@@ -97,7 +97,12 @@
                                 Placement="Top"
                                 Opened="QueueFlyout_Opened"
                                 Closed="QueueFlyout_Closed">
-                            <Grid Width="300" Height="400">
+                            <Grid
+                                Width="300"
+                                Height="400"
+                                AllowDrop="True"
+                                DragOver="QueueFlyout_DragOver"
+                                Drop="QueueFlyout_Drop">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="*" />

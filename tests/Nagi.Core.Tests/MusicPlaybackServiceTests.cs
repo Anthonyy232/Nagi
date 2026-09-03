@@ -94,7 +94,13 @@ public class MusicPlaybackServiceTests
     {
         // Arrange
         const string filePath = "C:\\temp\\transient.mp3";
-        var metadata = new SongFileMetadata { Title = "Transient Song", Artists = new List<string> { "Temp Artist" } };
+        var metadata = new SongFileMetadata
+        {
+            Title = "Transient Song",
+            Artists = new List<string> { "Temp Artist" },
+            Lyrics = "Embedded lyrics",
+            LrcFilePath = "C:\\temp\\transient.lrc"
+        };
         _metadataService.ExtractMetadataAsync(filePath).Returns(metadata);
         await _service.InitializeAsync();
         await _service.PlayAsync(_testSongs); // Pre-load a queue
@@ -108,6 +114,8 @@ public class MusicPlaybackServiceTests
         _service.CurrentTrack.Should().NotBeNull();
         _service.CurrentTrack!.Title.Should().Be("Transient Song");
         _service.CurrentTrack!.ArtistName.Should().Be("Temp Artist");
+        _service.CurrentTrack!.Lyrics.Should().Be("Embedded lyrics");
+        _service.CurrentTrack!.LrcFilePath.Should().Be("C:\\temp\\transient.lrc");
         _service.CurrentQueueIndex.Should().Be(-1);
         await _audioPlayer.Received(1).LoadAsync(Arg.Is<Song>(s => s != null && s.FilePath == filePath));
         await _audioPlayer.Received(1).PlayAsync();
@@ -132,6 +140,36 @@ public class MusicPlaybackServiceTests
         // Assert
         _service.CurrentTrack.Should().NotBeNull();
         _service.CurrentTrack!.ArtistName.Should().Be("Artist 1 & Artist 2");
+    }
+
+    [Fact]
+    public async Task AddTransientFilesToQueueAsync_AppendsAndPlaysExternalFiles()
+    {
+        var firstPath = "C:\\temp\\first.mp3";
+        var secondPath = "C:\\temp\\second.flac";
+        _metadataService.ExtractMetadataAsync(firstPath).Returns(new SongFileMetadata { Title = "First" });
+        _metadataService.ExtractMetadataAsync(secondPath).Returns(new SongFileMetadata { Title = "Second" });
+        await _service.InitializeAsync();
+        await _service.PlayAsync(_testSongs);
+        _audioPlayer.ClearReceivedCalls();
+        _libraryService.ClearReceivedCalls();
+
+        await _service.AddTransientFilesToQueueAsync([firstPath, secondPath]);
+
+        _service.PlaybackQueue.Should().HaveCount(_testSongs.Count + 2);
+        var externalIds = _service.PlaybackQueue.TakeLast(2).ToList();
+        var tracks = await _service.GetQueueTracksAsync(externalIds);
+        externalIds.Select(id => tracks[id].Title).Should().ContainInOrder("First", "Second");
+
+        await _service.SavePlaybackStateAsync();
+        await _settingsService.Received().SavePlaybackStateAsync(Arg.Is<PlaybackState>(state =>
+            state.PlaybackQueueTrackIds.SequenceEqual(_testSongs.Select(song => song.Id))));
+
+        await _service.PlayQueueItemAsync(_testSongs.Count);
+
+        await _audioPlayer.Received(1).LoadAsync(Arg.Is<Song>(song => song.FilePath == firstPath));
+        await _libraryService.DidNotReceive().StartListenSessionAsync(
+            externalIds[0], Arg.Any<PlaybackContext>());
     }
 
     #endregion

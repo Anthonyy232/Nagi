@@ -250,6 +250,16 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     Task PlayTransientFileAsync(string filePath);
 
     /// <summary>
+    ///     Adds files that are not necessarily in the library to the end of the queue.
+    /// </summary>
+    Task AddTransientFilesToQueueAsync(IEnumerable<string> filePaths);
+
+    /// <summary>
+    ///     Resolves library and transient tracks for queue display.
+    /// </summary>
+    Task<IReadOnlyDictionary<Guid, Song>> GetQueueTracksAsync(IEnumerable<Guid> songIds);
+
+    /// <summary>
     ///     Sets the player volume and persists the value.
     /// </summary>
     /// <param name="volume">The new volume level (0.0 to 1.0).</param>

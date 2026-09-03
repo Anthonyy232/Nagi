@@ -26,6 +26,8 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     private DateTime? _currentListenStartedUtc;
     private List<Guid> _playbackQueue = new();
     private List<Guid> _shuffledQueue = new();
+    private readonly Dictionary<Guid, Song> _transientTracks = new();
+    private readonly Dictionary<string, Guid> _transientTrackIdsByPath = new(StringComparer.OrdinalIgnoreCase);
 
     // Reverse index dictionaries for O(1) lookups in large queues (500k+ songs)
     private Dictionary<Guid, int> _playbackQueueIndex = new();
@@ -279,6 +281,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
                 }
             }
 
+            PruneTransientTracks();
             QueueChanged?.Invoke();
             UpdateSmtcControls();
         }
@@ -302,6 +305,49 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     public async Task PlayTransientFileAsync(string filePath)
     {
         _logger.LogDebug("Playing transient file: {FilePath}", filePath);
+        var transientSong = await CreateTransientSongAsync(filePath).ConfigureAwait(false);
+
+        if (CurrentListenHistoryId.HasValue)
+        {
+            var sessionId = CurrentListenHistoryId.Value;
+            var position = _audioPlayer.CurrentPosition;
+            CurrentListenHistoryId = null;
+            FireAndForgetSafe(async () => await _libraryService.FinalizeListenSessionAsync(sessionId, position, PlaybackEndReason.Skipped).ConfigureAwait(false), "Finalizing session on Transient Playback", trackForDisposal: true);
+        }
+
+        _isEligibilityMarked = false;
+
+        IsTransitioningTrack = true;
+        ClearQueuesInternal();
+        RegisterTransientTrack(transientSong);
+        QueueChanged?.Invoke();
+
+        CurrentTrack = transientSong;
+        CurrentQueueIndex = -1;
+        CurrentListenHistoryId = null;
+        _currentContext = new PlaybackContext(PlaybackContextType.Transient, null);
+
+        // Track listens for transient playback only when the file maps to a known library song.
+        // Truly external files remain untracked because ListenHistory requires a Song FK.
+        var existingLibrarySong = await _libraryService.GetSongByFilePathAsync(filePath).ConfigureAwait(false);
+        if (existingLibrarySong != null)
+        {
+            var listenStartedUtc = DateTime.UtcNow;
+            CurrentListenHistoryId = await _libraryService
+                .StartListenSessionAsync(existingLibrarySong.Id, _currentContext)
+                .ConfigureAwait(false);
+            _currentListenStartedUtc = CurrentListenHistoryId.HasValue ? listenStartedUtc : null;
+        }
+
+        await _audioPlayer.LoadAsync(CurrentTrack).ConfigureAwait(false);
+        await _audioPlayer.PlayAsync().ConfigureAwait(false);
+        UpdateSmtcControls();
+
+        TrackChanged?.Invoke();
+    }
+
+    private async Task<Song> CreateTransientSongAsync(string filePath)
+    {
         var metadata = await _metadataService.ExtractMetadataAsync(filePath).ConfigureAwait(false);
 
         // Filter out null/empty artist names and provide fallback if all are invalid
@@ -324,7 +370,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             validAlbumArtists = validArtists;
         }
 
-        var transientSong = new Song
+        return new Song
         {
             FilePath = filePath,
             Title = metadata.Title,
@@ -350,45 +396,102 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
                 }).ToList()
             },
             Duration = metadata.Duration,
-            AlbumArtUriFromTrack = metadata.CoverArtUri
+            AlbumArtUriFromTrack = metadata.CoverArtUri,
+            Lyrics = metadata.Lyrics,
+            LrcFilePath = metadata.LrcFilePath
         };
+    }
 
-        if (CurrentListenHistoryId.HasValue)
+    public async Task AddTransientFilesToQueueAsync(IEnumerable<string> filePaths)
+    {
+        var paths = filePaths?
+            .Where(path => !string.IsNullOrWhiteSpace(path))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList() ?? [];
+        if (paths.Count == 0) return;
+
+        var songs = new List<Song>(paths.Count);
+        foreach (var path in paths)
         {
-            var sessionId = CurrentListenHistoryId.Value;
-            var position = _audioPlayer.CurrentPosition;
-            CurrentListenHistoryId = null;
-            FireAndForgetSafe(async () => await _libraryService.FinalizeListenSessionAsync(sessionId, position, PlaybackEndReason.Skipped).ConfigureAwait(false), "Finalizing session on Transient Playback", trackForDisposal: true);
+            if (_transientTrackIdsByPath.TryGetValue(path, out var transientId)
+                && _transientTracks.TryGetValue(transientId, out var existingTransient))
+            {
+                songs.Add(existingTransient);
+                continue;
+            }
+
+            var librarySong = await _libraryService.GetSongByFilePathAsync(path).ConfigureAwait(false);
+            if (librarySong != null)
+            {
+                songs.Add(librarySong);
+                continue;
+            }
+
+            var transientSong = await CreateTransientSongAsync(path).ConfigureAwait(false);
+            RegisterTransientTrack(transientSong);
+            songs.Add(transientSong);
         }
 
-        _isEligibilityMarked = false;
-
-        IsTransitioningTrack = true;
-        ClearQueuesInternal();
-        QueueChanged?.Invoke();
-
-        CurrentTrack = transientSong;
-        CurrentQueueIndex = -1;
-        CurrentListenHistoryId = null;
-        _currentContext = new PlaybackContext(PlaybackContextType.Transient, null);
-
-        // Track listens for transient playback only when the file maps to a known library song.
-        // Truly external files remain untracked because ListenHistory requires a Song FK.
-        var existingLibrarySong = await _libraryService.GetSongByFilePathAsync(filePath).ConfigureAwait(false);
-        if (existingLibrarySong != null)
+        using (BeginQueueUpdate())
         {
-            var listenStartedUtc = DateTime.UtcNow;
-            CurrentListenHistoryId = await _libraryService
-                .StartListenSessionAsync(existingLibrarySong.Id, _currentContext)
-                .ConfigureAwait(false);
-            _currentListenStartedUtc = CurrentListenHistoryId.HasValue ? listenStartedUtc : null;
+            if (_playbackQueue.Count == 0 && CurrentTrack != null)
+            {
+                _playbackQueue.Add(CurrentTrack.Id);
+            }
+
+            var queuedIds = _playbackQueue.ToHashSet();
+            foreach (var song in songs)
+            {
+                if (queuedIds.Add(song.Id)) _playbackQueue.Add(song.Id);
+            }
         }
 
-        await _audioPlayer.LoadAsync(CurrentTrack).ConfigureAwait(false);
-        await _audioPlayer.PlayAsync().ConfigureAwait(false);
-        UpdateSmtcControls();
+        if (CurrentTrack == null && _playbackQueue.Count > 0)
+        {
+            _currentContext = new PlaybackContext(PlaybackContextType.Transient, null);
+            await PlayQueueItemAsync(0).ConfigureAwait(false);
+        }
+    }
 
-        TrackChanged?.Invoke();
+    public async Task<IReadOnlyDictionary<Guid, Song>> GetQueueTracksAsync(IEnumerable<Guid> songIds)
+    {
+        var ids = songIds?.Distinct().ToList() ?? [];
+        var result = new Dictionary<Guid, Song>(ids.Count);
+        var libraryIds = new List<Guid>(ids.Count);
+
+        foreach (var id in ids)
+        {
+            if (_transientTracks.TryGetValue(id, out var transientTrack))
+                result[id] = transientTrack;
+            else
+                libraryIds.Add(id);
+        }
+
+        if (libraryIds.Count > 0)
+        {
+            var libraryTracks = await _libraryService.GetSongsByIdsAsync(libraryIds).ConfigureAwait(false);
+            foreach (var pair in libraryTracks) result[pair.Key] = pair.Value;
+        }
+
+        return result;
+    }
+
+    private void RegisterTransientTrack(Song song)
+    {
+        _transientTracks[song.Id] = song;
+        _transientTrackIdsByPath[song.FilePath] = song.Id;
+    }
+
+    private void PruneTransientTracks()
+    {
+        var retainedIds = _playbackQueue.ToHashSet();
+        if (CurrentTrack != null) retainedIds.Add(CurrentTrack.Id);
+
+        foreach (var id in _transientTracks.Keys.Where(id => !retainedIds.Contains(id)).ToList())
+        {
+            _transientTrackIdsByPath.Remove(_transientTracks[id].FilePath);
+            _transientTracks.Remove(id);
+        }
     }
 
     public Task PlayAsync(Song song)
@@ -962,7 +1065,8 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         while (skipCount < maxSkipAttempts && currentIndex >= 0 && currentIndex < _playbackQueue.Count)
         {
             var songId = _playbackQueue[currentIndex];
-            song = await _libraryService.GetSongByIdAsync(songId).ConfigureAwait(false);
+            song = _transientTracks.GetValueOrDefault(songId)
+                   ?? await _libraryService.GetSongByIdAsync(songId).ConfigureAwait(false);
 
             if (song != null)
             {
@@ -1019,14 +1123,23 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
         CurrentTrack = song;
         CurrentQueueIndex = currentIndex;
+        PruneTransientTracks();
 
-        // Start and assign the listen session before media load can raise MediaOpened/TrackChanged.
-        // This guarantees presence listeners can observe a non-null CurrentListenHistoryId.
-        var listenStartedUtc = DateTime.UtcNow;
-        CurrentListenHistoryId = await _libraryService
-            .StartListenSessionAsync(CurrentTrack.Id, _currentContext)
-            .ConfigureAwait(false);
-        _currentListenStartedUtc = CurrentListenHistoryId.HasValue ? listenStartedUtc : null;
+        if (_transientTracks.ContainsKey(CurrentTrack.Id))
+        {
+            CurrentListenHistoryId = null;
+            _currentListenStartedUtc = null;
+        }
+        else
+        {
+            // Start and assign the listen session before media load can raise MediaOpened/TrackChanged.
+            // This guarantees presence listeners can observe a non-null CurrentListenHistoryId.
+            var listenStartedUtc = DateTime.UtcNow;
+            CurrentListenHistoryId = await _libraryService
+                .StartListenSessionAsync(CurrentTrack.Id, _currentContext)
+                .ConfigureAwait(false);
+            _currentListenStartedUtc = CurrentListenHistoryId.HasValue ? listenStartedUtc : null;
+        }
 
         if (IsShuffleEnabled)
         {
@@ -1045,8 +1158,8 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
         await _audioPlayer.LoadAsync(CurrentTrack).ConfigureAwait(false);
 
-        // Apply ReplayGain if enabled and available in database
-        await ApplyReplayGainIfEnabledAsync().ConfigureAwait(false);
+        if (!_transientTracks.ContainsKey(CurrentTrack.Id))
+            await ApplyReplayGainIfEnabledAsync().ConfigureAwait(false);
 
         await _audioPlayer.PlayAsync().ConfigureAwait(false);
         // Note: UpdateSmtcControls() is called by OnAudioPlayerMediaOpened after LoadAsync completes
@@ -1068,13 +1181,19 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     {
         if (!_isInitialized) return;
 
+        var playbackQueue = _playbackQueue.Where(id => !_transientTracks.ContainsKey(id)).ToList();
+        var shuffledQueue = _shuffledQueue.Where(id => !_transientTracks.ContainsKey(id)).ToList();
+        var currentTrackId = CurrentTrack is not null && !_transientTracks.ContainsKey(CurrentTrack.Id)
+            ? CurrentTrack.Id
+            : (Guid?)null;
+
         var state = new PlaybackState
         {
-            CurrentTrackId = CurrentTrack?.Id,
-            PlaybackQueueTrackIds = _playbackQueue.ToList(),
-            CurrentPlaybackQueueIndex = CurrentQueueIndex,
-            ShuffledQueueTrackIds = IsShuffleEnabled ? _shuffledQueue.ToList() : new List<Guid>(),
-            CurrentShuffledQueueIndex = CurrentShuffledIndex
+            CurrentTrackId = currentTrackId,
+            PlaybackQueueTrackIds = playbackQueue,
+            CurrentPlaybackQueueIndex = currentTrackId.HasValue ? playbackQueue.IndexOf(currentTrackId.Value) : -1,
+            ShuffledQueueTrackIds = IsShuffleEnabled ? shuffledQueue : [],
+            CurrentShuffledQueueIndex = currentTrackId.HasValue ? shuffledQueue.IndexOf(currentTrackId.Value) : -1
         };
         await _settingsService.SavePlaybackStateAsync(state).ConfigureAwait(false);
     }
@@ -1327,6 +1446,8 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         _shuffledQueue.Clear();
         _playbackQueueIndex.Clear();
         _shuffledQueueIndex.Clear();
+        _transientTracks.Clear();
+        _transientTrackIdsByPath.Clear();
         CurrentTrack = null;
         CurrentQueueIndex = -1;
         CurrentShuffledIndex = -1;
