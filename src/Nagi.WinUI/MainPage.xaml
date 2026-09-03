@@ -73,8 +73,18 @@
                 <Button
                     ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneTime}"
                     Style="{StaticResource LyricsButtonStyle}"
-                    Command="{x:Bind Command}">
-                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{x:Bind DynamicIcon, Mode=OneWay}" />
+                    Click="LyricsButton_Click">
+                    <Grid Width="40" Height="40" Margin="-8">
+                        <Border
+                            Background="{ThemeResource ControlFillColorSecondaryBrush}"
+                            CornerRadius="{ThemeResource ControlCornerRadius}"
+                            Visibility="{Binding DataContext.IsLyricsPageActive, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <FontIcon
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                            Glyph="{x:Bind DynamicIcon, Mode=OneWay}" />
+                    </Grid>
                 </Button>
             </DataTemplate>
 

@@ -166,6 +166,14 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         }
     }
 
+    private void LyricsButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (ContentFrame.CurrentSourcePageType == typeof(LyricsPage))
+            TryGoBack();
+        else
+            ContentFrame.Navigate(typeof(LyricsPage));
+    }
+
     // Synchronizes the NavigationView's selected item with the currently displayed page.
     private void UpdateNavViewSelection(Type currentPageType)
     {
@@ -492,6 +500,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         {
             var isDetailPage = _detailPageToParentTagMap.ContainsKey(e.SourcePageType);
             var isLyricsPage = e.SourcePageType == typeof(LyricsPage);
+            ViewModel.IsLyricsPageActive = isLyricsPage;
 
             if (AppTitleBar != null)
             {
