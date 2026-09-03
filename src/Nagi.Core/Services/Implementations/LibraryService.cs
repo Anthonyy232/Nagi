@@ -54,7 +54,6 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     private readonly ITheAudioDbService _theAudioDbService;
     private readonly ILogger<LibraryService> _logger;
     private readonly SemaphoreSlim _metadataFetchSemaphore = new(1, 1);
-    private readonly SemaphoreSlim _dbWriteSemaphore = new(1, 1);
     // These locks are only used by the single-song AddSongWithDetailsAsync API (not batch processing)
     private readonly SemaphoreSlim _artistCreationLock = new(1, 1);
     private readonly SemaphoreSlim _albumCreationLock = new(1, 1);
@@ -4163,11 +4162,6 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             }
         }, pipelineToken);
 
-        // Single explicit transaction wrapping all batches — reduces SQLite fsyncs from N to 1.
-        // Each SaveChangesAsync writes SQL to the WAL without committing; CommitAsync() does a single fsync.
-        // ChangeTracker.Clear() between batches is safe: it only releases in-memory tracking, not the WAL data.
-        await using var scanTransaction = await batchContext.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
-
         // Consumer: Batch and save to database as metadata arrives
         var consumerTask = Task.Run(async () =>
         {
@@ -4230,7 +4224,6 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }, pipelineToken);
 
         await Task.WhenAll(producerTask, consumerTask).ConfigureAwait(false);
-        await scanTransaction.CommitAsync(cancellationToken).ConfigureAwait(false);
 
         if (!failureSummary.IsEmpty)
         {
@@ -6088,7 +6081,6 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
             _shutdownCts.Dispose();
             _scanSemaphore.Dispose();
-            _dbWriteSemaphore.Dispose();
             _artistCreationLock.Dispose();
             _albumCreationLock.Dispose();
             _metadataFetchSemaphore.Dispose();

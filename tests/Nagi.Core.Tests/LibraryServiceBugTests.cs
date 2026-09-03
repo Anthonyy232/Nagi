@@ -52,7 +52,7 @@ public class LibraryServiceBugTests : IDisposable
         _imageProcessor = Substitute.For<IImageProcessor>();
         _logger = Substitute.For<ILogger<LibraryService>>();
 
-        _dbHelper = new DbContextFactoryTestHelper();
+        _dbHelper = new DbContextFactoryTestHelper(useFileDatabase: true);
         _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
 
         _libraryService = new LibraryService(
@@ -141,6 +141,75 @@ public class LibraryServiceBugTests : IDisposable
             .WaitAsync(TimeSpan.FromSeconds(5));
 
         result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task RescanFolderForMusicAsync_DuringSlowExtraction_AllowsListenHistoryWrites()
+    {
+        var folder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Music\\ConcurrentScan", Name = "ConcurrentScan" };
+        var existingSong = new Song
+        {
+            Id = Guid.NewGuid(),
+            FolderId = folder.Id,
+            FilePath = "C:\\Music\\ConcurrentScan\\existing.mp3",
+            Title = "Existing"
+        };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Songs.Add(existingSong);
+            await context.SaveChangesAsync();
+        }
+
+        var slowFile = "C:\\Music\\ConcurrentScan\\slow.mp3";
+        var files = Enumerable.Range(1, 100)
+            .Select(i => ($"C:\\Music\\ConcurrentScan\\song{i}.mp3", DateTime.UtcNow))
+            .Append((slowFile, DateTime.UtcNow))
+            .Append((existingSong.FilePath, DateTime.UtcNow))
+            .ToList();
+        _fileSystem.DirectoryExists(folder.Path).Returns(true);
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories).Returns(files);
+        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
+
+        var releaseSlowExtraction = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        _metadataService.ExtractMetadataAsync(Arg.Any<string>(), folder.Path)
+            .Returns(async call =>
+            {
+                var path = call.ArgAt<string>(0);
+                if (path == slowFile)
+                    await releaseSlowExtraction.Task;
+                return new SongFileMetadata { FilePath = path, Title = Path.GetFileNameWithoutExtension(path) };
+            });
+
+        var scanTask = _libraryService.RescanFolderForMusicAsync(folder.Id);
+        try
+        {
+            await WaitForSongCountAsync(51);
+            var sessionId = await _libraryService.StartListenSessionAsync(
+                existingSong.Id,
+                new PlaybackContext(PlaybackContextType.Library, null));
+
+            sessionId.Should().NotBeNull();
+        }
+        finally
+        {
+            releaseSlowExtraction.TrySetResult();
+            await scanTask.WaitAsync(TimeSpan.FromSeconds(5));
+        }
+    }
+
+    private async Task WaitForSongCountAsync(int expected)
+    {
+        var deadline = DateTime.UtcNow.AddSeconds(5);
+        while (DateTime.UtcNow < deadline)
+        {
+            await using var context = _dbHelper.ContextFactory.CreateDbContext();
+            if (await context.Songs.CountAsync() >= expected)
+                return;
+            await Task.Delay(20);
+        }
+
+        throw new TimeoutException($"Expected at least {expected} songs.");
     }
 
     [Fact]
