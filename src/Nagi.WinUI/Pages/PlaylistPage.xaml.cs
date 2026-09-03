@@ -41,7 +41,11 @@ public sealed partial class PlaylistPage : Page
         try
         {
             _logger.LogDebug("PlaylistPage loaded. Setting initial visual state and loading playlists...");
-            VisualStateManager.GoToState(this, "SearchCollapsed", false);
+            _isSearchExpanded = !string.IsNullOrWhiteSpace(ViewModel.SearchTerm);
+            ToolTipService.SetToolTip(SearchToggleButton, _isSearchExpanded
+                ? Nagi.WinUI.Resources.Strings.PlaylistPage_SearchButton_Close_ToolTip
+                : Nagi.WinUI.Resources.Strings.PlaylistPage_SearchButton_Search_ToolTip);
+            VisualStateManager.GoToState(this, _isSearchExpanded ? "SearchExpanded" : "SearchCollapsed", false);
             await ViewModel.LoadPlaylistsCommand.ExecuteAsync(null);
             _logger.LogDebug("Finished loading playlists.");
         }

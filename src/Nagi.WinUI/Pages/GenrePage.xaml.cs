@@ -92,7 +92,11 @@ public sealed partial class GenrePage : Page
     private void OnPageLoaded(object sender, RoutedEventArgs e)
     {
         _logger.LogDebug("GenrePage loaded. Setting initial visual state.");
-        VisualStateManager.GoToState(this, "SearchCollapsed", false);
+        _isSearchExpanded = !string.IsNullOrWhiteSpace(ViewModel.SearchTerm);
+        ToolTipService.SetToolTip(SearchToggleButton, _isSearchExpanded
+            ? Nagi.WinUI.Resources.Strings.GenrePage_SearchButton_Close_ToolTip
+            : Nagi.WinUI.Resources.Strings.GenrePage_SearchButton_Search_ToolTip);
+        VisualStateManager.GoToState(this, _isSearchExpanded ? "SearchExpanded" : "SearchCollapsed", false);
         Loaded -= OnPageLoaded;
     }
 
