@@ -297,7 +297,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
             await Task.WhenAll(fullSongTask, localLrcTask).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) return;
 
-            var fullSong = fullSongTask.Result;
+            var fullSong = fullSongTask.Result ?? song;
             var localLrc = localLrcTask.Result;
 
             // Priority 1: Local .lrc sidecar (synced lyrics)
