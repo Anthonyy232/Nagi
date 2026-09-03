@@ -15,6 +15,8 @@ namespace Nagi.Core.Services.Implementations;
 /// </summary>
 public class AtlMetadataService : IMetadataService, IDisposable
 {
+    private const char AtlMultiValueSeparator = '\u001F';
+    private const char CombinedValueSeparator = ';';
     private readonly IFileSystemService _fileSystem;
     private readonly IImageProcessor _imageProcessor;
     private readonly ILogger<AtlMetadataService> _logger;
@@ -27,6 +29,11 @@ public class AtlMetadataService : IMetadataService, IDisposable
     private readonly object _genreSplitCharactersLock = new();
     private string? _cachedGenreSplitCharacters;
     private bool _disposed;
+
+    static AtlMetadataService()
+    {
+        ATL.Settings.DisplayValueSeparator = AtlMultiValueSeparator;
+    }
 
     public AtlMetadataService(IImageProcessor imageProcessor, IFileSystemService fileSystem,
         IPathConfiguration pathConfig, ILogger<AtlMetadataService> logger, ISettingsService settingsService)
@@ -215,12 +222,13 @@ public class AtlMetadataService : IMetadataService, IDisposable
         // If no split characters are provided, normalize and return the whole string
         if (string.IsNullOrEmpty(splitCharacters))
         {
-            var normalized = ArtistNameHelper.NormalizeStringCore(input);
+            var normalized = ArtistNameHelper.NormalizeStringCore(
+                input.Replace(AtlMultiValueSeparator, CombinedValueSeparator));
             return normalized != null ? [normalized] : [];
         }
 
         return input
-            .Split(splitCharacters.ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+            .Split([.. splitCharacters, AtlMultiValueSeparator], StringSplitOptions.RemoveEmptyEntries)
             .Select(s => ArtistNameHelper.NormalizeStringCore(s))
             .Where(s => !string.IsNullOrEmpty(s))
             .Select(s => s!)
