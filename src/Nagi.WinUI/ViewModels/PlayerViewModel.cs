@@ -11,7 +11,6 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.WinUI.Models;
 using Nagi.WinUI.Navigation;
-using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Resources;
@@ -143,6 +142,8 @@ public partial class PlayerViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(CancelGlobalOperationCommand))]
     public partial bool IsGlobalOperationCancellable { get; set; }
     [ObservableProperty] public partial bool IsQueueViewVisible { get; set; }
+
+    [ObservableProperty] public partial bool IsLyricsPageActive { get; set; }
 
     [ObservableProperty] public partial bool IsVolumeControlVisible { get; set; }
 
@@ -296,7 +297,6 @@ public partial class PlayerViewModel : ObservableObject
                     button.DynamicToolTip = Strings.Player_NextButton_ToolTip;
                     break;
                 case "Lyrics":
-                    button.Command = GoToLyricsPageCommand;
                     button.DynamicIcon = "\uE8D2"; // Lyrics glyph
                     button.DynamicToolTip = Strings.Player_LyricsButton_ToolTip;
                     break;
@@ -470,12 +470,6 @@ public partial class PlayerViewModel : ObservableObject
 
         // Otherwise fallback to checking if we have a current track.
         return CurrentPlayingTrack != null;
-    }
-
-    [RelayCommand]
-    private void GoToLyricsPage()
-    {
-        _navigationService.Navigate(typeof(LyricsPage));
     }
 
     partial void OnIsMutedChanged(bool value)
