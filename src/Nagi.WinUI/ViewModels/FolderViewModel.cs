@@ -381,6 +381,8 @@ public partial class FolderViewModel : ObservableObject
         _playerViewModel.IsGlobalOperationInProgress = true;
         _playerViewModel.GlobalOperationStatusMessage = string.Format(Nagi.WinUI.Resources.Strings.Folders_Rescan_InProgress, folderItem.Name);
         _playerViewModel.IsGlobalOperationIndeterminate = true;
+        using var rescanCts = new CancellationTokenSource();
+        _playerViewModel.SetGlobalOperationCancellation(rescanCts.Cancel);
 
         try
         {
@@ -391,11 +393,16 @@ public partial class FolderViewModel : ObservableObject
                 _playerViewModel.GlobalOperationProgressValue = p.Percentage;
             });
 
-            var changesDetected = await _libraryService.RescanFolderForMusicAsync(folderId, progress);
+            var changesDetected = await _libraryService.RescanFolderForMusicAsync(folderId, progress, rescanCts.Token);
+            rescanCts.Token.ThrowIfCancellationRequested();
 
             _playerViewModel.GlobalOperationStatusMessage = changesDetected
                 ? string.Format(Nagi.WinUI.Resources.Strings.Folders_Rescan_Complete, folderItem.Name)
                 : string.Format(Nagi.WinUI.Resources.Strings.Folders_Rescan_NoChanges, folderItem.Name);
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("Folder rescan cancelled for {FolderId}.", folderId);
         }
         catch (Exception ex)
         {
@@ -404,6 +411,7 @@ public partial class FolderViewModel : ObservableObject
         }
         finally
         {
+            _playerViewModel.SetGlobalOperationCancellation(null);
             IsScanning = false;
             _playerViewModel.IsGlobalOperationInProgress = false;
             _playerViewModel.IsGlobalOperationIndeterminate = false;
