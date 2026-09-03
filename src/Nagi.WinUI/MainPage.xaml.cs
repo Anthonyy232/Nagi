@@ -183,6 +183,14 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             e.AcceptedOperation = DataPackageOperation.Copy;
     }
 
+    private void QueueButton_DragEnter(object sender, DragEventArgs e)
+    {
+        QueueFlyout_DragOver(sender, e);
+        if (e.AcceptedOperation == DataPackageOperation.Copy &&
+            !_isQueueFlyoutOpen && sender is Button button)
+            button.Flyout?.ShowAt(button);
+    }
+
     private async void QueueFlyout_Drop(object sender, DragEventArgs e)
     {
         if (!e.DataView.Contains(StandardDataFormats.StorageItems)) return;

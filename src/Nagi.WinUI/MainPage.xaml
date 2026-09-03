@@ -89,7 +89,11 @@
             </DataTemplate>
 
             <DataTemplate x:Key="QueueButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
-                <Button ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneTime}"
+                <Button AllowDrop="True"
+                        DragEnter="QueueButton_DragEnter"
+                        DragOver="QueueFlyout_DragOver"
+                        Drop="QueueFlyout_Drop"
+                        ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneTime}"
                         Style="{StaticResource QueueButtonStyle}">
                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{x:Bind DynamicIcon, Mode=OneWay}" />
                     <Button.Flyout>
