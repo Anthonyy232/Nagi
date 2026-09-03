@@ -5,27 +5,34 @@ using Nagi.Core.Data;
 namespace Nagi.Core.Tests.Utils;
 
 /// <summary>
-///     A helper class for creating an in-memory SQLite database context factory for testing purposes.
-///     Each instance creates a unique, isolated database connection that is disposed of with the helper.
+///     Creates an isolated SQLite database for each test.
 /// </summary>
 public class DbContextFactoryTestHelper : IDisposable
 {
-    private readonly SqliteConnection _connection;
+    private readonly SqliteConnection? _connection;
+    private readonly string? _databasePath;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="DbContextFactoryTestHelper" /> class,
-    ///     creating a new in-memory SQLite database.
+    ///     Creates an in-memory database by default, or a file database for concurrency tests.
     /// </summary>
-    public DbContextFactoryTestHelper()
+    public DbContextFactoryTestHelper(bool useFileDatabase = false)
     {
-        // Use "DataSource=:memory:" for a private in-memory database that is deleted when the connection is closed.
-        // "Mode=Memory" and "Cache=Shared" can be used for a shared in-memory database if needed across multiple connections.
-        _connection = new SqliteConnection("DataSource=:memory:");
-        _connection.Open();
-
-        var options = new DbContextOptionsBuilder<MusicDbContext>()
-            .UseSqlite(_connection)
-            .Options;
+        DbContextOptions<MusicDbContext> options;
+        if (useFileDatabase)
+        {
+            _databasePath = Path.Combine(Path.GetTempPath(), $"nagi-tests-{Guid.NewGuid():N}.db");
+            options = new DbContextOptionsBuilder<MusicDbContext>()
+                .UseSqlite($"Data Source={_databasePath};Pooling=False")
+                .Options;
+        }
+        else
+        {
+            _connection = new SqliteConnection("DataSource=:memory:");
+            _connection.Open();
+            options = new DbContextOptionsBuilder<MusicDbContext>()
+                .UseSqlite(_connection)
+                .Options;
+        }
 
         // Ensure the database schema is created
         using (var context = new MusicDbContext(options))
@@ -46,8 +53,13 @@ public class DbContextFactoryTestHelper : IDisposable
     /// </summary>
     public void Dispose()
     {
-        _connection.Close();
-        _connection.Dispose();
+        _connection?.Dispose();
+        if (_databasePath is not null)
+        {
+            File.Delete(_databasePath);
+            File.Delete($"{_databasePath}-wal");
+            File.Delete($"{_databasePath}-shm");
+        }
         GC.SuppressFinalize(this);
     }
 
