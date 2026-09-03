@@ -94,7 +94,11 @@ public sealed partial class AlbumPage : Page
     private void OnPageLoaded(object sender, RoutedEventArgs e)
     {
         _logger.LogDebug("AlbumPage loaded. Setting initial visual state.");
-        VisualStateManager.GoToState(this, "SearchCollapsed", false);
+        _isSearchExpanded = !string.IsNullOrWhiteSpace(ViewModel.SearchTerm);
+        ToolTipService.SetToolTip(SearchToggleButton, _isSearchExpanded
+            ? Nagi.WinUI.Resources.Strings.AlbumPage_SearchButton_Close_ToolTip
+            : Nagi.WinUI.Resources.Strings.AlbumPage_SearchButton_Search_ToolTip);
+        VisualStateManager.GoToState(this, _isSearchExpanded ? "SearchExpanded" : "SearchCollapsed", false);
         Loaded -= OnPageLoaded;
     }
 
