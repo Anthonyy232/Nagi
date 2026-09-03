@@ -651,7 +651,7 @@ public partial class PlayerViewModel : ObservableObject
             if (token.IsCancellationRequested) return;
 
             // Fetch metadata for the IDs we're about to display
-            var fetchedSongs = await _libraryService.GetSongsByIdsAsync(idsToShow).ConfigureAwait(true);
+            var fetchedSongs = await _playbackService.GetQueueTracksAsync(idsToShow).ConfigureAwait(true);
 
             // Check for cancellation or disposal after the async call, before updating UI
             if (token.IsCancellationRequested) return;
@@ -676,6 +676,9 @@ public partial class PlayerViewModel : ObservableObject
             _logger.LogError(ex, "Failed to update queue display");
         }
     }
+
+    public Task AddFilesToQueueAsync(IEnumerable<string> filePaths) =>
+        _playbackService.AddTransientFilesToQueueAsync(filePaths);
 
     private void UpdateVolumeIconGlyph()
     {

@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation.Metadata;
+using Windows.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
@@ -15,6 +17,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Constants;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Resources;
@@ -172,6 +175,54 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             TryGoBack();
         else
             ContentFrame.Navigate(typeof(LyricsPage));
+    }
+
+    private void QueueFlyout_DragOver(object sender, DragEventArgs e)
+    {
+        if (e.DataView.Contains(StandardDataFormats.StorageItems))
+            e.AcceptedOperation = DataPackageOperation.Copy;
+    }
+
+    private async void QueueFlyout_Drop(object sender, DragEventArgs e)
+    {
+        if (!e.DataView.Contains(StandardDataFormats.StorageItems)) return;
+
+        try
+        {
+            var paths = new List<string>();
+            var items = await e.DataView.GetStorageItemsAsync();
+            foreach (var item in items.OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase))
+                await CollectMusicFilesAsync(item, paths);
+
+            await ViewModel.AddFilesToQueueAsync(paths);
+            e.Handled = true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to add dropped files to the playback queue.");
+        }
+    }
+
+    private async Task CollectMusicFilesAsync(IStorageItem item, List<string> paths)
+    {
+        if (item is StorageFile file)
+        {
+            if (FileExtensions.MusicFileExtensions.Contains(file.FileType)) paths.Add(file.Path);
+            return;
+        }
+
+        if (item is not StorageFolder folder) return;
+
+        try
+        {
+            var children = await folder.GetItemsAsync();
+            foreach (var child in children.OrderBy(child => child.Name, StringComparer.OrdinalIgnoreCase))
+                await CollectMusicFilesAsync(child, paths);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Could not read dropped folder {FolderPath}.", folder.Path);
+        }
     }
 
     // Synchronizes the NavigationView's selected item with the currently displayed page.
