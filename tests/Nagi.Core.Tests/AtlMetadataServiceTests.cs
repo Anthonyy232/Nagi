@@ -202,6 +202,21 @@ public class AtlMetadataServiceTests : IDisposable
         result.Genres.Should().ContainInOrder("Rock", "Pop", "Indie", "Jazz");
     }
 
+    [Fact]
+    public async Task ExtractMetadataAsync_WithNativeMultiValueGenres_PreservesGenreBoundaries()
+    {
+        var filePath = CreateTestAudioFile("multigenre.mp3", track =>
+        {
+            track.Genre = "2-Step\u02F5Funky Breaks";
+        });
+
+        _settingsService.GetGenreSplitCharactersAsync().Returns(Task.FromResult("\\"));
+
+        var result = await _metadataService.ExtractMetadataAsync(filePath);
+
+        result.Genres.Should().ContainInOrder("2-Step", "Funky Breaks");
+    }
+
     /// <summary>
     ///     Verifies that the service provides sensible default values for metadata
     ///     when processing an audio file with no tags.
