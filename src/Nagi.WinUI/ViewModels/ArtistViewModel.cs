@@ -172,10 +172,10 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
 
     private void OnArtistMetadataUpdated(object? sender, ArtistMetadataUpdatedEventArgs e)
     {
-        if (!_artistLookup.TryGetValue(e.ArtistId, out var artistVm)) return;
         _dispatcherService.TryEnqueue(() =>
         {
-            artistVm.LocalImageCachePath = ImageUriHelper.GetUriWithCacheBuster(e.NewLocalImageCachePath, DateTime.UtcNow);
+            if (_artistLookup.TryGetValue(e.ArtistId, out var artistVm))
+                artistVm.LocalImageCachePath = ImageUriHelper.GetUriWithCacheBuster(e.NewLocalImageCachePath, DateTime.UtcNow);
         });
     }
 

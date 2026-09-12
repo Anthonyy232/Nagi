@@ -47,7 +47,8 @@ public sealed partial class AlbumPage : Page
             var cts = new CancellationTokenSource();
             _cancellationTokenSource = cts;
 
-            if (ViewModel.Albums.Count == 0)
+            if (ViewModel.Albums.Count == 0 || ViewModel.HasLoadError ||
+                (ViewModel.SongsPerPage == 0 && ViewModel.Albums.Count < ViewModel.TotalItemCount))
             {
                 _logger.LogDebug("Album collection is empty, loading albums...");
                 await ViewModel.LoadAsync(cts.Token);

@@ -211,6 +211,8 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
     protected override void OnSearchTermChangedInternal(string value)
     {
+        base.OnSearchTermChangedInternal(value);
+        _pagedLoadCts?.Cancel();
         if (HasSelectedSongs) DeselectAll();
         ClearFullSongIds();
     }
@@ -305,20 +307,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         }
     }
 
-    /// <summary>
-    ///     After a successful page load, kick off the infinite-scroll auto-loader if
-    ///     <see cref="PagedListViewModelBase{TItem}.IsPaginationEnabled"/> is false and there are
-    ///     more pages. Pagination-enabled lists do nothing here.
-    /// </summary>
-    protected override Task OnPageLoadedAsync(PagedResult<Song> result, CancellationToken token)
-    {
-        if (!IsPaginationEnabled && result is not null && result.HasNextPage && !token.IsCancellationRequested)
-        {
-            _ = StartAutomaticPagedLoadingAsync(result.PageNumber + 1, token);
-        }
-        return Task.CompletedTask;
-    }
-
     /// <summary>Songs use the SongList resource strings rather than per-list-type formatting.</summary>
     protected override string FormatTotalItemsText(int count) =>
         count == 1
@@ -357,38 +345,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     }
 
     /// <summary>
-    ///     Transparently loads subsequent pages in the background to create a smooth "infinite scroll" experience.
-    /// </summary>
-    private async Task StartAutomaticPagedLoadingAsync(int nextPageToLoad, CancellationToken token)
-    {
-        try
-        {
-            while (!token.IsCancellationRequested)
-            {
-                await Task.Delay(100, token);
-                if (token.IsCancellationRequested) break;
-
-                var pagedResult = await Task.Run(
-                    () => LoadSongsPagedAsync(nextPageToLoad, SongsPerPage, CurrentSortOrder, token), token);
-                if (pagedResult == null) break;
-
-                ProcessPagedResult(pagedResult, token, true);
-
-                if (!pagedResult.HasNextPage) break;
-                nextPageToLoad++;
-            }
-        }
-        catch (OperationCanceledException)
-        {
-            _logger.LogDebug("Automatic page loading was cancelled.");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed during automatic page loading");
-        }
-    }
-
-    /// <summary>
     ///     Loads a specific page of songs without re-fetching all song IDs.
     ///     Useful for pagination where the overall sort order and ID list remain unchanged.
     /// </summary>
@@ -409,7 +365,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
             var token = _pagedLoadCts.Token;
 
             var pagedResult = await Task.Run(
-                () => LoadSongsPagedAsync(pageNumber, SongsPerPage, CurrentSortOrder, token), token);
+                () => LoadSongsPagedAsync(pageNumber, PageSize, CurrentSortOrder, token), token);
             ProcessPagedResult(pagedResult, token);
         }
         catch (Exception ex)
