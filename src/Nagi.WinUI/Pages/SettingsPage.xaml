@@ -1154,6 +1154,7 @@
                         </controls:SettingsCard>
 
                         <controls:SettingsExpander
+                            Style="{x:Null}"
                             Header="{x:Bind resources:Strings.SettingsPage_ListenBrainz_AdvancedHeader, Mode=OneTime}"
                             IsExpanded="False">
                             <controls:SettingsExpander.HeaderIcon>
