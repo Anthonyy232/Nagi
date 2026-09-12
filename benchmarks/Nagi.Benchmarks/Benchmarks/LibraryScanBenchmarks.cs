@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Benchmarks.Helpers;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
+using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
 using NSubstitute;
@@ -21,18 +22,17 @@ public class LibraryScanBenchmarks
     private LibraryService _libraryService = null!;
     private ServiceProvider _serviceProvider = null!;
 
-    [Params(100, 500)] // Using smaller numbers for quicker CI, can be increased locally
+    [Params(100, 500)]
     public int SongCount;
 
     [GlobalSetup]
-    public void Setup()
+    public async Task Setup()
     {
         _testPath = Path.Combine(Path.GetTempPath(), "NagiBenchmarks", Guid.NewGuid().ToString());
         SyntheticAudioGenerator.GenerateLibrary(_testPath, SongCount);
 
         var services = new ServiceCollection();
 
-        // Use In-Memory SQLite for benchmarks to isolate file scanning + business logic performance
         var dbPath = Path.Combine(_testPath, "test.db");
         services.AddDbContextFactory<MusicDbContext>(options =>
             options.UseSqlite($"Data Source={dbPath}"));
@@ -58,33 +58,34 @@ public class LibraryScanBenchmarks
         services.AddSingleton<IFanartTvService>(Substitute.For<IFanartTvService>());
         services.AddSingleton<ITheAudioDbService>(Substitute.For<ITheAudioDbService>());
         services.AddSingleton<IApiKeyService>(Substitute.For<IApiKeyService>());
+        services.AddSingleton<IProviderPipelineProvider>(Substitute.For<IProviderPipelineProvider>());
         services.AddSingleton<IMetadataService, AtlMetadataService>();
         services.AddHttpClient();
         services.AddLogging(b => b.AddProvider(NullLoggerProvider.Instance));
 
         _serviceProvider = services.BuildServiceProvider();
 
-        // Ensure database is created and migrated
         using var scope = _serviceProvider.CreateScope();
         var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<MusicDbContext>>();
         using var context = factory.CreateDbContext();
         context.Database.EnsureCreated();
 
         _libraryService = ActivatorUtilities.CreateInstance<LibraryService>(_serviceProvider);
+        await _libraryService.ScanFolderForMusicAsync(_testPath);
+        VerifyScan();
     }
 
     [GlobalCleanup]
     public void Cleanup()
     {
+        _libraryService?.Dispose();
         if (_serviceProvider is IDisposable disposable)
         {
             disposable.Dispose();
         }
 
-        // Ensure SQLite releases all file locks
         SqliteConnection.ClearAllPools();
 
-        // Give the OS a moment to release handles if needed, or just retry
         if (Directory.Exists(_testPath))
         {
             try
@@ -93,29 +94,39 @@ public class LibraryScanBenchmarks
             }
             catch (IOException)
             {
-                // Fallback: Try again after a short delay or ignore if it's just temp files
                 Thread.Sleep(100);
                 if (Directory.Exists(_testPath))
                 {
-                    try { Directory.Delete(_testPath, true); } catch { /* Ignore */ }
+                    try { Directory.Delete(_testPath, true); } catch { }
                 }
             }
         }
     }
 
-    [Benchmark]
-    public async Task InitialScan()
+    [IterationSetup(Target = nameof(InitialScan))]
+    public void ResetLibrary()
     {
-        // Reset DB for clean scan
         using var scope = _serviceProvider.CreateScope();
         var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<MusicDbContext>>();
         using var context = factory.CreateDbContext();
-        await context.Songs.ExecuteDeleteAsync();
-        await context.Albums.ExecuteDeleteAsync();
-        await context.Artists.ExecuteDeleteAsync();
-
-        await _libraryService.ScanFolderForMusicAsync(_testPath);
+        context.Songs.ExecuteDelete();
+        context.Albums.ExecuteDelete();
+        context.Artists.ExecuteDelete();
     }
+
+    [IterationCleanup]
+    public void VerifyScan()
+    {
+        var factory = _serviceProvider.GetRequiredService<IDbContextFactory<MusicDbContext>>();
+        using var context = factory.CreateDbContext();
+        var indexedCount = context.Songs.Count();
+        var invalidCount = context.Songs.Count(song => song.DurationTicks <= 0);
+        if (indexedCount != SongCount || invalidCount != 0)
+            throw new InvalidOperationException($"Indexed {indexedCount}/{SongCount} songs, with {invalidCount} invalid durations.");
+    }
+
+    [Benchmark]
+    public Task InitialScan() => _libraryService.ScanFolderForMusicAsync(_testPath);
 
     [Benchmark]
     public async Task RescanNoChanges()
