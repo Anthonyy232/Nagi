@@ -456,6 +456,7 @@ public static class Strings
     public static string Player_QueueButton_ToolTip => GetString("Player_QueueButton_ToolTip");
     public static string Player_GoToAlbumButton_ToolTip => GetString("Player_GoToAlbumButton_ToolTip");
     public static string QueueFlyout_Title => GetString("QueueFlyout_Title");
+    public static string QueueFlyout_DropHint => GetString("QueueFlyout_DropHint");
     public static string AlbumPage_Title => GetString("AlbumPage_Title");
     public static string AlbumPage_SearchBox_Placeholder => GetString("AlbumPage_SearchBox_Placeholder");
     public static string AlbumPage_SearchButton_ToolTip => GetString("AlbumPage_SearchButton_ToolTip");
