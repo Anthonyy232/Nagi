@@ -481,7 +481,6 @@
                                         <Grid
                                             x:Name="ArtistNameHyperlink"
                                             MaxHeight="0"
-                                            Opacity="0"
                                             Visibility="{x:Bind ViewModel.CurrentPlayingTrack, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}">
                                             <TextBlock
                                                 VerticalAlignment="Center"
