@@ -74,11 +74,13 @@
 
     <!-- Specific brush for the player background tint. Defaults to primary color but can be overridden. -->
     <SolidColorBrush x:Key="PlayerTintColorBrush" Color="#FF21944B" />
+    <SolidColorBrush x:Key="PlayerBackgroundBrush" Color="#FF242424" />
+    <SolidColorBrush x:Key="PlayerAccentBrush" Color="#FFFFFFFF" />
 
     <!-- Windows 11 style acrylic brush. -->
     <media:AcrylicBrush
         x:Key="Win11AcrylicBrush"
-        FallbackColor="{Binding Color, Source={StaticResource PlayerTintColorBrush}}"
+        FallbackColor="{Binding Color, Source={StaticResource PlayerBackgroundBrush}}"
         TintColor="{Binding Color, Source={StaticResource PlayerTintColorBrush}}"
         TintLuminosityOpacity="0.15"
         TintOpacity="0.15" />
@@ -87,7 +89,7 @@
     <SolidColorBrush
         x:Key="Win10AcrylicBrush"
         Opacity="0.98"
-        Color="{Binding Color, Source={StaticResource PlayerTintColorBrush}}" />
+        Color="{Binding Color, Source={StaticResource PlayerBackgroundBrush}}" />
 
     <!-- No transparency brush. -->
     <SolidColorBrush
