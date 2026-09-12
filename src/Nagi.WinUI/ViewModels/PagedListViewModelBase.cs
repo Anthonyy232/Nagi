@@ -45,9 +45,7 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     [ObservableProperty] public partial bool HasPreviousPage { get; set; }
 
     /// <summary>
-    ///     When true, Next/Previous commands are active and the load envelope drives a single
-    ///     page at a time. When false, the subclass is expected to drive an "infinite scroll"
-    ///     style load (e.g. via <see cref="OnPageLoadedAsync"/>).
+    ///     When false, load all pages in the background and disable page navigation.
     /// </summary>
     public bool IsPaginationEnabled { get; set; } = true;
 
