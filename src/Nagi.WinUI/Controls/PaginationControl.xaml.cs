@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System.Collections.Generic;
 using Nagi.WinUI.ViewModels;
 
 namespace Nagi.WinUI.Controls;
@@ -33,7 +34,7 @@ public sealed partial class PaginationControl : UserControl
         if (PageSizeComboBox.IsDropDownOpen)
         {
             if (e.AddedItems.Count > 0 && ViewModel is { } vm)
-                vm.SongsPerPage = (int)e.AddedItems[0];
+                vm.SongsPerPage = ((KeyValuePair<int, string>)e.AddedItems[0]).Key;
             _pendingScrollRevertValue = null;
         }
         else if (e.RemovedItems.Count > 0)
@@ -60,14 +61,18 @@ public sealed partial class PaginationControl : UserControl
         }
     }
 
-    public int[] PageSizeOptions { get; } = new[] { 25, 50, 100, 250, 500 };
+    public KeyValuePair<int, string>[] PageSizeOptions { get; } =
+    [
+        new(25, "25"), new(50, "50"), new(100, "100"), new(250, "250"), new(500, "500"),
+        new(0, Nagi.WinUI.Resources.Strings.PaginationControl_All)
+    ];
 
     /// <summary>
     ///     Hide the entire control when the total item count fits within the smallest
     ///     page-size tier — pagination is meaningless at that scale.
     /// </summary>
     public Visibility VisibleIfPaginates(int totalItemCount) =>
-        totalItemCount > PageSizeOptions[0] ? Visibility.Visible : Visibility.Collapsed;
+        totalItemCount > 25 ? Visibility.Visible : Visibility.Collapsed;
 
     public IPagedListViewModel ViewModel
     {

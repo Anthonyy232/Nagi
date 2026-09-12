@@ -197,47 +197,75 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     ///     Loads a single page of combined folder+song content. Both slices are fetched in parallel.
     ///     Dispatches all UI updates atomically.
     /// </summary>
-    private async Task LoadCombinedPageAsync(int pageNumber, Guid parentFolderId, int totalFolderCount, CancellationToken token)
+    private async Task<bool> LoadCombinedPageAsync(int pageNumber, Guid parentFolderId, int totalFolderCount,
+        CancellationToken token, bool append = false)
     {
+        var pageSize = PageSize;
         var (folderSkip, foldersToLoad, songSkip, songsToLoad) =
-            ComputePageSlices(pageNumber, SongsPerPage, totalFolderCount);
+            ComputePageSlices(pageNumber, pageSize, totalFolderCount);
 
         // Fetch both data slices in parallel — exactly what the page needs, nothing more.
         var folderTask = FetchFolderSliceAsync(parentFolderId, folderSkip, foldersToLoad, token);
         var songTask = FetchSongSliceAsync(songSkip, songsToLoad, CurrentSortOrder, token);
 
         await Task.WhenAll(folderTask, songTask).ConfigureAwait(false);
-        if (token.IsCancellationRequested) return;
+        if (token.IsCancellationRequested) return false;
 
         var folders = folderTask.Result.ToList();
         var songResult = songTask.Result;
 
         // Compute combined pagination meta.
         var combinedTotal = totalFolderCount + songResult.TotalCount;
-        var totalPages = SongsPerPage > 0 ? (int)Math.Ceiling(combinedTotal / (double)SongsPerPage) : 1;
+        var totalPages = (int)Math.Ceiling(combinedTotal / (double)pageSize);
 
         // All UI updates in one dispatch to avoid partial-render states.
         _dispatcherService.TryEnqueue(() =>
         {
             if (token.IsCancellationRequested) return;
 
-            Songs.ReplaceRange(songResult.Items);
+            Songs.AppendOrReplace(songResult.Items, append);
 
             var newItems = folders.Select(FolderContentItem.FromFolder)
                 .Concat(songResult.Items.Select(FolderContentItem.FromSong));
-            FolderContents.ReplaceRange(newItems);
+            FolderContents.AppendOrReplace(newItems, append);
 
-            CurrentPage = pageNumber;
-            TotalPages = Math.Max(1, totalPages);
+            CurrentPage = SongsPerPage == 0 ? 1 : pageNumber;
+            TotalPages = SongsPerPage == 0 ? 1 : Math.Max(1, totalPages);
             TotalItemCount = combinedTotal;
-            HasNextPage = pageNumber < TotalPages;
-            HasPreviousPage = pageNumber > 1;
+            HasNextPage = SongsPerPage != 0 && pageNumber < TotalPages;
+            HasPreviousPage = CurrentPage > 1;
 
             UpdateTotalItemsText(songResult.TotalCount);
             UpdateSelectionStatus();
             PlayAllSongsCommand.NotifyCanExecuteChanged();
             ShuffleAndPlayAllSongsCommand.NotifyCanExecuteChanged();
         });
+        return pageNumber < totalPages;
+    }
+
+    private async Task LoadRemainingFolderPagesAsync(Guid parentFolderId, int totalFolderCount, CancellationToken token)
+    {
+        try
+        {
+            var page = 2;
+            while (!token.IsCancellationRequested)
+            {
+                await Task.Delay(100, token);
+                var hasMore = await Task.Run(() => LoadCombinedPageAsync(page, parentFolderId,
+                    totalFolderCount, token, append: true), token);
+                if (!hasMore) break;
+                page++;
+            }
+        }
+        catch (OperationCanceledException) { }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to load remaining folder contents");
+            _dispatcherService.TryEnqueue(() =>
+            {
+                if (!token.IsCancellationRequested && !_isDisposed) HasLoadError = true;
+            });
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -287,7 +315,9 @@ public partial class FolderSongListViewModel : SongListViewModelBase
             _totalFolderCount = await FetchTotalFolderCountAsync(parentFolderId.Value, token).ConfigureAwait(false);
             if (token.IsCancellationRequested) return;
 
-            await LoadCombinedPageAsync(1, parentFolderId.Value, _totalFolderCount, token).ConfigureAwait(false);
+            var hasMore = await LoadCombinedPageAsync(1, parentFolderId.Value, _totalFolderCount, token).ConfigureAwait(false);
+            if (SongsPerPage == 0 && hasMore)
+                _ = LoadRemainingFolderPagesAsync(parentFolderId.Value, _totalFolderCount, token);
         }
         catch (OperationCanceledException)
         {

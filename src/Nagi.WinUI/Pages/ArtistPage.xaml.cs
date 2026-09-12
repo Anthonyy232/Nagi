@@ -54,7 +54,8 @@ public sealed partial class ArtistPage : Page
             _cancellationTokenSource = cts;
             ViewModel.SubscribeToEvents();
 
-            if (ViewModel.Artists.Count == 0)
+            if (ViewModel.Artists.Count == 0 || ViewModel.HasLoadError ||
+                (ViewModel.SongsPerPage == 0 && ViewModel.Artists.Count < ViewModel.TotalItemCount))
             {
                 _logger.LogDebug("Artist collection is empty, loading artists...");
                 await ViewModel.LoadAsync(cts.Token);

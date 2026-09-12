@@ -828,6 +828,7 @@ public static class Strings
     public static string InsightsPage_SortBy_PlayCount => GetString("InsightsPage_SortBy_PlayCount");
     public static string InsightsPage_SortBy_Duration => GetString("InsightsPage_SortBy_Duration");
     public static string PaginationControl_ItemsPerPage => GetString("PaginationControl_ItemsPerPage");
+    public static string PaginationControl_All => GetString("PaginationControl_All");
     public static string PaginationControl_PreviousPage_ToolTip => GetString("PaginationControl_PreviousPage_ToolTip");
     public static string PaginationControl_NextPage_ToolTip => GetString("PaginationControl_NextPage_ToolTip");
     public static string CrashReport_CopyLog_ToolTip => GetString("CrashReport_CopyLog_ToolTip");
