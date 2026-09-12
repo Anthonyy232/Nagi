@@ -109,14 +109,20 @@
                                 Drop="QueueFlyout_Drop">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
                                 <TextBlock
                                     Text="{x:Bind resources:Strings.QueueFlyout_Title, Mode=OneTime}"
                                     Margin="12,0,12,4"
                                     Style="{ThemeResource MediaControlSubtitleStyle}" />
+                                <TextBlock Grid.Row="1" Margin="12,0,12,8"
+                                           Text="{x:Bind resources:Strings.QueueFlyout_DropHint, Mode=OneTime}"
+                                           TextWrapping="Wrap"
+                                           Style="{ThemeResource CaptionTextBlockStyle}"
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                                 <ListView
-                                    Grid.Row="1"
+                                    Grid.Row="2"
                                     ItemContainerStyle="{StaticResource QueueListViewItemStyle}"
                                     ItemsSource="{Binding DataContext.CurrentQueue, ElementName=MainPageRoot, Mode=OneWay}"
                                     SelectionMode="None"
@@ -410,6 +416,9 @@
                         <Border
                             x:Name="FloatingPlayerContainer"
                             Padding="12"
+                            AllowDrop="True"
+                            DragOver="QueueFlyout_DragOver"
+                            Drop="QueueFlyout_Drop"
                             VerticalAlignment="Bottom"
                             CornerRadius="8">
                             <Grid>

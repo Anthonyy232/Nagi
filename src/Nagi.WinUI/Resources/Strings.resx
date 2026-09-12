@@ -1082,6 +1082,9 @@ Error: {1}</value>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Go to album</value>
   </data>
+  <data name="QueueFlyout_DropHint" xml:space="preserve">
+    <value>Drop files or folders onto the player to add them to the queue.</value>
+  </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Up Next</value>
   </data>
