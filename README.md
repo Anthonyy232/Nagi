@@ -90,7 +90,7 @@ Localization support for Nagi is powered by Crowdin. Contributions to add new la
 - **[H.NotifyIcon.WinUI](https://github.com/HavenDV/H.NotifyIcon)**: For creating and managing the Windows tray icon.
 - **[Serilog](https://serilog.net/)**: A structured logging library for diagnostics and debugging.
 - **[XAML Behaviors](https://github.com/Microsoft/XamlBehaviors)**: For implementing UI behaviors declaratively in XAML.
-- **[Velopack](https://velopack.io/)**: For automatic application updates (GitHub releases).
+- **[MSIX App Installer](https://learn.microsoft.com/windows/msix/app-installer/app-installer-file-overview)**: For automatic updates from GitHub releases.
 - **[Microsoft Dependency Injection](https://docs.microsoft.com/en-us/dotnet/core/extensions/dependency-injection)**: For implementing a loosely coupled and testable architecture.
 
 *Thanks to the creators and maintainers of all the open-source libraries that make Nagi possible.*
@@ -116,15 +116,17 @@ This project is built using C# and the Windows App SDK.
 3. In Visual Studio, set the Solution Platform to `x64` (or your target architecture).
 4. Press `F5` or click the `▶ Nagi (Package)` button to build and run the application.
 
-   To build msixbundle, three commands must be ran in src/Nagi.WinUI (the first two will fail but create the proper R2R images):
+   To build an unsigned MSIX bundle, run these commands from `src/Nagi.WinUI`:
 
    ```bash
    # 1. Pre-build binaries for both platforms (triggers PGO/R2R optimization)
-   dotnet publish Nagi.WinUI.csproj -c Release -r win-x64 -p:Platform=x64 -p:GenerateAppxPackageOnBuild=false
-   dotnet publish Nagi.WinUI.csproj -c Release -r win-arm64 -p:Platform=arm64 -p:GenerateAppxPackageOnBuild=false
+   dotnet publish Nagi.WinUI.csproj -c Release -r win-x64 -p:Platform=x64 -p:PublishReadyToRun=true -p:GenerateAppxPackageOnBuild=false
+   dotnet publish Nagi.WinUI.csproj -c Release -r win-arm64 -p:Platform=ARM64 -p:PublishReadyToRun=true -p:GenerateAppxPackageOnBuild=false
    # 2. Finalize the packaged MSIX bundle
-   msbuild Nagi.WinUI.csproj -p:Configuration=Release -p:Platform=x64 -p:GenerateAppxPackageOnBuild=true
+   dotnet msbuild Nagi.WinUI.csproj -p:Configuration=Release -p:Platform=x64 -p:GenerateAppxPackageOnBuild=true -p:AppxBundle=Always "-p:AppxBundlePlatforms=x64|ARM64" -p:AppxPackageSigningEnabled=False
    ```
+
+   GitHub releases use the production SignPath signing workflow. Microsoft Store uploads use the Store publisher identity and remain unsigned locally.
 
 ### Development
 
