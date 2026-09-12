@@ -1071,6 +1071,9 @@
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>एल्बम पर जाएँ</value>
   </data>
+  <data name="QueueFlyout_DropHint" xml:space="preserve">
+    <value>Drop files or folders onto the player to add them to the queue.</value>
+  </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>आगे क्या</value>
   </data>
@@ -2177,6 +2180,9 @@
   </data>
   <data name="InsightsPage_SortBy_Duration" xml:space="preserve">
     <value>अवधि</value>
+  </data>
+  <data name="PaginationControl_All" xml:space="preserve">
+    <value>All</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>प्रति पृष्ठ आइटम:</value>
