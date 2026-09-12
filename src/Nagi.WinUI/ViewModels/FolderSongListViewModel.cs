@@ -221,7 +221,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         // All UI updates in one dispatch to avoid partial-render states.
         _dispatcherService.TryEnqueue(() =>
         {
-            if (token.IsCancellationRequested) return;
+            if (token.IsCancellationRequested || _isDisposed || _pendingReload) return;
 
             Songs.AppendOrReplace(songResult.Items, append);
 
