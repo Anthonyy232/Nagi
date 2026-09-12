@@ -36,7 +36,7 @@
 - **Resizable Mini-Player**: A sleek, always-on-top mini-player with playback controls, album art, and an efficiency mode for low resource usage.
 - **Folder-Based Library**: Add your music folders and Nagi automatically scans, organizes, and keeps your collection up to date.
 - **Playlists & Smart Playlists**: Create custom playlists or powerful rule-based smart playlists that automatically update as your library grows.
-- **Queue Management**: Build and customize your listening queue on the fly with full shuffle and repeat controls.
+- **Queue Management**: Drop files or folders onto the bottom player to add them to the queue, without importing them into your library. Use Up Next to view the queue, with full shuffle and repeat controls.
 - **10-Band Equalizer**: Fine-tune your sound with a fully customizable 10-band equalizer and pregain control.
 - **Volume Normalization**: ReplayGain support ensures consistent volume levels across your entire library.
 - **Last.fm & Discord Integration**: Scrobble your tracks to Last.fm, fetch artist metadata, and show off your listening activity with Discord Rich Presence.
