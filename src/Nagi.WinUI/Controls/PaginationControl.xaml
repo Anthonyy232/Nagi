@@ -11,7 +11,10 @@
                 Visibility="{x:Bind VisibleIfPaginates(ViewModel.TotalItemCount), Mode=OneWay}">
         <TextBlock Text="{x:Bind resources:Strings.PaginationControl_ItemsPerPage, Mode=OneTime}" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12"/>
 
-        <ComboBox x:Name="PageSizeComboBox" ItemsSource="{x:Bind PageSizeOptions}" SelectedItem="{x:Bind ViewModel.SongsPerPage, Mode=OneWay}" Width="80" Margin="0,0,16,0" FontSize="12" />
+        <ComboBox x:Name="PageSizeComboBox" ItemsSource="{x:Bind PageSizeOptions}"
+                  SelectedValuePath="Key" DisplayMemberPath="Value"
+                  SelectedValue="{x:Bind ViewModel.SongsPerPage, Mode=OneWay}"
+                  MinWidth="80" Margin="0,0,16,0" FontSize="12" />
 
         <Button Command="{x:Bind ViewModel.PreviousPageCommand, Mode=OneWay}"
                 IsEnabled="{x:Bind ViewModel.HasPreviousPage, Mode=OneWay}"
