@@ -195,6 +195,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     {
         if (!e.DataView.Contains(StandardDataFormats.StorageItems)) return;
 
+        e.Handled = true;
+        var deferral = e.GetDeferral();
         try
         {
             var paths = new List<string>();
@@ -203,11 +205,14 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
                 await CollectMusicFilesAsync(item, paths);
 
             await ViewModel.AddFilesToQueueAsync(paths);
-            e.Handled = true;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to add dropped files to the playback queue.");
+        }
+        finally
+        {
+            deferral.Complete();
         }
     }
 
