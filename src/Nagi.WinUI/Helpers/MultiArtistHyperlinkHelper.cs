@@ -4,8 +4,8 @@ using System.Linq;
 using System.Windows.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Documents;
-using Microsoft.UI.Xaml.Media;
 using Nagi.Core.Models;
 
 namespace Nagi.WinUI.Helpers;
@@ -160,16 +160,18 @@ public static class MultiArtistHyperlinkHelper
         // Clear and rebuild (this is efficient - only happens when content actually changes due to cache check above)
         stackPanel.Children.Clear();
 
-        var foreground = GetForegroundBrush(textBlock);
-
         if (string.IsNullOrEmpty(artistString))
         {
-            stackPanel.Children.Add(new TextBlock
+            var unknownArtist = new TextBlock
             {
                 Text = Artist.UnknownArtistName,
-                Style = Application.Current.Resources["BodyTextBlockStyle"] as Style,
-                Foreground = foreground
+                Style = Application.Current.Resources["BodyTextBlockStyle"] as Style
+            };
+            unknownArtist.SetBinding(TextBlock.ForegroundProperty, new Binding
+            {
+                Source = textBlock, Path = new PropertyPath(nameof(TextBlock.Foreground)), Mode = BindingMode.OneWay
             });
+            stackPanel.Children.Add(unknownArtist);
             return;
         }
 
@@ -212,10 +214,10 @@ public static class MultiArtistHyperlinkHelper
                 button.Style = style;
             }
 
-            if (foreground != null)
+            button.SetBinding(Control.ForegroundProperty, new Binding
             {
-                button.Foreground = foreground;
-            }
+                Source = textBlock, Path = new PropertyPath(nameof(TextBlock.Foreground)), Mode = BindingMode.OneWay
+            });
 
             stackPanel.Children.Add(button);
 
@@ -229,29 +231,16 @@ public static class MultiArtistHyperlinkHelper
                     FontSize = 13
                 };
 
-                if (foreground != null)
+                separatorText.SetBinding(TextBlock.ForegroundProperty, new Binding
                 {
-                    separatorText.Foreground = foreground;
-                }
+                    Source = textBlock, Path = new PropertyPath(nameof(TextBlock.Foreground)), Mode = BindingMode.OneWay
+                });
 
                 stackPanel.Children.Add(separatorText);
             }
         }
     }
 
-    private static Brush? GetForegroundBrush(TextBlock textBlock)
-    {
-        return textBlock.ReadLocalValue(TextBlock.ForegroundProperty) is Brush foreground
-            ? foreground
-            : GetResourceBrush("TextFillColorSecondaryBrush") ?? GetResourceBrush("TextFillColorSecondary");
-    }
-
-    private static Brush? GetResourceBrush(string resourceKey)
-    {
-        return Application.Current.Resources.TryGetValue(resourceKey, out var resource) && resource is Brush brush
-            ? brush
-            : null;
-    }
 }
 
 public record ArtistNavigationRequest

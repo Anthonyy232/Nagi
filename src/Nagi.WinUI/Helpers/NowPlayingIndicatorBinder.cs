@@ -11,25 +11,7 @@ using Nagi.WinUI.ViewModels;
 namespace Nagi.WinUI.Helpers;
 
 /// <summary>
-///     Wires a song-list ListView so that the row representing the currently-playing
-///     song shows a <see cref="NowPlayingIndicator"/> overlay on its artwork tile and
-///     renders its title in the app accent color.
-///
-///     <para>
-///     Usage: in a Page's code-behind, construct one binder per ListView after
-///     <c>InitializeComponent()</c>, passing the page's <see cref="SongListViewModelBase"/>
-///     (which exposes <see cref="SongListViewModelBase.CurrentPlayingSongId"/>) and the
-///     shared <see cref="PlayerViewModel"/> (for the global IsPlaying state). Call
-///     <see cref="Detach"/> on page unload to release event handlers.
-///     </para>
-///
-///     <para>
-///     Each row template must contain two named elements:
-///     a <see cref="NowPlayingIndicator"/> with <c>x:Name="NowPlayingIndicator"</c> and
-///     a <see cref="TextBlock"/> with <c>x:Name="SongTitle"</c>. The original Foreground
-///     of the title is cached on its <see cref="FrameworkElement.Tag"/> so it can be
-///     restored when the row is no longer playing.
-///     </para>
+///     Updates the named NowPlayingIndicator and SongTitle in realized song rows.
 /// </summary>
 public sealed class NowPlayingIndicatorBinder : IDisposable
 {
@@ -133,18 +115,13 @@ public sealed class NowPlayingIndicatorBinder : IDisposable
 
         if (root.FindName(TitleElementName) is TextBlock title)
         {
-            // Cache the original Foreground on first touch so we can restore it later.
-            // The Tag-based cache survives container recycling because the same TextBlock
-            // instance lives inside the same recycled container.
-            title.Tag ??= title.Foreground;
-
             if (isThisRowPlaying)
             {
                 title.Foreground = _playingTitleBrush;
             }
-            else if (title.Tag is Brush originalBrush)
+            else
             {
-                title.Foreground = originalBrush;
+                title.ClearValue(TextBlock.ForegroundProperty);
             }
         }
     }
