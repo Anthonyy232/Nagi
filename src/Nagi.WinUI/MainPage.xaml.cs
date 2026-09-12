@@ -451,7 +451,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             // Use solid color (respects system transparency preference or explicit user choice)
             // We use PlayerTintColorBrush directly to ensure the background opacity is 1.0 (Solid)
             // but the color matches the calculated tint.
-            FloatingPlayerContainer.Background = (Brush)Application.Current.Resources["PlayerTintColorBrush"];
+            FloatingPlayerContainer.Background = (Brush)Application.Current.Resources["PlayerBackgroundBrush"];
         }
         else if (_win32InteropService.IsWindows11OrNewer)
         {

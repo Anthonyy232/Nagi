@@ -129,13 +129,21 @@ public class ThemeService : IThemeService
             BlendChannel(baseChannel, primaryColor.R, intensity),
             BlendChannel(baseChannel, primaryColor.G, intensity),
             BlendChannel(baseChannel, primaryColor.B, intensity));
-        var tint = Hct.FromInt(0xFF000000u | (uint)playerTintColor.R << 16 |
-                              (uint)playerTintColor.G << 8 | playerTintColor.B);
-        var tone = theme == ElementTheme.Light ? Math.Max(85, tint.Tone) : Math.Min(35, tint.Tone);
-        if (tone != tint.Tone) tint.Tone = tone;
-        var argb = tint.ToInt();
-        playerTintColor = Color.FromArgb(OpaqueAlpha, (byte)(argb >> 16), (byte)(argb >> 8), (byte)argb);
-        _app.SetPlayerTintColorBrushColor(playerTintColor);
+        var isLight = theme == ElementTheme.Light;
+        var playerBackgroundColor = ClampTone(playerTintColor, isLight ? 85 : 0, isLight ? 100 : 35);
+        var playerAccentColor = ClampTone(primaryColor, isLight ? 0 : 80, isLight ? 40 : 100);
+        _app.SetPlayerColors(playerTintColor, playerBackgroundColor, playerAccentColor);
+    }
+
+    private static Color ClampTone(Color color, double minimum, double maximum)
+    {
+        var hct = Hct.FromInt(0xFF000000u | (uint)color.R << 16 | (uint)color.G << 8 | color.B);
+        var tone = Math.Clamp(hct.Tone, minimum, maximum);
+        if (tone == hct.Tone) return color;
+
+        hct.Tone = tone;
+        var argb = hct.ToInt();
+        return Color.FromArgb(OpaqueAlpha, (byte)(argb >> 16), (byte)(argb >> 8), (byte)argb);
     }
 
     private async Task<Color> GetConfiguredAccentColorAsync()

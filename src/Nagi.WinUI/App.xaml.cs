@@ -1212,9 +1212,11 @@ public partial class App : Application
             refreshTaskbarIcons: true);
     }
 
-    public void SetPlayerTintColorBrushColor(Color newColor)
+    public void SetPlayerColors(Color tintColor, Color backgroundColor, Color accentColor)
     {
-        SetSolidColorBrushColor("PlayerTintColorBrush", newColor, nameof(SetPlayerTintColorBrushColor));
+        SetSolidColorBrushColor("PlayerTintColorBrush", tintColor, nameof(SetPlayerColors));
+        SetSolidColorBrushColor("PlayerBackgroundBrush", backgroundColor, nameof(SetPlayerColors));
+        SetSolidColorBrushColor("PlayerAccentBrush", accentColor, nameof(SetPlayerColors));
     }
 
     public void SetMediaOnImageAccentBrushColor(Color newColor)
