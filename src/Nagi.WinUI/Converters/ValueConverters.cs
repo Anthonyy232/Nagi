@@ -11,6 +11,15 @@ using Nagi.WinUI.Models;
 
 namespace Nagi.WinUI.Converters;
 
+public sealed class PageSizeLabelConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language) =>
+        value is 0 ? Nagi.WinUI.Resources.Strings.PaginationControl_All : value?.ToString() ?? string.Empty;
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language) =>
+        DependencyProperty.UnsetValue;
+}
+
 /// <summary>
 ///     Converts a TimeSpan or a double (representing seconds) to a formatted time string (m:ss or h:mm:ss).
 /// </summary>
