@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using MaterialColorUtilities.ColorAppearance;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
@@ -116,14 +117,11 @@ public class ThemeService : IThemeService
         ElementTheme theme,
         Color? mediaOnImageSourceColor = null)
     {
-        // 1. Set the global primary accent color (for buttons, text, etc.)
         _app.SetAppPrimaryColorBrushColor(primaryColor);
 
-        // 2. Set the accent for controls displayed over dark cover-art surfaces.
         var mediaOnImageAccentColor = GetMediaOnImageAccentColor(mediaOnImageSourceColor ?? primaryColor);
         _app.SetMediaOnImageAccentBrushColor(mediaOnImageAccentColor);
 
-        // 3. Calculate and set the player tint color based on intensity setting
         var intensity = await _settingsService.Value.GetPlayerTintIntensityAsync();
         var baseChannel = theme == ElementTheme.Light ? byte.MaxValue : byte.MinValue;
         var playerTintColor = Color.FromArgb(
@@ -131,6 +129,12 @@ public class ThemeService : IThemeService
             BlendChannel(baseChannel, primaryColor.R, intensity),
             BlendChannel(baseChannel, primaryColor.G, intensity),
             BlendChannel(baseChannel, primaryColor.B, intensity));
+        var tint = Hct.FromInt(0xFF000000u | (uint)playerTintColor.R << 16 |
+                              (uint)playerTintColor.G << 8 | playerTintColor.B);
+        var tone = theme == ElementTheme.Light ? Math.Max(85, tint.Tone) : Math.Min(35, tint.Tone);
+        if (tone != tint.Tone) tint.Tone = tone;
+        var argb = tint.ToInt();
+        playerTintColor = Color.FromArgb(OpaqueAlpha, (byte)(argb >> 16), (byte)(argb >> 8), (byte)argb);
         _app.SetPlayerTintColorBrushColor(playerTintColor);
     }
 

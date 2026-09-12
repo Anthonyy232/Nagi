@@ -22,6 +22,7 @@
                 <Button
                     Command="{x:Bind Command}"
                     Style="{StaticResource ShuffleButtonStyle}"
+                    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                     ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneWay}">
                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
                               Glyph="{x:Bind DynamicIcon, Mode=OneWay}" />
@@ -31,7 +32,8 @@
             <DataTemplate x:Key="PreviousButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
                 <Button ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneTime}"
                         Command="{x:Bind Command}"
-                        Style="{StaticResource PreviousButtonStyle}">
+                        Style="{StaticResource PreviousButtonStyle}"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}">
                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{x:Bind DynamicIcon, Mode=OneWay}" />
                 </Button>
             </DataTemplate>
@@ -41,6 +43,7 @@
                     x:Name="PlayPauseButton"
                     Command="{x:Bind Command}"
                     Style="{StaticResource PlayPauseButtonStyle}"
+                    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                     ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneWay}">
                     <FontIcon
                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -53,7 +56,8 @@
             <DataTemplate x:Key="NextButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
                 <Button ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneTime}"
                         Command="{x:Bind Command}"
-                        Style="{StaticResource NextButtonStyle}">
+                        Style="{StaticResource NextButtonStyle}"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}">
                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{x:Bind DynamicIcon, Mode=OneWay}" />
                 </Button>
             </DataTemplate>
@@ -62,6 +66,7 @@
                 <Button
                     Command="{x:Bind Command}"
                     Style="{StaticResource RepeatButtonStyle}"
+                    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                     ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneWay}">
                     <FontIcon
                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -73,6 +78,7 @@
                 <Button
                     ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneTime}"
                     Style="{StaticResource LyricsButtonStyle}"
+                    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                     Click="LyricsButton_Click">
                     <Grid Width="40" Height="40" Margin="-8">
                         <Border
@@ -94,7 +100,8 @@
                         DragOver="QueueFlyout_DragOver"
                         Drop="QueueFlyout_Drop"
                         ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneTime}"
-                        Style="{StaticResource QueueButtonStyle}">
+                        Style="{StaticResource QueueButtonStyle}"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}">
                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{x:Bind DynamicIcon, Mode=OneWay}" />
                     <Button.Flyout>
                         <Flyout x:Name="QueueFlyout"
@@ -151,6 +158,7 @@
                 <Button
                     Command="{x:Bind Command}"
                     Style="{StaticResource VolumeButtonStyle}"
+                    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                     ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneWay}">
                     <FontIcon
                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -531,6 +539,7 @@
                                             Grid.Column="1"
                                             VerticalAlignment="Center"
                                             Style="{StaticResource VolumeSliderStyle}"
+                                            Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                                             Value="{x:Bind ViewModel.CurrentVolume, Mode=TwoWay}"
                                             Visibility="{x:Bind ViewModel.IsVolumeControlVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
 
@@ -559,6 +568,7 @@
                                     IsThumbToolTipEnabled="True"
                                     Maximum="{x:Bind ViewModel.TotalDuration, Mode=OneWay, Converter={StaticResource SliderMaximumConverter}}"
                                     Style="{StaticResource MediaSeekerSliderStyle}"
+                                    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                                     ThumbToolTipValueConverter="{StaticResource TimeSpanToTimeStringConverter}"
                                     Value="{x:Bind ViewModel.CurrentPosition, Mode=TwoWay}"
                                     PointerPressed="MediaSeekerSlider_PointerPressed"
