@@ -106,7 +106,7 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
 
         _dispatcherService.TryEnqueue(() =>
         {
-            if (token.IsCancellationRequested || _isDisposed) return;
+            if (token.IsCancellationRequested || _isDisposed || _pendingReload) return;
 
             ApplyItemsToCollection(result, append);
 
