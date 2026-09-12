@@ -45,11 +45,11 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     [ObservableProperty] public partial bool HasPreviousPage { get; set; }
 
     /// <summary>
-    ///     When true, Next/Previous commands are active and the load envelope drives a single
-    ///     page at a time. When false, the subclass is expected to drive an "infinite scroll"
-    ///     style load (e.g. via <see cref="OnPageLoadedAsync"/>).
+    ///     When false, load all pages in the background and disable page navigation.
     /// </summary>
     public bool IsPaginationEnabled { get; set; } = true;
+
+    protected int PageSize => SongsPerPage == 0 ? 500 : SongsPerPage;
 
     protected PagedListViewModelBase(
         ILibraryService libraryService,
@@ -104,14 +104,14 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
 
         _dispatcherService.TryEnqueue(() =>
         {
-            if (token.IsCancellationRequested || _isDisposed) return;
+            if (token.IsCancellationRequested || _isDisposed || _pendingReload) return;
 
             ApplyItemsToCollection(result, append);
 
-            CurrentPage = result.PageNumber > 0 ? result.PageNumber : CurrentPage;
-            TotalPages = Math.Max(1, result.TotalPages);
+            CurrentPage = SongsPerPage == 0 ? 1 : result.PageNumber > 0 ? result.PageNumber : CurrentPage;
+            TotalPages = SongsPerPage == 0 ? 1 : Math.Max(1, result.TotalPages);
             TotalItemCount = result.TotalCount;
-            HasNextPage = result.HasNextPage;
+            HasNextPage = SongsPerPage != 0 && result.HasNextPage;
             HasPreviousPage = CurrentPage > 1;
             TotalItemsText = FormatTotalItemsText(result.TotalCount);
         });
@@ -125,6 +125,8 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
         {
             if (SongsPerPage == newSize) return;
 
+            CancelInflightPageLoad();
+
             _isSettingSongsPerPage = true;
             try { SongsPerPage = newSize; }
             finally { _isSettingSongsPerPage = false; }
@@ -137,6 +139,8 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     partial void OnSongsPerPageChanged(int value)
     {
         if (_isSettingSongsPerPage) return;
+
+        CancelInflightPageLoad();
 
         _isSettingSongsPerPage = true;
         try { _ = _settingsService.SetSongsPerPageAsync(value); }
@@ -250,7 +254,7 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
             }
 
             var pageToLoad = CurrentPage;
-            var pageSize = SongsPerPage;
+            var pageSize = PageSize;
 
             // SQLite's async APIs still perform native I/O, so keep page loads off the UI thread.
             var pagedResult = await Task.Run(async () =>
@@ -278,6 +282,9 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
             if (token.IsCancellationRequested) return;
 
             await OnPageLoadedAsync(pagedResult, token);
+
+            if ((!IsPaginationEnabled || SongsPerPage == 0) && pagedResult.HasNextPage)
+                _ = LoadRemainingPagesAsync(pagedResult.PageNumber + 1, pageSize, token);
         }
         catch (OperationCanceledException)
         {
@@ -314,6 +321,32 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
             if (rerun && !_isDisposed) _ = RefreshAsync(CancellationToken.None);
         });
     }
+
+    private async Task LoadRemainingPagesAsync(int pageNumber, int pageSize, CancellationToken token)
+    {
+        try
+        {
+            while (!token.IsCancellationRequested)
+            {
+                await Task.Delay(100, token);
+                var result = await Task.Run(() => LoadPageItemsAsync(pageNumber, pageSize, token), token);
+                ProcessPagedResult(result, token, append: true);
+                if (!result.HasNextPage) break;
+                pageNumber++;
+            }
+        }
+        catch (OperationCanceledException) { }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to load remaining items");
+            _dispatcherService.TryEnqueue(() =>
+            {
+                if (!token.IsCancellationRequested && !_isDisposed) HasLoadError = true;
+            });
+        }
+    }
+
+    protected override void OnSearchTermChangedInternal(string value) => CancelInflightPageLoad();
 
     protected override async Task ExecuteSearchAsync(CancellationToken token)
     {
