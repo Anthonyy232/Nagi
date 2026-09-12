@@ -1,12 +1,14 @@
 using BenchmarkDotNet.Running;
-using Nagi.Benchmarks.Benchmarks;
 
 namespace Nagi.Benchmarks;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static int Main(string[] args)
     {
-        BenchmarkRunner.Run<LibraryScanBenchmarks>();
+        var summaries = BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args).ToArray();
+        return summaries.Length == 0 || summaries.Any(summary =>
+            summary.HasCriticalValidationErrors || summary.Reports.Length == 0 ||
+            summary.Reports.Any(report => !report.Success || report.ResultStatistics is null)) ? 1 : 0;
     }
 }
