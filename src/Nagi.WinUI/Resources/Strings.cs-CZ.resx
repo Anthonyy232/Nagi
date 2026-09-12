@@ -1080,6 +1080,9 @@ Chyba: {1}</value>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Přejít na album</value>
   </data>
+  <data name="QueueFlyout_DropHint" xml:space="preserve">
+    <value>Drop files or folders onto the player to add them to the queue.</value>
+  </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Další v pořadí</value>
   </data>
@@ -2186,6 +2189,9 @@ Chyba: {1}</value>
   </data>
   <data name="InsightsPage_SortBy_Duration" xml:space="preserve">
     <value>Délka</value>
+  </data>
+  <data name="PaginationControl_All" xml:space="preserve">
+    <value>All</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>Položek na stránku:</value>
