@@ -119,10 +119,19 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
-                                <TextBlock
-                                    Text="{x:Bind resources:Strings.QueueFlyout_Title, Mode=OneTime}"
-                                    Margin="12,0,12,4"
-                                    Style="{ThemeResource MediaControlSubtitleStyle}" />
+                                <Grid Margin="12,0,12,8" ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock
+                                        Text="{x:Bind resources:Strings.QueueFlyout_Title, Mode=OneTime}"
+                                        VerticalAlignment="Center"
+                                        Style="{ThemeResource MediaControlSubtitleStyle}" />
+                                    <Button Grid.Column="1"
+                                            Content="{x:Bind resources:Strings.QueueFlyout_ClearQueue, Mode=OneTime}"
+                                            Command="{Binding DataContext.ClearQueueCommand, ElementName=MainPageRoot}" />
+                                </Grid>
                                 <TextBlock Grid.Row="1" Margin="12,0,12,8"
                                            Text="{x:Bind resources:Strings.QueueFlyout_DropHint, Mode=OneTime}"
                                            TextWrapping="Wrap"

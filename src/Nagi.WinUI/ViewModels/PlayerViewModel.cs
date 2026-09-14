@@ -350,6 +350,11 @@ public partial class PlayerViewModel : ObservableObject
         IsQueueViewVisible = false;
     }
 
+    private bool CanClearQueue() => _playbackService.PlaybackQueue.Count > 0;
+
+    [RelayCommand(CanExecute = nameof(CanClearQueue))]
+    private Task ClearQueueAsync() => _playbackService.ClearQueueAsync();
+
     [RelayCommand]
     private void PlayPause()
     {
@@ -579,6 +584,8 @@ public partial class PlayerViewModel : ObservableObject
 
     private void UpdateCurrentQueueDisplay()
     {
+        ClearQueueCommand.NotifyCanExecuteChanged();
+
         // Cancel any previous in-flight fetch to prevent stale data from arriving out of order
         _queueDisplayCts?.Cancel();
         _queueDisplayCts?.Dispose();

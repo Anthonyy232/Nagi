@@ -1535,26 +1535,61 @@ public class MusicPlaybackServiceTests
         await _audioPlayer.Received(2).StopAsync(); // 1 from PlayAsync, 1 from RemoveFromQueueAsync
     }
 
-    /// <summary>
-    ///     Verifies that <see cref="MusicPlaybackService.ClearQueueAsync" /> stops playback and
-    ///     removes all songs from both the main and shuffled queues.
-    /// </summary>
-    [Fact]
-    public async Task ClearQueueAsync_WhenCalled_StopsPlaybackAndClearsQueues()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ClearQueueAsync_WithLargeQueue_ClearsPlaybackAndSavedState(bool shuffled)
     {
-        // Arrange
         await _service.InitializeAsync();
-        await _service.PlayAsync(_testSongs);
+        var ids = new[] { _testSongs[0].Id }.Concat(Enumerable.Range(0, 50000).Select(_ => Guid.NewGuid())).ToList();
+        await _service.PlayAsync(ids);
+        await _service.SetShuffleAsync(shuffled);
+        PlaybackState? savedState = null;
+        _settingsService.SavePlaybackStateAsync(Arg.Do<PlaybackState>(state => savedState = state))
+            .Returns(Task.CompletedTask);
 
-        // Act
         await _service.ClearQueueAsync();
+        await _service.SavePlaybackStateAsync();
 
-        // Assert
         _service.PlaybackQueue.Should().BeEmpty();
         _service.ShuffledQueue.Should().BeEmpty();
         _service.CurrentTrack.Should().BeNull();
         _service.CurrentQueueIndex.Should().Be(-1);
+        _service.CurrentShuffledIndex.Should().Be(-1);
         await _audioPlayer.Received(1).StopAsync();
+        savedState.Should().NotBeNull();
+        savedState!.PlaybackQueueTrackIds.Should().BeEmpty();
+        savedState.ShuffledQueueTrackIds.Should().BeEmpty();
+        savedState.CurrentTrackId.Should().BeNull();
+
+        _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
+        _settingsService.GetPlaybackStateAsync().Returns(savedState);
+        using var restored = new MusicPlaybackService(_settingsService, _audioPlayer, _libraryService, _metadataService, _logger);
+        await restored.InitializeAsync();
+        restored.PlaybackQueue.Should().BeEmpty();
+        restored.CurrentTrack.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task ClearQueueAsync_WithExternalFile_DiscardsMetadataBeforeAddingItAgain()
+    {
+        const string path = "C:\\temp\\queue.mp3";
+        _metadataService.ExtractMetadataAsync(path).Returns(new SongFileMetadata { Title = "Before edit" });
+        _libraryService.GetSongsByIdsAsync(Arg.Any<IEnumerable<Guid>>())
+            .Returns(new Dictionary<Guid, Song>());
+        await _service.InitializeAsync();
+        await _service.AddTransientFilesToQueueAsync([path]);
+        var previousId = _service.CurrentTrack!.Id;
+
+        await _service.ClearQueueAsync();
+        (await _service.GetQueueTracksAsync([previousId])).Should().BeEmpty();
+        _metadataService.ExtractMetadataAsync(path).Returns(new SongFileMetadata { Title = "After edit" });
+        await _service.AddTransientFilesToQueueAsync([path]);
+
+        _service.PlaybackQueue.Should().ContainSingle();
+        _service.CurrentTrack!.Title.Should().Be("After edit");
+        _service.CurrentTrack.Id.Should().NotBe(previousId);
+        await _metadataService.Received(2).ExtractMetadataAsync(path);
     }
 
     #endregion
