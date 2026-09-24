@@ -1088,6 +1088,48 @@ Hata: {1}</value>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Sıradaki</value>
   </data>
+  <data name="QueueFlyout_ClearQueue" xml:space="preserve">
+    <value>Clear queue</value>
+  </data>
+  <data name="QueuePanel_DisplayOptions" xml:space="preserve">
+    <value>Queue display options</value>
+  </data>
+  <data name="QueuePanel_Close" xml:space="preserve">
+    <value>Close queue</value>
+  </data>
+  <data name="QueuePanel_ShowArtist" xml:space="preserve">
+    <value>Artist</value>
+  </data>
+  <data name="QueuePanel_ShowDuration" xml:space="preserve">
+    <value>Duration</value>
+  </data>
+  <data name="QueuePanel_ShowTrackCount" xml:space="preserve">
+    <value>Track count</value>
+  </data>
+  <data name="QueuePanel_TrackCount" xml:space="preserve">
+    <value>Tracks: {0:N0}</value>
+  </data>
+  <data name="QueuePanel_ShowPosition" xml:space="preserve">
+    <value>Queue position</value>
+  </data>
+  <data name="QueuePanel_ShowGenre" xml:space="preserve">
+    <value>Genre</value>
+  </data>
+  <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
+    <value>Total duration</value>
+  </data>
+  <data name="QueuePanel_Play" xml:space="preserve">
+    <value>Play</value>
+  </data>
+  <data name="QueuePanel_MoveUp" xml:space="preserve">
+    <value>Move up</value>
+  </data>
+  <data name="QueuePanel_MoveDown" xml:space="preserve">
+    <value>Move down</value>
+  </data>
+  <data name="QueuePanel_Remove" xml:space="preserve">
+    <value>Remove from queue</value>
+  </data>
   <data name="AlbumPage_Title" xml:space="preserve">
     <value>Albümler</value>
   </data>
