@@ -347,6 +347,10 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     /// </summary>
     Task ClearQueueAsync();
 
+    void MoveQueueItem(Guid songId, Guid? beforeSongId);
+    Task<IReadOnlyDictionary<Guid, Song>> GetQueueSongsAsync(IEnumerable<Guid> songIds, CancellationToken cancellationToken = default);
+    Task<TimeSpan> GetQueueDurationAsync(IEnumerable<Guid> songIds, CancellationToken cancellationToken = default);
+
     /// <summary>
     ///     Saves the current playback state (queue, track, position) to persistent storage.
     /// </summary>

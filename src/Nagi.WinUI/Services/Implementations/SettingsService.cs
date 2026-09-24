@@ -46,6 +46,7 @@ public class SettingsService : IUISettingsService, IDisposable
     private const string DiscordRichPresenceEnabledKey = "DiscordRichPresenceEnabled";
     private const string NavigationItemsKey = "NavigationItems";
     private const string PlayerButtonSettingsKey = "PlayerButtonSettings";
+    private const string QueueDisplaySettingsKey = "QueueDisplaySettings";
     private const string LastFmCredentialResource = "Nagi/LastFm";
     private const string LastFmAuthTokenKey = "LastFmAuthToken";
     private const string LastFmScrobblingEnabledKey = "LastFmScrobblingEnabled";
@@ -108,6 +109,7 @@ public class SettingsService : IUISettingsService, IDisposable
     public event Action<bool>? ShowCoverArtInTrayFlyoutSettingChanged;
     public event Action? NavigationSettingsChanged;
     public event Action? PlayerButtonSettingsChanged;
+    public event Action<QueueDisplaySettings>? QueueDisplaySettingsChanged;
     public event Action? LastFmSettingsChanged;
     public event Action? ListenBrainzSettingsChanged;
     public event Action<bool>? DiscordRichPresenceSettingChanged;
@@ -158,6 +160,7 @@ public class SettingsService : IUISettingsService, IDisposable
             SetStartMinimizedEnabledAsync(SettingsDefaults.StartMinimizedEnabled),
             SetNavigationItemsAsync(GetDefaultNavigationItems()),
             SetPlayerButtonSettingsAsync(GetDefaultPlayerButtonSettings()),
+            SetQueueDisplaySettingsAsync(new QueueDisplaySettings()),
             SaveVolumeAsync(SettingsDefaults.Volume),
             SaveMuteStateAsync(SettingsDefaults.MuteState),
             SaveShuffleStateAsync(SettingsDefaults.ShuffleState),
@@ -985,6 +988,15 @@ public class SettingsService : IUISettingsService, IDisposable
     {
         await SetValueAsync(PlayerButtonSettingsKey, settings).ConfigureAwait(false);
         PlayerButtonSettingsChanged?.Invoke();
+    }
+
+    public async Task<QueueDisplaySettings> GetQueueDisplaySettingsAsync() =>
+        await GetComplexValueAsync<QueueDisplaySettings>(QueueDisplaySettingsKey).ConfigureAwait(false) ?? new();
+
+    public async Task SetQueueDisplaySettingsAsync(QueueDisplaySettings settings)
+    {
+        await SetValueAsync(QueueDisplaySettingsKey, settings).ConfigureAwait(false);
+        QueueDisplaySettingsChanged?.Invoke(settings);
     }
 
     private void RefreshNavigationItemLocalization(NavigationItemSetting item)

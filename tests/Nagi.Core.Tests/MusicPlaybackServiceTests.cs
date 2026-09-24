@@ -85,6 +85,112 @@ public class MusicPlaybackServiceTests
 
     #region Transient Playback Tests
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task MoveQueueItem_PreservesPlaybackAndSavedOrder(bool shuffle)
+    {
+        await _service.InitializeAsync();
+        await _service.PlayAsync(_testSongs);
+        await _service.SetShuffleAsync(shuffle);
+        var current = _service.CurrentTrack!;
+        var original = _service.PlaybackQueue.ToArray();
+        var order = (shuffle ? _service.ShuffledQueue : _service.PlaybackQueue).ToList();
+        var moved = order.Last(id => id != current.Id);
+        order.Remove(moved);
+        order.Insert(order.IndexOf(current.Id), moved);
+        _audioPlayer.ClearReceivedCalls();
+
+        _service.MoveQueueItem(moved, current.Id);
+
+        (shuffle ? _service.ShuffledQueue : _service.PlaybackQueue).Should().Equal(order);
+        _service.CurrentTrack.Should().BeSameAs(current);
+        _service.PlaybackQueue[_service.CurrentQueueIndex].Should().Be(current.Id);
+        if (shuffle)
+        {
+            _service.PlaybackQueue.Should().Equal(original);
+            _service.ShuffledQueue[_service.CurrentShuffledIndex].Should().Be(current.Id);
+        }
+        await _audioPlayer.DidNotReceive().LoadAsync(Arg.Any<Song>());
+        await _audioPlayer.DidNotReceive().StopAsync();
+        PlaybackState? saved = null;
+        _settingsService.SavePlaybackStateAsync(Arg.Do<PlaybackState>(s => saved = s)).Returns(Task.CompletedTask);
+        await _service.SavePlaybackStateAsync();
+        (shuffle ? saved!.ShuffledQueueTrackIds : saved!.PlaybackQueueTrackIds).Should().Equal(order);
+
+        _service.MoveQueueItem(moved, null);
+        (shuffle ? _service.ShuffledQueue : _service.PlaybackQueue).Last().Should().Be(moved);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task RemoveFromQueueAsync_AfterReorder_AdvancesInDisplayedOrder(bool shuffle)
+    {
+        await _service.InitializeAsync();
+        await _service.PlayAsync(_testSongs);
+        await _service.SetShuffleAsync(shuffle);
+        var current = _service.CurrentTrack!.Id;
+        var chosenNext = _testSongs[^1].Id;
+        _service.MoveQueueItem(chosenNext, current);
+        _service.MoveQueueItem(current, chosenNext);
+        var expected = (shuffle ? _service.ShuffledQueue : _service.PlaybackQueue).Where(id => id != current).ToArray();
+
+        await _service.RemoveFromQueueAsync(current);
+
+        _service.CurrentTrack!.Id.Should().Be(chosenNext);
+        (shuffle ? _service.ShuffledQueue : _service.PlaybackQueue).Should().Equal(expected);
+    }
+
+    [Fact]
+    public async Task QueueMetadata_IncludesTransientGenresAndDurationWithoutDoubleCounting()
+    {
+        const string path = "C:\\temp\\queue.mp3";
+        _metadataService.ExtractMetadataAsync(path).Returns(new SongFileMetadata
+        {
+            Title = "External", Genres = ["Rock", "rock", ""], Duration = TimeSpan.FromSeconds(90)
+        });
+        await _service.InitializeAsync();
+        await _service.AddTransientFilesToQueueAsync([path]);
+        var transientId = _service.PlaybackQueue.Single();
+        var librarySong = _testSongs[0];
+        _libraryService.GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
+            .Returns(new Dictionary<Guid, Song> { [librarySong.Id] = librarySong });
+        _libraryService.GetSongsDurationAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
+            .Returns(TimeSpan.FromSeconds(30));
+        Guid[] ids = [transientId, librarySong.Id, transientId];
+
+        var songs = await _service.GetQueueSongsAsync(ids);
+        songs[transientId].Genres.Select(g => g.Name).Should().Equal("Rock");
+        songs.Should().ContainKey(librarySong.Id);
+        (await _service.GetQueueDurationAsync(ids)).Should().Be(TimeSpan.FromMinutes(2));
+        await _libraryService.Received().GetSongsDurationAsync(
+            Arg.Is<IEnumerable<Guid>>(values => values.SequenceEqual(new[] { librarySong.Id })), Arg.Any<CancellationToken>());
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task MoveQueueItem_WithLargeQueue_PreservesIdsAndIgnoresStaleTargets(bool shuffle)
+    {
+        await _service.InitializeAsync();
+        var ids = new[] { _testSongs[0].Id }.Concat(Enumerable.Range(0, 50000).Select(_ => Guid.NewGuid())).ToArray();
+        await _service.PlayAsync(ids);
+        await _service.SetShuffleAsync(shuffle);
+        var queue = shuffle ? _service.ShuffledQueue : _service.PlaybackQueue;
+        var first = queue[0];
+        var last = queue[^1];
+        var expected = new[] { last }.Concat(queue.Take(queue.Count - 1)).ToArray();
+        _service.MoveQueueItem(last, first);
+        queue[0].Should().Be(last);
+        _service.MoveQueueItem(last, Guid.NewGuid());
+        _service.MoveQueueItem(Guid.NewGuid(), first);
+        _service.MoveQueueItem(last, last);
+        queue[0].Should().Be(last);
+        queue.Should().Equal(expected);
+        _service.PlaybackQueue[_service.CurrentQueueIndex].Should().Be(_testSongs[0].Id);
+    }
+
     /// <summary>
     ///     Verifies that PlayTransientFileAsync correctly plays a file not in the library,
     ///     clearing the existing queue and creating a temporary Song object.
@@ -1535,26 +1641,61 @@ public class MusicPlaybackServiceTests
         await _audioPlayer.Received(2).StopAsync(); // 1 from PlayAsync, 1 from RemoveFromQueueAsync
     }
 
-    /// <summary>
-    ///     Verifies that <see cref="MusicPlaybackService.ClearQueueAsync" /> stops playback and
-    ///     removes all songs from both the main and shuffled queues.
-    /// </summary>
-    [Fact]
-    public async Task ClearQueueAsync_WhenCalled_StopsPlaybackAndClearsQueues()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ClearQueueAsync_WithLargeQueue_ClearsPlaybackAndSavedState(bool shuffled)
     {
-        // Arrange
         await _service.InitializeAsync();
-        await _service.PlayAsync(_testSongs);
+        var ids = new[] { _testSongs[0].Id }.Concat(Enumerable.Range(0, 50000).Select(_ => Guid.NewGuid())).ToList();
+        await _service.PlayAsync(ids);
+        await _service.SetShuffleAsync(shuffled);
+        PlaybackState? savedState = null;
+        _settingsService.SavePlaybackStateAsync(Arg.Do<PlaybackState>(state => savedState = state))
+            .Returns(Task.CompletedTask);
 
-        // Act
         await _service.ClearQueueAsync();
+        await _service.SavePlaybackStateAsync();
 
-        // Assert
         _service.PlaybackQueue.Should().BeEmpty();
         _service.ShuffledQueue.Should().BeEmpty();
         _service.CurrentTrack.Should().BeNull();
         _service.CurrentQueueIndex.Should().Be(-1);
+        _service.CurrentShuffledIndex.Should().Be(-1);
         await _audioPlayer.Received(1).StopAsync();
+        savedState.Should().NotBeNull();
+        savedState!.PlaybackQueueTrackIds.Should().BeEmpty();
+        savedState.ShuffledQueueTrackIds.Should().BeEmpty();
+        savedState.CurrentTrackId.Should().BeNull();
+
+        _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
+        _settingsService.GetPlaybackStateAsync().Returns(savedState);
+        using var restored = new MusicPlaybackService(_settingsService, _audioPlayer, _libraryService, _metadataService, _logger);
+        await restored.InitializeAsync();
+        restored.PlaybackQueue.Should().BeEmpty();
+        restored.CurrentTrack.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task ClearQueueAsync_WithExternalFile_DiscardsMetadataBeforeAddingItAgain()
+    {
+        const string path = "C:\\temp\\queue.mp3";
+        _metadataService.ExtractMetadataAsync(path).Returns(new SongFileMetadata { Title = "Before edit" });
+        _libraryService.GetSongsByIdsAsync(Arg.Any<IEnumerable<Guid>>())
+            .Returns(new Dictionary<Guid, Song>());
+        await _service.InitializeAsync();
+        await _service.AddTransientFilesToQueueAsync([path]);
+        var previousId = _service.CurrentTrack!.Id;
+
+        await _service.ClearQueueAsync();
+        (await _service.GetQueueTracksAsync([previousId])).Should().BeEmpty();
+        _metadataService.ExtractMetadataAsync(path).Returns(new SongFileMetadata { Title = "After edit" });
+        await _service.AddTransientFilesToQueueAsync([path]);
+
+        _service.PlaybackQueue.Should().ContainSingle();
+        _service.CurrentTrack!.Title.Should().Be("After edit");
+        _service.CurrentTrack.Id.Should().NotBe(previousId);
+        await _metadataService.Received(2).ExtractMetadataAsync(path);
     }
 
     #endregion
