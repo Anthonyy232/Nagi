@@ -29,6 +29,9 @@ public interface ILibraryReader
     Task<Song?> GetSongByIdAsync(Guid songId);
     Task<Song?> GetSongByFilePathAsync(string filePath);
     Task<IReadOnlyDictionary<Guid, Song>> GetSongsByIdsAsync(IEnumerable<Guid> songIds);
+
+    Task<IReadOnlyDictionary<Guid, Song>> GetQueueSongsAsync(IEnumerable<Guid> songIds, CancellationToken cancellationToken = default);
+    Task<TimeSpan> GetSongsDurationAsync(IEnumerable<Guid> songIds, CancellationToken cancellationToken = default);
     Task<IEnumerable<Song>> GetAllSongsAsync(SongSortOrder sortOrder = SongSortOrder.TitleAsc, CancellationToken token = default);
     Task<IEnumerable<Song>> GetSongsByAlbumIdAsync(Guid albumId, CancellationToken token = default);
     Task<IEnumerable<Song>> GetSongsByArtistIdAsync(Guid artistId, CancellationToken token = default);

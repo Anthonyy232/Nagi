@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -83,11 +84,14 @@ public partial class PlayerViewModel : ObservableObject
         ArtistName = string.Empty;
         VolumeIconGlyph = VolumeMediumIconGlyph;
         CurrentQueue = new ObservableRangeCollection<Song>();
+        SidebarQueue = new PlaybackQueueCollection(_playbackService, _logger);
         CurrentTimeText = "0:00";
         TotalDurationText = "0:00";
         GlobalOperationStatusMessage = string.Empty;
+        QueueDisplaySettings.PropertyChanged += OnQueueDisplaySettingChanged;
 
         SubscribeToPlaybackServiceEvents();
+        _libraryService.LibraryContentChanged += OnQueueLibraryContentChanged;
         SubscribeToSettingsServiceEvents();
         SubscribeToWindowServiceEvents();
         InitializeStateFromService();
@@ -142,6 +146,14 @@ public partial class PlayerViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(CancelGlobalOperationCommand))]
     public partial bool IsGlobalOperationCancellable { get; set; }
     [ObservableProperty] public partial bool IsQueueViewVisible { get; set; }
+    [ObservableProperty] public partial bool IsQueuePanelOpen { get; set; }
+    [ObservableProperty] public partial QueueDisplaySettings QueueDisplaySettings { get; set; } = new();
+
+    public string QueueTrackCountText => string.Format(Strings.QueuePanel_TrackCount, _playbackService.PlaybackQueue.Count);
+
+    public PlaybackQueueCollection SidebarQueue { get; }
+
+    partial void OnIsQueuePanelOpenChanged(bool value) => SidebarQueue.SetActive(value);
 
     [ObservableProperty] public partial bool IsLyricsPageActive { get; set; }
 
@@ -224,8 +236,11 @@ public partial class PlayerViewModel : ObservableObject
     {
         _logger.LogDebug("Cleaning up PlayerViewModel resources");
         UnsubscribeFromPlaybackServiceEvents();
+        _libraryService.LibraryContentChanged -= OnQueueLibraryContentChanged;
         UnsubscribeFromSettingsServiceEvents();
         UnsubscribeFromWindowServiceEvents();
+        QueueDisplaySettings.PropertyChanged -= OnQueueDisplaySettingChanged;
+        SidebarQueue.Dispose();
         _queueDisplayCts?.Cancel();
         _queueDisplayCts?.Dispose();
         _queueDisplayCts = null;
@@ -301,7 +316,7 @@ public partial class PlayerViewModel : ObservableObject
                     button.DynamicToolTip = Strings.Player_LyricsButton_ToolTip;
                     break;
                 case "Queue":
-                    // Queue button uses a XAML Flyout, so no Command is needed.
+                    button.Command = ToggleQueuePanelCommand;
                     button.DynamicIcon = "\uE90B"; // Queue glyph
                     button.DynamicToolTip = Strings.Player_QueueButton_ToolTip;
                     break;
@@ -351,6 +366,9 @@ public partial class PlayerViewModel : ObservableObject
     }
 
     private bool CanClearQueue() => _playbackService.PlaybackQueue.Count > 0;
+
+    [RelayCommand]
+    private void ToggleQueuePanel() => IsQueuePanelOpen = !IsQueuePanelOpen;
 
     [RelayCommand(CanExecute = nameof(CanClearQueue))]
     private Task ClearQueueAsync() => _playbackService.ClearQueueAsync();
@@ -585,6 +603,7 @@ public partial class PlayerViewModel : ObservableObject
     private void UpdateCurrentQueueDisplay()
     {
         ClearQueueCommand.NotifyCanExecuteChanged();
+        OnPropertyChanged(nameof(QueueTrackCountText));
 
         // Cancel any previous in-flight fetch to prevent stale data from arriving out of order
         _queueDisplayCts?.Cancel();
@@ -831,7 +850,17 @@ public partial class PlayerViewModel : ObservableObject
 
     private void OnPlaybackService_QueueChanged()
     {
-        RunOnUIThread(UpdateCurrentQueueDisplay);
+        RunOnUIThread(() =>
+        {
+            UpdateCurrentQueueDisplay();
+            SidebarQueue.Refresh();
+        });
+    }
+
+    private void OnQueueLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
+    {
+        if (e.ChangeType != LibraryChangeType.FolderAdded && IsQueuePanelOpen)
+            RunOnUIThread(() => SidebarQueue.Refresh(reloadMetadata: true));
     }
 
     private void OnPlaybackService_PositionChanged()
@@ -875,6 +904,7 @@ public partial class PlayerViewModel : ObservableObject
         try
         {
             await LoadPlayerButtonSettingsAsync();
+            QueueDisplaySettings = await _settingsService.GetQueueDisplaySettingsAsync();
         }
         catch (Exception ex)
         {
@@ -885,16 +915,44 @@ public partial class PlayerViewModel : ObservableObject
     private void SubscribeToSettingsServiceEvents()
     {
         _settingsService.PlayerButtonSettingsChanged += OnSettingsService_PlayerButtonSettingsChanged;
+        _settingsService.QueueDisplaySettingsChanged += OnSettingsService_QueueDisplaySettingsChanged;
     }
 
     private void UnsubscribeFromSettingsServiceEvents()
     {
         _settingsService.PlayerButtonSettingsChanged -= OnSettingsService_PlayerButtonSettingsChanged;
+        _settingsService.QueueDisplaySettingsChanged -= OnSettingsService_QueueDisplaySettingsChanged;
     }
 
     private void OnSettingsService_PlayerButtonSettingsChanged()
     {
         _ = _dispatcherService.EnqueueAsync(LoadPlayerButtonSettingsAsync);
+    }
+
+    partial void OnQueueDisplaySettingsChanging(QueueDisplaySettings value) =>
+        QueueDisplaySettings.PropertyChanged -= OnQueueDisplaySettingChanged;
+
+    partial void OnQueueDisplaySettingsChanged(QueueDisplaySettings value)
+    {
+        value.PropertyChanged += OnQueueDisplaySettingChanged;
+        SidebarQueue.SetShowTotalDuration(value.ShowTotalDuration);
+    }
+
+    private void OnSettingsService_QueueDisplaySettingsChanged(QueueDisplaySettings settings) =>
+        RunOnUIThread(() => QueueDisplaySettings = settings);
+
+    private async void OnQueueDisplaySettingChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(QueueDisplaySettings.ShowTotalDuration))
+            SidebarQueue.SetShowTotalDuration(QueueDisplaySettings.ShowTotalDuration);
+        try
+        {
+            await _settingsService.SetQueueDisplaySettingsAsync(QueueDisplaySettings);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to save queue display settings.");
+        }
     }
 
     #endregion

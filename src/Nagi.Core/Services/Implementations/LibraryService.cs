@@ -1523,6 +1523,40 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         return result;
     }
 
+    public async Task<IReadOnlyDictionary<Guid, Song>> GetQueueSongsAsync(IEnumerable<Guid> songIds,
+        CancellationToken cancellationToken = default)
+    {
+        var result = new Dictionary<Guid, Song>();
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
+        foreach (var chunk in songIds.Distinct().Chunk(500))
+        {
+            var songs = await context.Songs.AsNoTracking().Where(s => chunk.Contains(s.Id))
+                .Select(s => new Song
+                {
+                    Id = s.Id, Title = s.Title, ArtistName = s.ArtistName,
+                    DurationTicks = s.DurationTicks, Genres = s.Genres,
+                    SongArtists = s.SongArtists.Select(sa => new SongArtist
+                    {
+                        Order = sa.Order,
+                        Artist = new Artist { Id = sa.Artist.Id, Name = sa.Artist.Name }
+                    }).ToList()
+                }).AsSplitQuery().ToListAsync(cancellationToken).ConfigureAwait(false);
+            foreach (var song in songs) result[song.Id] = song;
+        }
+        return result;
+    }
+
+    public async Task<TimeSpan> GetSongsDurationAsync(IEnumerable<Guid> songIds,
+        CancellationToken cancellationToken = default)
+    {
+        long ticks = 0;
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
+        foreach (var chunk in songIds.Distinct().Chunk(500))
+            ticks += await context.Songs.Where(s => chunk.Contains(s.Id))
+                .SumAsync(s => s.DurationTicks, cancellationToken).ConfigureAwait(false);
+        return TimeSpan.FromTicks(ticks);
+    }
+
     /// <inheritdoc />
     public async Task<bool> UpdateSongAsync(Song songToUpdate)
     {
