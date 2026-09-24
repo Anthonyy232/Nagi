@@ -19,7 +19,7 @@ public sealed class NowPlayingIndicatorBinder : IDisposable
     private const string TitleElementName = "SongTitle";
 
     private readonly ListView _listView;
-    private readonly SongListViewModelBase _viewModel;
+    private readonly SongListViewModelBase? _viewModel;
     private readonly PlayerViewModel _playerViewModel;
     private readonly Brush _playingTitleBrush;
     private readonly Func<object?, Guid?> _songIdExtractor;
@@ -34,19 +34,19 @@ public sealed class NowPlayingIndicatorBinder : IDisposable
     /// </param>
     public NowPlayingIndicatorBinder(
         ListView listView,
-        SongListViewModelBase viewModel,
+        SongListViewModelBase? viewModel,
         PlayerViewModel playerViewModel,
         Brush playingTitleBrush,
         Func<object?, Guid?>? songIdExtractor = null)
     {
         _listView = listView ?? throw new ArgumentNullException(nameof(listView));
-        _viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
+        _viewModel = viewModel;
         _playerViewModel = playerViewModel ?? throw new ArgumentNullException(nameof(playerViewModel));
         _playingTitleBrush = playingTitleBrush ?? throw new ArgumentNullException(nameof(playingTitleBrush));
         _songIdExtractor = songIdExtractor ?? (item => (item as Song)?.Id);
 
         _listView.ContainerContentChanging += OnContainerContentChanging;
-        _viewModel.PropertyChanged += OnViewModelPropertyChanged;
+        if (_viewModel is not null) _viewModel.PropertyChanged += OnViewModelPropertyChanged;
         _playerViewModel.PropertyChanged += OnPlayerViewModelPropertyChanged;
     }
 
@@ -55,7 +55,7 @@ public sealed class NowPlayingIndicatorBinder : IDisposable
         if (_disposed) return;
         _disposed = true;
         _listView.ContainerContentChanging -= OnContainerContentChanging;
-        _viewModel.PropertyChanged -= OnViewModelPropertyChanged;
+        if (_viewModel is not null) _viewModel.PropertyChanged -= OnViewModelPropertyChanged;
         _playerViewModel.PropertyChanged -= OnPlayerViewModelPropertyChanged;
     }
 
@@ -84,9 +84,8 @@ public sealed class NowPlayingIndicatorBinder : IDisposable
 
     private void OnPlayerViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName != nameof(PlayerViewModel.IsPlaying)) return;
-        // Only the IsPlaying child property of the indicator needs to update; iterate
-        // realized containers and toggle the animation play/pause state.
+        if (e.PropertyName != nameof(PlayerViewModel.IsPlaying) &&
+            !(_viewModel is null && e.PropertyName == nameof(PlayerViewModel.CurrentPlayingTrack))) return;
         RefreshAllRealizedContainers();
     }
 
@@ -105,7 +104,8 @@ public sealed class NowPlayingIndicatorBinder : IDisposable
         if (container?.ContentTemplateRoot is not FrameworkElement root) return;
 
         var rowSongId = _songIdExtractor(item);
-        var isThisRowPlaying = rowSongId is not null && _viewModel.CurrentPlayingSongId == rowSongId;
+        var currentSongId = _viewModel is not null ? _viewModel.CurrentPlayingSongId : _playerViewModel.CurrentPlayingTrack?.Id;
+        var isThisRowPlaying = rowSongId is not null && currentSongId == rowSongId;
 
         if (root.FindName(IndicatorElementName) is NowPlayingIndicator indicator)
         {
