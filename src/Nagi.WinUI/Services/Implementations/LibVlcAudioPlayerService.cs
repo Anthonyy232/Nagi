@@ -448,12 +448,14 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
                 }
 
                 // LibVLC 4 queues the start command and returns immediately.
+                _isExplicitStop = false;
                 if (_mediaPlayer.Play())
                 {
                     startFadeIn = _isFadeOnPlayPauseEnabled;
                 }
                 else
                 {
+                    _isExplicitStop = true;
                     _isFading = false;
                     _mediaPlayer.SetVolume((int)Math.Clamp(_userVolume * 100, 0, 100));
                     _logger.LogWarning("LibVLC rejected the play command. Last error: {LastError}",
@@ -995,7 +997,6 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     {
         if (_isDisposed || _libVlc is null) return;
 
-        // Mark as explicit stop to prevent double PlaybackEnded (error handler fires it below)
         _isExplicitStop = true;
 
         var lastVlcError = _libVlc.LastLibVLCError;
@@ -1007,7 +1008,6 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         {
             if (_isDisposed) return;
             ErrorOccurred?.Invoke(errorMessage);
-            PlaybackEnded?.Invoke();
         });
     }
 
