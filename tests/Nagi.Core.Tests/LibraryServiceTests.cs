@@ -1194,6 +1194,38 @@ public class LibraryServiceTests : IDisposable
 
     #region Song Artist Tests
 
+    [Fact]
+    public async Task QueueQueries_ReturnGenresAndFullDurationAcrossBatches_WithoutHeavyFields()
+    {
+        var folder = new Folder { Name = "Queue", Path = "C:\\Queue" };
+        var genre = new Genre { Name = "Rock" };
+        var artists = new[] { new Artist { Name = "Lead" }, new Artist { Name = "Guest" } };
+        var songs = Enumerable.Range(0, 601).Select(i => new Song
+        {
+            Title = $"Queue {i}", FilePath = $"C:\\Queue\\{i}.mp3", Folder = folder,
+            Duration = TimeSpan.FromSeconds(60), Genres = [genre], Lyrics = "Heavy lyrics",
+            AlbumArtUriFromTrack = "C:\\cache\\cover.jpg",
+            SongArtists = artists.Select((artist, order) => new SongArtist { Artist = artist, Order = order }).ToList()
+        }).ToArray();
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Songs.AddRange(songs);
+            await context.SaveChangesAsync();
+        }
+        var ids = songs.Select(s => s.Id).Append(songs[0].Id).Append(Guid.NewGuid()).ToArray();
+
+        var queue = await _libraryService.GetQueueSongsAsync(ids);
+        queue.Should().HaveCount(601);
+        queue.Values.Should().OnlyContain(s => s.Genres.Count == 1 && s.Genres.First().Name == "Rock");
+        queue.Values.Should().OnlyContain(s => s.Lyrics == null && s.AlbumArtUriFromTrack == null);
+        queue[songs[0].Id].SongArtists.OrderBy(sa => sa.Order).Select(sa => sa.Artist.Id)
+            .Should().Equal(artists.Select(a => a.Id));
+        queue[songs[0].Id].SongArtists.OrderBy(sa => sa.Order).Select(sa => sa.Artist.Name)
+            .Should().Equal("Lead", "Guest");
+        (await _libraryService.GetSongsDurationAsync(ids)).Should().Be(TimeSpan.FromMinutes(601));
+        (await _libraryService.GetSongsDurationAsync([Guid.NewGuid()])).Should().Be(TimeSpan.Zero);
+    }
+
     /// <summary>
     ///    Verifies that <see cref="LibraryService.GetArtistsForSongAsync" /> returns the correct list of artists
     ///    associated with a song, respects the assigned order, and projects the data correctly.

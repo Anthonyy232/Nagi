@@ -252,7 +252,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
                 if (IsShuffleEnabled)
                 {
                     CurrentShuffledIndex = GetShuffledQueueIndex(CurrentTrack.Id);
-                    if (CurrentShuffledIndex == -1)
+                    if (CurrentShuffledIndex == -1 && CurrentQueueIndex >= 0)
                     {
                         _logger.LogWarning("Current track lost in shuffle after batch update. Regenerating shuffle.");
                         GenerateShuffledQueue();
@@ -396,6 +396,8 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
                 }).ToList()
             },
             Duration = metadata.Duration,
+            Genres = metadata.Genres.Where(g => !string.IsNullOrWhiteSpace(g))
+                .Distinct(StringComparer.OrdinalIgnoreCase).Select(g => new Genre { Name = g }).ToList(),
             AlbumArtUriFromTrack = metadata.CoverArtUri,
             Lyrics = metadata.Lyrics,
             LrcFilePath = metadata.LrcFilePath
@@ -474,6 +476,46 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         }
 
         return result;
+    }
+
+    public async Task<IReadOnlyDictionary<Guid, Song>> GetQueueSongsAsync(IEnumerable<Guid> songIds,
+        CancellationToken cancellationToken = default)
+    {
+        var ids = songIds.Distinct().ToArray();
+        var transient = ids.Where(_transientTracks.ContainsKey).ToDictionary(id => id, id => _transientTracks[id]);
+        var songs = await Task.Run(() => _libraryService.GetQueueSongsAsync(
+            ids.Where(id => !transient.ContainsKey(id)), cancellationToken), cancellationToken).ConfigureAwait(false);
+        foreach (var pair in songs) transient[pair.Key] = pair.Value;
+        return transient;
+    }
+
+    public async Task<TimeSpan> GetQueueDurationAsync(IEnumerable<Guid> songIds,
+        CancellationToken cancellationToken = default)
+    {
+        var libraryIds = new List<Guid>();
+        long transientTicks = 0;
+        foreach (var id in songIds.Distinct())
+        {
+            if (_transientTracks.TryGetValue(id, out var song)) transientTicks += song.DurationTicks;
+            else libraryIds.Add(id);
+        }
+        var duration = await Task.Run(() => _libraryService.GetSongsDurationAsync(libraryIds, cancellationToken),
+            cancellationToken).ConfigureAwait(false);
+        return duration + TimeSpan.FromTicks(transientTicks);
+    }
+
+    public void MoveQueueItem(Guid songId, Guid? beforeSongId)
+    {
+        var queue = IsShuffleEnabled ? _shuffledQueue : _playbackQueue;
+        var from = queue.IndexOf(songId);
+        var target = beforeSongId.HasValue ? queue.IndexOf(beforeSongId.Value) : queue.Count;
+        if (from < 0 || target < 0 || from == target || from + 1 == target) return;
+
+        using (BeginQueueUpdate())
+        {
+            queue.RemoveAt(from);
+            queue.Insert(target > from ? target - 1 : target, songId);
+        }
     }
 
     private void RegisterTransientTrack(Song song)
@@ -890,62 +932,8 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         return RemoveFromQueueAsync(song?.Id ?? Guid.Empty);
     }
 
-    public async Task RemoveFromQueueAsync(Guid songId)
-    {
-        if (songId == Guid.Empty) return;
-
-        var originalIndex = GetPlaybackQueueIndex(songId);
-        if (originalIndex == -1) return;
-
-        var isRemovingCurrentTrack = CurrentTrack?.Id == songId;
-
-        if (isRemovingCurrentTrack)
-        {
-            _logger.LogDebug("Removing currently playing song ID '{SongId}' from queue.", songId);
-            FinalizeCurrentListenBeforeQueueRemoval();
-            await _audioPlayer.StopAsync().ConfigureAwait(false);
-
-            using (BeginQueueUpdate())
-            {
-                _playbackQueue.RemoveAt(originalIndex);
-                if (IsShuffleEnabled) _shuffledQueue.Remove(songId);
-            }
-
-            if (_playbackQueue.Any())
-            {
-                // Attempt to play the next song in the queue.
-                var nextIndexToPlay = originalIndex;
-                if (nextIndexToPlay >= _playbackQueue.Count)
-                    // If the removed track was the last one, wrap around if repeat is on.
-                    nextIndexToPlay = CurrentRepeatMode == RepeatMode.RepeatAll ? 0 : -1;
-
-                if (nextIndexToPlay != -1)
-                {
-                    await PlayQueueItemAsync(nextIndexToPlay).ConfigureAwait(false);
-                }
-                else
-                {
-                    await StopAsync().ConfigureAwait(false);
-                }
-            }
-            else
-            {
-                // The queue is now empty.
-                await StopAsync().ConfigureAwait(false);
-                ClearQueuesInternal();
-                QueueChanged?.Invoke();
-                UpdateSmtcControls();
-            }
-        }
-        else
-        {
-            using (BeginQueueUpdate())
-            {
-                _playbackQueue.RemoveAt(originalIndex);
-                if (IsShuffleEnabled) _shuffledQueue.Remove(songId);
-            }
-        }
-    }
+    public Task RemoveFromQueueAsync(Guid songId) =>
+        GetPlaybackQueueIndex(songId) < 0 ? Task.CompletedTask : RemoveRangeFromQueueAsync([songId]);
 
     private void FinalizeCurrentListenBeforeQueueRemoval()
     {

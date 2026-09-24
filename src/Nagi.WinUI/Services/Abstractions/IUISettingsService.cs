@@ -54,6 +54,8 @@ public interface IUISettingsService : ISettingsService
     /// </summary>
     event Action? PlayerButtonSettingsChanged;
 
+    event Action<QueueDisplaySettings>? QueueDisplaySettingsChanged;
+
     /// <summary>
     ///     Occurs when the system's transparency effects setting is changed.
     ///     The boolean parameter indicates whether transparency effects are enabled.
@@ -245,6 +247,9 @@ public interface IUISettingsService : ISettingsService
     /// </summary>
     /// <param name="settings">The list of <see cref="PlayerButtonSetting" /> to save.</param>
     Task SetPlayerButtonSettingsAsync(List<PlayerButtonSetting> settings);
+
+    Task<QueueDisplaySettings> GetQueueDisplaySettingsAsync();
+    Task SetQueueDisplaySettingsAsync(QueueDisplaySettings settings);
 
     /// <summary>
     ///     Gets the default list of player control buttons.

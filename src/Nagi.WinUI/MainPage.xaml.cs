@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
@@ -37,6 +38,57 @@ namespace Nagi.WinUI;
 public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 {
     private const double VolumeChangeStep = 5.0;
+    private int _queueDragVersion;
+    private NowPlayingIndicatorBinder? _queuePlayingBinder;
+
+    private void QueueListView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
+    {
+        _queueDragVersion = ViewModel.SidebarQueue.Version;
+        e.Data.RequestedOperation = DataPackageOperation.Move;
+    }
+
+    private void QueueListView_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs e)
+    {
+        if (e.DropResult == DataPackageOperation.Move && e.Items.FirstOrDefault() is QueueEntry entry)
+            ViewModel.SidebarQueue.CompleteReorder(entry, _queueDragVersion);
+    }
+
+    private async void QueueEntry_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { Tag: QueueEntry entry })
+        {
+            e.Handled = true;
+            await PlayQueueEntryAsync(entry);
+        }
+    }
+
+    private async void QueueEntry_Play(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { Tag: QueueEntry entry }) await PlayQueueEntryAsync(entry);
+    }
+
+    private async Task PlayQueueEntryAsync(QueueEntry entry)
+    {
+        try { await ViewModel.SidebarQueue.PlayAsync(entry); }
+        catch (Exception ex) { _logger.LogError(ex, "Failed to play queue entry."); }
+    }
+
+    private void QueueEntry_MoveUp(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { Tag: QueueEntry entry }) ViewModel.SidebarQueue.Move(entry, -1);
+    }
+
+    private void QueueEntry_MoveDown(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { Tag: QueueEntry entry }) ViewModel.SidebarQueue.Move(entry, 1);
+    }
+
+    private async void QueueEntry_Remove(object sender, RoutedEventArgs e)
+    {
+        if (sender is not FrameworkElement { Tag: QueueEntry entry }) return;
+        try { await ViewModel.SidebarQueue.RemoveAsync(entry); }
+        catch (Exception ex) { _logger.LogError(ex, "Failed to remove queue entry."); }
+    }
 
     // Maps detail pages back to their parent navigation item for selection synchronization.
     private readonly Dictionary<Type, string> _detailPageToParentTagMap = new()
@@ -78,9 +130,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     // Debounce tokens for hover expand/collapse — prevents stutter from cursor grazing the hit-zone edge.
     private CancellationTokenSource? _expandDebounce;
     private CancellationTokenSource? _collapseDebounce;
-
-    // A flag to track if the queue flyout is open, to keep the player expanded.
-    private bool _isQueueFlyoutOpen;
 
     // A flag to prevent re-entrant navigation while the selection is being updated programmatically.
     private bool _isUpdatingNavViewSelection;
@@ -177,7 +226,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             ContentFrame.Navigate(typeof(LyricsPage));
     }
 
-    private void QueueFlyout_DragOver(object sender, DragEventArgs e)
+    private void Queue_DragOver(object sender, DragEventArgs e)
     {
         if (e.DataView.Contains(StandardDataFormats.StorageItems))
             e.AcceptedOperation = DataPackageOperation.Copy;
@@ -185,14 +234,30 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private void QueueButton_DragEnter(object sender, DragEventArgs e)
     {
-        QueueFlyout_DragOver(sender, e);
-        if (e.AcceptedOperation == DataPackageOperation.Copy &&
-            !_isQueueFlyoutOpen && sender is Button button)
-            button.Flyout?.ShowAt(button);
+        Queue_DragOver(sender, e);
+        if (e.AcceptedOperation == DataPackageOperation.Copy)
+            ViewModel.IsQueuePanelOpen = true;
     }
 
-    private async void QueueFlyout_Drop(object sender, DragEventArgs e)
+    private void QueuePanel_DragOver(object sender, DragEventArgs e)
     {
+        Queue_DragOver(sender, e);
+        QueueDropHighlight.Visibility = e.AcceptedOperation == DataPackageOperation.Copy
+            ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private void QueuePanel_DragLeave(object sender, DragEventArgs e) =>
+        QueueDropHighlight.Visibility = Visibility.Collapsed;
+
+    private void ContentRegion_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        QueuePanel.MaxWidth = Math.Max(0, e.NewSize.Width - 24);
+        Grid.SetColumnSpan(ContentFrame, e.NewSize.Width < 760 ? 2 : 1);
+    }
+
+    private async void Queue_Drop(object sender, DragEventArgs e)
+    {
+        QueueDropHighlight.Visibility = Visibility.Collapsed;
         if (!e.DataView.Contains(StandardDataFormats.StorageItems)) return;
 
         e.Handled = true;
@@ -274,7 +339,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private void UpdatePlayerVisualState(bool useTransitions = true)
     {
         var isPlaying = ViewModel.CurrentPlayingTrack != null && ViewModel.IsPlaying;
-        var shouldBeExpanded = !_isPlayerAnimationEnabled || isPlaying || _isPointerOverPlayer || _isQueueFlyoutOpen;
+        var shouldBeExpanded = !_isPlayerAnimationEnabled || isPlaying || _isPointerOverPlayer || ViewModel.IsQueuePanelOpen;
         var stateName = shouldBeExpanded ? "PlayerExpanded" : "PlayerCollapsed";
 
         // XAML handles MinHeight/MaxHeight (layout-dependent)
@@ -369,6 +434,11 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     // Sets up event handlers and initial state when the page is loaded.
     private async void OnMainPageLoaded(object sender, RoutedEventArgs e)
     {
+        _queuePlayingBinder ??= new NowPlayingIndicatorBinder(
+            QueueListView, null, ViewModel,
+            (Brush)Application.Current.Resources["AppPrimaryColorBrush"],
+            item => (item as QueueEntry)?.Id);
+        _queuePlayingBinder.Refresh();
         if (NavView.SettingsItem is NavigationViewItem settingsItem)
         {
             settingsItem.Content = Strings.NavItem_Settings;
@@ -386,6 +456,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             _settingsService.TransparencyEffectsSettingChanged += OnTransparencyEffectsSettingChanged;
             _settingsService.PlayerDesignSettingsChanged += OnPlayerDesignSettingsChanged;
             AddHandler(PointerPressedEvent, new PointerEventHandler(OnGlobalPointerPressed), true);
+            KeyDown += OnSelectionKeyDown;
 
             // 2. Parallelize independent startup tasks to reduce total load time.
             var brushTask = SetPlatformSpecificBrushAsync();
@@ -418,6 +489,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     // Cleans up event handlers when the page is unloaded.
     private void OnMainPageUnloaded(object sender, RoutedEventArgs e)
     {
+        _queuePlayingBinder?.Dispose();
+        _queuePlayingBinder = null;
         _isUnloaded = true;
         _expandDebounce?.Cancel();
         _expandDebounce = null;
@@ -435,6 +508,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         AppTrayIconHost?.Dispose();
 
         RemoveHandler(PointerPressedEvent, (PointerEventHandler)OnGlobalPointerPressed);
+        KeyDown -= OnSelectionKeyDown;
     }
 
     /// <summary>
@@ -535,6 +609,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
                     UpdatePlayerVisualState();
                     break;
                 case nameof(PlayerViewModel.IsPlaying):
+                case nameof(PlayerViewModel.IsQueuePanelOpen):
                     UpdatePlayerVisualState();
                     break;
             }
@@ -574,6 +649,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             UpdateNavViewSelection(e.SourcePageType);
 
             var isSettingsPage = e.SourcePageType == typeof(SettingsPage);
+            QueuePanel.Margin = new Thickness(0, 12, 12, isSettingsPage ? 12 : 156);
             var stateName = isSettingsPage ? "PlayerHidden" : "PlayerVisible";
             VisualStateManager.GoToState(this, stateName, true);
         }
@@ -645,18 +721,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         TryGoBack();
     }
 
-    private void QueueFlyout_Opened(object sender, object e)
-    {
-        _isQueueFlyoutOpen = true;
-        UpdatePlayerVisualState();
-    }
-
-    private void QueueFlyout_Closed(object sender, object e)
-    {
-        _isQueueFlyoutOpen = false;
-        UpdatePlayerVisualState();
-    }
-
     private void MediaSeekerSlider_PointerPressed(object sender, PointerRoutedEventArgs e)
     {
         ViewModel.IsUserDraggingSlider = true;
@@ -720,7 +784,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     /// <summary>
     ///     Restores the navigation pane state if the "remember pane state" setting is enabled.
-    ///     This overrides the XAML adaptive trigger's default state.
     /// </summary>
     private async Task RestorePaneStateAsync()
     {
@@ -734,7 +797,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         }
         catch (Exception ex)
         {
-            // Non-critical: log at trace level and let adaptive triggers handle default state.
             _logger.LogTrace(ex, "Failed to restore navigation pane state.");
         }
     }
@@ -753,6 +815,60 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             TryGoBack();
             e.Handled = true;
         }
+        else if (properties.PointerUpdateKind == Microsoft.UI.Input.PointerUpdateKind.LeftButtonPressed &&
+                 VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot).Count == 0)
+        {
+            DismissListSelection(e.OriginalSource as DependencyObject);
+        }
+    }
+
+    private void OnSelectionKeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        if (e.Key != VirtualKey.Escape || e.Handled ||
+            VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot).Count != 0) return;
+        for (var element = e.OriginalSource as DependencyObject; element is not null; element = VisualTreeHelper.GetParent(element))
+            if (element is TextBox or PasswordBox or RichEditBox) return;
+
+        e.Handled = DismissListSelection(null);
+    }
+
+    private bool DismissListSelection(DependencyObject? source)
+    {
+        ListView? clickedList = null;
+        var clickedItem = false;
+        var clickedScrollBar = false;
+        var page = ContentFrame.Content as FrameworkElement;
+        for (var element = source; element is not null; element = VisualTreeHelper.GetParent(element))
+        {
+            if (element is ListViewItem) clickedItem = true;
+            if (element is ScrollBar) clickedScrollBar = true;
+            if (element is ListView list) clickedList = list;
+        }
+
+        var cleared = false;
+        if (page?.DataContext is SongListViewModelBase { HasSelectedSongs: true } viewModel &&
+            !(clickedList is not null && IsWithin(clickedList, page) && (clickedItem || clickedScrollBar)))
+        {
+            cleared = true;
+            viewModel.DeselectAll();
+            foreach (var name in new[] { "SongsListView", "GroupedSongsListView", "FolderContentsListView" })
+                if (page.FindName(name) is ListView list) list.SelectedItems.Clear();
+        }
+
+        if (QueueListView.SelectedItem is not null &&
+            !(clickedList == QueueListView && (clickedItem || clickedScrollBar)))
+        {
+            QueueListView.SelectedItem = null;
+            cleared = true;
+        }
+        return cleared;
+    }
+
+    private static bool IsWithin(DependencyObject element, DependencyObject parent)
+    {
+        for (DependencyObject? current = element; current is not null; current = VisualTreeHelper.GetParent(current))
+            if (current == parent) return true;
+        return false;
     }
 
     // ── Insights "See All" overlay handlers ──
