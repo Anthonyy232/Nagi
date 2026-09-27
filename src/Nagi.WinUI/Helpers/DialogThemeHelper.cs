@@ -8,6 +8,9 @@ public static class DialogThemeHelper
 {
     public static void ApplyThemeOverrides(ContentDialog dialog)
     {
+        if (App.RootWindow?.Content is FrameworkElement root)
+            dialog.RequestedTheme = root.RequestedTheme;
+
         var appResources = Application.Current.Resources;
         var accentBrush = (SolidColorBrush)appResources["AppPrimaryColorBrush"];
 

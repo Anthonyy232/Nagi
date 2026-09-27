@@ -53,7 +53,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
         DialogThemeHelper.ApplyThemeOverrides(this);
 
         Rules.CollectionChanged += OnRulesCollectionChanged;
-        Unloaded += OnDialogUnloaded;
+        Closed += OnDialogClosed;
 
         _isInitialized = true;
         MatchCountText.Text = Nagi.WinUI.Resources.Strings.SmartPlaylist_Status_Calculating;
@@ -94,7 +94,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
         }
     }
 
-    private void OnDialogUnloaded(object sender, RoutedEventArgs e)
+    private void OnDialogClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
     {
         _isInitialized = false;
         _matchCountDebouncer.Dispose();
