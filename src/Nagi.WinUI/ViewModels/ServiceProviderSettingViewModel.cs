@@ -12,8 +12,6 @@ public partial class ServiceProviderSettingViewModel : ObservableObject
     public string? Description { get; init; }
     public ServiceCategory Category { get; init; }
 
-    public bool CanDrag => Id != ServiceProviderIds.MusicBrainz;
-
     public static ServiceProviderSettingViewModel FromSetting(ServiceProviderSetting setting)
     {
         return new ServiceProviderSettingViewModel

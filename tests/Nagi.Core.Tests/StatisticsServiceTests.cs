@@ -117,7 +117,7 @@ public class StatisticsServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task GetTopAlbumsAsync_AlbumlessListensDoNotConsumePageSlots()
+    public async Task GetTopAlbumsPageAsync_AlbumlessListensDoNotConsumePageSlots()
     {
         var folder = new Folder { Name = "Test Folder", Path = "C:\\Music" };
         var artist = new Artist { Name = "Artist A" };
@@ -161,12 +161,11 @@ public class StatisticsServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var result = (await _statisticsService.GetTopAlbumsAsync(
-            new TimeRange(null, null), limit: 2, metric: SortMetric.PlayCount)).ToList();
-        var count = await _statisticsService.GetTopAlbumsCountAsync(new TimeRange(null, null));
+        var result = await _statisticsService.GetTopAlbumsPageAsync(
+            new TimeRange(null, null), 2, SortMetric.PlayCount, 0, null);
 
-        result.Select(item => item.Album.Id).Should().BeEquivalentTo(new[] { firstAlbum.Id, secondAlbum.Id });
-        result.Should().HaveCount(count);
+        result.Items.Select(item => item.Album.Id).Should().BeEquivalentTo(new[] { firstAlbum.Id, secondAlbum.Id });
+        result.TotalCount.Should().Be(2);
     }
 
     [Fact]
@@ -503,7 +502,7 @@ public class StatisticsServiceTests : IDisposable
     [Theory]
     [InlineData(null, 3)]
     [InlineData("mätch", 2)]
-    public async Task TopItemCounts_CountDistinctQualifyingEntities(string? search, int expectedCount)
+    public async Task TopItemPages_CountDistinctQualifyingEntitiesBeyondPageSize(string? search, int expectedCount)
     {
         var folder = new Folder { Name = "F", Path = @"C:\Music" };
         var names = new[] { "MÄTCH A", "MÄTCH B", "Other", "MÄTCH Skipped" };
@@ -537,10 +536,10 @@ public class StatisticsServiceTests : IDisposable
         }
 
         var range = new TimeRange(null, null);
-        (await _statisticsService.GetTopSongsCountAsync(range, search)).Should().Be(expectedCount);
-        (await _statisticsService.GetTopArtistsCountAsync(range, search)).Should().Be(expectedCount);
-        (await _statisticsService.GetTopAlbumsCountAsync(range, search)).Should().Be(expectedCount);
-        (await _statisticsService.GetTopGenresCountAsync(range, search)).Should().Be(expectedCount);
+        (await _statisticsService.GetTopSongsPageAsync(range, 1, SortMetric.PlayCount, 0, search)).TotalCount.Should().Be(expectedCount);
+        (await _statisticsService.GetTopArtistsPageAsync(range, 1, SortMetric.PlayCount, 0, search)).TotalCount.Should().Be(expectedCount);
+        (await _statisticsService.GetTopAlbumsPageAsync(range, 1, SortMetric.PlayCount, 0, search)).TotalCount.Should().Be(expectedCount);
+        (await _statisticsService.GetTopGenresPageAsync(range, 1, SortMetric.PlayCount, 0, search)).TotalCount.Should().Be(expectedCount);
     }
     [Fact]
     public async Task GetTopAlbumsAsync_WithDurationSortMetric_OrdersByTotalDurationDescending()
@@ -650,40 +649,6 @@ public class StatisticsServiceTests : IDisposable
         var total = await _statisticsService.GetTotalListenTimeAsync(new TimeRange(start, null));
 
         total.Should().Be(TimeSpan.FromMinutes(5), "only the listen within the range should contribute to total time");
-    }
-
-    [Fact]
-    public async Task GetListeningActivityTimelineAsync_GroupsQualifyingPlaysAndAllDurationByLocalHour()
-    {
-        var folder = new Folder { Name = "F", Path = "C:\\Music" };
-        var artist = new Artist { Name = "A" };
-        var song = CreateSong(folder, artist, "Song", null, TimeSpan.FromMinutes(3));
-        var firstLocalHour = new DateTime(2024, 6, 18, 10, 0, 0, DateTimeKind.Local);
-        var secondLocalHour = firstLocalHour.AddHours(1);
-
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Folders.Add(folder);
-            context.Artists.Add(artist);
-            context.Songs.Add(song);
-            context.ListenHistory.AddRange(
-                new ListenHistory { Song = song, ListenTimestampUtc = firstLocalHour.AddMinutes(5).ToUniversalTime(), EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks },
-                new ListenHistory { Song = song, ListenTimestampUtc = firstLocalHour.AddMinutes(25).ToUniversalTime(), EndReason = PlaybackEndReason.PausedAndAbandoned, ListenDurationTicks = TimeSpan.FromMinutes(1).Ticks },
-                new ListenHistory { Song = song, ListenTimestampUtc = secondLocalHour.AddMinutes(10).ToUniversalTime(), EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(2).Ticks });
-            await context.SaveChangesAsync();
-        }
-
-        var result = (await _statisticsService.GetListeningActivityTimelineAsync(
-            new TimeRange(null, null),
-            ActivityInterval.Hour)).ToList();
-
-        result.Should().HaveCount(2);
-        result[0].Timestamp.Should().Be(firstLocalHour);
-        result[0].Plays.Should().Be(1);
-        result[0].Duration.Should().Be(TimeSpan.FromMinutes(4));
-        result[1].Timestamp.Should().Be(secondLocalHour);
-        result[1].Plays.Should().Be(1);
-        result[1].Duration.Should().Be(TimeSpan.FromMinutes(2));
     }
 
     [Fact]

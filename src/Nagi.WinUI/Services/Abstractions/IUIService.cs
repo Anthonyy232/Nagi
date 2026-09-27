@@ -4,24 +4,6 @@ using System.Threading.Tasks;
 
 namespace Nagi.WinUI.Services.Abstractions;
 
-public enum UpdateDialogResult
-{
-    /// <summary>
-    ///     The user chose to install the update.
-    /// </summary>
-    Install,
-
-    /// <summary>
-    ///     The user chose to be reminded later.
-    /// </summary>
-    RemindLater,
-
-    /// <summary>
-    ///     The user chose to skip the current update version.
-    /// </summary>
-    Skip
-}
-
 public enum CrashReportResult
 {
     /// <summary>
@@ -62,18 +44,6 @@ public interface IUIService
     /// </summary>
     /// <param name="filePath">The full path to a file within the target directory.</param>
     Task OpenFolderInExplorerAsync(string filePath);
-
-    /// <summary>
-    ///     Shows a dialog specifically for application updates with three choices.
-    /// </summary>
-    /// <param name="title">The dialog's title.</param>
-    /// <param name="content">The main message of the dialog.</param>
-    /// <param name="primaryButtonText">Text for the "install" action.</param>
-    /// <param name="secondaryButtonText">Text for the "remind later" action.</param>
-    /// <param name="closeButtonText">Text for the "skip version" action.</param>
-    /// <returns>An <see cref="UpdateDialogResult" /> indicating the user's choice.</returns>
-    Task<UpdateDialogResult> ShowUpdateDialogAsync(string title, string content, string primaryButtonText,
-        string secondaryButtonText, string closeButtonText);
 
     /// <summary>
     ///     Shows a simple message dialog with a single "OK" button.

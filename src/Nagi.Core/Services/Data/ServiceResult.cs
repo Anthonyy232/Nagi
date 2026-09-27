@@ -18,12 +18,7 @@ public enum ServiceResultStatus
     /// <summary>
     ///     The operation failed due to a temporary issue (e.g., network error) and can be retried.
     /// </summary>
-    TemporaryError,
-
-    /// <summary>
-    ///     The operation failed due to a permanent issue (e.g., invalid configuration, bad request).
-    /// </summary>
-    PermanentError
+    TemporaryError
 }
 
 /// <summary>
@@ -48,7 +43,7 @@ public class ServiceResult<T> where T : class
 
     /// <summary>
     ///     Gets a value indicating whether the service call was conclusive (i.e., not a temporary error).
-    ///     A conclusive result means the operation either succeeded, confirmed no data exists, or failed permanently.
+    ///     A conclusive result means the operation either succeeded or confirmed no data exists.
     /// </summary>
     public bool IsConclusive => Status is not ServiceResultStatus.TemporaryError;
 
@@ -57,6 +52,4 @@ public class ServiceResult<T> where T : class
     public static ServiceResult<T> FromSuccessNotFound() => new(null, ServiceResultStatus.SuccessNotFound);
 
     public static ServiceResult<T> FromTemporaryError() => new(null, ServiceResultStatus.TemporaryError);
-
-    public static ServiceResult<T> FromPermanentError() => new(null, ServiceResultStatus.PermanentError);
 }

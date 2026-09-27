@@ -55,14 +55,13 @@ public class SettingsServiceTests
         var notifications = new List<string>();
         settings.VolumeNormalizationEnabledChanged += value => notifications.Add($"volume:{value}");
         settings.HideToTraySettingChanged += value => notifications.Add($"tray:{value}");
-        settings.LanguageChanged += value => notifications.Add($"language:{value}");
         settings.IgnoreLeadingArticlesOnSortEnabledChanged += value => notifications.Add($"articles:{value}");
 
         await settings.ResetStoredValuesAsync();
 
         notifications.Should().BeEquivalentTo(
             $"volume:{SettingsDefaults.VolumeNormalizationEnabled}", $"tray:{SettingsDefaults.HideToTrayEnabled}",
-            "language:", $"articles:{SettingsDefaults.IgnoreLeadingArticlesOnSortEnabled}");
+            $"articles:{SettingsDefaults.IgnoreLeadingArticlesOnSortEnabled}");
         values.Should().BeEmpty();
         (await settings.GetVolumeNormalizationEnabledAsync()).Should().Be(SettingsDefaults.VolumeNormalizationEnabled);
         (await settings.GetLanguageAsync()).Should().BeEmpty();

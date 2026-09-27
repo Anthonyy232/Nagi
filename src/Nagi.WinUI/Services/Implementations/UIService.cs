@@ -68,35 +68,6 @@ public class UIService : IUIService
         await Launcher.LaunchFolderAsync(folder);
     }
 
-    public async Task<UpdateDialogResult> ShowUpdateDialogAsync(string title, string content, string primaryButtonText,
-        string secondaryButtonText, string closeButtonText)
-    {
-        if (!TryGetXamlRoot(out var xamlRoot))
-            return UpdateDialogResult.RemindLater;
-
-        var dialog = new ContentDialog
-        {
-            Title = title,
-            Content = content,
-            PrimaryButtonText = primaryButtonText,
-            SecondaryButtonText = secondaryButtonText,
-            CloseButtonText = closeButtonText,
-            XamlRoot = xamlRoot,
-            DefaultButton = ContentDialogButton.Primary
-        };
-
-        DialogThemeHelper.ApplyThemeOverrides(dialog);
-        var result = await dialog.ShowAsync();
-
-        return result switch
-        {
-            ContentDialogResult.Primary => UpdateDialogResult.Install,
-            ContentDialogResult.Secondary => UpdateDialogResult.RemindLater,
-            _ => UpdateDialogResult.Skip
-        };
-    }
-
-
     public async Task ShowMessageDialogAsync(string title, string message)
     {
         if (!TryGetXamlRoot(out var xamlRoot)) return;

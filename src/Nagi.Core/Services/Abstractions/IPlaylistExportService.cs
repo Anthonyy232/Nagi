@@ -8,14 +8,6 @@ namespace Nagi.Core.Services.Abstractions;
 public interface IPlaylistExportService
 {
     /// <summary>
-    ///     Exports a playlist to an M3U/M3U8 file.
-    /// </summary>
-    /// <param name="playlistId">The ID of the playlist to export.</param>
-    /// <param name="filePath">The destination file path.</param>
-    /// <returns>A result indicating success and the number of songs exported.</returns>
-    Task<PlaylistExportResult> ExportPlaylistAsync(Guid playlistId, string filePath);
-
-    /// <summary>
     ///     Imports a playlist from an M3U/M3U8 file.
     /// </summary>
     /// <param name="filePath">The path to the M3U file to import.</param>

@@ -29,38 +29,10 @@ public class M3uPlaylistExportServiceTests : IDisposable
     public void Dispose() => Directory.Delete(_tempDirectory, true);
 
     [Fact]
-    public async Task ExportPlaylistAsync_WhenPlaylistNotFound_ReturnsFailureResult()
+    public async Task ExportAllPlaylistsAsync_WritesExtinfLineWithDurationAndArtistTitle()
     {
         var playlistId = Guid.NewGuid();
-        _libraryReader.GetPlaylistByIdAsync(playlistId).Returns((Playlist?)null);
-
-        var result = await _service.ExportPlaylistAsync(playlistId, Path.Combine(_tempDirectory, "missing.m3u8"));
-
-        result.Success.Should().BeFalse();
-        result.SongCount.Should().Be(0);
-    }
-
-    [Fact]
-    public async Task ExportPlaylistAsync_WritesExtm3uAndPlaylistHeaders()
-    {
-        var playlistId = Guid.NewGuid();
-        var filePath = Path.Combine(_tempDirectory, "playlist.m3u8");
-        var playlist = new Playlist { Id = playlistId, Name = "My Playlist" };
-        _libraryReader.GetPlaylistByIdAsync(playlistId).Returns(playlist);
-        _libraryReader.GetSongsInPlaylistOrderedAsync(playlistId).Returns(new List<Song>());
-
-        await _service.ExportPlaylistAsync(playlistId, filePath);
-
-        var content = await File.ReadAllTextAsync(filePath);
-        content.Should().StartWith("#EXTM3U", "M3U files must begin with the #EXTM3U header");
-        content.Should().Contain("#PLAYLIST:My Playlist", "the playlist name must appear in the #PLAYLIST directive");
-    }
-
-    [Fact]
-    public async Task ExportPlaylistAsync_WritesExtinfLineWithDurationAndArtistTitle()
-    {
-        var playlistId = Guid.NewGuid();
-        var filePath = Path.Combine(_tempDirectory, "playlist.m3u8");
+        var filePath = Path.Combine(_tempDirectory, "P.m3u8");
         var playlist = new Playlist { Id = playlistId, Name = "P" };
         var song = new Song
         {
@@ -72,13 +44,15 @@ public class M3uPlaylistExportServiceTests : IDisposable
         song.SongArtists.Add(new SongArtist { Song = song, Artist = artist, Order = 0 });
         song.SyncDenormalizedFields();
 
-        _libraryReader.GetPlaylistByIdAsync(playlistId).Returns(playlist);
+        _libraryReader.GetAllPlaylistsAsync().Returns(new[] { playlist });
         _libraryReader.GetSongsInPlaylistOrderedAsync(playlistId).Returns(new List<Song> { song });
 
-        var result = await _service.ExportPlaylistAsync(playlistId, filePath);
+        var result = await _service.ExportAllPlaylistsAsync(_tempDirectory);
 
         result.Success.Should().BeTrue();
         var content = await File.ReadAllTextAsync(filePath);
+        content.Should().StartWith("#EXTM3U");
+        content.Should().Contain("#PLAYLIST:P");
         content.Should().Contain("#EXTINF:240,The Artist - Track One");
         content.Should().Contain(@"C:\music\track.mp3");
     }
@@ -260,10 +234,10 @@ public class M3uPlaylistExportServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task ExportPlaylistAsync_WithMultiArtistSong_ExportsJoinedArtistNames()
+    public async Task ExportAllPlaylistsAsync_WithMultiArtistSong_ExportsJoinedArtistNames()
     {
         var playlistId = Guid.NewGuid();
-        var filePath = Path.Combine(_tempDirectory, "test_playlist.m3u8");
+        var filePath = Path.Combine(_tempDirectory, "Test Playlist.m3u8");
         var playlist = new Playlist { Id = playlistId, Name = "Test Playlist" };
 
         var song = new Song
@@ -279,13 +253,13 @@ public class M3uPlaylistExportServiceTests : IDisposable
         song.SongArtists.Add(new SongArtist { Song = song, Artist = artist2, Order = 1 });
         song.SyncDenormalizedFields();
 
-        _libraryReader.GetPlaylistByIdAsync(playlistId).Returns(playlist);
+        _libraryReader.GetAllPlaylistsAsync().Returns(new[] { playlist });
         _libraryReader.GetSongsInPlaylistOrderedAsync(playlistId).Returns(new List<Song> { song });
 
-        var result = await _service.ExportPlaylistAsync(playlistId, filePath);
+        var result = await _service.ExportAllPlaylistsAsync(_tempDirectory);
 
         result.Success.Should().BeTrue();
-        result.SongCount.Should().Be(1);
+        result.TotalSongs.Should().Be(1);
 
         var content = await File.ReadAllTextAsync(filePath);
         content.Should().Contain("#EXTINF:180,Artist A & Artist B - Multi-Artist Song");
@@ -313,17 +287,17 @@ public class M3uPlaylistExportServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task ExportPlaylistAsync_WithMultilineMetadata_KeepsOneLinePerDirective()
+    public async Task ExportAllPlaylistsAsync_WithMultilineMetadata_KeepsOneLinePerDirective()
     {
-        var filePath = Path.Combine(_tempDirectory, "playlist.m3u8");
+        var filePath = Path.Combine(_tempDirectory, "MyPlaylist.m3u8");
         var playlist = new Playlist { Id = Guid.NewGuid(), Name = "My\r\nPlaylist" };
         var song = CreateSong("Track\nTitle", @"C:\music\song.mp3");
         song.SongArtists.First().Artist.Name = "Artist\rName";
         song.SyncDenormalizedFields();
-        _libraryReader.GetPlaylistByIdAsync(playlist.Id).Returns(playlist);
+        _libraryReader.GetAllPlaylistsAsync().Returns(new[] { playlist });
         _libraryReader.GetSongsInPlaylistOrderedAsync(playlist.Id).Returns(new List<Song> { song });
 
-        var result = await _service.ExportPlaylistAsync(playlist.Id, filePath);
+        var result = await _service.ExportAllPlaylistsAsync(_tempDirectory);
 
         result.Success.Should().BeTrue();
         (await File.ReadAllLinesAsync(filePath)).Should().Equal(

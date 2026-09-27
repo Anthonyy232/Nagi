@@ -1,14 +1,6 @@
 ﻿namespace Nagi.Core.Services.Data;
 
 /// <summary>
-///     Represents the result of a playlist export operation.
-/// </summary>
-/// <param name="Success">Whether the export succeeded.</param>
-/// <param name="SongCount">The number of songs exported.</param>
-/// <param name="ErrorMessage">An error message if the export failed.</param>
-public record PlaylistExportResult(bool Success, int SongCount, string? ErrorMessage = null);
-
-/// <summary>
 ///     Represents the result of a playlist import operation.
 /// </summary>
 /// <param name="Success">Whether the import succeeded.</param>

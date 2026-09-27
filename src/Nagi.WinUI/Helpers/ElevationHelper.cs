@@ -1,25 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Security.Principal;
 
 namespace Nagi.WinUI.Helpers;
 
 /// <summary>
-///     Provides helper methods for detecting and handling Windows process elevation (administrator mode).
+///     Handles restarting the app without administrator elevation.
 /// </summary>
 public static class ElevationHelper
 {
-    /// <summary>
-    ///     Checks if the current process is running with elevated (administrator) privileges.
-    /// </summary>
-    /// <returns>True if running as administrator, false otherwise.</returns>
-    public static bool IsRunningAsAdministrator()
-    {
-        using var identity = WindowsIdentity.GetCurrent();
-        var principal = new WindowsPrincipal(identity);
-        return principal.IsInRole(WindowsBuiltInRole.Administrator);
-    }
-
     /// <summary>
     ///     Restarts the application without administrator elevation by using explorer.exe as a shell bridge.
     ///     This works because explorer.exe runs at medium integrity level (non-elevated),

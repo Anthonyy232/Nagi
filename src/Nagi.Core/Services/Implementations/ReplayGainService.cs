@@ -52,51 +52,6 @@ public class ReplayGainService : IReplayGainService
     }
 
     /// <inheritdoc />
-    public async Task<bool> CalculateAndWriteAsync(Guid songId, CancellationToken cancellationToken = default)
-    {
-        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
-        var song = await context.Songs.FindAsync(new object[] { songId }, cancellationToken).ConfigureAwait(false);
-        if (song == null)
-        {
-            // This can happen during concurrent library rescans - song may have been deleted and recreated with a new ID
-            _logger.LogDebug("Song with ID {SongId} not found for ReplayGain calculation (possibly deleted during rescan).", songId);
-            return false;
-        }
-
-        var result = await CalculateAsync(song.FilePath, cancellationToken).ConfigureAwait(false);
-        if (result == null) return false;
-
-        var (gainDb, peak) = result.Value;
-        cancellationToken.ThrowIfCancellationRequested();
-
-        if (!TagFileSafely(song.FilePath, gainDb, peak)) return false;
-
-        await _dbLock.WaitAsync(cancellationToken).ConfigureAwait(false);
-        try
-        {
-            song.ReplayGainTrackGain = gainDb;
-            song.ReplayGainTrackPeak = peak;
-
-            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            // Song was modified or deleted by another process (e.g., library rescan)
-            // The file tags are already updated, so just log and continue
-            _logger.LogDebug("Concurrency conflict when saving ReplayGain for song {SongId}. File tags were updated but database update skipped.", songId);
-            return true;
-        }
-        finally
-        {
-            _dbLock.Release();
-        }
-
-        _logger.LogInformation("ReplayGain calculated for '{Title}': Gain={Gain:F2} dB, Peak={Peak:F6}",
-            song.Title, gainDb, peak);
-        return true;
-    }
-
-    /// <inheritdoc />
     public async Task ScanLibraryAsync(IProgress<ScanProgress>? progress = null, CancellationToken cancellationToken = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);

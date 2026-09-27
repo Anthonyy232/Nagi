@@ -125,7 +125,6 @@ public class SettingsService : IUISettingsService, IDisposable
     public event Action<bool>? FetchOnlineMetadataEnabledChanged;
     public event Action<bool>? FetchOnlineLyricsEnabledChanged;
     public event Action<bool>? LyricsRomanizationEnabledChanged;
-    public event Action<string>? LanguageChanged;
     public event Action? PlayerDesignSettingsChanged;
     public event Action<int>? SongsPerPageChanged;
     public event Action<bool>? IgnoreLeadingArticlesOnSortEnabledChanged;
@@ -632,7 +631,7 @@ public class SettingsService : IUISettingsService, IDisposable
     public Task<string> GetLanguageAsync() => Task.FromResult(GetValue(LanguageKey, string.Empty));
 
     public Task SetLanguageAsync(string languageCode) =>
-        SetValueAndNotifyAsync(LanguageKey, languageCode, string.Empty, LanguageChanged);
+        SetValueAsync(LanguageKey, languageCode);
 
     public Task<PlayerBackgroundMaterial> GetPlayerBackgroundMaterialAsync() => Task.FromResult(GetEnumValue(PlayerBackgroundMaterialKey, PlayerBackgroundMaterial.Acrylic));
 

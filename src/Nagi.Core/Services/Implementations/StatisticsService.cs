@@ -61,18 +61,9 @@ public class StatisticsService : IStatisticsService
         if (!string.IsNullOrWhiteSpace(searchTerm))
             return await GetTopSongsSearchPageAsync(range, limit, metric, offset, searchTerm, ct).ConfigureAwait(false);
 
-        var totalCount = await GetTopSongsCountAsync(range, null, ct).ConfigureAwait(false);
+        var totalCount = await GetUniqueSongsPlayedAsync(range, ct).ConfigureAwait(false);
         var items = (await GetTopSongsAsync(range, limit, metric, offset, null, ct).ConfigureAwait(false)).ToList();
         return new StatisticsPage<SongStats>(items, totalCount);
-    }
-
-    /// <inheritdoc />
-    public async Task<int> GetTopSongsCountAsync(TimeRange range, string? searchTerm = null, CancellationToken ct = default)
-    {
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-            return (await GetTopSongsSearchPageAsync(range, 0, SortMetric.PlayCount, 0, searchTerm, ct).ConfigureAwait(false)).TotalCount;
-
-        return await GetUniqueSongsPlayedAsync(range, ct).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -124,17 +115,13 @@ public class StatisticsService : IStatisticsService
         if (!string.IsNullOrWhiteSpace(searchTerm))
             return await GetTopArtistsSearchPageAsync(range, limit, metric, offset, searchTerm, ct).ConfigureAwait(false);
 
-        var totalCount = await GetTopArtistsCountAsync(range, null, ct).ConfigureAwait(false);
+        var totalCount = await GetTopArtistsCountAsync(range, ct).ConfigureAwait(false);
         var items = (await GetTopArtistsAsync(range, limit, metric, offset, null, ct).ConfigureAwait(false)).ToList();
         return new StatisticsPage<ArtistStats>(items, totalCount);
     }
 
-    /// <inheritdoc />
-    public async Task<int> GetTopArtistsCountAsync(TimeRange range, string? searchTerm = null, CancellationToken ct = default)
+    private async Task<int> GetTopArtistsCountAsync(TimeRange range, CancellationToken ct)
     {
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-            return (await GetTopArtistsSearchPageAsync(range, 0, SortMetric.PlayCount, 0, searchTerm, ct).ConfigureAwait(false)).TotalCount;
-
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
         var query = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
 
@@ -196,17 +183,13 @@ public class StatisticsService : IStatisticsService
         if (!string.IsNullOrWhiteSpace(searchTerm))
             return await GetTopAlbumsSearchPageAsync(range, limit, metric, offset, searchTerm, ct).ConfigureAwait(false);
 
-        var totalCount = await GetTopAlbumsCountAsync(range, null, ct).ConfigureAwait(false);
+        var totalCount = await GetTopAlbumsCountAsync(range, ct).ConfigureAwait(false);
         var items = (await GetTopAlbumsAsync(range, limit, metric, offset, null, ct).ConfigureAwait(false)).ToList();
         return new StatisticsPage<AlbumStats>(items, totalCount);
     }
 
-    /// <inheritdoc />
-    public async Task<int> GetTopAlbumsCountAsync(TimeRange range, string? searchTerm = null, CancellationToken ct = default)
+    private async Task<int> GetTopAlbumsCountAsync(TimeRange range, CancellationToken ct)
     {
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-            return (await GetTopAlbumsSearchPageAsync(range, 0, SortMetric.PlayCount, 0, searchTerm, ct).ConfigureAwait(false)).TotalCount;
-
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
         var query = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
 
@@ -267,17 +250,13 @@ public class StatisticsService : IStatisticsService
         if (!string.IsNullOrWhiteSpace(searchTerm))
             return await GetTopGenresSearchPageAsync(range, limit, metric, offset, searchTerm, ct).ConfigureAwait(false);
 
-        var totalCount = await GetTopGenresCountAsync(range, null, ct).ConfigureAwait(false);
+        var totalCount = await GetTopGenresCountAsync(range, ct).ConfigureAwait(false);
         var items = (await GetTopGenresAsync(range, limit, metric, offset, null, ct).ConfigureAwait(false)).ToList();
         return new StatisticsPage<GenreStats>(items, totalCount);
     }
 
-    /// <inheritdoc />
-    public async Task<int> GetTopGenresCountAsync(TimeRange range, string? searchTerm = null, CancellationToken ct = default)
+    private async Task<int> GetTopGenresCountAsync(TimeRange range, CancellationToken ct)
     {
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-            return (await GetTopGenresSearchPageAsync(range, 0, SortMetric.PlayCount, 0, searchTerm, ct).ConfigureAwait(false)).TotalCount;
-
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
         var query = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
 
@@ -587,65 +566,6 @@ public class StatisticsService : IStatisticsService
             .Distinct()
             .CountAsync(ct)
             .ConfigureAwait(false);
-    }
-
-    /// <inheritdoc />
-    public async Task<IEnumerable<ActivityDataPoint>> GetListeningActivityTimelineAsync(TimeRange range, ActivityInterval interval, CancellationToken ct = default)
-    {
-        if (!Enum.IsDefined(interval))
-            throw new ArgumentOutOfRangeException(nameof(interval), interval, "Unknown activity interval.");
-
-        await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var query = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range)
-            .Select(history => new
-            {
-                history.ListenTimestampUtc,
-                history.ListenDurationTicks,
-                history.IsEligibleForScrobbling,
-                history.EndReason
-            });
-        var buckets = await query.AsAsyncEnumerable()
-            .AggregateBy(
-                history => GetActivityBucket(history.ListenTimestampUtc.ToLocalTime(), interval),
-                (Plays: 0, DurationTicks: 0L),
-                (total, history) => (
-                    total.Plays + (history.IsEligibleForScrobbling || history.EndReason == PlaybackEndReason.Finished ? 1 : 0),
-                    total.DurationTicks + history.ListenDurationTicks))
-            .ToListAsync(ct).ConfigureAwait(false);
-
-        return buckets
-            .OrderBy(entry => entry.Key)
-            .Select(entry => new ActivityDataPoint(
-                entry.Key,
-                entry.Value.Plays,
-                TimeSpan.FromTicks(entry.Value.DurationTicks)))
-            .ToList();
-    }
-
-    private static DateTime GetActivityBucket(DateTime localTimestamp, ActivityInterval interval)
-    {
-        return interval switch
-        {
-            ActivityInterval.Hour => new DateTime(
-                localTimestamp.Year,
-                localTimestamp.Month,
-                localTimestamp.Day,
-                localTimestamp.Hour,
-                0,
-                0,
-                localTimestamp.Kind),
-            ActivityInterval.Day => localTimestamp.Date,
-            ActivityInterval.Week => localTimestamp.Date.AddDays(-(((int)localTimestamp.DayOfWeek + 6) % 7)),
-            ActivityInterval.Month => new DateTime(
-                localTimestamp.Year,
-                localTimestamp.Month,
-                1,
-                0,
-                0,
-                0,
-                localTimestamp.Kind),
-            _ => throw new ArgumentOutOfRangeException(nameof(interval), interval, "Unknown activity interval.")
-        };
     }
 
     /// <inheritdoc />

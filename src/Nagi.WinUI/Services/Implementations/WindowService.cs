@@ -152,12 +152,6 @@ public sealed class WindowService : IWindowService, IDisposable
     }
 
     /// <inheritdoc />
-    public void MinimizeToMiniPlayer()
-    {
-        if (_appWindow?.Presenter is OverlappedPresenter presenter) presenter.Minimize();
-    }
-
-    /// <inheritdoc />
     public void Close()
     {
         _dispatcherService.TryEnqueue(() => _window?.Close());

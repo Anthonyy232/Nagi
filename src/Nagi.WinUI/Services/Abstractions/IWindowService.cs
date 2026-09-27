@@ -72,11 +72,6 @@ public interface IWindowService
     void Close();
 
     /// <summary>
-    ///     Minimizes the main window. This action may trigger the mini-player if the corresponding setting is enabled.
-    /// </summary>
-    void MinimizeToMiniPlayer();
-
-    /// <summary>
     ///     Creates and displays the mini-player window.
     /// </summary>
     void ShowMiniPlayer();

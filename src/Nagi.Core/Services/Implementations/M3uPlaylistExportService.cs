@@ -27,29 +27,6 @@ public class M3uPlaylistExportService : IPlaylistExportService
     }
 
     /// <inheritdoc />
-    public async Task<PlaylistExportResult> ExportPlaylistAsync(Guid playlistId, string filePath)
-    {
-        try
-        {
-            var playlist = await _libraryReader.GetPlaylistByIdAsync(playlistId).ConfigureAwait(false);
-            if (playlist is null)
-            {
-                _logger.LogWarning("Playlist not found for export: {PlaylistId}", playlistId);
-                return new PlaylistExportResult(false, 0, string.Format(Resources.Strings.Format_NotFound, Resources.Strings.Label_Playlist));
-            }
-
-            var songs = await _libraryReader.GetSongsInPlaylistOrderedAsync(playlistId).ConfigureAwait(false);
-            var songList = songs.ToList();
-            return await ExportLoadedPlaylistAsync(playlist, songList, filePath).ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to export playlist {PlaylistId} to {FilePath}", playlistId, filePath);
-            return new PlaylistExportResult(false, 0, ex.Message);
-        }
-    }
-
-    /// <inheritdoc />
     public async Task<PlaylistImportResult> ImportPlaylistAsync(string filePath, string playlistName)
     {
         try
@@ -186,7 +163,6 @@ public class M3uPlaylistExportService : IPlaylistExportService
 
             foreach (var playlist in playlistList)
             {
-                // Load once for both the empty check and the export body.
                 var songs = (await _libraryReader.GetSongsInPlaylistOrderedAsync(playlist.Id).ConfigureAwait(false))
                     .ToList();
 
@@ -198,11 +174,10 @@ public class M3uPlaylistExportService : IPlaylistExportService
 
                 var filePath = GetUniqueBatchExportPath(directoryPath, playlist.Name, reservedFileNames);
 
-                var result = await ExportLoadedPlaylistAsync(playlist, songs, filePath).ConfigureAwait(false);
-                if (result.Success)
+                if (await ExportLoadedPlaylistAsync(playlist, songs, filePath).ConfigureAwait(false))
                 {
                     exportedCount++;
-                    totalSongs += result.SongCount;
+                    totalSongs += songs.Count;
                 }
             }
 
@@ -218,7 +193,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
         }
     }
 
-    private async Task<PlaylistExportResult> ExportLoadedPlaylistAsync(
+    private async Task<bool> ExportLoadedPlaylistAsync(
         Playlist playlist,
         IReadOnlyList<Song> songs,
         string filePath)
@@ -229,12 +204,12 @@ public class M3uPlaylistExportService : IPlaylistExportService
 
             _logger.LogInformation("Exported playlist '{PlaylistName}' with {SongCount} songs to {FilePath}",
                 playlist.Name, songs.Count, filePath);
-            return new PlaylistExportResult(true, songs.Count);
+            return true;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to export playlist {PlaylistId} to {FilePath}", playlist.Id, filePath);
-            return new PlaylistExportResult(false, 0, ex.Message);
+            return false;
         }
     }
 

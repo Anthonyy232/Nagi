@@ -442,10 +442,8 @@ public class AtlMetadataServiceTests : IDisposable
         result.LrcFilePath.Should().Be(expectedPath);
     }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task ReplayGainWriting_WithCommaDecimalCulture_RoundTripsThroughMetadata(bool scanLibrary)
+    [Fact]
+    public async Task ReplayGainWriting_WithCommaDecimalCulture_RoundTripsThroughMetadata()
     {
         var originalCulture = CultureInfo.CurrentCulture;
         try
@@ -469,10 +467,7 @@ public class AtlMetadataServiceTests : IDisposable
             using var service = new ReplayGainService(database.ContextFactory, analyzer,
                 Substitute.For<ILogger<ReplayGainService>>());
 
-            if (scanLibrary)
-                await service.ScanLibraryAsync();
-            else
-                (await service.CalculateAndWriteAsync(song.Id)).Should().BeTrue();
+            await service.ScanLibraryAsync();
 
             await using var savedContext = database.ContextFactory.CreateDbContext();
             var savedSong = await savedContext.Songs.FindAsync(song.Id);

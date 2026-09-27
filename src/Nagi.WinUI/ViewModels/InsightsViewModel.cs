@@ -262,17 +262,13 @@ public partial class InsightsViewModel : ObservableObject
 
     // ── Top lists ───────────────────────────────────────────────
 
-    [ObservableProperty]
-    public partial ObservableRangeCollection<TopSongItem> TopSongs { get; set; } = new();
+    public ObservableRangeCollection<TopSongItem> TopSongs { get; } = new();
 
-    [ObservableProperty]
-    public partial ObservableRangeCollection<TopArtistItem> TopArtists { get; set; } = new();
+    public ObservableRangeCollection<TopArtistItem> TopArtists { get; } = new();
 
-    [ObservableProperty]
-    public partial ObservableRangeCollection<TopAlbumItem> TopAlbums { get; set; } = new();
+    public ObservableRangeCollection<TopAlbumItem> TopAlbums { get; } = new();
 
-    [ObservableProperty]
-    public partial ObservableRangeCollection<TopGenreItem> TopGenres { get; set; } = new();
+    public ObservableRangeCollection<TopGenreItem> TopGenres { get; } = new();
 
     // ── Playback source distribution ────────────────────────────
 
@@ -327,11 +323,10 @@ public partial class InsightsViewModel : ObservableObject
     public bool IsSeeAllAlbums => CurrentSeeAllCategory == SeeAllCategory.Albums;
     public bool IsSeeAllGenres => CurrentSeeAllCategory == SeeAllCategory.Genres;
 
-    // Paged display collections bound to the overlay ListViews.
-    [ObservableProperty] public partial ObservableRangeCollection<TopSongItem> SeeAllSongs { get; set; } = new();
-    [ObservableProperty] public partial ObservableRangeCollection<TopArtistItem> SeeAllArtists { get; set; } = new();
-    [ObservableProperty] public partial ObservableRangeCollection<TopAlbumItem> SeeAllAlbums { get; set; } = new();
-    [ObservableProperty] public partial ObservableRangeCollection<TopGenreItem> SeeAllGenres { get; set; } = new();
+    public ObservableRangeCollection<TopSongItem> SeeAllSongs { get; } = new();
+    public ObservableRangeCollection<TopArtistItem> SeeAllArtists { get; } = new();
+    public ObservableRangeCollection<TopAlbumItem> SeeAllAlbums { get; } = new();
+    public ObservableRangeCollection<TopGenreItem> SeeAllGenres { get; } = new();
 
     // ── Public API ──────────────────────────────────────────────
 
@@ -342,16 +337,15 @@ public partial class InsightsViewModel : ObservableObject
     [RelayCommand]
     public async Task LoadInsightsAsync()
     {
-        // Cancel any in-flight load and any per-card sort reloads.
         var newCts = new CancellationTokenSource();
         var ct = newCts.Token;
         var oldCts = Interlocked.Exchange(ref _loadCts, newCts);
-        try { oldCts?.Cancel(); oldCts?.Dispose(); } catch (ObjectDisposedException) { }
-        try { Interlocked.Exchange(ref _songsSortCts, null)?.Cancel(); } catch (ObjectDisposedException) { }
-        try { Interlocked.Exchange(ref _artistsSortCts, null)?.Cancel(); } catch (ObjectDisposedException) { }
-        try { Interlocked.Exchange(ref _albumsSortCts, null)?.Cancel(); } catch (ObjectDisposedException) { }
-        try { Interlocked.Exchange(ref _genresSortCts, null)?.Cancel(); } catch (ObjectDisposedException) { }
-
+        oldCts?.Cancel();
+        oldCts?.Dispose();
+        Interlocked.Exchange(ref _songsSortCts, null)?.Cancel();
+        Interlocked.Exchange(ref _artistsSortCts, null)?.Cancel();
+        Interlocked.Exchange(ref _albumsSortCts, null)?.Cancel();
+        Interlocked.Exchange(ref _genresSortCts, null)?.Cancel();
 
         IsLoading = true;
         HasData = false;
@@ -471,7 +465,8 @@ public partial class InsightsViewModel : ObservableObject
         var newCts = new CancellationTokenSource();
         var ct = newCts.Token;
         var oldCts = Interlocked.Exchange(ref _seeAllCts, newCts);
-        try { oldCts?.Cancel(); oldCts?.Dispose(); } catch (ObjectDisposedException) { }
+        oldCts?.Cancel();
+        oldCts?.Dispose();
         var previousPage = refreshTotalCount ? 1 : SeeAllCurrentPage;
 
         try
@@ -677,7 +672,8 @@ public partial class InsightsViewModel : ObservableObject
         var newCts = new CancellationTokenSource();
         var ct = newCts.Token;
         var oldCts = Interlocked.Exchange(ref _songsSortCts, newCts);
-        try { oldCts?.Cancel(); oldCts?.Dispose(); } catch (ObjectDisposedException) { }
+        oldCts?.Cancel();
+        oldCts?.Dispose();
         try
         {
             var range = BuildTimeRange();
@@ -699,7 +695,8 @@ public partial class InsightsViewModel : ObservableObject
         var newCts = new CancellationTokenSource();
         var ct = newCts.Token;
         var oldCts = Interlocked.Exchange(ref _artistsSortCts, newCts);
-        try { oldCts?.Cancel(); oldCts?.Dispose(); } catch (ObjectDisposedException) { }
+        oldCts?.Cancel();
+        oldCts?.Dispose();
         try
         {
             var range = BuildTimeRange();
@@ -721,7 +718,8 @@ public partial class InsightsViewModel : ObservableObject
         var newCts = new CancellationTokenSource();
         var ct = newCts.Token;
         var oldCts = Interlocked.Exchange(ref _albumsSortCts, newCts);
-        try { oldCts?.Cancel(); oldCts?.Dispose(); } catch (ObjectDisposedException) { }
+        oldCts?.Cancel();
+        oldCts?.Dispose();
         try
         {
             var range = BuildTimeRange();
@@ -743,7 +741,8 @@ public partial class InsightsViewModel : ObservableObject
         var newCts = new CancellationTokenSource();
         var ct = newCts.Token;
         var oldCts = Interlocked.Exchange(ref _genresSortCts, newCts);
-        try { oldCts?.Cancel(); oldCts?.Dispose(); } catch (ObjectDisposedException) { }
+        oldCts?.Cancel();
+        oldCts?.Dispose();
         try
         {
             var range = BuildTimeRange();

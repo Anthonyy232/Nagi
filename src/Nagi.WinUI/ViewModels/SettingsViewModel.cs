@@ -751,7 +751,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             if (authData is { Token: not null, AuthUrl: not null })
             {
                 await _settingsService.SaveLastFmAuthTokenAsync(authData.Value.Token);
-                if (!IsLastFmAuthCurrent(version)) return;
                 if (await Launcher.LaunchUriAsync(new Uri(authData.Value.AuthUrl))) return;
             }
         }
@@ -774,17 +773,15 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         try
         {
             var authToken = await _settingsService.GetLastFmAuthTokenAsync();
-            if (!IsLastFmAuthCurrent(version) || string.IsNullOrEmpty(authToken)) return;
+            if (string.IsNullOrEmpty(authToken)) return;
 
             var sessionData = await _lastFmAuthService.GetSessionAsync(authToken);
             if (!IsLastFmAuthCurrent(version)) return;
             if (sessionData is { Username: not null, SessionKey: not null })
             {
                 await _settingsService.SaveLastFmCredentialsAsync(sessionData.Value.Username, sessionData.Value.SessionKey);
-                if (!IsLastFmAuthCurrent(version)) return;
                 await Task.WhenAll(_settingsService.SetLastFmScrobblingEnabledAsync(true),
                     _settingsService.SetLastFmNowPlayingEnabledAsync(true));
-                if (!IsLastFmAuthCurrent(version)) return;
 
                 ApplyWithoutSaving(() =>
                 {
