@@ -6,12 +6,10 @@ using NagiAppFunctions;
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication(builder =>
     {
-        // Register API key authentication middleware
         builder.UseMiddleware<ApiKeyMiddleware>();
     })
     .ConfigureServices(services =>
     {
-        // Register Application Insights for telemetry
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
     })
