@@ -108,13 +108,20 @@ public class TrayPopupService : ITrayPopupService, IDisposable
     {
         _logger.LogDebug("Showing tray popup.");
         _isAnimating = true;
-        _popupWindow!.ViewModel.ShowPlayerViewCommand.Execute(null);
+        var popup = _popupWindow!;
+        popup.ViewModel.ShowPlayerViewCommand.Execute(null);
 
-        var windowHandle = WindowNative.GetWindowHandle(_popupWindow!);
+        var windowHandle = WindowNative.GetWindowHandle(popup);
         var scale = _win32.GetDpiForWindow(windowHandle) / BASE_DPI;
 
-        var finalWidth = (int)(POPUP_WIDTH_DIPS * scale);
-        var finalHeight = (int)(_popupWindow!.GetContentDesiredHeight(POPUP_WIDTH_DIPS) * scale);
+        var contentHeight = await popup.ShowAndMeasureAsync(POPUP_WIDTH_DIPS);
+        if (_popupWindow != popup) return;
+
+        popup.AppWindow.ResizeClient(new SizeInt32(
+            (int)Math.Ceiling(POPUP_WIDTH_DIPS * scale),
+            (int)Math.Ceiling(contentHeight * scale)));
+        var finalWidth = popup.AppWindow.Size.Width;
+        var finalHeight = popup.AppWindow.Size.Height;
 
         var cursorPosition = _win32.GetCursorPos();
         var workArea = _win32.GetWorkAreaForPoint(cursorPosition);
@@ -128,7 +135,7 @@ public class TrayPopupService : ITrayPopupService, IDisposable
         var finalRect = new RectInt32(finalX, finalY, finalWidth, finalHeight);
         _logger.LogDebug("Calculated popup position: {PopupRect}", finalRect);
 
-        await PopupAnimation.AnimateIn(_popupWindow, finalRect);
+        await PopupAnimation.AnimateIn(popup, finalRect);
         _isAnimating = false;
     }
 

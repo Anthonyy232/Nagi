@@ -59,11 +59,20 @@ public sealed partial class TrayPopup : Window
         SetLayeredWindowAttributes(hwnd, 0, alpha, LWA_ALPHA);
     }
 
-    /// <summary>
-    ///     Calculates the desired height of the popup's content for a given width.
-    /// </summary>
-    public double GetContentDesiredHeight(double targetWidthDips)
+    public async Task<double> ShowAndMeasureAsync(double targetWidthDips)
     {
+        SetWindowOpacity(0);
+        if (!OuterBorder.IsLoaded)
+        {
+            var loaded = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            void OnLoaded(object sender, RoutedEventArgs args) => loaded.SetResult();
+
+            OuterBorder.Loaded += OnLoaded;
+            AppWindow.Show();
+            await loaded.Task;
+            OuterBorder.Loaded -= OnLoaded;
+        }
+
         OuterBorder.Measure(new Size(targetWidthDips, double.PositiveInfinity));
         return OuterBorder.DesiredSize.Height;
     }
