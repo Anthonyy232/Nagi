@@ -640,6 +640,9 @@ public partial class App : Application
                 var saveStateTask = SaveApplicationStateAsync(Services);
 
                 await Task.WhenAll(presenceTask, saveStateTask);
+
+                // Finalize listen history before disposing the database service provider.
+                await Services.GetRequiredService<IMusicPlaybackService>().DisposeAsync();
             }
         }
         catch (Exception ex)
