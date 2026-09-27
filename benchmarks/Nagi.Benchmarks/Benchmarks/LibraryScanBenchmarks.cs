@@ -10,7 +10,6 @@ using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
 using NSubstitute;
-using System.IO;
 using Microsoft.Data.Sqlite;
 
 namespace Nagi.Benchmarks.Benchmarks;
@@ -28,14 +27,14 @@ public class LibraryScanBenchmarks
     [GlobalSetup]
     public async Task Setup()
     {
-        _testPath = Path.Combine(Path.GetTempPath(), "NagiBenchmarks", Guid.NewGuid().ToString());
+        _testPath = Directory.CreateTempSubdirectory("NagiBenchmarks-").FullName;
         SyntheticAudioGenerator.GenerateLibrary(_testPath, SongCount);
 
         var services = new ServiceCollection();
 
         var dbPath = Path.Combine(_testPath, "test.db");
         services.AddDbContextFactory<MusicDbContext>(options =>
-            options.UseSqlite($"Data Source={dbPath}"));
+            options.UseSqlite(new SqliteConnectionStringBuilder { DataSource = dbPath, Pooling = false }.ToString()));
 
         services.AddSingleton<IFileSystemService, TestFileSystemService>();
         services.AddSingleton<IPathConfiguration>(sp => {
@@ -65,8 +64,7 @@ public class LibraryScanBenchmarks
 
         _serviceProvider = services.BuildServiceProvider();
 
-        using var scope = _serviceProvider.CreateScope();
-        var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<MusicDbContext>>();
+        var factory = _serviceProvider.GetRequiredService<IDbContextFactory<MusicDbContext>>();
         using var context = factory.CreateDbContext();
         context.Database.EnsureCreated();
 
@@ -79,35 +77,14 @@ public class LibraryScanBenchmarks
     public void Cleanup()
     {
         _libraryService?.Dispose();
-        if (_serviceProvider is IDisposable disposable)
-        {
-            disposable.Dispose();
-        }
-
-        SqliteConnection.ClearAllPools();
-
-        if (Directory.Exists(_testPath))
-        {
-            try
-            {
-                Directory.Delete(_testPath, true);
-            }
-            catch (IOException)
-            {
-                Thread.Sleep(100);
-                if (Directory.Exists(_testPath))
-                {
-                    try { Directory.Delete(_testPath, true); } catch { }
-                }
-            }
-        }
+        _serviceProvider?.Dispose();
+        if (Directory.Exists(_testPath)) Directory.Delete(_testPath, true);
     }
 
     [IterationSetup(Target = nameof(InitialScan))]
     public void ResetLibrary()
     {
-        using var scope = _serviceProvider.CreateScope();
-        var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<MusicDbContext>>();
+        var factory = _serviceProvider.GetRequiredService<IDbContextFactory<MusicDbContext>>();
         using var context = factory.CreateDbContext();
         context.Songs.ExecuteDelete();
         context.Albums.ExecuteDelete();
@@ -129,10 +106,7 @@ public class LibraryScanBenchmarks
     public Task InitialScan() => _libraryService.ScanFolderForMusicAsync(_testPath);
 
     [Benchmark]
-    public async Task RescanNoChanges()
-    {
-        await _libraryService.ScanFolderForMusicAsync(_testPath);
-    }
+    public Task RescanNoChanges() => _libraryService.ScanFolderForMusicAsync(_testPath);
 
     private class TestFileSystemService : IFileSystemService
     {
@@ -163,7 +137,7 @@ public class LibraryScanBenchmarks
             var attributes = File.GetAttributes(path);
             return (attributes & (FileAttributes.Hidden | FileAttributes.System)) != 0;
         }
-        public string NormalizePath(string path) => Nagi.Core.Helpers.PathCanonicalizer.Normalize(path ?? string.Empty);
+        public string NormalizePath(string path) => PathCanonicalizer.Normalize(path);
         public bool IsNetworkPath(string path) => false;
     }
 }
