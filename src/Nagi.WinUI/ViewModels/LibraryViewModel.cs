@@ -29,6 +29,22 @@ public partial class LibraryViewModel : SongListViewModelBase
         ILogger<LibraryViewModel> logger)
         : base(libraryService, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
+        _settingsService.IgnoreLeadingArticlesOnSortEnabledChanged += OnIgnoreLeadingArticlesOnSortChanged;
+    }
+
+    private void OnIgnoreLeadingArticlesOnSortChanged(bool value)
+    {
+        _dispatcherService.TryEnqueue(() =>
+        {
+            CurrentPage = 1;
+            _ = RefreshOrSortSongsAsync();
+        });
+    }
+
+    public override void Dispose()
+    {
+        _settingsService.IgnoreLeadingArticlesOnSortEnabledChanged -= OnIgnoreLeadingArticlesOnSortChanged;
+        base.Dispose();
     }
 
     protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,

@@ -13,6 +13,47 @@ namespace Nagi.WinUI.Tests;
 
 public class LibraryViewModelTests
 {
+    [Fact]
+    public async Task ArticleSortSetting_RefreshesDisplayedSongsAndPlaybackOrder()
+    {
+        var library = Substitute.For<ILibraryService>();
+        var settings = Substitute.For<IUISettingsService>();
+        var playback = Substitute.For<IMusicPlaybackService>();
+        settings.GetSongsPerPageAsync().Returns(50);
+        var apple = new Song { Id = Guid.NewGuid(), Title = "Apple" };
+        var moon = new Song { Id = Guid.NewGuid(), Title = "A Moon" };
+        Song[] orderedSongs = [apple, moon];
+        library.GetAllSongsPagedAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<SongSortOrder>(),
+            Arg.Any<CancellationToken>()).Returns(_ => new PagedResult<Song>
+            {
+                PageNumber = 1, PageSize = 50, TotalCount = 2, Items = orderedSongs
+            });
+        library.GetAllSongIdsAsync(Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
+            .Returns(_ => orderedSongs.Select(song => song.Id).ToList());
+        using var viewModel = new LibraryViewModel(library, Substitute.For<IPlaylistService>(), playback,
+            Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), settings,
+            Substitute.For<IUIService>(), NullLogger<LibraryViewModel>.Instance);
+        await viewModel.RefreshOrSortSongsAsync();
+        viewModel.Songs.Select(song => song.Title).Should().Equal("Apple", "A Moon");
+        await viewModel.PlayAllSongsCommand.ExecuteAsync(null);
+        playback.ClearReceivedCalls();
+
+        var refreshed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        viewModel.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(viewModel.IsLoading) && !viewModel.IsLoading)
+                refreshed.TrySetResult();
+        };
+        orderedSongs = [moon, apple];
+        settings.IgnoreLeadingArticlesOnSortEnabledChanged += Raise.Event<Action<bool>>(false);
+        await refreshed.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+        viewModel.Songs.Select(song => song.Title).Should().Equal("A Moon", "Apple");
+        await viewModel.PlayAllSongsCommand.ExecuteAsync(null);
+        await playback.Received().PlayAsync(Arg.Is<IEnumerable<Guid>>(ids => ids.SequenceEqual(new[] { moon.Id, apple.Id })),
+            0, null, Arg.Any<PlaybackContext>());
+    }
+
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
