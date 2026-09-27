@@ -139,7 +139,6 @@ public sealed class WindowService : IWindowService, IDisposable
         var windowHandle = WinRT.Interop.WindowNative.GetWindowHandle(_window);
         var foregroundHandle = _win32InteropService.GetForegroundWindow();
 
-        // If the window is already foreground and visible, we don't need to do the full activation dance
         if (windowHandle == foregroundHandle && IsVisible && !IsMinimized && !IsMiniPlayerActive)
         {
             _logger.LogDebug("Window is already foreground and active, skipping redundant activation.");
@@ -167,9 +166,6 @@ public sealed class WindowService : IWindowService, IDisposable
         _lastEfficiencyMode = isEnabled;
     }
 
-    /// <summary>
-    ///     Creates and displays the mini-player window.
-    /// </summary>
     public void ShowMiniPlayer()
     {
         if (!_isMiniPlayerEnabled || _miniPlayerWindow is not null) return;
@@ -187,21 +183,16 @@ public sealed class WindowService : IWindowService, IDisposable
                 _miniPlayerWindow.Closed += OnMiniPlayerClosed;
                 _miniPlayerWindow.Activate();
 
-                // Because the IsMiniPlayerActive state has changed, notify subscribers.
                 UIStateChanged?.Invoke();
             }
             catch (Exception ex)
             {
                 _logger.LogCritical(ex, "Failed to show Mini Player.");
-                // Ensure we clean up if the window failed to initialize.
                 _miniPlayerWindow = null;
             }
         });
     }
 
-    /// <summary>
-    ///     Responds to live changes in the "Minimize to Mini-Player" application setting.
-    /// </summary>
     private void OnMinimizeToMiniPlayerSettingChanged(bool isEnabled)
     {
         _isMiniPlayerEnabled = isEnabled;
@@ -213,9 +204,6 @@ public sealed class WindowService : IWindowService, IDisposable
         Closing?.Invoke(args);
     }
 
-    /// <summary>
-    ///     Central handler for all AppWindow state changes, responsible for invoking high-level events.
-    /// </summary>
     private void OnAppWindowChanged(AppWindow sender, AppWindowChangedEventArgs args)
     {
         var didPresenterChange = args.DidPresenterChange;
@@ -240,14 +228,9 @@ public sealed class WindowService : IWindowService, IDisposable
                     break;
             }
 
-        // A change in either visibility or presenter state constitutes a UI state change
-        // that external coordinators may need to react to.
         if (args.DidVisibilityChange || didPresenterChange) UIStateChanged?.Invoke();
     }
 
-    /// <summary>
-    ///     Programmatically closes the mini-player window.
-    /// </summary>
     private void HideMiniPlayer()
     {
         _dispatcherService.TryEnqueue(() =>
@@ -274,15 +257,11 @@ public sealed class WindowService : IWindowService, IDisposable
         });
     }
 
-    /// <summary>
-    ///     Handles the Closed event for the mini-player, cleaning up resources and managing state transitions.
-    /// </summary>
     private void OnMiniPlayerClosed(object? sender, WindowEventArgs args)
     {
         if (sender is MiniPlayerWindow window) window.Closed -= OnMiniPlayerClosed;
         _miniPlayerWindow = null;
 
-        // If the user manually closed the mini-player, show the main application window
         if (!_isClosingMiniPlayerProgrammatically) ShowAndActivate();
 
         UIStateChanged?.Invoke();

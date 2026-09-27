@@ -25,7 +25,6 @@ public static class LanguageBootstrapper
             {
                 ApplicationLanguages.PrimaryLanguageOverride = language;
 
-                // Set .NET culture
                 var culture = new CultureInfo(language);
                 CultureInfo.CurrentUICulture = culture;
                 CultureInfo.CurrentCulture = culture;

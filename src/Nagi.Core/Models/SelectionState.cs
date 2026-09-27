@@ -18,14 +18,8 @@ public class SelectionState
     /// </summary>
     public bool IsSelectAllMode { get; private set; }
 
-    /// <summary>
-    ///     Checks if a specific ID is logically selected.
-    /// </summary>
     public bool IsSelected(Guid id) => IsSelectAllMode ? !_exceptions.Contains(id) : _exceptions.Contains(id);
 
-    /// <summary>
-    ///     Explicitly selects a specific ID.
-    /// </summary>
     public void Select(Guid id)
     {
         if (IsSelectAllMode)
@@ -34,9 +28,6 @@ public class SelectionState
             _exceptions.Add(id);
     }
 
-    /// <summary>
-    ///     Explicitly deselects a specific ID.
-    /// </summary>
     public void Deselect(Guid id)
     {
         if (IsSelectAllMode)
@@ -45,27 +36,18 @@ public class SelectionState
             _exceptions.Remove(id);
     }
 
-    /// <summary>
-    ///     Activates "Select All" mode and clears any exceptions.
-    /// </summary>
     public void SelectAll()
     {
         IsSelectAllMode = true;
         _exceptions.Clear();
     }
 
-    /// <summary>
-    ///     Deactivates "Select All" mode and clears all selections.
-    /// </summary>
     public void DeselectAll()
     {
         IsSelectAllMode = false;
         _exceptions.Clear();
     }
 
-    /// <summary>
-    ///     Calculates the total number of selected items based on the total items in the view.
-    /// </summary>
     public int GetSelectedCount(int totalItems) =>
         IsSelectAllMode ? Math.Max(0, totalItems - _exceptions.Count) : _exceptions.Count;
 
@@ -76,9 +58,6 @@ public class SelectionState
         return snapshot;
     }
 
-    /// <summary>
-    ///     Filters a master list of IDs using the current selection.
-    /// </summary>
     public IEnumerable<Guid> GetSelectedIds(IEnumerable<Guid> fullIdList)
     {
         return IsSelectAllMode

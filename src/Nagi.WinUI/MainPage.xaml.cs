@@ -102,7 +102,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private readonly IDispatcherService _dispatcherService;
     private readonly ILogger<MainPage> _logger;
 
-    // Maps navigation item tags to their corresponding page types.
     private readonly Dictionary<string, Type> _pages = new()
     {
         { "Library", typeof(LibraryPage) },
@@ -159,7 +158,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         return AppTitleBar;
     }
 
-    // Handles navigation logic when a NavigationView item is invoked or selected.
     private void HandleNavigation(bool isSettings, object? selectedItem, NavigationTransitionInfo transitionInfo)
     {
         if (isSettings)
@@ -174,7 +172,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             ContentFrame.CurrentSourcePageType != pageType) ContentFrame.Navigate(pageType, null, transitionInfo);
     }
 
-    // Navigates back if possible.
     private void TryGoBack()
     {
         try
@@ -296,14 +293,12 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         }
     }
 
-    // Applies a dynamic theme based on the currently playing track's album art.
     private Task ApplyDynamicThemeForCurrentTrackAsync()
     {
         var song = ViewModel.CurrentPlayingTrack;
         return _themeService.ApplyDynamicThemeFromSwatchesAsync(song?.LightSwatchId, song?.DarkSwatchId);
     }
 
-    // Updates the visual state of the floating player (expanded or collapsed).
     private void UpdatePlayerVisualState(bool useTransitions = true)
     {
         var isPlaying = ViewModel.CurrentPlayingTrack != null && ViewModel.IsPlaying;
@@ -326,7 +321,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         }
         else
         {
-            // Instant state change without animation
             var targetOpacity = shouldBeExpanded ? 1f : 0f;
             CompositionAnimationHelper.SetOpacityImmediate(SeekBarGrid, targetOpacity);
             CompositionAnimationHelper.SetOpacityImmediate(ArtistNameHyperlink, targetOpacity);
@@ -364,7 +358,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         }
     }
 
-    // Sets up event handlers and initial state when the page is loaded.
     private async void OnMainPageLoaded(object sender, RoutedEventArgs e)
     {
         _isUnloaded = false;
@@ -415,7 +408,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         }
     }
 
-    // Cleans up event handlers when the page is unloaded.
     private void OnMainPageUnloaded(object sender, RoutedEventArgs e)
     {
         _queuePlayingBinder?.Dispose();
@@ -467,7 +459,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         _ = UpdateUiAsync(SetPlatformSpecificBrushAsync);
     }
 
-    // Responds to changes in the player animation setting.
     private void OnPlayerAnimationSettingChanged(bool isEnabled)
     {
         _dispatcherService.TryEnqueue(() =>
@@ -483,7 +474,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         _ = UpdateUiAsync(PopulateNavigationAsync);
     }
 
-    // Reapplies the dynamic theme when the system or app theme changes.
     private void OnActualThemeChanged(FrameworkElement sender, object args)
     {
         if (ActualTheme == _lastKnownTheme) return;
@@ -491,7 +481,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         _ = UpdateUiAsync(_themeService.ReapplyCurrentDynamicThemeAsync);
     }
 
-    // Responds to property changes in the PlayerViewModel.
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName is not (nameof(PlayerViewModel.CurrentPlayingTrack) or
@@ -533,7 +522,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         TryGoBack();
     }
 
-    // Updates UI elements like the back button after a navigation event.
     private void OnContentFrameNavigated(object sender, NavigationEventArgs e)
     {
         try
@@ -617,9 +605,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         }
     }
 
-    /// <summary>
-    ///     Saves the navigation pane state if the "remember pane state" setting is enabled.
-    /// </summary>
     private async Task SavePaneStateAsync(bool isOpen)
     {
         try
@@ -643,9 +628,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         e.Handled = true;
     }
 
-    /// <summary>
-    ///     Restores the navigation pane state if the "remember pane state" setting is enabled.
-    /// </summary>
     private async Task RestorePaneStateAsync()
     {
         try

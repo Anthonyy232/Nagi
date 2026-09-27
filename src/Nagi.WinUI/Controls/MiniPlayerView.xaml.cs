@@ -53,7 +53,6 @@ public sealed partial class MiniPlayerView : UserControl
     {
         RestoreButton.Click += OnRestoreButtonClick;
 
-        // Pointer events for hover effects.
         HoverDetector.PointerEntered += OnPointerEntered;
         HoverDetector.PointerExited += OnPointerExited;
         HoverDetector.PointerCanceled += OnPointerExited;

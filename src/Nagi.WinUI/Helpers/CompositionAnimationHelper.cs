@@ -12,9 +12,6 @@ namespace Nagi.WinUI.Helpers;
 public static class CompositionAnimationHelper
 {
 
-    /// <summary>
-    ///     Animates an element's opacity using GPU-accelerated Composition animations.
-    /// </summary>
     public static void AnimateOpacity(UIElement element, float to, int durationMs, int delayMs = 0)
     {
         var visual = ElementCompositionPreview.GetElementVisual(element);
@@ -32,9 +29,6 @@ public static class CompositionAnimationHelper
         visual.StartAnimation("Opacity", animation);
     }
 
-    /// <summary>
-    ///     Sets an element's opacity immediately without animation.
-    /// </summary>
     public static void SetOpacityImmediate(UIElement element, float opacity)
     {
         var visual = ElementCompositionPreview.GetElementVisual(element);
@@ -42,9 +36,6 @@ public static class CompositionAnimationHelper
         visual.Opacity = opacity;
     }
 
-    /// <summary>
-    ///     Animates an element's scale using GPU-accelerated Composition animations.
-    /// </summary>
     public static void AnimateScale(UIElement element, float to, int durationMs)
     {
         var visual = ElementCompositionPreview.GetElementVisual(element);

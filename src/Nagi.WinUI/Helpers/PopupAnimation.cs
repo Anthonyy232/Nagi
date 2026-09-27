@@ -50,7 +50,6 @@ internal static class PopupAnimation
             _animationCts = new CancellationTokenSource();
             var token = _animationCts.Token;
 
-            // Calculate the starting geometry, scaled down but centered on the final position.
             var startWidth = (int)(finalRect.Width * StartScale);
             var startHeight = (int)(finalRect.Height * StartScale);
 
@@ -75,7 +74,6 @@ internal static class PopupAnimation
                 var progress = Math.Clamp((float)stopwatch.Elapsed.TotalMilliseconds / ShowDurationMs, 0f, 1f);
                 var easedProgress = EaseOutCubic(progress);
 
-                // Interpolate all geometric properties from start to final using the eased progress.
                 var newWidth = (int)float.Lerp(startRect.Width, finalRect.Width, easedProgress);
                 var newHeight = (int)float.Lerp(startRect.Height, finalRect.Height, easedProgress);
                 var newX = (int)float.Lerp(startRect.X, finalRect.X, easedProgress);
@@ -88,7 +86,6 @@ internal static class PopupAnimation
                 await YieldToRendering(token);
             }
 
-            // If not cancelled, ensure the final state is set perfectly.
             if (!token.IsCancellationRequested)
             {
                 window.AppWindow.MoveAndResize(finalRect);
@@ -97,12 +94,10 @@ internal static class PopupAnimation
         }
         catch (OperationCanceledException)
         {
-            // Expected during app shutdown - silently exit the animation.
             Logger.LogDebug("AnimateIn cancelled during shutdown.");
         }
         catch (Exception ex)
         {
-            // This can happen if the window is closed during the animation.
             Logger.LogWarning(ex,
                 "AnimateIn failed gracefully. This can happen if the window is closed during animation.");
         }
@@ -125,7 +120,6 @@ internal static class PopupAnimation
             var startRect = new RectInt32(window.AppWindow.Position.X, window.AppWindow.Position.Y,
                 window.AppWindow.Size.Width, window.AppWindow.Size.Height);
 
-            // The final state is scaled down and centered relative to the start position.
             var finalWidth = (int)(startRect.Width * StartScale);
             var finalHeight = (int)(startRect.Height * StartScale);
             var finalX = startRect.X + (startRect.Width - finalWidth) / 2;
@@ -144,7 +138,6 @@ internal static class PopupAnimation
                 var progress = Math.Clamp((float)stopwatch.Elapsed.TotalMilliseconds / HideDurationMs, 0f, 1f);
                 var easedProgress = EaseInCubic(progress);
 
-                // Interpolate all geometric properties from start to final.
                 var newWidth = (int)float.Lerp(startRect.Width, finalRect.Width, easedProgress);
                 var newHeight = (int)float.Lerp(startRect.Height, finalRect.Height, easedProgress);
                 var newX = (int)float.Lerp(startRect.X, finalRect.X, easedProgress);
@@ -157,7 +150,6 @@ internal static class PopupAnimation
                 await YieldToRendering(token);
             }
 
-            // If not cancelled, hide and reset the window for the next time it's shown.
             if (!token.IsCancellationRequested)
             {
                 window.AppWindow.Hide();
@@ -166,15 +158,12 @@ internal static class PopupAnimation
         }
         catch (OperationCanceledException)
         {
-            // Expected during app shutdown - silently exit the animation.
             Logger.LogDebug("AnimateOut cancelled during shutdown.");
         }
         catch (Exception ex)
         {
-            // This can happen if the window is closed during the animation.
             Logger.LogWarning(ex,
                 "AnimateOut failed gracefully. This can happen if the window is closed during animation.");
-            // Ensure the window is hidden if the animation fails mid-way.
             if (window?.AppWindow is not null) window.AppWindow.Hide();
         }
     }

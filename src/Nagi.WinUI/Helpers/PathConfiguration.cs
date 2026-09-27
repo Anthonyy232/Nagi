@@ -14,7 +14,6 @@ public class PathConfiguration : IPathConfiguration
     {
         try
         {
-            // Windows App Runtime local folder is the correct way to handle file storage in packaged apps.
             AppDataRoot = ApplicationData.Current.LocalFolder.Path;
         }
         catch (Exception)
@@ -34,7 +33,6 @@ public class PathConfiguration : IPathConfiguration
         DatabasePath = Path.Combine(AppDataRoot, "nagi.db");
         LogsDirectory = Path.Combine(AppDataRoot, "Logs");
 
-        // Ensure all necessary directories exist on startup.
         Directory.CreateDirectory(AppDataRoot);
         Directory.CreateDirectory(AlbumArtCachePath);
         Directory.CreateDirectory(ArtistImageCachePath);
