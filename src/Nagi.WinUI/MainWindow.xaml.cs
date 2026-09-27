@@ -32,6 +32,8 @@ public sealed partial class MainWindow : Window
 
     // Core windowing and service references.
     private AppWindow? _appWindow;
+    private SizeInt32 _lastWindowSize;
+    private PointInt32 _lastWindowPosition;
 
     // State flags to ensure one-time initialization.
     private bool _isBackdropInitialized;
@@ -60,6 +62,10 @@ public sealed partial class MainWindow : Window
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _logger = App.Services!.GetRequiredService<ILogger<MainWindow>>();
         _taskbarService = App.Services!.GetRequiredService<ITaskbarService>();
+        _appWindow = AppWindow;
+        _lastWindowSize = _appWindow.Size;
+        _lastWindowPosition = _appWindow.Position;
+        _appWindow.Changed += OnWindowGeometryChanged;
         Activated += OnWindowActivated;
         _settingsService.BackdropMaterialChanged += OnBackdropMaterialChanged;
         _settingsService.TransparencyEffectsSettingChanged += OnTransparencyEffectsChanged;
@@ -71,6 +77,7 @@ public sealed partial class MainWindow : Window
         if (Interlocked.Exchange(ref _isCleanedUp, 1) != 0) return;
 
         Activated -= OnWindowActivated;
+        if (_appWindow != null) _appWindow.Changed -= OnWindowGeometryChanged;
 
         if (_rootElement != null) _rootElement.ActualThemeChanged -= OnActualThemeChanged;
         if (_settingsService != null)
@@ -174,22 +181,18 @@ public sealed partial class MainWindow : Window
     {
         if (_settingsService == null) return;
 
-        // Ensure _appWindow is available. It might not be set if the window was never
-        // activated (e.g., when starting minimized or hidden to tray).
-        _appWindow ??= AppWindow;
-
         try
         {
             if (await _settingsService.GetRememberWindowSizeEnabledAsync())
             {
-                var size = _appWindow.Size;
+                var size = _lastWindowSize;
                 await _settingsService.SetLastWindowSizeAsync(size.Width, size.Height);
                 _logger?.LogDebug("Saving window size: {Width}x{Height}", size.Width, size.Height);
             }
 
             if (await _settingsService.GetRememberWindowPositionEnabledAsync())
             {
-                var position = _appWindow.Position;
+                var position = _lastWindowPosition;
                 await _settingsService.SetLastWindowPositionAsync(position.X, position.Y);
                 _logger?.LogDebug("Saving window position: ({X}, {Y})", position.X, position.Y);
             }
@@ -199,6 +202,14 @@ public sealed partial class MainWindow : Window
         {
             _logger?.LogWarning(ex, "Failed to save window state.");
         }
+    }
+
+    private void OnWindowGeometryChanged(AppWindow sender, AppWindowChangedEventArgs args)
+    {
+        if (sender.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Minimized }) return;
+
+        if (args.DidSizeChange) _lastWindowSize = sender.Size;
+        if (args.DidPositionChange) _lastWindowPosition = sender.Position;
     }
 
     private void OnBackdropMaterialChanged(BackdropMaterial material)

@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Nagi.WinUI.Services.Abstractions;
 using WinRT.Interop;
@@ -13,7 +14,6 @@ namespace Nagi.WinUI.Helpers;
 /// </summary>
 internal static class WindowActivator
 {
-    private const int SW_SHOWMINIMIZED = 2;
     private const int SW_RESTORE = 9;
 
     private static ILogger? _logger;
@@ -85,20 +85,11 @@ internal static class WindowActivator
         SetForegroundWindow(windowHandle);
     }
 
-    /// <summary>
-    ///     Shows a window in a minimized state on the taskbar.
-    /// </summary>
-    /// <param name="window">The window to minimize.</param>
     public static void ShowMinimized(Window window)
     {
-        var windowHandle = WindowNative.GetWindowHandle(window);
-        if (windowHandle == IntPtr.Zero)
-        {
-            Logger.LogWarning("Could not get window handle for ShowMinimized.");
-            return;
-        }
-
-        Logger.LogDebug("Showing window with handle {WindowHandle} as minimized.", windowHandle);
-        ShowWindow(windowHandle, SW_SHOWMINIMIZED);
+        Logger.LogDebug("Showing window as minimized.");
+        window.AppWindow.Show(false);
+        ((FrameworkElement)window.Content).UpdateLayout();
+        ((OverlappedPresenter)window.AppWindow.Presenter).Minimize(false);
     }
 }
