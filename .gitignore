@@ -16,7 +16,7 @@ _ReSharper*/
 [Rr]eleases/
 .roslyn/
 [Bb]undle[Aa]rtifacts/
-[BenchmarkDotNet.Artifacts]
+BenchmarkDotNet.Artifacts/
 
 # Test Results & Logs
 [Tt]est[Rr]esult*/

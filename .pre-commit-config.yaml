@@ -16,4 +16,5 @@ repos:
         name: dotnet format
         language: system
         entry: dotnet format --include
+        types: [c#]
         pass_filenames: true
