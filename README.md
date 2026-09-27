@@ -10,7 +10,7 @@
     <a href="https://github.com/Anthonyy232/Nagi/releases"><img src="https://img.shields.io/github/downloads/Anthonyy232/Nagi/total?style=flat-square&color=52c65f" alt="Total Downloads"></a>
     <a href="https://github.com/Anthonyy232/Nagi/releases/latest"><img src="https://img.shields.io/github/v/release/Anthonyy232/Nagi?style=flat-square" alt="Latest Release"></a>
     <a href="https://github.com/Anthonyy232/Nagi/blob/master/LICENSE"><img src="https://img.shields.io/github/license/Anthonyy232/Nagi?style=flat-square" alt="License"></a>
-    <a href="https://github.com/Anthonyy232/Nagi/actions/workflows/build.yml"><img src="https://github.com/Anthonyy232/Nagi/actions/workflows/build.yml/badge.svg" alt="Nagi CI/CD with Velopack"></a>
+    <a href="https://github.com/Anthonyy232/Nagi/actions/workflows/build.yml"><img src="https://github.com/Anthonyy232/Nagi/actions/workflows/build.yml/badge.svg" alt="Nagi CI/CD"></a>
     <img src="https://img.shields.io/badge/Platform-Windows-0078D6?style=flat-square&logo=windows" alt="Platform">
     <img src="https://img.shields.io/badge/WinUI_3-59278F?style=flat-square&logo=windows&logoColor=white" alt="WinUI 3">
 </div>
@@ -39,7 +39,7 @@
 - **Queue Management**: Drop files or folders onto the bottom player to add them to the queue, without importing them into your library. Use Up Next to view the queue, with full shuffle and repeat controls.
 - **10-Band Equalizer**: Fine-tune your sound with a fully customizable 10-band equalizer and pregain control.
 - **Volume Normalization**: ReplayGain support ensures consistent volume levels across your entire library.
-- **Last.fm & Discord Integration**: Scrobble your tracks to Last.fm, fetch artist metadata, and show off your listening activity with Discord Rich Presence.
+- **Last.fm, ListenBrainz & Discord Integration**: Scrobble your tracks to Last.fm or ListenBrainz, fetch artist metadata, and show your listening activity with Discord Rich Presence.
 - **System Tray & Media Controls**: Control playback from the system tray popup or use Windows media keys and transport controls.
 - **Wide Format Support**: Play virtually any audio format including MP3, FLAC, AAC, OGG, WAV, AIFF, APE, DSD, M4A, WMA, WavPack, and more.
 
@@ -101,9 +101,9 @@ This project is built using C# and the Windows App SDK.
 
 ### Prerequisites
 
-- Visual Studio 2022 or later
+- Visual Studio 2026 (18.0) or later, as required for [targeting .NET 10](https://learn.microsoft.com/en-us/dotnet/core/porting/versioning-sdk-msbuild-vs)
 - The **".NET Desktop Development"** and **"Universal Windows Platform development"** workloads installed (includes Windows App SDK).
-- .NET 10 SDK
+- .NET 10 SDK 10.0.300 or later, matching `global.json`
 
 ### Steps
 
@@ -129,6 +129,15 @@ This project is built using C# and the Windows App SDK.
    GitHub releases use the production SignPath signing workflow. Microsoft Store uploads use the Store publisher identity and remain unsigned locally.
 
 ### Development
+
+Run the core tests and the Windows view-model tests with:
+
+```powershell
+dotnet test --project tests/Nagi.Core.Tests/Nagi.Core.Tests.csproj -c Release
+dotnet test --project tests/Nagi.WinUI.Tests/Nagi.WinUI.Tests.csproj -c Release -p:Platform=x64
+```
+
+The Windows tests run against the app assembly without launching a XAML application. They cover paging, queue loading, cancellation, load recovery, and artwork URIs. The core audio analysis tests require `ffmpeg` on `PATH`. Both suites run on pull requests to `master`.
 
   To perform a database migration:
 
