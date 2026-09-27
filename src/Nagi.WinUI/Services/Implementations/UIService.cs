@@ -15,12 +15,8 @@ using WinRT.Interop;
 
 namespace Nagi.WinUI.Services.Implementations;
 
-/// <summary>
-///     An implementation of the IUIService that uses WinUI 3 controls.
-/// </summary>
 public class UIService : IUIService
 {
-    // Win32 MessageBox constants
     private const uint MB_OK = 0x00000000;
     private const uint MB_ICONERROR = 0x00000010;
 
@@ -216,13 +212,10 @@ public class UIService : IUIService
             DefaultButton = ContentDialogButton.Primary
         };
 
-        // Handle the primary button click to recheck without closing
         dialog.PrimaryButtonClick += async (sender, args) =>
         {
-            // Get a deferral to prevent the dialog from closing
             var deferral = args.GetDeferral();
 
-            // Update status to show we're checking
             statusBlock.Text = Resources.Strings.FFmpeg_Status_Checking;
             statusBlock.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Gray);
 
@@ -232,13 +225,11 @@ public class UIService : IUIService
 
                 if (isInstalled)
                 {
-                    // FFmpeg found - update status and allow dialog to close
                     statusBlock.Text = Resources.Strings.FFmpeg_Status_Detected;
                     statusBlock.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Green);
                 }
                 else
                 {
-                    // Still not found - prevent dialog from closing
                     args.Cancel = true;
                     statusBlock.Text = Resources.Strings.FFmpeg_Status_StillNotDetected;
                     statusBlock.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Orange);
@@ -246,7 +237,6 @@ public class UIService : IUIService
             }
             catch
             {
-                // On error, prevent closing and show error state
                 args.Cancel = true;
                 statusBlock.Text = Resources.Strings.FFmpeg_Status_Error;
                 statusBlock.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Red);
@@ -262,7 +252,7 @@ public class UIService : IUIService
         return result == ContentDialogResult.Primary;
     }
 
-    private bool TryGetXamlRoot(out XamlRoot? xamlRoot)
+    private static bool TryGetXamlRoot(out XamlRoot? xamlRoot)
     {
         xamlRoot = App.RootWindow?.Content?.XamlRoot;
         return xamlRoot is not null;

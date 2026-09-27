@@ -1,12 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.Sqlite;
+using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 
 namespace Nagi.Core.Data;
 
-/// <summary>
-///     Represents the Entity Framework Core database context for the application's music library.
-/// </summary>
 public class MusicDbContext : DbContext
 {
     private static readonly Data.Interceptors.DenormalizationInterceptor _interceptor = new();
@@ -18,7 +16,7 @@ public class MusicDbContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
-        optionsBuilder.AddInterceptors(_interceptor, Interceptors.SqlitePragmaInterceptor.Instance);
+        optionsBuilder.AddInterceptors(_interceptor, Interceptors.SqliteConnectionInterceptor.Instance);
     }
 
     public DbSet<Song> Songs { get; set; } = null!;
@@ -34,6 +32,24 @@ public class MusicDbContext : DbContext
     public DbSet<SmartPlaylist> SmartPlaylists { get; set; } = null!;
     public DbSet<SmartPlaylistRule> SmartPlaylistRules { get; set; } = null!;
 
+    public Task BackfillSortKeysAsync(CancellationToken cancellationToken = default)
+    {
+        // Use the same Unicode normalization as new writes, without tracking the library in memory.
+        var connection = (SqliteConnection)Database.GetDbConnection();
+        connection.CreateFunction<string, string>("nagi_sort_key", SortKeyHelper.Normalize, isDeterministic: true);
+        return Database.ExecuteSqlRawAsync("""
+            UPDATE Artists SET SortName = nagi_sort_key(Name) WHERE SortName = '';
+            UPDATE Albums
+            SET SortTitle = nagi_sort_key(Title),
+                PrimaryArtistSortName = nagi_sort_key(PrimaryArtistName)
+            WHERE SortTitle = '' OR PrimaryArtistSortName = '';
+            UPDATE Songs
+            SET SortTitle = nagi_sort_key(Title),
+                PrimaryArtistSortName = nagi_sort_key(PrimaryArtistName)
+            WHERE SortTitle = '' OR PrimaryArtistSortName = '';
+            """, cancellationToken);
+    }
+
     /// <summary>
     ///     Configures the database model, including table relationships, indexes, and constraints.
     /// </summary>
@@ -41,7 +57,6 @@ public class MusicDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // Configure the Song entity.
         modelBuilder.Entity<Song>(entity =>
         {
             entity.Property(s => s.Title).UseCollation("NOCASE");
@@ -86,7 +101,6 @@ public class MusicDbContext : DbContext
                 .WithMany(g => g.Songs);
         });
 
-        // Configure the Album entity.
         modelBuilder.Entity<Album>(entity =>
         {
             entity.Property(a => a.Title).UseCollation("NOCASE");
@@ -100,7 +114,6 @@ public class MusicDbContext : DbContext
             entity.HasIndex(a => a.Year);
         });
 
-        // Configure the Artist entity.
         modelBuilder.Entity<Artist>(entity =>
         {
             entity.Property(a => a.Name).UseCollation("NOCASE");
@@ -117,14 +130,12 @@ public class MusicDbContext : DbContext
                 .HasDatabaseName("IX_Artists_MetadataLastCheckedUtc_NullOnly");
         });
 
-        // Configure the Genre entity.
         modelBuilder.Entity<Genre>(entity =>
         {
             entity.Property(g => g.Name).UseCollation("NOCASE");
             entity.HasIndex(g => g.Name).IsUnique();
         });
 
-        // Configure the ListenHistory entity.
         modelBuilder.Entity<ListenHistory>(entity =>
         {
             entity.HasIndex(lh => lh.SongId);
@@ -140,7 +151,6 @@ public class MusicDbContext : DbContext
             entity.HasIndex(lh => new { lh.ListenTimestampUtc, lh.SongId });
         });
 
-        // Configure the Folder entity.
         modelBuilder.Entity<Folder>(entity =>
         {
             entity.Property(f => f.Path).UseCollation("NOCASE");
@@ -154,14 +164,12 @@ public class MusicDbContext : DbContext
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        // Configure the Playlist entity.
         modelBuilder.Entity<Playlist>(entity =>
         {
             entity.Property(p => p.Name).UseCollation("NOCASE");
             entity.HasIndex(p => p.Name).IsUnique();
         });
 
-        // Configure the PlaylistSong join entity.
         modelBuilder.Entity<PlaylistSong>(entity =>
         {
             entity.HasKey(ps => new { ps.PlaylistId, ps.SongId });
@@ -179,14 +187,12 @@ public class MusicDbContext : DbContext
             entity.HasIndex(ps => new { ps.PlaylistId, ps.Order });
         });
 
-        // Configure the SmartPlaylist entity.
         modelBuilder.Entity<SmartPlaylist>(entity =>
         {
             entity.Property(sp => sp.Name).UseCollation("NOCASE");
             entity.HasIndex(sp => sp.Name).IsUnique();
         });
 
-        // Configure the SmartPlaylistRule entity.
         modelBuilder.Entity<SmartPlaylistRule>(entity =>
         {
             entity.HasOne(r => r.SmartPlaylist)
@@ -198,7 +204,6 @@ public class MusicDbContext : DbContext
             entity.HasIndex(r => new { r.SmartPlaylistId, r.Order });
         });
 
-        // Configure the SongArtist join entity for multi-artist support.
         modelBuilder.Entity<SongArtist>(entity =>
         {
             entity.HasKey(sa => new { sa.SongId, sa.ArtistId });
@@ -217,7 +222,6 @@ public class MusicDbContext : DbContext
             entity.HasIndex(sa => sa.ArtistId);
         });
 
-        // Configure the AlbumArtist join entity for multi-artist support.
         modelBuilder.Entity<AlbumArtist>(entity =>
         {
             entity.HasKey(aa => new { aa.AlbumId, aa.ArtistId });
@@ -237,32 +241,4 @@ public class MusicDbContext : DbContext
         });
     }
 
-    /// <summary>
-    ///     Deletes and recreates the entire database. This is a destructive operation
-    ///     intended for development, testing, or user-initiated library resets.
-    /// </summary>
-    /// <param name="logger">The logger to use for recording operation status.</param>
-    public void RecreateDatabase(ILogger logger)
-    {
-        try
-        {
-            Database.EnsureDeleted();
-        }
-        catch (Exception ex)
-        {
-            // Log a warning if deletion fails, as the database might be locked by another process.
-            logger.LogWarning(ex, "Failed to delete the database. It may be locked by another process.");
-        }
-
-        try
-        {
-            Database.EnsureCreated();
-        }
-        catch (Exception ex)
-        {
-            // This is a critical failure if the database cannot be created.
-            logger.LogCritical(ex, "Failed to create the new database after deletion.");
-            throw;
-        }
-    }
 }

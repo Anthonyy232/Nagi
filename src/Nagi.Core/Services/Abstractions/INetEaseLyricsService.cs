@@ -12,6 +12,7 @@ public interface INetEaseLyricsService
     /// <param name="trackName">The track name.</param>
     /// <param name="artistName">The artist name.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>LRC content if found, null otherwise.</returns>
+    /// <returns>LRC content if found; null when the lookup succeeds without a match.</returns>
+    /// <remarks>Provider failures and cancellation propagate to the caller so they remain retryable.</remarks>
     Task<string?> SearchLyricsAsync(string trackName, string? artistName, CancellationToken cancellationToken = default);
 }

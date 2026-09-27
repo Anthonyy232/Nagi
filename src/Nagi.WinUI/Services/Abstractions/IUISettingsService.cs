@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
@@ -14,67 +14,26 @@ namespace Nagi.WinUI.Services.Abstractions;
 /// </summary>
 public interface IUISettingsService : ISettingsService
 {
-    /// <summary>
-    ///     Occurs when the player animation setting is changed.
-    ///     The boolean parameter indicates whether the animation is enabled.
-    /// </summary>
     event Action<bool>? PlayerAnimationSettingChanged;
 
-    /// <summary>
-    ///     Occurs when the "Hide to Tray" setting is changed.
-    ///     The boolean parameter indicates whether hiding to tray is enabled.
-    /// </summary>
     event Action<bool>? HideToTraySettingChanged;
 
-    /// <summary>
-    ///     Occurs when the "Minimize to Miniplayer" setting is changed.
-    ///     The boolean parameter indicates whether minimizing to the miniplayer is enabled.
-    /// </summary>
     event Action<bool>? MinimizeToMiniPlayerSettingChanged;
 
-    /// <summary>
-    ///     Occurs when the "Show Queue Button" setting is changed.
-    ///     The boolean parameter indicates whether the button is visible.
-    /// </summary>
-    event Action<bool>? ShowQueueButtonSettingChanged;
-
-    /// <summary>
-    ///     Occurs when the "Show Cover Art in Tray Flyout" setting is changed.
-    ///     The boolean parameter indicates whether the cover art is visible.
-    /// </summary>
     event Action<bool>? ShowCoverArtInTrayFlyoutSettingChanged;
 
-    /// <summary>
-    ///     Occurs when the navigation view item settings have changed.
-    /// </summary>
     event Action? NavigationSettingsChanged;
 
-    /// <summary>
-    ///     Occurs when the player button settings have changed.
-    /// </summary>
     event Action? PlayerButtonSettingsChanged;
 
     event Action<QueueDisplaySettings>? QueueDisplaySettingsChanged;
 
-    /// <summary>
-    ///     Occurs when the system's transparency effects setting is changed.
-    ///     The boolean parameter indicates whether transparency effects are enabled.
-    /// </summary>
     event Action<bool>? TransparencyEffectsSettingChanged;
 
-    /// <summary>
-    ///     Occurs when the window backdrop material setting has changed.
-    /// </summary>
     event Action<BackdropMaterial>? BackdropMaterialChanged;
 
-    /// <summary>
-    ///     Occurs when the player design settings (material or tint intensity) have changed.
-    /// </summary>
     event Action? PlayerDesignSettingsChanged;
 
-    /// <summary>
-    ///     Occurs when the number of songs per page setting has changed.
-    /// </summary>
     event Action<int>? SongsPerPageChanged;
 
     /// <summary>
@@ -84,36 +43,16 @@ public interface IUISettingsService : ISettingsService
     /// <returns>True if transparency effects are enabled; otherwise, false.</returns>
     bool IsTransparencyEffectsEnabled();
 
-    /// <summary>
-    ///     Gets the current application theme (Light, Dark, or Default).
-    /// </summary>
-    /// <returns>The saved <see cref="ElementTheme" />.</returns>
     Task<ElementTheme> GetThemeAsync();
 
-    /// <summary>
-    ///     Sets the application theme.
-    /// </summary>
-    /// <param name="theme">The theme to apply and save.</param>
     Task SetThemeAsync(ElementTheme theme);
 
-    /// <summary>
-    ///     Gets the currently configured window backdrop material.
-    /// </summary>
     Task<BackdropMaterial> GetBackdropMaterialAsync();
 
-    /// <summary>
-    ///     Saves the selected window backdrop material.
-    /// </summary>
     Task SetBackdropMaterialAsync(BackdropMaterial material);
 
-    /// <summary>
-    ///     Gets the currently configured player background material.
-    /// </summary>
     Task<PlayerBackgroundMaterial> GetPlayerBackgroundMaterialAsync();
 
-    /// <summary>
-    ///     Saves the selected player background material.
-    /// </summary>
     Task SetPlayerBackgroundMaterialAsync(PlayerBackgroundMaterial material);
 
     /// <summary>
@@ -128,100 +67,32 @@ public interface IUISettingsService : ISettingsService
     /// <param name="intensity">A value between 0.0 and 1.0.</param>
     Task SetPlayerTintIntensityAsync(double intensity);
 
-    /// <summary>
-    ///     Gets whether dynamic theming (based on album art) is enabled.
-    /// </summary>
-    /// <returns>True if dynamic theming is enabled; otherwise, false.</returns>
     Task<bool> GetDynamicThemingAsync();
 
-    /// <summary>
-    ///     Sets the dynamic theming preference.
-    /// </summary>
-    /// <param name="isEnabled">The dynamic theming preference to save.</param>
     Task SetDynamicThemingAsync(bool isEnabled);
 
-    /// <summary>
-    ///     Gets whether player bar animations are enabled.
-    /// </summary>
-    /// <returns>True if player animations are enabled; otherwise, false.</returns>
     Task<bool> GetPlayerAnimationEnabledAsync();
 
-    /// <summary>
-    ///     Sets the player bar animation preference.
-    /// </summary>
-    /// <param name="isEnabled">The player animation preference to save.</param>
     Task SetPlayerAnimationEnabledAsync(bool isEnabled);
 
-    /// <summary>
-    ///     Gets whether the application should launch automatically on system startup.
-    /// </summary>
-    /// <returns>True if auto-launch is enabled; otherwise, false.</returns>
     Task<bool> GetAutoLaunchEnabledAsync();
 
-    /// <summary>
-    ///     Sets the auto-launch preference.
-    /// </summary>
-    /// <param name="isEnabled">The auto-launch preference to save.</param>
     Task SetAutoLaunchEnabledAsync(bool isEnabled);
 
-    /// <summary>
-    ///     Gets whether the application should start minimized.
-    /// </summary>
-    /// <returns>True if start minimized is enabled; otherwise, false.</returns>
     Task<bool> GetStartMinimizedEnabledAsync();
 
-    /// <summary>
-    ///     Sets the start minimized preference.
-    /// </summary>
-    /// <param name="isEnabled">The start minimized preference to save.</param>
     Task SetStartMinimizedEnabledAsync(bool isEnabled);
 
-    /// <summary>
-    ///     Gets whether the application should hide to the system tray when closed.
-    /// </summary>
-    /// <returns>True if hide to tray is enabled; otherwise, false.</returns>
     Task<bool> GetHideToTrayEnabledAsync();
 
-    /// <summary>
-    ///     Sets the hide to tray preference.
-    /// </summary>
-    /// <param name="isEnabled">The hide to tray preference to save.</param>
     Task SetHideToTrayEnabledAsync(bool isEnabled);
 
-    /// <summary>
-    ///     Gets whether the application should minimize to a floating miniplayer.
-    /// </summary>
-    /// <returns>True if minimizing to the miniplayer is enabled; otherwise, false.</returns>
     Task<bool> GetMinimizeToMiniPlayerEnabledAsync();
 
-    /// <summary>
-    ///     Sets the preference for minimizing to a floating miniplayer.
-    /// </summary>
-    /// <param name="isEnabled">The preference to save.</param>
     Task SetMinimizeToMiniPlayerEnabledAsync(bool isEnabled);
 
-    /// <summary>
-    ///     Gets whether the queue button should be shown on the player controls.
-    /// </summary>
-    /// <returns>True if showing the queue button is enabled; otherwise, false.</returns>
-    Task<bool> GetShowQueueButtonEnabledAsync();
-
-    /// <summary>
-    ///     Sets the preference for showing the queue button on the player controls.
-    /// </summary>
-    /// <param name="isEnabled">The preference to save.</param>
-    Task SetShowQueueButtonEnabledAsync(bool isEnabled);
-
-    /// <summary>
-    ///     Gets whether cover art should be shown in the tray flyout.
-    /// </summary>
-    /// <returns>True if showing cover art is enabled; otherwise, false.</returns>
     Task<bool> GetShowCoverArtInTrayFlyoutAsync();
 
-    /// <summary>
-    ///     Sets the preference for showing cover art in the tray flyout.
-    /// </summary>
-    /// <param name="isEnabled">The preference to save.</param>
     Task SetShowCoverArtInTrayFlyoutAsync(bool isEnabled);
 
     /// <summary>
@@ -251,22 +122,10 @@ public interface IUISettingsService : ISettingsService
     Task<QueueDisplaySettings> GetQueueDisplaySettingsAsync();
     Task SetQueueDisplaySettingsAsync(QueueDisplaySettings settings);
 
-    /// <summary>
-    ///     Gets the default list of player control buttons.
-    /// </summary>
-    /// <returns>A list of <see cref="PlayerButtonSetting" /> with default settings.</returns>
     List<PlayerButtonSetting> GetDefaultPlayerButtonSettings();
 
-    /// <summary>
-    ///     Gets whether the application should remember and restore the main window size.
-    /// </summary>
-    /// <returns>True if remembering window size is enabled; otherwise, false.</returns>
     Task<bool> GetRememberWindowSizeEnabledAsync();
 
-    /// <summary>
-    ///     Sets the preference for remembering the main window size.
-    /// </summary>
-    /// <param name="isEnabled">The preference to save.</param>
     Task SetRememberWindowSizeEnabledAsync(bool isEnabled);
 
     /// <summary>
@@ -282,16 +141,8 @@ public interface IUISettingsService : ISettingsService
     /// <param name="height">The window height in pixels.</param>
     Task SetLastWindowSizeAsync(int width, int height);
 
-    /// <summary>
-    ///     Gets whether the application should remember and restore the main window position.
-    /// </summary>
-    /// <returns>True if remembering window position is enabled; otherwise, false.</returns>
     Task<bool> GetRememberWindowPositionEnabledAsync();
 
-    /// <summary>
-    ///     Sets the preference for remembering the main window position.
-    /// </summary>
-    /// <param name="isEnabled">The preference to save.</param>
     Task SetRememberWindowPositionEnabledAsync(bool isEnabled);
 
     /// <summary>
@@ -307,16 +158,8 @@ public interface IUISettingsService : ISettingsService
     /// <param name="y">The window Y position in pixels.</param>
     Task SetLastWindowPositionAsync(int x, int y);
 
-    /// <summary>
-    ///     Gets whether the application should remember and restore the navigation pane state.
-    /// </summary>
-    /// <returns>True if remembering pane state is enabled; otherwise, false.</returns>
     Task<bool> GetRememberPaneStateEnabledAsync();
 
-    /// <summary>
-    ///     Sets the preference for remembering the navigation pane state.
-    /// </summary>
-    /// <param name="isEnabled">The preference to save.</param>
     Task SetRememberPaneStateEnabledAsync(bool isEnabled);
 
     /// <summary>
@@ -325,10 +168,6 @@ public interface IUISettingsService : ISettingsService
     /// <returns>True if the pane was open, false if closed, or null if no state has been saved.</returns>
     Task<bool?> GetLastPaneOpenAsync();
 
-    /// <summary>
-    ///     Occurs when the navigation pane open/closed state is preserved.
-    ///     True if the pane was open; false if closed.
-    /// </summary>
     Task SetLastPaneOpenAsync(bool isOpen);
 
     /// <summary>
@@ -362,17 +201,10 @@ public interface IUISettingsService : ISettingsService
     /// <param name="color">The color to save, or null to clear the setting.</param>
     Task SetAccentColorAsync(Windows.UI.Color? color);
 
-    // Sort Order Persistence
     Task<TEnum> GetSortOrderAsync<TEnum>(string pageKey) where TEnum : struct, Enum;
     Task SetSortOrderAsync<TEnum>(string pageKey, TEnum sortOrder) where TEnum : struct, Enum;
 
-    /// <summary>
-    ///     Gets the number of songs to display per page in song lists.
-    /// </summary>
     Task<int> GetSongsPerPageAsync();
 
-    /// <summary>
-    ///     Sets the number of songs to display per page in song lists.
-    /// </summary>
     Task SetSongsPerPageAsync(int songsPerPage);
 }

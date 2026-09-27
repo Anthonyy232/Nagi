@@ -1,9 +1,7 @@
 namespace Nagi.Core.Http.Pipelines;
 
 /// <summary>
-///     Per-channel resilience policy. Controls rate limiting and retry behavior for one
-///     channel of one provider. Sensible defaults are aimed at "polite to the upstream API"
-///     rather than "fastest possible throughput".
+///     Rate limiting and retry settings shared by calls to one provider.
 /// </summary>
 public sealed record ChannelPolicy
 {
@@ -49,9 +47,7 @@ public sealed record ProviderPolicy
 }
 
 /// <summary>
-///     Conservative defaults: trip after a small number of consecutive failures, stay open
-///     for several minutes before allowing a half-open trial. Tuned for "don't get our key
-///     blocked" rather than "maximize uptime".
+///     Trips after a small number of failures and waits before allowing a half-open trial.
 /// </summary>
 public sealed record CircuitBreakerSettings
 {

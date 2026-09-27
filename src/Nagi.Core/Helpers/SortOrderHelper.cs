@@ -1,4 +1,4 @@
-﻿using Nagi.Core.Models;
+using Nagi.Core.Models;
 using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Helpers;
@@ -46,131 +46,76 @@ public static class SortOrderHelper
     public static string PlaylistOrderLabel => Resources.Strings.Label_ManualOrder;
     public static string RandomLabel => Resources.Strings.Label_Random;
 
-    // Full Display Text (for Buttons/Tooltips)
-    public static string SortByTitleAsc => $"{Resources.Strings.SortByPrefix}{TitleAscLabel}";
-    public static string SortByTitleDesc => $"{Resources.Strings.SortByPrefix}{TitleDescLabel}";
-    public static string SortByArtistAsc => $"{Resources.Strings.SortByPrefix}{ArtistAscLabel}";
-    public static string SortByArtistDesc => $"{Resources.Strings.SortByPrefix}{ArtistDescLabel}";
-    public static string SortByAlbumAsc => $"{Resources.Strings.SortByPrefix}{AlbumAscLabel}";
-    public static string SortByAlbumDesc => $"{Resources.Strings.SortByPrefix}{AlbumDescLabel}";
-    public static string SortByYearNewest => $"{Resources.Strings.SortByPrefix}{YearNewestLabel}";
-    public static string SortByYearOldest => $"{Resources.Strings.SortByPrefix}{YearOldestLabel}";
-    public static string SortByMostSongs => $"{Resources.Strings.SortByPrefix}{MostSongsLabel}";
-    public static string SortByLeastSongs => $"{Resources.Strings.SortByPrefix}{LeastSongsLabel}";
-    public static string SortByTrackNumberAsc => $"{Resources.Strings.SortByPrefix}{TrackNumberAscLabel}";
-    public static string SortByTrackNumberDesc => $"{Resources.Strings.SortByPrefix}{TrackNumberDescLabel}";
-    public static string SortByPlayCountAsc => $"{Resources.Strings.SortByPrefix}{PlayCountAscLabel}";
-    public static string SortByPlayCountDesc => $"{Resources.Strings.SortByPrefix}{PlayCountDescLabel}";
-    public static string SortByDateAddedAsc => $"{Resources.Strings.SortByPrefix}{DateAddedAscLabel}";
-    public static string SortByDateAddedDesc => $"{Resources.Strings.SortByPrefix}{DateAddedDescLabel}";
-    public static string SortByLastPlayedAsc => $"{Resources.Strings.SortByPrefix}{LastPlayedAscLabel}";
-    public static string SortByLastPlayedDesc => $"{Resources.Strings.SortByPrefix}{LastPlayedDescLabel}";
-    public static string SortByDurationAsc => $"{Resources.Strings.SortByPrefix}{DurationAscLabel}";
-    public static string SortByDurationDesc => $"{Resources.Strings.SortByPrefix}{DurationDescLabel}";
-    public static string SortByBpmAsc => $"{Resources.Strings.SortByPrefix}{BpmAscLabel}";
-    public static string SortByBpmDesc => $"{Resources.Strings.SortByPrefix}{BpmDescLabel}";
-    public static string SortByDateCreatedAsc => $"{Resources.Strings.SortByPrefix}{DateCreatedOldestLabel}";
-    public static string SortByDateCreatedDesc => $"{Resources.Strings.SortByPrefix}{DateCreatedNewestLabel}";
-    public static string SortByRandom => $"{Resources.Strings.SortByPrefix}{RandomLabel}";
-
-    public static string GetDisplayName(SongSortOrder sortOrder) => sortOrder switch
+    public static string GetDisplayName(SongSortOrder sortOrder) =>
+        sortOrder == SongSortOrder.PlaylistOrder ? PlaylistOrderLabel : Resources.Strings.SortByPrefix + (sortOrder switch
     {
-        SongSortOrder.TitleAsc => SortByTitleAsc,
-        SongSortOrder.TitleDesc => SortByTitleDesc,
-        SongSortOrder.AlbumAsc => SortByAlbumAsc,
-        SongSortOrder.AlbumDesc => SortByAlbumDesc,
-        SongSortOrder.YearAsc => SortByYearOldest,
-        SongSortOrder.YearDesc => SortByYearNewest,
-        SongSortOrder.FileCreatedDateAsc => SortByDateCreatedAsc,
-        SongSortOrder.FileCreatedDateDesc => SortByDateCreatedDesc,
-        SongSortOrder.ArtistAsc => SortByArtistAsc,
-        SongSortOrder.ArtistDesc => SortByArtistDesc,
-        SongSortOrder.TrackNumberAsc => SortByTrackNumberAsc,
-        SongSortOrder.TrackNumberDesc => SortByTrackNumberDesc,
-        SongSortOrder.PlayCountAsc => SortByPlayCountAsc,
-        SongSortOrder.PlayCountDesc => SortByPlayCountDesc,
-        SongSortOrder.LastPlayedAsc => SortByLastPlayedAsc,
-        SongSortOrder.LastPlayedDesc => SortByLastPlayedDesc,
-        SongSortOrder.DateAddedAsc => SortByDateAddedAsc,
-        SongSortOrder.DateAddedDesc => SortByDateAddedDesc,
-        SongSortOrder.DurationAsc => SortByDurationAsc,
-        SongSortOrder.DurationDesc => SortByDurationDesc,
-        SongSortOrder.BpmAsc => SortByBpmAsc,
-        SongSortOrder.BpmDesc => SortByBpmDesc,
-        SongSortOrder.Random => SortByRandom,
-        SongSortOrder.PlaylistOrder => Resources.Strings.Label_ManualOrder,
-        _ => SortByTitleAsc
-    };
+        SongSortOrder.TitleAsc => TitleAscLabel,
+        SongSortOrder.TitleDesc => TitleDescLabel,
+        SongSortOrder.AlbumAsc => AlbumAscLabel,
+        SongSortOrder.AlbumDesc => AlbumDescLabel,
+        SongSortOrder.YearAsc => YearOldestLabel,
+        SongSortOrder.YearDesc => YearNewestLabel,
+        SongSortOrder.FileCreatedDateAsc => DateCreatedOldestLabel,
+        SongSortOrder.FileCreatedDateDesc => DateCreatedNewestLabel,
+        SongSortOrder.ArtistAsc => ArtistAscLabel,
+        SongSortOrder.ArtistDesc => ArtistDescLabel,
+        SongSortOrder.TrackNumberAsc => TrackNumberAscLabel,
+        SongSortOrder.TrackNumberDesc => TrackNumberDescLabel,
+        SongSortOrder.PlayCountAsc => PlayCountAscLabel,
+        SongSortOrder.PlayCountDesc => PlayCountDescLabel,
+        SongSortOrder.LastPlayedAsc => LastPlayedAscLabel,
+        SongSortOrder.LastPlayedDesc => LastPlayedDescLabel,
+        SongSortOrder.DateAddedAsc => DateAddedAscLabel,
+        SongSortOrder.DateAddedDesc => DateAddedDescLabel,
+        SongSortOrder.DurationAsc => DurationAscLabel,
+        SongSortOrder.DurationDesc => DurationDescLabel,
+        SongSortOrder.BpmAsc => BpmAscLabel,
+        SongSortOrder.BpmDesc => BpmDescLabel,
+        SongSortOrder.Random => RandomLabel,
+        _ => TitleAscLabel
+    });
 
-    public static string GetDisplayName(PlaylistSortOrder sortOrder) => sortOrder switch
+    public static string GetDisplayName(PlaylistSortOrder sortOrder) => Resources.Strings.SortByPrefix + (sortOrder switch
     {
-        PlaylistSortOrder.NameAsc => SortByTitleAsc,
-        PlaylistSortOrder.NameDesc => SortByTitleDesc,
-        PlaylistSortOrder.DateCreatedDesc => $"{Resources.Strings.SortByPrefix}{string.Format(Resources.Strings.Format_TemporalNewest, Resources.Strings.Label_DateCreated)}",
-        PlaylistSortOrder.DateCreatedAsc => $"{Resources.Strings.SortByPrefix}{string.Format(Resources.Strings.Format_TemporalOldest, Resources.Strings.Label_DateCreated)}",
-        PlaylistSortOrder.DateModifiedDesc => $"{Resources.Strings.SortByPrefix}{string.Format(Resources.Strings.Format_TemporalNewest, Resources.Strings.Label_DateModified)}",
-        PlaylistSortOrder.DateModifiedAsc => $"{Resources.Strings.SortByPrefix}{string.Format(Resources.Strings.Format_TemporalOldest, Resources.Strings.Label_DateModified)}",
-        _ => SortByTitleAsc
-    };
+        PlaylistSortOrder.NameAsc => TitleAscLabel,
+        PlaylistSortOrder.NameDesc => TitleDescLabel,
+        PlaylistSortOrder.DateCreatedDesc => DateCreatedNewestLabel,
+        PlaylistSortOrder.DateCreatedAsc => DateCreatedOldestLabel,
+        PlaylistSortOrder.DateModifiedDesc => ModifiedNewestLabel,
+        PlaylistSortOrder.DateModifiedAsc => ModifiedOldestLabel,
+        _ => TitleAscLabel
+    });
 
-    public static string GetDisplayName(GenreSortOrder sortOrder) => sortOrder switch
+    public static string GetDisplayName(GenreSortOrder sortOrder) => Resources.Strings.SortByPrefix + (sortOrder switch
     {
-        GenreSortOrder.NameAsc => SortByTitleAsc,
-        GenreSortOrder.NameDesc => SortByTitleDesc,
-        GenreSortOrder.SongCountDesc => SortByMostSongs,
-        GenreSortOrder.SongCountAsc => SortByLeastSongs,
-        _ => SortByTitleAsc
-    };
+        GenreSortOrder.NameAsc => TitleAscLabel,
+        GenreSortOrder.NameDesc => TitleDescLabel,
+        GenreSortOrder.SongCountDesc => MostSongsLabel,
+        GenreSortOrder.SongCountAsc => LeastSongsLabel,
+        _ => TitleAscLabel
+    });
 
-    public static string GetDisplayName(ArtistSortOrder sortOrder) => sortOrder switch
+    public static string GetDisplayName(ArtistSortOrder sortOrder) => Resources.Strings.SortByPrefix + (sortOrder switch
     {
-        ArtistSortOrder.NameAsc => SortByTitleAsc,
-        ArtistSortOrder.NameDesc => SortByTitleDesc,
-        ArtistSortOrder.SongCountDesc => SortByMostSongs,
-        ArtistSortOrder.SongCountAsc => SortByLeastSongs,
-        _ => SortByTitleAsc
-    };
+        ArtistSortOrder.NameAsc => TitleAscLabel,
+        ArtistSortOrder.NameDesc => TitleDescLabel,
+        ArtistSortOrder.SongCountDesc => MostSongsLabel,
+        ArtistSortOrder.SongCountAsc => LeastSongsLabel,
+        _ => TitleAscLabel
+    });
 
-    public static string GetDisplayName(AlbumSortOrder sortOrder) => sortOrder switch
+    public static string GetDisplayName(AlbumSortOrder sortOrder) => Resources.Strings.SortByPrefix + (sortOrder switch
     {
-        AlbumSortOrder.ArtistAsc => SortByArtistAsc,
-        AlbumSortOrder.ArtistDesc => SortByArtistDesc,
-        AlbumSortOrder.AlbumTitleAsc => SortByAlbumAsc,
-        AlbumSortOrder.AlbumTitleDesc => SortByAlbumDesc,
-        AlbumSortOrder.YearDesc => SortByYearNewest,
-        AlbumSortOrder.YearAsc => SortByYearOldest,
-        AlbumSortOrder.SongCountDesc => SortByMostSongs,
-        AlbumSortOrder.SongCountAsc => SortByLeastSongs,
-        _ => SortByArtistAsc
-    };
-
-    public static string GetDisplayName(SmartPlaylistSortOrder sortOrder) => sortOrder switch
-    {
-        SmartPlaylistSortOrder.TitleAsc => SortByTitleAsc,
-        SmartPlaylistSortOrder.TitleDesc => SortByTitleDesc,
-        SmartPlaylistSortOrder.ArtistAsc => SortByArtistAsc,
-        SmartPlaylistSortOrder.ArtistDesc => SortByArtistDesc,
-        SmartPlaylistSortOrder.AlbumAsc => SortByAlbumAsc,
-        SmartPlaylistSortOrder.AlbumDesc => SortByAlbumDesc,
-        SmartPlaylistSortOrder.YearAsc => SortByYearOldest,
-        SmartPlaylistSortOrder.YearDesc => SortByYearNewest,
-        SmartPlaylistSortOrder.PlayCountAsc => SortByPlayCountAsc,
-        SmartPlaylistSortOrder.PlayCountDesc => SortByPlayCountDesc,
-        SmartPlaylistSortOrder.LastPlayedAsc => SortByLastPlayedAsc,
-        SmartPlaylistSortOrder.LastPlayedDesc => SortByLastPlayedDesc,
-        SmartPlaylistSortOrder.DateAddedAsc => SortByDateAddedAsc,
-        SmartPlaylistSortOrder.DateAddedDesc => SortByDateAddedDesc,
-        SmartPlaylistSortOrder.TrackNumberAsc => SortByTrackNumberAsc,
-        SmartPlaylistSortOrder.TrackNumberDesc => SortByTrackNumberDesc,
-        SmartPlaylistSortOrder.DurationAsc => SortByDurationAsc,
-        SmartPlaylistSortOrder.DurationDesc => SortByDurationDesc,
-        SmartPlaylistSortOrder.BpmAsc => SortByBpmAsc,
-        SmartPlaylistSortOrder.BpmDesc => SortByBpmDesc,
-        SmartPlaylistSortOrder.FileCreatedDateAsc => SortByDateCreatedAsc,
-        SmartPlaylistSortOrder.FileCreatedDateDesc => SortByDateCreatedDesc,
-        SmartPlaylistSortOrder.Random => SortByRandom,
-        _ => SortByTitleAsc
-    };
+        AlbumSortOrder.ArtistAsc => ArtistAscLabel,
+        AlbumSortOrder.ArtistDesc => ArtistDescLabel,
+        AlbumSortOrder.AlbumTitleAsc => AlbumAscLabel,
+        AlbumSortOrder.AlbumTitleDesc => AlbumDescLabel,
+        AlbumSortOrder.YearDesc => YearNewestLabel,
+        AlbumSortOrder.YearAsc => YearOldestLabel,
+        AlbumSortOrder.SongCountDesc => MostSongsLabel,
+        AlbumSortOrder.SongCountAsc => LeastSongsLabel,
+        _ => ArtistAscLabel
+    });
 
     /// <summary>
     ///     Maps a <see cref="SongSortOrder" /> to the equivalent <see cref="SmartPlaylistSortOrder" /> by matching
@@ -178,7 +123,6 @@ public static class SortOrderHelper
     ///     counterpart (e.g. <see cref="SongSortOrder.PlaylistOrder" />).
     /// </summary>
     public static SmartPlaylistSortOrder MapToSmartPlaylistSortOrder(SongSortOrder sortOrder) =>
-        sortOrder != SongSortOrder.PlaylistOrder &&
         Enum.TryParse<SmartPlaylistSortOrder>(sortOrder.ToString(), out var mapped)
             ? mapped
             : SmartPlaylistSortOrder.TitleAsc;

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Nagi.Core.Models;
@@ -9,25 +9,13 @@ namespace Nagi.Core.Models;
 /// </summary>
 public class SongArtist
 {
-    /// <summary>
-    ///     The foreign key for the song.
-    /// </summary>
     public Guid SongId { get; set; }
 
-    /// <summary>
-    ///     Navigation property to the song.
-    /// </summary>
     [ForeignKey("SongId")]
     public virtual Song Song { get; set; } = null!;
 
-    /// <summary>
-    ///     The foreign key for the artist.
-    /// </summary>
     public Guid ArtistId { get; set; }
 
-    /// <summary>
-    ///     Navigation property to the artist.
-    /// </summary>
     [ForeignKey("ArtistId")]
     public virtual Artist Artist { get; set; } = null!;
 

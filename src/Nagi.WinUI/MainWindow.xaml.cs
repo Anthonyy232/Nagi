@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Linq;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Graphics;
@@ -47,9 +46,6 @@ public sealed partial class MainWindow : Window
     private bool _isTaskbarInitialized;
     private int _isCleanedUp;
 
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="MainWindow" /> class.
-    /// </summary>
     public MainWindow()
     {
         InitializeComponent();
@@ -115,12 +111,7 @@ public sealed partial class MainWindow : Window
     /// </summary>
     public void InitializeCustomTitleBar()
     {
-        _appWindow ??= GetAppWindowForCurrentWindow();
-        if (_appWindow == null)
-        {
-            _logger?.LogCritical("AppWindow is not available. Cannot initialize title bar");
-            return;
-        }
+        _appWindow ??= AppWindow;
 
         if (_appWindow.Presenter is not OverlappedPresenter presenter)
         {
@@ -151,7 +142,7 @@ public sealed partial class MainWindow : Window
         presenter?.SetBorderAndTitleBar(true, true);
     }
 
-    private async void OnWindowActivated(object sender, WindowActivatedEventArgs args)
+    private void OnWindowActivated(object sender, WindowActivatedEventArgs args)
     {
         if (!_isTitleBarInitialized)
         {
@@ -161,8 +152,6 @@ public sealed partial class MainWindow : Window
 
         if (!_isBackdropInitialized)
         {
-            // The async void is acceptable here as this is a top-level event handler.
-            // Any exceptions are handled within TrySetBackdropAsync.
             _ = TrySetBackdropAsync();
             _isBackdropInitialized = true;
         }
@@ -175,7 +164,6 @@ public sealed partial class MainWindow : Window
             InitializeWndProc();
         }
 
-        if (Content is MainPage mainPage) mainPage.UpdateActivationVisualState(args.WindowActivationState);
     }
 
     /// <summary>
@@ -188,44 +176,24 @@ public sealed partial class MainWindow : Window
 
         // Ensure _appWindow is available. It might not be set if the window was never
         // activated (e.g., when starting minimized or hidden to tray).
-        _appWindow ??= GetAppWindowForCurrentWindow();
-        if (_appWindow == null)
-        {
-            _logger?.LogDebug("Cannot save window state: AppWindow not available");
-            return;
-        }
+        _appWindow ??= AppWindow;
 
         try
         {
-            var saveSizeTask = _settingsService.GetRememberWindowSizeEnabledAsync();
-            var savePositionTask = _settingsService.GetRememberWindowPositionEnabledAsync();
-
-            await Task.WhenAll(saveSizeTask, savePositionTask);
-
-            var saveSize = saveSizeTask.Result;
-            var savePosition = savePositionTask.Result;
-
-            // Parallelize the actual save operations when both are enabled
-            var saveTasks = new List<Task>();
-
-            if (saveSize)
+            if (await _settingsService.GetRememberWindowSizeEnabledAsync())
             {
                 var size = _appWindow.Size;
-                saveTasks.Add(_settingsService.SetLastWindowSizeAsync(size.Width, size.Height));
+                await _settingsService.SetLastWindowSizeAsync(size.Width, size.Height);
                 _logger?.LogDebug("Saving window size: {Width}x{Height}", size.Width, size.Height);
             }
 
-            if (savePosition)
+            if (await _settingsService.GetRememberWindowPositionEnabledAsync())
             {
                 var position = _appWindow.Position;
-                saveTasks.Add(_settingsService.SetLastWindowPositionAsync(position.X, position.Y));
+                await _settingsService.SetLastWindowPositionAsync(position.X, position.Y);
                 _logger?.LogDebug("Saving window position: ({X}, {Y})", position.X, position.Y);
             }
 
-            if (saveTasks.Count > 0)
-            {
-                await Task.WhenAll(saveTasks);
-            }
         }
         catch (Exception ex)
         {
@@ -249,7 +217,7 @@ public sealed partial class MainWindow : Window
     }
 
     /// <summary>
-    ///     Attempts to set the system backdrop based on user settings. This method is now much simpler.
+    ///     Sets the system backdrop based on user settings.
     /// </summary>
     private async Task TrySetBackdropAsync(BackdropMaterial? material = null)
     {
@@ -326,35 +294,16 @@ public sealed partial class MainWindow : Window
         if (_settingsService == null) return;
 
         // Ensure _appWindow is available.
-        _appWindow ??= GetAppWindowForCurrentWindow();
-        if (_appWindow == null)
-        {
-            _logger?.LogDebug("Cannot restore window state: AppWindow not available");
-            return;
-        }
+        _appWindow ??= AppWindow;
 
         try
         {
-            var restoreSizeTask = _settingsService.GetRememberWindowSizeEnabledAsync();
-            var restorePositionTask = _settingsService.GetRememberWindowPositionEnabledAsync();
-
-            await Task.WhenAll(restoreSizeTask, restorePositionTask);
-
-            var restoreSize = restoreSizeTask.Result;
-            var restorePosition = restorePositionTask.Result;
-
-            // Parallelize fetching saved values when both are enabled
-            var savedSizeTask = restoreSize
-                ? _settingsService.GetLastWindowSizeAsync()
-                : Task.FromResult<(int Width, int Height)?>(null);
-            var savedPositionTask = restorePosition
-                ? _settingsService.GetLastWindowPositionAsync()
-                : Task.FromResult<(int X, int Y)?>(null);
-
-            await Task.WhenAll(savedSizeTask, savedPositionTask);
-
-            var savedSize = savedSizeTask.Result;
-            var savedPosition = savedPositionTask.Result;
+            var savedSize = await _settingsService.GetRememberWindowSizeEnabledAsync()
+                ? await _settingsService.GetLastWindowSizeAsync()
+                : null;
+            var savedPosition = await _settingsService.GetRememberWindowPositionEnabledAsync()
+                ? await _settingsService.GetLastWindowPositionAsync()
+                : null;
 
             // Apply size and/or position using the most efficient method
             if (savedSize.HasValue && savedPosition.HasValue)
@@ -386,22 +335,6 @@ public sealed partial class MainWindow : Window
         catch (Exception ex)
         {
             _logger?.LogWarning(ex, "Failed to restore window state.");
-        }
-    }
-
-    private AppWindow? GetAppWindowForCurrentWindow()
-    {
-        try
-        {
-            var hWnd = WindowNative.GetWindowHandle(this);
-            if (hWnd == IntPtr.Zero) return null;
-            var windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
-            return AppWindow.GetFromWindowId(windowId);
-        }
-        catch (Exception ex)
-        {
-            _logger?.LogError(ex, "Failed to retrieve AppWindow");
-            return null;
         }
     }
 
@@ -449,9 +382,6 @@ public sealed class MiniPlayerWindow : Window
     private readonly MiniPlayerView _view;
     private readonly IWin32InteropService _win32InteropService;
 
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="MiniPlayerWindow" /> class.
-    /// </summary>
     public MiniPlayerWindow()
     {
         var services = App.Services!;
@@ -512,7 +442,6 @@ public sealed class MiniPlayerWindow : Window
     /// <param name="windowSize">The physical size of the window in pixels.</param>
     private void PositionWindowInBottomRight(AppWindow appWindow, int windowSize)
     {
-        // Get the display area for the window, falling back to the primary display.
         var displayArea = DisplayArea.GetFromWindowId(appWindow.Id, DisplayAreaFallback.Primary);
         if (displayArea == null)
         {
@@ -610,9 +539,6 @@ public sealed class MiniPlayerWindow : Window
         });
     }
 
-    /// <summary>
-    ///     Cleans up resources by unsubscribing from events when the window is closed.
-    /// </summary>
     private void OnWindowClosed(object sender, WindowEventArgs args)
     {
         _view.RestoreButtonClicked -= OnRestoreButtonClicked;

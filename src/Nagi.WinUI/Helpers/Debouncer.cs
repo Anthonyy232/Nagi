@@ -16,27 +16,37 @@ public sealed class Debouncer : IDisposable
     public Debouncer(TimeSpan delay) { _delay = delay; }
 
     public void Trigger(Func<CancellationToken, Task> action)
+        => _ = RunAsync(action);
+
+    public Task RunAsync(Func<CancellationToken, Task> action, bool immediate = false)
     {
         var newCts = new CancellationTokenSource();
-        var old = Interlocked.Exchange(ref _cts, newCts);
-        try { old?.Cancel(); old?.Dispose(); } catch (ObjectDisposedException) { }
-
         var token = newCts.Token;
-        _ = Task.Run(async () =>
-        {
-            try
-            {
-                await Task.Delay(_delay, token).ConfigureAwait(false);
-                if (!token.IsCancellationRequested)
-                    await action(token).ConfigureAwait(false);
-            }
-            catch (OperationCanceledException) { }
-        }, token);
+        var old = Interlocked.Exchange(ref _cts, newCts);
+        old?.Cancel();
+        old?.Dispose();
+
+        return InvokeAsync(action, token, immediate);
     }
 
-    public void Dispose()
+    private async Task InvokeAsync(Func<CancellationToken, Task> action, CancellationToken token, bool immediate)
+    {
+        try
+        {
+            if (!immediate)
+                await Task.Delay(_delay, token).ConfigureAwait(false);
+            token.ThrowIfCancellationRequested();
+            await action(token).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) { }
+    }
+
+    public void Cancel()
     {
         var old = Interlocked.Exchange(ref _cts, null);
-        try { old?.Cancel(); old?.Dispose(); } catch (ObjectDisposedException) { }
+        old?.Cancel();
+        old?.Dispose();
     }
+
+    public void Dispose() => Cancel();
 }

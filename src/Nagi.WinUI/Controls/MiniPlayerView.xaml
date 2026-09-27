@@ -41,6 +41,15 @@
 
         <Grid x:Name="HoverControlsContainer" Opacity="0">
             <Grid.Resources>
+                <StaticResource x:Key="SliderThumbBackground" ResourceKey="MediaOnImageAccentBrush" />
+                <StaticResource x:Key="SliderThumbBackgroundPointerOver" ResourceKey="MediaOnImageAccentBrush" />
+                <StaticResource x:Key="SliderThumbBackgroundPressed" ResourceKey="MediaOnImageAccentBrush" />
+                <StaticResource x:Key="SliderTrackValueFill" ResourceKey="MediaOnImageAccentBrush" />
+                <StaticResource x:Key="SliderTrackValueFillPointerOver" ResourceKey="MediaOnImageAccentBrush" />
+                <StaticResource x:Key="SliderTrackValueFillPressed" ResourceKey="MediaOnImageAccentBrush" />
+                <StaticResource x:Key="SliderTrackFill" ResourceKey="MediaOnImageControlTrackBrush" />
+                <StaticResource x:Key="SliderTrackFillPointerOver" ResourceKey="MediaOnImageControlTrackBrush" />
+                <StaticResource x:Key="SliderTrackFillPressed" ResourceKey="MediaOnImageControlTrackBrush" />
                 <Style TargetType="Button" BasedOn="{StaticResource MediaOnImageControlButtonStyle}" />
                 <Style TargetType="Slider" BasedOn="{StaticResource MediaOnImageSeekerSliderStyle}" />
             </Grid.Resources>
@@ -193,7 +202,7 @@
                     <ListView
                         x:Name="QueueListView"
                         Padding="16,12,16,20"
-                        ItemContainerStyle="{StaticResource QueueListViewItemStyle}"
+                        ItemContainerStyle="{StaticResource PaddedListViewItemStyle}"
                         ItemsSource="{x:Bind ViewModel.CurrentQueue}"
                         SelectionMode="None"
                         VirtualizingStackPanel.VirtualizationMode="Recycling"

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
-using Windows.ApplicationModel;
 using Windows.Storage;
-using Microsoft.Extensions.Configuration;
 using Nagi.Core.Helpers;
 
 namespace Nagi.WinUI.Helpers;
@@ -12,7 +10,7 @@ namespace Nagi.WinUI.Helpers;
 /// </summary>
 public class PathConfiguration : IPathConfiguration
 {
-    public PathConfiguration(IConfiguration configuration)
+    public PathConfiguration()
     {
         try
         {
@@ -26,7 +24,6 @@ public class PathConfiguration : IPathConfiguration
                 "Nagi");
         }
 
-        // Define all other paths based on the determined root.
         SettingsFilePath = Path.Combine(AppDataRoot, "settings.json");
         PlaybackStateFilePath = Path.Combine(AppDataRoot, "playback_state.json");
         AlbumArtCachePath = Path.Combine(AppDataRoot, "AlbumArt");

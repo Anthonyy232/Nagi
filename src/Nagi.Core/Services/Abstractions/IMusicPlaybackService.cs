@@ -6,6 +6,10 @@ namespace Nagi.Core.Services.Abstractions;
 /// <summary>
 ///     Defines the contract for a service that manages music playback, queue, and state.
 /// </summary>
+/// <remarks>
+///     Call mutations from the UI context. New transport requests supersede pending selections;
+///     dispose asynchronously to finish outstanding listen-history writes.
+/// </remarks>
 public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
 {
     /// <summary>
@@ -24,9 +28,6 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     /// </summary>
     bool IsPlaying { get; }
 
-    /// <summary>
-    ///     Gets the current playback position of the track.
-    /// </summary>
     TimeSpan CurrentPosition { get; }
 
     /// <summary>
@@ -71,24 +72,13 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     /// </summary>
     bool IsShuffleEnabled { get; }
 
-    /// <summary>
-    ///     Gets the current repeat mode (Off, RepeatAll, RepeatOne).
-    /// </summary>
     RepeatMode CurrentRepeatMode { get; }
-
-    /// <summary>
-    ///     Gets a value indicating whether the service is in the process of changing tracks.
-    /// </summary>
-    bool IsTransitioningTrack { get; }
 
     /// <summary>
     ///     Gets the descriptive information for each available equalizer band.
     /// </summary>
     IReadOnlyList<(uint Index, float Frequency)> EqualizerBands { get; }
 
-    /// <summary>
-    ///     Gets the current equalizer settings, including preamp and band gains.
-    /// </summary>
     EqualizerSettings? CurrentEqualizerSettings { get; }
 
     /// <summary>
@@ -148,14 +138,6 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     /// </summary>
     /// <param name="restoreLastSession">Whether to attempt to restore the last playback session.</param>
     Task InitializeAsync(bool restoreLastSession = true);
-
-    /// <summary>
-    ///     Begins a scoped update of the playback queue. Multiple modifications (Add, Remove, Shuffle)
-    ///     can be performed within the returned disposable scope, and indices will only be rebuilt once
-    ///     when the scope is disposed.
-    /// </summary>
-    /// <returns>An <see cref="IDisposable"/> that commits the changes when disposed.</returns>
-    IDisposable BeginQueueUpdate();
 
     /// <summary>
     ///     Plays a single song, replacing the current queue.

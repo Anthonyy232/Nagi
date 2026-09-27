@@ -23,6 +23,10 @@
         <ProjectGuid>57ABC68F-E3A9-42BD-ABDF-CE1B7E2ACE95</ProjectGuid>
     </PropertyGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="Nagi.WinUI.Tests" />
+    </ItemGroup>
+
     <!-- =============================================================== -->
     <!-- == Packaged (MSIX) Configuration                               == -->
     <!-- =============================================================== -->
@@ -85,6 +89,13 @@
         <!-- Project References -->
         <ProjectReference Include="..\Nagi.Core\Nagi.Core.csproj" />
 
+        <EmbeddedResource Update="Resources\Strings.resx">
+            <StronglyTypedLanguage>C#</StronglyTypedLanguage>
+            <StronglyTypedNamespace>Nagi.WinUI.Resources</StronglyTypedNamespace>
+            <StronglyTypedClassName>Strings</StronglyTypedClassName>
+            <PublicClass>true</PublicClass>
+        </EmbeddedResource>
+
         <!-- Core SDKs and Build Tools -->
         <!-- Reference only the runtime and WinUI components, excluding unused AI/ML components. -->
         <PackageReference Include="Microsoft.WindowsAppSDK.Runtime">
@@ -97,6 +108,7 @@
 
         <!-- Application Services (DI, Configuration) -->
         <PackageReference Include="MessageFormat" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
         <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
 
@@ -154,4 +166,8 @@
         </None>
     </ItemGroup>
 
+    <!-- XAML's temporary assembly needs resource accessors before the normal resource build step. -->
+    <Target Name="GenerateResourceAccessorsBeforeXaml"
+            BeforeTargets="MarkupCompilePass1"
+            DependsOnTargets="PrepareResourceNames;ResGen" />
 </Project>

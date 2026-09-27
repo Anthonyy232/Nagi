@@ -11,9 +11,6 @@ using Nagi.WinUI.Navigation;
 
 namespace Nagi.WinUI.Helpers;
 
-/// <summary>
-///     Helper class to populate the "Go to artist" submenu in a consistent way across different pages.
-/// </summary>
 public static class ArtistMenuFlyoutHelper
 {
     /// <summary>
@@ -37,23 +34,19 @@ public static class ArtistMenuFlyoutHelper
     {
         subMenu.Items.Clear();
 
-        // 1. Use pre-loaded artists if available
-        if (song.SongArtists != null && song.SongArtists.Count > 0)
+        var artists = song.SongArtists.OrderBy(sa => sa.Order).Select(sa => sa.Artist).OfType<Artist>().ToList();
+        if (artists.Count > 0)
         {
-            var artists = song.SongArtists.OrderBy(sa => sa.Order).Select(sa => sa.Artist).ToList();
             foreach (var artist in artists)
             {
-                if (artist == null) continue;
                 AddArtistMenuItem(subMenu, song, artist.Name, goToArtistCommand);
             }
             return;
         }
 
-        // 2. Show loading state and fetch asynchronously
         var loadingItem = new MenuFlyoutItem { Text = Nagi.WinUI.Resources.Strings.Status_Loading, IsEnabled = false };
         subMenu.Items.Add(loadingItem);
 
-        // Fire-and-forget async population
         _ = PopulateArtistsAsync(subMenu, song, loadingItem, goToArtistCommand, libraryReader, dispatcherQueue, logger);
     }
 

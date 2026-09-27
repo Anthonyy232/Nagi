@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.System;
@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.WinUI.ViewModels;
+using Nagi.Core.Services.Data;
 
 namespace Nagi.WinUI.Pages;
 
@@ -34,9 +35,6 @@ public sealed partial class GenrePage : Page
 
     public GenreViewModel ViewModel { get; }
 
-    /// <summary>
-    ///     Handles the page's navigated-to event. Initiates genre loading if the list is empty.
-    /// </summary>
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         try
@@ -46,20 +44,7 @@ public sealed partial class GenrePage : Page
             var cts = new CancellationTokenSource();
             _cancellationTokenSource = cts;
 
-            if (ViewModel.Genres.Count == 0)
-            {
-                _logger.LogDebug("Genre collection is empty, loading genres...");
-                await ViewModel.LoadGenresAsync(cts.Token);
-
-                if (cts.IsCancellationRequested)
-                    _logger.LogDebug("Genre loading was canceled.");
-                else if (!ViewModel.HasLoadError)
-                    _logger.LogDebug("Successfully loaded genres.");
-            }
-            else
-            {
-                _logger.LogDebug("Genres already loaded, skipping fetch.");
-            }
+            await ViewModel.LoadGenresAsync(cts.Token);
         }
         catch (Exception ex)
         {
@@ -67,28 +52,19 @@ public sealed partial class GenrePage : Page
         }
     }
 
-    /// <summary>
-    ///     Handles the page's navigated-from event. Cancels any ongoing data loading operations.
-    /// </summary>
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
         _logger.LogDebug("Navigating away from GenrePage.");
 
-        if (_cancellationTokenSource is { IsCancellationRequested: false })
-        {
-            _logger.LogDebug("Canceling ongoing genre loading task.");
-            _cancellationTokenSource.Cancel();
-        }
+        ViewModel.ResetState();
+        _cancellationTokenSource?.Cancel();
 
         _cancellationTokenSource?.Dispose();
         _cancellationTokenSource = null;
         // Note: ViewModel is Singleton, do not dispose - state persists across navigations
     }
 
-    /// <summary>
-    ///     Handles the page loaded event to set initial visual state.
-    /// </summary>
     private void OnPageLoaded(object sender, RoutedEventArgs e)
     {
         _logger.LogDebug("GenrePage loaded. Setting initial visual state.");
@@ -100,9 +76,6 @@ public sealed partial class GenrePage : Page
         Loaded -= OnPageLoaded;
     }
 
-    /// <summary>
-    ///     Handles the search toggle button click to expand or collapse the search box.
-    /// </summary>
     private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e)
     {
         if (_isSearchExpanded)
@@ -111,9 +84,6 @@ public sealed partial class GenrePage : Page
             ExpandSearch();
     }
 
-    /// <summary>
-    ///     Handles key down events in the search text box.
-    /// </summary>
     private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
     {
         if (e.Key == VirtualKey.Escape)
@@ -124,9 +94,6 @@ public sealed partial class GenrePage : Page
         }
     }
 
-    /// <summary>
-    ///     Expands the search interface with an animation.
-    /// </summary>
     private void ExpandSearch()
     {
         if (_isSearchExpanded) return;
@@ -136,19 +103,14 @@ public sealed partial class GenrePage : Page
         ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.GenrePage_SearchButton_Close_ToolTip);
         VisualStateManager.GoToState(this, "SearchExpanded", true);
 
-        var timer = DispatcherQueue.CreateTimer();
-        timer.Interval = TimeSpan.FromMilliseconds(150);
-        timer.Tick += (s, args) =>
-        {
-            timer.Stop();
-            SearchTextBox.Focus(FocusState.Programmatic);
-        };
-        timer.Start();
+
     }
 
-    /// <summary>
-    ///     Collapses the search interface with an animation and resets the filter.
-    /// </summary>
+    private void OnSearchExpansionCompleted(object sender, object e)
+    {
+        if (IsLoaded && _isSearchExpanded) SearchTextBox.Focus(FocusState.Programmatic);
+    }
+
     private void CollapseSearch()
     {
         if (!_isSearchExpanded) return;
@@ -160,12 +122,9 @@ public sealed partial class GenrePage : Page
         ViewModel.SearchTerm = string.Empty;
     }
 
-    /// <summary>
-    ///     Handles clicks on a genre item in the grid, navigating to the detailed view for that genre.
-    /// </summary>
     private void GenresGridView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        if (e.ClickedItem is GenreViewModelItem clickedGenre)
+        if (e.ClickedItem is GenreSummary clickedGenre)
         {
             _logger.LogDebug("User clicked on genre '{GenreName}'. Navigating to detail view.",
                 clickedGenre.Name);

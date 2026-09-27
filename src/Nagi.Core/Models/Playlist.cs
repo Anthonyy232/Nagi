@@ -1,21 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace Nagi.Core.Models;
 
-/// <summary>
-///     Represents a user-created playlist of songs.
-/// </summary>
 public class Playlist
 {
-    /// <summary>
-    ///     The unique identifier for the playlist.
-    /// </summary>
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
 
-    /// <summary>
-    ///     The name of the playlist.
-    /// </summary>
     [Required]
     [MaxLength(500)]
     public string Name { get; set; } = string.Format(Resources.Strings.Format_New, Resources.Strings.Label_Playlist);

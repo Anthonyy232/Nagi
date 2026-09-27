@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
@@ -14,7 +14,7 @@ namespace Nagi.Core.Tests;
 ///     eligible for scrobbling once the standard threshold is met (track &gt; 30 s, played ≥ 50% or
 ///     ≥ 4 min), regardless of whether Last.fm is configured.
 /// </summary>
-public class MusicPlaybackServiceScrobblingTests
+public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
 {
     private readonly IAudioPlayer _audioPlayer;
     private readonly ILibraryService _libraryService;
@@ -26,17 +26,12 @@ public class MusicPlaybackServiceScrobblingTests
     {
         _audioPlayer = Substitute.For<IAudioPlayer>();
         _libraryService = Substitute.For<ILibraryService>();
+        _libraryService.MarkListenAsEligibleForScrobblingAsync(Arg.Any<long>()).Returns(true);
         var settingsService = Substitute.For<ISettingsService>();
         var metadataService = Substitute.For<IMetadataService>();
         var logger = Substitute.For<ILogger<MusicPlaybackService>>();
 
         settingsService.GetInitialVolumeAsync().Returns(0.5);
-        settingsService.GetInitialMuteStateAsync().Returns(false);
-        settingsService.GetInitialShuffleStateAsync().Returns(false);
-        settingsService.GetInitialRepeatModeAsync().Returns(RepeatMode.Off);
-        settingsService.GetRestorePlaybackStateEnabledAsync().Returns(false);
-        settingsService.GetPlaybackStateAsync().Returns((PlaybackState?)null);
-        settingsService.GetEqualizerSettingsAsync().Returns((EqualizerSettings?)null);
 
         _audioPlayer.GetEqualizerBands().Returns(new List<(uint, float)> { (0, 60f), (1, 170f) });
 
@@ -47,7 +42,7 @@ public class MusicPlaybackServiceScrobblingTests
             metadataService,
             logger);
 
-        _testSongs = Enumerable.Range(1, 3)
+        _testSongs = Enumerable.Range(1, 2)
             .Select(i => new Song { Id = Guid.NewGuid(), Title = $"Song {i}", FilePath = $"C:\\music\\song{i}.mp3" })
             .ToList();
 
@@ -58,129 +53,98 @@ public class MusicPlaybackServiceScrobblingTests
             (song, sessionId, listenStartedUtc) => _raisedEvents.Add((song, sessionId, listenStartedUtc));
     }
 
-    /// <summary>
-    ///     Simulates the <c>PositionChanged</c> event being raised by the audio player.
-    ///     This is the trigger that calls <c>MaybeMarkEligibleForScrobbling</c>.
-    /// </summary>
+    public ValueTask DisposeAsync() => _service.DisposeAsync();
+
     private void RaisePositionChanged() => _audioPlayer.PositionChanged += Raise.Event<Action>();
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Eligibility is marked correctly
-    // ──────────────────────────────────────────────────────────────────────────
-
     [Fact]
-    public async Task OnPositionChanged_WhenHalfDurationPlayed_MarksSessionEligible()
+    public async Task Eligibility_DuringTrackLoad_DoesNotCountThePreviousTracksPosition()
     {
-        // Arrange — 3-minute track, 91 seconds played (≥ 50%)
-        await _service.InitializeAsync();
         _libraryService.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(1L);
-        await _service.PlayAsync(_testSongs[0]);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        _audioPlayer.LoadAsync(_testSongs[0]).Returns(release.Task);
+        var playback = _service.PlayAsync(_testSongs[0]);
+        _audioPlayer.Duration.Returns(TimeSpan.FromMinutes(3));
+        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(91));
+        _audioPlayer.IsPlaying.Returns(true);
+        _audioPlayer.StateChanged += Raise.Event<Action>();
 
+        RaisePositionChanged();
+        release.SetResult();
+        await playback;
+        await _service.FlushPendingFinalizationAsync();
+
+        _raisedEvents.Should().BeEmpty();
+        await _libraryService.DidNotReceive().MarkListenAsEligibleForScrobblingAsync(Arg.Any<long>());
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Eligibility_WhenDatabaseUpdateFails_RetriesWithoutEmittingSuccess(bool throws)
+    {
+        _libraryService.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(1L);
+        _libraryService.MarkListenAsEligibleForScrobblingAsync(1L).Returns(_ =>
+            throws ? Task.FromException<bool>(new InvalidOperationException("Database unavailable")) : Task.FromResult(false));
+        await _service.PlayAsync(_testSongs[0]);
         _audioPlayer.Duration.Returns(TimeSpan.FromMinutes(3));
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(91));
 
-        // Act
         RaisePositionChanged();
         await _service.FlushPendingFinalizationAsync();
-
-        // Assert
-        await _libraryService.Received(1).MarkListenAsEligibleForScrobblingAsync(1L);
-        _raisedEvents.Should().ContainSingle();
-        _raisedEvents[0].Song.Id.Should().Be(_testSongs[0].Id);
-        _raisedEvents[0].SessionId.Should().Be(1L);
-        _raisedEvents[0].ListenStartedUtc.Should().NotBe(default);
-    }
-
-    [Fact]
-    public async Task OnPositionChanged_WhenFourMinutesPlayed_MarksSessionEligible()
-    {
-        // Arrange — 10-minute track, 4 minutes played (< 50% but meets 4-min rule)
-        await _service.InitializeAsync();
-        _libraryService.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(2L);
-        await _service.PlayAsync(_testSongs[0]);
-
-        _audioPlayer.Duration.Returns(TimeSpan.FromMinutes(10));
-        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromMinutes(4));
-
-        // Act
-        RaisePositionChanged();
-        await _service.FlushPendingFinalizationAsync();
-
-        // Assert
-        await _libraryService.Received(1).MarkListenAsEligibleForScrobblingAsync(2L);
-        _raisedEvents.Should().ContainSingle();
-        _raisedEvents[0].SessionId.Should().Be(2L);
-    }
-
-    // ──────────────────────────────────────────────────────────────────────────
-    // Eligibility is NOT marked when threshold is not met
-    // ──────────────────────────────────────────────────────────────────────────
-
-    [Fact]
-    public async Task OnPositionChanged_WhenTrackIsTooShort_DoesNotMarkEligible()
-    {
-        // Arrange — 30-second track (must be > 30 s)
-        await _service.InitializeAsync();
-        _libraryService.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(3L);
-        await _service.PlayAsync(_testSongs[0]);
-
-        _audioPlayer.Duration.Returns(TimeSpan.FromSeconds(30));
-        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(20));
-
-        // Act
-        RaisePositionChanged();
-        await _service.FlushPendingFinalizationAsync();
-
-        // Assert
-        await _libraryService.DidNotReceive().MarkListenAsEligibleForScrobblingAsync(Arg.Any<long>());
         _raisedEvents.Should().BeEmpty();
-    }
-
-    [Fact]
-    public async Task OnPositionChanged_WhenThresholdNotYetMet_DoesNotMarkEligible()
-    {
-        // Arrange — 3-minute track, only 30 seconds played (< 50%)
-        await _service.InitializeAsync();
-        _libraryService.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(4L);
-        await _service.PlayAsync(_testSongs[0]);
-
-        _audioPlayer.Duration.Returns(TimeSpan.FromMinutes(3));
-        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(30));
-
-        // Act
+        _libraryService.MarkListenAsEligibleForScrobblingAsync(1L).Returns(true);
         RaisePositionChanged();
         await _service.FlushPendingFinalizationAsync();
 
-        // Assert
-        await _libraryService.DidNotReceive().MarkListenAsEligibleForScrobblingAsync(Arg.Any<long>());
-        _raisedEvents.Should().BeEmpty();
+        _raisedEvents.Should().ContainSingle();
+        await _libraryService.Received(2).MarkListenAsEligibleForScrobblingAsync(1L);
+    }
+
+    [Theory]
+    [InlineData(180, 90, true)]
+    [InlineData(600, 240, true)]
+    [InlineData(30, 20, false)]
+    [InlineData(180, 30, false)]
+    public async Task OnPositionChanged_RespectsDurationAndListeningThresholds(
+        int durationSeconds, int playedSeconds, bool eligible)
+    {
+        await _service.InitializeAsync();
+        _libraryService.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(1L);
+        await _service.PlayAsync(_testSongs[0]);
+        _audioPlayer.Duration.Returns(TimeSpan.FromSeconds(durationSeconds));
+        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(playedSeconds));
+
+        RaisePositionChanged();
+        await _service.FlushPendingFinalizationAsync();
+
+        await _libraryService.Received(eligible ? 1 : 0).MarkListenAsEligibleForScrobblingAsync(1L);
+        _raisedEvents.Should().HaveCount(eligible ? 1 : 0);
+        if (eligible)
+        {
+            _raisedEvents[0].Song.Id.Should().Be(_testSongs[0].Id);
+            _raisedEvents[0].SessionId.Should().Be(1L);
+            _raisedEvents[0].ListenStartedUtc.Should().NotBe(default);
+        }
     }
 
     [Fact]
     public async Task OnPositionChanged_WhenNoActiveSession_DoesNotMarkEligible()
     {
-        // Arrange — no track is playing (CurrentListenHistoryId is null)
         await _service.InitializeAsync();
 
         _audioPlayer.Duration.Returns(TimeSpan.FromMinutes(3));
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromMinutes(2));
 
-        // Act
         RaisePositionChanged();
         await _service.FlushPendingFinalizationAsync();
 
-        // Assert
         await _libraryService.DidNotReceive().MarkListenAsEligibleForScrobblingAsync(Arg.Any<long>());
     }
-
-    // ──────────────────────────────────────────────────────────────────────────
-    // Idempotence — marked at most once per session
-    // ──────────────────────────────────────────────────────────────────────────
 
     [Fact]
     public async Task OnPositionChanged_AfterEligibilityMet_DoesNotMarkAgain()
     {
-        // Arrange
         await _service.InitializeAsync();
         _libraryService.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(5L);
         await _service.PlayAsync(_testSongs[0]);
@@ -188,12 +152,10 @@ public class MusicPlaybackServiceScrobblingTests
         _audioPlayer.Duration.Returns(TimeSpan.FromMinutes(3));
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(91));
 
-        // Act — raise the event twice
         RaisePositionChanged();
         RaisePositionChanged();
         await _service.FlushPendingFinalizationAsync();
 
-        // Assert — only one DB call and one event despite two position events
         await _libraryService.Received(1).MarkListenAsEligibleForScrobblingAsync(5L);
         _raisedEvents.Should().ContainSingle();
     }
@@ -204,11 +166,11 @@ public class MusicPlaybackServiceScrobblingTests
         await _service.InitializeAsync();
         _libraryService.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(20L);
         _libraryService.StartListenSessionAsync(_testSongs[1].Id, Arg.Any<PlaybackContext>()).Returns(21L);
-        var markStarted = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var markStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var releaseMark = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         _libraryService.MarkListenAsEligibleForScrobblingAsync(20L).Returns(_ =>
         {
-            markStarted.TrySetResult(true);
+            markStarted.TrySetResult();
             return releaseMark.Task;
         });
 
@@ -228,14 +190,9 @@ public class MusicPlaybackServiceScrobblingTests
         _raisedEvents[0].ListenStartedUtc.Should().BeOnOrBefore(firstSessionStartedBy);
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Eligibility flag resets when a new track starts
-    // ──────────────────────────────────────────────────────────────────────────
-
     [Fact]
     public async Task OnPositionChanged_AfterTrackChange_ResetsEligibilityAndMarksNewSession()
     {
-        // Arrange — play first track, meet threshold
         await _service.InitializeAsync();
         _libraryService.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(10L);
         _libraryService.StartListenSessionAsync(_testSongs[1].Id, Arg.Any<PlaybackContext>()).Returns(11L);
@@ -243,19 +200,16 @@ public class MusicPlaybackServiceScrobblingTests
 
         _audioPlayer.Duration.Returns(TimeSpan.FromMinutes(3));
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(91));
-        RaisePositionChanged(); // marks session 10 as eligible
+        RaisePositionChanged();
         await _service.FlushPendingFinalizationAsync();
 
-        // Move to next track — this resets _isEligibilityMarked
         await _service.NextAsync();
         await _service.FlushPendingFinalizationAsync();
 
-        // Now simulate the threshold being met for the new session
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(91));
         RaisePositionChanged();
         await _service.FlushPendingFinalizationAsync();
 
-        // Assert — both sessions were individually marked
         await _libraryService.Received(1).MarkListenAsEligibleForScrobblingAsync(10L);
         await _libraryService.Received(1).MarkListenAsEligibleForScrobblingAsync(11L);
     }

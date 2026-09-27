@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Nagi.Core.Models;
@@ -8,21 +8,12 @@ namespace Nagi.Core.Models;
 /// </summary>
 public class ListenHistory
 {
-    /// <summary>
-    ///     The unique identifier for the listen event.
-    /// </summary>
     [Key]
     public long Id { get; set; }
 
-    /// <summary>
-    ///     The foreign key of the song that was listened to.
-    /// </summary>
     [Required]
     public Guid SongId { get; set; }
 
-    /// <summary>
-    ///     The navigation property for the associated song.
-    /// </summary>
     [ForeignKey("SongId")]
     public virtual Song Song { get; set; } = null!;
 

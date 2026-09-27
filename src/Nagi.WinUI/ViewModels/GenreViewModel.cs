@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,34 +17,18 @@ using Nagi.WinUI.Helpers;
 namespace Nagi.WinUI.ViewModels;
 
 /// <summary>
-///     A display-optimized representation of a genre for the user interface.
-/// </summary>
-public partial class GenreViewModelItem : ObservableObject
-{
-    [ObservableProperty] public partial Guid Id { get; set; }
-
-    [ObservableProperty] public partial string Name { get; set; } = string.Empty;
-
-    /// <summary>
-    ///     The number of songs in this genre (for sorting purposes).
-    /// </summary>
-    public int SongCount { get; set; }
-}
-
-/// <summary>
 ///     Manages the state and logic for the genre list page.
 /// </summary>
-public partial class GenreViewModel : SearchableViewModelBase
+public partial class GenreViewModel : SearchableViewModelBase, IDisposable
 {
-    private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
     private readonly ILibraryService _libraryService;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly INavigationService _navigationService;
     private readonly IUISettingsService _settingsService;
     private bool _hasSortOrderLoaded;
-    private List<GenreViewModelItem> _allGenres = new();
-    private bool _isNavigating;
-    private CancellationTokenSource? _debouncer;
+    private List<GenreSummary> _allGenres = new();
+    private readonly Debouncer _debouncer = new(TimeSpan.FromSeconds(1));
+    private readonly SemaphoreSlim _loadLock = new(1, 1);
 
     public GenreViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService,
         INavigationService navigationService, IUISettingsService settingsService, IDispatcherService dispatcherService, ILogger<GenreViewModel> logger)
@@ -57,14 +39,10 @@ public partial class GenreViewModel : SearchableViewModelBase
         _navigationService = navigationService;
         _settingsService = settingsService;
 
-        // Store the handler in a field so we can reliably unsubscribe from it later.
-        _collectionChangedHandler = (s, e) => OnPropertyChanged(nameof(HasGenres));
-        Genres.CollectionChanged += _collectionChangedHandler;
+        Genres.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasGenres));
 
-        // Subscribe to library changes to refresh when folders are added/removed
         _libraryService.LibraryContentChanged += OnLibraryContentChanged;
 
-        UpdateSortOrderText();
     }
 
     private void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
@@ -72,41 +50,45 @@ public partial class GenreViewModel : SearchableViewModelBase
         // We don't need to refresh the genre list just because a folder container was added (it has no songs yet).
         if (e.ChangeType == LibraryChangeType.FolderAdded) return;
 
-        // Debounce to prevent multiple refresh calls during rapid changes.
-        var cts = new CancellationTokenSource();
-        var oldCts = Interlocked.Exchange(ref _debouncer, cts);
-        try { oldCts?.Cancel(); oldCts?.Dispose(); } catch (ObjectDisposedException) { }
-
-        var token = cts.Token;
-        _ = Task.Run(async () =>
+        _debouncer.Trigger(async token =>
         {
             try
             {
-                await Task.Delay(1000, token).ConfigureAwait(false);
-                if (token.IsCancellationRequested) return;
-
                 _logger.LogDebug("Library content changed ({ChangeType}). Refreshing genre list.", e.ChangeType);
-                await _dispatcherService.EnqueueAsync(() => LoadGenresCommand.ExecuteAsync(CancellationToken.None));
+                await _dispatcherService.EnqueueAsync(() => token.IsCancellationRequested
+                    ? Task.CompletedTask : LoadGenresAsync(token));
             }
-            catch (OperationCanceledException) { }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not OperationCanceledException)
             {
                 _logger.LogError(ex, "Error refreshing genres after library content change");
             }
-        }, token);
+        });
     }
 
-    [ObservableProperty] public partial ObservableRangeCollection<GenreViewModelItem> Genres { get; set; } = new();
+    public override void ResetState()
+    {
+        base.ResetState();
+        _debouncer.Cancel();
+        LoadGenresCommand.Cancel();
+    }
+
+    public void Dispose()
+    {
+        _libraryService.LibraryContentChanged -= OnLibraryContentChanged;
+        ResetState();
+    }
+
+    public ObservableRangeCollection<GenreSummary> Genres { get; } = new();
 
     [ObservableProperty] public partial bool IsLoading { get; set; }
 
     [ObservableProperty] public partial bool HasLoadError { get; set; }
 
-    [ObservableProperty] public partial GenreSortOrder CurrentSortOrder { get; set; } = GenreSortOrder.NameAsc;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CurrentSortOrderText))]
+    public partial GenreSortOrder CurrentSortOrder { get; set; } = GenreSortOrder.NameAsc;
 
-    [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = string.Empty;
-
-    partial void OnCurrentSortOrderChanged(GenreSortOrder value) => UpdateSortOrderText();
+    public string CurrentSortOrderText => SortOrderHelper.GetDisplayName(CurrentSortOrder);
 
 
     /// <summary>
@@ -114,32 +96,19 @@ public partial class GenreViewModel : SearchableViewModelBase
     /// </summary>
     public bool HasGenres => Genres.Any();
 
-    private void UpdateSortOrderText()
-    {
-        CurrentSortOrderText = SortOrderHelper.GetDisplayName(CurrentSortOrder);
-    }
-
     /// <summary>
     ///     Navigates to the detailed view for the selected genre.
     /// </summary>
     [RelayCommand]
-    public void NavigateToGenreDetail(GenreViewModelItem? genre)
+    public void NavigateToGenreDetail(GenreSummary? genre)
     {
-        if (genre is null || _isNavigating) return;
-        _isNavigating = true;
-        try
+        if (genre is null) return;
+        var navParam = new GenreViewNavigationParameter
         {
-            var navParam = new GenreViewNavigationParameter
-            {
-                GenreId = genre.Id,
-                GenreName = genre.Name
-            };
-            _navigationService.Navigate(typeof(GenreViewPage), navParam);
-        }
-        finally
-        {
-            _isNavigating = false;
-        }
+            GenreId = genre.Id,
+            GenreName = genre.Name
+        };
+        _navigationService.Navigate(typeof(GenreViewPage), navParam);
     }
 
     /// <summary>
@@ -149,40 +118,24 @@ public partial class GenreViewModel : SearchableViewModelBase
     [RelayCommand]
     public async Task LoadGenresAsync(CancellationToken cancellationToken)
     {
-        if (IsLoading) return;
+        try { await _loadLock.WaitAsync(cancellationToken); }
+        catch (OperationCanceledException) { return; }
 
         IsLoading = true;
         HasLoadError = false;
 
         try
         {
-            Task<GenreSortOrder>? sortTask = null;
             if (!_hasSortOrderLoaded)
             {
-                sortTask = _settingsService.GetSortOrderAsync<GenreSortOrder>(SortOrderHelper.GenresSortOrderKey);
-            }
-
-            var genreModelsTask = _libraryService.GetAllGenresAsync();
-
-            if (sortTask != null)
-                await Task.WhenAll(sortTask, genreModelsTask);
-            else
-                await genreModelsTask;
-
-            if (sortTask != null)
-            {
-                CurrentSortOrder = sortTask.Result;
+                CurrentSortOrder = await _settingsService.GetSortOrderAsync<GenreSortOrder>(SortOrderHelper.GenresSortOrderKey);
                 _hasSortOrderLoaded = true;
             }
-
-            var genreModels = genreModelsTask.Result;
+            var genreModels = await Task.Run(() => _libraryService.GetGenreSummariesAsync(cancellationToken), cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
 
-            _allGenres = genreModels
-                .Select(g => new GenreViewModelItem { Id = g.Id, Name = g.Name, SongCount = g.Songs.Count })
-                .ToList();
+            _allGenres = genreModels.ToList();
 
-            // Apply current filter and sort
             ApplyFilter();
         }
         catch (OperationCanceledException)
@@ -193,31 +146,32 @@ public partial class GenreViewModel : SearchableViewModelBase
         {
             _logger.LogError(ex, "Failed to load genres");
             HasLoadError = true;
+            _allGenres.Clear();
             Genres.Clear();
         }
         finally
         {
             IsLoading = false;
+            _loadLock.Release();
         }
     }
 
-    protected override async Task ExecuteSearchAsync(CancellationToken token)
+    protected override Task ExecuteSearchAsync(CancellationToken token)
     {
-        await _dispatcherService.EnqueueAsync(async () =>
+        return _dispatcherService.EnqueueAsync(() =>
         {
-            if (token.IsCancellationRequested) return;
-            ApplyFilter();
+            if (!token.IsCancellationRequested) ApplyFilter();
+            return Task.CompletedTask;
         });
     }
 
     private void ApplyFilter()
     {
-        IEnumerable<GenreViewModelItem> filtered = _allGenres;
+        IEnumerable<GenreSummary> filtered = _allGenres;
         if (IsSearchActive)
             filtered = _allGenres.Where(g =>
-                g.Name?.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) == true);
+                g.Name.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase));
 
-        // Apply sort order
         var sorted = CurrentSortOrder switch
         {
             GenreSortOrder.NameDesc => filtered.OrderByDescending(g => g.Name, StringComparer.OrdinalIgnoreCase).ThenBy(g => g.Id),
@@ -233,18 +187,16 @@ public partial class GenreViewModel : SearchableViewModelBase
     ///     Changes the sort order and reapplies filtering.
     /// </summary>
     [RelayCommand]
-    public Task ChangeSortOrderAsync(string sortOrderString)
+    public async Task ChangeSortOrderAsync(string sortOrderString)
     {
         if (Enum.TryParse<GenreSortOrder>(sortOrderString, out var newSortOrder)
             && newSortOrder != CurrentSortOrder)
         {
             CurrentSortOrder = newSortOrder;
-            _ = _settingsService.SetSortOrderAsync(SortOrderHelper.GenresSortOrderKey, newSortOrder)
-                .ContinueWith(t => _logger.LogError(t.Exception, "Failed to save genre sort order"),
-                    TaskContinuationOptions.OnlyOnFaulted);
+            try { await _settingsService.SetSortOrderAsync(SortOrderHelper.GenresSortOrderKey, newSortOrder); }
+            catch (Exception ex) { _logger.LogError(ex, "Failed to save genre sort order"); }
             ApplyFilter();
         }
-        return Task.CompletedTask;
     }
 
     /// <summary>
@@ -261,7 +213,6 @@ public partial class GenreViewModel : SearchableViewModelBase
         }
         catch (Exception ex)
         {
-            // This is a critical failure as it directly impacts core user functionality.
             _logger.LogCritical(ex, "Failed to play genre {GenreId}", genreId);
         }
     }

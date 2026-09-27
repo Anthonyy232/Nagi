@@ -12,7 +12,8 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
 {
     private readonly string? _discordAppId;
     private readonly ILogger<DiscordPresenceService> _logger;
-    private readonly SemaphoreSlim _initLock = new(1, 1);
+    private readonly Func<string, DiscordRpcClient> _createClient;
+    private readonly object _clientLock = new();
     private DiscordRpcClient? _client;
     private TimeSpan _currentProgress;
     private Song? _currentSong;
@@ -21,68 +22,74 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
     private volatile bool _isReady;
 
     private Timer? _debounceTimer;
-    private readonly object _timerLock = new();
 
     public DiscordPresenceService(IConfiguration configuration, ILogger<DiscordPresenceService> logger)
+        : this(configuration, logger, appId => new DiscordRpcClient(appId, pipe: -1,
+            logger: new DiscordLoggerAdapter(logger), autoEvents: true,
+            client: new SandboxAwareDiscordPipeClient { Logger = new DiscordLoggerAdapter(logger) }))
+    {
+    }
+
+    internal DiscordPresenceService(IConfiguration configuration, ILogger<DiscordPresenceService> logger,
+        Func<string, DiscordRpcClient> createClient)
     {
         _logger = logger;
+        _createClient = createClient;
         _discordAppId = configuration["Discord:AppId"];
 
-        if (string.IsNullOrEmpty(_discordAppId))
+        if (string.IsNullOrWhiteSpace(_discordAppId))
             _logger.LogWarning("Discord AppId is not configured. Discord Rich Presence will be disabled.");
     }
 
     public string Name => "Discord";
 
-    public async Task InitializeAsync()
+    public Task InitializeAsync()
     {
-        if (string.IsNullOrEmpty(_discordAppId)) return;
+        if (string.IsNullOrWhiteSpace(_discordAppId)) return Task.CompletedTask;
 
-        await _initLock.WaitAsync().ConfigureAwait(false);
-        try
+        lock (_clientLock)
         {
-            if (_client == null || _client.IsDisposed)
+            try
             {
-                _logger.LogDebug("Initializing new Discord RPC client.");
-
-                var pipeClient = new SandboxAwareDiscordPipeClient { Logger = new DiscordLoggerAdapter(_logger) };
-
-                // Set SkipIdenticalPresence to true to prevent redundant updates that trigger library bugs
-                _client = new DiscordRpcClient(_discordAppId, pipe: -1, logger: new DiscordLoggerAdapter(_logger), autoEvents: true, client: pipeClient)
+                if (_client == null || _client.IsDisposed)
                 {
-                    SkipIdenticalPresence = true
-                };
+                    _logger.LogDebug("Initializing new Discord RPC client.");
+                    _isReady = false;
+                    var client = _createClient(_discordAppId);
+                    client.SkipIdenticalPresence = true;
+                    _client = client;
 
-                _client.OnError += OnRpcError;
-                _client.OnReady += async (_, _) =>
+                    client.OnError += OnRpcError;
+                    client.OnReady += async (_, _) =>
+                    {
+                        _logger.LogInformation("Discord Rich Presence is Ready. Waiting for warm-up...");
+
+                        // Let Discord finish initializing before sending presence, and ignore an old connection's callback.
+                        await Task.Delay(2000).ConfigureAwait(false);
+                        lock (_clientLock)
+                        {
+                            if (!ReferenceEquals(_client, client) || client.IsDisposed) return;
+                            _isReady = true;
+                            _logger.LogInformation("Discord warm-up complete. Syncing state.");
+                            RequestUpdate();
+                        }
+                    };
+
+                    client.OnConnectionFailed += (_, e) => _logger.LogWarning("Discord connection failed: {Pipe}", e.FailedPipe);
+                    client.Initialize();
+                }
+                else if (!_client.IsInitialized)
                 {
-                    _logger.LogInformation("Discord Rich Presence is Ready. Waiting for warm-up...");
-
-                    // Give the library 2 seconds to initialize its internal state before we push data.
-                    // Guard against disposal racing with this delay.
-                    await Task.Delay(2000).ConfigureAwait(false);
-
-                    if (_client is not { IsDisposed: false }) return;
-                    _isReady = true;
-                    _logger.LogInformation("Discord warm-up complete. Syncing state.");
-                    RequestUpdate();
-                };
-
-                _client.OnConnectionFailed += (_, e) => _logger.LogWarning("Discord connection failed: {Pipe}", e.FailedPipe);
-
-                _client.Initialize();
+                    _logger.LogDebug("Re-initializing existing Discord RPC client.");
+                    _client.Initialize();
+                }
             }
-            else if (!_client.IsInitialized)
+            catch (Exception ex)
             {
-                _logger.LogDebug("Re-initializing existing Discord RPC client.");
-                _client.Initialize();
+                _logger.LogError(ex, "Failed to initialize Discord RPC client.");
             }
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to initialize Discord RPC client.");
-        }
-        finally { _initLock.Release(); }
+        return Task.CompletedTask;
     }
 
     public Task OnTrackChangedAsync(Song song, long listenHistoryId)
@@ -113,20 +120,17 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
         // We show the paused-track state rather than calling ClearPresence (which is unstable in the library).
         _isPlaying = false;
         _timestamps = null;
-        lock (_timerLock) _debounceTimer?.Change(Timeout.Infinite, Timeout.Infinite);
         RequestUpdate();
         return Task.CompletedTask;
     }
 
     private void RequestUpdate()
     {
-        // DiscordRPC natively queues presence updates if the pipe isn't ready, so we only need to check if _client exists
-        if (_client == null) return;
-
         // Increase debounce to 500ms. Discord's rate limit is 1 update per 15s,
         // but the library specifically crashes if updates are sent within ~200ms of each other.
-        lock (_timerLock)
+        lock (_clientLock)
         {
+            if (_client == null) return;
             _debounceTimer ??= new Timer(_ => UpdatePresenceInternal(), null, Timeout.Infinite, Timeout.Infinite);
             _debounceTimer.Change(500, Timeout.Infinite);
         }
@@ -136,15 +140,13 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
     {
         try
         {
-            // Ensure we are initialized AND the Discord handshake has finished.
-            // Guard is inside try-catch to handle the race where DisposeAsync nulls/disposes
-            // _client between our check and usage (timer callback can fire after Dispose).
-            if (_client == null || !_client.IsInitialized || !_isReady) return;
+            var client = _client;
+            if (client == null || !client.IsInitialized || !_isReady) return;
 
             // If no song is loaded or playback is stopped, show idling
             if (_currentSong == null)
             {
-                _client.SetPresence(new RichPresence { Details = "Browsing Music Library", State = "Idling" });
+                client.SetPresence(new RichPresence { Details = "Browsing Music Library", State = "Idling" });
                 return;
             }
 
@@ -168,7 +170,7 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
             };
 
             _logger.LogDebug("Sending Discord Presence Update: {Details}", presence.Details);
-            _client.SetPresence(presence);
+            client.SetPresence(presence);
         }
         catch (ObjectDisposedException)
         {
@@ -200,16 +202,22 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
 
     public ValueTask DisposeAsync()
     {
-        _isReady = false;
-        _initLock.Dispose();
-        _debounceTimer?.Dispose();
+        DiscordRpcClient? client;
+        lock (_clientLock)
+        {
+            _isReady = false;
+            _debounceTimer?.Dispose();
+            _debounceTimer = null;
+            client = _client;
+            _client = null;
+        }
 
-        if (_client != null)
+        if (client != null)
         {
             _logger.LogDebug("Disposing Discord RPC client.");
-            _client.OnError -= OnRpcError;
-            if (!_client.IsDisposed) _client.Dispose();
-            _client = null;
+            client.OnError -= OnRpcError;
+            // Dispose outside the lock so RPC callbacks can finish while the client shuts down.
+            client.Dispose();
         }
 
         return ValueTask.CompletedTask;

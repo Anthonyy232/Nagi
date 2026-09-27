@@ -1,8 +1,7 @@
 ﻿using System.IO.Pipes;
-using System.Runtime.InteropServices;
+using System.Buffers.Binary;
 using DiscordRPC.IO;
 using DiscordRPC.Logging;
-using Microsoft.Win32.SafeHandles;
 
 namespace Nagi.Core.Services.Implementations.Presence;
 
@@ -16,7 +15,8 @@ public sealed class SandboxAwareDiscordPipeClient : INamedPipeClient
     private const string SandboxPrefix = "LOCAL\\";
 
     private NamedPipeClientStream? _stream;
-    private int _connectedPipe;
+    private Task<PipeFrame?>? _pendingFrame;
+    private int _connectedPipe = -1;
 
     public ILogger Logger { get; set; } = new NullLogger();
 
@@ -24,18 +24,9 @@ public sealed class SandboxAwareDiscordPipeClient : INamedPipeClient
 
     public int ConnectedPipe => _connectedPipe;
 
-    // Native Windows API to check if data is available in the pipe without blocking
-    [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern bool PeekNamedPipe(
-        SafePipeHandle handle,
-        byte[]? buffer,
-        int bufferSize,
-        ref int bytesRead,
-        ref int totalBytesAvail,
-        ref int bytesLeftThisMessage);
-
     public bool Connect(int pipe)
     {
+        Close();
         if (pipe >= 0) return TryConnect(pipe);
 
         // Auto-discover: try pipes 0-9
@@ -50,29 +41,45 @@ public sealed class SandboxAwareDiscordPipeClient : INamedPipeClient
     public bool ReadFrame(out PipeFrame frame)
     {
         frame = default;
-        if (_stream is not { IsConnected: true }) return false;
+        var stream = _stream;
+        if (stream is null) return false;
 
+        var pending = _pendingFrame ??= ReadNextFrameAsync(stream);
+        if (!pending.IsCompleted) return false;
+        _pendingFrame = null;
+        if (pending.GetAwaiter().GetResult() is not { } completedFrame)
+        {
+            Close();
+            return false;
+        }
+
+        frame = completedFrame;
+        return true;
+    }
+
+    private async Task<PipeFrame?> ReadNextFrameAsync(Stream stream)
+    {
         try
         {
-            int bytesRead = 0, totalBytesAvail = 0, bytesLeftThisMessage = 0;
+            var header = new byte[8];
+            await stream.ReadExactlyAsync(header).ConfigureAwait(false);
+            var length = BinaryPrimitives.ReadUInt32LittleEndian(header.AsSpan(4));
+            if (length > PipeFrame.MAX_SIZE)
+                throw new InvalidDataException($"Discord frame exceeds {PipeFrame.MAX_SIZE} bytes.");
 
-            // CRITICAL: We must not block infinitely. If we block here, the DiscordRPC
-            // writer queue starves and Presence updates will never be sent.
-            bool peekSuccess = PeekNamedPipe(_stream.SafePipeHandle, null, 0, ref bytesRead, ref totalBytesAvail, ref bytesLeftThisMessage);
-
-            if (!peekSuccess || totalBytesAvail == 0)
+            var data = new byte[length];
+            await stream.ReadExactlyAsync(data).ConfigureAwait(false);
+            return new PipeFrame
             {
-                return false; // No data available. Return immediately so the writer thread can run.
-            }
-
-            // Data is available! We can safely read without blocking.
-            frame = new PipeFrame();
-            return frame.ReadStream(_stream);
+                Opcode = (Opcode)BinaryPrimitives.ReadUInt32LittleEndian(header),
+                Data = data
+            };
         }
         catch (Exception ex)
         {
-            Logger.Error($"Error reading frame: {ex.Message}");
-            return false;
+            // Closing a connection also finishes any read that the RPC loop stopped polling.
+            if (ReferenceEquals(_stream, stream)) Logger.Error($"Error reading frame: {ex.Message}");
+            return null;
         }
     }
 
@@ -95,9 +102,11 @@ public sealed class SandboxAwareDiscordPipeClient : INamedPipeClient
 
     public void Close()
     {
-        _stream?.Dispose();
+        var stream = _stream;
         _stream = null;
+        _pendingFrame = null;
         _connectedPipe = -1;
+        stream?.Dispose();
     }
 
     public void Dispose() => Close();
@@ -113,30 +122,21 @@ public sealed class SandboxAwareDiscordPipeClient : INamedPipeClient
 
     private bool TryConnectToPipe(string pipeName, int pipeNumber)
     {
+        var client = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut, PipeOptions.Asynchronous);
         try
         {
             Logger.Trace($"Attempting connection to pipe: {pipeName}");
-            var client = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut);
             client.Connect(2000);
-
-            if (client.IsConnected)
-            {
-                Logger.Info($"Connected to pipe: {pipeName}");
-                _stream = client;
-                _connectedPipe = pipeNumber;
-                return true;
-            }
-
-            client.Dispose();
-            return false;
-        }
-        catch (TimeoutException)
-        {
-            return false;
+            Logger.Info($"Connected to pipe: {pipeName}");
+            _stream = client;
+            _connectedPipe = pipeNumber;
+            return true;
         }
         catch (Exception ex)
         {
-            Logger.Error($"Failed to connect to pipe {pipeName}: {ex.Message}");
+            client.Dispose();
+            if (ex is not TimeoutException)
+                Logger.Error($"Failed to connect to pipe {pipeName}: {ex.Message}");
             return false;
         }
     }

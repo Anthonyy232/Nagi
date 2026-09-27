@@ -1,5 +1,5 @@
 using System.Collections.Concurrent;
-using System.Text.Json;
+using System.Net.Http.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Http.Pipelines;
@@ -8,18 +8,15 @@ using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.Core.Services.Implementations;
 
-// Private DTO for deserializing the API key from the server response.
 file class ApiKeyResponse
 {
     public string? Value { get; set; }
 }
 
-
-
 /// <summary>
 ///     Manages the retrieval and thread-safe caching of API keys from a secure server endpoint.
 /// </summary>
-public class ApiKeyService : IApiKeyService, IDisposable
+public class ApiKeyService : IApiKeyService
 {
     private readonly ConcurrentDictionary<string, Lazy<Task<string?>>> _cachedApiKeys = new();
     private readonly IConfiguration _configuration;
@@ -48,30 +45,17 @@ public class ApiKeyService : IApiKeyService, IDisposable
             return null;
         }
 
-        // GetOrAdd ensures the factory function is only executed once for a given key.
-        // The Lazy<Task<T>> wrapper caches successful fetches and coalesces concurrent callers.
+        // Lazy coalesces concurrent callers even when GetOrAdd invokes its factory more than once.
         var lazyTask = _cachedApiKeys.GetOrAdd(keyName,
             _ => new Lazy<Task<string?>>(() => FetchKeyFromServerAsync(keyName, CancellationToken.None)));
 
-        try
+        var result = await lazyTask.Value.WaitAsync(cancellationToken).ConfigureAwait(false);
+        if (result is null)
         {
-            // Use WaitAsync to respect the caller's cancellation token without affecting the cached task.
-            var result = await lazyTask.Value.WaitAsync(cancellationToken).ConfigureAwait(false);
-            if (result is null)
-            {
-                // Transient transport failures must remain retryable. Remove only this exact Lazy;
-                // a concurrent forced refresh may already have installed a newer value.
-                ((ICollection<KeyValuePair<string, Lazy<Task<string?>>>>)_cachedApiKeys)
-                    .Remove(new KeyValuePair<string, Lazy<Task<string?>>>(keyName, lazyTask));
-            }
-
-            return result;
+            // Preserve a newer value installed by a concurrent forced refresh.
+            _cachedApiKeys.TryRemove(new KeyValuePair<string, Lazy<Task<string?>>>(keyName, lazyTask));
         }
-        catch (OperationCanceledException)
-        {
-            // Propagate cancellation requested by the caller.
-            throw;
-        }
+        return result;
     }
 
     /// <inheritdoc />
@@ -80,14 +64,6 @@ public class ApiKeyService : IApiKeyService, IDisposable
         _logger.LogDebug("Forcing refresh for API key '{ApiKeyName}'.", keyName);
         _cachedApiKeys.TryRemove(keyName, out _);
         return GetApiKeyAsync(keyName, cancellationToken);
-    }
-
-    /// <summary>
-    ///     No-op Dispose as IHttpClientFactory manages client lifetimes.
-    /// </summary>
-    public void Dispose()
-    {
-        GC.SuppressFinalize(this);
     }
 
     /// <summary>
@@ -105,10 +81,6 @@ public class ApiKeyService : IApiKeyService, IDisposable
             return null;
         }
 
-        // Ensure the URL has a scheme to prevent URI format exceptions.
-        if (!serverUrl.StartsWith("http://") && !serverUrl.StartsWith("https://")) serverUrl = "https://" + serverUrl;
-
-        // Build the request URL.
         var route = keyName switch
         {
             ServiceProviderIds.TheAudioDb => "theaudiodb-key",
@@ -118,7 +90,13 @@ public class ApiKeyService : IApiKeyService, IDisposable
             _ => throw new ArgumentException($"Unknown service: {keyName}", nameof(keyName))
         };
 
-        var requestUri = $"{serverUrl.TrimEnd('/')}/api/{route}";
+        if (!Uri.TryCreate(serverUrl, UriKind.Absolute, out var serverUri) ||
+            serverUri.Scheme is not ("http" or "https"))
+            serverUri = new Uri("https://" + serverUrl);
+        var requestUri = new UriBuilder(serverUri)
+        {
+            Path = $"{serverUri.AbsolutePath.TrimEnd('/')}/api/{route}"
+        }.Uri;
         using var httpClient = _httpClientFactory.CreateClient();
 
         return await _pipelines.ExecuteWithFallbackAsync<string?>(
@@ -136,9 +114,8 @@ public class ApiKeyService : IApiKeyService, IDisposable
             {
                 if (response.IsSuccessStatusCode)
                 {
-                    var jsonContent = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
-                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                    var apiKeyResponse = JsonSerializer.Deserialize<ApiKeyResponse>(jsonContent, options);
+                    var apiKeyResponse = await response.Content.ReadFromJsonAsync<ApiKeyResponse>(cancellationToken: ct)
+                        .ConfigureAwait(false);
                     var key = apiKeyResponse?.Value;
 
                     if (string.IsNullOrWhiteSpace(key))

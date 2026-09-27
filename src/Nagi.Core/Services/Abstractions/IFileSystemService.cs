@@ -18,7 +18,6 @@ public interface IFileSystemService
 
     bool FileExists(string path);
     void DeleteFile(string path);
-    void CopyFile(string sourceFileName, string destFileName, bool overwrite);
     void MoveFile(string sourceFileName, string destFileName, bool overwrite);
     DateTime GetLastWriteTimeUtc(string path);
     FileInfo GetFileInfo(string path);

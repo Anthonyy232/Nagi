@@ -5,8 +5,6 @@
 /// </summary>
 public interface IPathConfiguration
 {
-
-
     /// <summary>
     ///     Gets the root directory for all application data.
     /// </summary>

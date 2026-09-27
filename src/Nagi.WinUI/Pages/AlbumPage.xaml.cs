@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.System;
@@ -34,10 +34,6 @@ public sealed partial class AlbumPage : Page
 
     public AlbumViewModel ViewModel { get; }
 
-    /// <summary>
-    ///     Handles the page's navigated-to event.
-    ///     Initiates album loading if the collection is empty.
-    /// </summary>
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         try
@@ -47,21 +43,7 @@ public sealed partial class AlbumPage : Page
             var cts = new CancellationTokenSource();
             _cancellationTokenSource = cts;
 
-            if (ViewModel.Albums.Count == 0 || ViewModel.HasLoadError ||
-                (ViewModel.SongsPerPage == 0 && ViewModel.Albums.Count < ViewModel.TotalItemCount))
-            {
-                _logger.LogDebug("Album collection is empty, loading albums...");
-                await ViewModel.LoadAsync(cts.Token);
-
-                if (cts.IsCancellationRequested)
-                    _logger.LogDebug("Album loading was canceled.");
-                else if (!ViewModel.HasLoadError)
-                    _logger.LogDebug("Successfully loaded albums.");
-            }
-            else
-            {
-                _logger.LogDebug("Albums already loaded, skipping fetch.");
-            }
+            await ViewModel.LoadAsync(cts.Token);
         }
         catch (Exception ex)
         {
@@ -69,29 +51,19 @@ public sealed partial class AlbumPage : Page
         }
     }
 
-    /// <summary>
-    ///     Handles the page's navigated-from event.
-    ///     Cancels ongoing tasks but does not dispose the Singleton ViewModel.
-    /// </summary>
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
         _logger.LogDebug("Navigating away from AlbumPage.");
 
-        if (_cancellationTokenSource is { IsCancellationRequested: false })
-        {
-            _logger.LogDebug("Canceling ongoing album loading task.");
-            _cancellationTokenSource.Cancel();
-        }
+        ViewModel.ResetState();
+        _cancellationTokenSource?.Cancel();
 
         _cancellationTokenSource?.Dispose();
         _cancellationTokenSource = null;
         // Note: ViewModel is Singleton, do not dispose - state persists across navigations
     }
 
-    /// <summary>
-    ///     Handles the page loaded event to set initial visual state.
-    /// </summary>
     private void OnPageLoaded(object sender, RoutedEventArgs e)
     {
         _logger.LogDebug("AlbumPage loaded. Setting initial visual state.");
@@ -103,9 +75,6 @@ public sealed partial class AlbumPage : Page
         Loaded -= OnPageLoaded;
     }
 
-    /// <summary>
-    ///     Handles the search toggle button click to expand or collapse the search box.
-    /// </summary>
     private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e)
     {
         if (_isSearchExpanded)
@@ -114,9 +83,6 @@ public sealed partial class AlbumPage : Page
             ExpandSearch();
     }
 
-    /// <summary>
-    ///     Handles key down events in the search text box.
-    /// </summary>
     private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
     {
         if (e.Key == VirtualKey.Escape)
@@ -127,9 +93,6 @@ public sealed partial class AlbumPage : Page
         }
     }
 
-    /// <summary>
-    ///     Expands the search interface with an animation.
-    /// </summary>
     private void ExpandSearch()
     {
         if (_isSearchExpanded) return;
@@ -139,19 +102,14 @@ public sealed partial class AlbumPage : Page
         ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.AlbumPage_SearchButton_Close_ToolTip);
         VisualStateManager.GoToState(this, "SearchExpanded", true);
 
-        var timer = DispatcherQueue.CreateTimer();
-        timer.Interval = TimeSpan.FromMilliseconds(150);
-        timer.Tick += (s, args) =>
-        {
-            timer.Stop();
-            SearchTextBox.Focus(FocusState.Programmatic);
-        };
-        timer.Start();
+
     }
 
-    /// <summary>
-    ///     Collapses the search interface with an animation and resets the filter.
-    /// </summary>
+    private void OnSearchExpansionCompleted(object sender, object e)
+    {
+        if (IsLoaded && _isSearchExpanded) SearchTextBox.Focus(FocusState.Programmatic);
+    }
+
     private void CollapseSearch()
     {
         if (!_isSearchExpanded) return;
@@ -163,10 +121,6 @@ public sealed partial class AlbumPage : Page
         ViewModel.SearchTerm = string.Empty;
     }
 
-    /// <summary>
-    ///     Handles clicks on an album item in the grid.
-    ///     Navigates to the detailed view for the selected album.
-    /// </summary>
     private void AlbumsGridView_ItemClick(object sender, ItemClickEventArgs e)
     {
         if (e.ClickedItem is AlbumViewModelItem clickedAlbum)

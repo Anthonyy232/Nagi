@@ -55,7 +55,6 @@ public class SelectionStateTests
 
         Assert.False(state.IsSelected(id));
         Assert.Equal(9, state.GetSelectedCount(10));
-        Assert.Contains(id, state.GetExplicitlySelectedIds());
     }
 
     [Fact]
@@ -70,21 +69,20 @@ public class SelectionStateTests
 
         state.Select(id);
         Assert.True(state.IsSelected(id));
-        Assert.Empty(state.GetExplicitlySelectedIds());
+        Assert.Equal(10, state.GetSelectedCount(10));
     }
 
     [Fact]
-    public void Clear_ResetsState()
+    public void DeselectAll_ResetsState()
     {
         var state = new SelectionState();
         state.Select(Guid.NewGuid());
         state.SelectAll();
 
-        state.Clear();
+        state.DeselectAll();
 
         Assert.False(state.IsSelectAllMode);
         Assert.Equal(0, state.GetSelectedCount(10));
-        Assert.Empty(state.GetExplicitlySelectedIds());
     }
 
     [Fact]

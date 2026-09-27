@@ -1,6 +1,7 @@
-﻿using System.IO.Compression;
+using System.IO.Compression;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Data.Sqlite;
 using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
@@ -15,30 +16,21 @@ public class BackupRestoreServiceTests : IDisposable
     private readonly IPathConfiguration _pathConfig;
     private readonly BackupRestoreService _service;
 
-    // Temp dirs and files created during tests; all cleaned up in Dispose.
     private readonly List<string> _tempDirs = [];
-    private readonly List<string> _tempFiles = [];
 
     public BackupRestoreServiceTests()
     {
         _pathConfig = Substitute.For<IPathConfiguration>();
-        var fileSystem = Substitute.For<IFileSystemService>();
         var logger = Substitute.For<ILogger<BackupRestoreService>>();
-        _service = new BackupRestoreService(_pathConfig, fileSystem, logger);
+        _service = new BackupRestoreService(_pathConfig, logger);
     }
 
     public void Dispose()
     {
         foreach (var dir in _tempDirs)
             if (Directory.Exists(dir)) Directory.Delete(dir, recursive: true);
-        foreach (var file in _tempFiles)
-            if (File.Exists(file)) File.Delete(file);
         GC.SuppressFinalize(this);
     }
-
-    // -------------------------------------------------------------------------
-    // ValidateBackupAsync
-    // -------------------------------------------------------------------------
 
     [Fact]
     public async Task ValidateBackupAsync_WhenFileDoesNotExist_ReturnsFalse()
@@ -81,18 +73,13 @@ public class BackupRestoreServiceTests : IDisposable
     [Fact]
     public async Task ValidateBackupAsync_WithCorruptOrNonZipFile_ReturnsFalse()
     {
-        var path = Path.GetTempFileName();
-        _tempFiles.Add(path);
-        await File.WriteAllBytesAsync(path, [0x00, 0x01, 0x02, 0x03]); // not a ZIP
+        var path = Path.Combine(CreateTempDir(), "corrupt.zip");
+        await File.WriteAllBytesAsync(path, [0x00, 0x01, 0x02, 0x03]);
 
         var result = await _service.ValidateBackupAsync(path);
 
         result.Should().BeFalse("a corrupt or non-ZIP file must not pass validation");
     }
-
-    // -------------------------------------------------------------------------
-    // CreateBackupAsync
-    // -------------------------------------------------------------------------
 
     [Fact]
     public async Task CreateBackupAsync_WhenSourceDirectoryDoesNotExist_ReturnsFailure()
@@ -111,7 +98,7 @@ public class BackupRestoreServiceTests : IDisposable
     {
         var sourceDir = CreateTempDir();
         var destDir = CreateTempDir();
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, "nagi.db"), "db data");
+        using (OpenTestDatabase(Path.Combine(sourceDir, "nagi.db"), "Track")) { }
         await File.WriteAllTextAsync(Path.Combine(sourceDir, "settings.json"), "{ }");
         _pathConfig.AppDataRoot.Returns(sourceDir);
 
@@ -126,22 +113,95 @@ public class BackupRestoreServiceTests : IDisposable
         archive.Entries.Should().Contain(e => e.FullName == "settings.json");
     }
 
-    [Fact]
-    public async Task CreateBackupAsync_ExcludesLogsDirectory()
+    [Theory]
+    [InlineData("Library")]
+    [InlineData("Library;Archive")]
+    public async Task CreateBackupAsync_WithActiveReader_IncludesCommittedWalWrites(string directoryName)
+    {
+        var sourceDir = Directory.CreateDirectory(Path.Combine(CreateTempDir(), directoryName)).FullName;
+        var destinationDir = CreateTempDir();
+        var extractedDir = CreateTempDir();
+        _pathConfig.AppDataRoot.Returns(sourceDir);
+        var connectionString = new SqliteConnectionStringBuilder
+        {
+            DataSource = Path.Combine(sourceDir, "nagi.db"),
+            Pooling = false
+        }.ToString();
+        using var writer = new SqliteConnection(connectionString);
+        writer.Open();
+        using var write = writer.CreateCommand();
+        write.CommandText = "PRAGMA journal_mode=WAL; CREATE TABLE Songs (Title TEXT); INSERT INTO Songs VALUES ('Original'); PRAGMA wal_checkpoint(TRUNCATE);";
+        write.ExecuteNonQuery();
+
+        using var reader = new SqliteConnection(connectionString);
+        reader.Open();
+        using var transaction = reader.BeginTransaction(deferred: true);
+        using var read = reader.CreateCommand();
+        read.Transaction = transaction;
+        read.CommandText = "SELECT COUNT(*) FROM Songs;";
+        read.ExecuteScalar().Should().Be(1L);
+        write.CommandText = "INSERT INTO Songs VALUES ('Recent');";
+        write.ExecuteNonQuery();
+
+        var result = await _service.CreateBackupAsync(destinationDir);
+
+        result.Success.Should().BeTrue(result.ErrorMessage);
+        ZipFile.ExtractToDirectory(result.BackupFilePath!, extractedDir);
+        using var backup = new SqliteConnection(new SqliteConnectionStringBuilder
+        {
+            DataSource = Path.Combine(extractedDir, "nagi.db"),
+            Pooling = false
+        }.ToString());
+        backup.Open();
+        using var verify = backup.CreateCommand();
+        verify.CommandText = "PRAGMA integrity_check;";
+        verify.ExecuteScalar().Should().Be("ok");
+        verify.CommandText = "SELECT Title FROM Songs ORDER BY rowid DESC LIMIT 1;";
+        verify.ExecuteScalar().Should().Be("Recent", "a backup must include committed writes even when a reader blocks checkpointing");
+        read.ExecuteScalar().Should().Be(1L, "the existing reader should retain its original snapshot");
+    }
+
+    [Theory]
+    [InlineData("SQLite format 3\0corrupt data")]
+    [InlineData("corrupt header")]
+    public async Task CreateBackupAsync_WhenDatabaseSnapshotFails_DoesNotPublishArchive(string contents)
     {
         var sourceDir = CreateTempDir();
-        var destDir = CreateTempDir();
-        var logsDir = Directory.CreateDirectory(Path.Combine(sourceDir, "Logs"));
-        await File.WriteAllTextAsync(Path.Combine(logsDir.FullName, "app.log"), "logs");
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, "settings.json"), "{ }");
+        var destinationDir = CreateTempDir();
         _pathConfig.AppDataRoot.Returns(sourceDir);
+        await File.WriteAllTextAsync(Path.Combine(sourceDir, "nagi.db"), contents);
 
-        var result = await _service.CreateBackupAsync(destDir);
+        var result = await _service.CreateBackupAsync(destinationDir);
 
-        result.Success.Should().BeTrue();
-        using var archive = ZipFile.OpenRead(result.BackupFilePath!);
-        archive.Entries.Should().NotContain(e => e.FullName.StartsWith("Logs/", StringComparison.OrdinalIgnoreCase),
-            "the Logs directory is explicitly excluded from backups");
+        result.Success.Should().BeFalse();
+        result.BackupFilePath.Should().BeNull();
+        Directory.GetFiles(destinationDir).Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task CreateBackupAsync_RepeatedBackups_PreserveEveryArchive()
+    {
+        var sourceDir = CreateTempDir();
+        var destinationDir = CreateTempDir();
+        _pathConfig.AppDataRoot.Returns(sourceDir);
+        var paths = new List<string>();
+
+        for (var i = 0; i < 4; i++)
+        {
+            await File.WriteAllTextAsync(Path.Combine(sourceDir, "settings.json"), $"{{\"version\":{i}}}");
+            var result = await _service.CreateBackupAsync(destinationDir);
+            result.Success.Should().BeTrue(result.ErrorMessage);
+            paths.Add(result.BackupFilePath!);
+        }
+
+        paths.Should().OnlyHaveUniqueItems();
+        for (var i = 0; i < paths.Count; i++)
+        {
+            using var archive = ZipFile.OpenRead(paths[i]);
+            using var reader = new StreamReader(archive.GetEntry("settings.json")!.Open());
+            (await reader.ReadToEndAsync()).Should().Be($"{{\"version\":{i}}}");
+        }
+        Directory.GetFiles(destinationDir, "*.tmp").Should().BeEmpty();
     }
 
     [Fact]
@@ -154,6 +214,7 @@ public class BackupRestoreServiceTests : IDisposable
         await File.WriteAllTextAsync(Path.Combine(sourceDir, "data.lock"), "lock");
         await File.WriteAllTextAsync(Path.Combine(sourceDir, "nagi.db-wal"), "wal");
         await File.WriteAllTextAsync(Path.Combine(sourceDir, "nagi.db-shm"), "shm");
+        await File.WriteAllTextAsync(Path.Combine(sourceDir, "nagi.db-journal"), "journal");
         _pathConfig.AppDataRoot.Returns(sourceDir);
 
         var result = await _service.CreateBackupAsync(destDir);
@@ -164,14 +225,15 @@ public class BackupRestoreServiceTests : IDisposable
         archive.Entries.Should().NotContain(e => e.FullName.EndsWith(".lock", StringComparison.OrdinalIgnoreCase));
         archive.Entries.Should().NotContain(e => e.FullName.EndsWith(".db-wal", StringComparison.OrdinalIgnoreCase));
         archive.Entries.Should().NotContain(e => e.FullName.EndsWith(".db-shm", StringComparison.OrdinalIgnoreCase));
+        archive.Entries.Should().NotContain(e => e.FullName.EndsWith(".db-journal", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]
-    public async Task CreateBackupAsync_ExcludesCacheDumpAndEBWebViewDirectories()
+    public async Task CreateBackupAsync_ExcludesTransientDirectories()
     {
         var sourceDir = CreateTempDir();
         var destDir = CreateTempDir();
-        foreach (var dirName in new[] { "Cache", "Temp", "EBWebView", "crashdumps" })
+        foreach (var dirName in new[] { "Logs", "Cache", "Temp", "EBWebView", "crashdumps" })
         {
             var dir = Directory.CreateDirectory(Path.Combine(sourceDir, dirName));
             await File.WriteAllTextAsync(Path.Combine(dir.FullName, "file.txt"), "content");
@@ -183,7 +245,7 @@ public class BackupRestoreServiceTests : IDisposable
 
         result.Success.Should().BeTrue();
         using var archive = ZipFile.OpenRead(result.BackupFilePath!);
-        foreach (var excluded in new[] { "Cache/", "Temp/", "EBWebView/", "crashdumps/" })
+        foreach (var excluded in new[] { "Logs/", "Cache/", "Temp/", "EBWebView/", "crashdumps/" })
             archive.Entries.Should().NotContain(e => e.FullName.StartsWith(excluded, StringComparison.OrdinalIgnoreCase),
                 $"{excluded} should be excluded from backups");
     }
@@ -225,19 +287,7 @@ public class BackupRestoreServiceTests : IDisposable
     [Fact]
     public async Task RestoreFromBackupAsync_WithSubdirectoryInBackup_RestoresDirectory()
     {
-        var subDirContent = "content";
-        var zipPath = Path.GetTempFileName() + ".zip";
-        _tempFiles.Add(zipPath);
-        using (var zip = ZipFile.Open(zipPath, ZipArchiveMode.Create))
-        {
-            var dbEntry = zip.CreateEntry("nagi.db");
-            using (var w = new StreamWriter(dbEntry.Open()))
-                w.Write("db");
-
-            var subEntry = zip.CreateEntry("AlbumArt/cover.jpg");
-            using (var w2 = new StreamWriter(subEntry.Open()))
-                w2.Write(subDirContent);
-        }
+        var zipPath = CreateDatabaseBackup("Restored track", ("AlbumArt/cover.jpg", "content"));
 
         var destDir = CreateTempDir();
         _pathConfig.AppDataRoot.Returns(destDir);
@@ -249,14 +299,9 @@ public class BackupRestoreServiceTests : IDisposable
         File.Exists(Path.Combine(destDir, "AlbumArt", "cover.jpg")).Should().BeTrue();
     }
 
-    // -------------------------------------------------------------------------
-    // RestoreFromBackupAsync
-    // -------------------------------------------------------------------------
-
     [Fact]
     public async Task RestoreFromBackupAsync_WithInvalidBackupFile_ReturnsFailure()
     {
-        // A ZIP without nagi.db or settings.json is not a valid backup.
         var zipPath = CreateTempZip(("unrelated.txt", "data"));
         var destDir = CreateTempDir();
         _pathConfig.AppDataRoot.Returns(destDir);
@@ -270,9 +315,7 @@ public class BackupRestoreServiceTests : IDisposable
     [Fact]
     public async Task RestoreFromBackupAsync_WithValidBackup_RestoresFilesToAppDataRoot()
     {
-        var zipPath = CreateTempZip(
-            ("nagi.db", "restored db content"),
-            ("settings.json", "restored settings"));
+        var zipPath = CreateDatabaseBackup("Restored track", ("settings.json", "restored settings"));
         var destDir = CreateTempDir();
         _pathConfig.AppDataRoot.Returns(destDir);
 
@@ -281,8 +324,14 @@ public class BackupRestoreServiceTests : IDisposable
         result.Success.Should().BeTrue();
         File.Exists(Path.Combine(destDir, "nagi.db")).Should().BeTrue("nagi.db should be restored to AppDataRoot");
         File.Exists(Path.Combine(destDir, "settings.json")).Should().BeTrue("settings.json should be restored to AppDataRoot");
-        var restoredDbContent = await File.ReadAllTextAsync(Path.Combine(destDir, "nagi.db"));
-        restoredDbContent.Should().Be("restored db content");
+        using var database = new SqliteConnection(new SqliteConnectionStringBuilder
+        {
+            DataSource = Path.Combine(destDir, "nagi.db"), Mode = SqliteOpenMode.ReadOnly, Pooling = false
+        }.ToString());
+        database.Open();
+        using var query = database.CreateCommand();
+        query.CommandText = "SELECT Title FROM Songs;";
+        query.ExecuteScalar().Should().Be("Restored track");
     }
 
     [Fact]
@@ -310,22 +359,163 @@ public class BackupRestoreServiceTests : IDisposable
         (await File.ReadAllTextAsync(lockedPath)).Should().Be("original locked item");
     }
 
-    // -------------------------------------------------------------------------
-    // Helpers
-    // -------------------------------------------------------------------------
+    [Fact]
+    public async Task RestoreFromBackupAsync_WithOldWal_RestoresBackupInsteadOfReplayingOldLibrary()
+    {
+        var backupDir = CreateTempDir();
+        var destDir = CreateTempDir();
+        var backupDb = Path.Combine(backupDir, "nagi.db");
+        var liveDb = Path.Combine(destDir, "nagi.db");
+        byte[] oldWal;
+        using (var connection = OpenTestDatabase(backupDb, "Backup library")) { }
+        using (var connection = OpenTestDatabase(liveDb, "Current library"))
+        {
+            using var wal = new FileStream(liveDb + "-wal", FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            using var bytes = new MemoryStream();
+            await wal.CopyToAsync(bytes);
+            oldWal = bytes.ToArray();
+        }
+        // Recreate journal files left behind by an interrupted process, without a live connection.
+        await File.WriteAllBytesAsync(liveDb + "-wal", oldWal);
+        await File.WriteAllTextAsync(liveDb + "-journal", "old rollback journal");
+        var zipPath = Path.Combine(CreateTempDir(), "backup.zip");
+        using (var archive = ZipFile.Open(zipPath, ZipArchiveMode.Create))
+            archive.CreateEntryFromFile(backupDb, "nagi.db");
+        _pathConfig.AppDataRoot.Returns(destDir);
+
+        var result = await _service.RestoreFromBackupAsync(zipPath);
+
+        result.Success.Should().BeTrue(result.ErrorMessage);
+        using var restored = new SqliteConnection(new SqliteConnectionStringBuilder
+        {
+            DataSource = liveDb,
+            Pooling = false
+        }.ToString());
+        restored.Open();
+        using var verify = restored.CreateCommand();
+        verify.CommandText = "SELECT Title FROM Songs;";
+        verify.ExecuteScalar().Should().Be("Backup library", "journals from the replaced database must never replay into the backup");
+        verify.CommandText = "PRAGMA integrity_check;";
+        verify.ExecuteScalar().Should().Be("ok");
+        File.Exists(liveDb + "-journal").Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task RestoreFromBackupAsync_WhenRestoreFails_RollsBackDatabaseAndItsJournals()
+    {
+        var zipPath = CreateDatabaseBackup("Backup track", ("settings.json", "backup settings"));
+        var destDir = CreateTempDir();
+        _pathConfig.AppDataRoot.Returns(destDir);
+        var originalFiles = new[] { "nagi.db", "nagi.db-wal", "nagi.db-shm", "nagi.db-journal", "settings.json" };
+        foreach (var name in originalFiles)
+            await File.WriteAllTextAsync(Path.Combine(destDir, name), $"original {name}");
+
+        RestoreResult result;
+        using (File.Open(Path.Combine(destDir, "settings.json"), FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+            result = await _service.RestoreFromBackupAsync(zipPath);
+
+        result.Success.Should().BeFalse();
+        foreach (var name in originalFiles)
+            (await File.ReadAllTextAsync(Path.Combine(destDir, name))).Should().Be($"original {name}");
+    }
+
+    [Fact]
+    public async Task RestoreFromBackupAsync_WithActiveDatabaseConnection_PreservesLiveLibrary()
+    {
+        var zipPath = CreateDatabaseBackup("Backup track");
+        var destDir = CreateTempDir();
+        _pathConfig.AppDataRoot.Returns(destDir);
+        using var connection = OpenTestDatabase(Path.Combine(destDir, "nagi.db"), "Live library");
+
+        var result = await _service.RestoreFromBackupAsync(zipPath);
+
+        result.Success.Should().BeFalse();
+        using var verify = connection.CreateCommand();
+        verify.CommandText = "SELECT Title FROM Songs;";
+        verify.ExecuteScalar().Should().Be("Live library");
+        verify.CommandText = "INSERT INTO Songs VALUES ('Still writable');";
+        verify.ExecuteNonQuery().Should().Be(1);
+    }
+
+    [Fact]
+    public async Task RestoreFromBackupAsync_WithSettingsOnly_PreservesDatabaseJournals()
+    {
+        var zipPath = CreateTempZip(("settings.json", "backup settings"));
+        var destDir = CreateTempDir();
+        _pathConfig.AppDataRoot.Returns(destDir);
+        var databaseFiles = new[] { "nagi.db", "nagi.db-wal", "nagi.db-shm", "nagi.db-journal" };
+        foreach (var name in databaseFiles)
+            await File.WriteAllTextAsync(Path.Combine(destDir, name), $"original {name}");
+
+        var result = await _service.RestoreFromBackupAsync(zipPath);
+
+        result.Success.Should().BeTrue(result.ErrorMessage);
+        foreach (var name in databaseFiles)
+            (await File.ReadAllTextAsync(Path.Combine(destDir, name))).Should().Be($"original {name}");
+    }
+
+    [Theory]
+    [InlineData("nagi.db-wal")]
+    [InlineData("nagi.db-shm")]
+    [InlineData("nagi.db-journal")]
+    public async Task RestoreFromBackupAsync_WithLockedJournal_PreservesLiveDatabase(string lockedFile)
+    {
+        var zipPath = CreateDatabaseBackup("Backup track");
+        var destDir = CreateTempDir();
+        _pathConfig.AppDataRoot.Returns(destDir);
+        var databaseFiles = new[] { "nagi.db", "nagi.db-wal", "nagi.db-shm", "nagi.db-journal" };
+        foreach (var name in databaseFiles)
+            await File.WriteAllTextAsync(Path.Combine(destDir, name), $"original {name}");
+
+        RestoreResult result;
+        using (File.Open(Path.Combine(destDir, lockedFile), FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+            result = await _service.RestoreFromBackupAsync(zipPath);
+
+        result.Success.Should().BeFalse();
+        foreach (var name in databaseFiles)
+            (await File.ReadAllTextAsync(Path.Combine(destDir, name))).Should().Be($"original {name}");
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task RestoreFromBackupAsync_DamagedDatabase_DoesNotReplaceAnyLiveFiles(bool truncateDatabase)
+    {
+        var archivePath = truncateDatabase
+            ? CreateDatabaseBackup("Backup track", ("settings.json", "new settings"))
+            : CreateTempZip(("nagi.db", "not a database"), ("settings.json", "new settings"));
+        if (truncateDatabase)
+        {
+            using var archive = ZipFile.Open(archivePath, ZipArchiveMode.Update);
+            var entry = archive.GetEntry("nagi.db")!;
+            using var stream = entry.Open();
+            stream.SetLength(512);
+        }
+        var destination = CreateTempDir();
+        _pathConfig.AppDataRoot.Returns(destination);
+        var databasePath = Path.Combine(destination, "nagi.db");
+        using (OpenTestDatabase(databasePath, "Live track")) { }
+        var originalDatabase = await File.ReadAllBytesAsync(databasePath);
+        var settingsPath = Path.Combine(destination, "settings.json");
+        await File.WriteAllTextAsync(settingsPath, "live settings");
+
+        var result = await _service.RestoreFromBackupAsync(archivePath);
+
+        result.Success.Should().BeFalse();
+        (await File.ReadAllBytesAsync(databasePath)).Should().Equal(originalDatabase);
+        (await File.ReadAllTextAsync(settingsPath)).Should().Be("live settings");
+    }
 
     private string CreateTempDir()
     {
-        var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-        Directory.CreateDirectory(path);
+        var path = Directory.CreateTempSubdirectory("Nagi.BackupTests_").FullName;
         _tempDirs.Add(path);
         return path;
     }
 
     private string CreateTempZip(params (string name, string content)[] entries)
     {
-        var path = Path.GetTempFileName() + ".zip";
-        _tempFiles.Add(path);
+        var path = Path.Combine(CreateTempDir(), "backup.zip");
 
         using var zip = ZipFile.Open(path, ZipArchiveMode.Create);
         foreach (var (name, content) in entries)
@@ -336,5 +526,26 @@ public class BackupRestoreServiceTests : IDisposable
         }
 
         return path;
+    }
+
+    private string CreateDatabaseBackup(string title, params (string name, string content)[] files)
+    {
+        var databasePath = Path.Combine(CreateTempDir(), "nagi.db");
+        using (OpenTestDatabase(databasePath, title)) { }
+        var archivePath = CreateTempZip(files);
+        using var archive = ZipFile.Open(archivePath, ZipArchiveMode.Update);
+        archive.CreateEntryFromFile(databasePath, "nagi.db");
+        return archivePath;
+    }
+
+    private static SqliteConnection OpenTestDatabase(string path, string title)
+    {
+        var connection = new SqliteConnection(new SqliteConnectionStringBuilder { DataSource = path, Pooling = false }.ToString());
+        connection.Open();
+        using var command = connection.CreateCommand();
+        command.CommandText = "PRAGMA journal_mode=WAL; CREATE TABLE Songs (Title TEXT); INSERT INTO Songs VALUES ($title);";
+        command.Parameters.AddWithValue("$title", title);
+        command.ExecuteNonQuery();
+        return connection;
     }
 }

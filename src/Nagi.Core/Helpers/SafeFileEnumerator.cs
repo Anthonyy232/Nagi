@@ -10,7 +10,6 @@ public static class SafeFileEnumerator
 {
     private static readonly HashSet<string> ExcludedDirectoryNames = new(StringComparer.OrdinalIgnoreCase)
     {
-        "$RECYCLE.BIN",
         "RECYCLED",
         "RECYCLER",
         "System Volume Information",
@@ -33,16 +32,12 @@ public static class SafeFileEnumerator
         if (string.IsNullOrWhiteSpace(rootPath)) yield break;
 
         var pending = new Stack<DirectoryInfo>();
-        var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         pending.Push(new DirectoryInfo(rootPath));
 
         while (pending.Count > 0)
         {
             var directory = pending.Pop();
-            var identity = TryGetDirectoryIdentity(directory);
-            if (identity is null || !visited.Add(identity)) continue;
-
-            foreach (var file in EnumerateFilesSafely(directory, searchPattern))
+            foreach (var file in EnumerateSafely(() => directory.EnumerateFiles(searchPattern)))
             {
                 string path;
                 DateTime lastWriteTimeUtc;
@@ -61,7 +56,7 @@ public static class SafeFileEnumerator
 
             if (searchOption == SearchOption.TopDirectoryOnly) continue;
 
-            foreach (var child in EnumerateDirectoriesSafely(directory))
+            foreach (var child in EnumerateSafely(() => directory.EnumerateDirectories()))
             {
                 if (IsExcludedDirectory(child)) continue;
                 pending.Push(child);
@@ -72,7 +67,7 @@ public static class SafeFileEnumerator
     internal static bool IsExcludedDirectory(DirectoryInfo directory)
     {
         if (ExcludedDirectoryNames.Contains(directory.Name)) return true;
-        if (directory.Name.Length > 0 && directory.Name[0] == '$') return true;
+        if (directory.Name.StartsWith('$')) return true;
 
         try
         {
@@ -97,39 +92,23 @@ public static class SafeFileEnumerator
                == (FileAttributes.Hidden | FileAttributes.System);
     }
 
-    private static string? TryGetDirectoryIdentity(DirectoryInfo directory)
+    private static IEnumerable<T> EnumerateSafely<T>(Func<IEnumerable<T>> enumerate)
     {
+        IEnumerator<T> enumerator;
         try
         {
-            return Path.GetFullPath(directory.FullName)
-                .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-        }
-        catch (Exception ex) when (IsRecoverableFileSystemException(ex) || ex is ArgumentException)
-        {
-            return null;
-        }
-    }
-
-    private static IEnumerable<FileInfo> EnumerateFilesSafely(DirectoryInfo directory, string searchPattern)
-    {
-        IEnumerator<FileInfo>? enumerator = null;
-        try
-        {
-            enumerator = directory.EnumerateFiles(searchPattern).GetEnumerator();
+            enumerator = enumerate().GetEnumerator();
         }
         catch (Exception ex) when (IsRecoverableFileSystemException(ex))
         {
-            // Handled below by returning an empty sequence.
+            yield break;
         }
-
-        if (enumerator is null) yield break;
 
         using (enumerator)
         {
             while (true)
             {
-                var shouldStop = false;
-                var hasNext = false;
+                bool hasNext;
                 try
                 {
                     hasNext = enumerator.MoveNext();
@@ -138,53 +117,17 @@ public static class SafeFileEnumerator
                 {
                     // An iterator that throws is not guaranteed to advance. Stop this directory
                     // instead of retrying the same failing MoveNext forever.
-                    shouldStop = true;
+                    yield break;
                 }
 
-                if (shouldStop || !hasNext) yield break;
-                if (enumerator.Current is { } file) yield return file;
-            }
-        }
-    }
-
-    private static IEnumerable<DirectoryInfo> EnumerateDirectoriesSafely(DirectoryInfo directory)
-    {
-        IEnumerator<DirectoryInfo>? enumerator = null;
-        try
-        {
-            enumerator = directory.EnumerateDirectories().GetEnumerator();
-        }
-        catch (Exception ex) when (IsRecoverableFileSystemException(ex))
-        {
-            // Handled below by returning an empty sequence.
-        }
-
-        if (enumerator is null) yield break;
-
-        using (enumerator)
-        {
-            while (true)
-            {
-                var shouldStop = false;
-                var hasNext = false;
-                try
-                {
-                    hasNext = enumerator.MoveNext();
-                }
-                catch (Exception ex) when (IsRecoverableFileSystemException(ex))
-                {
-                    shouldStop = true;
-                }
-
-                if (shouldStop || !hasNext) yield break;
-                if (enumerator.Current is { } child) yield return child;
+                if (!hasNext) yield break;
+                yield return enumerator.Current;
             }
         }
     }
 
     private static bool IsRecoverableFileSystemException(Exception exception) =>
         exception is UnauthorizedAccessException
-            or DirectoryNotFoundException
             or IOException
             or System.Security.SecurityException;
 }

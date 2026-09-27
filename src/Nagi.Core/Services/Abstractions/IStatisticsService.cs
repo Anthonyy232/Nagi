@@ -85,16 +85,6 @@ public interface IStatisticsService
     Task<ListeningPatternStats> GetListeningPatternsAsync(TimeRange range, CancellationToken ct = default);
 
     /// <summary>
-    ///     Identifies the day of the week with the most listening activity.
-    /// </summary>
-    Task<DayOfWeek> GetMostActiveDayOfWeekAsync(TimeRange range, CancellationToken ct = default);
-
-    /// <summary>
-    ///     Identifies the hour of the day (0-23) with the peak listening activity.
-    /// </summary>
-    Task<int> GetPeakListeningHourAsync(TimeRange range, CancellationToken ct = default);
-
-    /// <summary>
     ///     Gets the distribution of playback sources (Album, Playlist, etc.) used.
     /// </summary>
     Task<IEnumerable<ContextStats>> GetPlaybackSourceDistributionAsync(TimeRange range, CancellationToken ct = default);

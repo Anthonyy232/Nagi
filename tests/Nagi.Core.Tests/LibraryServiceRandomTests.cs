@@ -1,8 +1,6 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Http.Pipelines;
@@ -13,52 +11,43 @@ using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
 
-#pragma warning disable NS2002 // NSubstitute.Analyzers false positives for some interfaces
-
 namespace Nagi.Core.Tests;
 
 public class LibraryServiceRandomTests : IDisposable
 {
     private readonly DbContextFactoryTestHelper _dbHelper;
     private readonly LibraryService _libraryService;
-    private readonly IFileSystemService _fileSystem;
     private readonly ProviderPipelineProvider _pipelines;
 
     public LibraryServiceRandomTests()
     {
         _dbHelper = new DbContextFactoryTestHelper();
-        _fileSystem = Substitute.For<IFileSystemService>();
+        var fileSystem = Substitute.For<IFileSystemService>();
         var metadataService = Substitute.For<IMetadataService>();
         var lastFmService = Substitute.For<ILastFmMetadataService>();
         var musicBrainzService = Substitute.For<IMusicBrainzService>();
         var fanartTvService = Substitute.For<IFanartTvService>();
         var driveService = Substitute.For<ITheAudioDbService>();
         var httpClientFactory = Substitute.For<IHttpClientFactory>();
-        var serviceScopeFactory = Substitute.For<IServiceScopeFactory>();
-#pragma warning disable NS2002
         var pathConfig = Substitute.For<IPathConfiguration>();
-#pragma warning restore NS2002
         var settingsService = Substitute.For<ISettingsService>();
         var replayGainService = Substitute.For<IReplayGainService>();
-        var apiKeyService = Substitute.For<IApiKeyService>();
         var imageProcessor = Substitute.For<IImageProcessor>();
         var logger = Substitute.For<ILogger<LibraryService>>();
         _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
 
         _libraryService = new LibraryService(
             _dbHelper.ContextFactory,
-            _fileSystem,
+            fileSystem,
             metadataService,
             lastFmService,
             musicBrainzService,
             fanartTvService,
             driveService,
             httpClientFactory,
-            serviceScopeFactory,
             pathConfig,
             settingsService,
             replayGainService,
-            apiKeyService,
             imageProcessor,
             _pipelines,
             logger);
@@ -71,56 +60,34 @@ public class LibraryServiceRandomTests : IDisposable
         _dbHelper.Dispose();
     }
 
-    [Fact]
-    public async Task GetRandomAlbumIdAsync_WithEmptyDatabase_ReturnsNull()
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(10)]
+    public async Task GetRandomAlbumIdAsync_ReturnsAnExistingAlbumOrNullForAnEmptyLibrary(int albumCount)
     {
-        var result = await _libraryService.GetRandomAlbumIdAsync();
-        result.Should().BeNull();
-    }
-
-    [Fact]
-    public async Task GetRandomAlbumIdAsync_WithSingleItem_ReturnsThatItemId()
-    {
-        var album = new Album { Title = "Test Album" };
+        var albums = Enumerable.Range(0, albumCount).Select(i => new Album { Title = $"Album {i}" }).ToArray();
         using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {
-            context.Albums.Add(album);
+            context.Albums.AddRange(albums);
             await context.SaveChangesAsync();
         }
 
         var result = await _libraryService.GetRandomAlbumIdAsync();
-        result.Should().Be(album.Id);
-    }
-
-    [Fact]
-    public async Task GetRandomAlbumIdAsync_WithMultipleItems_ReturnsValidId()
-    {
-        using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        if (albumCount == 0)
+            result.Should().BeNull();
+        else
         {
-            for (int i = 0; i < 10; i++)
-            {
-                context.Albums.Add(new Album { Title = $"Album {i}" });
-            }
-            await context.SaveChangesAsync();
-        }
-
-        var result = await _libraryService.GetRandomAlbumIdAsync();
-        result.Should().NotBeNull();
-
-        using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            var exists = await context.Albums.AnyAsync(a => a.Id == result);
-            exists.Should().BeTrue();
+            result.Should().NotBeNull();
+            albums.Select(a => a.Id).Should().Contain(result.Value);
         }
     }
 
     [Fact]
     public async Task GetRandomFolderIdAsync_IgnoresFoldersWithoutSongs()
     {
-        // 1. Folder with no songs
         var emptyFolder = new Folder { Name = "Empty", Path = "C:\\Empty" };
 
-        // 2. Folder with songs
         var musicFolder = new Folder { Name = "Music", Path = "C:\\Music" };
         var song = new Song { Title = "Song", Folder = musicFolder, FilePath = "C:\\Music\\song.mp3", DirectoryPath = "C:\\Music" };
 
@@ -132,7 +99,6 @@ public class LibraryServiceRandomTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        // Act: Try to get a random folder multiple times to ensure we never get the empty one
         for (int i = 0; i < 5; i++)
         {
             var result = await _libraryService.GetRandomFolderIdAsync();

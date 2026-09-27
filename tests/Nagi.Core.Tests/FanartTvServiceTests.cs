@@ -1,8 +1,7 @@
-﻿using System.Net;
+using System.Net;
 using System.Text.Json;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
@@ -14,10 +13,6 @@ using Xunit;
 
 namespace Nagi.Core.Tests;
 
-/// <summary>
-///     Comprehensive tests for the FanartTvService covering image fetching,
-///     error handling, rate limiting, and cancellation.
-/// </summary>
 public class FanartTvServiceTests : IDisposable
 {
     private const string ValidMbid = "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d";
@@ -52,12 +47,9 @@ public class FanartTvServiceTests : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    #region Successful Fetch Tests
-
     [Fact]
     public async Task GetArtistImagesAsync_WithValidMbid_ReturnsAllImageTypes()
     {
-        // Arrange
         var fanartResponse = new
         {
             artistbackground = new[] { new { url = "https://fanart.tv/bg.jpg" } },
@@ -69,11 +61,7 @@ public class FanartTvServiceTests : IDisposable
         {
             Content = new StringContent(JsonSerializer.Serialize(fanartResponse))
         });
-
-        // Act
         var result = await _service.GetArtistImagesAsync(ValidMbid);
-
-        // Assert
         result.Status.Should().Be(ServiceResultStatus.Success);
         result.Data.Should().NotBeNull();
         result.Data!.BackgroundUrl.Should().Be("https://fanart.tv/bg.jpg");
@@ -85,7 +73,6 @@ public class FanartTvServiceTests : IDisposable
     [Fact]
     public async Task GetArtistImagesAsync_WithOnlyThumb_ReturnsPartialResult()
     {
-        // Arrange
         var fanartResponse = new
         {
             artistthumb = new[] { new { url = "https://fanart.tv/thumb.jpg" } }
@@ -94,11 +81,7 @@ public class FanartTvServiceTests : IDisposable
         {
             Content = new StringContent(JsonSerializer.Serialize(fanartResponse))
         });
-
-        // Act
         var result = await _service.GetArtistImagesAsync(ValidMbid);
-
-        // Assert
         result.Status.Should().Be(ServiceResultStatus.Success);
         result.Data!.ThumbUrl.Should().Be("https://fanart.tv/thumb.jpg");
         result.Data.BackgroundUrl.Should().BeNull();
@@ -108,7 +91,6 @@ public class FanartTvServiceTests : IDisposable
     [Fact]
     public async Task GetArtistImagesAsync_PrefersHdLogoOverStandardLogo()
     {
-        // Arrange
         var fanartResponse = new
         {
             hdmusiclogo = new[] { new { url = "https://fanart.tv/logo-hd.png" } },
@@ -118,121 +100,59 @@ public class FanartTvServiceTests : IDisposable
         {
             Content = new StringContent(JsonSerializer.Serialize(fanartResponse))
         });
-
-        // Act
         var result = await _service.GetArtistImagesAsync(ValidMbid);
-
-        // Assert
         result.Data!.LogoUrl.Should().Be("https://fanart.tv/logo-hd.png");
     }
-
-    #endregion
-
-    #region Error Handling Tests
 
     [Fact]
     public async Task GetArtistImagesAsync_When404_ReturnsSuccessNotFound()
     {
-        // Arrange
         _httpHandler.SendAsyncFunc = (_, _) =>
             Task.FromResult(new HttpResponseMessage(HttpStatusCode.NotFound));
-
-        // Act
         var result = await _service.GetArtistImagesAsync(ValidMbid);
-
-        // Assert
         result.Status.Should().Be(ServiceResultStatus.SuccessNotFound);
     }
 
-    [Fact]
-    public async Task GetArtistImagesAsync_WithEmptyMbid_ReturnsSuccessNotFound()
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public async Task GetArtistImagesAsync_WithEmptyMbid_ReturnsSuccessNotFound(string mbid)
     {
-        // Act
-        var result = await _service.GetArtistImagesAsync("");
-
-        // Assert
-        result.Status.Should().Be(ServiceResultStatus.SuccessNotFound);
-    }
-
-    [Fact]
-    public async Task GetArtistImagesAsync_WithWhitespaceMbid_ReturnsSuccessNotFound()
-    {
-        // Act
-        var result = await _service.GetArtistImagesAsync("   ");
-
-        // Assert
+        var result = await _service.GetArtistImagesAsync(mbid);
         result.Status.Should().Be(ServiceResultStatus.SuccessNotFound);
     }
 
     [Fact]
     public async Task GetArtistImagesAsync_WhenApiKeyMissing_ReturnsTemporaryError()
     {
-        // Arrange
         _apiKeyService.GetApiKeyAsync("fanarttv", Arg.Any<CancellationToken>()).Returns((string?)null);
-
-        // Act
         var result = await _service.GetArtistImagesAsync(ValidMbid);
-
-        // Assert
         result.Status.Should().Be(ServiceResultStatus.TemporaryError);
     }
 
-    [Fact]
-    public async Task GetArtistImagesAsync_WhenHttpError_ReturnsTemporaryError()
+    [Theory]
+    [InlineData(HttpStatusCode.InternalServerError)]
+    [InlineData(HttpStatusCode.TooManyRequests)]
+    public async Task GetArtistImagesAsync_WhenHttpError_ReturnsTemporaryError(HttpStatusCode status)
     {
-        // Arrange
         _httpHandler.SendAsyncFunc = (_, _) =>
-            Task.FromResult(new HttpResponseMessage(HttpStatusCode.InternalServerError));
-
-        // Act
+            Task.FromResult(new HttpResponseMessage(status));
         var result = await _service.GetArtistImagesAsync(ValidMbid);
-
-        // Assert
         result.Status.Should().Be(ServiceResultStatus.TemporaryError);
     }
-
-    #endregion
-
-    #region Rate Limiting Tests
-
-    [Fact]
-    public async Task GetArtistImagesAsync_When429RateLimited_ReturnsTemporaryError()
-    {
-        // Arrange — the pipeline retries 429, then surfaces it; the service maps that to a
-        // temporary error. After enough consecutive 429s the breaker trips (covered by the
-        // pipeline's own tests), but a single 429 does NOT permanently disable the service.
-        _httpHandler.SendAsyncFunc = (_, _) =>
-            Task.FromResult(new HttpResponseMessage(HttpStatusCode.TooManyRequests));
-
-        var result = await _service.GetArtistImagesAsync(ValidMbid);
-
-        result.Status.Should().Be(ServiceResultStatus.TemporaryError);
-    }
-
-    #endregion
-
-    #region Cancellation Tests
 
     [Fact]
     public async Task GetArtistImagesAsync_WhenCancelled_ThrowsOperationCancelled()
     {
-        // Arrange
-        var cts = new CancellationTokenSource();
+        using var cts = new CancellationTokenSource();
         cts.Cancel();
-
-        // Act & Assert - TaskCanceledException inherits from OperationCanceledException
         await Assert.ThrowsAnyAsync<OperationCanceledException>(
             () => _service.GetArtistImagesAsync(ValidMbid, cts.Token));
     }
 
-    #endregion
-
-    #region Empty Response Handling
-
     [Fact]
     public async Task GetArtistImagesAsync_WithEmptyImages_ReturnsSuccessNotFound()
     {
-        // Arrange - Response with all empty arrays
         var fanartResponse = new
         {
             artistbackground = Array.Empty<object>(),
@@ -242,13 +162,8 @@ public class FanartTvServiceTests : IDisposable
         {
             Content = new StringContent(JsonSerializer.Serialize(fanartResponse))
         });
-
-        // Act
         var result = await _service.GetArtistImagesAsync(ValidMbid);
-
-        // Assert
         result.Status.Should().Be(ServiceResultStatus.SuccessNotFound);
     }
 
-    #endregion
 }

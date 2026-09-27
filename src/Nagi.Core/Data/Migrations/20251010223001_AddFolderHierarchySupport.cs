@@ -27,7 +27,7 @@ namespace Nagi.Core.Data.Migrations
 
             migrationBuilder.Sql(@"
                 UPDATE Songs
-                SET DirectoryPath = FilePath
+                SET DirectoryPath = nagi_directory_path(FilePath)
                 WHERE DirectoryPath = '' OR DirectoryPath IS NULL
             ");
 

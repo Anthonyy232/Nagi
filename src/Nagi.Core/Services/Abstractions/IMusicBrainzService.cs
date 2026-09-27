@@ -10,6 +10,6 @@ public interface IMusicBrainzService
     /// </summary>
     /// <param name="artistName">The artist name to search for.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>The MusicBrainz ID (MBID) if found, null otherwise.</returns>
-    Task<string?> SearchArtistAsync(string artistName, CancellationToken cancellationToken = default);
+    /// <returns>The matching MBID, no match, or a retryable provider failure.</returns>
+    Task<Data.ServiceResult<string>> SearchArtistAsync(string artistName, CancellationToken cancellationToken = default);
 }

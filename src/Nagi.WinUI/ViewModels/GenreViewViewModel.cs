@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -26,42 +25,40 @@ public partial class GenreViewViewModel : SongListViewModelBase
         ILibraryService libraryService,
         IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
-        INavigationService navigationService,
         IMusicNavigationService musicNavigationService,
         IDispatcherService dispatcherService,
         IUISettingsService settingsService,
         IUIService uiService,
         ILogger<GenreViewViewModel> logger)
-        : base(libraryService, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryService, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
         GenreName = Nagi.WinUI.Resources.Strings.GenreView_DefaultName;
 
         CurrentSortOrder = SongSortOrder.TitleAsc;
-        UpdateSortOrderButtonText(CurrentSortOrder);
     }
 
     [ObservableProperty] public partial string GenreName { get; set; }
 
 
-    protected override async Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
+    protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
         SongSortOrder sortOrder, CancellationToken cancellationToken = default)
     {
-        if (_genreId == Guid.Empty) return new PagedResult<Song>();
+        if (_genreId == Guid.Empty) return Task.FromResult(new PagedResult<Song>());
 
         if (IsSearchActive)
-            return await _libraryReader.SearchSongsInGenrePagedAsync(_genreId, SearchTerm, pageNumber, pageSize, cancellationToken);
+            return _libraryReader.SearchSongsInGenrePagedAsync(_genreId, SearchTerm, pageNumber, pageSize, cancellationToken);
 
-        return await _libraryReader.GetSongsByGenreIdPagedAsync(_genreId, pageNumber, pageSize, sortOrder, cancellationToken);
+        return _libraryReader.GetSongsByGenreIdPagedAsync(_genreId, pageNumber, pageSize, sortOrder, cancellationToken);
     }
 
-    protected override async Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
+    protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
     {
-        if (_genreId == Guid.Empty) return new List<Guid>();
+        if (_genreId == Guid.Empty) return Task.FromResult(new List<Guid>());
 
         if (IsSearchActive)
-            return await _libraryReader.SearchAllSongIdsInGenreAsync(_genreId, SearchTerm, sortOrder, token);
+            return _libraryReader.SearchAllSongIdsInGenreAsync(_genreId, SearchTerm, sortOrder, token);
 
-        return await _libraryReader.GetAllSongIdsByGenreIdAsync(_genreId, sortOrder, token);
+        return _libraryReader.GetAllSongIdsByGenreIdAsync(_genreId, sortOrder, token);
     }
 
     /// <summary>
@@ -71,7 +68,8 @@ public partial class GenreViewViewModel : SongListViewModelBase
     [RelayCommand]
     public async Task LoadGenreDetailsAsync(GenreViewNavigationParameter? navParam)
     {
-        if (IsLoading || navParam is null) return;
+        if (_isDisposed || navParam is null) return;
+        ResetState();
 
         _logger.LogDebug("Loading details for genre '{GenreName}' ({GenreId})", navParam.GenreName,
             navParam.GenreId);
@@ -82,12 +80,13 @@ public partial class GenreViewViewModel : SongListViewModelBase
             GenreName = navParam.GenreName;
             PageTitle = navParam.GenreName;
 
-            CurrentSortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.GenreViewSortOrderKey);
-            await RefreshOrSortSongsCommand.ExecuteAsync(null);
+            var sortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.GenreViewSortOrderKey);
+            CurrentSortOrder = sortOrder;
+            await RefreshOrSortSongsAsync();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to load details for GenreId {GenreId}", navParam?.GenreId);
+            _logger.LogError(ex, "Failed to load details for GenreId {GenreId}", navParam.GenreId);
             GenreName = Nagi.WinUI.Resources.Strings.GenreView_Error;
             PageTitle = Nagi.WinUI.Resources.Strings.Generic_Error;
             TotalItemsText = Nagi.WinUI.Resources.Strings.Generic_Error;
@@ -104,9 +103,4 @@ public partial class GenreViewViewModel : SongListViewModelBase
         return _settingsService.SetSortOrderAsync(SortOrderHelper.GenreViewSortOrderKey, sortOrder);
     }
 
-    public override void ResetState()
-    {
-        base.ResetState();
-        _logger.LogDebug("Cleaned up GenreViewViewModel search resources");
-    }
 }

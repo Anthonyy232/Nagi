@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,18 +21,15 @@ namespace Nagi.WinUI.ViewModels;
 /// </summary>
 public partial class ArtistViewModelItem : ObservableObject
 {
-    [ObservableProperty] public partial Guid Id { get; set; }
-    [ObservableProperty] public partial string Name { get; set; } = string.Empty;
-    [ObservableProperty] public partial string? LocalImageCachePath { get; set; }
+    public Guid Id { get; init; }
+    public string Name { get; init; } = string.Empty;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsArtworkAvailable), nameof(IsCustomImage))]
+    public partial string? LocalImageCachePath { get; set; }
 
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(LocalImageCachePath);
     public bool IsCustomImage => LocalImageCachePath?.Contains(".custom.") == true;
 
-    partial void OnLocalImageCachePathChanged(string? value)
-    {
-        OnPropertyChanged(nameof(IsArtworkAvailable));
-        OnPropertyChanged(nameof(IsCustomImage));
-    }
 }
 
 /// <summary>
@@ -43,9 +39,7 @@ public partial class ArtistViewModelItem : ObservableObject
 public partial class ArtistViewModel : PagedListViewModelBase<Artist>
 {
     private readonly Dictionary<Guid, ArtistViewModelItem> _artistLookup = new();
-    private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
     private readonly IMusicPlaybackService _musicPlaybackService;
-    private readonly INavigationService _navigationService;
     private readonly IMusicNavigationService _musicNavigationService;
 
     private bool _isNavigating;
@@ -55,32 +49,25 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
         IUISettingsService settingsService,
         IMusicPlaybackService musicPlaybackService,
         IDispatcherService dispatcherService,
-        INavigationService navigationService,
         IMusicNavigationService musicNavigationService,
         ILogger<ArtistViewModel> logger)
         : base(libraryService, settingsService, dispatcherService, logger)
     {
         _musicPlaybackService = musicPlaybackService;
-        _navigationService = navigationService;
         _musicNavigationService = musicNavigationService;
 
-        _collectionChangedHandler = (s, e) => OnPropertyChanged(nameof(HasArtists));
-        Artists.CollectionChanged += _collectionChangedHandler;
-
-        UpdateSortOrderText();
+        Artists.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasArtists));
     }
 
-    [ObservableProperty] public partial ObservableRangeCollection<ArtistViewModelItem> Artists { get; set; } = new();
+    public ObservableRangeCollection<ArtistViewModelItem> Artists { get; } = new();
 
-    [ObservableProperty] public partial ArtistSortOrder CurrentSortOrder { get; set; } = ArtistSortOrder.NameAsc;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CurrentSortOrderText))]
+    public partial ArtistSortOrder CurrentSortOrder { get; set; } = ArtistSortOrder.NameAsc;
 
-    [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = string.Empty;
+    public string CurrentSortOrderText => SortOrderHelper.GetDisplayName(CurrentSortOrder);
 
     public bool HasArtists => Artists.Any();
-
-    partial void OnCurrentSortOrderChanged(ArtistSortOrder value) => UpdateSortOrderText();
-
-    private void UpdateSortOrderText() => CurrentSortOrderText = SortOrderHelper.GetDisplayName(CurrentSortOrder);
 
     protected override async Task LoadInitialSortOrderAsync() =>
         CurrentSortOrder = await _settingsService.GetSortOrderAsync<ArtistSortOrder>(SortOrderHelper.ArtistsSortOrderKey);
@@ -90,20 +77,13 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
             ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Artists_Count_Singular, count)
             : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Artists_Count_Plural, count);
 
-    protected override async Task<PagedResult<Artist>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token)
-    {
-        var pagedResult = IsSearchActive
-            ? await _libraryService.SearchArtistsPagedAsync(SearchTerm, pageNumber, pageSize, token)
-            : await _libraryService.GetAllArtistsPagedAsync(pageNumber, pageSize, CurrentSortOrder, token);
-
-        token.ThrowIfCancellationRequested();
-        return pagedResult ?? new PagedResult<Artist>();
-    }
+    protected override Task<PagedResult<Artist>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token) =>
+        IsSearchActive
+            ? _libraryService.SearchArtistsPagedAsync(SearchTerm, pageNumber, pageSize, token)
+            : _libraryService.GetAllArtistsPagedAsync(pageNumber, pageSize, CurrentSortOrder, token);
 
     protected override void ApplyItemsToCollection(PagedResult<Artist> result, bool append)
     {
-        if (result?.Items == null) return;
-
         if (!append) _artistLookup.Clear();
         var items = new List<ArtistViewModelItem>();
         foreach (var artist in result.Items)
@@ -163,9 +143,8 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
             return;
 
         CurrentSortOrder = newSortOrder;
-        _ = _settingsService.SetSortOrderAsync(SortOrderHelper.ArtistsSortOrderKey, newSortOrder)
-            .ContinueWith(t => _logger.LogError(t.Exception, "Failed to save artist sort order"),
-                TaskContinuationOptions.OnlyOnFaulted);
+        try { await _settingsService.SetSortOrderAsync(SortOrderHelper.ArtistsSortOrderKey, newSortOrder); }
+        catch (Exception ex) { _logger.LogError(ex, "Failed to save artist sort order"); }
         CurrentPage = 1;
         await LoadCommand.ExecuteAsync(CancellationToken.None);
     }
@@ -174,6 +153,7 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
     {
         _dispatcherService.TryEnqueue(() =>
         {
+            if (_isDisposed) return;
             if (_artistLookup.TryGetValue(e.ArtistId, out var artistVm))
                 artistVm.LocalImageCachePath = ImageUriHelper.GetUriWithCacheBuster(e.NewLocalImageCachePath, DateTime.UtcNow);
         });
@@ -183,6 +163,7 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
     {
         _dispatcherService.TryEnqueue(() =>
         {
+            if (_isDisposed) return;
             var timestamp = DateTime.UtcNow;
             foreach (var update in updates)
             {
@@ -204,6 +185,12 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
         _libraryService.ArtistMetadataBatchUpdated -= OnArtistMetadataBatchUpdated;
     }
 
+    public override void Dispose()
+    {
+        UnsubscribeFromEvents();
+        base.Dispose();
+    }
+
     [RelayCommand]
     public async Task UpdateArtistImageAsync(Tuple<Guid, string> artistData)
     {
@@ -213,6 +200,5 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
     }
 
     [RelayCommand]
-    public async Task RemoveArtistImageAsync(Guid artistId) =>
-        await _libraryService.RemoveArtistImageAsync(artistId);
+    public Task RemoveArtistImageAsync(Guid artistId) => _libraryService.RemoveArtistImageAsync(artistId);
 }

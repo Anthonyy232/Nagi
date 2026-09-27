@@ -1,17 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Nagi.Core.Models;
 
-/// <summary>
-///     Represents a file system folder being monitored for music files.
-///     Supports hierarchical folder structures with parent-child relationships.
-/// </summary>
 public class Folder
 {
-    /// <summary>
-    ///     The unique identifier for the folder.
-    /// </summary>
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
 
@@ -38,19 +31,13 @@ public class Folder
     /// </summary>
     public Guid? ParentFolderId { get; set; }
 
-    /// <summary>
-    ///     Navigation property to the parent folder in the hierarchy.
-    /// </summary>
     [ForeignKey("ParentFolderId")]
     public virtual Folder? ParentFolder { get; set; }
 
-    /// <summary>
-    ///     Navigation property to child folders (subfolders) in the hierarchy.
-    /// </summary>
     public virtual ICollection<Folder> SubFolders { get; set; } = new List<Folder>();
 
     /// <summary>
-    ///     A collection of songs located directly within this folder (not including subfolders).
+    ///     Songs assigned to this monitored root, including songs in its subdirectories.
     /// </summary>
     public virtual ICollection<Song> Songs { get; set; } = new List<Song>();
 

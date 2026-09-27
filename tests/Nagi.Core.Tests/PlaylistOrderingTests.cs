@@ -1,6 +1,5 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Http.Pipelines;
@@ -18,13 +17,11 @@ public class PlaylistOrderingTests : IDisposable
 {
     private readonly DbContextFactoryTestHelper _dbHelper;
     private readonly LibraryService _libraryService;
-    private readonly ILogger<LibraryService> _logger;
     private readonly ProviderPipelineProvider _pipelines;
 
     public PlaylistOrderingTests()
     {
         _dbHelper = new DbContextFactoryTestHelper();
-        _logger = Substitute.For<ILogger<LibraryService>>();
         _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
 
         _libraryService = new LibraryService(
@@ -36,14 +33,12 @@ public class PlaylistOrderingTests : IDisposable
             Substitute.For<IFanartTvService>(),
             Substitute.For<ITheAudioDbService>(),
             Substitute.For<IHttpClientFactory>(),
-            Substitute.For<IServiceScopeFactory>(),
             Substitute.For<IPathConfiguration>(),
             Substitute.For<ISettingsService>(),
             Substitute.For<IReplayGainService>(),
-            Substitute.For<IApiKeyService>(),
             Substitute.For<IImageProcessor>(),
             _pipelines,
-            _logger);
+            Substitute.For<ILogger<LibraryService>>());
     }
 
     public void Dispose()
@@ -54,167 +49,106 @@ public class PlaylistOrderingTests : IDisposable
     }
 
     [Fact]
-    public async Task AddSongsToPlaylistAsync_AssignsSequentialDoubleOrders()
+    public async Task RenamePlaylistAsync_EmitsPersistedModificationDate()
     {
-        // Arrange
-        var playlist = await _libraryService.CreatePlaylistAsync("Test");
-        var folder = new Folder { Id = Guid.NewGuid(), Name = "F", Path = "C:\\" };
-        var song1 = new Song { Id = Guid.NewGuid(), Title = "Song 1", FilePath = "1.mp3", FolderId = folder.Id, DirectoryPath = "C:\\" };
-        var song2 = new Song { Id = Guid.NewGuid(), Title = "Song 2", FilePath = "2.mp3", FolderId = folder.Id, DirectoryPath = "C:\\" };
+        var playlist = await _libraryService.CreatePlaylistAsync("Original name");
+        PlaylistUpdatedEventArgs? update = null;
+        _libraryService.PlaylistUpdated += (_, args) => update = args;
 
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Folders.Add(folder);
-            context.Songs.AddRange(song1, song2);
-            await context.SaveChangesAsync();
-        }
+        var success = await _libraryService.RenamePlaylistAsync(playlist!.Id, "New name");
 
-        // Act
-        await _libraryService.AddSongsToPlaylistAsync(playlist!.Id, new[] { song1.Id, song2.Id });
-
-        // Assert
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            var ps = await context.PlaylistSongs.OrderBy(x => x.Order).ToListAsync();
-            ps.Should().HaveCount(2);
-            ps[0].Order.Should().Be(1.0);
-            ps[1].Order.Should().Be(2.0);
-        }
+        success.Should().BeTrue();
+        var persisted = await _libraryService.GetPlaylistByIdAsync(playlist.Id);
+        update.Should().NotBeNull();
+        update!.PlaylistId.Should().Be(playlist.Id);
+        update.DateModified.Should().Be(persisted!.DateModified);
     }
 
     [Fact]
-    public async Task MovePlaylistSongAsync_BetweenTwoSongs_CalculatesMiddleOrder()
+    public async Task AddSongsToPlaylistAsync_AppendsUniqueSongsAfterExistingFractionalOrders()
     {
-        // Arrange: s1 (order=1), s2 (order=2), movedSong (order=3)
-        // Move movedSong between s1 and s2 -> new order should be 1.5
-        var playlist = new Playlist { Id = Guid.NewGuid(), Name = "Test" };
-        var folder = new Folder { Id = Guid.NewGuid(), Name = "F", Path = "C:\\" };
-        var s1 = new Song { Id = Guid.NewGuid(), Title = "S1", FilePath = "1.mp3", FolderId = folder.Id, DirectoryPath = "C:\\" };
-        var s2 = new Song { Id = Guid.NewGuid(), Title = "S2", FilePath = "2.mp3", FolderId = folder.Id, DirectoryPath = "C:\\" };
-        var movedSong = new Song { Id = Guid.NewGuid(), Title = "Moved", FilePath = "m.mp3", FolderId = folder.Id, DirectoryPath = "C:\\" };
+        var (playlist, songs) = await SeedPlaylistAsync(0.5, 1.5, 2.5);
+        await _libraryService.RemoveSongsFromPlaylistAsync(playlist.Id, [songs[1].Id, songs[2].Id]);
 
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Playlists.Add(playlist);
-            context.Folders.Add(folder);
-            context.Songs.AddRange(s1, s2, movedSong);
-            context.PlaylistSongs.AddRange(
-                new PlaylistSong { PlaylistId = playlist.Id, SongId = s1.Id, Order = 1.0 },
-                new PlaylistSong { PlaylistId = playlist.Id, SongId = s2.Id, Order = 2.0 },
-                new PlaylistSong { PlaylistId = playlist.Id, SongId = movedSong.Id, Order = 3.0 }
-            );
-            await context.SaveChangesAsync();
-        }
+        await _libraryService.AddSongsToPlaylistAsync(playlist.Id, [songs[0].Id, songs[2].Id, songs[2].Id, songs[1].Id]);
 
-        // Act: Move movedSong between s1 and s2 (new order = (1.0 + 2.0) / 2 = 1.5)
-        var result = await _libraryService.MovePlaylistSongAsync(playlist.Id, movedSong.Id, 1.5);
+        await using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var entries = await context.PlaylistSongs.OrderBy(x => x.Order).ToListAsync();
+        entries.Select(x => x.SongId).Should().Equal(songs[0].Id, songs[2].Id, songs[1].Id);
+        entries.Select(x => x.Order).Should().Equal(0.5, 1, 2);
+    }
 
-        // Assert
+    [Fact]
+    public async Task MovePlaylistSongAsync_PersistsFractionalOrderAndModificationDate()
+    {
+        var (playlist, songs) = await SeedPlaylistAsync(1, 2, 3);
+
+        var result = await _libraryService.MovePlaylistSongAsync(playlist.Id, songs[2].Id, 1.5);
+
         result.Should().BeTrue();
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            var ps = await context.PlaylistSongs.FirstAsync(x => x.SongId == movedSong.Id);
-            ps.Order.Should().Be(1.5);
-        }
+        await using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var entries = await context.PlaylistSongs.OrderBy(x => x.Order).ToListAsync();
+        entries.Select(x => x.SongId).Should().Equal(songs[0].Id, songs[2].Id, songs[1].Id);
+        entries.Select(x => x.Order).Should().Equal(1, 1.5, 2);
+        (await context.Playlists.FindAsync(playlist.Id))!.DateModified.Should().BeAfter(playlist.DateModified);
     }
 
     [Fact]
-    public async Task MovePlaylistSongAsync_ToTop_SetsHalfOfFirstOrder()
+    public async Task UpdatePlaylistOrderAsync_NormalizesEvenNearIntegerValues()
     {
-        // Arrange: s1 (order=1), movedSong (order=2)
-        // Move movedSong to top -> new order should be 0.5 (half of first)
-        var playlist = new Playlist { Id = Guid.NewGuid(), Name = "Test" };
-        var folder = new Folder { Id = Guid.NewGuid(), Name = "F", Path = "C:\\" };
-        var s1 = new Song { Id = Guid.NewGuid(), Title = "S1", FilePath = "1.mp3", FolderId = folder.Id, DirectoryPath = "C:\\" };
-        var movedSong = new Song { Id = Guid.NewGuid(), Title = "Moved", FilePath = "m.mp3", FolderId = folder.Id, DirectoryPath = "C:\\" };
+        var (playlist, songs) = await SeedPlaylistAsync(1.0 + 1e-12, 1.5, 1.6);
 
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Playlists.Add(playlist);
-            context.Folders.Add(folder);
-            context.Songs.AddRange(s1, movedSong);
-            context.PlaylistSongs.AddRange(
-                new PlaylistSong { PlaylistId = playlist.Id, SongId = s1.Id, Order = 1.0 },
-                new PlaylistSong { PlaylistId = playlist.Id, SongId = movedSong.Id, Order = 2.0 }
-            );
-            await context.SaveChangesAsync();
-        }
+        await _libraryService.UpdatePlaylistOrderAsync(playlist.Id, songs.Select(s => s.Id));
 
-        // Act: Move to top (new order = 1.0 / 2 = 0.5)
-        await _libraryService.MovePlaylistSongAsync(playlist.Id, movedSong.Id, 0.5);
-
-        // Assert
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            var ps = await context.PlaylistSongs.FirstAsync(x => x.SongId == movedSong.Id);
-            ps.Order.Should().Be(0.5);
-        }
+        await using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var entries = await context.PlaylistSongs.OrderBy(x => x.Order).ToListAsync();
+        entries.Select(x => x.SongId).Should().Equal(songs.Select(s => s.Id));
+        entries.Select(x => x.Order).Should().Equal(1, 2, 3);
     }
 
     [Fact]
-    public async Task MovePlaylistSongAsync_ToBottom_IncrementsPrevByOne()
+    public async Task PlaylistReads_PreserveCustomOrderAcrossExportPagingAndSearch()
     {
-        // Arrange: movedSong (order=1), s1 (order=10)
-        // Move movedSong to bottom -> new order should be 11 (last + 1)
-        var playlist = new Playlist { Id = Guid.NewGuid(), Name = "Test" };
-        var folder = new Folder { Id = Guid.NewGuid(), Name = "F", Path = "C:\\" };
-        var s1 = new Song { Id = Guid.NewGuid(), Title = "S1", FilePath = "1.mp3", FolderId = folder.Id, DirectoryPath = "C:\\" };
-        var movedSong = new Song { Id = Guid.NewGuid(), Title = "Moved", FilePath = "m.mp3", FolderId = folder.Id, DirectoryPath = "C:\\" };
-
+        var (playlist, songs) = await SeedPlaylistAsync(3, 1, 2);
+        var expectedIds = new[] { songs[1].Id, songs[2].Id, songs[0].Id };
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {
-            context.Playlists.Add(playlist);
-            context.Folders.Add(folder);
-            context.Songs.AddRange(s1, movedSong);
-            context.PlaylistSongs.AddRange(
-                new PlaylistSong { PlaylistId = playlist.Id, SongId = movedSong.Id, Order = 1.0 },
-                new PlaylistSong { PlaylistId = playlist.Id, SongId = s1.Id, Order = 10.0 }
-            );
+            var other = new Song { Title = "Other", FolderId = songs[0].FolderId, FilePath = @"C:\other.mp3" };
+            context.PlaylistSongs.Add(new PlaylistSong { PlaylistId = playlist.Id, Song = other, Order = 1.25 });
             await context.SaveChangesAsync();
         }
 
-        // Act: Move to bottom (new order = 10.0 + 1 = 11.0)
-        await _libraryService.MovePlaylistSongAsync(playlist.Id, movedSong.Id, 11.0);
+        var exported = await _libraryService.GetSongsInPlaylistOrderedAsync(playlist.Id);
+        exported.Where(s => s.Title.StartsWith("Song")).Select(s => s.Id).Should().Equal(expectedIds);
 
-        // Assert
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            var ps = await context.PlaylistSongs.FirstAsync(x => x.SongId == movedSong.Id);
-            ps.Order.Should().Be(11.0);
-        }
+        var page = await _libraryService.GetSongsByPlaylistPagedAsync(playlist.Id, 3, 1, SongSortOrder.PlaylistOrder);
+        page.TotalCount.Should().Be(4);
+        var row = page.Items.Should().ContainSingle().Subject;
+        row.Id.Should().Be(songs[2].Id);
+        row.Order.Should().Be(2);
+        row.Grouping.Should().Be("Group");
+        row.Lyrics.Should().BeNull();
+
+        var search = await _libraryService.SearchSongsInPlaylistPagedAsync(playlist.Id, "Song", 2, 1, SongSortOrder.PlaylistOrder);
+        search.TotalCount.Should().Be(3);
+        search.Items.Should().ContainSingle().Which.Id.Should().Be(songs[2].Id);
+        search.Items.Single().Order.Should().Be(2);
+        var ids = await _libraryService.SearchAllSongIdsInPlaylistAsync(playlist.Id, "Song", SongSortOrder.PlaylistOrder);
+        ids.Should().Equal(expectedIds);
     }
 
-    [Fact]
-    public async Task UpdatePlaylistOrderAsync_Normalization_ResetsToIntegers()
+    private async Task<(Playlist Playlist, Song[] Songs)> SeedPlaylistAsync(params double[] orders)
     {
-        // Arrange
-        var playlist = new Playlist { Id = Guid.NewGuid(), Name = "Test" };
-        var folder = new Folder { Id = Guid.NewGuid(), Name = "F", Path = "C:\\" };
-        var s1 = new Song { Id = Guid.NewGuid(), Title = "S1", FilePath = "1.mp3", FolderId = folder.Id, DirectoryPath = "C:\\" };
-        var s2 = new Song { Id = Guid.NewGuid(), Title = "S2", FilePath = "2.mp3", FolderId = folder.Id, DirectoryPath = "C:\\" };
-
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        var folder = new Folder { Name = "Music", Path = @"C:\Music" };
+        var songs = orders.Select((_, i) => new Song
         {
-            context.Playlists.Add(playlist);
-            context.Folders.Add(folder);
-            context.Songs.AddRange(s1, s2);
-            context.PlaylistSongs.AddRange(
-                new PlaylistSong { PlaylistId = playlist.Id, SongId = s1.Id, Order = 1.234 },
-                new PlaylistSong { PlaylistId = playlist.Id, SongId = s2.Id, Order = 1.567 }
-            );
-            await context.SaveChangesAsync();
-        }
-
-        // Act: Full reset/normalization
-        await _libraryService.UpdatePlaylistOrderAsync(playlist.Id, new[] { s1.Id, s2.Id });
-
-        // Assert
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            var ps = await context.PlaylistSongs.OrderBy(x => x.Order).ToListAsync();
-            ps.Should().HaveCount(2);
-            ps[0].Order.Should().Be(1.0);
-            ps[1].Order.Should().Be(2.0);
-        }
+            Title = $"Song {i}", FilePath = $@"C:\Music\{i}.mp3", DirectoryPath = folder.Path,
+            Folder = folder, TrackNumber = orders.Length - i, Lyrics = "Heavy lyrics", Grouping = "Group"
+        }).ToArray();
+        var playlist = new Playlist { Name = "Test", DateModified = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc) };
+        await using var context = _dbHelper.ContextFactory.CreateDbContext();
+        context.PlaylistSongs.AddRange(songs.Select((song, i) => new PlaylistSong { Playlist = playlist, Song = song, Order = orders[i] }));
+        await context.SaveChangesAsync();
+        return (playlist, songs);
     }
 }

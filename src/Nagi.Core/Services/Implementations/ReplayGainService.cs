@@ -1,4 +1,4 @@
-﻿using ATL;
+using ATL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
@@ -9,27 +9,24 @@ namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
 ///     Service for calculating, writing, and managing ReplayGain metadata.
-///     Uses streaming PCM extraction for memory-efficient processing.
 /// </summary>
 public class ReplayGainService : IReplayGainService
 {
-    private const double ReplayGainReference = -14.0; // -14 LUFS: matches streaming platforms (YouTube, Apple) and RG1
+    private const double ReplayGainReference = -14.0;
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
     private readonly ILogger<ReplayGainService> _logger;
-    private readonly LoudnessMeter _loudnessMeter;
-    private readonly IPcmExtractor _pcmExtractor;
+    private readonly ILoudnessAnalyzer _loudnessAnalyzer;
     private readonly SemaphoreSlim _dbLock = new(1, 1);
     private bool _disposed;
 
     public ReplayGainService(
         IDbContextFactory<MusicDbContext> contextFactory,
-        IPcmExtractor pcmExtractor,
+        ILoudnessAnalyzer loudnessAnalyzer,
         ILogger<ReplayGainService> logger)
     {
         _contextFactory = contextFactory ?? throw new ArgumentNullException(nameof(contextFactory));
-        _pcmExtractor = pcmExtractor ?? throw new ArgumentNullException(nameof(pcmExtractor));
+        _loudnessAnalyzer = loudnessAnalyzer;
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _loudnessMeter = new LoudnessMeter();
     }
 
     /// <inheritdoc />
@@ -37,37 +34,9 @@ public class ReplayGainService : IReplayGainService
     {
         try
         {
-            // Use streaming extraction for memory efficiency
-            var hasData = false;
-            LoudnessMeter.Session? session = null;
-
-            await foreach (var chunk in _pcmExtractor.ExtractStreamingAsync(filePath, cancellationToken).ConfigureAwait(false))
-            {
-                // Initialize session on first chunk
-                session ??= _loudnessMeter.CreateSession(chunk.SampleRate, chunk.Channels);
-
-                session.ProcessChunk(chunk);
-                hasData = true;
-            }
-
-            if (!hasData || session == null)
-            {
-                _logger.LogWarning("Failed to extract PCM samples from: {FilePath}", filePath);
-                return null;
-            }
-
-            // Calculate integrated loudness using EBU R128
-            var integratedLoudness = session.GetIntegratedLoudness();
-            var peak = session.Peak;
-            session.Dispose();
-
-            if (double.IsNegativeInfinity(integratedLoudness))
-            {
-                _logger.LogWarning("Could not calculate loudness for: {FilePath} (possibly silent)", filePath);
-                return null;
-            }
-
-            // Calculate ReplayGain: difference from reference level
+            var result = await _loudnessAnalyzer.AnalyzeAsync(filePath, cancellationToken).ConfigureAwait(false);
+            if (result is null) return null;
+            var (integratedLoudness, peak) = result.Value;
             var gainDb = ReplayGainReference - integratedLoudness;
 
             _logger.LogDebug("Calculated ReplayGain for {FilePath}: LUFS={Lufs:F2}, Gain={Gain:F2} dB, Peak={Peak:F6}",
@@ -75,12 +44,7 @@ public class ReplayGainService : IReplayGainService
 
             return (gainDb, peak);
         }
-        catch (OperationCanceledException)
-        {
-            _logger.LogDebug("ReplayGain calculation cancelled for: {FilePath}", filePath);
-            return null;
-        }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not OperationCanceledException)
         {
             _logger.LogError(ex, "Error calculating ReplayGain for: {FilePath}", filePath);
             return null;
@@ -103,27 +67,10 @@ public class ReplayGainService : IReplayGainService
         if (result == null) return false;
 
         var (gainDb, peak) = result.Value;
+        cancellationToken.ThrowIfCancellationRequested();
 
-        // Write tags to file using ATL.NET
-        try
-        {
-            var track = new Track(song.FilePath);
-            track.AdditionalFields["REPLAYGAIN_TRACK_GAIN"] = $"{gainDb:F2} dB";
-            track.AdditionalFields["REPLAYGAIN_TRACK_PEAK"] = $"{peak:F6}";
+        if (!TagFileSafely(song.FilePath, gainDb, peak)) return false;
 
-            if (!track.Save())
-            {
-                _logger.LogError("Failed to save ReplayGain tags to file: {FilePath}", song.FilePath);
-                return false;
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error writing ReplayGain tags to file: {FilePath}", song.FilePath);
-            return false;
-        }
-
-        // Update database - handle concurrency and SQLite filing safely with a semaphore
         await _dbLock.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
@@ -181,71 +128,38 @@ public class ReplayGainService : IReplayGainService
 
         var processed = 0;
 
-        // Use Chunks to allow batching within each parallel worker
         var songGroups = songsWithoutReplayGain.Chunk(BatchSize);
 
         await Parallel.ForEachAsync(songGroups, parallelOptions, async (batch, ct) =>
         {
-            // Each parallel worker gets its own DB context and recycled session
             await using var workerContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-            LoudnessMeter.Session? recycledSession = null;
+            var songs = await workerContext.Songs.Where(song => batch.Contains(song.Id)).ToListAsync(ct).ConfigureAwait(false);
+            foreach (var song in songs)
+            {
+                var result = await CalculateAsync(song.FilePath, ct).ConfigureAwait(false);
+                ct.ThrowIfCancellationRequested();
+                if (result is { } values && TagFileSafely(song.FilePath, values.GainDb, values.Peak))
+                {
+                    song.ReplayGainTrackGain = values.GainDb;
+                    song.ReplayGainTrackPeak = values.Peak;
+                }
 
+                var currentProcessed = Interlocked.Increment(ref processed);
+                progress?.Report(new ScanProgress
+                {
+                    StatusText = string.Format(Resources.Strings.ReplayGain_CalculatingProgress, currentProcessed, totalCount),
+                    Percentage = (double)currentProcessed / totalCount * 100
+                });
+            }
+
+            await _dbLock.WaitAsync(ct).ConfigureAwait(false);
             try
             {
-                foreach (var songId in batch)
-                {
-                    var song = await workerContext.Songs.FindAsync(new object[] { songId }, ct).ConfigureAwait(false);
-                    if (song == null) continue;
-
-                    try
-                    {
-                        // Calculate - ensure we capture the session whether success or failure
-                        var calcResult = await CalculateStreamingInternalAsync(song.FilePath, recycledSession, ct).ConfigureAwait(false);
-                        recycledSession = calcResult.SessionBuffer; // Always update the reference
-
-                        if (calcResult.GainDb.HasValue && calcResult.Peak.HasValue)
-                        {
-                            var gainDb = calcResult.GainDb.Value;
-                            var peak = calcResult.Peak.Value;
-
-                            // Tag file
-                            if (TagFileSafely(song.FilePath, gainDb, peak))
-                            {
-                                // Stage for DB (No SaveChanges yet)
-                                song.ReplayGainTrackGain = gainDb;
-                                song.ReplayGainTrackPeak = peak;
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogWarning(ex, "Failed to process song {SongId}", songId);
-                    }
-
-                    // Granular progress reporting
-                    var currentProcessed = Interlocked.Increment(ref processed);
-                    var percentage = totalCount > 0 ? (double)currentProcessed / totalCount * 100 : 100;
-                    progress?.Report(new ScanProgress
-                    {
-                        StatusText = string.Format(Resources.Strings.ReplayGain_CalculatingProgress, currentProcessed, totalCount),
-                        Percentage = percentage
-                    });
-                }
-
-                // Batch Save to DB
-                await _dbLock.WaitAsync(ct).ConfigureAwait(false);
-                try
-                {
-                    await workerContext.SaveChangesAsync(ct).ConfigureAwait(false);
-                }
-                finally
-                {
-                    _dbLock.Release();
-                }
+                await workerContext.SaveChangesAsync(ct).ConfigureAwait(false);
             }
             finally
             {
-                recycledSession?.Dispose();
+                _dbLock.Release();
             }
         }).ConfigureAwait(false);
 
@@ -253,70 +167,16 @@ public class ReplayGainService : IReplayGainService
         _logger.LogInformation("ReplayGain scan complete. Processed {Count} songs.", processed);
     }
 
-    private record InternalCalculationResult(double? GainDb, double? Peak, LoudnessMeter.Session? SessionBuffer);
-
-    private async Task<InternalCalculationResult> CalculateStreamingInternalAsync(
-        string filePath,
-        LoudnessMeter.Session? existingSession,
-        CancellationToken ct)
-    {
-        var hasData = false;
-        var session = existingSession;
-        var initialized = false;
-
-        try
-        {
-            await foreach (var chunk in _pcmExtractor.ExtractStreamingAsync(filePath, ct).ConfigureAwait(false))
-            {
-                if (!initialized)
-                {
-                    // Validate if existing session matches current audio properties
-                    if (session == null || session.SampleRate != chunk.SampleRate || session.Channels != chunk.Channels)
-                    {
-                        session?.Dispose();
-                        session = _loudnessMeter.CreateSession(chunk.SampleRate, chunk.Channels);
-                    }
-                    else
-                    {
-                        session.Reset();
-                    }
-                    initialized = true;
-                }
-
-                // Use ! because we know it's initialized after the block above
-                session!.ProcessChunk(chunk);
-                hasData = true;
-            }
-
-            if (!hasData || session == null)
-                return new InternalCalculationResult(null, null, session);
-
-            var integratedLoudness = session.GetIntegratedLoudness();
-            if (double.IsNegativeInfinity(integratedLoudness))
-                return new InternalCalculationResult(null, null, session);
-
-            var gainDb = ReplayGainReference - integratedLoudness;
-            return new InternalCalculationResult(gainDb, session.Peak, session);
-        }
-        catch (OperationCanceledException)
-        {
-            throw;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogDebug(ex, "Error during streaming calculation for {FilePath}", filePath);
-            return new InternalCalculationResult(null, null, session);
-        }
-    }
-
     private bool TagFileSafely(string filePath, double gainDb, double peak)
     {
         try
         {
             var track = new Track(filePath);
-            track.AdditionalFields["REPLAYGAIN_TRACK_GAIN"] = $"{gainDb:F2} dB";
-            track.AdditionalFields["REPLAYGAIN_TRACK_PEAK"] = $"{peak:F6}";
-            return track.Save();
+            track.AdditionalFields["REPLAYGAIN_TRACK_GAIN"] = FormattableString.Invariant($"{gainDb:F2} dB");
+            track.AdditionalFields["REPLAYGAIN_TRACK_PEAK"] = FormattableString.Invariant($"{peak:F6}");
+            var saved = track.Save();
+            if (!saved) _logger.LogError("Failed to save ReplayGain tags to file: {FilePath}", filePath);
+            return saved;
         }
         catch (Exception ex)
         {
@@ -331,6 +191,5 @@ public class ReplayGainService : IReplayGainService
         if (_disposed) return;
         _dbLock.Dispose();
         _disposed = true;
-        GC.SuppressFinalize(this);
     }
 }

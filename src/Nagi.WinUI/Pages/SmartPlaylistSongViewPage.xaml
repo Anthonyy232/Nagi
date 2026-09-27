@@ -15,10 +15,6 @@
     Background="Transparent"
     x:Name="pageRoot">
 
-    <Page.Resources>
-
-    </Page.Resources>
-
     <Grid KeyboardAcceleratorPlacementMode="Hidden"
           Padding="0,0,0,24"
           Margin="{StaticResource SongListViewMargin}">
@@ -55,12 +51,11 @@
                             Storyboard.TargetName="SearchIcon"
                             Storyboard.TargetProperty="Glyph">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE721;" />
-                            <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="&#xE721;" />
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="SearchExpanded">
-                    <Storyboard>
+                    <Storyboard Completed="OnSearchExpansionCompleted">
                         <DoubleAnimation
                             Storyboard.TargetName="SearchTextBox"
                             Storyboard.TargetProperty="Width"
@@ -369,7 +364,7 @@
 
                         <TextBlock x:Name="SongTitle"
                                    Grid.Column="1" Text="{x:Bind Title}" VerticalAlignment="Center"
-                                   Style="{StaticResource SongListViewPageBodyStrongTextBlockStyle}"
+                                   Style="{StaticResource BodyStrongTextBlockStyle}"
                                    TextTrimming="CharacterEllipsis"
                                    TextWrapping="NoWrap" />
 
@@ -412,7 +407,7 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Spacing="16"
-            Visibility="{x:Bind ViewModel.Songs.Count, Mode=OneWay, Converter={StaticResource InverseCollectionCountToVisibilityConverter}}">
+            Visibility="{x:Bind ViewModel.ShowEmptyState, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel.ChildrenTransitions>
                 <TransitionCollection>
                     <EntranceThemeTransition FromVerticalOffset="20" />

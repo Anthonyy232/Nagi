@@ -48,12 +48,11 @@
                             Storyboard.TargetName="SearchIcon"
                             Storyboard.TargetProperty="Glyph">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE721;" />
-                            <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="&#xE721;" />
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="SearchExpanded">
-                    <Storyboard>
+                    <Storyboard Completed="OnSearchExpansionCompleted">
                         <DoubleAnimation
                             Storyboard.TargetName="SearchTextBox"
                             Storyboard.TargetProperty="Width"
@@ -81,23 +80,6 @@
                             <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE711;" />
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
-                </VisualState>
-            </VisualStateGroup>
-            <VisualStateGroup x:Name="WindowSizeStates">
-                <!-- Large displays (1600px+) -->
-                <VisualState x:Name="WideLayout">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="1600" />
-                    </VisualState.StateTriggers>
-                    <!-- Future: Scale up album cards for better space utilization -->
-                </VisualState>
-
-                <!-- Normal/Small displays -->
-                <VisualState x:Name="NormalLayout">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="0" />
-                    </VisualState.StateTriggers>
-                    <!-- Default sizing from resources -->
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
@@ -201,7 +183,7 @@
                 IsItemClickEnabled="True"
                 ItemClick="AlbumsGridView_ItemClick"
                 Padding="{StaticResource SongListViewPadding}"
-                ItemContainerStyle="{StaticResource AlbumPageGridViewItemStyle}"
+                ItemContainerStyle="{StaticResource AnimatedGridViewItemStyle}"
                 ItemsSource="{x:Bind ViewModel.Albums, Mode=OneWay}"
                 SelectionMode="None"
                 Visibility="{x:Bind ViewModel.HasAlbums, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
@@ -236,10 +218,10 @@
                             <Grid Grid.Row="0" Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}" HorizontalAlignment="Center">
                                 <Border
                                     CornerRadius="8"
-                                    Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                    Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}">
                                     <controls:ImageEx
                                         IsCacheEnabled="True"
-                                        Source="{x:Bind CoverArtUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
+                                        Source="{x:Bind CoverArtUri, Mode=OneTime, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
                                         DecodePixelWidth="{StaticResource HeaderImageSize}"
                                         DecodePixelType="Logical"
                                         Stretch="UniformToFill" />
@@ -247,7 +229,7 @@
                                 <Grid
                                     Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                                     CornerRadius="8"
-                                    Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
+                                    Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneTime}">
                                     <FontIcon
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
@@ -261,7 +243,7 @@
                                 Margin="0,12,0,0"
                                 HorizontalAlignment="Center"
                                 FontWeight="SemiBold"
-                                Text="{x:Bind Title, Mode=OneWay}"
+                                Text="{x:Bind Title, Mode=OneTime}"
                                 TextTrimming="CharacterEllipsis"
                                 TextWrapping="NoWrap" />
 
@@ -273,8 +255,8 @@
                                 Style="{ThemeResource CaptionTextBlockStyle}"
                                 TextTrimming="CharacterEllipsis"
                                 TextWrapping="NoWrap"
-                                uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName, Mode=OneWay}"
-                                uihelpers:MultiArtistHyperlinkHelper.AlbumArtists="{x:Bind AlbumArtists, Mode=OneWay}"
+                                uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName, Mode=OneTime}"
+                                uihelpers:MultiArtistHyperlinkHelper.AlbumArtists="{x:Bind AlbumArtists, Mode=OneTime}"
                                 uihelpers:MultiArtistHyperlinkHelper.Command="{Binding ViewModel.GoToArtistCommand, ElementName=AlbumPageRoot}" />
                         </Grid>
                     </DataTemplate>

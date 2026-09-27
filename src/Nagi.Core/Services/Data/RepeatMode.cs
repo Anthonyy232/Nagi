@@ -1,8 +1,5 @@
-﻿namespace Nagi.Core.Services.Data;
+namespace Nagi.Core.Services.Data;
 
-/// <summary>
-///     Defines playback repeat modes.
-/// </summary>
 public enum RepeatMode
 {
     Off,

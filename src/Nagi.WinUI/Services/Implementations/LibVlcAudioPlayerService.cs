@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.Media;
 using Windows.Storage;
@@ -19,7 +20,7 @@ namespace Nagi.WinUI.Services.Implementations;
 ///     and manual integration with the System Media Transport Controls (SMTC).
 ///     Uses lazy initialization to avoid blocking app startup.
 /// </summary>
-public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
+public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable, IAsyncDisposable
 {
     private static readonly TimeSpan NativeStopTimeout = TimeSpan.FromSeconds(5);
 
@@ -29,11 +30,10 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private readonly ILogger<LibVlcAudioPlayerService> _logger;
     private readonly CancellationTokenSource _disposeCts = new();
     private readonly SemaphoreSlim _vlcOperationLock = new(1, 1);
+    private readonly ReaderWriterLockSlim _nativeLifetimeLock = new();
     private CancellationTokenSource? _loadCts;
 
-    // Lazy initialization support
-    private readonly SemaphoreSlim _initSemaphore = new(1, 1);
-    private Task? _initTask;
+    private readonly Lazy<Task> _disposeTask;
     private volatile bool _isInitialized;
 
     // Deferred LibVLC components (nullable until initialized)
@@ -46,7 +46,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private Song? _currentSong;
     private SystemMediaTransportControls? _smtc;
 
-    private bool _isDisposed;
+    private volatile bool _isDisposed;
     private bool _isExplicitStop; // Prevents false PlaybackEnded events on user/error stop
     private double _replayGainOffset; // Separate tracking of ReplayGain adjustment
 
@@ -79,68 +79,37 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         _appInfoService = appInfoService ?? throw new ArgumentNullException(nameof(appInfoService));
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _disposeTask = new Lazy<Task>(DisposeCoreAsync);
     }
 
-    /// <inheritdoc />
-    public void EnsureInitialized()
+    private void EnsureInitialized()
     {
-        // Fast-path: already initialized or disposed
         if (_isInitialized || _isDisposed) return;
-
-        // Use Task.Run to execute initialization on thread pool, avoiding potential
-        // deadlock if called from UI thread while initialization needs to marshal back to UI.
-        // This is safer than direct .GetAwaiter().GetResult() which can deadlock.
-        Task.Run(() => EnsureInitializedAsync()).GetAwaiter().GetResult();
+        EnsureInitializedAsync().GetAwaiter().GetResult();
     }
 
     /// <inheritdoc />
-    public Task EnsureInitializedAsync()
+    public async Task EnsureInitializedAsync()
     {
-        // Fast-path: already initialized or disposed
-        if (_isInitialized || _isDisposed) return Task.CompletedTask;
-
-        // Fast-path: if initialization is in progress, await the existing task
-        var task = _initTask;
-        if (task is not null) return task;
-
-        return EnsureInitializedCoreAsync();
-    }
-
-    private async Task EnsureInitializedCoreAsync()
-    {
-        await _initSemaphore.WaitAsync().ConfigureAwait(false);
+        if (_isInitialized || _isDisposed) return;
+        await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
         try
         {
-            // Double-check after acquiring semaphore
             if (_isInitialized || _isDisposed) return;
-
-            // If another caller set _initTask while we waited, await it
-            if (_initTask is not null)
-            {
-                await _initTask.ConfigureAwait(false);
-                return;
-            }
-
-            // Create a task that other callers can await while we hold the semaphore
-            var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-            _initTask = tcs.Task;
-
-            try
-            {
-                var useWasapiExclusive = await _settingsService.GetWasapiExclusiveModeEnabledAsync().ConfigureAwait(false);
-                InitializeLibVlcCore(useWasapiExclusive);
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                _initTask = null; // Allow retry on failure
-                tcs.SetException(ex);
-                throw;
-            }
+            var useWasapiExclusive = await _settingsService.GetWasapiExclusiveModeEnabledAsync().ConfigureAwait(false);
+            await Task.Run(() => InitializeLibVlcCore(useWasapiExclusive), _disposeCts.Token).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (_isDisposed)
+        {
+        }
+        catch
+        {
+            DisposeNativeComponents();
+            throw;
         }
         finally
         {
-            _initSemaphore.Release();
+            _vlcOperationLock.Release();
         }
     }
 
@@ -176,7 +145,8 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             httpUserAgent);
 
         _mediaPlayer = new MediaPlayer(_libVlc);
-        _dummyMediaPlayer = new WinMediaPlayback.MediaPlayer { CommandManager = { IsEnabled = false } };
+        _dummyMediaPlayer = new WinMediaPlayback.MediaPlayer();
+        _dummyMediaPlayer.CommandManager.IsEnabled = false;
 
         _equalizer = new Equalizer();
         _equalizer.SetPreamp(_basePreamp);
@@ -268,24 +238,34 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     public event Action<string>? ErrorOccurred;
     public event Action? SmtcNextButtonPressed, SmtcPreviousButtonPressed;
 
-    public bool IsPlaying => !_isDisposed && _isInitialized && !_isPausing && _mediaPlayer?.State == VLCState.Playing;
-    public TimeSpan CurrentPosition => _isDisposed || !_isInitialized
-        ? TimeSpan.Zero
-        : FromVlcMicroseconds(_mediaPlayer?.Time ?? 0);
-    public TimeSpan Duration => _isDisposed || !_isInitialized
-        ? TimeSpan.Zero
-        : FromVlcMicroseconds(_mediaPlayer?.Length ?? 0);
+    public bool IsPlaying => !_isPausing && ReadNative(() => _mediaPlayer?.State == VLCState.Playing, false);
+    public TimeSpan CurrentPosition => ReadNative(() => FromVlcMicroseconds(_mediaPlayer?.Time ?? 0), TimeSpan.Zero);
+    public TimeSpan Duration => ReadNative(() => FromVlcMicroseconds(_mediaPlayer?.Length ?? 0), TimeSpan.Zero);
     public double Volume => _isDisposed || !_isInitialized ? 0 : _userVolume;
-    public bool IsMuted => !_isDisposed && _isInitialized && (_mediaPlayer?.Mute ?? false);
+    public bool IsMuted => ReadNative(() => _mediaPlayer?.Mute ?? false, false);
+
+    private T ReadNative<T>(Func<T> read, T unavailable)
+    {
+        // Native callbacks must not wait behind disposal, which can itself wait for callbacks.
+        if (_isDisposed || !_isInitialized || !_nativeLifetimeLock.TryEnterReadLock(0)) return unavailable;
+        try
+        {
+            return _isDisposed ? unavailable : read();
+        }
+        finally
+        {
+            _nativeLifetimeLock.ExitReadLock();
+        }
+    }
 
     public void InitializeSmtc()
     {
         if (_isDisposed) return;
         EnsureInitialized();
-        if (_isDisposed || _dummyMediaPlayer is null) return;
-
+        _vlcOperationLock.Wait();
         try
         {
+            if (_isDisposed || _dummyMediaPlayer is null || _smtc is not null) return;
             _logger.LogDebug("Initializing System Media Transport Controls (SMTC).");
             _smtc = _dummyMediaPlayer.SystemMediaTransportControls;
             _smtc.IsPlayEnabled = true;
@@ -300,6 +280,10 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         catch (Exception ex)
         {
             _logger.LogCritical(ex, "Failed to initialize SMTC. System media controls will be unavailable.");
+        }
+        finally
+        {
+            _vlcOperationLock.Release();
         }
     }
 
@@ -320,24 +304,25 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     public async Task LoadAsync(Song song)
     {
         if (_isDisposed) return;
-        EnsureInitialized();
+        await EnsureInitializedAsync().ConfigureAwait(false);
         if (_isDisposed || _mediaPlayer is null) return;
+
+        CancelFade();
 
         // Cancel any previous in-flight load immediately (cancel-and-supersede pattern).
         // When user rapidly skips tracks, only the final destination's VLC work executes.
-        _loadCts?.Cancel();
-        _loadCts?.Dispose();
-        var cts = new CancellationTokenSource();
-        _loadCts = cts;
+        var cts = CancellationTokenSource.CreateLinkedTokenSource(_disposeCts.Token);
         var token = cts.Token;
-
-        _currentSong = song;
+        var previousLoad = Interlocked.Exchange(ref _loadCts, cts);
+        previousLoad?.Cancel();
+        previousLoad?.Dispose();
 
         await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
         try
         {
             // If a newer LoadAsync call superseded us while we waited for the lock, skip entirely.
             token.ThrowIfCancellationRequested();
+            _currentSong = song;
 
             _logger.LogDebug("Loading media for song '{SongTitle}' from path: {FilePath}", song.Title,
                 song.FilePath);
@@ -408,15 +393,15 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     public async Task PlayAsync()
     {
         if (_isDisposed) return;
-        EnsureInitialized();
+        await EnsureInitializedAsync().ConfigureAwait(false);
         if (_isDisposed || _mediaPlayer is null) return;
 
         // Cancel any ongoing fade (e.g. a fade-out from a previous pause that didn't complete)
-        var newPlayCts = new CancellationTokenSource();
+        var newPlayCts = CancellationTokenSource.CreateLinkedTokenSource(_disposeCts.Token);
+        var fadeCt = newPlayCts.Token;
         var oldPlayCts = Interlocked.Exchange(ref _fadeCts, newPlayCts);
         oldPlayCts?.Cancel();
         oldPlayCts?.Dispose();
-        var fadeCt = newPlayCts.Token;
         var startFadeIn = false;
 
         _isPausing = false;
@@ -482,16 +467,16 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
         if (_isFadeOnPlayPauseEnabled)
         {
-            var newPauseCts = new CancellationTokenSource();
+            var newPauseCts = CancellationTokenSource.CreateLinkedTokenSource(_disposeCts.Token);
+            var fadeCt = newPauseCts.Token;
             var oldPauseCts = Interlocked.Exchange(ref _fadeCts, newPauseCts);
             oldPauseCts?.Cancel();
             oldPauseCts?.Dispose();
-            var fadeCt = newPauseCts.Token;
 
             _isPausing = true;
 
             // Fire and forget the fade-out and pause so the UI command completes immediately
-            _ = FadeAndPauseAsync(newPauseCts, _userVolume);
+            _ = FadeAndPauseAsync(fadeCt, _userVolume);
             return;
         }
 
@@ -511,9 +496,8 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         }
     }
 
-    private async Task FadeAndPauseAsync(CancellationTokenSource cts, double targetUserVolume)
+    private async Task FadeAndPauseAsync(CancellationToken fadeCt, double targetUserVolume)
     {
-        var fadeCt = cts.Token;
         try
         {
             // Immediately broadcast state change so UI Play/Pause button switches
@@ -526,7 +510,17 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             // Read the actual VLC volume as the starting point rather than _userVolume.
             // If a fade-in was canceled mid-way (rapid play→pause), starting from _userVolume
             // would cause VLC to briefly ramp up before fading out — an audible blip.
-            double fromVolume = Math.Clamp((_mediaPlayer?.Volume ?? 0) / 100.0, 0.0, targetUserVolume);
+            double fromVolume;
+            await _vlcOperationLock.WaitAsync(fadeCt).ConfigureAwait(false);
+            try
+            {
+                if (_isDisposed || _mediaPlayer is null) return;
+                fromVolume = Math.Clamp(_mediaPlayer.Volume / 100.0, 0.0, targetUserVolume);
+            }
+            finally
+            {
+                _vlcOperationLock.Release();
+            }
             await FadeAsync(fromVolume, 0.0, TimeSpan.FromMilliseconds(_fadeOutDurationMs), fadeCt).ConfigureAwait(false);
 
             if (_isDisposed || _mediaPlayer is null || fadeCt.IsCancellationRequested) return;
@@ -546,9 +540,11 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         }
         catch (OperationCanceledException)
         {
-            // Expected if superseded by Play/Stop/Load.
-            // Clear the pausing flag since this pause attempt was aborted.
-            _isPausing = false;
+            // The replacing operation owns the current pausing state.
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to fade out and pause playback.");
         }
     }
 
@@ -559,17 +555,15 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         _logger.LogDebug("Stop command received.");
 
         // Cancel any active fade immediately so audio stops without delay
-        var oldStopCts = Interlocked.Exchange(ref _fadeCts, null);
-        oldStopCts?.Cancel();
-        oldStopCts?.Dispose();
-        _isFading = false;
-        _isPausing = false;
+        CancelFade();
 
         // Mark as explicit stop to prevent false PlaybackEnded in state changed handler
         _isExplicitStop = true;
 
         // Cancel any pending load — no point loading media we're about to stop
-        _loadCts?.Cancel();
+        var pendingLoad = Interlocked.Exchange(ref _loadCts, null);
+        pendingLoad?.Cancel();
+        pendingLoad?.Dispose();
 
         await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
         try
@@ -614,9 +608,9 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
     private async Task StopNativePlaybackAsync(MediaPlayer player)
     {
-        var stopped = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var stopped = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        void OnStopped(object? sender, EventArgs args) => stopped.TrySetResult(true);
+        void OnStopped(object? sender, EventArgs args) => stopped.TrySetResult();
 
         player.Stopped += OnStopped;
         try
@@ -663,9 +657,9 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         }
     }
 
-    public Task SeekAsync(TimeSpan position)
+    public async Task SeekAsync(TimeSpan position)
     {
-        if (_isDisposed || !_isInitialized || _mediaPlayer is null) return Task.CompletedTask;
+        if (_isDisposed || !_isInitialized) return;
 
         if (position < TimeSpan.Zero)
         {
@@ -673,11 +667,19 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             position = TimeSpan.Zero;
         }
 
-        if (_mediaPlayer.IsSeekable)
-            _mediaPlayer.SeekTo(position, true);
-        else
-            _logger.LogWarning("Seek command received, but media is not seekable.");
-        return Task.CompletedTask;
+        await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            if (_isDisposed || _mediaPlayer is null) return;
+            if (_mediaPlayer.IsSeekable)
+                _mediaPlayer.SeekTo(position, true);
+            else
+                _logger.LogWarning("Seek command received, but media is not seekable.");
+        }
+        finally
+        {
+            _vlcOperationLock.Release();
+        }
     }
 
     private static TimeSpan FromVlcMicroseconds(long microseconds)
@@ -690,28 +692,30 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             : TimeSpan.FromTicks(microseconds * ticksPerMicrosecond);
     }
 
-    public Task SetVolumeAsync(double volume)
+    public async Task SetVolumeAsync(double volume)
     {
-        if (_isDisposed) return Task.CompletedTask;
-        EnsureInitialized();
-        if (_isDisposed || _mediaPlayer is null) return Task.CompletedTask;
+        if (_isDisposed) return;
 
         // Ensure volume is a valid finite number
         if (!double.IsFinite(volume))
         {
             _logger.LogWarning("SetVolumeAsync received invalid volume: {Volume}. Ignoring.", volume);
-            return Task.CompletedTask;
+            return;
         }
 
-        // Cancel any in-progress fade so the user's explicit change takes effect immediately
-        var oldVolCts = Interlocked.Exchange(ref _fadeCts, null);
-        oldVolCts?.Cancel();
-        oldVolCts?.Dispose();
-        _isFading = false;
-
-        _userVolume = Math.Clamp(volume, 0.0, 1.0);
-        _mediaPlayer.SetVolume((int)Math.Clamp(_userVolume * 100, 0, 100));
-        return Task.CompletedTask;
+        await EnsureInitializedAsync().ConfigureAwait(false);
+        CancelFade();
+        await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            if (_isDisposed || _mediaPlayer is null) return;
+            _userVolume = Math.Clamp(volume, 0.0, 1.0);
+            _mediaPlayer.SetVolume((int)(_userVolume * 100));
+        }
+        finally
+        {
+            _vlcOperationLock.Release();
+        }
     }
 
     public void SetFadeOnPlayPauseEnabled(bool isEnabled)
@@ -729,12 +733,18 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         _fadeOutDurationMs = durationMs;
     }
 
-    public Task SetMuteAsync(bool isMuted)
+    public async Task SetMuteAsync(bool isMuted)
     {
-        if (_isDisposed || !_isInitialized || _mediaPlayer is null) return Task.CompletedTask;
-
-        _mediaPlayer.Mute = isMuted;
-        return Task.CompletedTask;
+        if (_isDisposed || !_isInitialized) return;
+        await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            if (!_isDisposed && _mediaPlayer is not null) _mediaPlayer.Mute = isMuted;
+        }
+        finally
+        {
+            _vlcOperationLock.Release();
+        }
     }
 
     public IReadOnlyList<(uint Index, float Frequency)> GetEqualizerBands()
@@ -748,48 +758,66 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             return Array.Empty<(uint, float)>();
         }
 
-        var bandCount = _equalizer.BandCount;
-        var bands = new List<(uint, float)>();
-        for (uint i = 0; i < bandCount; i++) bands.Add((i, _equalizer.BandFrequency(i)));
-        return bands;
+        _vlcOperationLock.Wait();
+        try
+        {
+            if (_isDisposed || _equalizer is null) return Array.Empty<(uint, float)>();
+            var bands = new List<(uint, float)>();
+            for (uint i = 0; i < _equalizer.BandCount; i++)
+                bands.Add((i, _equalizer.BandFrequency(i)));
+            return bands;
+        }
+        finally
+        {
+            _vlcOperationLock.Release();
+        }
     }
 
     public bool ApplyEqualizerSettings(EqualizerSettings settings)
     {
-        if (_isDisposed || settings == null || !_isInitialized || _equalizer is null || _mediaPlayer is null)
+        if (_isDisposed || !_isInitialized) return false;
+        _vlcOperationLock.Wait();
+        try
         {
-            if (settings == null) _logger.LogWarning("ApplyEqualizerSettings called with null settings. Aborting.");
-            return false;
+            if (_isDisposed || _equalizer is null || _mediaPlayer is null) return false;
+            _basePreamp = settings.Preamp;
+            ApplyCombinedPreamp();
+            var bandCount = Math.Min(settings.BandGains.Count, (int)_equalizer.BandCount);
+            for (var i = 0; i < bandCount; i++)
+                _equalizer.SetAmp(Math.Clamp(settings.BandGains[i], -20.0f, 20.0f), (uint)i);
+
+            return _mediaPlayer.SetEqualizer(_equalizer);
         }
-
-        // Store the user's base preamp setting
-        _basePreamp = settings.Preamp;
-
-        // Apply combined preamp (base + ReplayGain offset)
-        ApplyCombinedPreamp();
-
-        var bandCount = _equalizer.BandCount;
-        for (var i = 0; i < settings.BandGains.Count; i++)
-            if (i < bandCount)
-            {
-                // LibVLC equalizer gain range: -20 to +20 dB
-                var gain = Math.Clamp(settings.BandGains[i], -20.0f, 20.0f);
-                _equalizer.SetAmp(gain, (uint)i);
-            }
-
-        var success = _mediaPlayer.SetEqualizer(_equalizer);
-        _logger.LogDebug("Re-applied equalizer to MediaPlayer. Success: {Success}", success);
-        return success;
+        finally
+        {
+            _vlcOperationLock.Release();
+        }
     }
 
-    public Task SetReplayGainAsync(double gainDb)
+    public async Task SetReplayGainAsync(double gainDb)
     {
-        if (_isDisposed || !_isInitialized) return Task.CompletedTask;
+        if (_isDisposed || !_isInitialized) return;
+        await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            if (_isDisposed) return;
+            _replayGainOffset = gainDb;
+            ApplyCombinedPreamp();
+            _logger.LogDebug("Applied ReplayGain offset: {GainDb} dB (combined preamp applied)", gainDb);
+        }
+        finally
+        {
+            _vlcOperationLock.Release();
+        }
+    }
 
-        _replayGainOffset = gainDb;
-        ApplyCombinedPreamp();
-        _logger.LogDebug("Applied ReplayGain offset: {GainDb} dB (combined preamp applied)", gainDb);
-        return Task.CompletedTask;
+    private void CancelFade()
+    {
+        var cts = Interlocked.Exchange(ref _fadeCts, null);
+        cts?.Cancel();
+        cts?.Dispose();
+        _isFading = false;
+        _isPausing = false;
     }
 
     /// <summary>
@@ -813,100 +841,55 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     /// </summary>
     private async Task FadeAsync(double fromVolume, double toVolume, TimeSpan duration, CancellationToken ct)
     {
-        if (_isDisposed || _mediaPlayer is null) return;
-
-        if (duration <= TimeSpan.Zero)
-        {
-            _mediaPlayer?.SetVolume((int)Math.Clamp(toVolume * 100, 0, 100));
-            _isFading = false;
-            return;
-        }
-
-        const int stepIntervalMs = 10;
-        int steps = Math.Max(1, (int)(duration.TotalMilliseconds / stepIntervalMs));
+        var stopwatch = Stopwatch.StartNew();
+        using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(10));
         _isFading = true;
         try
         {
-            double delta = toVolume - fromVolume;
-
-            for (int i = 1; i <= steps; i++)
+            do
             {
-                if (ct.IsCancellationRequested || _isDisposed) break;
-                // Equal-power curve: perceptually linear throughout the ramp.
-                // A linear ramp sounds like it snaps on at the end (fade-in) or cuts off
-                // at the start (fade-out) because human hearing is logarithmic.
-                double t = (double)i / steps;
-                double vol = fromVolume + delta * Math.Sin(t * Math.PI / 2.0);
-                _mediaPlayer?.SetVolume((int)Math.Clamp(vol * 100, 0, 100));
-                try { await Task.Delay(stepIntervalMs, ct).ConfigureAwait(false); }
-                catch (OperationCanceledException) { break; }
-            }
-
-            // Snap to target if we completed without cancellation
-            if (!ct.IsCancellationRequested && !_isDisposed)
-                _mediaPlayer?.SetVolume((int)Math.Clamp(toVolume * 100, 0, 100));
+                var fraction = duration <= TimeSpan.Zero ? 1.0 : Math.Min(1.0, stopwatch.Elapsed / duration);
+                var volume = fromVolume + (toVolume - fromVolume) * Math.Sin(fraction * Math.PI / 2.0);
+                await _vlcOperationLock.WaitAsync(ct).ConfigureAwait(false);
+                try
+                {
+                    if (_isDisposed || _mediaPlayer is null) return;
+                    _mediaPlayer.SetVolume((int)Math.Clamp(volume * 100, 0, 100));
+                }
+                finally
+                {
+                    _vlcOperationLock.Release();
+                }
+                if (fraction >= 1.0) return;
+            } while (await timer.WaitForNextTickAsync(ct).ConfigureAwait(false));
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
         }
         finally
         {
-            // Only clear _isFading if this fade ran to completion.
-            // If canceled, the caller that canceled us (StopAsync, SetVolumeAsync) sets
-            // _isFading = false itself, or a new FadeAsync is already running and owns the flag.
-            // Clearing here on cancellation would race with the new fade's _isFading = true.
-            if (!ct.IsCancellationRequested)
-                _isFading = false;
+            // A replacement fade owns the flag once this token is cancelled.
+            if (!ct.IsCancellationRequested) _isFading = false;
         }
     }
 
-    public void Dispose()
-    {
-        if (_isDisposed) return;
+    public void Dispose() => DisposeAsync().AsTask().GetAwaiter().GetResult();
 
-        // Signal disposal intent immediately so any in-progress initialization can check
+    public ValueTask DisposeAsync() => new(_disposeTask.Value);
+
+    private async Task DisposeCoreAsync()
+    {
+        _isDisposed = true;
         _disposeCts.Cancel();
 
-        // Cancel any pending load or fade operations
-        _loadCts?.Cancel();
-        _fadeCts?.Cancel();
-        _fadeCts?.Dispose();
+        var loadCts = Interlocked.Exchange(ref _loadCts, null);
+        loadCts?.Cancel();
+        loadCts?.Dispose();
+        CancelFade();
 
-        // Wait for semaphore to ensure we don't race with initialization.
-        // Use a reasonable timeout to prevent indefinite blocking, but if timeout occurs,
-        // we still proceed with disposal since _isDisposed flag will be set.
-        var acquiredInit = _initSemaphore.Wait(millisecondsTimeout: 5000);
-        if (!acquiredInit)
-        {
-            _logger.LogWarning("Dispose timed out waiting for initialization semaphore. Proceeding with disposal.");
-        }
-
-        // Wait for any in-flight VLC operations to complete before tearing down
-        var acquiredVlc = _vlcOperationLock.Wait(millisecondsTimeout: 5000);
-        if (!acquiredVlc)
-        {
-            _logger.LogWarning("Dispose timed out waiting for VLC operation lock. Proceeding with disposal.");
-        }
-
+        await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
         try
         {
-            if (_isDisposed) return;
-            _isDisposed = true;
-
-            _logger.LogDebug("Disposing LibVlcAudioPlayerService.");
-
-            // Only cleanup if we were initialized
-            if (_isInitialized && _mediaPlayer is not null)
-            {
-                _mediaPlayer.PositionChanged -= OnMediaPlayerPositionChanged;
-                _mediaPlayer.Playing -= OnMediaPlayerStateChanged;
-                _mediaPlayer.Paused -= OnMediaPlayerStateChanged;
-                _mediaPlayer.Stopped -= OnMediaPlayerStateChanged;
-                _mediaPlayer.EncounteredError -= OnMediaPlayerEncounteredError;
-                _mediaPlayer.MediaChanged -= OnMediaPlayerMediaChanged;
-                _mediaPlayer.LengthChanged -= OnMediaPlayerLengthChanged;
-                _mediaPlayer.VolumeChanged -= OnMediaPlayerVolumeChanged;
-                _mediaPlayer.Muted -= OnMediaPlayerMuteChanged;
-                _mediaPlayer.Unmuted -= OnMediaPlayerMuteChanged;
-            }
-
             if (_smtc is not null)
             {
                 try
@@ -920,53 +903,69 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
                 }
             }
 
-            // Release Nagi's media reference. MediaPlayer retains its own reference until
-            // it is disposed below, so this ordering is safe even during shutdown.
-            DisposeCurrentMedia("audio service disposal");
-
-            // Dispose LibVLC components if initialized
-            if (_isInitialized)
+        }
+        finally
+        {
+            try
             {
-                _mediaPlayer?.Stop();
-                _mediaPlayer?.Dispose();
-                _equalizer?.Dispose();
-                if (_libVlc is not null) _libVlc.Log -= OnLibVlcLog;
-                _libVlc?.Dispose();
+                DisposeCurrentMedia("audio service disposal");
+                await Task.Run(DisposeNativeComponents).ConfigureAwait(false);
+            }
+            finally
+            {
+                // Queued operations still need to acquire and release this managed gate before exiting.
+                _vlcOperationLock.Release();
+            }
+        }
+        GC.SuppressFinalize(this);
+    }
+
+    private void DisposeNativeComponents()
+    {
+        _nativeLifetimeLock.EnterWriteLock();
+        try
+        {
+            _isInitialized = false;
+            using var libVlc = _libVlc;
+            _libVlc = null;
+            using var equalizer = _equalizer;
+            _equalizer = null;
+            using var player = _mediaPlayer;
+            _mediaPlayer = null;
+
+            if (libVlc is not null) libVlc.Log -= OnLibVlcLog;
+            if (player is not null)
+            {
+                player.PositionChanged -= OnMediaPlayerPositionChanged;
+                player.Playing -= OnMediaPlayerStateChanged;
+                player.Paused -= OnMediaPlayerStateChanged;
+                player.Stopped -= OnMediaPlayerStateChanged;
+                player.EncounteredError -= OnMediaPlayerEncounteredError;
+                player.MediaChanged -= OnMediaPlayerMediaChanged;
+                player.LengthChanged -= OnMediaPlayerLengthChanged;
+                player.VolumeChanged -= OnMediaPlayerVolumeChanged;
+                player.Muted -= OnMediaPlayerMuteChanged;
+                player.Unmuted -= OnMediaPlayerMuteChanged;
             }
 
             try
             {
                 _dummyMediaPlayer?.Dispose();
             }
-            catch (System.Runtime.InteropServices.COMException comEx) when (comEx.HResult == unchecked((int)0x80000013)) // RO_E_CLOSED
+            catch (System.Runtime.InteropServices.COMException ex) when (ex.HResult == unchecked((int)0x80000013)) // RO_E_CLOSED
             {
-                // Expected during shutdown when COM object is already closed - safe to ignore
-                _logger.LogTrace("Dummy media player already closed (RO_E_CLOSED)");
+                _logger.LogTrace("Dummy media player already closed.");
             }
-            catch (Exception ex)
+            finally
             {
-                // Unexpected exception - log as warning so it's visible but doesn't crash
-                _logger.LogWarning(ex, "Unexpected error disposing dummy media player");
+                _dummyMediaPlayer = null;
             }
+            player?.Stop();
         }
         finally
         {
-            // Always release semaphores if we acquired them, then dispose
-            if (acquiredVlc)
-            {
-                _vlcOperationLock.Release();
-            }
-            if (acquiredInit)
-            {
-                _initSemaphore.Release();
-            }
-            _vlcOperationLock.Dispose();
-            _initSemaphore.Dispose();
-            _loadCts?.Dispose();
-            _disposeCts.Dispose();
+            _nativeLifetimeLock.ExitWriteLock();
         }
-
-        GC.SuppressFinalize(this);
     }
 
     private void OnMediaPlayerMediaChanged(object? sender, MediaPlayerMediaChangedEventArgs e)
@@ -999,7 +998,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
         _isExplicitStop = true;
 
-        var lastVlcError = _libVlc.LastLibVLCError;
+        var lastVlcError = ReadNative(() => _libVlc?.LastLibVLCError, null);
         var errorMessage = string.IsNullOrEmpty(lastVlcError)
             ? Resources.Strings.Player_Error_LibVLC_Unspecified
             : string.Format(Resources.Strings.Player_Error_LibVLC_WithDetails, lastVlcError);
@@ -1024,16 +1023,17 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         {
             if (_isDisposed) return;
             StateChanged?.Invoke();
+            var state = ReadNative(() => _mediaPlayer?.State, null);
 
             // Only fire PlaybackEnded for natural end of playback, not explicit stops
-            if (_mediaPlayer?.State == VLCState.Stopped && currentSong is not null && !isExplicitStop)
+            if (state == VLCState.Stopped && currentSong is not null && !isExplicitStop)
             {
                 _logger.LogDebug("Detected natural end of playback for song '{SongTitle}'.", currentSong.Title);
                 PlaybackEnded?.Invoke();
             }
 
             // Reset flag when playback starts
-            if (_mediaPlayer?.State == VLCState.Playing)
+            if (state == VLCState.Playing)
             {
                 _isExplicitStop = false;
                 _isPausing = false;
@@ -1060,7 +1060,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         // therefore arrives here just like a change made through Nagi. Keep our user-volume
         // snapshot in sync so the next track does not restore a stale value over the user's
         // Windows mixer adjustment.
-        var reportedVolume = _mediaPlayer?.Volume ?? -1;
+        var reportedVolume = ReadNative(() => _mediaPlayer?.Volume ?? -1, -1);
         if (reportedVolume >= 0)
             Interlocked.Exchange(ref _userVolume, Math.Clamp(reportedVolume / 100.0, 0.0, 1.0));
 
@@ -1081,42 +1081,39 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         });
     }
 
-    private void OnSmtcButtonPressed(SystemMediaTransportControls sender,
+    private async void OnSmtcButtonPressed(SystemMediaTransportControls sender,
         SystemMediaTransportControlsButtonPressedEventArgs args)
     {
         if (_isDisposed) return;
         _logger.LogDebug("SMTC button pressed: {Button}", args.Button);
-        _ = Task.Run(async () =>
+        try
         {
-            try
+            await _dispatcherService.EnqueueAsync(async () =>
             {
-                await _dispatcherService.EnqueueAsync(async () =>
+                if (_isDisposed) return;
+                switch (args.Button)
                 {
-                    if (_isDisposed) return;
-                    switch (args.Button)
-                    {
-                        case SystemMediaTransportControlsButton.Play: await PlayAsync(); break;
-                        case SystemMediaTransportControlsButton.Pause: await PauseAsync(); break;
-                        case SystemMediaTransportControlsButton.Next: SmtcNextButtonPressed?.Invoke(); break;
-                        case SystemMediaTransportControlsButton.Previous: SmtcPreviousButtonPressed?.Invoke(); break;
-                    }
-                });
-            }
-            catch (Exception ex) when (ex.HResult == unchecked((int)0x80000013)) // RO_E_CLOSED
-            {
-                _logger.LogDebug("SMTC button handler interrupted during disposal.");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error handling SMTC button press for button {Button}.", args.Button);
-            }
-        });
+                    case SystemMediaTransportControlsButton.Play: await PlayAsync(); break;
+                    case SystemMediaTransportControlsButton.Pause: await PauseAsync(); break;
+                    case SystemMediaTransportControlsButton.Next: SmtcNextButtonPressed?.Invoke(); break;
+                    case SystemMediaTransportControlsButton.Previous: SmtcPreviousButtonPressed?.Invoke(); break;
+                }
+            }).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex.HResult == unchecked((int)0x80000013)) // RO_E_CLOSED
+        {
+            _logger.LogDebug("SMTC button handler interrupted during disposal.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error handling SMTC button press for button {Button}.", args.Button);
+        }
     }
 
     private void UpdateSmtcPlaybackStatus()
     {
         if (_isDisposed || _smtc is null || _mediaPlayer is null) return;
-        var newStatus = _mediaPlayer.State switch
+        var newStatus = ReadNative(() => _mediaPlayer?.State, null) switch
         {
             VLCState.Playing => MediaPlaybackStatus.Playing,
             VLCState.Paused => MediaPlaybackStatus.Paused,
@@ -1146,39 +1143,36 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
     private async Task UpdateSmtcDisplayAsync()
     {
-        // Capture _currentSong to prevent TOCTOU race - field could become null during async operations
         var currentSong = _currentSong;
         if (_isDisposed || _smtc is null || currentSong is null) return;
 
         try
         {
             _logger.LogDebug("Updating SMTC display for track '{SongTitle}'.", currentSong.Title);
-            var updater = _smtc.DisplayUpdater;
-            updater.Type = MediaPlaybackType.Music;
-            updater.MusicProperties.Title = currentSong.Title ?? string.Empty;
-            updater.MusicProperties.Artist = currentSong.ArtistName;
-            updater.MusicProperties.AlbumArtist =
-                currentSong.Album?.ArtistName ?? currentSong.ArtistName;
-            updater.MusicProperties.AlbumTitle = currentSong.Album?.Title ?? Album.UnknownAlbumName;
-
-            updater.Thumbnail = null;
-
+            RandomAccessStreamReference? thumbnail = null;
             if (!string.IsNullOrEmpty(currentSong.AlbumArtUriFromTrack))
                 try
                 {
-                    if (_disposeCts.IsCancellationRequested) return;
-                    var albumArtFile = await StorageFile.GetFileFromPathAsync(currentSong.AlbumArtUriFromTrack).AsTask().ConfigureAwait(false);
-                    if (_disposeCts.IsCancellationRequested) return;
-                    updater.Thumbnail = RandomAccessStreamReference.CreateFromFile(albumArtFile);
+                    var albumArtFile = await StorageFile.GetFileFromPathAsync(currentSong.AlbumArtUriFromTrack)
+                        .AsTask(_disposeCts.Token).ConfigureAwait(false);
+                    thumbnail = RandomAccessStreamReference.CreateFromFile(albumArtFile);
                 }
+                catch (OperationCanceledException) when (_isDisposed) { return; }
                 catch (Exception ex)
                 {
                     _logger.LogWarning(ex, "Failed to load and set SMTC thumbnail from {AlbumArtPath}",
                         currentSong.AlbumArtUriFromTrack);
                 }
 
-            if (!_disposeCts.IsCancellationRequested)
-                updater.Update();
+            if (_isDisposed || !ReferenceEquals(currentSong, _currentSong)) return;
+            var updater = _smtc.DisplayUpdater;
+            updater.Type = MediaPlaybackType.Music;
+            updater.MusicProperties.Title = currentSong.Title;
+            updater.MusicProperties.Artist = currentSong.ArtistName;
+            updater.MusicProperties.AlbumArtist = currentSong.Album?.ArtistName ?? currentSong.ArtistName;
+            updater.MusicProperties.AlbumTitle = currentSong.Album?.Title ?? Album.UnknownAlbumName;
+            updater.Thumbnail = thumbnail;
+            updater.Update();
         }
         catch (Exception ex) when (ex.HResult == unchecked((int)0x80000013)) // RO_E_CLOSED
         {

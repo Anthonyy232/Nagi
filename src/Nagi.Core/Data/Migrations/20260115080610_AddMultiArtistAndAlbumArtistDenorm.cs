@@ -205,12 +205,6 @@ namespace Nagi.Core.Data.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "AlbumArtists");
-
-            migrationBuilder.DropTable(
-                name: "SongArtists");
-
             migrationBuilder.DropIndex(
                 name: "IX_Songs_ArtistName",
                 table: "Songs");
@@ -254,7 +248,24 @@ namespace Nagi.Core.Data.Migrations
                 table: "Albums",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+                defaultValue: Guid.Empty);
+
+            // The old schema can retain only the primary artist.
+            migrationBuilder.Sql($"""
+                INSERT INTO Artists (Id, Name)
+                SELECT '{Guid.NewGuid().ToString("D").ToUpperInvariant()}', 'Unknown Artist'
+                WHERE NOT EXISTS (SELECT 1 FROM Artists WHERE Name = 'Unknown Artist')
+                  AND EXISTS (SELECT 1 FROM Albums WHERE NOT EXISTS
+                      (SELECT 1 FROM AlbumArtists WHERE AlbumId = Albums.Id));
+                UPDATE Songs SET ArtistId = (
+                    SELECT ArtistId FROM SongArtists WHERE SongId = Songs.Id ORDER BY "Order", ArtistId LIMIT 1);
+                UPDATE Albums SET ArtistId = COALESCE((
+                    SELECT ArtistId FROM AlbumArtists WHERE AlbumId = Albums.Id ORDER BY "Order", ArtistId LIMIT 1),
+                    (SELECT Id FROM Artists WHERE Name = 'Unknown Artist'));
+                """);
+
+            migrationBuilder.DropTable(name: "AlbumArtists");
+            migrationBuilder.DropTable(name: "SongArtists");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Songs_ArtistId",

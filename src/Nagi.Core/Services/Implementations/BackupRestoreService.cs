@@ -1,26 +1,22 @@
-﻿using System.IO.Compression;
+using System.IO.Compression;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
-using System.Threading;
 
 namespace Nagi.Core.Services.Implementations;
 
 public class BackupRestoreService : IBackupRestoreService
 {
     private readonly IPathConfiguration _pathConfiguration;
-    private readonly IFileSystemService _fileSystemService;
     private readonly ILogger<BackupRestoreService> _logger;
 
     public BackupRestoreService(
         IPathConfiguration pathConfiguration,
-        IFileSystemService fileSystemService,
         ILogger<BackupRestoreService> logger)
     {
         _pathConfiguration = pathConfiguration;
-        _fileSystemService = fileSystemService;
         _logger = logger;
     }
 
@@ -35,39 +31,12 @@ public class BackupRestoreService : IBackupRestoreService
                 return new BackupResult(false, null, 0, "Source directory not found.");
             }
 
-            // Create staging directory
-            var stagingPath = Path.Combine(Path.GetTempPath(), $"NagiBackupStaging_{Guid.NewGuid()}");
-            Directory.CreateDirectory(stagingPath);
+            var stagingPath = Directory.CreateTempSubdirectory("NagiBackupStaging_").FullName;
 
             try
             {
-                // Flush WAL to the main database file so the backup includes all recent writes.
-                // Without this, any data written since the last automatic checkpoint would be lost
-                // because .db-wal/.db-shm files are intentionally excluded from the backup.
-                try
-                {
-                    var dbPath = Path.Combine(sourcePath, "nagi.db");
-                    if (File.Exists(dbPath) && IsSqliteDatabase(dbPath))
-                    {
-                        using (var connection = new SqliteConnection($"Data Source={dbPath}"))
-                        {
-                            connection.Open();
-                            using var cmd = connection.CreateCommand();
-                            cmd.CommandText = "PRAGMA wal_checkpoint(TRUNCATE);";
-                            cmd.ExecuteNonQuery();
-                        }
-                        // Release all pooled handles so the file is not locked during backup copy
-                        SqliteConnection.ClearAllPools();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "Failed to checkpoint WAL before backup. Backup may be missing recent data.");
-                }
-
                 var directoryInfo = new DirectoryInfo(sourcePath);
 
-                // Exclusions
                 var excludedDirectories = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                 {
                     "Logs",
@@ -78,56 +47,72 @@ public class BackupRestoreService : IBackupRestoreService
 
                 };
 
-                // Copy all files in root
-                foreach (var file in directoryInfo.GetFiles())
+                foreach (var file in directoryInfo.EnumerateFiles())
                 {
-                    // Skip temporary/lock files
+
                     if (file.Extension.Equals(".tmp", StringComparison.OrdinalIgnoreCase) ||
                         file.Extension.Equals(".lock", StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }
 
-
-
-                    // Skip cache files
                     if (file.Name.Equals(".libvlc-cache-version", StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }
 
-                    // Skip SQLite temporary files (safer for live backups)
                     if (file.Extension.Equals(".db-wal", StringComparison.OrdinalIgnoreCase) ||
-                        file.Extension.Equals(".db-shm", StringComparison.OrdinalIgnoreCase))
+                        file.Extension.Equals(".db-shm", StringComparison.OrdinalIgnoreCase) ||
+                        file.Extension.Equals(".db-journal", StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }
 
-                    await CopyFileAsync(file.FullName, Path.Combine(stagingPath, file.Name));
+                    var targetPath = Path.Combine(stagingPath, file.Name);
+                    if (file.Name.Equals("nagi.db", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // SQLite takes a consistent snapshot, including committed WAL data.
+                        // A checkpoint followed by a file copy can lose writes or race a writer.
+                        await Task.Run(() => BackupDatabase(file.FullName, targetPath)).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await CopyFileAsync(file.FullName, targetPath).ConfigureAwait(false);
+                    }
                 }
 
-                // Copy directories recursively (except exclusions)
-                foreach (var dir in directoryInfo.GetDirectories())
+                foreach (var dir in directoryInfo.EnumerateDirectories())
                 {
                     if (excludedDirectories.Contains(dir.Name)) continue;
 
-
-
                     var destDir = Path.Combine(stagingPath, dir.Name);
-                    await CopyDirectoryAsync(dir.FullName, destDir);
+                    await CopyDirectoryAsync(dir.FullName, destDir).ConfigureAwait(false);
                 }
 
-                // Create Zip
                 var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-                var zipFileName = $"Nagi_Backup_{timestamp}.zip";
-                var zipFilePath = Path.Combine(destinationFolderPath, zipFileName);
-
-                if (File.Exists(zipFilePath))
+                var zipFilePath = Path.Combine(destinationFolderPath, $"Nagi_Backup_{timestamp}.zip");
+                var pendingArchivePath = Path.Combine(destinationFolderPath, $".Nagi_Backup_{Guid.NewGuid():N}.tmp");
+                try
                 {
-                    File.Delete(zipFilePath);
+                    // Publish only a complete archive, and never overwrite an earlier backup.
+                    await ZipFile.CreateFromDirectoryAsync(stagingPath, pendingArchivePath).ConfigureAwait(false);
+                    for (var suffix = 2; ; suffix++)
+                    {
+                        try
+                        {
+                            File.Move(pendingArchivePath, zipFilePath);
+                            break;
+                        }
+                        catch (IOException) when (File.Exists(zipFilePath))
+                        {
+                            zipFilePath = Path.Combine(destinationFolderPath, $"Nagi_Backup_{timestamp} ({suffix}).zip");
+                        }
+                    }
                 }
-
-                ZipFile.CreateFromDirectory(stagingPath, zipFilePath);
+                finally
+                {
+                    if (File.Exists(pendingArchivePath)) File.Delete(pendingArchivePath);
+                }
 
                 var fileInfo = new FileInfo(zipFilePath);
                 var sizeMb = fileInfo.Length / (1024.0 * 1024.0);
@@ -138,7 +123,7 @@ public class BackupRestoreService : IBackupRestoreService
             }
             finally
             {
-                // Cleanup staging
+
                 if (Directory.Exists(stagingPath))
                 {
                     Directory.Delete(stagingPath, true);
@@ -154,39 +139,34 @@ public class BackupRestoreService : IBackupRestoreService
 
     public async Task<RestoreResult> RestoreFromBackupAsync(string backupFilePath)
     {
-        string? transactionPath = null;
-        var preserveTransaction = false;
-
         try
         {
-            if (!await ValidateBackupAsync(backupFilePath))
+            if (!await ValidateBackupAsync(backupFilePath).ConfigureAwait(false))
             {
                 return new RestoreResult(false, 0, false, "Invalid backup file.");
             }
 
             var destinationDirectory = new DirectoryInfo(Path.GetFullPath(_pathConfiguration.AppDataRoot));
             var destPath = destinationDirectory.FullName;
-            Directory.CreateDirectory(destPath); // Ensure it exists
+            Directory.CreateDirectory(destPath);
 
             // Keep staging and rollback data beside AppDataRoot so every move stays on the
             // same volume. This lets us reverse the complete restore if any item fails.
             var destinationParent = destinationDirectory.Parent?.FullName
                 ?? throw new InvalidOperationException("The application data directory must have a parent directory.");
-            transactionPath = Path.Combine(
+            var transactionPath = Path.Combine(
                 destinationParent,
                 $".{destinationDirectory.Name}.restore-{Guid.NewGuid():N}");
             var incomingPath = Path.Combine(transactionPath, "incoming");
             var rollbackPath = Path.Combine(transactionPath, "rollback");
-            Directory.CreateDirectory(incomingPath);
-            Directory.CreateDirectory(rollbackPath);
+            var preserveTransaction = false;
 
             try
             {
-                ZipFile.ExtractToDirectory(backupFilePath, incomingPath);
+                Directory.CreateDirectory(incomingPath);
+                Directory.CreateDirectory(rollbackPath);
+                await ZipFile.ExtractToDirectoryAsync(backupFilePath, incomingPath).ConfigureAwait(false);
 
-                // If extraction succeeded, we proceed to overwrite live data.
-                // NOTE: We cannot easily "close" the db connection from here if it's open by EF Core.
-                // The app restart requirement handles the final consistency, but replacing open files might fail on Windows.
                 try
                 {
                     SqliteConnection.ClearAllPools();
@@ -198,10 +178,50 @@ public class BackupRestoreService : IBackupRestoreService
 
                 var journal = new List<RestoreJournalEntry>();
                 var restoredCount = 0;
+                var incomingDatabase = Path.Combine(incomingPath, "nagi.db");
+                var existingDatabase = Path.Combine(destPath, "nagi.db");
+                if (File.Exists(incomingDatabase))
+                {
+                    using var database = new SqliteConnection(new SqliteConnectionStringBuilder
+                    {
+                        DataSource = incomingDatabase, Mode = SqliteOpenMode.ReadOnly, Pooling = false
+                    }.ToString());
+                    database.Open();
+                    using var check = database.CreateCommand();
+                    check.CommandText = "PRAGMA quick_check;";
+                    if (check.ExecuteScalar() is not "ok")
+                        throw new InvalidDataException("The backup database failed SQLite's integrity check.");
+                }
+
+                // On Windows, deny database reads/writes during replacement and rollback,
+                // while allowing our own renames. An active SQLite connection makes this
+                // fail before any live files are changed.
+                using var incomingDatabaseLock = File.Exists(incomingDatabase)
+                    ? new FileStream(incomingDatabase, FileMode.Open, FileAccess.Read, FileShare.Delete)
+                    : null;
+                using var existingDatabaseLock = incomingDatabaseLock is not null && File.Exists(existingDatabase)
+                    ? new FileStream(existingDatabase, FileMode.Open, FileAccess.Read, FileShare.Delete)
+                    : null;
 
                 try
                 {
-                    // A stable order makes failures and rollback behavior deterministic.
+                    // A restored snapshot must not inherit journals from the replaced database.
+                    // Keep them in the rollback transaction so any later failure restores the
+                    // original database and its complete recovery state together.
+                    if (incomingDatabaseLock is not null)
+                    {
+                        foreach (var suffix in new[] { "-wal", "-shm", "-journal" })
+                        {
+                            var journalName = "nagi.db" + suffix;
+                            var existingJournal = Path.Combine(destPath, journalName);
+                            if (!EntryExists(existingJournal)) continue;
+
+                            var savedJournal = Path.Combine(rollbackPath, journalName);
+                            MoveEntry(existingJournal, savedJournal);
+                            journal.Add(new RestoreJournalEntry(existingJournal, savedJournal));
+                        }
+                    }
+
                     foreach (var incomingItem in Directory
                         .EnumerateFileSystemEntries(incomingPath, "*", SearchOption.TopDirectoryOnly)
                         .OrderBy(item => Path.GetFileName(item), StringComparer.OrdinalIgnoreCase))
@@ -213,19 +233,19 @@ public class BackupRestoreService : IBackupRestoreService
                         if (EntryExists(destinationItem))
                         {
                             originalItem = Path.Combine(rollbackPath, itemName);
-                            await RetryFileOperationAsync(() => MoveEntry(destinationItem, originalItem));
+                            MoveEntry(destinationItem, originalItem);
                         }
 
                         // Record the original before installing the replacement so this item
                         // participates in rollback even if the second move fails.
                         journal.Add(new RestoreJournalEntry(destinationItem, originalItem));
-                        await RetryFileOperationAsync(() => MoveEntry(incomingItem, destinationItem));
+                        MoveEntry(incomingItem, destinationItem);
                         restoredCount++;
                     }
                 }
                 catch (Exception restoreException)
                 {
-                    var rollbackErrors = await RollbackRestoreAsync(journal);
+                    var rollbackErrors = RollbackRestore(journal);
                     if (rollbackErrors.Count > 0)
                     {
                         preserveTransaction = true;
@@ -267,7 +287,7 @@ public class BackupRestoreService : IBackupRestoreService
         }
     }
 
-    private async Task<List<Exception>> RollbackRestoreAsync(List<RestoreJournalEntry> journal)
+    private List<Exception> RollbackRestore(List<RestoreJournalEntry> journal)
     {
         var errors = new List<Exception>();
 
@@ -277,12 +297,12 @@ public class BackupRestoreService : IBackupRestoreService
             {
                 if (EntryExists(entry.DestinationPath))
                 {
-                    await RetryFileOperationAsync(() => DeleteEntry(entry.DestinationPath));
+                    DeleteEntry(entry.DestinationPath);
                 }
 
                 if (entry.OriginalPath is not null && EntryExists(entry.OriginalPath))
                 {
-                    await RetryFileOperationAsync(() => MoveEntry(entry.OriginalPath, entry.DestinationPath));
+                    MoveEntry(entry.OriginalPath, entry.DestinationPath);
                 }
             }
             catch (Exception ex)
@@ -323,23 +343,6 @@ public class BackupRestoreService : IBackupRestoreService
 
     private sealed record RestoreJournalEntry(string DestinationPath, string? OriginalPath);
 
-    private async Task RetryFileOperationAsync(Action action, int maxRetries = 3, int delayMs = 100)
-    {
-        for (int i = 0; i < maxRetries; i++)
-        {
-            try
-            {
-                action();
-                return;
-            }
-            catch (IOException)
-            {
-                if (i == maxRetries - 1) throw;
-                await Task.Delay(delayMs);
-            }
-        }
-    }
-
     public Task<bool> ValidateBackupAsync(string backupFilePath)
     {
         return Task.Run(() =>
@@ -350,7 +353,6 @@ public class BackupRestoreService : IBackupRestoreService
 
                 using var archive = ZipFile.OpenRead(backupFilePath);
 
-                // Check for critical file
                 var hasDb = archive.Entries.Any(e => e.FullName.Equals("nagi.db", StringComparison.OrdinalIgnoreCase));
                 var hasSettings = archive.Entries.Any(e => e.FullName.Equals("settings.json", StringComparison.OrdinalIgnoreCase));
 
@@ -365,46 +367,47 @@ public class BackupRestoreService : IBackupRestoreService
         });
     }
 
-    private async Task CopyFileAsync(string source, string dest)
+    private static async Task CopyFileAsync(string source, string dest)
     {
-        // Use FileShare.ReadWrite to allow copying even if file is open (e.g. WAL mode DB)
         using var sourceStream = new FileStream(source, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         using var destStream = new FileStream(dest, FileMode.Create, FileAccess.Write, FileShare.None);
-        await sourceStream.CopyToAsync(destStream);
+        await sourceStream.CopyToAsync(destStream).ConfigureAwait(false);
     }
 
-    private async Task CopyDirectoryAsync(string sourceDir, string destinationDir)
+    private static async Task CopyDirectoryAsync(string sourceDir, string destinationDir)
     {
         var dir = new DirectoryInfo(sourceDir);
-        if (!dir.Exists) throw new DirectoryNotFoundException($"Source directory not found: {sourceDir}");
-
         Directory.CreateDirectory(destinationDir);
 
-        foreach (var file in dir.GetFiles())
+        foreach (var file in dir.EnumerateFiles())
         {
             string targetFilePath = Path.Combine(destinationDir, file.Name);
-            await CopyFileAsync(file.FullName, targetFilePath);
+            await CopyFileAsync(file.FullName, targetFilePath).ConfigureAwait(false);
         }
 
-        foreach (var subDir in dir.GetDirectories())
+        foreach (var subDir in dir.EnumerateDirectories())
         {
             string newDestinationDir = Path.Combine(destinationDir, subDir.Name);
-            await CopyDirectoryAsync(subDir.FullName, newDestinationDir);
+            await CopyDirectoryAsync(subDir.FullName, newDestinationDir).ConfigureAwait(false);
         }
     }
 
-    private static bool IsSqliteDatabase(string filePath)
+    private static void BackupDatabase(string sourcePath, string destinationPath)
     {
-        try
+        using var source = new SqliteConnection(new SqliteConnectionStringBuilder
         {
-            // SQLite files start with the 16-byte magic string "SQLite format 3\000"
-            Span<byte> header = stackalloc byte[16];
-            using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            return fs.Read(header) == 16 && header.SequenceEqual("SQLite format 3\0"u8);
-        }
-        catch
+            DataSource = sourcePath,
+            Mode = SqliteOpenMode.ReadOnly,
+            Pooling = false
+        }.ToString());
+        using var destination = new SqliteConnection(new SqliteConnectionStringBuilder
         {
-            return false;
-        }
+            DataSource = destinationPath,
+            Pooling = false
+        }.ToString());
+        source.Open();
+        destination.Open();
+        source.BackupDatabase(destination);
     }
+
 }

@@ -9,10 +9,10 @@ namespace Nagi.Core.Services.Abstractions;
 public interface ILrcService
 {
     /// <summary>
-    ///     Asynchronously loads and parses an LRC file from the path specified in the Song object.
+    ///     Loads local lyrics or fetches them from the enabled providers.
     /// </summary>
     /// <param name="song">The song object containing the LrcFilePath.</param>
-    /// <returns>A ParsedLrc object containing the timed lyrics, or null if parsing fails or the file doesn't exist.</returns>
+    /// <returns>Parsed lyrics, or null if no lyrics could be loaded.</returns>
     Task<ParsedLrc?> GetLyricsAsync(Song song, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -37,14 +37,6 @@ public interface ILrcService
     /// <param name="lrcContent">The raw LRC string content.</param>
     /// <returns>A ParsedLrc object containing the parsed lyrics.</returns>
     ParsedLrc ParseLyrics(string? lrcContent);
-
-    /// <summary>
-    ///     Gets the current lyric line based on the playback time.
-    /// </summary>
-    /// <param name="parsedLrc">The parsed LRC data.</param>
-    /// <param name="currentTime">The current playback time of the song.</param>
-    /// <returns>The active LyricLine for the given time, or null if no line is active.</returns>
-    LyricLine? GetCurrentLine(ParsedLrc parsedLrc, TimeSpan currentTime);
 
     /// <summary>
     ///     Gets the current lyric line using a search hint for optimal sequential performance.

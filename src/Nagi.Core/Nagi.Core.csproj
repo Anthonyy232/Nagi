@@ -8,6 +8,12 @@
 
     <ItemGroup>
         <InternalsVisibleTo Include="Nagi.Core.Tests" />
+        <EmbeddedResource Update="Resources\Strings.resx">
+            <StronglyTypedLanguage>C#</StronglyTypedLanguage>
+            <StronglyTypedNamespace>Nagi.Core.Resources</StronglyTypedNamespace>
+            <StronglyTypedClassName>Strings</StronglyTypedClassName>
+            <PublicClass>true</PublicClass>
+        </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>

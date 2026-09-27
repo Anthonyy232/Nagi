@@ -22,7 +22,7 @@ public interface ITheAudioDbService
 /// <summary>
 ///     Container for TheAudioDB artist metadata.
 /// </summary>
-/// <param name="Biography">English biography of the artist.</param>
+/// <param name="Biography">Localized biography, falling back to English when unavailable.</param>
 /// <param name="ThumbUrl">Artist thumbnail image URL.</param>
 /// <param name="FanartUrl">Artist fanart image URL.</param>
 /// <param name="WideThumbUrl">Wide banner-style image URL.</param>

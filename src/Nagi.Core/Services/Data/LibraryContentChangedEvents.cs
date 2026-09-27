@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Nagi.Core.Services.Data;
 
@@ -7,29 +7,14 @@ namespace Nagi.Core.Services.Data;
 /// </summary>
 public enum LibraryChangeType
 {
-    /// <summary>
-    ///     A folder was added to the library.
-    /// </summary>
     FolderAdded,
 
-    /// <summary>
-    ///     A folder was removed from the library.
-    /// </summary>
     FolderRemoved,
 
-    /// <summary>
-    ///     A single folder was rescanned.
-    /// </summary>
     FolderRescanned,
 
-    /// <summary>
-    ///     The entire library was rescanned/refreshed.
-    /// </summary>
     LibraryRescanned,
 
-    /// <summary>
-    ///     Specific songs were updated (e.g. metadata changes).
-    /// </summary>
     SongsUpdated
 }
 

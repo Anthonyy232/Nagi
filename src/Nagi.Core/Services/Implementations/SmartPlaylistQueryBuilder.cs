@@ -1,9 +1,11 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Nagi.Core.Data;
 using Nagi.Core.Models;
 using Nagi.Core.Helpers;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Services.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -18,23 +20,12 @@ public class SmartPlaylistQueryBuilder
     /// </summary>
     public IQueryable<Song> BuildQuery(MusicDbContext context, SmartPlaylist smartPlaylist, string? searchTerm = null, SongSortOrder? sortOrderOverride = null)
     {
-        var query = context.Songs.AsNoTracking()
+        var query = BuildCountQuery(context, smartPlaylist, searchTerm)
             .Include(s => s.Album)
             .Include(s => s.Genres)
             .AsSplitQuery();
 
-        query = ApplyRuleFilters(query, smartPlaylist);
-
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-            query = ApplySearchFilter(query, searchTerm);
-
-        var finalSortOrder = sortOrderOverride.HasValue
-            ? SortOrderHelper.MapToSmartPlaylistSortOrder(sortOrderOverride.Value)
-            : smartPlaylist.SortOrder;
-
-        query = ApplySortOrder(query, finalSortOrder);
-
-        return query;
+        return SongQuery.Sort(query, sortOrderOverride ?? SortOrderHelper.MapToSongSortOrder(smartPlaylist.SortOrder));
     }
 
     /// <summary>
@@ -57,14 +48,10 @@ public class SmartPlaylistQueryBuilder
     /// </summary>
     private static IQueryable<Song> ApplyRuleFilters(IQueryable<Song> query, SmartPlaylist smartPlaylist)
     {
-        var orderedRules = smartPlaylist.Rules.OrderBy(r => r.Order).ToList();
-        if (orderedRules.Count == 0)
-            return query;
-
         if (smartPlaylist.MatchAllRules)
         {
             // AND logic: chain Where clauses
-            foreach (var rule in orderedRules)
+            foreach (var rule in smartPlaylist.Rules)
             {
                 var predicate = BuildRulePredicate(rule);
                 if (predicate != null)
@@ -74,7 +61,7 @@ public class SmartPlaylistQueryBuilder
         else
         {
             // OR logic: combine predicates
-            var predicates = orderedRules
+            var predicates = smartPlaylist.Rules
                 .Select(BuildRulePredicate)
                 .OfType<Expression<Func<Song, bool>>>()
                 .ToList();
@@ -130,8 +117,6 @@ public class SmartPlaylistQueryBuilder
         };
     }
 
-    #region Text Predicates
-
     private static Expression<Func<Song, bool>>? BuildTextPredicate(
         Expression<Func<Song, string?>> selector, SmartPlaylistRule rule)
     {
@@ -170,6 +155,10 @@ public class SmartPlaylistQueryBuilder
                 s => s.Genres.Any(g => g.Name.ToLower().Contains(value)),
             SmartPlaylistOperator.DoesNotContain =>
                 s => !s.Genres.Any(g => g.Name.ToLower().Contains(value)),
+            SmartPlaylistOperator.StartsWith =>
+                s => s.Genres.Any(g => g.Name.ToLower().StartsWith(value)),
+            SmartPlaylistOperator.EndsWith =>
+                s => s.Genres.Any(g => g.Name.ToLower().EndsWith(value)),
             _ => null
         };
     }
@@ -197,10 +186,6 @@ public class SmartPlaylistQueryBuilder
             _ => null
         };
     }
-
-    #endregion
-
-    #region Numeric Predicates
 
     private static Expression<Func<Song, bool>>? BuildNumericPredicate(
         Expression<Func<Song, int>> selector, SmartPlaylistRule rule)
@@ -243,7 +228,7 @@ public class SmartPlaylistQueryBuilder
     private static Expression<Func<Song, bool>>? BuildNullableDoublePredicate(
         Expression<Func<Song, double?>> selector, SmartPlaylistRule rule)
     {
-        if (!double.TryParse(rule.Value, out var value)) return null;
+        if (!SmartPlaylistRuleValue.TryParseNumber(rule.Value, out var value)) return null;
 
         // Use range check instead of Math.Abs for better SQL translation
         const double epsilon = 0.5; // BPM tolerance (e.g., 120 matches 119.5-120.5)
@@ -256,7 +241,7 @@ public class SmartPlaylistQueryBuilder
             SmartPlaylistOperator.LessThan => CombineSelector(selector, v => v.HasValue && v.Value < value),
             SmartPlaylistOperator.GreaterThanOrEqual => CombineSelector(selector, v => v.HasValue && v.Value >= value),
             SmartPlaylistOperator.LessThanOrEqual => CombineSelector(selector, v => v.HasValue && v.Value <= value),
-            SmartPlaylistOperator.IsInRange when double.TryParse(rule.SecondValue, out var value2) =>
+            SmartPlaylistOperator.IsInRange when SmartPlaylistRuleValue.TryParseNumber(rule.SecondValue, out var value2) =>
                 CombineSelector(selector, v => v.HasValue && v.Value >= value && v.Value <= value2),
             _ => null
         };
@@ -265,8 +250,7 @@ public class SmartPlaylistQueryBuilder
     private static Expression<Func<Song, bool>>? BuildDurationPredicate(SmartPlaylistRule rule)
     {
         // Duration values are in seconds - convert to ticks for database comparison
-        if (!double.TryParse(rule.Value, out var seconds)) return null;
-        var durationTicks = (long)(seconds * TimeSpan.TicksPerSecond);
+        if (!TryParseDuration(rule.Value, out var durationTicks)) return null;
 
         return rule.Operator switch
         {
@@ -276,15 +260,26 @@ public class SmartPlaylistQueryBuilder
             SmartPlaylistOperator.LessThan => s => s.DurationTicks < durationTicks,
             SmartPlaylistOperator.GreaterThanOrEqual => s => s.DurationTicks >= durationTicks,
             SmartPlaylistOperator.LessThanOrEqual => s => s.DurationTicks <= durationTicks,
-            SmartPlaylistOperator.IsInRange when double.TryParse(rule.SecondValue, out var seconds2) =>
-                s => s.DurationTicks >= durationTicks && s.DurationTicks <= (long)(seconds2 * TimeSpan.TicksPerSecond),
+            SmartPlaylistOperator.IsInRange when TryParseDuration(rule.SecondValue, out var upperTicks) =>
+                s => s.DurationTicks >= durationTicks && s.DurationTicks <= upperTicks,
             _ => null
         };
     }
 
-    #endregion
-
-    #region Boolean Predicates
+    private static bool TryParseDuration(string? value, out long ticks)
+    {
+        ticks = 0;
+        if (!SmartPlaylistRuleValue.TryParseNumber(value, out var seconds)) return false;
+        try
+        {
+            ticks = TimeSpan.FromSeconds(seconds).Ticks;
+            return true;
+        }
+        catch (OverflowException)
+        {
+            return false;
+        }
+    }
 
     private static Expression<Func<Song, bool>>? BuildBooleanPredicate(
         Expression<Func<Song, bool>> selector, SmartPlaylistRule rule)
@@ -297,174 +292,48 @@ public class SmartPlaylistQueryBuilder
         };
     }
 
-    #endregion
-
-    #region Date Predicates
-
     private static Expression<Func<Song, bool>>? BuildDatePredicate(
         Expression<Func<Song, DateTime?>> selector, SmartPlaylistRule rule)
     {
-        // Capture threshold date as variable for proper EF Core translation
-        if (rule.Operator == SmartPlaylistOperator.IsInTheLast && int.TryParse(rule.Value, out var days1))
+        if (rule.Operator is SmartPlaylistOperator.IsInTheLast or SmartPlaylistOperator.IsNotInTheLast)
         {
-            var threshold = DateTime.UtcNow.AddDays(-days1);
-            return CombineSelector(selector, v => v.HasValue && v.Value >= threshold);
-        }
-
-        if (rule.Operator == SmartPlaylistOperator.IsNotInTheLast && int.TryParse(rule.Value, out var days2))
-        {
-            var threshold = DateTime.UtcNow.AddDays(-days2);
-            return CombineSelector(selector, v => !v.HasValue || v.Value < threshold);
+            if (!int.TryParse(rule.Value, out var days) || days < 0) return null;
+            var now = DateTime.UtcNow;
+            if (days > (now - DateTime.MinValue).TotalDays) return null;
+            var threshold = now.AddDays(-days);
+            return rule.Operator == SmartPlaylistOperator.IsInTheLast
+                ? CombineSelector(selector, v => v.HasValue && v.Value >= threshold)
+                : CombineSelector(selector, v => !v.HasValue || v.Value < threshold);
         }
 
         return rule.Operator switch
         {
-            SmartPlaylistOperator.GreaterThan when DateTime.TryParse(rule.Value, out var date) =>
+            SmartPlaylistOperator.GreaterThan when SmartPlaylistRuleValue.TryParseDate(rule.Value, out var date) =>
                 CombineSelector(selector, v => v.HasValue && v.Value > date),
-            SmartPlaylistOperator.LessThan when DateTime.TryParse(rule.Value, out var date) =>
+            SmartPlaylistOperator.LessThan when SmartPlaylistRuleValue.TryParseDate(rule.Value, out var date) =>
                 CombineSelector(selector, v => v.HasValue && v.Value < date),
-            SmartPlaylistOperator.IsInRange when DateTime.TryParse(rule.Value, out var date1) &&
-                                                 DateTime.TryParse(rule.SecondValue, out var date2) =>
+            SmartPlaylistOperator.IsInRange when SmartPlaylistRuleValue.TryParseDate(rule.Value, out var date1) &&
+                                                 SmartPlaylistRuleValue.TryParseDate(rule.SecondValue, out var date2) =>
                 CombineSelector(selector, v => v.HasValue && v.Value >= date1 && v.Value <= date2),
             _ => null
         };
     }
 
-    #endregion
-
-    #region Sorting
-
-    private static IQueryable<Song> ApplySortOrder(IQueryable<Song> query, SmartPlaylistSortOrder sortOrder)
-    {
-        return sortOrder switch
-        {
-            SmartPlaylistSortOrder.TitleAsc => query.OrderBy(s => s.Title).ThenBy(s => s.PrimaryArtistName).ThenBy(s => s.Id),
-            SmartPlaylistSortOrder.TitleDesc => query.OrderByDescending(s => s.Title).ThenByDescending(s => s.PrimaryArtistName).ThenByDescending(s => s.Id),
-            SmartPlaylistSortOrder.ArtistAsc => query.OrderBy(s => s.PrimaryArtistName)
-                .ThenBy(s => s.Album != null ? s.Album.Title : string.Empty)
-                .ThenBy(s => s.DiscNumber ?? 0)
-                .ThenBy(s => s.TrackNumber)
-                .ThenBy(s => s.Title)
-                .ThenBy(s => s.Id),
-            SmartPlaylistSortOrder.ArtistDesc => query.OrderByDescending(s => s.PrimaryArtistName)
-                .ThenByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
-                .ThenByDescending(s => s.DiscNumber ?? 0)
-                .ThenByDescending(s => s.TrackNumber)
-                .ThenByDescending(s => s.Title)
-                .ThenByDescending(s => s.Id),
-            SmartPlaylistSortOrder.AlbumAsc => query.OrderBy(s => s.Album != null ? s.Album.Title : string.Empty)
-                .ThenBy(s => s.DiscNumber ?? 0)
-                .ThenBy(s => s.TrackNumber)
-                .ThenBy(s => s.Title)
-                .ThenBy(s => s.Id),
-            SmartPlaylistSortOrder.AlbumDesc => query.OrderByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
-                .ThenByDescending(s => s.DiscNumber ?? 0)
-                .ThenByDescending(s => s.TrackNumber)
-                .ThenByDescending(s => s.Title)
-                .ThenByDescending(s => s.Id),
-            SmartPlaylistSortOrder.YearAsc => query.OrderBy(s => s.Year)
-                .ThenBy(s => s.PrimaryArtistName)
-                .ThenBy(s => s.Album != null ? s.Album.Title : string.Empty)
-                .ThenBy(s => s.DiscNumber ?? 0)
-                .ThenBy(s => s.TrackNumber)
-                .ThenBy(s => s.Title)
-                .ThenBy(s => s.Id),
-            SmartPlaylistSortOrder.YearDesc => query.OrderByDescending(s => s.Year)
-                .ThenByDescending(s => s.PrimaryArtistName)
-                .ThenByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
-                .ThenByDescending(s => s.DiscNumber ?? 0)
-                .ThenByDescending(s => s.TrackNumber)
-                .ThenByDescending(s => s.Title)
-                .ThenByDescending(s => s.Id),
-            SmartPlaylistSortOrder.PlayCountAsc => query.OrderBy(s => s.PlayCount).ThenBy(s => s.PrimaryArtistName).ThenBy(s => s.Title).ThenBy(s => s.Id),
-            SmartPlaylistSortOrder.PlayCountDesc => query.OrderByDescending(s => s.PlayCount).ThenByDescending(s => s.PrimaryArtistName).ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
-            SmartPlaylistSortOrder.LastPlayedAsc => query.OrderBy(s => s.LastPlayedDate).ThenBy(s => s.PrimaryArtistName).ThenBy(s => s.Title).ThenBy(s => s.Id),
-            SmartPlaylistSortOrder.LastPlayedDesc => query.OrderByDescending(s => s.LastPlayedDate).ThenByDescending(s => s.PrimaryArtistName).ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
-            SmartPlaylistSortOrder.DateAddedAsc => query.OrderBy(s => s.DateAddedToLibrary).ThenBy(s => s.PrimaryArtistName).ThenBy(s => s.Title).ThenBy(s => s.Id),
-            SmartPlaylistSortOrder.DateAddedDesc => query.OrderByDescending(s => s.DateAddedToLibrary).ThenByDescending(s => s.PrimaryArtistName).ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
-            SmartPlaylistSortOrder.TrackNumberAsc => query.OrderBy(s => s.Album != null ? s.Album.Title : string.Empty)
-                .ThenBy(s => s.DiscNumber ?? 0)
-                .ThenBy(s => s.TrackNumber)
-                .ThenBy(s => s.Title)
-                .ThenBy(s => s.Id),
-            SmartPlaylistSortOrder.TrackNumberDesc => query.OrderByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
-                .ThenByDescending(s => s.DiscNumber ?? 0)
-                .ThenByDescending(s => s.TrackNumber)
-                .ThenByDescending(s => s.Title)
-                .ThenByDescending(s => s.Id),
-            SmartPlaylistSortOrder.DurationAsc => query.OrderBy(s => s.DurationTicks).ThenBy(s => s.PrimaryArtistName).ThenBy(s => s.Title).ThenBy(s => s.Id),
-            SmartPlaylistSortOrder.DurationDesc => query.OrderByDescending(s => s.DurationTicks).ThenByDescending(s => s.PrimaryArtistName).ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
-            SmartPlaylistSortOrder.BpmAsc => query.OrderBy(s => s.Bpm ?? 0).ThenBy(s => s.PrimaryArtistName).ThenBy(s => s.Title).ThenBy(s => s.Id),
-            SmartPlaylistSortOrder.BpmDesc => query.OrderByDescending(s => s.Bpm ?? 0).ThenByDescending(s => s.PrimaryArtistName).ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
-            SmartPlaylistSortOrder.FileCreatedDateAsc => query.OrderBy(s => s.FileCreatedDate)
-                .ThenBy(s => s.PrimaryArtistName)
-                .ThenBy(s => s.Album != null ? s.Album.Title : string.Empty)
-                .ThenBy(s => s.DiscNumber ?? 0)
-                .ThenBy(s => s.TrackNumber)
-                .ThenBy(s => s.Title)
-                .ThenBy(s => s.Id),
-            SmartPlaylistSortOrder.FileCreatedDateDesc => query.OrderByDescending(s => s.FileCreatedDate)
-                .ThenByDescending(s => s.PrimaryArtistName)
-                .ThenByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
-                .ThenByDescending(s => s.DiscNumber ?? 0)
-                .ThenByDescending(s => s.TrackNumber)
-                .ThenByDescending(s => s.Title)
-                .ThenByDescending(s => s.Id),
-            SmartPlaylistSortOrder.Random => query.OrderBy(_ => EF.Functions.Random()),
-            _ => query.OrderBy(s => s.Title).ThenBy(s => s.PrimaryArtistName).ThenBy(s => s.Id)
-        };
-    }
-
-    #endregion
-
-    #region Expression Helpers
-
     private static Expression<Func<Song, bool>> CombineSelector<T>(
         Expression<Func<Song, T>> selector,
         Expression<Func<T, bool>> predicate)
     {
-        var param = Expression.Parameter(typeof(Song), "s");
-        var selectorBody = ReplaceParameter(selector.Body, selector.Parameters[0], param);
-        var predicateBody = ReplaceParameter(predicate.Body, predicate.Parameters[0], selectorBody);
-        return Expression.Lambda<Func<Song, bool>>(predicateBody, param);
-    }
-
-    private static Expression ReplaceParameter(Expression expression, ParameterExpression oldParam, Expression newExpr)
-    {
-        return new ParameterReplacer(oldParam, newExpr).Visit(expression);
+        var body = ReplacingExpressionVisitor.Replace(predicate.Parameters[0], selector.Body, predicate.Body);
+        return Expression.Lambda<Func<Song, bool>>(body, selector.Parameters);
     }
 
     private static Expression<Func<Song, bool>> CombineWithOr(
         Expression<Func<Song, bool>> left,
         Expression<Func<Song, bool>> right)
     {
-        var param = Expression.Parameter(typeof(Song), "s");
-        var leftBody = ReplaceParameter(left.Body, left.Parameters[0], param);
-        var rightBody = ReplaceParameter(right.Body, right.Parameters[0], param);
-        var combined = Expression.OrElse(leftBody, rightBody);
-        return Expression.Lambda<Func<Song, bool>>(combined, param);
+        var rightBody = ReplacingExpressionVisitor.Replace(right.Parameters[0], left.Parameters[0], right.Body);
+        return Expression.Lambda<Func<Song, bool>>(Expression.OrElse(left.Body, rightBody), left.Parameters);
     }
-
-    private sealed class ParameterReplacer : ExpressionVisitor
-    {
-        private readonly Expression _newExpr;
-        private readonly ParameterExpression _oldParam;
-
-        public ParameterReplacer(ParameterExpression oldParam, Expression newExpr)
-        {
-            _oldParam = oldParam;
-            _newExpr = newExpr;
-        }
-
-        protected override Expression VisitParameter(ParameterExpression node)
-        {
-            return node == _oldParam ? _newExpr : base.VisitParameter(node);
-        }
-    }
-
-    #endregion
-
-    #region Search
 
     private static IQueryable<Song> ApplySearchFilter(IQueryable<Song> query, string searchTerm)
     {
@@ -477,5 +346,4 @@ public class SmartPlaylistQueryBuilder
             || (s.Album != null && (EF.Functions.Like(s.Album.Title, term, LikePatternHelper.EscapeCharacter) || EF.Functions.Like(s.Album.ArtistName, term, LikePatternHelper.EscapeCharacter) || s.Album.AlbumArtists.Any(aa => EF.Functions.Like(aa.Artist.Name, term, LikePatternHelper.EscapeCharacter)))));
     }
 
-    #endregion
 }

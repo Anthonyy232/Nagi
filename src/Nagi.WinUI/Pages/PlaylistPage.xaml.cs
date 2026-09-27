@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Microsoft.Windows.Storage.Pickers;
 using Windows.System;
@@ -17,9 +17,6 @@ using Nagi.WinUI.ViewModels;
 
 namespace Nagi.WinUI.Pages;
 
-/// <summary>
-///     A page that displays a grid of playlists and allows creating, renaming, and deleting them.
-/// </summary>
 public sealed partial class PlaylistPage : Page
 {
     private readonly ILogger<PlaylistPage> _logger;
@@ -59,7 +56,7 @@ public sealed partial class PlaylistPage : Page
     {
         base.OnNavigatedFrom(e);
         _logger.LogDebug("Navigating away from PlaylistPage.");
-        // Note: ViewModel is Singleton, do not dispose - state persists across navigations
+        ViewModel.ResetState();
     }
 
     /// <summary>
@@ -97,15 +94,11 @@ public sealed partial class PlaylistPage : Page
         _logger.LogDebug("Search UI expanded.");
         ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.PlaylistPage_SearchButton_Close_ToolTip);
         VisualStateManager.GoToState(this, "SearchExpanded", true);
+    }
 
-        var timer = DispatcherQueue.CreateTimer();
-        timer.Interval = TimeSpan.FromMilliseconds(150);
-        timer.Tick += (s, args) =>
-        {
-            timer.Stop();
-            SearchTextBox.Focus(FocusState.Programmatic);
-        };
-        timer.Start();
+    private void OnSearchExpansionCompleted(object sender, object e)
+    {
+        if (IsLoaded && _isSearchExpanded) SearchTextBox.Focus(FocusState.Programmatic);
     }
 
     /// <summary>
@@ -395,15 +388,7 @@ public sealed partial class PlaylistPage : Page
         foreach (var ext in FileExtensions.ImageFileExtensions)
             picker.FileTypeFilter.Add(ext);
 
-        var file = await picker.PickSingleFileAsync();
-        if (file != null)
-        {
-            _logger.LogDebug("User picked image file: {FilePath}", file.Path);
-            return file.Path;
-        }
-
-        _logger.LogDebug("User did not pick an image file.");
-        return null;
+        return (await picker.PickSingleFileAsync())?.Path;
     }
 
     private async void RemoveImage_Click(object sender, RoutedEventArgs e)

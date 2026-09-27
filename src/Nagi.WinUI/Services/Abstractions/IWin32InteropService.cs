@@ -1,7 +1,6 @@
 ﻿using System;
 using Windows.Foundation;
 using Windows.Graphics;
-using Microsoft.UI.Xaml;
 
 namespace Nagi.WinUI.Services.Abstractions;
 
@@ -11,19 +10,6 @@ namespace Nagi.WinUI.Services.Abstractions;
 /// </summary>
 public interface IWin32InteropService
 {
-    /// <summary>
-    ///     Sets the icon for a given WinUI 3 window, used in the title bar and Alt+Tab switcher.
-    /// </summary>
-    /// <param name="window">The window to set the icon for.</param>
-    /// <param name="iconPath">The relative path to the .ico file.</param>
-    void SetWindowIcon(Window window, string iconPath);
-
-    /// <summary>
-    ///     Gets the work area of the primary display monitor, excluding the taskbar.
-    /// </summary>
-    /// <returns>A Rect representing the work area.</returns>
-    Rect GetPrimaryWorkArea();
-
     /// <summary>
     ///     Gets the work area of the display monitor that contains a specified point.
     /// </summary>
@@ -43,12 +29,6 @@ public interface IWin32InteropService
     /// <param name="hwnd">The handle of the window.</param>
     /// <returns>The DPI value of the window.</returns>
     int GetDpiForWindow(IntPtr hwnd);
-
-    /// <summary>
-    ///     Retrieves the number of milliseconds that have elapsed since the system was started.
-    /// </summary>
-    /// <returns>The system uptime in milliseconds.</returns>
-    uint GetTickCount();
 
     /// <summary>
     ///     Retrieves a handle to the foreground window (the window with which the user is currently working).

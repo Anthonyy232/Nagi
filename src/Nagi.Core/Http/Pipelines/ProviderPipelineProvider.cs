@@ -3,17 +3,13 @@ using System.Threading.RateLimiting;
 using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.CircuitBreaker;
-using Polly.RateLimiting;
 using Polly.Retry;
 
 namespace Nagi.Core.Http.Pipelines;
 
 /// <summary>
-///     Default <see cref="IProviderPipelineProvider"/>. Builds one circuit-breaker pipeline
-///     per provider (shared across channels) and one rate-limit + retry pipeline per
-///     (provider, channel). Each <see cref="ExecuteAsync"/> call layers them: the request
-///     enters the channel pipeline first, then the breaker, then the actual HTTP call —
-///     so retry attempts pass through the breaker individually.
+///     Builds a rate-limit/retry pipeline and a circuit breaker for each provider.
+///     The breaker sees every retry attempt, not just the final outcome.
 /// </summary>
 internal sealed class ProviderPipelineProvider : IProviderPipelineProvider, IAsyncDisposable
 {
@@ -49,20 +45,8 @@ internal sealed class ProviderPipelineProvider : IProviderPipelineProvider, IAsy
             throw new InvalidOperationException(
                 $"Provider '{providerId}' is not registered with the pipeline provider.");
 
-        // Layer the channel pipeline (retry/concurrency/rate-limit) over the breaker so the
-        // breaker sees every individual attempt the retry strategy makes, not just the
-        // aggregated outcome the caller observes. Without this ordering a 3-attempt retry
-        // sequence ending in success registers as a single success on the breaker, and one
-        // ending in failure registers as a single failure — both delay tripping by the full
-        // backoff window. With the breaker innermost, each attempt's outcome counts, and a
-        // tripped breaker short-circuits subsequent retries via BrokenCircuitException
-        // (which the retry predicate doesn't handle, so retry stops immediately).
         return entry.ChannelPipeline.ExecuteAsync(
-            static async (state, ct) =>
-            {
-                var (breakerPipeline, httpCall) = state;
-                return await breakerPipeline.ExecuteAsync(httpCall, ct).ConfigureAwait(false);
-            },
+            static (state, ct) => state.CircuitBreakerPipeline.ExecuteAsync(state.httpCall, ct),
             (entry.CircuitBreakerPipeline, httpCall),
             cancellationToken);
     }
@@ -72,12 +56,8 @@ internal sealed class ProviderPipelineProvider : IProviderPipelineProvider, IAsy
            && entry.CircuitBreakerStateProvider.CircuitState
                is CircuitState.Open or CircuitState.Isolated;
 
-    public ProviderPolicy? GetPolicy(string providerId)
-        => _providers.TryGetValue(providerId, out var entry) ? entry.Policy : null;
-
     private ProviderEntry BuildEntry(ProviderPolicy policy)
     {
-        // CircuitBreakerStateProvider lets us peek at the breaker's state for IsCircuitOpen.
         var stateProvider = new CircuitBreakerStateProvider();
 
         var breakerPipeline = new ResiliencePipelineBuilder<HttpResponseMessage>()
@@ -114,7 +94,7 @@ internal sealed class ProviderPipelineProvider : IProviderPipelineProvider, IAsy
             .Build();
 
         var channelPipeline = BuildChannelPipeline(policy.ProviderId, policy.Channel);
-        return new ProviderEntry(policy, breakerPipeline, stateProvider, channelPipeline);
+        return new ProviderEntry(breakerPipeline, stateProvider, channelPipeline);
     }
 
     private ResiliencePipeline<HttpResponseMessage> BuildChannelPipeline(
@@ -122,9 +102,7 @@ internal sealed class ProviderPipelineProvider : IProviderPipelineProvider, IAsy
     {
         var builder = new ResiliencePipelineBuilder<HttpResponseMessage>();
 
-        // Polly's retry strategy requires MaxRetryAttempts >= 1. Skip the strategy entirely
-        // when retries are disabled — useful for tests and for providers we don't want to
-        // hammer on retry (e.g., expensive 1-RPS APIs).
+        // Polly requires MaxRetryAttempts >= 1; omit the strategy to disable retries.
         if (channelPolicy.MaxRetries > 0)
         {
             builder.AddRetry(new RetryStrategyOptions<HttpResponseMessage>
@@ -135,7 +113,7 @@ internal sealed class ProviderPipelineProvider : IProviderPipelineProvider, IAsy
                 Delay = channelPolicy.BaseRetryDelay,
                 MaxDelay = channelPolicy.MaxRetryDelay,
                 ShouldHandle = TransientNetworkPredicate()
-                    .HandleResult(static r => IsRetryableStatus(r.StatusCode)),
+                    .HandleResult(static r => HttpStatusClassification.IsTransient(r.StatusCode)),
                 DelayGenerator = args =>
                 {
                     // 429 with a Retry-After header: honor it, clamped by MaxRetryDelay.
@@ -158,10 +136,6 @@ internal sealed class ProviderPipelineProvider : IProviderPipelineProvider, IAsy
                         args.AttemptNumber + 1, channelPolicy.MaxRetries,
                         providerId, args.RetryDelay,
                         DescribeOutcome(args.Outcome));
-                    // Polly hands the final outcome to the caller but keeps no reference to
-                    // intermediate failure responses. Dispose them here so connections aren't
-                    // pinned until GC runs.
-                    args.Outcome.Result?.Dispose();
                     return ValueTask.CompletedTask;
                 },
             });
@@ -174,15 +148,10 @@ internal sealed class ProviderPipelineProvider : IProviderPipelineProvider, IAsy
             QueueLimit = int.MaxValue,
         });
 
-        // Rate limit (token bucket). Refills PermitsPerWindow tokens every Window.
-        // The limiter is created once per pipeline and reused across calls — Polly invokes
-        // the RateLimiter delegate on every Execute, so creating a new TokenBucketRateLimiter
-        // each time would defeat the rate limit (every call would see a fresh full bucket).
-        var permits = Math.Max(1, channelPolicy.PermitsPerWindow);
         var tokenBucket = new TokenBucketRateLimiter(new TokenBucketRateLimiterOptions
         {
-            TokenLimit = permits,
-            TokensPerPeriod = permits,
+            TokenLimit = channelPolicy.PermitsPerWindow,
+            TokensPerPeriod = channelPolicy.PermitsPerWindow,
             ReplenishmentPeriod = channelPolicy.Window,
             QueueLimit = int.MaxValue,
             QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
@@ -190,10 +159,7 @@ internal sealed class ProviderPipelineProvider : IProviderPipelineProvider, IAsy
         });
         _rateLimiters.Add(tokenBucket);
 
-        builder.AddRateLimiter(new RateLimiterStrategyOptions
-        {
-            RateLimiter = args => tokenBucket.AcquireAsync(permitCount: 1, args.Context.CancellationToken),
-        });
+        builder.AddRateLimiter(tokenBucket);
 
         return builder.Build();
     }
@@ -207,9 +173,6 @@ internal sealed class ProviderPipelineProvider : IProviderPipelineProvider, IAsy
             .Handle<HttpRequestException>()
             .Handle<IOException>()
             .Handle<System.Net.Sockets.SocketException>();
-
-    private static bool IsRetryableStatus(HttpStatusCode statusCode)
-        => HttpStatusClassification.IsTransient(statusCode);
 
     /// <summary>
     ///     Statuses that count toward the breaker. Adds 401/403 to the transient set so auth
@@ -265,7 +228,6 @@ internal sealed class ProviderPipelineProvider : IProviderPipelineProvider, IAsy
     }
 
     private sealed record ProviderEntry(
-        ProviderPolicy Policy,
         ResiliencePipeline<HttpResponseMessage> CircuitBreakerPipeline,
         CircuitBreakerStateProvider CircuitBreakerStateProvider,
         ResiliencePipeline<HttpResponseMessage> ChannelPipeline);

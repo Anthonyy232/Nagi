@@ -4,9 +4,6 @@ using Nagi.Core.Helpers;
 
 namespace Nagi.Core.Models;
 
-/// <summary>
-///     Represents a music album, which is a collection of songs.
-/// </summary>
 public class Album
 {
     public static string UnknownAlbumName => string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Album);
@@ -26,8 +23,6 @@ public class Album
     public int? Year { get; set; }
 
     [MaxLength(2000)] public string? CoverArtUri { get; set; }
-
-    // Simplified multi-artist relationship. ArtistId and Artist are moved to AlbumArtists.
 
     public virtual ICollection<AlbumArtist> AlbumArtists { get; set; } = new List<AlbumArtist>();
     public virtual ICollection<Song> Songs { get; set; } = new List<Song>();

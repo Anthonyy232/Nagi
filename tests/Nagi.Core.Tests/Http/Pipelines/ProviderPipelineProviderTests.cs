@@ -11,8 +11,6 @@ namespace Nagi.Core.Tests.Http.Pipelines;
 
 public class ProviderPipelineProviderTests
 {
-    // NullLogger avoids the NSubstitute strong-name proxy issue with internal generic types,
-    // and we don't assert on log calls in these tests anyway.
     private readonly NullLogger<ProviderPipelineProvider> _logger = NullLogger<ProviderPipelineProvider>.Instance;
 
     private static ChannelPolicy ApiPolicy(int rps = 100, int concurrency = 8, int retries = 0) => new()
@@ -42,9 +40,9 @@ public class ProviderPipelineProviderTests
     [Fact]
     public async Task ExecuteAsync_PassesThroughSuccessfulResponse()
     {
-        var sut = Build(Policy("p"));
+        await using var sut = Build(Policy("p"));
 
-        var response = await sut.ExecuteAsync("p", ct => ValueTask.FromResult(Resp(HttpStatusCode.OK)));
+        using var response = await sut.ExecuteAsync("p", ct => ValueTask.FromResult(Resp(HttpStatusCode.OK)));
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
@@ -52,7 +50,7 @@ public class ProviderPipelineProviderTests
     [Fact]
     public async Task ExecuteAsync_UnknownProvider_Throws()
     {
-        var sut = Build(Policy("p"));
+        await using var sut = Build(Policy("p"));
 
         var act = async () => await sut.ExecuteAsync("nope", _ => ValueTask.FromResult(Resp(HttpStatusCode.OK)));
 
@@ -65,7 +63,7 @@ public class ProviderPipelineProviderTests
     {
         // 2 RPS, single bucket. Three calls should take ~1 second total: the third has to
         // wait for the bucket to refill (1s replenishment period).
-        var sut = Build(Policy("p", channel: ApiPolicy(rps: 2, concurrency: 8)));
+        await using var sut = Build(Policy("p", channel: ApiPolicy(rps: 2, concurrency: 8)));
 
         var stopwatch = Stopwatch.StartNew();
         var tasks = Enumerable.Range(0, 3).Select(_ => sut.ExecuteAsync("p", _ => ValueTask.FromResult(Resp(HttpStatusCode.OK))).AsTask()).ToArray();
@@ -81,9 +79,10 @@ public class ProviderPipelineProviderTests
     {
         var inFlight = 0;
         var maxObserved = 0;
-        var gate = new TaskCompletionSource();
+        var gate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var atCapacity = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        var sut = Build(Policy("p", channel: ApiPolicy(rps: 100, concurrency: 2)));
+        await using var sut = Build(Policy("p", channel: ApiPolicy(rps: 100, concurrency: 2)));
 
         var tasks = Enumerable.Range(0, 5).Select(_ => sut.ExecuteAsync("p", async ct =>
             {
@@ -95,15 +94,22 @@ public class ProviderPipelineProviderTests
                     if (current <= observed) break;
                 } while (Interlocked.CompareExchange(ref maxObserved, current, observed) != observed);
 
+                if (current == 2) atCapacity.TrySetResult();
+
                 await gate.Task.WaitAsync(ct).ConfigureAwait(false);
                 Interlocked.Decrement(ref inFlight);
                 return Resp(HttpStatusCode.OK);
             }).AsTask()).ToArray();
 
-        // Give the limiter a moment to admit the first batch, then release everything.
-        await Task.Delay(150);
-        gate.SetResult();
-        await Task.WhenAll(tasks);
+        try
+        {
+            await atCapacity.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        }
+        finally
+        {
+            gate.SetResult();
+            await Task.WhenAll(tasks);
+        }
 
         maxObserved.Should().BeLessThanOrEqualTo(2);
     }
@@ -112,28 +118,33 @@ public class ProviderPipelineProviderTests
     public async Task Retry_OnTransient5xx_RetriesAndEventuallySucceeds()
     {
         var attempt = 0;
-        var sut = Build(Policy("p", channel: ApiPolicy(retries: 3)));
+        await using var sut = Build(Policy("p", channel: ApiPolicy(retries: 3)));
+        var responseBodies = new List<MemoryStream>();
 
-        var response = await sut.ExecuteAsync("p", _ =>
+        using var response = await sut.ExecuteAsync("p", _ =>
         {
             attempt++;
-            return ValueTask.FromResult(attempt < 3
+            var attemptResponse = attempt < 3
                 ? Resp(HttpStatusCode.ServiceUnavailable)
-                : Resp(HttpStatusCode.OK));
+                : Resp(HttpStatusCode.OK);
+            var body = new MemoryStream([1, 2, 3]);
+            responseBodies.Add(body);
+            attemptResponse.Content = new StreamContent(body);
+            return ValueTask.FromResult(attemptResponse);
         });
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         attempt.Should().Be(3);
+        responseBodies.Select(body => body.CanRead).Should().Equal(false, false, true);
     }
 
     [Fact]
     public async Task Retry_DoesNotRetryNonTransient4xx()
     {
         var attempt = 0;
-        var sut = Build(Policy("p", channel: ApiPolicy(retries: 3)));
+        await using var sut = Build(Policy("p", channel: ApiPolicy(retries: 3)));
 
-        // 404 isn't retryable; it should pass through after one call.
-        var response = await sut.ExecuteAsync("p", _ =>
+        using var response = await sut.ExecuteAsync("p", _ =>
         {
             attempt++;
             return ValueTask.FromResult(Resp(HttpStatusCode.NotFound));
@@ -147,10 +158,10 @@ public class ProviderPipelineProviderTests
     public async Task Retry_HonorsRetryAfterHeaderOn429()
     {
         var attempt = 0;
-        var sut = Build(Policy("p", channel: ApiPolicy(retries: 1)));
+        await using var sut = Build(Policy("p", channel: ApiPolicy(retries: 1)));
 
         var stopwatch = Stopwatch.StartNew();
-        var response = await sut.ExecuteAsync("p", _ =>
+        using var response = await sut.ExecuteAsync("p", _ =>
         {
             attempt++;
             if (attempt == 1)
@@ -173,10 +184,10 @@ public class ProviderPipelineProviderTests
     {
         // ListenBrainz returns X-RateLimit-Reset-In (seconds) instead of Retry-After.
         var attempt = 0;
-        var sut = Build(Policy("p", channel: ApiPolicy(retries: 1)));
+        await using var sut = Build(Policy("p", channel: ApiPolicy(retries: 1)));
 
         var stopwatch = Stopwatch.StartNew();
-        var response = await sut.ExecuteAsync("p", _ =>
+        using var response = await sut.ExecuteAsync("p", _ =>
         {
             attempt++;
             if (attempt == 1)
@@ -199,7 +210,7 @@ public class ProviderPipelineProviderTests
     {
         // MinimumThroughput=3, FailureRatio=1.0 → 3 consecutive failures trips the breaker.
         // BreakDuration is long enough that the next call should be rejected immediately.
-        var sut = Build(Policy("p", channel: ApiPolicy(retries: 0), breaker: new CircuitBreakerSettings
+        await using var sut = Build(Policy("p", channel: ApiPolicy(retries: 0), breaker: new CircuitBreakerSettings
         {
             MinimumThroughput = 3,
             SamplingDuration = TimeSpan.FromSeconds(30),
@@ -209,7 +220,7 @@ public class ProviderPipelineProviderTests
 
         for (var i = 0; i < 3; i++)
         {
-            var response = await sut.ExecuteAsync("p", _ => ValueTask.FromResult(Resp(HttpStatusCode.InternalServerError)));
+            using var response = await sut.ExecuteAsync("p", _ => ValueTask.FromResult(Resp(HttpStatusCode.InternalServerError)));
             response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
         }
 
@@ -222,7 +233,7 @@ public class ProviderPipelineProviderTests
     [Fact]
     public async Task CircuitBreaker_TripsOn401()
     {
-        var sut = Build(Policy("p", channel: ApiPolicy(retries: 0), breaker: new CircuitBreakerSettings
+        await using var sut = Build(Policy("p", channel: ApiPolicy(retries: 0), breaker: new CircuitBreakerSettings
         {
             MinimumThroughput = 3,
             SamplingDuration = TimeSpan.FromSeconds(30),
@@ -241,7 +252,7 @@ public class ProviderPipelineProviderTests
     [Fact]
     public async Task CircuitBreaker_IndependentAcrossDifferentProviders()
     {
-        var sut = Build(
+        await using var sut = Build(
             Policy("p1", breaker: new CircuitBreakerSettings { MinimumThroughput = 3, FailureRatio = 1.0 }),
             Policy("p2", breaker: new CircuitBreakerSettings { MinimumThroughput = 3, FailureRatio = 1.0 }));
 
@@ -253,25 +264,14 @@ public class ProviderPipelineProviderTests
         sut.IsCircuitOpen("p1").Should().BeTrue();
         sut.IsCircuitOpen("p2").Should().BeFalse();
 
-        // p2 still works.
-        var response = await sut.ExecuteAsync("p2", _ => ValueTask.FromResult(Resp(HttpStatusCode.OK)));
+        using var response = await sut.ExecuteAsync("p2", _ => ValueTask.FromResult(Resp(HttpStatusCode.OK)));
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-    }
-
-    [Fact]
-    public void GetPolicy_ReturnsRegisteredPolicy()
-    {
-        var policy = Policy("p");
-        var sut = Build(policy);
-
-        sut.GetPolicy("p").Should().BeSameAs(policy);
-        sut.GetPolicy("missing").Should().BeNull();
     }
 
     [Fact]
     public async Task ExceptionFromHttpCall_BubblesAndCountsAsBreakerFailure()
     {
-        var sut = Build(Policy("p", channel: ApiPolicy(retries: 0), breaker: new CircuitBreakerSettings
+        await using var sut = Build(Policy("p", channel: ApiPolicy(retries: 0), breaker: new CircuitBreakerSettings
         {
             MinimumThroughput = 3,
             SamplingDuration = TimeSpan.FromSeconds(30),

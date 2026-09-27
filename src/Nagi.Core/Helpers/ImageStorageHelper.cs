@@ -1,5 +1,6 @@
-﻿using Nagi.Core.Constants;
+using Nagi.Core.Constants;
 using Nagi.Core.Services.Abstractions;
+using Microsoft.Extensions.Logging;
 
 namespace Nagi.Core.Helpers;
 
@@ -9,6 +10,25 @@ namespace Nagi.Core.Helpers;
 /// </summary>
 public static class ImageStorageHelper
 {
+    internal static string? FindCoverArtInDirectory(IFileSystemService fileSystem, string directory, ILogger logger)
+    {
+        try
+        {
+            return fileSystem.GetFiles(directory, "*.*")
+                .Where(path => !fileSystem.IsHiddenOrSystemFile(path) &&
+                               FileExtensions.ImageFileExtensions.Contains(fileSystem.GetExtension(path)))
+                .Select(path => (Path: path, Priority: FileExtensions.GetCoverArtPriority(fileSystem.GetFileNameWithoutExtension(path))))
+                .Where(candidate => candidate.Priority < int.MaxValue)
+                .OrderBy(candidate => candidate.Priority)
+                .FirstOrDefault().Path;
+        }
+        catch (Exception ex)
+        {
+            logger.LogDebug(ex, "Failed to enumerate cover art in directory '{Directory}'.", directory);
+            return null;
+        }
+    }
+
     /// <summary>
     ///     Finds the first existing image file matching the pattern {baseFileName}{suffix}.*
     ///     checks against all supported image extensions.
@@ -31,46 +51,16 @@ public static class ImageStorageHelper
     }
 
     /// <summary>
-    ///     Saves a source image to the destination directory with the specified base name and suffix.
-    ///     Preserves the extension of the source file.
-    ///     Automatically deletes any OTHER existing images with the same base name and suffix (to prevent duplicates like .jpg AND .png).
-    /// </summary>
-    public static void SaveImage(IFileSystemService fs, string directory, string baseFileName, string suffix, string sourceFilePath)
-    {
-        if (!fs.FileExists(sourceFilePath)) return;
-
-        if (!fs.DirectoryExists(directory))
-        {
-            fs.CreateDirectory(directory);
-        }
-
-        // 1. Determine new extension
-        var extension = fs.GetExtension(sourceFilePath).ToLowerInvariant();
-        if (!FileExtensions.ImageFileExtensions.Contains(extension))
-        {
-            // Fallback or error? For now, we'll proceed or maybe default to allowed one.
-            // But strict checking might be better. enforcing checks from caller.
-        }
-
-        var newFileName = $"{baseFileName}{suffix}{extension}";
-        var destinationPath = fs.Combine(directory, newFileName);
-
-        // 2. Delete ALL existing variants to ensure we don't have partial duplicates
-        DeleteImage(fs, directory, baseFileName, suffix);
-
-        // 3. Copy the file
-        fs.CopyFile(sourceFilePath, destinationPath, true);
-    }
-
-    /// <summary>
     ///     Deletes all image files matching the pattern {baseFileName}{suffix}.*
     /// </summary>
-    public static void DeleteImage(IFileSystemService fs, string directory, string baseFileName, string suffix)
+    public static void DeleteImage(IFileSystemService fs, string directory, string baseFileName, string suffix,
+        string? exceptExtension = null)
     {
         if (!fs.DirectoryExists(directory)) return;
 
         foreach (var ext in FileExtensions.ImageFileExtensions)
         {
+            if (string.Equals(ext, exceptExtension, StringComparison.OrdinalIgnoreCase)) continue;
             var path = fs.Combine(directory, $"{baseFileName}{suffix}{ext}");
             if (fs.FileExists(path))
             {
@@ -81,7 +71,7 @@ public static class ImageStorageHelper
 
     /// <summary>
     ///     Saves processed image bytes to the destination directory.
-    ///     Deletes any existing images with the same base name and suffix.
+    ///     Replaces the destination only after the new image has been written successfully.
     /// </summary>
     /// <param name="fs">File system service.</param>
     /// <param name="directory">Target directory.</param>
@@ -89,20 +79,27 @@ public static class ImageStorageHelper
     /// <param name="suffix">File suffix (e.g., ".custom", ".fetched").</param>
     /// <param name="imageBytes">Processed image bytes to save.</param>
     /// <param name="extension">File extension to use (default ".jpg").</param>
-    public static async Task SaveImageBytesAsync(IFileSystemService fs, string directory,
+    public static async Task<string?> SaveImageBytesAsync(IFileSystemService fs, string directory,
         string baseFileName, string suffix, byte[] imageBytes, string extension = ".jpg")
     {
-        if (imageBytes.Length == 0) return;
+        if (imageBytes.Length == 0) return null;
 
         if (!fs.DirectoryExists(directory))
             fs.CreateDirectory(directory);
 
-        // Delete all existing variants to prevent duplicates
-        DeleteImage(fs, directory, baseFileName, suffix);
-
-        // Save new file
         var newFileName = $"{baseFileName}{suffix}{extension}";
         var destinationPath = fs.Combine(directory, newFileName);
-        await fs.WriteAllBytesAsync(destinationPath, imageBytes).ConfigureAwait(false);
+        var temporaryPath = fs.Combine(directory, $"{newFileName}.{Guid.NewGuid():N}.tmp");
+        try
+        {
+            await fs.WriteAllBytesAsync(temporaryPath, imageBytes).ConfigureAwait(false);
+            fs.MoveFile(temporaryPath, destinationPath, true);
+            DeleteImage(fs, directory, baseFileName, suffix, exceptExtension: extension);
+            return destinationPath;
+        }
+        finally
+        {
+            if (fs.FileExists(temporaryPath)) fs.DeleteFile(temporaryPath);
+        }
     }
 }

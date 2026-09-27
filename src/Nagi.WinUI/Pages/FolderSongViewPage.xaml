@@ -3,7 +3,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:ImageEx"
-    xmlns:converters="using:Nagi.WinUI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="using:Nagi.WinUI.Models"
@@ -17,9 +16,6 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-
-
-        <!-- Data template selector for folder/song items -->
         <local:FolderContentItemTemplateSelector x:Key="FolderContentItemTemplateSelector">
             <local:FolderContentItemTemplateSelector.FolderTemplate>
                 <DataTemplate x:DataType="local:FolderContentItem">
@@ -46,7 +42,7 @@
                         </Border>
 
                         <TextBlock Grid.Column="1"
-                                   Style="{StaticResource SongListViewPageBodyStrongTextBlockStyle}"
+                                   Style="{StaticResource BodyStrongTextBlockStyle}"
                                    Text="{x:Bind Folder.Name}"
                                    TextTrimming="CharacterEllipsis"
                                    TextWrapping="NoWrap"
@@ -121,7 +117,7 @@
                             VerticalAlignment="Center" />
 
                         <TextBlock x:Name="SongTitle"
-                                   Grid.Column="1" Style="{StaticResource SongListViewPageBodyStrongTextBlockStyle}"
+                                   Grid.Column="1" Style="{StaticResource BodyStrongTextBlockStyle}"
                                    Text="{x:Bind Song.Title}" TextTrimming="CharacterEllipsis"
                                    TextWrapping="NoWrap"
                                    VerticalAlignment="Center" />
@@ -190,12 +186,11 @@
                             Storyboard.TargetName="SearchIcon"
                             Storyboard.TargetProperty="Glyph">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE721;" />
-                            <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="&#xE721;" />
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="SearchExpanded">
-                    <Storyboard>
+                    <Storyboard Completed="OnSearchExpansionCompleted">
                         <DoubleAnimation
                             Storyboard.TargetName="SearchTextBox"
                             Storyboard.TargetProperty="Width"
@@ -234,16 +229,12 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-
-        <!-- Header Content -->
         <StackPanel Grid.Row="0" Padding="{StaticResource ViewPageHeaderPadding}" Spacing="16">
             <Grid Margin="0,0,0,6">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-
-                <!-- Folder Icon Replacement for Cover Art -->
                 <Grid Grid.Column="0" Width="150" Height="150">
                     <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                           CornerRadius="12">
@@ -261,42 +252,19 @@
                                Text="{x:Bind ViewModel.PageTitle, Mode=OneWay}" />
                 </StackPanel>
             </Grid>
-
-            <!-- Breadcrumb Bar -->
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                     Padding="16,8" CornerRadius="8"
                     Visibility="{x:Bind ViewModel.IsAtRootLevel, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}"
                     Margin="0,8,0,10">
-                <ItemsControl ItemsSource="{x:Bind ViewModel.Breadcrumbs, Mode=OneWay}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" Spacing="4" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
+                <BreadcrumbBar ItemsSource="{x:Bind ViewModel.Breadcrumbs, Mode=OneWay}"
+                               ItemClicked="OnBreadcrumbItemClicked">
+                    <BreadcrumbBar.ItemTemplate>
                         <DataTemplate x:DataType="vm:BreadcrumbItem">
-                            <StackPanel Orientation="Horizontal" Spacing="4">
-                                <HyperlinkButton
-                                    Content="{x:Bind Name}"
-                                    Command="{Binding DataContext.NavigateToBreadcrumbCommand, ElementName=pageRoot}"
-                                    CommandParameter="{x:Bind}"
-                                    Style="{StaticResource AnimatedHyperlinkButtonStyle}"
-                                    IsEnabled="{x:Bind IsLast, Converter={StaticResource BooleanToInverseBooleanConverter}, Mode=OneWay}"
-                                    FontSize="13"
-                                    Foreground="{StaticResource AppPrimaryColorBrush}"
-                                    Padding="4,2" />
-                                <TextBlock Text="/"
-                                           FontSize="13"
-                                           Foreground="{ThemeResource TextFillColorTertiary}"
-                                           VerticalAlignment="Center"
-                                           Visibility="{x:Bind IsLast, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}" />
-                            </StackPanel>
+                            <TextBlock Text="{x:Bind Name}" />
                         </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                    </BreadcrumbBar.ItemTemplate>
+                </BreadcrumbBar>
             </Border>
-
-            <!-- Action Bar -->
             <Grid Margin="0,8,0,10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -318,7 +286,6 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                    <!-- Search functionality -->
                     <Grid>
                         <TextBox x:Name="SearchTextBox"
                                  PlaceholderText="{x:Bind resources:Strings.FolderSongViewPage_SearchBox_Placeholder, Mode=OneTime}"
@@ -418,8 +385,6 @@
             ViewModel="{x:Bind ViewModel}"
             HorizontalAlignment="Right"
             Margin="0,16,24,16" />
-
-        <!-- Empty State -->
         <StackPanel
             Grid.Row="1"
             HorizontalAlignment="Center"

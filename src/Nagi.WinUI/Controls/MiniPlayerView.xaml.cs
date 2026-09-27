@@ -23,10 +23,6 @@ public sealed partial class MiniPlayerView : UserControl
     private readonly Window _parentWindow;
     private bool _isUnloaded;
 
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="MiniPlayerView" /> class.
-    /// </summary>
-    /// <param name="parentWindow">The parent window that hosts this control.</param>
     public MiniPlayerView(Window parentWindow)
     {
         InitializeComponent();
@@ -56,7 +52,6 @@ public sealed partial class MiniPlayerView : UserControl
     private void SubscribeToEvents()
     {
         RestoreButton.Click += OnRestoreButtonClick;
-        _parentWindow.Activated += OnWindowActivated;
 
         // Pointer events for hover effects.
         HoverDetector.PointerEntered += OnPointerEntered;
@@ -71,14 +66,16 @@ public sealed partial class MiniPlayerView : UserControl
         ArtistTextBlock.SizeChanged += OnInteractiveRegionChanged;
         SizeChanged += OnInteractiveRegionChanged;
 
-        ViewModel.PropertyChanged += OnViewModelPropertyChanged;
-
         Loaded += OnLoaded;
         Unloaded += OnUnloaded;
     }
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
+        _isUnloaded = false;
+        _parentWindow.Activated += OnWindowActivated;
+        ViewModel.PropertyChanged += OnViewModelPropertyChanged;
+
         // Initialize hover controls visual to ensure first hover works immediately.
         CompositionAnimationHelper.SetOpacityImmediate(HoverControlsContainer, 0f);
 
@@ -87,30 +84,9 @@ public sealed partial class MiniPlayerView : UserControl
 
     private void OnUnloaded(object sender, RoutedEventArgs e)
     {
-        // Ensure cleanup logic runs only once.
-        if (_isUnloaded) return;
         _isUnloaded = true;
-
-        // Unsubscribe from all events to prevent memory leaks.
-        RestoreButton.Click -= OnRestoreButtonClick;
         _parentWindow.Activated -= OnWindowActivated;
-
-        HoverDetector.PointerEntered -= OnPointerEntered;
-        HoverDetector.PointerExited -= OnPointerExited;
-        HoverDetector.PointerCanceled -= OnPointerExited;
-
-        MediaSeekerSlider.SizeChanged -= OnInteractiveRegionChanged;
-        MediaControlsPanel.SizeChanged -= OnInteractiveRegionChanged;
-        BackButton.SizeChanged -= OnInteractiveRegionChanged;
-        RestoreButton.SizeChanged -= OnInteractiveRegionChanged;
-        QueueListView.SizeChanged -= OnInteractiveRegionChanged;
-        ArtistTextBlock.SizeChanged -= OnInteractiveRegionChanged;
-        SizeChanged -= OnInteractiveRegionChanged;
-
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
-
-        Loaded -= OnLoaded;
-        Unloaded -= OnUnloaded;
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)

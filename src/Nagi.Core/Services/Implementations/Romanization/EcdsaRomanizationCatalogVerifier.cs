@@ -1,5 +1,4 @@
 using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
 using Nagi.Core.Models.Romanization;
 using Nagi.Core.Services.Abstractions;
@@ -15,8 +14,6 @@ public sealed class EcdsaRomanizationCatalogVerifier : IRomanizationCatalogVerif
         -----END PUBLIC KEY-----
         """;
 
-    private static readonly JsonSerializerOptions _jsonOptions = RomanizationJson.Options;
-
     public bool Verify(RomanizationCatalogEnvelope envelope)
     {
         if (string.IsNullOrWhiteSpace(envelope.Signature)) return false;
@@ -24,7 +21,7 @@ public sealed class EcdsaRomanizationCatalogVerifier : IRomanizationCatalogVerif
         try
         {
             var signature = Convert.FromBase64String(envelope.Signature);
-            var payload = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(envelope.Catalog, _jsonOptions));
+            var payload = JsonSerializer.SerializeToUtf8Bytes(envelope.Catalog, RomanizationJson.Options);
 
             using var ecdsa = ECDsa.Create();
             ecdsa.ImportFromPem(CatalogPublicKeyPem);

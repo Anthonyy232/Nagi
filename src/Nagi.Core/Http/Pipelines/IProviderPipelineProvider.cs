@@ -30,10 +30,4 @@ public interface IProviderPipelineProvider
     ///     Callers can use this for an early exit without paying the rate-limit wait.
     /// </summary>
     bool IsCircuitOpen(string providerId);
-
-    /// <summary>
-    ///     Returns the policy registered for the given provider, or null if the provider
-    ///     wasn't registered. Useful for diagnostics.
-    /// </summary>
-    ProviderPolicy? GetPolicy(string providerId);
 }

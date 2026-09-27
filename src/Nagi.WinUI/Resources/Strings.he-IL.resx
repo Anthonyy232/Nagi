@@ -179,10 +179,10 @@
     <value>לכל היותר</value>
   </data>
   <data name="Operator_IsInTheLast" xml:space="preserve">
-    <value>היה ב-{0} הימים האחרונים</value>
+    <value>היה בימים האחרונים</value>
   </data>
   <data name="Operator_IsNotInTheLast" xml:space="preserve">
-    <value>לא היה ב-{0} הימים האחרונים</value>
+    <value>לא היה בימים האחרונים</value>
   </data>
   <data name="Operator_IsTrue" xml:space="preserve">
     <value>הוא אמת</value>

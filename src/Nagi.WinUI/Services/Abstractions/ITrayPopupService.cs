@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Windows.Graphics;
 
 namespace Nagi.WinUI.Services.Abstractions;
 
@@ -11,7 +10,7 @@ public interface ITrayPopupService
     /// <summary>
     ///     Shows the popup if it is hidden, or hides it if it is visible.
     /// </summary>
-    void ShowOrHidePopup(RectInt32? targetRect = null);
+    void ShowOrHidePopup();
 
     /// <summary>
     ///     Hides the popup if it is currently visible.

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
@@ -25,9 +26,14 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
     private bool _showTotalDuration;
     private bool _isDisposed;
     private bool _reloadMetadata;
+    private bool _isLoading;
+    private bool _hasLoadError;
 
     public int Version { get; private set; }
-    public bool HasMoreItems => _isActive && _loadedCount < _ids.Length;
+    public bool HasMoreItems => !_isDisposed && _isActive && !HasLoadError && _loadedCount < _ids.Length;
+    public bool IsLoading => _isLoading;
+    public bool HasLoadError => _hasLoadError;
+    public bool ShowEmptyState => _isActive && !IsLoading && !HasLoadError && Count == 0;
     public string TotalDurationText { get; private set; } = string.Empty;
 
     public void SetActive(bool active)
@@ -39,6 +45,7 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
         {
             _refreshCts.Cancel();
             _durationCts.Cancel();
+            SetLoadState(false, false);
         }
     }
 
@@ -68,6 +75,7 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
         _ids = ids;
         _loadedCount = 0;
         _loadTask = null;
+        SetLoadState(false, false);
         if (!_isActive || _ids.Length == 0) Clear();
         if (durationChanged)
         {
@@ -86,7 +94,7 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
 
     public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
     {
-        if (_isDisposed || !_isActive)
+        if (_isDisposed || !_isActive || HasLoadError)
             return Task.FromResult(new LoadMoreItemsResult()).AsAsyncOperation();
         if (_loadTask is null || _loadTask.IsCompleted)
             _loadTask = LoadPageAsync(_refreshCts.Token);
@@ -97,6 +105,7 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
         Dictionary<Guid, QueueEntry>? cachedEntries = null)
     {
         uint added = 0;
+        SetLoadState(true, false);
         try
         {
             while (HasMoreItems && added == 0)
@@ -133,10 +142,34 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
         catch (OperationCanceledException) { }
         catch (Exception ex)
         {
-            if (cachedEntries is not null && !token.IsCancellationRequested) Clear();
+            if (!token.IsCancellationRequested && !_isDisposed)
+            {
+                if (cachedEntries is not null) Clear();
+                SetLoadState(false, true);
+            }
             logger.LogError(ex, "Failed to load the playback queue.");
         }
+        finally
+        {
+            if (!token.IsCancellationRequested && !_isDisposed) SetLoadState(false, HasLoadError);
+        }
         return new LoadMoreItemsResult { Count = added };
+    }
+
+    private void SetLoadState(bool isLoading, bool hasLoadError)
+    {
+        _isLoading = isLoading;
+        _hasLoadError = hasLoadError;
+        OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsLoading)));
+        OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasLoadError)));
+        OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShowEmptyState)));
+        OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasMoreItems)));
+    }
+
+    protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+    {
+        base.OnCollectionChanged(e);
+        OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShowEmptyState)));
     }
 
     private async Task UpdateDurationAsync(CancellationToken token)
@@ -184,9 +217,11 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
     {
         if (_isDisposed) return;
         _isDisposed = true;
+        _isActive = false;
         _refreshCts.Cancel();
         _refreshCts.Dispose();
         _durationCts.Cancel();
         _durationCts.Dispose();
+        SetLoadState(false, false);
     }
 }

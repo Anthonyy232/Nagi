@@ -91,6 +91,8 @@
                     <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.DurationDescLabel}" Tag="DurationDesc" />
                     <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.BpmAscLabel}" Tag="BpmAsc" />
                     <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.BpmDescLabel}" Tag="BpmDesc" />
+                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.DateCreatedOldestLabel}" Tag="FileCreatedDateAsc" />
+                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.DateCreatedNewestLabel}" Tag="FileCreatedDateDesc" />
                     <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.RandomLabel}" Tag="Random" />
                 </ComboBox>
             </StackPanel>
@@ -155,15 +157,21 @@
                                                       HorizontalAlignment="Stretch" />
 
                                             <ComboBox Grid.Column="1"
-                                                      ItemsSource="{x:Bind AvailableOperators}"
+                                                      ItemsSource="{x:Bind AvailableOperators, Mode=OneWay}"
                                                       SelectedItem="{x:Bind SelectedOperator, Mode=TwoWay}"
                                                       DisplayMemberPath="DisplayName"
                                                       HorizontalAlignment="Stretch" />
 
-                                            <TextBox Grid.Column="2"
-                                                     Text="{x:Bind Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                     PlaceholderText="{x:Bind resources:Strings.SmartPlaylist_RuleValueTextBox_Placeholder, Mode=OneTime}"
-                                                     HorizontalAlignment="Stretch" />
+                                            <StackPanel Grid.Column="2" Spacing="8"
+                                                        Visibility="{x:Bind RequiresValue, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                <TextBox Text="{x:Bind Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                         PlaceholderText="{x:Bind resources:Strings.SmartPlaylist_RuleValueTextBox_Placeholder, Mode=OneTime}"
+                                                         HorizontalAlignment="Stretch" />
+                                                <TextBox Text="{x:Bind SecondValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                         PlaceholderText="{x:Bind resources:Strings.SmartPlaylist_UpperBound_Placeholder, Mode=OneTime}"
+                                                         Visibility="{x:Bind IsRange, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                         HorizontalAlignment="Stretch" />
+                                            </StackPanel>
 
                                             <Button Grid.Column="3"
                                                     Click="RemoveRule_Click"

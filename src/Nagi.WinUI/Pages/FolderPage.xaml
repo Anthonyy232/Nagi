@@ -2,7 +2,6 @@
     x:Class="Nagi.WinUI.Pages.FolderPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:converters="using:Nagi.WinUI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resources="using:Nagi.WinUI.Resources"
@@ -40,7 +39,7 @@
                     Click="AddFolderButton_Click"
                     ToolTipService.ToolTip="{x:Bind resources:Strings.FolderPage_AddFolderButton_ToolTip, Mode=OneTime}"
                     IsEnabled="{x:Bind ViewModel.IsAnyOperationInProgress, Converter={StaticResource BooleanToInverseBooleanConverter}, Mode=OneWay}"
-                    Style="{StaticResource FolderPageAddFolderButtonStyle}">
+                    Style="{StaticResource AnimatedAccentButtonStyle}">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <FontIcon Glyph="" />
                         <TextBlock Text="{x:Bind resources:Strings.FolderPage_AddFolder_Label, Mode=OneTime}" />
@@ -53,7 +52,7 @@
             Grid.Row="1"
             IsItemClickEnabled="True"
             ItemClick="FoldersGridView_ItemClick"
-            ItemContainerStyle="{StaticResource FolderPageGridViewItemStyle}"
+            ItemContainerStyle="{StaticResource AnimatedGridViewItemStyle}"
             ItemsSource="{x:Bind ViewModel.Folders, Mode=OneWay}"
             Padding="{StaticResource SongListViewPadding}"
             Margin="{StaticResource SongListViewMargin}"
@@ -114,7 +113,7 @@
                             Margin="16,0,0,0"
                             HorizontalAlignment="Left"
                             Opacity="0.7"
-                            Text="{x:Bind SongCountText, Mode=OneWay}"
+                            Text="{x:Bind SongCountText}"
                             TextTrimming="CharacterEllipsis"
                             TextWrapping="NoWrap" />
                     </Grid>

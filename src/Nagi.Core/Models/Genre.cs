@@ -1,15 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace Nagi.Core.Models;
 
-/// <summary>
-///     Represents a musical genre.
-/// </summary>
 public class Genre
 {
-    /// <summary>
-    ///     The unique identifier for the genre.
-    /// </summary>
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
 

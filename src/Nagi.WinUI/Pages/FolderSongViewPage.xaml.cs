@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Windows.System;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,9 +19,6 @@ using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.Pages;
 
-/// <summary>
-///     A page for displaying the list of songs within a specific folder.
-/// </summary>
 public sealed partial class FolderSongViewPage : Page
 {
     private readonly ILogger<FolderSongViewPage> _logger;
@@ -66,14 +63,8 @@ public sealed partial class FolderSongViewPage : Page
         _nowPlayingBinder = null;
     }
 
-    /// <summary>
-    ///     Gets the view model associated with this page.
-    /// </summary>
     public FolderSongListViewModel ViewModel { get; }
 
-    /// <summary>
-    ///     Initializes the view model with navigation parameters when the page is navigated to.
-    /// </summary>
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
@@ -100,27 +91,18 @@ public sealed partial class FolderSongViewPage : Page
         }
     }
 
-    /// <summary>
-    ///     Cleans up the search state when navigating away from the page.
-    /// </summary>
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
         ViewModel.Dispose();
     }
 
-    /// <summary>
-    ///     Handles the page loaded event to set initial visual state.
-    /// </summary>
     private void OnPageLoaded(object sender, RoutedEventArgs e)
     {
         VisualStateManager.GoToState(this, "SearchCollapsed", false);
         Loaded -= OnPageLoaded;
     }
 
-    /// <summary>
-    ///     Handles the search toggle button click to expand or collapse the search box.
-    /// </summary>
     private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e)
     {
         if (_isSearchExpanded)
@@ -129,9 +111,6 @@ public sealed partial class FolderSongViewPage : Page
             ExpandSearch();
     }
 
-    /// <summary>
-    ///     Handles key down events in the search text box.
-    /// </summary>
     private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
     {
         if (e.Key == VirtualKey.Escape)
@@ -141,9 +120,6 @@ public sealed partial class FolderSongViewPage : Page
         }
     }
 
-    /// <summary>
-    ///     Expands the search interface with an animation.
-    /// </summary>
     private void ExpandSearch()
     {
         if (_isSearchExpanded) return;
@@ -151,20 +127,19 @@ public sealed partial class FolderSongViewPage : Page
         _isSearchExpanded = true;
         ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.FolderSongViewPage_SearchButton_Close_ToolTip);
         VisualStateManager.GoToState(this, "SearchExpanded", true);
-
-        var timer = DispatcherQueue.CreateTimer();
-        timer.Interval = TimeSpan.FromMilliseconds(150);
-        timer.Tick += (s, args) =>
-        {
-            timer.Stop();
-            SearchTextBox.Focus(FocusState.Programmatic);
-        };
-        timer.Start();
     }
 
-    /// <summary>
-    ///     Collapses the search interface with an animation and resets the filter.
-    /// </summary>
+    private void OnSearchExpansionCompleted(object sender, object e)
+    {
+        if (IsLoaded && _isSearchExpanded) SearchTextBox.Focus(FocusState.Programmatic);
+    }
+
+    private void OnBreadcrumbItemClicked(BreadcrumbBar sender, BreadcrumbBarItemClickedEventArgs args)
+    {
+        if (args.Item is BreadcrumbItem breadcrumb)
+            ViewModel.NavigateToBreadcrumbCommand.Execute(breadcrumb);
+    }
+
     private void CollapseSearch()
     {
         if (!_isSearchExpanded) return;
@@ -175,9 +150,6 @@ public sealed partial class FolderSongViewPage : Page
         ViewModel.SearchTerm = string.Empty;
     }
 
-    /// <summary>
-    ///     Handles clicks on folder content items (folders or songs).
-    /// </summary>
     private async void FolderContentsListView_ItemClick(object sender, ItemClickEventArgs e)
     {
         try
@@ -192,14 +164,10 @@ public sealed partial class FolderSongViewPage : Page
         }
     }
 
-    /// <summary>
-    ///     Updates the view model with the current selection from the content list.
-    /// </summary>
     private void FolderContentsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (_isUpdatingSelection || sender is not ListView listView) return;
 
-        // Update logical selection state based on individual changes
         foreach (var item in e.AddedItems.OfType<FolderContentItem>())
             ViewModel.SelectionState.Select(item.Id);
 
@@ -255,9 +223,6 @@ public sealed partial class FolderSongViewPage : Page
         args.Handled = true;
     }
 
-    /// <summary>
-    ///     Handles the double-tapped event on the content list to play songs or navigate folders.
-    /// </summary>
     private async void FolderContentsListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {
         try
@@ -276,40 +241,36 @@ public sealed partial class FolderSongViewPage : Page
         }
     }
 
-    /// <summary>
-    ///     Handles the opening of the context menu for a folder item.
-    /// </summary>
     private void FolderItemMenuFlyout_Opening(object sender, object e)
     {
         if (sender is not MenuFlyout menuFlyout) return;
 
         if (menuFlyout.Target?.DataContext is FolderContentItem { IsFolder: true, Folder: not null } contentItem)
         {
-            var listView = FindName("FolderContentsListView") as ListView;
-            if (listView != null && !listView.SelectedItems.Contains(contentItem)) listView.SelectedItem = contentItem;
+            if (!FolderContentsListView.SelectedItems.Contains(contentItem))
+                FolderContentsListView.SelectedItem = contentItem;
         }
 
         if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
                 .FirstOrDefault(item => item.Name == "FolderAddToPlaylistSubMenu") is { } addToPlaylistSubMenu)
-            PopulatePlaylistSubMenu(addToPlaylistSubMenu);
+            PlaylistMenuFlyoutHelper.Populate(addToPlaylistSubMenu, ViewModel.AvailablePlaylists,
+                ViewModel.AddSelectedSongsToPlaylistCommand, Nagi.WinUI.Resources.Strings.FolderSongViewPage_PlaylistMenu_NoPlaylists);
     }
 
-    /// <summary>
-    ///     Handles the opening of the context menu for a content item.
-    /// </summary>
     private void SongItemMenuFlyout_Opening(object sender, object e)
     {
         if (sender is not MenuFlyout menuFlyout) return;
 
         if (menuFlyout.Target?.DataContext is FolderContentItem { IsSong: true, Song: not null } contentItem)
         {
-            var listView = FindName("FolderContentsListView") as ListView;
-            if (listView != null && !listView.SelectedItems.Contains(contentItem)) listView.SelectedItem = contentItem;
+            if (!FolderContentsListView.SelectedItems.Contains(contentItem))
+                FolderContentsListView.SelectedItem = contentItem;
         }
 
         if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
                 .FirstOrDefault(item => item.Name == "AddToPlaylistSubMenu") is { } addToPlaylistSubMenu)
-            PopulatePlaylistSubMenu(addToPlaylistSubMenu);
+            PlaylistMenuFlyoutHelper.Populate(addToPlaylistSubMenu, ViewModel.AvailablePlaylists,
+                ViewModel.AddSelectedSongsToPlaylistCommand, Nagi.WinUI.Resources.Strings.FolderSongViewPage_PlaylistMenu_NoPlaylists);
 
         if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
                 .FirstOrDefault(item => item.Name == "GoToArtistSubMenu") is { } goToArtistSubMenu
@@ -319,29 +280,4 @@ public sealed partial class FolderSongViewPage : Page
         }
     }
 
-    /// <summary>
-    ///     Populates the "Add to playlist" submenu with available playlists from the view model.
-    /// </summary>
-    private void PopulatePlaylistSubMenu(MenuFlyoutSubItem subMenu)
-    {
-        subMenu.Items.Clear();
-        var availablePlaylists = ViewModel.AvailablePlaylists;
-
-        if (availablePlaylists?.Any() != true)
-        {
-            subMenu.Items.Add(new MenuFlyoutItem { Text = Nagi.WinUI.Resources.Strings.FolderSongViewPage_PlaylistMenu_NoPlaylists, IsEnabled = false });
-            return;
-        }
-
-        foreach (var playlist in availablePlaylists)
-        {
-            var playlistMenuItem = new MenuFlyoutItem
-            {
-                Text = playlist.Name,
-                Command = ViewModel.AddSelectedSongsToPlaylistCommand,
-                CommandParameter = playlist
-            };
-            subMenu.Items.Add(playlistMenuItem);
-        }
-    }
 }

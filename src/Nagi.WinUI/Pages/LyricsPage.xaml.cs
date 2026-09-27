@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Numerics;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,20 +16,16 @@ using Nagi.WinUI.ViewModels;
 
 namespace Nagi.WinUI.Pages;
 
-/// <summary>
-///     A page that displays synchronized lyrics for the currently playing song.
-/// </summary>
 public sealed partial class LyricsPage : Page
 {
     private const double ScrollIntoViewRatio = 0.30;
     private const int AnimationDurationMs = 300;
     private const float ActiveScale = 1.03f;
     private const float InactiveScale = 1.0f;
-    private static readonly double[] _opacityCurve;
     private static readonly SolidColorBrush _transparentBrush = new(Microsoft.UI.Colors.Transparent);
-    private static Brush? _hoverBrush;
     private readonly ILogger<LyricsPage> _logger;
     private readonly Storyboard _progressBarStoryboard = new();
+    private readonly DoubleAnimation _progressBarAnimation = new() { To = 100, EnableDependentAnimation = true };
     private bool _isUnloaded;
 
     /// <summary>
@@ -39,10 +35,6 @@ public sealed partial class LyricsPage : Page
     /// </summary>
     private bool _isInitialScroll = true;
 
-    /// <summary>
-    ///     Tracks the index of the last line whose overlay was set to active (opacity 1.0).
-    ///     Used to guarantee the previous active overlay is always reset.
-    /// </summary>
     private int _lastActiveOverlayIndex = -1;
 
     /// <summary>
@@ -52,20 +44,14 @@ public sealed partial class LyricsPage : Page
     /// </summary>
     private int _currentLineIndex = -1;
 
-    static LyricsPage()
-    {
-        _opacityCurve = new double[20];
-        for (var i = 0; i < _opacityCurve.Length; i++)
-        {
-            _opacityCurve[i] = Math.Max(0.05, Math.Pow(0.55, i));
-        }
-    }
-
     public LyricsPage()
     {
         ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<LyricsPageViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<LyricsPage>>();
         InitializeComponent();
+        Storyboard.SetTarget(_progressBarAnimation, LyricsProgressBar);
+        Storyboard.SetTargetProperty(_progressBarAnimation, nameof(ProgressBar.Value));
+        _progressBarStoryboard.Children.Add(_progressBarAnimation);
 
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
         Unloaded += OnPageUnloaded;
@@ -165,9 +151,6 @@ public sealed partial class LyricsPage : Page
         ViewModel.Dispose();
     }
 
-    /// <summary>
-    ///     Responds to property changes in the ViewModel to update the UI accordingly.
-    /// </summary>
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         switch (e.PropertyName)
@@ -200,13 +183,12 @@ public sealed partial class LyricsPage : Page
                 break;
 
             case nameof(ViewModel.IsPlaying):
+            case nameof(ViewModel.CurrentPosition):
+            case nameof(ViewModel.SongDuration):
                 DispatcherQueue.TryEnqueue(() =>
                 {
                     if (_isUnloaded) return;
-                    if (ViewModel.IsPlaying)
-                        UpdateProgressBarForCurrentLine();
-                    else
-                        _progressBarStoryboard.Pause();
+                    UpdateProgressBarForCurrentLine();
                 });
                 break;
 
@@ -225,70 +207,25 @@ public sealed partial class LyricsPage : Page
         }
     }
 
-    /// <summary>
-    ///     Called when an ItemsRepeater element is prepared (created or recycled).
-    ///     Sets the initial Composition visual state so the overlay starts hidden
-    ///     and the correct opacity/scale is applied based on whether it's the active line.
-    ///     IMPORTANT: Opacity is set on individual TextBlocks, NOT container elements,
-    ///     because sub-1.0 opacity on a container forces WinUI to render to an intermediate
-    ///     bitmap surface which breaks ClearType text anti-aliasing.
-    /// </summary>
     private void LyricsRepeater_ElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
     {
         if (args.Element is not Grid grid) return;
 
-        // Use the cached index — avoids O(n) IndexOf on every element materialization.
-        var currentIndex = _currentLineIndex;
-
-        var distance = currentIndex >= 0 ? Math.Abs(args.Index - currentIndex) : int.MaxValue;
-        var targetOpacity = GetOpacityForDistance(distance);
-        var isActive = args.Index == currentIndex;
-
-        // Set scale immediately on the grid (scale doesn't cause ClearType issues)
-        var visual = ElementCompositionPreview.GetElementVisual(grid);
-        var scale = isActive ? ActiveScale : InactiveScale;
-        visual.Scale = new Vector3(scale, scale, 1.0f);
-
-        // Set opacity on the two lyric text layers, NOT the grid.
-        if (grid.Children.Count >= 2)
-        {
-            if (grid.Children[0] is UIElement baseLayer)
-                SetLayerOpacityImmediate(baseLayer, (float)targetOpacity);
-            if (grid.Children[1] is UIElement overlayLayer)
-                SetLayerOpacityImmediate(overlayLayer, isActive ? 1.0f : 0.0f);
-        }
+        ApplyLineVisual(grid, args.Index, _currentLineIndex, false);
     }
 
-    /// <summary>
-    ///     Called when an element is being cleared/recycled. Resets Composition state.
-    /// </summary>
     private void LyricsRepeater_ElementClearing(ItemsRepeater sender, ItemsRepeaterElementClearingEventArgs args)
     {
         if (args.Element is not Grid grid) return;
 
-        // Reset scale on grid and stop animations
         var visual = ElementCompositionPreview.GetElementVisual(grid);
         visual.StopAnimation("Scale");
         visual.Scale = new Vector3(1.0f, 1.0f, 1.0f);
 
-        // Reset opacity on lyric text layers and stop animations
-        if (grid.Children.Count >= 2)
-        {
-            if (grid.Children[0] is UIElement baseLayer)
-            {
-                StopLayerOpacityAnimationsAndSet(baseLayer, 1.0f);
-            }
-            if (grid.Children[1] is UIElement overlayLayer)
-            {
-                StopLayerOpacityAnimationsAndSet(overlayLayer, 0.0f);
-            }
-        }
+        SetLayerOpacity((Panel)grid.Children[0], 1.0f, false);
+        SetLayerOpacity((Panel)grid.Children[1], 0.0f, false);
     }
 
-    /// <summary>
-    ///     Smoothly scrolls the lyrics to bring the current active line into view.
-    ///     Uses ChangeView which replaces ongoing scroll animations rather than queuing them.
-    /// </summary>
     private void ScrollToCurrentLine(bool disableAnimation)
     {
         // Use the cached index — _currentLineIndex is always updated before this is called.
@@ -298,33 +235,24 @@ public sealed partial class LyricsPage : Page
         var element = LyricsRepeater.TryGetElement(lineIndex);
         if (element == null)
         {
-            _logger.LogDebug("ScrollToCurrentLine: element at index {Index} is null (unexpected with non-virtualizing layout).", lineIndex);
+            _logger.LogDebug("Lyric element at index {Index} has not been realized yet.", lineIndex);
             return;
         }
 
         _logger.LogTrace("Scrolling to lyric line index {LineIndex}.", lineIndex);
 
-        // Get position of element relative to the LyricsRepeater (its immediate visual parent in the StackPanel).
-        // Because TopSpacer is a *sibling* of LyricsRepeater — not a parent — its height is already baked
-        // into the ScrollViewer's content offset but NOT into the transform returned here.
-        // Therefore position.Y == the exact VerticalOffset needed to place the element at the very top
-        // of the viewport. TopSpacer.Height = viewportHeight * ScrollIntoViewRatio then pushes the
-        // visible top down by that ratio, so the active line naturally lands at ScrollIntoViewRatio
-        // from the top without any additional arithmetic.
+        // TopSpacer is a sibling, so the repeater-relative Y offset already places the line
+        // at ScrollIntoViewRatio without subtracting the spacer again.
         var transform = element.TransformToVisual(LyricsRepeater);
         var position = transform.TransformPoint(new Windows.Foundation.Point(0, 0));
         var targetOffset = position.Y;
 
-        // Clamp to valid scroll range
         var maxOffset = LyricsScrollViewer.ScrollableHeight;
-        targetOffset = Math.Max(0, Math.Min(targetOffset, maxOffset));
+        targetOffset = Math.Clamp(targetOffset, 0, maxOffset);
 
         LyricsScrollViewer.ChangeView(null, targetOffset, null, disableAnimation);
     }
 
-    /// <summary>
-    ///     Sets spacer heights when the ScrollViewer is resized.
-    /// </summary>
     private void LyricsScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
     {
         var viewportHeight = e.NewSize.Height;
@@ -332,10 +260,6 @@ public sealed partial class LyricsPage : Page
         BottomSpacer.Height = viewportHeight * (1.0 - ScrollIntoViewRatio);
     }
 
-    /// <summary>
-    ///     Animates the transition between the previous and current active lines.
-    ///     Opacity is animated on individual TextBlocks to preserve ClearType rendering.
-    /// </summary>
     private void AnimateLineTransition()
     {
         var currentIndex = _currentLineIndex;
@@ -363,137 +287,62 @@ public sealed partial class LyricsPage : Page
         _lastActiveOverlayIndex = currentIndex;
     }
 
-    /// <summary>
-    ///     Sets all line visuals immediately (no animation). Used for initial load and track changes.
-    /// </summary>
     private void ApplyAllLineVisuals()
     {
         var currentIndex = _currentLineIndex;
 
-        if (ViewModel.LyricLines.Count > 0)
-        {
-            UpdateLinesInRange(0, ViewModel.LyricLines.Count - 1, currentIndex, false);
-        }
+        UpdateLinesInRange(0, ViewModel.LyricLines.Count - 1, currentIndex, false);
 
         _lastActiveOverlayIndex = currentIndex;
     }
 
-    /// <summary>
-    ///     Updates the visual state of a specific range of lyric lines.
-    /// </summary>
     private void UpdateLinesInRange(int minIndex, int maxIndex, int currentIndex, bool animate)
     {
         for (var i = minIndex; i <= maxIndex; i++)
-        {
-            var element = LyricsRepeater.TryGetElement(i);
-            if (element is not Grid grid) continue;
-
-            var distance = currentIndex >= 0 ? Math.Abs(i - currentIndex) : int.MaxValue;
-            var targetOpacity = GetOpacityForDistance(distance);
-            var isActive = i == currentIndex;
-
-            // Update opacity on the inactive and active text layers.
-            if (grid.Children.Count >= 2)
-            {
-                if (grid.Children[0] is UIElement baseLayer)
-                {
-                    if (animate)
-                        AnimateLayerOpacity(baseLayer, (float)targetOpacity);
-                    else
-                        SetLayerOpacityImmediate(baseLayer, (float)targetOpacity);
-                }
-
-                if (grid.Children[1] is UIElement overlayLayer)
-                {
-                    if (animate)
-                        AnimateLayerOpacity(overlayLayer, isActive ? 1.0f : 0.0f);
-                    else
-                        SetLayerOpacityImmediate(overlayLayer, isActive ? 1.0f : 0.0f);
-                }
-            }
-
-            // Update scale on grid
-            var targetScale = isActive ? ActiveScale : InactiveScale;
-            if (animate)
-            {
-                CompositionAnimationHelper.AnimateScale(grid, targetScale, AnimationDurationMs);
-            }
-            else
-            {
-                var visual = ElementCompositionPreview.GetElementVisual(grid);
-                var width = (float)grid.ActualWidth;
-                var height = (float)grid.ActualHeight;
-                if (width > 0 && height > 0)
-                    visual.CenterPoint = new Vector3(width / 2f, height / 2f, 0f);
-                visual.Scale = new Vector3(targetScale, targetScale, 1.0f);
-            }
-        }
+            if (LyricsRepeater.TryGetElement(i) is Grid grid)
+                ApplyLineVisual(grid, i, currentIndex, animate);
     }
 
-    private static void AnimateLayerOpacity(UIElement layer, float opacity)
+    private static void ApplyLineVisual(Grid grid, int index, int currentIndex, bool animate)
     {
-        foreach (var element in GetOpacityTargets(layer))
+        var distance = currentIndex >= 0 ? Math.Abs(index - currentIndex) : int.MaxValue;
+        var isActive = index == currentIndex;
+        SetLayerOpacity((Panel)grid.Children[0], (float)GetOpacityForDistance(distance), animate);
+        SetLayerOpacity((Panel)grid.Children[1], isActive ? 1.0f : 0.0f, animate);
+        var scale = isActive ? ActiveScale : InactiveScale;
+        if (animate)
+            CompositionAnimationHelper.AnimateScale(grid, scale, AnimationDurationMs);
+        else
         {
-            CompositionAnimationHelper.AnimateOpacity(element, opacity, AnimationDurationMs);
+            var visual = ElementCompositionPreview.GetElementVisual(grid);
+            visual.StopAnimation("Scale");
+            visual.CenterPoint = new Vector3((float)grid.ActualWidth / 2, (float)grid.ActualHeight / 2, 0);
+            visual.Scale = new Vector3(scale, scale, 1);
         }
     }
 
-    private static void SetLayerOpacityImmediate(UIElement layer, float opacity)
+    private static void SetLayerOpacity(Panel layer, float opacity, bool animate)
     {
-        foreach (var element in GetOpacityTargets(layer))
+        // Opacity on each TextBlock preserves ClearType; fading the panel rasterizes its children.
+        foreach (var element in layer.Children)
         {
-            CompositionAnimationHelper.SetOpacityImmediate(element, opacity);
+            if (animate) CompositionAnimationHelper.AnimateOpacity(element, opacity, AnimationDurationMs);
+            else CompositionAnimationHelper.SetOpacityImmediate(element, opacity);
         }
     }
 
-    private static void StopLayerOpacityAnimationsAndSet(UIElement layer, float opacity)
-    {
-        foreach (var element in GetOpacityTargets(layer))
-        {
-            var visual = ElementCompositionPreview.GetElementVisual(element);
-            visual.StopAnimation("Opacity");
-            visual.Opacity = opacity;
-        }
-    }
-
-    private static IEnumerable<UIElement> GetOpacityTargets(UIElement layer)
-    {
-        if (layer is Panel panel)
-        {
-            foreach (var child in panel.Children.OfType<UIElement>())
-                yield return child;
-
-            yield break;
-        }
-
-        yield return layer;
-    }
-
-    /// <summary>
-    ///     Gets the target opacity for a lyric line based on its distance from the active line.
-    /// </summary>
     private static double GetOpacityForDistance(int distance)
     {
-        return distance < _opacityCurve.Length ? _opacityCurve[distance] : 0.05;
+        return Math.Max(0.05, Math.Pow(0.55, distance));
     }
 
-    /// <summary>
-    ///     Handles pointer entering a lyric line for hover effect.
-    /// </summary>
     private void LyricItem_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
         if (sender is not Grid grid) return;
 
-        // Cache the hover brush on first use — the resource dictionary lookup only runs once
-        // per page lifetime rather than on every pointer-enter event.
-        _hoverBrush ??= Application.Current.Resources["SubtleFillColorSecondaryBrush"] as Brush;
-        if (_hoverBrush != null)
-            grid.Background = _hoverBrush;
+        grid.Background = (Brush)Application.Current.Resources["SubtleFillColorSecondaryBrush"];
     }
 
-    /// <summary>
-    ///     Handles pointer leaving a lyric line to remove hover effect.
-    /// </summary>
     private void LyricItem_PointerExited(object sender, PointerRoutedEventArgs e)
     {
         if (sender is not Grid grid) return;
@@ -503,25 +352,19 @@ public sealed partial class LyricsPage : Page
         grid.Background = _transparentBrush;
     }
 
-    /// <summary>
-    ///     Handles tapping a lyric line to seek to that position in the song.
-    /// </summary>
-    private void LyricItem_Tapped(object sender, TappedRoutedEventArgs e)
+    private async void LyricItem_Tapped(object sender, TappedRoutedEventArgs e)
     {
         if (sender is Grid grid && grid.Tag is LyricLine clickedLine)
         {
             _logger.LogDebug("User tapped lyric line at {Timestamp}. Seeking.", clickedLine.StartTime);
-            _ = ViewModel.SeekToLineAsync(clickedLine);
+            try { await ViewModel.SeekToLineAsync(clickedLine); }
+            catch (Exception ex) { _logger.LogError(ex, "Failed to seek to lyric line"); }
         }
     }
 
-    /// <summary>
-    ///     Resets and starts the progress bar animation for the current lyric line.
-    /// </summary>
     private void UpdateProgressBarForCurrentLine()
     {
         _progressBarStoryboard.Stop();
-        _progressBarStoryboard.Children.Clear();
 
         var currentLine = ViewModel.CurrentLine;
         if (currentLine == null)
@@ -532,9 +375,7 @@ public sealed partial class LyricsPage : Page
 
         _logger.LogTrace("Updating progress bar for line: {LyricText}", currentLine.Text);
 
-        // _currentLineIndex is always kept in sync with CurrentLine on the dispatcher thread,
-        // and UpdateProgressBarForCurrentLine is only called from that same thread.
-        var currentIndex = _currentLineIndex;
+        var currentIndex = ViewModel.LyricLines.IndexOf(currentLine);
         var nextLineStartTime = currentIndex >= 0 && currentIndex < ViewModel.LyricLines.Count - 1
             ? ViewModel.LyricLines[currentIndex + 1].StartTime
             : ViewModel.SongDuration;
@@ -555,16 +396,7 @@ public sealed partial class LyricsPage : Page
         var remainingDuration = lineDuration - positionInLine;
         if (remainingDuration <= TimeSpan.Zero) return;
 
-        var animation = new DoubleAnimation
-        {
-            To = 100.0,
-            Duration = remainingDuration,
-            EnableDependentAnimation = true
-        };
-
-        Storyboard.SetTarget(animation, LyricsProgressBar);
-        Storyboard.SetTargetProperty(animation, nameof(ProgressBar.Value));
-        _progressBarStoryboard.Children.Add(animation);
+        _progressBarAnimation.Duration = remainingDuration;
 
         _progressBarStoryboard.Begin();
 

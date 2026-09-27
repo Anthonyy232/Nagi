@@ -14,10 +14,4 @@ public interface ICustomTitleBarProvider
     /// <returns>The TitleBar control for the current page.</returns>
     TitleBar GetAppTitleBarElement();
 
-    /// <summary>
-    ///     Gets the RowDefinition that contains the title bar element.
-    ///     This allows for collapsing the row when the title bar is not needed, such as on the onboarding page.
-    /// </summary>
-    /// <returns>The RowDefinition for the title bar.</returns>
-    RowDefinition GetAppTitleBarRowElement();
 }

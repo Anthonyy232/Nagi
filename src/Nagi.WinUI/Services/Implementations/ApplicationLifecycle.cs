@@ -19,18 +19,18 @@ public class ApplicationLifecycle : IApplicationLifecycle
 
     public ApplicationLifecycle(App app, IServiceProvider serviceProvider, ILogger<ApplicationLifecycle> logger)
     {
-        _app = app ?? throw new ArgumentNullException(nameof(app));
-        _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+        _app = app;
+        _serviceProvider = serviceProvider;
         _logger = logger;
     }
 
     /// <summary>
     ///     Navigates to the main content of the application, performing initial setup checks if necessary.
     /// </summary>
-    public async Task NavigateToMainContentAsync()
+    public Task NavigateToMainContentAsync()
     {
         _logger.LogInformation("Navigating to main application content.");
-        await _app.CheckAndNavigateToMainContent();
+        return _app.CheckAndNavigateToMainContent();
     }
 
     /// <summary>
@@ -59,9 +59,7 @@ public class ApplicationLifecycle : IApplicationLifecycle
         }
         catch (Exception ex)
         {
-            // A failure during reset is a critical issue that can leave the app in a bad state.
             _logger.LogCritical(ex, "A critical failure occurred during the application reset process.");
-            // Re-throw to allow the caller (e.g., a ViewModel) to handle showing an error dialog.
             throw;
         }
     }

@@ -37,13 +37,9 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider
         return AppTitleBar;
     }
 
-    public RowDefinition GetAppTitleBarRowElement()
-    {
-        return AppTitleBarRow;
-    }
-
     private void OnboardingPage_Loaded(object sender, RoutedEventArgs e)
     {
+        _isUnloaded = false;
         _logger.LogDebug("OnboardingPage loaded.");
         VisualStateManager.GoToState(this, "PageLoaded", true);
         ViewModel.PropertyChanged += ViewModel_PropertyChanged;

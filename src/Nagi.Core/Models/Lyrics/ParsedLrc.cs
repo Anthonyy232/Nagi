@@ -8,7 +8,6 @@ public class ParsedLrc
 {
     public ParsedLrc(IEnumerable<LyricLine> lines, string? rawUnsyncedLyrics = null)
     {
-        // Ensure lines are sorted by time, which is crucial for playback syncing.
         Lines = lines.OrderBy(l => l.StartTime).ToList().AsReadOnly();
         RawUnsyncedLyrics = rawUnsyncedLyrics;
     }
@@ -27,5 +26,5 @@ public class ParsedLrc
     /// <summary>
     ///     Indicates if the parsed lyrics contain any lines.
     /// </summary>
-    public bool IsEmpty => !Lines.Any();
+    public bool IsEmpty => Lines.Count == 0;
 }

@@ -11,7 +11,6 @@ namespace Nagi.WinUI.ViewModels;
 
 public partial class OnboardingViewModel : ObservableObject
 {
-    private static string InitialWelcomeMessage => Nagi.WinUI.Resources.Strings.Onboarding_Welcome;
     private readonly IApplicationLifecycle _applicationLifecycle;
 
     private readonly ILibraryService _libraryService;
@@ -35,7 +34,7 @@ public partial class OnboardingViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(IsAnyOperationInProgress))]
     public partial bool IsParsing { get; set; }
 
-    [ObservableProperty] public partial string StatusMessage { get; set; } = InitialWelcomeMessage;
+    [ObservableProperty] public partial string StatusMessage { get; set; } = Nagi.WinUI.Resources.Strings.Onboarding_Welcome;
 
     [ObservableProperty] public partial double ProgressValue { get; set; }
 
@@ -46,8 +45,6 @@ public partial class OnboardingViewModel : ObservableObject
     [RelayCommand]
     private async Task AddFolder()
     {
-        if (IsAnyOperationInProgress) return;
-
         IsAddingFolder = true;
         StatusMessage = Nagi.WinUI.Resources.Strings.Onboarding_WaitingForSelection;
 
@@ -78,7 +75,7 @@ public partial class OnboardingViewModel : ObservableObject
             else
             {
                 _logger.LogDebug("User cancelled folder selection during onboarding");
-                StatusMessage = InitialWelcomeMessage;
+                StatusMessage = Nagi.WinUI.Resources.Strings.Onboarding_Welcome;
             }
         }
         catch (Exception ex)

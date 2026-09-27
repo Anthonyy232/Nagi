@@ -1,28 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Nagi.Core.Models;
 
-/// <summary>
-///     Represents a single rule within a smart playlist.
-///     Each rule defines a condition that songs must match to be included.
-/// </summary>
 public class SmartPlaylistRule
 {
-    /// <summary>
-    ///     The unique identifier for this rule.
-    /// </summary>
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
 
-    /// <summary>
-    ///     The foreign key for the parent smart playlist.
-    /// </summary>
     public Guid SmartPlaylistId { get; set; }
 
-    /// <summary>
-    ///     Navigation property to the parent smart playlist.
-    /// </summary>
     [ForeignKey("SmartPlaylistId")]
     public virtual SmartPlaylist SmartPlaylist { get; set; } = null!;
 

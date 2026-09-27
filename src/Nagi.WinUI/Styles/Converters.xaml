@@ -15,7 +15,6 @@ to avoid duplicate declarations across pages and controls.
     <!-- String and collection converters -->
     <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
     <converters:StringToDecodedImageSourceConverter x:Key="StringToDecodedImageSourceConverter" />
-    <converters:CollectionToVisibilityConverter x:Key="CollectionToVisibilityConverter" />
     <converters:CollectionCountToVisibilityConverter x:Key="CollectionCountToVisibilityConverter" />
     <converters:CollectionCountToVisibilityConverter x:Key="InverseCollectionCountToVisibilityConverter" Invert="True" />
     <converters:BooleanToInverseBooleanConverter x:Key="BooleanToInverseBooleanConverter" />
@@ -24,7 +23,6 @@ to avoid duplicate declarations across pages and controls.
     <converters:NullOrEmptyStringToVisibilityConverter x:Key="InverseNullOrEmptyStringToVisibilityConverter" Invert="True" />
     <converters:BooleanToOpacityConverter x:Key="BooleanToOpacityConverter" />
     <converters:GenreToGradientConverter x:Key="GenreToGradientConverter" />
-    <converters:ObjectToBooleanConverter x:Key="ObjectToBooleanConverter" />
     <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
 
     <!-- Sort order comparison converter -->

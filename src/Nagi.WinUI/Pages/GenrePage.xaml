@@ -1,21 +1,15 @@
-<!-- Nagi/Pages/GenrePage.xaml -->
 <Page
     x:Class="Nagi.WinUI.Pages.GenrePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:converters="using:Nagi.WinUI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:resources="using:Nagi.WinUI.Resources"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vm="using:Nagi.WinUI.ViewModels"
+    xmlns:data="using:Nagi.Core.Services.Data"
     xmlns:helpers="using:Nagi.Core.Helpers"
     x:Name="GenrePageRoot"
     Background="Transparent"
     mc:Ignorable="d">
-
-    <Page.Resources>
-
-    </Page.Resources>
 
     <Grid Padding="{StaticResource PageContainerPaddingVertical}">
         <VisualStateManager.VisualStateGroups>
@@ -46,12 +40,11 @@
                             Storyboard.TargetName="SearchIcon"
                             Storyboard.TargetProperty="Glyph">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE721;" />
-                            <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="&#xE721;" />
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="SearchExpanded">
-                    <Storyboard>
+                    <Storyboard Completed="OnSearchExpansionCompleted">
                         <DoubleAnimation
                             Storyboard.TargetName="SearchTextBox"
                             Storyboard.TargetProperty="Width"
@@ -170,17 +163,17 @@
                 Visibility="{x:Bind ViewModel.HasGenres, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
                 Padding="{StaticResource SongListViewPadding}"
                 Margin="{StaticResource SongListViewMargin}"
-                ItemContainerStyle="{StaticResource GenrePageGridViewItemStyle}">
+                ItemContainerStyle="{StaticResource AnimatedGridViewItemStyle}">
                 <GridView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <ItemsWrapGrid ItemHeight="120" ItemWidth="240" Orientation="Horizontal" />
                     </ItemsPanelTemplate>
                 </GridView.ItemsPanel>
                 <GridView.ItemTemplate>
-                    <DataTemplate x:DataType="vm:GenreViewModelItem">
+                    <DataTemplate x:DataType="data:GenreSummary">
                         <!-- The background is bound to the genre name, producing a unique gradient for each. -->
                         <Grid Padding="16"
-                              Background="{x:Bind Name, Converter={StaticResource GenreToGradientConverter}, Mode=OneWay}">
+                              Background="{x:Bind Name, Converter={StaticResource GenreToGradientConverter}, Mode=OneTime}">
                             <Grid.ContextFlyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem
@@ -199,7 +192,7 @@
                                     FontSize="22"
                                     FontWeight="Bold"
                                     Foreground="White"
-                                    Text="{x:Bind Name, Mode=OneWay}"
+                                    Text="{x:Bind Name, Mode=OneTime}"
                                     TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap" />
                             </StackPanel>

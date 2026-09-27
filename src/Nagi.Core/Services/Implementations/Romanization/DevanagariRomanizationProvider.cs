@@ -19,7 +19,7 @@ public sealed class DevanagariRomanizationProvider : IRomanizationProvider
     {
         if (string.IsNullOrWhiteSpace(text) || !Supports(text)) return null;
 
-        var rules = await LoadRulesAsync(pack, cancellationToken).ConfigureAwait(false);
+        var rules = await RomanizationProviderHelpers.LoadRulesAsync<DevanagariRuleSet>(pack, RulesFileName, cancellationToken).ConfigureAwait(false);
         var result = Romanize(text, rules);
         return string.Equals(result, text, StringComparison.Ordinal) ? null : result;
     }
@@ -27,11 +27,6 @@ public sealed class DevanagariRomanizationProvider : IRomanizationProvider
     public Task<bool> ValidatePackAsync(InstalledRomanizationPack pack, CancellationToken cancellationToken = default)
     {
         return RomanizationProviderHelpers.ValidatePackAsync(pack, RulesFileName, RomanizeAsync, cancellationToken);
-    }
-
-    private static Task<DevanagariRuleSet> LoadRulesAsync(InstalledRomanizationPack pack, CancellationToken cancellationToken)
-    {
-        return RomanizationProviderHelpers.LoadRulesAsync(pack, RulesFileName, () => new DevanagariRuleSet(), cancellationToken);
     }
 
     private static string Romanize(string text, DevanagariRuleSet rules)
@@ -113,8 +108,6 @@ public sealed class DevanagariRomanizationProvider : IRomanizationProvider
     {
         length = 0;
         consonant = string.Empty;
-
-        if (index >= text.Length) return false;
 
         if (index + 1 < text.Length)
         {

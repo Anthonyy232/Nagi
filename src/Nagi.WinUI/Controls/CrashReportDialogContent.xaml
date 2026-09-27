@@ -41,9 +41,7 @@
             CornerRadius="4"
             MinHeight="200"
             MaxHeight="400">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                 <TextBox
-                    x:Name="LogTextBox"
                     Text="{x:Bind LogContent, Mode=OneWay}"
                     IsReadOnly="True"
                     AcceptsReturn="True"
@@ -51,12 +49,13 @@
                     FontFamily="Consolas, Cascadia Mono, Courier New"
                     BorderThickness="0"
                     Background="Transparent"
+                    ScrollViewer.VerticalScrollBarVisibility="Auto"
+                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
                     d:Text="System.NullReferenceException: Object reference not set to an instance of an object..." />
-            </ScrollViewer>
         </Border>
 
         <StackPanel Grid.Row="4" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
-            <Button x:Name="CopyButton" Click="CopyButton_Click" ToolTipService.ToolTip="{x:Bind resources:Strings.CrashReport_CopyLogButton_ToolTip, Mode=OneTime}">
+            <Button Click="CopyButton_Click" ToolTipService.ToolTip="{x:Bind resources:Strings.CrashReport_CopyLogButton_ToolTip, Mode=OneTime}">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <FontIcon Glyph="&#xE8C8;" FontSize="16" />
                     <TextBlock Text="{x:Bind resources:Strings.CrashReport_CopyLogLabel, Mode=OneTime}" />

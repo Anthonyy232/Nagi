@@ -1,6 +1,8 @@
 ﻿using System;
-using System.Collections.Concurrent;
+using System.Globalization;
 using System.IO;
+using System.Web;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 
@@ -11,12 +13,8 @@ namespace Nagi.WinUI.Helpers;
 /// </summary>
 public static class ImageUriHelper
 {
-    private const string CacheBusterPrefix = "?v=";
-
-    // Short-lived cache to avoid repeated File.Exists + File.GetLastWriteTimeUtc calls
-    // when the same artwork path appears multiple times in a page load (e.g. album art shared
-    // across many tracks). Entries expire after 30 seconds so stale artwork is detected promptly.
-    private static readonly ConcurrentDictionary<string, (string? Uri, DateTime Expiry)> _uriCache = new();
+    // Shared artwork appears repeatedly in song lists; avoid repeating disk reads for each row.
+    private static readonly MemoryCache _uriCache = new(new MemoryCacheOptions { SizeLimit = 2048 });
     private static readonly TimeSpan _cacheLifetime = TimeSpan.FromSeconds(30);
 
     /// <summary>
@@ -35,11 +33,10 @@ public static class ImageUriHelper
         if (HasCacheBuster(path)) return path;
 
         // Only cache rooted physical paths — non-physical URIs skip disk I/O anyway.
-        if (IsRootedPhysicalPath(path))
+        if (Path.IsPathFullyQualified(path))
         {
-            var now = DateTime.UtcNow;
-            if (_uriCache.TryGetValue(path, out var cached) && cached.Expiry > now)
-                return cached.Uri;
+            if (_uriCache.TryGetValue(path, out string? cached))
+                return cached;
 
             string? result;
             try
@@ -59,7 +56,11 @@ public static class ImageUriHelper
                 result = null;
             }
 
-            _uriCache[path] = (result, now.Add(_cacheLifetime));
+            _uriCache.Set(path, result, new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = _cacheLifetime,
+                Size = 1
+            });
             return result;
         }
 
@@ -82,7 +83,7 @@ public static class ImageUriHelper
         try
         {
             // For physical file paths, verify the file exists to prevent ImageEx load errors
-            if (IsRootedPhysicalPath(path) && !File.Exists(path))
+            if (Path.IsPathFullyQualified(path) && !File.Exists(path))
             {
                 return null;
             }
@@ -99,24 +100,9 @@ public static class ImageUriHelper
     /// <summary>
     ///     Checks if a path already has a cache-buster query parameter.
     /// </summary>
-    private static bool HasCacheBuster(string path)
-    {
-        // Check if the path has a query parameter that looks like our cache buster.
-        // This is more robust than a simple Contains check.
-        var queryIndex = path.LastIndexOf('?');
-        return queryIndex >= 0 && path.IndexOf("v=", queryIndex, StringComparison.OrdinalIgnoreCase) > queryIndex;
-    }
-
-    /// <summary>
-    ///     Checks if a path is a rooted physical path (drive letter or UNC).
-    /// </summary>
-    private static bool IsRootedPhysicalPath(string path)
-    {
-        // Check for standard drive letter paths (e.g., C:\...) or UNC paths (e.g., \\server\...)
-        return path.Length >= 3 &&
-               ((path[1] == ':' && (path[2] == '\\' || path[2] == '/')) ||
-                path.StartsWith(@"\\", StringComparison.Ordinal));
-    }
+    private static bool HasCacheBuster(string path) =>
+        Uri.TryCreate(path, UriKind.Absolute, out var uri) &&
+        HttpUtility.ParseQueryString(uri.Query)["v"] is not null;
 
     /// <summary>
     ///     Builds the final URI string with the cache-buster appended.
@@ -125,11 +111,13 @@ public static class ImageUriHelper
     {
         if (Uri.TryCreate(path, UriKind.Absolute, out var uri))
         {
-            return string.Concat(uri.AbsoluteUri, CacheBusterPrefix, ticks.ToString());
+            var query = HttpUtility.ParseQueryString(uri.Query);
+            query["v"] = ticks.ToString(CultureInfo.InvariantCulture);
+            return $"{uri.GetLeftPart(UriPartial.Path)}?{query}{uri.Fragment}";
         }
 
         // If it's not a valid absolute URI, just append directly to the path.
-        return string.Concat(path, CacheBusterPrefix, ticks.ToString());
+        return string.Concat(path, "?v=", ticks.ToString(CultureInfo.InvariantCulture));
     }
 
     /// <summary>
@@ -140,19 +128,12 @@ public static class ImageUriHelper
     /// <returns>A BitmapImage if successful; otherwise, null.</returns>
     public static ImageSource? SafeGetImageSource(string? uriString)
     {
-        if (string.IsNullOrWhiteSpace(uriString))
+        if (!Uri.TryCreate(uriString, UriKind.Absolute, out var uri))
             return null;
 
         try
         {
-            if (Uri.TryCreate(uriString, UriKind.Absolute, out var uri))
-            {
-                return new BitmapImage(uri);
-            }
-
-            // Handle cases where it might be a local path that Uri.TryCreate didn't catch
-            // as absolute but we still want to try to load it.
-            return new BitmapImage(new Uri(uriString));
+            return new BitmapImage(uri);
         }
         catch
         {
@@ -173,16 +154,11 @@ public static class ImageUriHelper
     /// <returns>A configured BitmapImage, or null on invalid input.</returns>
     public static ImageSource? GetDecodedBitmap(string? uriString, int decodePixelWidth)
     {
-        if (string.IsNullOrWhiteSpace(uriString) || decodePixelWidth <= 0)
+        if (decodePixelWidth <= 0 || !Uri.TryCreate(uriString, UriKind.Absolute, out var uri))
             return null;
 
         try
         {
-            if (!Uri.TryCreate(uriString, UriKind.Absolute, out var uri))
-            {
-                uri = new Uri(uriString);
-            }
-
             var bitmap = new BitmapImage
             {
                 DecodePixelType = DecodePixelType.Logical,

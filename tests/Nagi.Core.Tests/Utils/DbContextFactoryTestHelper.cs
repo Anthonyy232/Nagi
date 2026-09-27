@@ -22,7 +22,7 @@ public class DbContextFactoryTestHelper : IDisposable
         {
             _databasePath = Path.Combine(Path.GetTempPath(), $"nagi-tests-{Guid.NewGuid():N}.db");
             options = new DbContextOptionsBuilder<MusicDbContext>()
-                .UseSqlite($"Data Source={_databasePath};Pooling=False")
+                .UseSqlite(new SqliteConnectionStringBuilder { DataSource = _databasePath, Pooling = false }.ToString())
                 .Options;
         }
         else
@@ -34,7 +34,6 @@ public class DbContextFactoryTestHelper : IDisposable
                 .Options;
         }
 
-        // Ensure the database schema is created
         using (var context = new MusicDbContext(options))
         {
             context.Database.EnsureCreated();
@@ -43,14 +42,8 @@ public class DbContextFactoryTestHelper : IDisposable
         ContextFactory = new TestDbContextFactory(options);
     }
 
-    /// <summary>
-    ///     Gets the configured <see cref="IDbContextFactory{MusicDbContext}" /> for the in-memory database.
-    /// </summary>
     public IDbContextFactory<MusicDbContext> ContextFactory { get; }
 
-    /// <summary>
-    ///     Disposes the underlying database connection, effectively deleting the in-memory database.
-    /// </summary>
     public void Dispose()
     {
         _connection?.Dispose();
@@ -60,24 +53,10 @@ public class DbContextFactoryTestHelper : IDisposable
             File.Delete($"{_databasePath}-wal");
             File.Delete($"{_databasePath}-shm");
         }
-        GC.SuppressFinalize(this);
     }
 
-    /// <summary>
-    ///     A simple implementation of IDbContextFactory for testing.
-    /// </summary>
-    private class TestDbContextFactory : IDbContextFactory<MusicDbContext>
+    private sealed class TestDbContextFactory(DbContextOptions<MusicDbContext> options) : IDbContextFactory<MusicDbContext>
     {
-        private readonly DbContextOptions<MusicDbContext> _options;
-
-        public TestDbContextFactory(DbContextOptions<MusicDbContext> options)
-        {
-            _options = options;
-        }
-
-        public MusicDbContext CreateDbContext()
-        {
-            return new MusicDbContext(_options);
-        }
+        public MusicDbContext CreateDbContext() => new(options);
     }
 }

@@ -1,6 +1,6 @@
 using System.Net;
 using System.Net.Http.Headers;
-using System.Text;
+using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
@@ -76,57 +76,47 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
             .Where(lh => lh.IsEligibleForScrobbling
                          && !lh.IsSubmittedToListenBrainz
                          && lh.ListenTimestampUtc >= enabledSince.Value)
-            .Include(lh => lh.Song).ThenInclude(s => s!.Album)
+            .Include(lh => lh.Song).ThenInclude(s => s.Album)
             .OrderBy(lh => lh.ListenTimestampUtc)
             .ToListAsync(cancellationToken).ConfigureAwait(false);
 
-        if (pending.Count == 0) return;
-
-        // ListenBrainz accepts up to 1000 listens per /1/submit-listens call. Chunk to
-        // keep payloads modest and limit blast radius if a chunk is rejected as 4xx.
-        const int batchSize = 100;
-        var changedCount = 0;
-        for (var offset = 0; offset < pending.Count; offset += batchSize)
+        foreach (var chunk in pending.Chunk(100))
         {
-            if (cancellationToken.IsCancellationRequested) break;
+            if (!await ProcessBatchAsync(ctx, chunk, cancellationToken).ConfigureAwait(false)) break;
+        }
+    }
 
-            var chunk = pending.GetRange(offset, Math.Min(batchSize, pending.Count - offset));
-
-            SubmissionOutcome outcome;
-            try
-            {
-                outcome = await SubmitBatchAsync(chunk, cancellationToken).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex,
-                    "ListenBrainz batch submission raised. Will retry later. {Count} listens deferred.",
-                    chunk.Count);
-                break;
-            }
-
-            if (outcome == SubmissionOutcome.TransientFailure)
-            {
-                _logger.LogDebug("ListenBrainz transient failure on batch of {Count}. Stopping to preserve order.",
-                    chunk.Count);
-                break;
-            }
-
-            // Mark permanent rejections as submitted too so a single bad batch cannot block
-            // every newer listen. Only transient failures keep the entries pending.
-            if (outcome == SubmissionOutcome.PermanentFailure)
-                _logger.LogWarning("ListenBrainz permanently rejected batch of {Count}; dropping from queue.",
-                    chunk.Count);
-
-            foreach (var entry in chunk)
-            {
-                entry.IsSubmittedToListenBrainz = true;
-                changedCount++;
-            }
+    private async Task<bool> ProcessBatchAsync(MusicDbContext context, IReadOnlyList<ListenHistory> entries,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        SubmissionOutcome outcome;
+        try
+        {
+            outcome = await SubmitBatchAsync(entries, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            _logger.LogWarning(ex, "ListenBrainz submission failed; retaining {Count} listens for retry.", entries.Count);
+            return false;
         }
 
-        if (changedCount > 0)
-            await ctx.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        if (outcome == SubmissionOutcome.TransientFailure) return false;
+        if (outcome == SubmissionOutcome.PermanentFailure && entries.Count > 1)
+        {
+            // A single invalid listen must not discard every valid listen in its batch.
+            foreach (var entry in entries)
+                if (!await ProcessBatchAsync(context, [entry], cancellationToken).ConfigureAwait(false)) return false;
+            return true;
+        }
+
+        if (outcome == SubmissionOutcome.PermanentFailure)
+            _logger.LogWarning("ListenBrainz permanently rejected listen {Id}; dropping it from the queue.", entries[0].Id);
+        foreach (var entry in entries)
+            entry.IsSubmittedToListenBrainz = true;
+        // Persist acknowledgements even if shutdown cancels further submissions.
+        await context.SaveChangesAsync(CancellationToken.None).ConfigureAwait(false);
+        return true;
     }
 
     private enum SubmissionOutcome
@@ -176,7 +166,6 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
             request.Headers.Authorization = new AuthenticationHeaderValue("Token", token);
 
             using var response = await _httpClient.SendAsync(request).ConfigureAwait(false);
-            var body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.Unauthorized)
                 return new ValidateTokenResult(false, null, "Token is not valid.");
@@ -184,16 +173,8 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
             if (!response.IsSuccessStatusCode)
                 return new ValidateTokenResult(false, null, $"ListenBrainz returned {(int)response.StatusCode}.");
 
-            ListenBrainzValidateTokenResponse? parsed;
-            try
-            {
-                parsed = JsonSerializer.Deserialize<ListenBrainzValidateTokenResponse>(body, JsonOptions);
-            }
-            catch (JsonException ex)
-            {
-                _logger.LogWarning(ex, "Failed to parse ListenBrainz validate-token response.");
-                return new ValidateTokenResult(false, null, "Could not parse response.");
-            }
+            var parsed = await response.Content.ReadFromJsonAsync<ListenBrainzValidateTokenResponse>(JsonOptions)
+                .ConfigureAwait(false);
 
             if (parsed is null)
                 return new ValidateTokenResult(false, null, "Could not parse response.");
@@ -202,6 +183,11 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
                 ? new ValidateTokenResult(true, parsed.UserName, null)
                 : new ValidateTokenResult(false, null, parsed.Message ?? "Token is not valid.");
         }
+        catch (JsonException ex)
+        {
+            _logger.LogWarning(ex, "Failed to parse ListenBrainz validate-token response.");
+            return new ValidateTokenResult(false, null, "Could not parse response.");
+        }
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "ListenBrainz token validation failed.");
@@ -209,83 +195,42 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
         }
     }
 
-    private async Task<SubmissionOutcome> SubmitAsync(Song song, string listenType, long? listenedAt)
+    private Task<SubmissionOutcome> SubmitAsync(Song song, string listenType, long? listenedAt)
     {
-        var artist = song.PrimaryArtistName;
-        if (string.IsNullOrWhiteSpace(artist) || string.IsNullOrWhiteSpace(song.Title))
-        {
-            _logger.LogDebug("Skipping ListenBrainz '{ListenType}' - missing artist or title.", listenType);
-            return SubmissionOutcome.PermanentFailure;
-        }
-
-        var payload = new ListenBrainzSubmitPayload
-        {
-            ListenType = listenType,
-            Payload = new List<ListenBrainzListen>
-            {
-                new()
-                {
-                    ListenedAt = listenedAt,
-                    TrackMetadata = new ListenBrainzTrackMetadata
-                    {
-                        ArtistName = artist,
-                        TrackName = song.Title,
-                        ReleaseName = song.Album?.Title
-                    }
-                }
-            }
-        };
-
-        return await PostPayloadAsync(payload, listenType, CancellationToken.None).ConfigureAwait(false);
+        var listen = CreateListen(song, listenedAt);
+        return listen is null
+            ? Task.FromResult(SubmissionOutcome.PermanentFailure)
+            : PostPayloadAsync(new ListenBrainzSubmitPayload { ListenType = listenType, Payload = [listen] }, CancellationToken.None);
     }
 
-    /// <summary>
-    ///     Submits a chunk of pending listens as a single <c>import</c> batch (or <c>single</c>
-    ///     if the chunk has exactly one valid entry). Entries with missing artist/title are
-    ///     filtered out before the call — they can never be accepted.
-    /// </summary>
-    private async Task<SubmissionOutcome> SubmitBatchAsync(
-        IReadOnlyList<ListenHistory> entries, CancellationToken cancellationToken)
+    private Task<SubmissionOutcome> SubmitBatchAsync(IReadOnlyList<ListenHistory> entries, CancellationToken cancellationToken)
     {
-        var listens = new List<ListenBrainzListen>(entries.Count);
-        foreach (var entry in entries)
-        {
-            var song = entry.Song;
-            if (song is null) continue;
-            var artist = song.PrimaryArtistName;
-            if (string.IsNullOrWhiteSpace(artist) || string.IsNullOrWhiteSpace(song.Title))
+        var listens = entries.Select(entry => CreateListen(entry.Song, ToUnixSeconds(entry.ListenTimestampUtc)))
+            .OfType<ListenBrainzListen>().ToList();
+        return listens.Count == 0
+            ? Task.FromResult(SubmissionOutcome.PermanentFailure)
+            : PostPayloadAsync(new ListenBrainzSubmitPayload
             {
-                _logger.LogDebug("Skipping ListenBrainz batch entry — missing artist or title for '{Title}'.",
-                    song.Title);
-                continue;
+                ListenType = listens.Count == 1 ? "single" : "import", Payload = listens
+            }, cancellationToken);
+    }
+
+    private static ListenBrainzListen? CreateListen(Song song, long? listenedAt)
+    {
+        if (string.IsNullOrWhiteSpace(song.PrimaryArtistName) || string.IsNullOrWhiteSpace(song.Title))
+            return null;
+        return new ListenBrainzListen
+        {
+            ListenedAt = listenedAt,
+            TrackMetadata = new ListenBrainzTrackMetadata
+            {
+                ArtistName = song.PrimaryArtistName, TrackName = song.Title, ReleaseName = song.Album?.Title
             }
-            listens.Add(new ListenBrainzListen
-            {
-                ListenedAt = ToUnixSeconds(entry.ListenTimestampUtc),
-                TrackMetadata = new ListenBrainzTrackMetadata
-                {
-                    ArtistName = artist,
-                    TrackName = song.Title,
-                    ReleaseName = song.Album?.Title
-                }
-            });
-        }
-
-        // Nothing in the chunk is submittable — drop it (matches per-entry permanent behavior).
-        if (listens.Count == 0) return SubmissionOutcome.PermanentFailure;
-
-        var listenType = listens.Count == 1 ? "single" : "import";
-        var payload = new ListenBrainzSubmitPayload
-        {
-            ListenType = listenType,
-            Payload = listens
         };
-
-        return await PostPayloadAsync(payload, listenType, cancellationToken).ConfigureAwait(false);
     }
 
     private async Task<SubmissionOutcome> PostPayloadAsync(
-        ListenBrainzSubmitPayload payload, string listenType, CancellationToken cancellationToken)
+        ListenBrainzSubmitPayload payload, CancellationToken cancellationToken)
     {
         var token = await _settingsService.GetListenBrainzUserTokenAsync().ConfigureAwait(false);
         if (string.IsNullOrEmpty(token))
@@ -303,12 +248,9 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
             {
                 using var request = new HttpRequestMessage(HttpMethod.Post, url);
                 request.Headers.Authorization = new AuthenticationHeaderValue("Token", token);
-                request.Content = new StringContent(
-                    JsonSerializer.Serialize(payload, JsonOptions),
-                    Encoding.UTF8,
-                    "application/json");
+                request.Content = JsonContent.Create(payload, options: JsonOptions);
                 _logger.LogDebug("Calling ListenBrainz '{ListenType}' with {Count} listen(s).",
-                    listenType, payload.Payload.Count);
+                    payload.ListenType, payload.Payload.Count);
                 return await _httpClient.SendAsync(request, ct).ConfigureAwait(false);
             },
             async (response, ct) =>
@@ -319,16 +261,15 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
                 var body = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
                 _logger.LogWarning(
                     "ListenBrainz '{ListenType}' failed. Status: {StatusCode}, Response: {ResponseContent}.",
-                    listenType, response.StatusCode, body);
+                    payload.ListenType, response.StatusCode, body);
 
-                // 5xx/408/429 = pipeline retries exhausted on transient code → hold queue.
-                return HttpStatusClassification.IsTransient(response.StatusCode)
-                    ? SubmissionOutcome.TransientFailure
-                    : SubmissionOutcome.PermanentFailure;
+                return response.StatusCode == HttpStatusCode.BadRequest
+                    ? SubmissionOutcome.PermanentFailure
+                    : SubmissionOutcome.TransientFailure;
             },
             fallback: SubmissionOutcome.TransientFailure,
             _logger,
-            $"submit '{listenType}'",
+            $"submit '{payload.ListenType}'",
             cancellationToken).ConfigureAwait(false);
     }
 

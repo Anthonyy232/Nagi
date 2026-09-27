@@ -1,15 +1,9 @@
-﻿using System;
+using System;
 
 namespace Nagi.WinUI.Navigation;
 
-/// <summary>
-///     Encapsulates parameters required for navigating to the playlist song view.
-/// </summary>
 public record PlaylistSongViewNavigationParameter
 {
-    /// <summary>
-    ///     Gets or sets the title to display on the song view page, typically the playlist's name.
-    /// </summary>
     public string Title { get; init; } = string.Empty;
 
     /// <summary>
@@ -18,8 +12,5 @@ public record PlaylistSongViewNavigationParameter
     /// </summary>
     public Guid? PlaylistId { get; init; }
 
-    /// <summary>
-    ///     Gets or sets the URI to the playlist's cover image.
-    /// </summary>
     public string? CoverImageUri { get; init; }
 }

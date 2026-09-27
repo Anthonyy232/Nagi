@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
@@ -10,33 +10,19 @@ using Xunit;
 
 namespace Nagi.Core.Tests;
 
-/// <summary>
-///     Provides comprehensive unit tests for the <see cref="MusicPlaybackService" />.
-///     All external dependencies are mocked to ensure isolated testing of the service's logic.
-/// </summary>
-public class MusicPlaybackServiceTests
+public class MusicPlaybackServiceTests : IAsyncDisposable
 {
     private readonly IAudioPlayer _audioPlayer;
     private readonly ILibraryService _libraryService;
     private readonly ILogger<MusicPlaybackService> _logger;
     private readonly IMetadataService _metadataService;
 
-    /// <summary>
-    ///     The instance of the service under test.
-    /// </summary>
     private readonly MusicPlaybackService _service;
 
-    // Mocks for external dependencies, enabling isolated testing of the service's logic.
     private readonly ISettingsService _settingsService;
 
-    // A consistent list of song objects for use in tests.
     private readonly List<Song> _testSongs;
 
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="MusicPlaybackServiceTests" /> class.
-    ///     This constructor sets up the required mocks and instantiates the
-    ///     <see cref="MusicPlaybackService" /> with these test dependencies.
-    /// </summary>
     public MusicPlaybackServiceTests()
     {
         _settingsService = Substitute.For<ISettingsService>();
@@ -45,7 +31,6 @@ public class MusicPlaybackServiceTests
         _metadataService = Substitute.For<IMetadataService>();
         _logger = Substitute.For<ILogger<MusicPlaybackService>>();
 
-        // Setup default return values for settings to avoid nulls
         _settingsService.GetInitialVolumeAsync().Returns(0.5);
         _settingsService.GetInitialMuteStateAsync().Returns(false);
         _settingsService.GetInitialShuffleStateAsync().Returns(false);
@@ -54,7 +39,6 @@ public class MusicPlaybackServiceTests
         _settingsService.GetPlaybackStateAsync().Returns((PlaybackState?)null);
         _settingsService.GetEqualizerSettingsAsync().Returns((EqualizerSettings?)null);
 
-        // Setup audio player with some default properties
         _audioPlayer.GetEqualizerBands().Returns(new List<(uint, float)> { (0, 60f), (1, 170f) });
 
         _service = new MusicPlaybackService(
@@ -66,16 +50,14 @@ public class MusicPlaybackServiceTests
 
         _testSongs = CreateTestSongs(5);
 
-        // Mock LibraryService.GetSongByIdAsync for all test songs to support lazy-loading
         foreach (var song in _testSongs)
         {
             _libraryService.GetSongByIdAsync(song.Id).Returns(song);
         }
     }
 
-    /// <summary>
-    ///     Helper to create a list of unique song objects for testing.
-    /// </summary>
+    public ValueTask DisposeAsync() => _service.DisposeAsync();
+
     private static List<Song> CreateTestSongs(int count)
     {
         return Enumerable.Range(1, count)
@@ -83,7 +65,36 @@ public class MusicPlaybackServiceTests
             .ToList();
     }
 
-    #region Transient Playback Tests
+    [Fact]
+    public async Task AddRangeToQueueAsync_WithRepeatedTracks_AddsEachTrackOnce()
+    {
+        await _service.InitializeAsync();
+        await _service.AddToQueueAsync(_testSongs[0]);
+        await _service.AddToQueueAsync(_testSongs[1]);
+        await _service.AddToQueueAsync(_testSongs[1]);
+        await _service.AddRangeToQueueAsync(new[]
+            { _testSongs[0].Id, _testSongs[1].Id, _testSongs[2].Id, _testSongs[2].Id, Guid.Empty });
+
+        _service.PlaybackQueue.Should().Equal(_testSongs.Take(3).Select(song => song.Id));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task PlayAsync_WithDuplicateTracks_PreservesSelectedTrackAndUniqueQueue(bool shuffle)
+    {
+        await _service.InitializeAsync();
+        await _service.SetShuffleAsync(shuffle);
+        var first = _testSongs[0];
+        var selected = _testSongs[1];
+
+        await _service.PlayAsync(new[] { first.Id, Guid.Empty, first.Id, selected.Id }, startIndex: 3);
+
+        _service.PlaybackQueue.Should().Equal(first.Id, selected.Id);
+        _service.CurrentTrack.Should().BeSameAs(selected);
+        _service.CurrentQueueIndex.Should().Be(1);
+        if (shuffle) _service.ShuffledQueue.Should().BeEquivalentTo(new[] { first.Id, selected.Id });
+    }
 
     [Theory]
     [InlineData(false)]
@@ -150,6 +161,7 @@ public class MusicPlaybackServiceTests
         {
             Title = "External", Genres = ["Rock", "rock", ""], Duration = TimeSpan.FromSeconds(90)
         });
+
         await _service.InitializeAsync();
         await _service.AddTransientFilesToQueueAsync([path]);
         var transientId = _service.PlaybackQueue.Single();
@@ -191,14 +203,9 @@ public class MusicPlaybackServiceTests
         _service.PlaybackQueue[_service.CurrentQueueIndex].Should().Be(_testSongs[0].Id);
     }
 
-    /// <summary>
-    ///     Verifies that PlayTransientFileAsync correctly plays a file not in the library,
-    ///     clearing the existing queue and creating a temporary Song object.
-    /// </summary>
     [Fact]
     public async Task PlayTransientFileAsync_WhenCalled_ClearsQueueAndPlaysFile()
     {
-        // Arrange
         const string filePath = "C:\\temp\\transient.mp3";
         var metadata = new SongFileMetadata
         {
@@ -209,13 +216,11 @@ public class MusicPlaybackServiceTests
         };
         _metadataService.ExtractMetadataAsync(filePath).Returns(metadata);
         await _service.InitializeAsync();
-        await _service.PlayAsync(_testSongs); // Pre-load a queue
+        await _service.PlayAsync(_testSongs);
         _audioPlayer.ClearReceivedCalls();
 
-        // Act
         await _service.PlayTransientFileAsync(filePath);
 
-        // Assert
         _service.PlaybackQueue.Should().BeEmpty();
         _service.CurrentTrack.Should().NotBeNull();
         _service.CurrentTrack!.Title.Should().Be("Transient Song");
@@ -230,7 +235,6 @@ public class MusicPlaybackServiceTests
     [Fact]
     public async Task PlayTransientFileAsync_WithMultipleArtists_SetsCorrectArtistName()
     {
-        // Arrange
         const string filePath = "C:\\temp\\multi.mp3";
         var metadata = new SongFileMetadata
         {
@@ -240,10 +244,8 @@ public class MusicPlaybackServiceTests
         _metadataService.ExtractMetadataAsync(filePath).Returns(metadata);
         await _service.InitializeAsync();
 
-        // Act
         await _service.PlayTransientFileAsync(filePath);
 
-        // Assert
         _service.CurrentTrack.Should().NotBeNull();
         _service.CurrentTrack!.ArtistName.Should().Be("Artist 1 & Artist 2");
     }
@@ -278,11 +280,6 @@ public class MusicPlaybackServiceTests
             externalIds[0], Arg.Any<PlaybackContext>());
     }
 
-    #endregion
-
-    /// <summary>
-    ///     Helper class to track event invocations for verification.
-    /// </summary>
     private class EventTracker
     {
         public EventTracker(MusicPlaybackService service)
@@ -299,46 +296,118 @@ public class MusicPlaybackServiceTests
         public int EqualizerChangedCount { get; private set; }
     }
 
-    #region Initialization Tests
+    [Fact]
+    public async Task InitializeAsync_WithDuplicateSavedQueue_RestoresUniqueTracksInOriginalOrder()
+    {
+        var first = _testSongs[0];
+        var second = _testSongs[1];
+        _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
+        _settingsService.GetPlaybackStateAsync().Returns(new PlaybackState
+        {
+            PlaybackQueueTrackIds = [first.Id, Guid.Empty, first.Id, second.Id],
+            CurrentPlaybackQueueIndex = 3
+        });
 
-    /// <summary>
-    ///     Verifies that <see cref="MusicPlaybackService.InitializeAsync" /> correctly loads initial
-    ///     settings (volume, mute, shuffle, repeat) from the settings service and applies them to
-    ///     the audio player and service state.
-    /// </summary>
+        await _service.InitializeAsync();
+
+        _service.PlaybackQueue.Should().Equal(first.Id, second.Id);
+        _service.CurrentQueueIndex.Should().Be(1);
+        await _service.PlayPauseAsync();
+        _service.CurrentTrack.Should().BeSameAs(second);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task InitializeAsync_WithInvalidShuffleOfSameLength_RebuildsPermutation(bool duplicate)
+    {
+        var ids = _testSongs.Select(song => song.Id).ToList();
+        var shuffle = ids.ToList();
+        shuffle[^1] = duplicate ? ids[0] : Guid.NewGuid();
+        _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
+        _settingsService.GetInitialShuffleStateAsync().Returns(true);
+        _settingsService.GetPlaybackStateAsync().Returns(new PlaybackState
+        {
+            PlaybackQueueTrackIds = ids,
+            ShuffledQueueTrackIds = shuffle,
+            CurrentTrackId = ids[0]
+        });
+
+        await _service.InitializeAsync();
+
+        _service.ShuffledQueue.Should().OnlyHaveUniqueItems();
+        _service.ShuffledQueue.Should().BeEquivalentTo(ids);
+        _service.ShuffledQueue[_service.CurrentShuffledIndex].Should().Be(ids[0]);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task InitializeAsync_WithOutOfRangeSavedPosition_RemainsPlayable(bool shuffle)
+    {
+        var ids = _testSongs.Select(song => song.Id).ToList();
+        _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
+        _settingsService.GetInitialShuffleStateAsync().Returns(shuffle);
+        _settingsService.GetPlaybackStateAsync().Returns(new PlaybackState
+        {
+            PlaybackQueueTrackIds = ids,
+            ShuffledQueueTrackIds = ids.AsEnumerable().Reverse().ToList(),
+            CurrentPlaybackQueueIndex = ids.Count,
+            CurrentShuffledQueueIndex = ids.Count
+        });
+
+        await _service.InitializeAsync();
+        await _service.PlayPauseAsync();
+
+        _service.CurrentTrack.Should().NotBeNull();
+        ids.Should().Contain(_service.CurrentTrack!.Id);
+        _service.CurrentQueueIndex.Should().BeInRange(0, ids.Count - 1);
+        if (shuffle) _service.CurrentShuffledIndex.Should().BeInRange(0, ids.Count - 1);
+    }
+
+    [Fact]
+    public async Task InitializeAsync_WithCurrentTrackOutsideSavedQueue_DoesNotLoadUnqueuedTrack()
+    {
+        var first = _testSongs[0];
+        var unqueued = _testSongs[1];
+        _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
+        _settingsService.GetPlaybackStateAsync().Returns(new PlaybackState
+        {
+            PlaybackQueueTrackIds = [first.Id],
+            CurrentTrackId = unqueued.Id
+        });
+
+        await _service.InitializeAsync();
+
+        _service.CurrentTrack.Should().BeNull();
+        await _audioPlayer.DidNotReceive().LoadAsync(unqueued);
+        await _service.PlayPauseAsync();
+        _service.CurrentTrack.Should().BeSameAs(first);
+    }
+
     [Fact]
     public async Task InitializeAsync_WhenCalledFirstTime_LoadsSettingsAndAppliesThem()
     {
-        // Arrange
         _settingsService.GetInitialVolumeAsync().Returns(0.75);
         _settingsService.GetInitialMuteStateAsync().Returns(true);
         _settingsService.GetInitialShuffleStateAsync().Returns(true);
         _settingsService.GetInitialRepeatModeAsync().Returns(RepeatMode.RepeatAll);
 
-        // Act
         await _service.InitializeAsync();
 
-        // Assert
         await _audioPlayer.Received(1).SetVolumeAsync(0.75);
         await _audioPlayer.Received(1).SetMuteAsync(true);
         _service.IsShuffleEnabled.Should().BeTrue();
         _service.CurrentRepeatMode.Should().Be(RepeatMode.RepeatAll);
     }
 
-    /// <summary>
-    ///     Verifies that if an exception occurs during initialization, the service gracefully
-    ///     falls back to default playback settings without crashing.
-    /// </summary>
     [Fact]
     public async Task InitializeAsync_WhenSettingsServiceThrows_FallsBackToDefaultSettings()
     {
-        // Arrange
         _settingsService.GetInitialVolumeAsync().ThrowsAsync(new InvalidOperationException("Config file corrupted"));
 
-        // Act
         await _service.InitializeAsync();
 
-        // Assert
         await _audioPlayer.Received(1).SetVolumeAsync(0.5);
         await _audioPlayer.Received(1).SetMuteAsync(false);
         _service.IsShuffleEnabled.Should().BeFalse();
@@ -346,14 +415,9 @@ public class MusicPlaybackServiceTests
         _service.PlaybackQueue.Should().BeEmpty();
     }
 
-    /// <summary>
-    ///     Verifies that when session restore is enabled, <see cref="MusicPlaybackService.InitializeAsync" />
-    ///     successfully restores the previous playback queue, current track, and position.
-    /// </summary>
     [Fact]
     public async Task InitializeAsync_WithSessionRestoreEnabled_RestoresStateSuccessfully()
     {
-        // Arrange
         var songIds = _testSongs.Select(s => s.Id).ToList();
         var savedState = new PlaybackState
         {
@@ -363,21 +427,8 @@ public class MusicPlaybackServiceTests
         };
         _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
         _settingsService.GetPlaybackStateAsync().Returns(savedState);
-        _libraryService.GetSongsByIdsAsync(Arg.Is<IEnumerable<Guid>>(ids => ids != null && ids.SequenceEqual(songIds)))
-            .Returns(_testSongs.ToDictionary(s => s.Id));
-
-        // Configure the mock to raise DurationChanged after LoadAsync is called.
-        // This is required for the SeekAsync logic in RestoreInternalPlaybackStateAsync to execute.
-        _audioPlayer.When(x => x.LoadAsync(Arg.Any<Song>())).Do(x =>
-        {
-            _audioPlayer.Duration.Returns(TimeSpan.FromMinutes(3));
-            _audioPlayer.DurationChanged += Raise.Event<Action>();
-        });
-
-        // Act
         await _service.InitializeAsync();
 
-        // Assert
         _service.PlaybackQueue.Should().BeEquivalentTo(_testSongs.Select(s => s.Id));
         _service.CurrentTrack.Should().Be(_testSongs[1]);
         _service.CurrentQueueIndex.Should().Be(1);
@@ -385,30 +436,9 @@ public class MusicPlaybackServiceTests
         await _audioPlayer.DidNotReceive().SeekAsync(Arg.Any<TimeSpan>());
     }
 
-    /// <summary>
-    ///     Verifies that <see cref="MusicPlaybackService.InitializeAsync" /> is idempotent and only
-    ///     performs the initialization logic on the first call.
-    /// </summary>
-    [Fact]
-    public async Task InitializeAsync_WhenCalledMultipleTimes_OnlyInitializesOnce()
-    {
-        // Act
-        await _service.InitializeAsync();
-        await _service.InitializeAsync();
-
-        // Assert
-        await _settingsService.Received(1).GetInitialVolumeAsync();
-        await _audioPlayer.Received(1).SetVolumeAsync(Arg.Any<double>());
-    }
-
-    /// <summary>
-    ///     Verifies that if session restore is enabled but the current track from the saved state
-    ///     cannot be found in the library, the service preserves the queue but resets to index zero.
-    /// </summary>
     [Fact]
     public async Task InitializeAsync_WithSessionRestoreAndMissingCurrentTrack_ResetsToIndexZero()
     {
-        // Arrange
         var songIds = _testSongs.Select(s => s.Id).ToList();
         var savedState = new PlaybackState
         {
@@ -419,38 +449,24 @@ public class MusicPlaybackServiceTests
         _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
         _settingsService.GetPlaybackStateAsync().Returns(savedState);
 
-        // Current track is missing in DB!
         _libraryService.GetSongByIdAsync(_testSongs[1].Id).Returns((Song?)null);
 
-        // Act
         await _service.InitializeAsync();
 
-        // Assert
         _service.PlaybackQueue.Should().BeEquivalentTo(songIds);
         _service.CurrentTrack.Should().BeNull();
         _service.CurrentQueueIndex.Should().Be(0);
         await _audioPlayer.DidNotReceive().LoadAsync(Arg.Any<Song>());
     }
 
-    #endregion
-
-    #region Playback Control Tests
-
-    /// <summary>
-    ///     Verifies that <see cref="MusicPlaybackService.PlayAsync(Song)" /> creates a new queue
-    ///     with the specified song, sets it as the current track, and starts playback.
-    /// </summary>
     [Fact]
     public async Task PlayAsync_WithSingleSong_CreatesQueueAndPlaysSong()
     {
-        // Arrange
         var song = _testSongs[0];
         await _service.InitializeAsync();
 
-        // Act
         await _service.PlayAsync(song);
 
-        // Assert
         _service.PlaybackQueue.Should().HaveCount(1).And.Contain(song.Id);
         _service.CurrentTrack.Should().Be(song);
         _service.CurrentQueueIndex.Should().Be(0);
@@ -458,302 +474,162 @@ public class MusicPlaybackServiceTests
         await _audioPlayer.Received(1).PlayAsync();
     }
 
-    /// <summary>
-    ///     Verifies that <see cref="MusicPlaybackService.PlayAsync(IEnumerable{Song}, int)" />
-    ///     replaces the existing queue with the new list and starts playback from the specified index.
-    /// </summary>
     [Fact]
     public async Task PlayAsync_WithSongList_ReplacesQueueAndPlaysFromStartIndex()
     {
-        // Arrange
         await _service.InitializeAsync();
 
-        // Act
         await _service.PlayAsync(_testSongs, 2);
 
-        // Assert
         _service.PlaybackQueue.Should().BeEquivalentTo(_testSongs.Select(s => s.Id), options => options.WithStrictOrdering());
         _service.CurrentTrack.Should().Be(_testSongs[2]);
         _service.CurrentQueueIndex.Should().Be(2);
         await _audioPlayer.Received(1).LoadAsync(_testSongs[2]);
     }
 
-    /// <summary>
-    ///     Verifies that calling PlayAsync with an empty list correctly stops playback
-    ///     and clears all queues, preventing any potential errors.
-    /// </summary>
     [Fact]
     public async Task PlayAsync_WithEmptyList_StopsAndClearsQueue()
     {
-        // Arrange
         await _service.InitializeAsync();
-        await _service.PlayAsync(_testSongs); // Pre-load a queue
+        await _service.PlayAsync(_testSongs);
 
-        // Act
         await _service.PlayAsync(new List<Song>());
 
-        // Assert
         await _audioPlayer.Received(1).StopAsync();
         _service.PlaybackQueue.Should().BeEmpty();
         _service.CurrentTrack.Should().BeNull();
     }
 
-    /// <summary>
-    ///     Verifies that PlayAsync correctly handles an out-of-bounds start index by defaulting to 0.
-    /// </summary>
     [Fact]
     public async Task PlayAsync_WithInvalidStartIndex_PlaysFromBeginning()
     {
-        // Arrange
         await _service.InitializeAsync();
 
-        // Act
         await _service.PlayAsync(_testSongs, 99);
 
-        // Assert
         _service.CurrentTrack.Should().Be(_testSongs[0]);
         _service.CurrentQueueIndex.Should().Be(0);
         await _audioPlayer.Received(1).LoadAsync(_testSongs[0]);
     }
 
-    /// <summary>
-    ///     Verifies that <see cref="MusicPlaybackService.PlayPauseAsync" /> correctly pauses
-    ///     playback when the audio player is currently playing.
-    /// </summary>
     [Fact]
     public async Task PlayPauseAsync_WhenPlaying_PausesPlayback()
     {
-        // Arrange
         await _service.InitializeAsync();
         await _service.PlayAsync(_testSongs[0]);
         _audioPlayer.IsPlaying.Returns(true);
 
-        // Act
         await _service.PlayPauseAsync();
 
-        // Assert
         await _audioPlayer.Received(1).PauseAsync();
     }
 
-    /// <summary>
-    ///     Verifies that <see cref="MusicPlaybackService.PlayPauseAsync" /> correctly resumes
-    ///     playback when the audio player is currently paused.
-    /// </summary>
     [Fact]
     public async Task PlayPauseAsync_WhenPaused_ResumesPlayback()
     {
-        // Arrange
         await _service.InitializeAsync();
         await _service.PlayAsync(_testSongs[0]);
-        _audioPlayer.IsPlaying.Returns(false); // Simulate paused state
+        _audioPlayer.IsPlaying.Returns(false);
 
-        // Act
         await _service.PlayPauseAsync();
 
-        // Assert
-        await _audioPlayer.Received(2).PlayAsync(); // 1 from PlayAsync, 1 from PlayPauseAsync
+        await _audioPlayer.Received(2).PlayAsync();
     }
 
-    /// <summary>
-    ///     Verifies that if PlayPause is called when no track is active but a queue exists
-    ///     (e.g., after StopAsync), it resumes playback from the last known position in the queue.
-    /// </summary>
     [Fact]
     public async Task PlayPauseAsync_WhenStoppedWithQueue_PlaysFromCurrentIndex()
     {
-        // Arrange
         await _service.InitializeAsync();
+
         await _service.PlayAsync(_testSongs, 2);
-        await _service.StopAsync(); // CurrentTrack is now null, but index is 2
+        await _service.StopAsync();
         _audioPlayer.IsPlaying.Returns(false);
         _audioPlayer.ClearReceivedCalls();
 
-        // Act
         await _service.PlayPauseAsync();
 
-        // Assert
         _service.CurrentTrack.Should().Be(_testSongs[2]);
         await _audioPlayer.Received(1).LoadAsync(_testSongs[2]);
     }
 
-    /// <summary>
-    ///     Verifies that <see cref="MusicPlaybackService.NextAsync" /> advances to the next song
-    ///     in the queue in normal playback mode.
-    /// </summary>
-    [Fact]
-    public async Task NextAsync_InNormalMode_PlaysNextSong()
-    {
-        // Arrange
-        await _service.InitializeAsync();
-        await _service.PlayAsync(_testSongs, 1);
-
-        // Act
-        await _service.NextAsync();
-
-        // Assert
-        _service.CurrentTrack.Should().Be(_testSongs[2]);
-        await _audioPlayer.Received(1).LoadAsync(_testSongs[2]);
-    }
-
-    /// <summary>
-    ///     Verifies that NextAsync with RepeatOne mode enabled simply restarts the current track.
-    /// </summary>
     [Fact]
     public async Task NextAsync_WithRepeatOne_RestartsCurrentTrack()
     {
-        // Arrange
         await _service.InitializeAsync();
         await _service.SetRepeatModeAsync(RepeatMode.RepeatOne);
         await _service.PlayAsync(_testSongs, 1);
         _audioPlayer.ClearReceivedCalls();
 
-        // Act
         await _service.NextAsync();
 
-        // Assert
         _service.CurrentTrack.Should().Be(_testSongs[1]);
         await _audioPlayer.Received(1).LoadAsync(_testSongs[1]);
         await _audioPlayer.Received(1).PlayAsync();
     }
 
-    /// <summary>
-    ///     Verifies that when <see cref="MusicPlaybackService.NextAsync" /> is called on the last
-    ///     song of the queue with RepeatAll enabled, it wraps around and plays the first song.
-    /// </summary>
     [Fact]
     public async Task NextAsync_AtEndOfQueueWithRepeatAll_PlaysFirstSong()
     {
-        // Arrange
         await _service.InitializeAsync();
         await _service.SetRepeatModeAsync(RepeatMode.RepeatAll);
         await _service.PlayAsync(_testSongs, _testSongs.Count - 1);
 
-        // Act
         await _service.NextAsync();
 
-        // Assert
         _service.CurrentTrack.Should().Be(_testSongs[0]);
         await _audioPlayer.Received(1).LoadAsync(_testSongs[0]);
     }
 
-    /// <summary>
-    ///     Verifies that when <see cref="MusicPlaybackService.NextAsync" /> is called on the last
-    ///     song of the queue with no repeat mode enabled, it stops playback.
-    /// </summary>
     [Fact]
     public async Task NextAsync_AtEndOfQueueWithNoRepeat_StopsPlayback()
     {
-        // Arrange
         await _service.InitializeAsync();
         await _service.PlayAsync(_testSongs, _testSongs.Count - 1);
 
-        // Act
         await _service.NextAsync();
 
-        // Assert
         _service.CurrentTrack.Should().BeNull();
         await _audioPlayer.Received(1).StopAsync();
     }
 
-    /// <summary>
-    ///     Verifies that <see cref="MusicPlaybackService.PreviousAsync" /> restarts the current
-    ///     track if the playback position is greater than three seconds.
-    /// </summary>
-    [Fact]
-    public async Task PreviousAsync_WhenPositionIsOver3Seconds_RestartsTrack()
-    {
-        // Arrange
-        await _service.InitializeAsync();
-        await _service.PlayAsync(_testSongs, 2);
-        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(5));
-
-        // Act
-        await _service.PreviousAsync();
-
-        // Assert
-        await _audioPlayer.Received(1).SeekAsync(TimeSpan.Zero);
-        _service.CurrentTrack.Should().Be(_testSongs[2]);
-    }
-
-    /// <summary>
-    ///     Verifies that <see cref="MusicPlaybackService.PreviousAsync" /> plays the previous
-    ///     track in the queue if the playback position is less than three seconds.
-    /// </summary>
-    [Fact]
-    public async Task PreviousAsync_WhenPositionIsUnder3Seconds_PlaysPreviousTrack()
-    {
-        // Arrange
-        await _service.InitializeAsync();
-        await _service.PlayAsync(_testSongs, 2);
-        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(2));
-
-        // Act
-        await _service.PreviousAsync();
-
-        // Assert
-        _service.CurrentTrack.Should().Be(_testSongs[1]);
-        await _audioPlayer.Received(1).LoadAsync(_testSongs[1]);
-    }
-
-    /// <summary>
-    ///     Verifies that PreviousAsync with RepeatOne mode enabled simply restarts the current track,
-    ///     regardless of the current playback position.
-    /// </summary>
     [Fact]
     public async Task PreviousAsync_WithRepeatOne_RestartsCurrentTrack()
     {
-        // Arrange
         await _service.InitializeAsync();
         await _service.SetRepeatModeAsync(RepeatMode.RepeatOne);
         await _service.PlayAsync(_testSongs, 1);
-        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(10)); // Position > 3s
+        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(10));
         _audioPlayer.ClearReceivedCalls();
 
-        // Act
         await _service.PreviousAsync();
 
-        // Assert
         _service.CurrentTrack.Should().Be(_testSongs[1]);
         await _audioPlayer.Received(1).LoadAsync(_testSongs[1]);
         await _audioPlayer.Received(1).PlayAsync();
     }
 
-    /// <summary>
-    ///     Verifies that calling PreviousAsync at the start of the queue with RepeatAll enabled
-    ///     correctly wraps around to the last song.
-    /// </summary>
     [Fact]
     public async Task PreviousAsync_AtStartOfQueueWithRepeatAll_PlaysLastSong()
     {
-        // Arrange
         await _service.InitializeAsync();
         await _service.SetRepeatModeAsync(RepeatMode.RepeatAll);
         await _service.PlayAsync(_testSongs);
-        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(1)); // Position < 3s
+        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(1));
 
-        // Act
         await _service.PreviousAsync();
 
-        // Assert
         _service.CurrentTrack.Should().Be(_testSongs.Last());
         await _audioPlayer.Received(1).LoadAsync(_testSongs.Last());
     }
 
-    #endregion
-
-    #region Listen History Session Tests
-
     [Fact]
     public async Task PlayAsync_CreatesListenSessionAndSetsContext()
     {
-        // Arrange
         await _service.InitializeAsync();
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(100L); // Session ID
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(100L);
 
-        // Act
         await _service.PlayAsync(_testSongs[0]);
 
-        // Assert
         _service.CurrentListenHistoryId.Should().Be(100L);
         await _libraryService.Received(1).StartListenSessionAsync(
             _testSongs[0].Id,
@@ -763,23 +639,19 @@ public class MusicPlaybackServiceTests
     [Fact]
     public async Task PlayAsync_RaisesTrackChanged_AfterListenSessionIdIsSet()
     {
-        // Arrange
         await _service.InitializeAsync();
         _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(150L);
 
         long? listenHistoryIdSeenByEvent = null;
         _service.TrackChanged += () => listenHistoryIdSeenByEvent = _service.CurrentListenHistoryId;
 
-        // Simulate the audio backend raising MediaOpened while LoadAsync is running.
         _audioPlayer.When(x => x.LoadAsync(Arg.Any<Song>())).Do(_ =>
         {
             _audioPlayer.MediaOpened += Raise.Event<Action>();
         });
 
-        // Act
         await _service.PlayAsync(_testSongs[0]);
 
-        // Assert
         listenHistoryIdSeenByEvent.Should().Be(150L,
             "TrackChanged consumers (e.g. presence) must always see the active listen session ID");
     }
@@ -787,17 +659,14 @@ public class MusicPlaybackServiceTests
     [Fact]
     public async Task StopAsync_WithActiveSession_FinalizesSessionAsPausedAndAbandoned()
     {
-        // Arrange
         await _service.InitializeAsync();
         _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(200L);
         await _service.PlayAsync(_testSongs[0]);
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(30));
 
-        // Act
         await _service.StopAsync();
         await _service.FlushPendingFinalizationAsync();
 
-        // Assert
         _service.CurrentListenHistoryId.Should().BeNull();
         await _libraryService.Received(1).FinalizeListenSessionAsync(
             200L,
@@ -808,60 +677,52 @@ public class MusicPlaybackServiceTests
     [Fact]
     public async Task NextAsync_WithActiveSession_FinalizesSessionAsSkipped()
     {
-        // Arrange
         await _service.InitializeAsync();
         _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(300L);
-        await _service.PlayAsync(_testSongs, 0); // Play Song 0
+        await _service.PlayAsync(_testSongs, 0);
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(45));
 
-        // We need to mock StartListenSessionAsync to return a new ID for the NEXT track
         _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(301L);
 
-        // Act
-        await _service.NextAsync(); // Transition to Song 1
+        await _service.NextAsync();
         await _service.FlushPendingFinalizationAsync();
 
-        // Assert
-        // First session should be finalized as skipped
         await _libraryService.Received(1).FinalizeListenSessionAsync(
             300L,
             TimeSpan.FromSeconds(45),
             PlaybackEndReason.Skipped);
 
-        // Service should now track the NEW session
         _service.CurrentListenHistoryId.Should().Be(301L);
+        _service.CurrentTrack.Should().Be(_testSongs[1]);
+        await _audioPlayer.Received(1).LoadAsync(_testSongs[1]);
     }
 
     [Fact]
     public async Task OnPlaybackEnded_FinalizesSessionAsFinishedAndAdvancesQueue()
     {
-        // Arrange
         await _service.InitializeAsync();
         _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(400L);
-        await _service.PlayAsync(_testSongs, 0); // Play Song 0
+        await _service.PlayAsync(_testSongs, 0);
 
-        // Set the mocked Duration and Position equivalent to reaching the end of the track
         var duration = TimeSpan.FromMinutes(3);
         _audioPlayer.Duration.Returns(duration);
         _audioPlayer.CurrentPosition.Returns(duration);
 
-        // Act
         _audioPlayer.PlaybackEnded += Raise.Event<Action>();
         await _service.FlushPendingFinalizationAsync();
 
-        // Assert
         await _libraryService.Received(1).FinalizeListenSessionAsync(
             400L,
             duration,
             PlaybackEndReason.Finished);
 
-        _service.CurrentTrack.Should().Be(_testSongs[1]); // Next track should be queued
+        _service.CurrentTrack.Should().Be(_testSongs[1]);
+        await _audioPlayer.Received(1).LoadAsync(_testSongs[1]);
     }
 
     [Fact]
     public async Task PlayAlbumAsync_StartsSessionWithAlbumContext()
     {
-        // Arrange
         await _service.InitializeAsync();
         var albumId = Guid.NewGuid();
         _libraryService.GetAllSongIdsByAlbumIdAsync(albumId, Arg.Any<SongSortOrder>())
@@ -869,10 +730,8 @@ public class MusicPlaybackServiceTests
 
         _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(500L);
 
-        // Act
         await _service.PlayAlbumAsync(albumId);
 
-        // Assert
         await _libraryService.Received(1).StartListenSessionAsync(
             _testSongs[0].Id,
             Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Album && c.ContextId == albumId));
@@ -881,16 +740,13 @@ public class MusicPlaybackServiceTests
     [Fact]
     public async Task DisposeAsync_FinalizesActiveSessionAsPausedAndAbandoned()
     {
-        // Arrange
         await _service.InitializeAsync();
         _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(600L);
         await _service.PlayAsync(_testSongs[0]);
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(15));
 
-        // Act
         await _service.DisposeAsync();
 
-        // Assert
         await _libraryService.Received(1).FinalizeListenSessionAsync(
             600L,
             TimeSpan.FromSeconds(15),
@@ -900,34 +756,27 @@ public class MusicPlaybackServiceTests
     [Fact]
     public async Task PlayTransientFileAsync_StartsTransientSessionAndFinalizesPrevious()
     {
-        // Arrange
         await _service.InitializeAsync();
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(100L); // Previous session
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(100L);
 
-        await _service.PlayAsync(_testSongs[0]); // Starts the previous session
+        await _service.PlayAsync(_testSongs[0]);
 
         var filePath = "C:\\temp\\transient.mp3";
         var metadata = new SongFileMetadata { Title = "Transient Song", Artists = new List<string> { "Temp Artist" } };
         _metadataService.ExtractMetadataAsync(filePath).Returns(metadata);
 
-        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(20)); // Duration of previous session before transient playback
+        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(20));
         _audioPlayer.ClearReceivedCalls();
         _libraryService.ClearReceivedCalls();
 
-        // Act
-        // Playing a transient file should finalize the previous queue session as Skipped
-        // and NOT start a new session because transient files are not in the database.
         await _service.PlayTransientFileAsync(filePath);
         await _service.FlushPendingFinalizationAsync();
 
-        // Assert
-        // Verified the previous session was finalized
         await _libraryService.Received(1).FinalizeListenSessionAsync(
             100L,
             TimeSpan.FromSeconds(20),
             PlaybackEndReason.Skipped);
 
-        // Verification that a new session was NOT created because transient playback is not tracked
         _service.CurrentListenHistoryId.Should().BeNull();
         await _libraryService.DidNotReceiveWithAnyArgs().StartListenSessionAsync(Guid.Empty, default!);
     }
@@ -935,7 +784,6 @@ public class MusicPlaybackServiceTests
     [Fact]
     public async Task PlayTransientFileAsync_WhenFileExistsInLibrary_StartsTransientSession()
     {
-        // Arrange
         await _service.InitializeAsync();
 
         const string filePath = "C:\\temp\\transient-in-library.mp3";
@@ -957,10 +805,8 @@ public class MusicPlaybackServiceTests
         _libraryService.GetSongByFilePathAsync(filePath).Returns(mappedSong);
         _libraryService.StartListenSessionAsync(mappedSong.Id, Arg.Any<PlaybackContext>()).Returns(777L);
 
-        // Act
         await _service.PlayTransientFileAsync(filePath);
 
-        // Assert
         _service.CurrentListenHistoryId.Should().Be(777L);
         await _libraryService.Received(1).StartListenSessionAsync(
             mappedSong.Id,
@@ -970,42 +816,29 @@ public class MusicPlaybackServiceTests
     [Fact]
     public async Task PlayQueueItemAsync_WhenSkippingDeletedSongs_FinalizesPreviousSessionCorrectly()
     {
-        // This test verifies the scenario in PlayQueueItemAsync where the target song is deleted from the DB
-        // so it skips forward until it finds a valid one. It must STILL accurately start the session for the *found* song
-        // and finalize the *previous* session.
 
-        // Arrange
         await _service.InitializeAsync();
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(700L); // First Session
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(700L);
         await _service.PlayAsync(_testSongs[0]);
 
-        // Current Track is Song 0. We want to skip to Song 1, but Song 1 is "deleted"
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(15));
 
-        // Add Song 1 and Song 2 to queue
         await _service.AddToQueueAsync(_testSongs[1]);
         await _service.AddToQueueAsync(_testSongs[2]);
 
-        // Mock Song 1 as deleted (returns null from DB)
         _libraryService.GetSongByIdAsync(_testSongs[1].Id).Returns((Song?)null);
 
-        // Mock Song 2 as valid and returning a new session ID
         _libraryService.GetSongByIdAsync(_testSongs[2].Id).Returns(_testSongs[2]);
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(701L); // Second Session
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(701L);
 
-        // Act
-        // Attempt to play Song 1 (which is deleted). The service should skip to Song 2.
         await _service.PlayQueueItemAsync(1);
         await _service.FlushPendingFinalizationAsync();
 
-        // Assert
-        // First session should be finalized as skipped
         await _libraryService.Received(1).FinalizeListenSessionAsync(
             700L,
             TimeSpan.FromSeconds(15),
             PlaybackEndReason.Skipped);
 
-        // Service should skip the deleted song and track the NEW session for Song 2
         _service.CurrentTrack.Should().Be(_testSongs[2]);
         _service.CurrentListenHistoryId.Should().Be(701L);
     }
@@ -1013,22 +846,17 @@ public class MusicPlaybackServiceTests
     [Fact]
     public async Task ClearQueueAsync_WithActiveSession_FinalizesSessionAsPausedAndAbandoned()
     {
-        // Arrange
         await _service.InitializeAsync();
         _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(800L);
-        await _service.PlayAsync(_testSongs[0]); // Starts the session
+        await _service.PlayAsync(_testSongs[0]);
 
-        // Add more songs to queue
         await _service.AddToQueueAsync(_testSongs[1]);
 
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(25));
 
-        // Act
         await _service.ClearQueueAsync();
         await _service.FlushPendingFinalizationAsync();
 
-        // Assert
-        // Verified the session was finalized as PausedAndAbandoned (because ClearQueue calls StopAsync)
         await _libraryService.Received(1).FinalizeListenSessionAsync(
             800L,
             TimeSpan.FromSeconds(25),
@@ -1041,62 +869,51 @@ public class MusicPlaybackServiceTests
     [Fact]
     public async Task PreviousAsync_Under3Seconds_FinalizesSessionAsSkipped()
     {
-        // Arrange
         await _service.InitializeAsync();
         _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(900L);
-        await _service.PlayAsync(_testSongs, 1); // Play Song 1 (Index 1)
+        await _service.PlayAsync(_testSongs, 1);
 
-        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(2)); // Under 3 seconds
+        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(2));
 
-        // Mock new session for Previous song
         _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(901L);
 
-        // Act
-        await _service.PreviousAsync(); // Should go back to Song 0
+        await _service.PreviousAsync();
         await _service.FlushPendingFinalizationAsync();
 
-        // Assert
-        // First session should be finalized as skipped
         await _libraryService.Received(1).FinalizeListenSessionAsync(
             900L,
             TimeSpan.FromSeconds(2),
             PlaybackEndReason.Skipped);
 
         _service.CurrentListenHistoryId.Should().Be(901L);
+        await _audioPlayer.Received(1).LoadAsync(_testSongs[0]);
         _service.CurrentTrack.Should().Be(_testSongs[0]);
     }
 
     [Fact]
     public async Task PreviousAsync_Over3Seconds_DoesNotFinalizeSession()
     {
-        // Arrange
         await _service.InitializeAsync();
         _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1000L);
-        await _service.PlayAsync(_testSongs, 1); // Play Song 1
+        await _service.PlayAsync(_testSongs, 1);
 
-        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(10)); // Over 3 seconds
-        _libraryService.ClearReceivedCalls(); // Clear the PlayAsync StartListenSessionAsync call
+        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(10));
+        _libraryService.ClearReceivedCalls();
 
-        // Act
-        await _service.PreviousAsync(); // Should restart Song 1
+        await _service.PreviousAsync();
         await _service.FlushPendingFinalizationAsync();
 
-        // Assert
-        // Should NOT finalize the session because it just restarted the track
         await _libraryService.DidNotReceiveWithAnyArgs().FinalizeListenSessionAsync(default, default, default);
 
-        // Session ID should remain the same
         _service.CurrentListenHistoryId.Should().Be(1000L);
         _service.CurrentTrack.Should().Be(_testSongs[1]);
 
-        // AudioPlayer should have been sought to zero
         await _audioPlayer.Received(1).SeekAsync(TimeSpan.Zero);
     }
 
     [Fact]
     public async Task PlayPlaylistAsync_StartsSessionWithPlaylistContext()
     {
-        // Arrange
         await _service.InitializeAsync();
         var playlistId = Guid.NewGuid();
         _libraryService.GetAllSongIdsByPlaylistIdAsync(playlistId, Arg.Any<SongSortOrder>())
@@ -1104,10 +921,8 @@ public class MusicPlaybackServiceTests
 
         _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1100L);
 
-        // Act
         await _service.PlayPlaylistAsync(playlistId);
 
-        // Assert
         await _libraryService.Received(1).StartListenSessionAsync(
             _testSongs[0].Id,
             Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Playlist && c.ContextId == playlistId));
@@ -1118,17 +933,14 @@ public class MusicPlaybackServiceTests
     [Fact]
     public async Task PlayArtistAsync_StartsSessionWithArtistContext()
     {
-        // Arrange
         await _service.InitializeAsync();
         var artistId = Guid.NewGuid();
         _libraryService.GetAllSongIdsByArtistIdAsync(artistId, Arg.Any<SongSortOrder>())
             .Returns(_testSongs.Select(s => s.Id).ToList());
         _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1200L);
 
-        // Act
         await _service.PlayArtistAsync(artistId);
 
-        // Assert
         await _libraryService.Received(1).StartListenSessionAsync(
             _testSongs[0].Id,
             Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Artist && c.ContextId == artistId));
@@ -1138,17 +950,14 @@ public class MusicPlaybackServiceTests
     [Fact]
     public async Task PlayFolderAsync_StartsSessionWithFolderContext()
     {
-        // Arrange
         await _service.InitializeAsync();
         var folderId = Guid.NewGuid();
         _libraryService.GetAllSongIdsByFolderIdAsync(folderId, Arg.Any<SongSortOrder>())
             .Returns(_testSongs.Select(s => s.Id).ToList());
         _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1300L);
 
-        // Act
         await _service.PlayFolderAsync(folderId);
 
-        // Assert
         await _libraryService.Received(1).StartListenSessionAsync(
             _testSongs[0].Id,
             Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Folder && c.ContextId == folderId));
@@ -1158,17 +967,14 @@ public class MusicPlaybackServiceTests
     [Fact]
     public async Task PlayGenreAsync_StartsSessionWithGenreContext()
     {
-        // Arrange
         await _service.InitializeAsync();
         var genreId = Guid.NewGuid();
         _libraryService.GetAllSongIdsByGenreIdAsync(genreId, Arg.Any<SongSortOrder>())
             .Returns(_testSongs.Select(s => s.Id).ToList());
         _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1400L);
 
-        // Act
         await _service.PlayGenreAsync(genreId);
 
-        // Assert
         await _libraryService.Received(1).StartListenSessionAsync(
             _testSongs[0].Id,
             Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Genre && c.ContextId == genreId));
@@ -1178,16 +984,14 @@ public class MusicPlaybackServiceTests
     [Fact]
     public async Task PlayAsync_WithExplicitContext_StartsSessionWithThatContext()
     {
-        // Arrange — simulates a smart playlist play where the caller resolves IDs and passes the context
+
         await _service.InitializeAsync();
         var smartPlaylistId = Guid.NewGuid();
         var context = new PlaybackContext(PlaybackContextType.SmartPlaylist, smartPlaylistId);
         _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1500L);
 
-        // Act
         await _service.PlayAsync(_testSongs.Select(s => s.Id).ToList(), 0, null, context);
 
-        // Assert
         await _libraryService.Received(1).StartListenSessionAsync(
             _testSongs[0].Id,
             Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.SmartPlaylist && c.ContextId == smartPlaylistId));
@@ -1197,89 +1001,55 @@ public class MusicPlaybackServiceTests
     [Fact]
     public async Task PlayAsync_WithNullContext_DefaultsToLibraryContext()
     {
-        // Arrange
         await _service.InitializeAsync();
         _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1600L);
 
-        // Act
         await _service.PlayAsync(_testSongs.Select(s => s.Id).ToList());
 
-        // Assert
         await _libraryService.Received(1).StartListenSessionAsync(
             _testSongs[0].Id,
             Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Library && c.ContextId == null));
     }
 
-    #endregion
-
-    #region Shuffle Mode Interaction Tests
-
-    /// <summary>
-    ///     Verifies that enabling shuffle mode creates a shuffled version of the playback queue,
-    ///     saves the state, and raises the appropriate events.
-    /// </summary>
     [Fact]
     public async Task SetShuffleAsync_WhenEnabled_GeneratesShuffledQueue()
     {
-        // Arrange - Use a larger song list to make the probability of shuffle producing
-        // the same order astronomically low (1/10! = 1/3,628,800 instead of 1/5! = 1/120)
-        var largeSongList = Enumerable.Range(1, 10)
-            .Select(i => new Song { Id = Guid.NewGuid(), Title = $"Song {i}", FilePath = $"C:\\music\\song{i}.mp3" })
-            .ToList();
-
         await _service.InitializeAsync();
-        await _service.PlayAsync(largeSongList);
+        await _service.PlayAsync(_testSongs);
         var eventTracker = new EventTracker(_service);
 
-        // Act
         await _service.SetShuffleAsync(true);
 
-        // Assert
         _service.IsShuffleEnabled.Should().BeTrue();
-        _service.ShuffledQueue.Should().HaveCount(largeSongList.Count);
-        _service.ShuffledQueue.Should().BeEquivalentTo(largeSongList.Select(s => s.Id));
-        _service.ShuffledQueue.Should().NotBeEquivalentTo(largeSongList.Select(s => s.Id), opt => opt.WithStrictOrdering());
+        _service.ShuffledQueue.Should().BeEquivalentTo(_testSongs.Select(s => s.Id));
         await _settingsService.Received(1).SaveShuffleStateAsync(true);
         eventTracker.ShuffleModeChangedCount.Should().Be(1);
-        // QueueChanged is invoked in CommitQueueChanges
+
         eventTracker.QueueChangedCount.Should().Be(1);
     }
 
-    /// <summary>
-    ///     Verifies that disabling shuffle mode correctly clears the shuffled queue and
-    ///     updates the service state.
-    /// </summary>
     [Fact]
     public async Task SetShuffleAsync_WhenDisabled_ClearsShuffledQueue()
     {
-        // Arrange
         await _service.InitializeAsync();
         await _service.PlayAsync(_testSongs);
-        await _service.SetShuffleAsync(true); // First, enable it
+        await _service.SetShuffleAsync(true);
         _service.ShuffledQueue.Should().NotBeEmpty();
 
-        // Act
         await _service.SetShuffleAsync(false);
 
-        // Assert
         _service.IsShuffleEnabled.Should().BeFalse();
         _service.ShuffledQueue.Should().BeEmpty();
         await _settingsService.Received(1).SaveShuffleStateAsync(false);
     }
 
-    /// <summary>
-    ///     Verifies that when shuffle is enabled, NextAsync plays the next song from the
-    ///     shuffled queue, not the original playback queue.
-    /// </summary>
     [Fact]
     public async Task NextAsync_WithShuffleEnabled_PlaysNextSongInShuffledQueue()
     {
-        // Arrange
         await _service.InitializeAsync();
         await _service.PlayAsync(_testSongs);
         await _service.SetShuffleAsync(true);
 
-        // Manually set the current track to the first in the shuffled queue to have a known start point
         var firstShuffledSongId = _service.ShuffledQueue[0];
         var firstShuffledSongOriginalIndex = _testSongs.FindIndex(s => s.Id == firstShuffledSongId);
         await _service.PlayQueueItemAsync(firstShuffledSongOriginalIndex);
@@ -1288,204 +1058,138 @@ public class MusicPlaybackServiceTests
         var expectedNextSong = _testSongs.First(s => s.Id == expectedNextSongId);
         _audioPlayer.ClearReceivedCalls();
 
-        // Act
         await _service.NextAsync();
 
-        // Assert
         _service.CurrentTrack.Should().Be(expectedNextSong);
         await _audioPlayer.Received(1).LoadAsync(expectedNextSong);
     }
 
-    /// <summary>
-    ///     Verifies that toggling shuffle mode on preserves the currently playing track.
-    /// </summary>
     [Fact]
     public async Task SetShuffleAsync_WhenEnabled_MaintainsCurrentTrack()
     {
-        // Arrange
         await _service.InitializeAsync();
-        await _service.PlayAsync(_testSongs, 2); // Playing _testSongs[2]
+
+        await _service.PlayAsync(_testSongs, 2);
         var currentTrackBeforeShuffle = _service.CurrentTrack;
 
-        // Act
         await _service.SetShuffleAsync(true);
 
-        // Assert
         _service.IsShuffleEnabled.Should().BeTrue();
         _service.CurrentTrack.Should().Be(currentTrackBeforeShuffle);
         _service.ShuffledQueue.Should().Contain(currentTrackBeforeShuffle!.Id);
     }
 
-    /// <summary>
-    ///     Verifies that when PlayAsync is called with a specific startIndex and shuffle is enabled,
-    ///     the selected song is moved to the front of the shuffled queue and played first.
-    /// </summary>
     [Fact]
     public async Task PlayAsync_WithShuffleEnabledAndStartIndex_PlaysSelectedSongFirst()
     {
-        // Arrange
         await _service.InitializeAsync();
         await _service.SetShuffleAsync(true);
-        var targetIndex = 2; // We want to play _testSongs[2]
+        var targetIndex = 2;
         var targetSong = _testSongs[targetIndex];
 
-        // Act
-        // Pass startShuffled: null so it leaves the existing IsShuffleEnabled state as-is
         await _service.PlayAsync(_testSongs, targetIndex, startShuffled: null);
 
-        // Assert
         _service.IsShuffleEnabled.Should().BeTrue();
         _service.CurrentTrack.Should().Be(targetSong);
 
-        // The first item in the shuffled queue MUST be the selected song
         _service.ShuffledQueue.First().Should().Be(targetSong.Id);
 
         await _audioPlayer.Received(1).LoadAsync(targetSong);
     }
-    #endregion
 
-    #region Queue Management Tests
-
-    /// <summary>
-    ///     Verifies that <see cref="MusicPlaybackService.AddToQueueAsync" /> adds a song to the
-    ///     end of the main playback queue.
-    /// </summary>
     [Fact]
     public async Task AddToQueueAsync_WhenCalled_AddsSongToEndOfQueue()
     {
-        // Arrange
         await _service.InitializeAsync();
         await _service.PlayAsync(_testSongs.Take(2).ToList());
         var songToAdd = _testSongs[3];
 
-        // Act
         await _service.AddToQueueAsync(songToAdd);
 
-        // Assert
         _service.PlaybackQueue.Should().HaveCount(3);
         _service.PlaybackQueue.Last().Should().Be(songToAdd.Id);
     }
 
-    /// <summary>
-    ///     Verifies that adding a song to the queue while shuffle is active correctly
-    ///     regenerates the shuffled queue to include the new song.
-    /// </summary>
     [Fact]
     public async Task AddToQueueAsync_WithShuffleEnabled_AddsToBothQueues()
     {
-        // Arrange
         await _service.InitializeAsync();
         await _service.PlayAsync(_testSongs);
         await _service.SetShuffleAsync(true);
         var songToAdd = new Song { Id = Guid.NewGuid(), Title = "New Song" };
 
-        // Act
         await _service.AddToQueueAsync(songToAdd);
 
-        // Assert
         _service.PlaybackQueue.Should().Contain(songToAdd.Id);
         _service.ShuffledQueue.Should().Contain(songToAdd.Id);
         _service.PlaybackQueue.Count.Should().Be(_testSongs.Count + 1);
         _service.ShuffledQueue.Count.Should().Be(_testSongs.Count + 1);
     }
 
-    /// <summary>
-    ///     Verifies that <see cref="MusicPlaybackService.PlayNextAsync" /> correctly inserts a
-    ///     song into the queue immediately after the currently playing track.
-    /// </summary>
     [Fact]
     public async Task PlayNextAsync_WhenCalled_InsertsSongAfterCurrentTrack()
     {
-        // Arrange
         await _service.InitializeAsync();
-        await _service.PlayAsync(_testSongs, 1); // Playing Song 2
+        await _service.PlayAsync(_testSongs, 1);
         var songToPlayNext = new Song { Id = Guid.NewGuid(), Title = "Next Song" };
         _libraryService.GetSongByIdAsync(songToPlayNext.Id).Returns(songToPlayNext);
 
-        // Act
         await _service.PlayNextAsync(songToPlayNext);
 
-        // Assert
         _service.PlaybackQueue.Should().HaveCount(_testSongs.Count + 1);
-        _service.PlaybackQueue[2].Should().Be(songToPlayNext.Id); // Index 0: S1, 1: S2, 2: Next, 3: S3...
+        _service.PlaybackQueue[2].Should().Be(songToPlayNext.Id);
     }
 
-    /// <summary>
-    ///     Verifies that if PlayNextAsync is called with a song already in the queue,
-    ///     it is moved to the next position instead of being duplicated.
-    /// </summary>
     [Fact]
     public async Task PlayNextAsync_WithSongAlreadyInQueue_MovesSongToNextPosition()
     {
-        // Arrange
         await _service.InitializeAsync();
-        await _service.PlayAsync(_testSongs); // Playing Song 1
-        var songToMove = _testSongs[3]; // Song 4
+        await _service.PlayAsync(_testSongs);
+        var songToMove = _testSongs[3];
 
-        // Act
         await _service.PlayNextAsync(songToMove);
 
-        // Assert
-        _service.PlaybackQueue.Should().HaveCount(_testSongs.Count); // Count should not change
-        _service.PlaybackQueue[1].Should().Be(songToMove.Id); // Song 4 should now be at index 1
+        _service.PlaybackQueue.Should().HaveCount(_testSongs.Count);
+        _service.PlaybackQueue[1].Should().Be(songToMove.Id);
     }
 
-    /// <summary>
-    ///     Verifies that PlayNextAsync works correctly when the queue is empty and no track is playing.
-    /// </summary>
     [Fact]
     public async Task PlayNextAsync_WithEmptyQueue_AddsSongAtBeginning()
     {
-        // Arrange
         await _service.InitializeAsync();
         var songToAdd = _testSongs[0];
 
-        // Act
         await _service.PlayNextAsync(songToAdd);
 
-        // Assert
         _service.PlaybackQueue.Should().HaveCount(1);
         _service.PlaybackQueue[0].Should().Be(songToAdd.Id);
     }
 
-    /// <summary>
-    ///     Verifies that PlayNextAsync works correctly when there's only one song in queue and it's playing.
-    /// </summary>
     [Fact]
     public async Task PlayNextAsync_WithSingleItemQueue_AddsSongAfterCurrent()
     {
-        // Arrange
         await _service.InitializeAsync();
         var firstSong = _testSongs[0];
         await _service.PlayAsync(new[] { firstSong });
         var songToAdd = _testSongs[1];
 
-        // Act
         await _service.PlayNextAsync(songToAdd);
 
-        // Assert
         _service.PlaybackQueue.Should().HaveCount(2);
         _service.PlaybackQueue[1].Should().Be(songToAdd.Id);
     }
 
-    /// <summary>
-    ///     Verifies that removing the currently playing song from the queue causes playback to
-    ///     advance to the next available track.
-    /// </summary>
     [Fact]
     public async Task RemoveFromQueueAsync_WhenRemovingCurrentTrack_PlaysNextTrack()
     {
-        // Arrange
         await _service.InitializeAsync();
-        await _service.PlayAsync(_testSongs, 1); // Playing Song 2
+        await _service.PlayAsync(_testSongs, 1);
         var songToRemove = _testSongs[1];
 
-        // Act
         await _service.RemoveFromQueueAsync(songToRemove);
 
-        // Assert
         _service.PlaybackQueue.Should().NotContain(songToRemove.Id);
-        _service.CurrentTrack.Should().Be(_testSongs[2]); // Should have advanced to the next song
+        _service.CurrentTrack.Should().Be(_testSongs[2]);
         await _audioPlayer.Received(1).StopAsync();
         await _audioPlayer.Received(1).LoadAsync(_testSongs[2]);
     }
@@ -1578,67 +1282,48 @@ public class MusicPlaybackServiceTests
         _service.CurrentTrack.Should().Be(_testSongs[0]);
     }
 
-    /// <summary>
-    ///     Verifies that removing a song that appeared before the current track correctly
-    ///     decrements the CurrentQueueIndex to maintain the correct position.
-    /// </summary>
     [Fact]
     public async Task RemoveFromQueueAsync_WhenRemovingTrackBeforeCurrent_AdjustsCurrentIndex()
     {
-        // Arrange
         await _service.InitializeAsync();
-        await _service.PlayAsync(_testSongs, 2); // Playing Song 3 (index 2)
-        var songToRemove = _testSongs[0]; // Removing Song 1 (index 0)
 
-        // Act
+        await _service.PlayAsync(_testSongs, 2);
+        var songToRemove = _testSongs[0];
+
         await _service.RemoveFromQueueAsync(songToRemove);
 
-        // Assert
         _service.PlaybackQueue.Should().NotContain(songToRemove.Id);
-        _service.CurrentTrack.Should().Be(_testSongs[2]); // Still playing Song 3
-        _service.CurrentQueueIndex.Should().Be(1); // Index should now be 1
+        _service.CurrentTrack.Should().Be(_testSongs[2]);
+        _service.CurrentQueueIndex.Should().Be(1);
     }
 
-    /// <summary>
-    ///     Verifies that removing a song that is not the current track updates the queue
-    ///     without interrupting playback.
-    /// </summary>
     [Fact]
     public async Task RemoveFromQueueAsync_WhenRemovingOtherTrack_QueueIsUpdated()
     {
-        // Arrange
         await _service.InitializeAsync();
-        await _service.PlayAsync(_testSongs, 1); // Playing Song 2
+        await _service.PlayAsync(_testSongs, 1);
         var songToRemove = _testSongs[3];
 
-        // Act
         await _service.RemoveFromQueueAsync(songToRemove);
 
-        // Assert
         _service.PlaybackQueue.Should().NotContain(songToRemove.Id);
-        _service.CurrentTrack.Should().Be(_testSongs[1]); // Current track should be unaffected
+        _service.CurrentTrack.Should().Be(_testSongs[1]);
         await _audioPlayer.DidNotReceive().StopAsync();
     }
 
-    /// <summary>
-    ///     Verifies that removing the last playing track from a non-repeating queue stops playback.
-    /// </summary>
     [Fact]
     public async Task RemoveFromQueueAsync_WhenRemovingLastPlayingTrack_StopsPlayback()
     {
-        // Arrange
         var singleSongList = new List<Song> { _testSongs[0] };
         await _service.InitializeAsync();
         await _service.PlayAsync(singleSongList);
         _service.CurrentRepeatMode.Should().Be(RepeatMode.Off);
 
-        // Act
         await _service.RemoveFromQueueAsync(_testSongs[0]);
 
-        // Assert
         _service.PlaybackQueue.Should().BeEmpty();
         _service.CurrentTrack.Should().BeNull();
-        await _audioPlayer.Received(2).StopAsync(); // 1 from PlayAsync, 1 from RemoveFromQueueAsync
+        await _audioPlayer.Received(1).StopAsync();
     }
 
     [Theory]
@@ -1698,47 +1383,29 @@ public class MusicPlaybackServiceTests
         await _metadataService.Received(2).ExtractMetadataAsync(path);
     }
 
-    #endregion
-
-    #region Mode and State Tests
-
-    /// <summary>
-    ///     Verifies that <see cref="MusicPlaybackService.SetRepeatModeAsync" /> updates the repeat
-    ///     mode property, saves the new setting, and raises the corresponding event.
-    /// </summary>
     [Fact]
     public async Task SetRepeatModeAsync_WhenChanged_UpdatesPropertyAndSaves()
     {
-        // Arrange
         await _service.InitializeAsync();
         var eventTracker = new EventTracker(_service);
 
-        // Act
         await _service.SetRepeatModeAsync(RepeatMode.RepeatOne);
 
-        // Assert
         _service.CurrentRepeatMode.Should().Be(RepeatMode.RepeatOne);
         await _settingsService.Received(1).SaveRepeatModeAsync(RepeatMode.RepeatOne);
         eventTracker.RepeatModeChangedCount.Should().Be(1);
     }
 
-    /// <summary>
-    ///     Verifies that <see cref="MusicPlaybackService.SavePlaybackStateAsync" /> correctly
-    ///     captures the current queue, track, and position and passes it to the settings service
-    ///     for persistence.
-    /// </summary>
     [Fact]
     public async Task SavePlaybackStateAsync_WhenCalled_SavesCorrectState()
     {
-        // Arrange
         await _service.InitializeAsync();
+
         await _service.PlayAsync(_testSongs, 2);
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(45));
 
-        // Act
         await _service.SavePlaybackStateAsync();
 
-        // Assert
         await _settingsService.Received(1).SavePlaybackStateAsync(Arg.Is<PlaybackState>(state =>
             state != null &&
             state.CurrentTrackId == _testSongs[2].Id &&
@@ -1747,27 +1414,16 @@ public class MusicPlaybackServiceTests
         ));
     }
 
-    #endregion
-
-    #region Equalizer Tests
-
-    /// <summary>
-    ///     Verifies that setting an equalizer band gain correctly updates the settings,
-    ///     applies them to the audio player, and saves them.
-    /// </summary>
     [Fact]
     public async Task SetEqualizerBandAsync_WithValidBand_AppliesAndSavesSettings()
     {
-        // Arrange
         await _service.InitializeAsync();
         _audioPlayer.ClearReceivedCalls();
         _settingsService.ClearReceivedCalls();
         var eventTracker = new EventTracker(_service);
 
-        // Act
         await _service.SetEqualizerBandAsync(1, 3.5f);
 
-        // Assert
         _service.CurrentEqualizerSettings.Should().NotBeNull();
         _service.CurrentEqualizerSettings!.BandGains[1].Should().Be(3.5f);
         _audioPlayer.Received(1).ApplyEqualizerSettings(Arg.Is<EqualizerSettings>(s => s != null && s.BandGains[1] == 3.5f));
@@ -1775,23 +1431,16 @@ public class MusicPlaybackServiceTests
         eventTracker.EqualizerChangedCount.Should().Be(1);
     }
 
-    /// <summary>
-    ///     Verifies that setting the equalizer preamp gain correctly updates the settings,
-    ///     applies them to the audio player, and saves them.
-    /// </summary>
     [Fact]
     public async Task SetEqualizerPreampAsync_WhenCalled_AppliesAndSavesSettings()
     {
-        // Arrange
         await _service.InitializeAsync();
         _audioPlayer.ClearReceivedCalls();
         _settingsService.ClearReceivedCalls();
         var eventTracker = new EventTracker(_service);
 
-        // Act
         await _service.SetEqualizerPreampAsync(5.0f);
 
-        // Assert
         _service.CurrentEqualizerSettings.Should().NotBeNull();
         _service.CurrentEqualizerSettings!.Preamp.Should().Be(5.0f);
         _audioPlayer.Received(1).ApplyEqualizerSettings(Arg.Is<EqualizerSettings>(s => s != null && s.Preamp == 5.0f));
@@ -1799,23 +1448,17 @@ public class MusicPlaybackServiceTests
         eventTracker.EqualizerChangedCount.Should().Be(1);
     }
 
-    /// <summary>
-    ///     Verifies that resetting the equalizer restores default values for preamp and all bands.
-    /// </summary>
     [Fact]
     public async Task ResetEqualizerAsync_WhenCalled_ResetsAllGainsToDefault()
     {
-        // Arrange
         await _service.InitializeAsync();
         await _service.SetEqualizerBandAsync(0, 5.0f);
         await _service.SetEqualizerPreampAsync(2.0f);
         _audioPlayer.ClearReceivedCalls();
         _settingsService.ClearReceivedCalls();
 
-        // Act
         await _service.ResetEqualizerAsync();
 
-        // Assert
         _service.CurrentEqualizerSettings!.Preamp.Should().Be(EqualizerSettings.DefaultPreampDb);
         _service.CurrentEqualizerSettings.BandGains.Should().AllSatisfy(g => g.Should().Be(0.0f));
         _audioPlayer.Received(1)
@@ -1826,158 +1469,380 @@ public class MusicPlaybackServiceTests
         await _settingsService.Received(1).SetEqualizerSettingsAsync(Arg.Any<EqualizerSettings>());
     }
 
-    #endregion
-
-    #region Audio Player Event Handling
-
-    /// <summary>
-    ///     Verifies that the service automatically advances to the next track when the audio
-    ///     player's `PlaybackEnded` event is raised.
-    /// </summary>
-    [Fact]
-    public async Task OnAudioPlayerPlaybackEnded_ShouldAdvanceToNextTrack()
-    {
-        // Arrange
-        await _service.InitializeAsync();
-        await _service.PlayAsync(_testSongs);
-        _audioPlayer.ClearReceivedCalls();
-
-        // Act
-        _audioPlayer.PlaybackEnded += Raise.Event<Action>();
-
-        // Assert
-        await Task.Delay(50); // Wait for async void event handler
-        _service.CurrentTrack.Should().Be(_testSongs[1]);
-        await _audioPlayer.Received(1).LoadAsync(_testSongs[1]);
-    }
-
-    /// <summary>
-    ///     Verifies that when the last song in a non-repeating queue ends, playback stops.
-    /// </summary>
     [Fact]
     public async Task OnAudioPlayerPlaybackEnded_AtEndOfQueuewithNoRepeat_StopsPlayback()
     {
-        // Arrange
         await _service.InitializeAsync();
-        await _service.PlayAsync(_testSongs, _testSongs.Count - 1); // Play the last song
+        await _service.PlayAsync(_testSongs, _testSongs.Count - 1);
         _service.CurrentRepeatMode.Should().Be(RepeatMode.Off);
         _audioPlayer.ClearReceivedCalls();
 
-        // Act
         _audioPlayer.PlaybackEnded += Raise.Event<Action>();
 
-        // Assert
-        await Task.Delay(50); // Wait for async void event handler
+        await _service.FlushPendingFinalizationAsync();
         _service.CurrentTrack.Should().BeNull();
         await _audioPlayer.Received(1).StopAsync();
     }
 
-    /// <summary>
-    ///     Verifies that when the audio player reports an error, the service stops playback
-    ///     to prevent further issues.
-    /// </summary>
     [Fact]
     public async Task OnAudioPlayerErrorOccurred_ShouldStopPlayback()
     {
-        // Arrange
         await _service.InitializeAsync();
         await _service.PlayAsync(_testSongs[0]);
 
-        // Act
         _audioPlayer.ErrorOccurred += Raise.Event<Action<string>>("File not found");
 
-        // Assert
-        await Task.Delay(50); // Wait for async void event handler
+        await _service.FlushPendingFinalizationAsync();
         _service.CurrentTrack.Should().BeNull();
         await _audioPlayer.Received(1).StopAsync();
     }
 
-    /// <summary>
-    ///     Verifies that the service handles the System Media Transport Controls (SMTC) 'Next'
-    ///     button press by calling the `NextAsync` method.
-    /// </summary>
     [Fact]
     public async Task OnAudioPlayerSmtcNextButtonPressed_ShouldCallNextAsync()
     {
-        // Arrange
         await _service.InitializeAsync();
         await _service.PlayAsync(_testSongs);
 
-        // Act
         _audioPlayer.SmtcNextButtonPressed += Raise.Event<Action>();
 
-        // Assert
-        await Task.Delay(50);
+        await _service.FlushPendingFinalizationAsync();
         _service.CurrentTrack.Should().Be(_testSongs[1]);
     }
 
-    /// <summary>
-    ///     Verifies that the service handles the System Media Transport Controls (SMTC) 'Previous'
-    ///     button press by calling the `PreviousAsync` method.
-    /// </summary>
     [Fact]
     public async Task OnAudioPlayerSmtcPreviousButtonPressed_ShouldCallPreviousAsync()
     {
-        // Arrange
         await _service.InitializeAsync();
         await _service.PlayAsync(_testSongs, 1);
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(1));
 
-        // Act
         _audioPlayer.SmtcPreviousButtonPressed += Raise.Event<Action>();
 
-        // Assert
-        await Task.Delay(50);
+        await _service.FlushPendingFinalizationAsync();
         _service.CurrentTrack.Should().Be(_testSongs[0]);
     }
 
-    #endregion
-
-    #region Advanced Scenarios and Edge Cases
-
-    /// <summary>
-    ///     Verifies that calling NextAsync after playing a transient file (which has no queue)
-    ///     correctly stops playback.
-    /// </summary>
-    [Fact]
-    public async Task NextAsync_AfterPlayingTransientFile_StopsPlayback()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task PlayNextAsync_PreservesRequestedOrderAfterMovingEarlierTracks(bool shuffled)
     {
-        // Arrange
-        const string filePath = "C:\\temp\\transient.mp3";
-        _metadataService.ExtractMetadataAsync(filePath).Returns(new SongFileMetadata { Title = "Transient" });
         await _service.InitializeAsync();
-        await _service.PlayTransientFileAsync(filePath);
-        _service.PlaybackQueue.Should().BeEmpty();
+        await _service.PlayAsync(_testSongs, 2);
+        await _service.SetShuffleAsync(shuffled);
 
-        // Act
+        await _service.PlayNextAsync(_testSongs[0]);
+        await _service.PlayNextAsync(_testSongs[1]);
+
+        _service.PlaybackQueue.Take(3).Should().Equal(_testSongs[2].Id, _testSongs[1].Id, _testSongs[0].Id);
         await _service.NextAsync();
+        _service.CurrentTrack.Should().Be(_testSongs[1]);
+        await _service.NextAsync();
+        _service.CurrentTrack.Should().Be(_testSongs[0]);
+    }
 
-        // Assert
+    [Fact]
+    public async Task ClearQueueAsync_WithStandaloneExternalFile_StopsPlayback()
+    {
+        const string path = "C:\\temp\\standalone.mp3";
+        _metadataService.ExtractMetadataAsync(path).Returns(new SongFileMetadata { Title = "External" });
+        await _service.PlayTransientFileAsync(path);
+
+        await _service.ClearQueueAsync();
+
         _service.CurrentTrack.Should().BeNull();
         await _audioPlayer.Received(1).StopAsync();
     }
 
-    /// <summary>
-    ///     Verifies that if the queue contains only one song and Repeat All is on, NextAsync
-    ///     just restarts that same song.
-    /// </summary>
+    [Theory]
+    [InlineData("lookup", false)]
+    [InlineData("lookup", true)]
+    [InlineData("session", false)]
+    [InlineData("session", true)]
+    [InlineData("load", false)]
+    [InlineData("load", true)]
+    public async Task PlayAsync_WhenSuperseded_DoesNotResumeOrReplaceNewerState(string delayAt, bool stop)
+    {
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var first = _testSongs[0];
+        var second = _testSongs[1];
+        _libraryService.StartListenSessionAsync(first.Id, Arg.Any<PlaybackContext>()).Returns(101L);
+        _libraryService.StartListenSessionAsync(second.Id, Arg.Any<PlaybackContext>()).Returns(202L);
+        if (delayAt == "lookup")
+            _libraryService.GetSongByIdAsync(first.Id).Returns(async _ => { await release.Task; return (Song?)first; });
+        else if (delayAt == "session")
+            _libraryService.StartListenSessionAsync(first.Id, Arg.Any<PlaybackContext>())
+                .Returns(async _ => { await release.Task; return (long?)101L; });
+        else
+            _audioPlayer.LoadAsync(first).Returns(release.Task);
+
+        var oldRequest = _service.PlayAsync(first);
+        if (stop) await _service.StopAsync();
+        else await _service.PlayAsync(second);
+        release.SetResult();
+        await oldRequest.WaitAsync(TimeSpan.FromSeconds(2));
+        await _service.FlushPendingFinalizationAsync();
+
+        _service.CurrentTrack.Should().Be(stop ? null : second);
+        _service.CurrentListenHistoryId.Should().Be(stop ? null : 202L);
+        await _audioPlayer.Received(stop ? 0 : 1).PlayAsync();
+        if (delayAt == "session")
+            await _libraryService.Received(1).FinalizeListenSessionAsync(101L, TimeSpan.Zero, PlaybackEndReason.PausedAndAbandoned);
+    }
+
+    [Fact]
+    public async Task PlayAlbumAsync_WhenLookupFinishesAfterNewSelection_KeepsNewQueue()
+    {
+        var release = new TaskCompletionSource<List<Guid>>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var albumId = Guid.NewGuid();
+        _libraryService.GetAllSongIdsByAlbumIdAsync(albumId, SongSortOrder.TrackNumberAsc).Returns(release.Task);
+        var oldRequest = _service.PlayAlbumAsync(albumId);
+
+        await _service.PlayAsync(_testSongs[1]);
+        release.SetResult([_testSongs[0].Id]);
+        await oldRequest;
+
+        _service.CurrentTrack.Should().Be(_testSongs[1]);
+        _service.PlaybackQueue.Should().Equal(_testSongs[1].Id);
+    }
+
+    [Fact]
+    public async Task PlaybackEnded_WhileAnotherTrackIsLoading_DoesNotSkipTheRequestedTrack()
+    {
+        await _service.PlayAsync(_testSongs);
+        var release = new TaskCompletionSource<Song?>(TaskCreationOptions.RunContinuationsAsynchronously);
+        _libraryService.GetSongByIdAsync(_testSongs[1].Id).Returns(release.Task);
+        var next = _service.NextAsync();
+
+        _audioPlayer.PlaybackEnded += Raise.Event<Action>();
+        release.SetResult(_testSongs[1]);
+        await next;
+        await _service.FlushPendingFinalizationAsync();
+
+        _service.CurrentTrack.Should().Be(_testSongs[1]);
+        await _audioPlayer.Received(1).LoadAsync(_testSongs[1]);
+        await _audioPlayer.DidNotReceive().LoadAsync(_testSongs[2]);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ClearQueueAsync_WhenStopFinishesAfterNewPlayback_PreservesNewSelection(bool removeCurrent)
+    {
+        await _service.PlayAsync(_testSongs);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        _audioPlayer.StopAsync().Returns(release.Task);
+        var oldRequest = removeCurrent
+            ? _service.RemoveFromQueueAsync(_testSongs[0])
+            : _service.ClearQueueAsync();
+
+        await _service.PlayAsync(_testSongs[3]);
+        release.SetResult();
+        await oldRequest;
+
+        _service.CurrentTrack.Should().Be(_testSongs[3]);
+        _service.PlaybackQueue.Should().Equal(_testSongs[3].Id);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task PlaybackEnded_WhenFinalizationIsDelayed_DoesNotAdvanceAfterNewRequestOrDisposal(bool dispose)
+    {
+        _libraryService.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(101L);
+        await _service.PlayAsync(_testSongs);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        _libraryService.FinalizeListenSessionAsync(101L, Arg.Any<TimeSpan>(), PlaybackEndReason.Finished)
+            .Returns(release.Task);
+        _audioPlayer.PlaybackEnded += Raise.Event<Action>();
+        var disposal = dispose ? _service.DisposeAsync().AsTask() : Task.CompletedTask;
+        if (!dispose) await _service.PlayQueueItemAsync(3);
+        _audioPlayer.ClearReceivedCalls();
+
+        release.SetResult();
+        await disposal;
+        await _service.FlushPendingFinalizationAsync();
+
+        await _audioPlayer.DidNotReceive().LoadAsync(Arg.Any<Song>());
+        await _audioPlayer.DidNotReceive().PlayAsync();
+        if (!dispose) _service.CurrentTrack.Should().Be(_testSongs[3]);
+    }
+
+    [Fact]
+    public async Task DisposeAsync_WaitsForLateListenSessionAndFinalizesIt()
+    {
+        var release = new TaskCompletionSource<long?>(TaskCreationOptions.RunContinuationsAsynchronously);
+        _libraryService.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(release.Task);
+        var playback = _service.PlayAsync(_testSongs[0]);
+        var disposal = _service.DisposeAsync().AsTask();
+        disposal.IsCompleted.Should().BeFalse();
+
+        release.SetResult(42);
+        await Task.WhenAll(playback, disposal);
+
+        await _libraryService.Received(1).FinalizeListenSessionAsync(42, TimeSpan.Zero, PlaybackEndReason.PausedAndAbandoned);
+        await _audioPlayer.DidNotReceive().LoadAsync(Arg.Any<Song>());
+    }
+
+    [Fact]
+    public async Task PlayTransientFileAsync_AfterNormalizedTrack_ResetsReplayGain()
+    {
+        _settingsService.GetVolumeNormalizationEnabledAsync().Returns(true);
+        _testSongs[0].ReplayGainTrackGain = -6;
+        await _service.PlayAsync(_testSongs[0]);
+        const string path = "C:\\temp\\external.mp3";
+        _metadataService.ExtractMetadataAsync(path).Returns(new SongFileMetadata { Title = "External" });
+
+        await _service.PlayTransientFileAsync(path);
+
+        Received.InOrder(() =>
+        {
+            _audioPlayer.SetReplayGainAsync(-6);
+            _audioPlayer.SetReplayGainAsync(0);
+        });
+    }
+
+    [Fact]
+    public async Task SavePlaybackStateAsync_WhenStopped_PreservesQueuePosition()
+    {
+        await _service.InitializeAsync();
+        await _service.PlayAsync(_testSongs, 3);
+        await _service.StopAsync();
+
+        await _service.SavePlaybackStateAsync();
+
+        await _settingsService.Received().SavePlaybackStateAsync(Arg.Is<PlaybackState>(state =>
+            state.CurrentTrackId == null && state.CurrentPlaybackQueueIndex == 3));
+    }
+
+    [Fact]
+    public async Task InitializeAsync_WhenDisposedDuringSessionFileRead_DoesNotTouchAudio()
+    {
+        var release = new TaskCompletionSource<PlaybackState?>(TaskCreationOptions.RunContinuationsAsynchronously);
+        _settingsService.GetPlaybackStateAsync().Returns(release.Task);
+        var initialization = _service.InitializeAsync();
+        var disposal = _service.DisposeAsync().AsTask();
+        release.SetResult(null);
+
+        await Task.WhenAll(initialization, disposal);
+
+        await _audioPlayer.DidNotReceive().SetVolumeAsync(Arg.Any<double>());
+        _audioPlayer.DidNotReceive().ApplyEqualizerSettings(Arg.Any<EqualizerSettings>());
+    }
+
+    [Fact]
+    public async Task PlayPauseAsync_AfterSessionRestore_StartsListenBeforePlaying()
+    {
+        _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
+        _settingsService.GetPlaybackStateAsync().Returns(new PlaybackState
+        {
+            PlaybackQueueTrackIds = [_testSongs[0].Id], CurrentTrackId = _testSongs[0].Id
+        });
+        _libraryService.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(52L);
+        await _service.InitializeAsync();
+        _service.CurrentListenHistoryId.Should().BeNull();
+
+        await _service.PlayPauseAsync();
+
+        _service.CurrentListenHistoryId.Should().Be(52L);
+        Received.InOrder(() =>
+        {
+            _libraryService.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>());
+            _audioPlayer.PlayAsync();
+        });
+    }
+
+    [Fact]
+    public async Task ReplayGain_WhenDisabledDuringDatabaseRead_DoesNotApplyLateGain()
+    {
+        var release = new TaskCompletionSource<Song?>(TaskCreationOptions.RunContinuationsAsynchronously);
+        _settingsService.GetVolumeNormalizationEnabledAsync().Returns(true);
+        _libraryService.GetSongByIdAsync(_testSongs[0].Id).Returns(Task.FromResult<Song?>(_testSongs[0]), release.Task);
+        var playback = _service.PlayAsync(_testSongs[0]);
+
+        _settingsService.VolumeNormalizationEnabledChanged += Raise.Event<Action<bool>>(false);
+        release.SetResult(new Song { Id = _testSongs[0].Id, ReplayGainTrackGain = -6 });
+        await playback;
+        await _service.FlushPendingFinalizationAsync();
+
+        await _audioPlayer.Received(1).SetReplayGainAsync(0);
+        await _audioPlayer.DidNotReceive().SetReplayGainAsync(-6);
+    }
+
+    [Fact]
+    public async Task AddTransientFilesToQueueAsync_WhenClearedDuringMetadataRead_DoesNotRepopulateQueue()
+    {
+        const string path = "C:\\temp\\late.mp3";
+        var release = new TaskCompletionSource<SongFileMetadata>(TaskCreationOptions.RunContinuationsAsynchronously);
+        _metadataService.ExtractMetadataAsync(path).Returns(release.Task);
+        var adding = _service.AddTransientFilesToQueueAsync([path]);
+
+        await _service.ClearQueueAsync();
+        release.SetResult(new SongFileMetadata { Title = "Late" });
+        await adding;
+
+        _service.PlaybackQueue.Should().BeEmpty();
+        _service.CurrentTrack.Should().BeNull();
+        await _audioPlayer.DidNotReceive().LoadAsync(Arg.Any<Song>());
+    }
+
+    [Fact]
+    public async Task AddTransientFilesToQueueAsync_WithConcurrentSamePath_AddsOneTrack()
+    {
+        const string path = "C:\\temp\\same.mp3";
+        var release = new TaskCompletionSource<SongFileMetadata>(TaskCreationOptions.RunContinuationsAsynchronously);
+        _metadataService.ExtractMetadataAsync(path).Returns(release.Task, Task.FromResult(new SongFileMetadata { Title = "First" }));
+        var first = _service.AddTransientFilesToQueueAsync([path]);
+        await _service.AddTransientFilesToQueueAsync([path]);
+
+        release.SetResult(new SongFileMetadata { Title = "Late" });
+        await first;
+
+        _service.PlaybackQueue.Should().ContainSingle();
+        _service.CurrentTrack!.Title.Should().Be("First");
+    }
+
+    [Fact]
+    public async Task SetVolumeAsync_PersistsTheVolumeAcceptedByTheAudioPlayer()
+    {
+        _audioPlayer.Volume.Returns(1.0);
+
+        await _service.SetVolumeAsync(2.0);
+
+        await _settingsService.Received(1).SaveVolumeAsync(1.0);
+        await _settingsService.DidNotReceive().SaveVolumeAsync(2.0);
+    }
+
+    [Fact]
+    public async Task NextAsync_AfterPlayingTransientFile_StopsPlayback()
+    {
+        const string filePath = "C:\\temp\\transient.mp3";
+        _metadataService.ExtractMetadataAsync(filePath).Returns(new SongFileMetadata { Title = "Transient" });
+        await _service.InitializeAsync();
+
+        await _service.PlayTransientFileAsync(filePath);
+
+        _service.PlaybackQueue.Should().BeEmpty();
+
+        await _service.NextAsync();
+
+        _service.CurrentTrack.Should().BeNull();
+        await _audioPlayer.Received(1).StopAsync();
+    }
+
     [Fact]
     public async Task NextAsync_WithSingleSongAndRepeatAll_RestartsSong()
     {
-        // Arrange
         var singleSongList = new List<Song> { _testSongs[0] };
         await _service.InitializeAsync();
         await _service.SetRepeatModeAsync(RepeatMode.RepeatAll);
         await _service.PlayAsync(singleSongList);
         _audioPlayer.ClearReceivedCalls();
 
-        // Act
         await _service.NextAsync();
 
-        // Assert
         _service.CurrentTrack.Should().Be(_testSongs[0]);
         await _audioPlayer.Received(1).LoadAsync(_testSongs[0]);
     }
 
-    #endregion
 }

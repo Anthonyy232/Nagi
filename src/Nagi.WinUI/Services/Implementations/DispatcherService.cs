@@ -19,7 +19,7 @@ public class DispatcherService : IDispatcherService
 
     public DispatcherService(DispatcherQueue dispatcherQueue)
     {
-        _dispatcherQueue = dispatcherQueue ?? throw new ArgumentNullException(nameof(dispatcherQueue));
+        _dispatcherQueue = dispatcherQueue;
     }
 
     /// <inheritdoc />
@@ -34,7 +34,6 @@ public class DispatcherService : IDispatcherService
         }
         catch (Exception ex) when (ex.HResult == RO_E_CLOSED || ex.HResult == RPC_E_WRONG_THREAD)
         {
-            // The dispatcher is shutting down or unavailable - silently ignore
             return false;
         }
     }
@@ -48,7 +47,6 @@ public class DispatcherService : IDispatcherService
         }
         catch (Exception ex) when (ex.HResult == RO_E_CLOSED || ex.HResult == RPC_E_WRONG_THREAD)
         {
-            // The dispatcher is shutting down or unavailable - return completed task
             return Task.CompletedTask;
         }
     }
@@ -62,7 +60,6 @@ public class DispatcherService : IDispatcherService
         }
         catch (Exception ex) when (ex.HResult == RO_E_CLOSED || ex.HResult == RPC_E_WRONG_THREAD)
         {
-            // The dispatcher is shutting down or unavailable - return default value
             return Task.FromResult(default(T)!);
         }
     }

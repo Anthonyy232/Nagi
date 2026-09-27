@@ -14,7 +14,6 @@
 
     <Page.Resources>
         <ResourceDictionary>
-            <!-- IMPORTANT: This Storyboard is triggered in code-behind (LyricsPage.xaml.cs, OnPageLoaded) and must NOT be removed by cleanup tools. -->
             <Storyboard x:Key="PageLoadStoryboard">
                 <DoubleAnimation
                     Storyboard.TargetName="LyricsContainer"
@@ -63,10 +62,11 @@
 
         <ProgressBar
             x:Name="LyricsProgressBar"
+            Maximum="100"
             Grid.Row="1"
             Style="{StaticResource LyricsProgressBarStyle}"
             Margin="100,16,100,12"
-            Visibility="{x:Bind ViewModel.ShowTimedLyrics, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+            Visibility="{x:Bind ViewModel.HasLyrics, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
             MaxWidth="600" />
 
         <!-- Synchronized (timed) lyrics display -->
@@ -77,7 +77,7 @@
             VerticalScrollBarVisibility="Auto"
             Background="Transparent"
             SizeChanged="LyricsScrollViewer_SizeChanged"
-            Visibility="{x:Bind ViewModel.ShowTimedLyrics, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            Visibility="{x:Bind ViewModel.HasLyrics, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel>
                 <Border x:Name="TopSpacer" />
                 <ItemsRepeater
@@ -137,7 +137,7 @@
             SelectionMode="None"
             IsItemClickEnabled="False"
             HorizontalContentAlignment="Stretch"
-            ItemContainerStyle="{StaticResource LyricsListViewItemStyle}"
+            ItemContainerStyle="{StaticResource PaddedListViewItemStyle}"
             Visibility="{x:Bind ViewModel.HasUnsyncedLyrics, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="core:LyricLine">

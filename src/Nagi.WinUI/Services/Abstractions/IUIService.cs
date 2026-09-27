@@ -4,9 +4,6 @@ using System.Threading.Tasks;
 
 namespace Nagi.WinUI.Services.Abstractions;
 
-/// <summary>
-///     Represents the user's choice in an update dialog.
-/// </summary>
 public enum UpdateDialogResult
 {
     /// <summary>
@@ -25,9 +22,6 @@ public enum UpdateDialogResult
     Skip
 }
 
-/// <summary>
-///     Represents the user's choice in a crash report dialog.
-/// </summary>
 public enum CrashReportResult
 {
     /// <summary>
@@ -52,7 +46,7 @@ public interface IUIService
     /// <param name="title">The dialog's title.</param>
     /// <param name="content">The main message of the dialog.</param>
     /// <param name="primaryButtonText">The text for the confirmation button.</param>
-    /// <param name="closeButtonText">The text for the cancellation button. If null, the button is not shown.</param>
+    /// <param name="closeButtonText">The text for the cancellation button, or null to use the localized Cancel label.</param>
     /// <returns>True if the user confirmed (primary button), false otherwise.</returns>
     Task<bool> ShowConfirmationDialogAsync(string title, string content, string? primaryButtonText = null,
         string? closeButtonText = null);

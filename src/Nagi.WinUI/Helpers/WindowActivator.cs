@@ -52,28 +52,18 @@ internal static class WindowActivator
         var currentThreadId = win32.GetCurrentThreadId();
         var foregroundThreadId = win32.GetWindowThreadProcessId(foregroundWindowHandle, IntPtr.Zero);
 
-        // Attach our thread's input to the foreground window's thread, which allows us to bypass focus restrictions.
-        if (foregroundThreadId != currentThreadId)
+        var attached = foregroundThreadId != 0 && foregroundThreadId != currentThreadId &&
+                       win32.AttachThreadInput(foregroundThreadId, currentThreadId, true);
+        try
         {
-            Logger.LogDebug(
-                "Attaching thread input from foreground thread {ForegroundThreadId} to current thread {CurrentThreadId}.",
-                foregroundThreadId, currentThreadId);
-            win32.AttachThreadInput(foregroundThreadId, currentThreadId, true);
+            win32.BringWindowToTop(windowHandle);
+            ShowWindow(windowHandle, SW_RESTORE);
+            window.AppWindow.Show();
+            SetForegroundWindow(windowHandle);
         }
-
-        win32.BringWindowToTop(windowHandle);
-        // Restore the window if it was minimized and ensure it's visible.
-        ShowWindow(windowHandle, SW_RESTORE);
-        window.AppWindow.Show();
-        SetForegroundWindow(windowHandle);
-
-        // Detach the threads to restore normal input processing.
-        if (foregroundThreadId != currentThreadId)
+        finally
         {
-            Logger.LogDebug(
-                "Detaching thread input from foreground thread {ForegroundThreadId} to current thread {CurrentThreadId}.",
-                foregroundThreadId, currentThreadId);
-            win32.AttachThreadInput(foregroundThreadId, currentThreadId, false);
+            if (attached) win32.AttachThreadInput(foregroundThreadId, currentThreadId, false);
         }
     }
 

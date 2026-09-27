@@ -1,11 +1,8 @@
-﻿using System;
-using System.Reflection;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Windowing;
-using Windows.Graphics;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
@@ -44,16 +41,6 @@ public partial class TrayIconViewModel : ObservableObject
         _settingsService.HideToTraySettingChanged += OnHideToTraySettingChanged;
     }
 
-    /// <summary>
-    ///     Gets or sets a value indicating whether the main application window is currently visible.
-    /// </summary>
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ToolTipText))]
-    public partial bool IsWindowVisible { get; set; } = true;
-
-    /// <summary>
-    ///     Gets or sets a value indicating whether the system tray icon should be visible.
-    /// </summary>
     [ObservableProperty]
     public partial bool IsTrayIconVisible { get; set; }
 
@@ -62,57 +49,38 @@ public partial class TrayIconViewModel : ObservableObject
     /// </summary>
     public string ToolTipText => _appInfoService.GetAppName();
 
-    /// <summary>
-    ///     Cleans up resources and unsubscribes from events.
-    ///     Called during application shutdown.
-    /// </summary>
     public void Cleanup()
     {
         _logger.LogDebug("Cleaning up TrayIconViewModel resources");
         _windowService.Closing -= OnAppWindowClosing;
         _windowService.VisibilityChanged -= OnAppWindowVisibilityChanged;
         _settingsService.HideToTraySettingChanged -= OnHideToTraySettingChanged;
-        _isInitialized = false;
     }
 
-
-    /// <summary>
-    ///     Asynchronously initializes the ViewModel by subscribing to window events and loading initial settings.
-    /// </summary>
-    private bool _isInitialized;
 
     /// <summary>
     ///     Asynchronously initializes the ViewModel by subscribing to window events and loading initial settings.
     /// </summary>
     public async Task InitializeAsync()
     {
-        // Prevent double initialization and duplicate subscriptions
-        if (_isInitialized) return;
-
         _windowService.Closing += OnAppWindowClosing;
         _windowService.VisibilityChanged += OnAppWindowVisibilityChanged;
 
         _isHideToTrayEnabled = await _settingsService.GetHideToTrayEnabledAsync();
-        IsWindowVisible = _windowService.IsVisible;
         UpdateTrayIconVisibility();
         _logger.LogDebug("Initialized. HideToTray: {IsHideToTrayEnabled}, IsWindowVisible: {IsWindowVisible}",
-            _isHideToTrayEnabled, IsWindowVisible);
+            _isHideToTrayEnabled, _windowService.IsVisible);
 
-        _isInitialized = true;
     }
 
     private void UpdateTrayIconVisibility()
     {
-        IsTrayIconVisible = _isHideToTrayEnabled && !IsWindowVisible;
+        IsTrayIconVisible = _isHideToTrayEnabled && !_windowService.IsVisible;
     }
 
     private void OnAppWindowVisibilityChanged(AppWindowChangedEventArgs args)
     {
-        _dispatcherService.TryEnqueue(() =>
-        {
-            IsWindowVisible = _windowService.IsVisible;
-            UpdateTrayIconVisibility();
-        });
+        _dispatcherService.TryEnqueue(UpdateTrayIconVisibility);
     }
 
     private void OnAppWindowClosing(AppWindowClosingEventArgs args)
@@ -120,7 +88,6 @@ public partial class TrayIconViewModel : ObservableObject
         // If the application is exiting intentionally, do not intercept the close.
         if (_windowService.IsExiting) return;
 
-        // Check if the current page is the OnboardingPage - if so, always exit the app
         if (App.RootWindow?.Content is OnboardingPage)
         {
             _windowService.IsExiting = true;
@@ -133,10 +100,7 @@ public partial class TrayIconViewModel : ObservableObject
             // Cancel the default close operation and hide the window to the tray instead.
             args.Cancel = true;
             _logger.LogDebug("'Hide to Tray' is enabled. Intercepting close and hiding window");
-            _dispatcherService.TryEnqueue(() =>
-            {
-                HideWindow();
-            });
+            _dispatcherService.TryEnqueue(_windowService.Hide);
         }
         else
         {
@@ -155,10 +119,10 @@ public partial class TrayIconViewModel : ObservableObject
             UpdateTrayIconVisibility();
 
             // If the feature is disabled while the window is hidden, show the window to prevent it from becoming inaccessible.
-            if (!isEnabled && !IsWindowVisible)
+            if (!isEnabled && !_windowService.IsVisible)
             {
                 _logger.LogWarning("'Hide to Tray' disabled while window was hidden. Forcing window to show");
-                ShowWindow();
+                RestoreWindow();
             }
         });
     }
@@ -167,7 +131,7 @@ public partial class TrayIconViewModel : ObservableObject
     ///     Shows or hides the popup menu associated with the tray icon.
     /// </summary>
     [RelayCommand]
-    private void ShowPopup(object? parameter)
+    private void ShowPopup()
     {
         if (_windowService.IsVisible)
         {
@@ -175,25 +139,7 @@ public partial class TrayIconViewModel : ObservableObject
             return;
         }
 
-        RectInt32? iconRect = null;
-        if (parameter != null)
-        {
-            try
-            {
-                // Attempt to find the icon's screen position if the library supports it.
-                var method = parameter.GetType().GetMethod("GetIconRect");
-                if (method?.Invoke(parameter, null) is RectInt32 rect)
-                {
-                    iconRect = rect;
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogTrace(ex, "Could not retrieve icon rect from parameter.");
-            }
-        }
-
-        _trayPopupService.ShowOrHidePopup(iconRect);
+        _trayPopupService.ShowOrHidePopup();
     }
 
     /// <summary>
@@ -203,16 +149,6 @@ public partial class TrayIconViewModel : ObservableObject
     /// </summary>
     [RelayCommand]
     private void RestoreWindow()
-    {
-        ShowWindow();
-    }
-
-    private void HideWindow()
-    {
-        _windowService.Hide();
-    }
-
-    private void ShowWindow()
     {
         _trayPopupService.HidePopup();
         _windowService.ShowAndActivate();

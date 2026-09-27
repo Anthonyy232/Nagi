@@ -1,11 +1,9 @@
-﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Documents;
 using Nagi.Core.Models;
 
 namespace Nagi.WinUI.Helpers;
@@ -40,31 +38,29 @@ public static class MultiArtistHyperlinkHelper
             typeof(MultiArtistHyperlinkHelper),
             new PropertyMetadata(null, OnSongOrArtistNameChanged));
 
-    public static Song GetSong(DependencyObject obj) => (Song)obj.GetValue(SongProperty);
-    public static void SetSong(DependencyObject obj, Song value) => obj.SetValue(SongProperty, value);
+    public static Song? GetSong(DependencyObject obj) => (Song?)obj.GetValue(SongProperty);
+    public static void SetSong(DependencyObject obj, Song? value) => obj.SetValue(SongProperty, value);
 
-    public static ICollection<AlbumArtist> GetAlbumArtists(DependencyObject obj) => (ICollection<AlbumArtist>)obj.GetValue(AlbumArtistsProperty);
-    public static void SetAlbumArtists(DependencyObject obj, ICollection<AlbumArtist> value) => obj.SetValue(AlbumArtistsProperty, value);
+    public static ICollection<AlbumArtist>? GetAlbumArtists(DependencyObject obj) => (ICollection<AlbumArtist>?)obj.GetValue(AlbumArtistsProperty);
+    public static void SetAlbumArtists(DependencyObject obj, ICollection<AlbumArtist>? value) => obj.SetValue(AlbumArtistsProperty, value);
 
-    public static string GetArtistName(DependencyObject obj) => (string)obj.GetValue(ArtistNameProperty);
-    public static void SetArtistName(DependencyObject obj, string value) => obj.SetValue(ArtistNameProperty, value);
+    public static string? GetArtistName(DependencyObject obj) => (string?)obj.GetValue(ArtistNameProperty);
+    public static void SetArtistName(DependencyObject obj, string? value) => obj.SetValue(ArtistNameProperty, value);
 
-    public static ICommand GetCommand(DependencyObject obj) => (ICommand)obj.GetValue(CommandProperty);
-    public static void SetCommand(DependencyObject obj, ICommand value) => obj.SetValue(CommandProperty, value);
+    public static ICommand? GetCommand(DependencyObject obj) => (ICommand?)obj.GetValue(CommandProperty);
+    public static void SetCommand(DependencyObject obj, ICommand? value) => obj.SetValue(CommandProperty, value);
 
     private static void OnSongOrArtistNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is TextBlock textBlock)
         {
-            // If the control is loaded and has a parent, update immediately
             if (textBlock.IsLoaded && textBlock.Parent != null)
             {
                 UpdateHyperlinks(textBlock);
             }
             else
             {
-                // Otherwise wait for it to be loaded/parented
-                textBlock.Loaded -= TextBlock_Loaded; // Prevent duplicate subscription
+                textBlock.Loaded -= TextBlock_Loaded;
                 textBlock.Loaded += TextBlock_Loaded;
             }
         }
@@ -86,31 +82,12 @@ public static class MultiArtistHyperlinkHelper
             typeof(MultiArtistHyperlinkHelper),
             new PropertyMetadata(null));
 
-    private static readonly DependencyProperty LastCacheKeyProperty =
-        DependencyProperty.RegisterAttached(
-            "LastCacheKey",
-            typeof(string),
-            typeof(MultiArtistHyperlinkHelper),
-            new PropertyMetadata(null));
-
     private static void UpdateHyperlinks(TextBlock textBlock)
     {
-        // Capture dependencies
         var song = GetSong(textBlock);
         var albumArtists = GetAlbumArtists(textBlock);
         var artistString = GetArtistName(textBlock);
         var command = GetCommand(textBlock);
-
-        // Quick escape if nothing changed to prevent rapid-fire redundant updates during virtualization/scrolling
-        // Include Command in cache key to ensure we rebuild if command is late-bound!
-        string cacheKey = $"{song?.Id ?? Guid.Empty}_{albumArtists?.GetHashCode() ?? 0}_{artistString ?? string.Empty}_{command?.GetHashCode() ?? 0}";
-
-        var lastCacheKey = (string)textBlock.GetValue(LastCacheKeyProperty);
-        if (lastCacheKey == cacheKey)
-        {
-            return;
-        }
-        textBlock.SetValue(LastCacheKeyProperty, cacheKey);
 
         if (textBlock.Parent is not Panel parentPanel)
         {
@@ -118,9 +95,7 @@ public static class MultiArtistHyperlinkHelper
             textBlock.Text = artistString ?? string.Empty;
             return;
         }
-
-        // Get or create the StackPanel (cached per TextBlock via attached property)
-        var stackPanel = (StackPanel)textBlock.GetValue(AssociatedStackPanelProperty);
+        var stackPanel = (StackPanel?)textBlock.GetValue(AssociatedStackPanelProperty);
         if (stackPanel == null)
         {
             stackPanel = new StackPanel
@@ -130,8 +105,6 @@ public static class MultiArtistHyperlinkHelper
                 VerticalAlignment = textBlock.VerticalAlignment,
                 HorizontalAlignment = textBlock.HorizontalAlignment
             };
-
-            // If parent is Grid, copy positioning
             if (parentPanel is Grid)
             {
                 Grid.SetColumn(stackPanel, Grid.GetColumn(textBlock));
@@ -139,28 +112,16 @@ public static class MultiArtistHyperlinkHelper
                 Grid.SetColumnSpan(stackPanel, Grid.GetColumnSpan(textBlock));
                 Grid.SetRowSpan(stackPanel, Grid.GetRowSpan(textBlock));
             }
-
-            // Hide the original TextBlock
             textBlock.Visibility = Visibility.Collapsed;
 
-            // Insert the new StackPanel at the same index as the TextBlock
-            int index = parentPanel.Children.IndexOf(textBlock);
-            if (index != -1)
-            {
-                parentPanel.Children.Insert(index + 1, stackPanel);
-            }
-            else
-            {
-                parentPanel.Children.Add(stackPanel);
-            }
+            parentPanel.Children.Insert(parentPanel.Children.IndexOf(textBlock) + 1, stackPanel);
 
             textBlock.SetValue(AssociatedStackPanelProperty, stackPanel);
         }
-
-        // Clear and rebuild (this is efficient - only happens when content actually changes due to cache check above)
         stackPanel.Children.Clear();
 
-        if (string.IsNullOrEmpty(artistString))
+        var artistParts = GetArtistNames(song, albumArtists, artistString);
+        if (artistParts.Count == 0)
         {
             var unknownArtist = new TextBlock
             {
@@ -175,28 +136,6 @@ public static class MultiArtistHyperlinkHelper
             return;
         }
 
-        // Prefer using structure data from SongArtists if available
-        var artistParts = new List<string>();
-
-        if (song?.SongArtists?.Any() == true)
-        {
-            artistParts = song.SongArtists
-                .OrderBy(sa => sa.Order)
-                .Select(sa => sa.Artist?.Name)
-                .Where(n => !string.IsNullOrWhiteSpace(n))
-                .Select(n => n!)
-                .ToList();
-        }
-        else if (albumArtists?.Any() == true)
-        {
-            artistParts = albumArtists
-                .OrderBy(aa => aa.Order)
-                .Select(aa => aa.Artist?.Name)
-                .Where(n => !string.IsNullOrWhiteSpace(n))
-                .Select(n => n!)
-                .ToList();
-        }
-
         for (int i = 0; i < artistParts.Count; i++)
         {
             var artistPart = artistParts[i];
@@ -207,8 +146,6 @@ public static class MultiArtistHyperlinkHelper
                 Command = command,
                 CommandParameter = new ArtistNavigationRequest { Song = song, ArtistName = artistPart }
             };
-
-            // Apply the shared style for consistency with album links
             if (Application.Current.Resources.TryGetValue("SongListHyperlinkButtonStyle", out var styleObj) && styleObj is Style style)
             {
                 button.Style = style;
@@ -241,6 +178,19 @@ public static class MultiArtistHyperlinkHelper
         }
     }
 
+    public static List<string> GetArtistNames(Song? song, ICollection<AlbumArtist>? albumArtists, string? artistName)
+    {
+        var names = (song?.SongArtists.Count > 0
+                ? song.SongArtists.OrderBy(a => a.Order).Select(a => a.Artist?.Name)
+                : albumArtists?.OrderBy(a => a.Order).Select(a => a.Artist?.Name) ?? [])
+            .Where(name => !string.IsNullOrWhiteSpace(name))
+            .Select(name => name!)
+            .ToList();
+
+        // A denormalized name is still useful when navigation relationships aren't loaded.
+        if (names.Count == 0 && !string.IsNullOrWhiteSpace(artistName)) names.Add(artistName);
+        return names;
+    }
 }
 
 public record ArtistNavigationRequest

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,60 +15,40 @@ using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.ViewModels;
 
-/// <summary>
-///     Represents a single music folder from the library in the user interface.
-/// </summary>
-public partial class FolderViewModelItem : ObservableObject
+public sealed class FolderViewModelItem
 {
     public FolderViewModelItem(Folder folder, int songCount)
     {
         Id = folder.Id;
         Name = folder.Name;
         Path = folder.Path;
-        UpdateSongCount(songCount);
+        SongCount = songCount;
     }
 
     public Guid Id { get; }
     public string Name { get; }
     public string Path { get; }
 
-    [ObservableProperty] public partial int SongCount { get; set; }
+    public int SongCount { get; }
 
-    [ObservableProperty] public partial string SongCountText { get; set; } = string.Empty;
-
-    /// <summary>
-    ///     Updates the song count and its corresponding display text.
-    /// </summary>
-    /// <remarks>
-    ///     This method avoids raising property change notifications if the count has not changed.
-    /// </remarks>
-    /// <param name="newSongCount">The new number of songs in the folder.</param>
-    public void UpdateSongCount(int newSongCount)
-    {
-        if (SongCount == newSongCount) return;
-
-        SongCount = newSongCount;
-        SongCountText = newSongCount == 1
-            ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Singular, newSongCount)
-            : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Plural, newSongCount);
-    }
+    public string SongCountText => SongCount == 1
+        ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Singular, SongCount)
+        : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Plural, SongCount);
 }
 
 /// <summary>
 ///     Manages the collection of music library folders and orchestrates library operations
 ///     such as adding, deleting, and scanning folders.
 /// </summary>
-public partial class FolderViewModel : ObservableObject
+public partial class FolderViewModel : ObservableObject, IDisposable
 {
-    private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
     private readonly ILibraryService _libraryService;
     private readonly ILogger<FolderViewModel> _logger;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly INavigationService _navigationService;
     private readonly IDispatcherService _dispatcherService;
     private readonly PlayerViewModel _playerViewModel;
-    private CancellationTokenSource? _debouncer;
-    private bool _isNavigating;
+    private readonly Debouncer _debouncer = new(TimeSpan.FromSeconds(1));
 
     public FolderViewModel(ILibraryService libraryService, PlayerViewModel playerViewModel,
         IMusicPlaybackService musicPlaybackService, INavigationService navigationService,
@@ -84,58 +61,41 @@ public partial class FolderViewModel : ObservableObject
         _dispatcherService = dispatcherService;
         _logger = logger;
 
-        // Store handler reference to enable proper cleanup in Dispose
-        _collectionChangedHandler = (s, e) => OnPropertyChanged(nameof(HasFolders));
-        Folders.CollectionChanged += _collectionChangedHandler;
+        Folders.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasFolders));
 
         _libraryService.LibraryContentChanged += OnLibraryContentChanged;
     }
 
     private void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
     {
-        // Refresh folders list on any folder-related change
         if (e.ChangeType == LibraryChangeType.FolderAdded ||
             e.ChangeType == LibraryChangeType.FolderRemoved ||
             e.ChangeType == LibraryChangeType.FolderRescanned ||
             e.ChangeType == LibraryChangeType.LibraryRescanned)
         {
-            // Debounce to prevent multiple refresh calls during rapid changes.
-            // We exchange the CTS to ensure only the latest one survives.
-            var cts = new CancellationTokenSource();
-            var oldCts = Interlocked.Exchange(ref _debouncer, cts);
-            try { oldCts?.Cancel(); }
-            catch (ObjectDisposedException) { }
-
-            var token = cts.Token;
-
-            Task.Run(async () =>
+            _debouncer.Trigger(async token =>
             {
                 try
                 {
-                    // 1 second is enough to catch all events from a folder scan while still feeling responsive
-                    await Task.Delay(1000, token).ConfigureAwait(false);
-
-                    if (token.IsCancellationRequested) return;
-
-                    await _dispatcherService.EnqueueAsync(() => LoadFoldersAsync());
+                    await _dispatcherService.EnqueueAsync(() => token.IsCancellationRequested
+                        ? Task.CompletedTask : LoadFoldersAsync(token));
                 }
-                catch (OperationCanceledException)
-                {
-                    // Expected when a new event arrives
-                }
-                catch (ObjectDisposedException)
-                {
-                    // Expected if the CTS was disposed immediately after cancellation in a race
-                }
-                catch (Exception ex)
+                catch (Exception ex) when (ex is not OperationCanceledException)
                 {
                     _logger.LogError(ex, "Error executing debounced folder refresh");
                 }
-            }, token);
+            });
         }
     }
 
-    [ObservableProperty] public partial ObservableRangeCollection<FolderViewModelItem> Folders { get; set; } = new();
+    public void Dispose()
+    {
+        _libraryService.LibraryContentChanged -= OnLibraryContentChanged;
+        _debouncer.Dispose();
+        LoadFoldersCommand.Cancel();
+    }
+
+    public ObservableRangeCollection<FolderViewModelItem> Folders { get; } = new();
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsAnyOperationInProgress))]
@@ -157,39 +117,21 @@ public partial class FolderViewModel : ObservableObject
     /// </remarks>
     public bool IsAnyOperationInProgress => IsAddingFolder || IsScanning || IsDeletingFolder;
 
-    /// <summary>
-    ///     Gets a value indicating whether there are any folders in the library.
-    /// </summary>
     public bool HasFolders => Folders.Any();
 
 
-    /// <summary>
-    ///     Navigates to the song list for the selected folder.
-    /// </summary>
     [RelayCommand]
     public void NavigateToFolderDetail(FolderViewModelItem? folder)
     {
-        if (folder is null || _isNavigating) return;
-
-        _isNavigating = true;
-        try
+        if (folder is null) return;
+        var navParam = new FolderSongViewNavigationParameter
         {
-            var navParam = new FolderSongViewNavigationParameter
-            {
-                Title = folder.Name,
-                FolderId = folder.Id
-            };
-            _navigationService.Navigate(typeof(FolderSongViewPage), navParam);
-        }
-        finally
-        {
-            _isNavigating = false;
-        }
+            Title = folder.Name,
+            FolderId = folder.Id
+        };
+        _navigationService.Navigate(typeof(FolderSongViewPage), navParam);
     }
 
-    /// <summary>
-    ///     Clears the current queue and starts playing all songs from the selected folder.
-    /// </summary>
     [RelayCommand]
     private async Task PlayFolderAsync(Guid folderId)
     {
@@ -206,9 +148,6 @@ public partial class FolderViewModel : ObservableObject
         }
     }
 
-    /// <summary>
-    ///     Fetches a random folder ID (one that contains songs) and starts playback.
-    /// </summary>
     [RelayCommand]
     private async Task PlayRandomFolderAsync()
     {
@@ -234,37 +173,28 @@ public partial class FolderViewModel : ObservableObject
         }
     }
 
-    /// <summary>
-    ///     Asynchronously loads all root folders from the database and updates the UI.
-    /// </summary>
     [RelayCommand]
-    private async Task LoadFoldersAsync()
+    private async Task LoadFoldersAsync(CancellationToken cancellationToken = default)
     {
         try
         {
-            var foldersFromDb = await _libraryService.GetRootFoldersAsync();
-            var folderItemTasks = foldersFromDb.Select(async folder =>
-            {
-                var songCount = await _libraryService.GetSongCountForFolderAsync(folder.Id);
-                return new FolderViewModelItem(folder, songCount);
-            });
-
-            var newItems = (await Task.WhenAll(folderItemTasks))
+            var foldersFromDb = await _libraryService.GetRootFoldersWithCountsAsync(cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
+            var newItems = foldersFromDb
+                .Select(item => new FolderViewModelItem(item.Folder, item.SongCount))
                 .OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(item => item.Id)
                 .ToList();
 
             Folders.ReplaceRange(newItems);
         }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to load folders");
         }
     }
 
-    /// <summary>
-    ///     Adds a new folder to the library and initiates a scan for music files.
-    /// </summary>
     [RelayCommand]
     private async Task AddFolderAndScanAsync(string folderPath)
     {
@@ -325,9 +255,6 @@ public partial class FolderViewModel : ObservableObject
         }
     }
 
-    /// <summary>
-    ///     Deletes a folder and all its associated songs from the library.
-    /// </summary>
     [RelayCommand]
     private async Task DeleteFolderAsync(Guid folderId)
     {
@@ -366,11 +293,8 @@ public partial class FolderViewModel : ObservableObject
         }
     }
 
-    /// <summary>
-    ///     Rescans a specific folder for new, removed, or changed music files.
-    /// </summary>
     [RelayCommand]
-    private async Task RescanFolderAsync(Guid folderId)
+    private async Task RescanFolderAsync(Guid folderId, CancellationToken cancellationToken)
     {
         if (IsAnyOperationInProgress) return;
 
@@ -381,8 +305,7 @@ public partial class FolderViewModel : ObservableObject
         _playerViewModel.IsGlobalOperationInProgress = true;
         _playerViewModel.GlobalOperationStatusMessage = string.Format(Nagi.WinUI.Resources.Strings.Folders_Rescan_InProgress, folderItem.Name);
         _playerViewModel.IsGlobalOperationIndeterminate = true;
-        using var rescanCts = new CancellationTokenSource();
-        _playerViewModel.SetGlobalOperationCancellation(rescanCts.Cancel);
+        _playerViewModel.SetGlobalOperationCancellation(RescanFolderCommand.Cancel);
 
         try
         {
@@ -393,8 +316,8 @@ public partial class FolderViewModel : ObservableObject
                 _playerViewModel.GlobalOperationProgressValue = p.Percentage;
             });
 
-            var changesDetected = await _libraryService.RescanFolderForMusicAsync(folderId, progress, rescanCts.Token);
-            rescanCts.Token.ThrowIfCancellationRequested();
+            var changesDetected = await _libraryService.RescanFolderForMusicAsync(folderId, progress, cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
 
             _playerViewModel.GlobalOperationStatusMessage = changesDetected
                 ? string.Format(Nagi.WinUI.Resources.Strings.Folders_Rescan_Complete, folderItem.Name)

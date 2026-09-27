@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Windows.System;
 using Microsoft.Extensions.DependencyInjection;
@@ -63,14 +63,8 @@ public sealed partial class GenreViewPage : Page
         _nowPlayingBinder = null;
     }
 
-    /// <summary>
-    ///     Gets the view model associated with this page.
-    /// </summary>
     public GenreViewViewModel ViewModel { get; }
 
-    /// <summary>
-    ///     Initializes the view model with navigation parameters when the page is navigated to.
-    /// </summary>
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
@@ -97,9 +91,6 @@ public sealed partial class GenreViewPage : Page
         }
     }
 
-    /// <summary>
-    ///     Cleans up resources when the user navigates away from this page.
-    /// </summary>
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
@@ -107,9 +98,6 @@ public sealed partial class GenreViewPage : Page
         ViewModel.Dispose();
     }
 
-    /// <summary>
-    ///     Handles the page loaded event to set initial visual state.
-    /// </summary>
     private void OnPageLoaded(object sender, RoutedEventArgs e)
     {
         _logger.LogDebug("GenreViewPage loaded. Setting initial visual state.");
@@ -117,9 +105,6 @@ public sealed partial class GenreViewPage : Page
         Loaded -= OnPageLoaded;
     }
 
-    /// <summary>
-    ///     Handles the search toggle button click to expand or collapse the search box.
-    /// </summary>
     private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e)
     {
         if (_isSearchExpanded)
@@ -128,9 +113,6 @@ public sealed partial class GenreViewPage : Page
             ExpandSearch();
     }
 
-    /// <summary>
-    ///     Handles key down events in the search text box.
-    /// </summary>
     private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
     {
         if (e.Key == VirtualKey.Escape)
@@ -141,9 +123,6 @@ public sealed partial class GenreViewPage : Page
         }
     }
 
-    /// <summary>
-    ///     Expands the search interface with an animation.
-    /// </summary>
     private void ExpandSearch()
     {
         if (_isSearchExpanded) return;
@@ -153,19 +132,13 @@ public sealed partial class GenreViewPage : Page
         ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.GenreViewPage_SearchButton_Close_ToolTip);
         VisualStateManager.GoToState(this, "SearchExpanded", true);
 
-        var timer = DispatcherQueue.CreateTimer();
-        timer.Interval = TimeSpan.FromMilliseconds(150);
-        timer.Tick += (s, args) =>
-        {
-            timer.Stop();
-            SearchTextBox.Focus(FocusState.Programmatic);
-        };
-        timer.Start();
     }
 
-    /// <summary>
-    ///     Collapses the search interface with an animation and resets the filter.
-    /// </summary>
+    private void OnSearchExpansionCompleted(object sender, object e)
+    {
+        if (IsLoaded && _isSearchExpanded) SearchTextBox.Focus(FocusState.Programmatic);
+    }
+
     private void CollapseSearch()
     {
         if (!_isSearchExpanded) return;
@@ -177,9 +150,6 @@ public sealed partial class GenreViewPage : Page
         ViewModel.SearchTerm = string.Empty;
     }
 
-    /// <summary>
-    ///     Updates the view model with the current selection from the song list.
-    /// </summary>
     private void SongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (_isUpdatingSelection || sender is not ListView listView) return;
@@ -233,9 +203,6 @@ public sealed partial class GenreViewPage : Page
         args.Handled = true;
     }
 
-    /// <summary>
-    ///     Handles the double-tapped event on the song list to play the selected song.
-    /// </summary>
     private void SongsListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {
         if (e.OriginalSource is FrameworkElement { DataContext: Song tappedSong })
@@ -246,9 +213,6 @@ public sealed partial class GenreViewPage : Page
         }
     }
 
-    /// <summary>
-    ///     Handles the opening of the context menu for a song item.
-    /// </summary>
     private void SongItemMenuFlyout_Opening(object sender, object e)
     {
         if (sender is not MenuFlyout menuFlyout) return;
@@ -264,7 +228,8 @@ public sealed partial class GenreViewPage : Page
                 .FirstOrDefault(item => item.Name == "AddToPlaylistSubMenu") is { } addToPlaylistSubMenu)
         {
             _logger.LogDebug("Populating 'Add to playlist' submenu.");
-            PopulatePlaylistSubMenu(addToPlaylistSubMenu);
+            PlaylistMenuFlyoutHelper.Populate(addToPlaylistSubMenu, ViewModel.AvailablePlaylists,
+                ViewModel.AddSelectedSongsToPlaylistCommand, Nagi.WinUI.Resources.Strings.GenreViewPage_PlaylistMenu_NoPlaylists);
         }
 
         if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
@@ -275,32 +240,5 @@ public sealed partial class GenreViewPage : Page
         }
     }
 
-    /// <summary>
-    ///     Populates the "Add to playlist" submenu with available playlists from the view model.
-    /// </summary>
-    private void PopulatePlaylistSubMenu(MenuFlyoutSubItem subMenu)
-    {
-        subMenu.Items.Clear();
-        var availablePlaylists = ViewModel.AvailablePlaylists;
 
-        if (availablePlaylists?.Any() != true)
-        {
-            _logger.LogDebug("No playlists available to populate submenu.");
-            var disabledItem = new MenuFlyoutItem { Text = Nagi.WinUI.Resources.Strings.GenreViewPage_PlaylistMenu_NoPlaylists, IsEnabled = false };
-            subMenu.Items.Add(disabledItem);
-            return;
-        }
-
-        _logger.LogDebug("Found {PlaylistCount} playlists to populate submenu.", availablePlaylists.Count);
-        foreach (var playlist in availablePlaylists)
-        {
-            var playlistMenuItem = new MenuFlyoutItem
-            {
-                Text = playlist.Name,
-                Command = ViewModel.AddSelectedSongsToPlaylistCommand,
-                CommandParameter = playlist
-            };
-            subMenu.Items.Add(playlistMenuItem);
-        }
-    }
 }

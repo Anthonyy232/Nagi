@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Windows.System;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,9 +18,6 @@ using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.Pages;
 
-/// <summary>
-///     A page for displaying the list of songs within a specific playlist.
-/// </summary>
 public sealed partial class PlaylistSongViewPage : Page
 {
     private readonly ILogger<PlaylistSongViewPage> _logger;
@@ -131,15 +128,11 @@ public sealed partial class PlaylistSongViewPage : Page
         _logger.LogDebug("Search UI expanded.");
         ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.PlaylistSongViewPage_SearchButton_Close_ToolTip);
         VisualStateManager.GoToState(this, "SearchExpanded", true);
+    }
 
-        var timer = DispatcherQueue.CreateTimer();
-        timer.Interval = TimeSpan.FromMilliseconds(150);
-        timer.Tick += (s, args) =>
-        {
-            timer.Stop();
-            SearchTextBox.Focus(FocusState.Programmatic);
-        };
-        timer.Start();
+    private void OnSearchExpansionCompleted(object sender, object e)
+    {
+        if (IsLoaded && _isSearchExpanded) SearchTextBox.Focus(FocusState.Programmatic);
     }
 
     private void CollapseSearch()
@@ -157,7 +150,6 @@ public sealed partial class PlaylistSongViewPage : Page
     {
         if (_isUpdatingSelection || sender is not ListView listView) return;
 
-        // Update logical selection state based on individual changes
         foreach (var song in e.AddedItems.OfType<Song>())
             ViewModel.SelectionState.Select(song.Id);
 
@@ -192,7 +184,6 @@ public sealed partial class PlaylistSongViewPage : Page
         _logger.LogDebug("Ctrl+A invoked. Selecting all songs in playlist.");
         ViewModel.SelectAllCommand.Execute(null);
 
-        // Sync the current visible items
         try
         {
             _isUpdatingSelection = true;
@@ -239,19 +230,6 @@ public sealed partial class PlaylistSongViewPage : Page
         if (args.DropResult != Windows.ApplicationModel.DataTransfer.DataPackageOperation.Move)
             return;
 
-        if (args.Items.FirstOrDefault() is not Song movedSong)
-            return;
-
-        var newIndex = ViewModel.Songs.IndexOf(movedSong);
-        if (newIndex < 0)
-        {
-            _logger.LogWarning("Could not find moved song {SongId} in Songs collection after reorder.", movedSong.Id);
-            return;
-        }
-
-        _logger.LogDebug("Drag completed for song '{SongTitle}' to index {NewIndex}.", movedSong.Title, newIndex);
-
-        // Fire-and-forget with proper error handling - the async method handles its own exceptions internally
-        _ = ViewModel.OnSongReorderedAsync(movedSong, newIndex);
+        _ = ViewModel.OnSongsReorderedAsync(args.Items.OfType<Song>().ToList());
     }
 }

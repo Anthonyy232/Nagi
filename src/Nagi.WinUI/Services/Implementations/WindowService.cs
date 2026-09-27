@@ -37,9 +37,6 @@ public sealed class WindowService : IWindowService, IDisposable
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    /// <summary>
-    ///     Cleans up resources and unsubscribes from events to prevent memory leaks.
-    /// </summary>
     public void Dispose()
     {
         if (_isDisposed) return;
@@ -143,7 +140,7 @@ public sealed class WindowService : IWindowService, IDisposable
         var foregroundHandle = _win32InteropService.GetForegroundWindow();
 
         // If the window is already foreground and visible, we don't need to do the full activation dance
-        if (windowHandle == foregroundHandle && IsVisible && !IsMinimized)
+        if (windowHandle == foregroundHandle && IsVisible && !IsMinimized && !IsMiniPlayerActive)
         {
             _logger.LogDebug("Window is already foreground and active, skipping redundant activation.");
             return;
@@ -259,8 +256,6 @@ public sealed class WindowService : IWindowService, IDisposable
     /// </summary>
     private void HideMiniPlayer()
     {
-        if (_miniPlayerWindow is null) return;
-
         _dispatcherService.TryEnqueue(() =>
         {
             if (_isDisposed) return;
@@ -291,11 +286,11 @@ public sealed class WindowService : IWindowService, IDisposable
     private void OnMiniPlayerClosed(object? sender, WindowEventArgs args)
     {
         if (sender is MiniPlayerWindow window) window.Closed -= OnMiniPlayerClosed;
+        _miniPlayerWindow = null;
 
         // If the user manually closed the mini-player, show the main application window
         if (!_isClosingMiniPlayerProgrammatically) ShowAndActivate();
 
-        _miniPlayerWindow = null;
         UIStateChanged?.Invoke();
     }
 }

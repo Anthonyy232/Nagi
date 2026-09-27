@@ -1,12 +1,10 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
-using Microsoft.Windows.Storage.Pickers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Navigation;
-using Nagi.WinUI.Helpers;
+using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.ViewModels;
 
 namespace Nagi.WinUI.Pages;
@@ -17,6 +15,7 @@ namespace Nagi.WinUI.Pages;
 public sealed partial class FolderPage : Page
 {
     private readonly ILogger<FolderPage> _logger;
+    private readonly IUIService _uiService;
 
     public FolderPage()
     {
@@ -24,6 +23,7 @@ public sealed partial class FolderPage : Page
 
         ViewModel = App.Services!.GetRequiredService<FolderViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<FolderPage>>();
+        _uiService = App.Services!.GetRequiredService<IUIService>();
         DataContext = ViewModel;
 
         _logger.LogDebug("FolderPage initialized.");
@@ -31,9 +31,6 @@ public sealed partial class FolderPage : Page
 
     public FolderViewModel ViewModel { get; }
 
-    /// <summary>
-    ///     Loads the folders from the ViewModel when the page is loaded.
-    /// </summary>
     private async void Page_Loaded(object sender, RoutedEventArgs e)
     {
         try
@@ -48,19 +45,6 @@ public sealed partial class FolderPage : Page
         }
     }
 
-    /// <summary>
-    ///     Handles the page's navigated-from event.
-    /// </summary>
-    protected override void OnNavigatedFrom(NavigationEventArgs e)
-    {
-        base.OnNavigatedFrom(e);
-        _logger.LogDebug("Navigating away from FolderPage.");
-        // Note: ViewModel is Singleton, do not dispose - state persists across navigations
-    }
-
-    /// <summary>
-    ///     Handles clicks on a folder item, navigating to the song list for that folder.
-    /// </summary>
     private void FoldersGridView_ItemClick(object sender, ItemClickEventArgs e)
     {
         if (e.ClickedItem is FolderViewModelItem clickedFolder)
@@ -71,9 +55,6 @@ public sealed partial class FolderPage : Page
         }
     }
 
-    /// <summary>
-    ///     Opens a folder picker to allow the user to add a new music folder.
-    /// </summary>
     private async void AddFolderButton_Click(object sender, RoutedEventArgs e)
     {
         if (ViewModel.IsAnyOperationInProgress)
@@ -85,13 +66,11 @@ public sealed partial class FolderPage : Page
         try
         {
             _logger.LogDebug("Add folder button clicked. Opening folder picker.");
-            var folderPicker = new FolderPicker(App.RootWindow!.AppWindow.Id);
-
-            var folder = await folderPicker.PickSingleFolderAsync();
-            if (folder != null)
+            var folderPath = await _uiService.PickSingleFolderAsync();
+            if (folderPath != null)
             {
-                _logger.LogDebug("User selected folder '{FolderPath}'. Adding and scanning.", folder.Path);
-                await ViewModel.AddFolderAndScanCommand.ExecuteAsync(folder.Path);
+                _logger.LogDebug("User selected folder '{FolderPath}'. Adding and scanning.", folderPath);
+                await ViewModel.AddFolderAndScanCommand.ExecuteAsync(folderPath);
             }
             else
             {
@@ -104,9 +83,6 @@ public sealed partial class FolderPage : Page
         }
     }
 
-    /// <summary>
-    ///     Handles the click event for the "Delete" context menu item.
-    /// </summary>
     private async void DeleteFolder_Click(object sender, RoutedEventArgs e)
     {
         if (sender is FrameworkElement { DataContext: FolderViewModelItem folderItem })
@@ -124,9 +100,6 @@ public sealed partial class FolderPage : Page
         }
     }
 
-    /// <summary>
-    ///     Displays a confirmation dialog before deleting a folder from the library.
-    /// </summary>
     private async Task ShowDeleteFolderConfirmationDialogAsync(FolderViewModelItem folderItem)
     {
         if (ViewModel.IsAnyOperationInProgress)
@@ -138,19 +111,12 @@ public sealed partial class FolderPage : Page
         }
 
         _logger.LogDebug("Showing delete confirmation dialog for folder '{FolderName}'.", folderItem.Name);
-        var dialog = new ContentDialog
-        {
-            Title = Nagi.WinUI.Resources.Strings.FolderPage_DeleteDialog_Title,
-            Content = string.Format(Nagi.WinUI.Resources.Strings.FolderPage_DeleteDialog_Format, folderItem.Name),
-            PrimaryButtonText = Nagi.WinUI.Resources.Strings.FolderPage_DeleteDialog_PrimaryButton,
-            CloseButtonText = Nagi.WinUI.Resources.Strings.FolderPage_DeleteDialog_CloseButton,
-            DefaultButton = ContentDialogButton.Close,
-            XamlRoot = XamlRoot
-        };
-
-        DialogThemeHelper.ApplyThemeOverrides(dialog);
-        var result = await dialog.ShowAsync();
-        if (result == ContentDialogResult.Primary)
+        var confirmed = await _uiService.ShowConfirmationDialogAsync(
+            Nagi.WinUI.Resources.Strings.FolderPage_DeleteDialog_Title,
+            string.Format(Nagi.WinUI.Resources.Strings.FolderPage_DeleteDialog_Format, folderItem.Name),
+            Nagi.WinUI.Resources.Strings.FolderPage_DeleteDialog_PrimaryButton,
+            Nagi.WinUI.Resources.Strings.FolderPage_DeleteDialog_CloseButton);
+        if (confirmed)
         {
             _logger.LogDebug(
                 "User confirmed deletion for folder '{FolderName}' (Id: {FolderId}). Executing delete command.",

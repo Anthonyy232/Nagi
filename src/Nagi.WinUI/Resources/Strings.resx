@@ -142,6 +142,39 @@
   <data name="Label_Rating" xml:space="preserve">
     <value>Rating</value>
   </data>
+  <data name="Label_Grouping" xml:space="preserve">
+    <value>Grouping</value>
+  </data>
+  <data name="Label_SkipCount" xml:space="preserve">
+    <value>Skip Count</value>
+  </data>
+  <data name="Label_DiscNumber" xml:space="preserve">
+    <value>Disc Number</value>
+  </data>
+  <data name="Label_Bitrate" xml:space="preserve">
+    <value>Bitrate</value>
+  </data>
+  <data name="Label_SampleRate" xml:space="preserve">
+    <value>Sample Rate</value>
+  </data>
+  <data name="Label_IsLoved" xml:space="preserve">
+    <value>Loved</value>
+  </data>
+  <data name="Label_HasLyrics" xml:space="preserve">
+    <value>Has Lyrics</value>
+  </data>
+  <data name="Operator_IsInRange" xml:space="preserve">
+    <value>Is between (inclusive)</value>
+  </data>
+  <data name="Operator_IsAfter" xml:space="preserve">
+    <value>Is after</value>
+  </data>
+  <data name="Operator_IsBefore" xml:space="preserve">
+    <value>Is before</value>
+  </data>
+  <data name="SmartPlaylist_UpperBound_Placeholder" xml:space="preserve">
+    <value>Upper bound</value>
+  </data>
   <data name="Operator_Contains" xml:space="preserve">
     <value>Contains</value>
   </data>
@@ -2267,5 +2300,20 @@ Error: {1}</value>
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
     <value>{0}m {1}s</value>
+  </data>
+  <data name="QueuePanel_EmptyTitle" xml:space="preserve">
+    <value>No tracks to display</value>
+  </data>
+  <data name="QueuePanel_EmptyDescription" xml:space="preserve">
+    <value>Play music or drop audio files here to build your queue.</value>
+  </data>
+  <data name="QueuePanel_LoadError" xml:space="preserve">
+    <value>Some tracks couldn't be loaded. Try loading the queue again.</value>
+  </data>
+  <data name="QueuePanel_Retry" xml:space="preserve">
+    <value>Retry</value>
+  </data>
+  <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
+    <value>The new playlist order couldn't be saved. Please try again.</value>
   </data>
 </root>

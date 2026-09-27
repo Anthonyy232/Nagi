@@ -24,8 +24,6 @@ public sealed class NowPlayingIndicatorBinder : IDisposable
     private readonly Brush _playingTitleBrush;
     private readonly Func<object?, Guid?> _songIdExtractor;
 
-    private bool _disposed;
-
     /// <param name="songIdExtractor">
     /// Maps a row item (whatever the ListView's ItemsSource yields) to the Song's Id.
     /// Defaults to <c>(item as Song)?.Id</c> for lists of bare <see cref="Song"/>;
@@ -52,8 +50,6 @@ public sealed class NowPlayingIndicatorBinder : IDisposable
 
     public void Dispose()
     {
-        if (_disposed) return;
-        _disposed = true;
         _listView.ContainerContentChanging -= OnContainerContentChanging;
         if (_viewModel is not null) _viewModel.PropertyChanged -= OnViewModelPropertyChanged;
         _playerViewModel.PropertyChanged -= OnPlayerViewModelPropertyChanged;

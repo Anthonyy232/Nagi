@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Web;
@@ -14,12 +14,6 @@ using NSubstitute;
 using Xunit;
 
 namespace Nagi.Core.Tests;
-
-/// <summary>
-///     Contains unit tests for the <see cref="LastFmMetadataService" />.
-///     These tests verify the service's ability to fetch artist information, handle API errors
-///     (including invalid API keys and retry logic), and correctly parse various API responses.
-/// </summary>
 public class LastFmMetadataServiceTests : IDisposable
 {
     private const string ApiKey = "test-api-key";
@@ -53,30 +47,16 @@ public class LastFmMetadataServiceTests : IDisposable
         _httpMessageHandler.Dispose();
         GC.SuppressFinalize(this);
     }
-
-    /// <summary>
-    ///     Verifies that a successful API response for an artist is correctly parsed and mapped to an
-    ///     <see cref="ArtistInfo" /> object.
-    /// </summary>
-    /// <remarks>
-    ///     <b>Scenario:</b> The Last.fm API returns a 200 OK response with valid artist data.
-    ///     <br />
-    ///     <b>Expected Result:</b> The service returns a `Success` result. The biography HTML is sanitized,
-    ///     and the highest-resolution image URL ('extralarge') is selected.
-    /// </remarks>
     [Fact]
     public async Task GetArtistInfoAsync_WithValidResponse_ReturnsSuccessWithMappedData()
     {
-        // Arrange
         const string bio = "This is a summary. <a href=\"https://www.last.fm\">Read more</a>";
         var responseContent = CreateValidArtistResponse(bio, "http://extralarge.jpg", "http://large.jpg");
         SetupApiKey();
         SetupHttpResponse(HttpStatusCode.OK, responseContent);
 
-        // Act
         var result = await _metadataService.GetArtistInfoAsync(ArtistName);
 
-        // Assert
         result.Status.Should().Be(ServiceResultStatus.Success);
         result.Data.Should().NotBeNull();
         result.Data!.Biography.Should().Be("This is a summary.");
@@ -90,36 +70,22 @@ public class LastFmMetadataServiceTests : IDisposable
     [Fact]
     public async Task GetArtistInfoAsync_WithLanguageCode_IncludesLangParamInRequest()
     {
-        // Arrange
         var responseContent = CreateValidArtistResponse("Localized Bio", "http://url.jpg", "http://url.jpg");
         SetupApiKey();
         SetupHttpResponse(HttpStatusCode.OK, responseContent);
 
-        // Act
         await _metadataService.GetArtistInfoAsync(ArtistName, "de");
 
-        // Assert
         _httpMessageHandler.Requests.Should().HaveCount(1);
         var query = HttpUtility.ParseQueryString(_httpMessageHandler.Requests[0].RequestUri!.Query);
         query["artist"].Should().Be(ArtistName);
         query["lang"].Should().Be("de");
     }
-
-    /// <summary>
-    ///     Verifies the retry logic for an invalid API key. Ensures that the service attempts to refresh
-    ///     the key and successfully retries the request with the new key.
-    /// </summary>
-    /// <remarks>
-    ///     <b>Scenario:</b> The first API call fails with an "Invalid API Key" error. The API key service
-    ///     successfully provides a new, valid key upon refresh.
-    ///     <br />
-    ///     <b>Expected Result:</b> The service makes two HTTP requests. The first uses the old key and fails.
-    ///     The second uses the new, refreshed key and succeeds. The final result is `Success`.
-    /// </remarks>
-    [Fact]
-    public async Task GetArtistInfoAsync_WhenApiKeyIsInvalid_RefreshesKeyAndRetriesSuccessfully()
+    [Theory]
+    [InlineData(HttpStatusCode.BadRequest)]
+    [InlineData(HttpStatusCode.OK)]
+    public async Task GetArtistInfoAsync_WhenApiKeyIsInvalid_RefreshesKeyAndRetriesSuccessfully(HttpStatusCode statusCode)
     {
-        // Arrange
         SetupApiKey();
         _apiKeyService.RefreshApiKeyAsync("lastfm", Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<string?>(RefreshedApiKey));
@@ -129,17 +95,15 @@ public class LastFmMetadataServiceTests : IDisposable
 
         var responseQueue = new Queue<HttpResponseMessage>(new[]
         {
-            new HttpResponseMessage(HttpStatusCode.BadRequest)
+            new HttpResponseMessage(statusCode)
                 { Content = new StringContent(JsonSerializer.Serialize(errorResponse)) },
             new HttpResponseMessage(HttpStatusCode.OK)
                 { Content = new StringContent(JsonSerializer.Serialize(successResponse)) }
         });
         _httpMessageHandler.SendAsyncFunc = (_, _) => Task.FromResult(responseQueue.Dequeue());
 
-        // Act
         var result = await _metadataService.GetArtistInfoAsync(ArtistName);
 
-        // Assert
         result.Status.Should().Be(ServiceResultStatus.Success);
         result.Data.Should().NotBeNull();
 
@@ -148,111 +112,113 @@ public class LastFmMetadataServiceTests : IDisposable
         _httpMessageHandler.Requests[1].RequestUri!.ToString().Should().Contain($"api_key={RefreshedApiKey}");
         await _apiKeyService.Received(1).RefreshApiKeyAsync("lastfm", Arg.Any<CancellationToken>());
     }
-
-    /// <summary>
-    ///     Verifies that if the initial API key is invalid and the subsequent refresh attempt also fails,
-    ///     the service returns a <see cref="ServiceResultStatus.PermanentError" /> without further retries.
-    /// </summary>
     [Fact]
-    public async Task GetArtistInfoAsync_WhenApiKeyIsInvalidAndRefreshFails_ReturnsPermanentError()
+    public async Task GetArtistInfoAsync_WhenApiKeyIsInvalidAndRefreshFails_RemainsRetryable()
     {
-        // Arrange
         SetupApiKey();
         _apiKeyService.RefreshApiKeyAsync("lastfm", Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<string?>(null));
         var errorResponse = CreateErrorResponse(10, "Invalid API Key");
         SetupHttpResponse(HttpStatusCode.BadRequest, errorResponse);
 
-        // Act
         var result = await _metadataService.GetArtistInfoAsync(ArtistName);
 
-        // Assert
-        result.Status.Should().Be(ServiceResultStatus.PermanentError);
+        result.IsConclusive.Should().BeFalse();
+        _httpMessageHandler.Requests.Should().HaveCount(1);
+    }
+    [Fact]
+    public async Task GetArtistInfoAsync_WhenInitialApiKeyIsMissing_RemainsRetryableWithoutHttpCall()
+    {
+        _apiKeyService.GetApiKeyAsync("lastfm", Arg.Any<CancellationToken>()).Returns(Task.FromResult<string?>(null));
+
+        var result = await _metadataService.GetArtistInfoAsync(ArtistName);
+
+        result.IsConclusive.Should().BeFalse();
+        _httpMessageHandler.Requests.Should().BeEmpty();
+
+        SetupApiKey();
+        SetupHttpResponse(HttpStatusCode.OK, CreateValidArtistResponse("Recovered bio", "http://image.jpg", "http://image.jpg"));
+
+        var retry = await _metadataService.GetArtistInfoAsync(ArtistName);
+
+        retry.Data!.Biography.Should().Be("Recovered bio");
         _httpMessageHandler.Requests.Should().HaveCount(1);
     }
 
-    /// <summary>
-    ///     Verifies that if the initial API key is missing, the service returns a
-    ///     <see cref="ServiceResultStatus.PermanentError" /> without attempting an HTTP request.
-    /// </summary>
-    [Fact]
-    public async Task GetArtistInfoAsync_WhenInitialApiKeyIsMissing_ReturnsPermanentErrorWithoutHttpCall()
+    [Theory]
+    [InlineData("<a href=\"https://www.last.fm/music/Test\">Read more on Last.fm</a>")]
+    [InlineData("   ")]
+    public async Task GetArtistInfoAsync_WithoutBiographyOrRealImage_ReturnsNotFound(string summary)
     {
-        // Arrange
-        _apiKeyService.GetApiKeyAsync("lastfm", Arg.Any<CancellationToken>()).Returns(Task.FromResult<string?>(null));
+        SetupApiKey();
+        SetupHttpResponse(HttpStatusCode.OK, new
+        {
+            artist = new
+            {
+                bio = new { summary },
+                image = new[]
+                {
+                    new Dictionary<string, string>
+                    {
+                        ["size"] = "extralarge",
+                        ["#text"] = "https://lastfm.freetls.fastly.net/i/u/300x300/2a96cbd8b46e442fc41c2b86b821562f.png"
+                    }
+                }
+            }
+        });
 
-        // Act
         var result = await _metadataService.GetArtistInfoAsync(ArtistName);
 
-        // Assert
-        result.Status.Should().Be(ServiceResultStatus.PermanentError);
-        _httpMessageHandler.Requests.Should().BeEmpty();
+        result.Status.Should().Be(ServiceResultStatus.SuccessNotFound);
     }
-
-    /// <summary>
-    ///     Verifies that when the Last.fm API response indicates the artist was not found, the service
-    ///     returns a <see cref="ServiceResultStatus.SuccessNotFound" /> result.
-    /// </summary>
     [Fact]
     public async Task GetArtistInfoAsync_WhenApiResponseIsNotFound_ReturnsSuccessNotFound()
     {
-        // Arrange
         SetupApiKey();
         SetupHttpResponse(HttpStatusCode.OK, new { artist = (object?)null });
 
-        // Act
         var result = await _metadataService.GetArtistInfoAsync(ArtistName);
 
-        // Assert
         result.Status.Should().Be(ServiceResultStatus.SuccessNotFound);
         result.Data.Should().BeNull();
     }
-
-    /// <summary>
-    ///     Verifies that a server-side error (HTTP 5xx) from the Last.fm API results in a
-    ///     <see cref="ServiceResultStatus.TemporaryError" />.
-    /// </summary>
     [Fact]
     public async Task GetArtistInfoAsync_WhenApiReturnsOtherError_ReturnsTemporaryError()
     {
-        // Arrange
         SetupApiKey();
         SetupHttpResponse(HttpStatusCode.InternalServerError, null);
 
-        // Act
         var result = await _metadataService.GetArtistInfoAsync(ArtistName);
 
-        // Assert
         result.Status.Should().Be(ServiceResultStatus.TemporaryError);
     }
 
-    /// <summary>
-    ///     Verifies that a malformed JSON response from the Last.fm API results in a
-    ///     <see cref="ServiceResultStatus.PermanentError" />.
-    /// </summary>
-    [Fact]
-    public async Task GetArtistInfoAsync_WhenResponseIsMalformedJson_ReturnsPermanentError()
+    [Theory]
+    [InlineData(11)]
+    [InlineData(16)]
+    public async Task GetArtistInfoAsync_WhenSuccessfulHttpResponseContainsApiError_ReturnsTemporaryError(int errorCode)
     {
-        // Arrange
+        SetupApiKey();
+        SetupHttpResponse(HttpStatusCode.OK, CreateErrorResponse(errorCode, "Service unavailable"));
+
+        var result = await _metadataService.GetArtistInfoAsync(ArtistName);
+
+        result.Status.Should().Be(ServiceResultStatus.TemporaryError);
+    }
+    [Fact]
+    public async Task GetArtistInfoAsync_WhenResponseIsMalformedJson_ReturnsTemporaryError()
+    {
         SetupApiKey();
         SetupHttpResponse(HttpStatusCode.OK, "{ not json }");
 
-        // Act
         var result = await _metadataService.GetArtistInfoAsync(ArtistName);
 
-        // Assert
-        result.Status.Should().Be(ServiceResultStatus.PermanentError);
+        result.Status.Should().Be(ServiceResultStatus.TemporaryError);
     }
-
-    /// <summary>
-    ///     Verifies that if the request is canceled via a <see cref="CancellationToken" />, the service
-    ///     propagates an <see cref="OperationCanceledException" />.
-    /// </summary>
     [Fact]
     public async Task GetArtistInfoAsync_WhenRequestIsCanceled_ThrowsOperationCanceledException()
     {
-        // Arrange
-        var cts = new CancellationTokenSource();
+        using var cts = new CancellationTokenSource();
         SetupApiKey();
         _httpMessageHandler.SendAsyncFunc = async (_, token) =>
         {
@@ -260,25 +226,17 @@ public class LastFmMetadataServiceTests : IDisposable
             return new HttpResponseMessage(HttpStatusCode.OK);
         };
 
-        // Act
         var task = _metadataService.GetArtistInfoAsync(ArtistName, null, cts.Token);
         cts.Cancel();
 
-        // Assert
         await task.Awaiting(t => t).Should().ThrowAsync<TaskCanceledException>();
     }
-
-    /// <summary>
-    ///     Verifies the image selection logic correctly chooses the best available image URL, prioritizing
-    ///     'extralarge', then 'large', and falling back to other sizes.
-    /// </summary>
     [Theory]
     [InlineData("http://extralarge.jpg", "http://large.jpg", "http://extralarge.jpg")]
     [InlineData(null, "http://large.jpg", "http://large.jpg")]
-    [InlineData(null, null, "http://small.jpg")] // Falls back to last available
+    [InlineData(null, null, "http://small.jpg")]
     public async Task ToArtistInfo_SelectsBestImageUrlCorrectly(string? extraLarge, string? large, string expected)
     {
-        // Arrange
         var responseContent = new
         {
             artist = new
@@ -295,28 +253,18 @@ public class LastFmMetadataServiceTests : IDisposable
         SetupApiKey();
         SetupHttpResponse(HttpStatusCode.OK, responseContent);
 
-        // Act
         var result = await _metadataService.GetArtistInfoAsync(ArtistName);
 
-        // Assert
         result.Status.Should().Be(ServiceResultStatus.Success);
         result.Data.Should().NotBeNull();
         result.Data!.ImageUrl.Should().Be(expected);
     }
 
     #region Helper Methods
-
-    /// <summary>
-    ///     Configures the mock <see cref="IApiKeyService" /> to return a specific API key.
-    /// </summary>
     private void SetupApiKey(string key = ApiKey)
     {
         _apiKeyService.GetApiKeyAsync("lastfm", Arg.Any<CancellationToken>()).Returns(Task.FromResult<string?>(key));
     }
-
-    /// <summary>
-    ///     Configures the mock <see cref="TestHttpMessageHandler" /> to return a specific HTTP response.
-    /// </summary>
     private void SetupHttpResponse(HttpStatusCode statusCode, object? content)
     {
         var response = new HttpResponseMessage(statusCode);
@@ -328,10 +276,6 @@ public class LastFmMetadataServiceTests : IDisposable
 
         _httpMessageHandler.SendAsyncFunc = (_, _) => Task.FromResult(response);
     }
-
-    /// <summary>
-    ///     Creates a mock Last.fm API response object for a successful artist.getInfo call.
-    /// </summary>
     private static object CreateValidArtistResponse(string summary, string extraLargeUrl, string largeUrl)
     {
         return new
@@ -348,10 +292,6 @@ public class LastFmMetadataServiceTests : IDisposable
             }
         };
     }
-
-    /// <summary>
-    ///     Creates a mock Last.fm API error response object.
-    /// </summary>
     private static object CreateErrorResponse(int errorCode, string message)
     {
         return new { error = errorCode, message };

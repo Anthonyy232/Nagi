@@ -10,7 +10,7 @@ namespace Nagi.Core.Services.Implementations.Presence;
 ///     raises <c>ScrobbleEligibilityReached</c>; this service is only responsible for submitting
 ///     the scrobble to Last.fm and marking the session as scrobbled in the database.
 /// </summary>
-public class LastFmPresenceService : IPresenceService, IAsyncDisposable
+public class LastFmPresenceService : IPresenceService
 {
     private readonly ILibraryWriter _libraryWriter;
     private readonly ILogger<LastFmPresenceService> _logger;
@@ -33,24 +33,6 @@ public class LastFmPresenceService : IPresenceService, IAsyncDisposable
     }
 
     public string Name => "Last.fm";
-
-    /// <summary>
-    ///     Executes an async action with proper error handling for event handlers.
-    /// </summary>
-    private void FireAndForgetSafe(Func<Task> asyncAction, string operationName)
-    {
-        _ = Task.Run(async () =>
-        {
-            try
-            {
-                await asyncAction().ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in fire-and-forget operation: {Operation}", operationName);
-            }
-        });
-    }
 
     public async Task InitializeAsync()
     {
@@ -119,11 +101,16 @@ public class LastFmPresenceService : IPresenceService, IAsyncDisposable
         return ValueTask.CompletedTask;
     }
 
-    private void OnSettingsChanged()
+    private async void OnSettingsChanged()
     {
-        FireAndForgetSafe(
-            async () => await UpdateLocalSettingsAsync().ConfigureAwait(false),
-            "Last.fm settings update");
+        try
+        {
+            await UpdateLocalSettingsAsync().ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to update Last.fm presence settings.");
+        }
     }
 
     private async Task UpdateLocalSettingsAsync()

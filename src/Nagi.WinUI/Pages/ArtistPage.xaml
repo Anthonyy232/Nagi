@@ -47,12 +47,11 @@
                             Storyboard.TargetName="SearchIcon"
                             Storyboard.TargetProperty="Glyph">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE721;" />
-                            <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="&#xE721;" />
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="SearchExpanded">
-                    <Storyboard>
+                    <Storyboard Completed="OnSearchExpansionCompleted">
                         <DoubleAnimation
                             Storyboard.TargetName="SearchTextBox"
                             Storyboard.TargetProperty="Width"
@@ -80,23 +79,6 @@
                             <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE711;" />
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
-                </VisualState>
-            </VisualStateGroup>
-            <VisualStateGroup x:Name="WindowSizeStates">
-                <!-- Large displays (1600px+) -->
-                <VisualState x:Name="WideLayout">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="1600" />
-                    </VisualState.StateTriggers>
-                    <!-- Future: Scale up artist cards for better space utilization -->
-                </VisualState>
-
-                <!-- Normal/Small displays -->
-                <VisualState x:Name="NormalLayout">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="0" />
-                    </VisualState.StateTriggers>
-                    <!-- Default sizing from resources -->
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
@@ -188,7 +170,7 @@
                 IsItemClickEnabled="True"
                 ItemClick="ArtistsGridView_ItemClick"
                 Padding="{StaticResource SongListViewPadding}"
-                ItemContainerStyle="{StaticResource ArtistPageGridViewItemStyle}"
+                ItemContainerStyle="{StaticResource AnimatedGridViewItemStyle}"
                 ItemsSource="{x:Bind ViewModel.Artists, Mode=OneWay}"
                 SelectionMode="None"
                 Visibility="{x:Bind ViewModel.HasArtists, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">

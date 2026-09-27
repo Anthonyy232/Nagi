@@ -28,9 +28,9 @@ public class TestHttpMessageHandler : HttpMessageHandler
     {
         Requests.Add(request);
 
-        if (_sequence.Count > 0)
+        if (_sequence.TryDequeue(out var response))
         {
-            var (status, body) = _sequence.Dequeue();
+            var (status, body) = response;
             return Task.FromResult(new HttpResponseMessage(status)
             {
                 Content = new StringContent(body, Encoding.UTF8, "application/json")

@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,10 +15,6 @@ using Nagi.Core.Helpers;
 
 namespace Nagi.WinUI.ViewModels;
 
-/// <summary>
-///     Provides data and commands for the album details page, displaying album art,
-///     metadata, and the list of tracks.
-/// </summary>
 public partial class AlbumViewViewModel : SongListViewModelBase
 {
     private Guid _albumId;
@@ -32,20 +27,18 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         ILibraryService libraryService,
         IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
-        INavigationService navigationService,
         IMusicNavigationService musicNavigationService,
         IDispatcherService dispatcherService,
         IUISettingsService settingsService,
         IUIService uiService,
         ILogger<AlbumViewViewModel> logger)
-        : base(libraryService, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryService, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
         AlbumTitle = Nagi.WinUI.Resources.Strings.AlbumView_DefaultAlbumTitle;
         ArtistName = Nagi.WinUI.Resources.Strings.AlbumView_DefaultArtistName;
         AlbumDetailsText = string.Empty;
 
         CurrentSortOrder = SongSortOrder.TrackNumberAsc;
-        UpdateSortOrderButtonText(CurrentSortOrder);
     }
 
     [ObservableProperty] public partial string AlbumTitle { get; set; }
@@ -62,44 +55,33 @@ public partial class AlbumViewViewModel : SongListViewModelBase
 
     [ObservableProperty] public partial string AlbumDetailsText { get; set; }
 
-    [ObservableProperty] public partial ObservableRangeCollection<object> GroupedSongsFlat { get; set; } = new();
+    public ObservableRangeCollection<object> GroupedSongsFlat { get; } = new();
 
     [ObservableProperty] public partial bool IsGroupedByDisc { get; set; }
 
-    protected override async Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
+    protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
         SongSortOrder sortOrder, CancellationToken cancellationToken = default)
     {
-        if (_albumId == Guid.Empty) return new PagedResult<Song>();
-
-        PagedResult<Song> result;
-        if (IsSearchActive)
-            result = await _libraryReader.SearchSongsInAlbumPagedAsync(_albumId, SearchTerm, pageNumber, pageSize, cancellationToken);
-        else
-            result = await _libraryReader.GetSongsByAlbumIdPagedAsync(_albumId, pageNumber, pageSize, sortOrder, cancellationToken);
-
-        if (pageNumber == 1)
-            _dispatcherService.TryEnqueue(() => UpdateAlbumDetails(result));
-
-        return result;
+        if (_albumId == Guid.Empty) return Task.FromResult(new PagedResult<Song>());
+        return IsSearchActive
+            ? _libraryReader.SearchSongsInAlbumPagedAsync(_albumId, SearchTerm, pageNumber, pageSize, cancellationToken)
+            : _libraryReader.GetSongsByAlbumIdPagedAsync(_albumId, pageNumber, pageSize, sortOrder, cancellationToken);
     }
 
-    protected override async Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
+    protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
     {
-        if (_albumId == Guid.Empty) return new List<Guid>();
-
-        if (IsSearchActive) return await _libraryReader.SearchAllSongIdsInAlbumAsync(_albumId, SearchTerm, sortOrder, token);
-
-        return await _libraryReader.GetAllSongIdsByAlbumIdAsync(_albumId, sortOrder, token);
+        if (_albumId == Guid.Empty) return Task.FromResult(new List<Guid>());
+        return IsSearchActive
+            ? _libraryReader.SearchAllSongIdsInAlbumAsync(_albumId, SearchTerm, sortOrder, token)
+            : _libraryReader.GetAllSongIdsByAlbumIdAsync(_albumId, sortOrder, token);
     }
 
-    /// <summary>
-    ///     Loads the details and track list for a specific album.
-    /// </summary>
-    /// <param name="albumId">The unique identifier of the album to load.</param>
     [RelayCommand]
     public async Task LoadAlbumDetailsAsync(Guid albumId)
     {
-        if (IsLoading) return;
+        if (_isDisposed) return;
+        ResetState();
+        var generation = CaptureSongContext();
 
         _logger.LogDebug("Loading details for album {AlbumId}", albumId);
         try
@@ -108,30 +90,20 @@ public partial class AlbumViewViewModel : SongListViewModelBase
             var albumTask = _libraryReader.GetAlbumByIdAsync(albumId);
             var sortOrderTask = _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.AlbumViewSortOrderKey);
 
-            // Wait for sort order first, as it is required for loading songs
-            await sortOrderTask;
-            CurrentSortOrder = sortOrderTask.Result;
-
-            // Start loading songs in parallel with album metadata
-            var songsTask = RefreshOrSortSongsCommand.ExecuteAsync(null);
-
-            await albumTask;
-            var album = albumTask.Result;
+            await Task.WhenAll(albumTask, sortOrderTask);
+            if (!IsSongContextCurrent(generation)) return;
+            CurrentSortOrder = await sortOrderTask;
+            var album = await albumTask;
 
             if (album != null)
             {
-                _dispatcherService.TryEnqueue(() =>
-                {
-                    AlbumTitle = album.Title;
-                    ArtistName = album.ArtistName;
-                    AlbumArtists = album.AlbumArtists;
-                    PageTitle = album.Title;
-                    _albumYear = album.Year;
-                    CoverArtUri = ImageUriHelper.GetUriWithCacheBuster(album.CoverArtUri);
-                    RefreshAlbumDetailsText();
-                });
-
-                await songsTask;
+                AlbumTitle = album.Title;
+                ArtistName = album.ArtistName;
+                AlbumArtists = album.AlbumArtists;
+                PageTitle = album.Title;
+                _albumYear = album.Year;
+                CoverArtUri = ImageUriHelper.GetUriWithCacheBuster(album.CoverArtUri);
+                await RefreshOrSortSongsAsync();
                 _logger.LogDebug("Populated details for album '{AlbumTitle}' ({AlbumId})", album.Title, albumId);
             }
             else
@@ -141,7 +113,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         }
         catch (Exception ex)
         {
-            HandleLoadError(albumId, ex);
+            if (IsSongContextCurrent(generation)) HandleLoadError(albumId, ex);
         }
     }
 
@@ -154,6 +126,8 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         AlbumArtists = new List<AlbumArtist>();
         CoverArtUri = null;
         Songs.Clear();
+        GroupedSongsFlat.Clear();
+        AlbumDetailsText = string.Empty;
         TotalItemsText = ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Plural, 0);
     }
 
@@ -164,59 +138,42 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         PageTitle = Nagi.WinUI.Resources.Strings.Generic_Error;
         ArtistName = string.Empty;
         AlbumArtists = new List<AlbumArtist>();
+        CoverArtUri = null;
+        AlbumDetailsText = string.Empty;
         TotalItemsText = Nagi.WinUI.Resources.Strings.Generic_Error;
         Songs.Clear();
+        GroupedSongsFlat.Clear();
+        HasLoadError = true;
     }
 
     private void UpdateAlbumDetails(PagedResult<Song> pagedResult)
     {
-        if (pagedResult?.Items == null) return;
-
         _totalSongCount = pagedResult.TotalCount;
+        CancelDurationFetch();
+        _totalDuration = TimeSpan.FromTicks(pagedResult.Items.Sum(s => s.DurationTicks));
+        RefreshAlbumDetailsText();
 
-        // As an optimization, if all songs fit in the first page, we can calculate duration in-memory.
-        // This is true for 99% of albums (PageSize is 250).
-        if (!pagedResult.HasNextPage)
+        if (pagedResult.HasNextPage)
         {
-            // Cancel any pending duration fetch since we have all the data
-            _durationFetchCts?.Cancel();
-            _durationFetchCts?.Dispose();
-            _durationFetchCts = null;
-
-            _totalDuration = TimeSpan.FromTicks(pagedResult.Items.Sum(s => s.DurationTicks));
-            RefreshAlbumDetailsText();
-        }
-        else
-        {
-            // Large album or filtered results spanning multiple pages - fetch total sum from DB.
-            // Cancel any previous fetch to avoid race conditions
-            _durationFetchCts?.Cancel();
-            _durationFetchCts?.Dispose();
             _durationFetchCts = new CancellationTokenSource();
-
-            // Capture current search term to avoid stale closures
-            var currentSearchTerm = SearchTerm;
-            _ = UpdateTotalDurationAsync(currentSearchTerm, _durationFetchCts.Token);
-
-            // Show partial duration for now to be responsive
-            _totalDuration = TimeSpan.FromTicks(pagedResult.Items.Sum(s => s.DurationTicks));
-            RefreshAlbumDetailsText();
+            _ = UpdateTotalDurationAsync(_albumId, SearchTerm, _durationFetchCts.Token);
         }
     }
 
-    private async Task UpdateTotalDurationAsync(string searchTerm, CancellationToken cancellationToken)
+    private async Task UpdateTotalDurationAsync(Guid albumId, string searchTerm, CancellationToken cancellationToken)
     {
         try
         {
             var duration = await Task.Run(
-                () => _libraryReader.GetSearchTotalDurationInAlbumAsync(_albumId, searchTerm, cancellationToken),
+                () => _libraryReader.GetSearchTotalDurationInAlbumAsync(albumId, searchTerm, cancellationToken),
                 cancellationToken).ConfigureAwait(false);
 
-            if (!cancellationToken.IsCancellationRequested)
+            _dispatcherService.TryEnqueue(() =>
             {
+                if (cancellationToken.IsCancellationRequested || _isDisposed) return;
                 _totalDuration = duration;
-                _dispatcherService.TryEnqueue(RefreshAlbumDetailsText);
-            }
+                RefreshAlbumDetailsText();
+            });
         }
         catch (OperationCanceledException)
         {
@@ -224,7 +181,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Failed to fetch total duration for album {AlbumId}", _albumId);
+            _logger.LogWarning(ex, "Failed to fetch total duration for album {AlbumId}", albumId);
         }
     }
 
@@ -243,7 +200,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         if (_totalDuration > TimeSpan.Zero)
         {
             var durationText = _totalDuration.TotalHours >= 1
-                ? _totalDuration.ToString(@"h\:mm\:ss")
+                ? $"{(long)_totalDuration.TotalHours}:{_totalDuration.Minutes:00}:{_totalDuration.Seconds:00}"
                 : _totalDuration.ToString(@"m\:ss");
             detailsParts.Add(durationText);
         }
@@ -255,32 +212,29 @@ public partial class AlbumViewViewModel : SongListViewModelBase
     protected override void ApplyItemsToCollection(PagedResult<Song> result, bool append)
     {
         base.ApplyItemsToCollection(result, append);
+        if (!append && result.PageNumber == 1) UpdateAlbumDetails(result);
         UpdateGrouping();
     }
 
     private void UpdateGrouping()
     {
-        // Only group by disc when sorting by TrackNumberAsc and not searching
         IsGroupedByDisc = CurrentSortOrder == SongSortOrder.TrackNumberAsc && !IsSearchActive;
 
         if (IsGroupedByDisc)
         {
             var tempList = new List<object>();
 
-            // Group songs by disc number (null/0 goes to group -1 to appear first)
             var groups = Songs
                 .GroupBy(s => s.DiscNumber ?? -1)
                 .OrderBy(g => g.Key);
 
             foreach (var group in groups)
             {
-                // Add header only for actual disc numbers (1, 2, 3, etc.)
                 if (group.Key > 0)
                 {
                     tempList.Add(new DiscHeader { DiscNumber = group.Key });
                 }
 
-                // Add all songs in this disc group
                 tempList.AddRange(group);
             }
 
@@ -300,18 +254,26 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         return _settingsService.SetSortOrderAsync(SortOrderHelper.AlbumViewSortOrderKey, sortOrder);
     }
 
-    public override void ResetState()
+    private void CancelDurationFetch()
     {
         _durationFetchCts?.Cancel();
         _durationFetchCts?.Dispose();
         _durationFetchCts = null;
+    }
+
+    protected override void OnSearchTermChangedInternal(string value)
+    {
+        CancelDurationFetch();
+        base.OnSearchTermChangedInternal(value);
+    }
+
+    public override void ResetState()
+    {
+        CancelDurationFetch();
         base.ResetState();
     }
 }
 
-/// <summary>
-///     Represents a disc section header.
-/// </summary>
 public class DiscHeader
 {
     public int DiscNumber { get; set; }

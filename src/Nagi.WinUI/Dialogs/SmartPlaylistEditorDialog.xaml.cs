@@ -1,19 +1,20 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Windows.Storage.Pickers;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.Core.Constants;
+using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Helpers;
+using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.Dialogs;
 
@@ -24,7 +25,8 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
 {
     private readonly ISmartPlaylistService _smartPlaylistService;
     private readonly ILogger<SmartPlaylistEditorDialog> _logger;
-    private CancellationTokenSource? _matchCountCts;
+    private readonly Debouncer _matchCountDebouncer = new(TimeSpan.FromMilliseconds(300));
+    private readonly IDispatcherService _dispatcherService;
     private string? _selectedCoverImageUri;
     private bool _isInitialized;
 
@@ -38,19 +40,16 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
     /// </summary>
     public ObservableCollection<RuleViewModel> Rules { get; } = new();
 
-    /// <summary>
-    ///     Gets or sets the resulting smart playlist after save.
-    /// </summary>
     public SmartPlaylist? ResultPlaylist { get; private set; }
 
     public SmartPlaylistEditorDialog()
     {
         _smartPlaylistService = App.Services!.GetRequiredService<ISmartPlaylistService>();
         _logger = App.Services!.GetRequiredService<ILogger<SmartPlaylistEditorDialog>>();
+        _dispatcherService = App.Services!.GetRequiredService<IDispatcherService>();
 
         InitializeComponent();
 
-        // Apply app theme overrides for TextBox styling inside ContentDialog
         DialogThemeHelper.ApplyThemeOverrides(this);
 
         Rules.CollectionChanged += OnRulesCollectionChanged;
@@ -64,7 +63,6 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
     {
         UpdateNoRulesVisibility();
 
-        // Subscribe to PropertyChanged for new rules
         if (e.NewItems != null)
         {
             foreach (RuleViewModel rule in e.NewItems)
@@ -73,7 +71,6 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
             }
         }
 
-        // Unsubscribe from removed rules
         if (e.OldItems != null)
         {
             foreach (RuleViewModel rule in e.OldItems)
@@ -82,14 +79,12 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
             }
         }
 
-        // Addition or removal of rules affects the match count
         _ = UpdateMatchCountAsync();
     }
 
     private void OnRulePropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        // Update match count when any rule property changes
-        // Debouncing is already handled in UpdateMatchCountAsync (300ms delay)
+
         if (e.PropertyName is nameof(RuleViewModel.Value) or
             nameof(RuleViewModel.SecondValue) or
             nameof(RuleViewModel.SelectedField) or
@@ -101,14 +96,11 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
 
     private void OnDialogUnloaded(object sender, RoutedEventArgs e)
     {
-        _matchCountCts?.Cancel();
-        _matchCountCts?.Dispose();
-        _matchCountCts = null;
+        _isInitialized = false;
+        _matchCountDebouncer.Dispose();
 
-        // Unsubscribe from collection changed event
         Rules.CollectionChanged -= OnRulesCollectionChanged;
 
-        // Unsubscribe from all rule property changes
         foreach (var rule in Rules)
         {
             rule.PropertyChanged -= OnRulePropertyChanged;
@@ -128,7 +120,6 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
 
             SelectSortByComboBoxItem(EditingPlaylist.SortOrder);
 
-            // Load existing cover image
             if (!string.IsNullOrWhiteSpace(EditingPlaylist.CoverImageUri))
             {
                 _selectedCoverImageUri = EditingPlaylist.CoverImageUri;
@@ -152,27 +143,19 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
 
     private void SelectSortByComboBoxItem(SmartPlaylistSortOrder sortOrder)
     {
-        var tagToFind = sortOrder.ToString();
-        for (var i = 0; i < SortByComboBox.Items.Count; i++)
-        {
-            if (SortByComboBox.Items[i] is ComboBoxItem item && item.Tag?.ToString() == tagToFind)
-            {
-                SortByComboBox.SelectedIndex = i;
-                return;
-            }
-        }
+        SortByComboBox.SelectedItem = SortByComboBox.Items.OfType<ComboBoxItem>()
+            .FirstOrDefault(item => item.Tag?.ToString() == sortOrder.ToString());
     }
-
 
     private void OnPlaylistNameChanged(object sender, TextChangedEventArgs e)
     {
-        // Name change affects whether we can calculate match count
+
         _ = UpdateMatchCountAsync();
     }
 
     private void OnComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        // Match logic or sort order change affects the query/count
+
         _ = UpdateMatchCountAsync();
     }
 
@@ -181,16 +164,13 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
         try
         {
             _logger.LogDebug("Opening file picker for cover image.");
-            var picker = new FileOpenPicker(App.RootWindow!.AppWindow.Id);
-            foreach (var ext in FileExtensions.ImageFileExtensions)
-                picker.FileTypeFilter.Add(ext);
-
-            var file = await picker.PickSingleFileAsync();
+            var file = await App.Services!.GetRequiredService<IUIService>()
+                .PickSingleFileAsync(FileExtensions.ImageFileExtensions);
             if (file != null)
             {
-                _logger.LogDebug("User picked image file: {FilePath}", file.Path);
-                _selectedCoverImageUri = file.Path;
-                CoverImagePreview.Source = ImageUriHelper.SafeGetImageSource(ImageUriHelper.GetUriWithCacheBuster(file.Path));
+                _logger.LogDebug("User picked image file: {FilePath}", file);
+                _selectedCoverImageUri = file;
+                CoverImagePreview.Source = ImageUriHelper.SafeGetImageSource(ImageUriHelper.GetUriWithCacheBuster(file));
                 CoverImagePreview.Visibility = Visibility.Visible;
                 CoverImagePlaceholder.Visibility = Visibility.Collapsed;
             }
@@ -205,7 +185,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
     {
         _logger.LogDebug("Adding new rule");
         Rules.Add(new RuleViewModel());
-        // UpdateMatchCountAsync is triggered by OnRulesCollectionChanged -> OnRulePropertyChanged
+
     }
 
     private void RemoveRule_Click(object sender, RoutedEventArgs e)
@@ -214,63 +194,49 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
         {
             _logger.LogDebug("Removing rule");
             Rules.Remove(rule);
-            // UpdateMatchCountAsync is triggered by OnRulesCollectionChanged
+
         }
     }
-
 
     private void UpdateNoRulesVisibility()
     {
         NoRulesPanel.Visibility = Rules.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    private async Task UpdateMatchCountAsync()
+    private Task UpdateMatchCountAsync()
     {
-        // Guard against early execution before UI is fully initialized.
-        // XAML event handlers (e.g., OnComboBoxSelectionChanged) may fire during
-        // InitializeComponent() before services are available.
-        if (!_isInitialized)
+        // XAML selection events can fire during InitializeComponent.
+        if (!_isInitialized) return Task.CompletedTask;
+
+        return _matchCountDebouncer.RunAsync(async token =>
         {
-            return;
-        }
-
-        // Dispose the old CTS to prevent resource leaks
-        _matchCountCts?.Cancel();
-        _matchCountCts?.Dispose();
-        _matchCountCts = new CancellationTokenSource();
-        var token = _matchCountCts.Token;
-
-        try
-        {
-            await Task.Delay(300, token); // Debounce
-            if (token.IsCancellationRequested) return;
-
-            // Build a temporary smart playlist to get the count
-            var tempPlaylist = BuildSmartPlaylistFromUI();
-            if (tempPlaylist == null)
+            try
             {
-                MatchCountText.Text = Nagi.WinUI.Resources.Strings.SmartPlaylist_Status_EnterName;
-                return;
+                var playlist = await _dispatcherService.EnqueueAsync(() =>
+                    token.IsCancellationRequested ? null : BuildSmartPlaylistFromUI());
+                token.ThrowIfCancellationRequested();
+                // SQLite executes count queries synchronously, so keep them off the UI thread.
+                int? count = playlist == null ? null
+                    : await Task.Run(() => _smartPlaylistService.GetMatchingSongCountAsync(playlist, token: token), token);
+
+                _dispatcherService.TryEnqueue(() =>
+                {
+                    if (token.IsCancellationRequested) return;
+                    MatchCountText.Text = count.HasValue
+                        ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.SmartPlaylist_Status_MatchCountFormat, count.Value)
+                        : Nagi.WinUI.Resources.Strings.SmartPlaylist_Status_EnterName;
+                });
             }
-
-            // Use the temp playlist for both new and existing playlists - it represents the current UI state
-            var count = await Task.Run(() => _smartPlaylistService.GetMatchingSongCountAsync(tempPlaylist), token);
-
-            if (token.IsCancellationRequested) return;
-
-            MatchCountText.Text = count >= 0
-                ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.SmartPlaylist_Status_MatchCountFormat, count)
-                : Nagi.WinUI.Resources.Strings.SmartPlaylist_Status_EnterNameToSeeSongs;
-        }
-        catch (TaskCanceledException)
-        {
-            // Ignore - new calculation started
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error calculating match count");
-            MatchCountText.Text = Nagi.WinUI.Resources.Strings.SmartPlaylist_Status_Error;
-        }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                _logger.LogError(ex, "Error calculating match count");
+                _dispatcherService.TryEnqueue(() =>
+                {
+                    if (!token.IsCancellationRequested)
+                        MatchCountText.Text = Nagi.WinUI.Resources.Strings.SmartPlaylist_Status_Error;
+                });
+            }
+        });
     }
 
     private SmartPlaylist? BuildSmartPlaylistFromUI()
@@ -286,22 +252,18 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
             MatchAllRules = MatchLogicComboBox.SelectedIndex == 0,
             SortOrder = GetSelectedSortOrder(),
             CoverImageUri = _selectedCoverImageUri,
+            Description = EditingPlaylist?.Description,
             DateCreated = EditingPlaylist?.DateCreated ?? DateTime.UtcNow,
             DateModified = DateTime.UtcNow
         };
 
-
-        // Add and index rules in a single pass
         var orderIndex = 0;
         foreach (var ruleVm in Rules)
         {
             var rule = ruleVm.ToSmartPlaylistRule();
-            if (rule != null)
-            {
-                rule.SmartPlaylistId = playlist.Id;
-                rule.Order = orderIndex++;
-                playlist.Rules.Add(rule);
-            }
+            rule.SmartPlaylistId = playlist.Id;
+            rule.Order = orderIndex++;
+            playlist.Rules.Add(rule);
         }
 
         return playlist;
@@ -320,84 +282,40 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
     private async void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
         var deferral = args.GetDeferral();
+        _matchCountDebouncer.Cancel();
 
         try
         {
-            var name = PlaylistNameTextBox.Text?.Trim();
-            if (string.IsNullOrWhiteSpace(name))
+            var playlist = BuildSmartPlaylistFromUI();
+            if (playlist is null)
             {
                 args.Cancel = true;
                 PlaylistNameTextBox.Focus(FocusState.Programmatic);
-                // Visual feedback - highlight the textbox
                 PlaylistNameTextBox.PlaceholderText = Nagi.WinUI.Resources.Strings.SmartPlaylist_Error_NameEmptyFeedback;
                 return;
             }
 
-            var isEditing = EditingPlaylist != null;
-
-            // Build rules list once for both paths
-            var newRules = Rules
-                .Select(ruleVm => ruleVm.ToSmartPlaylistRule())
-                .OfType<SmartPlaylistRule>()
-                .ToList();
-
-            if (isEditing)
+            ResultPlaylist = EditingPlaylist is null
+                ? await _smartPlaylistService.CreateSmartPlaylistAsync(playlist)
+                : await _smartPlaylistService.UpdateSmartPlaylistAsync(playlist);
+            if (ResultPlaylist is null)
             {
-                // Update existing playlist
-                EditingPlaylist!.Name = name;
-                EditingPlaylist.MatchAllRules = MatchLogicComboBox.SelectedIndex == 0;
-                EditingPlaylist.SortOrder = GetSelectedSortOrder();
-
-                await _smartPlaylistService.UpdateSmartPlaylistAsync(EditingPlaylist);
-
-                // Update cover image separately if needed to handle cache properly
-                if (!string.Equals(_selectedCoverImageUri, EditingPlaylist.CoverImageUri, StringComparison.Ordinal))
-                {
-                    await _smartPlaylistService.UpdateSmartPlaylistCoverAsync(EditingPlaylist.Id, _selectedCoverImageUri);
-                }
-
-                // Replace all rules in a single transaction
-                await _smartPlaylistService.ReplaceAllRulesAsync(EditingPlaylist.Id, newRules);
-
-                // Refresh the playlist from the DB to get the updated rules and properties
-                ResultPlaylist = await _smartPlaylistService.GetSmartPlaylistByIdAsync(EditingPlaylist.Id);
-                _logger.LogInformation("Updated smart playlist {PlaylistId}", EditingPlaylist.Id);
-            }
-            else
-            {
-                // Create new playlist
-                var newPlaylist = await _smartPlaylistService.CreateSmartPlaylistAsync(name, null, _selectedCoverImageUri);
-                if (newPlaylist == null)
-                {
-                    args.Cancel = true;
-                    PlaylistNameTextBox.Focus(FocusState.Programmatic);
-                    PlaylistNameTextBox.PlaceholderText = Nagi.WinUI.Resources.Strings.SmartPlaylist_Error_DuplicateName;
-                    PlaylistNameTextBox.Text = string.Empty;
-                    return;
-                }
-
-                // Set configuration
-                await _smartPlaylistService.SetMatchAllRulesAsync(newPlaylist.Id, MatchLogicComboBox.SelectedIndex == 0);
-                await _smartPlaylistService.SetSortOrderAsync(newPlaylist.Id, GetSelectedSortOrder());
-
-                // Add all rules in a single transaction
-                await _smartPlaylistService.ReplaceAllRulesAsync(newPlaylist.Id, newRules);
-
-                ResultPlaylist = await _smartPlaylistService.GetSmartPlaylistByIdAsync(newPlaylist.Id);
-                _logger.LogInformation("Created smart playlist {PlaylistId}", newPlaylist.Id);
+                args.Cancel = true;
+                MatchCountText.Text = Nagi.WinUI.Resources.Strings.SmartPlaylist_Status_Error;
             }
         }
-        catch (Microsoft.EntityFrameworkCore.DbUpdateException dbEx) when (dbEx.InnerException?.Message.Contains("UNIQUE constraint failed", StringComparison.OrdinalIgnoreCase) == true)
+        catch (Microsoft.EntityFrameworkCore.DbUpdateException dbEx) when (dbEx.InnerException is Microsoft.Data.Sqlite.SqliteException { SqliteExtendedErrorCode: 2067 })
         {
             _logger.LogWarning(dbEx, "Duplicate smart playlist name");
             args.Cancel = true;
             PlaylistNameTextBox.Focus(FocusState.Programmatic);
-            PlaylistNameTextBox.PlaceholderText = Nagi.WinUI.Resources.Strings.SmartPlaylist_Error_DuplicateName;
+            MatchCountText.Text = Nagi.WinUI.Resources.Strings.SmartPlaylist_Error_DuplicateName;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error saving smart playlist");
             args.Cancel = true;
+            MatchCountText.Text = Nagi.WinUI.Resources.Strings.SmartPlaylist_Status_Error;
         }
         finally
         {
@@ -409,9 +327,8 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
 /// <summary>
 ///     ViewModel for a single smart playlist rule in the editor.
 /// </summary>
-public class RuleViewModel : INotifyPropertyChanged
+public class RuleViewModel : ObservableObject
 {
-    // Static cached lists to avoid repeated allocations
     public static IReadOnlyList<FieldOption> AvailableFields { get; } = new List<FieldOption>
     {
         new(SmartPlaylistField.Title, Nagi.Core.Resources.Strings.Label_Title),
@@ -423,7 +340,20 @@ public class RuleViewModel : INotifyPropertyChanged
         new(SmartPlaylistField.Duration, Nagi.Core.Resources.Strings.Label_Duration),
         new(SmartPlaylistField.Bpm, Nagi.Core.Resources.Strings.Label_Bpm),
         new(SmartPlaylistField.Comment, Nagi.WinUI.Resources.Strings.Label_Comment),
-        new(SmartPlaylistField.Composer, Nagi.WinUI.Resources.Strings.Label_Composer)
+        new(SmartPlaylistField.Composer, Nagi.WinUI.Resources.Strings.Label_Composer),
+        new(SmartPlaylistField.Grouping, Nagi.WinUI.Resources.Strings.Label_Grouping),
+        new(SmartPlaylistField.PlayCount, Nagi.Core.Resources.Strings.Label_PlayCount),
+        new(SmartPlaylistField.SkipCount, Nagi.WinUI.Resources.Strings.Label_SkipCount),
+        new(SmartPlaylistField.TrackNumber, Nagi.Core.Resources.Strings.Label_TrackNumber),
+        new(SmartPlaylistField.DiscNumber, Nagi.WinUI.Resources.Strings.Label_DiscNumber),
+        new(SmartPlaylistField.Bitrate, Nagi.WinUI.Resources.Strings.Label_Bitrate),
+        new(SmartPlaylistField.SampleRate, Nagi.WinUI.Resources.Strings.Label_SampleRate),
+        new(SmartPlaylistField.IsLoved, Nagi.WinUI.Resources.Strings.Label_IsLoved),
+        new(SmartPlaylistField.HasLyrics, Nagi.WinUI.Resources.Strings.Label_HasLyrics),
+        new(SmartPlaylistField.DateAdded, Nagi.Core.Resources.Strings.Label_DateAdded),
+        new(SmartPlaylistField.LastPlayed, Nagi.Core.Resources.Strings.Label_LastPlayed),
+        new(SmartPlaylistField.FileCreatedDate, Nagi.Core.Resources.Strings.Label_DateCreated),
+        new(SmartPlaylistField.FileModifiedDate, Nagi.Core.Resources.Strings.Label_DateModified)
     };
 
     private static readonly IReadOnlyList<OperatorOption> TextOperators = new List<OperatorOption>
@@ -443,13 +373,17 @@ public class RuleViewModel : INotifyPropertyChanged
         new(SmartPlaylistOperator.GreaterThan, Nagi.WinUI.Resources.Strings.Operator_GreaterThan),
         new(SmartPlaylistOperator.LessThan, Nagi.WinUI.Resources.Strings.Operator_LessThan),
         new(SmartPlaylistOperator.GreaterThanOrEqual, Nagi.WinUI.Resources.Strings.Operator_GreaterThanOrEqual),
-        new(SmartPlaylistOperator.LessThanOrEqual, Nagi.WinUI.Resources.Strings.Operator_LessThanOrEqual)
+        new(SmartPlaylistOperator.LessThanOrEqual, Nagi.WinUI.Resources.Strings.Operator_LessThanOrEqual),
+        new(SmartPlaylistOperator.IsInRange, Nagi.WinUI.Resources.Strings.Operator_IsInRange)
     };
 
     private static readonly IReadOnlyList<OperatorOption> DateOperators = new List<OperatorOption>
     {
         new(SmartPlaylistOperator.IsInTheLast, Nagi.WinUI.Resources.Strings.Operator_IsInTheLast),
-        new(SmartPlaylistOperator.IsNotInTheLast, Nagi.WinUI.Resources.Strings.Operator_IsNotInTheLast)
+        new(SmartPlaylistOperator.IsNotInTheLast, Nagi.WinUI.Resources.Strings.Operator_IsNotInTheLast),
+        new(SmartPlaylistOperator.GreaterThan, Nagi.WinUI.Resources.Strings.Operator_IsAfter),
+        new(SmartPlaylistOperator.LessThan, Nagi.WinUI.Resources.Strings.Operator_IsBefore),
+        new(SmartPlaylistOperator.IsInRange, Nagi.WinUI.Resources.Strings.Operator_IsInRange)
     };
 
     private static readonly IReadOnlyList<OperatorOption> BooleanOperators = new List<OperatorOption>
@@ -458,60 +392,36 @@ public class RuleViewModel : INotifyPropertyChanged
         new(SmartPlaylistOperator.IsFalse, Nagi.WinUI.Resources.Strings.Operator_IsFalse)
     };
 
-    private static readonly IReadOnlyList<OperatorOption> FallbackOperators = new List<OperatorOption>
-    {
-        new(SmartPlaylistOperator.Contains, Nagi.WinUI.Resources.Strings.Operator_Contains),
-        new(SmartPlaylistOperator.Is, Nagi.WinUI.Resources.Strings.Operator_Is)
-    };
-
-    // Cached PropertyChangedEventArgs to avoid repeated allocations
-    private static readonly PropertyChangedEventArgs SelectedFieldChangedArgs = new(nameof(SelectedField));
-    private static readonly PropertyChangedEventArgs SelectedOperatorChangedArgs = new(nameof(SelectedOperator));
-    private static readonly PropertyChangedEventArgs ValueChangedArgs = new(nameof(Value));
-    private static readonly PropertyChangedEventArgs SecondValueChangedArgs = new(nameof(SecondValue));
-    private static readonly PropertyChangedEventArgs AvailableOperatorsChangedArgs = new(nameof(AvailableOperators));
-
-    // Instance properties for x:Bind access to static cached lists
     public IReadOnlyList<FieldOption> AvailableFieldsList => AvailableFields;
-    public IReadOnlyList<OperatorOption> TextOperatorsList => TextOperators;
-    public IReadOnlyList<OperatorOption> NumericOperatorsList => NumericOperators;
-    public IReadOnlyList<OperatorOption> DateOperatorsList => DateOperators;
-    public IReadOnlyList<OperatorOption> BooleanOperatorsList => BooleanOperators;
 
-    private FieldOption _selectedField;
-    private OperatorOption _selectedOperator;
+    private FieldOption _selectedField = AvailableFields[0];
+    private OperatorOption _selectedOperator = TextOperators[0];
     private string _value = string.Empty;
     private string _secondValue = string.Empty;
 
     public RuleViewModel()
     {
-        _selectedField = AvailableFields[0];
-        UpdateOperatorsForField();
-        _selectedOperator = AvailableOperators.Count > 0 ? AvailableOperators[0] : FallbackOperators[0];
     }
 
     public RuleViewModel(SmartPlaylistRule rule)
     {
-        _selectedField = AvailableFields.FirstOrDefault(f => f.Field == rule.Field) ?? AvailableFields[0];
+        _selectedField = AvailableFields.First(f => f.Field == rule.Field);
         UpdateOperatorsForField();
-        _selectedOperator = AvailableOperators.FirstOrDefault(o => o.Operator == rule.Operator) ?? AvailableOperators[0];
-        _value = rule.Value ?? string.Empty;
-        _secondValue = rule.SecondValue ?? string.Empty;
+        _selectedOperator = AvailableOperators.First(o => o.Operator == rule.Operator);
+        _value = SmartPlaylistRuleValue.ToDisplayValue(rule.Field, rule.Value);
+        _secondValue = SmartPlaylistRuleValue.ToDisplayValue(rule.Field, rule.SecondValue);
     }
 
-    public IReadOnlyList<OperatorOption> AvailableOperators { get; private set; } = FallbackOperators;
+    public IReadOnlyList<OperatorOption> AvailableOperators { get; private set; } = TextOperators;
 
     public FieldOption SelectedField
     {
         get => _selectedField;
         set
         {
-            if (_selectedField != value)
-            {
-                _selectedField = value;
-                PropertyChanged?.Invoke(this, SelectedFieldChangedArgs);
+            // ComboBox can clear selection while its items are refreshed.
+            if (value != null && SetProperty(ref _selectedField, value))
                 UpdateOperatorsForField();
-            }
         }
     }
 
@@ -520,111 +430,65 @@ public class RuleViewModel : INotifyPropertyChanged
         get => _selectedOperator;
         set
         {
-            if (_selectedOperator != value)
+            if (value != null && SetProperty(ref _selectedOperator, value))
             {
-                _selectedOperator = value;
-                PropertyChanged?.Invoke(this, SelectedOperatorChangedArgs);
+                OnPropertyChanged(nameof(IsRange));
+                OnPropertyChanged(nameof(RequiresValue));
             }
         }
     }
 
+    public bool IsRange => SelectedOperator.Operator == SmartPlaylistOperator.IsInRange;
+    public bool RequiresValue => SelectedOperator.Operator is not (SmartPlaylistOperator.IsTrue or SmartPlaylistOperator.IsFalse);
+
     public string Value
     {
         get => _value;
-        set
-        {
-            if (_value != value)
-            {
-                _value = value;
-                PropertyChanged?.Invoke(this, ValueChangedArgs);
-            }
-        }
+        set => SetProperty(ref _value, value);
     }
 
     public string SecondValue
     {
         get => _secondValue;
-        set
-        {
-            if (_secondValue != value)
-            {
-                _secondValue = value;
-                PropertyChanged?.Invoke(this, SecondValueChangedArgs);
-            }
-        }
+        set => SetProperty(ref _secondValue, value);
     }
 
     private void UpdateOperatorsForField()
     {
-        var fieldType = GetFieldType(_selectedField.Field);
-        AvailableOperators = fieldType switch
+        AvailableOperators = _selectedField.Field switch
         {
-            FieldType.Text => TextOperators,
-            FieldType.Numeric => NumericOperators,
-            FieldType.Date => DateOperators,
-            FieldType.Boolean => BooleanOperators,
-            _ => FallbackOperators
+            SmartPlaylistField.Year or SmartPlaylistField.PlayCount or SmartPlaylistField.SkipCount or
+            SmartPlaylistField.Rating or SmartPlaylistField.Duration or SmartPlaylistField.Bpm or
+            SmartPlaylistField.TrackNumber or SmartPlaylistField.DiscNumber or SmartPlaylistField.Bitrate or
+            SmartPlaylistField.SampleRate => NumericOperators,
+
+            SmartPlaylistField.DateAdded or SmartPlaylistField.LastPlayed or
+            SmartPlaylistField.FileCreatedDate or SmartPlaylistField.FileModifiedDate => DateOperators,
+
+            SmartPlaylistField.IsLoved or SmartPlaylistField.HasLyrics => BooleanOperators,
+
+            _ => TextOperators
         };
 
-        // Notify that operators list changed first
-        PropertyChanged?.Invoke(this, AvailableOperatorsChangedArgs);
-
-        // Always select first operator when switching fields to prevent empty state
-        // Use property setter to ensure proper change notification
-        if (AvailableOperators.Count > 0)
-        {
-            // Try to keep the same operator type if it exists in the new list
-            var matchingOperator = AvailableOperators.FirstOrDefault(o => o.Operator == _selectedOperator?.Operator);
-            SelectedOperator = matchingOperator ?? AvailableOperators[0];
-        }
+        OnPropertyChanged(nameof(AvailableOperators));
+        SelectedOperator = AvailableOperators.FirstOrDefault(o => o.Operator == _selectedOperator.Operator)
+                           ?? AvailableOperators[0];
     }
 
-    private static FieldType GetFieldType(SmartPlaylistField field) => field switch
+    public SmartPlaylistRule ToSmartPlaylistRule()
     {
-        SmartPlaylistField.Title or SmartPlaylistField.Artist or SmartPlaylistField.Album or
-        SmartPlaylistField.Genre or SmartPlaylistField.Comment or SmartPlaylistField.Composer or
-        SmartPlaylistField.Grouping => FieldType.Text,
-
-        SmartPlaylistField.Year or SmartPlaylistField.PlayCount or SmartPlaylistField.SkipCount or
-        SmartPlaylistField.Rating or SmartPlaylistField.Duration or SmartPlaylistField.Bpm or
-        SmartPlaylistField.TrackNumber or SmartPlaylistField.DiscNumber or SmartPlaylistField.Bitrate or
-        SmartPlaylistField.SampleRate => FieldType.Numeric,
-
-        SmartPlaylistField.DateAdded or SmartPlaylistField.LastPlayed or
-        SmartPlaylistField.FileCreatedDate or SmartPlaylistField.FileModifiedDate => FieldType.Date,
-
-        SmartPlaylistField.IsLoved or SmartPlaylistField.HasLyrics => FieldType.Boolean,
-
-        _ => FieldType.Text
-    };
-
-    public SmartPlaylistRule? ToSmartPlaylistRule()
-    {
-        // Defensive check: if no operator is selected (shouldn't happen), skip this rule
-        if (_selectedOperator == null) return null;
-
         return new SmartPlaylistRule
         {
             Field = _selectedField.Field,
             Operator = _selectedOperator.Operator,
-            Value = _value,
-            SecondValue = string.IsNullOrWhiteSpace(_secondValue) ? null : _secondValue
+            Value = SmartPlaylistRuleValue.ToStoredValue(_selectedField.Field, _selectedOperator.Operator, _value),
+            SecondValue = string.IsNullOrWhiteSpace(_secondValue) ? null
+                : SmartPlaylistRuleValue.ToStoredValue(_selectedField.Field, _selectedOperator.Operator, _secondValue)
         };
     }
 
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-
-
-    private enum FieldType { Text, Numeric, Date, Boolean }
 }
 
-/// <summary>
-///     Represents a field option for smart playlist rules.
-/// </summary>
 public record FieldOption(SmartPlaylistField Field, string DisplayName);
 
-/// <summary>
-///     Represents an operator option for smart playlist rules.
-/// </summary>
 public record OperatorOption(SmartPlaylistOperator Operator, string DisplayName);

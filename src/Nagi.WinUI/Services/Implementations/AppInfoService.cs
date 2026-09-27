@@ -81,9 +81,5 @@ public class AppInfoService : IAppInfoService
             _languageCacheLock.Release();
         }
     }
-    public async System.Threading.Tasks.Task InitializeAsync()
-    {
-        // Pre-cache languages
-        await GetAvailableLanguagesAsync();
-    }
+    public System.Threading.Tasks.Task InitializeAsync() => GetAvailableLanguagesAsync();
 }

@@ -26,7 +26,7 @@ public sealed class KoreanRomanizationProvider : IRomanizationProvider
     {
         if (string.IsNullOrWhiteSpace(text) || !Supports(text)) return null;
 
-        var rules = await LoadRulesAsync(pack, cancellationToken).ConfigureAwait(false);
+        var rules = await RomanizationProviderHelpers.LoadRulesAsync<HangulRuleSet>(pack, RulesFileName, cancellationToken).ConfigureAwait(false);
         var result = Romanize(text, rules);
         return string.Equals(result, text, StringComparison.Ordinal) ? null : result;
     }
@@ -34,11 +34,6 @@ public sealed class KoreanRomanizationProvider : IRomanizationProvider
     public Task<bool> ValidatePackAsync(InstalledRomanizationPack pack, CancellationToken cancellationToken = default)
     {
         return RomanizationProviderHelpers.ValidatePackAsync(pack, RulesFileName, RomanizeAsync, cancellationToken);
-    }
-
-    private static Task<HangulRuleSet> LoadRulesAsync(InstalledRomanizationPack pack, CancellationToken cancellationToken)
-    {
-        return RomanizationProviderHelpers.LoadRulesAsync(pack, RulesFileName, () => new HangulRuleSet(), cancellationToken);
     }
 
     private static string Romanize(string text, HangulRuleSet rules)
@@ -58,9 +53,8 @@ public sealed class KoreanRomanizationProvider : IRomanizationProvider
                 continue;
             }
 
-            if (TryRomanizeHangulSyllable(text, index, rules, out var syllable))
+            if (TryAppendHangulSyllable(text, index, rules, builder))
             {
-                builder.Append(syllable);
                 index++;
                 continue;
             }
@@ -82,15 +76,13 @@ public sealed class KoreanRomanizationProvider : IRomanizationProvider
         return RomanizationProviderHelpers.NormalizePunctuationSpacing(builder.ToString());
     }
 
-    private static bool TryRomanizeHangulSyllable(string text, int index, HangulRuleSet rules, out string romanized)
+    private static bool TryAppendHangulSyllable(string text, int index, HangulRuleSet rules, StringBuilder builder)
     {
-        romanized = string.Empty;
         var current = text[index];
         if (!IsHangulSyllable(current)) return false;
 
         Decompose(current, out var initialIndex, out var vowelIndex, out var finalIndex);
 
-        var builder = new StringBuilder();
         builder.Append(rules.InitialConsonants[initialIndex]);
         builder.Append(rules.Vowels[vowelIndex]);
 
@@ -107,7 +99,6 @@ public sealed class KoreanRomanizationProvider : IRomanizationProvider
             builder.Append(finals[finalIndex]);
         }
 
-        romanized = builder.ToString();
         return true;
     }
 

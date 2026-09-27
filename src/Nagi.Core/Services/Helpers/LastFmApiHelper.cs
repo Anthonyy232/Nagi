@@ -19,8 +19,7 @@ public static class LastFmApiHelper
     {
         var sb = new StringBuilder();
 
-        // Parameters must be ordered alphabetically by key for a valid signature.
-        foreach (var kvp in parameters.OrderBy(p => p.Key))
+        foreach (var kvp in parameters.OrderBy(p => p.Key, StringComparer.Ordinal))
         {
             sb.Append(kvp.Key);
             sb.Append(kvp.Value);

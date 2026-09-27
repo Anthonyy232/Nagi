@@ -30,12 +30,10 @@ public static class ElevationHelper
         var exePath = Environment.ProcessPath;
         if (string.IsNullOrEmpty(exePath)) return;
 
-        // Use explorer.exe to launch the app without elevation.
-        // When explorer.exe starts a process, it inherits explorer's medium integrity level.
         var startInfo = new ProcessStartInfo
         {
             FileName = "explorer.exe",
-            Arguments = $"\"{exePath}\"",
+            ArgumentList = { exePath },
             UseShellExecute = false
         };
 

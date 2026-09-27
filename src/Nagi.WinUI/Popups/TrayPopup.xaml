@@ -20,6 +20,7 @@
 
 
     <Border x:Name="OuterBorder"
+            Background="Transparent"
             BorderThickness="1"
             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
             CornerRadius="8"
@@ -44,7 +45,6 @@
             </Grid>
 
             <Grid>
-                <!-- Player View: Contains track info, seek bar, and media controls. -->
                 <Grid Padding="16" RowSpacing="24"
                       Visibility="{Binding IsQueueViewVisible, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
                       Background="Transparent">
@@ -56,7 +56,7 @@
 
                     <StackPanel Grid.Row="0" HorizontalAlignment="Stretch" Spacing="2">
                         <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                   Text="{Binding SongTitle, FallbackValue='A Really Long Song Title That Might Need to be Clipped'}"
+                                   Text="{Binding SongTitle}"
                                    HorizontalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis"
                                    TextWrapping="NoWrap" />
                         <Grid HorizontalAlignment="Center">
@@ -84,7 +84,7 @@
                             KeyUp="MediaSeekerSlider_KeyUp" />
 
                     <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8">
-                        <Button Command="{Binding ToggleMuteCommand}" Style="{StaticResource VolumeButtonStyle}"
+                        <Button Command="{Binding ToggleMuteCommand}" Style="{StaticResource MediaControlButtonStyle}"
                                 ToolTipService.ToolTip="{Binding VolumeButtonToolTip}"
                                 PointerWheelChanged="VolumeButton_PointerWheelChanged">
                             <Grid Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -99,37 +99,36 @@
                                           Glyph="{Binding VolumeIconGlyph}" />
                             </Grid>
                         </Button>
-                        <Button Command="{Binding ToggleShuffleCommand}" Style="{StaticResource ShuffleButtonStyle}"
+                        <Button Command="{Binding ToggleShuffleCommand}" Style="{StaticResource MediaControlButtonStyle}"
                                 ToolTipService.ToolTip="{Binding ShuffleButtonToolTip}">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                       Glyph="{Binding ShuffleIconGlyph}" />
                         </Button>
-                        <Button Command="{Binding PreviousCommand}" Style="{StaticResource PreviousButtonStyle}"
+                        <Button Command="{Binding PreviousCommand}" Style="{StaticResource MediaControlButtonStyle}"
                                 ToolTipService.ToolTip="{x:Bind resources:Strings.TrayPopup_PreviousButton_ToolTip, Mode=OneTime}">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                         </Button>
-                        <Button Command="{Binding PlayPauseCommand}" Style="{StaticResource PlayPauseButtonStyle}"
+                        <Button Command="{Binding PlayPauseCommand}" Style="{StaticResource MediaControlButtonStyle}"
                                 ToolTipService.ToolTip="{Binding PlayPauseButtonToolTip}">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="24"
                                       Glyph="{Binding PlayPauseIconGlyph}" />
                         </Button>
-                        <Button Command="{Binding NextCommand}" Style="{StaticResource NextButtonStyle}"
+                        <Button Command="{Binding NextCommand}" Style="{StaticResource MediaControlButtonStyle}"
                                 ToolTipService.ToolTip="{x:Bind resources:Strings.TrayPopup_NextButton_ToolTip, Mode=OneTime}">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                         </Button>
-                        <Button Command="{Binding CycleRepeatCommand}" Style="{StaticResource RepeatButtonStyle}"
+                        <Button Command="{Binding CycleRepeatCommand}" Style="{StaticResource MediaControlButtonStyle}"
                                 ToolTipService.ToolTip="{Binding RepeatButtonToolTip}">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                       Glyph="{Binding RepeatIconGlyph}" />
                         </Button>
-                        <Button Command="{Binding ShowQueueViewCommand}" Style="{StaticResource QueueButtonStyle}"
+                        <Button Command="{Binding ShowQueueViewCommand}" Style="{StaticResource MediaControlButtonStyle}"
                                 ToolTipService.ToolTip="{x:Bind resources:Strings.TrayPopup_QueueButton_ToolTip, Mode=OneTime}">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                         </Button>
                     </StackPanel>
                 </Grid>
 
-                <!-- Queue View: Displays the list of upcoming tracks. -->
                 <Grid Padding="12,16,16,16"
                       Visibility="{Binding IsQueueViewVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
                       Background="Transparent">
@@ -155,7 +154,7 @@
                     <ListView Grid.Row="1"
                               ItemsSource="{Binding CurrentQueue}"
                               SelectionMode="None"
-                              ItemContainerStyle="{StaticResource QueueListViewItemStyle}"
+                              ItemContainerStyle="{StaticResource PaddedListViewItemStyle}"
                               VirtualizingStackPanel.VirtualizationMode="Recycling">
                         <ListView.ItemsPanel>
                             <ItemsPanelTemplate>

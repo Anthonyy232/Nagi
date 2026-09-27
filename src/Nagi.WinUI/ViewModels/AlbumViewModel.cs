@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,7 +19,7 @@ namespace Nagi.WinUI.ViewModels;
 /// <summary>
 ///     A display-optimized representation of an album for the user interface.
 /// </summary>
-public partial class AlbumViewModelItem : ObservableObject
+public sealed class AlbumViewModelItem
 {
     public AlbumViewModelItem(Album album)
     {
@@ -32,51 +31,42 @@ public partial class AlbumViewModelItem : ObservableObject
     }
 
     public Guid Id { get; }
-    [ObservableProperty] public partial string Title { get; set; }
-    [ObservableProperty] public partial string ArtistName { get; set; }
+    public string Title { get; }
+    public string ArtistName { get; }
     public ICollection<AlbumArtist> AlbumArtists { get; }
-    [ObservableProperty] public partial string? CoverArtUri { get; set; }
+    public string? CoverArtUri { get; }
 
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverArtUri);
 
-    partial void OnCoverArtUriChanged(string? value) => OnPropertyChanged(nameof(IsArtworkAvailable));
 }
 
 public partial class AlbumViewModel : PagedListViewModelBase<Album>
 {
-    private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
     private readonly IMusicPlaybackService _musicPlaybackService;
-    private readonly INavigationService _navigationService;
     private readonly IMusicNavigationService _musicNavigationService;
 
     private bool _isNavigating;
 
     public AlbumViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService,
-        INavigationService navigationService, IMusicNavigationService musicNavigationService,
+        IMusicNavigationService musicNavigationService,
         IUISettingsService settingsService, IDispatcherService dispatcherService, ILogger<AlbumViewModel> logger)
         : base(libraryService, settingsService, dispatcherService, logger)
     {
         _musicPlaybackService = musicPlaybackService;
-        _navigationService = navigationService;
         _musicNavigationService = musicNavigationService;
 
-        _collectionChangedHandler = (sender, args) => OnPropertyChanged(nameof(HasAlbums));
-        Albums.CollectionChanged += _collectionChangedHandler;
-
-        UpdateSortOrderText();
+        Albums.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasAlbums));
     }
 
-    [ObservableProperty] public partial ObservableRangeCollection<AlbumViewModelItem> Albums { get; set; } = new();
+    public ObservableRangeCollection<AlbumViewModelItem> Albums { get; } = new();
 
-    [ObservableProperty] public partial AlbumSortOrder CurrentSortOrder { get; set; } = AlbumSortOrder.ArtistAsc;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CurrentSortOrderText))]
+    public partial AlbumSortOrder CurrentSortOrder { get; set; } = AlbumSortOrder.ArtistAsc;
 
-    [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = string.Empty;
-
-    partial void OnCurrentSortOrderChanged(AlbumSortOrder value) => UpdateSortOrderText();
+    public string CurrentSortOrderText => SortOrderHelper.GetDisplayName(CurrentSortOrder);
 
     public bool HasAlbums => Albums.Any();
-
-    private void UpdateSortOrderText() => CurrentSortOrderText = SortOrderHelper.GetDisplayName(CurrentSortOrder);
 
     protected override async Task LoadInitialSortOrderAsync() =>
         CurrentSortOrder = await _settingsService.GetSortOrderAsync<AlbumSortOrder>(SortOrderHelper.AlbumsSortOrderKey);
@@ -86,20 +76,13 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
             ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Albums_Count_Singular, count)
             : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Albums_Count_Plural, count);
 
-    protected override async Task<PagedResult<Album>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token)
-    {
-        var pagedResult = IsSearchActive
-            ? await _libraryService.SearchAlbumsPagedAsync(SearchTerm, pageNumber, pageSize, token)
-            : await _libraryService.GetAllAlbumsPagedAsync(pageNumber, pageSize, CurrentSortOrder, token);
-
-        token.ThrowIfCancellationRequested();
-
-        return pagedResult ?? new PagedResult<Album>();
-    }
+    protected override Task<PagedResult<Album>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token) =>
+        IsSearchActive
+            ? _libraryService.SearchAlbumsPagedAsync(SearchTerm, pageNumber, pageSize, token)
+            : _libraryService.GetAllAlbumsPagedAsync(pageNumber, pageSize, CurrentSortOrder, token);
 
     protected override void ApplyItemsToCollection(PagedResult<Album> result, bool append)
     {
-        if (result?.Items == null) return;
         Albums.AppendOrReplace(result.Items.Select(a => new AlbumViewModelItem(a)), append);
     }
 
@@ -146,9 +129,8 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
             return;
 
         CurrentSortOrder = newSortOrder;
-        _ = _settingsService.SetSortOrderAsync(SortOrderHelper.AlbumsSortOrderKey, newSortOrder)
-            .ContinueWith(t => _logger.LogError(t.Exception, "Failed to save album sort order"),
-                TaskContinuationOptions.OnlyOnFaulted);
+        try { await _settingsService.SetSortOrderAsync(SortOrderHelper.AlbumsSortOrderKey, newSortOrder); }
+        catch (Exception ex) { _logger.LogError(ex, "Failed to save album sort order"); }
         CurrentPage = 1;
         await LoadCommand.ExecuteAsync(CancellationToken.None);
     }

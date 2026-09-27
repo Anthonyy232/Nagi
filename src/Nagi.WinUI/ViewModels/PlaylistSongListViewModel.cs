@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
@@ -12,7 +11,6 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.WinUI.Services.Abstractions;
-using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.ViewModels;
 
@@ -24,33 +22,34 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
     protected override bool PrefetchSongIds => true;
 
     private Guid? _currentPlaylistId;
-    private CancellationTokenSource? _saveOrderCts;
+    private bool _isSavingOrder;
+    private int _playlistGeneration;
 
     public PlaylistSongListViewModel(
         ILibraryService libraryService,
         IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
-        INavigationService navigationService,
         IMusicNavigationService musicNavigationService,
         IDispatcherService dispatcherService,
         IUISettingsService settingsService,
         IUIService uiService,
         ILogger<PlaylistSongListViewModel> logger)
-        : base(libraryService, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryService, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
         IsPaginationEnabled = false;
-
-        // Subscribe to the initial collection.
-        if (Songs != null) Songs.CollectionChanged += OnSongsCollectionChanged;
+        Songs.CollectionChanged += OnSongsCollectionChanged;
     }
 
 
-    public bool IsReorderingEnabled => IsCurrentViewAPlaylist && CurrentSortOrder == SongSortOrder.PlaylistOrder && !IsSearchActive;
+    public bool IsReorderingEnabled => !_isDisposed && !_isSavingOrder && !IsLoading && !HasLoadError &&
+        IsCurrentViewAPlaylist && CurrentSortOrder == SongSortOrder.PlaylistOrder && !IsSearchActive &&
+        Songs.Count == TotalItemCount;
 
 
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(RemoveSelectedSongsFromPlaylistCommand))]
+    [NotifyPropertyChangedFor(nameof(IsReorderingEnabled))]
     public partial bool IsCurrentViewAPlaylist { get; set; }
 
     [ObservableProperty]
@@ -71,30 +70,32 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         OnPropertyChanged(nameof(IsReorderingEnabled));
     }
 
+    protected override void OnLoadingStateChanged(bool isLoading)
+    {
+        base.OnLoadingStateChanged(isLoading);
+        OnPropertyChanged(nameof(IsReorderingEnabled));
+    }
+
+    protected override void UpdateSelectionStatus()
+    {
+        base.UpdateSelectionStatus();
+        RemoveSelectedSongsFromPlaylistCommand.NotifyCanExecuteChanged();
+    }
+
     /// <summary>
     ///     Initializes the view model for a specific playlist.
     /// </summary>
     public async Task InitializeAsync(string title, Guid? playlistId, string? coverImageUri = null)
     {
+        if (_isDisposed) return;
+        ResetState();
         CurrentSortOrder = SongSortOrder.PlaylistOrder;
         _logger.LogDebug("Initializing for playlist '{Title}' (ID: {PlaylistId})", title, playlistId);
 
         try
         {
-            // Cancel any pending debounced tasks from previous views
-            _saveOrderCts?.Cancel();
-            CancelPendingSearch();
-
             PageTitle = title;
-            _stateLock.EnterWriteLock();
-            try
-            {
-                _currentPlaylistId = playlistId;
-            }
-            finally
-            {
-                _stateLock.ExitWriteLock();
-            }
+            _currentPlaylistId = playlistId;
             IsCurrentViewAPlaylist = playlistId.HasValue;
             CoverImageUri = coverImageUri;
 
@@ -128,34 +129,27 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         if (IsSearchActive)
             return _libraryReader.SearchAllSongIdsInPlaylistAsync(_currentPlaylistId.Value, SearchTerm, sortOrder, token);
 
-        // When not searching, get all song IDs in the requested order.
         return _libraryReader.GetAllSongIdsByPlaylistIdAsync(_currentPlaylistId.Value, sortOrder, token);
     }
 
     protected override PlaybackContext GetPlaybackContext() =>
         _currentPlaylistId.HasValue ? new(PlaybackContextType.Playlist, _currentPlaylistId.Value) : base.GetPlaybackContext();
 
-    /// <summary>
-    ///     Override to manage the CollectionChanged subscription when the Songs collection is replaced in the base class.
-    /// </summary>
-    protected override void OnSongsChangedInternal(ObservableRangeCollection<Song> oldValue, ObservableRangeCollection<Song> newValue)
-    {
-        if (oldValue != null) oldValue.CollectionChanged -= OnSongsCollectionChanged;
-        if (newValue != null) newValue.CollectionChanged += OnSongsCollectionChanged;
-    }
-
     [RelayCommand(CanExecute = nameof(CanRemoveSongs))]
     private async Task RemoveSelectedSongsFromPlaylistAsync()
     {
         if (!_currentPlaylistId.HasValue || !HasSelectedSongs) return;
 
+        var playlistId = _currentPlaylistId.Value;
+        var generation = _playlistGeneration;
         var songIdsToRemove = await GetCurrentSelectionIdsAsync();
+        if (_isDisposed || generation != _playlistGeneration || songIdsToRemove.Count == 0) return;
         _logger.LogDebug("Removing {SongCount} songs from playlist ID {PlaylistId}", songIdsToRemove.Count,
-            _currentPlaylistId.Value);
+            playlistId);
 
         var success =
-            await _playlistService.RemoveSongsFromPlaylistAsync(_currentPlaylistId.Value, songIdsToRemove);
-        if (success)
+            await _playlistService.RemoveSongsFromPlaylistAsync(playlistId, songIdsToRemove);
+        if (success && !_isDisposed && generation == _playlistGeneration)
             await RefreshOrSortSongsCommand.ExecuteAsync(null);
     }
 
@@ -164,229 +158,90 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         return IsCurrentViewAPlaylist && HasSelectedSongs;
     }
 
-    protected override async Task ExecuteSearchAsync(CancellationToken token)
+    /// <summary>Persists the completed drag, including every item in a multi-selection.</summary>
+    public async Task OnSongsReorderedAsync(IReadOnlyCollection<Song> movedSongs)
     {
-        var targetPlaylistId = _currentPlaylistId;
-        await _dispatcherService.EnqueueAsync(async () =>
+        if (!IsReorderingEnabled || !_currentPlaylistId.HasValue || movedSongs.Count == 0) return;
+        var songs = Songs.ToList();
+        var orderedIds = songs.Select(song => song.Id).ToList();
+        var visibleIds = orderedIds.ToHashSet();
+        if (movedSongs.Any(song => !visibleIds.Contains(song.Id))) return;
+        lock (_fullSongIdsLock)
         {
-            // Re-check context before execution
-            _stateLock.EnterReadLock();
-            try
-            {
-                if (token.IsCancellationRequested || _currentPlaylistId != targetPlaylistId) return;
-            }
-            finally
-            {
-                _stateLock.ExitReadLock();
-            }
-            await RefreshOrSortSongsAsync(null, token);
-        });
-    }
+            if (_fullSongIdList.SequenceEqual(orderedIds)) return;
+        }
+        var playlistId = _currentPlaylistId.Value;
+        var generation = _playlistGeneration;
+        var normalize = movedSongs.Count > 1;
+        var moved = movedSongs.First();
+        var newOrder = moved.Order;
 
-    /// <summary>
-    ///     Called from the View when a song has been reordered via drag-and-drop.
-    ///     This is the proper way to handle WinUI ListView reordering, as WinUI fires
-    ///     Remove+Add collection events, NOT Move events.
-    /// </summary>
-    public async Task OnSongReorderedAsync(Song movedSong, int newIndex)
-    {
+        if (!normalize)
+        {
+            var index = songs.FindIndex(song => song.Id == moved.Id);
+            var previous = index > 0 ? songs[index - 1].Order : double.NegativeInfinity;
+            var next = index < songs.Count - 1 ? songs[index + 1].Order : double.PositiveInfinity;
+            newOrder = double.IsNegativeInfinity(previous)
+                ? double.IsPositiveInfinity(next) ? 1 : next > 0.5 ? next / 2 : next - 1
+                : double.IsPositiveInfinity(next) ? Math.Floor(previous) + 1
+                : previous + (next - previous) / 2;
+            // Normalize immediately when fractional positions can no longer represent this move.
+            // The new integer positions must also be reflected in memory before the next drag.
+            normalize = !double.IsFinite(newOrder) || newOrder <= previous || newOrder >= next ||
+                (double.IsFinite(previous) && double.IsFinite(next) && next - previous < 1e-9);
+        }
+
+        _isSavingOrder = true;
+        OnPropertyChanged(nameof(IsReorderingEnabled));
+        lock (_fullSongIdsLock)
+        {
+            _fullSongIdList.Clear();
+            _fullSongIdList.AddRange(orderedIds);
+        }
+
+        var saved = false;
         try
         {
-            // Capture the playlist ID immediately to prevent race conditions
-            Guid playlistId;
-            _stateLock.EnterReadLock();
-            try
+            saved = normalize
+                ? await _playlistService.UpdatePlaylistOrderAsync(playlistId, orderedIds)
+                : await _playlistService.MovePlaylistSongAsync(playlistId, moved.Id, newOrder);
+            if (saved && !_isDisposed && generation == _playlistGeneration)
             {
-                if (!_currentPlaylistId.HasValue)
-                {
-                    _logger.LogWarning("Reorder ignored: No playlist ID set.");
-                    return;
-                }
-                playlistId = _currentPlaylistId.Value;
-            }
-            finally
-            {
-                _stateLock.ExitReadLock();
-            }
-
-            if (!IsReorderingEnabled)
-            {
-                _logger.LogDebug("Reorder ignored: Reordering is not enabled.");
-                return;
-            }
-
-            // Defensive bounds check - the collection could have been modified between drag and this handler
-            var currentCount = Songs.Count;
-            if (newIndex < 0 || newIndex >= currentCount)
-            {
-                _logger.LogWarning("Reorder ignored: Index {Index} is out of bounds for collection of size {Count}.", newIndex, currentCount);
-                return;
-            }
-
-            // Calculate the new order based on neighbors
-            double prevOrder = double.NegativeInfinity;
-            double nextOrder = double.PositiveInfinity;
-
-            if (newIndex > 0)
-            {
-                var prevSong = Songs[newIndex - 1];
-                if (prevSong.Id != movedSong.Id)
-                    prevOrder = prevSong.Order;
-            }
-
-            if (newIndex < currentCount - 1)
-            {
-                var nextSong = Songs[newIndex + 1];
-                if (nextSong.Id != movedSong.Id)
-                    nextOrder = nextSong.Order;
-            }
-
-            _logger.LogDebug("Reorder: Song {SongId} at index {Index}, Neighbors: {PrevOrder} | {NextOrder}",
-                movedSong.Id, newIndex, prevOrder, nextOrder);
-
-            // Calculate the new fractional order
-            double newOrder;
-            if (double.IsNegativeInfinity(prevOrder))
-            {
-                // Moving to the beginning
-                if (double.IsPositiveInfinity(nextOrder))
-                    newOrder = 1.0; // Only song
-                else if (nextOrder > 0.5)
-                    newOrder = nextOrder / 2.0;
+                if (normalize)
+                    for (var i = 0; i < songs.Count; i++) songs[i].Order = i + 1;
                 else
-                    newOrder = nextOrder - 1.0;
-            }
-            else if (double.IsPositiveInfinity(nextOrder))
-            {
-                // Moving to the end
-                newOrder = Math.Floor(prevOrder) + 1.0;
-            }
-            else
-            {
-                // Moving between two songs
-                newOrder = (prevOrder + nextOrder) / 2.0;
-            }
-
-            if (double.IsNaN(newOrder) || double.IsInfinity(newOrder))
-            {
-                _logger.LogWarning("Calculated invalid order {Order} for song {SongId}. Falling back to 1.0", newOrder, movedSong.Id);
-                newOrder = 1.0;
-            }
-
-            // Update the song's order in memory
-            movedSong.Order = newOrder;
-
-            // Update the master ID list for playback consistency
-            lock (_fullSongIdsLock)
-            {
-                var oldIndex = _fullSongIdList.IndexOf(movedSong.Id);
-                if (oldIndex >= 0 && oldIndex != newIndex)
-                {
-                    _fullSongIdList.RemoveAt(oldIndex);
-                    var insertIndex = Math.Min(newIndex, _fullSongIdList.Count);
-                    _fullSongIdList.Insert(insertIndex, movedSong.Id);
-                }
-            }
-
-            // Save to database with proper error handling
-            _logger.LogDebug("Saving order {Order} for song {SongId} in playlist {PlaylistId}",
-                newOrder, movedSong.Id, playlistId);
-
-            var success = await _playlistService.MovePlaylistSongAsync(playlistId, movedSong.Id, newOrder);
-            if (!success)
-            {
-                _logger.LogWarning("MovePlaylistSongAsync returned false for song {SongId} in playlist {PlaylistId}",
-                    movedSong.Id, playlistId);
-            }
-
-            // Check for precision exhaustion and trigger normalization if needed
-            // Using 1e-9 threshold which is more conservative than double precision limits
-            if (!double.IsInfinity(prevOrder) && !double.IsInfinity(nextOrder) && Math.Abs(nextOrder - prevOrder) < 1e-9)
-            {
-                _logger.LogInformation("Precision threshold reached, triggering order normalization for playlist {PlaylistId}", playlistId);
-                TriggerDebouncedSaveOrder();
+                    moved.Order = newOrder;
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unexpected error during song reorder for {SongId}", movedSong?.Id);
+            _logger.LogError(ex, "Failed to save song order for playlist {PlaylistId}", playlistId);
+        }
+        try
+        {
+            if (!saved && !_isDisposed && generation == _playlistGeneration)
+            {
+                await RefreshOrSortSongsAsync();
+                if (!_isDisposed && generation == _playlistGeneration)
+                    await _uiService.ShowMessageDialogAsync(
+                        Resources.Strings.Generic_Error, Resources.Strings.Playlist_ErrorSavingOrder);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to recover playlist view after an unsuccessful reorder");
+        }
+        finally
+        {
+            _isSavingOrder = false;
+            OnPropertyChanged(nameof(IsReorderingEnabled));
         }
     }
 
     private void OnSongsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        // This handler now only manages the _fullSongIdList for Remove operations.
-        // Reordering is handled by OnSongReordered via DragItemsCompleted event.
-        if (!IsReorderingEnabled || IsLoading) return;
-
-        if (e.Action == NotifyCollectionChangedAction.Remove)
-        {
-            lock (_fullSongIdsLock)
-            {
-                if (e.OldItems != null)
-                {
-                    foreach (var item in e.OldItems)
-                    {
-                        if (item is Song song) _fullSongIdList.Remove(song.Id);
-                    }
-                }
-            }
-        }
-    }
-
-    private void TriggerDebouncedSaveOrder()
-    {
-        _saveOrderCts?.Cancel();
-        _saveOrderCts?.Dispose();
-        _saveOrderCts = new CancellationTokenSource();
-        var token = _saveOrderCts.Token;
-
-        // Capture the playlist ID that this save operation targets to prevent cross-playlist corruption
-        // if the user navigates during the delay.
-        var targetPlaylistId = _currentPlaylistId;
-
-        _ = Task.Run(async () =>
-        {
-            try
-            {
-                // Wait 2 seconds before saving to batch multiple moves during a drag.
-                await Task.Delay(2000, token);
-                if (token.IsCancellationRequested) return;
-
-                List<Guid> songIds;
-
-                _stateLock.EnterReadLock();
-                try
-                {
-                    // Verify we are still on the same playlist.
-                    if (!targetPlaylistId.HasValue || _currentPlaylistId != targetPlaylistId)
-                    {
-                        _logger.LogDebug("Playlist order normalization aborted: Active playlist changed.");
-                        return;
-                    }
-                    lock (_fullSongIdsLock)
-                    {
-                        songIds = _fullSongIdList.ToList();
-                    }
-                }
-                finally
-                {
-                    _stateLock.ExitReadLock();
-                }
-
-                _logger.LogInformation("Performing full playlist order normalization for {PlaylistId}", targetPlaylistId);
-                await _playlistService.UpdatePlaylistOrderAsync(targetPlaylistId.Value, songIds);
-            }
-            catch (TaskCanceledException) { }
-            catch (ObjectDisposedException)
-            {
-                _logger.LogDebug("Playlist order normalization stopped because the view model was disposed");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to normalize playlist order for {PlaylistId}", targetPlaylistId);
-            }
-        }, token);
+        // Do not disable an active drag during the intermediate Remove events.
+        if (Songs.Count == TotalItemCount) OnPropertyChanged(nameof(IsReorderingEnabled));
     }
 
     /// <summary>
@@ -396,17 +251,17 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
     {
         _logger.LogDebug("Cleaning up PlaylistSongListViewModel resources");
 
-        if (Songs != null)
-        {
-            Songs.CollectionChanged -= OnSongsCollectionChanged;
-        }
-
-        _saveOrderCts?.Cancel();
-        _saveOrderCts?.Dispose();
-        _saveOrderCts = null;
-
+        _playlistGeneration++;
         _currentPlaylistId = null;
+        IsCurrentViewAPlaylist = false;
 
         base.ResetState();
+    }
+
+    public override void Dispose()
+    {
+        if (_isDisposed) return;
+        Songs.CollectionChanged -= OnSongsCollectionChanged;
+        base.Dispose();
     }
 }

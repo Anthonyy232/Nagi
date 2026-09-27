@@ -20,9 +20,6 @@ public interface IAudioPlayer : IDisposable
     /// </summary>
     event Action? PositionChanged;
 
-    /// <summary>
-    ///     Occurs when the player's state (e.g., Playing, Paused, Stopped) changes.
-    /// </summary>
     event Action? StateChanged;
 
     /// <summary>
@@ -45,35 +42,18 @@ public interface IAudioPlayer : IDisposable
     /// </summary>
     event Action? DurationChanged;
 
-    /// <summary>
-    ///     Occurs when the SMTC 'Next' button is pressed by the user.
-    ///     This allows the high-level playback service to manage the queue.
-    /// </summary>
     event Action? SmtcNextButtonPressed;
 
-    /// <summary>
-    ///     Occurs when the SMTC 'Previous' button is pressed by the user.
-    ///     This allows the high-level playback service to manage the queue.
-    /// </summary>
     event Action? SmtcPreviousButtonPressed;
 
     #endregion
 
     #region Properties
 
-    /// <summary>
-    ///     Gets a value indicating whether media is currently playing.
-    /// </summary>
     bool IsPlaying { get; }
 
-    /// <summary>
-    ///     Gets the current playback position.
-    /// </summary>
     TimeSpan CurrentPosition { get; }
 
-    /// <summary>
-    ///     Gets the duration of the currently loaded media.
-    /// </summary>
     TimeSpan Duration { get; }
 
     /// <summary>
@@ -81,9 +61,6 @@ public interface IAudioPlayer : IDisposable
     /// </summary>
     double Volume { get; }
 
-    /// <summary>
-    ///     Gets a value indicating whether the player is currently muted.
-    /// </summary>
     bool IsMuted { get; }
 
     #endregion
@@ -91,17 +68,9 @@ public interface IAudioPlayer : IDisposable
     #region Methods
 
     /// <summary>
-    ///     Ensures the audio player is initialized and ready for playback.
-    ///     This synchronous version is for use by sync callers. For async contexts,
-    ///     prefer <see cref="EnsureInitializedAsync"/> to avoid blocking.
-    /// </summary>
-    void EnsureInitialized();
-
-    /// <summary>
     ///     Asynchronously ensures the audio player is initialized and ready for playback.
     ///     This can be called from a background thread to pre-warm the audio engine
-    ///     without blocking the UI thread during app startup. Multiple concurrent calls
-    ///     will await the same initialization task.
+    ///     without blocking the UI thread during app startup. Concurrent calls are serialized.
     /// </summary>
     /// <returns>A task that completes when initialization is done.</returns>
     Task EnsureInitializedAsync();
@@ -111,11 +80,6 @@ public interface IAudioPlayer : IDisposable
     /// </summary>
     void InitializeSmtc();
 
-    /// <summary>
-    ///     Updates the enabled state of the SMTC 'Next' and 'Previous' buttons.
-    /// </summary>
-    /// <param name="canNext">A value indicating whether the 'Next' button should be enabled.</param>
-    /// <param name="canPrevious">A value indicating whether the 'Previous' button should be enabled.</param>
     void UpdateSmtcButtonStates(bool canNext, bool canPrevious);
 
     /// <summary>
@@ -130,9 +94,6 @@ public interface IAudioPlayer : IDisposable
     /// </summary>
     Task PlayAsync();
 
-    /// <summary>
-    ///     Pauses playback of the current media.
-    /// </summary>
     Task PauseAsync();
 
     /// <summary>
@@ -140,10 +101,6 @@ public interface IAudioPlayer : IDisposable
     /// </summary>
     Task StopAsync();
 
-    /// <summary>
-    ///     Seeks to a specific position in the current media.
-    /// </summary>
-    /// <param name="position">The position to seek to.</param>
     Task SeekAsync(TimeSpan position);
 
     /// <summary>
@@ -152,10 +109,6 @@ public interface IAudioPlayer : IDisposable
     /// <param name="volume">The volume level, clamped between 0.0 and 1.0.</param>
     Task SetVolumeAsync(double volume);
 
-    /// <summary>
-    ///     Sets the player's mute state.
-    /// </summary>
-    /// <param name="isMuted">True to mute the player, false to unmute.</param>
     Task SetMuteAsync(bool isMuted);
 
     /// <summary>
@@ -183,14 +136,8 @@ public interface IAudioPlayer : IDisposable
     /// </summary>
     void SetFadeOnPlayPauseEnabled(bool isEnabled);
 
-    /// <summary>
-    ///     Sets the duration of the fade-in effect when playing.
-    /// </summary>
     void SetFadeInDuration(int durationMs);
 
-    /// <summary>
-    ///     Sets the duration of the fade-out effect when pausing.
-    /// </summary>
     void SetFadeOutDuration(int durationMs);
 
     #endregion

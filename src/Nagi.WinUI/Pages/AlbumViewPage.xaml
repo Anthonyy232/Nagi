@@ -3,7 +3,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:ImageEx"
-    xmlns:converters="using:Nagi.WinUI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:Nagi.WinUI.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -16,11 +15,6 @@
     x:Name="pageRoot"
     Background="Transparent"
     mc:Ignorable="d">
-
-    <Page.Resources>
-        <ResourceDictionary>
-        </ResourceDictionary>
-    </Page.Resources>
 
     <Grid KeyboardAcceleratorPlacementMode="Hidden"
           Padding="0,0,0,24"
@@ -58,12 +52,11 @@
                             Storyboard.TargetName="SearchIcon"
                             Storyboard.TargetProperty="Glyph">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE721;" />
-                            <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="&#xE721;" />
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="SearchExpanded">
-                    <Storyboard>
+                    <Storyboard Completed="OnSearchExpansionCompleted">
                         <DoubleAnimation
                             Storyboard.TargetName="SearchTextBox"
                             Storyboard.TargetProperty="Width"
@@ -134,7 +127,7 @@
                                    uihelpers:MultiArtistHyperlinkHelper.AlbumArtists="{x:Bind ViewModel.AlbumArtists, Mode=OneWay}"
                                    uihelpers:MultiArtistHyperlinkHelper.Command="{Binding ViewModel.GoToArtistCommand, ElementName=pageRoot}" />
                         <TextBlock Opacity="0.8" Text="•"
-                                   Visibility="{x:Bind ViewModel.AlbumDetailsText, Converter={StaticResource CollectionToVisibilityConverter}, Mode=OneWay}" />
+                                   Visibility="{x:Bind ViewModel.AlbumDetailsText, Converter={StaticResource StringToVisibilityConverter}, Mode=OneWay}" />
                         <TextBlock Opacity="0.8" Text="{x:Bind ViewModel.AlbumDetailsText, Mode=OneWay}" />
                     </StackPanel>
                 </StackPanel>
@@ -161,7 +154,6 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                    <!-- Search functionality -->
                     <Grid>
                         <TextBox x:Name="SearchTextBox"
                                  PlaceholderText="{x:Bind resources:Strings.AlbumViewPage_SearchBox_Placeholder, Mode=OneTime}"
@@ -240,10 +232,10 @@
             Padding="{StaticResource SongListViewPadding}"
             IsItemClickEnabled="True"
             ItemsSource="{x:Bind ViewModel.GroupedSongsFlat, Mode=OneWay}"
-            SelectionChanged="GroupedSongsListView_SelectionChanged"
+            SelectionChanged="SongsListView_SelectionChanged"
             SelectionMode="Extended"
             ContainerContentChanging="OnSongsListViewContainerContentChanging"
-            DoubleTapped="GroupedSongsListView_DoubleTapped"
+            DoubleTapped="SongsListView_DoubleTapped"
             Visibility="{x:Bind ViewModel.IsGroupedByDisc, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <ListView.ItemContainerStyleSelector>
                 <local:DiscGroupStyleSelector>
@@ -301,7 +293,7 @@
                                 </Button>
                                 <uicontrols:NowPlayingIndicator x:Name="NowPlayingIndicator" Grid.Column="0" Width="42" Height="42" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                 <TextBlock Grid.Column="1" MinWidth="30" HorizontalAlignment="Center" Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}" Text="{x:Bind TrackNumber}" />
-                                <TextBlock x:Name="SongTitle" Grid.Column="2" Style="{StaticResource SongListViewPageBodyStrongTextBlockStyle}" Text="{x:Bind Title}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center" />
+                                <TextBlock x:Name="SongTitle" Grid.Column="2" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Bind Title}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center" />
                                 <TextBlock Grid.Column="3" Margin="0,0,12,0" HorizontalAlignment="Right" Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}" Text="{x:Bind Duration, Converter={StaticResource TimeSpanToTimeStringConverter}}" />
                             </Grid>
                         </DataTemplate>
@@ -388,7 +380,7 @@
 
                         <TextBlock x:Name="SongTitle"
                                    Grid.Column="2"
-                                   Style="{StaticResource SongListViewPageBodyStrongTextBlockStyle}"
+                                   Style="{StaticResource BodyStrongTextBlockStyle}"
                                    Text="{x:Bind Title}" TextTrimming="CharacterEllipsis"
                                    TextWrapping="NoWrap"
                                    VerticalAlignment="Center" />
@@ -406,8 +398,6 @@
             ViewModel="{x:Bind ViewModel}"
             HorizontalAlignment="Right"
             Margin="0,16,24,16" />
-
-        <!-- Empty State -->
         <StackPanel
             Grid.Row="1"
             HorizontalAlignment="Center"

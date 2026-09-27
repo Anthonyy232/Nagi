@@ -1,4 +1,4 @@
-﻿namespace Nagi.Core.Services.Data;
+namespace Nagi.Core.Services.Data;
 
 /// <summary>
 ///     Defines the possible outcomes of a service operation.
@@ -28,16 +28,15 @@ public enum ServiceResultStatus
 
 /// <summary>
 ///     A generic wrapper for service method return values, encapsulating the result status,
-///     data, and any potential error messages.
+///     and data.
 /// </summary>
 /// <typeparam name="T">The type of the data returned by the service.</typeparam>
 public class ServiceResult<T> where T : class
 {
-    private ServiceResult(T? data, ServiceResultStatus status, string? errorMessage = null)
+    private ServiceResult(T? data, ServiceResultStatus status)
     {
         Data = data;
         Status = status;
-        ErrorMessage = errorMessage;
     }
 
     /// <summary>
@@ -45,15 +44,7 @@ public class ServiceResult<T> where T : class
     /// </summary>
     public T? Data { get; }
 
-    /// <summary>
-    ///     The status of the operation.
-    /// </summary>
     public ServiceResultStatus Status { get; }
-
-    /// <summary>
-    ///     A descriptive message for failed operations. Null otherwise.
-    /// </summary>
-    public string? ErrorMessage { get; }
 
     /// <summary>
     ///     Gets a value indicating whether the service call was conclusive (i.e., not a temporary error).
@@ -61,35 +52,11 @@ public class ServiceResult<T> where T : class
     /// </summary>
     public bool IsConclusive => Status is not ServiceResultStatus.TemporaryError;
 
-    /// <summary>
-    ///     Creates a new success result with a data payload.
-    /// </summary>
-    public static ServiceResult<T> FromSuccess(T data)
-    {
-        return new ServiceResult<T>(data, ServiceResultStatus.Success);
-    }
+    public static ServiceResult<T> FromSuccess(T data) => new(data, ServiceResultStatus.Success);
 
-    /// <summary>
-    ///     Creates a new result indicating the operation was successful but no data was found.
-    /// </summary>
-    public static ServiceResult<T> FromSuccessNotFound()
-    {
-        return new ServiceResult<T>(null, ServiceResultStatus.SuccessNotFound);
-    }
+    public static ServiceResult<T> FromSuccessNotFound() => new(null, ServiceResultStatus.SuccessNotFound);
 
-    /// <summary>
-    ///     Creates a new result indicating a temporary error that may be resolved by retrying.
-    /// </summary>
-    public static ServiceResult<T> FromTemporaryError(string message)
-    {
-        return new ServiceResult<T>(null, ServiceResultStatus.TemporaryError, message);
-    }
+    public static ServiceResult<T> FromTemporaryError() => new(null, ServiceResultStatus.TemporaryError);
 
-    /// <summary>
-    ///     Creates a new result indicating a permanent error that should not be retried.
-    /// </summary>
-    public static ServiceResult<T> FromPermanentError(string message)
-    {
-        return new ServiceResult<T>(null, ServiceResultStatus.PermanentError, message);
-    }
+    public static ServiceResult<T> FromPermanentError() => new(null, ServiceResultStatus.PermanentError);
 }

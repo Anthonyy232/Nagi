@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,11 +15,6 @@ using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.ViewModels;
 
-/// <summary>
-///     Manages the state and logic for the LyricsPage. It interfaces with playback
-///     services to get song information and lyrics, and provides properties for data
-///     binding to the view.
-/// </summary>
 public partial class LyricsPageViewModel : ObservableObject, IDisposable
 {
     private static readonly TimeSpan OptimisticUpdateGracePeriod = TimeSpan.FromSeconds(2);
@@ -39,7 +34,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     private int _lrcSearchHint;
 
     private LyricLine? _optimisticallySetLine;
-    private DateTime _optimisticSetTimestamp;
+    private long _optimisticSetTimestamp;
     private ParsedLrc? _parsedLrc;
     private Song? _currentSong;
 
@@ -80,7 +75,6 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     /// </summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowNoLyricsMessage))]
-    [NotifyPropertyChangedFor(nameof(ShowTimedLyrics))]
     public partial bool HasLyrics { get; set; }
 
     /// <summary>
@@ -88,7 +82,6 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     /// </summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowNoLyricsMessage))]
-    [NotifyPropertyChangedFor(nameof(ShowTimedLyrics))]
     public partial bool HasUnsyncedLyrics { get; set; }
 
     [ObservableProperty] public partial LyricLine? CurrentLine { get; set; }
@@ -98,7 +91,6 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial TimeSpan CurrentPosition { get; set; }
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ShowNoLyricsMessage))]
     public partial bool IsPlaying { get; set; }
 
     [ObservableProperty]
@@ -109,11 +101,6 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial bool CanRemoveLyrics { get; set; }
     [ObservableProperty] public partial string EditableLyrics { get; set; } = string.Empty;
     public Guid? CurrentSongId => _currentSong?.Id;
-
-    /// <summary>
-    ///     True when the timed lyrics ListView should be displayed.
-    /// </summary>
-    public bool ShowTimedLyrics => HasLyrics;
 
     /// <summary>
     ///     True when the "No lyrics found" message should be displayed.
@@ -130,7 +117,14 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
     public void Dispose()
     {
-        if (_isDisposed) return;
+        lock (_lyricsFetchLock)
+        {
+            if (_isDisposed) return;
+            _isDisposed = true;
+            _lyricsFetchCts?.Cancel();
+            _lyricsFetchCts?.Dispose();
+            _lyricsFetchCts = null;
+        }
 
         _playbackService.TrackChanged -= OnPlaybackServiceTrackChanged;
         _playbackService.PositionChanged -= OnPlaybackServicePositionChanged;
@@ -139,29 +133,19 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         _settingsService.LyricsRomanizationEnabledChanged -= OnLyricsRomanizationEnabledChanged;
         _romanizationPackManager.PacksChanged -= OnRomanizationPacksChanged;
 
-        // Cancel any pending lyrics fetch operation
-        lock (_lyricsFetchLock)
-        {
-            _lyricsFetchCts?.Cancel();
-            _lyricsFetchCts?.Dispose();
-            _lyricsFetchCts = null;
-        }
-
-        _isDisposed = true;
-        GC.SuppressFinalize(this);
     }
 
     [RelayCommand]
     public async Task SeekToLineAsync(LyricLine? line)
     {
-        if (line is null) return;
+        if (_isDisposed || line is null || !LyricLines.Contains(line)) return;
 
         var targetTime = line.StartTime - _seekTimeOffset;
         if (targetTime < TimeSpan.Zero) targetTime = TimeSpan.Zero;
 
         _logger.LogDebug("Seeking lyrics to line with start time {StartTime}", line.StartTime);
         _optimisticallySetLine = line;
-        _optimisticSetTimestamp = DateTime.UtcNow;
+        _optimisticSetTimestamp = Stopwatch.GetTimestamp();
         UpdateCurrentLineFromPosition(targetTime);
 
         await _playbackService.SeekAsync(targetTime);
@@ -171,7 +155,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     {
         var song = _currentSong?.Id == songId
             ? _currentSong
-            : await _libraryReader.GetSongWithFullDataAsync(songId).ConfigureAwait(false);
+            : await _libraryReader.GetSongByIdAsync(songId).ConfigureAwait(false);
         if (song is null || string.IsNullOrWhiteSpace(lyrics)) return;
 
         await _lrcService.SaveLyricsAsync(song, lyrics).ConfigureAwait(false);
@@ -182,7 +166,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     {
         var song = _currentSong?.Id == songId
             ? _currentSong
-            : await _libraryReader.GetSongWithFullDataAsync(songId).ConfigureAwait(false);
+            : await _libraryReader.GetSongByIdAsync(songId).ConfigureAwait(false);
         if (song is null || !await _lrcService.RemoveCachedLyricsAsync(song).ConfigureAwait(false)) return;
 
         if (_currentSong?.Id == song.Id) await UpdateForTrack(song).ConfigureAwait(false);
@@ -195,17 +179,18 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
     private void UpdateCurrentLineFromPosition(TimeSpan position)
     {
-        if (_parsedLrc is null || !HasLyrics) return;
+        var parsedLrc = _parsedLrc;
+        if (parsedLrc is null || !HasLyrics) return;
 
         _dispatcherService.TryEnqueue(() =>
         {
-            if (_isDisposed || _parsedLrc is null) return;
+            if (_isDisposed || !ReferenceEquals(parsedLrc, _parsedLrc)) return;
             CurrentPosition = position;
-            var newCurrentLine = _lrcService.GetCurrentLine(_parsedLrc, position, ref _lrcSearchHint);
+            var newCurrentLine = _lrcService.GetCurrentLine(parsedLrc, position, ref _lrcSearchHint);
 
             if (_optimisticallySetLine != null)
             {
-                if (DateTime.UtcNow - _optimisticSetTimestamp < OptimisticUpdateGracePeriod)
+                if (Stopwatch.GetElapsedTime(_optimisticSetTimestamp) < OptimisticUpdateGracePeriod)
                 {
                     // If the "natural" current line is already the one we optimistically set,
                     // we can clear the optimistic flag early as the seek has successfully caught up.
@@ -224,21 +209,17 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
                 }
             }
 
-            if (!ReferenceEquals(newCurrentLine, CurrentLine))
-            {
-                CurrentLine = newCurrentLine;
-            }
+            CurrentLine = newCurrentLine;
         });
     }
 
     private async Task UpdateForTrack(Song? song)
     {
-        _currentSong = song;
-
-        // Cancel any previous lyrics fetch operation to prevent stale data when skipping songs
         CancellationToken cancellationToken;
         lock (_lyricsFetchLock)
         {
+            if (_isDisposed) return;
+            _currentSong = song;
             _lyricsFetchCts?.Cancel();
             _lyricsFetchCts?.Dispose();
             _lyricsFetchCts = new CancellationTokenSource();
@@ -248,7 +229,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         // Reset UI state immediately on dispatcher
         _dispatcherService.TryEnqueue(() =>
         {
-            if (_isDisposed) return;
+            if (_isDisposed || cancellationToken.IsCancellationRequested) return;
             LyricLines.Clear();
             UnsyncedLyricLines.Clear();
             CurrentLine = null;
@@ -284,180 +265,97 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         _logger.LogDebug("Updating lyrics for track '{SongTitle}' ({SongId})", song.Title, song.Id);
 
         // Start prefetch for next track immediately (runs in parallel with current fetch)
-        _ = PrefetchNextTrackLyrics();
+        _ = PrefetchNextTrackLyrics(cancellationToken);
 
         try
         {
-            // Fetch full song data in parallel with .lrc check since both are local/fast
-            var fullSongTask = _libraryReader.GetSongWithFullDataAsync(song.Id);
+            var fullSongTask = _libraryReader.GetSongByIdAsync(song.Id);
             var localLrcTask = !string.IsNullOrWhiteSpace(song.LrcFilePath)
                 ? _lrcService.GetLyricsAsync(song.LrcFilePath)
                 : Task.FromResult<ParsedLrc?>(null);
+            await Task.WhenAll(fullSongTask, localLrcTask).WaitAsync(cancellationToken).ConfigureAwait(false);
 
-            await Task.WhenAll(fullSongTask, localLrcTask).ConfigureAwait(false);
-            if (cancellationToken.IsCancellationRequested) return;
+            var fullSong = await fullSongTask ?? song;
+            var parsedLrc = await localLrcTask;
+            var rawLyrics = parsedLrc?.RawUnsyncedLyrics ?? string.Empty;
 
-            var fullSong = fullSongTask.Result ?? song;
-            var localLrc = localLrcTask.Result;
-
-            // Priority 1: Local .lrc sidecar (synced lyrics)
-            if (localLrc is not null && !localLrc.IsEmpty)
+            // Prefer sidecars, then embedded tags, and only then the network/cache.
+            if (parsedLrc is not { IsEmpty: false } && string.IsNullOrWhiteSpace(rawLyrics))
             {
-                _logger.LogDebug("Using local .lrc for track '{SongTitle}'", song.Title);
-                var displayLrc = await ApplyRomanizationAsync(localLrc, cancellationToken).ConfigureAwait(false);
-                _dispatcherService.TryEnqueue(() =>
+                if (!string.IsNullOrWhiteSpace(fullSong.Lyrics))
                 {
-                    if (cancellationToken.IsCancellationRequested || _isDisposed) return;
-                    _parsedLrc = displayLrc;
-                    EditableLyrics = localLrc.RawUnsyncedLyrics ?? string.Empty;
-                    CanEditLyrics = true;
-                    CanRemoveLyrics = _lrcService.HasCachedLyrics(song);
-                    LyricLines.AddRange(displayLrc.Lines);
-                    HasLyrics = true;
-                    IsLoading = false;
-                    UpdateCurrentLineFromPosition(_playbackService.CurrentPosition);
-                });
-                return;
-            }
-
-            // Priority 2: Embedded lyrics tag (skip network)
-            if (fullSong is not null && !string.IsNullOrWhiteSpace(fullSong.Lyrics))
-            {
-                _logger.LogDebug("Using embedded lyrics for track '{SongTitle}'", song.Title);
-                var parsedEmbedded = _lrcService.ParseLyrics(fullSong.Lyrics);
-
-                if (parsedEmbedded is not null && !parsedEmbedded.IsEmpty)
-                {
-                    var displayLrc = await ApplyRomanizationAsync(parsedEmbedded, cancellationToken).ConfigureAwait(false);
-                    _dispatcherService.TryEnqueue(() =>
-                    {
-                        if (cancellationToken.IsCancellationRequested || _isDisposed) return;
-                        _parsedLrc = displayLrc;
-                        EditableLyrics = fullSong.Lyrics;
-                        CanEditLyrics = true;
-                        CanRemoveLyrics = _lrcService.HasCachedLyrics(song);
-                        LyricLines.AddRange(displayLrc.Lines);
-                        HasLyrics = true;
-                        IsLoading = false;
-                        UpdateCurrentLineFromPosition(_playbackService.CurrentPosition);
-                    });
-                    return;
+                    rawLyrics = fullSong.Lyrics;
+                    parsedLrc = _lrcService.ParseLyrics(rawLyrics);
                 }
-                var embeddedLines = await ApplyRomanizationAsync(
-                    ParseUnsyncedLyricsToLines(parsedEmbedded?.RawUnsyncedLyrics ?? fullSong.Lyrics),
-                    cancellationToken).ConfigureAwait(false);
-                _dispatcherService.TryEnqueue(() =>
+                else
                 {
-                    if (cancellationToken.IsCancellationRequested || _isDisposed) return;
-                    UnsyncedLyricLines.AddRange(embeddedLines);
-                    EditableLyrics = fullSong.Lyrics;
-                    CanEditLyrics = true;
-                    CanRemoveLyrics = _lrcService.HasCachedLyrics(song);
-                    HasUnsyncedLyrics = true;
-                    IsLoading = false;
-                });
-                return;
+                    parsedLrc = await _lrcService.GetLyricsAsync(song, cancellationToken).ConfigureAwait(false);
+                    rawLyrics = parsedLrc?.RawUnsyncedLyrics ?? string.Empty;
+                }
             }
+            cancellationToken.ThrowIfCancellationRequested();
 
-            // Priority 3: Network/cache (only when no local lyrics exist)
-            var parsedLrc = await _lrcService.GetLyricsAsync(song, cancellationToken).ConfigureAwait(false);
-            if (cancellationToken.IsCancellationRequested) return;
+            var hasTimedLyrics = parsedLrc is { IsEmpty: false };
+            IReadOnlyList<LyricLine> displayLines = [];
+            if (hasTimedLyrics)
+                displayLines = await _lyricRomanizationService.ApplyRomanizationAsync(parsedLrc!.Lines, cancellationToken).ConfigureAwait(false);
+            else if (!string.IsNullOrWhiteSpace(rawLyrics))
+                displayLines = await _lyricRomanizationService.ApplyRomanizationAsync(
+                    ParseUnsyncedLyricsToLines(rawLyrics), cancellationToken).ConfigureAwait(false);
 
-            if (parsedLrc is not null && !parsedLrc.IsEmpty)
+            _dispatcherService.TryEnqueue(() =>
             {
-                _logger.LogDebug("Fetched synced lyrics for track '{SongTitle}'", song.Title);
-                var displayLrc = await ApplyRomanizationAsync(parsedLrc, cancellationToken).ConfigureAwait(false);
-                _dispatcherService.TryEnqueue(() =>
+                if (cancellationToken.IsCancellationRequested || _isDisposed) return;
+                EditableLyrics = rawLyrics;
+                CanEditLyrics = true;
+                CanRemoveLyrics = _lrcService.HasCachedLyrics(song);
+                IsLoading = false;
+                if (hasTimedLyrics)
                 {
-                    if (cancellationToken.IsCancellationRequested || _isDisposed) return;
-                    _parsedLrc = displayLrc;
-                    EditableLyrics = parsedLrc.RawUnsyncedLyrics ?? string.Empty;
-                    CanEditLyrics = true;
-                    CanRemoveLyrics = _lrcService.HasCachedLyrics(song);
-                    LyricLines.AddRange(displayLrc.Lines);
+                    _parsedLrc = new ParsedLrc(displayLines, rawLyrics);
+                    LyricLines.ReplaceRange(displayLines);
                     HasLyrics = true;
-                    IsLoading = false;
                     UpdateCurrentLineFromPosition(_playbackService.CurrentPosition);
-                });
-            }
-            else if (parsedLrc is not null && !string.IsNullOrWhiteSpace(parsedLrc.RawUnsyncedLyrics))
-            {
-                _logger.LogDebug("Fetched unsynced lyrics for track '{SongTitle}'", song.Title);
-                var unsyncedLines = await ApplyRomanizationAsync(
-                    ParseUnsyncedLyricsToLines(parsedLrc.RawUnsyncedLyrics),
-                    cancellationToken).ConfigureAwait(false);
-                _dispatcherService.TryEnqueue(() =>
+                }
+                else
                 {
-                    if (cancellationToken.IsCancellationRequested || _isDisposed) return;
-                    UnsyncedLyricLines.AddRange(unsyncedLines);
-                    EditableLyrics = parsedLrc.RawUnsyncedLyrics;
-                    CanEditLyrics = true;
-                    CanRemoveLyrics = _lrcService.HasCachedLyrics(song);
-                    HasUnsyncedLyrics = true;
-                    IsLoading = false;
-                });
-            }
-            else
-            {
-                _logger.LogDebug("No lyrics found for track '{SongTitle}'", song.Title);
-                _dispatcherService.TryEnqueue(() =>
-                {
-                    if (cancellationToken.IsCancellationRequested || _isDisposed) return;
-                    CanEditLyrics = true;
-                    IsLoading = false;
-                });
-            }
+                    UnsyncedLyricLines.ReplaceRange(displayLines);
+                    HasUnsyncedLyrics = displayLines.Count > 0;
+                }
+            });
         }
         catch (OperationCanceledException)
         {
             _logger.LogDebug("Lyrics fetch for '{SongTitle}' was cancelled", song.Title);
-            return;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to fetch lyrics for track '{SongTitle}'", song.Title);
             _dispatcherService.TryEnqueue(() =>
             {
+                if (cancellationToken.IsCancellationRequested || _isDisposed) return;
                 CanEditLyrics = true;
                 IsLoading = false;
             });
         }
     }
 
-    private async Task<ParsedLrc> ApplyRomanizationAsync(ParsedLrc parsedLrc, CancellationToken cancellationToken)
-    {
-        var lines = await _lyricRomanizationService.ApplyRomanizationAsync(parsedLrc.Lines, cancellationToken).ConfigureAwait(false);
-        return new ParsedLrc(lines, parsedLrc.RawUnsyncedLyrics);
-    }
-
-    private Task<IReadOnlyList<LyricLine>> ApplyRomanizationAsync(IEnumerable<string> lines, CancellationToken cancellationToken)
-    {
-        return _lyricRomanizationService.ApplyRomanizationAsync(lines, cancellationToken);
-    }
-
     /// <summary>
     ///     Parses unsynchronized lyrics text into individual lines for display,
     ///     normalizing line breaks and preserving verse structure with blank lines.
     /// </summary>
-    private static List<string> ParseUnsyncedLyricsToLines(string rawLyrics)
+    private static string[] ParseUnsyncedLyricsToLines(string rawLyrics)
     {
         // Strip language prefixes like "eng||" or "jpn||" at the start of the text
         rawLyrics = LanguagePrefixRegex().Replace(rawLyrics, string.Empty);
 
-        // Normalize different line ending styles to \n
-        var normalized = rawLyrics
-            .Replace("\r\n", "\n")
-            .Replace("\r", "\n");
+        var normalized = rawLyrics.ReplaceLineEndings("\n");
 
         // Collapse multiple consecutive blank lines into double line breaks
         // This preserves verse separation while cleaning up excessive spacing
         normalized = MultipleNewlines().Replace(normalized, "\n\n");
 
-        // Split into lines and trim each line
-        return normalized
-            .Split('\n')
-            .Select(line => line.Trim())
-            .ToList();
+        return normalized.Split('\n', StringSplitOptions.TrimEntries);
     }
 
     private void OnPlaybackServiceTrackChanged()
@@ -497,56 +395,24 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     ///     Pre-fetches lyrics for the next track in the queue to reduce perceived latency.
     ///     This is fire-and-forget - failures are silently logged and don't affect current playback.
     /// </summary>
-    private async Task PrefetchNextTrackLyrics()
+    private async Task PrefetchNextTrackLyrics(CancellationToken cancellationToken)
     {
-        CancellationTokenSource? prefetchCts = null;
         try
         {
-            var nextSong = await GetNextSongInQueueAsync().ConfigureAwait(false);
-            if (nextSong is null) return;
+            var nextSong = await GetNextSongInQueueAsync().WaitAsync(cancellationToken).ConfigureAwait(false);
+            if (nextSong is null || nextSong.LyricsLastCheckedUtc.HasValue ||
+                !string.IsNullOrWhiteSpace(nextSong.LrcFilePath) || !string.IsNullOrWhiteSpace(nextSong.Lyrics)) return;
 
-            // Skip if already network-checked
-            if (nextSong.LyricsLastCheckedUtc != null) return;
-
-            // Skip if a local .lrc sidecar exists — it loads from disk when the track plays
-            if (!string.IsNullOrWhiteSpace(nextSong.LrcFilePath)) return;
-
-            // Skip if embedded lyrics exist — they load from the DB when the track plays
-            var fullNextSong = await _libraryReader.GetSongWithFullDataAsync(nextSong.Id).ConfigureAwait(false);
-            if (fullNextSong is not null && !string.IsNullOrWhiteSpace(fullNextSong.Lyrics)) return;
-
-            // No local lyrics — worth prefetching from network.
-            // Wait 1 second to reduce peak concurrent HTTP request count.
-            CancellationToken earlyCancelToken;
-            lock (_lyricsFetchLock)
-            {
-                if (_lyricsFetchCts == null || _isDisposed) return;
-                earlyCancelToken = _lyricsFetchCts.Token;
-            }
-            await Task.Delay(TimeSpan.FromSeconds(1), earlyCancelToken).ConfigureAwait(false);
-
-            lock (_lyricsFetchLock)
-            {
-                if (_lyricsFetchCts == null || _isDisposed) return;
-                prefetchCts = CancellationTokenSource.CreateLinkedTokenSource(_lyricsFetchCts.Token);
-            }
-
-            if (prefetchCts.Token.IsCancellationRequested) return;
+            // Stagger network work behind the current song's fetch.
+            await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken).ConfigureAwait(false);
+            using var prefetchCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             prefetchCts.CancelAfter(TimeSpan.FromSeconds(15));
-
             await _lrcService.GetLyricsAsync(nextSong, prefetchCts.Token).ConfigureAwait(false);
         }
-        catch (OperationCanceledException)
-        {
-            // Expected when the pre-fetch times out or is cancelled
-        }
+        catch (OperationCanceledException) { }
         catch (Exception ex)
         {
-            _logger.LogDebug(ex, "Pre-fetch failed for next track (non-critical)");
-        }
-        finally
-        {
-            prefetchCts?.Dispose();
+            _logger.LogDebug(ex, "Pre-fetch failed for next track");
         }
     }
 
@@ -556,25 +422,13 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     [GeneratedRegex(@"^[a-z]{2,3}\|\|", RegexOptions.IgnoreCase)]
     private static partial Regex LanguagePrefixRegex();
 
-    private async Task<Song?> GetNextSongInQueueAsync()
+    private Task<Song?> GetNextSongInQueueAsync()
     {
-        Guid nextId = Guid.Empty;
-        if (_playbackService.IsShuffleEnabled)
-        {
-            var nextIndex = _playbackService.CurrentShuffledIndex + 1;
-            if (nextIndex < _playbackService.ShuffledQueue.Count)
-                nextId = _playbackService.ShuffledQueue[nextIndex];
-        }
-        else
-        {
-            var nextQueueIndex = _playbackService.CurrentQueueIndex + 1;
-            if (nextQueueIndex < _playbackService.PlaybackQueue.Count)
-                nextId = _playbackService.PlaybackQueue[nextQueueIndex];
-        }
-
-        if (nextId == Guid.Empty) return null;
-
-        // Fetch basic metadata for the next song (single lookup is more efficient than dictionary)
-        return await _libraryReader.GetSongByIdAsync(nextId).ConfigureAwait(false);
+        var shuffled = _playbackService.IsShuffleEnabled;
+        var queue = shuffled ? _playbackService.ShuffledQueue : _playbackService.PlaybackQueue;
+        var nextIndex = (shuffled ? _playbackService.CurrentShuffledIndex : _playbackService.CurrentQueueIndex) + 1;
+        return nextIndex >= 0 && nextIndex < queue.Count
+            ? _libraryReader.GetSongByIdAsync(queue[nextIndex])
+            : Task.FromResult<Song?>(null);
     }
 }

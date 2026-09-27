@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Data;
 using Nagi.WinUI.Models;
@@ -14,7 +14,6 @@ public static class SettingsDefaults
 {
     public const bool AutoLaunchEnabled = false;
     public const bool PlayerAnimationEnabled = true;
-    public const bool ShowQueueButtonEnabled = true;
     public const bool HideToTrayEnabled = true;
     public const bool MinimizeToMiniPlayerEnabled = false;
     public const bool ShowCoverArtInTrayFlyoutEnabled = true;
@@ -33,8 +32,8 @@ public static class SettingsDefaults
     public const RepeatMode DefaultRepeatMode = RepeatMode.Off;
     public const bool LastFmScrobblingEnabled = false;
 
-    public const string DefaultArtistSplitCharacters = ""; // No splitting by default
-    public const string DefaultGenreSplitCharacters = ""; // No splitting by default
+    public const string DefaultArtistSplitCharacters = "";
+    public const string DefaultGenreSplitCharacters = "";
     public const bool LastFmNowPlayingEnabled = false;
     public const bool RememberWindowSizeEnabled = false;
     public const bool RememberWindowPositionEnabled = false;
@@ -52,7 +51,6 @@ public static class SettingsDefaults
     public const int DefaultSongsPerPage = 50;
     public const bool IgnoreLeadingArticlesOnSortEnabled = true;
 
-    // Default Sort Orders
     public const SongSortOrder LibrarySortOrder = SongSortOrder.TitleAsc;
     public const AlbumSortOrder AlbumsSortOrder = AlbumSortOrder.ArtistAsc;
     public const ArtistSortOrder ArtistsSortOrder = ArtistSortOrder.NameAsc;

@@ -5,7 +5,6 @@
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:converters="using:Nagi.WinUI.Converters"
     xmlns:resources="using:Nagi.WinUI.Resources"
     mc:Ignorable="d"
     Background="Transparent">
@@ -13,7 +12,7 @@
 
     <Grid x:Name="RootGrid" Opacity="0">
         <Grid.RowDefinitions>
-            <RowDefinition x:Name="AppTitleBarRow" Height="48" />
+            <RowDefinition Height="48" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -247,13 +246,12 @@
                                 </TransformGroup>
                             </StackPanel.RenderTransform>
                             <Button
-                                x:Name="AddFolderButton"
                                 HorizontalAlignment="Center"
                                 Padding="24,12"
                                 Command="{x:Bind ViewModel.AddFolderCommand}"
-                                Style="{StaticResource BrandAccentButtonStyle}"
+                                Style="{StaticResource AnimatedAccentButtonStyle}"
                                 ToolTipService.ToolTip="{x:Bind resources:Strings.OnboardingPage_AddFolderButton_ToolTip, Mode=OneTime}">
-                                <StackPanel x:Name="AddFolderButtonContent" Orientation="Horizontal" Spacing="10">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
                                     <SymbolIcon Symbol="Add" />
                                     <TextBlock
                                         VerticalAlignment="Center"
@@ -284,6 +282,7 @@
                                 Visibility="{x:Bind ViewModel.IsAddingFolder, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                             <ProgressBar
+                                CornerRadius="4"
                                 Width="300"
                                 Height="6"
                                 HorizontalAlignment="Center"

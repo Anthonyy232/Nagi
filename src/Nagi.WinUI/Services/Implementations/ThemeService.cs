@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using MaterialColorUtilities.ColorAppearance;
+using MaterialColorUtilities.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
@@ -23,21 +24,19 @@ public class ThemeService : IThemeService
     private readonly App _app;
     private readonly ILogger<ThemeService> _logger;
     private readonly Lazy<IMusicPlaybackService> _playbackService;
-    private readonly IServiceProvider _serviceProvider;
     private readonly Lazy<IUISettingsService> _settingsService;
     private readonly Lazy<IDispatcherService> _dispatcherService;
 
     public ThemeService(App app, IServiceProvider serviceProvider, ILogger<ThemeService> logger)
     {
         _app = app ?? throw new ArgumentNullException(nameof(app));
-        _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         _logger = logger;
         _settingsService =
-            new Lazy<IUISettingsService>(() => _serviceProvider.GetRequiredService<IUISettingsService>());
+            new Lazy<IUISettingsService>(() => serviceProvider.GetRequiredService<IUISettingsService>());
         _playbackService =
-            new Lazy<IMusicPlaybackService>(() => _serviceProvider.GetRequiredService<IMusicPlaybackService>());
+            new Lazy<IMusicPlaybackService>(() => serviceProvider.GetRequiredService<IMusicPlaybackService>());
         _dispatcherService =
-            new Lazy<IDispatcherService>(() => _serviceProvider.GetRequiredService<IDispatcherService>());
+            new Lazy<IDispatcherService>(() => serviceProvider.GetRequiredService<IDispatcherService>());
     }
 
     public ElementTheme CurrentTheme { get; private set; } = ElementTheme.Default;
@@ -137,7 +136,7 @@ public class ThemeService : IThemeService
 
     private static Color ClampTone(Color color, double minimum, double maximum)
     {
-        var hct = Hct.FromInt(0xFF000000u | (uint)color.R << 16 | (uint)color.G << 8 | color.B);
+        var hct = Hct.FromInt(ColorUtils.ArgbFromRgb(color.R, color.G, color.B));
         var tone = Math.Clamp(hct.Tone, minimum, maximum);
         if (tone == hct.Tone) return color;
 
@@ -151,10 +150,10 @@ public class ThemeService : IThemeService
         return await _settingsService.Value.GetAccentColorAsync() ?? App.DefaultAccentColor;
     }
 
-    private bool TryParseSwatch(string? swatchId, out Color color)
+    private static bool TryParseSwatch(string? swatchId, out Color color)
     {
         color = default;
-        return !string.IsNullOrWhiteSpace(swatchId) && _app.TryParseHexColor(swatchId, out color);
+        return !string.IsNullOrWhiteSpace(swatchId) && App.TryParseHexColor(swatchId, out color);
     }
 
     private static Color GetMediaOnImageAccentColor(Color color)
@@ -202,17 +201,7 @@ public class ThemeService : IThemeService
 
     private static double GetRelativeLuminance(Color color)
     {
-        return (0.2126 * GetLinearChannelValue(color.R)) +
-               (0.7152 * GetLinearChannelValue(color.G)) +
-               (0.0722 * GetLinearChannelValue(color.B));
-    }
-
-    private static double GetLinearChannelValue(byte value)
-    {
-        var channel = value / 255d;
-        return channel <= 0.04045
-            ? channel / 12.92
-            : Math.Pow((channel + 0.055) / 1.055, 2.4);
+        return ColorUtils.XyzFromArgb(ColorUtils.ArgbFromRgb(color.R, color.G, color.B))[1] / 100;
     }
 
     private async Task<ElementTheme> GetActualThemeAsync()

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
+using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.ViewModels;
@@ -13,10 +14,9 @@ namespace Nagi.WinUI.ViewModels;
 /// </summary>
 public abstract partial class SearchableViewModelBase : ObservableObject
 {
-    protected const int DefaultSearchDebounceDelay = 300;
     protected readonly IDispatcherService _dispatcherService;
     protected readonly ILogger _logger;
-    private CancellationTokenSource? _debounceCts;
+    private readonly Debouncer _searchDebouncer = new(TimeSpan.FromMilliseconds(300));
 
     protected SearchableViewModelBase(IDispatcherService dispatcherService, ILogger logger)
     {
@@ -25,19 +25,15 @@ public abstract partial class SearchableViewModelBase : ObservableObject
     }
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsSearchActive))]
     public partial string SearchTerm { get; set; } = string.Empty;
 
     public bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
 
-    /// <summary>
-    ///     Gets the delay in milliseconds to wait before triggering a search.
-    /// </summary>
-    protected virtual int SearchDebounceDelay => DefaultSearchDebounceDelay;
-
     partial void OnSearchTermChanged(string value)
     {
         OnSearchTermChangedInternal(value);
-        TriggerDebouncedSearch();
+        _searchDebouncer.Trigger(ExecuteSearchWithErrorHandlingAsync);
     }
 
     /// <summary>
@@ -52,78 +48,24 @@ public abstract partial class SearchableViewModelBase : ObservableObject
     ///     Executes an immediate search, cancelling any pending debounced search.
     /// </summary>
     [RelayCommand]
-    public virtual async Task SearchAsync()
+    public virtual Task SearchAsync() => _searchDebouncer.RunAsync(ExecuteSearchWithErrorHandlingAsync, immediate: true);
+
+    private async Task ExecuteSearchWithErrorHandlingAsync(CancellationToken token)
     {
-        CancelPendingSearch();
-
-        _debounceCts = new CancellationTokenSource();
-        var token = _debounceCts.Token;
-
         try
         {
             await ExecuteSearchAsync(token);
         }
-        catch (OperationCanceledException)
+        catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            _logger.LogDebug("Immediate search cancelled.");
+            _logger.LogError(ex, "Search failed.");
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed during immediate search execution.");
-        }
-    }
-
-    /// <summary>
-    ///     Internal triggering logic for debounced search.
-    /// </summary>
-    protected void TriggerDebouncedSearch()
-    {
-        CancelPendingSearch();
-
-        var cts = new CancellationTokenSource();
-        Interlocked.Exchange(ref _debounceCts, cts);
-        var token = cts.Token;
-
-        _ = Task.Run(async () =>
-        {
-            try
-            {
-                await Task.Delay(SearchDebounceDelay, token);
-
-                if (token.IsCancellationRequested) return;
-
-                await ExecuteSearchAsync(token);
-            }
-            catch (OperationCanceledException)
-            {
-
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed during debounced search execution.");
-            }
-        }, token);
     }
 
     /// <summary>
     ///     Cancels any pending debounced search.
     /// </summary>
-    protected void CancelPendingSearch()
-    {
-        var cts = Interlocked.Exchange(ref _debounceCts, null);
-        if (cts != null)
-        {
-            try
-            {
-                cts.Cancel();
-                cts.Dispose();
-            }
-            catch (ObjectDisposedException)
-            {
-                // Ignore if already disposed
-            }
-        }
-    }
+    protected void CancelPendingSearch() => _searchDebouncer.Cancel();
 
     /// <summary>
     ///     Override this method to implement the actual search logic.
@@ -138,6 +80,5 @@ public abstract partial class SearchableViewModelBase : ObservableObject
     public virtual void ResetState()
     {
         CancelPendingSearch();
-        // Option: SearchTerm = string.Empty; // Decided to keep search term for better UX when navigating back
     }
 }

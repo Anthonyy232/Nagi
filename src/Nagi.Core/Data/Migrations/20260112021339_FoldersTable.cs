@@ -10,6 +10,12 @@ namespace Nagi.Core.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            // The next migration reintroduces Order as REAL. Keep values across the schema gap.
+            migrationBuilder.Sql("""
+                CREATE TABLE __NagiPlaylistOrderBackup AS
+                SELECT PlaylistId, SongId, "Order" FROM PlaylistSongs;
+                """);
+
             migrationBuilder.DropIndex(
                 name: "IX_PlaylistSongs_PlaylistId_Order",
                 table: "PlaylistSongs");
@@ -37,6 +43,14 @@ namespace Nagi.Core.Data.Migrations
                 type: "INTEGER",
                 nullable: false,
                 defaultValue: 0);
+
+            migrationBuilder.Sql("""
+                CREATE TABLE IF NOT EXISTS __NagiPlaylistOrderBackup (PlaylistId TEXT, SongId TEXT, "Order" REAL);
+                UPDATE PlaylistSongs SET "Order" = CAST(backup."Order" AS INTEGER)
+                FROM __NagiPlaylistOrderBackup AS backup
+                WHERE PlaylistSongs.PlaylistId = backup.PlaylistId AND PlaylistSongs.SongId = backup.SongId;
+                DROP TABLE __NagiPlaylistOrderBackup;
+                """);
 
             migrationBuilder.CreateIndex(
                 name: "IX_PlaylistSongs_PlaylistId_Order",

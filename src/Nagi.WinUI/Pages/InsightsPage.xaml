@@ -1,4 +1,3 @@
-<!-- Nagi/Pages/InsightsPage.xaml -->
 <Page
     x:Class="Nagi.WinUI.Pages.InsightsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -7,60 +6,57 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resources="using:Nagi.WinUI.Resources"
     xmlns:vm="using:Nagi.WinUI.ViewModels"
-    xmlns:controls="using:ImageEx"
-    xmlns:converters="using:Nagi.WinUI.Converters"
     x:Name="InsightsPageRoot"
     Background="Transparent"
     mc:Ignorable="d">
 
-    <!-- ═══════════════  SHARED ITEM TEMPLATES  ═══════════════ -->
     <Grid Padding="{StaticResource PageContainerPaddingVertical}">
         <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="AdaptiveStates">
-                <!-- Wide: >= 1000px -->
-                <VisualState x:Name="WideState">
+            <VisualStateGroup x:Name="HeroLayoutStates">
+                <VisualState x:Name="WideHeroes">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="1000" />
                     </VisualState.StateTriggers>
                 </VisualState>
-
-                <!-- Medium: 600 - 999px -->
-                <VisualState x:Name="MediumState">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="600" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="HeroCol2.Width" Value="0" />
-                        <Setter Target="HeroCol3.Width" Value="0" />
-                        <Setter Target="HeroCard3.(Grid.Column)" Value="0" />
-                        <Setter Target="HeroCard3.(Grid.Row)" Value="1" />
-                        <Setter Target="HeroCard4.(Grid.Column)" Value="1" />
-                        <Setter Target="HeroCard4.(Grid.Row)" Value="1" />
-                    </VisualState.Setters>
-                </VisualState>
-
-                <!-- Narrow: < 600px -->
-                <VisualState x:Name="NarrowState">
+                <VisualState x:Name="CompactHeroes">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <!-- Hero stats 2x2 -->
-                        <Setter Target="HeroCol2.Width" Value="0" />
-                        <Setter Target="HeroCol3.Width" Value="0" />
+                        <Setter Target="HeroGrid.RowSpacing" Value="16" />
+                        <Setter Target="HeroCard1.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="HeroCard2.(Grid.Column)" Value="2" />
+                        <Setter Target="HeroCard2.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="HeroCard3.(Grid.Column)" Value="0" />
                         <Setter Target="HeroCard3.(Grid.Row)" Value="1" />
-                        <Setter Target="HeroCard4.(Grid.Column)" Value="1" />
+                        <Setter Target="HeroCard3.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="HeroCard4.(Grid.Column)" Value="2" />
                         <Setter Target="HeroCard4.(Grid.Row)" Value="1" />
-
-                        <!-- Stacking Lists -->
-                        <Setter Target="Row2Col1.Width" Value="0" />
+                        <Setter Target="HeroCard4.(Grid.ColumnSpan)" Value="2" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="ListLayoutStates">
+                <VisualState x:Name="SideBySideLists">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="600" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <VisualState x:Name="StackedLists">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="Row2Grid.RowSpacing" Value="16" />
+                        <Setter Target="TopSongsCard.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="TopArtistsCard.(Grid.Column)" Value="0" />
                         <Setter Target="TopArtistsCard.(Grid.Row)" Value="1" />
-
-                        <Setter Target="Row3Col1.Width" Value="0" />
+                        <Setter Target="TopArtistsCard.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="Row3Grid.RowSpacing" Value="16" />
+                        <Setter Target="TopAlbumsCard.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="TopGenresCard.(Grid.Column)" Value="0" />
                         <Setter Target="TopGenresCard.(Grid.Row)" Value="1" />
+                        <Setter Target="TopGenresCard.(Grid.ColumnSpan)" Value="2" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -71,7 +67,6 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- ═══════════════  PAGE HEADER  ═══════════════ -->
         <Grid Grid.Row="0" Margin="{StaticResource PageHeaderMarginIndented}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -82,7 +77,6 @@
                        Text="{x:Bind resources:Strings.InsightsPage_Title, Mode=OneTime}"
                        Style="{StaticResource PageTitleTextStyle}" />
 
-            <!-- Time range selector + reset button -->
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                 <ComboBox x:Name="TimeRangeSelector"
                           ItemsSource="{x:Bind ViewModel.TimeRangeLabels}"
@@ -96,7 +90,6 @@
             </StackPanel>
         </Grid>
 
-        <!-- ═══════════════  LOADING INDICATOR  ═══════════════ -->
         <ProgressRing
             Grid.Row="1"
             HorizontalAlignment="Center"
@@ -104,13 +97,11 @@
             IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
             Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-        <!-- ═══════════════  DASHBOARD CONTENT  ═══════════════ -->
         <ScrollViewer Grid.Row="1"
                       HorizontalScrollBarVisibility="Disabled"
                       VerticalScrollBarVisibility="Auto"
                       Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
 
-            <!-- Show dashboard when data exists -->
             <Grid Visibility="{x:Bind ViewModel.HasData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <StackPanel Padding="24,12,24,132" Spacing="20">
                     <StackPanel.ChildrenTransitions>
@@ -119,20 +110,18 @@
                         </TransitionCollection>
                     </StackPanel.ChildrenTransitions>
 
-                    <!-- ─────────  ROW 1: Hero Stats  ───────── -->
-                    <Grid x:Name="HeroGrid" ColumnSpacing="16" RowSpacing="16">
+                    <Grid x:Name="HeroGrid" ColumnSpacing="16">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" x:Name="HeroCol0" />
-                            <ColumnDefinition Width="*" x:Name="HeroCol1" />
-                            <ColumnDefinition Width="*" x:Name="HeroCol2" />
-                            <ColumnDefinition Width="*" x:Name="HeroCol3" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <!-- Total Listen Time -->
                         <Grid x:Name="HeroCard1" Grid.Column="0" Grid.Row="0" Style="{StaticResource InsightsHeroCardStyle}">
                             <Grid ColumnSpacing="16" VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <Grid.ColumnDefinitions>
@@ -151,7 +140,6 @@
                             </Grid>
                         </Grid>
 
-                        <!-- Unique Songs -->
                         <Grid x:Name="HeroCard2" Grid.Column="1" Grid.Row="0" Style="{StaticResource InsightsHeroCardStyle}">
                             <Grid ColumnSpacing="16" VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <Grid.ColumnDefinitions>
@@ -170,7 +158,6 @@
                             </Grid>
                         </Grid>
 
-                        <!-- Peak Hour -->
                         <Grid x:Name="HeroCard3" Grid.Column="2" Grid.Row="0" Style="{StaticResource InsightsHeroCardStyle}">
                             <Grid ColumnSpacing="16" VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <Grid.ColumnDefinitions>
@@ -189,7 +176,6 @@
                             </Grid>
                         </Grid>
 
-                        <!-- Most Active Day -->
                         <Grid x:Name="HeroCard4" Grid.Column="3" Grid.Row="0" Style="{StaticResource InsightsHeroCardStyle}">
                             <Grid ColumnSpacing="16" VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <Grid.ColumnDefinitions>
@@ -209,25 +195,22 @@
                         </Grid>
                     </Grid>
 
-                    <!-- ─────────  ROW 2: Top Songs + Top Artists (side-by-side)  ───────── -->
-                    <Grid x:Name="Row2Grid" ColumnSpacing="16" RowSpacing="16">
+                    <Grid x:Name="Row2Grid" ColumnSpacing="16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" x:Name="Row2Col1" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <!-- Top Songs Card -->
                         <Grid x:Name="TopSongsCard" Grid.Column="0" Grid.Row="0" Style="{StaticResource InsightsCardStyle}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <!-- Header row: title (left) + sort toggle + see-all button (right) -->
                             <Grid Grid.Row="0" Margin="0,0,0,12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
@@ -244,10 +227,10 @@
                                                VerticalAlignment="Center" Margin="0,0,4,0">
                                     <DropDownButton.Flyout>
                                         <MenuFlyout>
-                                            <RadioMenuFlyoutItem Text="Play count" GroupName="SongsSort"
+                                            <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_PlayCount, Mode=OneTime}" GroupName="SongsSort"
                                                                  IsChecked="{x:Bind ViewModel.IsSongsByPlayCount, Mode=OneWay}"
                                                                  Click="OnSongsSortByPlayCountClick" />
-                                            <RadioMenuFlyoutItem Text="Duration" GroupName="SongsSort"
+                                            <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_Duration, Mode=OneTime}" GroupName="SongsSort"
                                                                  IsChecked="{x:Bind ViewModel.IsSongsByDuration, Mode=OneWay}"
                                                                  Click="OnSongsSortByDurationClick" />
                                         </MenuFlyout>
@@ -274,14 +257,12 @@
                                       ItemTemplate="{StaticResource TopSongItemTemplate}" />
                         </Grid>
 
-                        <!-- Top Artists Card -->
                         <Grid x:Name="TopArtistsCard" Grid.Column="1" Grid.Row="0" Style="{StaticResource InsightsCardStyle}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <!-- Header row: title (left) + sort toggle + see-all button (right) -->
                             <Grid Grid.Row="0" Margin="0,0,0,12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
@@ -298,10 +279,10 @@
                                                VerticalAlignment="Center" Margin="0,0,4,0">
                                     <DropDownButton.Flyout>
                                         <MenuFlyout>
-                                            <RadioMenuFlyoutItem Text="Play count" GroupName="ArtistsSort"
+                                            <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_PlayCount, Mode=OneTime}" GroupName="ArtistsSort"
                                                                  IsChecked="{x:Bind ViewModel.IsArtistsByPlayCount, Mode=OneWay}"
                                                                  Click="OnArtistsSortByPlayCountClick" />
-                                            <RadioMenuFlyoutItem Text="Duration" GroupName="ArtistsSort"
+                                            <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_Duration, Mode=OneTime}" GroupName="ArtistsSort"
                                                                  IsChecked="{x:Bind ViewModel.IsArtistsByDuration, Mode=OneWay}"
                                                                  Click="OnArtistsSortByDurationClick" />
                                         </MenuFlyout>
@@ -329,25 +310,22 @@
                         </Grid>
                     </Grid>
 
-                    <!-- ─────────  ROW 3: Top Albums + Top Genres (side-by-side)  ───────── -->
-                    <Grid x:Name="Row3Grid" ColumnSpacing="16" RowSpacing="16">
+                    <Grid x:Name="Row3Grid" ColumnSpacing="16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" x:Name="Row3Col1" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <!-- Top Albums Card -->
                         <Grid x:Name="TopAlbumsCard" Grid.Column="0" Grid.Row="0" Style="{StaticResource InsightsCardStyle}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <!-- Header row: title (left) + sort toggle + see-all button (right) -->
                             <Grid Grid.Row="0" Margin="0,0,0,12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
@@ -364,10 +342,10 @@
                                                VerticalAlignment="Center" Margin="0,0,4,0">
                                     <DropDownButton.Flyout>
                                         <MenuFlyout>
-                                            <RadioMenuFlyoutItem Text="Play count" GroupName="AlbumsSort"
+                                            <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_PlayCount, Mode=OneTime}" GroupName="AlbumsSort"
                                                                  IsChecked="{x:Bind ViewModel.IsAlbumsByPlayCount, Mode=OneWay}"
                                                                  Click="OnAlbumsSortByPlayCountClick" />
-                                            <RadioMenuFlyoutItem Text="Duration" GroupName="AlbumsSort"
+                                            <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_Duration, Mode=OneTime}" GroupName="AlbumsSort"
                                                                  IsChecked="{x:Bind ViewModel.IsAlbumsByDuration, Mode=OneWay}"
                                                                  Click="OnAlbumsSortByDurationClick" />
                                         </MenuFlyout>
@@ -394,14 +372,12 @@
                                       ItemTemplate="{StaticResource TopAlbumItemTemplate}" />
                         </Grid>
 
-                        <!-- Top Genres Card -->
                         <Grid x:Name="TopGenresCard" Grid.Column="1" Grid.Row="0" Style="{StaticResource InsightsCardStyle}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <!-- Header row: title (left) + sort toggle + see-all button (right) -->
                             <Grid Grid.Row="0" Margin="0,0,0,12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
@@ -418,10 +394,10 @@
                                                VerticalAlignment="Center" Margin="0,0,4,0">
                                     <DropDownButton.Flyout>
                                         <MenuFlyout>
-                                            <RadioMenuFlyoutItem Text="Play count" GroupName="GenresSort"
+                                            <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_PlayCount, Mode=OneTime}" GroupName="GenresSort"
                                                                  IsChecked="{x:Bind ViewModel.IsGenresByPlayCount, Mode=OneWay}"
                                                                  Click="OnGenresSortByPlayCountClick" />
-                                            <RadioMenuFlyoutItem Text="Duration" GroupName="GenresSort"
+                                            <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_Duration, Mode=OneTime}" GroupName="GenresSort"
                                                                  IsChecked="{x:Bind ViewModel.IsGenresByDuration, Mode=OneWay}"
                                                                  Click="OnGenresSortByDurationClick" />
                                         </MenuFlyout>
@@ -449,14 +425,12 @@
                         </Grid>
                     </Grid>
 
-                    <!-- ─────────  ROW 4: Playback Source Distribution  ───────── -->
                     <Grid x:Name="Row4Grid" Style="{StaticResource InsightsCardStyle}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <!-- Playback Source Distribution -->
                         <TextBlock Grid.Row="0"
                                    Text="{x:Bind resources:Strings.InsightsPage_Sources, Mode=OneTime}"
                                    Style="{StaticResource InsightsCardHeaderStyle}"
@@ -483,7 +457,6 @@
                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                    VerticalAlignment="Center" />
 
-                                        <!-- Progress bar representing percentage -->
                                         <ProgressBar Grid.Column="1"
                                                      Value="{x:Bind Percentage}"
                                                      Maximum="100"
@@ -506,11 +479,8 @@
                 </StackPanel>
             </Grid>
 
-            <!-- ═══════════════  EMPTY STATE  ═══════════════ -->
-            <!-- (Shown when loading is complete but there's no listening data) -->
         </ScrollViewer>
 
-        <!-- Empty state (overlaid when no data) -->
         <StackPanel Grid.Row="1"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"

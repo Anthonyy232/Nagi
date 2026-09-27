@@ -37,17 +37,25 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     [ObservableProperty] public partial bool HasLoadError { get; set; }
     [ObservableProperty] public partial string TotalItemsText { get; set; } = string.Empty;
 
-    [ObservableProperty] public partial int CurrentPage { get; set; } = 1;
-    [ObservableProperty] public partial int TotalPages { get; set; } = 1;
-    [ObservableProperty] public partial int SongsPerPage { get; set; } = 50;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasNextPage), nameof(HasPreviousPage))]
+    public partial int CurrentPage { get; set; } = 1;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasNextPage))]
+    public partial int TotalPages { get; set; } = 1;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasNextPage), nameof(HasPreviousPage))]
+    public partial int SongsPerPage { get; set; } = 50;
     [ObservableProperty] public partial int TotalItemCount { get; set; }
-    [ObservableProperty] public partial bool HasNextPage { get; set; }
-    [ObservableProperty] public partial bool HasPreviousPage { get; set; }
+    public bool HasNextPage => IsPaginationEnabled && SongsPerPage != 0 && CurrentPage < TotalPages;
+    public bool HasPreviousPage => IsPaginationEnabled && SongsPerPage != 0 && CurrentPage > 1;
 
     /// <summary>
     ///     When false, load all pages in the background and disable page navigation.
     /// </summary>
-    public bool IsPaginationEnabled { get; set; } = true;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasNextPage), nameof(HasPreviousPage))]
+    public partial bool IsPaginationEnabled { get; set; } = true;
 
     protected int PageSize => SongsPerPage == 0 ? 500 : SongsPerPage;
 
@@ -66,12 +74,10 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
 
     protected abstract Task<PagedResult<TItem>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token);
 
-    /// <summary>Load the persisted sort order. Default no-op; override if your VM has a sort to hydrate.</summary>
     protected virtual Task LoadInitialSortOrderAsync() => Task.CompletedTask;
 
     protected abstract string FormatTotalItemsText(int count);
 
-    /// <summary>Hook run after the page has been processed. Default no-op.</summary>
     protected virtual Task OnPageLoadedAsync(PagedResult<TItem> result, CancellationToken token) => Task.CompletedTask;
 
     /// <summary>
@@ -100,20 +106,20 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     /// </summary>
     protected void ProcessPagedResult(PagedResult<TItem> result, CancellationToken token, bool append = false)
     {
-        if (result is null || token.IsCancellationRequested || _isDisposed) return;
+        if (token.IsCancellationRequested || _isDisposed) return;
 
         _dispatcherService.TryEnqueue(() =>
         {
             if (token.IsCancellationRequested || _isDisposed || _pendingReload) return;
 
-            ApplyItemsToCollection(result, append);
-
-            CurrentPage = SongsPerPage == 0 ? 1 : result.PageNumber > 0 ? result.PageNumber : CurrentPage;
-            TotalPages = SongsPerPage == 0 ? 1 : Math.Max(1, result.TotalPages);
+            var isPaged = IsPaginationEnabled && SongsPerPage != 0;
+            TotalPages = isPaged ? Math.Max(1, result.TotalPages) : 1;
+            CurrentPage = isPaged
+                ? Math.Clamp(result.PageNumber > 0 ? result.PageNumber : CurrentPage, 1, TotalPages)
+                : 1;
             TotalItemCount = result.TotalCount;
-            HasNextPage = SongsPerPage != 0 && result.HasNextPage;
-            HasPreviousPage = CurrentPage > 1;
             TotalItemsText = FormatTotalItemsText(result.TotalCount);
+            ApplyItemsToCollection(result, append);
         });
     }
 
@@ -123,7 +129,8 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     {
         _dispatcherService.TryEnqueue(() =>
         {
-            if (SongsPerPage == newSize) return;
+            if (_isDisposed || SongsPerPage == newSize) return;
+            _hasLoadedInitialSettings = true;
 
             CancelInflightPageLoad();
 
@@ -139,12 +146,11 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     partial void OnSongsPerPageChanged(int value)
     {
         if (_isSettingSongsPerPage) return;
+        _hasLoadedInitialSettings = true;
 
         CancelInflightPageLoad();
 
-        _isSettingSongsPerPage = true;
-        try { _ = _settingsService.SetSongsPerPageAsync(value); }
-        finally { _isSettingSongsPerPage = false; }
+        _ = SaveSongsPerPageAsync(value);
 
         _dispatcherService.TryEnqueue(() =>
         {
@@ -153,31 +159,50 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
         });
     }
 
+    private async Task SaveSongsPerPageAsync(int value)
+    {
+        try { await _settingsService.SetSongsPerPageAsync(value); }
+        catch (Exception ex) { _logger.LogError(ex, "Failed to save page size"); }
+    }
+
     protected virtual void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
     {
         if (!ShouldReloadOnLibraryChange(e.ChangeType)) return;
 
-        _libraryChangeDebouncer.Trigger(async _ =>
+        _libraryChangeDebouncer.Trigger(async token =>
         {
             _logger.LogDebug("Library content changed ({ChangeType}). Refreshing paged list.", e.ChangeType);
-            await _dispatcherService.EnqueueAsync(() => RefreshAsync(CancellationToken.None));
+            await _dispatcherService.EnqueueAsync(() => token.IsCancellationRequested
+                ? Task.CompletedTask : RefreshAsync(token));
         });
     }
 
     [RelayCommand]
     public async Task NextPageAsync()
     {
-        if (!HasNextPage || IsLoading || !IsPaginationEnabled) return;
-        CurrentPage += 1;
-        await ReloadCurrentPageAsync(CancellationToken.None);
+        if (_isDisposed || !HasNextPage || IsLoading || !IsPaginationEnabled) return;
+        await NavigateToPageAsync(CurrentPage + 1);
     }
 
     [RelayCommand]
     public async Task PreviousPageAsync()
     {
-        if (!HasPreviousPage || IsLoading || !IsPaginationEnabled) return;
-        CurrentPage -= 1;
+        if (_isDisposed || !HasPreviousPage || IsLoading || !IsPaginationEnabled) return;
+        await NavigateToPageAsync(CurrentPage - 1);
+    }
+
+    private async Task NavigateToPageAsync(int requestedPage)
+    {
+        var previousPage = CurrentPage;
+        CurrentPage = requestedPage;
         await ReloadCurrentPageAsync(CancellationToken.None);
+        _dispatcherService.TryEnqueue(() =>
+        {
+            // A failed request leaves the existing items visible. Keep their page number too,
+            // unless a newer search, page-size change, or reload has already moved the view.
+            if (!_isDisposed && HasLoadError && CurrentPage == requestedPage)
+                CurrentPage = previousPage;
+        });
     }
 
     /// <summary>
@@ -203,8 +228,9 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     {
         if (_hasLoadedInitialSettings) return;
 
+        var pageSize = await _settingsService.GetSongsPerPageAsync();
         _isSettingSongsPerPage = true;
-        try { SongsPerPage = await _settingsService.GetSongsPerPageAsync(); }
+        try { SongsPerPage = pageSize; }
         finally { _isSettingSongsPerPage = false; }
         _hasLoadedInitialSettings = true;
     }
@@ -218,6 +244,7 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     {
         lock (_loadLock)
         {
+            if (_isDisposed) return;
             // If a load is already in flight, queue a follow-up. The finally block
             // re-runs LoadAsync once the current one completes, picking up whatever
             // sort/page-size/search/library state the caller just applied.
@@ -226,20 +253,10 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
         }
 
         var newCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        var oldCts = Interlocked.Exchange(ref _pageLoadCts, newCts);
-        try { oldCts?.Cancel(); oldCts?.Dispose(); } catch (ObjectDisposedException) { }
-
-        // Dispose may have raced past CancelInflightPageLoad between our swap-in and now.
-        // Reclaim the slot if it's still ours and tear down so the new CTS doesn't leak.
-        if (_isDisposed)
-        {
-            var reclaimed = Interlocked.CompareExchange(ref _pageLoadCts, null, newCts);
-            if (reclaimed == newCts) { newCts.Cancel(); newCts.Dispose(); }
-            EndLoadAndDrainPendingReload();
-            return;
-        }
-
         var token = newCts.Token;
+        var oldCts = Interlocked.Exchange(ref _pageLoadCts, newCts);
+        oldCts?.Cancel();
+        oldCts?.Dispose();
 
         HasLoadError = false;
 
@@ -260,21 +277,11 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
             var pagedResult = await Task.Run(async () =>
             {
                 var auxTask = OnAuxiliaryLoadAsync(token);
-                var pageTask = LoadPageItemsAsync(pageToLoad, pageSize, token);
+                var pageTask = LoadValidPageAsync(pageToLoad, pageSize, token);
                 await Task.WhenAll(auxTask, pageTask).ConfigureAwait(false);
                 token.ThrowIfCancellationRequested();
 
-                var result = pageTask.Result;
-
-                // Clamp pages past the end after items are removed.
-                var totalPages = Math.Max(1, result.TotalPages);
-                if (pageToLoad > totalPages && result.TotalCount > 0)
-                {
-                    result = await LoadPageItemsAsync(totalPages, pageSize, token).ConfigureAwait(false);
-                    token.ThrowIfCancellationRequested();
-                }
-
-                return result;
+                return pageTask.Result;
             }, token);
 
             ProcessPagedResult(pagedResult, token);
@@ -293,12 +300,26 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
         catch (Exception ex)
         {
             _logger.LogError(ex, "An error occurred while loading a page");
-            HasLoadError = true;
+            if (!token.IsCancellationRequested && !_isDisposed) HasLoadError = true;
         }
         finally
         {
             EndLoadAndDrainPendingReload();
         }
+    }
+
+    /// <summary>Reloads the last remaining page when deletions move the requested page past the end.</summary>
+    protected async Task<PagedResult<TItem>> LoadValidPageAsync(int pageNumber, int pageSize, CancellationToken token)
+    {
+        var result = await LoadPageItemsAsync(pageNumber, pageSize, token).ConfigureAwait(false);
+        token.ThrowIfCancellationRequested();
+        var totalPages = Math.Max(1, result.TotalPages);
+        if (pageNumber > totalPages && result.TotalCount > 0)
+        {
+            result = await LoadPageItemsAsync(totalPages, pageSize, token).ConfigureAwait(false);
+            token.ThrowIfCancellationRequested();
+        }
+        return result;
     }
 
     /// <summary>
@@ -362,13 +383,23 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     protected void CancelInflightPageLoad()
     {
         var cts = Interlocked.Exchange(ref _pageLoadCts, null);
-        try { cts?.Cancel(); cts?.Dispose(); } catch (ObjectDisposedException) { }
+        cts?.Cancel();
+        cts?.Dispose();
+    }
+
+    public override void ResetState()
+    {
+        base.ResetState();
+        _libraryChangeDebouncer.Cancel();
+        CancelInflightPageLoad();
+        lock (_loadLock) _pendingReload = false;
     }
 
     public virtual void Dispose()
     {
         if (_isDisposed) return;
         _isDisposed = true;
+        CancelPendingSearch();
 
         _libraryService.LibraryContentChanged -= OnLibraryContentChanged;
         _settingsService.SongsPerPageChanged -= OnSettingsSongsPerPageChanged;

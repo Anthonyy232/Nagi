@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.IO;
@@ -38,7 +38,6 @@ public class SettingsService : IUISettingsService, IDisposable
     private const string StartMinimizedEnabledKey = "StartMinimizedEnabled";
     private const string HideToTrayEnabledKey = "HideToTrayEnabled";
     private const string MinimizeToMiniPlayerEnabledKey = "MinimizeToMiniPlayerEnabled";
-    private const string ShowQueueButtonEnabledKey = "ShowQueueButtonEnabled";
     private const string ShowCoverArtInTrayFlyoutKey = "ShowCoverArtInTrayFlyout";
     private const string FetchOnlineMetadataKey = "FetchOnlineMetadataEnabled";
     private const string FetchOnlineLyricsEnabledKey = "FetchOnlineLyricsEnabled";
@@ -78,9 +77,8 @@ public class SettingsService : IUISettingsService, IDisposable
     private const string GenreSplitCharactersKey = "GenreSplitCharacters";
     private const string IgnoreLeadingArticlesOnSortKey = "IgnoreLeadingArticlesOnSort";
 
-    private static readonly JsonSerializerOptions _serializerOptions = new() { WriteIndented = true };
     private readonly ICredentialLockerService _credentialLockerService;
-    private readonly ApplicationDataContainer? _localSettings;
+    private readonly IDictionary<string, object> _values;
     private readonly ILogger<SettingsService> _logger;
     private readonly IPathConfiguration _pathConfig;
     private readonly UISettings _uiSettings = new();
@@ -89,6 +87,12 @@ public class SettingsService : IUISettingsService, IDisposable
 
     public SettingsService(IPathConfiguration pathConfig, ICredentialLockerService credentialLockerService,
         ILogger<SettingsService> logger, IDispatcherService dispatcherService)
+        : this(pathConfig, credentialLockerService, logger, dispatcherService, ApplicationData.Current.LocalSettings.Values)
+    {
+    }
+
+    internal SettingsService(IPathConfiguration pathConfig, ICredentialLockerService credentialLockerService,
+        ILogger<SettingsService> logger, IDispatcherService dispatcherService, IDictionary<string, object> values)
     {
         _pathConfig = pathConfig ?? throw new ArgumentNullException(nameof(pathConfig));
         _credentialLockerService =
@@ -96,7 +100,7 @@ public class SettingsService : IUISettingsService, IDisposable
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
 
-        _localSettings = ApplicationData.Current.LocalSettings;
+        _values = values;
 
         _uiSettings.AdvancedEffectsEnabledChanged += OnAdvancedEffectsEnabledChanged;
     }
@@ -105,7 +109,6 @@ public class SettingsService : IUISettingsService, IDisposable
     public event Action<bool>? PlayerAnimationSettingChanged;
     public event Action<bool>? HideToTraySettingChanged;
     public event Action<bool>? MinimizeToMiniPlayerSettingChanged;
-    public event Action<bool>? ShowQueueButtonSettingChanged;
     public event Action<bool>? ShowCoverArtInTrayFlyoutSettingChanged;
     public event Action? NavigationSettingsChanged;
     public event Action? PlayerButtonSettingsChanged;
@@ -122,12 +125,9 @@ public class SettingsService : IUISettingsService, IDisposable
     public event Action<bool>? FetchOnlineMetadataEnabledChanged;
     public event Action<bool>? FetchOnlineLyricsEnabledChanged;
     public event Action<bool>? LyricsRomanizationEnabledChanged;
-    public event Action<ServiceCategory>? ServiceProvidersChanged;
-    public event Action? ArtistSplitCharactersChanged;
     public event Action<string>? LanguageChanged;
     public event Action? PlayerDesignSettingsChanged;
     public event Action<int>? SongsPerPageChanged;
-    public event Action? GenreSplitCharactersChanged;
     public event Action<bool>? IgnoreLeadingArticlesOnSortEnabledChanged;
 
     public bool IsTransparencyEffectsEnabled()
@@ -137,15 +137,18 @@ public class SettingsService : IUISettingsService, IDisposable
 
     public async Task ResetToDefaultsAsync()
     {
-        _localSettings!.Values.Clear();
+        await ResetStoredValuesAsync().ConfigureAwait(false);
+        await Task.WhenAll(ClearPlaybackStateAsync(),
+            SetAutoLaunchEnabledAsync(SettingsDefaults.AutoLaunchEnabled),
+            ClearLastFmCredentialsAsync(), ClearListenBrainzUserTokenAsync()).ConfigureAwait(false);
+        _logger.LogInformation("All application settings have been reset to their default values.");
+    }
 
-
+    internal async Task ResetStoredValuesAsync()
+    {
         var tasks = new List<Task>
         {
-            ClearPlaybackStateAsync(),
-            SetAutoLaunchEnabledAsync(SettingsDefaults.AutoLaunchEnabled),
             SetPlayerAnimationEnabledAsync(SettingsDefaults.PlayerAnimationEnabled),
-            SetShowQueueButtonEnabledAsync(SettingsDefaults.ShowQueueButtonEnabled),
             SetHideToTrayEnabledAsync(SettingsDefaults.HideToTrayEnabled),
             SetMinimizeToMiniPlayerEnabledAsync(SettingsDefaults.MinimizeToMiniPlayerEnabled),
             SetShowCoverArtInTrayFlyoutAsync(SettingsDefaults.ShowCoverArtInTrayFlyoutEnabled),
@@ -167,10 +170,8 @@ public class SettingsService : IUISettingsService, IDisposable
             SaveRepeatModeAsync(SettingsDefaults.DefaultRepeatMode),
             SetLastFmScrobblingEnabledAsync(SettingsDefaults.LastFmScrobblingEnabled),
             SetLastFmNowPlayingEnabledAsync(SettingsDefaults.LastFmNowPlayingEnabled),
-            ClearLastFmCredentialsAsync(),
             SetListenBrainzScrobblingEnabledAsync(false),
             SetListenBrainzNowPlayingEnabledAsync(false),
-            ClearListenBrainzUserTokenAsync(),
             SetListenBrainzServerUrlAsync(null),
             SetListenBrainzEnabledSinceUtcAsync(null),
             SetEqualizerSettingsAsync(new EqualizerSettings()),
@@ -193,8 +194,8 @@ public class SettingsService : IUISettingsService, IDisposable
         };
 
         await Task.WhenAll(tasks).ConfigureAwait(false);
-
-        _logger.LogInformation("All application settings have been reset to their default values.");
+        // Setters must see the old values so live services receive reset notifications.
+        _values.Clear();
     }
 
 
@@ -207,14 +208,14 @@ public class SettingsService : IUISettingsService, IDisposable
 
     private T GetValue<T>(string key, T defaultValue)
     {
-        return _localSettings!.Values.TryGetValue(key, out var value) && value is T v ? v : defaultValue;
+        return _values.TryGetValue(key, out var value) && value is T v ? v : defaultValue;
     }
 
-    private async Task<T?> GetComplexValueAsync<T>(string key) where T : class
+    private T? GetComplexValue<T>(string key) where T : class
     {
         string? json = null;
 
-        if (_localSettings!.Values.TryGetValue(key, out var value) && value is string jsonString) json = jsonString;
+        if (_values.TryGetValue(key, out var value) && value is string jsonString) json = jsonString;
 
         if (json != null)
             try
@@ -234,10 +235,10 @@ public class SettingsService : IUISettingsService, IDisposable
     {
         string? name = null;
 
-        if (_localSettings!.Values.TryGetValue(key, out var value) && value is string stringValue)
+        if (_values.TryGetValue(key, out var value) && value is string stringValue)
             name = stringValue;
 
-        if (name != null && Enum.TryParse(name, out TEnum result)) return result;
+        if (name != null && Enum.TryParse(name, out TEnum result) && Enum.IsDefined(result)) return result;
 
         return defaultValue;
     }
@@ -246,14 +247,14 @@ public class SettingsService : IUISettingsService, IDisposable
     {
         if (value is null)
         {
-            _localSettings!.Values.Remove(key);
+            _values.Remove(key);
             return Task.CompletedTask;
         }
 
         if (typeof(T).IsClass && typeof(T) != typeof(string))
-            _localSettings!.Values[key] = JsonSerializer.Serialize(value, _serializerOptions);
+            _values[key] = JsonSerializer.Serialize(value);
         else
-            _localSettings!.Values[key] = value!;
+            _values[key] = value!;
 
         return Task.CompletedTask;
     }
@@ -266,7 +267,7 @@ public class SettingsService : IUISettingsService, IDisposable
         if (!EqualityComparer<T>.Default.Equals(currentValue, newValue)) notifier?.Invoke(newValue);
     }
 
-    private List<NavigationItemSetting> GetDefaultNavigationItems()
+    private static List<NavigationItemSetting> GetDefaultNavigationItems()
     {
         return new List<NavigationItemSetting>
         {
@@ -397,49 +398,55 @@ public class SettingsService : IUISettingsService, IDisposable
             return;
         }
 
-        var jsonState = JsonSerializer.Serialize(state, _serializerOptions);
-
-        var stateFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(
-            Path.GetFileName(_pathConfig.PlaybackStateFilePath), CreationCollisionOption.ReplaceExisting).AsTask().ConfigureAwait(false);
-        await FileIO.WriteTextAsync(stateFile, jsonState).AsTask().ConfigureAwait(false);
+        var path = _pathConfig.PlaybackStateFilePath;
+        var temporaryPath = $"{path}.{Guid.NewGuid():N}.tmp";
+        try
+        {
+            await File.WriteAllTextAsync(temporaryPath, JsonSerializer.Serialize(state)).ConfigureAwait(false);
+            File.Move(temporaryPath, path, overwrite: true);
+        }
+        finally
+        {
+            try { File.Delete(temporaryPath); }
+            catch (Exception ex) { _logger.LogWarning(ex, "Could not remove temporary playback state {Path}.", temporaryPath); }
+        }
     }
 
     public async Task<PlaybackState?> GetPlaybackStateAsync()
     {
         try
         {
-            string? jsonState = null;
-            var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(
-                Path.GetFileName(_pathConfig.PlaybackStateFilePath)).AsTask().ConfigureAwait(false);
-            if (item is IStorageFile stateFile) jsonState = await FileIO.ReadTextAsync(stateFile).AsTask().ConfigureAwait(false);
-
-            if (string.IsNullOrEmpty(jsonState)) return null;
-            return JsonSerializer.Deserialize<PlaybackState>(jsonState);
+            var json = await File.ReadAllTextAsync(_pathConfig.PlaybackStateFilePath).ConfigureAwait(false);
+            return JsonSerializer.Deserialize<PlaybackState>(json);
         }
-        catch (FileNotFoundException)
+        catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
         {
+            return null;
+        }
+        catch (JsonException ex)
+        {
+            _logger.LogWarning(ex, "Discarding invalid playback state.");
+            await ClearPlaybackStateAsync().ConfigureAwait(false);
             return null;
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Error reading PlaybackState.");
-            await ClearPlaybackStateAsync().ConfigureAwait(false);
+            _logger.LogWarning(ex, "Error reading playback state.");
             return null;
         }
     }
 
-    public async Task ClearPlaybackStateAsync()
+    public Task ClearPlaybackStateAsync()
     {
         try
         {
-            var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(
-                Path.GetFileName(_pathConfig.PlaybackStateFilePath)).AsTask().ConfigureAwait(false);
-            if (item != null) await item.DeleteAsync().AsTask().ConfigureAwait(false);
+            File.Delete(_pathConfig.PlaybackStateFilePath);
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Error clearing PlaybackState file.");
+            _logger.LogWarning(ex, "Error clearing playback state file.");
         }
+        return Task.CompletedTask;
     }
 
     public Task<bool> GetLastFmScrobblingEnabledAsync()
@@ -562,7 +569,7 @@ public class SettingsService : IUISettingsService, IDisposable
 
     public Task<EqualizerSettings?> GetEqualizerSettingsAsync()
     {
-        return GetComplexValueAsync<EqualizerSettings>(EqualizerSettingsKey);
+        return Task.FromResult(GetComplexValue<EqualizerSettings>(EqualizerSettingsKey));
     }
 
     public Task SetEqualizerSettingsAsync(EqualizerSettings settings)
@@ -570,64 +577,23 @@ public class SettingsService : IUISettingsService, IDisposable
         return SetValueAsync(EqualizerSettingsKey, settings);
     }
 
-    public async Task<List<ServiceProviderSetting>> GetServiceProvidersAsync(ServiceCategory category)
+    public Task<List<ServiceProviderSetting>> GetServiceProvidersAsync(ServiceCategory category)
     {
         var key = category == ServiceCategory.Lyrics ? LyricsServiceProvidersKey : MetadataServiceProvidersKey;
-        var items = await GetComplexValueAsync<List<ServiceProviderSetting>>(key).ConfigureAwait(false);
-
-
-        if (items is { Count: > 0 })
-        {
-            // Deduplicate items to fix users with duplicate items saved in config file
-            var distinctItems = new List<ServiceProviderSetting>();
-            var seenIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-            foreach (var item in items)
+        var saved = GetComplexValue<List<ServiceProviderSetting>>(key) ?? [];
+        var defaults = GetDefaultServiceProviders(category);
+        var providers = saved.DistinctBy(p => p.Id, StringComparer.OrdinalIgnoreCase)
+            .OrderBy(p => p.Order)
+            .Join(defaults, p => p.Id, p => p.Id, (configuration, definition) =>
             {
-                if (seenIds.Add(item.Id))
-                {
-                    distinctItems.Add(item);
-                }
-            }
-
-            if (distinctItems.Count != items.Count)
-            {
-                _ = SetValueAsync(key, distinctItems);
-            }
-
-            items = distinctItems;
-
-            // Merge with defaults to handle new services added in updates
-            var defaults = GetDefaultServiceProviders(category);
-            var knownIds = defaults.Select(d => d.Id).ToHashSet();
-
-            // Filter out unknown providers (handles removal of providers in future versions)
-            items = items.Where(i => knownIds.Contains(i.Id)).ToList();
-
-            var existingIds = items.Select(i => i.Id).ToHashSet();
-            var newProviders = defaults.Where(d => !existingIds.Contains(d.Id)).ToList();
-
-            if (newProviders.Count > 0)
-            {
-                // Append new providers at the end with lowest priority
-                var maxOrder = items.Count > 0 ? items.Max(i => i.Order) : -1;
-                foreach (var provider in newProviders)
-                {
-                    provider.Order = ++maxOrder;
-                    items.Add(provider);
-                }
-            }
-
-            // Migration: Update NetEase display name if it's the old default
-            foreach (var item in items.Where(i => i.Id == ServiceProviderIds.NetEase && i.DisplayName == "NetEase Music 163"))
-            {
-                item.DisplayName = "NetEase";
-            }
-
-            return items.OrderBy(i => i.Order).ToList();
-        }
-
-        return GetDefaultServiceProviders(category);
+                definition.IsEnabled = configuration.IsEnabled;
+                return definition;
+            }, StringComparer.OrdinalIgnoreCase)
+            .Concat(defaults)
+            .DistinctBy(p => p.Id, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+        for (var i = 0; i < providers.Count; i++) providers[i].Order = i;
+        return Task.FromResult(providers);
     }
 
     public async Task SetServiceProvidersAsync(ServiceCategory category, List<ServiceProviderSetting> providers)
@@ -638,13 +604,12 @@ public class SettingsService : IUISettingsService, IDisposable
 
         var key = category == ServiceCategory.Lyrics ? LyricsServiceProvidersKey : MetadataServiceProvidersKey;
         await SetValueAsync(key, providers).ConfigureAwait(false);
-        ServiceProvidersChanged?.Invoke(category);
     }
 
     public async Task<List<ServiceProviderSetting>> GetEnabledServiceProvidersAsync(ServiceCategory category)
     {
         var providers = await GetServiceProvidersAsync(category).ConfigureAwait(false);
-        return providers.Where(p => p.IsEnabled).OrderBy(p => p.Order).ToList();
+        return providers.Where(p => p.IsEnabled).ToList();
     }
 
     public Task<string> GetArtistSplitCharactersAsync()
@@ -652,13 +617,7 @@ public class SettingsService : IUISettingsService, IDisposable
         return Task.FromResult(GetValue(ArtistSplitCharactersKey, SettingsDefaults.DefaultArtistSplitCharacters));
     }
 
-    public async Task SetArtistSplitCharactersAsync(string characters)
-    {
-        var currentValue = GetValue(ArtistSplitCharactersKey, SettingsDefaults.DefaultArtistSplitCharacters);
-
-        await SetValueAsync(ArtistSplitCharactersKey, characters).ConfigureAwait(false);
-        if (currentValue != characters) ArtistSplitCharactersChanged?.Invoke();
-    }
+    public Task SetArtistSplitCharactersAsync(string characters) => SetValueAsync(ArtistSplitCharactersKey, characters);
 
     public Task<bool> GetIgnoreLeadingArticlesOnSortEnabledAsync()
         => Task.FromResult(GetValue(IgnoreLeadingArticlesOnSortKey, SettingsDefaults.IgnoreLeadingArticlesOnSortEnabled));
@@ -668,20 +627,12 @@ public class SettingsService : IUISettingsService, IDisposable
 
     public Task<string> GetGenreSplitCharactersAsync() => Task.FromResult(GetValue(GenreSplitCharactersKey, SettingsDefaults.DefaultGenreSplitCharacters));
 
-    public async Task SetGenreSplitCharactersAsync(string characters)
-    {
-        var currentValue = GetValue(GenreSplitCharactersKey, SettingsDefaults.DefaultGenreSplitCharacters);
-
-        await SetValueAsync(GenreSplitCharactersKey, characters).ConfigureAwait(false);
-        if (currentValue != characters) GenreSplitCharactersChanged?.Invoke();
-    }
+    public Task SetGenreSplitCharactersAsync(string characters) => SetValueAsync(GenreSplitCharactersKey, characters);
 
     public Task<string> GetLanguageAsync() => Task.FromResult(GetValue(LanguageKey, string.Empty));
 
-    public async Task SetLanguageAsync(string languageCode)
-    {
-        await SetValueAndNotifyAsync(LanguageKey, languageCode, string.Empty, LanguageChanged).ConfigureAwait(false);
-    }
+    public Task SetLanguageAsync(string languageCode) =>
+        SetValueAndNotifyAsync(LanguageKey, languageCode, string.Empty, LanguageChanged);
 
     public Task<PlayerBackgroundMaterial> GetPlayerBackgroundMaterialAsync() => Task.FromResult(GetEnumValue(PlayerBackgroundMaterialKey, PlayerBackgroundMaterial.Acrylic));
 
@@ -810,7 +761,7 @@ public class SettingsService : IUISettingsService, IDisposable
         try
         {
             var startupTask = await StartupTask.GetAsync(StartupTaskId).AsTask().ConfigureAwait(false);
-            return startupTask.State is StartupTaskState.Enabled;
+            return startupTask.State is StartupTaskState.Enabled or StartupTaskState.EnabledByPolicy;
         }
         catch (Exception ex)
         {
@@ -864,13 +815,6 @@ public class SettingsService : IUISettingsService, IDisposable
             MinimizeToMiniPlayerSettingChanged);
     }
 
-    public Task<bool> GetShowQueueButtonEnabledAsync() => Task.FromResult(GetValue(ShowQueueButtonEnabledKey, SettingsDefaults.ShowQueueButtonEnabled));
-
-    public Task SetShowQueueButtonEnabledAsync(bool isEnabled)
-    {
-        return SetValueAndNotifyAsync(ShowQueueButtonEnabledKey, isEnabled, SettingsDefaults.ShowQueueButtonEnabled, ShowQueueButtonSettingChanged);
-    }
-
     public Task<bool> GetShowCoverArtInTrayFlyoutAsync() => Task.FromResult(GetValue(ShowCoverArtInTrayFlyoutKey, SettingsDefaults.ShowCoverArtInTrayFlyoutEnabled));
 
     public Task SetShowCoverArtInTrayFlyoutAsync(bool isEnabled)
@@ -883,7 +827,7 @@ public class SettingsService : IUISettingsService, IDisposable
     {
         var hex = GetValue<string?>(AccentColorKey, null);
         if (string.IsNullOrEmpty(hex)) return Task.FromResult<Windows.UI.Color?>(null);
-        if (App.CurrentApp!.TryParseHexColor(hex, out var color))
+        if (App.TryParseHexColor(hex, out var color))
             return Task.FromResult<Windows.UI.Color?>(color);
         return Task.FromResult<Windows.UI.Color?>(null);
     }
@@ -899,43 +843,20 @@ public class SettingsService : IUISettingsService, IDisposable
         return SetValueAsync(AccentColorKey, hex);
     }
 
-    public async Task<List<NavigationItemSetting>> GetNavigationItemsAsync()
+    public Task<List<NavigationItemSetting>> GetNavigationItemsAsync()
     {
-        var items = await GetComplexValueAsync<List<NavigationItemSetting>>(NavigationItemsKey).ConfigureAwait(false);
-
-        if (items != null)
-        {
-            // Deduplicate items to fix users with duplicate items saved in config file
-            var distinctItems = new List<NavigationItemSetting>();
-            var seenTags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-            foreach (var item in items)
+        var saved = GetComplexValue<List<NavigationItemSetting>>(NavigationItemsKey) ?? [];
+        var defaults = GetDefaultNavigationItems();
+        var items = saved.DistinctBy(item => item.Tag, StringComparer.OrdinalIgnoreCase)
+            .Join(defaults, item => item.Tag, item => item.Tag, (configuration, definition) =>
             {
-                if (seenTags.Add(item.Tag))
-                {
-                    distinctItems.Add(item);
-                }
-            }
-
-            if (distinctItems.Count != items.Count)
-            {
-                _ = SetValueAsync(NavigationItemsKey, distinctItems);
-            }
-
-            items = distinctItems;
-
-            var defaultItems = GetDefaultNavigationItems();
-            var loadedTags = new HashSet<string>(items.Select(i => i.Tag));
-            var missingItems = defaultItems.Where(d => !loadedTags.Contains(d.Tag));
-            items.AddRange(missingItems);
-
-            // Refresh localization for all items
-            foreach (var item in items) RefreshNavigationItemLocalization(item);
-
-            return items;
-        }
-
-        return GetDefaultNavigationItems();
+                definition.IsEnabled = configuration.IsEnabled;
+                return definition;
+            }, StringComparer.OrdinalIgnoreCase)
+            .Concat(defaults)
+            .DistinctBy(item => item.Tag, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+        return Task.FromResult(items);
     }
 
     public async Task SetNavigationItemsAsync(List<NavigationItemSetting> items)
@@ -944,44 +865,22 @@ public class SettingsService : IUISettingsService, IDisposable
         NavigationSettingsChanged?.Invoke();
     }
 
-    public async Task<List<PlayerButtonSetting>> GetPlayerButtonSettingsAsync()
+    public Task<List<PlayerButtonSetting>> GetPlayerButtonSettingsAsync()
     {
-        var settings = await GetComplexValueAsync<List<PlayerButtonSetting>>(PlayerButtonSettingsKey).ConfigureAwait(false);
-
-        if (settings != null)
-        {
-            // Deduplicate items to fix users with duplicate items saved in config file
-            var distinctSettings = new List<PlayerButtonSetting>();
-            var seenIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-            foreach (var setting in settings)
+        var saved = GetComplexValue<List<PlayerButtonSetting>>(PlayerButtonSettingsKey);
+        var defaults = GetDefaultPlayerButtonSettings();
+        if (saved is null) return Task.FromResult(defaults);
+        var settings = saved.DistinctBy(item => item.Id, StringComparer.OrdinalIgnoreCase)
+            .Join(defaults, item => item.Id, item => item.Id, (configuration, definition) =>
             {
-                if (seenIds.Add(setting.Id))
-                {
-                    distinctSettings.Add(setting);
-                }
-            }
+                definition.IsEnabled = configuration.IsEnabled;
+                return definition;
+            }, StringComparer.OrdinalIgnoreCase).ToList();
 
-            if (distinctSettings.Count != settings.Count)
-            {
-                _ = SetValueAsync(PlayerButtonSettingsKey, distinctSettings);
-            }
-
-            settings = distinctSettings;
-
-            // For backward compatibility, ensure the separator exists for users with older settings.
-            if (!settings.Any(b => b.Id == "Separator"))
-                settings.Insert(5,
-                    new PlayerButtonSetting
-                    { Id = "Separator", DisplayName = Resources.Strings.Settings_Button_Divider, IconGlyph = "\uE7A3", IsEnabled = true });
-
-            // Refresh localization for all buttons
-            foreach (var setting in settings) RefreshPlayerButtonLocalization(setting);
-
-            return settings;
-        }
-
-        return GetDefaultPlayerButtonSettings();
+        // Older saved layouts predate the divider between playback and auxiliary buttons.
+        if (!settings.Any(item => item.Id == "Separator"))
+            settings.Insert(Math.Min(5, settings.Count), defaults.Single(item => item.Id == "Separator"));
+        return Task.FromResult(settings);
     }
 
     public async Task SetPlayerButtonSettingsAsync(List<PlayerButtonSetting> settings)
@@ -990,49 +889,13 @@ public class SettingsService : IUISettingsService, IDisposable
         PlayerButtonSettingsChanged?.Invoke();
     }
 
-    public async Task<QueueDisplaySettings> GetQueueDisplaySettingsAsync() =>
-        await GetComplexValueAsync<QueueDisplaySettings>(QueueDisplaySettingsKey).ConfigureAwait(false) ?? new();
+    public Task<QueueDisplaySettings> GetQueueDisplaySettingsAsync() =>
+        Task.FromResult(GetComplexValue<QueueDisplaySettings>(QueueDisplaySettingsKey) ?? new());
 
     public async Task SetQueueDisplaySettingsAsync(QueueDisplaySettings settings)
     {
         await SetValueAsync(QueueDisplaySettingsKey, settings).ConfigureAwait(false);
         QueueDisplaySettingsChanged?.Invoke(settings);
-    }
-
-    private void RefreshNavigationItemLocalization(NavigationItemSetting item)
-    {
-        var name = item.Tag switch
-        {
-            "Library" => Resources.Strings.Settings_Nav_Library,
-            "Folders" => Resources.Strings.Settings_Nav_Folders,
-            "Playlists" => Resources.Strings.Settings_Nav_Playlists,
-            "Artists" => Resources.Strings.Settings_Nav_Artists,
-            "Albums" => Resources.Strings.Settings_Nav_Albums,
-            "Genres" => Resources.Strings.Settings_Nav_Genres,
-            "Insights" => Resources.Strings.Settings_Nav_Insights,
-            _ => null
-        };
-
-        if (!string.IsNullOrEmpty(name)) item.DisplayName = name;
-    }
-
-    private void RefreshPlayerButtonLocalization(PlayerButtonSetting item)
-    {
-        var name = item.Id switch
-        {
-            "Shuffle" => Resources.Strings.Settings_Button_Shuffle,
-            "Previous" => Resources.Strings.Settings_Button_Previous,
-            "PlayPause" => Resources.Strings.Settings_Button_PlayPause,
-            "Next" => Resources.Strings.Settings_Button_Next,
-            "Repeat" => Resources.Strings.Settings_Button_Repeat,
-            "Separator" => Resources.Strings.Settings_Button_Divider,
-            "Lyrics" => Resources.Strings.Settings_Button_Lyrics,
-            "Queue" => Resources.Strings.Settings_Button_Queue,
-            "Volume" => Resources.Strings.Settings_Button_Volume,
-            _ => null
-        };
-
-        if (!string.IsNullOrEmpty(name)) item.DisplayName = name;
     }
 
     public Task<bool> GetRememberWindowSizeEnabledAsync() => Task.FromResult(GetValue(RememberWindowSizeEnabledKey, SettingsDefaults.RememberWindowSizeEnabled));
@@ -1042,12 +905,10 @@ public class SettingsService : IUISettingsService, IDisposable
         return SetValueAsync(RememberWindowSizeEnabledKey, isEnabled);
     }
 
-    public async Task<(int Width, int Height)?> GetLastWindowSizeAsync()
+    public Task<(int Width, int Height)?> GetLastWindowSizeAsync()
     {
-        var sizeData = await GetComplexValueAsync<int[]>(LastWindowSizeKey).ConfigureAwait(false);
-        if (sizeData is { Length: 2 })
-            return (sizeData[0], sizeData[1]);
-        return null;
+        var sizeData = GetComplexValue<int[]>(LastWindowSizeKey);
+        return Task.FromResult<(int Width, int Height)?>(sizeData is { Length: 2 } ? (sizeData[0], sizeData[1]) : null);
     }
 
     public Task SetLastWindowSizeAsync(int width, int height)
@@ -1062,12 +923,10 @@ public class SettingsService : IUISettingsService, IDisposable
         return SetValueAsync(RememberWindowPositionEnabledKey, isEnabled);
     }
 
-    public async Task<(int X, int Y)?> GetLastWindowPositionAsync()
+    public Task<(int X, int Y)?> GetLastWindowPositionAsync()
     {
-        var positionData = await GetComplexValueAsync<int[]>(LastWindowPositionKey).ConfigureAwait(false);
-        if (positionData is { Length: 2 })
-            return (positionData[0], positionData[1]);
-        return null;
+        var positionData = GetComplexValue<int[]>(LastWindowPositionKey);
+        return Task.FromResult<(int X, int Y)?>(positionData is { Length: 2 } ? (positionData[0], positionData[1]) : null);
     }
 
     public Task SetLastWindowPositionAsync(int x, int y)
@@ -1084,15 +943,18 @@ public class SettingsService : IUISettingsService, IDisposable
 
     public Task<bool?> GetLastPaneOpenAsync()
     {
-        // Use a string to differentiate between 'never set' and 'set to false'
-        var value = GetValue<string?>(LastPaneOpenKey, null);
-        if (value == null) return Task.FromResult<bool?>(null);
-        return Task.FromResult<bool?>(value == "true");
+        var value = GetValue<object?>(LastPaneOpenKey, null);
+        return Task.FromResult<bool?>(value switch
+        {
+            bool isOpen => isOpen,
+            string legacy when bool.TryParse(legacy, out var isOpen) => isOpen,
+            _ => null
+        });
     }
 
     public Task SetLastPaneOpenAsync(bool isOpen)
     {
-        return SetValueAsync(LastPaneOpenKey, isOpen ? "true" : "false");
+        return SetValueAsync(LastPaneOpenKey, isOpen);
     }
 
     public Task<bool> GetVolumeNormalizationEnabledAsync() => Task.FromResult(GetValue(VolumeNormalizationEnabledKey, SettingsDefaults.VolumeNormalizationEnabled));
@@ -1159,12 +1021,6 @@ public class SettingsService : IUISettingsService, IDisposable
     public Task SetSortOrderAsync<TEnum>(string pageKey, TEnum sortOrder) where TEnum : struct, Enum
     {
         return SetValueAsync(pageKey, sortOrder.ToString());
-    }
-
-    public Task FlushAsync()
-    {
-        _logger.LogDebug("FlushAsync: ApplicationData handles persistence automatically.");
-        return Task.CompletedTask;
     }
 
     public void Dispose()

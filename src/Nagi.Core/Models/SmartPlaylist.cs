@@ -1,23 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace Nagi.Core.Models;
 
-/// <summary>
-///     Represents a smart playlist with automatic song matching rules.
-///     Unlike regular playlists, smart playlists dynamically populate their contents
-///     based on user-defined rules that are evaluated at query time.
-/// </summary>
 public class SmartPlaylist
 {
-    /// <summary>
-    ///     The unique identifier for the smart playlist.
-    /// </summary>
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
 
-    /// <summary>
-    ///     The name of the smart playlist.
-    /// </summary>
     [Required]
     [MaxLength(500)]
     public string Name { get; set; } = string.Format(Resources.Strings.Format_New, Resources.Strings.Label_Playlist);

@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Serilog.Core;
 using Serilog.Events;
 
@@ -14,17 +15,14 @@ public class MemoryLog : ILogEventSink
 {
     private const int MaxEntries = 200;
 
-    private static readonly Lazy<MemoryLog> LazyInstance = new(() => new MemoryLog());
-    private readonly ConcurrentQueue<LogEvent> _events = new();
+    private readonly Lock _gate = new();
+    private readonly Queue<LogEvent> _events = new(MaxEntries);
 
     private MemoryLog()
     {
     }
 
-    /// <summary>
-    ///     Gets the singleton instance of the MemoryLog.
-    /// </summary>
-    public static MemoryLog Instance => LazyInstance.Value;
+    public static MemoryLog Instance { get; } = new();
 
     /// <summary>
     ///     Emits a log event to the in-memory queue.
@@ -32,8 +30,11 @@ public class MemoryLog : ILogEventSink
     /// </summary>
     public void Emit(LogEvent logEvent)
     {
-        if (_events.Count >= MaxEntries) _events.TryDequeue(out _);
-        _events.Enqueue(logEvent);
+        lock (_gate)
+        {
+            if (_events.Count == MaxEntries) _events.Dequeue();
+            _events.Enqueue(logEvent);
+        }
     }
 
     /// <summary>
@@ -42,8 +43,11 @@ public class MemoryLog : ILogEventSink
     /// <returns>A string containing all rendered log messages and exceptions.</returns>
     public string GetContent()
     {
+        LogEvent[] events;
+        lock (_gate) events = _events.ToArray();
+
         var sb = new StringBuilder();
-        foreach (var ev in _events)
+        foreach (var ev in events)
         {
             sb.AppendLine(ev.RenderMessage());
             if (ev.Exception != null) sb.AppendLine(ev.Exception.ToString());

@@ -11,7 +11,6 @@ using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Models;
 using Nagi.WinUI.Navigation;
 using Nagi.WinUI.ViewModels;
-using System.Threading.Tasks;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Services.Abstractions;
@@ -142,7 +141,7 @@ public sealed partial class SmartPlaylistSongViewPage : Page
             {
                 _logger.LogDebug("User edited smart playlist '{PlaylistName}'.", dialog.ResultPlaylist.Name);
                 // Refresh the song list
-                await ViewModel.InitializeAsync(dialog.ResultPlaylist.Name, smartPlaylistId);
+                await ViewModel.InitializeAsync(dialog.ResultPlaylist.Name, smartPlaylistId, dialog.ResultPlaylist.CoverImageUri);
             }
             else
             {
@@ -182,14 +181,11 @@ public sealed partial class SmartPlaylistSongViewPage : Page
         ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.SmartPlaylistSongViewPage_SearchButton_Close_ToolTip);
         VisualStateManager.GoToState(this, "SearchExpanded", true);
 
-        var timer = DispatcherQueue.CreateTimer();
-        timer.Interval = TimeSpan.FromMilliseconds(150);
-        timer.Tick += (s, args) =>
-        {
-            timer.Stop();
-            SearchTextBox.Focus(FocusState.Programmatic);
-        };
-        timer.Start();
+    }
+
+    private void OnSearchExpansionCompleted(object sender, object e)
+    {
+        if (IsLoaded && _isSearchExpanded) SearchTextBox.Focus(FocusState.Programmatic);
     }
 
     private void CollapseSearch()

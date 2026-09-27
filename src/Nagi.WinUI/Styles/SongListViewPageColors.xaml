@@ -1,13 +1,7 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:animation="using:Microsoft.UI.Xaml.Media.Animation">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-
-
-    <!--
-    Defines a style for circular, transparent, icon-only buttons.
-    -->
     <Style x:Key="SongListViewPageIconButton" TargetType="Button" BasedOn="{StaticResource MediaControlButtonStyle}">
         <Setter Property="Padding" Value="0" />
         <Setter Property="MinWidth" Value="36" />
@@ -15,23 +9,11 @@
         <Setter Property="Height" Value="36" />
     </Style>
 
-    <Style x:Key="SongListViewPageFilledButtonStyle" TargetType="Button" BasedOn="{StaticResource AnimatedAccentButtonStyle}">
-        <Setter Property="Background" Value="{ThemeResource ButtonBackground}" />
-        <Setter Property="Padding" Value="12,8" />
-        <Setter Property="CornerRadius" Value="8" />
-        <Setter Property="FontSize" Value="12" />
-        <Setter Property="MinHeight" Value="36" />
-    </Style>
-
-    <!--
-    Defines the style for the interactive play button that overlays album art in a song list.
-    -->
     <Style x:Key="SongListViewPageSongPlayButtonStyle" TargetType="Button"
            BasedOn="{StaticResource SongListViewPageIconButton}">
         <Setter Property="Width" Value="42" />
         <Setter Property="Height" Value="42" />
         <Setter Property="Margin" Value="12,0,12,0" />
-        <Setter Property="ToolTipService.ToolTip" Value="Play song" />
         <Setter Property="CornerRadius" Value="12" />
         <Setter Property="Template">
             <Setter.Value>
@@ -97,15 +79,6 @@
         </Setter>
     </Style>
 
-    <!--
-    Defines the style for primary text elements in a song list, such as the song title.
-    -->
-    <Style x:Key="SongListViewPageBodyStrongTextBlockStyle" TargetType="TextBlock"
-           BasedOn="{StaticResource BodyStrongTextBlockStyle}" />
-
-    <!--
-    Defines the style for secondary text elements in a song list, such as artist or album.
-    -->
     <Style x:Key="SongListViewPageSecondaryTextBlockStyle" TargetType="TextBlock"
            BasedOn="{StaticResource BodyTextBlockStyle}">
         <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondary}" />
@@ -115,9 +88,6 @@
         <Setter Property="FontSize" Value="13" />
     </Style>
 
-    <!--
-     Defines the style for clickable links within a song list, such as artist or album names.
-     -->
     <Style x:Key="SongListHyperlinkButtonStyle" TargetType="HyperlinkButton" BasedOn="{StaticResource AnimatedHyperlinkButtonStyle}">
         <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondary}" />
         <Setter Property="VerticalAlignment" Value="Center" />
@@ -126,7 +96,6 @@
         <Setter Property="HorizontalAlignment" Value="Left" />
     </Style>
 
-    <!-- ListView Item Style -->
     <Style x:Key="SongListViewPageListViewItemStyle" TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
         <Setter Property="Margin" Value="0,1" />
         <Setter Property="Padding" Value="0" />
@@ -137,80 +106,13 @@
     <Style x:Key="SearchTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource DefaultTextBoxStyle}">
         <Setter Property="Background" Value="{ThemeResource ControlFillColorDefaultBrush}" />
         <Setter Property="BorderBrush" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="0" />
         <Setter Property="CornerRadius" Value="8" />
         <Setter Property="FontSize" Value="13" />
-        <Setter Property="Padding" Value="12,8,40,8" />
+        <Setter Property="Padding" Value="12,8" />
         <Setter Property="Height" Value="36" />
+        <Setter Property="MinWidth" Value="0" />
+        <Setter Property="Margin" Value="0,0,36,0" />
         <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="TextBox">
-                    <Grid x:Name="RootGrid" RenderTransformOrigin="0.5,0.5">
-                        <Grid.RenderTransform>
-                            <ScaleTransform x:Name="BoxScale" />
-                        </Grid.RenderTransform>
-                        <ContentPresenter x:Name="HeaderContentPresenter"
-                                          Grid.Row="0"
-                                          Content="{TemplateBinding Header}"
-                                          ContentTemplate="{TemplateBinding HeaderTemplate}"
-                                          Visibility="Collapsed" />
-                        <Border x:Name="BackgroundElement"
-                                Grid.Row="1"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="{TemplateBinding CornerRadius}"
-                                MinWidth="{TemplateBinding MinWidth}"
-                                MinHeight="{TemplateBinding MinHeight}" />
-                        <ScrollViewer x:Name="ContentElement"
-                                      Grid.Row="1"
-                                      Margin="{TemplateBinding BorderThickness}"
-                                      Padding="{TemplateBinding Padding}"
-                                      IsTabStop="False"
-                                      AutomationProperties.AccessibilityView="Raw"
-                                      HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                                      VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                                      IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
-                                      IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
-                                      IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
-                                      ZoomMode="Disabled" />
-                        <TextBlock x:Name="PlaceholderTextContentPresenter"
-                                   Grid.Row="1"
-                                   Margin="{TemplateBinding BorderThickness}"
-                                   Padding="{TemplateBinding Padding}"
-                                   Text="{TemplateBinding PlaceholderText}"
-                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                   IsHitTestVisible="False"
-                                   VerticalAlignment="Center" />
-
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal">
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="BoxScale" Storyboard.TargetProperty="ScaleX" To="1.0" Duration="0:0:0.2" EasingFunction="{StaticResource CubicEaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="BoxScale" Storyboard.TargetProperty="ScaleY" To="1.0" Duration="0:0:0.2" EasingFunction="{StaticResource CubicEaseOut}" />
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="PointerOver">
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="BoxScale" Storyboard.TargetProperty="ScaleX" To="1.01" Duration="0:0:0.3" EasingFunction="{StaticResource CubicEaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="BoxScale" Storyboard.TargetProperty="ScaleY" To="1.01" Duration="0:0:0.3" EasingFunction="{StaticResource CubicEaseOut}" />
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Focused">
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="BoxScale" Storyboard.TargetProperty="ScaleX" To="1.02" Duration="0:0:0.3" EasingFunction="{StaticResource CubicEaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="BoxScale" Storyboard.TargetProperty="ScaleY" To="1.02" Duration="0:0:0.3" EasingFunction="{StaticResource CubicEaseOut}" />
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Disabled" />
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
     </Style>
 
     <Style x:Key="DiceIconStyle" TargetType="ContentControl">

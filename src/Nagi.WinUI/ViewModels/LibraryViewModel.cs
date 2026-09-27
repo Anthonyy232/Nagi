@@ -1,10 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
@@ -19,31 +16,19 @@ namespace Nagi.WinUI.ViewModels;
 /// </summary>
 public partial class LibraryViewModel : SongListViewModelBase
 {
-    private static bool _isInitialScanTriggered;
-    private CancellationTokenSource? _debouncer;
-    private bool _hasInitialized;
-    private bool _pendingLibraryRefresh;
+    private bool _isInitialScanTriggered;
 
     public LibraryViewModel(
         ILibraryService libraryService,
         IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
-        INavigationService navigationService,
         IMusicNavigationService musicNavigationService,
         IDispatcherService dispatcherService,
         IUISettingsService settingsService,
         IUIService uiService,
         ILogger<LibraryViewModel> logger)
-        : base(libraryService, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryService, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
-        PropertyChanged += (s, e) =>
-        {
-            if (e.PropertyName == nameof(IsLoading) && !IsLoading && _pendingLibraryRefresh)
-            {
-                _pendingLibraryRefresh = false;
-                _ = RefreshOrSortSongsAsync();
-            }
-        };
     }
 
     protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
@@ -55,32 +40,30 @@ public partial class LibraryViewModel : SongListViewModelBase
         return _libraryReader.GetAllSongsPagedAsync(pageNumber, pageSize, sortOrder, cancellationToken);
     }
 
-    protected override async Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
+    protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
     {
-        if (IsSearchActive) return await _libraryReader.SearchAllSongIdsAsync(SearchTerm, SongSortOrder.TitleAsc, token);
-        return await _libraryReader.GetAllSongIdsAsync(sortOrder, token);
+        return IsSearchActive
+            ? _libraryReader.SearchAllSongIdsAsync(SearchTerm, SongSortOrder.TitleAsc, token)
+            : _libraryReader.GetAllSongIdsAsync(sortOrder, token);
     }
 
     protected override PlaybackContext GetPlaybackContext() =>
         IsSearchActive ? new(PlaybackContextType.Search, null) : new(PlaybackContextType.Library, null);
 
-    public bool HasInitialized => _hasInitialized;
+    public bool HasInitialized { get; private set; }
 
     public async Task InitializeAsync()
     {
         _logger.LogDebug("Initializing LibraryViewModel");
-        var shouldTriggerScan = !_isInitialScanTriggered;
-        _isInitialScanTriggered = true;
-        _hasInitialized = true;
-
         CurrentSortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.LibrarySortOrderKey);
         await RefreshOrSortSongsCommand.ExecuteAsync(null);
+        HasInitialized = !HasLoadError;
 
-        if (!shouldTriggerScan) return;
+        if (_isInitialScanTriggered) return;
+        _isInitialScanTriggered = true;
 
         _logger.LogDebug("Starting initial background library refresh");
-        // We don't await this because we want the UI to be responsive.
-        // The LibraryContentChanged event will trigger a refresh when it finishes.
+        // LibraryContentChanged refreshes the view when the background scan finishes.
         _ = Task.Run(async () =>
         {
             try
@@ -104,42 +87,11 @@ public partial class LibraryViewModel : SongListViewModelBase
         });
     }
 
-    protected override void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
-    {
-        // We don't need to refresh the song list just because a folder container was added (it has no songs yet).
-        // We wait for the subsequent scan to update us.
-        if (e.ChangeType == LibraryChangeType.FolderAdded) return;
+    protected override bool ShouldReloadOnLibraryChange(LibraryChangeType changeType) =>
+        changeType != LibraryChangeType.FolderAdded;
 
-        // Debounce to prevent multiple refresh calls during rapid changes.
-        var cts = new CancellationTokenSource();
-        var oldCts = Interlocked.Exchange(ref _debouncer, cts);
-        try { oldCts?.Cancel(); } catch (ObjectDisposedException) { }
-
-        var token = cts.Token;
-        _ = Task.Run(async () =>
-        {
-            try
-            {
-                await Task.Delay(1000, token).ConfigureAwait(false);
-                if (token.IsCancellationRequested) return;
-
-                _logger.LogDebug("Library content changed ({ChangeType}). Refreshing song list.", e.ChangeType);
-                await _dispatcherService.EnqueueAsync(async () =>
-                {
-                    if (!IsLoading)
-                        await RefreshOrSortSongsAsync();
-                    else
-                        _pendingLibraryRefresh = true;
-                });
-            }
-            catch (OperationCanceledException) { }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error handling library content change in LibraryViewModel");
-            }
-        }, token);
-    }
-
+    protected override Task RefreshAsync(CancellationToken cancellationToken) =>
+        RefreshOrSortSongsAsync(manualToken: cancellationToken);
 
     protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
     {

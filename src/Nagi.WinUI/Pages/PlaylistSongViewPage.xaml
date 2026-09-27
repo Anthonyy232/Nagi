@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:converters="using:Nagi.WinUI.Converters"
     xmlns:controls="using:ImageEx"
     xmlns:resources="using:Nagi.WinUI.Resources"
     xmlns:models="using:Nagi.Core.Models"
@@ -15,8 +14,6 @@
     Background="Transparent"
     x:Name="pageRoot">
 
-    <Page.Resources>
-    </Page.Resources>
 
     <Grid KeyboardAcceleratorPlacementMode="Hidden" Padding="0,0,0,24">
         <Grid.KeyboardAccelerators>
@@ -52,12 +49,11 @@
                             Storyboard.TargetName="SearchIcon"
                             Storyboard.TargetProperty="Glyph">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE721;" />
-                            <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="&#xE721;" />
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="SearchExpanded">
-                    <Storyboard>
+                    <Storyboard Completed="OnSearchExpansionCompleted">
                         <DoubleAnimation
                             Storyboard.TargetName="SearchTextBox"
                             Storyboard.TargetProperty="Width"
@@ -102,8 +98,6 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-
-                <!-- Playlist Cover Art -->
                 <Grid Grid.Column="0" Width="150" Height="150">
                     <Border CornerRadius="12"
                             Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
@@ -153,7 +147,6 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                    <!-- Search functionality -->
                     <Grid>
                         <TextBox x:Name="SearchTextBox"
                                  PlaceholderText="{x:Bind resources:Strings.PlaylistSongViewPage_SearchBox_Placeholder, Mode=OneTime}"
@@ -316,7 +309,7 @@
 
                         <TextBlock x:Name="SongTitle"
                                    Grid.Column="1" Text="{x:Bind Title}" VerticalAlignment="Center"
-                                   Style="{StaticResource SongListViewPageBodyStrongTextBlockStyle}"
+                                   Style="{StaticResource BodyStrongTextBlockStyle}"
                                    TextTrimming="CharacterEllipsis"
                                    TextWrapping="NoWrap" />
 
@@ -346,8 +339,6 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-
-        <!-- Empty State -->
         <StackPanel
             Grid.Row="1"
             HorizontalAlignment="Center"

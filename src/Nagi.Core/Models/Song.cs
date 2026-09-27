@@ -1,12 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Nagi.Core.Helpers;
 
 namespace Nagi.Core.Models;
 
-/// <summary>
-///     Represents a single song track in the music library.
-/// </summary>
 public class Song
 {
     [Key] public Guid Id { get; set; } = Guid.NewGuid();
@@ -24,9 +21,6 @@ public class Song
     public Guid? AlbumId { get; set; }
 
     [ForeignKey("AlbumId")] public virtual Album? Album { get; set; }
-
-    // Simplified multi-artist relationship. ArtistId and Artist are moved to SongArtists.
-    // Migration will attempt to preserve existing data.
 
     [MaxLength(200)] public string? Composer { get; set; }
 
@@ -85,19 +79,10 @@ public class Song
     /// </summary>
     public bool IsLoved { get; set; }
 
-    /// <summary>
-    ///     The total number of times the song has been played.
-    /// </summary>
     public int PlayCount { get; set; }
 
-    /// <summary>
-    ///     The total number of times the song has been skipped.
-    /// </summary>
     public int SkipCount { get; set; }
 
-    /// <summary>
-    ///     The date and time the song was last played.
-    /// </summary>
     public DateTime? LastPlayedDate { get; set; }
 
     /// <summary>
@@ -105,9 +90,6 @@ public class Song
     /// </summary>
     public long TotalListenTimeTicks { get; set; }
 
-    /// <summary>
-    ///     The lyrics of the song.
-    /// </summary>
     [MaxLength(50000)]
     public string? Lyrics { get; set; }
 
@@ -151,21 +133,12 @@ public class Song
     [MaxLength(200)]
     public string? Grouping { get; set; }
 
-    /// <summary>
-    ///     Copyright information for the track.
-    /// </summary>
     [MaxLength(1000)]
     public string? Copyright { get; set; }
 
-    /// <summary>
-    ///     A general-purpose comment field.
-    /// </summary>
     [MaxLength(1000)]
     public string? Comment { get; set; }
 
-    /// <summary>
-    ///     The conductor of the orchestra, if applicable.
-    /// </summary>
     [MaxLength(200)]
     public string? Conductor { get; set; }
 

@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using Windows.Foundation;
 using Windows.UI;
 using Microsoft.UI.Xaml;
@@ -65,8 +65,7 @@ public class BooleanToInverseBooleanConverter : IValueConverter
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
-        if (value is bool b) return !b;
-        return value;
+        return Convert(value, targetType, parameter, language);
     }
 }
 
@@ -75,25 +74,23 @@ public class BooleanToInverseBooleanConverter : IValueConverter
 /// </summary>
 public class ElementThemeToFriendlyStringConverter : IValueConverter
 {
-    private static readonly Dictionary<ElementTheme, string> FriendlyNames = new()
-    {
-        { ElementTheme.Light, Nagi.WinUI.Resources.Strings.Theme_Light },
-        { ElementTheme.Dark, Nagi.WinUI.Resources.Strings.Theme_Dark },
-        { ElementTheme.Default, Nagi.WinUI.Resources.Strings.Theme_Default }
-    };
-
     public object Convert(object value, Type targetType, object parameter, string language)
     {
-        if (value is ElementTheme theme && FriendlyNames.TryGetValue(theme, out var name)) return name;
-        return value?.ToString() ?? string.Empty;
+        return value switch
+        {
+            ElementTheme.Light => Nagi.WinUI.Resources.Strings.Theme_Light,
+            ElementTheme.Dark => Nagi.WinUI.Resources.Strings.Theme_Dark,
+            ElementTheme.Default => Nagi.WinUI.Resources.Strings.Theme_Default,
+            _ => value?.ToString() ?? string.Empty
+        };
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
         if (value is string strValue)
         {
-            var pair = FriendlyNames.FirstOrDefault(kvp => kvp.Value == strValue);
-            if (pair.Value != null) return pair.Key;
+            foreach (var theme in Enum.GetValues<ElementTheme>())
+                if ((string)Convert(theme, targetType, parameter, language) == strValue) return theme;
         }
 
         return DependencyProperty.UnsetValue;
@@ -140,24 +137,6 @@ public class StringToVisibilityConverter : IValueConverter
         var isVisible = !string.IsNullOrWhiteSpace(value as string);
         if (Invert) isVisible = !isVisible;
         return isVisible ? Visibility.Visible : Visibility.Collapsed;
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-/// <summary>
-///     Converts a collection to Visibility. Visible if the collection is not null and not empty.
-/// </summary>
-public class CollectionToVisibilityConverter : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        if (value is IEnumerable collection)
-            return collection.Cast<object>().Any() ? Visibility.Visible : Visibility.Collapsed;
-        return Visibility.Collapsed;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -235,23 +214,7 @@ public class ObjectToVisibilityConverter : IValueConverter
 }
 
 /// <summary>
-///     Converts an object to a boolean. Returns true if the object is not null.
-/// </summary>
-public class ObjectToBooleanConverter : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        return value != null;
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-/// <summary>
-///     Converts a string value into a unique, deterministic LinearGradientBrush from a curated palette.
+///     Converts a string value into a deterministic LinearGradientBrush from a curated palette.
 /// </summary>
 public class GenreToGradientConverter : IValueConverter
 {
@@ -287,8 +250,8 @@ public class GenreToGradientConverter : IValueConverter
     {
         if (value is not string genreName || string.IsNullOrEmpty(genreName)) return GetDefaultGradient();
 
-        var seed = genreName.GetHashCode();
-        var index = Math.Abs(seed) % Palettes.Count;
+        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(genreName));
+        var index = (int)(BitConverter.ToUInt32(hash, 0) % (uint)Palettes.Count);
         var (startColor, endColor) = Palettes[index];
 
         return CreateGradient(startColor, endColor);
@@ -397,7 +360,7 @@ public class BooleanToOpacityConverter : IValueConverter
 
     public object Convert(object value, Type targetType, object parameter, string language)
     {
-        return value is bool b && b ? TrueValue : FalseValue;
+        return value is true ? TrueValue : FalseValue;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -529,24 +492,17 @@ public class DoubleToPercentageConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
     {
-        if (value is double d)
+        return value switch
         {
-            return $"{(int)Math.Round(d * 100)}%";
-        }
-        if (value is float f)
-        {
-            return $"{(int)Math.Round(f * 100)}%";
-        }
-        return "0%";
+            double d => d.ToString("P0"),
+            float f => f.ToString("P0"),
+            _ => 0d.ToString("P0")
+        };
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
-        if (value is string s && s.EndsWith("%") && double.TryParse(s.TrimEnd('%'), out var d))
-        {
-            return d / 100.0;
-        }
-        return 0.0;
+        throw new NotSupportedException();
     }
 }
 

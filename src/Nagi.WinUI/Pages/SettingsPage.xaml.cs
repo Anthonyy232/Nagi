@@ -1,8 +1,7 @@
-﻿using System;
+using System;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.WinUI.ViewModels;
@@ -10,9 +9,6 @@ using Nagi.Core.Models;
 
 namespace Nagi.WinUI.Pages;
 
-/// <summary>
-///     A page for configuring application settings.
-/// </summary>
 public sealed partial class SettingsPage : Page
 {
     private readonly ILogger<SettingsPage> _logger;
@@ -24,27 +20,6 @@ public sealed partial class SettingsPage : Page
         _logger = App.Services!.GetRequiredService<ILogger<SettingsPage>>();
         DataContext = ViewModel;
         _logger.LogDebug("SettingsPage initialized.");
-
-        Unloaded += (_, _) => ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
-    }
-
-    private void OnViewModelPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-    {
-        switch (e.PropertyName)
-        {
-            case nameof(ViewModel.IsFetchOnlineMetadataEnabled):
-                MetadataSettingsExpander.IsExpanded = ViewModel.IsFetchOnlineMetadataEnabled;
-                break;
-            case nameof(ViewModel.IsFetchOnlineLyricsEnabled):
-                LyricsSettingsExpander.IsExpanded = ViewModel.IsFetchOnlineLyricsEnabled;
-                break;
-            case nameof(ViewModel.IsLyricsRomanizationEnabled):
-                RomanizedLyricsSettingsExpander.IsExpanded = ViewModel.IsLyricsRomanizationEnabled;
-                break;
-            case nameof(ViewModel.IsLastFmConnected):
-                LastFmSettingsExpander.IsExpanded = ViewModel.IsLastFmConnected;
-                break;
-        }
     }
 
     public SettingsViewModel ViewModel { get; }
@@ -58,16 +33,8 @@ public sealed partial class SettingsPage : Page
             await ViewModel.LoadSettingsAsync();
             _logger.LogDebug("Settings loaded successfully.");
 
-            // Set initial expander states after settings are loaded (no animation)
-            MetadataSettingsExpander.IsExpanded = ViewModel.IsFetchOnlineMetadataEnabled;
-            LyricsSettingsExpander.IsExpanded = ViewModel.IsFetchOnlineLyricsEnabled;
-            RomanizedLyricsSettingsExpander.IsExpanded = ViewModel.IsLyricsRomanizationEnabled;
-            LastFmSettingsExpander.IsExpanded = ViewModel.IsLastFmConnected;
+            Bindings.Update();
             _ = ViewModel.LoadRomanizationPacksAsync();
-
-            // Subscribe to property changes for reactive updates (these will animate)
-            ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
-            ViewModel.PropertyChanged += OnViewModelPropertyChanged;
         }
         catch (Exception ex)
         {
@@ -75,30 +42,11 @@ public sealed partial class SettingsPage : Page
         }
     }
 
-    protected override void OnNavigatedFrom(NavigationEventArgs e)
-    {
-        base.OnNavigatedFrom(e);
-        _logger.LogDebug("Navigated away from SettingsPage.");
-    }
-
     private void ProvidersListView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
     {
-        // Prevent dragging MusicBrainz metadata provider
         if (e.Items.Any(i => i is ServiceProviderSettingViewModel { Id: ServiceProviderIds.MusicBrainz }))
         {
             e.Cancel = true;
         }
-    }
-
-    private async void RomanizationPackInstall_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is FrameworkElement { Tag: RomanizationPackViewModel pack })
-            await ViewModel.InstallRomanizationPackCommand.ExecuteAsync(pack);
-    }
-
-    private async void RomanizationPackRemove_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is FrameworkElement { Tag: RomanizationPackViewModel pack })
-            await ViewModel.RemoveRomanizationPackCommand.ExecuteAsync(pack);
     }
 }

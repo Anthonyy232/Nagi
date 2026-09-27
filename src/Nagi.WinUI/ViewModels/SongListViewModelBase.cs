@@ -11,8 +11,6 @@ using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
-using Nagi.WinUI.Navigation;
-using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Helpers;
 
@@ -24,15 +22,11 @@ namespace Nagi.WinUI.ViewModels;
 public abstract partial class SongListViewModelBase : PagedListViewModelBase<Song>
 {
     protected readonly ILibraryReader _libraryReader;
-    protected readonly INavigationService _navigationService;
     protected readonly IMusicPlaybackService _playbackService;
     protected readonly IPlaylistService _playlistService;
-    protected readonly ReaderWriterLockSlim _stateLock = new(LockRecursionPolicy.SupportsRecursion);
-    private readonly IUIService _uiService;
+    protected readonly IUIService _uiService;
     protected readonly IMusicNavigationService _musicNavigationService;
-    private bool _hasLoadedPlaylists;
-
-    public bool HasLoadedPlaylists => _hasLoadedPlaylists;
+    public bool HasLoadedPlaylists { get; private set; }
 
     /// <summary>
     ///     The Id of the song that is currently playing in the player, mirrored from
@@ -66,7 +60,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         ILibraryService libraryService,
         IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
-        INavigationService navigationService,
         IMusicNavigationService musicNavigationService,
         IDispatcherService dispatcherService,
         IUISettingsService settingsService,
@@ -77,7 +70,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         _libraryReader = libraryService ?? throw new ArgumentNullException(nameof(libraryService));
         _playlistService = playlistService ?? throw new ArgumentNullException(nameof(playlistService));
         _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
-        _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
         _musicNavigationService = musicNavigationService ?? throw new ArgumentNullException(nameof(musicNavigationService));
         _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
 
@@ -90,7 +82,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         CurrentPlayingSongId = _playbackService.CurrentTrack?.Id;
         _playbackService.TrackChanged += OnPlaybackTrackChanged;
 
-        UpdateSortOrderButtonText(CurrentSortOrder);
     }
 
     private void OnPlaybackTrackChanged()
@@ -107,7 +98,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     private void OnPlaylistsChanged(object? sender, EventArgs e)
     {
         // Only reload if we've already loaded once; ignore if never loaded (avoids loading when not needed).
-        if (!_hasLoadedPlaylists || _isDisposed) return;
+        if (!HasLoadedPlaylists || _isDisposed) return;
 
         _dispatcherService.TryEnqueue(() =>
         {
@@ -118,30 +109,14 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         });
     }
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(FirstSong))]
-    [NotifyPropertyChangedFor(nameof(ShowEmptyState))]
-    public partial ObservableRangeCollection<Song> Songs { get; set; } = new();
-
-    public Song? FirstSong => Songs?.FirstOrDefault();
-
-    partial void OnSongsChanged(ObservableRangeCollection<Song> oldValue, ObservableRangeCollection<Song> newValue)
-    {
-        OnSongsChangedInternal(oldValue, newValue);
-    }
-
-    protected virtual void OnSongsChangedInternal(ObservableRangeCollection<Song> oldValue, ObservableRangeCollection<Song> newValue)
-    {
-        if (oldValue != null) oldValue.CollectionChanged -= OnSongsCollectionChanged;
-        if (newValue != null) newValue.CollectionChanged += OnSongsCollectionChanged;
-    }
+    public ObservableRangeCollection<Song> Songs { get; } = new();
 
     private void OnSongsCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
         OnPropertyChanged(nameof(ShowEmptyState));
     }
 
-    [ObservableProperty] public partial ObservableCollection<Song> SelectedSongs { get; set; } = new();
+    public ObservableCollection<Song> SelectedSongs { get; } = new();
 
     [ObservableProperty] public partial ObservableCollection<Playlist> AvailablePlaylists { get; set; } = new();
 
@@ -149,29 +124,13 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(PlaySelectedSongsCommand))]
-    [NotifyCanExecuteChangedFor(nameof(PlaySelectedSongsNextCommand))]
-    [NotifyCanExecuteChangedFor(nameof(AddSelectedSongsToQueueCommand))]
-    [NotifyCanExecuteChangedFor(nameof(AddSelectedSongsToPlaylistCommand))]
     public partial string SelectedItemsCountText { get; set; } = string.Empty;
 
-    public virtual int SelectedItemsCount
-    {
-        get
-        {
-            _stateLock.EnterReadLock();
-            try
-            {
-                return SelectionState.GetSelectedCount(TotalItemCount);
-            }
-            finally
-            {
-                _stateLock.ExitReadLock();
-            }
-        }
-    }
+    public virtual int SelectedItemsCount => SelectionState.GetSelectedCount(TotalItemCount);
 
-    [ObservableProperty] public partial SongSortOrder CurrentSortOrder { get; set; } = SongSortOrder.TitleAsc;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CurrentSortOrderText))]
+    public partial SongSortOrder CurrentSortOrder { get; set; } = SongSortOrder.TitleAsc;
 
     partial void OnCurrentSortOrderChanged(SongSortOrder oldValue, SongSortOrder newValue)
     {
@@ -183,7 +142,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         ClearFullSongIds();
     }
 
-    [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = string.Empty;
+    public string CurrentSortOrderText => SortOrderHelper.GetDisplayName(CurrentSortOrder);
 
     public bool ShowEmptyState => !IsLoading && Songs.Count == 0;
 
@@ -195,11 +154,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
     public bool HasSelectedSongs => SelectedItemsCount > 0;
 
-    // LibraryViewModel installs its own override; the other six song subclasses don't react
-    // to library changes. The base's debouncer subscription is harmless either way.
-    protected override void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
-    {
-    }
+    protected override bool ShouldReloadOnLibraryChange(LibraryChangeType changeType) => false;
 
     protected override void OnLoadingStateChanged(bool isLoading)
     {
@@ -299,12 +254,24 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         {
             lock (_fullSongIdsLock)
             {
+                if (_isDisposed || generation != _fullSongIdGeneration)
+                    return [];
                 if (ReferenceEquals(_fullSongIdLoadTask, loadTask))
                     _fullSongIdLoadTask = null;
             }
 
             throw;
         }
+    }
+
+    protected int CaptureSongContext()
+    {
+        lock (_fullSongIdsLock) return _fullSongIdGeneration;
+    }
+
+    protected bool IsSongContextCurrent(int generation)
+    {
+        lock (_fullSongIdsLock) return !_isDisposed && generation == _fullSongIdGeneration;
     }
 
     /// <summary>Songs use the SongList resource strings rather than per-list-type formatting.</summary>
@@ -333,12 +300,10 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
             CurrentSortOrder = newSortOrder;
             CurrentPage = 1;
             _logger.LogDebug("Sort order changed to '{SortOrder}'", CurrentSortOrder);
-            _ = SaveSortOrderAsync(newSortOrder)
-                .ContinueWith(t => _logger.LogError(t.Exception, "Failed to save sort order"),
-                    TaskContinuationOptions.OnlyOnFaulted);
+            try { await SaveSortOrderAsync(newSortOrder); }
+            catch (Exception ex) { _logger.LogError(ex, "Failed to save sort order"); }
         }
 
-        UpdateSortOrderButtonText(CurrentSortOrder);
         UpdateSelectionStatus();
 
         await LoadAsync(manualToken);
@@ -352,25 +317,30 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     {
         lock (_loadLock)
         {
-            if (IsLoading || !IsPaginationEnabled) return;
+            if (_isDisposed || IsLoading || !IsPaginationEnabled) return;
             IsLoading = true;
         }
 
         _pagedLoadCts?.Cancel();
         _pagedLoadCts?.Dispose();
+        _pagedLoadCts = new CancellationTokenSource();
+        var token = _pagedLoadCts.Token;
+        HasLoadError = false;
 
         try
         {
-            _pagedLoadCts = new CancellationTokenSource();
-            var token = _pagedLoadCts.Token;
-
             var pagedResult = await Task.Run(
-                () => LoadSongsPagedAsync(pageNumber, PageSize, CurrentSortOrder, token), token);
+                () => LoadValidPageAsync(pageNumber, PageSize, token), token);
             ProcessPagedResult(pagedResult, token);
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogDebug("Song page load was canceled.");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to load next page");
+            if (!token.IsCancellationRequested && !_isDisposed) HasLoadError = true;
         }
         finally
         {
@@ -386,7 +356,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
     protected override void ApplyItemsToCollection(PagedResult<Song> result, bool append)
     {
-        if (result?.Items == null) return;
         Songs.AppendOrReplace(result.Items, append);
         UpdateSelectionStatus();
         PlayAllSongsCommand.NotifyCanExecuteChanged();
@@ -398,8 +367,9 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         try
         {
             var playlists = await _libraryReader.GetAllPlaylistsAsync();
+            if (_isDisposed) return;
             AvailablePlaylists = new ObservableCollection<Playlist>(playlists);
-            _hasLoadedPlaylists = true;
+            HasLoadedPlaylists = true;
             AddSelectedSongsToPlaylistCommand.NotifyCanExecuteChanged();
         }
         catch (Exception ex)
@@ -423,7 +393,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     {
         SelectionState.SelectAll();
         UpdateSelectionStatus();
-        OnSelectionStateChanged();
     }
 
     /// <summary>
@@ -433,16 +402,8 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     public virtual void DeselectAll()
     {
         SelectionState.DeselectAll();
+        SelectedSongs.Clear();
         UpdateSelectionStatus();
-        OnSelectionStateChanged();
-    }
-
-    /// <summary>
-    ///     Called when the logical selection state changes (e.g. Select All).
-    ///     Derived classes (pages) should override this to sync UI.
-    /// </summary>
-    protected virtual void OnSelectionStateChanged()
-    {
     }
 
     /// <summary>
@@ -453,17 +414,19 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     [RelayCommand(CanExecute = nameof(CanExecutePlayAllCommands))]
     private async Task PlayAllSongsAsync()
     {
+        var context = GetPlaybackContext();
         var ids = await GetFullSongIdsAsync();
         if (ids.Count == 0) return;
-        await _playbackService.PlayAsync(ids, 0, null, GetPlaybackContext());
+        await _playbackService.PlayAsync(ids, 0, null, context);
     }
 
     [RelayCommand(CanExecute = nameof(CanExecutePlayAllCommands))]
     private async Task ShuffleAndPlayAllSongsAsync()
     {
+        var context = GetPlaybackContext();
         var ids = await GetFullSongIdsAsync();
         if (ids.Count == 0) return;
-        await _playbackService.PlayAsync(ids, 0, true, GetPlaybackContext());
+        await _playbackService.PlayAsync(ids, 0, true, context);
     }
 
     [RelayCommand]
@@ -471,7 +434,10 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     {
         if (song == null) return;
 
+        var generation = CaptureSongContext();
+        var context = GetPlaybackContext();
         var ids = await GetFullSongIdsAsync();
+        if (!IsSongContextCurrent(generation)) return;
         var startIndex = ids.IndexOf(song.Id);
 
         if (startIndex == -1)
@@ -481,14 +447,16 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
             return;
         }
 
-        await _playbackService.PlayAsync(ids, startIndex, null, GetPlaybackContext());
+        await _playbackService.PlayAsync(ids, startIndex, null, context);
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteSelectedSongsCommands))]
     private async Task PlaySelectedSongsAsync()
     {
+        var context = GetPlaybackContext();
         var ids = await GetCurrentSelectionIdsAsync();
-        await _playbackService.PlayAsync(ids, 0, null, GetPlaybackContext());
+        if (ids.Count == 0) return;
+        await _playbackService.PlayAsync(ids, 0, null, context);
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteSelectedSongsCommands))]
@@ -503,6 +471,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     private async Task AddSelectedSongsToQueueAsync()
     {
         var ids = await GetCurrentSelectionIdsAsync();
+        if (ids.Count == 0) return;
         await _playbackService.AddRangeToQueueAsync(ids);
     }
 
@@ -511,6 +480,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     {
         if (playlist == null || !HasSelectedSongs) return;
         var ids = await GetCurrentSelectionIdsAsync();
+        if (ids.Count == 0) return;
         await _playlistService.AddSongsToPlaylistAsync(playlist.Id, ids);
     }
 
@@ -595,7 +565,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         return CanExecuteSelectedSongsCommands() && AvailablePlaylists.Any();
     }
 
-    protected void UpdateSelectionStatus()
+    protected virtual void UpdateSelectionStatus()
     {
         var count = SelectedItemsCount;
         SelectedItemsCountText = count > 0
@@ -609,21 +579,17 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
     protected virtual async Task<List<Guid>> GetCurrentSelectionIdsAsync()
     {
+        var snapshot = CaptureSelectionSnapshot();
         var ids = await GetFullSongIdsAsync();
-        _stateLock.EnterReadLock();
-        try
-        {
-            return SelectionState.GetSelectedIds(ids).ToList();
-        }
-        finally
-        {
-            _stateLock.ExitReadLock();
-        }
+        if (!IsSongContextCurrent(snapshot.Generation)) return [];
+        return snapshot.Selection.GetSelectedIds(ids).ToList();
     }
 
-    protected void UpdateSortOrderButtonText(SongSortOrder sortOrder)
+    protected (SelectionState Selection, int Generation) CaptureSelectionSnapshot()
     {
-        CurrentSortOrderText = SortOrderHelper.GetDisplayName(sortOrder);
+        // Resolve against the selection at invocation, not a later selection after database I/O.
+        if (_isDisposed) return (new SelectionState(), -1);
+        return (SelectionState.CreateSnapshot(), CaptureSongContext());
     }
 
     protected virtual Task SaveSortOrderAsync(SongSortOrder sortOrder)
@@ -633,7 +599,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
     private void UpdateSelectionDependentCommands()
     {
-        OnPropertyChanged(nameof(HasSelectedSongs));
         PlaySelectedSongsCommand.NotifyCanExecuteChanged();
         PlaySelectedSongsNextCommand.NotifyCanExecuteChanged();
         AddSelectedSongsToQueueCommand.NotifyCanExecuteChanged();
@@ -642,99 +607,11 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
 
 
-    protected static IEnumerable<Song> SortSongs(IEnumerable<Song> songs, SongSortOrder sortOrder)
-    {
-        return sortOrder switch
-        {
-            SongSortOrder.TitleAsc => songs.OrderBy(s => s.Title, StringComparer.OrdinalIgnoreCase).ThenBy(s => s.ArtistName, StringComparer.OrdinalIgnoreCase).ThenBy(s => s.Id),
-            SongSortOrder.TitleDesc => songs.OrderByDescending(s => s.Title, StringComparer.OrdinalIgnoreCase).ThenByDescending(s => s.ArtistName, StringComparer.OrdinalIgnoreCase).ThenByDescending(s => s.Id),
-            SongSortOrder.YearAsc => songs.OrderBy(s => s.Year)
-                .ThenBy(s => s.ArtistName, StringComparer.OrdinalIgnoreCase)
-                .ThenBy(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
-                .ThenBy(s => s.DiscNumber ?? 0)
-                .ThenBy(s => s.TrackNumber)
-                .ThenBy(s => s.Title, StringComparer.OrdinalIgnoreCase)
-                .ThenBy(s => s.Id),
-            SongSortOrder.YearDesc => songs.OrderByDescending(s => s.Year)
-                .ThenByDescending(s => s.ArtistName, StringComparer.OrdinalIgnoreCase)
-                .ThenByDescending(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
-                .ThenByDescending(s => s.DiscNumber ?? 0)
-                .ThenByDescending(s => s.TrackNumber)
-                .ThenByDescending(s => s.Title, StringComparer.OrdinalIgnoreCase)
-                .ThenByDescending(s => s.Id),
-            SongSortOrder.PlayCountAsc => OrderByMetric(s => s.PlayCount),
-            SongSortOrder.PlayCountDesc => OrderByMetricDescending(s => s.PlayCount),
-            SongSortOrder.LastPlayedAsc => OrderByMetric(s => s.LastPlayedDate),
-            SongSortOrder.LastPlayedDesc => OrderByMetricDescending(s => s.LastPlayedDate),
-            SongSortOrder.DateAddedAsc => OrderByMetric(s => s.DateAddedToLibrary),
-            SongSortOrder.DateAddedDesc => OrderByMetricDescending(s => s.DateAddedToLibrary),
-            SongSortOrder.DurationAsc => OrderByMetric(s => s.DurationTicks),
-            SongSortOrder.DurationDesc => OrderByMetricDescending(s => s.DurationTicks),
-            SongSortOrder.BpmAsc => OrderByMetric(s => s.Bpm ?? 0),
-            SongSortOrder.BpmDesc => OrderByMetricDescending(s => s.Bpm ?? 0),
-            SongSortOrder.AlbumAsc or SongSortOrder.TrackNumberAsc => songs.OrderBy(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
-                .ThenBy(s => s.DiscNumber ?? 0)
-                .ThenBy(s => s.TrackNumber)
-                .ThenBy(s => s.Title, StringComparer.OrdinalIgnoreCase)
-                .ThenBy(s => s.Id),
-            SongSortOrder.AlbumDesc or SongSortOrder.TrackNumberDesc => songs.OrderByDescending(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
-                .ThenByDescending(s => s.DiscNumber ?? 0)
-                .ThenByDescending(s => s.TrackNumber)
-                .ThenByDescending(s => s.Title, StringComparer.OrdinalIgnoreCase)
-                .ThenByDescending(s => s.Id),
-            SongSortOrder.ArtistAsc => songs.OrderBy(s => s.ArtistName, StringComparer.OrdinalIgnoreCase)
-                .ThenBy(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
-                .ThenBy(s => s.DiscNumber ?? 0)
-                .ThenBy(s => s.TrackNumber)
-                .ThenBy(s => s.Title, StringComparer.OrdinalIgnoreCase)
-                .ThenBy(s => s.Id),
-            SongSortOrder.ArtistDesc => songs.OrderByDescending(s => s.ArtistName, StringComparer.OrdinalIgnoreCase)
-                .ThenByDescending(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
-                .ThenByDescending(s => s.DiscNumber ?? 0)
-                .ThenByDescending(s => s.TrackNumber)
-                .ThenByDescending(s => s.Title, StringComparer.OrdinalIgnoreCase)
-                .ThenByDescending(s => s.Id),
-            SongSortOrder.FileCreatedDateAsc => songs.OrderBy(s => s.FileCreatedDate)
-                .ThenBy(s => s.ArtistName, StringComparer.OrdinalIgnoreCase)
-                .ThenBy(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
-                .ThenBy(s => s.DiscNumber ?? 0)
-                .ThenBy(s => s.TrackNumber)
-                .ThenBy(s => s.Title, StringComparer.OrdinalIgnoreCase)
-                .ThenBy(s => s.Id),
-            SongSortOrder.FileCreatedDateDesc => songs.OrderByDescending(s => s.FileCreatedDate)
-                .ThenByDescending(s => s.ArtistName, StringComparer.OrdinalIgnoreCase)
-                .ThenByDescending(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
-                .ThenByDescending(s => s.DiscNumber ?? 0)
-                .ThenByDescending(s => s.TrackNumber)
-                .ThenByDescending(s => s.Title, StringComparer.OrdinalIgnoreCase)
-                .ThenByDescending(s => s.Id),
-            SongSortOrder.Random => songs.OrderBy(_ => Guid.NewGuid()),
-            _ => songs.OrderBy(s => s.Title, StringComparer.OrdinalIgnoreCase).ThenBy(s => s.ArtistName, StringComparer.OrdinalIgnoreCase).ThenBy(s => s.Id)
-        };
-
-        IOrderedEnumerable<Song> OrderByMetric<TKey>(Func<Song, TKey> keySelector) =>
-            songs.OrderBy(keySelector)
-                .ThenBy(s => s.ArtistName, StringComparer.OrdinalIgnoreCase)
-                .ThenBy(s => s.Title, StringComparer.OrdinalIgnoreCase)
-                .ThenBy(s => s.Id);
-
-        IOrderedEnumerable<Song> OrderByMetricDescending<TKey>(Func<Song, TKey> keySelector) =>
-            songs.OrderByDescending(keySelector)
-                .ThenByDescending(s => s.ArtistName, StringComparer.OrdinalIgnoreCase)
-                .ThenByDescending(s => s.Title, StringComparer.OrdinalIgnoreCase)
-                .ThenByDescending(s => s.Id);
-    }
-
-    /// <summary>
-    ///     Cancels in-flight page loads and clears selection state. Doesn't dispose
-    ///     <see cref="_stateLock"/> — that lives until <see cref="Dispose"/>.
-    /// </summary>
     public override void ResetState()
     {
         base.ResetState();
-        SelectionState.DeselectAll();
+        DeselectAll();
         ClearFullSongIds();
-        CancelInflightPageLoad();
         _pagedLoadCts?.Cancel();
         _pagedLoadCts?.Dispose();
         _pagedLoadCts = null;
@@ -747,7 +624,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         if (_isDisposed) return;
 
         ResetState();
-        _stateLock.Dispose();
 
         _playlistService.PlaylistsChanged -= OnPlaylistsChanged;
         _playbackService.TrackChanged -= OnPlaybackTrackChanged;
@@ -755,6 +631,5 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
         base.Dispose();
 
-        GC.SuppressFinalize(this);
     }
 }

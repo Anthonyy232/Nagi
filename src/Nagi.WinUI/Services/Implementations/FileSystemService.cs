@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
@@ -78,11 +77,6 @@ public class FileSystemService : IFileSystemService
         File.Delete(path);
     }
 
-    public void CopyFile(string sourceFileName, string destFileName, bool overwrite)
-    {
-        File.Copy(sourceFileName, destFileName, overwrite);
-    }
-
     public void MoveFile(string sourceFileName, string destFileName, bool overwrite)
     {
         File.Move(sourceFileName, destFileName, overwrite);
@@ -128,7 +122,7 @@ public class FileSystemService : IFileSystemService
 
     public string GetExtension(string path)
     {
-        return Path.GetExtension(path)?.ToLowerInvariant() ?? string.Empty;
+        return Path.GetExtension(path).ToLowerInvariant();
     }
 
     public string Combine(params string[] paths)
@@ -162,7 +156,6 @@ public class FileSystemService : IFileSystemService
         {
             var root = Path.GetPathRoot(path);
             if (string.IsNullOrEmpty(root)) return false;
-            if (root.StartsWith(@"\\")) return true;
             var drive = new DriveInfo(root);
             return drive.DriveType == DriveType.Network;
         }
@@ -171,8 +164,6 @@ public class FileSystemService : IFileSystemService
             return false;
         }
     }
-
-    // --- Mapped drive -> UNC resolution via WNetGetUniversalNameW ----------------------------
 
     private const int UNIVERSAL_NAME_INFO_LEVEL = 1;
     private const int ERROR_SUCCESS = 0;
@@ -193,8 +184,6 @@ public class FileSystemService : IFileSystemService
 
     private static string ResolveMappedDriveToUnc(string path)
     {
-        if (string.IsNullOrWhiteSpace(path)) return path;
-        if (path.StartsWith(@"\\")) return path; // already UNC
         if (path.Length < 2 || path[1] != ':') return path; // not drive-rooted
 
         try

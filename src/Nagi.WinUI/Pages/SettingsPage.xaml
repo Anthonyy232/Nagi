@@ -1,5 +1,6 @@
 <Page
     x:Class="Nagi.WinUI.Pages.SettingsPage"
+    x:Name="SettingsPageRoot"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
@@ -18,15 +19,14 @@
 
 
     <Page.Resources>
+        <Style TargetType="ToggleSwitch" BasedOn="{StaticResource DefaultToggleSwitchStyle}">
+            <Setter Property="OnContent" Value="" />
+            <Setter Property="OffContent" Value="" />
+        </Style>
         <localConverters:ElementThemeToFriendlyStringConverter x:Key="ThemeToStringConverter" />
         <localConverters:BackdropMaterialToStringConverter x:Key="BackdropMaterialToStringConverter" />
         <localConverters:StringToFontFamilyConverter x:Key="StringToFontFamilyConverter" />
         <localConverters:FloatToDecimalStringConverter x:Key="FloatToDecimalStringConverter" />
-        <localConverters:BooleanToOpacityConverter x:Key="BooleanToOpacityConverter" />
-        <localConverters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <localConverters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" Invert="True" />
-        <localConverters:BooleanToInverseBooleanConverter x:Key="BooleanToInverseBooleanConverter" />
-        <localConverters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
         <localConverters:PlayerBackgroundMaterialToStringConverter x:Key="PlayerBackgroundMaterialToStringConverter" />
         <localConverters:DoubleToPercentageConverter x:Key="DoubleToPercentageConverter" />
 
@@ -135,24 +135,24 @@
                             Visibility="{x:Bind IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <Button
                             MinWidth="86"
-                            Click="RomanizationPackInstall_Click"
+                            Command="{Binding DataContext.InstallRomanizationPackCommand, ElementName=SettingsPageRoot}"
+                            CommandParameter="{x:Bind}"
                             Content="{x:Bind resources:Strings.SettingsPage_RomanizationPacks_Install, Mode=OneTime}"
                             IsEnabled="{x:Bind CanInstall, Mode=OneWay}"
-                            Tag="{x:Bind}"
                             Visibility="{x:Bind IsInstalled, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                         <Button
                             MinWidth="86"
-                            Click="RomanizationPackInstall_Click"
+                            Command="{Binding DataContext.InstallRomanizationPackCommand, ElementName=SettingsPageRoot}"
+                            CommandParameter="{x:Bind}"
                             Content="{x:Bind resources:Strings.SettingsPage_RomanizationPacks_Update, Mode=OneTime}"
                             IsEnabled="{x:Bind CanInstall, Mode=OneWay}"
-                            Tag="{x:Bind}"
                             Visibility="{x:Bind IsUpdateAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <Button
                             MinWidth="86"
-                            Click="RomanizationPackRemove_Click"
+                            Command="{Binding DataContext.RemoveRomanizationPackCommand, ElementName=SettingsPageRoot}"
+                            CommandParameter="{x:Bind}"
                             Content="{x:Bind resources:Strings.SettingsPage_RomanizationPacks_Remove, Mode=OneTime}"
                             IsEnabled="{x:Bind CanRemove, Mode=OneWay}"
-                            Tag="{x:Bind}"
                             Visibility="{x:Bind IsInstalled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     </StackPanel>
                 </Grid>
@@ -310,7 +310,7 @@
                                     Maximum="1.0"
                                     Minimum="0.0"
                                     StepFrequency="0.01"
-                                    Style="{StaticResource EqualizerSliderStyle}"
+                                    Style="{StaticResource DefaultSliderStyle}"
                                     ThumbToolTipValueConverter="{StaticResource DoubleToPercentageConverter}"
                                     Value="{x:Bind ViewModel.PlayerTintIntensity, Mode=TwoWay}" />
                                 <TextBlock
@@ -479,7 +479,7 @@
                                     Maximum="1000"
                                     Minimum="0"
                                     StepFrequency="50"
-                                    Style="{StaticResource EqualizerSliderStyle}"
+                                    Style="{StaticResource DefaultSliderStyle}"
                                     Value="{x:Bind ViewModel.FadeInDurationMs, Mode=TwoWay}" />
                                 <TextBlock
                                     VerticalAlignment="Center"
@@ -499,7 +499,7 @@
                                     Maximum="1000"
                                     Minimum="0"
                                     StepFrequency="50"
-                                    Style="{StaticResource EqualizerSliderStyle}"
+                                    Style="{StaticResource DefaultSliderStyle}"
                                     Value="{x:Bind ViewModel.FadeOutDurationMs, Mode=TwoWay}" />
                                 <TextBlock
                                     VerticalAlignment="Center"
@@ -537,7 +537,7 @@
                                 Maximum="20"
                                 Minimum="-20"
                                 StepFrequency="0.1"
-                                Style="{StaticResource EqualizerSliderStyle}"
+                                Style="{StaticResource DefaultSliderStyle}"
                                 Value="{x:Bind ViewModel.EqualizerPreamp, Mode=TwoWay}" />
                             <TextBlock
                                 HorizontalAlignment="Center"
@@ -571,7 +571,7 @@
                                                 Minimum="-20"
                                                 Orientation="Vertical"
                                                 StepFrequency="0.1"
-                                                Style="{StaticResource EqualizerSliderStyle}"
+                                                Style="{StaticResource DefaultSliderStyle}"
                                                 Value="{x:Bind Gain, Mode=TwoWay}" />
                                         </Grid>
                                         <TextBlock
@@ -708,7 +708,6 @@
                                                 VerticalAlignment="Center"
                                                 Visibility="{x:Bind IsNotSeparator, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-                                                <!-- Drag indicator (shown on hover) -->
                                                 <FontIcon
                                                     x:Name="DragIndicator"
                                                     HorizontalAlignment="Center"
@@ -731,7 +730,6 @@
                                                         Glyph="{x:Bind IconGlyph}" />
                                                 </Button>
 
-                                                <!-- Enable/Disable toggle (shown on hover) -->
                                                 <ToggleSwitch
                                                     x:Name="EnableDisableToggle"
                                                     Width="40"
@@ -739,9 +737,7 @@
                                                     HorizontalAlignment="Center"
                                                     MinWidth="0"
                                                     MinHeight="0"
-                                                    IsOn="{x:Bind IsEnabled, Mode=TwoWay}"
-                                                    OffContent=""
-                                                    OnContent="" />
+                                                    IsOn="{x:Bind IsEnabled, Mode=TwoWay}" />
                                             </StackPanel>
                                         </Grid>
                                     </DataTemplate>
@@ -787,7 +783,8 @@
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
-                        IsOn="{x:Bind ViewModel.IsAutoLaunchEnabled, Mode=TwoWay}" />
+                        IsOn="{x:Bind ViewModel.IsAutoLaunchEnabled, Mode=TwoWay}"
+                        IsEnabled="{x:Bind ViewModel.IsUpdatingAutoLaunch, Mode=OneWay, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
@@ -875,7 +872,7 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsExpander
-                    x:Name="MetadataSettingsExpander"
+                    IsExpanded="{x:Bind ViewModel.IsFetchOnlineMetadataEnabled, Mode=OneWay}"
                     Header="{x:Bind resources:Strings.SettingsPage_OnlineMetadata_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_OnlineMetadata_Description, Mode=OneTime}">
                     <controls:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8EC;" />
@@ -910,7 +907,7 @@
                 </controls:SettingsExpander>
 
                 <controls:SettingsExpander
-                    x:Name="LyricsSettingsExpander"
+                    IsExpanded="{x:Bind ViewModel.IsFetchOnlineLyricsEnabled, Mode=OneWay}"
                     Header="{x:Bind resources:Strings.SettingsPage_OnlineLyrics_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_OnlineLyrics_Description, Mode=OneTime}">
                     <controls:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE90A;" />
@@ -946,7 +943,7 @@
                 </controls:SettingsExpander>
 
                 <controls:SettingsExpander
-                    x:Name="RomanizedLyricsSettingsExpander"
+                    IsExpanded="{x:Bind ViewModel.IsLyricsRomanizationEnabled, Mode=OneWay}"
                     Header="{x:Bind resources:Strings.SettingsPage_RomanizedLyrics_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_RomanizedLyrics_Description, Mode=OneTime}">
                     <controls:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8D4;" />
@@ -1047,7 +1044,7 @@
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{x:Bind resources:Strings.SettingsPage_Section_Integrations, Mode=OneTime}" />
 
                 <controls:SettingsExpander
-                    x:Name="LastFmSettingsExpander"
+                    IsExpanded="{x:Bind ViewModel.IsLastFmConnected, Mode=OneWay}"
                     Header="{x:Bind resources:Strings.SettingsPage_LastFm_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_LastFm_Description, Mode=OneTime}">
                     <controls:SettingsExpander.HeaderIcon>
                         <PathIcon

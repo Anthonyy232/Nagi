@@ -11,18 +11,14 @@ using Nagi.WinUI.Popups;
 namespace Nagi.WinUI.Helpers;
 
 /// <summary>
-///     Provides robust, cancellable, and smooth animations for pop-up windows.
-///     This implementation uses an async/await loop with cancellation handling to prevent
-///     conflicting animations and ensure a jank-free experience.
+///     Animates tray popup bounds and opacity, cancelling any previous transition.
 /// </summary>
 internal static class PopupAnimation
 {
-    // Defines the duration and style of the animations.
     private const float ShowDurationMs = 250f;
     private const float HideDurationMs = 200f;
     private const float StartScale = 0.85f;
 
-    // Manages the cancellation of ongoing animations to prevent conflicts.
     private static CancellationTokenSource? _animationCts;
 
     private static ILogger? _logger;
@@ -35,33 +31,22 @@ internal static class PopupAnimation
     /// </summary>
     public static void CancelAllAnimations()
     {
-        if (_animationCts is not null)
-        {
-            _animationCts.Cancel();
-            _animationCts.Dispose();
-            _animationCts = null;
-        }
+        _animationCts?.Cancel();
+        _animationCts?.Dispose();
+        _animationCts = null;
     }
 
     /// <summary>
     ///     Animates a window into view with a scale and fade effect.
     ///     Cancels any previously running animation on the same window.
     /// </summary>
-    public static async Task AnimateIn(TrayPopup window, RectInt32 finalRect, RectInt32? sourceRect = null)
+    public static async Task AnimateIn(TrayPopup window, RectInt32 finalRect)
     {
-        // Defensively check if the window is valid before starting.
         if (window?.AppWindow is null) return;
 
         try
         {
-            // Cancel and dispose any existing animation token before creating a new one.
-            if (_animationCts is not null)
-            {
-                Logger.LogDebug("Cancelling previous animation before starting AnimateIn.");
-                _animationCts.Cancel();
-                _animationCts.Dispose();
-            }
-
+            CancelAllAnimations();
             _animationCts = new CancellationTokenSource();
             var token = _animationCts.Token;
 
@@ -69,23 +54,11 @@ internal static class PopupAnimation
             var startWidth = (int)(finalRect.Width * StartScale);
             var startHeight = (int)(finalRect.Height * StartScale);
 
-            int startX, startY;
-            if (sourceRect is { } source)
-            {
-                // Bloom out from the source (e.g., tray icon)
-                startX = source.X + (source.Width - startWidth) / 2;
-                startY = source.Y + (source.Height - startHeight) / 2;
-            }
-            else
-            {
-                // Expand from the center of the final position
-                startX = finalRect.X + (finalRect.Width - startWidth) / 2;
-                startY = finalRect.Y + (finalRect.Height - startHeight) / 2;
-            }
+            var startX = finalRect.X + (finalRect.Width - startWidth) / 2;
+            var startY = finalRect.Y + (finalRect.Height - startHeight) / 2;
 
             var startRect = new RectInt32(startX, startY, startWidth, startHeight);
 
-            // Set the window to its initial, invisible state and then show it.
             window.SetWindowOpacity(0);
             window.AppWindow.MoveAndResize(startRect);
             WindowActivator.ActivatePopupWindow(window);
@@ -99,14 +72,14 @@ internal static class PopupAnimation
                     return;
                 }
 
-                var progress = (float)stopwatch.Elapsed.TotalMilliseconds / ShowDurationMs;
+                var progress = Math.Clamp((float)stopwatch.Elapsed.TotalMilliseconds / ShowDurationMs, 0f, 1f);
                 var easedProgress = EaseOutCubic(progress);
 
                 // Interpolate all geometric properties from start to final using the eased progress.
-                var newWidth = (int)(startRect.Width + (finalRect.Width - startRect.Width) * easedProgress);
-                var newHeight = (int)(startRect.Height + (finalRect.Height - startRect.Height) * easedProgress);
-                var newX = (int)(startRect.X + (finalRect.X - startRect.X) * easedProgress);
-                var newY = (int)(startRect.Y + (finalRect.Y - startRect.Y) * easedProgress);
+                var newWidth = (int)float.Lerp(startRect.Width, finalRect.Width, easedProgress);
+                var newHeight = (int)float.Lerp(startRect.Height, finalRect.Height, easedProgress);
+                var newX = (int)float.Lerp(startRect.X, finalRect.X, easedProgress);
+                var newY = (int)float.Lerp(startRect.Y, finalRect.Y, easedProgress);
                 var newAlpha = (byte)(255 * easedProgress);
 
                 window.AppWindow.MoveAndResize(new RectInt32(newX, newY, newWidth, newHeight));
@@ -141,19 +114,11 @@ internal static class PopupAnimation
     /// </summary>
     public static async Task AnimateOut(TrayPopup window)
     {
-        // Defensively check if the window is valid and visible before starting.
         if (window?.AppWindow is null || !window.AppWindow.IsVisible) return;
 
         try
         {
-            // Cancel and dispose any existing animation token before creating a new one.
-            if (_animationCts is not null)
-            {
-                Logger.LogDebug("Cancelling previous animation before starting AnimateOut.");
-                _animationCts.Cancel();
-                _animationCts.Dispose();
-            }
-
+            CancelAllAnimations();
             _animationCts = new CancellationTokenSource();
             var token = _animationCts.Token;
 
@@ -176,14 +141,14 @@ internal static class PopupAnimation
                     return;
                 }
 
-                var progress = (float)stopwatch.Elapsed.TotalMilliseconds / HideDurationMs;
+                var progress = Math.Clamp((float)stopwatch.Elapsed.TotalMilliseconds / HideDurationMs, 0f, 1f);
                 var easedProgress = EaseInCubic(progress);
 
                 // Interpolate all geometric properties from start to final.
-                var newWidth = (int)(startRect.Width + (finalRect.Width - startRect.Width) * easedProgress);
-                var newHeight = (int)(startRect.Height + (finalRect.Height - startRect.Height) * easedProgress);
-                var newX = (int)(startRect.X + (finalRect.X - startRect.X) * easedProgress);
-                var newY = (int)(startRect.Y + (finalRect.Y - startRect.Y) * easedProgress);
+                var newWidth = (int)float.Lerp(startRect.Width, finalRect.Width, easedProgress);
+                var newHeight = (int)float.Lerp(startRect.Height, finalRect.Height, easedProgress);
+                var newX = (int)float.Lerp(startRect.X, finalRect.X, easedProgress);
+                var newY = (int)float.Lerp(startRect.Y, finalRect.Y, easedProgress);
                 var newAlpha = (byte)(255 * (1 - easedProgress));
 
                 window.AppWindow.MoveAndResize(new RectInt32(newX, newY, newWidth, newHeight));
@@ -230,40 +195,21 @@ internal static class PopupAnimation
         return progress * progress * progress;
     }
 
-    /// <summary>
-    ///     Waits for the next CompositionTarget.Rendering event.
-    ///     This ensures the animation is perfectly synced with the monitor's refresh rate.
-    /// </summary>
-    private static Task YieldToRendering(CancellationToken token)
+    private static async Task YieldToRendering(CancellationToken token)
     {
+        token.ThrowIfCancellationRequested();
         var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        void OnRendering(object? sender, object args) => tcs.TrySetResult();
 
-        // If already cancelled, return immediately.
-        if (token.IsCancellationRequested)
+        CompositionTarget.Rendering += OnRendering;
+        try
         {
-            tcs.SetCanceled(token);
-            return tcs.Task;
+            // Keep cleanup on the UI thread even if cancellation comes from another thread.
+            await tcs.Task.WaitAsync(token);
         }
-
-        EventHandler<object>? handler = null;
-        CancellationTokenRegistration registration = default;
-
-        handler = (s, e) =>
+        finally
         {
-            CompositionTarget.Rendering -= handler;
-            registration.Dispose();
-            tcs.TrySetResult();
-        };
-
-        CompositionTarget.Rendering += handler;
-
-        registration = token.Register(() =>
-        {
-            CompositionTarget.Rendering -= handler;
-            registration.Dispose();
-            tcs.TrySetCanceled();
-        });
-
-        return tcs.Task;
+            CompositionTarget.Rendering -= OnRendering;
+        }
     }
 }

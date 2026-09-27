@@ -12,6 +12,7 @@ public interface IOnlineLyricsService
     /// <param name="artistName">The artist of the track.</param>
     /// <param name="albumName">The album regarding the track.</param>
     /// <param name="duration">The duration of the track.</param>
-    /// <returns>The raw LRC string content if found; otherwise, null.</returns>
+    /// <returns>The raw LRC string content if found; null when the lookup succeeds without a match.</returns>
+    /// <remarks>Provider failures and cancellation propagate to the caller so they remain retryable.</remarks>
     Task<string?> GetLyricsAsync(string trackName, string? artistName, string? albumName, TimeSpan duration, CancellationToken cancellationToken = default);
 }
