@@ -10,6 +10,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
+        <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
         <SelfContained>true</SelfContained>
         <NoWarn>$(NoWarn);xUnit1051</NoWarn>
         <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
