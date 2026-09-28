@@ -12,7 +12,7 @@ namespace Nagi.Core.Services.Implementations;
 /// </summary>
 public class ReplayGainService : IReplayGainService
 {
-    private const double ReplayGainReference = -14.0;
+    private const double ReplayGainReference = -18.0;
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
     private readonly ILogger<ReplayGainService> _logger;
     private readonly ILoudnessAnalyzer _loudnessAnalyzer;
