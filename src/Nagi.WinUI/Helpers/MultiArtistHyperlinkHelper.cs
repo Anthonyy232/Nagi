@@ -91,7 +91,6 @@ public static class MultiArtistHyperlinkHelper
 
         if (textBlock.Parent is not Panel parentPanel)
         {
-            // Fallback: if not in a supported container, just set text
             textBlock.Text = artistString ?? string.Empty;
             return;
         }
@@ -121,6 +120,9 @@ public static class MultiArtistHyperlinkHelper
         stackPanel.Children.Clear();
 
         var artistParts = GetArtistNames(song, albumArtists, artistString);
+        var usesSongDisplayName = song is not null
+                                 && !song.SongArtists.Any(link => !string.IsNullOrWhiteSpace(link.Artist?.Name))
+                                 && (albumArtists is null || albumArtists.Count == 0);
         if (artistParts.Count == 0)
         {
             var unknownArtist = new TextBlock
@@ -144,7 +146,7 @@ public static class MultiArtistHyperlinkHelper
             {
                 Content = artistPart,
                 Command = command,
-                CommandParameter = new ArtistNavigationRequest { Song = song, ArtistName = artistPart }
+                CommandParameter = new ArtistNavigationRequest { Song = song, ArtistName = usesSongDisplayName ? null : artistPart }
             };
             if (Application.Current.Resources.TryGetValue("SongListHyperlinkButtonStyle", out var styleObj) && styleObj is Style style)
             {
