@@ -282,14 +282,18 @@
                                    Text="{x:Bind Title}" TextTrimming="CharacterEllipsis"
                                    TextWrapping="NoWrap" VerticalAlignment="Center" />
 
-                        <TextBlock Grid.Column="2"
-                                   VerticalAlignment="Center"
-                                   TextTrimming="CharacterEllipsis"
-                                   TextWrapping="NoWrap"
-                                   Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
-                                   uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName}"
-                                   uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind}"
-                                   uihelpers:MultiArtistHyperlinkHelper.Command="{Binding DataContext.GoToArtistCommand, ElementName=pageRoot}" />
+                        <Grid Grid.Column="2" SizeChanged="OnArtistColumnSizeChanged">
+                            <Grid HorizontalAlignment="Center">
+                                <TextBlock HorizontalAlignment="Left"
+                                           VerticalAlignment="Center"
+                                           TextTrimming="CharacterEllipsis"
+                                           TextWrapping="NoWrap"
+                                           Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
+                                           uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName}"
+                                           uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind}"
+                                           uihelpers:MultiArtistHyperlinkHelper.Command="{Binding DataContext.GoToArtistCommand, ElementName=pageRoot}" />
+                            </Grid>
+                        </Grid>
 
                         <HyperlinkButton
                             Grid.Column="3"
@@ -334,11 +338,11 @@
                 HorizontalAlignment="Center" />
             <TextBlock
                 Style="{StaticResource TitleTextBlockStyle}"
-                Text="{x:Bind resources:Strings.LibraryPage_EmptyState_Title, Mode=OneTime}"
+                Text="{x:Bind GetEmptyStateTitle(ViewModel.IsSearchActive), Mode=OneWay}"
                 HorizontalAlignment="Center" />
             <TextBlock
                 Style="{StaticResource SubtitleTextBlockStyle}"
-                Text="{x:Bind resources:Strings.LibraryPage_EmptyState_Subtitle, Mode=OneTime}"
+                Text="{x:Bind GetEmptyStateSubtitle(ViewModel.IsSearchActive), Mode=OneWay}"
                 HorizontalAlignment="Center"
                 Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
         </StackPanel>

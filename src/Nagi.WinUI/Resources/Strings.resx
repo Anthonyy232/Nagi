@@ -1440,6 +1440,12 @@ Error: {1}</value>
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Play</value>
   </data>
+  <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
+    <value>No songs found</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+    <value>Try searching for something else</value>
+  </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
     <value>Your library is empty</value>
   </data>

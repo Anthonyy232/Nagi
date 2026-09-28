@@ -189,7 +189,7 @@
                 Visibility="{x:Bind ViewModel.HasAlbums, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                 <GridView.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <ItemsWrapGrid ItemWidth="200" Orientation="Horizontal" />
+                        <ItemsWrapGrid ItemWidth="200" Orientation="Horizontal" SizeChanged="OnAlbumPanelSizeChanged" />
                     </ItemsPanelTemplate>
                 </GridView.ItemsPanel>
                 <GridView.ItemTemplate>

@@ -20,6 +20,17 @@ namespace Nagi.WinUI.Pages;
 /// </summary>
 public sealed partial class LibraryPage : Page
 {
+    private string GetEmptyStateTitle(bool isSearchActive) => isSearchActive
+        ? Nagi.WinUI.Resources.Strings.LibraryPage_SearchEmpty_Title
+        : Nagi.WinUI.Resources.Strings.LibraryPage_EmptyState_Title;
+
+    private string GetEmptyStateSubtitle(bool isSearchActive) => isSearchActive
+        ? Nagi.WinUI.Resources.Strings.LibraryPage_SearchEmpty_Subtitle
+        : Nagi.WinUI.Resources.Strings.LibraryPage_EmptyState_Subtitle;
+
+    private void OnArtistColumnSizeChanged(object sender, SizeChangedEventArgs e) =>
+        ((FrameworkElement)((Grid)sender).Children[0]).MaxWidth = e.NewSize.Width;
+
     private readonly ILogger<LibraryPage> _logger;
     private readonly ILibraryReader _libraryReader;
     private bool _isSearchExpanded;
