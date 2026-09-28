@@ -1190,9 +1190,13 @@ public class LibraryService : ILibraryService, IDisposable
     public async Task<IEnumerable<Album>> GetTopAlbumsForArtistAsync(Guid artistId, int limit)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        return await context.AlbumArtists.AsNoTracking()
+        var albumIds = context.AlbumArtists
             .Where(aa => aa.ArtistId == artistId)
-            .Select(aa => aa.Album)
+            .Select(aa => (Guid?)aa.AlbumId)
+            .Union(context.SongArtists.Where(sa => sa.ArtistId == artistId).Select(sa => sa.Song.AlbumId));
+
+        return await context.Albums.AsNoTracking()
+            .Where(album => albumIds.Contains(album.Id))
             .OrderByDescending(album => album.Songs.Sum(s => s.PlayCount))
             .ThenByDescending(album => album.Songs.Count)
             .ThenBy(album => album.Id)
@@ -3769,7 +3773,7 @@ public class LibraryService : ILibraryService, IDisposable
         int pageSize, SongSortOrder sortOrder, CancellationToken token)
     {
         var totalCount = await query.CountAsync(token).ConfigureAwait(false);
-        var items = await ApplySongSortOrder(SongQuery.ExcludeHeavyFields(query.AsNoTracking()), sortOrder)
+        var items = totalCount == 0 ? [] : await ApplySongSortOrder(SongQuery.ExcludeHeavyFields(query.AsNoTracking()), sortOrder)
             .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync(token).ConfigureAwait(false);
         return new PagedResult<Song>
         { Items = items, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
@@ -3822,16 +3826,28 @@ public class LibraryService : ILibraryService, IDisposable
 
     private IQueryable<Song> BuildSongSearchQuery(MusicDbContext context, string searchTerm)
     {
-        // Leading wildcards prevent index usage; consider full-text search for large datasets
         var term = LikePatternHelper.CreateContainsPattern(searchTerm);
+        var artistIds = context.Artists
+            .Where(artist => EF.Functions.Like(artist.Name, term, LikePatternHelper.EscapeCharacter))
+            .Select(artist => artist.Id);
+        var songArtistIds = context.SongArtists.Where(sa => artistIds.Contains(sa.ArtistId)).Select(sa => sa.SongId);
+        var albumIds = context.Albums
+            .Where(album => EF.Functions.Like(album.Title, term, LikePatternHelper.EscapeCharacter)
+                            || EF.Functions.Like(album.ArtistName, term, LikePatternHelper.EscapeCharacter))
+            .Select(album => (Guid?)album.Id)
+            .Union(context.AlbumArtists.Where(aa => artistIds.Contains(aa.ArtistId)).Select(aa => (Guid?)aa.AlbumId));
+        var genreSongIds = context.Genres
+            .Where(genre => EF.Functions.Like(genre.Name, term, LikePatternHelper.EscapeCharacter))
+            .SelectMany(genre => genre.Songs).Select(song => song.Id);
+
         return context.Songs
             .Where(s =>
                 EF.Functions.Like(s.Title, term, LikePatternHelper.EscapeCharacter)
                 || EF.Functions.Like(s.ArtistName, term, LikePatternHelper.EscapeCharacter)
-                || s.SongArtists.Any(sa => EF.Functions.Like(sa.Artist.Name, term, LikePatternHelper.EscapeCharacter))
-                || (s.Album != null && (EF.Functions.Like(s.Album.Title, term, LikePatternHelper.EscapeCharacter) || EF.Functions.Like(s.Album.ArtistName, term, LikePatternHelper.EscapeCharacter) || s.Album.AlbumArtists.Any(aa => EF.Functions.Like(aa.Artist.Name, term, LikePatternHelper.EscapeCharacter))))
+                || songArtistIds.Contains(s.Id)
+                || albumIds.Contains(s.AlbumId)
                 || (s.Year != null && EF.Functions.Like(s.Year.ToString(), term, LikePatternHelper.EscapeCharacter))
-                || s.Genres.Any(g => EF.Functions.Like(g.Name, term, LikePatternHelper.EscapeCharacter))
+                || genreSongIds.Contains(s.Id)
             );
     }
 

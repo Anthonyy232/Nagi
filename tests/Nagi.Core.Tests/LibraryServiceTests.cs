@@ -1817,22 +1817,42 @@ public class LibraryServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task SearchSongsPagedAsync_WithMatchingTerm_ReturnsFilteredResults()
+    public async Task GlobalSongSearch_MatchesMetadataAndTreatsWildcardsLiterally()
     {
         var folder = new Folder { Name = "F", Path = "C:\\Music" };
-        var song1 = new Song { Title = "Thunderstruck", Folder = folder, FilePath = "C:\\Music\\t.mp3" };
-        var song2 = new Song { Title = "Highway to Hell", Folder = folder, FilePath = "C:\\Music\\h.mp3" };
+        var creditedArtist = new Artist { Name = "Needle%" };
+        var otherArtist = new Artist { Name = "Other" };
+        var matches = new[]
+        {
+            new Song { Title = "Needle%" },
+            new Song { SongArtists = [new() { Artist = otherArtist }, new() { Artist = creditedArtist, Order = 1 },
+                new() { Artist = new Artist { Name = "Needle% Guest" }, Order = 2 }] },
+            new Song { Album = new Album { Title = "Needle%" } },
+            new Song { Album = new Album { AlbumArtists = [new() { Artist = otherArtist }, new() { Artist = creditedArtist, Order = 1 }] } },
+            new Song { Genres = [new Genre { Name = "Needle%" }] }
+        };
+        var yearMatch = new Song { Year = 1999 };
+        var songs = matches.Concat([yearMatch, new Song { Title = "NeedleX" }, new Song()]).ToArray();
         await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
         {
-            ctx.Folders.Add(folder);
-            ctx.Songs.AddRange(song1, song2);
+            for (var i = 0; i < songs.Length; i++)
+            {
+                songs[i].Folder = folder;
+                songs[i].FilePath = $@"C:\Music\{i}.flac";
+            }
+            ctx.Songs.AddRange(songs);
             await ctx.SaveChangesAsync();
         }
 
-        var result = await _libraryService.SearchSongsPagedAsync("thunder", 1, 10);
+        var result = await _libraryService.SearchSongsPagedAsync("needle%", 1, 20);
 
-        result.TotalCount.Should().Be(1);
-        result.Items.Should().ContainSingle(s => s.Title == "Thunderstruck");
+        result.TotalCount.Should().Be(matches.Length);
+        result.Items.Select(song => song.Id).Should().BeEquivalentTo(matches.Select(song => song.Id));
+        (await _libraryService.SearchAllSongIdsAsync("needle%", SongSortOrder.TitleAsc))
+            .Should().Equal(result.Items.Select(song => song.Id));
+        (await _libraryService.SearchSongsPagedAsync("1999", 1, 20)).Items
+            .Should().ContainSingle().Which.Id.Should().Be(yearMatch.Id);
+        (await _libraryService.SearchSongsPagedAsync("absent", 1, 20)).TotalCount.Should().Be(0);
     }
 
     [Fact]
@@ -1925,6 +1945,33 @@ public class LibraryServiceTests : IDisposable
         results.Select(album => album.Id).Should().Equal(albumHigh.Id, albumTied.Id, albumLow.Id);
         (await _libraryService.GetTopAlbumsForArtistAsync(artist.Id, 1))
             .Should().ContainSingle().Which.Id.Should().Be(albumHigh.Id);
+    }
+
+    [Fact]
+    public async Task GetTopAlbumsForArtistAsync_IncludesTrackCreditsWithoutDuplicatingAlbumCredits()
+    {
+        var artist = new Artist { Name = "Guest Artist" };
+        var folder = new Folder { Name = "Music", Path = @"C:\Music" };
+        var ownAlbum = new Album { Title = "Own Album", AlbumArtists = [new() { Artist = artist }] };
+        var compilation = new Album { Title = "Compilation" };
+        var unrelated = new Album { Title = "Other Artist" };
+        var songs = new[]
+        {
+            new Song { FilePath = @"C:\Music\own.flac", Album = ownAlbum, SongArtists = [new() { Artist = artist }] },
+            new Song { FilePath = @"C:\Music\guest1.flac", Album = compilation, SongArtists = [new() { Artist = artist }] },
+            new Song { FilePath = @"C:\Music\guest2.flac", Album = compilation, SongArtists = [new() { Artist = artist }] },
+            new Song { FilePath = @"C:\Music\other.flac", Album = unrelated }
+        };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            foreach (var song in songs) song.Folder = folder;
+            context.Songs.AddRange(songs);
+            await context.SaveChangesAsync();
+        }
+
+        var albums = await _libraryService.GetTopAlbumsForArtistAsync(artist.Id, 10);
+
+        albums.Select(album => album.Id).Should().BeEquivalentTo(new[] { ownAlbum.Id, compilation.Id });
     }
 
     [Theory]
