@@ -1668,7 +1668,7 @@
     <value>تطبيع مستوى الصوت (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>ضبط مستوى الصوت تلقائيًا إلى المستوى القياسي (-14 LUFS) لتجنب التغيرات المفاجئة في الصوت.</value>
+    <value>ضبط مستوى الصوت تلقائيًا إلى المستوى القياسي (-18 LUFS) لتجنب التغيرات المفاجئة في الصوت.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
     <value>WASAPI exclusive mode</value>

@@ -1668,7 +1668,7 @@ Fehler: {1}</value>
     <value>Lautstärke-Normalisierung (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Passt die Lautstärke automatisch an den Standardpegel (-14 LUFS) an, um plötzliche Lautstärkeänderungen zu vermeiden.</value>
+    <value>Passt die Lautstärke automatisch an den Standardpegel (-18 LUFS) an, um plötzliche Lautstärkeänderungen zu vermeiden.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
     <value>WASAPI exclusive mode</value>

@@ -1655,7 +1655,7 @@
     <value>Нормализација јачине звука (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Аутоматски подесите јачину звука на стандардни ниво (-14 LUFS) да бисте избегли изненадне промене јачине.</value>
+    <value>Аутоматски подесите јачину звука на стандардни ниво (-18 LUFS) да бисте избегли изненадне промене јачине.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
     <value>WASAPI exclusive mode</value>

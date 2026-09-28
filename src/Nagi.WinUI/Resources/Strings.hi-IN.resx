@@ -1657,7 +1657,7 @@
     <value>वॉल्यूम सामान्यीकरण (रिप्लेगेन)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>अचानक लाउडनेस परिवर्तनों से बचने के लिए वॉल्यूम को मानक स्तर (-14 LUFS) पर स्वचालित रूप से समायोजित करें।</value>
+    <value>अचानक लाउडनेस परिवर्तनों से बचने के लिए वॉल्यूम को मानक स्तर (-18 LUFS) पर स्वचालित रूप से समायोजित करें।</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
     <value>WASAPI exclusive mode</value>

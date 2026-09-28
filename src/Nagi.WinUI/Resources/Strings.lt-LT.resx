@@ -1655,7 +1655,7 @@
     <value>Garso normalizavimas (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Automatiškai reguliuoti garsumą iki standartinio lygio (-14 LUFS), kad būtų išvengta staigių garsumo pokyčių.</value>
+    <value>Automatiškai reguliuoti garsumą iki standartinio lygio (-18 LUFS), kad būtų išvengta staigių garsumo pokyčių.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
     <value>WASAPI exclusive mode</value>

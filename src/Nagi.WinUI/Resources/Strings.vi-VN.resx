@@ -1655,7 +1655,7 @@
     <value>Chuẩn hóa âm lượng (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Tự động điều chỉnh âm lượng về mức chuẩn (-14 LUFS) để tránh thay đổi độ lớn đột ngột.</value>
+    <value>Tự động điều chỉnh âm lượng về mức chuẩn (-18 LUFS) để tránh thay đổi độ lớn đột ngột.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
     <value>WASAPI exclusive mode</value>

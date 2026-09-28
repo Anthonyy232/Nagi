@@ -1668,7 +1668,7 @@ Pogreška: {1}</value>
     <value>Normalizacija glasnoće (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Automatski prilagodite glasnoću na standardnu razinu (-14 LUFS) kako biste izbjegli nagle promjene glasnoće.</value>
+    <value>Automatski prilagodite glasnoću na standardnu razinu (-18 LUFS) kako biste izbjegli nagle promjene glasnoće.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
     <value>WASAPI exclusive mode</value>

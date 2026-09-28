@@ -1668,7 +1668,7 @@ Error: {1}</value>
     <value>Normalización de volumen (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Ajustar automáticamente el volumen al nivel estándar (-14 LUFS) para evitar cambios repentinos de volumen.</value>
+    <value>Ajustar automáticamente el volumen al nivel estándar (-18 LUFS) para evitar cambios repentinos de volumen.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
     <value>WASAPI exclusive mode</value>

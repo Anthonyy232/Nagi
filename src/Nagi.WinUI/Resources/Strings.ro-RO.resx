@@ -1655,7 +1655,7 @@
     <value>Normalizare Volum (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Reglează automat volumul la nivelul standard (-14 LUFS) pentru a evita modificările bruște de volum.</value>
+    <value>Reglează automat volumul la nivelul standard (-18 LUFS) pentru a evita modificările bruște de volum.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
     <value>WASAPI exclusive mode</value>

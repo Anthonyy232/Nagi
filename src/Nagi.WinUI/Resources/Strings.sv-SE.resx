@@ -1655,7 +1655,7 @@
     <value>Volymnormalisering (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Justera volymen automatiskt till standardnivån (-14 LUFS) för att undvika plötsliga volymförändringar.</value>
+    <value>Justera volymen automatiskt till standardnivån (-18 LUFS) för att undvika plötsliga volymförändringar.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
     <value>WASAPI exclusive mode</value>

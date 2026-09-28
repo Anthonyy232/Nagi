@@ -1666,7 +1666,7 @@ Chyba: {1}</value>
     <value>Normalizace hlasitosti (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Automaticky upravit hlasitost na standardní úroveň (-14 LUFS) pro zamezení náhlých změn hlasitosti.</value>
+    <value>Automaticky upravit hlasitost na standardní úroveň (-18 LUFS) pro zamezení náhlých změn hlasitosti.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
     <value>WASAPI exclusive mode</value>

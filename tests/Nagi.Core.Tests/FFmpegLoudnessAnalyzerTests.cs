@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Globalization;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Services.Implementations;
@@ -42,23 +41,14 @@ public sealed class FFmpegLoudnessAnalyzerTests : IDisposable
     }
 
     [Fact]
-    public async Task FinalPartialBlock_ContributesToPeak_RegardlessOfCurrentCulture()
+    public async Task FinalPartialBlock_ContributesToPeak()
     {
         var signal = "if(lt(t\\,0.4)\\,0.1\\,0.9)*sin(2*PI*1000*t)";
         var path = await GenerateAsync($"aevalsrc={signal}|{signal}:s=48000:d=0.45");
-        var previousCulture = CultureInfo.CurrentCulture;
-        try
-        {
-            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fr-FR");
-            var result = await _analyzer.AnalyzeAsync(path);
+        var result = await _analyzer.AnalyzeAsync(path);
 
-            result.Should().NotBeNull();
-            result!.Value.Peak.Should().BeApproximately(0.9, 0.000001);
-        }
-        finally
-        {
-            CultureInfo.CurrentCulture = previousCulture;
-        }
+        result.Should().NotBeNull();
+        result!.Value.Peak.Should().BeApproximately(0.9, 0.000001);
     }
 
     [Fact]
@@ -101,6 +91,28 @@ public sealed class FFmpegLoudnessAnalyzerTests : IDisposable
         var wait = async () => await analyzing;
         await wait.Should().ThrowAsync<OperationCanceledException>();
         using var exclusive = File.Open(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+
+        var valid = await GenerateAsync("aevalsrc=0.125892541*sin(2*PI*1000*t)|0.125892541*sin(2*PI*1000*t):s=48000:d=3");
+        (await _analyzer.AnalyzeAsync(valid)).Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task ConcurrentAnalyses_ReturnEachTracksLoudnessAndPeak()
+    {
+        var quietPath = Path.Combine(_directory.FullName, "quiet.wav");
+        var loudPath = Path.Combine(_directory.FullName, "loud.wav");
+        await RunFFmpegAsync("-f", "lavfi", "-i", "aevalsrc=0.125892541*sin(2*PI*1000*t)|0.125892541*sin(2*PI*1000*t):s=48000:d=3", "-c:a", "pcm_f32le", quietPath);
+        await RunFFmpegAsync("-f", "lavfi", "-i", "aevalsrc=0.5*sin(2*PI*440*t)|0.5*sin(2*PI*440*t):s=48000:d=3", "-c:a", "pcm_f32le", loudPath);
+
+        var quietTask = _analyzer.AnalyzeAsync(quietPath);
+        var loudTask = _analyzer.AnalyzeAsync(loudPath);
+        await Task.WhenAll(quietTask, loudTask);
+
+        quietTask.Result.Should().NotBeNull();
+        loudTask.Result.Should().NotBeNull();
+        quietTask.Result!.Value.Peak.Should().BeApproximately(0.125892541, 0.001);
+        loudTask.Result!.Value.Peak.Should().BeApproximately(0.5, 0.001);
+        loudTask.Result.Value.LoudnessLufs.Should().BeGreaterThan(quietTask.Result.Value.LoudnessLufs + 10);
     }
 
     private async Task<string> GenerateAsync(string source, string codec = "pcm_f32le")

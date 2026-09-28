@@ -4,7 +4,21 @@
         <TargetFramework>net$(NetVersion)</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <LoudnessRuntimeIdentifier Condition="'$(RuntimeIdentifier)' != ''">$(RuntimeIdentifier)</LoudnessRuntimeIdentifier>
+        <LoudnessRuntimeIdentifier Condition="'$(LoudnessRuntimeIdentifier)' == '' and '$(Platform)' == 'ARM64'">win-arm64</LoudnessRuntimeIdentifier>
+        <LoudnessRuntimeIdentifier Condition="'$(LoudnessRuntimeIdentifier)' == '' and '$(Platform)' == 'x64'">win-x64</LoudnessRuntimeIdentifier>
+        <LoudnessRuntimeIdentifier Condition="'$(LoudnessRuntimeIdentifier)' == ''">$(NETCoreSdkRuntimeIdentifier)</LoudnessRuntimeIdentifier>
     </PropertyGroup>
+
+    <ItemGroup>
+        <Content Include="Native\libebur128\x64\ebur128.dll" Condition="'$(LoudnessRuntimeIdentifier)' == 'win-x64'"
+                 Link="ebur128.dll" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+        <Content Include="Native\libebur128\arm64\ebur128.dll" Condition="'$(LoudnessRuntimeIdentifier)' == 'win-arm64'"
+                 Link="ebur128.dll" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+        <Content Include="Native\libebur128\LICENSE" Link="libebur128-LICENSE.txt"
+                 CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    </ItemGroup>
 
     <ItemGroup>
         <InternalsVisibleTo Include="Nagi.Core.Tests" />

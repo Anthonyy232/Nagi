@@ -80,6 +80,7 @@ Localization support for Nagi is powered by Crowdin. Contributions to add new la
 - **[C#](https://docs.microsoft.com/en-us/dotnet/csharp/)** & **[.NET 10](https://dotnet.microsoft.com/)**: The core programming language and framework for building robust Windows applications.
 - **[WinUI 3](https://docs.microsoft.com/en-us/windows/apps/winui/winui3/)** in **[Windows App SDK](https://github.com/microsoft/WindowsAppSDK)**: The native UI platform for crafting modern, fluent interfaces on Windows.
 - **[LibVLCSharp](https://github.com/videolan/libvlcsharp)**: A cross-platform .NET binding for LibVLC, enabling robust and wide-ranging audio format support.
+- **[libebur128](https://github.com/jiixyj/libebur128)**: Native loudness measurement for ReplayGain, with FFmpeg providing audio decoding. Native binary provenance and rebuild instructions are in [Native/libebur128](src/Nagi.Core/Native/libebur128/README.md).
 - **[Community Toolkit for WinUI](https://github.com/CommunityToolkit/WindowsCommunityToolkit)**: A collection of controls, helpers, and services to simplify app development (e.g., ColorPicker, SettingsControls).
 - **[Community Toolkit MVVM](https://docs.microsoft.com/en-us/dotnet/communitytoolkit/mvvm/)**: A modern, fast, and platform-agnostic MVVM library.
 - **[Entity Framework Core (SQLite)](https://docs.microsoft.com/en-us/ef/core/)**: A modern object-relational mapper for .NET, used for local database storage.

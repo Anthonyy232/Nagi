@@ -1655,7 +1655,7 @@
     <value>การปรับระดับเสียงให้เป็นมาตรฐาน (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>ปรับระดับเสียงโดยอัตโนมัติให้เป็นระดับมาตรฐาน (-14 LUFS) เพื่อหลีกเลี่ยงการเปลี่ยนแปลงความดังของเสียงที่กะทันหัน</value>
+    <value>ปรับระดับเสียงโดยอัตโนมัติให้เป็นระดับมาตรฐาน (-18 LUFS) เพื่อหลีกเลี่ยงการเปลี่ยนแปลงความดังของเสียงที่กะทันหัน</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
     <value>WASAPI exclusive mode</value>

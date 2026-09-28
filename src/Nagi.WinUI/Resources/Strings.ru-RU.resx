@@ -1655,7 +1655,7 @@
     <value>Нормализация громкости (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Автоматически регулировать громкость до стандартного уровня (-14 LUFS), чтобы избежать резких изменений громкости.</value>
+    <value>Автоматически регулировать громкость до стандартного уровня (-18 LUFS), чтобы избежать резких изменений громкости.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
     <value>WASAPI exclusive mode</value>

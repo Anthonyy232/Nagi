@@ -1668,7 +1668,7 @@ Fout: {1}</value>
     <value>Volume Normalisering (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Verstel volume outomaties na die standaardvlak (-14 LUFS) om skielike volume-veranderinge te vermy.</value>
+    <value>Verstel volume outomaties na die standaardvlak (-18 LUFS) om skielike volume-veranderinge te vermy.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
     <value>WASAPI exclusive mode</value>

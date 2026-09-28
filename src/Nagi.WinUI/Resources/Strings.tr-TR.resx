@@ -1668,7 +1668,7 @@ Hata: {1}</value>
     <value>Ses Normalizasyonu (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Ani ses yüksekliği değişikliklerini önlemek için sesi otomatik olarak standart seviyeye (-14 LUFS) ayarlayın.</value>
+    <value>Ani ses yüksekliği değişikliklerini önlemek için sesi otomatik olarak standart seviyeye (-18 LUFS) ayarlayın.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
     <value>WASAPI exclusive mode</value>

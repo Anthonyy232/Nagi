@@ -1655,7 +1655,7 @@
     <value>Normalizimi i volumit (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Rregulloni automatikisht volumin në nivelin standard (-14 LUFS) për të shmangur ndryshimet e papritura të zërit.</value>
+    <value>Rregulloni automatikisht volumin në nivelin standard (-18 LUFS) për të shmangur ndryshimet e papritura të zërit.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
     <value>WASAPI exclusive mode</value>

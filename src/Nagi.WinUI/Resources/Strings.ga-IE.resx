@@ -1655,7 +1655,7 @@
     <value>Gnáthú Toirte (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Coigeartaigh an toirt go huathoibríoch go dtí an leibhéal caighdeánach (-14 LUFS) chun athruithe tobanna fuaime a sheachaint.</value>
+    <value>Coigeartaigh an toirt go huathoibríoch go dtí an leibhéal caighdeánach (-18 LUFS) chun athruithe tobanna fuaime a sheachaint.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
     <value>WASAPI exclusive mode</value>

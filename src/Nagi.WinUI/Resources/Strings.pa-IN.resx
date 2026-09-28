@@ -1655,7 +1655,7 @@
     <value>ਵਾਲੀਅਮ ਨਾਰਮਲਾਈਜ਼ੇਸ਼ਨ (ਰੀਪਲੇਗੇਨ)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>ਅਚਾਨਕ ਉੱਚੀ ਆਵਾਜ਼ ਦੀਆਂ ਤਬਦੀਲੀਆਂ ਤੋਂ ਬਚਣ ਲਈ ਵਾਲੀਅਮ ਨੂੰ ਸਟੈਂਡਰਡ ਪੱਧਰ (-14 LUFS) 'ਤੇ ਆਪਣੇ ਆਪ ਐਡਜਸਟ ਕਰੋ।</value>
+    <value>ਅਚਾਨਕ ਉੱਚੀ ਆਵਾਜ਼ ਦੀਆਂ ਤਬਦੀਲੀਆਂ ਤੋਂ ਬਚਣ ਲਈ ਵਾਲੀਅਮ ਨੂੰ ਸਟੈਂਡਰਡ ਪੱਧਰ (-18 LUFS) 'ਤੇ ਆਪਣੇ ਆਪ ਐਡਜਸਟ ਕਰੋ।</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
     <value>WASAPI exclusive mode</value>

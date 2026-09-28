@@ -1655,7 +1655,7 @@
     <value>音量標準化 (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>自動將音量調整到標準等級 (-14 LUFS)，以避免音量突然變化。</value>
+    <value>自動將音量調整到標準等級 (-18 LUFS)，以避免音量突然變化。</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
     <value>WASAPI exclusive mode</value>
