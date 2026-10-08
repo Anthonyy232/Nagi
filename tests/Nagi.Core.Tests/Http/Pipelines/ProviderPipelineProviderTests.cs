@@ -67,8 +67,9 @@ public class ProviderPipelineProviderTests
 
         var stopwatch = Stopwatch.StartNew();
         var tasks = Enumerable.Range(0, 3).Select(_ => sut.ExecuteAsync("p", _ => ValueTask.FromResult(Resp(HttpStatusCode.OK))).AsTask()).ToArray();
-        await Task.WhenAll(tasks);
+        var responses = await Task.WhenAll(tasks);
         stopwatch.Stop();
+        foreach (var response in responses) response.Dispose();
 
         stopwatch.Elapsed.Should().BeGreaterThan(TimeSpan.FromMilliseconds(800),
             "the third request must wait for the rate-limit bucket to refill");
@@ -108,7 +109,8 @@ public class ProviderPipelineProviderTests
         finally
         {
             gate.SetResult();
-            await Task.WhenAll(tasks);
+            var responses = await Task.WhenAll(tasks);
+            foreach (var response in responses) response.Dispose();
         }
 
         maxObserved.Should().BeLessThanOrEqualTo(2);
@@ -205,11 +207,11 @@ public class ProviderPipelineProviderTests
             "the retry must wait at least the X-RateLimit-Reset-In value");
     }
 
-    [Fact]
-    public async Task CircuitBreaker_TripsAfterConsecutiveFailures()
+    [Theory]
+    [InlineData(HttpStatusCode.InternalServerError)]
+    [InlineData(HttpStatusCode.Unauthorized)]
+    public async Task CircuitBreaker_TripsAfterConsecutiveFailures(HttpStatusCode statusCode)
     {
-        // MinimumThroughput=3, FailureRatio=1.0 → 3 consecutive failures trips the breaker.
-        // BreakDuration is long enough that the next call should be rejected immediately.
         await using var sut = Build(Policy("p", channel: ApiPolicy(retries: 0), breaker: new CircuitBreakerSettings
         {
             MinimumThroughput = 3,
@@ -220,33 +222,14 @@ public class ProviderPipelineProviderTests
 
         for (var i = 0; i < 3; i++)
         {
-            using var response = await sut.ExecuteAsync("p", _ => ValueTask.FromResult(Resp(HttpStatusCode.InternalServerError)));
-            response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
+            using var response = await sut.ExecuteAsync("p", _ => ValueTask.FromResult(Resp(statusCode)));
+            response.StatusCode.Should().Be(statusCode);
         }
 
         sut.IsCircuitOpen("p").Should().BeTrue();
 
         var act = async () => await sut.ExecuteAsync("p", _ => ValueTask.FromResult(Resp(HttpStatusCode.OK)));
         await act.Should().ThrowAsync<BrokenCircuitException>();
-    }
-
-    [Fact]
-    public async Task CircuitBreaker_TripsOn401()
-    {
-        await using var sut = Build(Policy("p", channel: ApiPolicy(retries: 0), breaker: new CircuitBreakerSettings
-        {
-            MinimumThroughput = 3,
-            SamplingDuration = TimeSpan.FromSeconds(30),
-            FailureRatio = 1.0,
-            BreakDuration = TimeSpan.FromMinutes(5),
-        }));
-
-        for (var i = 0; i < 3; i++)
-        {
-            await sut.ExecuteAsync("p", _ => ValueTask.FromResult(Resp(HttpStatusCode.Unauthorized)));
-        }
-
-        sut.IsCircuitOpen("p").Should().BeTrue();
     }
 
     [Fact]
@@ -258,7 +241,7 @@ public class ProviderPipelineProviderTests
 
         for (var i = 0; i < 3; i++)
         {
-            await sut.ExecuteAsync("p1", _ => ValueTask.FromResult(Resp(HttpStatusCode.InternalServerError)));
+            using var failedResponse = await sut.ExecuteAsync("p1", _ => ValueTask.FromResult(Resp(HttpStatusCode.InternalServerError)));
         }
 
         sut.IsCircuitOpen("p1").Should().BeTrue();

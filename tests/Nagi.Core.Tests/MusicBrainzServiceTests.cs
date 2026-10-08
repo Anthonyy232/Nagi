@@ -36,7 +36,6 @@ public class MusicBrainzServiceTests : IDisposable
     {
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _httpHandler.Dispose();
-        GC.SuppressFinalize(this);
     }
 
     [Fact]
@@ -169,18 +168,21 @@ public class MusicBrainzServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task SearchArtistAsync_WhenCancelledDuringDelay_ThrowsTaskCancelledException()
+    public async Task SearchArtistAsync_WhenRequestIsCancelled_PropagatesCancellation()
     {
         using var cts = new CancellationTokenSource();
 
+        var requestStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         _httpHandler.SendAsyncFunc = async (_, ct) =>
         {
-            cts.CancelAfter(10);
-            await Task.Delay(1000, ct);
+            requestStarted.SetResult();
+            await Task.Delay(Timeout.InfiniteTimeSpan, ct);
             return new HttpResponseMessage(HttpStatusCode.OK);
         };
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () => _service.SearchArtistAsync("Artist", cts.Token));
+        var request = _service.SearchArtistAsync("Artist", cts.Token);
+        await requestStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        cts.Cancel();
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => request);
     }
 
 

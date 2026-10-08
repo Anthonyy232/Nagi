@@ -222,7 +222,7 @@ public class NetEaseLyricsServiceTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task SearchLyricsAsync_WhenCancelledDuringSearch_ThrowsOperationCanceledException()
+    public async Task SearchLyricsAsync_WhenAlreadyCancelled_ThrowsOperationCanceledException()
     {
         using var cts = new CancellationTokenSource();
         cts.Cancel();

@@ -46,7 +46,6 @@ public class TheAudioDbServiceTests : IDisposable
         _service.Dispose();
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _httpHandler.Dispose();
-        GC.SuppressFinalize(this);
     }
 
     [Fact]

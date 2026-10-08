@@ -42,7 +42,6 @@ public class SmartPlaylistServiceTests : IDisposable
     public void Dispose()
     {
         _dbHelper.Dispose();
-        GC.SuppressFinalize(this);
     }
 
     private void SeedTestData()
@@ -131,20 +130,13 @@ public class SmartPlaylistServiceTests : IDisposable
         result!.Name.Should().Be("Trimmed Name");
     }
 
-    [Fact]
-    public async Task CreateSmartPlaylistAsync_WithEmptyName_ThrowsArgumentException()
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public async Task CreateSmartPlaylistAsync_WithBlankName_ThrowsArgumentException(string name)
     {
-
         await Assert.ThrowsAsync<ArgumentException>(() =>
-            _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "" }));
-    }
-
-    [Fact]
-    public async Task CreateSmartPlaylistAsync_WithWhitespaceOnlyName_ThrowsArgumentException()
-    {
-
-        await Assert.ThrowsAsync<ArgumentException>(() =>
-            _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "   " }));
+            _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = name }));
     }
 
     [Fact]
@@ -376,29 +368,20 @@ public class SmartPlaylistServiceTests : IDisposable
         songs.Should().ContainSingle().Which.Title.Should().Be("Song One");
     }
 
-    [Fact]
-    public async Task GetMatchingSongsPagedAsync_ReturnsPaginatedResults()
+    [Theory]
+    [InlineData(1, "Song One", "Song Three")]
+    [InlineData(2, "Song Two")]
+    public async Task GetMatchingSongsPagedAsync_ReturnsExpectedPage(int page, params string[] expectedTitles)
     {
         var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "Paged Test" });
 
-        var result = await _service.GetMatchingSongsPagedAsync(playlist!.Id, 1, 2);
+        var result = await _service.GetMatchingSongsPagedAsync(playlist!.Id, page, 2);
 
-        result.Items.Should().HaveCount(2);
+        result.Items.Select(song => song.Title).Should().Equal(expectedTitles);
         result.TotalCount.Should().Be(3);
-        result.PageNumber.Should().Be(1);
+        result.PageNumber.Should().Be(page);
         result.PageSize.Should().Be(2);
         result.TotalPages.Should().Be(2);
-    }
-
-    [Fact]
-    public async Task GetMatchingSongsPagedAsync_SecondPage_ReturnsRemainingItems()
-    {
-        var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "Page 2 Test" });
-
-        var result = await _service.GetMatchingSongsPagedAsync(playlist!.Id, 2, 2);
-
-        result.Items.Should().HaveCount(1);
-        result.PageNumber.Should().Be(2);
     }
 
     [Fact]

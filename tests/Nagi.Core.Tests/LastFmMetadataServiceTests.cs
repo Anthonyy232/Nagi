@@ -45,7 +45,6 @@ public class LastFmMetadataServiceTests : IDisposable
     {
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _httpMessageHandler.Dispose();
-        GC.SuppressFinalize(this);
     }
     [Fact]
     public async Task GetArtistInfoAsync_WithValidResponse_ReturnsSuccessWithMappedData()
@@ -220,13 +219,16 @@ public class LastFmMetadataServiceTests : IDisposable
     {
         using var cts = new CancellationTokenSource();
         SetupApiKey();
+        var requestStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         _httpMessageHandler.SendAsyncFunc = async (_, token) =>
         {
-            await Task.Delay(1000, token);
+            requestStarted.SetResult();
+            await Task.Delay(Timeout.InfiniteTimeSpan, token);
             return new HttpResponseMessage(HttpStatusCode.OK);
         };
 
         var task = _metadataService.GetArtistInfoAsync(ArtistName, null, cts.Token);
+        await requestStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
         cts.Cancel();
 
         await task.Awaiting(t => t).Should().ThrowAsync<TaskCanceledException>();

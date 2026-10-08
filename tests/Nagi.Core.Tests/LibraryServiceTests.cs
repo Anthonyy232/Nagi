@@ -90,7 +90,6 @@ public class LibraryServiceTests : IDisposable
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _dbHelper.Dispose();
         _httpMessageHandler.Dispose();
-        GC.SuppressFinalize(this);
     }
 
     [Fact]

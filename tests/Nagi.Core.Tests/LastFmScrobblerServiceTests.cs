@@ -53,7 +53,6 @@ public class LastFmScrobblerServiceTests : IDisposable
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _httpMessageHandler.Dispose();
         _dbHelper.Dispose();
-        GC.SuppressFinalize(this);
     }
 
     private LastFmScrobblerService CreateService()

@@ -42,7 +42,6 @@ public class LastFmAuthServiceTests : IDisposable
     {
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _httpMessageHandler.Dispose();
-        GC.SuppressFinalize(this);
     }
     [Fact]
     public async Task GetAuthenticationTokenAsync_WithValidCredentialsAndResponse_ReturnsTokenAndUrl()

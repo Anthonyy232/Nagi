@@ -29,7 +29,6 @@ public class BackupRestoreServiceTests : IDisposable
     {
         foreach (var dir in _tempDirs)
             if (Directory.Exists(dir)) Directory.Delete(dir, recursive: true);
-        GC.SuppressFinalize(this);
     }
 
     [Fact]

@@ -71,7 +71,6 @@ public class LibraryServiceBugTests : IDisposable
         _libraryService.Dispose();
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _dbHelper.Dispose();
-        GC.SuppressFinalize(this);
     }
 
     [Fact]

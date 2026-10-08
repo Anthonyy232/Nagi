@@ -41,7 +41,6 @@ public class ApiKeyServiceTests : IDisposable
     {
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _httpMessageHandler.Dispose();
-        GC.SuppressFinalize(this);
     }
 
     [Fact]

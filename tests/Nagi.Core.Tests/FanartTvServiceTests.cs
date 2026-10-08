@@ -44,7 +44,6 @@ public class FanartTvServiceTests : IDisposable
     {
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _httpHandler.Dispose();
-        GC.SuppressFinalize(this);
     }
 
     [Fact]
