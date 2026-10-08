@@ -104,7 +104,7 @@ This project is built using C# and the Windows App SDK.
 
 - Visual Studio 2026 (18.0) or later, as required for [targeting .NET 10](https://learn.microsoft.com/en-us/dotnet/core/porting/versioning-sdk-msbuild-vs)
 - The **".NET Desktop Development"** and **"Universal Windows Platform development"** workloads installed (includes Windows App SDK).
-- .NET 10 SDK 10.0.300 or later, matching `global.json`
+- .NET 10 SDK 10.0.401 or later, matching `global.json`
 
 ### Steps
 
@@ -137,6 +137,8 @@ Run the core tests and the Windows view-model tests with:
 dotnet test --project tests/Nagi.Core.Tests/Nagi.Core.Tests.csproj -c Release
 dotnet test --project tests/Nagi.WinUI.Tests/Nagi.WinUI.Tests.csproj -c Release -p:Platform=x64
 ```
+
+The test projects use Microsoft.Testing.Platform with xUnit's native runner, including Visual Studio 2026 Test Explorer. VSTest adapters are not required.
 
 The Windows tests run against the app assembly without launching a XAML application. They cover paging, queue loading, cancellation, load recovery, and artwork URIs. The core audio analysis tests require `ffmpeg` on `PATH`. Both suites run on pull requests to `master`.
 

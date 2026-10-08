@@ -607,6 +607,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable, IAsync
 
     private async Task StopNativePlaybackAsync(MediaPlayer player)
     {
+        // Upstream StopAsync waits for Stopped even when Stop returns false.
         var stopped = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 
         void OnStopped(object? sender, EventArgs args) => stopped.TrySetResult();

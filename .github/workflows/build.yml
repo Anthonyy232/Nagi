@@ -18,9 +18,9 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v7.0.0
+      - uses: actions/checkout@v7.0.1
 
-      - uses: actions/setup-dotnet@v5.4.0
+      - uses: actions/setup-dotnet@v6.0.0
         with:
           dotnet-version: 10.0.x
           cache: true
@@ -40,7 +40,7 @@ jobs:
 
       - name: Upload test results
         if: failure()
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: test-results
           path: '**/*test-results.trx'
@@ -54,9 +54,9 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v7.0.0
+      - uses: actions/checkout@v7.0.1
 
-      - uses: actions/setup-dotnet@v5.4.0
+      - uses: actions/setup-dotnet@v6.0.0
         with:
           dotnet-version: 10.0.x
           cache: true
@@ -81,13 +81,13 @@ jobs:
           }
           exit 0
 
-      - uses: azure/login@v3.0.0
+      - uses: azure/login@v3.1.0
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - uses: Azure/functions-action@v1.5.6
+      - uses: Azure/functions-action@v1.5.7
         with:
           app-name: nagiflexapiserver
           package: ./functions-output
@@ -100,9 +100,9 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v7.0.0
+      - uses: actions/checkout@v7.0.1
 
-      - uses: actions/setup-dotnet@v5.4.0
+      - uses: actions/setup-dotnet@v6.0.0
         with:
           dotnet-version: 10.0.x
           cache: true
@@ -116,7 +116,7 @@ jobs:
 
       - run: dotnet run -c Release --project benchmarks/Nagi.Benchmarks/Nagi.Benchmarks.csproj -- --filter *LibraryScanBenchmarks*
 
-      - uses: actions/upload-artifact@v7.0.1
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: Benchmark-Results
           path: BenchmarkDotNet.Artifacts/results/
@@ -162,9 +162,9 @@ jobs:
     outputs:
       artifact-id: ${{ steps.upload.outputs.artifact-id }}
     steps:
-      - uses: actions/checkout@v7.0.0
+      - uses: actions/checkout@v7.0.1
 
-      - uses: actions/setup-dotnet@v5.4.0
+      - uses: actions/setup-dotnet@v6.0.0
         with:
           dotnet-version: 10.0.x
           cache: true
@@ -240,7 +240,7 @@ jobs:
 
       - name: Upload artifact
         id: upload
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: Unsigned-MSIX-${{ github.ref_name }}
           path: ${{ github.workspace }}/bundle-output/Nagi.msixbundle
@@ -255,7 +255,7 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - uses: signpath/github-action-submit-signing-request@v2.2
+      - uses: signpath/github-action-submit-signing-request@v3.0
         with:
           api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
           organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
@@ -268,7 +268,7 @@ jobs:
           output-artifact-directory: ./signed
           github-token: '${{ secrets.GITHUB_TOKEN }}'
 
-      - uses: actions/upload-artifact@v7.0.1
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: Signed-MSIX
           path: ./signed/

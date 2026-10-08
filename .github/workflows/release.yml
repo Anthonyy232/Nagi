@@ -20,7 +20,7 @@ jobs:
       contents: read
       actions: read
     steps:
-      - uses: actions/checkout@v7.0.0
+      - uses: actions/checkout@v7.0.1
         with:
           ref: refs/tags/${{ inputs.tag }}
 
@@ -29,7 +29,7 @@ jobs:
         run: echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Download unsigned MSIX from build workflow
-        uses: dawidd6/action-download-artifact@v21
+        uses: dawidd6/action-download-artifact@v27
         with:
           workflow: build.yml
           workflow_conclusion: success
@@ -41,13 +41,13 @@ jobs:
       # SignPath needs an artifact belonging to this signing run.
       - name: Re-upload for SignPath
         id: reupload
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: Unsigned-MSIX-For-Signing
           path: Nagi.msixbundle
           if-no-files-found: error
 
-      - uses: signpath/github-action-submit-signing-request@v2.2
+      - uses: signpath/github-action-submit-signing-request@v3.0
         with:
           api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
           organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
@@ -60,7 +60,7 @@ jobs:
           output-artifact-directory: ./signed
           github-token: '${{ secrets.GITHUB_TOKEN }}'
 
-      - uses: actions/upload-artifact@v7.0.1
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: Signed-MSIX
           path: ./signed/
@@ -72,12 +72,12 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v7.0.0
+      - uses: actions/checkout@v7.0.1
         with:
           ref: refs/tags/${{ inputs.tag }}
 
       - name: Download signed MSIX
-        uses: actions/download-artifact@v8.0.1
+        uses: actions/download-artifact@v8.0.2
         with:
           name: Signed-MSIX
           path: ./signed

@@ -104,6 +104,10 @@
         <PackageReference Include="Microsoft.WindowsAppSDK.WinUI">
             <TreatAsUsed>true</TreatAsUsed>
         </PackageReference>
+        <!-- WinUI 2.3.9 requests an unpublished InteractiveExperiences 2.1.8 package. -->
+        <PackageReference Include="Microsoft.WindowsAppSDK.InteractiveExperiences">
+            <TreatAsUsed>true</TreatAsUsed>
+        </PackageReference>
         <PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
 
         <!-- Application Services (DI, Configuration) -->
