@@ -1,4 +1,5 @@
 ﻿using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.OpenTelemetry;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NagiAppFunctions;
@@ -11,7 +12,7 @@ var host = new HostBuilder()
     .ConfigureServices(services =>
     {
         services.AddApplicationInsightsTelemetryWorkerService();
-        services.ConfigureFunctionsApplicationInsights();
+        services.AddOpenTelemetry().UseFunctionsWorkerDefaults();
     })
     .Build();
 

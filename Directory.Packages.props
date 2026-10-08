@@ -52,11 +52,9 @@
     <!-- Presence -->
     <PackageVersion Include="DiscordRichPresence" Version="1.6.1.70" />
     <!-- Azure Functions -->
-    <PackageVersion Include="Azure.Identity" Version="1.21.0" />
-    <!-- 3.x removes telemetry interfaces still required by Functions.Worker.ApplicationInsights 2.x. -->
-    <PackageVersion Include="Microsoft.ApplicationInsights.WorkerService" Version="2.23.0" />
+    <PackageVersion Include="Microsoft.ApplicationInsights.WorkerService" Version="3.1.2" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker" Version="2.52.0" />
-    <PackageVersion Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" Version="2.51.0" />
+    <PackageVersion Include="Microsoft.Azure.Functions.Worker.OpenTelemetry" Version="1.2.0" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore" Version="2.1.1" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.OpenApi" Version="2.0.0-preview2" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Sdk" Version="2.1.0" />
