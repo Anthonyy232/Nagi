@@ -83,7 +83,6 @@ public class LrcService : ILrcService, IDisposable
         using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, settingsToken);
         var token = linkedCts.Token;
 
-        // Check for cancellation before making any online calls
         if (token.IsCancellationRequested)
             return null;
 

@@ -38,6 +38,8 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     private ParsedLrc? _parsedLrc;
     private Song? _currentSong;
 
+    internal Task PendingPrefetch { get; private set; } = Task.CompletedTask;
+
     public LyricsPageViewModel(
         IMusicPlaybackService playbackService,
         IDispatcherService dispatcherService,
@@ -226,7 +228,6 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
             cancellationToken = _lyricsFetchCts.Token;
         }
 
-        // Reset UI state immediately on dispatcher
         _dispatcherService.TryEnqueue(() =>
         {
             if (_isDisposed || cancellationToken.IsCancellationRequested) return;
@@ -264,8 +265,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
         _logger.LogDebug("Updating lyrics for track '{SongTitle}' ({SongId})", song.Title, song.Id);
 
-        // Start prefetch for next track immediately (runs in parallel with current fetch)
-        _ = PrefetchNextTrackLyrics(cancellationToken);
+        PendingPrefetch = PrefetchNextTrackLyrics(cancellationToken);
 
         try
         {

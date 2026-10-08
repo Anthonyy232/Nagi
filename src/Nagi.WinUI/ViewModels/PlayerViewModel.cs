@@ -525,7 +525,6 @@ public partial class PlayerViewModel : ObservableObject
 
             var fetchedSongs = await _playbackService.GetQueueTracksAsync(idsToShow);
 
-            // Check for cancellation or disposal after the async call, before updating UI
             if (token.IsCancellationRequested) return;
 
             var newDisplayQueue = idsToShow

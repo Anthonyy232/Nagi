@@ -41,8 +41,7 @@ public static class CompositionAnimationHelper
         var visual = ElementCompositionPreview.GetElementVisual(element);
         var compositor = visual.Compositor;
 
-        // Set center point based on element's actual size for proper scaling origin.
-        // Skip if ActualSize is zero (element not yet laid out) to avoid scaling from top-left.
+        // Center scale transitions on laid-out elements.
         var width = (float)element.ActualSize.X;
         var height = (float)element.ActualSize.Y;
         if (width > 0 && height > 0)

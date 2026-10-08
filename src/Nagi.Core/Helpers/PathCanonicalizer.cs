@@ -60,7 +60,7 @@ public static class PathCanonicalizer
     }
 
     /// <summary>
-    ///     Returns true if the path is a UNC path (starts with "\\" after normalization).
+    ///     Recognizes either slash form of a UNC prefix.
     /// </summary>
     public static bool IsUncPath(string path)
     {

@@ -18,12 +18,6 @@ public static class ArtistMenuFlyoutHelper
     ///     If artists are already loaded in the song object, they are used immediately.
     ///     Otherwise, they are fetched asynchronously using the provided ILibraryReader.
     /// </summary>
-    /// <param name="subMenu">The menu flyout sub-item to populate.</param>
-    /// <param name="song">The song to get artists for.</param>
-    /// <param name="goToArtistCommand">The command to execute when an artist is clicked.</param>
-    /// <param name="libraryReader">The service to fetch artists if needed.</param>
-    /// <param name="dispatcherQueue">The dispatcher queue to update UI from background threads.</param>
-    /// <param name="logger">The logger for error reporting.</param>
     public static void PopulateSubMenu(
         MenuFlyoutSubItem subMenu,
         Song song,

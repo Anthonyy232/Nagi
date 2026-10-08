@@ -9,20 +9,14 @@ namespace Nagi.Core.Helpers;
 public static class ArtistNameHelper
 {
     /// <summary>
-    ///     Core normalization logic for strings:
-    ///     1. Applying Unicode NFC normalization (ensures composed vs decomposed characters are unified)
-    ///     2. Removing null terminators and other control characters
-    ///     3. Trimming whitespace
-    ///     Returns null if the input is null, whitespace, or becomes empty after normalization.
+    ///     Applies Unicode NFC normalization, replaces null characters with a splitting separator,
+    ///     and trims whitespace. Returns null for empty names.
     /// </summary>
     public static string? NormalizeStringCore(string? s)
     {
         if (string.IsNullOrWhiteSpace(s))
             return null;
 
-        // Apply Unicode NFC normalization to unify composed/decomposed characters
-        // This ensures "é" (U+00E9) and "e\u0301" (e + combining accent) become identical
-        // Normalize() already checks IsNormalized internally, so no need to do it manually
         var normalized = s.Normalize(NormalizationForm.FormC);
 
         // Replace null terminators with a visible separator (double backslash) to prevent concatenation

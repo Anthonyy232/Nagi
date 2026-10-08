@@ -33,13 +33,14 @@ public partial class EqualizerBandViewModel : ObservableObject, IDisposable
 {
     private const int KiloHertzThreshold = 1000;
 
-    private readonly Debouncer _debouncer = new(TimeSpan.FromMilliseconds(SettingsViewModel.EqualizerDebounceDelayMilliseconds));
+    private readonly Debouncer _debouncer;
     private readonly IDispatcherService _dispatcherService;
     private bool _isExternalUpdate;
 
-    public EqualizerBandViewModel(uint index, float frequency, float initialGain, IDispatcherService dispatcherService)
+    public EqualizerBandViewModel(uint index, float frequency, float initialGain, IDispatcherService dispatcherService, TimeProvider? timeProvider = null)
     {
         _dispatcherService = dispatcherService;
+        _debouncer = new Debouncer(TimeSpan.FromMilliseconds(SettingsViewModel.EqualizerDebounceDelayMilliseconds), timeProvider);
         Index = index;
         FrequencyLabel = frequency < KiloHertzThreshold ? $"{frequency:F0}" : $"{frequency / KiloHertzThreshold:F0}K";
         SetGainFromService(initialGain);
@@ -59,6 +60,8 @@ public partial class EqualizerBandViewModel : ObservableObject, IDisposable
         try { Gain = gain; }
         finally { _isExternalUpdate = false; }
     }
+
+    internal Task PendingGainCommit => _debouncer.PendingInvocation;
 
     public void CancelPendingGain() => _debouncer.Cancel();
 
@@ -108,6 +111,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private readonly SemaphoreSlim _loadLock = new(1, 1);
 
     private const int SettingsSaveDebounceMs = 300;
+    private readonly TimeProvider _timeProvider;
 
     private bool _isDisposed;
     private bool _isInitializing;
@@ -115,17 +119,17 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private int _lastFmAuthVersion;
     private int _listenBrainzConnectionVersion;
     private int _volumeNormalizationVersion;
-    private readonly Debouncer _preampDebouncer = new(TimeSpan.FromMilliseconds(EqualizerDebounceDelayMilliseconds));
+    private readonly Debouncer _preampDebouncer;
     private CancellationTokenSource? _replayGainScanCts;
     private CancellationTokenSource? _metadataRescanCts;
-    private readonly Debouncer _playerButtonSaveDebouncer = new(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs));
-    private readonly Debouncer _navigationItemSaveDebouncer = new(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs));
-    private readonly Debouncer _lyricsProviderSaveDebouncer = new(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs));
-    private readonly Debouncer _metadataProviderSaveDebouncer = new(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs));
-    private readonly Debouncer _artistSplitSaveDebouncer = new(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs));
-    private readonly Debouncer _genreSplitSaveDebouncer = new(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs));
-    private readonly Debouncer _playerTintSaveDebouncer = new(TimeSpan.FromMilliseconds(VisualSettingDebounceMs));
-    private readonly Debouncer _accentColorSaveDebouncer = new(TimeSpan.FromMilliseconds(VisualSettingDebounceMs));
+    private readonly Debouncer _playerButtonSaveDebouncer;
+    private readonly Debouncer _navigationItemSaveDebouncer;
+    private readonly Debouncer _lyricsProviderSaveDebouncer;
+    private readonly Debouncer _metadataProviderSaveDebouncer;
+    private readonly Debouncer _artistSplitSaveDebouncer;
+    private readonly Debouncer _genreSplitSaveDebouncer;
+    private readonly Debouncer _playerTintSaveDebouncer;
+    private readonly Debouncer _accentColorSaveDebouncer;
     private CancellationTokenSource? _romanizationPackCts;
 
     public SettingsViewModel(
@@ -145,7 +149,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         IBackupRestoreService backupRestoreService,
         IDispatcherService dispatcherService,
         IRomanizationPackManager romanizationPackManager,
-        ILogger<SettingsViewModel> logger)
+        ILogger<SettingsViewModel> logger,
+        TimeProvider? timeProvider = null)
     {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
@@ -165,6 +170,16 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
         _romanizationPackManager = romanizationPackManager ?? throw new ArgumentNullException(nameof(romanizationPackManager));
         _logger = logger;
+        _timeProvider = timeProvider ?? TimeProvider.System;
+        _preampDebouncer = new Debouncer(TimeSpan.FromMilliseconds(EqualizerDebounceDelayMilliseconds), _timeProvider);
+        _playerButtonSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs), _timeProvider);
+        _navigationItemSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs), _timeProvider);
+        _lyricsProviderSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs), _timeProvider);
+        _metadataProviderSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs), _timeProvider);
+        _artistSplitSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs), _timeProvider);
+        _genreSplitSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs), _timeProvider);
+        _playerTintSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(VisualSettingDebounceMs), _timeProvider);
+        _accentColorSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(VisualSettingDebounceMs), _timeProvider);
 
         NavigationItems.CollectionChanged += OnNavigationItemsCollectionChanged;
         PlayerButtons.CollectionChanged += OnPlayerButtonsCollectionChanged;
@@ -1014,7 +1029,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         foreach (var bandInfo in _playbackService.EqualizerBands)
         {
             var gain = eqSettings.BandGains.ElementAtOrDefault((int)bandInfo.Index);
-            var bandVm = new EqualizerBandViewModel(bandInfo.Index, bandInfo.Frequency, gain, _dispatcherService);
+            var bandVm = new EqualizerBandViewModel(bandInfo.Index, bandInfo.Frequency, gain, _dispatcherService, _timeProvider);
             bandVm.GainChanged += OnBandGainChanged;
             bandVm.GainCommitted += OnBandGainCommitted;
             EqualizerBands.Add(bandVm);
@@ -1135,6 +1150,17 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             }
         });
     }
+
+    internal Task PendingSettingsSaves => Task.WhenAll(
+        _preampDebouncer.PendingInvocation,
+        _playerButtonSaveDebouncer.PendingInvocation,
+        _navigationItemSaveDebouncer.PendingInvocation,
+        _lyricsProviderSaveDebouncer.PendingInvocation,
+        _metadataProviderSaveDebouncer.PendingInvocation,
+        _artistSplitSaveDebouncer.PendingInvocation,
+        _genreSplitSaveDebouncer.PendingInvocation,
+        _playerTintSaveDebouncer.PendingInvocation,
+        _accentColorSaveDebouncer.PendingInvocation);
 
     private void ApplyWithoutSaving(Action update)
     {

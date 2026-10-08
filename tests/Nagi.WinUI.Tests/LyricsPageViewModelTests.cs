@@ -150,11 +150,12 @@ public class LyricsPageViewModelTests
         _playback.CurrentQueueIndex.Returns(0);
         _playback.CurrentTrack.Returns(current);
         using var viewModel = CreateViewModel();
+        var prefetch = viewModel.PendingPrefetch;
 
         _playback.PlaybackQueue.Returns(Array.Empty<Guid>());
         ChangeTrack(new Song { Title = "Replacement" });
         pending.SetResult(next);
-        await Task.Delay(1200);
+        await prefetch.WaitAsync(TimeSpan.FromSeconds(5));
 
         await _lyrics.DidNotReceive().GetLyricsAsync(next, Arg.Any<CancellationToken>());
         await _library.Received(1).GetSongByIdAsync(next.Id);

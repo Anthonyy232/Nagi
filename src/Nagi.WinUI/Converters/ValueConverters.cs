@@ -459,9 +459,7 @@ public class SortOrderEqualsConverter : IValueConverter
 }
 
 /// <summary>
-///     Ensures a slider's Maximum value is always at least 1 to prevent E_INVALIDARG errors.
-///     When Maximum equals Minimum (both 0), the Slider's internal calculations can produce
-///     invalid values which cause XAML rendering errors.
+///     Supplies a positive maximum for sliders whose minimum is zero, avoiding invalid XAML ranges.
 /// </summary>
 public class SliderMaximumConverter : IValueConverter
 {
@@ -475,7 +473,6 @@ public class SliderMaximumConverter : IValueConverter
             _ => 0.0
         };
 
-        // Ensure maximum is at least 1 to avoid division by zero in slider calculations
         return maximum > 0 ? maximum : 1.0;
     }
 

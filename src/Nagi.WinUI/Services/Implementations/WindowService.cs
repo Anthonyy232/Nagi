@@ -44,7 +44,6 @@ public sealed class WindowService : IWindowService, IDisposable
 
         _logger.LogDebug("Disposing and cleaning up resources.");
 
-        // Ensure we exit efficiency mode before shutdown for a clean exit.
         SetEfficiencyMode(false);
 
         if (_appWindow is not null)
@@ -216,14 +215,14 @@ public sealed class WindowService : IWindowService, IDisposable
                 case OverlappedPresenterState.Minimized:
                     if (_isMiniPlayerEnabled)
                     {
-                        if (_appWindow is not null) _appWindow.IsShownInSwitchers = false;
+                        _appWindow.IsShownInSwitchers = false;
                         ShowMiniPlayer();
                     }
 
                     break;
 
                 case OverlappedPresenterState.Restored:
-                    if (_appWindow is not null) _appWindow.IsShownInSwitchers = true;
+                    _appWindow.IsShownInSwitchers = true;
                     HideMiniPlayer();
                     break;
             }
@@ -250,7 +249,6 @@ public sealed class WindowService : IWindowService, IDisposable
             }
             finally
             {
-                // Ensure state is reset even if Close() fails.
                 _isClosingMiniPlayerProgrammatically = false;
                 _miniPlayerWindow = null;
             }

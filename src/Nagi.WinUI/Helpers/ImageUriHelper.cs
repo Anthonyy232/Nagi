@@ -25,7 +25,6 @@ public static class ImageUriHelper
     ///     This method only performs a disk read for rooted, physical file paths (e.g., C:\... or \\server\...).
     ///     For non-physical URIs (ms-appx, http, etc.), the original path is returned unchanged.
     /// </remarks>
-    /// <param name="path">The local file path or URI.</param>
     /// <returns>A URI string with a cache-buster query parameter if it's a local file; otherwise, the original path.</returns>
     public static string? GetUriWithCacheBuster(string? path)
     {
@@ -69,10 +68,8 @@ public static class ImageUriHelper
 
     /// <summary>
     ///     Appends a cache-busting query parameter to a path using a provided modification date.
-    ///     This is highly efficient for large lists as it avoids disk I/O.
+    ///     Avoids querying the timestamp; local file existence is still checked.
     /// </summary>
-    /// <param name="path">The file path or URI.</param>
-    /// <param name="modifiedDate">The modification date to use for the version.</param>
     /// <returns>A URI string with a cache-buster query parameter.</returns>
     public static string? GetUriWithCacheBuster(string? path, DateTime? modifiedDate)
     {
@@ -92,21 +89,14 @@ public static class ImageUriHelper
         }
         catch
         {
-            // Return null on any error to prevent ImageEx from trying to load invalid paths
             return null;
         }
     }
 
-    /// <summary>
-    ///     Checks if a path already has a cache-buster query parameter.
-    /// </summary>
     private static bool HasCacheBuster(string path) =>
         Uri.TryCreate(path, UriKind.Absolute, out var uri) &&
         HttpUtility.ParseQueryString(uri.Query)["v"] is not null;
 
-    /// <summary>
-    ///     Builds the final URI string with the cache-buster appended.
-    /// </summary>
     private static string BuildCacheBustedUri(string path, long ticks)
     {
         if (Uri.TryCreate(path, UriKind.Absolute, out var uri))
@@ -124,7 +114,6 @@ public static class ImageUriHelper
     ///     Safely converts a URI string to an ImageSource (BitmapImage).
     ///     Returns null if the input is null, empty, or an invalid URI.
     /// </summary>
-    /// <param name="uriString">The URI string to convert.</param>
     /// <returns>A BitmapImage if successful; otherwise, null.</returns>
     public static ImageSource? SafeGetImageSource(string? uriString)
     {
@@ -147,10 +136,8 @@ public static class ImageUriHelper
     ///     be set BEFORE the URI source so the framework decodes at the requested resolution
     ///     instead of the source's native size — using new BitmapImage(uri) starts decoding
     ///     immediately and ignores any subsequent DecodePixelWidth assignment.
+    ///     The framework multiplies the logical width by the active DPI scale.
     /// </summary>
-    /// <param name="uriString">The URI string to load.</param>
-    /// <param name="decodePixelWidth">Logical pixel width to decode at. The framework
-    ///     multiplies this by the active DPI scale automatically.</param>
     /// <returns>A configured BitmapImage, or null on invalid input.</returns>
     public static ImageSource? GetDecodedBitmap(string? uriString, int decodePixelWidth)
     {

@@ -775,7 +775,7 @@ public partial class App : Application
     {
         try
         {
-            // 1. Packaged apps store settings in LocalSettings, not settings.json
+            // Packaged settings live in LocalSettings; legacy state files are cleared below.
             try
             {
                 ApplicationData.Current.LocalSettings.Values.Clear();
@@ -785,14 +785,11 @@ public partial class App : Application
                 Log.Warning(ex, "Failed to clear LocalSettings.");
             }
 
-            // 2. Clear known settings and state files
             SafelyDeleteFile(pathConfig.SettingsFilePath);
             SafelyDeleteFile(pathConfig.PlaybackStateFilePath);
 
-            // 3. Delete the database
             DeleteDatabaseFiles(pathConfig.DatabasePath);
 
-            // 4. Clear cache directories
             SafelyDeleteDir(pathConfig.AlbumArtCachePath);
             SafelyDeleteDir(pathConfig.ArtistImageCachePath);
             SafelyDeleteDir(pathConfig.PlaylistImageCachePath);

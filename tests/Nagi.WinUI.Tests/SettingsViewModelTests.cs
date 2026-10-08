@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Time.Testing;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
@@ -26,6 +27,7 @@ public class SettingsViewModelTests : IDisposable
     private readonly IReplayGainService _replayGain = Substitute.For<IReplayGainService>();
     private readonly PlayerViewModel _player;
     private readonly SettingsViewModel _viewModel;
+    private readonly FakeTimeProvider _timeProvider = new();
 
     public SettingsViewModelTests()
     {
@@ -46,7 +48,7 @@ public class SettingsViewModelTests : IDisposable
             _playback, Substitute.For<IPlaylistExportService>(), _library, _player,
             _replayGain, _ffmpeg,
             Substitute.For<IBackupRestoreService>(), _dispatcher, Substitute.For<IRomanizationPackManager>(),
-            NullLogger<SettingsViewModel>.Instance);
+            NullLogger<SettingsViewModel>.Instance, _timeProvider);
     }
 
     public void Dispose()
@@ -336,7 +338,7 @@ public class SettingsViewModelTests : IDisposable
         _viewModel.PlayerTintIntensity = .75;
 
         await _viewModel.ResetPlayerDesignSettingsCommand.ExecuteAsync(null);
-        await Task.Delay(600);
+        await AdvanceDebouncesAsync();
 
         await _settings.Received(1).SetPlayerTintIntensityAsync(Nagi.WinUI.Services.SettingsDefaults.DefaultPlayerTintIntensity);
         await _settings.DidNotReceive().SetPlayerTintIntensityAsync(.75);
@@ -363,27 +365,27 @@ public class SettingsViewModelTests : IDisposable
     [Fact]
     public async Task EqualizerBand_InitialValueDoesNotCommit_ButLatestEditDoes()
     {
-        using var band = new EqualizerBandViewModel(0, 100, 4, new ImmediateDispatcher());
+        using var band = new EqualizerBandViewModel(0, 100, 4, new ImmediateDispatcher(), _timeProvider);
         var commits = new List<float>();
         band.GainCommitted += (_, gain) => commits.Add(gain);
 
-        await Task.Delay(600);
+        await AdvanceDebouncesAsync();
+        await band.PendingGainCommit.WaitAsync(TimeSpan.FromSeconds(5));
 
         commits.Should().BeEmpty();
 
-        var committed = new TaskCompletionSource<float>(TaskCreationOptions.RunContinuationsAsynchronously);
-        band.GainCommitted += (_, gain) => committed.TrySetResult(gain);
         band.Gain = 5;
         band.Gain = 6;
+        await AdvanceDebouncesAsync();
+        await band.PendingGainCommit.WaitAsync(TimeSpan.FromSeconds(5));
 
-        (await committed.Task.WaitAsync(TimeSpan.FromSeconds(5))).Should().Be(6);
         commits.Should().Equal(6);
     }
 
     [Fact]
     public async Task EqualizerPreset_CancelsOlderBandCommit()
     {
-        var band = new EqualizerBandViewModel(0, 100, 0, new ImmediateDispatcher());
+        var band = new EqualizerBandViewModel(0, 100, 0, new ImmediateDispatcher(), _timeProvider);
         _viewModel.EqualizerBands.Add(band);
         var commits = new List<float>();
         band.GainCommitted += (_, gain) => commits.Add(gain);
@@ -397,7 +399,7 @@ public class SettingsViewModelTests : IDisposable
         });
 
         _viewModel.SelectedEqualizerPreset = new EqualizerPreset("Preset", [7]);
-        await Task.Delay(600);
+        await AdvanceDebouncesAsync();
 
         band.Gain.Should().Be(7);
         commits.Should().BeEmpty();
@@ -406,7 +408,7 @@ public class SettingsViewModelTests : IDisposable
     [Fact]
     public async Task EqualizerReset_CancelsOlderPreampAndBandCommits()
     {
-        var band = new EqualizerBandViewModel(0, 100, 0, new ImmediateDispatcher());
+        var band = new EqualizerBandViewModel(0, 100, 0, new ImmediateDispatcher(), _timeProvider);
         _viewModel.EqualizerBands.Add(band);
         var commits = new List<float>();
         band.GainCommitted += (_, gain) => commits.Add(gain);
@@ -414,7 +416,7 @@ public class SettingsViewModelTests : IDisposable
         _viewModel.EqualizerPreamp = 2;
 
         await _viewModel.ResetEqualizerCommand.ExecuteAsync(null);
-        await Task.Delay(600);
+        await AdvanceDebouncesAsync();
 
         commits.Should().BeEmpty();
         await _playback.DidNotReceive().SetEqualizerPreampAsync(Arg.Any<float>());
@@ -429,7 +431,7 @@ public class SettingsViewModelTests : IDisposable
         _viewModel.AccentColor = Windows.UI.Color.FromArgb(255, 200, 10, 20);
 
         await _viewModel.ResetAccentColorCommand.ExecuteAsync(null);
-        await Task.Delay(600);
+        await AdvanceDebouncesAsync();
 
         await _settings.Received(1).SetAccentColorAsync(null);
         await _settings.DidNotReceive().SetAccentColorAsync(Arg.Is<Windows.UI.Color?>(color => color.HasValue));
@@ -452,7 +454,7 @@ public class SettingsViewModelTests : IDisposable
         _viewModel.PlayerButtons.CollectionChanged += (_, _) => collectionChanges++;
 
         await _viewModel.ResetPlayerButtonsCommand.ExecuteAsync(null);
-        await Task.Delay(600);
+        await AdvanceDebouncesAsync();
 
         _viewModel.PlayerButtons.Should().Equal(defaults);
         collectionChanges.Should().Be(1);
@@ -473,7 +475,7 @@ public class SettingsViewModelTests : IDisposable
         _viewModel.EqualizerPreamp = 2;
         if (dispose) _viewModel.Dispose();
 
-        await Task.Delay(600);
+        await AdvanceDebouncesAsync();
 
         if (dispose)
         {
@@ -490,5 +492,13 @@ public class SettingsViewModelTests : IDisposable
             await _settings.DidNotReceive().SetGenreSplitCharactersAsync("first");
             await _playback.DidNotReceive().SetEqualizerPreampAsync(1);
         }
+    }
+
+    private async Task AdvanceDebouncesAsync()
+    {
+        _timeProvider.Advance(TimeSpan.FromSeconds(1));
+        await Task.WhenAll(_viewModel.PendingSettingsSaves,
+            Task.WhenAll(_viewModel.EqualizerBands.Select(band => band.PendingGainCommit)))
+            .WaitAsync(TimeSpan.FromSeconds(5));
     }
 }

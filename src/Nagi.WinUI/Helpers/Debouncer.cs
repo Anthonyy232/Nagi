@@ -11,9 +11,16 @@ namespace Nagi.WinUI.Helpers;
 public sealed class Debouncer : IDisposable
 {
     private readonly TimeSpan _delay;
+    private readonly TimeProvider _timeProvider;
     private CancellationTokenSource? _cts;
 
-    public Debouncer(TimeSpan delay) { _delay = delay; }
+    public Debouncer(TimeSpan delay, TimeProvider? timeProvider = null)
+    {
+        _delay = delay;
+        _timeProvider = timeProvider ?? TimeProvider.System;
+    }
+
+    internal Task PendingInvocation { get; private set; } = Task.CompletedTask;
 
     public void Trigger(Func<CancellationToken, Task> action)
         => _ = RunAsync(action);
@@ -26,7 +33,7 @@ public sealed class Debouncer : IDisposable
         old?.Cancel();
         old?.Dispose();
 
-        return InvokeAsync(action, token, immediate);
+        return PendingInvocation = InvokeAsync(action, token, immediate);
     }
 
     private async Task InvokeAsync(Func<CancellationToken, Task> action, CancellationToken token, bool immediate)
@@ -34,7 +41,7 @@ public sealed class Debouncer : IDisposable
         try
         {
             if (!immediate)
-                await Task.Delay(_delay, token).ConfigureAwait(false);
+                await Task.Delay(_delay, _timeProvider, token).ConfigureAwait(false);
             token.ThrowIfCancellationRequested();
             await action(token).ConfigureAwait(false);
         }

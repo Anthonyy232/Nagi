@@ -336,7 +336,6 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable, IAsync
 
                 DisposeCurrentMedia("replacement load");
 
-                // Create new media and store reference
                 var extension = System.IO.Path.GetExtension(song.FilePath).ToLowerInvariant();
                 var useNativeDemuxer = UsesNativeDemuxer(extension);
 
@@ -696,7 +695,6 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable, IAsync
     {
         if (_isDisposed) return;
 
-        // Ensure volume is a valid finite number
         if (!double.IsFinite(volume))
         {
             _logger.LogWarning("SetVolumeAsync received invalid volume: {Volume}. Ignoring.", volume);
