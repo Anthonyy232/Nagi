@@ -126,12 +126,8 @@ public sealed partial class FolderSongViewPage : Page
 
         _isSearchExpanded = true;
         ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.FolderSongViewPage_SearchButton_Close_ToolTip);
-        VisualStateManager.GoToState(this, "SearchExpanded", true);
-    }
-
-    private void OnSearchExpansionCompleted(object sender, object e)
-    {
-        if (IsLoaded && _isSearchExpanded) SearchTextBox.Focus(FocusState.Programmatic);
+        VisualStateManager.GoToState(this, "SearchExpanded", false);
+        SearchTextBox.Focus(FocusState.Programmatic);
     }
 
     private void OnBreadcrumbItemClicked(BreadcrumbBar sender, BreadcrumbBarItemClickedEventArgs args)
@@ -146,7 +142,8 @@ public sealed partial class FolderSongViewPage : Page
 
         _isSearchExpanded = false;
         ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.FolderSongViewPage_SearchButton_Search_ToolTip);
-        VisualStateManager.GoToState(this, "SearchCollapsed", true);
+        VisualStateManager.GoToState(this, "SearchCollapsed", false);
+        SearchToggleButton.Focus(FocusState.Programmatic);
         ViewModel.SearchTerm = string.Empty;
     }
 

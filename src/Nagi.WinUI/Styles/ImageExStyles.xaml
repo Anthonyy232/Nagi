@@ -25,14 +25,22 @@
                             VerticalAlignment="Center"
                             Opacity="1.0"
                             Source="{TemplateBinding PlaceholderSource}"
-                            Stretch="{TemplateBinding PlaceholderStretch}" />
+                            Stretch="{TemplateBinding PlaceholderStretch}">
+                            <Image.OpacityTransition>
+                                <ScalarTransition Duration="0:0:0.2" />
+                            </Image.OpacityTransition>
+                        </Image>
                         <Image
                             Name="Image"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             NineGrid="{TemplateBinding NineGrid}"
                             Opacity="0.0"
-                            Stretch="{TemplateBinding Stretch}" />
+                            Stretch="{TemplateBinding Stretch}">
+                            <Image.OpacityTransition>
+                                <ScalarTransition Duration="0:0:0.2" />
+                            </Image.OpacityTransition>
+                        </Image>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Failed">
@@ -48,20 +56,17 @@
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="Loaded">
-                                    <Storyboard>
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="Image"
-                                            Storyboard.TargetProperty="Opacity"
-                                            From="0"
-                                            To="1" />
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="PlaceholderImage"
-                                            Storyboard.TargetProperty="Opacity"
-                                            From="1"
-                                            To="0" />
-                                    </Storyboard>
+                                    <VisualState.Setters>
+                                        <Setter Target="Image.Opacity" Value="1" />
+                                        <Setter Target="PlaceholderImage.Opacity" Value="0" />
+                                    </VisualState.Setters>
                                 </VisualState>
-                                <VisualState x:Name="Unloaded" />
+                                <VisualState x:Name="Unloaded">
+                                    <VisualState.Setters>
+                                        <Setter Target="Image.Opacity" Value="0" />
+                                        <Setter Target="PlaceholderImage.Opacity" Value="1" />
+                                    </VisualState.Setters>
+                                </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                     </Grid>

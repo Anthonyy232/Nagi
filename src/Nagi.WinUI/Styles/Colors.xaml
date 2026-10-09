@@ -47,7 +47,6 @@
     <Thickness x:Key="PageHeaderMarginIndented">24,0,24,24</Thickness>
 
     <Thickness x:Key="SongListViewPadding">24,0,24,0</Thickness>
-    <Thickness x:Key="SongListViewMargin">0,0,0,132</Thickness>
 
     <x:Double x:Key="SearchBoxExpandedWidth">300</x:Double>
     <x:Double x:Key="SearchBoxExpandedWidthLarge">360</x:Double>

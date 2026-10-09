@@ -44,6 +44,17 @@ internal static class PopupAnimation
             var token = _animationCts.Token;
             var fullRect = showRect ?? new RectInt32(window.AppWindow.Position.X, window.AppWindow.Position.Y,
                 window.AppWindow.Size.Width, window.AppWindow.Size.Height);
+            if (!CompositionAnimationHelper.AreAnimationsEnabled)
+            {
+                window.SetWindowOpacity(255);
+                if (showing)
+                {
+                    window.AppWindow.MoveAndResize(fullRect);
+                    WindowActivator.ActivatePopupWindow(window);
+                }
+                else window.AppWindow.Hide();
+                return;
+            }
             var scaledWidth = (int)(fullRect.Width * StartScale);
             var scaledHeight = (int)(fullRect.Height * StartScale);
             var scaledRect = new RectInt32(fullRect.X + (fullRect.Width - scaledWidth) / 2,
@@ -60,7 +71,7 @@ internal static class PopupAnimation
             }
 
             var stopwatch = Stopwatch.StartNew();
-            while (stopwatch.Elapsed.TotalMilliseconds < durationMs)
+            while (CompositionAnimationHelper.AreAnimationsEnabled && stopwatch.Elapsed.TotalMilliseconds < durationMs)
             {
                 token.ThrowIfCancellationRequested();
                 var progress = Math.Clamp((float)stopwatch.Elapsed.TotalMilliseconds / durationMs, 0f, 1f);

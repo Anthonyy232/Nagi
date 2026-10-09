@@ -131,7 +131,7 @@
         <!-- Unsynchronized (plain text) lyrics display -->
         <ListView
             Grid.Row="2"
-            Padding="24,0,24,132"
+            Padding="24,0,24,0"
             ItemsSource="{x:Bind ViewModel.UnsyncedLyricLines, Mode=OneWay}"
             Background="Transparent"
             SelectionMode="None"

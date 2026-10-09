@@ -103,7 +103,7 @@
                       Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
 
             <Grid Visibility="{x:Bind ViewModel.HasData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <StackPanel Padding="24,12,24,132" Spacing="20">
+                <StackPanel Padding="24,12,24,0" Spacing="20">
                     <StackPanel.ChildrenTransitions>
                         <TransitionCollection>
                             <EntranceThemeTransition FromVerticalOffset="40" />

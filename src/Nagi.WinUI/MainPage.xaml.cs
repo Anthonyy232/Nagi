@@ -118,6 +118,9 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private readonly IThemeService _themeService;
     private readonly IWin32InteropService _win32InteropService;
 
+    private SplitViewContentMotion? _queueContentMotion;
+    private SplitViewContentMotion? _navigationContentMotion;
+
     private bool _isPlayerAnimationEnabled = true;
     private bool _isPointerOverPlayer;
     private readonly DispatcherTimer _hoverTimer = new();
@@ -217,8 +220,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private void ContentRegion_SizeChanged(object sender, SizeChangedEventArgs e)
     {
-        QueuePanel.MaxWidth = Math.Max(0, e.NewSize.Width - 24);
-        Grid.SetColumnSpan(ContentFrame, e.NewSize.Width < 760 ? 2 : 1);
+        QueueSplitView.OpenPaneLength = Math.Min(332, Math.Max(0, e.NewSize.Width - 12));
+        QueueSplitView.DisplayMode = e.NewSize.Width < 760 ? SplitViewDisplayMode.Overlay : SplitViewDisplayMode.Inline;
     }
 
     private async void Queue_Drop(object sender, DragEventArgs e)
@@ -299,19 +302,22 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         return _themeService.ApplyDynamicThemeFromSwatchesAsync(song?.LightSwatchId, song?.DarkSwatchId);
     }
 
+    private bool ShouldExpandPlayer =>
+        !_isPlayerAnimationEnabled || _isPointerOverPlayer || ViewModel.IsQueuePanelOpen ||
+        ViewModel.CurrentPlayingTrack != null && ViewModel.IsPlaying;
+
     private void UpdatePlayerVisualState(bool useTransitions = true)
     {
-        var isPlaying = ViewModel.CurrentPlayingTrack != null && ViewModel.IsPlaying;
-        var shouldBeExpanded = !_isPlayerAnimationEnabled || isPlaying || _isPointerOverPlayer || ViewModel.IsQueuePanelOpen;
+        var shouldBeExpanded = ShouldExpandPlayer;
         var stateName = shouldBeExpanded ? "PlayerExpanded" : "PlayerCollapsed";
 
-        // XAML handles MinHeight/MaxHeight (layout-dependent)
+        useTransitions &= CompositionAnimationHelper.AreAnimationsEnabled;
         VisualStateManager.GoToState(this, stateName, useTransitions);
+        if (!useTransitions) PlayerStateGroup.CurrentState?.Storyboard?.SkipToFill();
 
-        // Composition handles opacity (GPU-accelerated)
+        var targetOpacity = shouldBeExpanded ? 1f : 0f;
         if (useTransitions)
         {
-            var targetOpacity = shouldBeExpanded ? 1f : 0f;
             var duration = shouldBeExpanded ? 350 : 150;
             var delay = shouldBeExpanded ? 100 : 0;
 
@@ -321,7 +327,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         }
         else
         {
-            var targetOpacity = shouldBeExpanded ? 1f : 0f;
             CompositionAnimationHelper.SetOpacityImmediate(SeekBarGrid, targetOpacity);
             CompositionAnimationHelper.SetOpacityImmediate(ArtistNameHyperlink, targetOpacity);
             CompositionAnimationHelper.SetOpacityImmediate(SecondaryControlsContainer, targetOpacity);
@@ -361,6 +366,11 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private async void OnMainPageLoaded(object sender, RoutedEventArgs e)
     {
         _isUnloaded = false;
+        _queueContentMotion ??= SplitViewContentMotion.Attach(QueueSplitView);
+        NavView.ApplyTemplate();
+        if (VisualTreeHelper.GetChildrenCount(NavView) > 0 &&
+            (VisualTreeHelper.GetChild(NavView, 0) as FrameworkElement)?.FindName("RootSplitView") is SplitView navigationSplitView)
+            _navigationContentMotion ??= SplitViewContentMotion.Attach(navigationSplitView);
         _queuePlayingBinder ??= new NowPlayingIndicatorBinder(
             QueueListView, null, ViewModel,
             (Brush)Application.Current.Resources["AppPrimaryColorBrush"],
@@ -377,6 +387,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             ActualThemeChanged += OnActualThemeChanged;
             ContentFrame.Navigated += OnContentFrameNavigated;
             ViewModel.PropertyChanged += OnViewModelPropertyChanged;
+            CompositionAnimationHelper.AnimationsEnabledChanged += OnAnimationsEnabledChanged;
             _settingsService.PlayerAnimationSettingChanged += OnPlayerAnimationSettingChanged;
             _settingsService.NavigationSettingsChanged += OnNavigationSettingsChanged;
             _settingsService.TransparencyEffectsSettingChanged += OnTransparencyEffectsSettingChanged;
@@ -418,6 +429,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         ActualThemeChanged -= OnActualThemeChanged;
         ContentFrame.Navigated -= OnContentFrameNavigated;
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
+        CompositionAnimationHelper.AnimationsEnabledChanged -= OnAnimationsEnabledChanged;
         _settingsService.PlayerAnimationSettingChanged -= OnPlayerAnimationSettingChanged;
         _settingsService.NavigationSettingsChanged -= OnNavigationSettingsChanged;
         _settingsService.TransparencyEffectsSettingChanged -= OnTransparencyEffectsSettingChanged;
@@ -457,6 +469,18 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private void OnTransparencyEffectsSettingChanged(bool isEnabled)
     {
         _ = UpdateUiAsync(SetPlatformSpecificBrushAsync);
+    }
+
+    private void OnAnimationsEnabledChanged(Windows.UI.ViewManagement.UISettings sender,
+        Windows.UI.ViewManagement.UISettingsAnimationsEnabledChangedEventArgs args)
+    {
+        _dispatcherService.TryEnqueue(() =>
+        {
+            if (_isUnloaded) return;
+            UpdatePlayerVisualState(false);
+            if (!CompositionAnimationHelper.AreAnimationsEnabled)
+                PlayerVisibilityStates.CurrentState?.Storyboard?.SkipToFill();
+        });
     }
 
     private void OnPlayerAnimationSettingChanged(bool isEnabled)
@@ -535,9 +559,14 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             UpdateNavViewSelection(e.SourcePageType);
 
             var isSettingsPage = e.SourcePageType == typeof(SettingsPage);
-            QueuePanel.Margin = new Thickness(0, 12, 12, isSettingsPage ? 12 : 156);
+            // Keep destination bounds stable while player space changes, so WinUI can finish the outgoing fade.
+            var pageHeightAnimation = isSettingsPage ? HiddenPageHeightAnimation : VisiblePageHeightAnimation;
+            var reservedHeight = isSettingsPage ? 0 : ShouldExpandPlayer ? 132 : 80;
+            pageHeightAnimation.From = pageHeightAnimation.To = Math.Max(0, ContentRegion.ActualHeight - reservedHeight);
+            if (isSettingsPage) PlayerSpaceHideAnimation.From = PlayerContentSpace.ActualHeight;
             var stateName = isSettingsPage ? "PlayerHidden" : "PlayerVisible";
-            VisualStateManager.GoToState(this, stateName, true);
+            VisualStateManager.GoToState(this, stateName, CompositionAnimationHelper.AreAnimationsEnabled);
+            if (!CompositionAnimationHelper.AreAnimationsEnabled) PlayerVisibilityStates.CurrentState?.Storyboard?.SkipToFill();
         }
         catch (Exception ex)
         {
@@ -730,19 +759,16 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         if (SeeAllSearchStates.CurrentState?.Name == "SeeAllSearchExpanded")
             CollapseSeeAllSearch();
         else
-            VisualStateManager.GoToState(this, "SeeAllSearchExpanded", true);
-    }
-
-    private void OnSeeAllSearchExpansionCompleted(object sender, object e)
-    {
-        if (IsLoaded && InsightsVm.IsSeeAllOpen && SeeAllSearchStates.CurrentState?.Name == "SeeAllSearchExpanded")
+        {
+            VisualStateManager.GoToState(this, "SeeAllSearchExpanded", false);
             SeeAllSearchTextBox.Focus(FocusState.Programmatic);
+        }
     }
 
     private void CollapseSeeAllSearch()
     {
         InsightsVm.SearchTerm = string.Empty;
-        VisualStateManager.GoToState(this, "SeeAllSearchCollapsed", true);
+        VisualStateManager.GoToState(this, "SeeAllSearchCollapsed", false);
         SeeAllSearchToggleButton.Focus(FocusState.Programmatic);
     }
 

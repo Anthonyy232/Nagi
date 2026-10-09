@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.WinUI.Controls;
+using Nagi.WinUI.Helpers;
 using Nagi.WinUI.ViewModels;
 
 namespace Nagi.WinUI.Pages;
@@ -41,7 +42,8 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider
     {
         _isUnloaded = false;
         _logger.LogDebug("OnboardingPage loaded.");
-        VisualStateManager.GoToState(this, "PageLoaded", true);
+        VisualStateManager.GoToState(this, "PageLoaded", CompositionAnimationHelper.AreAnimationsEnabled);
+        if (!CompositionAnimationHelper.AreAnimationsEnabled) EntranceStates.CurrentState?.Storyboard?.SkipToFill();
         ViewModel.PropertyChanged += ViewModel_PropertyChanged;
         UpdateVisualState(ViewModel.IsAnyOperationInProgress);
     }
@@ -73,6 +75,7 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider
     {
         var stateName = isWorking ? "Working" : "Idle";
         _logger.LogDebug("Updating visual state to '{StateName}'.", stateName);
-        VisualStateManager.GoToState(this, stateName, true);
+        VisualStateManager.GoToState(this, stateName, CompositionAnimationHelper.AreAnimationsEnabled);
+        if (!CompositionAnimationHelper.AreAnimationsEnabled) ActivityStates.CurrentState?.Storyboard?.SkipToFill();
     }
 }

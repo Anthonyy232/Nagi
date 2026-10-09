@@ -1,6 +1,8 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
+using Nagi.WinUI.Helpers;
+using Windows.UI.ViewManagement;
 
 namespace Nagi.WinUI.Controls;
 
@@ -46,9 +48,24 @@ public sealed partial class NowPlayingIndicator : UserControl
     public NowPlayingIndicator()
     {
         InitializeComponent();
-        Loaded += (_, _) => ApplyState();
-        Unloaded += (_, _) => EqualizerStoryboard.Stop();
+        Loaded += OnLoaded;
+        Unloaded += OnUnloaded;
     }
+
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        CompositionAnimationHelper.AnimationsEnabledChanged += OnAnimationsEnabledChanged;
+        ApplyState();
+    }
+
+    private void OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        CompositionAnimationHelper.AnimationsEnabledChanged -= OnAnimationsEnabledChanged;
+        EqualizerStoryboard.Stop();
+    }
+
+    private void OnAnimationsEnabledChanged(UISettings sender, UISettingsAnimationsEnabledChangedEventArgs args) =>
+        DispatcherQueue.TryEnqueue(ApplyState);
 
     private static void OnPlaybackStateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -67,7 +84,11 @@ public sealed partial class NowPlayingIndicator : UserControl
         }
 
         RootGrid.Visibility = Visibility.Visible;
-        if (IsPlaying)
+        if (!CompositionAnimationHelper.AreAnimationsEnabled)
+        {
+            EqualizerStoryboard.Stop();
+        }
+        else if (IsPlaying)
         {
             if (EqualizerStoryboard.GetCurrentState() == ClockState.Stopped)
                 EqualizerStoryboard.Begin();

@@ -32,6 +32,8 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
     public int Version { get; private set; }
     public bool HasMoreItems => !_isDisposed && _isActive && !HasLoadError && _loadedCount < _ids.Length;
     public bool IsLoading => _isLoading;
+    public bool ShowInitialLoading => IsLoading && Count == 0;
+    public bool ShowMoreLoading => IsLoading && Count > 0;
     public bool HasLoadError => _hasLoadError;
     public bool ShowEmptyState => _isActive && !IsLoading && !HasLoadError && Count == 0;
     public string TotalDurationText { get; private set; } = string.Empty;
@@ -40,7 +42,7 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
     {
         if (_isDisposed) return;
         _isActive = active;
-        if (active) Refresh(reloadMetadata: true);
+        if (active) Refresh();
         else
         {
             _refreshCts.Cancel();
@@ -61,22 +63,22 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
     {
         if (_isDisposed) return;
         _reloadMetadata |= reloadMetadata;
+        if (!_isActive) return;
         var pageSize = Math.Max(128, Math.Max(_loadedCount, Count));
-        var cachedEntries = _isActive && !_reloadMetadata
+        var cachedEntries = !_reloadMetadata
             ? this.ToDictionary(entry => entry.Id) : new Dictionary<Guid, QueueEntry>();
         Version++;
         _refreshCts.Cancel();
         _refreshCts.Dispose();
         _refreshCts = new CancellationTokenSource();
-        var ids = _isActive
-            ? (playbackService.IsShuffleEnabled ? playbackService.ShuffledQueue : playbackService.PlaybackQueue).ToArray()
-            : [];
-        var durationChanged = _reloadMetadata || _ids.Length != ids.Length || !_ids.ToHashSet().SetEquals(ids);
+        var ids = (playbackService.IsShuffleEnabled ? playbackService.ShuffledQueue : playbackService.PlaybackQueue).ToArray();
+        var durationChanged = _reloadMetadata || _ids.Length != ids.Length || !_ids.ToHashSet().SetEquals(ids)
+            || (_durationCts.IsCancellationRequested && TotalDurationText.Length == 0);
         _ids = ids;
         _loadedCount = 0;
         _loadTask = null;
         SetLoadState(false, false);
-        if (!_isActive || _ids.Length == 0) Clear();
+        if (_ids.Length == 0) Clear();
         if (durationChanged)
         {
             _durationCts.Cancel();
@@ -87,7 +89,6 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(TotalDurationText)));
         }
         OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasMoreItems)));
-        if (!_isActive) return;
         _loadTask = LoadPageAsync(_refreshCts.Token, pageSize, cachedEntries);
         if (_showTotalDuration && durationChanged) _durationTask = UpdateDurationAsync(_durationCts.Token);
     }
@@ -163,6 +164,8 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
         OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsLoading)));
         OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasLoadError)));
         OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShowEmptyState)));
+        OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShowInitialLoading)));
+        OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShowMoreLoading)));
         OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasMoreItems)));
     }
 
@@ -170,6 +173,8 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
     {
         base.OnCollectionChanged(e);
         OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShowEmptyState)));
+        OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShowInitialLoading)));
+        OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShowMoreLoading)));
     }
 
     private async Task UpdateDurationAsync(CancellationToken token)

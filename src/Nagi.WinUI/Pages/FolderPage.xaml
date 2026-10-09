@@ -55,7 +55,6 @@
             ItemContainerStyle="{StaticResource AnimatedGridViewItemStyle}"
             ItemsSource="{x:Bind ViewModel.Folders, Mode=OneWay}"
             Padding="{StaticResource SongListViewPadding}"
-            Margin="{StaticResource SongListViewMargin}"
             Visibility="{x:Bind ViewModel.HasFolders, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>

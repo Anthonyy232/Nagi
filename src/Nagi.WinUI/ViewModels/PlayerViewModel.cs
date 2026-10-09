@@ -146,6 +146,8 @@ public partial class PlayerViewModel : ObservableObject
 
     partial void OnIsQueuePanelOpenChanged(bool value) => SidebarQueue.SetActive(value);
 
+    partial void OnIsQueueViewVisibleChanged(bool value) => UpdateCurrentQueueDisplay();
+
     [ObservableProperty] public partial bool IsLyricsPageActive { get; set; }
 
     [ObservableProperty] public partial bool IsVolumeControlVisible { get; set; }
@@ -482,9 +484,11 @@ public partial class PlayerViewModel : ObservableObject
         ClearQueueCommand.NotifyCanExecuteChanged();
         OnPropertyChanged(nameof(QueueTrackCountText));
 
-        // Cancel any previous in-flight fetch to prevent stale data from arriving out of order
         _queueDisplayCts?.Cancel();
         _queueDisplayCts?.Dispose();
+        _queueDisplayCts = null;
+        if (!IsQueueViewVisible) return;
+
         _queueDisplayCts = new CancellationTokenSource();
         var token = _queueDisplayCts.Token;
 
@@ -493,7 +497,6 @@ public partial class PlayerViewModel : ObservableObject
 
     private async Task UpdateCurrentQueueDisplayAsync(CancellationToken token)
     {
-
         try
         {
             var isShuffleEnabled = _playbackService.IsShuffleEnabled;
@@ -512,8 +515,6 @@ public partial class PlayerViewModel : ObservableObject
                 ? _playbackService.CurrentShuffledIndex
                 : _playbackService.CurrentQueueIndex;
 
-            // For large libraries, we only show a window of the queue to keep the UI snappy
-            // and avoid allocating 500k objects in the ObservableCollection.
             const int displayWindowSize = 100;
             var start = currentTrackIndexInSource >= 0 && currentTrackIndexInSource < sourceQueue.Count
                 ? currentTrackIndexInSource : 0;
@@ -686,7 +687,7 @@ public partial class PlayerViewModel : ObservableObject
         RunOnUIThread(() =>
         {
             UpdateCurrentQueueDisplay();
-            if (IsQueuePanelOpen) SidebarQueue.Refresh(reloadMetadata: true);
+            SidebarQueue.Refresh(reloadMetadata: true);
         });
     }
 

@@ -56,6 +56,30 @@ public class PlayerViewModelTests : IDisposable
         _playback.DidNotReceive().SetVolumeAsync(Arg.Any<double>());
     }
 
+    [Fact]
+    public async Task HiddenQueuePreview_DefersFetchUntilOpenedAndRefreshesOnReopen()
+    {
+        var first = new Song { Title = "First" };
+        var next = new Song { Title = "Next" };
+        _playback.GetQueueTracksAsync(Arg.Any<IEnumerable<Guid>>())
+            .Returns(new Dictionary<Guid, Song> { [first.Id] = first, [next.Id] = next });
+        _playback.PlaybackQueue.Returns(new[] { first.Id });
+        _playback.QueueChanged += Raise.Event<Action>();
+        _playback.TrackChanged += Raise.Event<Action>();
+        await _playback.DidNotReceive().GetQueueTracksAsync(Arg.Any<IEnumerable<Guid>>());
+
+        _viewModel.IsQueueViewVisible = true;
+        _viewModel.CurrentQueue.Should().ContainSingle().Which.Should().BeSameAs(first);
+        _viewModel.IsQueueViewVisible = false;
+        _playback.ClearReceivedCalls();
+        _playback.PlaybackQueue.Returns(new[] { next.Id });
+        _playback.QueueChanged += Raise.Event<Action>();
+        await _playback.DidNotReceive().GetQueueTracksAsync(Arg.Any<IEnumerable<Guid>>());
+
+        _viewModel.IsQueueViewVisible = true;
+        _viewModel.CurrentQueue.Should().ContainSingle().Which.Should().BeSameAs(next);
+    }
+
     [Theory]
     [InlineData(false, 4, 3, 1, 4)]
     [InlineData(true, 4, 3, 1, 4)]
@@ -71,6 +95,7 @@ public class PlayerViewModelTests : IDisposable
         _playback.CurrentQueueIndex.Returns(index);
         _playback.CurrentShuffledIndex.Returns(index);
         _playback.GetQueueTracksAsync(Arg.Any<IEnumerable<Guid>>()).Returns(songs.ToDictionary(song => song.Id));
+        _viewModel.IsQueueViewVisible = true;
         _playback.QueueChanged += Raise.Event<Action>();
         _viewModel.CurrentQueue.Should().HaveCount(linearCount);
 

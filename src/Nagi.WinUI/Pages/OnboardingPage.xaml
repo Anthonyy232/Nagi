@@ -28,8 +28,7 @@
                         <DoubleAnimation
                             Storyboard.TargetName="MainCard"
                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
-                            From="0.95" To="1" Duration="0:0:0.5"
-                            EnableDependentAnimation="True">
+                            From="0.95" To="1" Duration="0:0:0.5">
                             <DoubleAnimation.EasingFunction>
                                 <BackEase EasingMode="EaseOut" />
                             </DoubleAnimation.EasingFunction>
@@ -37,8 +36,7 @@
                         <DoubleAnimation
                             Storyboard.TargetName="MainCard"
                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
-                            From="0.95" To="1" Duration="0:0:0.5"
-                            EnableDependentAnimation="True">
+                            From="0.95" To="1" Duration="0:0:0.5">
                             <DoubleAnimation.EasingFunction>
                                 <BackEase EasingMode="EaseOut" />
                             </DoubleAnimation.EasingFunction>
@@ -51,8 +49,7 @@
                             BeginTime="0:0:0.2"
                             Storyboard.TargetName="CardContent"
                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
-                            From="20" To="0" Duration="0:0:0.5"
-                            EnableDependentAnimation="True">
+                            From="20" To="0" Duration="0:0:0.5">
                             <DoubleAnimation.EasingFunction>
                                 <CubicEase EasingMode="EaseOut" />
                             </DoubleAnimation.EasingFunction>
@@ -72,8 +69,7 @@
                         <DoubleAnimation
                             Storyboard.TargetName="CallToActionPanel"
                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.Y)"
-                            From="20" To="0" Duration="0:0:0.4"
-                            EnableDependentAnimation="True">
+                            From="20" To="0" Duration="0:0:0.4">
                             <DoubleAnimation.EasingFunction>
                                 <CubicEase EasingMode="EaseOut" />
                             </DoubleAnimation.EasingFunction>
@@ -90,8 +86,7 @@
                         <DoubleAnimation
                             Storyboard.TargetName="ProgressPanel"
                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.Y)"
-                            To="-20" Duration="0:0:0.4"
-                            EnableDependentAnimation="True">
+                            To="-20" Duration="0:0:0.4">
                             <DoubleAnimation.EasingFunction>
                                 <CubicEase EasingMode="EaseIn" />
                             </DoubleAnimation.EasingFunction>
@@ -103,13 +98,11 @@
                         <DoubleAnimation
                             Storyboard.TargetName="ProgressPanel"
                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
-                            To="0.9" Duration="0:0:0.4"
-                            EnableDependentAnimation="True" />
+                            To="0.9" Duration="0:0:0.4" />
                         <DoubleAnimation
                             Storyboard.TargetName="ProgressPanel"
                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
-                            To="0.9" Duration="0:0:0.4"
-                            EnableDependentAnimation="True" />
+                            To="0.9" Duration="0:0:0.4" />
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProgressPanel"
                                                        Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="Collapsed" />
@@ -121,8 +114,7 @@
                         <DoubleAnimation
                             Storyboard.TargetName="CallToActionPanel"
                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.Y)"
-                            To="20" Duration="0:0:0.3"
-                            EnableDependentAnimation="True">
+                            To="20" Duration="0:0:0.3">
                             <DoubleAnimation.EasingFunction>
                                 <CubicEase EasingMode="EaseOut" />
                             </DoubleAnimation.EasingFunction>
@@ -139,8 +131,7 @@
                         <DoubleAnimation
                             Storyboard.TargetName="ProgressPanel"
                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.Y)"
-                            From="20" To="0" Duration="0:0:0.5"
-                            EnableDependentAnimation="True">
+                            From="20" To="0" Duration="0:0:0.5">
                             <DoubleAnimation.EasingFunction>
                                 <BackEase Amplitude="0.3" EasingMode="EaseOut" />
                             </DoubleAnimation.EasingFunction>
@@ -152,13 +143,11 @@
                         <DoubleAnimation
                             Storyboard.TargetName="ProgressPanel"
                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
-                            From="0.9" To="1.0" Duration="0:0:0.5"
-                            EnableDependentAnimation="True" />
+                            From="0.9" To="1.0" Duration="0:0:0.5" />
                         <DoubleAnimation
                             Storyboard.TargetName="ProgressPanel"
                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
-                            From="0.9" To="1.0" Duration="0:0:0.5"
-                            EnableDependentAnimation="True" />
+                            From="0.9" To="1.0" Duration="0:0:0.5" />
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProgressPanel"
                                                        Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />

@@ -92,72 +92,42 @@
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="SeeAllSearchStates">
                 <VisualState x:Name="SeeAllSearchCollapsed">
-                    <Storyboard>
-                        <DoubleAnimation
-                            Storyboard.TargetName="SeeAllSearchTextBox"
-                            Storyboard.TargetProperty="Width"
-                            To="0"
-                            Duration="0:0:0.3"
-                            EnableDependentAnimation="True">
-                            <DoubleAnimation.EasingFunction>
-                                <CubicEase EasingMode="EaseInOut" />
-                            </DoubleAnimation.EasingFunction>
-                        </DoubleAnimation>
-
-                        <DoubleAnimation
-                            Storyboard.TargetName="SeeAllSearchTextBox"
-                            Storyboard.TargetProperty="Opacity"
-                            To="0"
-                            Duration="0:0:0.15" />
-
-                        <ObjectAnimationUsingKeyFrames
-                            Storyboard.TargetName="SeeAllSearchTextBox"
-                            Storyboard.TargetProperty="IsHitTestVisible">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="False" />
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames
-                            Storyboard.TargetName="SeeAllSearchIcon"
-                            Storyboard.TargetProperty="Glyph">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE721;" />
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
+                    <VisualState.Setters>
+                        <Setter Target="SeeAllSearchTextBox.Width" Value="0" />
+                        <Setter Target="SeeAllSearchTextBox.Opacity" Value="0" />
+                        <Setter Target="SeeAllSearchTextBox.IsHitTestVisible" Value="False" />
+                        <Setter Target="SeeAllSearchTextBox.IsTabStop" Value="False" />
+                        <Setter Target="SeeAllSearchIcon.Glyph" Value="&#xE721;" />
+                    </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="SeeAllSearchExpanded">
-                    <Storyboard Completed="OnSeeAllSearchExpansionCompleted">
-                        <DoubleAnimation
-                            Storyboard.TargetName="SeeAllSearchTextBox"
-                            Storyboard.TargetProperty="Width"
-                            To="300"
-                            Duration="0:0:0.3"
-                            EnableDependentAnimation="True">
-                            <DoubleAnimation.EasingFunction>
-                                <CubicEase EasingMode="EaseInOut" />
-                            </DoubleAnimation.EasingFunction>
-                        </DoubleAnimation>
-
-                        <DoubleAnimation
-                            Storyboard.TargetName="SeeAllSearchTextBox"
-                            Storyboard.TargetProperty="Opacity"
-                            To="1"
-                            BeginTime="0:0:0.15"
-                            Duration="0:0:0.15" />
-
-                        <ObjectAnimationUsingKeyFrames
-                            Storyboard.TargetName="SeeAllSearchTextBox"
-                            Storyboard.TargetProperty="IsHitTestVisible">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="True" />
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames
-                            Storyboard.TargetName="SeeAllSearchIcon"
-                            Storyboard.TargetProperty="Glyph">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE711;" />
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
+                    <VisualState.Setters>
+                        <Setter Target="SeeAllSearchTextBox.Width" Value="300" />
+                        <Setter Target="SeeAllSearchTextBox.Opacity" Value="1" />
+                        <Setter Target="SeeAllSearchTextBox.IsHitTestVisible" Value="True" />
+                        <Setter Target="SeeAllSearchTextBox.IsTabStop" Value="True" />
+                        <Setter Target="SeeAllSearchIcon.Glyph" Value="&#xE711;" />
+                    </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
             <VisualStateGroup x:Name="PlayerVisibilityStates">
                 <VisualState x:Name="PlayerVisible">
                     <Storyboard>
+                        <DoubleAnimation x:Name="VisiblePageHeightAnimation"
+                                         Storyboard.TargetName="ContentFrame" Storyboard.TargetProperty="Height"
+                                         Duration="0:0:0.3" FillBehavior="Stop" EnableDependentAnimation="True" />
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentFrame"
+                                                       Storyboard.TargetProperty="VerticalAlignment"
+                                                       Duration="0:0:0.3" FillBehavior="Stop">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Top" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <DoubleAnimation Storyboard.TargetName="PlayerContentSpace" Storyboard.TargetProperty="MaxHeight"
+                                         To="{Binding MinHeight, ElementName=FloatingPlayerContainer}"
+                                         Duration="0:0:0.3" FillBehavior="Stop" EnableDependentAnimation="True">
+                            <DoubleAnimation.EasingFunction>
+                                <CubicEase EasingMode="EaseOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
                         <DoubleAnimation
                             Storyboard.TargetName="PlayerHitBox"
                             Storyboard.TargetProperty="Opacity"
@@ -180,6 +150,21 @@
                 </VisualState>
                 <VisualState x:Name="PlayerHidden">
                     <Storyboard>
+                        <DoubleAnimation x:Name="HiddenPageHeightAnimation"
+                                         Storyboard.TargetName="ContentFrame" Storyboard.TargetProperty="Height"
+                                         Duration="0:0:0.3" FillBehavior="Stop" EnableDependentAnimation="True" />
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentFrame"
+                                                       Storyboard.TargetProperty="VerticalAlignment"
+                                                       Duration="0:0:0.3" FillBehavior="Stop">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Top" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <DoubleAnimation x:Name="PlayerSpaceHideAnimation"
+                                         Storyboard.TargetName="PlayerContentSpace" Storyboard.TargetProperty="MaxHeight"
+                                         To="0" Duration="0:0:0.3" EnableDependentAnimation="True">
+                            <DoubleAnimation.EasingFunction>
+                                <CubicEase EasingMode="EaseIn" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
                         <DoubleAnimation
                             Storyboard.TargetName="PlayerHitBox"
                             Storyboard.TargetProperty="Opacity"
@@ -209,7 +194,7 @@
                             Storyboard.TargetName="FloatingPlayerContainer"
                             Storyboard.TargetProperty="MinHeight"
                             To="132"
-                            Duration="0:0:0.6"
+                            Duration="0:0:0.25"
                             EnableDependentAnimation="True">
                             <DoubleAnimation.EasingFunction>
                                 <BackEase Amplitude="0.3" EasingMode="EaseOut" />
@@ -220,7 +205,7 @@
                             Storyboard.TargetName="ArtistNameHyperlink"
                             Storyboard.TargetProperty="MaxHeight"
                             To="20"
-                            Duration="0:0:0.4"
+                            Duration="0:0:0.2"
                             EnableDependentAnimation="True">
                             <DoubleAnimation.EasingFunction>
                                 <CubicEase EasingMode="EaseOut" />
@@ -289,155 +274,167 @@
                 Background="Transparent">
 
                 <Grid x:Name="ContentRegion" SizeChanged="ContentRegion_SizeChanged">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <Frame x:Name="ContentFrame" Padding="12,0,12,0" />
-
-                    <Grid x:Name="QueuePanel" Grid.Column="1" Width="320" Margin="0,12,12,156"
-                          Visibility="{x:Bind ViewModel.IsQueuePanelOpen, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                          AllowDrop="True" DragOver="QueuePanel_DragOver" DragLeave="QueuePanel_DragLeave" Drop="Queue_Drop">
-                        <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8">
-                            <Grid Padding="12" RowSpacing="12" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="*" />
-                                </Grid.RowDefinitions>
-                                <Grid ColumnSpacing="4">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel VerticalAlignment="Center" Spacing="4">
-                                        <TextBlock Text="{x:Bind resources:Strings.QueueFlyout_Title}" Style="{ThemeResource SubtitleTextBlockStyle}"
-                                                   Foreground="{StaticResource PlayerAccentBrush}" />
-                                        <TextBlock Text="{x:Bind ViewModel.QueueTrackCountText, Mode=OneWay}"
-                                                   Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                   Visibility="{x:Bind ViewModel.QueueDisplaySettings.ShowTrackCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                        <TextBlock Text="{x:Bind ViewModel.SidebarQueue.TotalDurationText, Mode=OneWay}"
-                                                   Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                   ToolTipService.ToolTip="{x:Bind resources:Strings.QueuePanel_ShowTotalDuration}"
-                                                   Visibility="{x:Bind ViewModel.QueueDisplaySettings.ShowTotalDuration, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                    </StackPanel>
-                                    <Button Grid.Column="1" VerticalAlignment="Top" Padding="6" Background="Transparent" BorderThickness="0"
-                                            Foreground="{StaticResource PlayerAccentBrush}"
-                                            Command="{x:Bind ViewModel.ClearQueueCommand}"
-                                            ToolTipService.ToolTip="{x:Bind resources:Strings.QueueFlyout_ClearQueue}"
-                                            AutomationProperties.Name="{x:Bind resources:Strings.QueueFlyout_ClearQueue}">
-                                        <FontIcon Glyph="&#xE74D;" FontSize="16" />
-                                    </Button>
-                                    <Button x:Name="QueueSettingsButton" Grid.Column="2" VerticalAlignment="Top" Padding="6" Background="Transparent" BorderThickness="0"
-                                            Foreground="{StaticResource PlayerAccentBrush}"
-                                            ToolTipService.ToolTip="{x:Bind resources:Strings.QueuePanel_DisplayOptions}"
-                                            AutomationProperties.Name="{x:Bind resources:Strings.QueuePanel_DisplayOptions}">
-                                        <FontIcon Glyph="&#xE713;" FontSize="16" />
-                                        <Button.Flyout>
-                                            <MenuFlyout Placement="BottomEdgeAlignedRight">
-                                                <ToggleMenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_ShowPosition}"
-                                                                      IsChecked="{x:Bind ViewModel.QueueDisplaySettings.ShowPosition, Mode=TwoWay}" />
-                                                <ToggleMenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_ShowArtist}"
-                                                                      IsChecked="{x:Bind ViewModel.QueueDisplaySettings.ShowArtist, Mode=TwoWay}" />
-                                                <ToggleMenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_ShowDuration}"
-                                                                      IsChecked="{x:Bind ViewModel.QueueDisplaySettings.ShowDuration, Mode=TwoWay}" />
-                                                <ToggleMenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_ShowGenre}"
-                                                                      IsChecked="{x:Bind ViewModel.QueueDisplaySettings.ShowGenre, Mode=TwoWay}" />
-                                                <ToggleMenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_ShowTrackCount}"
-                                                                      IsChecked="{x:Bind ViewModel.QueueDisplaySettings.ShowTrackCount, Mode=TwoWay}" />
-                                                <ToggleMenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_ShowTotalDuration}"
-                                                                      IsChecked="{x:Bind ViewModel.QueueDisplaySettings.ShowTotalDuration, Mode=TwoWay}" />
-                                            </MenuFlyout>
-                                        </Button.Flyout>
-                                    </Button>
-                                    <Button Grid.Column="3" VerticalAlignment="Top" Padding="6" Background="Transparent" BorderThickness="0"
-                                            Foreground="{StaticResource PlayerAccentBrush}"
-                                            Command="{x:Bind ViewModel.ToggleQueuePanelCommand}"
-                                            ToolTipService.ToolTip="{x:Bind resources:Strings.QueuePanel_Close}"
-                                            AutomationProperties.Name="{x:Bind resources:Strings.QueuePanel_Close}">
-                                        <FontIcon Glyph="&#xE711;" FontSize="16" />
-                                    </Button>
-                                </Grid>
-                                <InfoBar Grid.Row="1" IsOpen="{x:Bind ViewModel.SidebarQueue.HasLoadError, Mode=OneWay}"
-                                         Severity="Error" IsClosable="False"
-                                         Message="{x:Bind resources:Strings.QueuePanel_LoadError}">
-                                    <InfoBar.ActionButton>
-                                        <Button Content="{x:Bind resources:Strings.QueuePanel_Retry}" Click="Queue_Retry" />
-                                    </InfoBar.ActionButton>
-                                </InfoBar>
-                                <ListView x:Name="QueueListView" Grid.Row="2" ItemsSource="{x:Bind ViewModel.SidebarQueue}"
-                                          ItemContainerStyle="{StaticResource PaddedListViewItemStyle}" SelectionMode="Single"
-                                          CanDragItems="True" CanReorderItems="True" AllowDrop="True"
-                                          DragItemsStarting="QueueListView_DragItemsStarting" DragItemsCompleted="QueueListView_DragItemsCompleted"
-                                          VirtualizingStackPanel.VirtualizationMode="Recycling">
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate x:DataType="uiModels:QueueEntry">
-                                            <Grid Margin="0,6,12,6" Background="Transparent" Tag="{x:Bind}" DoubleTapped="QueueEntry_DoubleTapped"
-                                                  ToolTipService.ToolTip="{x:Bind Title}">
-                                                <Grid.ContextFlyout>
-                                                    <MenuFlyout>
-                                                        <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_Play}" Tag="{x:Bind}" Click="QueueEntry_Play" />
-                                                        <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_MoveUp}" Tag="{x:Bind}" Click="QueueEntry_MoveUp" />
-                                                        <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_MoveDown}" Tag="{x:Bind}" Click="QueueEntry_MoveDown" />
-                                                        <MenuFlyoutSeparator />
-                                                        <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_Remove}" Tag="{x:Bind}" Click="QueueEntry_Remove" />
-                                                    </MenuFlyout>
-                                                </Grid.ContextFlyout>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto" />
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                </Grid.ColumnDefinitions>
-                                                <TextBlock Text="{x:Bind Position, Mode=OneWay}" Margin="0,0,12,0" Style="{ThemeResource CaptionTextBlockStyle}"
-                                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                           Visibility="{Binding DataContext.QueueDisplaySettings.ShowPosition, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                                <StackPanel Grid.Column="1" Margin="0,0,12,0" Spacing="4">
-                                                    <TextBlock x:Name="SongTitle" Text="{x:Bind Title}" Style="{StaticResource BodyStrongTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
-                                                    <StackPanel Visibility="{Binding DataContext.QueueDisplaySettings.ShowArtist, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                                        <TextBlock Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
-                                                                   uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName}"
-                                                                   uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind Song}"
-                                                                   uihelpers:MultiArtistHyperlinkHelper.Command="{Binding DataContext.GoToArtistCommand, ElementName=MainPageRoot}" />
-                                                    </StackPanel>
-                                                    <TextBlock Text="{x:Bind GenreText}" Style="{ThemeResource CaptionTextBlockStyle}"
-                                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"
-                                                               Visibility="{Binding DataContext.QueueDisplaySettings.ShowGenre, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                                </StackPanel>
-                                                <TextBlock Grid.Column="2" Text="{x:Bind Duration, Converter={StaticResource TimeSpanToTimeStringConverter}}"
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <SplitView x:Name="QueueSplitView" PanePlacement="Right" DisplayMode="Inline"
+                               OpenPaneLength="332" CompactPaneLength="0" PaneBackground="Transparent"
+                               IsPaneOpen="{x:Bind ViewModel.IsQueuePanelOpen, Mode=TwoWay}">
+                        <SplitView.Pane>
+                            <Grid x:Name="QueuePanel" Margin="0,12,12,24"
+                                  AllowDrop="True" DragOver="QueuePanel_DragOver" DragLeave="QueuePanel_DragLeave" Drop="Queue_Drop">
+                                <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8">
+                                    <Grid Padding="12" RowSpacing="12" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Grid ColumnSpacing="4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel VerticalAlignment="Center" Spacing="4">
+                                                <TextBlock Text="{x:Bind resources:Strings.QueueFlyout_Title}" Style="{ThemeResource SubtitleTextBlockStyle}"
+                                                           Foreground="{StaticResource PlayerAccentBrush}" />
+                                                <TextBlock Text="{x:Bind ViewModel.QueueTrackCountText, Mode=OneWay}"
                                                            Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                           Visibility="{Binding DataContext.QueueDisplaySettings.ShowDuration, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                            </Grid>
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
-                                </ListView>
-                                <StackPanel Grid.Row="2" Margin="20" Spacing="8" VerticalAlignment="Center" IsHitTestVisible="False"
-                                            Visibility="{x:Bind ViewModel.SidebarQueue.ShowEmptyState, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                    <FontIcon Glyph="&#xE8D6;" FontSize="28" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                                    <TextBlock Text="{x:Bind resources:Strings.QueuePanel_EmptyTitle}" FontWeight="SemiBold"
-                                               TextAlignment="Center" TextWrapping="Wrap" />
-                                    <TextBlock Text="{x:Bind resources:Strings.QueuePanel_EmptyDescription}"
-                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextAlignment="Center" TextWrapping="Wrap" />
-                                </StackPanel>
-                                <ProgressRing Grid.Row="2" Width="32" Height="32" IsHitTestVisible="False"
-                                              HorizontalAlignment="Center" VerticalAlignment="Center"
-                                              IsActive="{x:Bind ViewModel.SidebarQueue.IsLoading, Mode=OneWay}"
-                                              Visibility="{x:Bind ViewModel.SidebarQueue.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                           Visibility="{x:Bind ViewModel.QueueDisplaySettings.ShowTrackCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                <TextBlock Text="{x:Bind ViewModel.SidebarQueue.TotalDurationText, Mode=OneWay}"
+                                                           Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                           ToolTipService.ToolTip="{x:Bind resources:Strings.QueuePanel_ShowTotalDuration}"
+                                                           Visibility="{x:Bind ViewModel.QueueDisplaySettings.ShowTotalDuration, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                            </StackPanel>
+                                            <Button Grid.Column="1" VerticalAlignment="Top" Padding="6" Background="Transparent" BorderThickness="0"
+                                                    Foreground="{StaticResource PlayerAccentBrush}"
+                                                    Command="{x:Bind ViewModel.ClearQueueCommand}"
+                                                    ToolTipService.ToolTip="{x:Bind resources:Strings.QueueFlyout_ClearQueue}"
+                                                    AutomationProperties.Name="{x:Bind resources:Strings.QueueFlyout_ClearQueue}">
+                                                <FontIcon Glyph="&#xE74D;" FontSize="16" />
+                                            </Button>
+                                            <Button x:Name="QueueSettingsButton" Grid.Column="2" VerticalAlignment="Top" Padding="6" Background="Transparent" BorderThickness="0"
+                                                    Foreground="{StaticResource PlayerAccentBrush}"
+                                                    ToolTipService.ToolTip="{x:Bind resources:Strings.QueuePanel_DisplayOptions}"
+                                                    AutomationProperties.Name="{x:Bind resources:Strings.QueuePanel_DisplayOptions}">
+                                                <FontIcon Glyph="&#xE713;" FontSize="16" />
+                                                <Button.Flyout>
+                                                    <MenuFlyout Placement="BottomEdgeAlignedRight">
+                                                        <ToggleMenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_ShowPosition}"
+                                                                              IsChecked="{x:Bind ViewModel.QueueDisplaySettings.ShowPosition, Mode=TwoWay}" />
+                                                        <ToggleMenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_ShowArtist}"
+                                                                              IsChecked="{x:Bind ViewModel.QueueDisplaySettings.ShowArtist, Mode=TwoWay}" />
+                                                        <ToggleMenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_ShowDuration}"
+                                                                              IsChecked="{x:Bind ViewModel.QueueDisplaySettings.ShowDuration, Mode=TwoWay}" />
+                                                        <ToggleMenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_ShowGenre}"
+                                                                              IsChecked="{x:Bind ViewModel.QueueDisplaySettings.ShowGenre, Mode=TwoWay}" />
+                                                        <ToggleMenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_ShowTrackCount}"
+                                                                              IsChecked="{x:Bind ViewModel.QueueDisplaySettings.ShowTrackCount, Mode=TwoWay}" />
+                                                        <ToggleMenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_ShowTotalDuration}"
+                                                                              IsChecked="{x:Bind ViewModel.QueueDisplaySettings.ShowTotalDuration, Mode=TwoWay}" />
+                                                    </MenuFlyout>
+                                                </Button.Flyout>
+                                            </Button>
+                                            <Button Grid.Column="3" VerticalAlignment="Top" Padding="6" Background="Transparent" BorderThickness="0"
+                                                    Foreground="{StaticResource PlayerAccentBrush}"
+                                                    Command="{x:Bind ViewModel.ToggleQueuePanelCommand}"
+                                                    ToolTipService.ToolTip="{x:Bind resources:Strings.QueuePanel_Close}"
+                                                    AutomationProperties.Name="{x:Bind resources:Strings.QueuePanel_Close}">
+                                                <FontIcon Glyph="&#xE711;" FontSize="16" />
+                                            </Button>
+                                        </Grid>
+                                        <InfoBar Grid.Row="1" IsOpen="{x:Bind ViewModel.SidebarQueue.HasLoadError, Mode=OneWay}"
+                                                 Severity="Error" IsClosable="False"
+                                                 Message="{x:Bind resources:Strings.QueuePanel_LoadError}">
+                                            <InfoBar.ActionButton>
+                                                <Button Content="{x:Bind resources:Strings.QueuePanel_Retry}" Click="Queue_Retry" />
+                                            </InfoBar.ActionButton>
+                                        </InfoBar>
+                                        <ListView x:Name="QueueListView" Grid.Row="2" ItemsSource="{x:Bind ViewModel.SidebarQueue}"
+                                                  ItemContainerStyle="{StaticResource PaddedListViewItemStyle}" SelectionMode="Single"
+                                                  CanDragItems="True" CanReorderItems="True" AllowDrop="True"
+                                                  DragItemsStarting="QueueListView_DragItemsStarting" DragItemsCompleted="QueueListView_DragItemsCompleted"
+                                                  VirtualizingStackPanel.VirtualizationMode="Recycling">
+                                            <ListView.Footer>
+                                                <ProgressRing Width="16" Height="16" Margin="0,8"
+                                                              IsHitTestVisible="False" HorizontalAlignment="Center"
+                                                              IsActive="{x:Bind ViewModel.SidebarQueue.ShowMoreLoading, Mode=OneWay}"
+                                                              Visibility="{x:Bind ViewModel.SidebarQueue.ShowMoreLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                            </ListView.Footer>
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate x:DataType="uiModels:QueueEntry">
+                                                    <Grid Margin="0,6,12,6" Background="Transparent" Tag="{x:Bind}" DoubleTapped="QueueEntry_DoubleTapped"
+                                                          ToolTipService.ToolTip="{x:Bind Title}">
+                                                        <Grid.ContextFlyout>
+                                                            <MenuFlyout>
+                                                                <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_Play}" Tag="{x:Bind}" Click="QueueEntry_Play" />
+                                                                <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_MoveUp}" Tag="{x:Bind}" Click="QueueEntry_MoveUp" />
+                                                                <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_MoveDown}" Tag="{x:Bind}" Click="QueueEntry_MoveDown" />
+                                                                <MenuFlyoutSeparator />
+                                                                <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_Remove}" Tag="{x:Bind}" Click="QueueEntry_Remove" />
+                                                            </MenuFlyout>
+                                                        </Grid.ContextFlyout>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto" />
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="Auto" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Text="{x:Bind Position, Mode=OneWay}" Margin="0,0,12,0" Style="{ThemeResource CaptionTextBlockStyle}"
+                                                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                                   Visibility="{Binding DataContext.QueueDisplaySettings.ShowPosition, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                        <StackPanel Grid.Column="1" Margin="0,0,12,0" Spacing="4">
+                                                            <TextBlock x:Name="SongTitle" Text="{x:Bind Title}" Style="{StaticResource BodyStrongTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
+                                                            <StackPanel Visibility="{Binding DataContext.QueueDisplaySettings.ShowArtist, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                                <TextBlock Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
+                                                                           uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName}"
+                                                                           uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind Song}"
+                                                                           uihelpers:MultiArtistHyperlinkHelper.Command="{Binding DataContext.GoToArtistCommand, ElementName=MainPageRoot}" />
+                                                            </StackPanel>
+                                                            <TextBlock Text="{x:Bind GenreText}" Style="{ThemeResource CaptionTextBlockStyle}"
+                                                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"
+                                                                       Visibility="{Binding DataContext.QueueDisplaySettings.ShowGenre, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                        </StackPanel>
+                                                        <TextBlock Grid.Column="2" Text="{x:Bind Duration, Converter={StaticResource TimeSpanToTimeStringConverter}}"
+                                                                   Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                                   Visibility="{Binding DataContext.QueueDisplaySettings.ShowDuration, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
+                                        <StackPanel Grid.Row="2" Margin="20" Spacing="8" VerticalAlignment="Center" IsHitTestVisible="False"
+                                                    Visibility="{x:Bind ViewModel.SidebarQueue.ShowEmptyState, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                            <FontIcon Glyph="&#xE8D6;" FontSize="28" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                            <TextBlock Text="{x:Bind resources:Strings.QueuePanel_EmptyTitle}" FontWeight="SemiBold"
+                                                       TextAlignment="Center" TextWrapping="Wrap" />
+                                            <TextBlock Text="{x:Bind resources:Strings.QueuePanel_EmptyDescription}"
+                                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextAlignment="Center" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <ProgressRing Grid.Row="2" Width="32" Height="32" IsHitTestVisible="False"
+                                                      HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                      IsActive="{x:Bind ViewModel.SidebarQueue.ShowInitialLoading, Mode=OneWay}"
+                                                      Visibility="{x:Bind ViewModel.SidebarQueue.ShowInitialLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                    </Grid>
+                                </Border>
+                                <Border x:Name="QueueDropHighlight" BorderBrush="{ThemeResource AccentFillColorDefaultBrush}"
+                                        BorderThickness="2" CornerRadius="8" IsHitTestVisible="False" Visibility="Collapsed" />
                             </Grid>
-                        </Border>
-                        <Border x:Name="QueueDropHighlight" BorderBrush="{ThemeResource AccentFillColorDefaultBrush}"
-                                BorderThickness="2" CornerRadius="8" IsHitTestVisible="False" Visibility="Collapsed" />
-                    </Grid>
+                        </SplitView.Pane>
+                        <Frame x:Name="ContentFrame" Padding="12,0,12,0" />
+                    </SplitView>
+
+                    <Border x:Name="PlayerContentSpace" Grid.Row="1" MaxHeight="132"
+                            Height="{Binding MinHeight, ElementName=FloatingPlayerContainer}" />
 
                     <Grid
                         x:Name="PlayerHitBox"
-                        Grid.ColumnSpan="2"
+                        Grid.RowSpan="2"
                         Height="132"
                         Margin="12,0,12,12"
                         VerticalAlignment="Bottom"
-                        Background="Transparent"
                         PointerEntered="FloatingPlayerContainer_PointerEntered"
                         PointerExited="FloatingPlayerContainer_PointerExited">
                         <Grid.Resources>
@@ -755,10 +752,14 @@
                                      Width="0"
                                      Opacity="0"
                                      IsHitTestVisible="False"
+                             IsTabStop="False"
                                      HorizontalAlignment="Right"
                                      KeyDown="OnSeeAllSearchTextBoxKeyDown"
                                      Text="{x:Bind InsightsVm.SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                      Canvas.ZIndex="0">
+                                <TextBox.OpacityTransition>
+                                    <ScalarTransition Duration="0:0:0.15" />
+                                </TextBox.OpacityTransition>
                             </TextBox>
 
                             <Button x:Name="SeeAllSearchToggleButton"
