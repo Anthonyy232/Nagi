@@ -57,7 +57,7 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     [NotifyPropertyChangedFor(nameof(HasNextPage), nameof(HasPreviousPage))]
     public partial bool IsPaginationEnabled { get; set; } = true;
 
-    protected int PageSize => SongsPerPage == 0 ? 500 : SongsPerPage;
+    protected int PageSize => !IsPaginationEnabled || SongsPerPage == 0 ? 500 : SongsPerPage;
 
     protected PagedListViewModelBase(
         ILibraryService libraryService,
@@ -108,19 +108,21 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     {
         if (token.IsCancellationRequested || _isDisposed) return;
 
-        _dispatcherService.TryEnqueue(() =>
-        {
-            if (token.IsCancellationRequested || _isDisposed || _pendingReload) return;
+        _dispatcherService.TryEnqueue(() => ApplyPagedResult(result, token, append));
+    }
 
-            var isPaged = IsPaginationEnabled && SongsPerPage != 0;
-            TotalPages = isPaged ? Math.Max(1, result.TotalPages) : 1;
-            CurrentPage = isPaged
-                ? Math.Clamp(result.PageNumber > 0 ? result.PageNumber : CurrentPage, 1, TotalPages)
-                : 1;
-            TotalItemCount = result.TotalCount;
-            TotalItemsText = FormatTotalItemsText(result.TotalCount);
-            ApplyItemsToCollection(result, append);
-        });
+    private void ApplyPagedResult(PagedResult<TItem> result, CancellationToken token, bool append)
+    {
+        if (token.IsCancellationRequested || _isDisposed || _pendingReload) return;
+
+        var isPaged = IsPaginationEnabled && SongsPerPage != 0;
+        TotalPages = isPaged ? Math.Max(1, result.TotalPages) : 1;
+        CurrentPage = isPaged
+            ? Math.Clamp(result.PageNumber > 0 ? result.PageNumber : CurrentPage, 1, TotalPages)
+            : 1;
+        TotalItemCount = result.TotalCount;
+        TotalItemsText = FormatTotalItemsText(result.TotalCount);
+        ApplyItemsToCollection(result, append);
     }
 
     partial void OnIsLoadingChanged(bool value) => OnLoadingStateChanged(value);
@@ -349,9 +351,12 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
         {
             while (!token.IsCancellationRequested)
             {
-                await Task.Delay(100, token);
                 var result = await Task.Run(() => LoadPageItemsAsync(pageNumber, pageSize, token), token);
-                ProcessPagedResult(result, token, append: true);
+                await _dispatcherService.EnqueueAsync(() =>
+                {
+                    ApplyPagedResult(result, token, append: true);
+                    return Task.CompletedTask;
+                }).WaitAsync(token).ConfigureAwait(false);
                 if (!result.HasNextPage) break;
                 pageNumber++;
             }

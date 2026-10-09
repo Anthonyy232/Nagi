@@ -153,7 +153,7 @@ internal sealed class ProviderPipelineProvider : IProviderPipelineProvider, IAsy
             TokenLimit = channelPolicy.PermitsPerWindow,
             TokensPerPeriod = channelPolicy.PermitsPerWindow,
             ReplenishmentPeriod = channelPolicy.Window,
-            QueueLimit = int.MaxValue,
+            QueueLimit = channelPolicy.MaxConcurrent,
             QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
             AutoReplenishment = true,
         });

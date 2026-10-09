@@ -1039,9 +1039,6 @@ public class LibraryService : ILibraryService, IDisposable
                         {
                             _logger.LogError(ex, "Failed to update artist {ArtistId} in background.", artist.Id);
                         }
-
-                        // Throttle: Yield to UI and other threads to prevent CPU starvation
-                        await Task.Delay(50, token).ConfigureAwait(false);
                     }
 
                     if (token.IsCancellationRequested) break;
@@ -2793,17 +2790,13 @@ public class LibraryService : ILibraryService, IDisposable
 
         var totalSaved = 0;
 
-        // Producer: Extract metadata concurrently and write to channel using Parallel.ForEachAsync
-        // This limits both concurrency AND task object allocation (unlike Task.WhenAll which creates all tasks upfront)
         var isNetworkFolder = _fileSystem.IsNetworkPath(baseFolderPath);
         var failureSummary = new ConcurrentDictionary<string, int>();
         var producerTask = Task.Run(async () =>
         {
             try
             {
-                // NAS/SMB serializes I/O per session; hammering it with ProcessorCount concurrent
-                // opens increases timeouts far more than it speeds up extraction. Cap at 4 for
-                // network paths; local disks keep the full CPU-count concurrency.
+                // Limit concurrent file opens on network storage to reduce transient I/O failures.
                 var degreeOfParallelism = isNetworkFolder
                     ? Math.Min(4, Environment.ProcessorCount)
                     : Environment.ProcessorCount;

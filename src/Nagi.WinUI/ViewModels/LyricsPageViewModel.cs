@@ -265,8 +265,6 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
         _logger.LogDebug("Updating lyrics for track '{SongTitle}' ({SongId})", song.Title, song.Id);
 
-        PendingPrefetch = PrefetchNextTrackLyrics(cancellationToken);
-
         try
         {
             var fullSongTask = _libraryReader.GetSongByIdAsync(song.Id);
@@ -338,6 +336,9 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
                 IsLoading = false;
             });
         }
+
+        if (!cancellationToken.IsCancellationRequested)
+            PendingPrefetch = PrefetchNextTrackLyrics(cancellationToken);
     }
 
     /// <summary>
@@ -403,8 +404,6 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
             if (nextSong is null || nextSong.LyricsLastCheckedUtc.HasValue ||
                 !string.IsNullOrWhiteSpace(nextSong.LrcFilePath) || !string.IsNullOrWhiteSpace(nextSong.Lyrics)) return;
 
-            // Stagger network work behind the current song's fetch.
-            await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken).ConfigureAwait(false);
             using var prefetchCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             prefetchCts.CancelAfter(TimeSpan.FromSeconds(15));
             await _lrcService.GetLyricsAsync(nextSong, prefetchCts.Token).ConfigureAwait(false);

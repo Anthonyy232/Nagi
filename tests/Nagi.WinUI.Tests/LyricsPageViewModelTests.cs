@@ -140,6 +140,34 @@ public class LyricsPageViewModelTests
     }
 
     [Fact]
+    public async Task Prefetch_WaitsForCurrentLyricsBeforeFetchingNextTrack()
+    {
+        var current = new Song { Title = "Current" };
+        var next = new Song { Title = "Next" };
+        var currentLyrics = new TaskCompletionSource<ParsedLrc?>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var nextRequested = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        _library.GetSongByIdAsync(current.Id).Returns(current);
+        _library.GetSongByIdAsync(next.Id).Returns(next);
+        _lyrics.GetLyricsAsync(current, Arg.Any<CancellationToken>()).Returns(currentLyrics.Task);
+        _lyrics.GetLyricsAsync(next, Arg.Any<CancellationToken>()).Returns(_ =>
+        {
+            nextRequested.SetResult();
+            return Task.FromResult<ParsedLrc?>(null);
+        });
+        _playback.PlaybackQueue.Returns(new[] { current.Id, next.Id });
+        _playback.CurrentQueueIndex.Returns(0);
+        _playback.CurrentTrack.Returns(current);
+        using var viewModel = CreateViewModel();
+
+        await _lyrics.DidNotReceive().GetLyricsAsync(next, Arg.Any<CancellationToken>());
+        currentLyrics.SetResult(null);
+        await nextRequested.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+        viewModel.IsLoading.Should().BeFalse();
+        await _lyrics.Received(1).GetLyricsAsync(next, Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
     public async Task PrefetchLookup_CompletesAfterTrackChange_DoesNotBorrowNewTracksCancellationToken()
     {
         var current = new Song { Title = "Current" };

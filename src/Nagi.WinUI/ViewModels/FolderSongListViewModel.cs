@@ -207,9 +207,9 @@ public partial class FolderSongListViewModel : SongListViewModelBase
                 token, clampPage: false).ConfigureAwait(false);
 
         // All UI updates in one dispatch to avoid partial-render states.
-        _dispatcherService.TryEnqueue(() =>
+        await _dispatcherService.EnqueueAsync(() =>
         {
-            if (token.IsCancellationRequested || _isDisposed || _pendingReload) return;
+            if (token.IsCancellationRequested || _isDisposed || _pendingReload) return Task.CompletedTask;
 
             Songs.AppendOrReplace(songResult.Items, append);
 
@@ -226,7 +226,8 @@ public partial class FolderSongListViewModel : SongListViewModelBase
             UpdateSelectionStatus();
             PlayAllSongsCommand.NotifyCanExecuteChanged();
             ShuffleAndPlayAllSongsCommand.NotifyCanExecuteChanged();
-        });
+            return Task.CompletedTask;
+        }).WaitAsync(token).ConfigureAwait(false);
         return pageNumber < totalPages;
     }
 
@@ -237,7 +238,6 @@ public partial class FolderSongListViewModel : SongListViewModelBase
             var page = 2;
             while (!token.IsCancellationRequested)
             {
-                await Task.Delay(100, token);
                 var hasMore = await Task.Run(() => LoadCombinedPageAsync(page, parentFolderId,
                     totalFolderCount, token, append: true), token);
                 if (!hasMore) break;

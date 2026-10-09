@@ -117,6 +117,42 @@ public class PagedListViewModelTests
     }
 
     [Fact]
+    public async Task LoadAll_WaitsForUiBatchAndDiscardsItAfterReset()
+    {
+        var settings = Substitute.For<IUISettingsService>();
+        settings.GetSongsPerPageAsync().Returns(0);
+        var dispatcher = Substitute.For<IDispatcherService>();
+        dispatcher.TryEnqueue(Arg.Any<Action>()).Returns(call => { call.Arg<Action>()(); return true; });
+        var batchQueued = new TaskCompletionSource<Func<Task>>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var batchApplied = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        dispatcher.EnqueueAsync(Arg.Any<Func<Task>>()).Returns(call =>
+        {
+            batchQueued.TrySetResult(call.Arg<Func<Task>>());
+            return batchApplied.Task;
+        });
+        var requestedPages = new List<int>();
+        using var viewModel = new TestViewModel(settings, (page, size, _) =>
+        {
+            requestedPages.Add(page);
+            return Task.FromResult(new PagedResult<int>
+            {
+                PageNumber = page, PageSize = size, TotalCount = 1500,
+                Items = Enumerable.Range((page - 1) * size, size).ToArray()
+            });
+        }, dispatcher);
+
+        await viewModel.LoadAsync(CancellationToken.None);
+        var applyBatch = await batchQueued.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        requestedPages.Should().Equal(1, 2);
+
+        viewModel.ResetState();
+        await applyBatch();
+        batchApplied.SetResult();
+
+        viewModel.Items.Should().Equal(Enumerable.Range(0, 500));
+    }
+
+    [Fact]
     public async Task LoadAsync_WhenNewPageRequestedDuringLoad_DiscardsOldResultAndLoadsLatestPage()
     {
         var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -202,9 +238,10 @@ public class PagedListViewModelTests
     }
 
     private sealed class TestViewModel(IUISettingsService settings,
-        Func<int, int, CancellationToken, Task<PagedResult<int>>> load)
+        Func<int, int, CancellationToken, Task<PagedResult<int>>> load,
+        IDispatcherService? dispatcher = null)
         : PagedListViewModelBase<int>(Substitute.For<ILibraryService>(), settings,
-            new ImmediateDispatcher(), NullLogger.Instance)
+            dispatcher ?? new ImmediateDispatcher(), NullLogger.Instance)
     {
         public List<int> Items { get; } = [];
         public void ApplyResult(PagedResult<int> result) => ProcessPagedResult(result, CancellationToken.None);
