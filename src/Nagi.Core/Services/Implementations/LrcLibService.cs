@@ -56,21 +56,24 @@ public class LrcLibService : IOnlineLyricsService
 
         try
         {
-            // Try strict lookup first when artist+album are known. Only fall through to search
-            // if strict misses — saves a round-trip + a rate-limit permit on the happy path.
+            LrcLibResponse? strictResult = null;
             if (artistName is not null && albumName is not null)
             {
-                var strictResult = await TryStrictLookupAsync(trackName, artistName, albumName, duration, cancellationToken)
+                strictResult = await TryStrictLookupAsync(trackName, artistName, albumName, duration, cancellationToken)
                     .ConfigureAwait(false);
-                if (!string.IsNullOrWhiteSpace(strictResult))
-                    return strictResult;
+                if (!string.IsNullOrWhiteSpace(strictResult?.SyncedLyrics))
+                    return strictResult.SyncedLyrics;
             }
             else
             {
                 _logger.LogDebug("Strict lookup skipped (missing artist or album). Using search for: {Track}", trackName);
             }
 
-            return await SearchLyricsAsync(trackName, artistName, albumName, duration, cancellationToken).ConfigureAwait(false);
+            var searchResult = await SearchLyricsAsync(trackName, artistName, albumName, duration, cancellationToken).ConfigureAwait(false);
+            if (!string.IsNullOrWhiteSpace(searchResult?.SyncedLyrics)) return searchResult.SyncedLyrics;
+            return !string.IsNullOrWhiteSpace(strictResult?.PlainLyrics)
+                ? strictResult.PlainLyrics
+                : searchResult?.PlainLyrics;
         }
         catch (OperationCanceledException)
         {
@@ -84,7 +87,7 @@ public class LrcLibService : IOnlineLyricsService
         }
     }
 
-    private async Task<string?> TryStrictLookupAsync(string trackName, string artistName, string albumName, TimeSpan duration, CancellationToken cancellationToken)
+    private async Task<LrcLibResponse?> TryStrictLookupAsync(string trackName, string artistName, string albumName, TimeSpan duration, CancellationToken cancellationToken)
     {
         var query = HttpUtility.ParseQueryString(string.Empty);
         query["track_name"] = trackName;
@@ -107,12 +110,11 @@ public class LrcLibService : IOnlineLyricsService
             return null;
 
         response.EnsureSuccessStatusCode();
-        var lrcResponse = await response.Content.ReadFromJsonAsync<LrcLibResponse>(cancellationToken: cancellationToken)
+        return await response.Content.ReadFromJsonAsync<LrcLibResponse>(cancellationToken: cancellationToken)
             .ConfigureAwait(false);
-        return lrcResponse?.SyncedLyrics;
     }
 
-    private async Task<string?> SearchLyricsAsync(string trackName, string? artistName, string? albumName, TimeSpan duration, CancellationToken cancellationToken)
+    private async Task<LrcLibResponse?> SearchLyricsAsync(string trackName, string? artistName, string? albumName, TimeSpan duration, CancellationToken cancellationToken)
     {
         var query = HttpUtility.ParseQueryString(string.Empty);
         query["track_name"] = trackName;
@@ -140,20 +142,20 @@ public class LrcLibService : IOnlineLyricsService
             return null;
         }
 
-        // Client-side filtering: must have synced lyrics, ±30s duration tolerance, prefer
-        // album match, closest duration tie-breaker.
+        // Prefer synchronized lyrics, then album match and closest duration within ±30s.
         var targetDurationSeconds = duration.TotalSeconds;
         var bestMatch = searchResults
-            .Where(r => !string.IsNullOrWhiteSpace(r.SyncedLyrics))
+            .Where(r => !string.IsNullOrWhiteSpace(r.SyncedLyrics) || !string.IsNullOrWhiteSpace(r.PlainLyrics))
             .Where(r => Math.Abs(r.Duration - targetDurationSeconds) <= 30)
-            .OrderByDescending(r => albumName is not null && string.Equals(r.AlbumName, albumName, StringComparison.OrdinalIgnoreCase))
+            .OrderByDescending(r => !string.IsNullOrWhiteSpace(r.SyncedLyrics))
+            .ThenByDescending(r => albumName is not null && string.Equals(r.AlbumName, albumName, StringComparison.OrdinalIgnoreCase))
             .ThenBy(r => Math.Abs(r.Duration - targetDurationSeconds))
             .FirstOrDefault();
 
         if (bestMatch != null)
         {
             _logger.LogDebug("Found fallback lyrics via search for: {Artist} - {Track}", artistName, trackName);
-            return bestMatch.SyncedLyrics;
+            return bestMatch;
         }
 
         _logger.LogDebug("Search results found but none matched criteria for: {Artist} - {Track}", artistName, trackName);
@@ -165,5 +167,6 @@ public class LrcLibService : IOnlineLyricsService
         public string? AlbumName { get; set; }
         public double Duration { get; set; }
         public string? SyncedLyrics { get; set; }
+        public string? PlainLyrics { get; set; }
     }
 }

@@ -146,6 +146,32 @@ public class LrcLibServiceTests : IAsyncDisposable
         result.Should().Be("[00:01.00]Correct Match");
     }
 
+    [Theory]
+    [InlineData("Exact plain", "[00:01.00]Search synced", "Search plain", "[00:01.00]Search synced")]
+    [InlineData("Exact plain", null, "Search plain", "Exact plain")]
+    [InlineData("Exact plain", null, null, "Exact plain")]
+    [InlineData(null, null, "Search plain", "Search plain")]
+    [InlineData("   ", "   ", "   ", null)]
+    public async Task GetLyricsAsync_PlainFallbackPreservesSyncedAndExactMatchPriority(
+        string? strictPlain, string? searchSynced, string? searchPlain, string? expected)
+    {
+        _httpHandler.SendAsyncFunc = (request, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new StringContent(request.RequestUri!.AbsolutePath.Contains("/api/get")
+                ? JsonSerializer.Serialize(new { plainLyrics = strictPlain })
+                : JsonSerializer.Serialize(new[]
+                {
+                    new { syncedLyrics = (string?)null, plainLyrics = searchPlain, duration = 180.0, albumName = "Test Album" },
+                    new { syncedLyrics = searchSynced, plainLyrics = (string?)null, duration = 185.0, albumName = "Other Album" },
+                    new { syncedLyrics = (string?)null, plainLyrics = (string?)"Wrong duration", duration = 500.0, albumName = "Test Album" }
+                }))
+        });
+
+        var result = await _service.GetLyricsAsync("Track", "Artist", "Test Album", TimeSpan.FromMinutes(3));
+
+        result.Should().Be(expected);
+    }
+
     [Fact]
     public async Task GetLyricsAsync_WhenRateLimited_PropagatesFailure()
     {

@@ -113,17 +113,22 @@ public class LrcService : ILrcService, IDisposable
                 }
             }
 
-            // Evaluate results in priority order (but all tasks already running in parallel)
-            string? lrcContent = null;
+            // Provider order breaks ties; plain text must not hide another provider's timed lyrics.
+            ParsedLrc? selectedLyrics = null;
             foreach (var task in tasks)
             {
                 try
                 {
-                    var result = await task.ConfigureAwait(false);
+                    var result = await task.WaitAsync(token).ConfigureAwait(false);
                     if (!string.IsNullOrWhiteSpace(result))
                     {
-                        lrcContent = result;
-                        break;
+                        var parsed = ParseLyrics(result);
+                        if (!parsed.IsEmpty)
+                        {
+                            selectedLyrics = parsed;
+                            break;
+                        }
+                        selectedLyrics ??= parsed;
                     }
                 }
                 catch (OperationCanceledException)
@@ -153,13 +158,10 @@ public class LrcService : ILrcService, IDisposable
 
             if (token.IsCancellationRequested) return null;
 
-            if (!string.IsNullOrWhiteSpace(lrcContent))
+            if (selectedLyrics is not null)
             {
-                // Cache the lyrics for future use
-                await CacheLyricsAsync(song, lrcContent).ConfigureAwait(false);
-
-                // Parse the downloaded lyrics string
-                return ParseLyrics(lrcContent);
+                await CacheLyricsAsync(song, selectedLyrics.RawUnsyncedLyrics!).ConfigureAwait(false);
+                return selectedLyrics;
             }
         }
 
