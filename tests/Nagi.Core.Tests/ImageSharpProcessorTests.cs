@@ -17,21 +17,19 @@ public class ImageSharpProcessorTests
     private const string AlbumArtPath = "C:\\cache\\art";
     private readonly IFileSystemService _fileSystem;
     private readonly ImageSharpProcessor _imageProcessor;
-    private readonly ILogger<ImageSharpProcessor> _logger;
-    private readonly IPathConfiguration _pathConfig;
 
     public ImageSharpProcessorTests()
     {
-        _pathConfig = Substitute.For<IPathConfiguration>();
+        var pathConfig = Substitute.For<IPathConfiguration>();
         _fileSystem = Substitute.For<IFileSystemService>();
-        _logger = Substitute.For<ILogger<ImageSharpProcessor>>();
+        var logger = Substitute.For<ILogger<ImageSharpProcessor>>();
 
-        _pathConfig.AlbumArtCachePath.Returns(AlbumArtPath);
+        pathConfig.AlbumArtCachePath.Returns(AlbumArtPath);
 
         _fileSystem.Combine(Arg.Any<string>(), Arg.Any<string>())
             .Returns(callInfo => Path.Combine(callInfo.ArgAt<string[]>(0)));
 
-        _imageProcessor = new ImageSharpProcessor(_pathConfig, _fileSystem, _logger);
+        _imageProcessor = new ImageSharpProcessor(pathConfig, _fileSystem, logger);
     }
 
     [Fact]
@@ -90,6 +88,20 @@ public class ImageSharpProcessorTests
         uri2.Should().Be(savedPath);
         await _fileSystem.Received(1).WriteAllBytesAsync(Arg.Any<string>(), Arg.Any<byte[]>());
         _fileSystem.Received(1).MoveFile(Arg.Any<string>(), Arg.Any<string>(), true);
+    }
+
+    [Fact]
+    public async Task SaveCoverArtAndExtractColorsAsync_WithDistinctLargePngs_SavesEveryConcurrentImage()
+    {
+        var pictures = Enumerable.Range(0, 4).Select(index =>
+            CreateTestImageBytes(width: 4000 + index, height: 4000)).ToArray();
+
+        var results = await Task.WhenAll(pictures.Select(data => Task.Run(() =>
+            _imageProcessor.SaveCoverArtAndExtractColorsAsync(data))));
+
+        results.Select(result => result.uri).Should().OnlyContain(uri => uri != null)
+            .And.OnlyHaveUniqueItems();
+        await _fileSystem.Received(4).WriteAllBytesAsync(Arg.Any<string>(), Arg.Any<byte[]>());
     }
 
     [Fact]

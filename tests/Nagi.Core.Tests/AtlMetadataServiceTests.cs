@@ -9,6 +9,8 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using Xunit;
 
 namespace Nagi.Core.Tests;
@@ -18,27 +20,23 @@ public class AtlMetadataServiceTests : IDisposable
     private const string LrcCachePath = "C:\\cache\\lrc";
     private readonly IFileSystemService _fileSystem;
     private readonly IImageProcessor _imageProcessor;
-    private readonly ILogger<AtlMetadataService> _logger;
     private readonly ISettingsService _settingsService;
     private readonly AtlMetadataService _metadataService;
-    private readonly IPathConfiguration _pathConfig;
     private readonly string _tempDirectory;
 
-    // A valid MP3 file with proper headers - this is the minimum valid MP3 structure
-    // that ATL.NET can read and write tags to
     private static readonly byte[] ValidMp3Bytes = CreateValidMp3Bytes();
 
     public AtlMetadataServiceTests()
     {
         _imageProcessor = Substitute.For<IImageProcessor>();
         _fileSystem = Substitute.For<IFileSystemService>();
-        _pathConfig = Substitute.For<IPathConfiguration>();
-        _logger = Substitute.For<ILogger<AtlMetadataService>>();
+        var pathConfig = Substitute.For<IPathConfiguration>();
+        var logger = Substitute.For<ILogger<AtlMetadataService>>();
         _settingsService = Substitute.For<ISettingsService>();
 
         _tempDirectory = Directory.CreateTempSubdirectory("Nagi-AtlTests-").FullName;
 
-        _pathConfig.LrcCachePath.Returns(LrcCachePath);
+        pathConfig.LrcCachePath.Returns(LrcCachePath);
 
         _fileSystem.GetFileNameWithoutExtension(Arg.Any<string>())
             .Returns(callInfo => Path.GetFileNameWithoutExtension(callInfo.ArgAt<string>(0)));
@@ -52,27 +50,19 @@ public class AtlMetadataServiceTests : IDisposable
         _settingsService.GetArtistSplitCharactersAsync().Returns(Task.FromResult(string.Empty));
         _settingsService.GetGenreSplitCharactersAsync().Returns(Task.FromResult(string.Empty));
 
-        _metadataService = new AtlMetadataService(_imageProcessor, _fileSystem, _pathConfig, _logger, _settingsService);
+        _metadataService = new AtlMetadataService(_imageProcessor, _fileSystem, pathConfig, logger, _settingsService);
     }
     private static byte[] CreateValidMp3Bytes()
     {
-        // Create a minimal but valid MP3 file structure
-        // This includes an ID3v2 header followed by a minimal audio frame
         using var ms = new MemoryStream();
 
-        // ID3v2.3 header (10 bytes)
-        ms.Write(new byte[] { 0x49, 0x44, 0x33 }); // "ID3"
-        ms.Write(new byte[] { 0x03, 0x00 }); // Version 2.3
-        ms.Write(new byte[] { 0x00 }); // Flags
-        ms.Write(new byte[] { 0x00, 0x00, 0x00, 0x00 }); // Size (syncsafe, 0 for now)
+        // ID3v2.3 header with an empty tag.
+        ms.Write(new byte[] { 0x49, 0x44, 0x33, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 });
 
-        // Add some minimal MP3 audio frames (silent frames)
-        // MP3 frame header: sync word + audio info
+        // MPEG1 Layer3 frames at 128 kbps and 44100 Hz (417 bytes per frame).
         for (var i = 0; i < 10; i++)
         {
-            // MP3 frame sync (0xFFE for MPEG Audio Layer 3)
-            ms.Write(new byte[] { 0xFF, 0xFB, 0x90, 0x00 }); // MPEG1 Layer3, 128kbps, 44100Hz
-            // Fill with zeros for the rest of the frame (417 bytes for this config)
+            ms.Write(new byte[] { 0xFF, 0xFB, 0x90, 0x00 });
             ms.Write(new byte[413]);
         }
 
@@ -98,7 +88,13 @@ public class AtlMetadataServiceTests : IDisposable
     [Fact]
     public async Task ExtractMetadataAsync_WithFullMetadata_ExtractsAllPropertiesCorrectly()
     {
-        var pictureData = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A }; // PNG header
+        var pixels = new byte[256 * 256 * 3];
+        new Random(42).NextBytes(pixels);
+        using var image = Image.LoadPixelData<Rgb24>(pixels, 256, 256);
+        using var stream = new MemoryStream();
+        image.SaveAsPng(stream);
+        var pictureData = stream.ToArray();
+        var lyrics = string.Concat(Enumerable.Repeat("歌詞 — αβγ\n", 10000)) + "Final line";
         var filePath = CreateTestAudioFile("full.mp3", track =>
         {
             track.Title = "Test Title";
@@ -111,7 +107,7 @@ public class AtlMetadataServiceTests : IDisposable
             track.DiscNumber = 1;
             track.DiscTotal = 2;
             track.BPM = 120;
-            track.Lyrics.Add(new LyricsInfo { UnsynchronizedLyrics = "Some simple lyrics" });
+            track.Lyrics.Add(new LyricsInfo { UnsynchronizedLyrics = lyrics });
             track.Genre = "Rock;Pop";
             track.AdditionalFields.Add("GROUPING", "Test Grouping");
             track.EmbeddedPictures.Add(PictureInfo.fromBinaryData(pictureData));
@@ -120,7 +116,6 @@ public class AtlMetadataServiceTests : IDisposable
         _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>())
             .Returns(Task.FromResult<(string?, string?, string?)>(("C:/art/1.jpg", "light1", "dark1")));
         var result = await _metadataService.ExtractMetadataAsync(filePath);
-        result.Should().NotBeNull();
         result.ExtractionFailed.Should().BeFalse();
         result.Title.Should().Be("Test Title");
         result.Artists.Should().ContainSingle().Which.Should().Be("Test Artist");
@@ -132,12 +127,14 @@ public class AtlMetadataServiceTests : IDisposable
         result.DiscNumber.Should().Be(1);
         result.DiscCount.Should().Be(2);
         result.Bpm.Should().Be(120);
-        result.Lyrics.Should().Be("Some simple lyrics");
+        result.Lyrics.Should().Be(lyrics);
         result.Genres.Should().ContainSingle().Which.Should().Be("Rock;Pop");
         result.CoverArtUri.Should().Be("C:/art/1.jpg");
         result.Grouping.Should().Be("Test Grouping");
         result.LightSwatchId.Should().Be("light1");
         result.DarkSwatchId.Should().Be("dark1");
+        await _imageProcessor.Received(1).SaveCoverArtAndExtractColorsAsync(
+            Arg.Is<byte[]>(bytes => bytes.SequenceEqual(pictureData)));
     }
 
     [Fact]
@@ -178,7 +175,6 @@ public class AtlMetadataServiceTests : IDisposable
             track.Album = "";
         });
         var result = await _metadataService.ExtractMetadataAsync(filePath);
-        result.Should().NotBeNull();
         result.Title.Should().Be("minimal");
         result.Artists.Should().ContainSingle().Which.Should().Be("Unknown Artist");
         result.Album.Should().Be("Unknown Album");
@@ -225,7 +221,6 @@ public class AtlMetadataServiceTests : IDisposable
         var cacheFileTime = audioFileTime.AddHours(1);
 
         File.SetLastWriteTimeUtc(audioFilePath, audioFileTime);
-        _fileSystem.GetFileInfo(audioFilePath).Returns(new FileInfo(audioFilePath));
 
         var expectedCachePath = Path.Combine(LrcCachePath,
             FileNameHelper.GenerateLrcCacheFileName(audioFilePath, "Cache Artist", null, "Cached Song"));
@@ -245,7 +240,6 @@ public class AtlMetadataServiceTests : IDisposable
             track.Title = "Override Song";
             track.Artist = "Override Artist";
         });
-        _fileSystem.GetFileInfo(audioFilePath).Returns(new FileInfo(audioFilePath));
         var expectedPath = Path.Combine(LrcCachePath,
             FileNameHelper.GenerateLrcOverrideFileName(audioFilePath));
         _fileSystem.FileExists(expectedPath).Returns(true);
@@ -256,37 +250,21 @@ public class AtlMetadataServiceTests : IDisposable
         _fileSystem.DidNotReceive().GetLastWriteTimeUtc(expectedPath);
     }
 
-    [Fact]
-    public async Task FindLrcFilePath_WithExternalLrcFile_ReturnsExternalPath()
+    [Theory]
+    [InlineData("lrc")]
+    [InlineData("txt")]
+    public async Task FindLrcFilePath_WithSidecar_ReturnsExternalPath(string extension)
     {
-        var audioFilePath = CreateTestAudioFile("external.mp3", track =>
-        {
-            /* no lyrics */
-        });
-        var expectedLrcPath = Path.Combine(_tempDirectory, "external.lrc");
+        var audioFilePath = CreateTestAudioFile("external.mp3", _ => { });
+        var expectedPath = Path.Combine(_tempDirectory, "external." + extension);
 
-        _fileSystem.FileExists(Arg.Is<string>(s => s != null && s.Contains(LrcCachePath))).Returns(false);
-        _fileSystem.GetFiles(_tempDirectory, "*.lrc").Returns(new[] { expectedLrcPath });
-        _fileSystem.GetFileNameWithoutExtension(expectedLrcPath).Returns("external");
-        var result = await _metadataService.ExtractMetadataAsync(audioFilePath);
-        result.LrcFilePath.Should().Be(expectedLrcPath);
-    }
-
-    [Fact]
-    public async Task FindLrcFilePath_WithExternalTxtFile_ReturnsTxtPath()
-    {
-        var audioFilePath = CreateTestAudioFile("externaltxt.mp3", track =>
-        {
-            /* no lyrics */
-        });
-        var expectedTxtPath = Path.Combine(_tempDirectory, "externaltxt.txt");
-
-        _fileSystem.FileExists(Arg.Is<string>(s => s != null && s.Contains(LrcCachePath))).Returns(false);
+        _fileSystem.FileExists(Arg.Is<string>(s => s.Contains(LrcCachePath))).Returns(false);
         _fileSystem.GetFiles(_tempDirectory, "*.lrc").Returns(Array.Empty<string>());
-        _fileSystem.GetFiles(_tempDirectory, "*.txt").Returns(new[] { expectedTxtPath });
-        _fileSystem.GetFileNameWithoutExtension(expectedTxtPath).Returns("externaltxt");
+        _fileSystem.GetFiles(_tempDirectory, "*." + extension).Returns(new[] { expectedPath });
+
         var result = await _metadataService.ExtractMetadataAsync(audioFilePath);
-        result.LrcFilePath.Should().Be(expectedTxtPath);
+
+        result.LrcFilePath.Should().Be(expectedPath);
     }
 
     [Fact]
@@ -297,7 +275,6 @@ public class AtlMetadataServiceTests : IDisposable
         _fileSystem.GetFileInfo(filePath).Returns(new FileInfo(filePath));
         _fileSystem.FileExists(filePath).Returns(true);
         var result = await _metadataService.ExtractMetadataAsync(filePath);
-        result.Should().NotBeNull();
         result.ExtractionFailed.Should().BeTrue();
         result.ErrorMessage.Should().BeOneOf("CorruptFile", "UnsupportedFormat");
     }
@@ -310,7 +287,6 @@ public class AtlMetadataServiceTests : IDisposable
         _fileSystem.GetFileInfo(filePath).Returns(new FileInfo(filePath));
         _fileSystem.FileExists(filePath).Returns(true);
         var result = await _metadataService.ExtractMetadataAsync(filePath);
-        result.Should().NotBeNull();
         result.ExtractionFailed.Should().BeTrue();
         result.ErrorMessage.Should().BeOneOf("CorruptFile", "UnsupportedFormat");
     }
@@ -363,7 +339,7 @@ public class AtlMetadataServiceTests : IDisposable
         _imageProcessor.SaveCoverArtAndExtractColorsAsync(embeddedPictureData)
             .Returns(Task.FromResult<(string?, string?, string?)>(("C:/art/embedded.jpg", "emb-light", "emb-dark")));
         var result = await _metadataService.ExtractMetadataAsync(audioFilePath);
-        result.CoverArtUri.Should().Be("C:/art/directory.jpg", because: "directory art has higher priority than embedded");
+        result.CoverArtUri.Should().Be("C:/art/directory.jpg");
         result.LightSwatchId.Should().Be("dir-light");
         await _imageProcessor.DidNotReceive().SaveCoverArtAndExtractColorsAsync(embeddedPictureData);
     }

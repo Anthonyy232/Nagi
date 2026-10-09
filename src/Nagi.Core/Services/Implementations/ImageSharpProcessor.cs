@@ -35,6 +35,7 @@ public class ImageSharpProcessor : IImageProcessor
     private const int ColorExtractionDimension = 112;
 
     private const int MaxImageSharpActiveAllocationMegabytes = 128;
+    private static readonly SemaphoreSlim DecodeGate = new(1, 1);
 
     private readonly string _albumArtStoragePath;
     private readonly IFileSystemService _fileSystem;
@@ -97,10 +98,6 @@ public class ImageSharpProcessor : IImageProcessor
         }
     }
 
-    /// <summary>
-    ///     Finds an existing cached file by content hash prefix.
-    ///     Returns the full path if found, null otherwise.
-    /// </summary>
     private string? FindCachedFileByHash(string contentHash)
     {
         try
@@ -127,9 +124,6 @@ public class ImageSharpProcessor : IImageProcessor
         return parts.Length >= 3 ? (parts[^2], parts[^1]) : (null, null);
     }
 
-    /// <summary>
-    ///     Processes a new image: loads it once, extracts colors, resizes, saves with colors in filename.
-    /// </summary>
     private async Task<(string? uri, string? lightSwatchId, string? darkSwatchId)> ProcessAndSaveNewImageAsync(
         string contentHash, byte[] pictureData)
     {
@@ -148,9 +142,6 @@ public class ImageSharpProcessor : IImageProcessor
         }
     }
 
-    /// <summary>
-    ///     Core implementation: loads image once, extracts colors, saves with colors embedded in filename.
-    /// </summary>
     private async Task<string> ProcessAndSaveNewImageCoreAsync(string contentHash, byte[] pictureData)
     {
         // Double-check: another thread may have created the file while we were waiting
@@ -160,7 +151,7 @@ public class ImageSharpProcessor : IImageProcessor
 
         // Decode directly toward the cached size. ImageSharp v4 can apply this during decode for
         // supported formats, avoiding large transient buffers for oversized embedded art.
-        using var image = LoadImage(pictureData, CachedImageMaxDimension);
+        using var image = await LoadImageAsync(pictureData, CachedImageMaxDimension).ConfigureAwait(false);
 
         var (lightHex, darkHex) = ExtractColorsFromLoadedImage(image);
 
@@ -237,9 +228,7 @@ public class ImageSharpProcessor : IImageProcessor
             if (imageInfo.Width <= maxDimension && imageInfo.Height <= maxDimension)
                 return imageData;
 
-            using var image = LoadImage(imageData, maxDimension);
-            var originalWidth = imageInfo.Width;
-            var originalHeight = imageInfo.Height;
+            using var image = await LoadImageAsync(imageData, maxDimension).ConfigureAwait(false);
 
             // TargetSize is a decode hint. Keep this guard for formats that still decode full-size.
             if (image.Width > maxDimension || image.Height > maxDimension)
@@ -252,9 +241,9 @@ public class ImageSharpProcessor : IImageProcessor
             }
 
             _logger.LogDebug("Resized image from {OrigWidth}x{OrigHeight} to {Width}x{Height}",
-                originalWidth, originalHeight, image.Width, image.Height);
+                imageInfo.Width, imageInfo.Height, image.Width, image.Height);
 
-            using var memoryStream = new MemoryStream(imageData.Length);
+            using var memoryStream = new MemoryStream();
             await image.SaveAsJpegAsync(memoryStream).ConfigureAwait(false);
             return memoryStream.ToArray();
         }
@@ -265,9 +254,18 @@ public class ImageSharpProcessor : IImageProcessor
         }
     }
 
-    private static Image<Bgra32> LoadImage(byte[] imageData, int maxDimension)
+    private static async Task<Image<Bgra32>> LoadImageAsync(byte[] imageData, int maxDimension)
     {
-        return Image.Load<Bgra32>(CreateDecoderOptions(maxDimension), imageData);
+        // PNG decoding can allocate a full-size frame before resizing within the shared memory limit.
+        await DecodeGate.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            return Image.Load<Bgra32>(CreateDecoderOptions(maxDimension), imageData);
+        }
+        finally
+        {
+            DecodeGate.Release();
+        }
     }
 
     private static DecoderOptions CreateDecoderOptions(int? maxDimension = null)

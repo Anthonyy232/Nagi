@@ -26,6 +26,7 @@ public partial class AtlMetadataService : IMetadataService
     static AtlMetadataService()
     {
         ATL.Settings.DisplayValueSeparator = AtlMultiValueSeparator;
+        ATL.Settings.FileBufferSize = 8 * 1024;
     }
 
     public AtlMetadataService(IImageProcessor imageProcessor, IFileSystemService fileSystem,
