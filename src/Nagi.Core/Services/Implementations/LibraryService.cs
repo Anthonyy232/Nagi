@@ -935,7 +935,6 @@ public class LibraryService : ILibraryService, IDisposable
         }
 
         return await context.Artists.AsNoTracking()
-            .Include(a => a.AlbumArtists).ThenInclude(aa => aa.Album)
             .FirstOrDefaultAsync(a => a.Id == artistId, cancellationToken).ConfigureAwait(false);
     }
 
@@ -1478,8 +1477,6 @@ public class LibraryService : ILibraryService, IDisposable
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await context.Playlists.AsNoTracking()
-            .Include(p => p.PlaylistSongs).ThenInclude(ps => ps.Song).ThenInclude(s => s!.Album)
-            .AsSplitQuery()
             .FirstOrDefaultAsync(p => p.Id == playlistId).ConfigureAwait(false);
     }
 
