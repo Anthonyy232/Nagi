@@ -27,12 +27,12 @@
                        HorizontalAlignment="Center" Foreground="{ThemeResource AppPrimaryColorBrush}"
                        FontWeight="Bold" FontSize="14" />
             <Grid Grid.Column="1" Width="40" Height="40" HorizontalAlignment="Center">
-                <Border CornerRadius="4" Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <controls:ImageEx IsCacheEnabled="True"
+                <Border CornerRadius="{StaticResource ArtworkCornerRadius}" Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <controls:ImageEx Width="40" Height="40" IsCacheEnabled="True"
                         Source="{x:Bind ArtworkUri, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
                         DecodePixelWidth="40" DecodePixelType="Logical" Stretch="UniformToFill" />
                 </Border>
-                <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="4"
+                <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="{StaticResource ArtworkCornerRadius}"
                       Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                     <FontIcon Glyph="&#xE8D6;" FontSize="16" Foreground="{ThemeResource TextFillColorTertiaryBrush}"
                               HorizontalAlignment="Center" VerticalAlignment="Center" />
@@ -62,7 +62,7 @@
                        FontWeight="Bold" FontSize="14" />
             <Grid Grid.Column="1" Width="40" Height="40" HorizontalAlignment="Center">
                 <Border CornerRadius="20" Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <controls:ImageEx IsCacheEnabled="True"
+                    <controls:ImageEx Width="40" Height="40" IsCacheEnabled="True"
                         Source="{x:Bind ImageUri, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
                         DecodePixelWidth="40" DecodePixelType="Logical" Stretch="UniformToFill" />
                 </Border>
@@ -95,12 +95,12 @@
                        HorizontalAlignment="Center" Foreground="{ThemeResource AppPrimaryColorBrush}"
                        FontWeight="Bold" FontSize="14" />
             <Grid Grid.Column="1" Width="40" Height="40" HorizontalAlignment="Center">
-                <Border CornerRadius="4" Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <controls:ImageEx IsCacheEnabled="True"
+                <Border CornerRadius="{StaticResource ArtworkCornerRadius}" Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <controls:ImageEx Width="40" Height="40" IsCacheEnabled="True"
                         Source="{x:Bind ArtworkUri, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
                         DecodePixelWidth="40" DecodePixelType="Logical" Stretch="UniformToFill" />
                 </Border>
-                <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="4"
+                <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="{StaticResource ArtworkCornerRadius}"
                       Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                     <FontIcon Glyph="&#xE93C;" FontSize="16" Foreground="{ThemeResource TextFillColorTertiaryBrush}"
                               HorizontalAlignment="Center" VerticalAlignment="Center" />

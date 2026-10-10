@@ -51,12 +51,12 @@
                 x:Name="EditLyricsButton"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
-                Style="{StaticResource SubtleButtonStyle}"
+                Style="{StaticResource SongListViewPageIconButton}"
                 IsEnabled="{x:Bind ViewModel.CanEditLyrics, Mode=OneWay}"
                 Click="EditLyricsButton_Click"
                 AutomationProperties.Name="{x:Bind resources:Strings.LyricsPage_EditLyrics_ToolTip, Mode=OneTime}"
                 ToolTipService.ToolTip="{x:Bind resources:Strings.LyricsPage_EditLyrics_ToolTip, Mode=OneTime}">
-                <FontIcon Glyph="&#xE70F;" />
+                <FontIcon Glyph="&#xE70F;" FontSize="16" />
             </Button>
         </Grid>
 

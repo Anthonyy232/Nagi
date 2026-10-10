@@ -38,7 +38,7 @@
             Grid.Row="3"
             BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
             BorderThickness="1"
-            CornerRadius="4"
+            CornerRadius="{ThemeResource ControlCornerRadius}"
             MinHeight="200"
             MaxHeight="400">
                 <TextBox

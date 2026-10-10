@@ -26,6 +26,10 @@ public partial class PlayerButtonSetting : ObservableObject
 
     [ObservableProperty]
     [property: JsonIgnore]
+    public partial bool IsIconActive { get; set; } = true;
+
+    [ObservableProperty]
+    [property: JsonIgnore]
     public partial string? DynamicIcon { get; set; }
 
     [ObservableProperty]

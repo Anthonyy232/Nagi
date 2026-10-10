@@ -35,7 +35,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <Border Grid.Column="0" Width="42" Height="42" Margin="12,0,0,0" CornerRadius="12"
+                        <Border Grid.Column="0" Width="42" Height="42" Margin="12,0,0,0" CornerRadius="{StaticResource ArtworkCornerRadius}"
                                 Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
                             <FontIcon FontSize="20" Glyph="&#xE8B7;" HorizontalAlignment="Center"
                                       VerticalAlignment="Center" />
@@ -98,9 +98,9 @@
                             Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}"
                             CommandParameter="{x:Bind Song}"
                             Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
-                            <Border Width="42" Height="42" CornerRadius="12"
+                            <Border Width="42" Height="42" CornerRadius="{StaticResource ArtworkCornerRadius}"
                                     Visibility="{x:Bind Song.IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <controls:ImageEx
+                                <controls:ImageEx Width="42" Height="42"
                                     IsCacheEnabled="True"
                                     Stretch="UniformToFill"
                                     DecodePixelWidth="48"
@@ -191,7 +191,7 @@
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0" Width="150" Height="150">
                     <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                          CornerRadius="12">
+                          CornerRadius="{StaticResource ArtworkCornerRadius}">
                         <FontIcon
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
@@ -207,7 +207,7 @@
                 </StackPanel>
             </Grid>
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    Padding="16,8" CornerRadius="8"
+                    Padding="16,8" CornerRadius="{ThemeResource OverlayCornerRadius}"
                     Visibility="{x:Bind ViewModel.IsAtRootLevel, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}"
                     Margin="0,8,0,10">
                 <BreadcrumbBar ItemsSource="{x:Bind ViewModel.Breadcrumbs, Mode=OneWay}"

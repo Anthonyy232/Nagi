@@ -22,6 +22,7 @@ to avoid duplicate declarations across pages and controls.
     <converters:NullOrEmptyStringToVisibilityConverter x:Key="NullOrEmptyStringToVisibilityConverter" />
     <converters:NullOrEmptyStringToVisibilityConverter x:Key="InverseNullOrEmptyStringToVisibilityConverter" Invert="True" />
     <converters:BooleanToOpacityConverter x:Key="BooleanToOpacityConverter" />
+    <converters:BooleanToOpacityConverter x:Key="ToggleIconOpacityConverter" FalseValue="0.6" />
     <converters:GenreToGradientConverter x:Key="GenreToGradientConverter" />
     <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
 

@@ -344,15 +344,12 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             NavView.MenuItems.Clear();
             foreach (var item in navItems.Where(i => i.IsEnabled))
             {
-                var icon = new FontIcon { Glyph = item.IconGlyph };
-                if (!string.IsNullOrEmpty(item.IconFontFamily))
-                    icon.FontFamily = new FontFamily(item.IconFontFamily);
                 var resourceKey = $"NavItem_{item.Tag}";
                 NavView.MenuItems.Add(new NavigationViewItem
                 {
                     Content = Strings.ResourceManager.GetString(resourceKey) ?? resourceKey,
                     Tag = item.Tag,
-                    Icon = icon
+                    Icon = new FontIcon { Glyph = item.IconGlyph }
                 });
             }
             UpdateNavViewSelection(ContentFrame.CurrentSourcePageType);

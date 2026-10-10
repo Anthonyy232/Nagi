@@ -129,7 +129,7 @@
                         x:Name="RestoreButton"
                         Grid.Column="2"
                         ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_RestoreButton_ToolTip, Mode=OneTime}">
-                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="20" Glyph="" />
+                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="20" Glyph="" />
                     </Button>
                 </Grid>
 
@@ -170,7 +170,8 @@
                                 <Button Command="{x:Bind ViewModel.ToggleShuffleCommand}"
                                         ToolTipService.ToolTip="{x:Bind ViewModel.ShuffleButtonToolTip, Mode=OneWay}">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                              Glyph="{x:Bind ViewModel.ShuffleIconGlyph, Mode=OneWay}" />
+                                              Glyph="{x:Bind ViewModel.ShuffleIconGlyph}"
+                                              Opacity="{x:Bind ViewModel.IsShuffleEnabled, Mode=OneWay, Converter={StaticResource ToggleIconOpacityConverter}}" />
                                 </Button>
                                 <Button Command="{x:Bind ViewModel.PreviousCommand}"
                                         ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_PreviousButton_ToolTip, Mode=OneTime}">

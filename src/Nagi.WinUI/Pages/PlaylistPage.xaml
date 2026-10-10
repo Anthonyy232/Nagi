@@ -95,11 +95,11 @@
 
                 <Button x:Name="RandomPlaylistButton"
                         ToolTipService.ToolTip="{x:Bind resources:Strings.PlaylistPage_RandomButton_ToolTip, Mode=OneTime}"
+                        AutomationProperties.Name="{x:Bind resources:Strings.PlaylistPage_RandomButton_ToolTip, Mode=OneTime}"
                         Style="{StaticResource SongListViewPageIconButton}"
                         Command="{x:Bind ViewModel.PlayRandomPlaylistCommand}"
-                        Margin="0,0,1,0">
-                    <ContentControl Style="{StaticResource DiceIconStyle}" />
-                </Button>
+                        Margin="0,0,1,0"
+                        ContentTemplate="{StaticResource RandomPlayIconTemplate}" />
 
                 <Button Style="{StaticResource SongListViewPageIconButton}"
                         ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
@@ -146,12 +146,12 @@
                     <MenuFlyout Placement="Bottom">
                         <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_NewPlaylistMenu_Regular, Mode=OneTime}" Click="CreateNewPlaylistButton_Click">
                             <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xE142;" />
+                                <FontIcon Glyph="&#xE90B;" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_NewPlaylistMenu_Smart, Mode=OneTime}" Click="CreateSmartPlaylistButton_Click">
                             <MenuFlyoutItem.Icon>
-                            <FontIcon Glyph="&#xE762;" />
+                            <FontIcon Glyph="&#xE71C;" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                     </MenuFlyout>
@@ -209,9 +209,9 @@
                             Height="{StaticResource HeaderImageSize}"
                             HorizontalAlignment="Center">
                             <Border
-                                CornerRadius="12"
+                                CornerRadius="{StaticResource ArtworkCornerRadius}"
                                 Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                                <controls:ImageEx
+                                <controls:ImageEx Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}"
                                     IsCacheEnabled="True"
                                     Source="{x:Bind CoverImageUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
                                     DecodePixelWidth="{StaticResource HeaderImageSize}"
@@ -220,13 +220,13 @@
                             </Border>
                             <Grid
                                 Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                CornerRadius="12"
+                                CornerRadius="{StaticResource ArtworkCornerRadius}"
                                 Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
                                 <FontIcon
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     FontSize="48"
-                                    Glyph="&#xE142;" />
+                                    Glyph="&#xE90B;" />
                             </Grid>
                             <!-- Smart playlist badge -->
                             <Border
@@ -235,9 +235,9 @@
                                 Margin="0,0,4,4"
                                 Padding="6,3"
                                 Background="{StaticResource AppPrimaryColorBrush}"
-                                CornerRadius="6"
+                                CornerRadius="{ThemeResource ControlCornerRadius}"
                                 Visibility="{x:Bind IsSmart, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <FontIcon Glyph="&#xE762;" FontSize="12" Foreground="White" />
+                                <FontIcon Glyph="&#xE71C;" FontSize="12" Foreground="White" />
                             </Border>
                         </Grid>
 

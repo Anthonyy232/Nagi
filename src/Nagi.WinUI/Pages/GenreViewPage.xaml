@@ -60,7 +60,7 @@
                 <Border Grid.Column="0"
                         Width="150"
                         Height="150"
-                        CornerRadius="12"
+                        CornerRadius="{StaticResource ArtworkCornerRadius}"
                         Background="{x:Bind ViewModel.GenreName, Converter={StaticResource GenreToGradientConverter}, Mode=OneWay}" />
 
                 <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Center" Spacing="8">
@@ -226,9 +226,9 @@
                                 CommandParameter="{x:Bind}"
                                 Style="{StaticResource SongListViewPageSongPlayButtonStyle}"
                                 ToolTipService.ToolTip="{x:Bind resources:Strings.GenreViewPage_SongElement_PlayButton_ToolTip, Mode=OneTime}">
-                            <Border Width="42" Height="42" CornerRadius="12"
+                            <Border Width="42" Height="42" CornerRadius="{StaticResource ArtworkCornerRadius}"
                                     Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <controls:ImageEx IsCacheEnabled="True" Stretch="UniformToFill"
+                                <controls:ImageEx Width="42" Height="42" IsCacheEnabled="True" Stretch="UniformToFill"
                                                   DecodePixelWidth="48" DecodePixelType="Logical"
                                                   Source="{x:Bind uihelpers:ImageUriHelper.GetUriWithCacheBuster(AlbumArtUriFromTrack, FileModifiedDate), Mode=OneTime}" />
                             </Border>

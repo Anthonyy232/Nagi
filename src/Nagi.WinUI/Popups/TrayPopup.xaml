@@ -23,7 +23,7 @@
             Background="Transparent"
             BorderThickness="1"
             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-            CornerRadius="8"
+            CornerRadius="{ThemeResource OverlayCornerRadius}"
             d:DataContext="{d:DesignInstance Type=viewmodels:PlayerViewModel}">
 
         <Border.Resources>
@@ -32,7 +32,7 @@
 
         <Grid>
             <Grid x:Name="CoverArtBackground"
-                  CornerRadius="8">
+                  CornerRadius="{ThemeResource OverlayCornerRadius}">
                 <Border Opacity="0.7">
                     <Border.Background>
                         <media:ImageBlendBrush x:Name="CoverArtBrush"
@@ -102,7 +102,8 @@
                         <Button Command="{Binding ToggleShuffleCommand}" Style="{StaticResource MediaControlButtonStyle}"
                                 ToolTipService.ToolTip="{Binding ShuffleButtonToolTip}">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                      Glyph="{Binding ShuffleIconGlyph}" />
+                                      Glyph="{Binding ShuffleIconGlyph}"
+                                      Opacity="{Binding IsShuffleEnabled, Converter={StaticResource ToggleIconOpacityConverter}}" />
                         </Button>
                         <Button Command="{Binding PreviousCommand}" Style="{StaticResource MediaControlButtonStyle}"
                                 ToolTipService.ToolTip="{x:Bind resources:Strings.TrayPopup_PreviousButton_ToolTip, Mode=OneTime}">
@@ -142,7 +143,7 @@
                                 Command="{Binding ShowPlayerViewCommand}"
                                 Style="{StaticResource MediaControlButtonStyle}"
                                 ToolTipService.ToolTip="{x:Bind resources:Strings.TrayPopup_BackButton_ToolTip, Mode=OneTime}">
-                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                         </Button>
 
                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"

@@ -270,13 +270,13 @@ public class SettingsService : IUISettingsService, IDisposable
     {
         return new List<NavigationItemSetting>
         {
-            new() { DisplayName = Resources.Strings.Settings_Nav_Library, Tag = "Library", IconGlyph = "\uE1D3", IsEnabled = true },
+            new() { DisplayName = Resources.Strings.Settings_Nav_Library, Tag = "Library", IconGlyph = "\uE8F1", IsEnabled = true },
             new() { DisplayName = Resources.Strings.Settings_Nav_Folders, Tag = "Folders", IconGlyph = "\uE8B7", IsEnabled = true },
             new() { DisplayName = Resources.Strings.Settings_Nav_Playlists, Tag = "Playlists", IconGlyph = "\uE90B", IsEnabled = true },
             new() { DisplayName = Resources.Strings.Settings_Nav_Artists, Tag = "Artists", IconGlyph = "\uE77B", IsEnabled = true },
             new() { DisplayName = Resources.Strings.Settings_Nav_Albums, Tag = "Albums", IconGlyph = "\uE93C", IsEnabled = true },
             new() { DisplayName = Resources.Strings.Settings_Nav_Genres, Tag = "Genres", IconGlyph = "\uE8EC", IsEnabled = true },
-            new() { DisplayName = Resources.Strings.Settings_Nav_Insights, Tag = "Insights", IconGlyph = "\uE9D9", IsEnabled = false }
+            new() { DisplayName = Resources.Strings.Settings_Nav_Insights, Tag = "Insights", IconGlyph = "\uE9D2", IsEnabled = false }
         };
     }
 
@@ -289,8 +289,8 @@ public class SettingsService : IUISettingsService, IDisposable
             new() { Id = "PlayPause", DisplayName = Resources.Strings.Settings_Button_PlayPause, IconGlyph = "\uE768", IsEnabled = true },
             new() { Id = "Next", DisplayName = Resources.Strings.Settings_Button_Next, IconGlyph = "\uE893", IsEnabled = true },
             new() { Id = "Repeat", DisplayName = Resources.Strings.Settings_Button_Repeat, IconGlyph = "\uE8EE", IsEnabled = true },
-            new() { Id = "Separator", DisplayName = Resources.Strings.Settings_Button_Divider, IconGlyph = "\uE7A3", IsEnabled = true },
-            new() { Id = "Lyrics", DisplayName = Resources.Strings.Settings_Button_Lyrics, IconGlyph = "\uE8D2", IsEnabled = true },
+            new() { Id = "Separator", DisplayName = Resources.Strings.Settings_Button_Divider, IconGlyph = string.Empty, IsEnabled = true },
+            new() { Id = "Lyrics", DisplayName = Resources.Strings.Settings_Button_Lyrics, IconGlyph = "\uED1E", IsEnabled = true },
             new() { Id = "Queue", DisplayName = Resources.Strings.Settings_Button_Queue, IconGlyph = "\uE90B", IsEnabled = true },
             new() { Id = "Volume", DisplayName = Resources.Strings.Settings_Button_Volume, IconGlyph = "\uE767", IsEnabled = true }
         };

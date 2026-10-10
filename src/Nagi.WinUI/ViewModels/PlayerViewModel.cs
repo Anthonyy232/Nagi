@@ -25,11 +25,9 @@ public partial class PlayerViewModel : ObservableObject
 {
     private const string PlayIconGlyph = "\uE768";
     private const string PauseIconGlyph = "\uE769";
-    private const string RepeatOffIconGlyph = "\uE8EE";
-    private const string RepeatAllIconGlyph = "\uE895";
+    private const string RepeatOffIconGlyph = "\uF5E7";
+    private const string RepeatAllIconGlyph = "\uE8EE";
     private const string RepeatOneIconGlyph = "\uE8ED";
-    private const string ShuffleOffIconGlyph = "\uE8B1";
-    private const string ShuffleOnIconGlyph = "\uE148";
     private const string MuteIconGlyph = "\uE74F";
     private const string VolumeLowIconGlyph = "\uE993";
     private const string VolumeMediumIconGlyph = "\uE994";
@@ -106,7 +104,6 @@ public partial class PlayerViewModel : ObservableObject
     public partial Song? CurrentPlayingTrack { get; set; }
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ShuffleIconGlyph))]
     [NotifyPropertyChangedFor(nameof(ShuffleButtonToolTip))]
     public partial bool IsShuffleEnabled { get; set; }
 
@@ -158,7 +155,7 @@ public partial class PlayerViewModel : ObservableObject
     public bool IsArtworkAvailable => !string.IsNullOrWhiteSpace(AlbumArtUri);
     public string PlayPauseIconGlyph => IsPlaying ? PauseIconGlyph : PlayIconGlyph;
     public string PlayPauseButtonToolTip => IsPlaying ? Strings.Tooltip_Pause : Strings.Tooltip_Play;
-    public string ShuffleIconGlyph => IsShuffleEnabled ? ShuffleOnIconGlyph : ShuffleOffIconGlyph;
+    public string ShuffleIconGlyph => "\uE8B1";
     public string ShuffleButtonToolTip => IsShuffleEnabled ? Strings.Tooltip_ShuffleOn : Strings.Tooltip_ShuffleOff;
 
     public string RepeatIconGlyph => CurrentRepeatMode switch
@@ -201,7 +198,7 @@ public partial class PlayerViewModel : ObservableObject
 
     partial void OnIsShuffleEnabledChanged(bool value)
     {
-        UpdateButtonState("Shuffle", ShuffleIconGlyph, ShuffleButtonToolTip);
+        UpdateButtonState("Shuffle", ShuffleIconGlyph, ShuffleButtonToolTip, IsShuffleEnabled);
     }
 
     partial void OnCurrentRepeatModeChanged(RepeatMode value)
@@ -209,13 +206,14 @@ public partial class PlayerViewModel : ObservableObject
         UpdateButtonState("Repeat", RepeatIconGlyph, RepeatButtonToolTip);
     }
 
-    private void UpdateButtonState(string buttonId, string icon, string toolTip)
+    private void UpdateButtonState(string buttonId, string icon, string toolTip, bool isIconActive = true)
     {
         var button = MainTransportButtons.FirstOrDefault(b => b.Id == buttonId)
                      ?? SecondaryControlsButtons.FirstOrDefault(b => b.Id == buttonId);
 
         if (button != null)
         {
+            button.IsIconActive = isIconActive;
             button.DynamicIcon = icon;
             button.DynamicToolTip = toolTip;
         }
@@ -268,6 +266,7 @@ public partial class PlayerViewModel : ObservableObject
                     break;
                 case "Shuffle":
                     button.Command = ToggleShuffleCommand;
+                    button.IsIconActive = IsShuffleEnabled;
                     button.DynamicIcon = ShuffleIconGlyph;
                     button.DynamicToolTip = ShuffleButtonToolTip;
                     break;
@@ -283,21 +282,21 @@ public partial class PlayerViewModel : ObservableObject
                     break;
                 case "Previous":
                     button.Command = PreviousCommand;
-                    button.DynamicIcon = "\uE892";
+                    button.DynamicIcon = button.IconGlyph;
                     button.DynamicToolTip = Strings.Player_PreviousButton_ToolTip;
                     break;
                 case "Next":
                     button.Command = NextCommand;
-                    button.DynamicIcon = "\uE893";
+                    button.DynamicIcon = button.IconGlyph;
                     button.DynamicToolTip = Strings.Player_NextButton_ToolTip;
                     break;
                 case "Lyrics":
-                    button.DynamicIcon = "\uE8D2";
+                    button.DynamicIcon = button.IconGlyph;
                     button.DynamicToolTip = Strings.Player_LyricsButton_ToolTip;
                     break;
                 case "Queue":
                     button.Command = ToggleQueuePanelCommand;
-                    button.DynamicIcon = "\uE90B";
+                    button.DynamicIcon = button.IconGlyph;
                     button.DynamicToolTip = Strings.Player_QueueButton_ToolTip;
                     break;
             }

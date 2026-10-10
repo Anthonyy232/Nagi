@@ -22,7 +22,8 @@
                     Foreground="{StaticResource PlayerAccentBrush}"
                     ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneWay}">
                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                              Glyph="{x:Bind DynamicIcon, Mode=OneWay}" />
+                              Glyph="{x:Bind DynamicIcon, Mode=OneWay}"
+                              Opacity="{x:Bind IsIconActive, Mode=OneWay, Converter={StaticResource ToggleIconOpacityConverter}}" />
                 </Button>
             </DataTemplate>
 
@@ -285,8 +286,8 @@
                             <Grid x:Name="QueuePanel" Margin="0,12,12,24"
                                   AllowDrop="True" DragOver="QueuePanel_DragOver" DragLeave="QueuePanel_DragLeave" Drop="Queue_Drop">
                                 <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8">
-                                    <Grid Padding="12" RowSpacing="12" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8">
+                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="{ThemeResource OverlayCornerRadius}">
+                                    <Grid Padding="12" RowSpacing="12" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="{ThemeResource OverlayCornerRadius}">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto" />
                                             <RowDefinition Height="Auto" />
@@ -314,9 +315,8 @@
                                                     Foreground="{StaticResource PlayerAccentBrush}"
                                                     Command="{x:Bind ViewModel.ClearQueueCommand}"
                                                     ToolTipService.ToolTip="{x:Bind resources:Strings.QueueFlyout_ClearQueue}"
-                                                    AutomationProperties.Name="{x:Bind resources:Strings.QueueFlyout_ClearQueue}">
-                                                <FontIcon Glyph="&#xE74D;" FontSize="16" />
-                                            </Button>
+                                                    AutomationProperties.Name="{x:Bind resources:Strings.QueueFlyout_ClearQueue}"
+                                                    ContentTemplate="{StaticResource ClearQueueIconTemplate}" />
                                             <Button x:Name="QueueSettingsButton" Grid.Column="2" VerticalAlignment="Top" Padding="6" Background="Transparent" BorderThickness="0"
                                                     Foreground="{StaticResource PlayerAccentBrush}"
                                                     ToolTipService.ToolTip="{x:Bind resources:Strings.QueuePanel_DisplayOptions}"
@@ -420,7 +420,7 @@
                                     </Grid>
                                 </Border>
                                 <Border x:Name="QueueDropHighlight" BorderBrush="{ThemeResource AccentFillColorDefaultBrush}"
-                                        BorderThickness="2" CornerRadius="8" IsHitTestVisible="False" Visibility="Collapsed" />
+                                        BorderThickness="2" CornerRadius="{ThemeResource OverlayCornerRadius}" IsHitTestVisible="False" Visibility="Collapsed" />
                             </Grid>
                         </SplitView.Pane>
                         <Frame x:Name="ContentFrame" Padding="12,0,12,0" />
@@ -456,7 +456,7 @@
                             DragOver="Queue_DragOver"
                             Drop="Queue_Drop"
                             VerticalAlignment="Bottom"
-                            CornerRadius="8">
+                            CornerRadius="{ThemeResource OverlayCornerRadius}">
                             <Grid>
                                 <Grid x:Name="MainControlsGrid" VerticalAlignment="Top">
                                     <Grid.ColumnDefinitions>
@@ -489,8 +489,8 @@
                                             x:Name="AlbumArtBorder"
                                             Width="{StaticResource FloatingPlayerArtSize}"
                                             Height="{StaticResource FloatingPlayerArtSize}"
-                                            CornerRadius="6">
-                                            <imageEx:ImageEx
+                                            CornerRadius="{StaticResource ArtworkCornerRadius}">
+                                            <imageEx:ImageEx Width="{StaticResource FloatingPlayerArtSize}" Height="{StaticResource FloatingPlayerArtSize}"
                                                 x:Name="AlbumArt"
                                                 IsCacheEnabled="True"
                                                 Source="{x:Bind ViewModel.AlbumArtUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
@@ -705,12 +705,12 @@
                   VerticalAlignment="Stretch"
                   Opacity="1"
                   Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                  CornerRadius="8"
+                  CornerRadius="{ThemeResource OverlayCornerRadius}"
                   BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                   BorderThickness="1"
                   Tapped="OnSeeAllPanelTapped">
 
-                <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8">
+                <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="{ThemeResource OverlayCornerRadius}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />

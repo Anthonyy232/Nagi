@@ -216,9 +216,9 @@
                             CommandParameter="{x:Bind}"
                             Style="{StaticResource SongListViewPageSongPlayButtonStyle}"
                             ToolTipService.ToolTip="{x:Bind resources:Strings.LibraryPage_SongElement_PlayButton_ToolTip, Mode=OneTime}">
-                            <Border Width="42" Height="42" CornerRadius="12"
+                            <Border Width="42" Height="42" CornerRadius="{StaticResource ArtworkCornerRadius}"
                                     Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <controls:ImageEx
+                                <controls:ImageEx Width="42" Height="42"
                                     IsCacheEnabled="True"
                                     Stretch="UniformToFill"
                                     DecodePixelWidth="48"

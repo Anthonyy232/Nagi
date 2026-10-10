@@ -15,16 +15,10 @@
         <Setter Property="Foreground" Value="{ThemeResource AppPrimaryColorBrush}" />
     </Style>
 
-    <Style x:Key="SettingsPageResetButtonStyle" TargetType="Button" BasedOn="{StaticResource AnimatedAccentButtonStyle}">
-        <Setter Property="Padding" Value="16,10" />
-        <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
-    </Style>
-
     <Style x:Key="NavigationListViewItemStyle" TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="MinHeight" Value="0" />
-        <Setter Property="CornerRadius" Value="8" />
     </Style>
 
 </ResourceDictionary>

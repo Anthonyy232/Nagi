@@ -31,6 +31,8 @@
         <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
 
+    <CornerRadius x:Key="ArtworkCornerRadius">12</CornerRadius>
+
     <x:Double x:Key="ArtistGridCardImageSize">160</x:Double>
     <x:Double x:Key="HeaderImageSize">150</x:Double>
     <x:Double x:Key="AlbumCardImageSize">110</x:Double>
@@ -75,7 +77,6 @@
 
     <Style x:Key="AnimatedAccentButtonStyle" TargetType="Button" BasedOn="{StaticResource AccentButtonStyle}">
         <Setter Property="Padding" Value="16,10" />
-        <Setter Property="CornerRadius" Value="12" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -285,6 +286,7 @@
     </Style>
 
     <Style x:Key="AnimatedGridViewItemStyle" TargetType="GridViewItem">
+        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="Margin" Value="4" />
@@ -296,7 +298,7 @@
                 <ControlTemplate TargetType="GridViewItem">
                     <Grid x:Name="RootGrid"
                           Background="{TemplateBinding Background}"
-                          CornerRadius="12"
+                          CornerRadius="{TemplateBinding CornerRadius}"
                           RenderTransformOrigin="0.5,0.5">
                         <Grid.RenderTransform>
                             <ScaleTransform x:Name="ItemScale" />
@@ -345,8 +347,8 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
-                        <Border x:Name="SelectionBorder" Background="Transparent" CornerRadius="12" />
-                        <Border x:Name="HoverOverlay" Background="Transparent" CornerRadius="12" />
+                        <Border x:Name="SelectionBorder" Background="Transparent" CornerRadius="{TemplateBinding CornerRadius}" />
+                        <Border x:Name="HoverOverlay" Background="Transparent" CornerRadius="{TemplateBinding CornerRadius}" />
                         <ContentPresenter x:Name="ContentPresenter"
                                           ContentTransitions="{TemplateBinding ContentTransitions}"
                                           ContentTemplate="{TemplateBinding ContentTemplate}"

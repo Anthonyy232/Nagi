@@ -80,11 +80,11 @@
 
                 <Button x:Name="RandomGenreButton"
                         ToolTipService.ToolTip="{x:Bind resources:Strings.GenrePage_RandomButton_ToolTip, Mode=OneTime}"
+                        AutomationProperties.Name="{x:Bind resources:Strings.GenrePage_RandomButton_ToolTip, Mode=OneTime}"
                         Style="{StaticResource SongListViewPageIconButton}"
                         Command="{x:Bind ViewModel.PlayRandomGenreCommand}"
-                        Margin="0,0,1,0">
-                    <ContentControl Style="{StaticResource DiceIconStyle}" />
-                </Button>
+                        Margin="0,0,1,0"
+                        ContentTemplate="{StaticResource RandomPlayIconTemplate}" />
 
                 <Button Style="{StaticResource SongListViewPageIconButton}"
                         ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">

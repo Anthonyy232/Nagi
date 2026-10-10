@@ -58,20 +58,17 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <Border x:Name="AlbumArtwork" Grid.Row="0"
-                        Width="{StaticResource AlbumCardImageSize}"
-                        Height="{StaticResource AlbumCardImageSize}"
-                        HorizontalAlignment="Center"
-                        CornerRadius="12"
-                        Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <controls:ImageEx x:Name="AlbumImage"
-                        CornerRadius="12"
-                        IsCacheEnabled="True"
-                        Source="{x:Bind CoverArtUri}"
-                        DecodePixelWidth="{StaticResource AlbumCardImageSizeLarge}"
-                        DecodePixelType="Logical"
-                        Stretch="UniformToFill" />
-                </Border>
+                <controls:ImageEx x:Name="AlbumArtwork" Grid.Row="0"
+                    Width="{StaticResource AlbumCardImageSize}"
+                    Height="{StaticResource AlbumCardImageSize}"
+                    HorizontalAlignment="Center"
+                    CornerRadius="{StaticResource ArtworkCornerRadius}"
+                    Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    IsCacheEnabled="True"
+                    Source="{x:Bind CoverArtUri}"
+                    DecodePixelWidth="{StaticResource AlbumCardImageSizeLarge}"
+                    DecodePixelType="Logical"
+                    Stretch="UniformToFill" />
                 <TextBlock x:Name="AlbumName"
                     Grid.Row="1"
                     Margin="4,8,4,0"
@@ -139,7 +136,7 @@
                     <Grid Grid.Column="0" Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}" CornerRadius="75"
                           PointerEntered="ArtistImage_PointerEntered" PointerExited="ArtistImage_PointerExited"
                           Background="Transparent">
-                        <controls:ImageEx x:Name="AlbumImage"
+                        <controls:ImageEx Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}" x:Name="AlbumImage"
                             CornerRadius="75"
                             IsCacheEnabled="True"
                             Source="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
@@ -368,9 +365,9 @@
                             Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}"
                             CommandParameter="{x:Bind}"
                             Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
-                            <Border Width="42" Height="42" CornerRadius="12"
+                            <Border Width="42" Height="42" CornerRadius="{StaticResource ArtworkCornerRadius}"
                                     Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <controls:ImageEx x:Name="AlbumImage"
+                                <controls:ImageEx Width="42" Height="42" x:Name="AlbumImage"
                                     IsCacheEnabled="True"
                                     Stretch="UniformToFill"
                                     DecodePixelWidth="48"

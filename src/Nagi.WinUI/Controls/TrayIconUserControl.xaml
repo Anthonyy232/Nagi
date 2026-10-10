@@ -24,7 +24,7 @@
                     Text="{x:Bind resources:Strings.TrayIcon_ShowWindow, Mode=OneTime}"
                     Command="{x:Bind ViewModel.RestoreWindowCommand}">
                     <MenuFlyoutItem.Icon>
-                        <SymbolIcon Symbol="FullScreen" />
+                        <FontIcon Glyph="&#xE73F;" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
                 <MenuFlyoutSeparator />
@@ -32,7 +32,7 @@
                     Text="{x:Bind resources:Strings.TrayIcon_Exit, Mode=OneTime}"
                     Command="{x:Bind ViewModel.ExitApplicationCommand}">
                     <MenuFlyoutItem.Icon>
-                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="" />
+                        <FontIcon Glyph="" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
             </MenuFlyout>

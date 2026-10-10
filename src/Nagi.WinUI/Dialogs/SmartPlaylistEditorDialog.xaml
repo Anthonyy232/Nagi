@@ -22,7 +22,7 @@
 
         <Style x:Key="RuleRowStyle" TargetType="Border">
             <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
             <Setter Property="Padding" Value="12" />
             <Setter Property="Margin" Value="0,4" />
         </Style>
@@ -36,16 +36,16 @@
             <StackPanel Grid.Column="0" Spacing="8" VerticalAlignment="Top">
                 <Grid x:Name="CoverImageGrid" Width="100" Height="100"
                       Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                      CornerRadius="12">
+                      CornerRadius="{StaticResource ArtworkCornerRadius}">
                     <FontIcon x:Name="CoverImagePlaceholder" Glyph="&#xE91B;" FontSize="40"
                               HorizontalAlignment="Center" VerticalAlignment="Center"
-                              Foreground="{ThemeResource TextFillColorSecondary}" />
-                    <controls:ImageEx x:Name="CoverImagePreview"
+                              Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                    <controls:ImageEx Width="100" Height="100" x:Name="CoverImagePreview"
                                       Stretch="UniformToFill"
                                       IsCacheEnabled="True"
                                       DecodePixelWidth="100"
                                       DecodePixelType="Logical"
-                                      CornerRadius="12"
+                                      CornerRadius="{StaticResource ArtworkCornerRadius}"
                                       Visibility="Collapsed" />
                 </Grid>
                 <Button x:Name="PickCoverImageButton"
@@ -120,7 +120,7 @@
         <Border Grid.Row="2"
                 BorderThickness="1"
                 BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                CornerRadius="8"
+                CornerRadius="{ThemeResource OverlayCornerRadius}"
                 Padding="0"
                 Background="{ThemeResource LayerFillColorDefaultBrush}">
             <Grid>
@@ -175,7 +175,7 @@
                                                     Click="RemoveRule_Click"
                                                     ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylist_RemoveRuleButton_ToolTip, Mode=OneTime}"
                                                     Style="{ThemeResource SubtleButtonStyle}">
-                                                <FontIcon Glyph="&#xE74D;" FontSize="14" Foreground="{ThemeResource SystemFillColorCriticalBrush}" />
+                                                <FontIcon Glyph="&#xE738;" FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                                             </Button>
                                         </Grid>
                                     </Border>
@@ -194,7 +194,7 @@
                                        Style="{ThemeResource SubtitleTextBlockStyle}"
                                        HorizontalAlignment="Center"/>
                             <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_NoRulesMessage, Mode=OneTime}"
-                                       Foreground="{ThemeResource TextFillColorSecondary}"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                        HorizontalAlignment="Center"/>
                             <Button Content="{x:Bind resources:Strings.SmartPlaylist_AddFirstRuleButton_Content, Mode=OneTime}"
                                     ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylist_AddFirstRuleButton_ToolTip, Mode=OneTime}"
@@ -210,12 +210,12 @@
         <!-- Row 3: Footer Status -->
         <Border Grid.Row="3" Margin="0,16,0,0" Padding="12,8"
                 Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
-                CornerRadius="4"
+                CornerRadius="{ThemeResource ControlCornerRadius}"
                 HorizontalAlignment="Stretch">
             <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Left">
-                <FontIcon Glyph="&#xE946;" FontSize="14" Foreground="{ThemeResource TextFillColorSecondary}" VerticalAlignment="Center"/>
+                <FontIcon Glyph="&#xE946;" FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
                 <TextBlock x:Name="MatchCountText"
-                           Foreground="{ThemeResource TextFillColorSecondary}"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                            VerticalAlignment="Center"
                            Style="{ThemeResource CaptionTextBlockStyle}"/>
             </StackPanel>

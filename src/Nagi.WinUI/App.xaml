@@ -11,6 +11,7 @@
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <ResourceDictionary Source="ms-appx:///Styles/Converters.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/Colors.xaml" />
+                <ResourceDictionary Source="ms-appx:///Styles/Icons.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/MediaControlPlayerColors.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/SettingsPageColors.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/SongListViewPageColors.xaml" />

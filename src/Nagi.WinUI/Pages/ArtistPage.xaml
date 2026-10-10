@@ -96,11 +96,11 @@
 
                 <Button x:Name="RandomArtistButton"
                         ToolTipService.ToolTip="{x:Bind resources:Strings.ArtistPage_RandomButton_ToolTip, Mode=OneTime}"
+                        AutomationProperties.Name="{x:Bind resources:Strings.ArtistPage_RandomButton_ToolTip, Mode=OneTime}"
                         Style="{StaticResource SongListViewPageIconButton}"
                         Command="{x:Bind ViewModel.PlayRandomArtistCommand}"
-                        Margin="0,0,1,0">
-                    <ContentControl Style="{StaticResource DiceIconStyle}" />
-                </Button>
+                        Margin="0,0,1,0"
+                        ContentTemplate="{StaticResource RandomPlayIconTemplate}" />
 
                 <Button Style="{StaticResource SongListViewPageIconButton}"
                         ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
@@ -175,7 +175,7 @@
                                 <Border
                                     CornerRadius="80"
                                     Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                                    <controls:ImageEx
+                                    <controls:ImageEx Width="{StaticResource ArtistGridCardImageSize}" Height="{StaticResource ArtistGridCardImageSize}"
                                         IsCacheEnabled="True"
                                         Source="{x:Bind LocalImageCachePath, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
                                         DecodePixelWidth="{StaticResource ArtistGridCardImageSize}"

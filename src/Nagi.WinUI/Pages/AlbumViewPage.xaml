@@ -59,9 +59,9 @@
                 <Border Grid.Column="0"
                         Width="{StaticResource HeaderImageSize}"
                         Height="{StaticResource HeaderImageSize}"
-                        CornerRadius="12"
+                        CornerRadius="{StaticResource ArtworkCornerRadius}"
                         Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                    <controls:ImageEx
+                    <controls:ImageEx Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}"
                         IsCacheEnabled="True"
                         Source="{x:Bind ViewModel.CoverArtUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
                         DecodePixelWidth="{StaticResource HeaderImageSize}"
@@ -243,8 +243,8 @@
                                     <ColumnDefinition MinWidth="50" Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <Button Grid.Column="0" ToolTipService.ToolTip="{x:Bind resources:Strings.AlbumViewPage_SongPlayButton_ToolTip, Mode=OneTime}" Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}" CommandParameter="{x:Bind}" Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
-                                    <Border Width="42" Height="42" CornerRadius="12" Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                        <controls:ImageEx IsCacheEnabled="True" Stretch="UniformToFill"
+                                    <Border Width="42" Height="42" CornerRadius="{StaticResource ArtworkCornerRadius}" Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <controls:ImageEx Width="42" Height="42" IsCacheEnabled="True" Stretch="UniformToFill"
                                                           DecodePixelWidth="48" DecodePixelType="Logical"
                                                           Source="{x:Bind uihelpers:ImageUriHelper.GetUriWithCacheBuster(AlbumArtUriFromTrack, FileModifiedDate), Mode=OneTime}" />
                                     </Border>
@@ -314,9 +314,9 @@
                             Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}"
                             CommandParameter="{x:Bind}"
                             Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
-                            <Border Width="42" Height="42" CornerRadius="12"
+                            <Border Width="42" Height="42" CornerRadius="{StaticResource ArtworkCornerRadius}"
                                     Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <controls:ImageEx
+                                <controls:ImageEx Width="42" Height="42"
                                     IsCacheEnabled="True"
                                     Stretch="UniformToFill"
                                     DecodePixelWidth="48"

@@ -59,9 +59,9 @@
 
                 <!-- Smart Playlist Cover Art -->
                 <Grid Grid.Column="0" Width="150" Height="150">
-                    <Border CornerRadius="12"
+                    <Border CornerRadius="{StaticResource ArtworkCornerRadius}"
                             Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                        <controls:ImageEx
+                        <controls:ImageEx Width="150" Height="150"
                             IsCacheEnabled="True"
                             Source="{x:Bind ViewModel.CoverImageUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
                             DecodePixelWidth="160"
@@ -69,13 +69,13 @@
                             Stretch="UniformToFill" />
                     </Border>
                     <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                          CornerRadius="12"
+                          CornerRadius="{StaticResource ArtworkCornerRadius}"
                           Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
                         <FontIcon
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="48"
-                            Glyph="&#xE1D3;" />
+                            Glyph="&#xE71C;" />
                     </Grid>
                 </Grid>
 
@@ -88,11 +88,11 @@
 
             <!-- Rule Summary Bar -->
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    Padding="16,8" CornerRadius="8" Margin="0,8,0,10">
+                    Padding="16,8" CornerRadius="{ThemeResource OverlayCornerRadius}" Margin="0,8,0,10">
                 <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                    <FontIcon Glyph="&#xE946;" FontSize="14" Foreground="{ThemeResource TextFillColorSecondary}" />
+                    <FontIcon Glyph="&#xE946;" FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                     <TextBlock Text="{x:Bind ViewModel.RuleSummary, Mode=OneWay}"
-                               Foreground="{ThemeResource TextFillColorSecondary}"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                FontSize="13" />
                 </StackPanel>
             </Border>
@@ -113,7 +113,7 @@
                         Text="{x:Bind ViewModel.SelectedItemsCountText, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     <TextBlock Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}"
-                               Foreground="{ThemeResource TextFillColorSecondary}" VerticalAlignment="Center"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"
                                FontSize="13"
                                Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                 </StackPanel>
@@ -302,9 +302,9 @@
                                 Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}"
                                 CommandParameter="{x:Bind}"
                                 ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip, Mode=OneTime}">
-                            <Border Width="42" Height="42" CornerRadius="12"
+                            <Border Width="42" Height="42" CornerRadius="{StaticResource ArtworkCornerRadius}"
                                     Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <controls:ImageEx
+                                <controls:ImageEx Width="42" Height="42"
                                     Source="{x:Bind uihelpers:ImageUriHelper.GetUriWithCacheBuster(AlbumArtUriFromTrack, FileModifiedDate), Mode=OneTime}"
                                     Stretch="UniformToFill"
                                     DecodePixelWidth="48"
@@ -372,7 +372,7 @@
                 </TransitionCollection>
             </StackPanel.ChildrenTransitions>
             <FontIcon
-                Glyph="&#xE99A;"
+                Glyph="&#xE71C;"
                 FontSize="48"
                 Margin="0,0,0,12"
                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"

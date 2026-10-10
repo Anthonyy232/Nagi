@@ -128,7 +128,7 @@
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <FontIcon Grid.Column="0" Glyph="&#xE767;" FontSize="32"
+                                <FontIcon Grid.Column="0" Glyph="&#xE7F6;" FontSize="32"
                                           Foreground="{ThemeResource AppPrimaryColorBrush}"
                                           VerticalAlignment="Center" />
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
@@ -462,7 +462,7 @@
                                                      Maximum="100"
                                                      Height="8"
                                                      Foreground="{x:Bind SegmentBrush}"
-                                                     CornerRadius="4"
+                                                     CornerRadius="{ThemeResource ControlCornerRadius}"
                                                      VerticalAlignment="Center" />
 
                                         <TextBlock Grid.Column="2"
@@ -492,7 +492,7 @@
                 </TransitionCollection>
             </StackPanel.ChildrenTransitions>
 
-            <FontIcon Glyph="&#xE9D9;"
+            <FontIcon Glyph="&#xE9D2;"
                       FontSize="48"
                       Margin="0,0,0,12"
                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"

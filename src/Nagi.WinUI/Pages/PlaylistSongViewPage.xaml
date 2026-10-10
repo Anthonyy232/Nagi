@@ -54,9 +54,9 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0" Width="150" Height="150">
-                    <Border CornerRadius="12"
+                    <Border CornerRadius="{StaticResource ArtworkCornerRadius}"
                             Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                        <controls:ImageEx
+                        <controls:ImageEx Width="150" Height="150"
                             IsCacheEnabled="True"
                             Source="{x:Bind ViewModel.CoverImageUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
                             DecodePixelWidth="160"
@@ -64,13 +64,13 @@
                             Stretch="UniformToFill" />
                     </Border>
                     <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                          CornerRadius="12"
+                          CornerRadius="{StaticResource ArtworkCornerRadius}"
                           Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
                         <FontIcon
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="48"
-                            Glyph="&#xE142;" />
+                            Glyph="&#xE90B;" />
                     </Grid>
                 </Grid>
 
@@ -247,9 +247,9 @@
                                 Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}"
                                 CommandParameter="{x:Bind Mode=OneTime}"
                                 ToolTipService.ToolTip="{x:Bind resources:Strings.PlaylistSongViewPage_SongElement_PlayButton_ToolTip, Mode=OneTime}">
-                            <Border Width="42" Height="42" CornerRadius="12"
+                            <Border Width="42" Height="42" CornerRadius="{StaticResource ArtworkCornerRadius}"
                                     Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}">
-                                <controls:ImageEx
+                                <controls:ImageEx Width="42" Height="42"
                                     Source="{x:Bind uihelpers:ImageUriHelper.GetUriWithCacheBuster(AlbumArtUriFromTrack, FileModifiedDate), Mode=OneTime}"
                                     Stretch="UniformToFill"
                                     DecodePixelWidth="48"
@@ -309,7 +309,7 @@
                 </TransitionCollection>
             </StackPanel.ChildrenTransitions>
             <FontIcon
-                Glyph="&#xE142;"
+                Glyph="&#xE90B;"
                 FontSize="48"
                 Margin="0,0,0,12"
                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"

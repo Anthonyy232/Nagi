@@ -283,27 +283,6 @@ public class GenreToGradientConverter : IValueConverter
 }
 
 /// <summary>
-///     Converts a string font family name into a FontFamily object.
-/// </summary>
-public class StringToFontFamilyConverter : IValueConverter
-{
-    private static readonly FontFamily DefaultSymbolFont = new("Segoe MDL2 Assets");
-
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        if (value is string fontFamilyName && !string.IsNullOrEmpty(fontFamilyName))
-            return new FontFamily(fontFamilyName);
-
-        return DefaultSymbolFont;
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-/// <summary>
 ///     Converts a BackdropMaterial enum value to a user-friendly string for display in the UI.
 /// </summary>
 public class BackdropMaterialToStringConverter : IValueConverter

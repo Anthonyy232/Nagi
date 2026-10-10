@@ -97,11 +97,11 @@
 
                 <Button x:Name="RandomAlbumButton"
                         ToolTipService.ToolTip="{x:Bind resources:Strings.AlbumPage_RandomButton_ToolTip, Mode=OneTime}"
+                        AutomationProperties.Name="{x:Bind resources:Strings.AlbumPage_RandomButton_ToolTip, Mode=OneTime}"
                         Style="{StaticResource SongListViewPageIconButton}"
                         Command="{x:Bind ViewModel.PlayRandomAlbumCommand}"
-                        Margin="0,0,1,0">
-                    <ContentControl Style="{StaticResource DiceIconStyle}" />
-                </Button>
+                        Margin="0,0,1,0"
+                        ContentTemplate="{StaticResource RandomPlayIconTemplate}" />
 
                 <Button Style="{StaticResource SongListViewPageIconButton}"
                         ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
@@ -179,9 +179,9 @@
                             <!-- Album Cover Art or Placeholder -->
                             <Grid Grid.Row="0" Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}" HorizontalAlignment="Center">
                                 <Border
-                                    CornerRadius="8"
+                                    CornerRadius="{StaticResource ArtworkCornerRadius}"
                                     Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}">
-                                    <controls:ImageEx
+                                    <controls:ImageEx Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}"
                                         IsCacheEnabled="True"
                                         Source="{x:Bind CoverArtUri, Mode=OneTime, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
                                         DecodePixelWidth="{StaticResource HeaderImageSize}"
@@ -190,7 +190,7 @@
                                 </Border>
                                 <Grid
                                     Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    CornerRadius="8"
+                                    CornerRadius="{StaticResource ArtworkCornerRadius}"
                                     Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneTime}">
                                     <FontIcon
                                         HorizontalAlignment="Center"
