@@ -1,3 +1,4 @@
+using System.Collections.Specialized;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Models;
@@ -10,6 +11,65 @@ namespace Nagi.WinUI.Tests;
 
 public class PlaybackQueueCollectionTests
 {
+    [Fact]
+    public void SkipAndPrevious_RemoveAndInsertRowsWithoutReplacingRemainingSongs()
+    {
+        var songs = Enumerable.Range(0, 4).Select(index => new Song { Title = $"Song {index}" }).ToArray();
+        var playback = Substitute.For<IMusicPlaybackService>();
+        playback.PlaybackQueue.Returns(songs.Select(song => song.Id).ToArray());
+        playback.GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
+            .Returns(songs.ToDictionary(song => song.Id));
+        using var queue = new PlaybackQueueCollection(playback, NullLogger.Instance);
+        queue.SetActive(true);
+        var originalRows = queue.ToArray();
+        var changes = new List<NotifyCollectionChangedAction>();
+        queue.CollectionChanged += (_, args) => changes.Add(args.Action);
+
+        playback.CurrentQueueIndex.Returns(1);
+        queue.Refresh();
+
+        changes.Should().Equal(NotifyCollectionChangedAction.Remove);
+        queue.Should().Equal(originalRows.Skip(1));
+        changes.Clear();
+
+        playback.CurrentQueueIndex.Returns(0);
+        queue.Refresh();
+
+        changes.Should().Equal(NotifyCollectionChangedAction.Add);
+        queue[0].Id.Should().Be(songs[0].Id);
+        queue.Skip(1).Should().Equal(originalRows.Skip(1));
+    }
+
+    [Fact]
+    public async Task UpNext_ReorderingKeepsCurrentTrackFirstAndUsesUpcomingSongsForDuration()
+    {
+        var songs = Enumerable.Range(0, 5).Select(index => new Song { Title = $"Song {index}" }).ToArray();
+        var ids = songs.Select(song => song.Id).ToArray();
+        var playback = Substitute.For<IMusicPlaybackService>();
+        playback.PlaybackQueue.Returns(ids);
+        playback.CurrentTrack.Returns(songs[2]);
+        playback.CurrentQueueIndex.Returns(2);
+        playback.GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
+            .Returns(songs.ToDictionary(song => song.Id));
+        playback.GetQueueDurationAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>()).Returns(TimeSpan.FromMinutes(3));
+        using var queue = new PlaybackQueueCollection(playback, NullLogger.Instance);
+        queue.SetShowTotalDuration(true);
+        queue.SetActive(true);
+        var current = queue[0];
+        var next = queue[1];
+
+        queue.Move(current, 1);
+        queue.Move(next, -1);
+        queue.Move(1, 0);
+        queue.CompleteReorder(next, queue.Version);
+
+        playback.DidNotReceive().MoveQueueItem(Arg.Any<Guid>(), Arg.Any<Guid?>());
+        queue.Select(entry => entry.Id).Should().Equal(ids.Skip(2));
+        queue.Move(queue[2], -1);
+        playback.Received(1).MoveQueueItem(ids[4], ids[3]);
+        await playback.Received(1).GetQueueDurationAsync(Arg.Is<IEnumerable<Guid>>(requested => requested.SequenceEqual(ids.Skip(2))), Arg.Any<CancellationToken>());
+    }
+
     [Fact]
     public void EmptyQueue_ShowsHelpfulEmptyState()
     {

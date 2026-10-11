@@ -308,7 +308,7 @@
                                             <StackPanel VerticalAlignment="Center" Spacing="4">
                                                 <TextBlock Text="{x:Bind GetListeningPaneTitle(ViewModel.IsHistoryVisible), Mode=OneWay}" Style="{ThemeResource SubtitleTextBlockStyle}"
                                                            Foreground="{StaticResource PlayerAccentBrush}" />
-                                                <TextBlock Text="{x:Bind ViewModel.QueueTrackCountText, Mode=OneWay}"
+                                                <TextBlock Text="{x:Bind ViewModel.SidebarQueue.TrackCountText, Mode=OneWay}"
                                                            Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                            Visibility="{x:Bind GetQueueDetailVisibility(ViewModel.IsHistoryVisible, ViewModel.QueueDisplaySettings.ShowTrackCount), Mode=OneWay}" />
                                                 <TextBlock Text="{x:Bind ViewModel.SidebarQueue.TotalDurationText, Mode=OneWay}"

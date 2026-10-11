@@ -13,6 +13,41 @@ namespace Nagi.WinUI.Tests;
 
 public partial class PlayerViewModelTests
 {
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void UpNext_FollowsPlaybackAndRestoresEarlierSongsWhenGoingBackOrRepeating(bool shuffle)
+    {
+        var songs = Enumerable.Range(0, 6).Select(index => new Song { Title = $"Song {index}" }).ToArray();
+        var ids = songs.Select(song => song.Id).ToArray();
+        var shuffledIds = ids.Reverse().ToArray();
+        var order = shuffle ? shuffledIds : ids;
+        _playback.PlaybackQueue.Returns(ids);
+        _playback.ShuffledQueue.Returns(shuffledIds);
+        _playback.IsShuffleEnabled.Returns(shuffle);
+        _playback.CurrentRepeatMode.Returns(RepeatMode.RepeatAll);
+        _playback.GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
+            .Returns(songs.ToDictionary(song => song.Id));
+        _viewModel.IsQueuePanelOpen = true;
+
+        foreach (var index in new[] { 3, 4, 2, 0 })
+        {
+            _playback.CurrentTrack.Returns(songs.Single(song => song.Id == order[index]));
+            _playback.CurrentQueueIndex.Returns(Array.IndexOf(ids, order[index]));
+            _playback.CurrentShuffledIndex.Returns(Array.IndexOf(shuffledIds, order[index]));
+            _playback.TrackChanged += Raise.Event<Action>();
+
+            _viewModel.SidebarQueue.Select(entry => entry.Id).Should().Equal(order.Skip(index));
+            _viewModel.SidebarQueue.Select(entry => entry.Position).Should().Equal(Enumerable.Range(1, order.Length - index));
+        }
+
+        _playback.IsShuffleEnabled.Returns(!shuffle);
+        _playback.ShuffleModeChanged += Raise.Event<Action>();
+        var switchedOrder = shuffle ? ids : shuffledIds;
+        var switchedIndex = shuffle ? _playback.CurrentQueueIndex : _playback.CurrentShuffledIndex;
+        _viewModel.SidebarQueue.Select(entry => entry.Id).Should().Equal(switchedOrder.Skip(switchedIndex));
+    }
+
     [Fact]
     public async Task HistoryPlayback_PreservesTheQueueAndSelectsTheRequestedTrackEvenWithRepeatOne()
     {

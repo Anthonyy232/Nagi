@@ -40,6 +40,11 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private void QueueListView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
     {
+        if (e.Items.OfType<QueueEntry>().Any(entry => entry.Id == ViewModel.CurrentPlayingTrack?.Id))
+        {
+            e.Cancel = true;
+            return;
+        }
         _queueDragVersion = ViewModel.SidebarQueue.Version;
         e.Data.RequestedOperation = DataPackageOperation.Move;
     }

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Data;
 using Nagi.Core.Services.Abstractions;
+using Nagi.WinUI.Resources;
 using Windows.Foundation;
 
 namespace Nagi.WinUI.Models;
@@ -37,6 +38,8 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
     public bool HasLoadError => _hasLoadError;
     public bool ShowEmptyState => _isActive && !IsLoading && !HasLoadError && Count == 0;
     public string TotalDurationText { get; private set; } = string.Empty;
+    public string TrackCountText => string.Format(Strings.QueuePanel_TrackCount, _ids.Length);
+    private int FirstMovableIndex => playbackService.CurrentTrack?.Id == _ids.FirstOrDefault() ? 1 : 0;
 
     public void SetActive(bool active)
     {
@@ -71,10 +74,13 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
         _refreshCts.Cancel();
         _refreshCts.Dispose();
         _refreshCts = new CancellationTokenSource();
-        var ids = (playbackService.IsShuffleEnabled ? playbackService.ShuffledQueue : playbackService.PlaybackQueue).ToArray();
+        var queue = playbackService.IsShuffleEnabled ? playbackService.ShuffledQueue : playbackService.PlaybackQueue;
+        var currentIndex = playbackService.IsShuffleEnabled ? playbackService.CurrentShuffledIndex : playbackService.CurrentQueueIndex;
+        var ids = queue.Skip(Math.Max(0, currentIndex)).ToArray();
         var durationChanged = _reloadMetadata || _ids.Length != ids.Length || !_ids.ToHashSet().SetEquals(ids)
             || (_durationCts.IsCancellationRequested && TotalDurationText.Length == 0);
         _ids = ids;
+        OnPropertyChanged(new PropertyChangedEventArgs(nameof(TrackCountText)));
         _loadedCount = 0;
         _loadTask = null;
         SetLoadState(false, false);
@@ -106,6 +112,7 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
         Dictionary<Guid, QueueEntry>? cachedEntries = null)
     {
         uint added = 0;
+        var refreshedEntries = cachedEntries is null ? null : new List<QueueEntry>();
         SetLoadState(true, false);
         try
         {
@@ -126,17 +133,23 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
                         entry = new QueueEntry(song, offset + i + 1);
                     }
                     entry.Position = offset + i + 1;
-                    if (cachedEntries is not null && added < Count)
-                    {
-                        if (!ReferenceEquals(this[(int)added], entry)) this[(int)added] = entry;
-                    }
+                    if (refreshedEntries is not null) refreshedEntries.Add(entry);
                     else Add(entry);
                     added++;
                 }
             }
-            if (cachedEntries is not null)
+            if (refreshedEntries is not null)
             {
-                while (Count > added) RemoveAt(Count - 1);
+                var retainedEntries = refreshedEntries.ToHashSet();
+                for (var index = Count - 1; index >= 0; index--)
+                    if (!retainedEntries.Contains(this[index])) RemoveAt(index);
+                for (var index = 0; index < refreshedEntries.Count; index++)
+                {
+                    var entry = refreshedEntries[index];
+                    var oldIndex = IndexOf(entry);
+                    if (oldIndex < 0) Insert(index, entry);
+                    else if (oldIndex != index) Move(oldIndex, index);
+                }
                 _reloadMetadata = false;
             }
         }
@@ -194,7 +207,7 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
     {
         if (version != Version) { Refresh(); return; }
         var index = IndexOf(entry);
-        if (index < 0) return;
+        if (index < FirstMovableIndex || entry.Id == playbackService.CurrentTrack?.Id) { Refresh(); return; }
         Guid? beforeId = index + 1 < Count ? this[index + 1].Id
             : _loadedCount < _ids.Length ? _ids[_loadedCount] : null;
         playbackService.MoveQueueItem(entry.Id, beforeId);
@@ -203,7 +216,7 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
     public void Move(QueueEntry entry, int direction)
     {
         var index = Array.IndexOf(_ids, entry.Id);
-        if (index < 0 || index + direction < 0 || index + direction >= _ids.Length) return;
+        if (index < FirstMovableIndex || index + direction < FirstMovableIndex || index + direction >= _ids.Length) return;
         var beforeIndex = direction < 0 ? index - 1 : index + 2;
         playbackService.MoveQueueItem(entry.Id, beforeIndex < _ids.Length ? _ids[beforeIndex] : null);
     }

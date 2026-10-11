@@ -142,8 +142,6 @@ public partial class PlayerViewModel : ObservableObject
     [ObservableProperty] public partial bool IsQueuePanelOpen { get; set; }
     [ObservableProperty] public partial QueueDisplaySettings QueueDisplaySettings { get; set; } = new();
 
-    public string QueueTrackCountText => string.Format(Strings.QueuePanel_TrackCount, _playbackService.PlaybackQueue.Count);
-
     public PlaybackQueueCollection SidebarQueue { get; }
 
     partial void OnIsQueuePanelOpenChanged(bool value)
@@ -496,7 +494,6 @@ public partial class PlayerViewModel : ObservableObject
     {
         ClearQueueCommand.NotifyCanExecuteChanged();
         StopAtQueueEndCommand.NotifyCanExecuteChanged();
-        OnPropertyChanged(nameof(QueueTrackCountText));
 
         _queueDisplayCts?.Cancel();
         _queueDisplayCts?.Dispose();
@@ -656,6 +653,7 @@ public partial class PlayerViewModel : ObservableObject
             UpdateTrackDetails(_playbackService.CurrentTrack);
             CurrentPosition = 0;
             UpdateCurrentQueueDisplay();
+            SidebarQueue.Refresh();
         });
     }
 
@@ -676,6 +674,7 @@ public partial class PlayerViewModel : ObservableObject
             OnPropertyChanged(nameof(ShuffleButtonToolTip));
             UpdateButtonState("Shuffle", ShuffleIconGlyph, ShuffleButtonToolTip, IsShuffleEnabled);
             UpdateCurrentQueueDisplay();
+            SidebarQueue.Refresh();
         });
     }
 
