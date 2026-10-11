@@ -9,6 +9,8 @@ namespace Nagi.Core.Services.Abstractions;
 public interface ILibraryReader
 {
     Task<IReadOnlyList<MixCandidate>> GetMixCandidatesAsync(IEnumerable<Guid> songIds, CancellationToken token = default);
+    Task<PagedResult<Song>> GetFavoritesPagedAsync(string searchTerm, int pageNumber, int pageSize, SongSortOrder sortOrder, CancellationToken token = default);
+    Task<List<Guid>> GetFavoriteSongIdsAsync(string searchTerm, SongSortOrder sortOrder, CancellationToken token = default);
 
     Task<Folder?> GetFolderByIdAsync(Guid folderId);
     Task<Folder?> GetFolderByPathAsync(string path);

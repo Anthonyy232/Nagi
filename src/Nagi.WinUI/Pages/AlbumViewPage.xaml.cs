@@ -271,6 +271,7 @@ public sealed partial class AlbumViewPage : Page
         {
             ArtistMenuFlyoutHelper.PopulateSubMenu(goToArtistSubMenu, song, ViewModel.GoToArtistCommand, _libraryReader, _dispatcherQueue, _logger);
         }
+        ListeningMenuFlyoutHelper.PopulateFavorites(menuFlyout, ViewModel);
     }
 
     private void ListeningOptions_Opening(object sender, object e) =>

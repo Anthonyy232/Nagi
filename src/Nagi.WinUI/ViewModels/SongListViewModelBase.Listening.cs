@@ -34,6 +34,25 @@ public abstract partial class SongListViewModelBase
             await _uiService.ShowMessageDialogAsync(Strings.Listening_NoMixTitle, Strings.Listening_NoMixDescription);
     });
 
+    [RelayCommand(CanExecute = nameof(CanExecuteSelectedSongsCommands))]
+    private Task SetSelectedFavoritesAsync(bool loved) => RunListeningActionAsync(async () =>
+    {
+        var ids = await GetCurrentSelectionIdsAsync();
+        if (ids.Count == 0) return;
+        if (await Task.Run(() => _libraryService.SetSongsLovedAsync(ids, loved)))
+        {
+            var changed = ids.ToHashSet();
+            foreach (var song in Songs.Concat(SelectedSongs).DistinctBy(song => song.Id))
+                if (changed.Contains(song.Id)) song.IsLoved = loved;
+        }
+    });
+
+    [RelayCommand(CanExecute = nameof(CanExecuteSingleSongCommands))]
+    private async Task ToggleSelectedFavoriteAsync()
+    {
+        if (SelectedSongs.Count == 1) await SetSelectedFavoritesAsync(!SelectedSongs[0].IsLoved);
+    }
+
     protected async Task RunListeningActionAsync(Func<Task> action)
     {
         try { await action(); }

@@ -275,6 +275,7 @@ public sealed partial class FolderSongViewPage : Page
         {
             ArtistMenuFlyoutHelper.PopulateSubMenu(goToArtistSubMenu, songContentItem.Song, ViewModel.GoToArtistCommand, _libraryReader, _dispatcherQueue, _logger);
         }
+        ListeningMenuFlyoutHelper.PopulateFavorites(menuFlyout, ViewModel);
     }
 
     private void ListeningOptions_Opening(object sender, object e) =>

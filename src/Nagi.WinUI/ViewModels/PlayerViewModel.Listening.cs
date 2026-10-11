@@ -20,6 +20,12 @@ public partial class PlayerViewModel
     private bool _checkingStopSchedule;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(FavoriteActionText))]
+    public partial bool IsCurrentTrackFavorite { get; set; }
+
+    public string FavoriteActionText => IsCurrentTrackFavorite ? Strings.Listening_RemoveFavorite : Strings.Listening_AddFavorite;
+
+    [ObservableProperty]
     public partial bool IsStopScheduled { get; set; }
 
     [ObservableProperty]
@@ -28,6 +34,7 @@ public partial class PlayerViewModel
     private void InitializeListeningEvents()
     {
         _playbackService.StopScheduleChanged += OnStopScheduleChanged;
+        _libraryService.LibraryContentChanged += OnFavoriteLibraryChanged;
         OnStopScheduleChanged();
     }
 
@@ -35,7 +42,45 @@ public partial class PlayerViewModel
     {
         _stopTimer?.Dispose();
         _playbackService.StopScheduleChanged -= OnStopScheduleChanged;
+        _libraryService.LibraryContentChanged -= OnFavoriteLibraryChanged;
     }
+
+    private void OnFavoriteLibraryChanged(object? sender, LibraryContentChangedEventArgs e)
+    {
+        if (e.ChangeType != LibraryChangeType.SongsUpdated) return;
+        RunOnUIThread(() => _ = RefreshFavoriteAsync());
+    }
+
+    private async Task RefreshFavoriteAsync()
+    {
+        var current = CurrentPlayingTrack;
+        if (current is null) return;
+        try
+        {
+            var song = await _libraryService.GetSongByIdAsync(current.Id);
+            if (!_isCleanedUp && ReferenceEquals(current, CurrentPlayingTrack) && song is not null)
+            {
+                current.IsLoved = song.IsLoved;
+                IsCurrentTrackFavorite = song.IsLoved;
+            }
+        }
+        catch (Exception ex) { _logger.LogError(ex, "Failed to refresh current track favorite"); }
+    }
+
+    private bool CanFavorite() => CurrentPlayingTrack is { FolderId: var folderId } && folderId != Guid.Empty;
+
+    [RelayCommand(CanExecute = nameof(CanFavorite))]
+    private Task ToggleFavoriteAsync() => RunListeningActionAsync(async () =>
+    {
+        var current = CurrentPlayingTrack;
+        if (current is null) return;
+        var loved = !IsCurrentTrackFavorite;
+        if (await Task.Run(() => _libraryService.SetSongsLovedAsync([current.Id], loved)) && ReferenceEquals(current, CurrentPlayingTrack))
+        {
+            current.IsLoved = loved;
+            IsCurrentTrackFavorite = loved;
+        }
+    });
 
     [RelayCommand]
     private Task PlayQueueMixAsync(ShuffleMode mode) => RunListeningActionAsync(async () =>

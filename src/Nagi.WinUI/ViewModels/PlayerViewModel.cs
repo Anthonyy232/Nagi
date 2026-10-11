@@ -470,6 +470,8 @@ public partial class PlayerViewModel : ObservableObject
     private void UpdateTrackDetails(Song? song)
     {
         CurrentPlayingTrack = song;
+        IsCurrentTrackFavorite = song?.IsLoved ?? false;
+        ToggleFavoriteCommand.NotifyCanExecuteChanged();
         if (song != null)
         {
             SongTitle = song.Title;

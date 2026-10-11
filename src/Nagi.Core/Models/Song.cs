@@ -1,11 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Nagi.Core.Helpers;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Nagi.Core.Models;
 
-public class Song
+public class Song : ObservableObject
 {
+    private bool _isLoved;
     [Key] public Guid Id { get; set; } = Guid.NewGuid();
 
     [Required][MaxLength(500)] public string Title { get; set; } = string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Title);
@@ -77,7 +79,11 @@ public class Song
     /// <summary>
     ///     Indicates if the user has marked this song as a favorite.
     /// </summary>
-    public bool IsLoved { get; set; }
+    public bool IsLoved
+    {
+        get => _isLoved;
+        set => SetProperty(ref _isLoved, value);
+    }
 
     public int PlayCount { get; set; }
 

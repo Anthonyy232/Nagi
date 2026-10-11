@@ -154,7 +154,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
     public bool HasSelectedSongs => SelectedItemsCount > 0;
 
-    protected override bool ShouldReloadOnLibraryChange(LibraryChangeType changeType) => false;
+    protected override bool ShouldReloadOnLibraryChange(LibraryChangeType changeType) => changeType == LibraryChangeType.SongsUpdated;
 
     protected override void OnLoadingStateChanged(bool isLoading)
     {
@@ -607,6 +607,8 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         PlaySelectedSongsNextCommand.NotifyCanExecuteChanged();
         AddSelectedSongsToQueueCommand.NotifyCanExecuteChanged();
         AddSelectedSongsToPlaylistCommand.NotifyCanExecuteChanged();
+        SetSelectedFavoritesCommand.NotifyCanExecuteChanged();
+        ToggleSelectedFavoriteCommand.NotifyCanExecuteChanged();
     }
 
 

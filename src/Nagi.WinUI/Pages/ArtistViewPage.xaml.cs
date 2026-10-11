@@ -258,6 +258,7 @@ public sealed partial class ArtistViewPage : Page
             PlaylistMenuFlyoutHelper.Populate(addToPlaylistSubMenu, ViewModel.AvailablePlaylists,
                 ViewModel.AddSelectedSongsToPlaylistCommand, Nagi.WinUI.Resources.Strings.ArtistViewPage_PlaylistMenu_NoPlaylists);
         }
+        ListeningMenuFlyoutHelper.PopulateFavorites(menuFlyout, ViewModel);
     }
 
     private void ArtistImage_PointerEntered(object sender, PointerRoutedEventArgs e)

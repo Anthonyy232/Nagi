@@ -14,7 +14,7 @@ using Xunit;
 
 namespace Nagi.Core.Tests;
 
-public class LibraryServiceTests : IDisposable
+public partial class LibraryServiceTests : IDisposable
 {
     private readonly DbContextFactoryTestHelper _dbHelper;
 

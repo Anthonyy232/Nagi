@@ -20,6 +20,7 @@ public sealed partial class MainPage
     {
         if (sender is not MenuFlyout menu) return;
         menu.Items.Clear();
+        menu.Items.Add(new MenuFlyoutItem { Text = ViewModel.FavoriteActionText, Command = ViewModel.ToggleFavoriteCommand });
         var stops = new MenuFlyoutSubItem { Text = Strings.Listening_StopPlayback };
         PopulateStopOptions(stops.Items);
         menu.Items.Add(stops);
@@ -43,6 +44,26 @@ public sealed partial class MainPage
         {
             items.Add(new MenuFlyoutSeparator());
             items.Add(new MenuFlyoutItem { Text = Strings.Listening_CancelStop, Command = ViewModel.CancelScheduledStopCommand });
+        }
+    }
+
+    private async void OnListeningShortcutInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    {
+        if (FocusManager.GetFocusedElement(XamlRoot) is Control { IsHitTestVisible: true, IsEnabled: true } input &&
+            input is TextBox or PasswordBox or RichEditBox ||
+            Microsoft.UI.Xaml.Media.VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot).Count != 0) return;
+        {
+            var list = (ContentFrame.Content as FrameworkElement)?.DataContext as SongListViewModelBase;
+            if (list?.ToggleSelectedFavoriteCommand.CanExecute(null) == true)
+            {
+                args.Handled = true;
+                await list.ToggleSelectedFavoriteCommand.ExecuteAsync(null);
+            }
+            else if (list?.HasSelectedSongs != true && ViewModel.ToggleFavoriteCommand.CanExecute(null))
+            {
+                args.Handled = true;
+                await ViewModel.ToggleFavoriteCommand.ExecuteAsync(null);
+            }
         }
     }
 }

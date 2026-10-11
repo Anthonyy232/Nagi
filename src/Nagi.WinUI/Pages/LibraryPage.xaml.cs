@@ -20,13 +20,13 @@ namespace Nagi.WinUI.Pages;
 /// </summary>
 public sealed partial class LibraryPage : Page
 {
-    private string GetEmptyStateTitle(bool isSearchActive) => isSearchActive
+    private string GetEmptyStateTitle(bool isSearchActive, bool favorites) => isSearchActive
         ? Nagi.WinUI.Resources.Strings.LibraryPage_SearchEmpty_Title
-        : Nagi.WinUI.Resources.Strings.LibraryPage_EmptyState_Title;
+        : favorites ? Nagi.WinUI.Resources.Strings.Listening_FavoritesEmpty : Nagi.WinUI.Resources.Strings.LibraryPage_EmptyState_Title;
 
-    private string GetEmptyStateSubtitle(bool isSearchActive) => isSearchActive
+    private string GetEmptyStateSubtitle(bool isSearchActive, bool favorites) => isSearchActive
         ? Nagi.WinUI.Resources.Strings.LibraryPage_SearchEmpty_Subtitle
-        : Nagi.WinUI.Resources.Strings.LibraryPage_EmptyState_Subtitle;
+        : favorites ? Nagi.WinUI.Resources.Strings.Listening_FavoritesEmptyDescription : Nagi.WinUI.Resources.Strings.LibraryPage_EmptyState_Subtitle;
 
     private void OnArtistColumnSizeChanged(object sender, SizeChangedEventArgs e) =>
         ((FrameworkElement)((Grid)sender).Children[0]).MaxWidth = e.NewSize.Width;
@@ -178,6 +178,7 @@ public sealed partial class LibraryPage : Page
         _logger.LogDebug("Context menu opening for song '{SongTitle}'.", rightClickedSong.Title);
         if (!SongsListView.SelectedItems.Contains(rightClickedSong))
             SongsListView.SelectedItem = rightClickedSong;
+        ListeningMenuFlyoutHelper.PopulateFavorites(menuFlyout, ViewModel);
     }
     private bool _isUpdatingSelection;
 

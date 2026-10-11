@@ -385,12 +385,14 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center" />
 
-                        <TextBlock x:Name="SongTitle"
-                                   Grid.Column="1"
-                                   Style="{StaticResource BodyStrongTextBlockStyle}"
-                                   Text="{x:Bind Title}" TextTrimming="CharacterEllipsis"
-                                   TextWrapping="NoWrap"
-                                   VerticalAlignment="Center" />
+                        <Grid Grid.Column="1" ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="SongTitle" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Bind Title}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center" />
+                            <FontIcon Grid.Column="1" Glyph="&#xEB51;" FontSize="12" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" ToolTipService.ToolTip="{x:Bind resources:Strings.Listening_Favorites}" Visibility="{x:Bind IsLoved, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        </Grid>
 
                         <HyperlinkButton
                             Grid.Column="2"

@@ -50,6 +50,8 @@ public partial class LibraryViewModel : SongListViewModelBase
     protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
         SongSortOrder sortOrder, CancellationToken cancellationToken = default)
     {
+        if (ShowFavoritesOnly)
+            return _libraryReader.GetFavoritesPagedAsync(SearchTerm, pageNumber, pageSize, sortOrder, cancellationToken);
         if (IsSearchActive)
             // When searching, a consistent sort order is applied, ignoring the user's current sort selection.
             return _libraryReader.SearchSongsPagedAsync(SearchTerm, pageNumber, pageSize, cancellationToken);
@@ -58,6 +60,7 @@ public partial class LibraryViewModel : SongListViewModelBase
 
     protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
     {
+        if (ShowFavoritesOnly) return _libraryReader.GetFavoriteSongIdsAsync(SearchTerm, sortOrder, token);
         return IsSearchActive
             ? _libraryReader.SearchAllSongIdsAsync(SearchTerm, SongSortOrder.TitleAsc, token)
             : _libraryReader.GetAllSongIdsAsync(sortOrder, token);

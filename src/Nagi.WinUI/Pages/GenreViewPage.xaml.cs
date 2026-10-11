@@ -235,6 +235,7 @@ public sealed partial class GenreViewPage : Page
         {
             ArtistMenuFlyoutHelper.PopulateSubMenu(goToArtistSubMenu, song, ViewModel.GoToArtistCommand, _libraryReader, _dispatcherQueue, _logger);
         }
+        ListeningMenuFlyoutHelper.PopulateFavorites(menuFlyout, ViewModel);
     }
 
 

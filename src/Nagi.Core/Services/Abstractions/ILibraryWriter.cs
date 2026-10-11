@@ -7,6 +7,7 @@ namespace Nagi.Core.Services.Abstractions;
 /// </summary>
 public interface ILibraryWriter
 {
+    Task<bool> SetSongsLovedAsync(IEnumerable<Guid> songIds, bool loved);
     Task<Folder?> AddFolderAsync(string path, string? name = null);
     Task<bool> RemoveFolderAsync(Guid folderId);
     Task<bool> UpdateSongLrcPathAsync(Guid songId, string? lrcPath);

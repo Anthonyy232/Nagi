@@ -105,6 +105,7 @@
                     </Button>
                 </Grid>
 
+                <ToggleButton IsChecked="{x:Bind ViewModel.ShowFavoritesOnly, Mode=TwoWay}" ToolTipService.ToolTip="{x:Bind resources:Strings.Listening_Favorites}" AutomationProperties.Name="{x:Bind resources:Strings.Listening_Favorites}"><FontIcon FontSize="16" Glyph="&#xEB51;" /></ToggleButton>
                 <Button Command="{x:Bind ViewModel.PlayAllSongsCommand}"
                         ToolTipService.ToolTip="{x:Bind resources:Strings.LibraryPage_PlayAllButton_ToolTip, Mode=OneTime}"
                         Style="{StaticResource SongListViewPageIconButton}">
@@ -234,11 +235,14 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center" />
 
-                        <TextBlock Grid.Column="1"
-                                   x:Name="SongTitle"
-                                   Style="{StaticResource BodyStrongTextBlockStyle}"
-                                   Text="{x:Bind Title}" TextTrimming="CharacterEllipsis"
-                                   TextWrapping="NoWrap" VerticalAlignment="Center" />
+                        <Grid Grid.Column="1" ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="SongTitle" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Bind Title}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center" />
+                            <FontIcon Grid.Column="1" Glyph="&#xEB51;" FontSize="12" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" ToolTipService.ToolTip="{x:Bind resources:Strings.Listening_Favorites}" Visibility="{x:Bind IsLoved, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        </Grid>
 
                         <Grid Grid.Column="2" SizeChanged="OnArtistColumnSizeChanged">
                             <Grid HorizontalAlignment="Center">
@@ -296,11 +300,11 @@
                 HorizontalAlignment="Center" />
             <TextBlock
                 Style="{StaticResource TitleTextBlockStyle}"
-                Text="{x:Bind GetEmptyStateTitle(ViewModel.IsSearchActive), Mode=OneWay}"
+                Text="{x:Bind GetEmptyStateTitle(ViewModel.IsSearchActive, ViewModel.ShowFavoritesOnly), Mode=OneWay}"
                 HorizontalAlignment="Center" />
             <TextBlock
                 Style="{StaticResource SubtitleTextBlockStyle}"
-                Text="{x:Bind GetEmptyStateSubtitle(ViewModel.IsSearchActive), Mode=OneWay}"
+                Text="{x:Bind GetEmptyStateSubtitle(ViewModel.IsSearchActive, ViewModel.ShowFavoritesOnly), Mode=OneWay}"
                 HorizontalAlignment="Center"
                 Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
         </StackPanel>

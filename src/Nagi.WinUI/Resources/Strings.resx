@@ -2373,6 +2373,15 @@ Error: {1}</value>
   <data name="Listening_NoMixDescription" xml:space="preserve">
     <value>No tracks fit this selection. Try another mode, a longer duration, or a different source.</value>
   </data>
+  <data name="Listening_Favorites" xml:space="preserve">
+    <value>Favorites</value>
+  </data>
+  <data name="Listening_AddFavorite" xml:space="preserve">
+    <value>Add to favorites</value>
+  </data>
+  <data name="Listening_RemoveFavorite" xml:space="preserve">
+    <value>Remove from favorites</value>
+  </data>
   <data name="Listening_SleepTimer" xml:space="preserve">
     <value>Sleep timer</value>
   </data>
@@ -2411,6 +2420,12 @@ Error: {1}</value>
   </data>
   <data name="Listening_ActionError" xml:space="preserve">
     <value>Could not complete this action. Please try again.</value>
+  </data>
+  <data name="Listening_FavoritesEmpty" xml:space="preserve">
+    <value>No favorites yet</value>
+  </data>
+  <data name="Listening_FavoritesEmptyDescription" xml:space="preserve">
+    <value>Favorite a song from its menu, or select it and press Ctrl+D.</value>
   </data>
   <data name="Listening_VarietyDescription" xml:space="preserve">
     <value>Avoid recently played tracks and space out artists where possible.</value>

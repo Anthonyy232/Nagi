@@ -218,6 +218,7 @@ public sealed partial class PlaylistSongViewPage : Page
         {
             ArtistMenuFlyoutHelper.PopulateSubMenu(goToArtistSubMenu, rightClickedSong, ViewModel.GoToArtistCommand, _libraryReader, _dispatcherQueue, _logger);
         }
+        ListeningMenuFlyoutHelper.PopulateFavorites(menuFlyout, ViewModel);
     }
 
     private void SongsListView_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)

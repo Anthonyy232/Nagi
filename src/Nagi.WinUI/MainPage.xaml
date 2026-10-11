@@ -11,8 +11,12 @@
     xmlns:imageEx="using:ImageEx"
     xmlns:uiModels="using:Nagi.WinUI.Models"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    KeyboardAcceleratorPlacementMode="Hidden">
 
+    <UserControl.KeyboardAccelerators>
+        <KeyboardAccelerator Key="D" Modifiers="Control" Invoked="OnListeningShortcutInvoked" />
+    </UserControl.KeyboardAccelerators>
     <UserControl.Resources>
         <ResourceDictionary>
             <DataTemplate x:Key="PlayerButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
