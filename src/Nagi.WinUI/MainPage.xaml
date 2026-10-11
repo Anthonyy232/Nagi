@@ -314,23 +314,24 @@
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
                                             <StackPanel VerticalAlignment="Center" Spacing="4">
-                                                <TextBlock Text="{x:Bind resources:Strings.QueueFlyout_Title}" Style="{ThemeResource SubtitleTextBlockStyle}"
+                                                <TextBlock Text="{x:Bind GetListeningPaneTitle(ViewModel.IsHistoryVisible), Mode=OneWay}" Style="{ThemeResource SubtitleTextBlockStyle}"
                                                            Foreground="{StaticResource PlayerAccentBrush}" />
                                                 <TextBlock Text="{x:Bind ViewModel.QueueTrackCountText, Mode=OneWay}"
                                                            Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                           Visibility="{x:Bind ViewModel.QueueDisplaySettings.ShowTrackCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                           Visibility="{x:Bind GetQueueDetailVisibility(ViewModel.IsHistoryVisible, ViewModel.QueueDisplaySettings.ShowTrackCount), Mode=OneWay}" />
                                                 <TextBlock Text="{x:Bind ViewModel.SidebarQueue.TotalDurationText, Mode=OneWay}"
                                                            Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                            ToolTipService.ToolTip="{x:Bind resources:Strings.QueuePanel_ShowTotalDuration}"
-                                                           Visibility="{x:Bind ViewModel.QueueDisplaySettings.ShowTotalDuration, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                           Visibility="{x:Bind GetQueueDetailVisibility(ViewModel.IsHistoryVisible, ViewModel.QueueDisplaySettings.ShowTotalDuration), Mode=OneWay}" />
                                             </StackPanel>
                                             <Button Grid.Column="1" VerticalAlignment="Top" Padding="6" Background="Transparent" BorderThickness="0"
                                                     Foreground="{StaticResource PlayerAccentBrush}"
                                                     Command="{x:Bind ViewModel.ClearQueueCommand}"
+                                                    Visibility="{x:Bind ViewModel.IsHistoryVisible, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
                                                     ToolTipService.ToolTip="{x:Bind resources:Strings.QueueFlyout_ClearQueue}"
                                                     AutomationProperties.Name="{x:Bind resources:Strings.QueueFlyout_ClearQueue}"
                                                     ContentTemplate="{StaticResource ClearQueueIconTemplate}" />
-                                            <Button x:Name="QueueSettingsButton" Grid.Column="2" VerticalAlignment="Top" Padding="6" Background="Transparent" BorderThickness="0"
+                                            <Button Visibility="{x:Bind ViewModel.IsHistoryVisible, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" x:Name="QueueSettingsButton" Grid.Column="2" VerticalAlignment="Top" Padding="6" Background="Transparent" BorderThickness="0"
                                                     Foreground="{StaticResource PlayerAccentBrush}"
                                                     ToolTipService.ToolTip="{x:Bind resources:Strings.QueuePanel_DisplayOptions}"
                                                     AutomationProperties.Name="{x:Bind resources:Strings.QueuePanel_DisplayOptions}">
@@ -360,14 +361,21 @@
                                                 <FontIcon Glyph="&#xE711;" FontSize="16" />
                                             </Button>
                                         </Grid>
-                                        <InfoBar Grid.Row="1" IsOpen="{x:Bind ViewModel.SidebarQueue.HasLoadError, Mode=OneWay}"
+                                        <StackPanel Grid.Row="1" Spacing="8">
+                                            <RadioButtons MaxColumns="2" SelectedIndex="0" SelectionChanged="HistoryTab_SelectionChanged">
+                                                <RadioButton Content="{x:Bind resources:Strings.QueueFlyout_Title}" />
+                                                <RadioButton Content="{x:Bind resources:Strings.Listening_RecentlyPlayed}" />
+                                            </RadioButtons>
+                                        <InfoBar Visibility="{x:Bind ViewModel.IsHistoryVisible, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" IsOpen="{x:Bind ViewModel.SidebarQueue.HasLoadError, Mode=OneWay}"
                                                  Severity="Error" IsClosable="False"
                                                  Message="{x:Bind resources:Strings.QueuePanel_LoadError}">
                                             <InfoBar.ActionButton>
                                                 <Button Content="{x:Bind resources:Strings.QueuePanel_Retry}" Click="Queue_Retry" />
                                             </InfoBar.ActionButton>
                                         </InfoBar>
-                                        <ListView uihelpers:ScrollEdgeFade.IsEnabled="True" x:Name="QueueListView" Grid.Row="2" ItemsSource="{x:Bind ViewModel.SidebarQueue}"
+                                        </StackPanel>
+                                        <Grid Grid.Row="2" Visibility="{x:Bind ViewModel.IsHistoryVisible, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                                        <ListView uihelpers:ScrollEdgeFade.IsEnabled="True" x:Name="QueueListView" ItemsSource="{x:Bind ViewModel.SidebarQueue}"
                                                   ItemContainerStyle="{StaticResource PaddedListViewItemStyle}" SelectionMode="Single"
                                                   CanDragItems="True" CanReorderItems="True" AllowDrop="True"
                                                   DragItemsStarting="QueueListView_DragItemsStarting" DragItemsCompleted="QueueListView_DragItemsCompleted"
@@ -418,7 +426,7 @@
                                                 </DataTemplate>
                                             </ListView.ItemTemplate>
                                         </ListView>
-                                        <StackPanel Grid.Row="2" Margin="20" Spacing="8" VerticalAlignment="Center" IsHitTestVisible="False"
+                                        <StackPanel Margin="20" Spacing="8" VerticalAlignment="Center" IsHitTestVisible="False"
                                                     Visibility="{x:Bind ViewModel.SidebarQueue.ShowEmptyState, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                                             <FontIcon Glyph="&#xE8D6;" FontSize="28" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                                             <TextBlock Text="{x:Bind resources:Strings.QueuePanel_EmptyTitle}" FontWeight="SemiBold"
@@ -426,10 +434,39 @@
                                             <TextBlock Text="{x:Bind resources:Strings.QueuePanel_EmptyDescription}"
                                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextAlignment="Center" TextWrapping="Wrap" />
                                         </StackPanel>
-                                        <ProgressRing Grid.Row="2" Width="32" Height="32" IsHitTestVisible="False"
+                                        <ProgressRing Width="32" Height="32" IsHitTestVisible="False"
                                                       HorizontalAlignment="Center" VerticalAlignment="Center"
                                                       IsActive="{x:Bind ViewModel.SidebarQueue.ShowInitialLoading, Mode=OneWay}"
                                                       Visibility="{x:Bind ViewModel.SidebarQueue.ShowInitialLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                        </Grid>
+                                        <Grid Grid.Row="2" RowSpacing="12" Visibility="{x:Bind ViewModel.IsHistoryVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                            <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+                                            <TextBox PlaceholderText="{x:Bind resources:Strings.Listening_HistorySearch}" Text="{x:Bind ViewModel.History.SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <InfoBar Grid.Row="1" IsOpen="{x:Bind ViewModel.History.HasLoadError, Mode=OneWay}" Severity="Error" IsClosable="False" Message="{x:Bind resources:Strings.QueuePanel_LoadError}">
+                                                <InfoBar.ActionButton><Button Content="{x:Bind resources:Strings.QueuePanel_Retry}" Command="{x:Bind ViewModel.History.SearchCommand}" /></InfoBar.ActionButton>
+                                            </InfoBar>
+                                            <ListView Grid.Row="2" SelectionMode="None" ItemsSource="{x:Bind ViewModel.History.Entries}">
+                                                <ListView.ItemTemplate>
+                                                    <DataTemplate x:DataType="uiModels:RecentListenEntry">
+                                                        <StackPanel Spacing="8" Tag="{x:Bind}" DoubleTapped="HistoryEntry_DoubleTapped">
+                                                            <TextBlock Text="{x:Bind DateHeader}" FontWeight="SemiBold" Visibility="{x:Bind DateHeader, Converter={StaticResource StringToVisibilityConverter}}" />
+                                                            <Grid ColumnSpacing="8">
+                                                                <Grid.ContextFlyout><MenuFlyout>
+                                                                    <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_Play}" Command="{Binding DataContext.PlayHistoryNowCommand, ElementName=MainPageRoot}" CommandParameter="{x:Bind}" />
+                                                                    <MenuFlyoutItem Text="{x:Bind resources:Strings.LibraryPage_Context_PlayNext}" Command="{Binding DataContext.PlayHistoryNextCommand, ElementName=MainPageRoot}" CommandParameter="{x:Bind}" />
+                                                                </MenuFlyout></Grid.ContextFlyout>
+                                                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                                                <StackPanel Spacing="4"><TextBlock Text="{x:Bind Title}" TextTrimming="CharacterEllipsis" /><TextBlock Text="{x:Bind ArtistName}" TextTrimming="CharacterEllipsis" Style="{ThemeResource CaptionTextBlockStyle}" /></StackPanel>
+                                                                <TextBlock Grid.Column="1" Text="{x:Bind TimeText}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                                            </Grid>
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </ListView.ItemTemplate>
+                                            </ListView>
+                                            <TextBlock Grid.Row="2" Text="{x:Bind ViewModel.History.EmptyStateText, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind ViewModel.History.ShowEmptyState, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                            <ProgressRing Grid.Row="2" Width="24" Height="24" IsActive="{x:Bind ViewModel.History.IsLoading, Mode=OneWay}" Visibility="{x:Bind ViewModel.History.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                            <Button Grid.Row="3" Content="{x:Bind resources:Strings.Listening_HistoryMore}" Command="{x:Bind ViewModel.History.LoadMoreCommand}" Visibility="{x:Bind ViewModel.History.HasMore, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                        </Grid>
                                     </Grid>
                                 </Border>
                                 <Border x:Name="QueueDropHighlight" BorderBrush="{ThemeResource AccentFillColorDefaultBrush}"

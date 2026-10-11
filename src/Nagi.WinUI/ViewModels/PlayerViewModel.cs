@@ -74,6 +74,7 @@ public partial class PlayerViewModel : ObservableObject
         SongTitle = Strings.Status_NoTrackPlaying;
         ArtistName = string.Empty;
         SidebarQueue = new PlaybackQueueCollection(_playbackService, _logger);
+        History = new RecentHistoryViewModel(_libraryService, _dispatcherService, _logger);
         CurrentTimeText = "0:00";
         TotalDurationText = "0:00";
         GlobalOperationStatusMessage = string.Empty;
@@ -145,7 +146,11 @@ public partial class PlayerViewModel : ObservableObject
 
     public PlaybackQueueCollection SidebarQueue { get; }
 
-    partial void OnIsQueuePanelOpenChanged(bool value) => SidebarQueue.SetActive(value);
+    partial void OnIsQueuePanelOpenChanged(bool value)
+    {
+        SidebarQueue.SetActive(value && !IsHistoryVisible);
+        History.SetActive(value && IsHistoryVisible);
+    }
 
     partial void OnIsQueueViewVisibleChanged(bool value) => UpdateCurrentQueueDisplay();
 
@@ -699,6 +704,7 @@ public partial class PlayerViewModel : ObservableObject
         {
             UpdateCurrentQueueDisplay();
             SidebarQueue.Refresh(reloadMetadata: true);
+            if (IsQueuePanelOpen && IsHistoryVisible) _ = History.SearchAsync();
         });
     }
 

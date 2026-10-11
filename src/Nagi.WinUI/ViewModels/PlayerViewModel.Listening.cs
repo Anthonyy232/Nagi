@@ -18,12 +18,16 @@ public partial class PlayerViewModel
     private readonly IUIService _uiService;
     private Timer? _stopTimer;
     private bool _checkingStopSchedule;
+    public RecentHistoryViewModel History { get; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(FavoriteActionText))]
     public partial bool IsCurrentTrackFavorite { get; set; }
 
     public string FavoriteActionText => IsCurrentTrackFavorite ? Strings.Listening_RemoveFavorite : Strings.Listening_AddFavorite;
+
+    [ObservableProperty]
+    public partial bool IsHistoryVisible { get; set; }
 
     [ObservableProperty]
     public partial bool IsStopScheduled { get; set; }
@@ -35,15 +39,29 @@ public partial class PlayerViewModel
     {
         _playbackService.StopScheduleChanged += OnStopScheduleChanged;
         _libraryService.LibraryContentChanged += OnFavoriteLibraryChanged;
+        _playbackService.TrackChanged += OnHistoryTrackChanged;
         OnStopScheduleChanged();
     }
 
     private void CleanupListening()
     {
         _stopTimer?.Dispose();
+        History.Dispose();
         _playbackService.StopScheduleChanged -= OnStopScheduleChanged;
         _libraryService.LibraryContentChanged -= OnFavoriteLibraryChanged;
+        _playbackService.TrackChanged -= OnHistoryTrackChanged;
     }
+
+    partial void OnIsHistoryVisibleChanged(bool value)
+    {
+        SidebarQueue.SetActive(IsQueuePanelOpen && !value);
+        History.SetActive(IsQueuePanelOpen && value);
+    }
+
+    private void OnHistoryTrackChanged() => RunOnUIThread(() =>
+    {
+        if (IsQueuePanelOpen && IsHistoryVisible) _ = History.SearchAsync();
+    });
 
     private void OnFavoriteLibraryChanged(object? sender, LibraryContentChangedEventArgs e)
     {
@@ -79,6 +97,23 @@ public partial class PlayerViewModel
         {
             current.IsLoved = loved;
             IsCurrentTrackFavorite = loved;
+        }
+    });
+
+    [RelayCommand]
+    private Task PlayHistoryNextAsync(RecentListenEntry? entry) => entry is null ? Task.CompletedTask : RunListeningActionAsync(() => _playbackService.PlayNextAsync(entry.Listen.SongId));
+
+    [RelayCommand]
+    private Task PlayHistoryNowAsync(RecentListenEntry? entry) => RunListeningActionAsync(async () =>
+    {
+        if (entry is null) return;
+        await _playbackService.PlayNextAsync(entry.Listen.SongId);
+        var queue = _playbackService.PlaybackQueue;
+        for (var index = 0; index < queue.Count; index++)
+        {
+            if (queue[index] != entry.Listen.SongId) continue;
+            await _playbackService.PlayQueueItemAsync(index);
+            break;
         }
     });
 

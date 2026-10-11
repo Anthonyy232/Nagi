@@ -49,6 +49,21 @@ public partial class LibraryService
         (string.IsNullOrWhiteSpace(searchTerm) ? context.Songs : BuildSongSearchQuery(context, NormalizeString(searchTerm) ?? searchTerm))
         .Where(s => s.IsLoved);
 
+    public async Task<IReadOnlyList<RecentListen>> GetRecentListensAsync(string searchTerm, int skip, int take, CancellationToken token = default)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
+        var query = context.ListenHistory.AsNoTracking();
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            var songs = BuildSongSearchQuery(context, NormalizeString(searchTerm) ?? searchTerm).Select(s => s.Id);
+            query = query.Where(h => songs.Contains(h.SongId));
+        }
+        return await query.OrderByDescending(h => h.ListenTimestampUtc).ThenByDescending(h => h.Id)
+            .Skip(Math.Max(0, skip)).Take(Math.Clamp(take, 1, 100))
+            .Select(h => new RecentListen(h.Id, h.SongId, h.Song.Title, h.Song.ArtistName, h.ListenTimestampUtc))
+            .ToListAsync(token).ConfigureAwait(false);
+    }
+
     public async Task<RediscoverySuggestion?> GetRediscoverySuggestionAsync(CancellationToken token = default)
     {
         var cutoff = DateTime.UtcNow.AddDays(-90);

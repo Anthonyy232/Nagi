@@ -2418,6 +2418,24 @@ Error: {1}</value>
   <data name="Listening_PlayerOptions" xml:space="preserve">
     <value>Player options</value>
   </data>
+  <data name="Listening_RecentlyPlayed" xml:space="preserve">
+    <value>Recently played</value>
+  </data>
+  <data name="Listening_HistorySearch" xml:space="preserve">
+    <value>Search listening history</value>
+  </data>
+  <data name="Listening_HistoryEmpty" xml:space="preserve">
+    <value>No listening history yet</value>
+  </data>
+  <data name="Listening_HistoryMore" xml:space="preserve">
+    <value>Load earlier listens</value>
+  </data>
+  <data name="Listening_Today" xml:space="preserve">
+    <value>Today</value>
+  </data>
+  <data name="Listening_Yesterday" xml:space="preserve">
+    <value>Yesterday</value>
+  </data>
   <data name="Listening_RediscoveryReason" xml:space="preserve">
     <value>Last played {0:d}</value>
   </data>
@@ -2444,5 +2462,8 @@ Error: {1}</value>
   </data>
   <data name="Listening_UnheardDescription" xml:space="preserve">
     <value>Tracks with no recorded plays in Nagi.</value>
+  </data>
+  <data name="Listening_HistoryNoMatches" xml:space="preserve">
+    <value>No listens match your search</value>
   </data>
 </root>

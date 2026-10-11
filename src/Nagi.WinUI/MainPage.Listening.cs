@@ -13,6 +13,17 @@ namespace Nagi.WinUI;
 public sealed partial class MainPage
 {
 
+    private string GetListeningPaneTitle(bool history) => history ? Strings.Listening_RecentlyPlayed : Strings.QueueFlyout_Title;
+    private Visibility GetQueueDetailVisibility(bool history, bool enabled) => !history && enabled ? Visibility.Visible : Visibility.Collapsed;
+    private async void HistoryEntry_DoubleTapped(object sender, DoubleTappedRoutedEventArgs args)
+    {
+        if (sender is FrameworkElement { Tag: Models.RecentListenEntry entry })
+        {
+            args.Handled = true;
+            await ViewModel.PlayHistoryNowCommand.ExecuteAsync(entry);
+        }
+    }
+
     private void ShuffleOptions_Opening(object sender, object e) =>
         ListeningMenuFlyoutHelper.PopulateMixes((MenuFlyout)sender, ViewModel.PlayQueueMixCommand, ViewModel.PlayQueueForCommand);
 
@@ -45,6 +56,11 @@ public sealed partial class MainPage
             items.Add(new MenuFlyoutSeparator());
             items.Add(new MenuFlyoutItem { Text = Strings.Listening_CancelStop, Command = ViewModel.CancelScheduledStopCommand });
         }
+    }
+
+    private void HistoryTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is RadioButtons tabs) ViewModel.IsHistoryVisible = tabs.SelectedIndex == 1;
     }
 
     private async void OnListeningShortcutInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
