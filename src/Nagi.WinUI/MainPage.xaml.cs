@@ -36,6 +36,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private const double VolumeChangeStep = 5.0;
     private int _queueDragVersion;
     private NowPlayingIndicatorBinder? _queuePlayingBinder;
+    private NowPlayingIndicatorBinder? _historyPlayingBinder;
 
     private void QueueListView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
     {
@@ -105,6 +106,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private readonly Dictionary<string, Type> _pages = new()
     {
         { "Library", typeof(LibraryPage) },
+        { "Favorites", typeof(LibraryPage) },
         { "Folders", typeof(FolderPage) },
         { "Playlists", typeof(PlaylistPage) },
         { "Settings", typeof(SettingsPage) },
@@ -170,9 +172,13 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             return;
         }
 
-        if (selectedItem is NavigationViewItem { Tag: string tag } &&
-            _pages.TryGetValue(tag, out var pageType) &&
-            ContentFrame.CurrentSourcePageType != pageType) ContentFrame.Navigate(pageType, null, transitionInfo);
+        if (selectedItem is NavigationViewItem { Tag: string tag } && _pages.TryGetValue(tag, out var pageType))
+        {
+            var favorites = tag == "Favorites";
+            if (ContentFrame.CurrentSourcePageType != pageType ||
+                ContentFrame.Content is LibraryPage library && library.ViewModel.ShowFavoritesOnly != favorites)
+                ContentFrame.Navigate(pageType, favorites ? "Favorites" : null, transitionInfo);
+        }
     }
 
     private void TryGoBack()
@@ -272,7 +278,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         }
     }
 
-    private void UpdateNavViewSelection(Type? currentPageType)
+    private void UpdateNavViewSelection(Type? currentPageType, bool? favorites = null)
     {
         var wasUpdating = _isUpdatingNavViewSelection;
         _isUpdatingNavViewSelection = true;
@@ -285,6 +291,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             }
 
             var tag = _pages.FirstOrDefault(p => p.Value == currentPageType).Key;
+            if (currentPageType == typeof(LibraryPage))
+                tag = (favorites ?? (ContentFrame.Content as LibraryPage)?.ViewModel.ShowFavoritesOnly) == true ? "Favorites" : "Library";
             if (tag is null && currentPageType is not null)
                 _detailPageToParentTagMap.TryGetValue(currentPageType, out tag);
             NavView.SelectedItem = NavView.MenuItems.OfType<NavigationViewItem>()
@@ -373,6 +381,11 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             (Brush)Application.Current.Resources["AppPrimaryColorBrush"],
             item => (item as QueueEntry)?.Id);
         _queuePlayingBinder.Refresh();
+        _historyPlayingBinder ??= new NowPlayingIndicatorBinder(
+            HistoryListView, null, ViewModel,
+            (Brush)Application.Current.Resources["AppPrimaryColorBrush"],
+            item => (item as RecentListenEntry)?.Listen.SongId);
+        _historyPlayingBinder.Refresh();
         if (NavView.SettingsItem is NavigationViewItem settingsItem)
         {
             settingsItem.Content = Strings.NavItem_Settings;
@@ -420,6 +433,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     {
         _queuePlayingBinder?.Dispose();
         _queuePlayingBinder = null;
+        _historyPlayingBinder?.Dispose();
+        _historyPlayingBinder = null;
         _isUnloaded = true;
         _hoverTimer.Stop();
         _isPointerOverPlayer = false;
@@ -553,7 +568,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
             AppTitleBar.IsBackButtonVisible = ContentFrame.CanGoBack && (isDetailPage || isLyricsPage);
 
-            UpdateNavViewSelection(e.SourcePageType);
+            UpdateNavViewSelection(e.SourcePageType, e.Parameter is "Favorites");
 
             var isSettingsPage = e.SourcePageType == typeof(SettingsPage);
             // Keep destination bounds stable while player space changes, so WinUI can finish the outgoing fade.

@@ -108,7 +108,8 @@ public class SettingsServiceTests
 
         var items = await settings.GetNavigationItemsAsync();
 
-        items.Select(item => item.Tag).Should().Equal("Albums", "Library", "Folders", "Playlists", "Artists", "Genres", "Insights");
+        items.Select(item => item.Tag).Should().Equal("Albums", "Library", "Folders", "Playlists", "Artists", "Genres", "Insights", "Favorites");
+        items.Single(item => item.Tag == "Favorites").IsEnabled.Should().BeFalse();
         items[0].IsEnabled.Should().BeFalse();
         items.Should().OnlyContain(item => item.DisplayName != "Old" && !string.IsNullOrEmpty(item.IconGlyph));
     }

@@ -17,8 +17,6 @@
         <muxm:DesktopAcrylicBackdrop />
     </Window.SystemBackdrop>
 
-
-
     <Border x:Name="OuterBorder"
             Background="Transparent"
             BorderThickness="1"
@@ -84,21 +82,7 @@
                             KeyUp="MediaSeekerSlider_KeyUp" />
 
                     <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8">
-                        <Button Command="{Binding ToggleMuteCommand}" Style="{StaticResource MediaControlButtonStyle}"
-                                ToolTipService.ToolTip="{Binding VolumeButtonToolTip}"
-                                PointerWheelChanged="VolumeButton_PointerWheelChanged">
-                            <Grid Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                          FontSize="20"
-                                          Foreground="{ThemeResource TextFillColorDisabledBrush}"
-                                          Glyph="{Binding VolumeIconGlyph}" />
-                                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                          FontSize="20"
-                                          Foreground="{StaticResource AppPrimaryColorBrush}"
-                                          Clip="{Binding CurrentVolume, Converter={StaticResource VolumeToClipRectConverter}, ConverterParameter='20'}"
-                                          Glyph="{Binding VolumeIconGlyph}" />
-                            </Grid>
-                        </Button>
+
                         <Button Command="{Binding ToggleShuffleCommand}" Style="{StaticResource MediaControlButtonStyle}"
                                 ToolTipService.ToolTip="{Binding ShuffleButtonToolTip}">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -126,6 +110,21 @@
                         <Button Command="{Binding ShowQueueViewCommand}" Style="{StaticResource MediaControlButtonStyle}"
                                 ToolTipService.ToolTip="{x:Bind resources:Strings.TrayPopup_QueueButton_ToolTip, Mode=OneTime}">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
+                        </Button>
+                        <Button Command="{Binding ToggleMuteCommand}" Style="{StaticResource MediaControlButtonStyle}"
+                                ToolTipService.ToolTip="{Binding VolumeButtonToolTip}"
+                                PointerWheelChanged="VolumeButton_PointerWheelChanged">
+                            <Grid Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                          FontSize="20"
+                                          Foreground="{ThemeResource TextFillColorDisabledBrush}"
+                                          Glyph="{Binding VolumeIconGlyph}" />
+                                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                          FontSize="20"
+                                          Foreground="{StaticResource AppPrimaryColorBrush}"
+                                          Clip="{Binding CurrentVolume, Converter={StaticResource VolumeToClipRectConverter}, ConverterParameter='20'}"
+                                          Glyph="{Binding VolumeIconGlyph}" />
+                            </Grid>
                         </Button>
                     </StackPanel>
                 </Grid>

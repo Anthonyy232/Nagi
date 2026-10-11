@@ -13,7 +13,6 @@ public class PlayerButtonTemplateSelector : DataTemplateSelector
     public DataTemplate? PlayPauseButtonTemplate { get; set; }
     public DataTemplate? LyricsButtonTemplate { get; set; }
     public DataTemplate? QueueButtonTemplate { get; set; }
-    public DataTemplate? ShuffleButtonTemplate { get; set; }
     protected override DataTemplate? SelectTemplateCore(object item, DependencyObject container)
     {
         if (item is not PlayerButtonSetting buttonSetting) return base.SelectTemplateCore(item, container);
@@ -23,7 +22,6 @@ public class PlayerButtonTemplateSelector : DataTemplateSelector
             "PlayPause" => PlayPauseButtonTemplate,
             "Lyrics" => LyricsButtonTemplate,
             "Queue" => QueueButtonTemplate,
-            "Shuffle" => ShuffleButtonTemplate,
             _ => DefaultButtonTemplate
         };
     }

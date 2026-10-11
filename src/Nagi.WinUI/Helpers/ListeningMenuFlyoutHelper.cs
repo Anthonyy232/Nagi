@@ -25,10 +25,17 @@ internal static class ListeningMenuFlyoutHelper
         _ => string.Empty
     };
 
+    public static string GetEmptyMixDescription(ShuffleMode mode, bool timed = false)
+    {
+        var description = GetModeDescription(mode);
+        var guidance = timed ? Strings.Listening_NoTimedMixDescription : Strings.Listening_NoMixDescription;
+        return description.Length > 0 ? $"{description}\n\n{guidance}" : guidance;
+    }
+
     public static void PopulateMixes(MenuFlyout menu, ICommand command, ICommand playFor)
     {
         menu.Items.Clear();
-        foreach (var mode in System.Enum.GetValues<ShuffleMode>())
+        foreach (var mode in System.Enum.GetValues<ShuffleMode>().Where(mode => mode != ShuffleMode.Random))
         {
             var item = new MenuFlyoutItem { Text = GetModeName(mode), Command = command, CommandParameter = mode };
             var description = GetModeDescription(mode);

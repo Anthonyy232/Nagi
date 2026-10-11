@@ -28,7 +28,7 @@ public class BackupRestoreService : IBackupRestoreService
 
             if (!Directory.Exists(sourcePath))
             {
-                return new BackupResult(false, null, 0, "Source directory not found.");
+                return new BackupResult(false, null, 0, Resources.Strings.Backup_DataFolderMissing);
             }
 
             var stagingPath = Directory.CreateTempSubdirectory("NagiBackupStaging_").FullName;
@@ -143,7 +143,7 @@ public class BackupRestoreService : IBackupRestoreService
         {
             if (!await ValidateBackupAsync(backupFilePath).ConfigureAwait(false))
             {
-                return new RestoreResult(false, 0, false, "Invalid backup file.");
+                return new RestoreResult(false, 0, false, Resources.Strings.Backup_InvalidFile);
             }
 
             var destinationDirectory = new DirectoryInfo(Path.GetFullPath(_pathConfiguration.AppDataRoot));
@@ -249,7 +249,7 @@ public class BackupRestoreService : IBackupRestoreService
                     if (rollbackErrors.Count > 0)
                     {
                         preserveTransaction = true;
-                        var rollbackMessage = $"Restore failed and rollback was incomplete. Recovery data was preserved at '{transactionPath}'.";
+                        var rollbackMessage = string.Format(Resources.Strings.Backup_IncompleteRestore, transactionPath);
                         _logger.LogCritical(
                             restoreException,
                             "{Message} Rollback errors: {RollbackErrors}",

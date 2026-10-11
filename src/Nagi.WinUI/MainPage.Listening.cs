@@ -3,16 +3,13 @@ using System.Collections.Generic;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Resources;
 using Nagi.WinUI.ViewModels;
-using Windows.System;
 
 namespace Nagi.WinUI;
 
 public sealed partial class MainPage
 {
-
     private string GetListeningPaneTitle(bool history) => history ? Strings.Listening_RecentlyPlayed : Strings.QueueFlyout_Title;
     private Visibility GetQueueDetailVisibility(bool history, bool enabled) => !history && enabled ? Visibility.Visible : Visibility.Collapsed;
     private async void HistoryEntry_DoubleTapped(object sender, DoubleTappedRoutedEventArgs args)
@@ -23,9 +20,6 @@ public sealed partial class MainPage
             await ViewModel.PlayHistoryNowCommand.ExecuteAsync(entry);
         }
     }
-
-    private void ShuffleOptions_Opening(object sender, object e) =>
-        ListeningMenuFlyoutHelper.PopulateMixes((MenuFlyout)sender, ViewModel.PlayQueueMixCommand, ViewModel.PlayQueueForCommand);
 
     private void PlayerOptions_Opening(object sender, object e)
     {
@@ -58,28 +52,25 @@ public sealed partial class MainPage
         }
     }
 
-    private void HistoryTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (sender is RadioButtons tabs) ViewModel.IsHistoryVisible = tabs.SelectedIndex == 1;
-    }
+    private string GetListeningPaneToggleLabel(bool history) => history ? Strings.QueueFlyout_Title : Strings.Listening_RecentlyPlayed;
+    private string GetListeningPaneToggleIcon(bool history) => history ? "\uE90B" : "\uE81C";
+    private void ToggleListeningPane_Click(object sender, RoutedEventArgs e) => ViewModel.IsHistoryVisible = !ViewModel.IsHistoryVisible;
 
     private async void OnListeningShortcutInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
     {
         if (FocusManager.GetFocusedElement(XamlRoot) is Control { IsHitTestVisible: true, IsEnabled: true } input &&
             input is TextBox or PasswordBox or RichEditBox ||
             Microsoft.UI.Xaml.Media.VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot).Count != 0) return;
+        var list = (ContentFrame.Content as FrameworkElement)?.DataContext as SongListViewModelBase;
+        if (list?.ToggleSelectedFavoriteCommand.CanExecute(null) == true)
         {
-            var list = (ContentFrame.Content as FrameworkElement)?.DataContext as SongListViewModelBase;
-            if (list?.ToggleSelectedFavoriteCommand.CanExecute(null) == true)
-            {
-                args.Handled = true;
-                await list.ToggleSelectedFavoriteCommand.ExecuteAsync(null);
-            }
-            else if (list?.HasSelectedSongs != true && ViewModel.ToggleFavoriteCommand.CanExecute(null))
-            {
-                args.Handled = true;
-                await ViewModel.ToggleFavoriteCommand.ExecuteAsync(null);
-            }
+            args.Handled = true;
+            await list.ToggleSelectedFavoriteCommand.ExecuteAsync(null);
+        }
+        else if (list?.HasSelectedSongs != true && ViewModel.ToggleFavoriteCommand.CanExecute(null))
+        {
+            args.Handled = true;
+            await ViewModel.ToggleFavoriteCommand.ExecuteAsync(null);
         }
     }
 }

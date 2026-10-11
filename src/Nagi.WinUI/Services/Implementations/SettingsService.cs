@@ -278,7 +278,8 @@ public class SettingsService : IUISettingsService, IDisposable
             new() { DisplayName = Resources.Strings.Settings_Nav_Artists, Tag = "Artists", IconGlyph = "\uE77B", IsEnabled = true },
             new() { DisplayName = Resources.Strings.Settings_Nav_Albums, Tag = "Albums", IconGlyph = "\uE93C", IsEnabled = true },
             new() { DisplayName = Resources.Strings.Settings_Nav_Genres, Tag = "Genres", IconGlyph = "\uE8EC", IsEnabled = true },
-            new() { DisplayName = Resources.Strings.Settings_Nav_Insights, Tag = "Insights", IconGlyph = "\uE9D2", IsEnabled = false }
+            new() { DisplayName = Resources.Strings.Settings_Nav_Insights, Tag = "Insights", IconGlyph = "\uE9D2", IsEnabled = false },
+            new() { DisplayName = Resources.Strings.Listening_Favorites, Tag = "Favorites", IconGlyph = "\uEB51", IsEnabled = false }
         };
     }
 

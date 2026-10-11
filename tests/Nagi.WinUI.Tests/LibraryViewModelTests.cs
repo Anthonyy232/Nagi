@@ -14,6 +14,43 @@ namespace Nagi.WinUI.Tests;
 public class LibraryViewModelTests
 {
     [Fact]
+    public async Task FavoritesNavigation_UsesFavoriteSongsAndRestoresLibraryPlaybackOrder()
+    {
+        var library = Substitute.For<ILibraryService>();
+        var settings = Substitute.For<IUISettingsService>();
+        var playback = Substitute.For<IMusicPlaybackService>();
+        settings.GetSongsPerPageAsync().Returns(50);
+        var favorite = new Song { Id = Guid.NewGuid(), Title = "Favorite", IsLoved = true };
+        var other = new Song { Id = Guid.NewGuid(), Title = "Other" };
+        library.GetFavoritesPagedAsync(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<int>(),
+            Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>
+            { PageNumber = 1, PageSize = 50, TotalCount = 1, Items = [favorite] });
+        library.GetAllSongsPagedAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<SongSortOrder>(),
+            Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>
+            { PageNumber = 1, PageSize = 50, TotalCount = 2, Items = [favorite, other] });
+        library.GetFavoriteSongIdsAsync(Arg.Any<string>(), Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
+            .Returns([favorite.Id]);
+        library.GetAllSongIdsAsync(Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
+            .Returns([favorite.Id, other.Id]);
+        using var viewModel = new LibraryViewModel(library, Substitute.For<IPlaylistService>(), playback,
+            Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), settings,
+            Substitute.For<IUIService>(), NullLogger<LibraryViewModel>.Instance);
+
+        await viewModel.SetLibraryViewAsync(true);
+        await viewModel.InitializeAsync();
+        viewModel.Songs.Should().ContainSingle().Which.Should().Be(favorite);
+        await viewModel.PlayAllSongsCommand.ExecuteAsync(null);
+        await playback.Received().PlayAsync(Arg.Is<IEnumerable<Guid>>(ids => ids.SequenceEqual(new[] { favorite.Id })),
+            0, null, Arg.Any<PlaybackContext>());
+
+        await viewModel.SetLibraryViewAsync(false);
+        viewModel.Songs.Should().Equal(favorite, other);
+        await viewModel.PlayAllSongsCommand.ExecuteAsync(null);
+        await playback.Received().PlayAsync(Arg.Is<IEnumerable<Guid>>(ids => ids.SequenceEqual(new[] { favorite.Id, other.Id })),
+            0, null, Arg.Any<PlaybackContext>());
+    }
+
+    [Fact]
     public async Task ArticleSortSetting_RefreshesDisplayedSongsAndPlaybackOrder()
     {
         var library = Substitute.For<ILibraryService>();

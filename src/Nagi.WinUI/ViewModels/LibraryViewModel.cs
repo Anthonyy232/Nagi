@@ -29,6 +29,7 @@ public partial class LibraryViewModel : SongListViewModelBase
         ILogger<LibraryViewModel> logger)
         : base(libraryService, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
+        PageTitle = Nagi.WinUI.Resources.Strings.LibraryPage_Title;
         _settingsService.IgnoreLeadingArticlesOnSortEnabledChanged += OnIgnoreLeadingArticlesOnSortChanged;
     }
 

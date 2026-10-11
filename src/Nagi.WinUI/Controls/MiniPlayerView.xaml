@@ -152,21 +152,7 @@
                                 KeyUp="MediaSeekerSlider_KeyUp" />
 
                             <StackPanel x:Name="MediaControlsPanel" HorizontalAlignment="Center" Orientation="Horizontal" Spacing="2">
-                                <Button Command="{x:Bind ViewModel.ToggleMuteCommand}"
-                                        PointerWheelChanged="VolumeButton_PointerWheelChanged"
-                                        ToolTipService.ToolTip="{x:Bind ViewModel.VolumeButtonToolTip, Mode=OneWay}">
-                                    <Grid Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                  FontSize="20"
-                                                  Foreground="{StaticResource MediaOnImageControlSecondaryBrush}"
-                                                  Glyph="{x:Bind ViewModel.VolumeIconGlyph, Mode=OneWay}" />
-                                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                  FontSize="20"
-                                                  Foreground="{StaticResource MediaOnImageAccentBrush}"
-                                                  Clip="{x:Bind ViewModel.CurrentVolume, Mode=OneWay, Converter={StaticResource VolumeToClipRectConverter}, ConverterParameter='20'}"
-                                                  Glyph="{x:Bind ViewModel.VolumeIconGlyph, Mode=OneWay}" />
-                                    </Grid>
-                                </Button>
+
                                 <Button Command="{x:Bind ViewModel.ToggleShuffleCommand}"
                                         ToolTipService.ToolTip="{x:Bind ViewModel.ShuffleButtonToolTip, Mode=OneWay}">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -194,6 +180,21 @@
                                 <Button Command="{x:Bind ViewModel.ShowQueueViewCommand}"
                                         ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_QueueButton_ToolTip, Mode=OneTime}">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
+                                </Button>
+                                <Button Command="{x:Bind ViewModel.ToggleMuteCommand}"
+                                        PointerWheelChanged="VolumeButton_PointerWheelChanged"
+                                        ToolTipService.ToolTip="{x:Bind ViewModel.VolumeButtonToolTip, Mode=OneWay}">
+                                    <Grid Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                  FontSize="20"
+                                                  Foreground="{StaticResource MediaOnImageControlSecondaryBrush}"
+                                                  Glyph="{x:Bind ViewModel.VolumeIconGlyph, Mode=OneWay}" />
+                                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                  FontSize="20"
+                                                  Foreground="{StaticResource MediaOnImageAccentBrush}"
+                                                  Clip="{x:Bind ViewModel.CurrentVolume, Mode=OneWay, Converter={StaticResource VolumeToClipRectConverter}, ConverterParameter='20'}"
+                                                  Glyph="{x:Bind ViewModel.VolumeIconGlyph, Mode=OneWay}" />
+                                    </Grid>
                                 </Button>
                             </StackPanel>
                         </StackPanel>

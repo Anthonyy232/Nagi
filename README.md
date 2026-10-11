@@ -38,10 +38,10 @@
 - **Playlists & Smart Playlists**: Create custom playlists or powerful rule-based smart playlists that automatically update as your library grows.
 - **Queue Management**: Drop files or folders onto the bottom player to queue them without importing them into your library. Use Up Next to view and reorder tracks in an inline side pane, with shuffle and repeat controls.
 - **Listening Mixes**: Use the shuffle dropdown for More variety (avoids the past day's tracks and spaces out artists), Rediscover (played tracks not heard in over 30 days), or Unheard. These modes use your local library and listening history.
-- **Play for…**: Build a queue of whole songs within a chosen duration from the current song list or queue. More variety offers an optional recent-play exclusion window. Timed mixes turn repeat off and stop at the end of the queue.
-- **Favorites & Rediscovery**: Favorite songs from their menus or with Ctrl+D, and filter the Library to favorites. A dismissible library suggestion surfaces an often-played song not heard in over 90 days. Favorites stay in Nagi's database without changing audio files.
-- **Listening History**: Switch the Up Next pane to Recently played to search your listening history, browse earlier listens, or replay a track while preserving the queue.
-- **Sleep Timer**: Use the player options menu to stop after a track, at queue end, or after a preset/custom duration. Choose whether a custom timer finishes the current song; the active timer appears in the player and continues while minimized.
+- **Play for…**: Build a queue of whole songs within a chosen duration from the current song list. More variety offers an optional recent-play exclusion window. Timed mixes turn repeat off and stop at the end of the queue.
+- **Favorites & Rediscovery**: Favorite songs from their menus or with Ctrl+D. Enable the optional Favorites page in Settings → Customize Navigation. A dismissible library suggestion surfaces an often-played song not heard in over 90 days. Favorites stay in Nagi's database without changing audio files.
+- **Listening History**: Use the history button in the Up Next header to search recent listens or replay a track while preserving the queue. Earlier listens load automatically as you scroll.
+- **Sleep Timer**: Use the options menu beside the player's song title to stop after a track, at queue end, or after a preset/custom duration. Choose whether a custom timer finishes the current song; the active timer appears in the player and continues while minimized.
 - **10-Band Equalizer**: Fine-tune your sound with a fully customizable 10-band equalizer and pregain control.
 - **Volume Normalization**: ReplayGain support ensures consistent volume levels across your entire library.
 - **Last.fm, ListenBrainz & Discord Integration**: Scrobble your tracks to Last.fm or ListenBrainz, fetch artist metadata, and show your listening activity with Discord Rich Presence.

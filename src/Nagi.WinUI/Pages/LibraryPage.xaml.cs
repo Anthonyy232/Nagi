@@ -85,6 +85,7 @@ public sealed partial class LibraryPage : Page
 
         try
         {
+            await ViewModel.SetLibraryViewAsync(e.Parameter is "Favorites");
             if (!ViewModel.HasLoadedPlaylists)
             {
                 await ViewModel.LoadAvailablePlaylistsAsync();

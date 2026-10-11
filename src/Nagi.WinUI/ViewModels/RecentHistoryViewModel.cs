@@ -1,29 +1,40 @@
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+using Microsoft.UI.Xaml.Data;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Models;
 using Nagi.WinUI.Resources;
 using Nagi.WinUI.Services.Abstractions;
+using Windows.Foundation;
 
 namespace Nagi.WinUI.ViewModels;
 
-public partial class RecentHistoryViewModel(ILibraryReader library, IDispatcherService dispatcher, ILogger logger)
-    : SearchableViewModelBase(dispatcher, logger), IDisposable
+public partial class RecentHistoryViewModel : SearchableViewModelBase, IDisposable
 {
+    private readonly ILibraryReader _library;
+    private readonly HistoryEntries _entries;
     private CancellationTokenSource? _loadCts;
     private bool _isDisposed;
     private bool _isActive;
-    public ObservableRangeCollection<RecentListenEntry> Entries { get; } = new();
+    public ObservableRangeCollection<RecentListenEntry> Entries => _entries;
+
+    public RecentHistoryViewModel(ILibraryReader library, IDispatcherService dispatcher, ILogger logger)
+        : base(dispatcher, logger)
+    {
+        _library = library;
+        _entries = new HistoryEntries(this);
+    }
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(LoadMoreCommand))]
     [NotifyPropertyChangedFor(nameof(ShowEmptyState))]
+    [NotifyPropertyChangedFor(nameof(ShowInitialLoading))]
+    [NotifyPropertyChangedFor(nameof(ShowMoreLoading))]
     public partial bool IsLoading { get; set; }
 
     [ObservableProperty]
@@ -31,16 +42,22 @@ public partial class RecentHistoryViewModel(ILibraryReader library, IDispatcherS
     public partial bool HasLoadError { get; set; }
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(LoadMoreCommand))]
     public partial bool HasMore { get; set; }
+
+    partial void OnIsLoadingChanged(bool value) => _entries.RefreshLoadingState();
+    partial void OnHasMoreChanged(bool value) => _entries.RefreshLoadingState();
+    partial void OnHasLoadErrorChanged(bool value) => _entries.RefreshLoadingState();
 
     public string EmptyStateText => IsSearchActive ? Strings.Listening_HistoryNoMatches : Strings.Listening_HistoryEmpty;
 
     public bool ShowEmptyState => !IsLoading && !HasLoadError && Entries.Count == 0;
+    public bool ShowInitialLoading => IsLoading && Entries.Count == 0;
+    public bool ShowMoreLoading => IsLoading && Entries.Count > 0;
 
     public void SetActive(bool active)
     {
         _isActive = active;
+        _entries.RefreshLoadingState();
         if (active) _ = SearchAsync();
         else
         {
@@ -56,16 +73,12 @@ public partial class RecentHistoryViewModel(ILibraryReader library, IDispatcherS
     }
 
     protected override Task ExecuteSearchAsync(CancellationToken token) =>
-        _dispatcherService.EnqueueAsync(() => LoadAsync(true, token));
+        _dispatcherService.EnqueueAsync(async () => { await LoadAsync(true, token); });
 
-    private bool CanLoadMore() => HasMore && !IsLoading;
-
-    [RelayCommand(CanExecute = nameof(CanLoadMore))]
-    private Task LoadMoreAsync() => LoadAsync(false, CancellationToken.None);
-
-    private async Task LoadAsync(bool reset, CancellationToken token)
+    private async Task<uint> LoadAsync(bool reset, CancellationToken token)
     {
-        if (_isDisposed || !_isActive || token.IsCancellationRequested) return;
+        if (_isDisposed || !_isActive || token.IsCancellationRequested) return 0;
+        if (reset) _entries.ResetLoading();
         _loadCts?.Cancel();
         _loadCts?.Dispose();
         var cts = _loadCts = CancellationTokenSource.CreateLinkedTokenSource(token);
@@ -76,8 +89,8 @@ public partial class RecentHistoryViewModel(ILibraryReader library, IDispatcherS
         HasLoadError = false;
         try
         {
-            var listens = await Task.Run(() => library.GetRecentListensAsync(searchTerm, offset, 100, loadToken), loadToken);
-            if (cts.IsCancellationRequested || _isDisposed) return;
+            var listens = await Task.Run(() => _library.GetRecentListensAsync(searchTerm, offset, 100, loadToken), loadToken);
+            if (cts.IsCancellationRequested || _isDisposed) return 0;
             var previousDay = reset ? (DateTime?)null : Entries.LastOrDefault()?.Listen.TimestampUtc.ToLocalTime().Date;
             var rows = listens.Select(listen =>
             {
@@ -89,6 +102,7 @@ public partial class RecentHistoryViewModel(ILibraryReader library, IDispatcherS
             }).ToList();
             Entries.AppendOrReplace(rows, !reset);
             HasMore = listens.Count == 100;
+            return (uint)rows.Count;
         }
         catch (OperationCanceledException) { }
         catch (Exception ex)
@@ -106,6 +120,7 @@ public partial class RecentHistoryViewModel(ILibraryReader library, IDispatcherS
                 IsLoading = false;
             }
         }
+        return 0;
     }
 
     public void Dispose()
@@ -114,5 +129,26 @@ public partial class RecentHistoryViewModel(ILibraryReader library, IDispatcherS
         ResetState();
         _loadCts?.Cancel();
         _loadCts?.Dispose();
+    }
+
+    private sealed class HistoryEntries(RecentHistoryViewModel owner)
+        : ObservableRangeCollection<RecentListenEntry>, ISupportIncrementalLoading
+    {
+        private Task<LoadMoreItemsResult>? _loadTask;
+        public bool HasMoreItems => owner._isActive && !owner._isDisposed && owner.HasMore && !owner.IsLoading && !owner.HasLoadError;
+        public void RefreshLoadingState() => OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasMoreItems)));
+        public void ResetLoading() => _loadTask = null;
+
+        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        {
+            if (_loadTask?.IsCompleted != false) _loadTask = LoadPageAsync();
+            return _loadTask.AsAsyncOperation();
+        }
+
+        private async Task<LoadMoreItemsResult> LoadPageAsync()
+        {
+            if (!HasMoreItems) return new LoadMoreItemsResult();
+            return new LoadMoreItemsResult { Count = await owner.LoadAsync(false, CancellationToken.None) };
+        }
     }
 }

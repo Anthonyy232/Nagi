@@ -12,8 +12,6 @@
     Loaded="Page_Loaded"
     mc:Ignorable="d">
 
-
-
     <Grid Padding="{StaticResource PageContainerPaddingVertical}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -36,6 +34,7 @@
                         Command="{x:Bind ViewModel.PlayRandomFolderCommand}"
                         Margin="0,0,1,0"
                         ContentTemplate="{StaticResource RandomPlayIconTemplate}" />
+
                 <Button
                     Click="AddFolderButton_Click"
                     ToolTipService.ToolTip="{x:Bind resources:Strings.FolderPage_AddFolderButton_ToolTip, Mode=OneTime}"
@@ -46,6 +45,7 @@
                         <TextBlock Text="{x:Bind resources:Strings.FolderPage_AddFolder_Label, Mode=OneTime}" />
                     </StackPanel>
                 </Button>
+
             </StackPanel>
         </Grid>
 

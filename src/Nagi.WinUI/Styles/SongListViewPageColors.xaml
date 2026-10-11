@@ -9,6 +9,15 @@
         <Setter Property="Height" Value="36" />
     </Style>
 
+    <Style x:Key="SongListViewPageShuffleButton" TargetType="SplitButton">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground" Value="{StaticResource AppPrimaryColorBrush}" />
+        <Setter Property="Height" Value="36" />
+        <Setter Property="Padding" Value="8,0" />
+        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+    </Style>
+
     <Style x:Key="SongListViewPageSongPlayButtonStyle" TargetType="Button"
            BasedOn="{StaticResource SongListViewPageIconButton}">
         <Setter Property="Width" Value="42" />

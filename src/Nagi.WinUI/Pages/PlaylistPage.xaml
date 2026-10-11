@@ -14,8 +14,6 @@
     Loaded="Page_Loaded"
     mc:Ignorable="d">
 
-
-
     <Grid Padding="{StaticResource PageContainerPaddingVertical}">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="SearchStates">
@@ -95,14 +93,6 @@
                     </Button>
                 </Grid>
 
-                <Button x:Name="RandomPlaylistButton"
-                        ToolTipService.ToolTip="{x:Bind resources:Strings.PlaylistPage_RandomButton_ToolTip, Mode=OneTime}"
-                        AutomationProperties.Name="{x:Bind resources:Strings.PlaylistPage_RandomButton_ToolTip, Mode=OneTime}"
-                        Style="{StaticResource SongListViewPageIconButton}"
-                        Command="{x:Bind ViewModel.PlayRandomPlaylistCommand}"
-                        Margin="0,0,1,0"
-                        ContentTemplate="{StaticResource RandomPlayIconTemplate}" />
-
                 <Button Style="{StaticResource SongListViewPageIconButton}"
                         ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
                     <Button.Flyout>
@@ -133,6 +123,15 @@
                     </Button.Flyout>
                     <FontIcon FontSize="16" Glyph="&#xE8CB;" />
                 </Button>
+
+                <Button x:Name="RandomPlaylistButton"
+                        ToolTipService.ToolTip="{x:Bind resources:Strings.PlaylistPage_RandomButton_ToolTip, Mode=OneTime}"
+                        AutomationProperties.Name="{x:Bind resources:Strings.PlaylistPage_RandomButton_ToolTip, Mode=OneTime}"
+                        Style="{StaticResource SongListViewPageIconButton}"
+                        Command="{x:Bind ViewModel.PlayRandomPlaylistCommand}"
+                        Margin="0,0,1,0"
+                        ContentTemplate="{StaticResource RandomPlayIconTemplate}" />
+
             </StackPanel>
 
             <DropDownButton

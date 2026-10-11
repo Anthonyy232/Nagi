@@ -103,7 +103,7 @@
     <value>Track Number</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Play Count</value>
+    <value>Plays</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>Songs</value>
@@ -150,10 +150,10 @@
     <value>{0} (Oldest)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Asc)</value>
+    <value>{0} (Ascending)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Desc)</value>
+    <value>{0} (Descending)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>Shortest First</value>
@@ -171,7 +171,7 @@
     <value>Most {0}</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
-    <value>Least {0}</value>
+    <value>Fewest {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Scanning folder {0} of {1}: {2} - {3}</value>
@@ -180,12 +180,12 @@
     <value>Scan complete. Added or updated {0} {1}.</value>
   </data>
   <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Saving batch {0}...</value>
+    <value>Saving batch {0}…</value>
   </data>
 
   <!-- Status & Success Messages -->
   <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Scanning folder...</value>
+    <value>Scanning folder…</value>
   </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Scan complete. Library is up to date.</value>
@@ -197,16 +197,16 @@
     <value>Scan failed. Check logs for details.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Preparing scan caches...</value>
+    <value>Preparing library scan…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Reading song details...</value>
+    <value>Reading song details…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Cleaning up your library...</value>
+    <value>Cleaning up your library…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Finalizing...</value>
+    <value>Finalizing…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Volume normalization failed. Check logs for details.</value>
@@ -220,7 +220,7 @@
 
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Failed to add folder.</value>
+    <value>Could not add the folder.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Playlist name cannot be empty.</value>
@@ -255,15 +255,12 @@
   </data>
 
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg is required for High-Precision Volume Normalization (ReplayGain analysis) but was not found on your system.
+    <value>FFmpeg is needed to analyze songs for volume normalization, but Nagi could not find it.
 
-Follow these steps to set it up:
-
-1. **Download**: Visit https://www.gyan.dev/ffmpeg/builds/ and download the 'ffmpeg-git-full.7z' (or similar) essentials build.
-2. **Guide**: You can follow this guide for detailed instructions: https://phoenixnap.com/kb/ffmpeg-windows
-3. **Extract**: Open the architecture folder and locate the 'bin' directory containing `ffmpeg.exe`.
-4. **Install**: Copy `ffmpeg.exe` to a permanent folder (e.g., `C:\ffmpeg\`) and **add that folder to your System PATH** environment variable.
-5. **Restart**: Please restart Nagi after installation for changes to take effect.</value>
+1. Download a Windows build from https://ffmpeg.org/download.html.
+2. Extract the archive and locate ffmpeg.exe in its bin folder.
+3. Add the folder containing ffmpeg.exe to your Windows PATH.
+4. Restart Nagi, then enable volume normalization again.</value>
   </data>
 
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
@@ -314,12 +311,39 @@ Follow these steps to set it up:
     <value>All songs already have volume data.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Calculating volume for {0} songs...</value>
+    <value>Analyzing volume… Songs: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Calculating volume normalization ({0}/{1})...</value>
+    <value>Calculating volume normalization ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Volume normalization complete. Processed {0} songs.</value>
+    <value>Volume normalization complete. Songs processed: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Enter your ListenBrainz user token.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Could not read the response from ListenBrainz. Try again later.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Enter a server URL beginning with http:// or https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>The user token is invalid. Check it and try again.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz returned an error (HTTP {0}). Try again later.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Could not connect to ListenBrainz. Check your connection and server URL.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi could not find its library data folder.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>The restore failed, and your previous data could not be fully restored. Recovery files were saved at &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>The selected file is not a valid Nagi backup.</value>
   </data>
 </root>

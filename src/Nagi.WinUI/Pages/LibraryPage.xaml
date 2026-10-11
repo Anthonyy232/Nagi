@@ -59,7 +59,7 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                <TextBlock Text="{x:Bind resources:Strings.LibraryPage_Title, Mode=OneTime}" Style="{StaticResource PageTitleTextStyle}" />
+                <TextBlock Text="{x:Bind ViewModel.PageTitle, Mode=OneWay}" Style="{StaticResource PageTitleTextStyle}" />
                 <TextBlock
                     Margin="0,0,0,5"
                     VerticalAlignment="Bottom"
@@ -106,19 +106,6 @@
                     </Button>
                 </Grid>
 
-                <ToggleButton IsChecked="{x:Bind ViewModel.ShowFavoritesOnly, Mode=TwoWay}" ToolTipService.ToolTip="{x:Bind resources:Strings.Listening_Favorites}" AutomationProperties.Name="{x:Bind resources:Strings.Listening_Favorites}"><FontIcon FontSize="16" Glyph="&#xEB51;" /></ToggleButton>
-                <Button Command="{x:Bind ViewModel.PlayAllSongsCommand}"
-                        ToolTipService.ToolTip="{x:Bind resources:Strings.LibraryPage_PlayAllButton_ToolTip, Mode=OneTime}"
-                        Style="{StaticResource SongListViewPageIconButton}">
-                    <FontIcon FontSize="16" Glyph="" />
-                </Button>
-
-                <SplitButton Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}"
-                        ToolTipService.ToolTip="{x:Bind resources:Strings.LibraryPage_ShufflePlayAllButton_ToolTip, Mode=OneTime}">
-                    <SplitButton.Flyout><MenuFlyout Opening="ListeningOptions_Opening" /></SplitButton.Flyout>
-                    <FontIcon FontSize="16" Glyph="" />
-                </SplitButton>
-
                 <Button Style="{StaticResource SongListViewPageIconButton}"
                         ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
                     <Button.Flyout>
@@ -157,6 +144,19 @@
                     </Button.Flyout>
                     <FontIcon FontSize="16" Glyph="&#xE8CB;" />
                 </Button>
+
+                <Button Command="{x:Bind ViewModel.PlayAllSongsCommand}"
+                        ToolTipService.ToolTip="{x:Bind resources:Strings.LibraryPage_PlayAllButton_ToolTip, Mode=OneTime}"
+                        Style="{StaticResource SongListViewPageIconButton}">
+                    <FontIcon FontSize="16" Glyph="" />
+                </Button>
+
+                <SplitButton Style="{StaticResource SongListViewPageShuffleButton}" Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}"
+                        ToolTipService.ToolTip="{x:Bind resources:Strings.LibraryPage_ShufflePlayAllButton_ToolTip, Mode=OneTime}">
+                    <SplitButton.Flyout><MenuFlyout Opening="ListeningOptions_Opening" /></SplitButton.Flyout>
+                    <FontIcon FontSize="16" Glyph="" />
+                </SplitButton>
+
             </StackPanel>
         </Grid>
 
@@ -217,10 +217,10 @@
 
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="2*" />
-                            <ColumnDefinition MinWidth="100" Width="1*" />
-                            <ColumnDefinition MinWidth="100" Width="1*" />
-                            <ColumnDefinition MinWidth="40" Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition MinWidth="100" Width="*" />
+                            <ColumnDefinition MinWidth="100" Width="*" />
+                            <ColumnDefinition MinWidth="40" Width="Auto" />
                             <ColumnDefinition MinWidth="50" Width="Auto" />
                         </Grid.ColumnDefinitions>
 
@@ -248,17 +248,10 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center" />
 
-                        <Grid Grid.Column="1" ColumnSpacing="8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="SongTitle" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Bind Title}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center" />
-                            <FontIcon Grid.Column="1" Glyph="&#xEB51;" FontSize="12" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" ToolTipService.ToolTip="{x:Bind resources:Strings.Listening_Favorites}" Visibility="{x:Bind IsLoved, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        </Grid>
+                        <TextBlock Grid.Column="1" x:Name="SongTitle" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Bind Title}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center" />
 
                         <Grid Grid.Column="2" SizeChanged="OnArtistColumnSizeChanged">
-                            <Grid HorizontalAlignment="Center">
+                            <Grid HorizontalAlignment="Left">
                                 <TextBlock HorizontalAlignment="Left"
                                            VerticalAlignment="Center"
                                            TextTrimming="CharacterEllipsis"

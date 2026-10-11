@@ -1,10 +1,10 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.UI.Xaml.Data;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.WinUI.Models;
-using Nagi.WinUI.Services.Implementations;
 using Nagi.WinUI.ViewModels;
 using NSubstitute;
 using Xunit;
@@ -53,6 +53,76 @@ public partial class PlayerViewModelTests
 
 public class RecentHistoryViewModelTests
 {
+    [Fact]
+    public async Task SearchDuringIncrementalLoad_DoesNotBlockNewPagesOrAppendOldResults()
+    {
+        static RecentListen[] FullPage(string title) => Enumerable.Range(0, 100)
+            .Select(index => new RecentListen(index, Guid.NewGuid(), title, "Artist", DateTime.UtcNow)).ToArray();
+        var library = Substitute.For<ILibraryReader>();
+        library.GetRecentListensAsync("", 0, 100, Arg.Any<CancellationToken>()).Returns(FullPage("Original"));
+        library.GetRecentListensAsync("New", 0, 100, Arg.Any<CancellationToken>()).Returns(FullPage("New"));
+        library.GetRecentListensAsync("New", 100, 100, Arg.Any<CancellationToken>())
+            .Returns([new RecentListen(100, Guid.NewGuid(), "New page", "Artist", DateTime.UtcNow)]);
+        var oldPage = new TaskCompletionSource<IReadOnlyList<RecentListen>>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        library.GetRecentListensAsync("", 100, 100, Arg.Any<CancellationToken>()).Returns(_ =>
+        {
+            entered.TrySetResult();
+            return oldPage.Task;
+        });
+        using var viewModel = new RecentHistoryViewModel(library, new ImmediateDispatcher(), NullLogger.Instance);
+        viewModel.SetActive(true);
+        await viewModel.SearchAsync();
+        var entries = (ISupportIncrementalLoading)viewModel.Entries;
+        var pending = entries.LoadMoreItemsAsync(100).AsTask();
+        await entered.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+        viewModel.SearchTerm = "New";
+        await viewModel.SearchAsync();
+        (await entries.LoadMoreItemsAsync(100).AsTask().WaitAsync(TimeSpan.FromSeconds(5))).Count.Should().Be(1);
+        oldPage.SetResult([new RecentListen(101, Guid.NewGuid(), "Stale", "Artist", DateTime.UtcNow)]);
+
+        (await pending).Count.Should().Be(0);
+        viewModel.Entries.Should().HaveCount(101).And.OnlyContain(entry => entry.Title.StartsWith("New"));
+    }
+
+    [Fact]
+    public async Task IncrementalHistory_CoalescesRequestsAndPreservesDateGroupsAcrossPages()
+    {
+        var library = Substitute.For<ILibraryReader>();
+        var today = DateTime.Today.AddHours(12).ToUniversalTime();
+        var firstPage = Enumerable.Range(0, 100)
+            .Select(index => new RecentListen(index, Guid.NewGuid(), $"Song {index}", "Artist", today.AddMinutes(-index)))
+            .ToArray();
+        library.GetRecentListensAsync("", 0, 100, Arg.Any<CancellationToken>()).Returns(firstPage);
+        var nextPage = new TaskCompletionSource<IReadOnlyList<RecentListen>>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        library.GetRecentListensAsync("", 100, 100, Arg.Any<CancellationToken>()).Returns(_ =>
+        {
+            entered.TrySetResult();
+            return nextPage.Task;
+        });
+        using var viewModel = new RecentHistoryViewModel(library, new ImmediateDispatcher(), NullLogger.Instance);
+        viewModel.SetActive(true);
+        await viewModel.SearchAsync();
+        var entries = (ISupportIncrementalLoading)viewModel.Entries;
+        var firstLoad = entries.LoadMoreItemsAsync(100).AsTask();
+        await entered.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        var duplicateLoad = entries.LoadMoreItemsAsync(100).AsTask();
+        nextPage.SetResult([
+            new RecentListen(100, Guid.NewGuid(), "Earlier today", "Artist", today.AddHours(-2)),
+            new RecentListen(101, Guid.NewGuid(), "Yesterday", "Artist", today.AddDays(-1))
+        ]);
+        (await firstLoad).Count.Should().Be(2);
+        (await duplicateLoad).Count.Should().Be(2);
+
+        viewModel.Entries.Should().HaveCount(102);
+        viewModel.Entries[100].DateHeader.Should().BeEmpty();
+        viewModel.Entries[101].DateHeader.Should().Be(Nagi.WinUI.Resources.Strings.Listening_Yesterday);
+        entries.HasMoreItems.Should().BeFalse();
+        await library.Received(1).GetRecentListensAsync("", 100, 100, Arg.Any<CancellationToken>());
+    }
+
     [Fact]
     public async Task SearchSupersedesPendingLoadAndHistoryLoadsOnlyWhileVisible()
     {

@@ -144,7 +144,7 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
     public async Task<ValidateTokenResult> ValidateTokenAsync(string token, string? serverUrl = null)
     {
         if (string.IsNullOrWhiteSpace(token))
-            return new ValidateTokenResult(false, null, "Token is empty.");
+            return new ValidateTokenResult(false, null, Resources.Strings.ListenBrainz_EmptyToken);
 
         string baseUrl;
         if (string.IsNullOrWhiteSpace(serverUrl))
@@ -155,7 +155,7 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
         {
             var sanitized = SanitizeBaseUrl(serverUrl);
             if (sanitized is null)
-                return new ValidateTokenResult(false, null, "Server URL must be an absolute http(s) URL.");
+                return new ValidateTokenResult(false, null, Resources.Strings.ListenBrainz_InvalidServerUrl);
             baseUrl = sanitized;
         }
         var url = $"{baseUrl}{ValidateTokenPath}";
@@ -168,30 +168,30 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
             using var response = await _httpClient.SendAsync(request).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.Unauthorized)
-                return new ValidateTokenResult(false, null, "Token is not valid.");
+                return new ValidateTokenResult(false, null, Resources.Strings.ListenBrainz_InvalidToken);
 
             if (!response.IsSuccessStatusCode)
-                return new ValidateTokenResult(false, null, $"ListenBrainz returned {(int)response.StatusCode}.");
+                return new ValidateTokenResult(false, null, string.Format(Resources.Strings.ListenBrainz_ServerError, (int)response.StatusCode));
 
             var parsed = await response.Content.ReadFromJsonAsync<ListenBrainzValidateTokenResponse>(JsonOptions)
                 .ConfigureAwait(false);
 
             if (parsed is null)
-                return new ValidateTokenResult(false, null, "Could not parse response.");
+                return new ValidateTokenResult(false, null, Resources.Strings.ListenBrainz_InvalidResponse);
 
             return parsed.Valid
                 ? new ValidateTokenResult(true, parsed.UserName, null)
-                : new ValidateTokenResult(false, null, parsed.Message ?? "Token is not valid.");
+                : new ValidateTokenResult(false, null, parsed.Message ?? Resources.Strings.ListenBrainz_InvalidToken);
         }
         catch (JsonException ex)
         {
             _logger.LogWarning(ex, "Failed to parse ListenBrainz validate-token response.");
-            return new ValidateTokenResult(false, null, "Could not parse response.");
+            return new ValidateTokenResult(false, null, Resources.Strings.ListenBrainz_InvalidResponse);
         }
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "ListenBrainz token validation failed.");
-            return new ValidateTokenResult(false, null, "Could not reach ListenBrainz.");
+            return new ValidateTokenResult(false, null, Resources.Strings.ListenBrainz_Unreachable);
         }
     }
 

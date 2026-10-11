@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
+using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Resources;
 
 namespace Nagi.WinUI.ViewModels;
@@ -18,7 +19,7 @@ public abstract partial class SongListViewModelBase
         var ids = await GetFullSongIdsAsync();
         if (!IsSongContextCurrent(generation) || ids.Count == 0) return;
         if (!await _playbackService.PlayMixAsync(ids, mode, context: context))
-            await _uiService.ShowMessageDialogAsync(Strings.Listening_NoMixTitle, Strings.Listening_NoMixDescription);
+            await _uiService.ShowMessageDialogAsync(Strings.Listening_NoMixTitle, ListeningMenuFlyoutHelper.GetEmptyMixDescription(mode));
     });
 
     [RelayCommand(CanExecute = nameof(CanExecutePlayAllCommands))]
@@ -31,7 +32,7 @@ public abstract partial class SongListViewModelBase
         var ids = await GetFullSongIdsAsync();
         if (!IsSongContextCurrent(generation) || ids.Count == 0) return;
         if (!await _playbackService.PlayMixAsync(ids, options.Mode, TimeSpan.FromMinutes(options.Minutes), context, options.AvoidRecentDays))
-            await _uiService.ShowMessageDialogAsync(Strings.Listening_NoMixTitle, Strings.Listening_NoMixDescription);
+            await _uiService.ShowMessageDialogAsync(Strings.Listening_NoMixTitle, ListeningMenuFlyoutHelper.GetEmptyMixDescription(options.Mode, timed: true));
     });
 
     [RelayCommand(CanExecute = nameof(CanExecuteSelectedSongsCommands))]

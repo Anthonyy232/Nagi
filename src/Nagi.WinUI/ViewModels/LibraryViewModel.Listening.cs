@@ -26,13 +26,17 @@ public partial class LibraryViewModel
     public string SuggestionReason => Suggestion is null ? string.Empty
         : string.Format(Strings.Listening_RediscoveryReason, Suggestion.LastPlayedDate.ToLocalTime());
 
-    partial void OnShowFavoritesOnlyChanged(bool value)
+    public async Task SetLibraryViewAsync(bool favorites)
     {
+        if (ShowFavoritesOnly == favorites) return;
         _pagedLoadCts?.Cancel();
+        ShowFavoritesOnly = favorites;
+        PageTitle = favorites ? Strings.Listening_Favorites : Strings.LibraryPage_Title;
+        SearchTerm = string.Empty;
         DeselectAll();
         ClearFullSongIds();
         CurrentPage = 1;
-        _ = RefreshOrSortSongsAsync();
+        if (HasInitialized) await RefreshOrSortSongsAsync();
     }
 
     protected override void OnSearchTermChangedInternal(string value)
