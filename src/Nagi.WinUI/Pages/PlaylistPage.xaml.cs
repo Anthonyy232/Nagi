@@ -165,6 +165,7 @@ public sealed partial class PlaylistPage : Page
             {
                 Width = 80,
                 Height = 80,
+                CornerRadius = (CornerRadius)Application.Current.Resources["ArtworkCornerRadius"],
                 Margin = new Thickness(0, 0, 0, 12),
                 HorizontalAlignment = HorizontalAlignment.Center
             };

@@ -25,7 +25,7 @@
                 </VisualState>
                 <VisualState x:Name="SearchExpanded">
                     <VisualState.Setters>
-                        <Setter Target="SearchTextBox.Width" Value="300" />
+                        <Setter Target="SearchTextBox.Width" Value="{StaticResource SearchBoxExpandedWidth}" />
                         <Setter Target="SearchTextBox.Opacity" Value="1" />
                         <Setter Target="SearchTextBox.IsHitTestVisible" Value="True" />
                         <Setter Target="SearchTextBox.IsTabStop" Value="True" />
@@ -41,7 +41,7 @@
         </Grid.RowDefinitions>
 
         <!-- Page Header -->
-        <Grid Grid.Row="0" Margin="{StaticResource PageHeaderMarginIndented}">
+        <Grid Grid.Row="0" Margin="{StaticResource CollectionPageHeaderMargin}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -124,7 +124,7 @@
                 ItemsSource="{x:Bind ViewModel.Genres, Mode=OneWay}"
                 SelectionMode="None"
                 Visibility="{x:Bind ViewModel.HasGenres, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
-                Padding="{StaticResource SongListViewPadding}"
+                Padding="{StaticResource PageContentPadding}"
                 ItemContainerStyle="{StaticResource AnimatedGridViewItemStyle}">
                 <GridView.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -134,7 +134,8 @@
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="data:GenreSummary">
                         <!-- The background is bound to the genre name, producing a unique gradient for each. -->
-                        <Grid Padding="16"
+                        <Grid Margin="{StaticResource CollectionCardMargin}" Padding="{StaticResource SurfaceContentPadding}"
+                              CornerRadius="{StaticResource ArtworkCornerRadius}"
                               Background="{x:Bind Name, Converter={StaticResource GenreToGradientConverter}, Mode=OneTime}">
                             <Grid.ContextFlyout>
                                 <MenuFlyout>

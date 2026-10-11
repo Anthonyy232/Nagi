@@ -49,7 +49,7 @@
 
         <!-- Page Header -->
         <Grid Grid.Row="0"
-              Margin="{StaticResource PageHeaderMarginIndented}">
+              Margin="{StaticResource CollectionPageHeaderMargin}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -131,22 +131,22 @@
                 x:Name="ArtistsGridView"
                 IsItemClickEnabled="True"
                 ItemClick="ArtistsGridView_ItemClick"
-                Padding="{StaticResource SongListViewPadding}"
+                Padding="{StaticResource PageContentPadding}"
                 ItemContainerStyle="{StaticResource AnimatedGridViewItemStyle}"
                 ItemsSource="{x:Bind ViewModel.Artists, Mode=OneWay}"
                 SelectionMode="None"
                 Visibility="{x:Bind ViewModel.HasArtists, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                 <GridView.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <ItemsWrapGrid ItemWidth="200" Orientation="Horizontal" />
+                        <ItemsWrapGrid ItemWidth="{StaticResource CollectionGridItemWidth}" Orientation="Horizontal" />
                     </ItemsPanelTemplate>
                 </GridView.ItemsPanel>
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="vm:ArtistViewModelItem">
                         <Grid
-                            Width="{StaticResource ArtistGridCardWidth}"
-                            Height="{StaticResource ArtistGridCardHeight}"
-                            Margin="8,16,8,16"
+                            Width="{StaticResource CollectionCardWidth}"
+                            Height="{StaticResource CollectionCardHeight}"
+                            Margin="{StaticResource CollectionCardMargin}"
                             Background="Transparent">
                             <Grid.ContextFlyout>
                                 <MenuFlyout>
@@ -166,19 +166,19 @@
                                 </MenuFlyout>
                             </Grid.ContextFlyout>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
                             <!-- Artist Image or Placeholder -->
-                            <Grid Grid.Row="0" Width="{StaticResource ArtistGridCardImageSize}" Height="{StaticResource ArtistGridCardImageSize}" HorizontalAlignment="Center">
+                            <Grid Grid.Row="0" Width="{StaticResource CollectionCardImageSize}" Height="{StaticResource CollectionCardImageSize}" HorizontalAlignment="Center">
                                 <Border
                                     CornerRadius="80"
                                     Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                                    <controls:ImageEx Width="{StaticResource ArtistGridCardImageSize}" Height="{StaticResource ArtistGridCardImageSize}"
+                                    <controls:ImageEx Width="{StaticResource CollectionCardImageSize}" Height="{StaticResource CollectionCardImageSize}"
                                         IsCacheEnabled="True"
                                         Source="{x:Bind LocalImageCachePath, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
-                                        DecodePixelWidth="{StaticResource ArtistGridCardImageSize}"
+                                        DecodePixelWidth="{StaticResource CollectionCardImageSize}"
                                         DecodePixelType="Logical"
                                         Stretch="UniformToFill" />
                                 </Border>

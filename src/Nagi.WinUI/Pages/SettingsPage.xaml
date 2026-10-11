@@ -74,7 +74,7 @@
 
         <DataTemplate x:Key="RomanizationPackItemTemplate" x:DataType="viewmodels:RomanizationPackViewModel">
             <Border
-                Padding="14,12"
+                Padding="16,12"
                 Background="{ThemeResource LayerFillColorDefaultBrush}"
                 BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                 BorderThickness="1"
@@ -99,7 +99,7 @@
                                 TextTrimming="CharacterEllipsis" />
                             <Border
                                 Grid.Column="1"
-                                Padding="8,3"
+                                Padding="8,4"
                                 VerticalAlignment="Center"
                                 Background="{ThemeResource ControlFillColorSecondaryBrush}"
                                 CornerRadius="{ThemeResource ControlCornerRadius}">
@@ -159,7 +159,7 @@
         </DataTemplate>
     </Page.Resources>
 
-    <Grid>
+    <Grid Padding="{StaticResource PageContainerPaddingVertical}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -168,7 +168,7 @@
         <TextBlock
             Grid.Row="0"
             MaxWidth="1200"
-            Margin="36,24,36,0"
+            Margin="{StaticResource PageHeaderMarginIndented}"
             Style="{StaticResource SettingsPageTitleTextStyle}"
             Text="{x:Bind resources:Strings.SettingsPage_Title, Mode=OneTime}" />
 
@@ -178,13 +178,13 @@
             VerticalScrollMode="Auto"
             HorizontalScrollMode="Disabled"
             HorizontalScrollBarVisibility="Disabled">
-            <Grid Padding="36,0,36,24">
+            <Grid Padding="{StaticResource PageContentPadding}">
                 <StackPanel
                     MaxWidth="1200"
                     HorizontalAlignment="Stretch"
                     Spacing="{StaticResource SettingsCardSpacing}">
 
-                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{x:Bind resources:Strings.SettingsPage_Section_Appearance, Mode=OneTime}" />
+                <TextBlock Margin="0,0,0,8" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{x:Bind resources:Strings.SettingsPage_Section_Appearance, Mode=OneTime}" />
 
                 <controls:SettingsExpander
                     x:Name="ThemeSettingsExpander"
@@ -643,7 +643,7 @@
                     <StackPanel Spacing="12" HorizontalAlignment="Right">
                         <Border
                             MinWidth="520"
-                            Padding="16"
+                            Padding="{StaticResource SurfaceContentPadding}"
                             HorizontalAlignment="Right"
                             Background="{ThemeResource LayerFillColorDefaultBrush}"
                             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"

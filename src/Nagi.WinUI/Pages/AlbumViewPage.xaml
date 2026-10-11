@@ -17,7 +17,7 @@
     mc:Ignorable="d">
 
     <Grid KeyboardAcceleratorPlacementMode="Hidden"
-          Padding="0,0,0,24">
+          Padding="{StaticResource DetailPageContainerPadding}">
         <Grid.KeyboardAccelerators>
             <KeyboardAccelerator Key="A" Modifiers="Control" Invoked="OnSelectAllAcceleratorInvoked" />
         </Grid.KeyboardAccelerators>
@@ -50,7 +50,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Padding="{StaticResource ViewPageHeaderPadding}" Spacing="16">
+        <StackPanel Grid.Row="0" Padding="{StaticResource ViewPageHeaderPadding}">
             <Grid Margin="{StaticResource SectionHeaderMargin}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -87,7 +87,7 @@
                 </StackPanel>
             </Grid>
 
-            <Grid Margin="0,8,0,10">
+            <Grid Margin="{StaticResource SectionHeaderMargin}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -107,7 +107,7 @@
                                Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                 </StackPanel>
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                     <Grid>
                         <TextBox x:Name="SearchTextBox"
                                  PlaceholderText="{x:Bind resources:Strings.AlbumViewPage_SearchBox_Placeholder, Mode=OneTime}"
@@ -187,7 +187,7 @@
         <ListView
             Grid.Row="1"
             x:Name="GroupedSongsListView"
-            Padding="{StaticResource SongListViewPadding}"
+            Padding="{StaticResource PageContentPadding}"
             IsItemClickEnabled="True"
             ItemsSource="{x:Bind ViewModel.GroupedSongsFlat, Mode=OneWay}"
             SelectionChanged="SongsListView_SelectionChanged"
@@ -264,7 +264,7 @@
         <ListView
             Grid.Row="1"
             x:Name="SongsListView"
-            Padding="{StaticResource SongListViewPadding}"
+            Padding="{StaticResource PageContentPadding}"
             IsItemClickEnabled="True"
             ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
             ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"

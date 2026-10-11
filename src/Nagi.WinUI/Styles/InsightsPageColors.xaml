@@ -13,13 +13,12 @@
     <Style x:Key="InsightsCardStyle" TargetType="Grid">
         <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
         <Setter Property="CornerRadius" Value="{ThemeResource OverlayCornerRadius}" />
-        <Setter Property="Padding" Value="20" />
+        <Setter Property="Padding" Value="{StaticResource SurfaceContentPadding}" />
         <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
         <Setter Property="BorderThickness" Value="1" />
     </Style>
 
     <Style x:Key="InsightsHeroCardStyle" TargetType="Grid" BasedOn="{StaticResource InsightsCardStyle}">
-        <Setter Property="Padding" Value="20,16" />
         <Setter Property="MinHeight" Value="120" />
     </Style>
 

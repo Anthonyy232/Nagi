@@ -8,7 +8,7 @@
         x:Key="SettingsSectionHeaderTextBlockStyle"
         BasedOn="{StaticResource BodyStrongTextBlockStyle}"
         TargetType="TextBlock">
-        <Setter Property="Margin" Value="1,30,0,6" />
+        <Setter Property="Margin" Value="0,24,0,8" />
     </Style>
 
     <Style x:Key="SettingsPageTitleTextStyle" TargetType="TextBlock" BasedOn="{StaticResource TitleTextBlockStyle}">

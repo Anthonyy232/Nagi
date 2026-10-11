@@ -103,7 +103,7 @@
                       Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
 
             <Grid Visibility="{x:Bind ViewModel.HasData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <StackPanel Padding="24,12,24,0" Spacing="20">
+                <StackPanel Padding="{StaticResource PageContentPadding}" Spacing="16">
                     <StackPanel.ChildrenTransitions>
                         <TransitionCollection>
                             <EntranceThemeTransition FromVerticalOffset="40" />
@@ -224,7 +224,7 @@
                                 <DropDownButton Grid.Column="1"
                                                Content="{x:Bind ViewModel.SongsSortLabel, Mode=OneWay}"
                                                FontSize="11" Height="28" Padding="8,0"
-                                               VerticalAlignment="Center" Margin="0,0,4,0">
+                                               VerticalAlignment="Center" Margin="0,0,8,0">
                                     <DropDownButton.Flyout>
                                         <MenuFlyout>
                                             <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_PlayCount, Mode=OneTime}" GroupName="SongsSort"
@@ -276,7 +276,7 @@
                                 <DropDownButton Grid.Column="1"
                                                Content="{x:Bind ViewModel.ArtistsSortLabel, Mode=OneWay}"
                                                FontSize="11" Height="28" Padding="8,0"
-                                               VerticalAlignment="Center" Margin="0,0,4,0">
+                                               VerticalAlignment="Center" Margin="0,0,8,0">
                                     <DropDownButton.Flyout>
                                         <MenuFlyout>
                                             <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_PlayCount, Mode=OneTime}" GroupName="ArtistsSort"
@@ -339,7 +339,7 @@
                                 <DropDownButton Grid.Column="1"
                                                Content="{x:Bind ViewModel.AlbumsSortLabel, Mode=OneWay}"
                                                FontSize="11" Height="28" Padding="8,0"
-                                               VerticalAlignment="Center" Margin="0,0,4,0">
+                                               VerticalAlignment="Center" Margin="0,0,8,0">
                                     <DropDownButton.Flyout>
                                         <MenuFlyout>
                                             <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_PlayCount, Mode=OneTime}" GroupName="AlbumsSort"
@@ -391,7 +391,7 @@
                                 <DropDownButton Grid.Column="1"
                                                Content="{x:Bind ViewModel.GenresSortLabel, Mode=OneWay}"
                                                FontSize="11" Height="28" Padding="8,0"
-                                               VerticalAlignment="Center" Margin="0,0,4,0">
+                                               VerticalAlignment="Center" Margin="0,0,8,0">
                                     <DropDownButton.Flyout>
                                         <MenuFlyout>
                                             <RadioMenuFlyoutItem Text="{x:Bind resources:Strings.InsightsPage_SortBy_PlayCount, Mode=OneTime}" GroupName="GenresSort"

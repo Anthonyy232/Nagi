@@ -32,28 +32,34 @@
     </Style>
 
     <CornerRadius x:Key="ArtworkCornerRadius">12</CornerRadius>
+    <Thickness x:Key="SurfaceContentPadding">16</Thickness>
+    <Thickness x:Key="CompactSurfaceContentPadding">12</Thickness>
 
-    <x:Double x:Key="ArtistGridCardImageSize">160</x:Double>
+    <x:Double x:Key="CollectionCardImageSize">160</x:Double>
     <x:Double x:Key="HeaderImageSize">150</x:Double>
     <x:Double x:Key="AlbumCardImageSize">110</x:Double>
     <x:Double x:Key="FloatingPlayerArtSize">56</x:Double>
 
-    <x:Double x:Key="ArtistGridCardWidth">180</x:Double>
-    <x:Double x:Key="ArtistGridCardHeight">220</x:Double>
+    <x:Double x:Key="CollectionCardWidth">180</x:Double>
+    <x:Double x:Key="CollectionCardHeight">220</x:Double>
+    <x:Double x:Key="CollectionGridItemWidth">208</x:Double>
     <x:Double x:Key="AlbumCardWidth">134</x:Double>
     <x:Double x:Key="AlbumCardMinHeight">150</x:Double>
 
     <Thickness x:Key="ViewPageHeaderPadding">24,24,24,0</Thickness>
+    <Thickness x:Key="DetailPageContainerPadding">0,0,0,24</Thickness>
 
     <Thickness x:Key="PageContainerPaddingVertical">0,24,0,24</Thickness>
     <Thickness x:Key="PageHeaderMarginIndented">24,0,24,24</Thickness>
+    <Thickness x:Key="CollectionPageHeaderMargin">24,0,24,8</Thickness>
 
-    <Thickness x:Key="SongListViewPadding">24,0,24,0</Thickness>
+    <Thickness x:Key="PageContentPadding">24,0,24,0</Thickness>
 
     <x:Double x:Key="SearchBoxExpandedWidth">300</x:Double>
     <x:Double x:Key="SearchBoxExpandedWidthLarge">360</x:Double>
 
     <Thickness x:Key="SectionHeaderMargin">0,0,0,16</Thickness>
+    <Thickness x:Key="CollectionCardMargin">8,16,8,16</Thickness>
 
     <x:Double x:Key="AlbumCardImageSizeLarge">130</x:Double>
     <x:Double x:Key="AlbumCardWidthLarge">154</x:Double>

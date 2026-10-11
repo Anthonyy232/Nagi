@@ -103,7 +103,7 @@
                 </VisualState>
                 <VisualState x:Name="SeeAllSearchExpanded">
                     <VisualState.Setters>
-                        <Setter Target="SeeAllSearchTextBox.Width" Value="300" />
+                        <Setter Target="SeeAllSearchTextBox.Width" Value="{StaticResource SearchBoxExpandedWidth}" />
                         <Setter Target="SeeAllSearchTextBox.Opacity" Value="1" />
                         <Setter Target="SeeAllSearchTextBox.IsHitTestVisible" Value="True" />
                         <Setter Target="SeeAllSearchTextBox.IsTabStop" Value="True" />
@@ -287,7 +287,7 @@
                                   AllowDrop="True" DragOver="QueuePanel_DragOver" DragLeave="QueuePanel_DragLeave" Drop="Queue_Drop">
                                 <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                         BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="{ThemeResource OverlayCornerRadius}">
-                                    <Grid Padding="12" RowSpacing="12" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="{ThemeResource OverlayCornerRadius}">
+                                    <Grid Padding="{StaticResource SurfaceContentPadding}" RowSpacing="16" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="{ThemeResource OverlayCornerRadius}">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto" />
                                             <RowDefinition Height="Auto" />
@@ -367,7 +367,7 @@
                                             </ListView.Footer>
                                             <ListView.ItemTemplate>
                                                 <DataTemplate x:DataType="uiModels:QueueEntry">
-                                                    <Grid Margin="0,6,12,6" Background="Transparent" Tag="{x:Bind}" DoubleTapped="QueueEntry_DoubleTapped"
+                                                    <Grid Background="Transparent" Tag="{x:Bind}" DoubleTapped="QueueEntry_DoubleTapped"
                                                           ToolTipService.ToolTip="{x:Bind Title}">
                                                         <Grid.ContextFlyout>
                                                             <MenuFlyout>
@@ -451,7 +451,7 @@
 
                         <Border
                             x:Name="FloatingPlayerContainer"
-                            Padding="12"
+                            Padding="{StaticResource CompactSurfaceContentPadding}"
                             AllowDrop="True"
                             DragOver="Queue_DragOver"
                             Drop="Queue_Drop"
@@ -717,7 +717,7 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <Grid Grid.Row="0" Padding="20,20,12,12">
+                    <Grid Grid.Row="0" Padding="{StaticResource SurfaceContentPadding}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
@@ -794,7 +794,7 @@
                                   ItemsSource="{x:Bind InsightsVm.SeeAllSongs, Mode=OneWay}"
                                   SelectionMode="None"
                                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                  Padding="20,0,20,8"
+                                  Padding="16,0,16,8"
                                   ItemContainerStyle="{StaticResource SeeAllListItemStyle}"
                                   ItemTemplate="{StaticResource TopSongItemTemplate}" />
 
@@ -804,7 +804,7 @@
                                   ItemsSource="{x:Bind InsightsVm.SeeAllArtists, Mode=OneWay}"
                                   SelectionMode="None"
                                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                  Padding="20,0,20,8"
+                                  Padding="16,0,16,8"
                                   ItemContainerStyle="{StaticResource SeeAllListItemStyle}"
                                   ItemTemplate="{StaticResource TopArtistItemTemplate}" />
 
@@ -814,7 +814,7 @@
                                   ItemsSource="{x:Bind InsightsVm.SeeAllAlbums, Mode=OneWay}"
                                   SelectionMode="None"
                                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                  Padding="20,0,20,8"
+                                  Padding="16,0,16,8"
                                   ItemContainerStyle="{StaticResource SeeAllListItemStyle}"
                                   ItemTemplate="{StaticResource TopAlbumItemTemplate}" />
 
@@ -824,12 +824,12 @@
                                   ItemsSource="{x:Bind InsightsVm.SeeAllGenres, Mode=OneWay}"
                                   SelectionMode="None"
                                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                  Padding="20,0,20,8"
+                                  Padding="16,0,16,8"
                                   ItemContainerStyle="{StaticResource SeeAllListItemStyle}"
                                   ItemTemplate="{StaticResource TopGenreItemTemplate}" />
                     </Grid>
 
-                    <Grid Grid.Row="2" Padding="20,8,20,20">
+                    <Grid Grid.Row="2" Padding="16,8,16,16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />

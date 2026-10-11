@@ -19,7 +19,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="{StaticResource PageHeaderMarginIndented}">
+        <Grid Grid.Row="0" Margin="{StaticResource CollectionPageHeaderMargin}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -54,19 +54,19 @@
             ItemClick="FoldersGridView_ItemClick"
             ItemContainerStyle="{StaticResource AnimatedGridViewItemStyle}"
             ItemsSource="{x:Bind ViewModel.Folders, Mode=OneWay}"
-            Padding="{StaticResource SongListViewPadding}"
+            Padding="{StaticResource PageContentPadding}"
             Visibility="{x:Bind ViewModel.HasFolders, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <ItemsWrapGrid ItemWidth="200" Orientation="Horizontal" />
+                    <ItemsWrapGrid ItemWidth="{StaticResource CollectionGridItemWidth}" Orientation="Horizontal" />
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="vm:FolderViewModelItem">
                     <Grid
-                        Width="180"
-                        Height="220"
-                        Margin="8,16,8,16"
+                        Width="{StaticResource CollectionCardWidth}"
+                        Height="{StaticResource CollectionCardHeight}"
+                        Margin="{StaticResource CollectionCardMargin}"
                         Background="Transparent">
                         <Grid.ContextFlyout>
                             <MenuFlyout>
@@ -84,15 +84,15 @@
                             </MenuFlyout>
                         </Grid.ContextFlyout>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
                         <Grid
                             Grid.Row="0"
-                            Width="160"
-                            Height="160"
+                            Width="{StaticResource CollectionCardImageSize}"
+                            Height="{StaticResource CollectionCardImageSize}"
                             HorizontalAlignment="Center"
                             Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                             CornerRadius="{StaticResource ArtworkCornerRadius}">
@@ -101,16 +101,16 @@
 
                         <TextBlock
                             Grid.Row="1"
-                            Margin="16,4,0,0"
-                            HorizontalAlignment="Left"
+                            Margin="0,12,0,0"
+                            HorizontalAlignment="Center"
                             FontWeight="SemiBold"
                             Text="{x:Bind Name}"
                             TextTrimming="CharacterEllipsis"
                             TextWrapping="NoWrap" />
                         <TextBlock
                             Grid.Row="2"
-                            Margin="16,0,0,0"
-                            HorizontalAlignment="Left"
+                            Margin="0,4,0,0"
+                            HorizontalAlignment="Center"
                             Opacity="0.7"
                             Text="{x:Bind SongCountText}"
                             TextTrimming="CharacterEllipsis"

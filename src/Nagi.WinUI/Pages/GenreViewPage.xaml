@@ -17,7 +17,7 @@
 
 
     <Grid KeyboardAcceleratorPlacementMode="Hidden"
-          Padding="0,0,0,24">
+          Padding="{StaticResource DetailPageContainerPadding}">
         <Grid.KeyboardAccelerators>
             <KeyboardAccelerator Key="A" Modifiers="Control" Invoked="OnSelectAllAcceleratorInvoked" />
         </Grid.KeyboardAccelerators>
@@ -34,7 +34,7 @@
                 </VisualState>
                 <VisualState x:Name="SearchExpanded">
                     <VisualState.Setters>
-                        <Setter Target="SearchTextBox.Width" Value="300" />
+                        <Setter Target="SearchTextBox.Width" Value="{StaticResource SearchBoxExpandedWidth}" />
                         <Setter Target="SearchTextBox.Opacity" Value="1" />
                         <Setter Target="SearchTextBox.IsHitTestVisible" Value="True" />
                         <Setter Target="SearchTextBox.IsTabStop" Value="True" />
@@ -50,16 +50,16 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Padding="{StaticResource ViewPageHeaderPadding}" Spacing="16">
-            <Grid Margin="0,0,0,10">
+        <StackPanel Grid.Row="0" Padding="{StaticResource ViewPageHeaderPadding}">
+            <Grid Margin="{StaticResource SectionHeaderMargin}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
                 <Border Grid.Column="0"
-                        Width="150"
-                        Height="150"
+                        Width="{StaticResource HeaderImageSize}"
+                        Height="{StaticResource HeaderImageSize}"
                         CornerRadius="{StaticResource ArtworkCornerRadius}"
                         Background="{x:Bind ViewModel.GenreName, Converter={StaticResource GenreToGradientConverter}, Mode=OneWay}" />
 
@@ -70,7 +70,7 @@
                 </StackPanel>
             </Grid>
 
-            <StackPanel Margin="0,8,0,10" Spacing="8">
+            <StackPanel Margin="{StaticResource SectionHeaderMargin}" Spacing="8">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -175,7 +175,7 @@
         <ListView
             x:Name="SongsListView"
             Grid.Row="1"
-            Padding="{StaticResource SongListViewPadding}"
+            Padding="{StaticResource PageContentPadding}"
             IsItemClickEnabled="True"
             ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
             ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"

@@ -34,14 +34,6 @@ public sealed partial class AlbumPage : Page
 
     public AlbumViewModel ViewModel { get; }
 
-    private void OnAlbumPanelSizeChanged(object sender, SizeChangedEventArgs e)
-    {
-        if (e.NewSize.Width == e.PreviousSize.Width || e.NewSize.Width <= 0) return;
-
-        var columns = Math.Max(1, Math.Floor(e.NewSize.Width / 200));
-        ((ItemsWrapGrid)sender).ItemWidth = Math.Floor(e.NewSize.Width / columns);
-    }
-
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         try

@@ -27,7 +27,7 @@
         </ResourceDictionary>
     </Page.Resources>
 
-    <Grid x:Name="LyricsContainer" Opacity="0">
+    <Grid x:Name="LyricsContainer" Opacity="0" Padding="{StaticResource PageContainerPaddingVertical}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -36,7 +36,7 @@
 
         <Grid
             Grid.Row="0"
-            Margin="24,32,24,8">
+            Margin="{StaticResource PageHeaderMarginIndented}">
             <TextBlock
                 Style="{StaticResource TitleTextBlockStyle}"
                 Text="{x:Bind ViewModel.SongTitle, Mode=OneWay}"
@@ -65,7 +65,7 @@
             Maximum="100"
             Grid.Row="1"
             Style="{StaticResource LyricsProgressBarStyle}"
-            Margin="100,16,100,12"
+            Margin="{StaticResource PageHeaderMarginIndented}"
             Visibility="{x:Bind ViewModel.HasLyrics, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
             MaxWidth="600" />
 
@@ -131,7 +131,7 @@
         <!-- Unsynchronized (plain text) lyrics display -->
         <ListView
             Grid.Row="2"
-            Padding="24,0,24,0"
+            Padding="{StaticResource PageContentPadding}"
             ItemsSource="{x:Bind ViewModel.UnsyncedLyricLines, Mode=OneWay}"
             Background="Transparent"
             SelectionMode="None"

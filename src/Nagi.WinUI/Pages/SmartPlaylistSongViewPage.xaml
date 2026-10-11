@@ -16,7 +16,7 @@
     x:Name="pageRoot">
 
     <Grid KeyboardAcceleratorPlacementMode="Hidden"
-          Padding="0,0,0,24">
+          Padding="{StaticResource DetailPageContainerPadding}">
         <Grid.KeyboardAccelerators>
             <KeyboardAccelerator Key="A" Modifiers="Control" Invoked="OnSelectAllAcceleratorInvoked" />
         </Grid.KeyboardAccelerators>
@@ -33,7 +33,7 @@
                 </VisualState>
                 <VisualState x:Name="SearchExpanded">
                     <VisualState.Setters>
-                        <Setter Target="SearchTextBox.Width" Value="300" />
+                        <Setter Target="SearchTextBox.Width" Value="{StaticResource SearchBoxExpandedWidth}" />
                         <Setter Target="SearchTextBox.Opacity" Value="1" />
                         <Setter Target="SearchTextBox.IsHitTestVisible" Value="True" />
                         <Setter Target="SearchTextBox.IsTabStop" Value="True" />
@@ -50,18 +50,18 @@
         </Grid.RowDefinitions>
 
         <!-- Header Content -->
-        <StackPanel Grid.Row="0" Padding="{StaticResource ViewPageHeaderPadding}" Spacing="16">
-            <Grid Margin="0,0,0,6">
+        <StackPanel Grid.Row="0" Padding="{StaticResource ViewPageHeaderPadding}">
+            <Grid Margin="{StaticResource SectionHeaderMargin}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
                 <!-- Smart Playlist Cover Art -->
-                <Grid Grid.Column="0" Width="150" Height="150">
+                <Grid Grid.Column="0" Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}">
                     <Border CornerRadius="{StaticResource ArtworkCornerRadius}"
                             Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                        <controls:ImageEx Width="150" Height="150"
+                        <controls:ImageEx Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}"
                             IsCacheEnabled="True"
                             Source="{x:Bind ViewModel.CoverImageUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
                             DecodePixelWidth="160"
@@ -88,7 +88,7 @@
 
             <!-- Rule Summary Bar -->
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    Padding="16,8" CornerRadius="{ThemeResource OverlayCornerRadius}" Margin="0,8,0,10">
+                    Padding="16,8" CornerRadius="{ThemeResource OverlayCornerRadius}" Margin="{StaticResource SectionHeaderMargin}">
                 <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                     <FontIcon Glyph="&#xE946;" FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                     <TextBlock Text="{x:Bind ViewModel.RuleSummary, Mode=OneWay}"
@@ -98,7 +98,7 @@
             </Border>
 
             <!-- Action Bar -->
-            <Grid Margin="0,8,0,10">
+            <Grid Margin="{StaticResource SectionHeaderMargin}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -118,7 +118,7 @@
                                Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                 </StackPanel>
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                     <!-- Search functionality -->
                     <Grid>
                         <TextBox x:Name="SearchTextBox"
@@ -253,7 +253,7 @@
                   x:Name="SongsListView"
                   SelectionMode="Extended"
                   IsItemClickEnabled="True"
-                  Padding="{StaticResource SongListViewPadding}"
+                  Padding="{StaticResource PageContentPadding}"
                   ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
                   ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
                   SelectionChanged="SongsListView_SelectionChanged"
