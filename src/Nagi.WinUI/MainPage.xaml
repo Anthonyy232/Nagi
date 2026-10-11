@@ -434,31 +434,58 @@
                                         <Grid Grid.Row="2" RowSpacing="12" Visibility="{x:Bind ViewModel.IsHistoryVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                                             <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
                                             <TextBox Style="{StaticResource SearchTextBoxStyle}" PlaceholderText="{x:Bind resources:Strings.Listening_HistorySearch}" Text="{x:Bind ViewModel.History.SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            <InfoBar Grid.Row="1" IsOpen="{x:Bind ViewModel.History.HasLoadError, Mode=OneWay}" Severity="Error" IsClosable="False" Message="{x:Bind resources:Strings.QueuePanel_LoadError}">
+                                            <InfoBar Grid.Row="1" IsOpen="{x:Bind ViewModel.History.HasLoadError, Mode=OneWay}" Severity="Error" IsClosable="False" Message="{x:Bind resources:Strings.Listening_HistoryLoadError}">
                                                 <InfoBar.ActionButton><Button Content="{x:Bind resources:Strings.QueuePanel_Retry}" Command="{x:Bind ViewModel.History.SearchCommand}" /></InfoBar.ActionButton>
                                             </InfoBar>
-                                            <ListView Grid.Row="2" x:Name="HistoryListView" uihelpers:ScrollEdgeFade.IsEnabled="True" ItemContainerStyle="{StaticResource PaddedListViewItemStyle}" SelectionMode="None" ItemsSource="{x:Bind ViewModel.History.Entries}">
+                                            <ListView Grid.Row="2" x:Name="HistoryListView" uihelpers:ScrollEdgeFade.IsEnabled="True" SelectionMode="Single" ItemsSource="{x:Bind ViewModel.History.Entries}">
+                                                <ListView.ItemContainerStyleSelector>
+                                                    <uihelpers:RecentHistoryStyleSelector SongStyle="{StaticResource PaddedListViewItemStyle}">
+                                                        <uihelpers:RecentHistoryStyleSelector.HeaderStyle>
+                                                            <Style TargetType="ListViewItem">
+                                                                <Setter Property="MinHeight" Value="0" />
+                                                                <Setter Property="Padding" Value="12,16,12,8" />
+                                                                <Setter Property="IsHitTestVisible" Value="False" />
+                                                                <Setter Property="IsTabStop" Value="False" />
+                                                            </Style>
+                                                        </uihelpers:RecentHistoryStyleSelector.HeaderStyle>
+                                                    </uihelpers:RecentHistoryStyleSelector>
+                                                </ListView.ItemContainerStyleSelector>
                                                 <ListView.Footer>
                                                     <ProgressRing Width="16" Height="16" Margin="0,8" IsHitTestVisible="False" HorizontalAlignment="Center"
                                                                   IsActive="{x:Bind ViewModel.History.ShowMoreLoading, Mode=OneWay}"
                                                                   Visibility="{x:Bind ViewModel.History.ShowMoreLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                                 </ListView.Footer>
-                                                <ListView.ItemTemplate>
-                                                    <DataTemplate x:DataType="uiModels:RecentListenEntry">
-                                                        <StackPanel Spacing="8" Background="Transparent" Tag="{x:Bind}" DoubleTapped="HistoryEntry_DoubleTapped">
-                                                            <TextBlock Text="{x:Bind DateHeader}" Margin="0,8,0,4" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Visibility="{x:Bind DateHeader, Converter={StaticResource StringToVisibilityConverter}}" />
-                                                            <Grid ColumnSpacing="12">
-                                                                <Grid.ContextFlyout><MenuFlyout>
-                                                                    <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_Play}" Command="{Binding DataContext.PlayHistoryNowCommand, ElementName=MainPageRoot}" CommandParameter="{x:Bind}" />
-                                                                    <MenuFlyoutItem Text="{x:Bind resources:Strings.LibraryPage_Context_PlayNext}" Command="{Binding DataContext.PlayHistoryNextCommand, ElementName=MainPageRoot}" CommandParameter="{x:Bind}" />
-                                                                </MenuFlyout></Grid.ContextFlyout>
-                                                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                                                                <StackPanel Spacing="4"><TextBlock x:Name="SongTitle" Text="{x:Bind Title}" Style="{StaticResource BodyStrongTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" /><TextBlock Text="{x:Bind ArtistName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}" /></StackPanel>
-                                                                <TextBlock Grid.Column="1" Text="{x:Bind TimeText}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                                                            </Grid>
-                                                        </StackPanel>
-                                                    </DataTemplate>
-                                                </ListView.ItemTemplate>
+                                                <ListView.ItemTemplateSelector>
+                                                    <uihelpers:RecentHistoryTemplateSelector>
+                                                        <uihelpers:RecentHistoryTemplateSelector.HeaderTemplate>
+                                                            <DataTemplate x:DataType="uiModels:RecentListenDateHeader">
+                                                                <TextBlock Text="{x:Bind Title}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                                            </DataTemplate>
+                                                        </uihelpers:RecentHistoryTemplateSelector.HeaderTemplate>
+                                                        <uihelpers:RecentHistoryTemplateSelector.SongTemplate>
+                                                            <DataTemplate x:DataType="uiModels:RecentListenEntry">
+                                                                <Grid Background="Transparent" Tag="{x:Bind}" DoubleTapped="HistoryEntry_DoubleTapped"
+                                                                      ToolTipService.ToolTip="{x:Bind Title}">
+                                                                    <Grid.ContextFlyout><MenuFlyout>
+                                                                        <MenuFlyoutItem Text="{x:Bind resources:Strings.QueuePanel_Play}" Command="{Binding DataContext.PlayHistoryNowCommand, ElementName=MainPageRoot}" CommandParameter="{x:Bind}" />
+                                                                        <MenuFlyoutItem Text="{x:Bind resources:Strings.LibraryPage_Context_PlayNext}" Command="{Binding DataContext.PlayHistoryNextCommand, ElementName=MainPageRoot}" CommandParameter="{x:Bind}" />
+                                                                    </MenuFlyout></Grid.ContextFlyout>
+                                                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                                                    <StackPanel Margin="0,0,12,0" Spacing="4">
+                                                                        <TextBlock x:Name="SongTitle" Text="{x:Bind Title}" Style="{StaticResource BodyStrongTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
+                                                                        <StackPanel>
+                                                                            <TextBlock Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
+                                                                                       uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName}"
+                                                                                       uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind Song}"
+                                                                                       uihelpers:MultiArtistHyperlinkHelper.Command="{Binding DataContext.GoToArtistCommand, ElementName=MainPageRoot}" />
+                                                                        </StackPanel>
+                                                                    </StackPanel>
+                                                                    <TextBlock Grid.Column="1" Text="{x:Bind TimeText}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                                                </Grid>
+                                                            </DataTemplate>
+                                                        </uihelpers:RecentHistoryTemplateSelector.SongTemplate>
+                                                    </uihelpers:RecentHistoryTemplateSelector>
+                                                </ListView.ItemTemplateSelector>
                                             </ListView>
                                             <TextBlock Grid.Row="2" Text="{x:Bind ViewModel.History.EmptyStateText, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind ViewModel.History.ShowEmptyState, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                             <ProgressRing Grid.Row="2" Width="24" Height="24" IsActive="{x:Bind ViewModel.History.ShowInitialLoading, Mode=OneWay}" Visibility="{x:Bind ViewModel.History.ShowInitialLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
@@ -22,7 +23,7 @@ public partial class RecentHistoryViewModel : SearchableViewModelBase, IDisposab
     private CancellationTokenSource? _loadCts;
     private bool _isDisposed;
     private bool _isActive;
-    public ObservableRangeCollection<RecentListenEntry> Entries => _entries;
+    public ObservableRangeCollection<object> Entries => _entries;
 
     public RecentHistoryViewModel(ILibraryReader library, IDispatcherService dispatcher, ILogger logger)
         : base(dispatcher, logger)
@@ -75,7 +76,12 @@ public partial class RecentHistoryViewModel : SearchableViewModelBase, IDisposab
     protected override Task ExecuteSearchAsync(CancellationToken token) =>
         _dispatcherService.EnqueueAsync(async () => { await LoadAsync(true, token); });
 
-    private async Task<uint> LoadAsync(bool reset, CancellationToken token)
+    public Task RefreshAsync() => _dispatcherService.EnqueueAsync(async () =>
+    {
+        if (!IsLoading) await LoadAsync(true, CancellationToken.None, preserveRows: true);
+    });
+
+    private async Task<uint> LoadAsync(bool reset, CancellationToken token, bool preserveRows = false)
     {
         if (_isDisposed || !_isActive || token.IsCancellationRequested) return 0;
         if (reset) _entries.ResetLoading();
@@ -84,24 +90,43 @@ public partial class RecentHistoryViewModel : SearchableViewModelBase, IDisposab
         var cts = _loadCts = CancellationTokenSource.CreateLinkedTokenSource(token);
         var loadToken = cts.Token;
         var searchTerm = SearchTerm;
-        var offset = reset ? 0 : Entries.Count;
+        var loadedCount = Entries.OfType<RecentListenEntry>().Count();
+        var newestListenId = Entries.OfType<RecentListenEntry>().FirstOrDefault()?.Listen.Id;
+        var offset = reset ? 0 : loadedCount;
         IsLoading = true;
         HasLoadError = false;
         try
         {
-            var listens = await Task.Run(() => _library.GetRecentListensAsync(searchTerm, offset, 100, loadToken), loadToken);
+            var (listens, songs) = await Task.Run(async () =>
+            {
+                var listens = await _library.GetRecentListensAsync(searchTerm, offset, 100, loadToken);
+                if (preserveRows) listens = listens.TakeWhile(listen => listen.Id != newestListenId).ToArray();
+                var songs = await _library.GetQueueSongsAsync(listens.Select(listen => listen.SongId), loadToken);
+                return (listens, songs);
+            }, loadToken);
             if (cts.IsCancellationRequested || _isDisposed) return 0;
-            var previousDay = reset ? (DateTime?)null : Entries.LastOrDefault()?.Listen.TimestampUtc.ToLocalTime().Date;
-            var rows = listens.Select(listen =>
+            var previousDay = reset ? (DateTime?)null : Entries.OfType<RecentListenEntry>().LastOrDefault()?.Listen.TimestampUtc.ToLocalTime().Date;
+            var rows = new List<object>();
+            foreach (var listen in listens)
             {
                 var day = listen.TimestampUtc.ToLocalTime().Date;
-                var header = previousDay == day ? string.Empty : day == DateTime.Today ? Strings.Listening_Today
-                    : day == DateTime.Today.AddDays(-1) ? Strings.Listening_Yesterday : day.ToString("D");
+                if (previousDay != day)
+                {
+                    var title = day == DateTime.Today ? Strings.Listening_Today
+                        : day == DateTime.Today.AddDays(-1) ? Strings.Listening_Yesterday : day.ToString("D");
+                    rows.Add(new RecentListenDateHeader(day, title));
+                }
+                rows.Add(new RecentListenEntry(listen, songs.GetValueOrDefault(listen.SongId)));
                 previousDay = day;
-                return new RecentListenEntry(listen, header);
-            }).ToList();
-            Entries.AppendOrReplace(rows, !reset);
-            HasMore = listens.Count == 100;
+            }
+            if (preserveRows)
+            {
+                if (rows.Count > 0 && Entries.FirstOrDefault() is RecentListenDateHeader header && header.Date == previousDay)
+                    Entries.RemoveAt(0);
+                for (var index = rows.Count - 1; index >= 0; index--) Entries.Insert(0, rows[index]);
+            }
+            else Entries.AppendOrReplace(rows, !reset);
+            if (!preserveRows || loadedCount == 0) HasMore = listens.Count == 100;
             return (uint)rows.Count;
         }
         catch (OperationCanceledException) { }
@@ -132,7 +157,7 @@ public partial class RecentHistoryViewModel : SearchableViewModelBase, IDisposab
     }
 
     private sealed class HistoryEntries(RecentHistoryViewModel owner)
-        : ObservableRangeCollection<RecentListenEntry>, ISupportIncrementalLoading
+        : ObservableRangeCollection<object>, ISupportIncrementalLoading
     {
         private Task<LoadMoreItemsResult>? _loadTask;
         public bool HasMoreItems => owner._isActive && !owner._isDisposed && owner.HasMore && !owner.IsLoading && !owner.HasLoadError;

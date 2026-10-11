@@ -2432,6 +2432,9 @@ Error: {1}</value>
   <data name="Listening_HistoryEmpty" xml:space="preserve">
     <value>No listening history yet</value>
   </data>
+  <data name="Listening_HistoryLoadError" xml:space="preserve">
+    <value>Recently Played could not be loaded. Select Retry to try again.</value>
+  </data>
   <data name="Listening_Today" xml:space="preserve">
     <value>Today</value>
   </data>

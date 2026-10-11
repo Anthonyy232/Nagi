@@ -20,7 +20,7 @@ public partial class PlayerViewModelTests
         var historical = Guid.NewGuid();
         _playback.PlaybackQueue.Returns(new[] { current, historical });
         _playback.CurrentRepeatMode.Returns(RepeatMode.RepeatOne);
-        var entry = new RecentListenEntry(new RecentListen(1, historical, "Historical", "Artist", DateTime.UtcNow), "");
+        var entry = new RecentListenEntry(new RecentListen(1, historical, "Historical", "Artist", DateTime.UtcNow));
 
         await _viewModel.PlayHistoryNowCommand.ExecuteAsync(entry);
 
@@ -53,6 +53,45 @@ public partial class PlayerViewModelTests
 
 public class RecentHistoryViewModelTests
 {
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    public async Task PlaybackRefresh_PrependsNewListensWithoutResettingRowsOrLosingLoadedPages(int daysLater)
+    {
+        var library = Substitute.For<ILibraryReader>();
+        var today = DateTime.Today.AddHours(12).ToUniversalTime();
+        var listens = Enumerable.Range(0, 102)
+            .Select(index => new RecentListen(index, Guid.NewGuid(), $"Song {index}", "Artist", today.AddMinutes(-index)))
+            .ToArray();
+        library.GetRecentListensAsync("", 0, 100, Arg.Any<CancellationToken>()).Returns(listens.Take(100).ToArray());
+        library.GetRecentListensAsync("", 100, 100, Arg.Any<CancellationToken>()).Returns(listens.Skip(100).ToArray());
+        using var viewModel = new RecentHistoryViewModel(library, new ImmediateDispatcher(), NullLogger.Instance);
+        viewModel.SetActive(true);
+        await viewModel.SearchAsync();
+        await ((ISupportIncrementalLoading)viewModel.Entries).LoadMoreItemsAsync(100).AsTask();
+        var originalTracks = viewModel.Entries.OfType<RecentListenEntry>().ToArray();
+        var changes = new List<System.Collections.Specialized.NotifyCollectionChangedAction>();
+        viewModel.Entries.CollectionChanged += (_, args) => changes.Add(args.Action);
+        var latest = new RecentListen(102, listens[0].SongId, "Played again", "Artist", today.AddDays(daysLater).AddMinutes(1));
+        library.GetRecentListensAsync("", 0, 100, Arg.Any<CancellationToken>())
+            .Returns(new[] { latest }.Concat(listens.Take(99)).ToArray());
+
+        await viewModel.RefreshAsync();
+
+        var tracks = viewModel.Entries.OfType<RecentListenEntry>().ToArray();
+        tracks[0].Listen.Should().Be(latest);
+        tracks.Skip(1).Should().Equal(originalTracks, (actual, original) => ReferenceEquals(actual, original));
+        viewModel.Entries.OfType<RecentListenDateHeader>().Select(header => header.Date)
+            .Should().Equal(daysLater == 0 ? [DateTime.Today] : new[] { DateTime.Today.AddDays(1), DateTime.Today });
+        changes.Should().NotContain(System.Collections.Specialized.NotifyCollectionChangedAction.Reset);
+        viewModel.HasMore.Should().BeFalse();
+        changes.Clear();
+
+        await viewModel.RefreshAsync();
+
+        changes.Should().BeEmpty();
+    }
+
     [Fact]
     public async Task SearchDuringIncrementalLoad_DoesNotBlockNewPagesOrAppendOldResults()
     {
@@ -83,7 +122,7 @@ public class RecentHistoryViewModelTests
         oldPage.SetResult([new RecentListen(101, Guid.NewGuid(), "Stale", "Artist", DateTime.UtcNow)]);
 
         (await pending).Count.Should().Be(0);
-        viewModel.Entries.Should().HaveCount(101).And.OnlyContain(entry => entry.Title.StartsWith("New"));
+        viewModel.Entries.OfType<RecentListenEntry>().Should().HaveCount(101).And.OnlyContain(entry => entry.Title.StartsWith("New"));
     }
 
     [Fact]
@@ -113,12 +152,12 @@ public class RecentHistoryViewModelTests
             new RecentListen(100, Guid.NewGuid(), "Earlier today", "Artist", today.AddHours(-2)),
             new RecentListen(101, Guid.NewGuid(), "Yesterday", "Artist", today.AddDays(-1))
         ]);
-        (await firstLoad).Count.Should().Be(2);
-        (await duplicateLoad).Count.Should().Be(2);
+        (await firstLoad).Count.Should().Be(3);
+        (await duplicateLoad).Count.Should().Be(3);
 
-        viewModel.Entries.Should().HaveCount(102);
-        viewModel.Entries[100].DateHeader.Should().BeEmpty();
-        viewModel.Entries[101].DateHeader.Should().Be(Nagi.WinUI.Resources.Strings.Listening_Yesterday);
+        viewModel.Entries.OfType<RecentListenEntry>().Should().HaveCount(102);
+        viewModel.Entries.OfType<RecentListenDateHeader>().Select(header => header.Title)
+            .Should().Equal(Nagi.WinUI.Resources.Strings.Listening_Today, Nagi.WinUI.Resources.Strings.Listening_Yesterday);
         entries.HasMoreItems.Should().BeFalse();
         await library.Received(1).GetRecentListensAsync("", 100, 100, Arg.Any<CancellationToken>());
     }
@@ -143,7 +182,7 @@ public class RecentHistoryViewModelTests
         old.SetResult([new RecentListen(1, Guid.NewGuid(), "Stale", "Artist", DateTime.UtcNow)]);
         viewModel.SetActive(false);
 
-        viewModel.Entries.Should().ContainSingle().Which.Listen.Should().Be(latest);
+        viewModel.Entries.OfType<RecentListenEntry>().Should().ContainSingle().Which.Listen.Should().Be(latest);
         await viewModel.SearchAsync();
         await library.Received(1).GetRecentListensAsync("Found", 0, 100, Arg.Any<CancellationToken>());
     }

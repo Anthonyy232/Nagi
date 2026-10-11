@@ -59,7 +59,7 @@ public partial class PlayerViewModel
 
     private void OnHistoryTrackChanged() => RunOnUIThread(() =>
     {
-        if (IsQueuePanelOpen && IsHistoryVisible) _ = History.SearchAsync();
+        if (IsQueuePanelOpen && IsHistoryVisible) _ = History.RefreshAsync();
     });
 
     private void OnFavoriteLibraryChanged(object? sender, LibraryContentChangedEventArgs e)
