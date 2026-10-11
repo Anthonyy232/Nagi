@@ -25,7 +25,7 @@ internal static class ListeningMenuFlyoutHelper
         _ => string.Empty
     };
 
-    public static void PopulateMixes(MenuFlyout menu, ICommand command)
+    public static void PopulateMixes(MenuFlyout menu, ICommand command, ICommand playFor)
     {
         menu.Items.Clear();
         foreach (var mode in System.Enum.GetValues<ShuffleMode>())
@@ -35,5 +35,7 @@ internal static class ListeningMenuFlyoutHelper
             if (description.Length > 0) ToolTipService.SetToolTip(item, description);
             menu.Items.Add(item);
         }
+        menu.Items.Add(new MenuFlyoutSeparator());
+        menu.Items.Add(new MenuFlyoutItem { Text = Strings.Listening_PlayFor, Command = playFor });
     }
 }

@@ -2349,8 +2349,23 @@ Error: {1}</value>
   <data name="Listening_Unheard" xml:space="preserve">
     <value>Unheard</value>
   </data>
+  <data name="Listening_PlayFor" xml:space="preserve">
+    <value>Play for…</value>
+  </data>
   <data name="Listening_Minutes" xml:space="preserve">
     <value>Minutes</value>
+  </data>
+  <data name="Listening_ShuffleMode" xml:space="preserve">
+    <value>Selection</value>
+  </data>
+  <data name="Listening_AvoidRecentDays" xml:space="preserve">
+    <value>Avoid tracks played in the last N days</value>
+  </data>
+  <data name="Listening_MoreOptions" xml:space="preserve">
+    <value>More options</value>
+  </data>
+  <data name="Listening_PlayForDescription" xml:space="preserve">
+    <value>Build a queue of whole songs within your chosen time.</value>
   </data>
   <data name="Listening_NoMixTitle" xml:space="preserve">
     <value>No matching tracks</value>

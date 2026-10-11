@@ -22,6 +22,7 @@ public enum CrashReportResult
 /// </summary>
 public interface IUIService
 {
+    Task<Nagi.WinUI.Models.PlaybackMixOptions?> ShowPlayForDialogAsync();
     Task<(int Minutes, bool FinishTrack)?> ShowSleepTimerDialogAsync();
     /// <summary>
     ///     Shows a confirmation dialog to the user.

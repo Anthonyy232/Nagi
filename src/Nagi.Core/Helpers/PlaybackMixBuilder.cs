@@ -5,7 +5,7 @@ namespace Nagi.Core.Helpers;
 internal static class PlaybackMixBuilder
 {
     public static List<Guid> Build(IEnumerable<MixCandidate> candidates, ShuffleMode mode, DateTime now,
-        int avoidRecentDays = 1, Random? random = null)
+        TimeSpan? duration = null, int avoidRecentDays = 1, Random? random = null)
     {
         random ??= Random.Shared;
         var eligible = candidates.Where(c => mode switch
@@ -22,8 +22,14 @@ internal static class PlaybackMixBuilder
             ordered = SpaceArtists(eligible);
 
         var result = new List<Guid>();
+        var remaining = duration?.Ticks;
         foreach (var candidate in ordered)
         {
+            if (remaining.HasValue)
+            {
+                if (candidate.DurationTicks <= 0 || candidate.DurationTicks > remaining.Value) continue;
+                remaining -= candidate.DurationTicks;
+            }
             result.Add(candidate.Id);
         }
         return result;

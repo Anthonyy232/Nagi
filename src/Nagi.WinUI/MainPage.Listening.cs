@@ -14,7 +14,7 @@ public sealed partial class MainPage
 {
 
     private void ShuffleOptions_Opening(object sender, object e) =>
-        ListeningMenuFlyoutHelper.PopulateMixes((MenuFlyout)sender, ViewModel.PlayQueueMixCommand);
+        ListeningMenuFlyoutHelper.PopulateMixes((MenuFlyout)sender, ViewModel.PlayQueueMixCommand, ViewModel.PlayQueueForCommand);
 
     private void PlayerOptions_Opening(object sender, object e)
     {

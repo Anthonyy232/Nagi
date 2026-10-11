@@ -239,5 +239,5 @@ public sealed partial class GenreViewPage : Page
 
 
     private void ListeningOptions_Opening(object sender, object e) =>
-        ListeningMenuFlyoutHelper.PopulateMixes((MenuFlyout)sender, ViewModel.PlayMixCommand);
+        ListeningMenuFlyoutHelper.PopulateMixes((MenuFlyout)sender, ViewModel.PlayMixCommand, ViewModel.PlayForCommand);
 }

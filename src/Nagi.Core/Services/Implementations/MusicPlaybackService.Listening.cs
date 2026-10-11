@@ -14,9 +14,12 @@ public partial class MusicPlaybackService
     public DateTimeOffset? StopDeadline { get; private set; }
     public event Action? StopScheduleChanged;
 
-    public async Task<bool> PlayMixAsync(IEnumerable<Guid> songIds, ShuffleMode mode, PlaybackContext? context = null, int avoidRecentDays = 1)
+    public async Task<bool> PlayMixAsync(IEnumerable<Guid> songIds, ShuffleMode mode, TimeSpan? duration = null,
+        PlaybackContext? context = null, int avoidRecentDays = 1)
     {
         if (!Enum.IsDefined(mode)) throw new ArgumentOutOfRangeException(nameof(mode));
+        if (duration is { } limit && (limit <= TimeSpan.Zero || limit > TimeSpan.FromDays(1)))
+            throw new ArgumentOutOfRangeException(nameof(duration));
         if (avoidRecentDays is < 0 or > 365) throw new ArgumentOutOfRangeException(nameof(avoidRecentDays));
 
         var played = false;
@@ -30,12 +33,18 @@ public partial class MusicPlaybackService
             {
                 var candidates = (await _libraryService.GetMixCandidatesAsync(ids)).ToList();
                 candidates.AddRange(transient);
-                return PlaybackMixBuilder.Build(candidates, mode, now, avoidRecentDays: avoidRecentDays);
+                return PlaybackMixBuilder.Build(candidates, mode, now, duration, avoidRecentDays);
             });
             if (!IsCurrentRequest(request)) throw new OperationCanceledException();
             if (order.Count == 0) return;
             await PlayInternalAsync(order, 0, true, context ?? _currentContext, request, order, mode);
             if (!IsCurrentRequest(request)) throw new OperationCanceledException();
+            if (duration.HasValue)
+            {
+                await SetRepeatModeAsync(RepeatMode.Off);
+                if (!IsCurrentRequest(request)) throw new OperationCanceledException();
+                ScheduleStop(PlaybackStopMode.EndOfQueue);
+            }
             played = true;
         });
         return played;

@@ -163,6 +163,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         PlayAllSongsCommand.NotifyCanExecuteChanged();
         ShuffleAndPlayAllSongsCommand.NotifyCanExecuteChanged();
         PlayMixCommand.NotifyCanExecuteChanged();
+        PlayForCommand.NotifyCanExecuteChanged();
     }
 
     protected override void OnSearchTermChangedInternal(string value)
@@ -362,6 +363,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         PlayAllSongsCommand.NotifyCanExecuteChanged();
         ShuffleAndPlayAllSongsCommand.NotifyCanExecuteChanged();
         PlayMixCommand.NotifyCanExecuteChanged();
+        PlayForCommand.NotifyCanExecuteChanged();
     }
 
     public async Task LoadAvailablePlaylistsAsync()

@@ -45,6 +45,30 @@ public partial class MusicPlaybackServiceTests
         await _audioPlayer.DidNotReceive().LoadAsync(Arg.Any<Song>());
     }
 
+    [Fact]
+    public async Task TimedMix_KeepsItsGeneratedOrderAndStopsAtQueueEndDespiteRepeat()
+    {
+        var candidates = _testSongs.Select((song, index) => new MixCandidate(song.Id, $"Artist {index}",
+            TimeSpan.FromMinutes(2).Ticks, 0, null)).ToArray();
+        _libraryService.GetMixCandidatesAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>()).Returns(candidates);
+        await _service.InitializeAsync();
+
+        (await _service.PlayMixAsync(_testSongs.Select(s => s.Id), ShuffleMode.Unheard, TimeSpan.FromMinutes(4))).Should().BeTrue();
+        _service.PlaybackQueue.Should().HaveCount(2);
+        _service.CurrentShuffleMode.Should().Be(ShuffleMode.Unheard);
+        _service.ShuffledQueue.Should().Equal(_service.PlaybackQueue);
+        await _service.SetRepeatModeAsync(RepeatMode.RepeatAll);
+        await _service.PlayQueueItemAsync(1);
+        _audioPlayer.MediaOpened += Raise.Event<Action>();
+        _audioPlayer.ClearReceivedCalls();
+
+        _audioPlayer.PlaybackEnded += Raise.Event<Action>();
+        await _service.FlushPendingFinalizationAsync();
+
+        _service.CurrentTrack.Should().BeNull();
+        await _audioPlayer.DidNotReceive().LoadAsync(Arg.Any<Song>());
+    }
+
     [Theory]
     [InlineData(true, true)]
     [InlineData(true, false)]

@@ -45,6 +45,14 @@ public partial class PlayerViewModel
     });
 
     [RelayCommand]
+    private Task PlayQueueForAsync() => RunListeningActionAsync(async () =>
+    {
+        var options = await _uiService.ShowPlayForDialogAsync();
+        if (options is not null && !await _playbackService.PlayMixAsync(_playbackService.PlaybackQueue, options.Mode, TimeSpan.FromMinutes(options.Minutes), avoidRecentDays: options.AvoidRecentDays))
+            await _uiService.ShowMessageDialogAsync(Strings.Listening_NoMixTitle, Strings.Listening_NoMixDescription);
+    });
+
+    [RelayCommand]
     private Task SetCustomSleepTimerAsync() => RunListeningActionAsync(async () =>
     {
         var options = await _uiService.ShowSleepTimerDialogAsync();

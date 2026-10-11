@@ -37,4 +37,19 @@ public class PlaybackMixBuilderTests
 
         PlaybackMixBuilder.Build(songs, mode, now).Should().Equal(songs[expected].Id);
     }
+
+    [Fact]
+    public void TimedMix_SkipsUnknownAndOversizedTracksAndUsesWholeSongsWithinBudget()
+    {
+        MixCandidate[] songs = [
+            new(Guid.NewGuid(), "A", 0, 0, null),
+            new(Guid.NewGuid(), "A", -1, 0, null),
+            new(Guid.NewGuid(), "A", TimeSpan.FromMinutes(20).Ticks, 0, null),
+            new(Guid.NewGuid(), "A", TimeSpan.FromMinutes(3).Ticks, 0, null),
+            new(Guid.NewGuid(), "B", TimeSpan.FromMinutes(2).Ticks, 0, null)
+        ];
+
+        PlaybackMixBuilder.Build(songs, ShuffleMode.Random, DateTime.UtcNow, TimeSpan.FromMinutes(5))
+            .Should().BeEquivalentTo(songs.Skip(3).Select(s => s.Id));
+    }
 }
