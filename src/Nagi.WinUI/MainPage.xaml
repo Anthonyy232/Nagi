@@ -573,7 +573,7 @@
                                         </Border>
                                     </Button>
                                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                        <Grid ColumnSpacing="4">
+                                        <Grid HorizontalAlignment="Left" ColumnSpacing="4">
                                             <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
                                             <TextBlock
                                                 x:Name="SongTitle"
