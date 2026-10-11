@@ -2418,6 +2418,15 @@ Error: {1}</value>
   <data name="Listening_PlayerOptions" xml:space="preserve">
     <value>Player options</value>
   </data>
+  <data name="Listening_RediscoveryReason" xml:space="preserve">
+    <value>Last played {0:d}</value>
+  </data>
+  <data name="Listening_RediscoveryTitle" xml:space="preserve">
+    <value>Worth another listen</value>
+  </data>
+  <data name="Listening_Dismiss" xml:space="preserve">
+    <value>Dismiss</value>
+  </data>
   <data name="Listening_ActionError" xml:space="preserve">
     <value>Could not complete this action. Please try again.</value>
   </data>

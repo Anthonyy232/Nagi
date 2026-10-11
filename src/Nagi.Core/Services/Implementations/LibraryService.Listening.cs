@@ -48,4 +48,14 @@ public partial class LibraryService
     private IQueryable<Song> FavoriteQuery(MusicDbContext context, string searchTerm) =>
         (string.IsNullOrWhiteSpace(searchTerm) ? context.Songs : BuildSongSearchQuery(context, NormalizeString(searchTerm) ?? searchTerm))
         .Where(s => s.IsLoved);
+
+    public async Task<RediscoverySuggestion?> GetRediscoverySuggestionAsync(CancellationToken token = default)
+    {
+        var cutoff = DateTime.UtcNow.AddDays(-90);
+        await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
+        return await context.Songs.AsNoTracking().Where(s => s.PlayCount >= 3 && s.LastPlayedDate < cutoff)
+            .OrderByDescending(s => s.IsLoved).ThenByDescending(s => s.PlayCount).ThenBy(s => s.LastPlayedDate).ThenBy(s => s.Id)
+            .Select(s => new RediscoverySuggestion(s.Id, s.Title, s.ArtistName, s.LastPlayedDate!.Value))
+            .FirstOrDefaultAsync(token).ConfigureAwait(false);
+    }
 }

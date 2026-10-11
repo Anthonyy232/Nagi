@@ -45,6 +45,7 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -159,9 +160,21 @@
             </StackPanel>
         </Grid>
 
+        <Border Grid.Row="1" Margin="24,0,24,16" Padding="12" CornerRadius="{ThemeResource ControlCornerRadius}" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                Visibility="{x:Bind ViewModel.ShowSuggestion, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid ColumnSpacing="12"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                <StackPanel Spacing="4"><TextBlock Text="{x:Bind resources:Strings.Listening_RediscoveryTitle}" Style="{ThemeResource CaptionTextBlockStyle}" />
+                    <TextBlock Text="{x:Bind ViewModel.Suggestion.Title, Mode=OneWay}" TextTrimming="CharacterEllipsis" FontWeight="SemiBold" />
+                    <TextBlock Text="{x:Bind ViewModel.Suggestion.ArtistName, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                    <TextBlock Text="{x:Bind ViewModel.SuggestionReason, Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                </StackPanel>
+                <Button Grid.Column="1" VerticalAlignment="Center" Content="{x:Bind resources:Strings.QueuePanel_Play}" Command="{x:Bind ViewModel.PlaySuggestionCommand}" />
+                <Button Grid.Column="2" VerticalAlignment="Top" Command="{x:Bind ViewModel.DismissSuggestionCommand}" ToolTipService.ToolTip="{x:Bind resources:Strings.Listening_Dismiss}" AutomationProperties.Name="{x:Bind resources:Strings.Listening_Dismiss}"><FontIcon FontSize="12" Glyph="&#xE711;" /></Button>
+            </Grid>
+        </Border>
         <ListView uihelpers:ScrollEdgeFade.IsEnabled="True"
             x:Name="SongsListView"
-            Grid.Row="1"
+            Grid.Row="2"
             Padding="{StaticResource PageContentPadding}"
             IsItemClickEnabled="True"
             ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
@@ -276,13 +289,13 @@
         </ListView>
 
         <uicontrols:PaginationControl
-            Grid.Row="2"
+            Grid.Row="3"
             ViewModel="{x:Bind ViewModel}"
             HorizontalAlignment="Right"
             Margin="0,16,24,16" />
 
         <StackPanel
-            Grid.Row="1"
+            Grid.Row="2"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Spacing="16"
