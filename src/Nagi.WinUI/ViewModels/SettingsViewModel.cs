@@ -97,6 +97,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private readonly IListenBrainzScrobblerService _listenBrainzScrobblerService;
     private readonly ILogger<SettingsViewModel> _logger;
     private readonly IMusicPlaybackService _playbackService;
+    private readonly IAudioPlayer _audioPlayer;
     private readonly IUISettingsService _settingsService;
     private readonly IThemeService _themeService;
     private readonly IUIService _uiService;
@@ -114,6 +115,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private readonly TimeProvider _timeProvider;
 
     private bool _isDisposed;
+    private bool _isRefreshingAudioOutputDevices;
+    private bool _isSynchronizingAudioOutputSelection;
     private bool _isInitializing;
     private bool _isLoaded;
     private int _lastFmAuthVersion;
@@ -141,6 +144,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         ILastFmAuthService lastFmAuthService,
         IListenBrainzScrobblerService listenBrainzScrobblerService,
         IMusicPlaybackService playbackService,
+        IAudioPlayer audioPlayer,
         IPlaylistExportService playlistExportService,
         ILibraryScanner libraryScanner,
         PlayerViewModel playerViewModel,
@@ -160,6 +164,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _lastFmAuthService = lastFmAuthService ?? throw new ArgumentNullException(nameof(lastFmAuthService));
         _listenBrainzScrobblerService = listenBrainzScrobblerService ?? throw new ArgumentNullException(nameof(listenBrainzScrobblerService));
         _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
+        _audioPlayer = audioPlayer ?? throw new ArgumentNullException(nameof(audioPlayer));
         _playlistExportService = playlistExportService ?? throw new ArgumentNullException(nameof(playlistExportService));
         _libraryScanner = libraryScanner ?? throw new ArgumentNullException(nameof(libraryScanner));
         _playerViewModel = playerViewModel ?? throw new ArgumentNullException(nameof(playerViewModel));
@@ -244,6 +249,12 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial bool IsRememberPaneStateEnabled { get; set; }
     [ObservableProperty] public partial bool IsVolumeNormalizationEnabled { get; set; }
     [ObservableProperty] public partial bool IsWasapiExclusiveModeEnabled { get; set; }
+
+    [ObservableProperty] public partial IReadOnlyList<AudioOutputDeviceInfo> AudioOutputDevices { get; set; } = Array.Empty<AudioOutputDeviceInfo>();
+    [ObservableProperty] public partial AudioOutputDeviceInfo? SelectedAudioOutputDevice { get; set; }
+    [ObservableProperty] public partial string AudioOutputDeviceMessage { get; set; } = string.Empty;
+    [ObservableProperty] public partial bool IsAudioOutputBusy { get; set; }
+
     [ObservableProperty] public partial bool IsFadeOnPlayPauseEnabled { get; set; }
     [ObservableProperty] public partial double FadeInDurationMs { get; set; }
     [ObservableProperty] public partial double FadeOutDurationMs { get; set; }
@@ -384,6 +395,77 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _romanizationPackCts?.Cancel();
         _romanizationPackCts?.Dispose();
 
+    }
+
+    [RelayCommand]
+    private async Task RefreshAudioOutputDevicesAsync()
+    {
+        if (_isDisposed || IsAudioOutputBusy || _isRefreshingAudioOutputDevices) return;
+        _isRefreshingAudioOutputDevices = true;
+        try
+        {
+            var devices = await _audioPlayer.GetAudioOutputDevicesAsync();
+            var savedId = await _settingsService.GetAudioOutputDeviceIdAsync();
+            // A user selection can start while enumeration is awaiting VLC. Let
+            // that operation own the displayed selection until it finishes.
+            if (_isDisposed || IsAudioOutputBusy) return;
+            _isSynchronizingAudioOutputSelection = true;
+            var defaultDevice = new AudioOutputDeviceInfo(string.Empty, Strings.SettingsPage_AudioOutput_Default);
+            var refreshedDevices = new[] { defaultDevice }.Concat(devices).ToArray();
+            if (!AudioOutputDevices.SequenceEqual(refreshedDevices))
+            {
+                // Clear the old item before replacing the collection; record equality
+                // must not leave ComboBox pointing at an item from the previous list.
+                SelectedAudioOutputDevice = null;
+                AudioOutputDevices = refreshedDevices;
+            }
+            // VLC can fall back after a disconnect. Display the live route, keeping
+            // the saved preference for the next launch until the user changes it.
+            var currentId = _audioPlayer.AudioOutputDeviceId;
+            SelectedAudioOutputDevice = AudioOutputDevices.FirstOrDefault(d => d.Id == currentId) ?? AudioOutputDevices[0];
+            AudioOutputDeviceMessage = !string.IsNullOrEmpty(savedId) && !devices.Any(d => d.Id == savedId)
+                ? Strings.SettingsPage_AudioOutput_Unavailable : string.Empty;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Could not refresh audio outputs.");
+            AudioOutputDeviceMessage = Strings.SettingsPage_AudioOutput_Error;
+        }
+        finally
+        {
+            _isSynchronizingAudioOutputSelection = false;
+            _isRefreshingAudioOutputDevices = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task SelectAudioOutputDeviceAsync(AudioOutputDeviceInfo? device)
+    {
+        if (_isDisposed || IsAudioOutputBusy || _isSynchronizingAudioOutputSelection || device is null ||
+            (device.Id == SelectedAudioOutputDevice?.Id && AudioOutputDeviceMessage.Length == 0)) return;
+        IsAudioOutputBusy = true;
+        try
+        {
+            var accepted = await _audioPlayer.SetAudioOutputDeviceAsync(device.Id);
+            if (_isDisposed) return;
+            if (!accepted)
+            {
+                AudioOutputDeviceMessage = Strings.SettingsPage_AudioOutput_Error;
+                // Restore the displayed selection when VLC rejects a request.
+                OnPropertyChanged(nameof(SelectedAudioOutputDevice));
+                return;
+            }
+            SelectedAudioOutputDevice = device;
+            await _settingsService.SetAudioOutputDeviceIdAsync(device.Id);
+            AudioOutputDeviceMessage = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Could not change or save audio output {DeviceId}.", device.Id);
+            AudioOutputDeviceMessage = Strings.SettingsPage_AudioOutput_Error;
+            OnPropertyChanged(nameof(SelectedAudioOutputDevice));
+        }
+        finally { IsAudioOutputBusy = false; }
     }
 
     [RelayCommand]

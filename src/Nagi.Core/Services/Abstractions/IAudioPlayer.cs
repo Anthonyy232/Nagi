@@ -63,6 +63,9 @@ public interface IAudioPlayer : IDisposable
 
     bool IsMuted { get; }
 
+    /// <summary>The current output ID, or an empty string for system default routing.</summary>
+    string AudioOutputDeviceId { get; }
+
     #endregion
 
     #region Methods
@@ -74,6 +77,15 @@ public interface IAudioPlayer : IDisposable
     /// </summary>
     /// <returns>A task that completes when initialization is done.</returns>
     Task EnsureInitializedAsync();
+
+    /// <summary>Enumerates named outputs; system default is represented separately by an empty ID.</summary>
+    Task<IReadOnlyList<AudioOutputDeviceInfo>> GetAudioOutputDevicesAsync();
+
+    /// <summary>
+    /// Requests an output change. An empty ID selects the system default.
+    /// True means the request was accepted; opening the output stream can still fail asynchronously.
+    /// </summary>
+    Task<bool> SetAudioOutputDeviceAsync(string deviceId);
 
     /// <summary>
     ///     Initializes the System Media Transport Controls for integration with the OS.

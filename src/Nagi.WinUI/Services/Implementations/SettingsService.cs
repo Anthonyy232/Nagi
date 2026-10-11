@@ -65,6 +65,7 @@ public class SettingsService : IUISettingsService, IDisposable
     private const string LastPaneOpenKey = "LastPaneOpen";
     private const string VolumeNormalizationEnabledKey = "VolumeNormalizationEnabled";
     private const string WasapiExclusiveModeEnabledKey = "WasapiExclusiveModeEnabled";
+    private const string AudioOutputDeviceIdKey = "AudioOutputDeviceId";
     private const string FadeOnPlayPauseEnabledKey = "FadeOnPlayPauseEnabled";
     private const string AccentColorKey = "AccentColor";
     private const string LyricsServiceProvidersKey = "LyricsServiceProviders";
@@ -179,6 +180,7 @@ public class SettingsService : IUISettingsService, IDisposable
             SetRememberPaneStateEnabledAsync(SettingsDefaults.RememberPaneStateEnabled),
             SetVolumeNormalizationEnabledAsync(SettingsDefaults.VolumeNormalizationEnabled),
             SetWasapiExclusiveModeEnabledAsync(SettingsDefaults.WasapiExclusiveModeEnabled),
+            SetAudioOutputDeviceIdAsync(string.Empty),
             SetFadeOnPlayPauseEnabledAsync(SettingsDefaults.FadeOnPlayPauseEnabled),
             SetFadeInDurationMsAsync(SettingsDefaults.DefaultFadeInDurationMs),
             SetFadeOutDurationMsAsync(SettingsDefaults.DefaultFadeOutDurationMs),
@@ -969,6 +971,12 @@ public class SettingsService : IUISettingsService, IDisposable
 
     public Task SetWasapiExclusiveModeEnabledAsync(bool isEnabled) =>
         SetValueAsync(WasapiExclusiveModeEnabledKey, isEnabled);
+
+    public Task<string> GetAudioOutputDeviceIdAsync() =>
+        Task.FromResult(GetValue(AudioOutputDeviceIdKey, string.Empty));
+
+    public Task SetAudioOutputDeviceIdAsync(string deviceId) =>
+        SetValueAsync(AudioOutputDeviceIdKey, deviceId);
 
     public Task<bool> GetFadeOnPlayPauseEnabledAsync() => Task.FromResult(GetValue(FadeOnPlayPauseEnabledKey, SettingsDefaults.FadeOnPlayPauseEnabled));
 

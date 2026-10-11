@@ -459,6 +459,31 @@
                         IsOn="{x:Bind ViewModel.IsWasapiExclusiveModeEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
+                <controls:SettingsCard
+                    Header="{x:Bind resources:Strings.SettingsPage_AudioOutput_Header, Mode=OneTime}"
+                    Description="{x:Bind resources:Strings.SettingsPage_AudioOutput_Description, Mode=OneTime}">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7F5;" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <StackPanel Spacing="8" MaxWidth="360">
+                        <ComboBox
+                            MinWidth="200"
+                            HorizontalAlignment="Stretch"
+                            AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_AudioOutput_Header, Mode=OneTime}"
+                            ItemsSource="{x:Bind ViewModel.AudioOutputDevices, Mode=OneWay}"
+                            DisplayMemberPath="DisplayName"
+                            SelectedItem="{x:Bind ViewModel.SelectedAudioOutputDevice, Mode=OneWay}"
+                            IsEnabled="{x:Bind ViewModel.IsAudioOutputBusy, Mode=OneWay, Converter={StaticResource BooleanToInverseBooleanConverter}}"
+                            DropDownOpened="AudioOutput_DropDownOpened"
+                            SelectionChanged="AudioOutput_SelectionChanged" />
+                        <TextBlock
+                            Text="{x:Bind ViewModel.AudioOutputDeviceMessage, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.AudioOutputDeviceMessage, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}"
+                            TextWrapping="Wrap"
+                            Style="{StaticResource CaptionTextBlockStyle}" />
+                    </StackPanel>
+                </controls:SettingsCard>
+
                 <controls:SettingsExpander
                     Header="{x:Bind resources:Strings.SettingsPage_FadeOnPlayPause_Header, Mode=OneTime}"
                     Description="{x:Bind resources:Strings.SettingsPage_FadeOnPlayPause_Description, Mode=OneTime}">

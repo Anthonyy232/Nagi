@@ -173,6 +173,10 @@ public interface ISettingsService
 
     Task SetWasapiExclusiveModeEnabledAsync(bool isEnabled);
 
+    Task<string> GetAudioOutputDeviceIdAsync();
+
+    Task SetAudioOutputDeviceIdAsync(string deviceId);
+
     Task<bool> GetFadeOnPlayPauseEnabledAsync();
 
     Task SetFadeOnPlayPauseEnabledAsync(bool isEnabled);

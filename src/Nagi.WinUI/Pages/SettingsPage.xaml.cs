@@ -31,6 +31,7 @@ public sealed partial class SettingsPage : Page
         try
         {
             await ViewModel.LoadSettingsAsync();
+            await ViewModel.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
             _logger.LogDebug("Settings loaded successfully.");
 
             Bindings.Update();
@@ -48,5 +49,14 @@ public sealed partial class SettingsPage : Page
         {
             e.Cancel = true;
         }
+    }
+
+    private async void AudioOutput_DropDownOpened(object sender, object e) =>
+        await ViewModel.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
+
+    private async void AudioOutput_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is ComboBox { SelectedItem: AudioOutputDeviceInfo device })
+            await ViewModel.SelectAudioOutputDeviceCommand.ExecuteAsync(device);
     }
 }

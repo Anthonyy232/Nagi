@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.Media;
 using Windows.Storage;
@@ -11,6 +12,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using System.Threading;
 using Nagi.WinUI.Services.Abstractions;
+using Nagi.WinUI.Helpers;
 using WinMediaPlayback = Windows.Media.Playback;
 
 namespace Nagi.WinUI.Services.Implementations;
@@ -97,7 +99,8 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable, IAsync
         {
             if (_isInitialized || _isDisposed) return;
             var useWasapiExclusive = await _settingsService.GetWasapiExclusiveModeEnabledAsync().ConfigureAwait(false);
-            await Task.Run(() => InitializeLibVlcCore(useWasapiExclusive), _disposeCts.Token).ConfigureAwait(false);
+            var outputDeviceId = await _settingsService.GetAudioOutputDeviceIdAsync().ConfigureAwait(false);
+            await Task.Run(() => InitializeLibVlcCore(useWasapiExclusive, outputDeviceId), _disposeCts.Token).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (_isDisposed)
         {
@@ -113,7 +116,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable, IAsync
         }
     }
 
-    private void InitializeLibVlcCore(bool useWasapiExclusive)
+    private void InitializeLibVlcCore(bool useWasapiExclusive, string outputDeviceId)
     {
         _logger.LogDebug("Initializing LibVLC core (deferred).");
 
@@ -145,6 +148,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable, IAsync
             httpUserAgent);
 
         _mediaPlayer = new MediaPlayer(_libVlc);
+        ApplySavedAudioOutput(outputDeviceId);
         _dummyMediaPlayer = new WinMediaPlayback.MediaPlayer();
         _dummyMediaPlayer.CommandManager.IsEnabled = false;
 
@@ -166,6 +170,62 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable, IAsync
 
         _isInitialized = true;
         _logger.LogDebug("LibVLC initialization complete.");
+    }
+
+    private void ApplySavedAudioOutput(string outputDeviceId)
+    {
+        if (string.IsNullOrEmpty(outputDeviceId) || _mediaPlayer is null) return;
+        try
+        {
+            if (!_mediaPlayer.AudioOutputDeviceEnum.Any(d => d.DeviceIdentifier == outputDeviceId))
+            {
+                _logger.LogWarning("Saved audio output {DeviceId} is unavailable; using system default.", outputDeviceId);
+                return;
+            }
+            if (_mediaPlayer.SetOutputDevice(outputDeviceId)) return;
+            _logger.LogWarning("Could not select saved audio output {DeviceId}; using system default.", outputDeviceId);
+            LibVlcAudioOutputInterop.UseSystemDefault(_mediaPlayer);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Could not apply saved audio output {DeviceId}.", outputDeviceId);
+        }
+    }
+
+    public async Task<IReadOnlyList<AudioOutputDeviceInfo>> GetAudioOutputDevicesAsync()
+    {
+        await EnsureInitializedAsync().ConfigureAwait(false);
+        await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            if (_isDisposed || _mediaPlayer is null) return Array.Empty<AudioOutputDeviceInfo>();
+            return await Task.Run(() => _mediaPlayer.AudioOutputDeviceEnum
+                .Where(d => !string.IsNullOrEmpty(d.DeviceIdentifier))
+                .Select(d => new AudioOutputDeviceInfo(d.DeviceIdentifier, d.Description))
+                .ToArray()).ConfigureAwait(false);
+        }
+        finally { _vlcOperationLock.Release(); }
+    }
+
+    public async Task<bool> SetAudioOutputDeviceAsync(string deviceId)
+    {
+        ArgumentNullException.ThrowIfNull(deviceId);
+        await EnsureInitializedAsync().ConfigureAwait(false);
+        await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            if (_isDisposed || _mediaPlayer is null) return false;
+            return await Task.Run(() =>
+            {
+                // A device can disappear between opening the dropdown and choosing it.
+                if (deviceId.Length > 0 && !_mediaPlayer.AudioOutputDeviceEnum.Any(d => d.DeviceIdentifier == deviceId))
+                    return false;
+                return deviceId.Length == 0
+                    ? LibVlcAudioOutputInterop.UseSystemDefault(_mediaPlayer)
+                    : _mediaPlayer.SetOutputDevice(deviceId);
+            }).ConfigureAwait(false);
+        }
+        finally { _vlcOperationLock.Release(); }
     }
 
     private string GetHttpUserAgent()
@@ -243,6 +303,8 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable, IAsync
     public TimeSpan Duration => ReadNative(() => FromVlcMicroseconds(_mediaPlayer?.Length ?? 0), TimeSpan.Zero);
     public double Volume => _isDisposed || !_isInitialized ? 0 : _userVolume;
     public bool IsMuted => ReadNative(() => _mediaPlayer?.Mute ?? false, false);
+
+    public string AudioOutputDeviceId => ReadNative(() => _mediaPlayer?.OutputDevice ?? string.Empty, string.Empty);
 
     private T ReadNative<T>(Func<T> read, T unavailable)
     {

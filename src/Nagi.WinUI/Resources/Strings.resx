@@ -2322,4 +2322,19 @@ Error: {1}</value>
   <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
     <value>The new playlist order couldn't be saved. Please try again.</value>
   </data>
+  <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
+    <value>Audio output device</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Description" xml:space="preserve">
+    <value>Choose where Nagi plays music.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Default" xml:space="preserve">
+    <value>System default</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Unavailable" xml:space="preserve">
+    <value>The saved device is unavailable. Using the system default.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
+    <value>Couldn't update the audio output. Try again or choose another device.</value>
+  </data>
 </root>

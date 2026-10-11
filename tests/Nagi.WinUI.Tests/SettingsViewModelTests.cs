@@ -17,6 +17,7 @@ public class SettingsViewModelTests : IDisposable
     private readonly IUISettingsService _settings = Substitute.For<IUISettingsService>();
     private readonly IThemeService _theme = Substitute.For<IThemeService>();
     private readonly IMusicPlaybackService _playback = Substitute.For<IMusicPlaybackService>();
+    private readonly IAudioPlayer _audioPlayer = Substitute.For<IAudioPlayer>();
     private readonly IAppInfoService _appInfo = Substitute.For<IAppInfoService>();
     private readonly IUIService _ui = Substitute.For<IUIService>();
     private readonly IDispatcherService _dispatcher = Substitute.For<IDispatcherService>();
@@ -45,7 +46,7 @@ public class SettingsViewModelTests : IDisposable
         _viewModel = new SettingsViewModel(_settings, _ui, _theme,
             Substitute.For<IApplicationLifecycle>(), _appInfo,
             _lastFm, _listenBrainz,
-            _playback, Substitute.For<IPlaylistExportService>(), _library, _player,
+            _playback, _audioPlayer, Substitute.For<IPlaylistExportService>(), _library, _player,
             _replayGain, _ffmpeg,
             Substitute.For<IBackupRestoreService>(), _dispatcher, Substitute.For<IRomanizationPackManager>(),
             NullLogger<SettingsViewModel>.Instance, _timeProvider);
@@ -55,6 +56,112 @@ public class SettingsViewModelTests : IDisposable
     {
         _viewModel.Dispose();
         _player.Cleanup();
+    }
+
+    [Fact]
+    public async Task AudioOutput_MissingSavedDeviceDisplaysDefaultWithoutLosingPreference()
+    {
+        _audioPlayer.GetAudioOutputDevicesAsync().Returns(Array.Empty<AudioOutputDeviceInfo>());
+        _settings.GetAudioOutputDeviceIdAsync().Returns("disconnected-dac");
+
+        await _viewModel.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
+
+        _viewModel.SelectedAudioOutputDevice!.Id.Should().BeEmpty();
+        _viewModel.AudioOutputDeviceMessage.Should().NotBeEmpty();
+        await _settings.DidNotReceive().SetAudioOutputDeviceIdAsync(Arg.Any<string>());
+    }
+
+    [Fact]
+    public async Task AudioOutput_ReconnectedDeviceDoesNotMisrepresentVlcFallbackAsAnActiveSelection()
+    {
+        var device = new AudioOutputDeviceInfo("dac", "DAC");
+        _settings.GetAudioOutputDeviceIdAsync().Returns(device.Id);
+        _audioPlayer.AudioOutputDeviceId.Returns(string.Empty);
+        _audioPlayer.GetAudioOutputDevicesAsync().Returns(new[] { device });
+        _audioPlayer.SetAudioOutputDeviceAsync(device.Id).Returns(true);
+
+        await _viewModel.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
+        _viewModel.SelectedAudioOutputDevice!.Id.Should().BeEmpty();
+        await _viewModel.SelectAudioOutputDeviceCommand.ExecuteAsync(device);
+
+        await _audioPlayer.Received(1).SetAudioOutputDeviceAsync(device.Id);
+    }
+
+    [Fact]
+    public async Task AudioOutput_RejectedSelectionRetainsPreviousDeviceAndPreference()
+    {
+        var previous = new AudioOutputDeviceInfo("speakers", "Speakers");
+        _viewModel.SelectedAudioOutputDevice = previous;
+        var selectionNotifications = 0;
+        _viewModel.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(SettingsViewModel.SelectedAudioOutputDevice)) selectionNotifications++;
+        };
+
+        await _viewModel.SelectAudioOutputDeviceCommand.ExecuteAsync(new AudioOutputDeviceInfo("removed", "Removed"));
+
+        _viewModel.SelectedAudioOutputDevice.Should().Be(previous);
+        selectionNotifications.Should().BeGreaterThan(0);
+        _viewModel.AudioOutputDeviceMessage.Should().NotBeEmpty();
+        _viewModel.IsAudioOutputBusy.Should().BeFalse();
+        await _settings.DidNotReceive().SetAudioOutputDeviceIdAsync(Arg.Any<string>());
+    }
+
+    [Fact]
+    public async Task AudioOutput_ChangedDeviceListKeepsSelectionInCurrentCollection()
+    {
+        _audioPlayer.AudioOutputDeviceId.Returns("dac");
+        _audioPlayer.GetAudioOutputDevicesAsync().Returns(new[] { new AudioOutputDeviceInfo("dac", "DAC") });
+        _settings.GetAudioOutputDeviceIdAsync().Returns("dac");
+        await _viewModel.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
+
+        _audioPlayer.GetAudioOutputDevicesAsync().Returns(new[]
+        {
+            new AudioOutputDeviceInfo("dac", "DAC"), new AudioOutputDeviceInfo("speakers", "Speakers")
+        });
+        await _viewModel.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
+
+        _viewModel.SelectedAudioOutputDevice.Should().BeSameAs(_viewModel.AudioOutputDevices.Single(d => d.Id == "dac"));
+        await _audioPlayer.DidNotReceive().SetAudioOutputDeviceAsync(Arg.Any<string>());
+    }
+
+    [Fact]
+    public async Task AudioOutput_UserSelectionDuringRefreshIsAppliedWithoutRefreshOverwritingIt()
+    {
+        var device = new AudioOutputDeviceInfo("dac", "DAC");
+        var enumeration = new TaskCompletionSource<IReadOnlyList<AudioOutputDeviceInfo>>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var selection = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        _audioPlayer.GetAudioOutputDevicesAsync().Returns(enumeration.Task);
+        _audioPlayer.SetAudioOutputDeviceAsync(device.Id).Returns(selection.Task);
+        var defaultDevice = new AudioOutputDeviceInfo(string.Empty, "Default");
+        _viewModel.AudioOutputDevices = new[] { defaultDevice, device };
+        _viewModel.SelectedAudioOutputDevice = defaultDevice;
+
+        var refreshing = _viewModel.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
+        var selecting = _viewModel.SelectAudioOutputDeviceCommand.ExecuteAsync(device);
+        enumeration.SetResult(new[] { device });
+        await refreshing.WaitAsync(TimeSpan.FromSeconds(5));
+        _viewModel.SelectedAudioOutputDevice.Id.Should().BeEmpty();
+        selection.SetResult(true);
+        await selecting.WaitAsync(TimeSpan.FromSeconds(5));
+
+        _viewModel.SelectedAudioOutputDevice.Should().Be(device);
+        await _audioPlayer.Received(1).SetAudioOutputDeviceAsync(device.Id);
+        await _settings.Received(1).SetAudioOutputDeviceIdAsync(device.Id);
+    }
+
+    [Fact]
+    public async Task AudioOutput_SaveFailureKeepsLiveSelectionAndReportsFailure()
+    {
+        var device = new AudioOutputDeviceInfo("dac", "DAC");
+        _audioPlayer.SetAudioOutputDeviceAsync(device.Id).Returns(true);
+        _settings.SetAudioOutputDeviceIdAsync(device.Id).Returns(Task.FromException(new IOException("Storage unavailable")));
+
+        await _viewModel.SelectAudioOutputDeviceCommand.ExecuteAsync(device);
+
+        _viewModel.SelectedAudioOutputDevice.Should().Be(device);
+        _viewModel.AudioOutputDeviceMessage.Should().NotBeEmpty();
+        _viewModel.IsAudioOutputBusy.Should().BeFalse();
     }
 
     [Theory]
