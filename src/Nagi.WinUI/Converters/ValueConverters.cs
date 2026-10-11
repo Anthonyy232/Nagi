@@ -34,6 +34,11 @@ public class TimeSpanToTimeStringConverter : IValueConverter
             _ => TimeSpan.Zero
         };
 
+        return Format(timeSpan);
+    }
+
+    public static string Format(TimeSpan timeSpan)
+    {
         // >= 100 h: drop seconds (noise at that scale), show "Xh Ym"
         if (timeSpan.TotalHours >= 100)
             return $"{(int)timeSpan.TotalHours}h {timeSpan.Minutes}m";

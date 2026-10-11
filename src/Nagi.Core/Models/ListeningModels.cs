@@ -8,4 +8,12 @@ public enum ShuffleMode
     Unheard
 }
 
+public enum PlaybackStopMode
+{
+    Off,
+    AfterTrack,
+    EndOfQueue,
+    Timer
+}
+
 public sealed record MixCandidate(Guid Id, string Artist, long DurationTicks, int PlayCount, DateTime? LastPlayedDate);

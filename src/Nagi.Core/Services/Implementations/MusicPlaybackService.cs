@@ -537,6 +537,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             idList.Count, startIndex, startShuffled);
 
         _currentContext = context ?? new PlaybackContext(PlaybackContextType.Library, null);
+        if (StopMode is PlaybackStopMode.AfterTrack or PlaybackStopMode.EndOfQueue) ScheduleStop(PlaybackStopMode.Off);
         if (startShuffled.HasValue && IsShuffleEnabled != startShuffled.Value) await SetShuffleAsync(startShuffled.Value);
 
         if (!IsCurrentRequest(request)) return;
@@ -621,6 +622,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
     private async Task StopInternalAsync(int request)
     {
+        ScheduleStop(PlaybackStopMode.Off);
         if (CurrentListenHistoryId.HasValue)
         {
             // Capture and clear synchronously before the async gap, mirroring the pattern in
@@ -651,6 +653,11 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
     private async Task NextInternalAsync(int request)
     {
+        if (CurrentTrack is not null && ShouldStopAfterTrack())
+        {
+            await StopInternalAsync(request);
+            return;
+        }
         if (CurrentRepeatMode == RepeatMode.RepeatOne && CurrentTrack != null)
         {
             await PlayQueueItemInternalAsync(CurrentQueueIndex, request);

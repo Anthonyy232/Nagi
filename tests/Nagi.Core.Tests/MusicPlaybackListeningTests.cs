@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Time.Testing;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Implementations;
@@ -42,6 +43,35 @@ public partial class MusicPlaybackServiceTests
         _service.CurrentTrack.Should().BeSameAs(_testSongs[0]);
         await _audioPlayer.DidNotReceive().StopAsync();
         await _audioPlayer.DidNotReceive().LoadAsync(Arg.Any<Song>());
+    }
+
+    [Theory]
+    [InlineData(true, true)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    public async Task ExpiredTimer_FinishesOnlyAnActivelyPlayingTrack(bool finishTrack, bool playing)
+    {
+        var clock = new FakeTimeProvider();
+        await using var service = new MusicPlaybackService(_settingsService, _audioPlayer, _libraryService,
+            _metadataService, NullLogger<MusicPlaybackService>.Instance, clock);
+        await service.InitializeAsync();
+        await service.PlayAsync(_testSongs);
+        _audioPlayer.MediaOpened += Raise.Event<Action>();
+        _audioPlayer.IsPlaying.Returns(playing);
+        service.ScheduleStop(PlaybackStopMode.Timer, TimeSpan.FromMinutes(1), finishTrack);
+        clock.Advance(TimeSpan.FromMinutes(2));
+
+        await service.CheckStopScheduleAsync();
+
+        if (finishTrack && playing)
+        {
+            service.StopMode.Should().Be(PlaybackStopMode.AfterTrack);
+            await service.SetRepeatModeAsync(RepeatMode.RepeatOne);
+            _audioPlayer.PlaybackEnded += Raise.Event<Action>();
+            await service.FlushPendingFinalizationAsync();
+        }
+        service.CurrentTrack.Should().BeNull();
+        service.StopMode.Should().Be(PlaybackStopMode.Off);
     }
 
 }

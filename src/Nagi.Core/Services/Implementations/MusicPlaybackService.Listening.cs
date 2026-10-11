@@ -7,8 +7,12 @@ namespace Nagi.Core.Services.Implementations;
 public partial class MusicPlaybackService
 {
     private readonly TimeProvider _timeProvider;
+    private bool _finishCurrentTrack = true;
 
     public ShuffleMode CurrentShuffleMode { get; private set; }
+    public PlaybackStopMode StopMode { get; private set; }
+    public DateTimeOffset? StopDeadline { get; private set; }
+    public event Action? StopScheduleChanged;
 
     public async Task<bool> PlayMixAsync(IEnumerable<Guid> songIds, ShuffleMode mode, PlaybackContext? context = null, int avoidRecentDays = 1)
     {
@@ -35,5 +39,37 @@ public partial class MusicPlaybackService
             played = true;
         });
         return played;
+    }
+
+    public void ScheduleStop(PlaybackStopMode mode, TimeSpan? delay = null, bool finishCurrentTrack = true)
+    {
+        if (_isDisposed) return;
+        if (!Enum.IsDefined(mode)) throw new ArgumentOutOfRangeException(nameof(mode));
+        if (mode == PlaybackStopMode.Timer && (delay is null || delay <= TimeSpan.Zero || delay > TimeSpan.FromDays(1)))
+            throw new ArgumentOutOfRangeException(nameof(delay));
+        StopMode = mode;
+        StopDeadline = mode == PlaybackStopMode.Timer ? _timeProvider.GetUtcNow() + delay!.Value : null;
+        _finishCurrentTrack = finishCurrentTrack;
+        StopScheduleChanged?.Invoke();
+    }
+
+    public Task CheckStopScheduleAsync()
+    {
+        if (_isDisposed || StopMode != PlaybackStopMode.Timer || _timeProvider.GetUtcNow() < StopDeadline)
+            return Task.CompletedTask;
+        if (_finishCurrentTrack && CurrentTrack is not null && IsPlaying)
+        {
+            ScheduleStop(PlaybackStopMode.AfterTrack);
+            return Task.CompletedTask;
+        }
+        return StopAsync();
+    }
+
+    private bool ShouldStopAfterTrack()
+    {
+        if (StopMode == PlaybackStopMode.AfterTrack) return true;
+        var count = IsShuffleEnabled ? _shuffledQueue.Count : _playbackQueue.Count;
+        var index = IsShuffleEnabled ? CurrentShuffledIndex : CurrentQueueIndex;
+        return StopMode == PlaybackStopMode.EndOfQueue && index == count - 1;
     }
 }

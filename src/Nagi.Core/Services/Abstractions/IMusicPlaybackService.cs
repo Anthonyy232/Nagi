@@ -17,7 +17,12 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     /// </summary>
     Song? CurrentTrack { get; }
     ShuffleMode CurrentShuffleMode { get; }
+    PlaybackStopMode StopMode { get; }
+    DateTimeOffset? StopDeadline { get; }
+    event Action? StopScheduleChanged;
     Task<bool> PlayMixAsync(IEnumerable<Guid> songIds, ShuffleMode mode, PlaybackContext? context = null, int avoidRecentDays = 1);
+    void ScheduleStop(PlaybackStopMode mode, TimeSpan? delay = null, bool finishCurrentTrack = true);
+    Task CheckStopScheduleAsync();
 
     /// <summary>
     ///     Gets the unique database ID for the current listening session.

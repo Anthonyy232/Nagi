@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,7 +15,7 @@ using WinRT.Interop;
 
 namespace Nagi.WinUI.Services.Implementations;
 
-public class UIService : IUIService
+public partial class UIService : IUIService
 {
     private const uint MB_OK = 0x00000000;
     private const uint MB_ICONERROR = 0x00000010;

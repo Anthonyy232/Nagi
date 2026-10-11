@@ -22,6 +22,7 @@ public enum CrashReportResult
 /// </summary>
 public interface IUIService
 {
+    Task<(int Minutes, bool FinishTrack)?> ShowSleepTimerDialogAsync();
     /// <summary>
     ///     Shows a confirmation dialog to the user.
     /// </summary>

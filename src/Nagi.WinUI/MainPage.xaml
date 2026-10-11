@@ -529,6 +529,9 @@
                                                 uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind ViewModel.CurrentPlayingTrack, Mode=OneWay}"
                                                 uihelpers:MultiArtistHyperlinkHelper.Command="{Binding ViewModel.GoToArtistCommand, ElementName=MainPageRoot}" />
                                         </Grid>
+                                        <Button Content="{x:Bind ViewModel.StopScheduleText, Mode=OneWay}" Padding="0,2" Background="Transparent" BorderThickness="0" HorizontalAlignment="Left" FontSize="12" Visibility="{x:Bind ViewModel.IsStopScheduled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                            <Button.Flyout><MenuFlyout Opening="TimerOptions_Opening" /></Button.Flyout>
+                                        </Button>
                                     </StackPanel>
                                 </Grid>
 
@@ -563,6 +566,11 @@
                                             </ItemsPanelTemplate>
                                         </ItemsControl.ItemsPanel>
                                     </ItemsControl>
+
+                                    <Button Style="{StaticResource MediaControlButtonStyle}" ToolTipService.ToolTip="{x:Bind resources:Strings.Listening_PlayerOptions}" AutomationProperties.Name="{x:Bind resources:Strings.Listening_PlayerOptions}">
+                                        <Button.Flyout><MenuFlyout Opening="PlayerOptions_Opening" /></Button.Flyout>
+                                        <FontIcon Glyph="&#xE712;" Foreground="{StaticResource PlayerAccentBrush}" />
+                                    </Button>
 
                                     <Grid
                                         Height="72"

@@ -80,6 +80,7 @@ public partial class PlayerViewModel : ObservableObject
         QueueDisplaySettings.PropertyChanged += OnQueueDisplaySettingChanged;
 
         SubscribeToPlaybackServiceEvents();
+        InitializeListeningEvents();
         _libraryService.LibraryContentChanged += OnQueueLibraryContentChanged;
         SubscribeToSettingsServiceEvents();
         SubscribeToWindowServiceEvents();
@@ -103,6 +104,7 @@ public partial class PlayerViewModel : ObservableObject
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(GoToArtistCommand))]
     [NotifyCanExecuteChangedFor(nameof(GoToAlbumCommand))]
+    [NotifyCanExecuteChangedFor(nameof(StopAfterTrackCommand))]
     public partial Song? CurrentPlayingTrack { get; set; }
 
     [ObservableProperty]
@@ -233,6 +235,7 @@ public partial class PlayerViewModel : ObservableObject
         _isCleanedUp = true;
         _logger.LogDebug("Cleaning up PlayerViewModel resources");
         UnsubscribeFromPlaybackServiceEvents();
+        CleanupListening();
         _libraryService.LibraryContentChanged -= OnQueueLibraryContentChanged;
         UnsubscribeFromSettingsServiceEvents();
         UnsubscribeFromWindowServiceEvents();
@@ -485,6 +488,7 @@ public partial class PlayerViewModel : ObservableObject
     private void UpdateCurrentQueueDisplay()
     {
         ClearQueueCommand.NotifyCanExecuteChanged();
+        StopAtQueueEndCommand.NotifyCanExecuteChanged();
         OnPropertyChanged(nameof(QueueTrackCountText));
 
         _queueDisplayCts?.Cancel();
