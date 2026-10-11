@@ -249,7 +249,7 @@
         </StackPanel>
 
         <!-- Song List -->
-        <ListView Grid.Row="1"
+        <ListView uihelpers:ScrollEdgeFade.IsEnabled="True" Grid.Row="1"
                   x:Name="SongsListView"
                   SelectionMode="Extended"
                   IsItemClickEnabled="True"

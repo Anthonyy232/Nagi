@@ -3,6 +3,7 @@
     x:Name="SettingsPageRoot"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     xmlns:coreModels="using:Nagi.Core.Models"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -172,7 +173,7 @@
             Style="{StaticResource SettingsPageTitleTextStyle}"
             Text="{x:Bind resources:Strings.SettingsPage_Title, Mode=OneTime}" />
 
-        <ScrollViewer
+        <ScrollViewer uihelpers:ScrollEdgeFade.IsEnabled="True"
             Grid.Row="1"
             VerticalScrollBarVisibility="Auto"
             VerticalScrollMode="Auto"

@@ -354,7 +354,7 @@
                                                 <Button Content="{x:Bind resources:Strings.QueuePanel_Retry}" Click="Queue_Retry" />
                                             </InfoBar.ActionButton>
                                         </InfoBar>
-                                        <ListView x:Name="QueueListView" Grid.Row="2" ItemsSource="{x:Bind ViewModel.SidebarQueue}"
+                                        <ListView uihelpers:ScrollEdgeFade.IsEnabled="True" x:Name="QueueListView" Grid.Row="2" ItemsSource="{x:Bind ViewModel.SidebarQueue}"
                                                   ItemContainerStyle="{StaticResource PaddedListViewItemStyle}" SelectionMode="Single"
                                                   CanDragItems="True" CanReorderItems="True" AllowDrop="True"
                                                   DragItemsStarting="QueueListView_DragItemsStarting" DragItemsCompleted="QueueListView_DragItemsCompleted"
@@ -788,7 +788,7 @@
                                       HorizontalAlignment="Center" VerticalAlignment="Center"
                                       Width="40" Height="40" />
 
-                        <ListView x:Name="SeeAllSongsPanel"
+                        <ListView uihelpers:ScrollEdgeFade.IsEnabled="True" x:Name="SeeAllSongsPanel"
                                   x:Load="{x:Bind InsightsVm.IsSeeAllSongs, Mode=OneWay}"
                                   Visibility="{x:Bind InsightsVm.IsSeeAllLoading, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
                                   ItemsSource="{x:Bind InsightsVm.SeeAllSongs, Mode=OneWay}"
@@ -798,7 +798,7 @@
                                   ItemContainerStyle="{StaticResource SeeAllListItemStyle}"
                                   ItemTemplate="{StaticResource TopSongItemTemplate}" />
 
-                        <ListView x:Name="SeeAllArtistsPanel"
+                        <ListView uihelpers:ScrollEdgeFade.IsEnabled="True" x:Name="SeeAllArtistsPanel"
                                   x:Load="{x:Bind InsightsVm.IsSeeAllArtists, Mode=OneWay}"
                                   Visibility="{x:Bind InsightsVm.IsSeeAllLoading, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
                                   ItemsSource="{x:Bind InsightsVm.SeeAllArtists, Mode=OneWay}"
@@ -808,7 +808,7 @@
                                   ItemContainerStyle="{StaticResource SeeAllListItemStyle}"
                                   ItemTemplate="{StaticResource TopArtistItemTemplate}" />
 
-                        <ListView x:Name="SeeAllAlbumsPanel"
+                        <ListView uihelpers:ScrollEdgeFade.IsEnabled="True" x:Name="SeeAllAlbumsPanel"
                                   x:Load="{x:Bind InsightsVm.IsSeeAllAlbums, Mode=OneWay}"
                                   Visibility="{x:Bind InsightsVm.IsSeeAllLoading, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
                                   ItemsSource="{x:Bind InsightsVm.SeeAllAlbums, Mode=OneWay}"
@@ -818,7 +818,7 @@
                                   ItemContainerStyle="{StaticResource SeeAllListItemStyle}"
                                   ItemTemplate="{StaticResource TopAlbumItemTemplate}" />
 
-                        <ListView x:Name="SeeAllGenresPanel"
+                        <ListView uihelpers:ScrollEdgeFade.IsEnabled="True" x:Name="SeeAllGenresPanel"
                                   x:Load="{x:Bind InsightsVm.IsSeeAllGenres, Mode=OneWay}"
                                   Visibility="{x:Bind InsightsVm.IsSeeAllLoading, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
                                   ItemsSource="{x:Bind InsightsVm.SeeAllGenres, Mode=OneWay}"

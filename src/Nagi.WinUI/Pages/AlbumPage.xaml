@@ -140,7 +140,7 @@
 
         <Grid Grid.Row="1">
             <!-- Displays the collection of albums -->
-            <GridView
+            <GridView uihelpers:ScrollEdgeFade.IsEnabled="True"
                 x:Name="AlbumsGridView"
                 IsItemClickEnabled="True"
                 ItemClick="AlbumsGridView_ItemClick"

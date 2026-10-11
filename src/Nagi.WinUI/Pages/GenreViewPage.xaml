@@ -172,7 +172,7 @@
             </StackPanel>
         </StackPanel>
 
-        <ListView
+        <ListView uihelpers:ScrollEdgeFade.IsEnabled="True"
             x:Name="SongsListView"
             Grid.Row="1"
             Padding="{StaticResource PageContentPadding}"

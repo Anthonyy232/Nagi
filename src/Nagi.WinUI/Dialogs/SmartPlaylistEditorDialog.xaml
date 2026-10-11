@@ -2,6 +2,7 @@
     x:Class="Nagi.WinUI.Dialogs.SmartPlaylistEditorDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:ImageEx"
@@ -123,7 +124,7 @@
                 Padding="0"
                 Background="{ThemeResource LayerFillColorDefaultBrush}">
             <Grid>
-                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="{StaticResource SurfaceContentPadding}">
+                <ScrollViewer uihelpers:ScrollEdgeFade.IsEnabled="True" VerticalScrollBarVisibility="Auto" Padding="{StaticResource SurfaceContentPadding}">
                     <StackPanel Spacing="8">
                         <ListView x:Name="RulesListView"
                                   ItemsSource="{x:Bind Rules, Mode=OneWay}"

@@ -184,7 +184,7 @@
         </StackPanel>
 
         <!-- Grouped ListView for Disc mode -->
-        <ListView
+        <ListView uihelpers:ScrollEdgeFade.IsEnabled="True"
             Grid.Row="1"
             x:Name="GroupedSongsListView"
             Padding="{StaticResource PageContentPadding}"
@@ -261,7 +261,7 @@
         </ListView>
 
         <!-- Regular ListView for other sort modes -->
-        <ListView
+        <ListView uihelpers:ScrollEdgeFade.IsEnabled="True"
             Grid.Row="1"
             x:Name="SongsListView"
             Padding="{StaticResource PageContentPadding}"

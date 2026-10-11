@@ -158,6 +158,9 @@
 
     <ItemGroup>
         <!-- Application Content -->
+        <Content Include="Assets\ScrollEdgeNoise.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
         <Content Include="Assets\FluentSystemIcons.LICENSE.txt">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>

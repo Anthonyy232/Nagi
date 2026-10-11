@@ -126,7 +126,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer uihelpers:ScrollEdgeFade.IsEnabled="True" Grid.Row="0" VerticalScrollBarVisibility="Auto">
             <StackPanel Padding="{StaticResource ViewPageHeaderPadding}">
                 <Grid Margin="{StaticResource SectionHeaderMargin}">
                     <Grid.ColumnDefinitions>
@@ -311,7 +311,7 @@
             </StackPanel>
         </ScrollViewer>
 
-        <ListView
+        <ListView uihelpers:ScrollEdgeFade.IsEnabled="True"
             Grid.Row="1"
             x:Name="SongsListView"
             Padding="{StaticResource PageContentPadding}"

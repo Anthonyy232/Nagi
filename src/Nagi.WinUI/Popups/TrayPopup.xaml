@@ -152,7 +152,7 @@
                                    Margin="12,0,12,4" />
                     </Grid>
 
-                    <ListView Grid.Row="1"
+                    <ListView uihelpers:ScrollEdgeFade.IsEnabled="True" Grid.Row="1"
                               ItemsSource="{Binding CurrentQueue}"
                               SelectionMode="None"
                               ItemContainerStyle="{StaticResource PaddedListViewItemStyle}"

@@ -201,6 +201,7 @@
 
                     <!--  Queue View -->
                     <ListView
+                        uihelpers:ScrollEdgeFade.IsEnabled="True"
                         x:Name="QueueListView"
                         Padding="16,12,16,16"
                         ItemContainerStyle="{StaticResource PaddedListViewItemStyle}"
