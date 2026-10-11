@@ -32,11 +32,11 @@
 
 - **Fluent & Modern UI**: A beautiful, responsive interface built with WinUI 3, featuring customizable backdrops (Mica, Mica Alt, Acrylic) and smooth animations.
 - **Dynamic Theming**: The app's color scheme adapts in real-time to the artwork of the currently playing song for a truly immersive experience.
-- **Synced Lyrics**: Display synced lyrics from embedded tags or external `.lrc` files. Tap any line to jump directly to that moment in the song.
+- **Lyrics**: Display lyrics from embedded tags, external `.lrc` files, or optional online providers, with plain-text fallback when synced lyrics are unavailable. Tap a synced line to jump to that moment in the song.
 - **Resizable Mini-Player**: A sleek, always-on-top mini-player with playback controls, album art, and an efficiency mode for low resource usage.
 - **Folder-Based Library**: Add your music folders and Nagi automatically scans, organizes, and keeps your collection up to date.
 - **Playlists & Smart Playlists**: Create custom playlists or powerful rule-based smart playlists that automatically update as your library grows.
-- **Queue Management**: Drop files or folders onto the bottom player to add them to the queue, without importing them into your library. Use Up Next to view the queue, with full shuffle and repeat controls.
+- **Queue Management**: Drop files or folders onto the bottom player to queue them without importing them into your library. Use Up Next to view and reorder tracks in an inline side pane, with shuffle and repeat controls.
 - **10-Band Equalizer**: Fine-tune your sound with a fully customizable 10-band equalizer and pregain control.
 - **Volume Normalization**: ReplayGain support ensures consistent volume levels across your entire library.
 - **Last.fm, ListenBrainz & Discord Integration**: Scrobble your tracks to Last.fm or ListenBrainz, fetch artist metadata, and show your listening activity with Discord Rich Presence.
@@ -85,7 +85,7 @@ Localization support for Nagi is powered by Crowdin. Contributions to add new la
 - **[Community Toolkit MVVM](https://docs.microsoft.com/en-us/dotnet/communitytoolkit/mvvm/)**: A modern, fast, and platform-agnostic MVVM library.
 - **[Entity Framework Core (SQLite)](https://docs.microsoft.com/en-us/ef/core/)**: A modern object-relational mapper for .NET, used for local database storage.
 - **[ATL (Audio Tools Library)](https://github.com/Zeugma440/atldotnet)**: A versatile library for reading and writing metadata in audio files.
-- **[LrcParser](https://github.com/OpportunityLiu/LrcParser)**: For parsing LRC lyrics files.
+- **[ModernLrc](https://github.com/Anthonyy232/ModernLrcParser)**: For parsing LRC lyrics files.
 - **[SixLabors.ImageSharp](https://github.com/SixLabors/ImageSharp)**: A cross-platform library for image processing.
 - **[MaterialColorUtilities](https://github.com/material-foundation/material-color-utilities)**: For generating dynamic color schemes from artwork.
 - **[H.NotifyIcon.WinUI](https://github.com/HavenDV/H.NotifyIcon)**: For creating and managing the Windows tray icon.
