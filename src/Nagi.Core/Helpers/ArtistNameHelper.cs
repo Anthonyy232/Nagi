@@ -1,11 +1,8 @@
-﻿using System.Text;
+using System.Text;
 using Nagi.Core.Models;
 
 namespace Nagi.Core.Helpers;
 
-/// <summary>
-///     Provides centralized normalization logic for artist names to ensure consistency across the application.
-/// </summary>
 public static class ArtistNameHelper
 {
     /// <summary>
@@ -26,13 +23,5 @@ public static class ArtistNameHelper
         return string.IsNullOrEmpty(cleaned) ? null : cleaned;
     }
 
-    /// <summary>
-    ///     Normalizes an artist name by applying core normalization logic.
-    ///     Returns <see cref="Artist.UnknownArtistName"/> if the name is null or whitespace.
-    /// </summary>
-    public static string Normalize(string? name)
-    {
-        var normalized = NormalizeStringCore(name);
-        return string.IsNullOrEmpty(normalized) ? Artist.UnknownArtistName : normalized;
-    }
+    public static string Normalize(string? name) => NormalizeStringCore(name) ?? Artist.UnknownArtistName;
 }

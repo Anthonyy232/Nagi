@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -36,10 +36,6 @@ public abstract partial class SearchableViewModelBase : ObservableObject
         _searchDebouncer.Trigger(ExecuteSearchWithErrorHandlingAsync);
     }
 
-    /// <summary>
-    ///     Hook for derived classes to perform actions when the search term changes,
-    ///     such as clearing selection.
-    /// </summary>
     protected virtual void OnSearchTermChangedInternal(string value)
     {
     }
@@ -62,15 +58,8 @@ public abstract partial class SearchableViewModelBase : ObservableObject
         }
     }
 
-    /// <summary>
-    ///     Cancels any pending debounced search.
-    /// </summary>
     protected void CancelPendingSearch() => _searchDebouncer.Cancel();
 
-    /// <summary>
-    ///     Override this method to implement the actual search logic.
-    ///     This is called after the debounce delay.
-    /// </summary>
     protected abstract Task ExecuteSearchAsync(CancellationToken token);
 
     /// <summary>

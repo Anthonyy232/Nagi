@@ -275,7 +275,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
             var fullSong = await fullSongTask ?? song;
             var parsedLrc = await localLrcTask;
-            var rawLyrics = parsedLrc?.RawUnsyncedLyrics ?? string.Empty;
+            var rawLyrics = parsedLrc?.RawLyrics ?? string.Empty;
 
             // Prefer sidecars, then embedded tags, and only then the network/cache.
             if (parsedLrc is not { IsEmpty: false } && string.IsNullOrWhiteSpace(rawLyrics))
@@ -288,7 +288,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
                 else
                 {
                     parsedLrc = await _lrcService.GetLyricsAsync(song, cancellationToken).ConfigureAwait(false);
-                    rawLyrics = parsedLrc?.RawUnsyncedLyrics ?? string.Empty;
+                    rawLyrics = parsedLrc?.RawLyrics ?? string.Empty;
                 }
             }
             cancellationToken.ThrowIfCancellationRequested();

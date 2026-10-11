@@ -84,8 +84,7 @@ public static class ImageStorageHelper
     {
         if (imageBytes.Length == 0) return null;
 
-        if (!fs.DirectoryExists(directory))
-            fs.CreateDirectory(directory);
+        fs.CreateDirectory(directory);
 
         var newFileName = $"{baseFileName}{suffix}{extension}";
         var destinationPath = fs.Combine(directory, newFileName);

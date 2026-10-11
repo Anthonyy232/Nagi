@@ -1,4 +1,4 @@
-﻿namespace Nagi.Core.Models.Lyrics;
+namespace Nagi.Core.Models.Lyrics;
 
 /// <summary>
 ///     Represents a fully parsed LRC file with a collection of timed lyric lines,
@@ -6,10 +6,10 @@
 /// </summary>
 public class ParsedLrc
 {
-    public ParsedLrc(IEnumerable<LyricLine> lines, string? rawUnsyncedLyrics = null)
+    public ParsedLrc(IEnumerable<LyricLine> lines, string? rawLyrics = null)
     {
         Lines = lines.OrderBy(l => l.StartTime).ToList().AsReadOnly();
-        RawUnsyncedLyrics = rawUnsyncedLyrics;
+        RawLyrics = rawLyrics;
     }
 
     /// <summary>
@@ -18,10 +18,9 @@ public class ParsedLrc
     public IReadOnlyList<LyricLine> Lines { get; }
 
     /// <summary>
-    ///     The raw unsynchronized lyrics text, available if the source was a plain text file
-    ///     or an LRC file without timestamps.
+    ///     Original source text retained for plain-text display and caching, including any timestamps.
     /// </summary>
-    public string? RawUnsyncedLyrics { get; }
+    public string? RawLyrics { get; }
 
     /// <summary>
     ///     Indicates if the parsed lyrics contain any lines.

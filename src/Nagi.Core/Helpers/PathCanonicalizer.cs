@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 
 namespace Nagi.Core.Helpers;
 
@@ -22,22 +22,14 @@ public static class PathCanonicalizer
         var normalized = path.Normalize(NormalizationForm.FormC);
 
         // Collapse alt separators to canonical ones. Preserve UNC prefix "\\" by checking first.
-        var isUnc = normalized.StartsWith(@"\\") || normalized.StartsWith("//");
+        var isUnc = IsUncPath(normalized);
         normalized = normalized.Replace('/', '\\');
 
-        if (isUnc)
-        {
-            // Keep the "\\" prefix; only collapse duplicate separators in the remainder.
-            var rest = normalized.Substring(2);
-            while (rest.Contains(@"\\"))
-                rest = rest.Replace(@"\\", @"\");
-            normalized = @"\\" + rest;
-        }
-        else
-        {
-            while (normalized.Contains(@"\\"))
-                normalized = normalized.Replace(@"\\", @"\");
-        }
+        // Keep the "\\" prefix; only collapse duplicate separators in the remainder.
+        var rest = isUnc ? normalized[2..] : normalized;
+        while (rest.Contains(@"\\"))
+            rest = rest.Replace(@"\\", @"\");
+        normalized = isUnc ? @"\\" + rest : rest;
 
         // A drive-relative path such as "C:" has different Windows semantics from the
         // drive root "C:\\". Preserve the separator for drive roots while continuing to

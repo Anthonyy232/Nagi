@@ -47,7 +47,7 @@ public class ApiKeyService : IApiKeyService
 
         // Lazy coalesces concurrent callers even when GetOrAdd invokes its factory more than once.
         var lazyTask = _cachedApiKeys.GetOrAdd(keyName,
-            _ => new Lazy<Task<string?>>(() => FetchKeyFromServerAsync(keyName, CancellationToken.None)));
+            _ => new Lazy<Task<string?>>(() => FetchKeyFromServerAsync(keyName)));
 
         var result = await lazyTask.Value.WaitAsync(cancellationToken).ConfigureAwait(false);
         if (result is null)
@@ -66,10 +66,7 @@ public class ApiKeyService : IApiKeyService
         return GetApiKeyAsync(keyName, cancellationToken);
     }
 
-    /// <summary>
-    ///     Performs the HTTP request to fetch an API key from the configured server.
-    /// </summary>
-    private async Task<string?> FetchKeyFromServerAsync(string keyName, CancellationToken cancellationToken)
+    private async Task<string?> FetchKeyFromServerAsync(string keyName)
     {
         var serverUrl = _configuration["NagiApiServer:Url"];
         var serverKey = _configuration["NagiApiServer:ApiKey"];
@@ -144,6 +141,6 @@ public class ApiKeyService : IApiKeyService
             fallback: null,
             _logger,
             $"fetch API key '{keyName}'",
-            cancellationToken).ConfigureAwait(false);
+            CancellationToken.None).ConfigureAwait(false);
     }
 }

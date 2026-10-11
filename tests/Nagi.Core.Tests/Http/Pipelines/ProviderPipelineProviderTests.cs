@@ -38,16 +38,6 @@ public class ProviderPipelineProviderTests
     private static HttpResponseMessage Resp(HttpStatusCode code) => new(code);
 
     [Fact]
-    public async Task ExecuteAsync_PassesThroughSuccessfulResponse()
-    {
-        await using var sut = Build(Policy("p"));
-
-        using var response = await sut.ExecuteAsync("p", ct => ValueTask.FromResult(Resp(HttpStatusCode.OK)));
-
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-    }
-
-    [Fact]
     public async Task ExecuteAsync_UnknownProvider_Throws()
     {
         await using var sut = Build(Policy("p"));

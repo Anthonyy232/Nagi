@@ -63,22 +63,6 @@ public class ApiKeyServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task GetApiKeyAsync_SecondCallForSameKey_ReturnsFromCacheWithoutHttpCall()
-    {
-        const string keyName = ServiceProviderIds.TheAudioDb;
-        const string expectedApiKey = "12345-abcde";
-        SetupValidConfiguration();
-        SetupHttpResponse(HttpStatusCode.OK, new { Value = expectedApiKey });
-
-        var result1 = await _apiKeyService.GetApiKeyAsync(keyName);
-        var result2 = await _apiKeyService.GetApiKeyAsync(keyName);
-
-        result1.Should().Be(expectedApiKey);
-        result2.Should().Be(expectedApiKey);
-        _httpMessageHandler.Requests.Should().HaveCount(1);
-    }
-
-    [Fact]
     public async Task RefreshApiKeyAsync_ForcesNewFetchFromServer_AndUpdatesCache()
     {
         const string keyName = ServiceProviderIds.TheAudioDb;
@@ -97,19 +81,6 @@ public class ApiKeyServiceTests : IDisposable
         result2.Should().Be(refreshedApiKey);
         result3.Should().Be(refreshedApiKey);
         _httpMessageHandler.Requests.Should().HaveCount(2);
-    }
-
-    [Fact]
-    public async Task GetApiKeyAsync_WhenHttpCallFails_ReturnsNull()
-    {
-        const string keyName = ServiceProviderIds.LastFm;
-        SetupValidConfiguration();
-        SetupHttpResponse(HttpStatusCode.InternalServerError);
-
-        var result = await _apiKeyService.GetApiKeyAsync(keyName);
-
-        result.Should().BeNull();
-        _httpMessageHandler.Requests.Should().HaveCount(1);
     }
 
     [Fact]

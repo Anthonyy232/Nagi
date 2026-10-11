@@ -109,10 +109,6 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         }
     }
 
-    /// <summary>
-    ///     Computes exactly how many folders and songs belong on a given page.
-    ///     Callers request only what they need — no rounding up or over-fetching.
-    /// </summary>
     private static (int folderSkip, int foldersToLoad, int songSkip, int songsToLoad)
         ComputePageSlices(int pageNumber, int pageSize, int totalFolders)
     {
@@ -124,9 +120,6 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         return (folderSkip, foldersToLoad, songSkip, songsToLoad);
     }
 
-    /// <summary>
-    ///     Resolves the folder DB ID for the current directory path.
-    /// </summary>
     private async Task<Guid?> ResolveCurrentParentFolderIdAsync(CancellationToken token)
     {
         if (!_rootFolderId.HasValue) return null;
@@ -140,9 +133,6 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         return folder?.Id;
     }
 
-    /// <summary>
-    ///     Returns the total number of directly-visible subfolders, using the search query when active.
-    /// </summary>
     private Task<int> FetchTotalFolderCountAsync(Guid parentFolderId, CancellationToken token = default)
     {
         if (IsSearchActive)
@@ -151,9 +141,6 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         return _libraryReader.GetSubFolderCountAsync(parentFolderId, token);
     }
 
-    /// <summary>
-    ///     Fetches exactly the folder slice needed for this page. Returns empty when <paramref name="take"/> is 0.
-    /// </summary>
     private Task<IEnumerable<Folder>> FetchFolderSliceAsync(Guid parentFolderId, int skip, int take, CancellationToken token = default)
     {
         if (take <= 0) return Task.FromResult(Enumerable.Empty<Folder>());
@@ -165,7 +152,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     }
 
     /// <summary>
-    ///     Fetches exactly the song slice needed for this page. Always returns TotalCount even when take=0,
+    ///     Returns TotalCount even when take=0,
     ///     so the caller can compute total pages without a separate COUNT query.
     /// </summary>
     private Task<PagedResult<Song>> FetchSongSliceAsync(int skip, int take, SongSortOrder sortOrder, CancellationToken token = default)
@@ -255,7 +242,6 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         }
     }
 
-    /// <summary>Loads page 1 after resolving the current folder and item counts.</summary>
     public override async Task RefreshOrSortSongsAsync(string? sortOrderString = null, CancellationToken manualToken = default)
     {
         lock (_loadLock)

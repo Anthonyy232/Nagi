@@ -87,87 +87,82 @@ public class LrcService : ILrcService, IDisposable
             return null;
 
         var enabledProviders = await _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Lyrics).ConfigureAwait(false);
-        var allProvidersSucceeded = enabledProviders.Count > 0;
+        if (enabledProviders.Count == 0) return null;
+        var allProvidersSucceeded = true;
 
-        if (enabledProviders.Count > 0)
+        var tasks = new List<Task<string?>>(enabledProviders.Count);
+        foreach (var provider in enabledProviders)
         {
-            // Start all enabled provider tasks in parallel for speed
-            var tasks = new List<Task<string?>>(enabledProviders.Count);
-            foreach (var provider in enabledProviders)
+            try
             {
-                try
+                tasks.Add(provider.Id switch
                 {
-                    tasks.Add(provider.Id switch
-                    {
-                        ServiceProviderIds.LrcLib => _onlineLyricsService.GetLyricsAsync(
-                            song.Title, song.PrimaryArtistName, song.Album?.Title, song.Duration, token),
-                        ServiceProviderIds.NetEase => _netEaseLyricsService.SearchLyricsAsync(
-                            song.Title, song.PrimaryArtistName, token),
-                        _ => throw new NotSupportedException($"Unknown lyrics provider: {provider.Id}")
-                    });
-                }
-                catch (Exception ex)
-                {
-                    allProvidersSucceeded = false;
-                    _logger.LogError(ex, "Failed to initiate lyrics fetch for provider {Provider}", provider.DisplayName);
-                }
+                    ServiceProviderIds.LrcLib => _onlineLyricsService.GetLyricsAsync(
+                        song.Title, song.PrimaryArtistName, song.Album?.Title, song.Duration, token),
+                    ServiceProviderIds.NetEase => _netEaseLyricsService.SearchLyricsAsync(
+                        song.Title, song.PrimaryArtistName, token),
+                    _ => throw new NotSupportedException($"Unknown lyrics provider: {provider.Id}")
+                });
             }
-
-            // Provider order breaks ties; plain text must not hide another provider's timed lyrics.
-            ParsedLrc? selectedLyrics = null;
-            foreach (var task in tasks)
+            catch (Exception ex)
             {
-                try
-                {
-                    var result = await task.WaitAsync(token).ConfigureAwait(false);
-                    if (!string.IsNullOrWhiteSpace(result))
-                    {
-                        var parsed = ParseLyrics(result);
-                        if (!parsed.IsEmpty)
-                        {
-                            selectedLyrics = parsed;
-                            break;
-                        }
-                        selectedLyrics ??= parsed;
-                    }
-                }
-                catch (OperationCanceledException)
-                {
-                    allProvidersSucceeded = false;
-                    // A provider timeout must not prevent a lower-priority provider from succeeding.
-                    if (token.IsCancellationRequested) break;
-                }
-                catch (Exception ex)
-                {
-                    allProvidersSucceeded = false;
-                    _logger.LogDebug(ex, "Lyrics provider failed for '{Title}'.", song.Title);
-                }
+                allProvidersSucceeded = false;
+                _logger.LogError(ex, "Failed to initiate lyrics fetch for provider {Provider}", provider.DisplayName);
             }
+        }
 
-            // Observe failures from providers we stopped awaiting after finding lyrics.
-            foreach (var task in tasks)
+        // Provider order breaks ties; plain text must not hide another provider's timed lyrics.
+        ParsedLrc? selectedLyrics = null;
+        foreach (var task in tasks)
+        {
+            try
             {
-                _ = task.ContinueWith(
-                    static (t, state) => ((ILogger<LrcService>)state!).LogDebug(
-                        t.Exception!.InnerException, "Lyrics task faulted (ignored, already resolved)"),
-                    _logger,
-                    CancellationToken.None,
-                    TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously,
-                    TaskScheduler.Default);
+                var result = await task.WaitAsync(token).ConfigureAwait(false);
+                if (string.IsNullOrWhiteSpace(result)) continue;
+                var parsed = ParseLyrics(result);
+                if (!parsed.IsEmpty)
+                {
+                    selectedLyrics = parsed;
+                    break;
+                }
+                selectedLyrics ??= parsed;
             }
-
-            if (token.IsCancellationRequested) return null;
-
-            if (selectedLyrics is not null)
+            catch (OperationCanceledException)
             {
-                await CacheLyricsAsync(song, selectedLyrics.RawUnsyncedLyrics!).ConfigureAwait(false);
-                return selectedLyrics;
+                allProvidersSucceeded = false;
+                // A provider timeout must not prevent a lower-priority provider from succeeding.
+                if (token.IsCancellationRequested) break;
             }
+            catch (Exception ex)
+            {
+                allProvidersSucceeded = false;
+                _logger.LogDebug(ex, "Lyrics provider failed for '{Title}'.", song.Title);
+            }
+        }
+
+        // Observe failures from providers we stopped awaiting after finding lyrics.
+        foreach (var task in tasks)
+        {
+            _ = task.ContinueWith(
+                static (t, state) => ((ILogger<LrcService>)state!).LogDebug(
+                    t.Exception!.InnerException, "Lyrics task faulted (ignored, already resolved)"),
+                _logger,
+                CancellationToken.None,
+                TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously,
+                TaskScheduler.Default);
+        }
+
+        if (token.IsCancellationRequested) return null;
+
+        if (selectedLyrics is not null)
+        {
+            await CacheLyricsAsync(song, selectedLyrics.RawLyrics!).ConfigureAwait(false);
+            return selectedLyrics;
         }
 
         // A negative result is conclusive only when every enabled provider completed.
         // Failed requests remain retryable on the next playback.
-        if (!token.IsCancellationRequested && allProvidersSucceeded)
+        if (allProvidersSucceeded)
         {
             // All providers completed successfully but returned no lyrics. Remove the invalid local
             // reference now; successful lyric results already replace it in CacheLyricsAsync.

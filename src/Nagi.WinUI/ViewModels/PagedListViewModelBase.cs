@@ -86,10 +86,8 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     /// </summary>
     protected virtual Task OnAuxiliaryLoadAsync(CancellationToken token) => Task.CompletedTask;
 
-    /// <summary>Notifies subclasses of <see cref="IsLoading"/> transitions for command can-execute updates.</summary>
     protected virtual void OnLoadingStateChanged(bool isLoading) { }
 
-    /// <summary>Whether a library content change should trigger a reload. Default: everything except FolderAdded.</summary>
     protected virtual bool ShouldReloadOnLibraryChange(LibraryChangeType changeType) =>
         changeType != LibraryChangeType.FolderAdded;
 
@@ -182,14 +180,14 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     [RelayCommand]
     public async Task NextPageAsync()
     {
-        if (_isDisposed || !HasNextPage || IsLoading || !IsPaginationEnabled) return;
+        if (_isDisposed || !HasNextPage || IsLoading) return;
         await NavigateToPageAsync(CurrentPage + 1);
     }
 
     [RelayCommand]
     public async Task PreviousPageAsync()
     {
-        if (_isDisposed || !HasPreviousPage || IsLoading || !IsPaginationEnabled) return;
+        if (_isDisposed || !HasPreviousPage || IsLoading) return;
         await NavigateToPageAsync(CurrentPage - 1);
     }
 
@@ -384,7 +382,6 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
         });
     }
 
-    /// <summary>Cancels and disposes any in-flight page load. Safe to call from subclasses.</summary>
     protected void CancelInflightPageLoad()
     {
         var cts = Interlocked.Exchange(ref _pageLoadCts, null);

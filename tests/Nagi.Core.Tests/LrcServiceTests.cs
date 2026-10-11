@@ -96,7 +96,7 @@ public class LrcServiceTests : IDisposable
         var result = await _lrcService.GetLyricsAsync(song);
 
         result!.IsEmpty.Should().Be(!timed);
-        result.RawUnsyncedLyrics.Should().Be(expected);
+        result.RawLyrics.Should().Be(expected);
         await _fileSystem.Received(1).WriteAllTextAsync(Arg.Any<string>(), expected);
         _fileSystem.FileExists(song.LrcFilePath!).Returns(true);
         _fileSystem.ReadAllTextAsync(song.LrcFilePath!).Returns(expected);
@@ -106,7 +106,7 @@ public class LrcServiceTests : IDisposable
         var cached = await _lrcService.GetLyricsAsync(song);
 
         cached!.IsEmpty.Should().Be(!timed);
-        cached.RawUnsyncedLyrics.Should().Be(expected);
+        cached.RawLyrics.Should().Be(expected);
         await _onlineLyricsService.DidNotReceive().GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(),
             Arg.Any<string?>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
         await _netEaseLyricsService.DidNotReceive().SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
