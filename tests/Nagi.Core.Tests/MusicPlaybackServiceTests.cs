@@ -10,7 +10,7 @@ using Xunit;
 
 namespace Nagi.Core.Tests;
 
-public class MusicPlaybackServiceTests : IAsyncDisposable
+public partial class MusicPlaybackServiceTests : IAsyncDisposable
 {
     private readonly IAudioPlayer _audioPlayer;
     private readonly ILibraryService _libraryService;

@@ -81,11 +81,20 @@
                 </Button>
             </DataTemplate>
 
+            <DataTemplate x:Key="ShuffleButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
+                <SplitButton Command="{x:Bind Command}" Background="Transparent" BorderThickness="0" Padding="8,0"
+                             Foreground="{StaticResource PlayerAccentBrush}" ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneWay}">
+                    <SplitButton.Flyout><MenuFlyout Opening="ShuffleOptions_Opening" /></SplitButton.Flyout>
+                    <FontIcon Glyph="{x:Bind DynamicIcon, Mode=OneWay}" Opacity="{x:Bind IsIconActive, Mode=OneWay, Converter={StaticResource ToggleIconOpacityConverter}}" />
+                </SplitButton>
+            </DataTemplate>
+
             <localControls:PlayerButtonTemplateSelector x:Key="PlayerButtonSelector"
                                                         DefaultButtonTemplate="{StaticResource PlayerButtonTemplate}"
                                                         PlayPauseButtonTemplate="{StaticResource PlayPauseButtonTemplate}"
                                                         LyricsButtonTemplate="{StaticResource LyricsButtonTemplate}"
-                                                        QueueButtonTemplate="{StaticResource QueueButtonTemplate}" />
+                                                        QueueButtonTemplate="{StaticResource QueueButtonTemplate}"
+                                                        ShuffleButtonTemplate="{StaticResource ShuffleButtonTemplate}" />
         </ResourceDictionary>
     </UserControl.Resources>
 

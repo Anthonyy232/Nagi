@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -9,11 +10,11 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
-using Nagi.WinUI.Models;
-using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Helpers;
+using Nagi.WinUI.Models;
 using Nagi.WinUI.Resources;
-using System.Threading;
+using Nagi.WinUI.Services.Abstractions;
+using Nagi.WinUI.Services.Implementations;
 
 namespace Nagi.WinUI.ViewModels;
 
@@ -59,7 +60,7 @@ public partial class PlayerViewModel : ObservableObject
     public PlayerViewModel(IMusicPlaybackService playbackService,
         IMusicNavigationService musicNavigationService,
         IDispatcherService dispatcherService, IUISettingsService settingsService, IWindowService windowService,
-        ILibraryService libraryService, ILogger<PlayerViewModel> logger)
+        ILibraryService libraryService, ILogger<PlayerViewModel> logger, IUIService uiService)
     {
         _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
         _musicNavigationService = musicNavigationService ?? throw new ArgumentNullException(nameof(musicNavigationService));
@@ -68,6 +69,7 @@ public partial class PlayerViewModel : ObservableObject
         _windowService = windowService ?? throw new ArgumentNullException(nameof(windowService));
         _libraryService = libraryService ?? throw new ArgumentNullException(nameof(libraryService));
         _logger = logger;
+        _uiService = uiService;
 
         SongTitle = Strings.Status_NoTrackPlaying;
         ArtistName = string.Empty;
@@ -156,7 +158,9 @@ public partial class PlayerViewModel : ObservableObject
     public string PlayPauseIconGlyph => IsPlaying ? PauseIconGlyph : PlayIconGlyph;
     public string PlayPauseButtonToolTip => IsPlaying ? Strings.Tooltip_Pause : Strings.Tooltip_Play;
     public string ShuffleIconGlyph => "\uE8B1";
-    public string ShuffleButtonToolTip => IsShuffleEnabled ? Strings.Tooltip_ShuffleOn : Strings.Tooltip_ShuffleOff;
+    public string ShuffleButtonToolTip => IsShuffleEnabled
+        ? ListeningMenuFlyoutHelper.GetModeName(_playbackService.CurrentShuffleMode)
+        : Strings.Tooltip_ShuffleOff;
 
     public string RepeatIconGlyph => CurrentRepeatMode switch
     {
@@ -658,6 +662,8 @@ public partial class PlayerViewModel : ObservableObject
         RunOnUIThread(() =>
         {
             IsShuffleEnabled = _playbackService.IsShuffleEnabled;
+            OnPropertyChanged(nameof(ShuffleButtonToolTip));
+            UpdateButtonState("Shuffle", ShuffleIconGlyph, ShuffleButtonToolTip, IsShuffleEnabled);
             UpdateCurrentQueueDisplay();
         });
     }

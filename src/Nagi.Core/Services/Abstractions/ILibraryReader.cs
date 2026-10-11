@@ -8,6 +8,8 @@ namespace Nagi.Core.Services.Abstractions;
 /// </summary>
 public interface ILibraryReader
 {
+    Task<IReadOnlyList<MixCandidate>> GetMixCandidatesAsync(IEnumerable<Guid> songIds, CancellationToken token = default);
+
     Task<Folder?> GetFolderByIdAsync(Guid folderId);
     Task<Folder?> GetFolderByPathAsync(string path);
     Task<bool> HasAnyFolderAsync(CancellationToken token = default);

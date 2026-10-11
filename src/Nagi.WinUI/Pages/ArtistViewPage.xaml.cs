@@ -402,4 +402,6 @@ public sealed partial class ArtistViewPage : Page
             _isUpdatingAlbumsLayout = false;
         }
     }
+    private void ListeningOptions_Opening(object sender, object e) =>
+        ListeningMenuFlyoutHelper.PopulateMixes((MenuFlyout)sender, ViewModel.PlayMixCommand);
 }

@@ -277,4 +277,6 @@ public sealed partial class FolderSongViewPage : Page
         }
     }
 
+    private void ListeningOptions_Opening(object sender, object e) =>
+        ListeningMenuFlyoutHelper.PopulateMixes((MenuFlyout)sender, ViewModel.PlayMixCommand);
 }

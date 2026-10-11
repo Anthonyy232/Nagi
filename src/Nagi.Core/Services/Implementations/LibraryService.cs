@@ -22,7 +22,7 @@ namespace Nagi.Core.Services.Implementations;
 ///     Manages all aspects of the music library, including file scanning, metadata, and database operations.
 ///     This service is designed to be a singleton and is internally thread-safe.
 /// </summary>
-public class LibraryService : ILibraryService, IDisposable
+public partial class LibraryService : ILibraryService, IDisposable
 {
 
     private readonly ConcurrentDictionary<Guid, Lazy<Task<string?>>> _artistImageProcessingTasks = new();
@@ -143,6 +143,7 @@ public class LibraryService : ILibraryService, IDisposable
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         await context.ListenHistory.ExecuteDeleteAsync().ConfigureAwait(false);
         _logger.LogInformation("Listen history cleared.");
+        LibraryContentChanged?.Invoke(this, new(LibraryChangeType.SongsUpdated));
     }
 
     public async Task ClearAllLibraryDataAsync()

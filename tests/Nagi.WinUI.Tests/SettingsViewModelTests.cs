@@ -42,7 +42,7 @@ public class SettingsViewModelTests : IDisposable
         _dispatcher.TryEnqueue(Arg.Any<Action>()).Returns(call => { call.Arg<Action>()(); return true; });
         _dispatcher.EnqueueAsync(Arg.Any<Func<Task>>()).Returns(call => call.Arg<Func<Task>>()());
         _player = new PlayerViewModel(_playback, Substitute.For<IMusicNavigationService>(), _dispatcher,
-            _settings, Substitute.For<IWindowService>(), _library, NullLogger<PlayerViewModel>.Instance);
+            _settings, Substitute.For<IWindowService>(), _library, NullLogger<PlayerViewModel>.Instance, Substitute.For<IUIService>());
         _viewModel = new SettingsViewModel(_settings, _ui, _theme,
             Substitute.For<IApplicationLifecycle>(), _appInfo,
             _lastFm, _listenBrainz,

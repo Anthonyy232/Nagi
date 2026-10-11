@@ -275,11 +275,11 @@
                         <FontIcon FontSize="16" Glyph="" />
                     </Button>
 
-                    <Button Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}"
-                            ToolTipService.ToolTip="{x:Bind resources:Strings.FolderSongViewPage_ShufflePlayButton_ToolTip, Mode=OneTime}"
-                            Style="{StaticResource SongListViewPageIconButton}">
-                        <FontIcon FontSize="16" Glyph="" />
-                    </Button>
+                    <SplitButton Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}"
+                            ToolTipService.ToolTip="{x:Bind resources:Strings.FolderSongViewPage_ShufflePlayButton_ToolTip, Mode=OneTime}">
+                        <SplitButton.Flyout><MenuFlyout Opening="ListeningOptions_Opening" /></SplitButton.Flyout>
+                    <FontIcon FontSize="16" Glyph="" />
+                    </SplitButton>
 
                     <Button Style="{StaticResource SongListViewPageIconButton}"
                             ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">

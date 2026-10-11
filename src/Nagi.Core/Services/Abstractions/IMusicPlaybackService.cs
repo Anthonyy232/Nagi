@@ -16,6 +16,8 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     ///     Gets the currently playing song, or null if nothing is playing or the player is stopped.
     /// </summary>
     Song? CurrentTrack { get; }
+    ShuffleMode CurrentShuffleMode { get; }
+    Task<bool> PlayMixAsync(IEnumerable<Guid> songIds, ShuffleMode mode, PlaybackContext? context = null, int avoidRecentDays = 1);
 
     /// <summary>
     ///     Gets the unique database ID for the current listening session.

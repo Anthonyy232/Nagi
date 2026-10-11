@@ -2337,4 +2337,34 @@ Error: {1}</value>
   <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
     <value>Couldn't update the audio output. Try again or choose another device.</value>
   </data>
+  <data name="Listening_Random" xml:space="preserve">
+    <value>Shuffle</value>
+  </data>
+  <data name="Listening_MoreVariety" xml:space="preserve">
+    <value>More variety</value>
+  </data>
+  <data name="Listening_Rediscover" xml:space="preserve">
+    <value>Rediscover</value>
+  </data>
+  <data name="Listening_Unheard" xml:space="preserve">
+    <value>Unheard</value>
+  </data>
+  <data name="Listening_NoMixTitle" xml:space="preserve">
+    <value>No matching tracks</value>
+  </data>
+  <data name="Listening_NoMixDescription" xml:space="preserve">
+    <value>No tracks fit this selection. Try another mode, a longer duration, or a different source.</value>
+  </data>
+  <data name="Listening_ActionError" xml:space="preserve">
+    <value>Could not complete this action. Please try again.</value>
+  </data>
+  <data name="Listening_VarietyDescription" xml:space="preserve">
+    <value>Avoid recently played tracks and space out artists where possible.</value>
+  </data>
+  <data name="Listening_RediscoverDescription" xml:space="preserve">
+    <value>Tracks you have played before, last played over 30 days ago.</value>
+  </data>
+  <data name="Listening_UnheardDescription" xml:space="preserve">
+    <value>Tracks with no recorded plays in Nagi.</value>
+  </data>
 </root>

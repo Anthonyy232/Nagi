@@ -244,4 +244,6 @@ public sealed partial class LibraryPage : Page
             ViewModel.PlaySongCommand.Execute(tappedSong);
         }
     }
+    private void ListeningOptions_Opening(object sender, object e) =>
+        ListeningMenuFlyoutHelper.PopulateMixes((MenuFlyout)sender, ViewModel.PlayMixCommand);
 }

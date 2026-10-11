@@ -31,7 +31,7 @@ public class FolderViewModelTests
         settings.GetQueueDisplaySettingsAsync().Returns(new QueueDisplaySettings());
         var player = new PlayerViewModel(playback, Substitute.For<IMusicNavigationService>(),
             dispatcher, settings, Substitute.For<IWindowService>(),
-            library, NullLogger<PlayerViewModel>.Instance);
+            library, NullLogger<PlayerViewModel>.Instance, Substitute.For<IUIService>());
         using var viewModel = new FolderViewModel(library, player, playback,
             Substitute.For<INavigationService>(), dispatcher, NullLogger<FolderViewModel>.Instance);
         var load = viewModel.LoadFoldersCommand.ExecuteAsync(null);

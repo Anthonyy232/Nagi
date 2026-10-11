@@ -11,12 +11,13 @@ using Xunit;
 
 namespace Nagi.WinUI.Tests;
 
-public class PlayerViewModelTests : IDisposable
+public partial class PlayerViewModelTests : IDisposable
 {
     private readonly IMusicPlaybackService _playback = Substitute.For<IMusicPlaybackService>();
     private readonly IUISettingsService _settings = Substitute.For<IUISettingsService>();
     private readonly IDispatcherService _dispatcher = Substitute.For<IDispatcherService>();
     private readonly PlayerViewModel _viewModel;
+    private readonly ILibraryService _library = Substitute.For<ILibraryService>();
 
     public PlayerViewModelTests()
     {
@@ -30,7 +31,7 @@ public class PlayerViewModelTests : IDisposable
         _settings.GetQueueDisplaySettingsAsync().Returns(new QueueDisplaySettings());
         _viewModel = new PlayerViewModel(_playback, Substitute.For<IMusicNavigationService>(),
             _dispatcher, _settings, Substitute.For<IWindowService>(),
-            Substitute.For<ILibraryService>(), NullLogger<PlayerViewModel>.Instance);
+            _library, NullLogger<PlayerViewModel>.Instance, Substitute.For<IUIService>());
     }
 
     public void Dispose() => _viewModel.Cleanup();

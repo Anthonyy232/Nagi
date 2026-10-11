@@ -229,4 +229,6 @@ public sealed partial class PlaylistSongViewPage : Page
 
         _ = ViewModel.OnSongsReorderedAsync(args.Items.OfType<Song>().ToList());
     }
+    private void ListeningOptions_Opening(object sender, object e) =>
+        ListeningMenuFlyoutHelper.PopulateMixes((MenuFlyout)sender, ViewModel.PlayMixCommand);
 }

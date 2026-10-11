@@ -7,7 +7,7 @@ using Nagi.Core.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
-public class MusicPlaybackService : IMusicPlaybackService
+public partial class MusicPlaybackService : IMusicPlaybackService
 {
     private readonly IAudioPlayer _audioPlayer;
     private readonly ILibraryService _libraryService;
@@ -42,13 +42,14 @@ public class MusicPlaybackService : IMusicPlaybackService
         IAudioPlayer audioPlayer,
         ILibraryService libraryService,
         IMetadataService metadataService,
-        ILogger<MusicPlaybackService> logger)
+        ILogger<MusicPlaybackService> logger, TimeProvider? timeProvider = null)
     {
         _settingsService = settingsService;
         _audioPlayer = audioPlayer;
         _libraryService = libraryService;
         _metadataService = metadataService;
         _logger = logger;
+        _timeProvider = timeProvider ?? TimeProvider.System;
 
         _audioPlayer.PlaybackEnded += OnAudioPlayerPlaybackEnded;
         _audioPlayer.StateChanged += OnAudioPlayerStateChanged;
@@ -220,7 +221,12 @@ public class MusicPlaybackService : IMusicPlaybackService
 
         if (IsShuffleEnabled)
         {
-            if (_shuffledQueue.Count != _playbackQueue.Count) GenerateShuffledQueue();
+            var retained = _playbackQueue.ToHashSet();
+            _shuffledQueue.RemoveAll(id => !retained.Contains(id));
+            retained.ExceptWith(_shuffledQueue);
+            var additions = retained.ToArray();
+            Random.Shared.Shuffle(additions);
+            _shuffledQueue.AddRange(additions);
             RebuildShuffledQueueIndex();
         }
 
@@ -508,10 +514,9 @@ public class MusicPlaybackService : IMusicPlaybackService
     public Task PlayAsync(IEnumerable<Guid> songIds, int startIndex = 0, bool? startShuffled = null, PlaybackContext? context = null) =>
         RunPlaybackRequest(request => PlayInternalAsync(songIds, startIndex, startShuffled, context, request));
 
-    private async Task PlayInternalAsync(IEnumerable<Guid> songIds, int startIndex, bool? startShuffled, PlaybackContext? context, int request)
+    private async Task PlayInternalAsync(IEnumerable<Guid> songIds, int startIndex, bool? startShuffled, PlaybackContext? context, int request, IReadOnlyList<Guid>? shuffleOrder = null, ShuffleMode mode = ShuffleMode.Random)
     {
         _queueVersion++;
-        _currentContext = context ?? new PlaybackContext(PlaybackContextType.Library, null);
         var requestedIds = songIds?.ToList() ?? [];
         var requestedStartId = startIndex >= 0 && startIndex < requestedIds.Count ? requestedIds[startIndex] : Guid.Empty;
         var idList = requestedIds.Where(id => id != Guid.Empty).Distinct().ToList();
@@ -531,12 +536,19 @@ public class MusicPlaybackService : IMusicPlaybackService
             "Playing a new queue of {SongCount} songs. Start index: {StartIndex}, Shuffled: {IsShuffled}",
             idList.Count, startIndex, startShuffled);
 
+        _currentContext = context ?? new PlaybackContext(PlaybackContextType.Library, null);
         if (startShuffled.HasValue && IsShuffleEnabled != startShuffled.Value) await SetShuffleAsync(startShuffled.Value);
 
         if (!IsCurrentRequest(request)) return;
 
         _playbackQueue = idList;
-        if (IsShuffleEnabled) GenerateShuffledQueue();
+        if (IsShuffleEnabled)
+        {
+            if (shuffleOrder is null) GenerateShuffledQueue();
+            else _shuffledQueue = [.. shuffleOrder];
+        }
+        CurrentShuffleMode = mode;
+        ShuffleModeChanged?.Invoke();
         CommitQueueChanges();
 
         if (IsShuffleEnabled)
@@ -754,6 +766,7 @@ public class MusicPlaybackService : IMusicPlaybackService
         if (IsShuffleEnabled == enable) return;
 
         IsShuffleEnabled = enable;
+        CurrentShuffleMode = ShuffleMode.Random;
         _logger.LogDebug("Shuffle mode set to {ShuffleState}", IsShuffleEnabled);
 
         if (IsShuffleEnabled)
@@ -1048,6 +1061,7 @@ public class MusicPlaybackService : IMusicPlaybackService
         var state = new PlaybackState
         {
             CurrentTrackId = currentTrackId,
+            ShuffleMode = CurrentShuffleMode,
             PlaybackQueueTrackIds = playbackQueue,
             CurrentPlaybackQueueIndex = playbackQueue.IndexOf(_playbackQueue.ElementAtOrDefault(CurrentQueueIndex)),
             ShuffledQueueTrackIds = IsShuffleEnabled ? shuffledQueue : [],
@@ -1171,6 +1185,7 @@ public class MusicPlaybackService : IMusicPlaybackService
         RebuildPlaybackQueueIndex();
 
         if (!_playbackQueue.Any()) return false;
+        CurrentShuffleMode = Enum.IsDefined(state.ShuffleMode) ? state.ShuffleMode : ShuffleMode.Random;
 
         if (IsShuffleEnabled)
         {
@@ -1250,6 +1265,7 @@ public class MusicPlaybackService : IMusicPlaybackService
         CurrentShuffledIndex = -1;
         CurrentListenHistoryId = null;
         _currentListenStartedUtc = null;
+        CurrentShuffleMode = ShuffleMode.Random;
     }
 
     private void GenerateShuffledQueue()
