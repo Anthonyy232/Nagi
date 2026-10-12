@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
-using System.Runtime.InteropServices;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Helpers;
@@ -25,14 +24,8 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     private Task? _initializationTask;
     private bool _isEligibilityMarked;
     private DateTime? _currentListenStartedUtc;
-    private List<Guid> _playbackQueue = new();
-    private List<Guid> _shuffledQueue = new();
-    private readonly Dictionary<Guid, Song> _transientTracks = new();
-    private readonly Dictionary<string, Guid> _transientTrackIdsByPath = new(StringComparer.OrdinalIgnoreCase);
-
-    // Reverse index dictionaries for O(1) lookups in large queues (500k+ songs)
-    private readonly Dictionary<Guid, int> _playbackQueueIndex = new();
-    private readonly Dictionary<Guid, int> _shuffledQueueIndex = new();
+    private readonly PlaybackQueue _queue = new();
+    private readonly TransientTrackCache _transientTracks = new();
 
     private PlaybackContext _currentContext = new(PlaybackContextType.Library, null);
 
@@ -81,8 +74,8 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         : (CurrentTrack?.Duration ?? TimeSpan.Zero);
     public double Volume => _audioPlayer.Volume;
     public bool IsMuted => _audioPlayer.IsMuted;
-    public IReadOnlyList<Guid> PlaybackQueue => _playbackQueue.AsReadOnly();
-    public IReadOnlyList<Guid> ShuffledQueue => _shuffledQueue.AsReadOnly();
+    public IReadOnlyList<Guid> PlaybackQueue => _queue.OrderView();
+    public IReadOnlyList<Guid> ShuffledQueue => _queue.ShuffledView();
     public int CurrentQueueIndex { get; private set; } = -1;
     public int CurrentShuffledIndex { get; private set; } = -1;
     public bool IsShuffleEnabled { get; private set; }
@@ -220,29 +213,19 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     private void CommitQueueChanges()
     {
         _logger.LogTrace("Committing queue changes and rebuilding indices.");
-        RebuildPlaybackQueueIndex();
-
-        if (IsShuffleEnabled)
-        {
-            var retained = _playbackQueue.ToHashSet();
-            _shuffledQueue.RemoveAll(id => !retained.Contains(id));
-            retained.ExceptWith(_shuffledQueue);
-            var additions = retained.ToArray();
-            Random.Shared.Shuffle(additions);
-            _shuffledQueue.AddRange(additions);
-            RebuildShuffledQueueIndex();
-        }
+        _queue.RebuildIndex();
+        if (IsShuffleEnabled) _queue.SyncShuffledWithOrder();
 
         if (CurrentTrack != null)
         {
-            CurrentQueueIndex = GetPlaybackQueueIndex(CurrentTrack.Id);
-            CurrentShuffledIndex = IsShuffleEnabled ? GetShuffledQueueIndex(CurrentTrack.Id) : -1;
+            CurrentQueueIndex = _queue.IndexOf(CurrentTrack.Id);
+            CurrentShuffledIndex = IsShuffleEnabled ? _queue.ShuffledIndexOf(CurrentTrack.Id) : -1;
         }
         else
         {
-            CurrentQueueIndex = Math.Clamp(CurrentQueueIndex, -1, _playbackQueue.Count - 1);
+            CurrentQueueIndex = Math.Clamp(CurrentQueueIndex, -1, _queue.Order.Count - 1);
             CurrentShuffledIndex = IsShuffleEnabled
-                ? Math.Clamp(CurrentShuffledIndex, -1, _shuffledQueue.Count - 1)
+                ? Math.Clamp(CurrentShuffledIndex, -1, _queue.Shuffled.Count - 1)
                 : -1;
         }
 
@@ -274,7 +257,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
         _isTransitioningTrack = true;
         ClearQueuesInternal();
-        RegisterTransientTrack(transientSong);
+        _transientTracks.Register(transientSong);
         QueueChanged?.Invoke();
 
         CurrentTrack = transientSong;
@@ -378,9 +361,9 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         var songs = new List<(Song Song, bool Transient)>(paths.Count);
         foreach (var path in paths)
         {
-            if (_transientTrackIdsByPath.TryGetValue(path, out var transientId))
+            if (_transientTracks.TryGetByPath(path, out var knownTransient))
             {
-                songs.Add((_transientTracks[transientId], true));
+                songs.Add((knownTransient, true));
                 continue;
             }
 
@@ -397,24 +380,24 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             songs.Add((transientSong, true));
         }
 
-        if (_playbackQueue.Count == 0 && CurrentTrack != null) _playbackQueue.Add(CurrentTrack.Id);
-        var queuedIds = _playbackQueue.ToHashSet();
+        if (_queue.Order.Count == 0 && CurrentTrack != null) _queue.Add(CurrentTrack.Id);
+        var queuedIds = _queue.Order.ToHashSet();
         foreach (var item in songs)
         {
             var song = item.Song;
             if (item.Transient)
             {
                 // Another add may have resolved the same path while metadata was loading.
-                if (_transientTrackIdsByPath.TryGetValue(song.FilePath, out var existingId))
-                    song = _transientTracks[existingId];
+                if (_transientTracks.TryGetByPath(song.FilePath, out var existing))
+                    song = existing;
                 else
-                    RegisterTransientTrack(song);
+                    _transientTracks.Register(song);
             }
-            if (queuedIds.Add(song.Id)) _playbackQueue.Add(song.Id);
+            if (queuedIds.Add(song.Id)) _queue.Add(song.Id);
         }
         CommitQueueChanges();
 
-        if (CurrentTrack == null && _playbackQueue.Count > 0 && IsCurrentRequest(request))
+        if (CurrentTrack == null && _queue.Order.Count > 0 && IsCurrentRequest(request))
         {
             _currentContext = new PlaybackContext(PlaybackContextType.Transient, null);
             await PlayQueueItemAsync(0);
@@ -472,32 +455,14 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
     public void MoveQueueItem(Guid songId, Guid? beforeSongId)
     {
-        var queue = IsShuffleEnabled ? _shuffledQueue : _playbackQueue;
-        var from = queue.IndexOf(songId);
-        var target = beforeSongId.HasValue ? queue.IndexOf(beforeSongId.Value) : queue.Count;
-        if (from < 0 || target < 0 || from == target || from + 1 == target) return;
-
-        queue.RemoveAt(from);
-        queue.Insert(target > from ? target - 1 : target, songId);
-        CommitQueueChanges();
-    }
-
-    private void RegisterTransientTrack(Song song)
-    {
-        _transientTracks[song.Id] = song;
-        _transientTrackIdsByPath[song.FilePath] = song.Id;
+        if (_queue.Move(songId, beforeSongId, IsShuffleEnabled)) CommitQueueChanges();
     }
 
     private void PruneTransientTracks()
     {
-        var retainedIds = _playbackQueue.ToHashSet();
+        var retainedIds = _queue.Order.ToHashSet();
         if (CurrentTrack != null) retainedIds.Add(CurrentTrack.Id);
-
-        foreach (var id in _transientTracks.Keys.Where(id => !retainedIds.Contains(id)).ToList())
-        {
-            _transientTrackIdsByPath.Remove(_transientTracks[id].FilePath);
-            _transientTracks.Remove(id);
-        }
+        _transientTracks.RetainOnly(retainedIds);
     }
 
     public Task PlayAsync(Song song)
@@ -545,11 +510,11 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
         if (!IsCurrentRequest(request)) return;
 
-        _playbackQueue = idList;
+        _queue.SetOrder(idList);
         if (IsShuffleEnabled)
         {
-            if (shuffleOrder is null) GenerateShuffledQueue();
-            else _shuffledQueue = [.. shuffleOrder];
+            if (shuffleOrder is null) _queue.GenerateShuffled();
+            else _queue.SetShuffled([.. shuffleOrder]);
         }
         CurrentShuffleMode = mode;
         ShuffleModeChanged?.Invoke();
@@ -558,15 +523,13 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         if (IsShuffleEnabled)
         {
             // If playing from a specific item (not just "Shuffle All"), ensure it plays first
-            if (startShuffled != true && startIndex >= 0 && startIndex < _playbackQueue.Count)
+            if (startShuffled != true && startIndex >= 0 && startIndex < _queue.Order.Count)
             {
-                var targetSongId = _playbackQueue[startIndex];
-                _shuffledQueue.Remove(targetSongId);
-                _shuffledQueue.Insert(0, targetSongId);
-                RebuildShuffledQueueIndex();
+                _queue.MoveToShuffledFront(_queue.Order[startIndex]);
+                _queue.RebuildShuffledIndex();
             }
 
-            startIndex = GetPlaybackQueueIndex(_shuffledQueue[0]);
+            startIndex = _queue.IndexOf(_queue.Shuffled[0]);
         }
 
         if (IsCurrentRequest(request)) await PlayQueueItemInternalAsync(startIndex, request);
@@ -601,22 +564,22 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         }
 
         // If no track is loaded but a queue exists, play from the last known position.
-        if (_playbackQueue.Any())
+        if (_queue.Order.Any())
         {
             var indexToPlay = CurrentQueueIndex >= 0 ? CurrentQueueIndex : 0;
 
-            if (IsShuffleEnabled && _shuffledQueue.Any())
+            if (IsShuffleEnabled && _queue.Shuffled.Any())
             {
                 var shuffledIndex = CurrentShuffledIndex >= 0 ? CurrentShuffledIndex : 0;
-                var songIdToPlay = _shuffledQueue.ElementAtOrDefault(shuffledIndex);
+                var songIdToPlay = _queue.Shuffled.ElementAtOrDefault(shuffledIndex);
                 if (songIdToPlay != Guid.Empty)
                 {
-                    indexToPlay = GetPlaybackQueueIndex(songIdToPlay);
+                    indexToPlay = _queue.IndexOf(songIdToPlay);
                     if (indexToPlay == -1) indexToPlay = 0;
                 }
             }
 
-            if (indexToPlay >= 0 && indexToPlay < _playbackQueue.Count) await PlayQueueItemInternalAsync(indexToPlay, request);
+            if (indexToPlay >= 0 && indexToPlay < _queue.Order.Count) await PlayQueueItemInternalAsync(indexToPlay, request);
         }
     }
 
@@ -675,7 +638,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             else
                 await StopInternalAsync(request);
         }
-        else if (_playbackQueue.Any())
+        else if (_queue.Order.Any())
         {
             // Pressing Next should resume playback from the current position.
             await PlayQueueItemInternalAsync(CurrentQueueIndex, request);
@@ -711,7 +674,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             else
                 await StopInternalAsync(request);
         }
-        else if (_playbackQueue.Any())
+        else if (_queue.Order.Any())
         {
             // Pressing Previous should resume playback from the current position.
             await PlayQueueItemInternalAsync(CurrentQueueIndex, request);
@@ -781,11 +744,11 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
         if (IsShuffleEnabled)
         {
-            GenerateShuffledQueue();
+            _queue.GenerateShuffled();
         }
         else
         {
-            _shuffledQueue.Clear();
+            _queue.ClearShuffled();
         }
         CommitQueueChanges();
 
@@ -812,9 +775,9 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
     public Task AddToQueueAsync(Guid songId)
     {
-        if (songId == Guid.Empty || GetPlaybackQueueIndex(songId) >= 0) return Task.CompletedTask;
+        if (songId == Guid.Empty || _queue.IndexOf(songId) >= 0) return Task.CompletedTask;
 
-        _playbackQueue.Add(songId);
+        _queue.Add(songId);
         CommitQueueChanges();
 
         return Task.CompletedTask;
@@ -829,14 +792,14 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     {
         if (songIds == null) return Task.CompletedTask;
 
-        var queuedIds = _playbackQueue.ToHashSet();
+        var queuedIds = _queue.Order.ToHashSet();
         var idsToAdd = songIds
             .Where(id => id != Guid.Empty && queuedIds.Add(id))
             .ToList();
 
         if (idsToAdd.Count > 0)
         {
-            _playbackQueue.AddRange(idsToAdd);
+            _queue.AddRange(idsToAdd);
             CommitQueueChanges();
         }
 
@@ -852,24 +815,11 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     {
         if (songId == Guid.Empty) return Task.CompletedTask;
 
-        MoveAfterCurrent(_playbackQueue, songId, CurrentQueueIndex);
-        if (IsShuffleEnabled) MoveAfterCurrent(_shuffledQueue, songId, CurrentShuffledIndex);
+        _queue.MoveAfterCurrent(songId, CurrentTrack?.Id, CurrentQueueIndex, inShuffled: false);
+        if (IsShuffleEnabled) _queue.MoveAfterCurrent(songId, CurrentTrack?.Id, CurrentShuffledIndex, inShuffled: true);
         CommitQueueChanges();
 
         return Task.CompletedTask;
-    }
-
-    private void MoveAfterCurrent(List<Guid> queue, Guid songId, int stoppedIndex)
-    {
-        var currentIndex = CurrentTrack == null ? stoppedIndex : queue.IndexOf(CurrentTrack.Id);
-        var removedIndex = queue.IndexOf(songId);
-        if (removedIndex >= 0)
-        {
-            queue.RemoveAt(removedIndex);
-            if (removedIndex < currentIndex) currentIndex--;
-        }
-
-        queue.Insert(Math.Clamp(currentIndex + 1, 0, queue.Count), songId);
     }
 
     public Task RemoveFromQueueAsync(Song song)
@@ -878,7 +828,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     }
 
     public Task RemoveFromQueueAsync(Guid songId) =>
-        GetPlaybackQueueIndex(songId) < 0 ? Task.CompletedTask : RemoveRangeFromQueueAsync([songId]);
+        _queue.IndexOf(songId) < 0 ? Task.CompletedTask : RemoveRangeFromQueueAsync([songId]);
 
     private void FinalizeCurrentListenBeforeQueueRemoval()
     {
@@ -895,26 +845,9 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             trackForDisposal: true);
     }
 
-    private Guid? GetNextSurvivingSongId(HashSet<Guid> idsToRemove)
-    {
-        var activeQueue = IsShuffleEnabled ? _shuffledQueue : _playbackQueue;
-        var currentIndex = IsShuffleEnabled ? CurrentShuffledIndex : CurrentQueueIndex;
-        if (currentIndex < 0 || currentIndex >= activeQueue.Count) return null;
-
-        for (var i = currentIndex + 1; i < activeQueue.Count; i++)
-        {
-            if (!idsToRemove.Contains(activeQueue[i])) return activeQueue[i];
-        }
-
-        if (CurrentRepeatMode != RepeatMode.RepeatAll) return null;
-
-        for (var i = 0; i < currentIndex; i++)
-        {
-            if (!idsToRemove.Contains(activeQueue[i])) return activeQueue[i];
-        }
-
-        return null;
-    }
+    private Guid? GetNextSurvivingSongId(HashSet<Guid> idsToRemove) =>
+        _queue.GetNextSurvivingSongId(idsToRemove, IsShuffleEnabled ? CurrentShuffledIndex : CurrentQueueIndex,
+            IsShuffleEnabled, CurrentRepeatMode == RepeatMode.RepeatAll);
 
     public Task RemoveRangeFromQueueAsync(IEnumerable<Guid> songIds)
     {
@@ -935,7 +868,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             RemoveQueuedTracks(idsToRemove);
             if (nextSongId.HasValue && IsCurrentRequest(request))
             {
-                var index = GetPlaybackQueueIndex(nextSongId.Value);
+                var index = _queue.IndexOf(nextSongId.Value);
                 if (index >= 0) await PlayQueueItemInternalAsync(index, request);
             }
         });
@@ -943,8 +876,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
     private void RemoveQueuedTracks(HashSet<Guid> idsToRemove)
     {
-        _playbackQueue.RemoveAll(idsToRemove.Contains);
-        _shuffledQueue.RemoveAll(idsToRemove.Contains);
+        _queue.RemoveAll(idsToRemove);
         CommitQueueChanges();
     }
 
@@ -953,7 +885,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
     private async Task PlayQueueItemInternalAsync(int originalQueueIndex, int request)
     {
-        if (originalQueueIndex < 0 || originalQueueIndex >= _playbackQueue.Count)
+        if (originalQueueIndex < 0 || originalQueueIndex >= _queue.Order.Count)
         {
             await StopInternalAsync(request);
             return;
@@ -978,13 +910,13 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         var skipCount = 0;
         Song? song = null;
 
-        while (skipCount < maxSkipAttempts && currentIndex >= 0 && currentIndex < _playbackQueue.Count)
+        while (skipCount < maxSkipAttempts && currentIndex >= 0 && currentIndex < _queue.Order.Count)
         {
-            var songId = _playbackQueue[currentIndex];
+            var songId = _queue.Order[currentIndex];
             song = _transientTracks.GetValueOrDefault(songId)
                    ?? await _libraryReader.GetSongByIdAsync(songId);
             if (!IsCurrentRequest(request)) return;
-            currentIndex = GetPlaybackQueueIndex(songId);
+            currentIndex = _queue.IndexOf(songId);
             if (currentIndex < 0)
             {
                 await StopInternalAsync(request);
@@ -1018,7 +950,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         if (!_transientTracks.ContainsKey(song.Id)) await StartListenSessionAsync(song.Id, request);
         if (!IsCurrentRequest(request)) return;
 
-        CurrentShuffledIndex = IsShuffleEnabled ? GetShuffledQueueIndex(song.Id) : -1;
+        CurrentShuffledIndex = IsShuffleEnabled ? _queue.ShuffledIndexOf(song.Id) : -1;
         _logger.LogDebug("Now playing '{SongTitle}' (Index: {QueueIndex}, Shuffled Index: {ShuffledIndex})",
             song.Title, CurrentQueueIndex, CurrentShuffledIndex);
 
@@ -1062,8 +994,8 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     {
         if (!_isInitialized) return;
 
-        var playbackQueue = _playbackQueue.Where(id => !_transientTracks.ContainsKey(id)).ToList();
-        var shuffledQueue = _shuffledQueue.Where(id => !_transientTracks.ContainsKey(id)).ToList();
+        var playbackQueue = _queue.Order.Where(id => !_transientTracks.ContainsKey(id)).ToList();
+        var shuffledQueue = _queue.Shuffled.Where(id => !_transientTracks.ContainsKey(id)).ToList();
         var currentTrackId = CurrentTrack is not null && !_transientTracks.ContainsKey(CurrentTrack.Id)
             ? CurrentTrack.Id
             : (Guid?)null;
@@ -1073,9 +1005,9 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             CurrentTrackId = currentTrackId,
             ShuffleMode = CurrentShuffleMode,
             PlaybackQueueTrackIds = playbackQueue,
-            CurrentPlaybackQueueIndex = playbackQueue.IndexOf(_playbackQueue.ElementAtOrDefault(CurrentQueueIndex)),
+            CurrentPlaybackQueueIndex = playbackQueue.IndexOf(_queue.Order.ElementAtOrDefault(CurrentQueueIndex)),
             ShuffledQueueTrackIds = IsShuffleEnabled ? shuffledQueue : [],
-            CurrentShuffledQueueIndex = shuffledQueue.IndexOf(_shuffledQueue.ElementAtOrDefault(CurrentShuffledIndex))
+            CurrentShuffledQueueIndex = shuffledQueue.IndexOf(_queue.Shuffled.ElementAtOrDefault(CurrentShuffledIndex))
         };
         await _settingsService.SavePlaybackStateAsync(state);
     }
@@ -1191,36 +1123,36 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     {
         _logger.LogDebug("Attempting to restore previous playback state.");
         var savedQueue = state.PlaybackQueueTrackIds ?? [];
-        _playbackQueue = savedQueue.Where(id => id != Guid.Empty).Distinct().ToList();
-        RebuildPlaybackQueueIndex();
+        _queue.SetOrder(savedQueue.Where(id => id != Guid.Empty).Distinct().ToList());
+        _queue.RebuildIndex();
 
-        if (!_playbackQueue.Any()) return false;
+        if (!_queue.Order.Any()) return false;
         CurrentShuffleMode = Enum.IsDefined(state.ShuffleMode) ? state.ShuffleMode : ShuffleMode.Random;
 
         if (IsShuffleEnabled)
         {
-            _shuffledQueue = (state.ShuffledQueueTrackIds ?? Enumerable.Empty<Guid>()).ToList();
+            _queue.SetShuffled((state.ShuffledQueueTrackIds ?? Enumerable.Empty<Guid>()).ToList());
 
             // Equal lengths alone do not rule out duplicate or unrelated tracks.
-            if (_shuffledQueue.Count != _playbackQueue.Count ||
-                !_shuffledQueue.ToHashSet().SetEquals(_playbackQueue))
-                GenerateShuffledQueue();
-            RebuildShuffledQueueIndex();
+            if (_queue.Shuffled.Count != _queue.Order.Count ||
+                !_queue.Shuffled.ToHashSet().SetEquals(_queue.Order))
+                _queue.GenerateShuffled();
+            _queue.RebuildShuffledIndex();
         }
 
         if (state.CurrentTrackId.HasValue)
         {
-            var currentSong = GetPlaybackQueueIndex(state.CurrentTrackId.Value) >= 0
+            var currentSong = _queue.IndexOf(state.CurrentTrackId.Value) >= 0
                 ? await _libraryReader.GetSongByIdAsync(state.CurrentTrackId.Value)
                 : null;
             if (_isDisposed) return false;
             if (currentSong != null)
             {
                 CurrentTrack = currentSong;
-                CurrentQueueIndex = GetPlaybackQueueIndex(currentSong.Id);
+                CurrentQueueIndex = _queue.IndexOf(currentSong.Id);
                 if (IsShuffleEnabled)
                 {
-                    CurrentShuffledIndex = GetShuffledQueueIndex(currentSong.Id);
+                    CurrentShuffledIndex = _queue.ShuffledIndexOf(currentSong.Id);
                 }
 
                 CurrentListenHistoryId = null;
@@ -1243,7 +1175,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             var positionId = state.CurrentPlaybackQueueIndex >= 0 && state.CurrentPlaybackQueueIndex < savedQueue.Count
                 ? savedQueue[state.CurrentPlaybackQueueIndex]
                 : Guid.Empty;
-            CurrentQueueIndex = Math.Max(0, GetPlaybackQueueIndex(positionId));
+            CurrentQueueIndex = Math.Max(0, _queue.IndexOf(positionId));
             CurrentShuffledIndex = -1;
             if (IsShuffleEnabled)
             {
@@ -1251,10 +1183,10 @@ public partial class MusicPlaybackService : IMusicPlaybackService
                 var shuffledPositionId = state.CurrentShuffledQueueIndex >= 0 && state.CurrentShuffledQueueIndex < savedShuffle.Count
                     ? savedShuffle[state.CurrentShuffledQueueIndex]
                     : Guid.Empty;
-                CurrentShuffledIndex = GetShuffledQueueIndex(shuffledPositionId);
+                CurrentShuffledIndex = _queue.ShuffledIndexOf(shuffledPositionId);
                 if (CurrentShuffledIndex < 0)
-                    CurrentShuffledIndex = GetShuffledQueueIndex(_playbackQueue[CurrentQueueIndex]);
-                CurrentQueueIndex = GetPlaybackQueueIndex(_shuffledQueue[CurrentShuffledIndex]);
+                    CurrentShuffledIndex = _queue.ShuffledIndexOf(_queue.Order[CurrentQueueIndex]);
+                CurrentQueueIndex = _queue.IndexOf(_queue.Shuffled[CurrentShuffledIndex]);
             }
         }
 
@@ -1264,12 +1196,8 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     private void ClearQueuesInternal()
     {
         _queueVersion++;
-        _playbackQueue.Clear();
-        _shuffledQueue.Clear();
-        _playbackQueueIndex.Clear();
-        _shuffledQueueIndex.Clear();
+        _queue.Clear();
         _transientTracks.Clear();
-        _transientTrackIdsByPath.Clear();
         CurrentTrack = null;
         CurrentQueueIndex = -1;
         CurrentShuffledIndex = -1;
@@ -1278,57 +1206,15 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         CurrentShuffleMode = ShuffleMode.Random;
     }
 
-    private void GenerateShuffledQueue()
-    {
-        _shuffledQueue = new List<Guid>(_playbackQueue);
-        Random.Shared.Shuffle(CollectionsMarshal.AsSpan(_shuffledQueue));
-    }
-
-    private void RebuildPlaybackQueueIndex()
-    {
-        _playbackQueueIndex.Clear();
-        for (var i = 0; i < _playbackQueue.Count; i++)
-        {
-            _playbackQueueIndex[_playbackQueue[i]] = i;
-        }
-    }
-
-    private void RebuildShuffledQueueIndex()
-    {
-        _shuffledQueueIndex.Clear();
-        for (var i = 0; i < _shuffledQueue.Count; i++)
-        {
-            _shuffledQueueIndex[_shuffledQueue[i]] = i;
-        }
-    }
-
-    private int GetPlaybackQueueIndex(Guid songId) => _playbackQueueIndex.GetValueOrDefault(songId, -1);
-
-    private int GetShuffledQueueIndex(Guid songId) => _shuffledQueueIndex.GetValueOrDefault(songId, -1);
-
-    private int GetAdjacentTrackIndex(int originalIndex, bool moveForward)
-    {
-        if (originalIndex < 0 || originalIndex >= _playbackQueue.Count) return -1;
-        var queue = IsShuffleEnabled ? _shuffledQueue : _playbackQueue;
-        var index = IsShuffleEnabled ? GetShuffledQueueIndex(_playbackQueue[originalIndex]) : originalIndex;
-        if (index < 0) return -1;
-
-        var nextIndex = index + (moveForward ? 1 : -1);
-        if (nextIndex < 0 || nextIndex >= queue.Count)
-        {
-            if (CurrentRepeatMode != RepeatMode.RepeatAll) return -1;
-            nextIndex = moveForward ? 0 : queue.Count - 1;
-        }
-
-        return IsShuffleEnabled ? GetPlaybackQueueIndex(queue[nextIndex]) : nextIndex;
-    }
+    private int GetAdjacentTrackIndex(int originalIndex, bool moveForward) =>
+        _queue.GetAdjacentIndex(originalIndex, moveForward, IsShuffleEnabled, CurrentRepeatMode == RepeatMode.RepeatAll);
 
     private void UpdateSmtcControls()
     {
         var canGoNext = false;
         var canGoPrevious = false;
 
-        if (_playbackQueue.Any())
+        if (_queue.Order.Any())
         {
             if (CurrentRepeatMode != RepeatMode.Off)
             {
@@ -1337,12 +1223,12 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             }
             else if (IsShuffleEnabled)
             {
-                canGoNext = CurrentShuffledIndex < _shuffledQueue.Count - 1;
+                canGoNext = CurrentShuffledIndex < _queue.Shuffled.Count - 1;
                 canGoPrevious = CurrentShuffledIndex > 0;
             }
             else
             {
-                canGoNext = CurrentQueueIndex < _playbackQueue.Count - 1;
+                canGoNext = CurrentQueueIndex < _queue.Order.Count - 1;
                 canGoPrevious = CurrentQueueIndex > 0;
             }
 

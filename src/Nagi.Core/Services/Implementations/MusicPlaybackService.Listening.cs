@@ -77,7 +77,7 @@ public partial class MusicPlaybackService
     private bool ShouldStopAfterTrack()
     {
         if (StopMode == PlaybackStopMode.AfterTrack) return true;
-        var count = IsShuffleEnabled ? _shuffledQueue.Count : _playbackQueue.Count;
+        var count = IsShuffleEnabled ? _queue.Shuffled.Count : _queue.Order.Count;
         var index = IsShuffleEnabled ? CurrentShuffledIndex : CurrentQueueIndex;
         return StopMode == PlaybackStopMode.EndOfQueue && index == count - 1;
     }
