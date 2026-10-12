@@ -14,7 +14,7 @@ namespace Nagi.Core.Tests;
 public partial class MusicPlaybackServiceTests : IAsyncDisposable
 {
     private readonly IAudioPlayer _audioPlayer;
-    private readonly ILibraryFake _libraryService;
+    private readonly LibraryFakes _library;
     private readonly ILogger<MusicPlaybackService> _logger;
     private readonly IMetadataService _metadataService;
 
@@ -28,7 +28,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     {
         _settingsService = Substitute.For<ISettingsService>();
         _audioPlayer = Substitute.For<IAudioPlayer>();
-        _libraryService = Substitute.For<ILibraryFake>();
+        _library = new LibraryFakes();
         _metadataService = Substitute.For<IMetadataService>();
         _logger = Substitute.For<ILogger<MusicPlaybackService>>();
 
@@ -45,15 +45,14 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         _service = new MusicPlaybackService(
             _settingsService,
             _audioPlayer,
-            _libraryService, _libraryService,
-            _metadataService,
+            _library.Reader, _library.Writer,            _metadataService,
             _logger);
 
         _testSongs = CreateTestSongs(5);
 
         foreach (var song in _testSongs)
         {
-            _libraryService.GetSongByIdAsync(song.Id).Returns(song);
+            _library.Reader.GetSongByIdAsync(song.Id).Returns(song);
         }
     }
 
@@ -167,9 +166,9 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         await _service.AddTransientFilesToQueueAsync([path]);
         var transientId = _service.PlaybackQueue.Single();
         var librarySong = _testSongs[0];
-        _libraryService.GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
+        _library.Reader.GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
             .Returns(new Dictionary<Guid, Song> { [librarySong.Id] = librarySong });
-        _libraryService.GetSongsDurationAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
+        _library.Reader.GetSongsDurationAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
             .Returns(TimeSpan.FromSeconds(30));
         Guid[] ids = [transientId, librarySong.Id, transientId];
 
@@ -177,7 +176,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         songs[transientId].Genres.Select(g => g.Name).Should().Equal("Rock");
         songs.Should().ContainKey(librarySong.Id);
         (await _service.GetQueueDurationAsync(ids)).Should().Be(TimeSpan.FromMinutes(2));
-        await _libraryService.Received().GetSongsDurationAsync(
+        await _library.Reader.Received().GetSongsDurationAsync(
             Arg.Is<IEnumerable<Guid>>(values => values.SequenceEqual(new[] { librarySong.Id })), Arg.Any<CancellationToken>());
     }
 
@@ -261,7 +260,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         await _service.InitializeAsync();
         await _service.PlayAsync(_testSongs);
         _audioPlayer.ClearReceivedCalls();
-        _libraryService.ClearReceivedCalls();
+        _library.ClearReceivedCalls();
 
         await _service.AddTransientFilesToQueueAsync([firstPath, secondPath]);
 
@@ -277,7 +276,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         await _service.PlayQueueItemAsync(_testSongs.Count);
 
         await _audioPlayer.Received(1).LoadAsync(Arg.Is<Song>(song => song.FilePath == firstPath));
-        await _libraryService.DidNotReceive().StartListenSessionAsync(
+        await _library.Writer.DidNotReceive().StartListenSessionAsync(
             externalIds[0], Arg.Any<PlaybackContext>());
     }
 
@@ -450,7 +449,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
         _settingsService.GetPlaybackStateAsync().Returns(savedState);
 
-        _libraryService.GetSongByIdAsync(_testSongs[1].Id).Returns((Song?)null);
+        _library.Reader.GetSongByIdAsync(_testSongs[1].Id).Returns((Song?)null);
 
         await _service.InitializeAsync();
 
@@ -627,12 +626,12 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     public async Task PlayAsync_CreatesListenSessionAndSetsContext()
     {
         await _service.InitializeAsync();
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(100L);
+        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(100L);
 
         await _service.PlayAsync(_testSongs[0]);
 
         _service.CurrentListenHistoryId.Should().Be(100L);
-        await _libraryService.Received(1).StartListenSessionAsync(
+        await _library.Writer.Received(1).StartListenSessionAsync(
             _testSongs[0].Id,
             Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Library && c.ContextId == null));
     }
@@ -641,7 +640,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     public async Task PlayAsync_RaisesTrackChanged_AfterListenSessionIdIsSet()
     {
         await _service.InitializeAsync();
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(150L);
+        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(150L);
 
         long? listenHistoryIdSeenByEvent = null;
         _service.TrackChanged += () => listenHistoryIdSeenByEvent = _service.CurrentListenHistoryId;
@@ -661,7 +660,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     public async Task StopAsync_WithActiveSession_FinalizesSessionAsPausedAndAbandoned()
     {
         await _service.InitializeAsync();
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(200L);
+        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(200L);
         await _service.PlayAsync(_testSongs[0]);
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(30));
 
@@ -669,7 +668,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         await _service.FlushPendingFinalizationAsync();
 
         _service.CurrentListenHistoryId.Should().BeNull();
-        await _libraryService.Received(1).FinalizeListenSessionAsync(
+        await _library.Writer.Received(1).FinalizeListenSessionAsync(
             200L,
             TimeSpan.FromSeconds(30),
             PlaybackEndReason.PausedAndAbandoned);
@@ -679,16 +678,16 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     public async Task NextAsync_WithActiveSession_FinalizesSessionAsSkipped()
     {
         await _service.InitializeAsync();
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(300L);
+        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(300L);
         await _service.PlayAsync(_testSongs, 0);
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(45));
 
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(301L);
+        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(301L);
 
         await _service.NextAsync();
         await _service.FlushPendingFinalizationAsync();
 
-        await _libraryService.Received(1).FinalizeListenSessionAsync(
+        await _library.Writer.Received(1).FinalizeListenSessionAsync(
             300L,
             TimeSpan.FromSeconds(45),
             PlaybackEndReason.Skipped);
@@ -702,7 +701,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     public async Task OnPlaybackEnded_FinalizesSessionAsFinishedAndAdvancesQueue()
     {
         await _service.InitializeAsync();
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(400L);
+        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(400L);
         await _service.PlayAsync(_testSongs, 0);
 
         var duration = TimeSpan.FromMinutes(3);
@@ -712,7 +711,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         _audioPlayer.PlaybackEnded += Raise.Event<Action>();
         await _service.FlushPendingFinalizationAsync();
 
-        await _libraryService.Received(1).FinalizeListenSessionAsync(
+        await _library.Writer.Received(1).FinalizeListenSessionAsync(
             400L,
             duration,
             PlaybackEndReason.Finished);
@@ -726,14 +725,14 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     {
         await _service.InitializeAsync();
         var albumId = Guid.NewGuid();
-        _libraryService.GetAllSongIdsByAlbumIdAsync(albumId, Arg.Any<SongSortOrder>())
+        _library.Reader.GetAllSongIdsByAlbumIdAsync(albumId, Arg.Any<SongSortOrder>())
             .Returns(_testSongs.Select(s => s.Id).ToList());
 
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(500L);
+        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(500L);
 
         await _service.PlayAlbumAsync(albumId);
 
-        await _libraryService.Received(1).StartListenSessionAsync(
+        await _library.Writer.Received(1).StartListenSessionAsync(
             _testSongs[0].Id,
             Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Album && c.ContextId == albumId));
     }
@@ -742,13 +741,13 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     public async Task DisposeAsync_FinalizesActiveSessionAsPausedAndAbandoned()
     {
         await _service.InitializeAsync();
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(600L);
+        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(600L);
         await _service.PlayAsync(_testSongs[0]);
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(15));
 
         await _service.DisposeAsync();
 
-        await _libraryService.Received(1).FinalizeListenSessionAsync(
+        await _library.Writer.Received(1).FinalizeListenSessionAsync(
             600L,
             TimeSpan.FromSeconds(15),
             PlaybackEndReason.PausedAndAbandoned);
@@ -758,7 +757,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     public async Task PlayTransientFileAsync_StartsTransientSessionAndFinalizesPrevious()
     {
         await _service.InitializeAsync();
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(100L);
+        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(100L);
 
         await _service.PlayAsync(_testSongs[0]);
 
@@ -768,18 +767,18 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
 
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(20));
         _audioPlayer.ClearReceivedCalls();
-        _libraryService.ClearReceivedCalls();
+        _library.ClearReceivedCalls();
 
         await _service.PlayTransientFileAsync(filePath);
         await _service.FlushPendingFinalizationAsync();
 
-        await _libraryService.Received(1).FinalizeListenSessionAsync(
+        await _library.Writer.Received(1).FinalizeListenSessionAsync(
             100L,
             TimeSpan.FromSeconds(20),
             PlaybackEndReason.Skipped);
 
         _service.CurrentListenHistoryId.Should().BeNull();
-        await _libraryService.DidNotReceiveWithAnyArgs().StartListenSessionAsync(Guid.Empty, default!);
+        await _library.Writer.DidNotReceiveWithAnyArgs().StartListenSessionAsync(Guid.Empty, default!);
     }
 
     [Fact]
@@ -803,13 +802,13 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
             Folder = new Folder { Path = "C:\\temp" }
         };
 
-        _libraryService.GetSongByFilePathAsync(filePath).Returns(mappedSong);
-        _libraryService.StartListenSessionAsync(mappedSong.Id, Arg.Any<PlaybackContext>()).Returns(777L);
+        _library.Reader.GetSongByFilePathAsync(filePath).Returns(mappedSong);
+        _library.Writer.StartListenSessionAsync(mappedSong.Id, Arg.Any<PlaybackContext>()).Returns(777L);
 
         await _service.PlayTransientFileAsync(filePath);
 
         _service.CurrentListenHistoryId.Should().Be(777L);
-        await _libraryService.Received(1).StartListenSessionAsync(
+        await _library.Writer.Received(1).StartListenSessionAsync(
             mappedSong.Id,
             Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Transient && c.ContextId == null));
     }
@@ -819,7 +818,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     {
 
         await _service.InitializeAsync();
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(700L);
+        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(700L);
         await _service.PlayAsync(_testSongs[0]);
 
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(15));
@@ -827,15 +826,15 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         await _service.AddToQueueAsync(_testSongs[1]);
         await _service.AddToQueueAsync(_testSongs[2]);
 
-        _libraryService.GetSongByIdAsync(_testSongs[1].Id).Returns((Song?)null);
+        _library.Reader.GetSongByIdAsync(_testSongs[1].Id).Returns((Song?)null);
 
-        _libraryService.GetSongByIdAsync(_testSongs[2].Id).Returns(_testSongs[2]);
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(701L);
+        _library.Reader.GetSongByIdAsync(_testSongs[2].Id).Returns(_testSongs[2]);
+        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(701L);
 
         await _service.PlayQueueItemAsync(1);
         await _service.FlushPendingFinalizationAsync();
 
-        await _libraryService.Received(1).FinalizeListenSessionAsync(
+        await _library.Writer.Received(1).FinalizeListenSessionAsync(
             700L,
             TimeSpan.FromSeconds(15),
             PlaybackEndReason.Skipped);
@@ -848,7 +847,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     public async Task ClearQueueAsync_WithActiveSession_FinalizesSessionAsPausedAndAbandoned()
     {
         await _service.InitializeAsync();
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(800L);
+        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(800L);
         await _service.PlayAsync(_testSongs[0]);
 
         await _service.AddToQueueAsync(_testSongs[1]);
@@ -858,7 +857,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         await _service.ClearQueueAsync();
         await _service.FlushPendingFinalizationAsync();
 
-        await _libraryService.Received(1).FinalizeListenSessionAsync(
+        await _library.Writer.Received(1).FinalizeListenSessionAsync(
             800L,
             TimeSpan.FromSeconds(25),
             PlaybackEndReason.PausedAndAbandoned);
@@ -871,17 +870,17 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     public async Task PreviousAsync_Under3Seconds_FinalizesSessionAsSkipped()
     {
         await _service.InitializeAsync();
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(900L);
+        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(900L);
         await _service.PlayAsync(_testSongs, 1);
 
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(2));
 
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(901L);
+        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(901L);
 
         await _service.PreviousAsync();
         await _service.FlushPendingFinalizationAsync();
 
-        await _libraryService.Received(1).FinalizeListenSessionAsync(
+        await _library.Writer.Received(1).FinalizeListenSessionAsync(
             900L,
             TimeSpan.FromSeconds(2),
             PlaybackEndReason.Skipped);
@@ -895,16 +894,16 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     public async Task PreviousAsync_Over3Seconds_DoesNotFinalizeSession()
     {
         await _service.InitializeAsync();
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1000L);
+        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1000L);
         await _service.PlayAsync(_testSongs, 1);
 
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(10));
-        _libraryService.ClearReceivedCalls();
+        _library.ClearReceivedCalls();
 
         await _service.PreviousAsync();
         await _service.FlushPendingFinalizationAsync();
 
-        await _libraryService.DidNotReceiveWithAnyArgs().FinalizeListenSessionAsync(default, default, default);
+        await _library.Writer.DidNotReceiveWithAnyArgs().FinalizeListenSessionAsync(default, default, default);
 
         _service.CurrentListenHistoryId.Should().Be(1000L);
         _service.CurrentTrack.Should().Be(_testSongs[1]);
@@ -917,14 +916,14 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     {
         await _service.InitializeAsync();
         var playlistId = Guid.NewGuid();
-        _libraryService.GetAllSongIdsByPlaylistIdAsync(playlistId, Arg.Any<SongSortOrder>())
+        _library.Reader.GetAllSongIdsByPlaylistIdAsync(playlistId, Arg.Any<SongSortOrder>())
             .Returns(_testSongs.Select(s => s.Id).ToList());
 
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1100L);
+        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1100L);
 
         await _service.PlayPlaylistAsync(playlistId);
 
-        await _libraryService.Received(1).StartListenSessionAsync(
+        await _library.Writer.Received(1).StartListenSessionAsync(
             _testSongs[0].Id,
             Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Playlist && c.ContextId == playlistId));
 
@@ -936,13 +935,13 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     {
         await _service.InitializeAsync();
         var artistId = Guid.NewGuid();
-        _libraryService.GetAllSongIdsByArtistIdAsync(artistId, Arg.Any<SongSortOrder>())
+        _library.Reader.GetAllSongIdsByArtistIdAsync(artistId, Arg.Any<SongSortOrder>())
             .Returns(_testSongs.Select(s => s.Id).ToList());
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1200L);
+        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1200L);
 
         await _service.PlayArtistAsync(artistId);
 
-        await _libraryService.Received(1).StartListenSessionAsync(
+        await _library.Writer.Received(1).StartListenSessionAsync(
             _testSongs[0].Id,
             Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Artist && c.ContextId == artistId));
         _service.CurrentListenHistoryId.Should().Be(1200L);
@@ -953,13 +952,13 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     {
         await _service.InitializeAsync();
         var folderId = Guid.NewGuid();
-        _libraryService.GetAllSongIdsByFolderIdAsync(folderId, Arg.Any<SongSortOrder>())
+        _library.Reader.GetAllSongIdsByFolderIdAsync(folderId, Arg.Any<SongSortOrder>())
             .Returns(_testSongs.Select(s => s.Id).ToList());
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1300L);
+        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1300L);
 
         await _service.PlayFolderAsync(folderId);
 
-        await _libraryService.Received(1).StartListenSessionAsync(
+        await _library.Writer.Received(1).StartListenSessionAsync(
             _testSongs[0].Id,
             Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Folder && c.ContextId == folderId));
         _service.CurrentListenHistoryId.Should().Be(1300L);
@@ -970,13 +969,13 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     {
         await _service.InitializeAsync();
         var genreId = Guid.NewGuid();
-        _libraryService.GetAllSongIdsByGenreIdAsync(genreId, Arg.Any<SongSortOrder>())
+        _library.Reader.GetAllSongIdsByGenreIdAsync(genreId, Arg.Any<SongSortOrder>())
             .Returns(_testSongs.Select(s => s.Id).ToList());
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1400L);
+        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1400L);
 
         await _service.PlayGenreAsync(genreId);
 
-        await _libraryService.Received(1).StartListenSessionAsync(
+        await _library.Writer.Received(1).StartListenSessionAsync(
             _testSongs[0].Id,
             Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Genre && c.ContextId == genreId));
         _service.CurrentListenHistoryId.Should().Be(1400L);
@@ -989,11 +988,11 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         await _service.InitializeAsync();
         var smartPlaylistId = Guid.NewGuid();
         var context = new PlaybackContext(PlaybackContextType.SmartPlaylist, smartPlaylistId);
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1500L);
+        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1500L);
 
         await _service.PlayAsync(_testSongs.Select(s => s.Id).ToList(), 0, null, context);
 
-        await _libraryService.Received(1).StartListenSessionAsync(
+        await _library.Writer.Received(1).StartListenSessionAsync(
             _testSongs[0].Id,
             Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.SmartPlaylist && c.ContextId == smartPlaylistId));
         _service.CurrentListenHistoryId.Should().Be(1500L);
@@ -1003,11 +1002,11 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     public async Task PlayAsync_WithNullContext_DefaultsToLibraryContext()
     {
         await _service.InitializeAsync();
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1600L);
+        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1600L);
 
         await _service.PlayAsync(_testSongs.Select(s => s.Id).ToList());
 
-        await _libraryService.Received(1).StartListenSessionAsync(
+        await _library.Writer.Received(1).StartListenSessionAsync(
             _testSongs[0].Id,
             Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Library && c.ContextId == null));
     }
@@ -1133,7 +1132,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         await _service.InitializeAsync();
         await _service.PlayAsync(_testSongs, 1);
         var songToPlayNext = new Song { Id = Guid.NewGuid(), Title = "Next Song" };
-        _libraryService.GetSongByIdAsync(songToPlayNext.Id).Returns(songToPlayNext);
+        _library.Reader.GetSongByIdAsync(songToPlayNext.Id).Returns(songToPlayNext);
 
         await _service.PlayNextAsync(songToPlayNext);
 
@@ -1199,7 +1198,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     public async Task RemoveFromQueueAsync_WhenRemovingCurrentTrack_CapturesPositionBeforePlayerStops()
     {
         await _service.InitializeAsync();
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(2001L);
+        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(2001L);
         await _service.PlayAsync(_testSongs, 1);
 
         var position = TimeSpan.FromSeconds(73);
@@ -1209,12 +1208,12 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
             position = TimeSpan.Zero;
             return Task.CompletedTask;
         });
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(2002L);
+        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(2002L);
 
         await _service.RemoveFromQueueAsync(_testSongs[1]);
         await _service.FlushPendingFinalizationAsync();
 
-        await _libraryService.Received(1).FinalizeListenSessionAsync(
+        await _library.Writer.Received(1).FinalizeListenSessionAsync(
             2001L,
             TimeSpan.FromSeconds(73),
             PlaybackEndReason.Skipped);
@@ -1225,7 +1224,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     public async Task RemoveRangeFromQueueAsync_WhenRemovingCurrentTrack_CapturesPositionBeforePlayerStops()
     {
         await _service.InitializeAsync();
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(2101L);
+        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(2101L);
         await _service.PlayAsync(_testSongs, 1);
 
         var position = TimeSpan.FromSeconds(91);
@@ -1235,12 +1234,12 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
             position = TimeSpan.Zero;
             return Task.CompletedTask;
         });
-        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(2102L);
+        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(2102L);
 
         await _service.RemoveRangeFromQueueAsync(new[] { _testSongs[1].Id });
         await _service.FlushPendingFinalizationAsync();
 
-        await _libraryService.Received(1).FinalizeListenSessionAsync(
+        await _library.Writer.Received(1).FinalizeListenSessionAsync(
             2101L,
             TimeSpan.FromSeconds(91),
             PlaybackEndReason.Skipped);
@@ -1356,7 +1355,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
 
         _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
         _settingsService.GetPlaybackStateAsync().Returns(savedState);
-        using var restored = new MusicPlaybackService(_settingsService, _audioPlayer, _libraryService, _libraryService, _metadataService, _logger);
+        using var restored = new MusicPlaybackService(_settingsService, _audioPlayer, _library.Reader, _library.Writer, _metadataService, _logger);
         await restored.InitializeAsync();
         restored.PlaybackQueue.Should().BeEmpty();
         restored.CurrentTrack.Should().BeNull();
@@ -1367,7 +1366,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     {
         const string path = "C:\\temp\\queue.mp3";
         _metadataService.ExtractMetadataAsync(path).Returns(new SongFileMetadata { Title = "Before edit" });
-        _libraryService.GetSongsByIdsAsync(Arg.Any<IEnumerable<Guid>>())
+        _library.Reader.GetSongsByIdsAsync(Arg.Any<IEnumerable<Guid>>())
             .Returns(new Dictionary<Guid, Song>());
         await _service.InitializeAsync();
         await _service.AddTransientFilesToQueueAsync([path]);
@@ -1567,12 +1566,12 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var first = _testSongs[0];
         var second = _testSongs[1];
-        _libraryService.StartListenSessionAsync(first.Id, Arg.Any<PlaybackContext>()).Returns(101L);
-        _libraryService.StartListenSessionAsync(second.Id, Arg.Any<PlaybackContext>()).Returns(202L);
+        _library.Writer.StartListenSessionAsync(first.Id, Arg.Any<PlaybackContext>()).Returns(101L);
+        _library.Writer.StartListenSessionAsync(second.Id, Arg.Any<PlaybackContext>()).Returns(202L);
         if (delayAt == "lookup")
-            _libraryService.GetSongByIdAsync(first.Id).Returns(async _ => { await release.Task; return (Song?)first; });
+            _library.Reader.GetSongByIdAsync(first.Id).Returns(async _ => { await release.Task; return (Song?)first; });
         else if (delayAt == "session")
-            _libraryService.StartListenSessionAsync(first.Id, Arg.Any<PlaybackContext>())
+            _library.Writer.StartListenSessionAsync(first.Id, Arg.Any<PlaybackContext>())
                 .Returns(async _ => { await release.Task; return (long?)101L; });
         else
             _audioPlayer.LoadAsync(first).Returns(release.Task);
@@ -1588,7 +1587,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         _service.CurrentListenHistoryId.Should().Be(stop ? null : 202L);
         await _audioPlayer.Received(stop ? 0 : 1).PlayAsync();
         if (delayAt == "session")
-            await _libraryService.Received(1).FinalizeListenSessionAsync(101L, TimeSpan.Zero, PlaybackEndReason.PausedAndAbandoned);
+            await _library.Writer.Received(1).FinalizeListenSessionAsync(101L, TimeSpan.Zero, PlaybackEndReason.PausedAndAbandoned);
     }
 
     [Fact]
@@ -1596,7 +1595,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     {
         var release = new TaskCompletionSource<List<Guid>>(TaskCreationOptions.RunContinuationsAsynchronously);
         var albumId = Guid.NewGuid();
-        _libraryService.GetAllSongIdsByAlbumIdAsync(albumId, SongSortOrder.TrackNumberAsc).Returns(release.Task);
+        _library.Reader.GetAllSongIdsByAlbumIdAsync(albumId, SongSortOrder.TrackNumberAsc).Returns(release.Task);
         var oldRequest = _service.PlayAlbumAsync(albumId);
 
         await _service.PlayAsync(_testSongs[1]);
@@ -1612,7 +1611,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     {
         await _service.PlayAsync(_testSongs);
         var release = new TaskCompletionSource<Song?>(TaskCreationOptions.RunContinuationsAsynchronously);
-        _libraryService.GetSongByIdAsync(_testSongs[1].Id).Returns(release.Task);
+        _library.Reader.GetSongByIdAsync(_testSongs[1].Id).Returns(release.Task);
         var next = _service.NextAsync();
 
         _audioPlayer.PlaybackEnded += Raise.Event<Action>();
@@ -1650,10 +1649,10 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     [InlineData(true)]
     public async Task PlaybackEnded_WhenFinalizationIsDelayed_DoesNotAdvanceAfterNewRequestOrDisposal(bool dispose)
     {
-        _libraryService.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(101L);
+        _library.Writer.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(101L);
         await _service.PlayAsync(_testSongs);
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        _libraryService.FinalizeListenSessionAsync(101L, Arg.Any<TimeSpan>(), PlaybackEndReason.Finished)
+        _library.Writer.FinalizeListenSessionAsync(101L, Arg.Any<TimeSpan>(), PlaybackEndReason.Finished)
             .Returns(release.Task);
         _audioPlayer.PlaybackEnded += Raise.Event<Action>();
         var disposal = dispose ? _service.DisposeAsync().AsTask() : Task.CompletedTask;
@@ -1673,7 +1672,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     public async Task DisposeAsync_WaitsForLateListenSessionAndFinalizesIt()
     {
         var release = new TaskCompletionSource<long?>(TaskCreationOptions.RunContinuationsAsynchronously);
-        _libraryService.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(release.Task);
+        _library.Writer.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(release.Task);
         var playback = _service.PlayAsync(_testSongs[0]);
         var disposal = _service.DisposeAsync().AsTask();
         disposal.IsCompleted.Should().BeFalse();
@@ -1681,7 +1680,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         release.SetResult(42);
         await Task.WhenAll(playback, disposal);
 
-        await _libraryService.Received(1).FinalizeListenSessionAsync(42, TimeSpan.Zero, PlaybackEndReason.PausedAndAbandoned);
+        await _library.Writer.Received(1).FinalizeListenSessionAsync(42, TimeSpan.Zero, PlaybackEndReason.PausedAndAbandoned);
         await _audioPlayer.DidNotReceive().LoadAsync(Arg.Any<Song>());
     }
 
@@ -1739,7 +1738,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         {
             PlaybackQueueTrackIds = [_testSongs[0].Id], CurrentTrackId = _testSongs[0].Id
         });
-        _libraryService.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(52L);
+        _library.Writer.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(52L);
         await _service.InitializeAsync();
         _service.CurrentListenHistoryId.Should().BeNull();
 
@@ -1748,7 +1747,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         _service.CurrentListenHistoryId.Should().Be(52L);
         Received.InOrder(() =>
         {
-            _libraryService.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>());
+            _library.Writer.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>());
             _audioPlayer.PlayAsync();
         });
     }
@@ -1758,7 +1757,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     {
         var release = new TaskCompletionSource<Song?>(TaskCreationOptions.RunContinuationsAsynchronously);
         _settingsService.GetVolumeNormalizationEnabledAsync().Returns(true);
-        _libraryService.GetSongByIdAsync(_testSongs[0].Id).Returns(Task.FromResult<Song?>(_testSongs[0]), release.Task);
+        _library.Reader.GetSongByIdAsync(_testSongs[0].Id).Returns(Task.FromResult<Song?>(_testSongs[0]), release.Task);
         var playback = _service.PlayAsync(_testSongs[0]);
 
         _settingsService.VolumeNormalizationEnabledChanged += Raise.Event<Action<bool>>(false);

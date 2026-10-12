@@ -20,10 +20,10 @@ public class FolderSongListViewModelTests
     [InlineData(true, true)]
     public async Task InitializeAsync_ObsoleteFolderLookupCannotUpdateThePage(bool dispose, bool fails)
     {
-        var library = Substitute.For<ILibraryFake>();
+        var library = new LibraryFakes();
         var oldFolder = new Folder { Name = "Old", Path = @"C:\Old" };
         var pending = new TaskCompletionSource<Folder?>(TaskCreationOptions.RunContinuationsAsynchronously);
-        library.GetFolderByIdAsync(oldFolder.Id).Returns(pending.Task);
+        library.Reader.GetFolderByIdAsync(oldFolder.Id).Returns(pending.Task);
         using var viewModel = CreateViewModel(library, Substitute.For<IUISettingsService>());
         var loading = viewModel.InitializeAsync(oldFolder.Name, oldFolder.Id);
         if (dispose) viewModel.Dispose();
@@ -41,18 +41,18 @@ public class FolderSongListViewModelTests
 
         viewModel.PageTitle.Should().Be(title);
         viewModel.Breadcrumbs.Should().Equal(breadcrumbs);
-        await library.DidNotReceive().GetSongsInDirectoryOffsetAsync(oldFolder.Id, Arg.Any<string>(),
+        await library.Reader.DidNotReceive().GetSongsInDirectoryOffsetAsync(oldFolder.Id, Arg.Any<string>(),
             Arg.Any<int>(), Arg.Any<int>(), Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task PlaySubfolder_LookupCompletesAfterDisposal_DoesNotStartPlayback()
     {
-        var library = Substitute.For<ILibraryFake>();
+        var library = new LibraryFakes();
         var root = ConfigureRoot(library);
         var folder = new Folder { Name = "Album", Path = @"C:\Music\Album" };
         var pending = new TaskCompletionSource<List<Guid>>(TaskCreationOptions.RunContinuationsAsynchronously);
-        library.GetAllSongIdsInDirectoryRecursiveAsync(root.Id, folder.Path, Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
+        library.Reader.GetAllSongIdsInDirectoryRecursiveAsync(root.Id, folder.Path, Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns(pending.Task);
         var playback = Substitute.For<IMusicPlaybackService>();
         using var viewModel = CreateViewModel(library, Substitute.For<IUISettingsService>(), playback);
@@ -70,15 +70,15 @@ public class FolderSongListViewModelTests
     [Fact]
     public async Task SearchPlayback_UsesTheNavigatedDirectoryAndBreadcrumbReturnsToRoot()
     {
-        var library = Substitute.For<ILibraryFake>();
+        var library = new LibraryFakes();
         var root = ConfigureRoot(library);
         var child = new Folder { Name = "Album", Path = @"C:\Music\Album" };
-        library.GetFolderByPathAsync(child.Path).Returns(child);
+        library.Reader.GetFolderByPathAsync(child.Path).Returns(child);
         var song = new Song { Title = "Match" };
-        library.SearchSongsInFolderOffsetAsync(root.Id, child.Path, "Match", Arg.Any<int>(), Arg.Any<int>(),
+        library.Reader.SearchSongsInFolderOffsetAsync(root.Id, child.Path, "Match", Arg.Any<int>(), Arg.Any<int>(),
             Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns(new PagedResult<Song> { Items = [song], TotalCount = 1 });
-        library.SearchAllSongIdsInFolderAsync(root.Id, child.Path, "Match", Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
+        library.Reader.SearchAllSongIdsInFolderAsync(root.Id, child.Path, "Match", Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns(new List<Guid> { song.Id });
         var playback = Substitute.For<IMusicPlaybackService>();
         using var viewModel = CreateViewModel(library, Substitute.For<IUISettingsService>(), playback);
@@ -106,9 +106,9 @@ public class FolderSongListViewModelTests
     public async Task InitializeAsync_BreadcrumbsHandleRootAndTrailingSeparators(
         string rootPath, string rootName, string directoryPath)
     {
-        var library = Substitute.For<ILibraryFake>();
+        var library = new LibraryFakes();
         var root = new Folder { Name = "Library", Path = rootPath };
-        library.GetFolderByIdAsync(root.Id).Returns(root);
+        library.Reader.GetFolderByIdAsync(root.Id).Returns(root);
         using var viewModel = CreateViewModel(library, Substitute.For<IUISettingsService>());
 
         await viewModel.InitializeAsync(root.Name, root.Id, directoryPath);
@@ -129,7 +129,7 @@ public class FolderSongListViewModelTests
         var settings = Substitute.For<IUISettingsService>();
         settings.GetSongsPerPageAsync().Returns(Task.FromException<int>(new IOException("Settings unavailable")),
             Task.FromResult(50));
-        using var viewModel = CreateViewModel(Substitute.For<ILibraryFake>(), settings);
+        using var viewModel = CreateViewModel(new LibraryFakes(), settings);
 
         await viewModel.RefreshOrSortSongsAsync();
 
@@ -148,14 +148,14 @@ public class FolderSongListViewModelTests
     [InlineData(51)]
     public async Task LoadPageAsync_WhenSongsWereRemoved_UpdatesPageAndContents(int remainingSongs)
     {
-        var library = Substitute.For<ILibraryFake>();
+        var library = new LibraryFakes();
         var settings = Substitute.For<IUISettingsService>();
         settings.GetSongsPerPageAsync().Returns(50);
         var folder = new Folder { Id = Guid.NewGuid(), Path = @"C:\Music", Name = "Music" };
-        library.GetFolderByIdAsync(folder.Id).Returns(folder);
+        library.Reader.GetFolderByIdAsync(folder.Id).Returns(folder);
         var count = 151;
         var song = new Song { Title = "Last song" };
-        library.GetSongsInDirectoryOffsetAsync(folder.Id, folder.Path, Arg.Any<int>(), Arg.Any<int>(),
+        library.Reader.GetSongsInDirectoryOffsetAsync(folder.Id, folder.Path, Arg.Any<int>(), Arg.Any<int>(),
                 Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns(call => new PagedResult<Song>
             {
@@ -176,9 +176,9 @@ public class FolderSongListViewModelTests
         viewModel.FolderContents.Should().HaveCount(remainingSongs == 0 ? 0 : 1);
     }
 
-    private static FolderSongListViewModel CreateViewModel(ILibraryFake library, IUISettingsService settings,
+    private static FolderSongListViewModel CreateViewModel(LibraryFakes library, IUISettingsService settings,
         IMusicPlaybackService? playback = null) =>
-        new(library, library, library, Substitute.For<IPlaylistService>(), playback ?? Substitute.For<IMusicPlaybackService>(),
+        new(library.Reader, library.Writer, library.Scanner, Substitute.For<IPlaylistService>(), playback ?? Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(),
             new ImmediateDispatcher(), settings, Substitute.For<IUIService>(),
             NullLogger<FolderSongListViewModel>.Instance);
@@ -186,15 +186,15 @@ public class FolderSongListViewModelTests
     [Fact]
     public async Task ResolveSelection_WhenFolderSelectionChangesDuringQuery_ExpandsOriginalFolder()
     {
-        var library = Substitute.For<ILibraryFake>();
+        var library = new LibraryFakes();
         var root = ConfigureRoot(library);
         var selectedFolder = new Folder { Name = "First", Path = @"C:\Music\First" };
         var nextFolder = new Folder { Name = "Second", Path = @"C:\Music\Second" };
         var songId = Guid.NewGuid();
         var pending = new TaskCompletionSource<List<Guid>>(TaskCreationOptions.RunContinuationsAsynchronously);
-        library.GetAllSongIdsInDirectoryRecursiveAsync(root.Id, root.Path, Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
+        library.Reader.GetAllSongIdsInDirectoryRecursiveAsync(root.Id, root.Path, Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns(pending.Task);
-        library.GetAllSongIdsInDirectoryRecursiveAsync(root.Id, selectedFolder.Path, Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
+        library.Reader.GetAllSongIdsInDirectoryRecursiveAsync(root.Id, selectedFolder.Path, Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns(new List<Guid> { songId });
         using var viewModel = new SelectionFolderList(library);
         await viewModel.InitializeAsync(root.Name, root.Id);
@@ -209,21 +209,21 @@ public class FolderSongListViewModelTests
         pending.SetResult([]);
 
         (await resolving.WaitAsync(TimeSpan.FromSeconds(10))).Should().Equal(songId);
-        await library.DidNotReceive().GetAllSongIdsInDirectoryRecursiveAsync(root.Id, nextFolder.Path,
+        await library.Reader.DidNotReceive().GetAllSongIdsInDirectoryRecursiveAsync(root.Id, nextFolder.Path,
             Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task ResolveSelection_WhenViewResetsDuringFolderExpansion_DiscardsResult()
     {
-        var library = Substitute.For<ILibraryFake>();
+        var library = new LibraryFakes();
         var root = ConfigureRoot(library);
         var selectedFolder = new Folder { Name = "First", Path = @"C:\Music\First" };
         var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var pending = new TaskCompletionSource<List<Guid>>(TaskCreationOptions.RunContinuationsAsynchronously);
-        library.GetAllSongIdsInDirectoryRecursiveAsync(root.Id, root.Path, Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
+        library.Reader.GetAllSongIdsInDirectoryRecursiveAsync(root.Id, root.Path, Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns(new List<Guid>());
-        library.GetAllSongIdsInDirectoryRecursiveAsync(root.Id, selectedFolder.Path, Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
+        library.Reader.GetAllSongIdsInDirectoryRecursiveAsync(root.Id, selectedFolder.Path, Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns(_ => { started.SetResult(); return pending.Task; });
         using var viewModel = new SelectionFolderList(library);
         await viewModel.InitializeAsync(root.Name, root.Id);
@@ -238,17 +238,17 @@ public class FolderSongListViewModelTests
         (await resolving.WaitAsync(TimeSpan.FromSeconds(10))).Should().BeEmpty();
     }
 
-    private static Folder ConfigureRoot(ILibraryFake library)
+    private static Folder ConfigureRoot(LibraryFakes library)
     {
         var root = new Folder { Name = "Music", Path = @"C:\Music" };
-        library.GetFolderByIdAsync(root.Id).Returns(root);
-        library.GetSongsInDirectoryOffsetAsync(root.Id, root.Path, Arg.Any<int>(), Arg.Any<int>(),
+        library.Reader.GetFolderByIdAsync(root.Id).Returns(root);
+        library.Reader.GetSongsInDirectoryOffsetAsync(root.Id, root.Path, Arg.Any<int>(), Arg.Any<int>(),
             Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>());
         return root;
     }
 
-    private sealed class SelectionFolderList(ILibraryFake library)
-        : FolderSongListViewModel(library, library, library, Substitute.For<IPlaylistService>(), Substitute.For<IMusicPlaybackService>(),
+    private sealed class SelectionFolderList(LibraryFakes library)
+        : FolderSongListViewModel(library.Reader, library.Writer, library.Scanner, Substitute.For<IPlaylistService>(), Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(),
             Substitute.For<IUISettingsService>(), Substitute.For<IUIService>(), NullLogger<FolderSongListViewModel>.Instance)
     {

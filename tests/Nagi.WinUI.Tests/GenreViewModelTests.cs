@@ -15,13 +15,13 @@ public class GenreViewModelTests
     [Fact]
     public async Task ChangeSortOrder_WhenSavingFails_StillReordersGenres()
     {
-        var library = Substitute.For<ILibraryFake>();
-        library.GetGenreSummariesAsync(Arg.Any<CancellationToken>())
+        var library = new LibraryFakes();
+        library.Reader.GetGenreSummariesAsync(Arg.Any<CancellationToken>())
             .Returns(new[] { new GenreSummary(Guid.NewGuid(), "Jazz", 1), new GenreSummary(Guid.NewGuid(), "Rock", 1) });
         var settings = Substitute.For<IUISettingsService>();
         settings.SetSortOrderAsync(Arg.Any<string>(), Arg.Any<GenreSortOrder>())
             .Returns(_ => throw new IOException("Settings unavailable"));
-        using var viewModel = new GenreViewModel(library, library, Substitute.For<IMusicPlaybackService>(),
+        using var viewModel = new GenreViewModel(library.Reader, library.Scanner, Substitute.For<IMusicPlaybackService>(),
             Substitute.For<INavigationService>(), settings,
             new ImmediateDispatcher(), NullLogger<GenreViewModel>.Instance);
         await viewModel.LoadGenresAsync(CancellationToken.None);
@@ -35,18 +35,18 @@ public class GenreViewModelTests
     [Fact]
     public async Task ReloadWhileCancelledLoadIsFinishing_LoadsTheLatestGenres()
     {
-        var library = Substitute.For<ILibraryFake>();
+        var library = new LibraryFakes();
         var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var firstResult = new TaskCompletionSource<IEnumerable<GenreSummary>>(TaskCreationOptions.RunContinuationsAsynchronously);
         var attempts = 0;
-        library.GetGenreSummariesAsync(Arg.Any<CancellationToken>()).Returns(call =>
+        library.Reader.GetGenreSummariesAsync(Arg.Any<CancellationToken>()).Returns(call =>
         {
             if (Interlocked.Increment(ref attempts) != 1)
                 return Task.FromResult<IEnumerable<GenreSummary>>([new GenreSummary(Guid.NewGuid(), "Rock", 1)]);
             started.SetResult();
             return firstResult.Task.WaitAsync(call.Arg<CancellationToken>());
         });
-        using var viewModel = new GenreViewModel(library, library, Substitute.For<IMusicPlaybackService>(),
+        using var viewModel = new GenreViewModel(library.Reader, library.Scanner, Substitute.For<IMusicPlaybackService>(),
             Substitute.For<INavigationService>(), Substitute.For<IUISettingsService>(),
             new ImmediateDispatcher(), NullLogger<GenreViewModel>.Instance);
         using var cancellation = new CancellationTokenSource();
@@ -65,21 +65,21 @@ public class GenreViewModelTests
     [Fact]
     public async Task Reset_CancelsAnEventTriggeredGenreLoad()
     {
-        var library = Substitute.For<ILibraryFake>();
+        var library = new LibraryFakes();
         var started = new TaskCompletionSource<CancellationToken>(TaskCreationOptions.RunContinuationsAsynchronously);
         var genres = new TaskCompletionSource<IEnumerable<GenreSummary>>(TaskCreationOptions.RunContinuationsAsynchronously);
-        library.GetGenreSummariesAsync(Arg.Any<CancellationToken>()).Returns(call =>
+        library.Reader.GetGenreSummariesAsync(Arg.Any<CancellationToken>()).Returns(call =>
         {
             var token = call.Arg<CancellationToken>();
             started.SetResult(token);
             return genres.Task.WaitAsync(token);
         });
-        using var viewModel = new GenreViewModel(library, library, Substitute.For<IMusicPlaybackService>(),
+        using var viewModel = new GenreViewModel(library.Reader, library.Scanner, Substitute.For<IMusicPlaybackService>(),
             Substitute.For<INavigationService>(), Substitute.For<IUISettingsService>(),
             new ImmediateDispatcher(), NullLogger<GenreViewModel>.Instance);
 
-        library.LibraryContentChanged += Raise.Event<EventHandler<LibraryContentChangedEventArgs>>(
-            library, new LibraryContentChangedEventArgs(LibraryChangeType.LibraryRescanned));
+        library.Scanner.LibraryContentChanged += Raise.Event<EventHandler<LibraryContentChangedEventArgs>>(
+            library.Scanner, new LibraryContentChangedEventArgs(LibraryChangeType.LibraryRescanned));
         try
         {
             var token = await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
@@ -96,15 +96,15 @@ public class GenreViewModelTests
     [Fact]
     public async Task FailedReload_SearchDoesNotRestoreStaleGenres()
     {
-        var library = Substitute.For<ILibraryFake>();
-        library.GetGenreSummariesAsync(Arg.Any<CancellationToken>())
+        var library = new LibraryFakes();
+        library.Reader.GetGenreSummariesAsync(Arg.Any<CancellationToken>())
             .Returns(new[] { new GenreSummary(Guid.NewGuid(), "Rock", 1) });
-        using var viewModel = new GenreViewModel(library, library, Substitute.For<IMusicPlaybackService>(),
+        using var viewModel = new GenreViewModel(library.Reader, library.Scanner, Substitute.For<IMusicPlaybackService>(),
             Substitute.For<INavigationService>(), Substitute.For<IUISettingsService>(),
             new ImmediateDispatcher(), NullLogger<GenreViewModel>.Instance);
         await viewModel.LoadGenresAsync(CancellationToken.None);
         viewModel.Genres.Should().ContainSingle();
-        library.GetGenreSummariesAsync(Arg.Any<CancellationToken>())
+        library.Reader.GetGenreSummariesAsync(Arg.Any<CancellationToken>())
             .Returns(Task.FromException<IEnumerable<GenreSummary>>(new IOException("Library unavailable")));
 
         await viewModel.LoadGenresAsync(CancellationToken.None);
@@ -118,11 +118,11 @@ public class GenreViewModelTests
     [Fact]
     public async Task CancelledLoad_StopsWaitingForGenresWithoutDisplayingAnError()
     {
-        var library = Substitute.For<ILibraryFake>();
+        var library = new LibraryFakes();
         var pendingGenres = new TaskCompletionSource<IEnumerable<GenreSummary>>(TaskCreationOptions.RunContinuationsAsynchronously);
-        library.GetGenreSummariesAsync(Arg.Any<CancellationToken>())
+        library.Reader.GetGenreSummariesAsync(Arg.Any<CancellationToken>())
             .Returns(call => pendingGenres.Task.WaitAsync(call.Arg<CancellationToken>()));
-        using var viewModel = new GenreViewModel(library, library, Substitute.For<IMusicPlaybackService>(),
+        using var viewModel = new GenreViewModel(library.Reader, library.Scanner, Substitute.For<IMusicPlaybackService>(),
             Substitute.For<INavigationService>(), Substitute.For<IUISettingsService>(),
             new ImmediateDispatcher(), NullLogger<GenreViewModel>.Instance);
         using var cancellation = new CancellationTokenSource();

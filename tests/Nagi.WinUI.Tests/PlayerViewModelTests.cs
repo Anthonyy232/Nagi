@@ -17,7 +17,7 @@ public partial class PlayerViewModelTests : IDisposable
     private readonly IUISettingsService _settings = Substitute.For<IUISettingsService>();
     private readonly IDispatcherService _dispatcher = Substitute.For<IDispatcherService>();
     private readonly PlayerViewModel _viewModel;
-    private readonly ILibraryFake _library = Substitute.For<ILibraryFake>();
+    private readonly LibraryFakes _library = new LibraryFakes();
 
     public PlayerViewModelTests()
     {
@@ -31,7 +31,7 @@ public partial class PlayerViewModelTests : IDisposable
         _settings.GetQueueDisplaySettingsAsync().Returns(new QueueDisplaySettings());
         _viewModel = new PlayerViewModel(_playback, Substitute.For<IMusicNavigationService>(),
             _dispatcher, _settings, Substitute.For<IWindowService>(),
-            _library, _library, _library, NullLogger<PlayerViewModel>.Instance, Substitute.For<IUIService>());
+            _library.Reader, _library.Writer, _library.Scanner, NullLogger<PlayerViewModel>.Instance, Substitute.For<IUIService>());
     }
 
     public void Dispose() => _viewModel.Cleanup();

@@ -12,7 +12,7 @@ namespace Nagi.WinUI.Tests;
 
 public class PlaylistSongListViewModelTests
 {
-    private readonly ILibraryFake _library = Substitute.For<ILibraryFake>();
+    private readonly LibraryFakes _library = new LibraryFakes();
     private readonly IPlaylistService _playlists = Substitute.For<IPlaylistService>();
     private readonly IUIService _ui = Substitute.For<IUIService>();
     private readonly Guid _playlistId = Guid.NewGuid();
@@ -21,13 +21,13 @@ public class PlaylistSongListViewModelTests
 
     public PlaylistSongListViewModelTests()
     {
-        _library.GetSongsByPlaylistPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
+        _library.Reader.GetSongsByPlaylistPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
                 Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns(call => new PagedResult<Song>
             {
                 PageNumber = 1, PageSize = call.ArgAt<int>(2), TotalCount = _songs.Count, Items = _songs.ToList()
             });
-        _library.GetAllSongIdsByPlaylistIdAsync(Arg.Any<Guid>(), Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
+        _library.Reader.GetAllSongIdsByPlaylistIdAsync(Arg.Any<Guid>(), Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns(_ => _songs.Select(song => song.Id).ToList());
         _playlists.MovePlaylistSongAsync(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<double>()).Returns(true);
         _playlists.UpdatePlaylistOrderAsync(Arg.Any<Guid>(), Arg.Any<IEnumerable<Guid>>()).Returns(true);
@@ -167,7 +167,7 @@ public class PlaylistSongListViewModelTests
 
         viewModel.Songs.Select(song => song.Id).Should().Equal(_songs.Select(song => song.Id));
         await _ui.DidNotReceiveWithAnyArgs().ShowMessageDialogAsync(default!, default!);
-        await _library.Received(1).GetSongsByPlaylistPagedAsync(newPlaylist, Arg.Any<int>(), Arg.Any<int>(),
+        await _library.Reader.Received(1).GetSongsByPlaylistPagedAsync(newPlaylist, Arg.Any<int>(), Arg.Any<int>(),
             Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>());
     }
 
@@ -197,8 +197,8 @@ public class PlaylistSongListViewModelTests
         await _ui.DidNotReceiveWithAnyArgs().ShowMessageDialogAsync(default!, default!);
     }
 
-    private sealed class TestPlaylist(ILibraryFake library, IPlaylistService playlists, IUIService ui)
-        : PlaylistSongListViewModel(library, library, library, playlists, Substitute.For<IMusicPlaybackService>(),
+    private sealed class TestPlaylist(LibraryFakes library, IPlaylistService playlists, IUIService ui)
+        : PlaylistSongListViewModel(library.Reader, library.Writer, library.Scanner, playlists, Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(),
             Substitute.For<IUISettingsService>(), ui, NullLogger<PlaylistSongListViewModel>.Instance)
     {
@@ -243,7 +243,7 @@ public class PlaylistSongListViewModelTests
 
         await _playlists.Received(1).RemoveSongsFromPlaylistAsync(_playlistId,
             Arg.Is<IEnumerable<Guid>>(ids => ids.SequenceEqual(new[] { _songs[0].Id })));
-        await _library.Received(1).GetSongsByPlaylistPagedAsync(newPlaylist, Arg.Any<int>(), Arg.Any<int>(),
+        await _library.Reader.Received(1).GetSongsByPlaylistPagedAsync(newPlaylist, Arg.Any<int>(), Arg.Any<int>(),
             Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>());
     }
 }

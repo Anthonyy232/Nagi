@@ -12,12 +12,12 @@ namespace Nagi.WinUI.Tests;
 
 public class PlaylistViewModelTests
 {
-    private readonly ILibraryFake _library = Substitute.For<ILibraryFake>();
+    private readonly LibraryFakes _library = new LibraryFakes();
     private readonly ISmartPlaylistService _smart = Substitute.For<ISmartPlaylistService>();
 
     public PlaylistViewModelTests()
     {
-        _library.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(Array.Empty<Playlist>());
+        _library.Reader.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(Array.Empty<Playlist>());
         _smart.GetAllSmartPlaylistsAsync().Returns(Array.Empty<SmartPlaylist>());
         _smart.GetAllMatchingSongCountsAsync().Returns(new Dictionary<Guid, int>());
     }
@@ -36,8 +36,8 @@ public class PlaylistViewModelTests
     [Fact]
     public async Task CreatePlaylist_AppliesCurrentSort()
     {
-        _library.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new Playlist { Name = "Zebra" } });
-        _library.CreatePlaylistAsync("Alpha", null, null).Returns(new Playlist { Name = "Alpha" });
+        _library.Reader.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new Playlist { Name = "Zebra" } });
+        _library.Playlists.CreatePlaylistAsync("Alpha", null, null).Returns(new Playlist { Name = "Alpha" });
         using var viewModel = CreateViewModel();
         await viewModel.LoadPlaylistsCommand.ExecuteAsync(null);
         await viewModel.ChangeSortOrderAsync(nameof(PlaylistSortOrder.NameAsc));
@@ -50,7 +50,7 @@ public class PlaylistViewModelTests
     [Fact]
     public async Task CreatePlaylist_RespectsActiveSearchAndRemainsAvailableWhenCleared()
     {
-        _library.CreatePlaylistAsync("Alpha", null, null).Returns(new Playlist { Name = "Alpha" });
+        _library.Playlists.CreatePlaylistAsync("Alpha", null, null).Returns(new Playlist { Name = "Alpha" });
         using var viewModel = CreateViewModel();
         viewModel.SearchTerm = "Zebra";
         await viewModel.SearchAsync();
@@ -76,8 +76,8 @@ public class PlaylistViewModelTests
         }
         else
         {
-            _library.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new Playlist { Id = id, Name = "Morning" } });
-            _library.RenamePlaylistAsync(id, "Evening").Returns(true);
+            _library.Reader.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new Playlist { Id = id, Name = "Morning" } });
+            _library.Playlists.RenamePlaylistAsync(id, "Evening").Returns(true);
         }
         using var viewModel = CreateViewModel();
         await viewModel.LoadPlaylistsCommand.ExecuteAsync(null);
@@ -96,9 +96,9 @@ public class PlaylistViewModelTests
     public async Task DeletePlaylist_WhenSearchChangesWhileSaving_DoesNotReturnDeletedPlaylist()
     {
         var playlist = new Playlist { Name = "Morning" };
-        _library.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(new[] { playlist });
+        _library.Reader.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(new[] { playlist });
         var delete = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-        _library.DeletePlaylistAsync(playlist.Id).Returns(delete.Task);
+        _library.Playlists.DeletePlaylistAsync(playlist.Id).Returns(delete.Task);
         using var viewModel = CreateViewModel();
         await viewModel.LoadPlaylistsCommand.ExecuteAsync(null);
 
@@ -113,7 +113,7 @@ public class PlaylistViewModelTests
         viewModel.Playlists.Should().BeEmpty();
     }
 
-    private PlaylistViewModel CreateViewModel() => new(_library, _library, _smart, Substitute.For<IMusicPlaybackService>(),
+    private PlaylistViewModel CreateViewModel() => new(_library.Reader, _library.Playlists, _smart, Substitute.For<IMusicPlaybackService>(),
         Substitute.For<INavigationService>(), Substitute.For<IUISettingsService>(), new ImmediateDispatcher(),
         NullLogger<PlaylistViewModel>.Instance);
 
@@ -125,14 +125,14 @@ public class PlaylistViewModelTests
     public async Task LoadPlaylists_IgnoresObsoleteResult(bool fails, bool dispose)
     {
         var pending = new TaskCompletionSource<IEnumerable<Playlist>>(TaskCreationOptions.RunContinuationsAsynchronously);
-        _library.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(pending.Task);
+        _library.Reader.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(pending.Task);
         using var viewModel = CreateViewModel();
         var oldLoad = viewModel.LoadPlaylistsCommand.ExecuteAsync(null);
         if (dispose) viewModel.Dispose();
         else
         {
-            _library.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new Playlist { Name = "Latest" } });
-            _library.PlaylistsChanged += Raise.Event();
+            _library.Reader.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new Playlist { Name = "Latest" } });
+            _library.Playlists.PlaylistsChanged += Raise.Event();
             viewModel.Playlists.Should().ContainSingle().Which.Name.Should().Be("Latest");
         }
         var status = viewModel.StatusMessage;
@@ -149,13 +149,13 @@ public class PlaylistViewModelTests
     public async Task LoadPlaylists_BlocksMutationUntilSnapshotIsApplied()
     {
         var pending = new TaskCompletionSource<IEnumerable<Playlist>>(TaskCreationOptions.RunContinuationsAsynchronously);
-        _library.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(pending.Task);
+        _library.Reader.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(pending.Task);
         using var viewModel = CreateViewModel();
         var loading = viewModel.LoadPlaylistsCommand.ExecuteAsync(null);
 
         viewModel.IsAnyOperationInProgress.Should().BeTrue();
         await viewModel.CreatePlaylistCommand.ExecuteAsync(Tuple.Create("New", (string?)null));
-        await _library.DidNotReceive().CreatePlaylistAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>());
+        await _library.Playlists.DidNotReceive().CreatePlaylistAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>());
         pending.SetResult(new[] { new Playlist { Name = "Existing" } });
         await loading.WaitAsync(TimeSpan.FromSeconds(5));
 
@@ -168,7 +168,7 @@ public class PlaylistViewModelTests
     [InlineData(true)]
     public async Task PlayRandomPlaylist_WhenSelectedTypeWasDeleted_ClearsPickingStatus(bool smart)
     {
-        _library.GetPlaylistCountAsync().Returns(smart ? 0 : 1);
+        _library.Reader.GetPlaylistCountAsync().Returns(smart ? 0 : 1);
         _smart.GetSmartPlaylistCountAsync().Returns(smart ? 1 : 0);
         using var viewModel = CreateViewModel();
 
@@ -194,10 +194,10 @@ public class PlaylistViewModelTests
         }
         else
         {
-            _library.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new Playlist { Id = id, CoverImageUri = "ms-appx:///custom.png" } });
-            _library.UpdatePlaylistCoverAsync(id, null).Returns(_ =>
+            _library.Reader.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new Playlist { Id = id, CoverImageUri = "ms-appx:///custom.png" } });
+            _library.Playlists.UpdatePlaylistCoverAsync(id, null).Returns(_ =>
             {
-                _library.PlaylistUpdated += Raise.EventWith(new PlaylistUpdatedEventArgs(id, null));
+                _library.Playlists.PlaylistUpdated += Raise.EventWith(new PlaylistUpdatedEventArgs(id, null));
                 return true;
             });
         }
@@ -230,10 +230,10 @@ public class PlaylistViewModelTests
         }
         else
         {
-            _library.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new Playlist { Id = id, Name = "Artwork" } });
-            _library.UpdatePlaylistCoverAsync(id, selectedImage).Returns(_ =>
+            _library.Reader.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new Playlist { Id = id, Name = "Artwork" } });
+            _library.Playlists.UpdatePlaylistCoverAsync(id, selectedImage).Returns(_ =>
             {
-                _library.PlaylistUpdated += Raise.EventWith(new PlaylistUpdatedEventArgs(id, cachedImage));
+                _library.Playlists.PlaylistUpdated += Raise.EventWith(new PlaylistUpdatedEventArgs(id, cachedImage));
                 return Task.FromResult(true);
             });
         }
@@ -254,14 +254,14 @@ public class PlaylistViewModelTests
         var oldDate = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         var updatedDate = oldDate.AddDays(2);
         var id = Guid.NewGuid();
-        _library.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(new[]
+        _library.Reader.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(new[]
         {
             new Playlist { Name = "Recent", DateModified = oldDate.AddDays(1) }
         });
         if (smart)
             _smart.GetAllSmartPlaylistsAsync().Returns(new[] { new SmartPlaylist { Id = id, Name = "Older", DateModified = oldDate } });
         else
-            _library.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(new[]
+            _library.Reader.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(new[]
             {
                 new Playlist { Name = "Recent", DateModified = oldDate.AddDays(1) },
                 new Playlist { Id = id, Name = "Older", DateModified = oldDate }
@@ -274,7 +274,7 @@ public class PlaylistViewModelTests
 
         var update = new PlaylistUpdatedEventArgs(id, null, updatedDate);
         if (smart) _smart.PlaylistUpdated += Raise.EventWith(update);
-        else _library.PlaylistUpdated += Raise.EventWith(update);
+        else _library.Playlists.PlaylistUpdated += Raise.EventWith(update);
         viewModel.SearchTerm = string.Empty;
         await viewModel.SearchAsync();
 
@@ -289,13 +289,13 @@ public class PlaylistViewModelTests
         try
         {
             var playlist = new Playlist { Name = "Artwork", CoverImageUri = image };
-            _library.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(new[] { playlist });
+            _library.Reader.GetAllPlaylistsAsync(Arg.Any<CancellationToken>()).Returns(new[] { playlist });
             using var viewModel = CreateViewModel();
             await viewModel.LoadPlaylistsCommand.ExecuteAsync(null);
             var originalUri = viewModel.Playlists[0].CoverImageUri;
             var modified = new DateTime(2026, 8, 1, 0, 0, 0, DateTimeKind.Utc);
 
-            _library.PlaylistUpdated += Raise.EventWith(new PlaylistUpdatedEventArgs(playlist.Id, image, modified));
+            _library.Playlists.PlaylistUpdated += Raise.EventWith(new PlaylistUpdatedEventArgs(playlist.Id, image, modified));
 
             viewModel.Playlists[0].CoverImageUri.Should().NotBe(originalUri);
             viewModel.Playlists[0].CoverImageUri.Should().Contain($"?v={modified.Ticks}");

@@ -23,7 +23,7 @@ public class SettingsViewModelTests : IDisposable
     private readonly IDispatcherService _dispatcher = Substitute.For<IDispatcherService>();
     private readonly ILastFmAuthService _lastFm = Substitute.For<ILastFmAuthService>();
     private readonly IListenBrainzScrobblerService _listenBrainz = Substitute.For<IListenBrainzScrobblerService>();
-    private readonly ILibraryFake _library = Substitute.For<ILibraryFake>();
+    private readonly LibraryFakes _library = new LibraryFakes();
     private readonly IFFmpegService _ffmpeg = Substitute.For<IFFmpegService>();
     private readonly IReplayGainService _replayGain = Substitute.For<IReplayGainService>();
     private readonly PlayerViewModel _player;
@@ -42,8 +42,8 @@ public class SettingsViewModelTests : IDisposable
         _dispatcher.TryEnqueue(Arg.Any<Action>()).Returns(call => { call.Arg<Action>()(); return true; });
         _dispatcher.EnqueueAsync(Arg.Any<Func<Task>>()).Returns(call => call.Arg<Func<Task>>()());
         _player = new PlayerViewModel(_playback, Substitute.For<IMusicNavigationService>(), _dispatcher,
-            _settings, Substitute.For<IWindowService>(), _library, _library, _library, NullLogger<PlayerViewModel>.Instance, Substitute.For<IUIService>());
-        _viewModel = new SettingsViewModel(_settings, _ui, _theme, _appInfo, _library, _player,
+            _settings, Substitute.For<IWindowService>(), _library.Reader, _library.Writer, _library.Scanner, NullLogger<PlayerViewModel>.Instance, Substitute.For<IUIService>());
+        _viewModel = new SettingsViewModel(_settings, _ui, _theme, _appInfo, _library.Scanner, _player,
             _replayGain, _ffmpeg, _dispatcher,
             new AudioSettingsViewModel(_playback, _audioPlayer, _settings, _dispatcher,
                 NullLogger<AudioSettingsViewModel>.Instance, _timeProvider),
@@ -259,7 +259,7 @@ public class SettingsViewModelTests : IDisposable
         confirmation.SetResult(true);
         await scan.WaitAsync(TimeSpan.FromSeconds(5));
 
-        await _library.DidNotReceive().ForceRescanMetadataAsync(Arg.Any<IProgress<ScanProgress>>(), Arg.Any<CancellationToken>());
+        await _library.Scanner.DidNotReceive().ForceRescanMetadataAsync(Arg.Any<IProgress<ScanProgress>>(), Arg.Any<CancellationToken>());
         _player.IsGlobalOperationInProgress.Should().BeTrue();
     }
 
@@ -268,7 +268,7 @@ public class SettingsViewModelTests : IDisposable
     {
         _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>()).Returns(true);
         var scanning = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-        _library.ForceRescanMetadataAsync(Arg.Any<IProgress<ScanProgress>>(), Arg.Any<CancellationToken>()).Returns(scanning.Task);
+        _library.Scanner.ForceRescanMetadataAsync(Arg.Any<IProgress<ScanProgress>>(), Arg.Any<CancellationToken>()).Returns(scanning.Task);
         var scan = _viewModel.RescanMetadataCommand.ExecuteAsync(null);
 
         _viewModel.Dispose();
@@ -311,7 +311,7 @@ public class SettingsViewModelTests : IDisposable
     public async Task MetadataRescan_QueuedProgressCannotOverwriteFollowingOperation()
     {
         _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>()).Returns(true);
-        _library.ForceRescanMetadataAsync(Arg.Any<IProgress<ScanProgress>>(), Arg.Any<CancellationToken>()).Returns(call =>
+        _library.Scanner.ForceRescanMetadataAsync(Arg.Any<IProgress<ScanProgress>>(), Arg.Any<CancellationToken>()).Returns(call =>
         {
             call.Arg<IProgress<ScanProgress>>().Report(new ScanProgress { StatusText = "Old progress", Percentage = 90 });
             return true;

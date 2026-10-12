@@ -16,10 +16,10 @@ public class FolderViewModelTests
     [Fact]
     public async Task CancelledFolderLoad_DoesNotApplyLateResults()
     {
-        var library = Substitute.For<ILibraryFake>();
+        var library = new LibraryFakes();
         var response = new TaskCompletionSource<IEnumerable<FolderSummary>>(TaskCreationOptions.RunContinuationsAsynchronously);
         var started = new TaskCompletionSource<CancellationToken>(TaskCreationOptions.RunContinuationsAsynchronously);
-        library.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>()).Returns(call =>
+        library.Reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>()).Returns(call =>
         {
             started.SetResult(call.Arg<CancellationToken>());
             return response.Task;
@@ -31,8 +31,8 @@ public class FolderViewModelTests
         settings.GetQueueDisplaySettingsAsync().Returns(new QueueDisplaySettings());
         var player = new PlayerViewModel(playback, Substitute.For<IMusicNavigationService>(),
             dispatcher, settings, Substitute.For<IWindowService>(),
-            library, library, library, NullLogger<PlayerViewModel>.Instance, Substitute.For<IUIService>());
-        using var viewModel = new FolderViewModel(library, library, library, player, playback,
+            library.Reader, library.Writer, library.Scanner, NullLogger<PlayerViewModel>.Instance, Substitute.For<IUIService>());
+        using var viewModel = new FolderViewModel(library.Reader, library.Writer, library.Scanner, player, playback,
             Substitute.For<INavigationService>(), dispatcher, NullLogger<FolderViewModel>.Instance);
         var load = viewModel.LoadFoldersCommand.ExecuteAsync(null);
         try

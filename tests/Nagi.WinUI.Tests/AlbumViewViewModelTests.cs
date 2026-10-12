@@ -17,9 +17,9 @@ public class AlbumViewViewModelTests
     [InlineData(true)]
     public async Task AlbumLookupCompletesAfterDisposal_DoesNotUpdateTheViewOrLoadSongs(bool fails)
     {
-        var library = Substitute.For<ILibraryFake>();
+        var library = new LibraryFakes();
         var result = new TaskCompletionSource<Album?>(TaskCreationOptions.RunContinuationsAsynchronously);
-        library.GetAlbumByIdAsync(Arg.Any<Guid>()).Returns(result.Task);
+        library.Reader.GetAlbumByIdAsync(Arg.Any<Guid>()).Returns(result.Task);
         using var viewModel = CreateViewModel(library);
         var title = viewModel.AlbumTitle;
         var load = viewModel.LoadAlbumDetailsAsync(Guid.NewGuid());
@@ -30,36 +30,36 @@ public class AlbumViewViewModelTests
         await load.WaitAsync(TimeSpan.FromSeconds(5));
 
         viewModel.AlbumTitle.Should().Be(title);
-        await library.DidNotReceive().GetSongsByAlbumIdPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
+        await library.Reader.DidNotReceive().GetSongsByAlbumIdPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
             Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task MissingAlbum_DoesNotStartAnOrphanedSongQuery()
     {
-        var library = Substitute.For<ILibraryFake>();
+        var library = new LibraryFakes();
         using var viewModel = CreateViewModel(library);
 
         await viewModel.LoadAlbumDetailsAsync(Guid.NewGuid());
 
         viewModel.Songs.Should().BeEmpty();
         viewModel.GroupedSongsFlat.Should().BeEmpty();
-        await library.DidNotReceive().GetSongsByAlbumIdPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
+        await library.Reader.DidNotReceive().GetSongsByAlbumIdPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
             Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task DurationResultQueuedBeforeReset_DoesNotOverwriteTheNextAlbum()
     {
-        var library = Substitute.For<ILibraryFake>();
-        library.GetAlbumByIdAsync(Arg.Any<Guid>()).Returns(call => new Album { Id = call.Arg<Guid>(), Title = "Album" });
-        library.GetSongsByAlbumIdPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
+        var library = new LibraryFakes();
+        library.Reader.GetAlbumByIdAsync(Arg.Any<Guid>()).Returns(call => new Album { Id = call.Arg<Guid>(), Title = "Album" });
+        library.Reader.GetSongsByAlbumIdPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
             Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>
             {
                 PageNumber = 1, PageSize = 50, TotalCount = 51, Items = [new Song { DurationTicks = TimeSpan.TicksPerMinute }]
             });
         var duration = new TaskCompletionSource<TimeSpan>(TaskCreationOptions.RunContinuationsAsynchronously);
-        library.GetSearchTotalDurationInAlbumAsync(Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+        library.Reader.GetSearchTotalDurationInAlbumAsync(Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns(duration.Task);
         var dispatcher = new HoldingDispatcher();
         using var viewModel = CreateViewModel(library, dispatcher);
@@ -78,9 +78,9 @@ public class AlbumViewViewModelTests
     [Fact]
     public async Task AlbumLongerThanOneDay_ShowsTotalHours()
     {
-        var library = Substitute.For<ILibraryFake>();
-        library.GetAlbumByIdAsync(Arg.Any<Guid>()).Returns(new Album { Title = "Long album" });
-        library.GetSongsByAlbumIdPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
+        var library = new LibraryFakes();
+        library.Reader.GetAlbumByIdAsync(Arg.Any<Guid>()).Returns(new Album { Title = "Long album" });
+        library.Reader.GetSongsByAlbumIdPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
             Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>
             {
                 PageNumber = 1, PageSize = 50, TotalCount = 1,
@@ -93,11 +93,11 @@ public class AlbumViewViewModelTests
         viewModel.AlbumDetailsText.Should().EndWith("25:00:00");
     }
 
-    private static AlbumViewViewModel CreateViewModel(ILibraryFake library, IDispatcherService? dispatcher = null)
+    private static AlbumViewViewModel CreateViewModel(LibraryFakes library, IDispatcherService? dispatcher = null)
     {
         var settings = Substitute.For<IUISettingsService>();
         settings.GetSongsPerPageAsync().Returns(50);
-        return new AlbumViewViewModel(library, library, library, Substitute.For<IPlaylistService>(),
+        return new AlbumViewViewModel(library.Reader, library.Writer, library.Scanner, Substitute.For<IPlaylistService>(),
             Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), dispatcher ?? new ImmediateDispatcher(), settings,
             Substitute.For<IUIService>(), NullLogger<AlbumViewViewModel>.Instance);

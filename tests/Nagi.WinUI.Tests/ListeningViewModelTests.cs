@@ -73,7 +73,7 @@ public partial class PlayerViewModelTests
         _playback.CurrentTrack.Returns(original);
         _playback.TrackChanged += Raise.Event<Action>();
         var write = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-        _library.SetSongsLovedAsync(Arg.Any<IEnumerable<Guid>>(), true).Returns(write.Task);
+        _library.Writer.SetSongsLovedAsync(Arg.Any<IEnumerable<Guid>>(), true).Returns(write.Task);
 
         var favoriting = _viewModel.ToggleFavoriteCommand.ExecuteAsync(null);
         _playback.CurrentTrack.Returns(next);
@@ -82,7 +82,7 @@ public partial class PlayerViewModelTests
         await favoriting;
 
         _viewModel.IsCurrentTrackFavorite.Should().BeFalse();
-        await _library.Received(1).SetSongsLovedAsync(Arg.Is<IEnumerable<Guid>>(ids => ids.Single() == original.Id), true);
+        await _library.Writer.Received(1).SetSongsLovedAsync(Arg.Is<IEnumerable<Guid>>(ids => ids.Single() == original.Id), true);
     }
 }
 

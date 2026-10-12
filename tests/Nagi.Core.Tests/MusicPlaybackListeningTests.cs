@@ -18,7 +18,7 @@ public partial class MusicPlaybackServiceTests
         await _service.InitializeAsync();
         await _service.PlayAsync(_testSongs);
         var lookup = new TaskCompletionSource<IReadOnlyList<MixCandidate>>(TaskCreationOptions.RunContinuationsAsynchronously);
-        _libraryService.GetMixCandidatesAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>()).Returns(lookup.Task);
+        _library.Reader.GetMixCandidatesAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>()).Returns(lookup.Task);
         var mixing = _service.PlayMixAsync(_testSongs.Select(s => s.Id), ShuffleMode.Unheard);
         await _service.NextAsync();
         lookup.SetResult(_testSongs.Select(s => new MixCandidate(s.Id, "Artist", 1, 0, null)).ToArray());
@@ -33,7 +33,7 @@ public partial class MusicPlaybackServiceTests
     {
         await _service.InitializeAsync();
         await _service.PlayAsync(_testSongs);
-        _libraryService.GetMixCandidatesAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
+        _library.Reader.GetMixCandidatesAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
             .Returns(Array.Empty<MixCandidate>());
         _audioPlayer.ClearReceivedCalls();
 
@@ -50,7 +50,7 @@ public partial class MusicPlaybackServiceTests
     {
         var candidates = _testSongs.Select((song, index) => new MixCandidate(song.Id, $"Artist {index}",
             TimeSpan.FromMinutes(2).Ticks, 0, null)).ToArray();
-        _libraryService.GetMixCandidatesAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>()).Returns(candidates);
+        _library.Reader.GetMixCandidatesAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>()).Returns(candidates);
         await _service.InitializeAsync();
 
         (await _service.PlayMixAsync(_testSongs.Select(s => s.Id), ShuffleMode.Unheard, TimeSpan.FromMinutes(4))).Should().BeTrue();
@@ -76,7 +76,7 @@ public partial class MusicPlaybackServiceTests
     public async Task ExpiredTimer_FinishesOnlyAnActivelyPlayingTrack(bool finishTrack, bool playing)
     {
         var clock = new FakeTimeProvider();
-        await using var service = new MusicPlaybackService(_settingsService, _audioPlayer, _libraryService, _libraryService,
+        await using var service = new MusicPlaybackService(_settingsService, _audioPlayer, _library.Reader, _library.Writer,
             _metadataService, NullLogger<MusicPlaybackService>.Instance, clock);
         await service.InitializeAsync();
         await service.PlayAsync(_testSongs);

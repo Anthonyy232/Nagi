@@ -17,7 +17,7 @@ public class ArtistViewViewModelTests
     [InlineData(true)]
     public async Task MetadataCompletesAfterLeaving_DoesNotUpdateTheDisposedView(bool fails)
     {
-        var library = Substitute.For<ILibraryFake>();
+        var library = new LibraryFakes();
         var scanner = Substitute.For<ILibraryScanner>();
         var metadata = new TaskCompletionSource<Artist?>(TaskCreationOptions.RunContinuationsAsynchronously);
         scanner.GetArtistDetailsAsync(Arg.Any<Guid>(), Arg.Any<bool>(), Arg.Any<CancellationToken>())
@@ -39,7 +39,7 @@ public class ArtistViewViewModelTests
     [Fact]
     public async Task ImageCommands_UseTheLibraryWriterWhenScannerIsASeparateService()
     {
-        var library = Substitute.For<ILibraryFake>();
+        var library = new LibraryFakes();
         var scanner = Substitute.For<ILibraryScanner>();
         var artistId = Guid.NewGuid();
         scanner.GetArtistDetailsAsync(artistId, Arg.Any<bool>(), Arg.Any<CancellationToken>())
@@ -50,20 +50,20 @@ public class ArtistViewViewModelTests
         await viewModel.UpdateArtistImageAsync("portrait.png");
         await viewModel.RemoveArtistImageAsync();
 
-        await library.Received(1).UpdateArtistImageAsync(artistId, "portrait.png");
-        await library.Received(1).RemoveArtistImageAsync(artistId);
+        await library.Writer.Received(1).UpdateArtistImageAsync(artistId, "portrait.png");
+        await library.Writer.Received(1).RemoveArtistImageAsync(artistId);
     }
 
-    private static ArtistViewViewModel CreateViewModel(ILibraryFake library, ILibraryScanner scanner)
+    private static ArtistViewViewModel CreateViewModel(LibraryFakes library, ILibraryScanner scanner)
     {
-        library.GetSongsByArtistIdPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
+        library.Reader.GetSongsByArtistIdPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
             Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>
             {
                 PageNumber = 1, PageSize = 50, Items = []
             });
         var settings = Substitute.For<IUISettingsService>();
         settings.GetSongsPerPageAsync().Returns(50);
-        return new ArtistViewViewModel(library, library, scanner, Substitute.For<IPlaylistService>(),
+        return new ArtistViewViewModel(library.Reader, library.Writer, scanner, Substitute.For<IPlaylistService>(),
             Substitute.For<IMusicPlaybackService>(), Substitute.For<IMusicNavigationService>(),
             settings, new ImmediateDispatcher(), Substitute.For<IUIService>(), NullLogger<ArtistViewViewModel>.Instance);
     }

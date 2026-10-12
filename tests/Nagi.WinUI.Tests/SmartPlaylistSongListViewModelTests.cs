@@ -12,7 +12,7 @@ namespace Nagi.WinUI.Tests;
 
 public class SmartPlaylistSongListViewModelTests
 {
-    private readonly ILibraryFake _library = Substitute.For<ILibraryFake>();
+    private readonly LibraryFakes _library = new LibraryFakes();
     private readonly ISmartPlaylistService _playlists = Substitute.For<ISmartPlaylistService>();
 
     public SmartPlaylistSongListViewModelTests()
@@ -113,7 +113,7 @@ public class SmartPlaylistSongListViewModelTests
         var ids = songs.Select(song => song.Id).ToList();
         var pending = new TaskCompletionSource<List<Guid>>();
         _playlists.GetMatchingSongIdsAsync(id, null, SongSortOrder.Random, CancellationToken.None).Returns(pending.Task);
-        _library.GetSongsByIdsAsync(Arg.Any<IEnumerable<Guid>>())
+        _library.Reader.GetSongsByIdsAsync(Arg.Any<IEnumerable<Guid>>())
             .Returns(call => (IReadOnlyDictionary<Guid, Song>)songs
                 .Where(song => call.Arg<IEnumerable<Guid>>().Contains(song.Id)).ToDictionary(song => song.Id));
         using var viewModel = CreateViewModel();
@@ -133,8 +133,8 @@ public class SmartPlaylistSongListViewModelTests
 
     private TestSmartPlaylist CreateViewModel() => new(_library, _playlists);
 
-    private sealed class TestSmartPlaylist(ILibraryFake library, ISmartPlaylistService playlists)
-        : SmartPlaylistSongListViewModel(library, library, library, Substitute.For<IPlaylistService>(), playlists,
+    private sealed class TestSmartPlaylist(LibraryFakes library, ISmartPlaylistService playlists)
+        : SmartPlaylistSongListViewModel(library.Reader, library.Writer, library.Scanner, Substitute.For<IPlaylistService>(), playlists,
             Substitute.For<IMusicPlaybackService>(), Substitute.For<IMusicNavigationService>(),
             new ImmediateDispatcher(), Substitute.For<IUISettingsService>(), Substitute.For<IUIService>(),
             NullLogger<SmartPlaylistSongListViewModel>.Instance)
