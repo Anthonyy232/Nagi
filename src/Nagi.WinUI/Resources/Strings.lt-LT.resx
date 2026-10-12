@@ -76,6 +76,9 @@
   <data name="NavItem_Folders" xml:space="preserve">
     <value>Aplankai</value>
   </data>
+  <data name="NavItem_Favorites" xml:space="preserve">
+    <value>Mėgstamiausi</value>
+  </data>
   <data name="NavItem_Insights" xml:space="preserve">
     <value>Įžvalgos</value>
   </data>
@@ -83,7 +86,7 @@
     <value>Nustatymai</value>
   </data>
   <data name="Status_NoTrackPlaying" xml:space="preserve">
-    <value>Groja joks kūrinys</value>
+    <value>Joks kūrinys negroja</value>
   </data>
   <data name="Tooltip_Play" xml:space="preserve">
     <value>Groti</value>
@@ -122,7 +125,7 @@
     <value>Tamsi</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">
-    <value>Naudoti sistemos nustatymą</value>
+    <value>Sistemos numatytasis</value>
   </data>
   <data name="Backdrop_Mica" xml:space="preserve">
     <value>Mika</value>
@@ -141,6 +144,39 @@
   </data>
   <data name="Label_Rating" xml:space="preserve">
     <value>Įvertinimas</value>
+  </data>
+  <data name="Label_Grouping" xml:space="preserve">
+    <value>Grupavimas</value>
+  </data>
+  <data name="Label_SkipCount" xml:space="preserve">
+    <value>Praleidimų skaičius</value>
+  </data>
+  <data name="Label_DiscNumber" xml:space="preserve">
+    <value>Disko numeris</value>
+  </data>
+  <data name="Label_Bitrate" xml:space="preserve">
+    <value>Bitų sparta</value>
+  </data>
+  <data name="Label_SampleRate" xml:space="preserve">
+    <value>Diskretizavimo dažnis</value>
+  </data>
+  <data name="Label_IsLoved" xml:space="preserve">
+    <value>Mėgstamiausias</value>
+  </data>
+  <data name="Label_HasLyrics" xml:space="preserve">
+    <value>Turi žodžius</value>
+  </data>
+  <data name="Operator_IsInRange" xml:space="preserve">
+    <value>Yra tarp (įskaitant)</value>
+  </data>
+  <data name="Operator_IsAfter" xml:space="preserve">
+    <value>Yra po</value>
+  </data>
+  <data name="Operator_IsBefore" xml:space="preserve">
+    <value>Yra prieš</value>
+  </data>
+  <data name="SmartPlaylist_UpperBound_Placeholder" xml:space="preserve">
+    <value>Maksimali reikšmė</value>
   </data>
   <data name="Operator_Contains" xml:space="preserve">
     <value>Turi</value>
@@ -179,46 +215,46 @@
     <value>Yra daugiausiai</value>
   </data>
   <data name="Operator_IsInTheLast" xml:space="preserve">
-    <value>Buvo per paskutines (dienas)</value>
+    <value>Yra per pastarąsias (dienas)</value>
   </data>
   <data name="Operator_IsNotInTheLast" xml:space="preserve">
-    <value>Nebuvo per paskutines (dienas)</value>
+    <value>Nėra per pastarąsias (dienas)</value>
   </data>
   <data name="Operator_IsTrue" xml:space="preserve">
     <value>Yra tiesa</value>
   </data>
   <data name="Operator_IsFalse" xml:space="preserve">
-    <value>Yra klaida</value>
+    <value>Netiesa</value>
   </data>
   <data name="SmartPlaylist_Title_New" xml:space="preserve">
     <value>Naujas išmanusis grojaraštis</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>Redaguoti išmanųjį grojaraštį – {0}</value>
+    <value>Redaguoti išmanųjį grojaraštį: {0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
     <value>Įveskite grojaraščio pavadinimą</value>
   </data>
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
-    <value>{0:N0} kūrinių atitinka dabartines taisykles</value>
+    <value>Atitinkantys kūriniai: {0:N0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Įveskite pavadinimą, kad pamatytumėte atitinkančius kūrinius</value>
+    <value>Įveskite grojaraščio pavadinimą, kad pamatytumėte atitinkančius kūrinius</value>
   </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
-    <value>Nepavyko apskaičiuoti</value>
+    <value>Nepavyko suskaičiuoti atitinkančių kūrinių</value>
   </data>
   <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
-    <value>Skaičiuojama...</value>
+    <value>Skaičiuojama…</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>Grojaraštis tokiu pavadinimu jau egzistuoja!</value>
+    <value>Grojaraštis tokiu pavadinimu jau yra.</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>Prašome įvesti pavadinimą!</value>
+    <value>Įveskite grojaraščio pavadinimą.</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
-    <value>Kraunama...</value>
+    <value>Įkeliama…</value>
   </data>
   <data name="Error_FailedToLoadArtists" xml:space="preserve">
     <value>Nepavyko įkelti atlikėjų</value>
@@ -227,13 +263,15 @@
     <value>Kritinė klaida</value>
   </data>
   <data name="CrashReport_Message" xml:space="preserve">
-    <value>"Nagi" susidūrė su kritine klaida ir turi užsidaryti. Atsiprašome už nepatogumus.</value>
+    <value>Nagi susidūrė su klaida ir turi užsidaryti.</value>
   </data>
   <data name="ElevationWarning_Title" xml:space="preserve">
     <value>Vykdoma kaip administratorius</value>
   </data>
   <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>"Nagi" šiuo metu veikia kaip administratorius. Tai gali trukdyti kai kurioms funkcijoms (pvz., muzikos aplankų pridėjimui) veikti tinkamai.\n\nNorėdami geriausios patirties, paleiskite "Nagi" iš naujo be administratoriaus privilegijų.</value>
+    <value>"Nagi" šiuo metu veikia kaip administratorius. Tai gali trukdyti kai kurioms funkcijoms (pvz., muzikos aplankų pridėjimui) veikti tinkamai.
+
+Norėdami geriausios patirties, paleiskite "Nagi" iš naujo be administratoriaus privilegijų.</value>
   </data>
   <data name="ElevationWarning_Restart" xml:space="preserve">
     <value>Paleisti iš naujo įprastai</value>
@@ -293,25 +331,25 @@
     <value>Šis aplankas jau yra bibliotekoje.</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
-    <value>Pridedamas aplankas į biblioteką...</value>
+    <value>Aplankalas įtraukiamas į biblioteką…</value>
   </data>
   <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Sėkmingai ištrinta "{0}".</value>
+    <value>Iš jūsų bibliotekos pašalintas &apos;{0}&apos;.</value>
   </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
-    <value>Nepavyko ištrinti "{0}".</value>
+    <value>Nepavyko pašalinti &apos;{0}&apos; iš jūsų bibliotekos.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
-    <value>Trinamas "{0}"...</value>
+    <value>&apos;{0}&apos; šalinamas iš jūsų bibliotekos…</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>"Kūrinių iš {0}" pakartotinis nuskaitymas baigtas.</value>
+    <value>Pakartotinis „{0}“ nuskaitymas baigtas.</value>
   </data>
   <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>"Kūrinių iš {0}" pokyčių nerasta.</value>
+    <value>„{0}“ pokyčių nerasta.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
-    <value>Nuskenuojama "{0}" iš naujo...</value>
+    <value>Iš naujo nuskaitoma '{0}'…</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
     <value>Nerasta aplankų su muzika.</value>
@@ -326,7 +364,7 @@
     <value>Klaida pridedant aplanką: {0}</value>
   </data>
   <data name="Folders_Error_DeleteFolder" xml:space="preserve">
-    <value>Klaida trinant aplanką: {0}</value>
+    <value>Nepavyko pašalinti aplanko iš bibliotekos: {0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Klaida iš naujo nuskenuojant aplanką: {0}</value>
@@ -371,16 +409,16 @@
     <value>Nėra pasirinkto kūrinio</value>
   </data>
   <data name="Lyrics_SongTitleFormat" xml:space="preserve">
-    <value>{0} autorius {1}</value>
+    <value>{0}, atlikėjas {1}</value>
   </data>
   <data name="Onboarding_Welcome" xml:space="preserve">
     <value>Pradėkime nuo muzikos bibliotekos nustatymo.</value>
   </data>
   <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>Laukiama, kol pasirinksite aplanką...</value>
+    <value>Laukiama, kol pasirinksite aplanką…</value>
   </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
-    <value>Kuriama biblioteka...</value>
+    <value>Kuriama jūsų biblioteka…</value>
   </data>
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Įvyko netikėta klaida. Bandykite dar kartą.</value>
@@ -401,7 +439,7 @@
     <value>Klaida įkeliant grojaraštį</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Paleidžiamas grojaraštis...</value>
+    <value>Paleidžiamas grojaraštis…</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Nėra kūrinių, atitinkančių šio išmaniojo grojaraščio taisykles.</value>
@@ -410,7 +448,7 @@
     <value>Klaida pradedant grojimą iš šio grojaraščio.</value>
   </data>
   <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Pasirenkamas atsitiktinis grojaraštis...</value>
+    <value>Renkamas atsitiktinis grojaraštis…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Grojaraščių nerasta.</value>
@@ -422,13 +460,13 @@
     <value>Klaida paleidžiant atsitiktinį grojaraštį.</value>
   </data>
   <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Kraunami grojaraščiai...</value>
+    <value>Įkeliami grojaraščiai…</value>
   </data>
   <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
     <value>Klaida įkeliant grojaraščius.</value>
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Kuriamas naujas grojaraštis...</value>
+    <value>Kuriamas naujas grojaraštis…</value>
   </data>
   <data name="Playlist_Status_CreateFailed" xml:space="preserve">
     <value>Nepavyko sukurti grojaraščio. Galbūt jis jau egzistuoja.</value>
@@ -437,7 +475,7 @@
     <value>Įvyko klaida kuriant grojaraštį.</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Atnaujinamas grojaraščio viršelis...</value>
+    <value>Atnaujinamas grojaraščio viršelis…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Nepavyko atnaujinti grojaraščio viršelio.</value>
@@ -446,7 +484,7 @@
     <value>Įvyko klaida atnaujinant grojaraščio viršelį.</value>
   </data>
   <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Šalinamas grojaraščio paveikslėlis...</value>
+    <value>Šalinamas grojaraščio paveikslėlis…</value>
   </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Nepavyko pašalinti grojaraščio paveikslėlio.</value>
@@ -455,7 +493,7 @@
     <value>Įvyko klaida šalinant grojaraščio paveikslėlį.</value>
   </data>
   <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Pervardinamas grojaraštis...</value>
+    <value>Keičiamas grojaraščio pavadinimas…</value>
   </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Nepavyko pervadinti grojaraščio.</value>
@@ -464,7 +502,7 @@
     <value>Įvyko klaida pervardinant grojaraštį.</value>
   </data>
   <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Trinamas grojaraštis...</value>
+    <value>Trinamas grojaraštis…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Nepavyko ištrinti grojaraščio.</value>
@@ -512,7 +550,9 @@
     <value>Eksportavimas sėkmingas</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>Eksportuota {0} grojaraščių ({1} viso kūrinių) į:\n{2}</value>
+    <value>Eksportuoti grojaraščiai: {0}
+Kūriniai: {1}
+Išsaugota čia: {2}</value>
   </data>
   <data name="Settings_Export_Failed_Title" xml:space="preserve">
     <value>Eksportavimas nepavyko</value>
@@ -521,13 +561,18 @@
     <value>Importavimas sėkmingas</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>Sėkmingai importuota {0} grojaraščių ({1} kūrinių).</value>
+    <value>Importuoti grojaraščiai: {0}
+Kūriniai: {1}</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
-    <value>\n\n{0} kūrinių nerasta jūsų bibliotekoje.</value>
+    <value>
+
+Kūriniai, nerasti jūsų bibliotekoje: {0}.</value>
   </data>
   <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
-    <value>\n\nNepavyko importuoti {0} failų.</value>
+    <value>
+
+Failai, kurių nepavyko importuoti: {0}.</value>
   </data>
   <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
     <value>Importavimas nepavyko</value>
@@ -557,7 +602,7 @@
     <value>taisyklės</value>
   </data>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
-    <value>Kūriniai</value>
+    <value>Dainos</value>
   </data>
   <data name="SongList_TotalItems_Default" xml:space="preserve">
     <value>0 elementų</value>
@@ -596,10 +641,10 @@
     <value>FFmpeg nerastas. Įdiekite FFmpeg ir spustelėkite "Patikrinti iš naujo".</value>
   </data>
   <data name="FFmpeg_Status_Checking" xml:space="preserve">
-    <value>Tikrinama, ar yra FFmpeg...</value>
+    <value>Tikrinama FFmpeg…</value>
   </data>
   <data name="FFmpeg_Status_Detected" xml:space="preserve">
-    <value>FFmpeg aptiktas!</value>
+    <value>FFmpeg aptiktas.</value>
   </data>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg vis dar nerastas. Įdiekite FFmpeg ir spustelėkite "Patikrinti iš naujo".</value>
@@ -653,7 +698,7 @@
     <value>Atsisiunčiamas naujinimas</value>
   </data>
   <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>Versija {0} yra atsisiunčiama. Programa automatiškai paleis iš naujo, kai bus paruošta.</value>
+    <value>Atsisiunčiama versija {0}. Programa automatiškai pasileis iš naujo, kai ji bus paruošta.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLC susidūrė su nepatikslinta klaida.</value>
@@ -767,13 +812,13 @@
     <value>Nėra galimų grojaraščių</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
-    <value>Ištrinti aplanką</value>
+    <value>Pašalinti aplanką</value>
   </data>
   <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
-    <value>Ar tikrai norite pašalinti aplanką "{0}" iš bibliotekos? Tai neištrins failų iš jūsų kompiuterio.</value>
+    <value>Pašalinti &apos;{0}&apos; iš bibliotekos? Jūsų garso failai liks kompiuteryje.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
-    <value>Ištrinti</value>
+    <value>Pašalinti</value>
   </data>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Atšaukti</value>
@@ -812,10 +857,10 @@
     <value>Ieškoti grojaraščių</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>Įveskite naujo grojaraščio pavadinimą</value>
+    <value>Įveskite grojaraščio pavadinimą</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
-    <value>Pasirinkti paveikslėlį</value>
+    <value>Pasirinkti viršelį</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
     <value>Sukurti naują grojaraštį</value>
@@ -851,7 +896,7 @@
     <value>Uždaryti paiešką</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Ieškoti bibliotekoje</value>
+    <value>Ieškoti žanre</value>
   </data>
   <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Nėra galimų grojaraščių</value>
@@ -872,13 +917,13 @@
     <value>Nuskaityti metaduomenis iš naujo</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>Tai iš naujo nuskaitys visus jūsų bibliotekos kūrinius, kad pritaikytų naujus metaduomenų nustatymus (pvz., atlikėjo atskyrimo simbolius). Tai gali užtrukti, priklausomai nuo bibliotekos dydžio. Ar norite tęsti?</value>
+    <value>Iš naujo nuskaitykite biblioteką, kad būtų pritaikyti metaduomenų nustatymai, pavyzdžiui, atlikėjų atskyrimas. Didelėms bibliotekoms tai gali užtrukti. Tęsti?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
     <value>Nuskaityti iš naujo</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
-    <value>Ruošiamas bibliotekos pakartotinis nuskaitymas...</value>
+    <value>Ruošiamasi pakartotiniam bibliotekos nuskaitymui…</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
     <value>Pakartotinis nuskaitymas baigtas</value>
@@ -899,13 +944,17 @@
     <value>Įjungti garso normalizavimą</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
-    <value>Garso normalizavimas ("ReplayGain") užtikrina pastovų garso lygį visoje jūsų muzikoje.\n\nTai analizuos jūsų muzikos biblioteką ir tiesiogiai modifikuos garso failus, įrašydamas "ReplayGain" žymes. Bus apdorojami tik failai be esamų žymių. Tai gali užtrukti, priklausomai nuo jūsų bibliotekos dydžio.\n\nAr norite tęsti?</value>
+    <value>Garso normalizavimas ("ReplayGain") užtikrina pastovų garso lygį visoje jūsų muzikoje.
+
+Tai analizuos jūsų muzikos biblioteką ir tiesiogiai modifikuos garso failus, įrašydamas "ReplayGain" žymes. Bus apdorojami tik failai be esamų žymių. Tai gali užtrukti, priklausomai nuo jūsų bibliotekos dydžio.
+
+Ar norite tęsti?</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Įjungti ir nuskaityti</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>Ruošiamas garso normalizavimo nuskaitymas...</value>
+    <value>Ruošiamasi garso stiprumo normalizavimo nuskaitymui…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
     <value>Garso normalizavimo nuskaitymas atšauktas.</value>
@@ -914,7 +963,9 @@
     <value>Klaida skenavimo metu: {0}</value>
   </data>
   <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Nepavyko gauti žurnalų iš atminties. Atsarginis bandymas perskaityti žurnalo failą nepavyko.\nNumatomas kelias: "{0}"\nKlaida: {1}</value>
+    <value>Nepavyko gauti žurnalų iš atminties. Atsarginis bandymas perskaityti žurnalo failą nepavyko.
+Numatomas kelias: "{0}"
+Klaida: {1}</value>
   </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Nėra grojaraščių eksportuoti.</value>
@@ -1040,7 +1091,7 @@
     <value>Nagi</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Iš naujo atraskite savo vietinę muzikos kolekciją su Nagi – muzikos grotuvu, orientuotu į greitį, paprastumą ir privatumą. Nagi sukurtas naudojant C# ir WinUI 3, kad pasiūlytų švarią, natūralią „Fluent“ patirtį. Jis yra gražus, efektyvus ir gerbia jūsų privatumą.</value>
+    <value>Atraskite savo vietinę muzikos kolekciją iš naujo su Nagi – muzikos grotuvu, kuriam svarbiausia greitis, paprastumas ir privatumas.</value>
   </data>
   <data name="AppShortName" xml:space="preserve">
     <value>Nagi</value>
@@ -1070,58 +1121,58 @@
     <value>Eiti į albumą</value>
   </data>
   <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Drop files or folders onto the player to add them to the queue.</value>
+    <value>Nuvilkite failus arba aplankus į grotuvą, kad įtrauktumėte juos į eilę.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Kitas eilėje</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
-    <value>Clear queue</value>
+    <value>Išvalyti eilę</value>
   </data>
   <data name="QueuePanel_DisplayOptions" xml:space="preserve">
-    <value>Queue display options</value>
+    <value>Eilės rodymo parinktys</value>
   </data>
   <data name="QueuePanel_Close" xml:space="preserve">
-    <value>Close queue</value>
+    <value>Uždaryti eilę</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
-    <value>Artist</value>
+    <value>Atlikėjas</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
-    <value>Duration</value>
+    <value>Trukmė</value>
   </data>
   <data name="QueuePanel_ShowTrackCount" xml:space="preserve">
-    <value>Track count</value>
+    <value>Kūrinių skaičius</value>
   </data>
   <data name="QueuePanel_TrackCount" xml:space="preserve">
-    <value>Tracks: {0:N0}</value>
+    <value>Takeliai: {0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
-    <value>Queue position</value>
+    <value>Vieta eilėje</value>
   </data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve">
-    <value>Genre</value>
+    <value>Žanras</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
-    <value>Total duration</value>
+    <value>Bendra trukmė</value>
   </data>
   <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Groti</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
-    <value>Move up</value>
+    <value>Perkelti aukštyn</value>
   </data>
   <data name="QueuePanel_MoveDown" xml:space="preserve">
-    <value>Move down</value>
+    <value>Perkelti žemyn</value>
   </data>
   <data name="QueuePanel_Remove" xml:space="preserve">
-    <value>Remove from queue</value>
+    <value>Pašalinti iš eilės</value>
   </data>
   <data name="AlbumPage_Title" xml:space="preserve">
     <value>Albumai</value>
   </data>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Ieškoti albumų...</value>
+    <value>Ieškoti albumų…</value>
   </data>
   <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Ieškoti albumų</value>
@@ -1145,7 +1196,7 @@
     <value>Dainos</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Ieškoti albume...</value>
+    <value>Ieškoti albume…</value>
   </data>
   <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Ieškoti albume</value>
@@ -1166,13 +1217,13 @@
     <value>Pridėti į eilę</value>
   </data>
   <data name="AlbumViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Pridėti į grojaraštį</value>
+    <value>Įtraukti į grojaraštį</value>
   </data>
   <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Eiti į atlikėją</value>
+    <value>Eiti pas atlikėją</value>
   </data>
   <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Rodyti naršyklėje</value>
+    <value>Rodyti failų naršyklėje</value>
   </data>
   <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Groti</value>
@@ -1187,7 +1238,7 @@
     <value>Atlikėjai</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Ieškoti atlikėjų...</value>
+    <value>Ieškoti atlikėjų…</value>
   </data>
   <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Ieškoti atlikėjų</value>
@@ -1229,7 +1280,7 @@
     <value>Dainos</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Ieškoti atlikėjyje...</value>
+    <value>Ieškoti atlikėjo kūriniuose…</value>
   </data>
   <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Ieškoti atlikėjyje</value>
@@ -1250,13 +1301,13 @@
     <value>Pridėti į eilę</value>
   </data>
   <data name="ArtistViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Pridėti į grojaraštį</value>
+    <value>Įtraukti į grojaraštį</value>
   </data>
   <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
     <value>Eiti į albumą</value>
   </data>
   <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Rodyti naršyklėje</value>
+    <value>Rodyti failų naršyklėje</value>
   </data>
   <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Groti</value>
@@ -1286,7 +1337,7 @@
     <value>Nuskaityti iš naujo</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>Ištrinti</value>
+    <value>Pašalinti iš bibliotekos</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Dar nepridėta aplankų</value>
@@ -1298,7 +1349,7 @@
     <value>Groti</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>Pridėti į grojaraštį</value>
+    <value>Įtraukti į grojaraštį</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_Play" xml:space="preserve">
     <value>Groti</value>
@@ -1310,16 +1361,16 @@
     <value>Pridėti į eilę</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Pridėti į grojaraštį</value>
+    <value>Įtraukti į grojaraštį</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
     <value>Eiti į albumą</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Eiti į atlikėją</value>
+    <value>Eiti pas atlikėją</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Rodyti naršyklėje</value>
+    <value>Rodyti failų naršyklėje</value>
   </data>
   <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Groti</value>
@@ -1331,7 +1382,7 @@
     <value>Dainos</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Ieškoti aplanke...</value>
+    <value>Ieškoti aplanke…</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Ieškoti aplanke</value>
@@ -1352,7 +1403,7 @@
     <value>Žanrai</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Ieškoti žanrų...</value>
+    <value>Ieškoti žanrų…</value>
   </data>
   <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
     <value>Ieškoti žanrų</value>
@@ -1373,7 +1424,7 @@
     <value>Biblioteka</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Ieškoti bibliotekoje...</value>
+    <value>Ieškoti bibliotekoje…</value>
   </data>
   <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Ieškoti bibliotekoje</value>
@@ -1394,19 +1445,25 @@
     <value>Pridėti į eilę</value>
   </data>
   <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Pridėti į grojaraštį</value>
+    <value>Įtraukti į grojaraštį</value>
   </data>
   <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
     <value>Eiti į albumą</value>
   </data>
   <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
-    <value>Eiti į atlikėją</value>
+    <value>Eiti pas atlikėją</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Rodyti naršyklėje</value>
+    <value>Rodyti failų naršyklėje</value>
   </data>
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Groti</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
+    <value>Kūrinių nerasta</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+    <value>Pabandykite ieškoti ko nors kito</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
     <value>Jūsų biblioteka tuščia</value>
@@ -1415,31 +1472,31 @@
     <value>Pridėkite aplankų į savo biblioteką nustatymuose</value>
   </data>
   <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
-    <value>Šiam kūriniui dainų tekstų nerasta</value>
+    <value>Šio kūrinio žodžių nerasta</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
     <value>Pabandykite kitą dainą</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
-    <value>Edit or replace lyrics</value>
+    <value>Redaguoti arba pakeisti dainų tekstus</value>
   </data>
   <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
-    <value>Edit lyrics</value>
+    <value>Redaguoti dainos žodžius</value>
   </data>
   <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
-    <value>Paste plain text or timestamped LRC lyrics</value>
+    <value>Įklijuokite paprastą tekstą arba LRC dainų tekstus su laiko žymomis</value>
   </data>
   <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
-    <value>Save</value>
+    <value>Išsaugoti</value>
   </data>
   <data name="LyricsPage_EditLyrics_Remove" xml:space="preserve">
-    <value>Remove saved lyrics</value>
+    <value>Pašalinti išsaugotus dainos žodžius</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
-    <value>Lyrics could not be updated</value>
+    <value>Nepavyko atnaujinti dainų tekstų</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Nagi could not save the lyrics. Check the log for details and try again.</value>
+    <value>„Nagi“ negalėjo išsaugoti dainų tekstų. Patikrinkite žurnalą, kad sužinotumėte išsamią informaciją, ir bandykite dar kartą.</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Sveiki atvykę į Nagi</value>
@@ -1454,7 +1511,7 @@
     <value>Grojaraščiai</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Ieškoti grojaraščių...</value>
+    <value>Ieškoti grojaraščių…</value>
   </data>
   <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Ieškoti grojaraščių</value>
@@ -1502,7 +1559,7 @@
     <value>Dainos</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Ieškoti grojaraštyje...</value>
+    <value>Ieškoti grojaraštyje…</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Ieškoti grojaraštyje</value>
@@ -1526,10 +1583,10 @@
     <value>Eiti į albumą</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Eiti į atlikėją</value>
+    <value>Eiti pas atlikėją</value>
   </data>
   <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Rodyti naršyklėje</value>
+    <value>Rodyti failų naršyklėje</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
     <value>Pašalinti iš grojaraščio</value>
@@ -1550,7 +1607,7 @@
     <value>Dainos</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Ieškoti žanre...</value>
+    <value>Ieškoti žanre…</value>
   </data>
   <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Ieškoti žanre</value>
@@ -1571,16 +1628,16 @@
     <value>Pridėti į eilę</value>
   </data>
   <data name="GenreViewPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Pridėti į grojaraštį</value>
+    <value>Įtraukti į grojaraštį</value>
   </data>
   <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
     <value>Eiti į albumą</value>
   </data>
   <data name="GenreViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Eiti į atlikėją</value>
+    <value>Eiti pas atlikėją</value>
   </data>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Rodyti naršyklėje</value>
+    <value>Rodyti failų naršyklėje</value>
   </data>
   <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
     <value>Nėra grojaraščių</value>
@@ -1604,13 +1661,13 @@
     <value>Tema</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>Pasirinkite programos temą.</value>
+    <value>Pasirinkite šviesią, tamsią arba sistemos temą.</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
     <value>Akcento spalva</value>
   </data>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
-    <value>Atstatyti numatytuosius</value>
+    <value>Atkurti numatytąjį</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Lango medžiaga</value>
@@ -1622,7 +1679,7 @@
     <value>Dinaminė tema</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>Įjungti ir konfigūruoti dinaminės temos parinktis.</value>
+    <value>Pritaikyti programos spalvas prie dabartinio albumo viršelio.</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
     <value>Prisiminti lango dydį</value>
@@ -1637,7 +1694,7 @@
     <value>Atkūrti pagrindinį langą į ankstesnę ekrano vietą kitą kartą paleidus.</value>
   </data>
   <data name="SettingsPage_RememberNavState_Header" xml:space="preserve">
-    <value>Prisiminti naršymo skydelio būseną</value>
+    <value>Prisiminti navigacijos skydelio būseną</value>
   </data>
   <data name="SettingsPage_RememberNavState_Description" xml:space="preserve">
     <value>Palikti kairįjį naršymo skydelį atidarytą arba uždarytą, kaip jį palikote.</value>
@@ -1655,13 +1712,13 @@
     <value>Garso normalizavimas (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Automatiškai reguliuoti garsumą iki standartinio lygio (-18 LUFS), kad būtų išvengta staigių garsumo pokyčių.</value>
+    <value>Sumažinti garso garsumo skirtumus tarp kūrinių naudojant ReplayGain.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
-    <value>WASAPI exclusive mode</value>
+    <value>Išskirtinis WASAPI režimas</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+    <value>Suteikti „Nagi“ išskirtinę „Windows“ garso įrenginio kontrolę. Kitos programos gali tylėti. Pakeitę šį nustatymą, paleiskite „Nagi“ iš naujo.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>Išnykimas paleidžiant / pristabdant</value>
@@ -1673,7 +1730,7 @@
     <value>Garso ekvalaizeris</value>
   </data>
   <data name="SettingsPage_ResetEqualizer_Content" xml:space="preserve">
-    <value>Atstatyti numatytuosius</value>
+    <value>Atkurti numatytąjį</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Išankstinis stiprintuvas</value>
@@ -1685,55 +1742,55 @@
     <value>Tinkinti grotuvo valdiklius</value>
   </data>
   <data name="SettingsPage_ResetPlayerButtons_Content" xml:space="preserve">
-    <value>Atstatyti numatytuosius</value>
+    <value>Atkurti numatytąjį</value>
   </data>
   <data name="SettingsPage_CustomizePlayer_Instructions" xml:space="preserve">
     <value>Užveskite pelės žymeklį, kad perjungtumėte matomumą. Vilkite, kad pertvarkytumėte. Skirstiklis atskiria centrinius ir dešiniuosius valdiklius.</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Header" xml:space="preserve">
-    <value>Sutraukiamas grotuvas</value>
+    <value>Suskleidžiamas grotuvas</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>Animuoti grotuvo juostą, kad ji išsiplėstų ir susitrauktų.</value>
+    <value>Išskleisti grotuvo juostą užvedus ant jos pelės žymeklį.</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
     <value>Atkurti grojimo būseną</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>Išsaugoti dabartinę grojimo būseną, kad būtų galima tęsti kitą kartą paleidus.</value>
+    <value>Atkurti grojimo eilę ir grojimo vietą paleidus Nagi.</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
-    <value>Automatinis paleidimas paleidus</value>
+    <value>Automatiškai paleisti paleidus sistemą</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
     <value>Automatiškai paleisti Nagi prisijungus prie kompiuterio.</value>
   </data>
   <data name="SettingsPage_StartMinimized_Header" xml:space="preserve">
-    <value>Paleisti sumažintą</value>
+    <value>Paleisti suskleistą</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>Paleidus, programos langas bus numatytai sumažintas.</value>
+    <value>Paleisti Nagi su sumažintu langu.</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
-    <value>Sumažinti iki mini-grotuvo</value>
+    <value>Sumažinti į mini grotuvą</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Description" xml:space="preserve">
     <value>Kai sumažintas, rodyti kompaktišką plaukiojantį grotuvą, o ne paslėpti langą.</value>
   </data>
   <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
-    <value>Slėpti į sistemos dėklą</value>
+    <value>Paslėpti sistemos dėkle</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>Uždarius, paslėpti į sistemos dėklą.</value>
+    <value>Palikti Nagi veikti sistemos dėkle uždarius langą.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
-    <value>Rodyti viršelio paveikslėlį iškylančiame lange</value>
+    <value>Rodyti viršelį iškylančiajame lange</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
     <value>Rodyti viršelio paveikslėlį kompaktiškame grotuve, kuris pasirodo spustelėjus sistemos dėklo piktogramą.</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
-    <value>Ignoruoti narius rūšiuojant</value>
+    <value>Rūšiuojant nepaisyti artikelių</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
     <value>Rūšiuoti albumus, atlikėjus ir dainas pagal jų pirmą reikšmingą žodį (pvz., "The Beatles" rūšiuojami po B).</value>
@@ -1760,10 +1817,10 @@
     <value>Nuskaitykite biblioteką iš naujo, kad pritaikytumėte skaidymo pakeitimus</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
-    <value>Gauti metaduomenis internetu</value>
+    <value>Gauti metaduomenis iš interneto</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Gauti papildomą informaciją, pvz., atlikėjų paveikslėlius ir biografijas, iš internetinių paslaugų (pvz., Spotify, Last.fm).</value>
+    <value>Atsisiųsti atlikėjų nuotraukas ir biografijas iš interneto šaltinių.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Šaltiniai</value>
@@ -1772,10 +1829,10 @@
     <value>Vilkite, kad pertvarkytumėte metaduomenų šaltinius. Užveskite pelės žymeklį virš kiekvieno šaltinio, kad gautumėte išsamią informaciją.</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Header" xml:space="preserve">
-    <value>Gauti dainų tekstus internetu</value>
+    <value>Gauti dainų žodžius iš interneto</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>Automatiškai gauti trūkstamus dainų tekstus iš internetinių šaltinių. (Privatumas: siunčia kūrinių metaduomenis trečiųjų šalių paslaugoms)</value>
+    <value>Atsisiųsti trūkstamus dainų žodžius iš interneto šaltinių. Tai siunčia kūrinio metaduomenis trečiųjų šalių paslaugoms.</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
     <value>Šaltiniai</value>
@@ -1784,7 +1841,7 @@
     <value>Vilkite, kad pertvarkytumėte dainų tekstų šaltinius. Užveskite pelės žymeklį virš kiekvieno šaltinio, kad gautumėte išsamią informaciją.</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
-    <value>Rodyti romanizuotus dainų tekstus</value>
+    <value>Rodyti romanizuotus dainų žodžius</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
     <value>Rodyti mažesnę romanizuotą eilutę po palaikomais dainų tekstais, kai įdiegtas paketas atitinka rašybą.</value>
@@ -1793,7 +1850,7 @@
     <value>Kalbos paketai</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>Įdiekite kalbas, kurias norite romanizuoti. Paketai yra pasirašyti, skirti tik duomenims ir saugomi lokaliai.</value>
+    <value>Įdiekite kalbų paketus, kad romanizuotumėte palaikomus dainų žodžius. Paketai saugomi lokaliai.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
     <value>Atnaujinti</value>
@@ -1832,19 +1889,19 @@
     <value>{0} licencija</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>Eksportuoti/Importuoti grojaraščius</value>
+    <value>Importuoti ir eksportuoti grojaraščius</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
     <value>Eksportuoti grojaraščius į M3U failus, skirtus naudoti kituose grotuvuose, arba importuoti M3U grojaraščius į Nagi.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
-    <value>Eksportuoti viską...</value>
+    <value>Eksportuoti visus…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
     <value>Eksportuoti visus grojaraščius į aplanką</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
-    <value>Importuoti...</value>
+    <value>Importuoti…</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
     <value>Importuoti vieną ar daugiau M3U failų</value>
@@ -1880,7 +1937,7 @@
     <value>Atsijungti</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
-    <value>Įjungti scrobbling</value>
+    <value>Įjungti skroblinimą</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Description" xml:space="preserve">
     <value>Automatiškai pridėti kūrinius, kurių klausotės Nagi, į savo Last.fm profilį.</value>
@@ -1889,7 +1946,7 @@
     <value>Atnaujinti „Dabar grojama“</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>Rodykite savo draugams Last.fm, ko šiuo metu klausotės realiuoju laiku.</value>
+    <value>Rodyti šiuo metu grojamą kūrinį jūsų Last.fm profilyje.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
     <value>ListenBrainz</value>
@@ -1904,7 +1961,7 @@
     <value>Įklijuokite savo prieigos raktą iš listenbrainz.org/settings</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TestConnection" xml:space="preserve">
-    <value>Patikrinti ryšį</value>
+    <value>Tikrinti ryšį</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Connected" xml:space="preserve">
     <value>Prisijungta kaip {0}</value>
@@ -1913,10 +1970,10 @@
     <value>Ryšys nepavyko: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>Siųsti klausymus (scrobbling)</value>
+    <value>Pateikti perklausas (skroblinimas)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>Siųsti "dabar groja" atnaujinimus</value>
+    <value>Pateikti „Dabar grojama“ atnaujinimus</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
     <value>Išplėstiniai</value>
@@ -1949,7 +2006,7 @@
     <value>Dainos</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Ieškoti išmaniajame grojaraštyje...</value>
+    <value>Ieškoti išmaniajame grojaraštyje…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Ieškoti išmaniajame grojaraštyje</value>
@@ -1976,10 +2033,10 @@
     <value>Eiti į albumą</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Eiti į atlikėją</value>
+    <value>Eiti pas atlikėją</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Rodyti naršyklėje</value>
+    <value>Rodyti failų naršyklėje</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Groti</value>
@@ -2021,7 +2078,7 @@
     <value>Siųsti atsiliepimą</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Tikrinti atnaujinimus paleidus</value>
+    <value>Tikrinti atnaujinimus paleidžiant</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
     <value>Automatiškai tikrinti, ar yra naujų versijų, kai programa paleidžiama.</value>
@@ -2030,7 +2087,7 @@
     <value>Programos kalba</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>Pakeitimams įsigalioti reikia paleisti iš naujo</value>
+    <value>Paleiskite Nagi iš naujo, kad pritaikytumėte kalbos pakeitimą.</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
     <value>Reikia paleisti iš naujo</value>
@@ -2045,7 +2102,7 @@
     <value>Atsarginė kopija ir atkūrimas</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Kurkite muzikos bibliotekos ir nustatymų atsargines kopijas arba atkurkite iš ankstesnės atsarginės kopijos</value>
+    <value>Sukurti jūsų bibliotekos duomenų ir nustatymų atsarginę kopiją arba atkurti ankstesnę kopiją.</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
     <value>Sukurti atsarginę kopiją</value>
@@ -2057,7 +2114,7 @@
     <value>Atsarginė kopija sukurta</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Atsarginė kopija sėkmingai sukurta ({0:F2} MB): {1}</value>
+    <value>Sukurta atsarginė kopija ({0:F2} MB) čia: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
     <value>Atsarginės kopijos kūrimas nepavyko</value>
@@ -2084,13 +2141,13 @@
     <value>Atkūrimas baigtas</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Atsarginė kopija sėkmingai atkurta. Programa bus paleista iš naujo.</value>
+    <value>Atsarginė kopija atkurta. Nagi dabar pasileis iš naujo.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
     <value>Atkūrimas nepavyko</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Nepavyko atkurti iš atsarginės kopijos. Jūsų duomenys nebuvo pakeisti.</value>
+    <value>Nepavyko atkurti atsarginės kopijos.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
     <value>Grotuvo stilius</value>
@@ -2102,25 +2159,25 @@
     <value>Vientisas (nepermatomas)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Tinkinkite slankiojančio grotuvo išvaizdą</value>
+    <value>Pritaikyti grotuvo juostos išvaizdą.</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
     <value>Atspalvio intensyvumas</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Koreguoja grotuvo fono spalvos ryškumą</value>
+    <value>Koreguoti grotuvo fono spalvos intensyvumą.</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
-    <value>Įjungimo švelninimo trukmė</value>
+    <value>Garsėjimo trukmė</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
-    <value>Garso įjungimo švelninimo efekto trukmė grojant (ms)</value>
+    <value>Nustatykite, kiek laiko garsas stiprėja atnaujinus grojimą.</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
-    <value>Išjungimo švelninimo trukmė</value>
+    <value>Tylėjimo trukmė</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
-    <value>Garso išjungimo švelninimo efekto trukmė stabdant (ms)</value>
+    <value>Nustatykite, kiek laiko garsas tylsta pristabdžius grojimą.</value>
   </data>
   <data name="Settings_Nav_Insights" xml:space="preserve">
     <value>Įžvalgos</value>
@@ -2129,13 +2186,13 @@
     <value>Įžvalgos</value>
   </data>
   <data name="InsightsPage_TotalTime" xml:space="preserve">
-    <value>Bendra klausymosi trukmė</value>
+    <value>Bendras klausymosi laikas</value>
   </data>
   <data name="InsightsPage_UniqueSongs" xml:space="preserve">
     <value>Unikalūs kūriniai</value>
   </data>
   <data name="InsightsPage_PeakHour" xml:space="preserve">
-    <value>Piko valanda</value>
+    <value>Aktyviausia valanda</value>
   </data>
   <data name="InsightsPage_MostActiveDay" xml:space="preserve">
     <value>Aktyviausia diena</value>
@@ -2162,7 +2219,7 @@
     <value>Pradėkite groti muziką, kad pamatytumėte savo įžvalgas čia</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
-    <value>{0} grojimų</value>
+    <value>Perklausos: {0}</value>
   </data>
   <data name="InsightsPage_Source_Albums" xml:space="preserve">
     <value>Albumai</value>
@@ -2222,7 +2279,7 @@
     <value>Trukmė</value>
   </data>
   <data name="PaginationControl_All" xml:space="preserve">
-    <value>All</value>
+    <value>Visi</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>Elementų puslapyje:</value>
@@ -2246,19 +2303,19 @@
     <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
-    <value>Per paskutinę 1 dieną</value>
+    <value>Pastaroji 1 diena</value>
   </data>
   <data name="Insights_TimeRange_Last7Days" xml:space="preserve">
-    <value>Per paskutines 7 dienas</value>
+    <value>Pastarosios 7 dienos</value>
   </data>
   <data name="Insights_TimeRange_Last30Days" xml:space="preserve">
-    <value>Per paskutines 30 dienų</value>
+    <value>Pastarosios 30 dienų</value>
   </data>
   <data name="Insights_TimeRange_Last90Days" xml:space="preserve">
-    <value>Per paskutines 90 dienų</value>
+    <value>Pastarosios 90 dienų</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>Per paskutinius metus</value>
+    <value>Pastarieji metai</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>Visas laikas</value>
@@ -2268,5 +2325,167 @@
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
     <value>{0} min. {1} s</value>
+  </data>
+  <data name="QueuePanel_EmptyTitle" xml:space="preserve">
+    <value>Jūsų eilė tuščia</value>
+  </data>
+  <data name="QueuePanel_EmptyDescription" xml:space="preserve">
+    <value>Paleiskite muziką arba atvilkite garso failus čia, kad sukurtumėte eilę.</value>
+  </data>
+  <data name="QueuePanel_LoadError" xml:space="preserve">
+    <value>Kai kurių kūrinių nepavyko įkelti. Pasirinkite „Bandyti iš naujo“, kad vėl įkeltumėte eilę.</value>
+  </data>
+  <data name="QueuePanel_Retry" xml:space="preserve">
+    <value>Bandyti iš naujo</value>
+  </data>
+  <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
+    <value>Naujos grojaraščio tvarkos nepavyko išsaugoti. Pabandykite iš naujo.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
+    <value>Garso išvesties įrenginys</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Description" xml:space="preserve">
+    <value>Pasirinkite, kur Nagi groja muziką.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Default" xml:space="preserve">
+    <value>Sistemos numatytasis</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Unavailable" xml:space="preserve">
+    <value>Išsaugotas įrenginys nepasiekiamas. Naudojamas sistemos numatytasis.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
+    <value>Nepavyko atnaujinti garso išvesties. Pabandykite iš naujo arba pasirinkite kitą įrenginį.</value>
+  </data>
+  <data name="Listening_Random" xml:space="preserve">
+    <value>Maišyti</value>
+  </data>
+  <data name="Listening_MoreVariety" xml:space="preserve">
+    <value>Daugiau įvairovės</value>
+  </data>
+  <data name="Listening_Rediscover" xml:space="preserve">
+    <value>Atrasti iš naujo</value>
+  </data>
+  <data name="Listening_Unheard" xml:space="preserve">
+    <value>Neklausyti</value>
+  </data>
+  <data name="Listening_PlayFor" xml:space="preserve">
+    <value>Groti…</value>
+  </data>
+  <data name="Listening_Minutes" xml:space="preserve">
+    <value>Minutės</value>
+  </data>
+  <data name="Listening_ShuffleMode" xml:space="preserve">
+    <value>Mikso tipas</value>
+  </data>
+  <data name="Listening_AvoidRecentDays" xml:space="preserve">
+    <value>Vengti neseniai grotų (dienos)</value>
+  </data>
+  <data name="Listening_MoreOptions" xml:space="preserve">
+    <value>Daugiau parinkčių</value>
+  </data>
+  <data name="Listening_PlayForDescription" xml:space="preserve">
+    <value>Sukurkite pilnų kūrinių eilę, neviršijančią pasirinktos trukmės.</value>
+  </data>
+  <data name="Listening_NoMixTitle" xml:space="preserve">
+    <value>Šiam miksui kūrinių nėra</value>
+  </data>
+  <data name="Listening_NoMixDescription" xml:space="preserve">
+    <value>Joks šio sąrašo kūrinys neatitinka šių reikalavimų. Pabandykite kitą miksą arba kūrinių sąrašą.</value>
+  </data>
+  <data name="Listening_Favorites" xml:space="preserve">
+    <value>Mėgstamiausi</value>
+  </data>
+  <data name="Listening_AddFavorite" xml:space="preserve">
+    <value>Įtraukti į mėgstamiausius</value>
+  </data>
+  <data name="Listening_RemoveFavorite" xml:space="preserve">
+    <value>Pašalinti iš mėgstamiausių</value>
+  </data>
+  <data name="Listening_SleepTimer" xml:space="preserve">
+    <value>Miego laikmatis</value>
+  </data>
+  <data name="Listening_FinishTrack" xml:space="preserve">
+    <value>Užbaigti dabartinį kūrinį, kai pasibaigs laikmatis</value>
+  </data>
+  <data name="Listening_StopAfterTrack" xml:space="preserve">
+    <value>Sustabdyti po šio kūrinio</value>
+  </data>
+  <data name="Listening_StopAtQueueEnd" xml:space="preserve">
+    <value>Sustabdyti eilės pabaigoje</value>
+  </data>
+  <data name="Listening_StopPlayback" xml:space="preserve">
+    <value>Sustabdyti grojimą</value>
+  </data>
+  <data name="Listening_CustomTimer" xml:space="preserve">
+    <value>Pasirinktinis laikmatis…</value>
+  </data>
+  <data name="Listening_Timer15" xml:space="preserve">
+    <value>Po 15 minučių</value>
+  </data>
+  <data name="Listening_Timer30" xml:space="preserve">
+    <value>Po 30 minučių</value>
+  </data>
+  <data name="Listening_Timer60" xml:space="preserve">
+    <value>Po 60 minučių</value>
+  </data>
+  <data name="Listening_CancelStop" xml:space="preserve">
+    <value>Atšaukti suplanuotą sustabdymą</value>
+  </data>
+  <data name="Listening_TimerRemaining" xml:space="preserve">
+    <value>Sustabdys po {0}</value>
+  </data>
+  <data name="Listening_PlayerOptions" xml:space="preserve">
+    <value>Grotuvo parinktys</value>
+  </data>
+  <data name="Listening_RecentlyPlayed" xml:space="preserve">
+    <value>Neseniai grota</value>
+  </data>
+  <data name="Listening_HistorySearch" xml:space="preserve">
+    <value>Ieškoti klausymosi istorijoje</value>
+  </data>
+  <data name="Listening_HistoryEmpty" xml:space="preserve">
+    <value>Klausymosi istorijos dar nėra</value>
+  </data>
+  <data name="Listening_HistoryLoadError" xml:space="preserve">
+    <value>Nepavyko įkelti skilties „Neseniai grota“. Pasirinkite „Bandyti iš naujo“, kad pabandytumėte vėl.</value>
+  </data>
+  <data name="Listening_Today" xml:space="preserve">
+    <value>Šiandien</value>
+  </data>
+  <data name="Listening_Yesterday" xml:space="preserve">
+    <value>Vakar</value>
+  </data>
+  <data name="Listening_RediscoveryReason" xml:space="preserve">
+    <value>Paskutinį kartą grota {0:d}</value>
+  </data>
+  <data name="Listening_RediscoveryTitle" xml:space="preserve">
+    <value>Verta paklausyti dar kartą</value>
+  </data>
+  <data name="Listening_Dismiss" xml:space="preserve">
+    <value>Atmesti</value>
+  </data>
+  <data name="Listening_ActionError" xml:space="preserve">
+    <value>Nepavyko atlikti šio veiksmo. Pabandykite dar kartą.</value>
+  </data>
+  <data name="Listening_FavoritesEmpty" xml:space="preserve">
+    <value>Mėgstamiausių dar nėra</value>
+  </data>
+  <data name="Listening_FavoritesEmptyDescription" xml:space="preserve">
+    <value>Pažymėkite kūrinį kaip mėgstamą jo meniu arba pasirinkite jį ir paspauskite Ctrl+D.</value>
+  </data>
+  <data name="Listening_VarietyDescription" xml:space="preserve">
+    <value>Režimas „Daugiau įvairovės“ vengia dainų, grojamų neseniai grojamų kūrinių lange, ir, jei įmanoma, atskiria to paties atlikėjo kūrinius.</value>
+  </data>
+  <data name="Listening_RediscoverDescription" xml:space="preserve">
+    <value>Režimas „Atrasti iš naujo“ naudoja kūrinius, grojamus Nagi programoje, kurie paskutinį kartą buvo grojami seniau nei prieš 30 dienų.</value>
+  </data>
+  <data name="Listening_UnheardDescription" xml:space="preserve">
+    <value>Režimas „Neklausyti“ naudoja kūrinius, kurie dar nebuvo groti Nagi programoje.</value>
+  </data>
+  <data name="Listening_HistoryNoMatches" xml:space="preserve">
+    <value>Jokių perklausų, atitinkančių paiešką</value>
+  </data>
+  <data name="Listening_NoTimedMixDescription" xml:space="preserve">
+    <value>Jokio dainų sąrašo kūrinys neatitinka mikso reikalavimų ir netelpa į pasirinktą trukmę. Pabandykite ilgesnę trukmę, kitą miksą arba kitą kūrinių sąrašą.</value>
   </data>
 </root>

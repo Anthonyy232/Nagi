@@ -76,6 +76,9 @@
   <data name="NavItem_Folders" xml:space="preserve">
     <value>Ordner</value>
   </data>
+  <data name="NavItem_Favorites" xml:space="preserve">
+    <value>Favoriten</value>
+  </data>
   <data name="NavItem_Insights" xml:space="preserve">
     <value>Statistiken</value>
   </data>
@@ -86,7 +89,7 @@
     <value>Kein Titel wird abgespielt</value>
   </data>
   <data name="Tooltip_Play" xml:space="preserve">
-    <value>Wiedergabe</value>
+    <value>Wiedergeben</value>
   </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Pause</value>
@@ -122,7 +125,7 @@
     <value>Dunkel</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">
-    <value>Systemeinstellung verwenden</value>
+    <value>Systemstandard</value>
   </data>
   <data name="Backdrop_Mica" xml:space="preserve">
     <value>Mica</value>
@@ -141,6 +144,39 @@
   </data>
   <data name="Label_Rating" xml:space="preserve">
     <value>Bewertung</value>
+  </data>
+  <data name="Label_Grouping" xml:space="preserve">
+    <value>Gruppierung</value>
+  </data>
+  <data name="Label_SkipCount" xml:space="preserve">
+    <value>Anzahl Überspringungen</value>
+  </data>
+  <data name="Label_DiscNumber" xml:space="preserve">
+    <value>Disc-Nummer</value>
+  </data>
+  <data name="Label_Bitrate" xml:space="preserve">
+    <value>Bitrate</value>
+  </data>
+  <data name="Label_SampleRate" xml:space="preserve">
+    <value>Abtastrate</value>
+  </data>
+  <data name="Label_IsLoved" xml:space="preserve">
+    <value>Favorit</value>
+  </data>
+  <data name="Label_HasLyrics" xml:space="preserve">
+    <value>Hat Songtext</value>
+  </data>
+  <data name="Operator_IsInRange" xml:space="preserve">
+    <value>Liegt zwischen (inklusive)</value>
+  </data>
+  <data name="Operator_IsAfter" xml:space="preserve">
+    <value>Ist nach</value>
+  </data>
+  <data name="Operator_IsBefore" xml:space="preserve">
+    <value>Ist vor</value>
+  </data>
+  <data name="SmartPlaylist_UpperBound_Placeholder" xml:space="preserve">
+    <value>Maximalwert</value>
   </data>
   <data name="Operator_Contains" xml:space="preserve">
     <value>Enthält</value>
@@ -179,10 +215,10 @@
     <value>Ist höchstens</value>
   </data>
   <data name="Operator_IsInTheLast" xml:space="preserve">
-    <value>Ist in den letzten (Tagen)</value>
+    <value>Liegt innerhalb der letzten (Tage)</value>
   </data>
   <data name="Operator_IsNotInTheLast" xml:space="preserve">
-    <value>Ist nicht in den letzten (Tagen)</value>
+    <value>Liegt nicht innerhalb der letzten (Tage)</value>
   </data>
   <data name="Operator_IsTrue" xml:space="preserve">
     <value>Ist wahr</value>
@@ -194,31 +230,31 @@
     <value>Neue intelligente Wiedergabeliste</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>Intelligente Wiedergabeliste bearbeiten - {0}</value>
+    <value>Intelligente Wiedergabeliste bearbeiten: {0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
     <value>Geben Sie einen Wiedergabelistennamen ein</value>
   </data>
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
-    <value>{0} Lieder passen zu den aktuellen Regeln</value>
+    <value>Übereinstimmende Titel: {0:N0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Geben Sie einen Namen ein, um passende Lieder zu sehen</value>
+    <value>Geben Sie einen Namen für die Wiedergabeliste ein, um übereinstimmende Titel anzuzeigen</value>
   </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
-    <value>Berechnung nicht möglich</value>
+    <value>Übereinstimmende Titel konnten nicht gezählt werden</value>
   </data>
   <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
-    <value>Berechne...</value>
+    <value>Wird berechnet…</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>Eine Wiedergabeliste mit diesem Namen existiert bereits!</value>
+    <value>Eine Wiedergabeliste mit diesem Namen existiert bereits.</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>Bitte geben Sie einen Namen ein!</value>
+    <value>Geben Sie einen Namen für die Wiedergabeliste ein.</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
-    <value>Lade...</value>
+    <value>Wird geladen…</value>
   </data>
   <data name="Error_FailedToLoadArtists" xml:space="preserve">
     <value>Künstler konnten nicht geladen werden</value>
@@ -227,10 +263,10 @@
     <value>Kritischer Fehler</value>
   </data>
   <data name="CrashReport_Message" xml:space="preserve">
-    <value>Nagi ist auf einen kritischen Fehler gestoßen und muss geschlossen werden. Wir entschuldigen uns für die Unannehmlichkeiten.</value>
+    <value>Nagi ist auf einen Fehler gestoßen und muss beendet werden.</value>
   </data>
   <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>Als Administrator ausführen</value>
+    <value>Mit Administratorrechten ausgeführt</value>
   </data>
   <data name="ElevationWarning_Message" xml:space="preserve">
     <value>Nagi wird derzeit als Administrator ausgeführt. Dies kann dazu führen, dass einige Funktionen (wie das Hinzufügen von Musikordnern) nicht korrekt funktionieren.
@@ -295,16 +331,16 @@ Für die beste Erfahrung starten Sie Nagi bitte ohne Administratorrechte neu.</v
     <value>Dieser Ordner ist bereits in der Bibliothek.</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
-    <value>Ordner zur Bibliothek hinzufügen...</value>
+    <value>Ordner wird zur Bibliothek hinzugefügt…</value>
   </data>
   <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>„{0}“ erfolgreich gelöscht.</value>
+    <value>&apos;{0}&apos; wurde aus Ihrer Bibliothek entfernt.</value>
   </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
-    <value>„{0}“ konnte nicht gelöscht werden.</value>
+    <value>&apos;{0}&apos; konnte nicht aus Ihrer Bibliothek entfernt werden.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
-    <value>„{0}“ wird gelöscht...</value>
+    <value>&apos;{0}&apos; wird aus Ihrer Bibliothek entfernt…</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
     <value>Neuprüfung von „{0}“ abgeschlossen.</value>
@@ -313,7 +349,7 @@ Für die beste Erfahrung starten Sie Nagi bitte ohne Administratorrechte neu.</v
     <value>Keine Änderungen für „{0}“ erkannt.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
-    <value>„{0}“ wird neu gescannt...</value>
+    <value>'{0}' wird neu gescannt…</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
     <value>Keine Ordner mit Musik gefunden.</value>
@@ -328,7 +364,7 @@ Für die beste Erfahrung starten Sie Nagi bitte ohne Administratorrechte neu.</v
     <value>Fehler beim Hinzufügen des Ordners: {0}</value>
   </data>
   <data name="Folders_Error_DeleteFolder" xml:space="preserve">
-    <value>Fehler beim Löschen des Ordners: {0}</value>
+    <value>Ordner konnte nicht aus Ihrer Bibliothek entfernt werden: {0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Fehler beim Neu-Scannen des Ordners: {0}</value>
@@ -379,10 +415,10 @@ Für die beste Erfahrung starten Sie Nagi bitte ohne Administratorrechte neu.</v
     <value>Richten wir Ihre Musikbibliothek ein, um zu beginnen.</value>
   </data>
   <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>Warte darauf, dass Sie einen Ordner auswählen...</value>
+    <value>Warten auf die Auswahl eines Ordners…</value>
   </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
-    <value>Ihre Bibliothek wird erstellt...</value>
+    <value>Bibliothek wird erstellt…</value>
   </data>
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Es ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut.</value>
@@ -403,7 +439,7 @@ Für die beste Erfahrung starten Sie Nagi bitte ohne Administratorrechte neu.</v
     <value>Fehler beim Laden der Wiedergabeliste</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Wiedergabeliste wird gestartet...</value>
+    <value>Wiedergabeliste wird gestartet…</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Keine Lieder stimmen mit den Regeln dieser intelligenten Wiedergabeliste überein.</value>
@@ -412,7 +448,7 @@ Für die beste Erfahrung starten Sie Nagi bitte ohne Administratorrechte neu.</v
     <value>Fehler beim Starten der Wiedergabe für diese Wiedergabeliste.</value>
   </data>
   <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Eine zufällige Wiedergabeliste wird ausgewählt...</value>
+    <value>Zufällige Wiedergabeliste wird ausgewählt…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Keine Wiedergabelisten gefunden.</value>
@@ -424,13 +460,13 @@ Für die beste Erfahrung starten Sie Nagi bitte ohne Administratorrechte neu.</v
     <value>Fehler beim Abspielen einer zufälligen Wiedergabeliste.</value>
   </data>
   <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Wiedergabelisten werden geladen...</value>
+    <value>Wiedergabelisten werden geladen…</value>
   </data>
   <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
     <value>Fehler beim Laden der Wiedergabelisten.</value>
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Neue Wiedergabeliste wird erstellt...</value>
+    <value>Neue Wiedergabeliste wird erstellt…</value>
   </data>
   <data name="Playlist_Status_CreateFailed" xml:space="preserve">
     <value>Wiedergabeliste konnte nicht erstellt werden. Sie existiert möglicherweise bereits.</value>
@@ -439,7 +475,7 @@ Für die beste Erfahrung starten Sie Nagi bitte ohne Administratorrechte neu.</v
     <value>Beim Erstellen der Wiedergabeliste ist ein Fehler aufgetreten.</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Wiedergabelisten-Cover wird aktualisiert...</value>
+    <value>Cover der Wiedergabeliste wird aktualisiert…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Wiedergabelisten-Cover konnte nicht aktualisiert werden.</value>
@@ -448,7 +484,7 @@ Für die beste Erfahrung starten Sie Nagi bitte ohne Administratorrechte neu.</v
     <value>Beim Aktualisieren des Wiedergabelisten-Covers ist ein Fehler aufgetreten.</value>
   </data>
   <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Wiedergabelistenbild wird entfernt...</value>
+    <value>Bild der Wiedergabeliste wird entfernt…</value>
   </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Wiedergabelistenbild konnte nicht entfernt werden.</value>
@@ -457,7 +493,7 @@ Für die beste Erfahrung starten Sie Nagi bitte ohne Administratorrechte neu.</v
     <value>Beim Entfernen des Wiedergabelistenbildes ist ein Fehler aufgetreten.</value>
   </data>
   <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Wiedergabeliste wird umbenannt...</value>
+    <value>Wiedergabeliste wird umbenannt…</value>
   </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Wiedergabeliste konnte nicht umbenannt werden.</value>
@@ -466,7 +502,7 @@ Für die beste Erfahrung starten Sie Nagi bitte ohne Administratorrechte neu.</v
     <value>Beim Umbenennen der Wiedergabeliste ist ein Fehler aufgetreten.</value>
   </data>
   <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Wiedergabeliste wird gelöscht...</value>
+    <value>Wiedergabeliste wird gelöscht…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Wiedergabeliste konnte nicht gelöscht werden.</value>
@@ -514,8 +550,9 @@ Für die beste Erfahrung starten Sie Nagi bitte ohne Administratorrechte neu.</v
     <value>Export erfolgreich</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>{0} Wiedergabelisten ({1} Lieder insgesamt) exportiert nach:
-{2}</value>
+    <value>Exportierte Wiedergabelisten: {0}
+Titel: {1}
+Gespeichert unter: {2}</value>
   </data>
   <data name="Settings_Export_Failed_Title" xml:space="preserve">
     <value>Export fehlgeschlagen</value>
@@ -524,17 +561,18 @@ Für die beste Erfahrung starten Sie Nagi bitte ohne Administratorrechte neu.</v
     <value>Import erfolgreich</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>{0} Wiedergabelisten ({1} Lieder) erfolgreich importiert.</value>
+    <value>Importierte Wiedergabelisten: {0}
+Titel: {1}</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
     <value>
 
-{0} Lieder konnten in Ihrer Bibliothek nicht gefunden werden.</value>
+In Ihrer Bibliothek nicht gefundene Titel: {0}.</value>
   </data>
   <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
     <value>
 
-{0} Dateien konnten nicht importiert werden.</value>
+Dateien, die nicht importiert werden konnten: {0}.</value>
   </data>
   <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
     <value>Import fehlgeschlagen</value>
@@ -549,7 +587,7 @@ Für die beste Erfahrung starten Sie Nagi bitte ohne Administratorrechte neu.</v
     <value>Keine Regeln definiert • Alle Lieder stimmen überein</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Stimme {0} von {1} {2} überein</value>
+    <value>Übereinstimmung: {0} ({1} {2})</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>alle</value>
@@ -564,7 +602,7 @@ Für die beste Erfahrung starten Sie Nagi bitte ohne Administratorrechte neu.</v
     <value>Regeln</value>
   </data>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
-    <value>Lieder</value>
+    <value>Titel</value>
   </data>
   <data name="SongList_TotalItems_Default" xml:space="preserve">
     <value>0 Elemente</value>
@@ -603,10 +641,10 @@ Für die beste Erfahrung starten Sie Nagi bitte ohne Administratorrechte neu.</v
     <value>FFmpeg nicht erkannt. Bitte installieren Sie FFmpeg und klicken Sie auf „Erneut prüfen“.</value>
   </data>
   <data name="FFmpeg_Status_Checking" xml:space="preserve">
-    <value>Suche nach FFmpeg...</value>
+    <value>FFmpeg wird überprüft…</value>
   </data>
   <data name="FFmpeg_Status_Detected" xml:space="preserve">
-    <value>FFmpeg erkannt!</value>
+    <value>FFmpeg erkannt.</value>
   </data>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg immer noch nicht erkannt. Bitte installieren Sie FFmpeg und klicken Sie auf „Erneut prüfen“.</value>
@@ -618,7 +656,7 @@ Für die beste Erfahrung starten Sie Nagi bitte ohne Administratorrechte neu.</v
     <value>Zurück</value>
   </data>
   <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>Wiedergabe</value>
+    <value>Wiedergeben</value>
   </data>
   <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
     <value>Pause</value>
@@ -774,13 +812,13 @@ Für die beste Erfahrung starten Sie Nagi bitte ohne Administratorrechte neu.</v
     <value>Keine Wiedergabelisten verfügbar</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
-    <value>Ordner löschen</value>
+    <value>Ordner entfernen</value>
   </data>
   <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
-    <value>Möchten Sie den Ordner „{0}“ wirklich aus der Bibliothek entfernen? Die Dateien werden dabei nicht von Ihrem Computer gelöscht.</value>
+    <value>&apos;{0}&apos; aus Ihrer Bibliothek entfernen? Ihre Audiodateien bleiben auf Ihrem Computer.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
-    <value>Löschen</value>
+    <value>Entfernen</value>
   </data>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Abbrechen</value>
@@ -819,10 +857,10 @@ Für die beste Erfahrung starten Sie Nagi bitte ohne Administratorrechte neu.</v
     <value>Wiedergabelisten suchen</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>Neuen Wiedergabelistennamen eingeben</value>
+    <value>Name der Wiedergabeliste eingeben</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
-    <value>Bild auswählen</value>
+    <value>Cover auswählen</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
     <value>Neue Wiedergabeliste erstellen</value>
@@ -858,7 +896,7 @@ Für die beste Erfahrung starten Sie Nagi bitte ohne Administratorrechte neu.</v
     <value>Suche schließen</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Bibliothek durchsuchen</value>
+    <value>Im Genre suchen</value>
   </data>
   <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Keine Wiedergabelisten verfügbar</value>
@@ -879,13 +917,13 @@ Für die beste Erfahrung starten Sie Nagi bitte ohne Administratorrechte neu.</v
     <value>Metadaten neu scannen</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>Dadurch werden alle Lieder in Ihrer Bibliothek erneut gescannt, um neue Metadateneinstellungen (wie Künstler-Trennjeichen) anzuwenden. Dies kann je nach Größe der Bibliothek eine Weile dauern. Möchten Sie fortfahren?</value>
+    <value>Scannen Sie Ihre Bibliothek neu, um Metadaten-Einstellungen wie das Aufteilen von Künstlern anzuwenden. Bei großen Bibliotheken kann dies eine Weile dauern. Fortfahren?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
     <value>Neu scannen</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
-    <value>Vorbereitung des Bibliotheks-Rescans...</value>
+    <value>Bibliotheksscan wird vorbereitet…</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
     <value>Rescan abgeschlossen</value>
@@ -916,7 +954,7 @@ Möchten Sie fortfahren?</value>
     <value>Aktivieren &amp; Scannen</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>Vorbereitung des Lautstärkenormalisierungs-Scans...</value>
+    <value>Lautstärkenormalisierungsscan wird vorbereitet…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
     <value>Lautstärkenormalisierungs-Scan abgebrochen.</value>
@@ -1053,7 +1091,7 @@ Fehler: {1}</value>
     <value>Nagi</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Entdecken Sie Ihre lokale Musiksammlung neu mit Nagi, einem Musikplayer, der sich auf Geschwindigkeit, Einfachheit und Datenschutz konzentriert. Nagi wurde mit C# und WinUI 3 entwickelt, um eine saubere, native Fluent-Erfahrung zu bieten. Er ist schön, effizient und respektiert Ihre Privatsphäre.</value>
+    <value>Entdecken Sie Ihre lokale Musiksammlung neu mit Nagi – einem Musik-Player, bei dem Geschwindigkeit, Einfachheit und Datenschutz im Mittelpunkt stehen.</value>
   </data>
   <data name="AppShortName" xml:space="preserve">
     <value>Nagi</value>
@@ -1080,61 +1118,61 @@ Fehler: {1}</value>
     <value>Als Nächstes</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
-    <value>Zum Album gehen</value>
+    <value>Zum Album</value>
   </data>
   <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Drop files or folders onto the player to add them to the queue.</value>
+    <value>Dateien oder Ordner auf den Player ziehen, um sie zur Warteschlange hinzuzufügen.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Als Nächstes</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
-    <value>Clear queue</value>
+    <value>Warteschlange leeren</value>
   </data>
   <data name="QueuePanel_DisplayOptions" xml:space="preserve">
-    <value>Queue display options</value>
+    <value>Anzeigeoptionen für Warteschlange</value>
   </data>
   <data name="QueuePanel_Close" xml:space="preserve">
-    <value>Close queue</value>
+    <value>Warteschlange schließen</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
-    <value>Artist</value>
+    <value>Interpret</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
-    <value>Duration</value>
+    <value>Dauer</value>
   </data>
   <data name="QueuePanel_ShowTrackCount" xml:space="preserve">
-    <value>Track count</value>
+    <value>Titelanzahl</value>
   </data>
   <data name="QueuePanel_TrackCount" xml:space="preserve">
-    <value>Tracks: {0:N0}</value>
+    <value>Titel: {0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
-    <value>Queue position</value>
+    <value>Position in der Warteschlange</value>
   </data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve">
     <value>Genre</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
-    <value>Total duration</value>
+    <value>Gesamtdauer</value>
   </data>
   <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Wiedergeben</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
-    <value>Move up</value>
+    <value>Nach oben verschieben</value>
   </data>
   <data name="QueuePanel_MoveDown" xml:space="preserve">
-    <value>Move down</value>
+    <value>Nach unten verschieben</value>
   </data>
   <data name="QueuePanel_Remove" xml:space="preserve">
-    <value>Remove from queue</value>
+    <value>Aus Warteschlange entfernen</value>
   </data>
   <data name="AlbumPage_Title" xml:space="preserve">
     <value>Alben</value>
   </data>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Alben suchen...</value>
+    <value>Alben suchen…</value>
   </data>
   <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Alben suchen</value>
@@ -1143,7 +1181,7 @@ Fehler: {1}</value>
     <value>Zufällig auswählen</value>
   </data>
   <data name="AlbumPage_Menu_Play" xml:space="preserve">
-    <value>Wiedergabe</value>
+    <value>Wiedergeben</value>
   </data>
   <data name="AlbumPage_Empty_Title" xml:space="preserve">
     <value>Keine Alben gefunden</value>
@@ -1158,7 +1196,7 @@ Fehler: {1}</value>
     <value>Titel</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Im Album suchen...</value>
+    <value>Im Album suchen…</value>
   </data>
   <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Im Album suchen</value>
@@ -1170,7 +1208,7 @@ Fehler: {1}</value>
     <value>Alle mischen und abspielen</value>
   </data>
   <data name="AlbumViewPage_SongMenu_Play" xml:space="preserve">
-    <value>Wiedergabe</value>
+    <value>Wiedergeben</value>
   </data>
   <data name="AlbumViewPage_SongMenu_PlayNext" xml:space="preserve">
     <value>Als Nächstes abspielen</value>
@@ -1179,16 +1217,16 @@ Fehler: {1}</value>
     <value>Zur Warteschlange hinzufügen</value>
   </data>
   <data name="AlbumViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Zur Playlist hinzufügen</value>
+    <value>Zur Wiedergabeliste hinzufügen</value>
   </data>
   <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Zum Künstler gehen</value>
+    <value>Zum Künstler</value>
   </data>
   <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Im Explorer anzeigen</value>
+    <value>Im Datei-Explorer anzeigen</value>
   </data>
   <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>Wiedergabe</value>
+    <value>Wiedergeben</value>
   </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
     <value>Keine Titel in diesem Album gefunden</value>
@@ -1200,7 +1238,7 @@ Fehler: {1}</value>
     <value>Künstler</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Künstler suchen...</value>
+    <value>Künstler suchen…</value>
   </data>
   <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Künstler suchen</value>
@@ -1209,7 +1247,7 @@ Fehler: {1}</value>
     <value>Zufällig auswählen</value>
   </data>
   <data name="ArtistPage_Menu_Play" xml:space="preserve">
-    <value>Wiedergabe</value>
+    <value>Wiedergeben</value>
   </data>
   <data name="ArtistPage_Menu_ChangeImage" xml:space="preserve">
     <value>Bild ändern</value>
@@ -1242,7 +1280,7 @@ Fehler: {1}</value>
     <value>Titel</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Im Künstler suchen...</value>
+    <value>Beim Künstler suchen…</value>
   </data>
   <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Im Künstler suchen</value>
@@ -1254,7 +1292,7 @@ Fehler: {1}</value>
     <value>Alle mischen und abspielen</value>
   </data>
   <data name="ArtistViewPage_SongMenu_Play" xml:space="preserve">
-    <value>Wiedergabe</value>
+    <value>Wiedergeben</value>
   </data>
   <data name="ArtistViewPage_SongMenu_PlayNext" xml:space="preserve">
     <value>Als Nächstes abspielen</value>
@@ -1263,16 +1301,16 @@ Fehler: {1}</value>
     <value>Zur Warteschlange hinzufügen</value>
   </data>
   <data name="ArtistViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Zur Playlist hinzufügen</value>
+    <value>Zur Wiedergabeliste hinzufügen</value>
   </data>
   <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Zum Album gehen</value>
+    <value>Zum Album</value>
   </data>
   <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Im Explorer anzeigen</value>
+    <value>Im Datei-Explorer anzeigen</value>
   </data>
   <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>Wiedergabe</value>
+    <value>Wiedergeben</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
     <value>Keine Titel für diesen Künstler gefunden</value>
@@ -1293,13 +1331,13 @@ Fehler: {1}</value>
     <value>Ordner hinzufügen</value>
   </data>
   <data name="FolderPage_Menu_Play" xml:space="preserve">
-    <value>Wiedergabe</value>
+    <value>Wiedergeben</value>
   </data>
   <data name="FolderPage_Menu_Rescan" xml:space="preserve">
     <value>Neu scannen</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>Löschen</value>
+    <value>Aus Bibliothek entfernen</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Noch keine Ordner hinzugefügt</value>
@@ -1308,13 +1346,13 @@ Fehler: {1}</value>
     <value>Fügen Sie Musikordner hinzu, um zu beginnen</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
-    <value>Wiedergabe</value>
+    <value>Wiedergeben</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>Zur Playlist hinzufügen</value>
+    <value>Zur Wiedergabeliste hinzufügen</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_Play" xml:space="preserve">
-    <value>Wiedergabe</value>
+    <value>Wiedergeben</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_PlayNext" xml:space="preserve">
     <value>Als Nächstes abspielen</value>
@@ -1323,19 +1361,19 @@ Fehler: {1}</value>
     <value>Zur Warteschlange hinzufügen</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Zur Playlist hinzufügen</value>
+    <value>Zur Wiedergabeliste hinzufügen</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Zum Album gehen</value>
+    <value>Zum Album</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Zum Künstler gehen</value>
+    <value>Zum Künstler</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Im Explorer anzeigen</value>
+    <value>Im Datei-Explorer anzeigen</value>
   </data>
   <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>Wiedergabe</value>
+    <value>Wiedergeben</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Ordner</value>
@@ -1344,7 +1382,7 @@ Fehler: {1}</value>
     <value>Titel</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Im Ordner suchen...</value>
+    <value>Im Ordner suchen…</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Im Ordner suchen</value>
@@ -1365,7 +1403,7 @@ Fehler: {1}</value>
     <value>Genres</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Genres suchen...</value>
+    <value>Genres suchen…</value>
   </data>
   <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
     <value>Genres suchen</value>
@@ -1374,7 +1412,7 @@ Fehler: {1}</value>
     <value>Zufällig auswählen</value>
   </data>
   <data name="GenrePage_Menu_Play" xml:space="preserve">
-    <value>Wiedergabe</value>
+    <value>Wiedergeben</value>
   </data>
   <data name="GenrePage_Empty_Title" xml:space="preserve">
     <value>Keine Genres gefunden</value>
@@ -1386,7 +1424,7 @@ Fehler: {1}</value>
     <value>Sammlung</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Bibliothek durchsuchen...</value>
+    <value>Bibliothek durchsuchen…</value>
   </data>
   <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Bibliothek durchsuchen</value>
@@ -1398,7 +1436,7 @@ Fehler: {1}</value>
     <value>Alle mischen und abspielen</value>
   </data>
   <data name="LibraryPage_Context_Play" xml:space="preserve">
-    <value>Wiedergabe</value>
+    <value>Wiedergeben</value>
   </data>
   <data name="LibraryPage_Context_PlayNext" xml:space="preserve">
     <value>Als Nächstes abspielen</value>
@@ -1407,19 +1445,25 @@ Fehler: {1}</value>
     <value>Zur Warteschlange hinzufügen</value>
   </data>
   <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Zur Playlist hinzufügen</value>
+    <value>Zur Wiedergabeliste hinzufügen</value>
   </data>
   <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Zum Album gehen</value>
+    <value>Zum Album</value>
   </data>
   <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
-    <value>Zum Künstler gehen</value>
+    <value>Zum Künstler</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Im Explorer anzeigen</value>
+    <value>Im Datei-Explorer anzeigen</value>
   </data>
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Wiedergabe</value>
+    <value>Wiedergeben</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
+    <value>Keine Titel gefunden</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+    <value>Versuchen Sie es mit einer anderen Suche</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
     <value>Ihre Bibliothek ist leer</value>
@@ -1428,31 +1472,31 @@ Fehler: {1}</value>
     <value>Fügen Sie Ordner zu Ihrer Bibliothek in den Einstellungen hinzu</value>
   </data>
   <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
-    <value>Keine Liedtexte für diesen Titel gefunden</value>
+    <value>Kein Songtext für diesen Titel gefunden</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
     <value>Versuchen Sie einen anderen Titel</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
-    <value>Edit or replace lyrics</value>
+    <value>Liedtext bearbeiten oder ersetzen</value>
   </data>
   <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
-    <value>Edit lyrics</value>
+    <value>Songtext bearbeiten</value>
   </data>
   <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
-    <value>Paste plain text or timestamped LRC lyrics</value>
+    <value>Reinen Text oder LRC-Liedtext mit Zeitstempeln einfügen</value>
   </data>
   <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
-    <value>Save</value>
+    <value>Speichern</value>
   </data>
   <data name="LyricsPage_EditLyrics_Remove" xml:space="preserve">
-    <value>Remove saved lyrics</value>
+    <value>Gespeicherten Songtext entfernen</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
-    <value>Lyrics could not be updated</value>
+    <value>Liedtext konnte nicht aktualisiert werden</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Nagi could not save the lyrics. Check the log for details and try again.</value>
+    <value>Nagi konnte den Liedtext nicht speichern. Überprüfen Sie das Protokoll auf Details und versuchen Sie es erneut.</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Willkommen bei Nagi</value>
@@ -1467,7 +1511,7 @@ Fehler: {1}</value>
     <value>Playlists</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Playlists suchen...</value>
+    <value>Wiedergabelisten suchen…</value>
   </data>
   <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Playlists suchen</value>
@@ -1488,7 +1532,7 @@ Fehler: {1}</value>
     <value>Smart-Playlist</value>
   </data>
   <data name="PlaylistPage_Context_Play" xml:space="preserve">
-    <value>Wiedergabe</value>
+    <value>Wiedergeben</value>
   </data>
   <data name="PlaylistPage_Context_Rename" xml:space="preserve">
     <value>Umbenennen</value>
@@ -1515,7 +1559,7 @@ Fehler: {1}</value>
     <value>Titel</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>In Playlist suchen...</value>
+    <value>In Wiedergabeliste suchen…</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>In Playlist suchen</value>
@@ -1527,7 +1571,7 @@ Fehler: {1}</value>
     <value>Alle mischen und abspielen</value>
   </data>
   <data name="PlaylistSongViewPage_Context_Play" xml:space="preserve">
-    <value>Wiedergabe</value>
+    <value>Wiedergeben</value>
   </data>
   <data name="PlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
     <value>Als Nächstes abspielen</value>
@@ -1536,19 +1580,19 @@ Fehler: {1}</value>
     <value>Zur Warteschlange hinzufügen</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Zum Album gehen</value>
+    <value>Zum Album</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Zum Künstler gehen</value>
+    <value>Zum Künstler</value>
   </data>
   <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Im Explorer anzeigen</value>
+    <value>Im Datei-Explorer anzeigen</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
-    <value>Aus Playlist entfernen</value>
+    <value>Aus Wiedergabeliste entfernen</value>
   </data>
   <data name="PlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Wiedergabe</value>
+    <value>Wiedergeben</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>Diese Playlist ist leer</value>
@@ -1563,7 +1607,7 @@ Fehler: {1}</value>
     <value>Titel</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Im Genre suchen...</value>
+    <value>Im Genre suchen…</value>
   </data>
   <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Im Genre suchen</value>
@@ -1575,7 +1619,7 @@ Fehler: {1}</value>
     <value>Alle mischen und abspielen</value>
   </data>
   <data name="GenreViewPage_Context_Play" xml:space="preserve">
-    <value>Wiedergabe</value>
+    <value>Wiedergeben</value>
   </data>
   <data name="GenreViewPage_Context_PlayNext" xml:space="preserve">
     <value>Als Nächstes abspielen</value>
@@ -1584,22 +1628,22 @@ Fehler: {1}</value>
     <value>Zur Warteschlange hinzufügen</value>
   </data>
   <data name="GenreViewPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Zur Playlist hinzufügen</value>
+    <value>Zur Wiedergabeliste hinzufügen</value>
   </data>
   <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Zum Album gehen</value>
+    <value>Zum Album</value>
   </data>
   <data name="GenreViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Zum Künstler gehen</value>
+    <value>Zum Künstler</value>
   </data>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Im Explorer anzeigen</value>
+    <value>Im Datei-Explorer anzeigen</value>
   </data>
   <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
     <value>Keine Playlists verfügbar</value>
   </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Wiedergabe</value>
+    <value>Wiedergeben</value>
   </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
     <value>Keine Titel für dieses Genre gefunden</value>
@@ -1617,7 +1661,7 @@ Fehler: {1}</value>
     <value>Thema</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>Wählen Sie das Anwendungsthema.</value>
+    <value>Wählen Sie ein helles, dunkles oder System-Design.</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
     <value>Akzentfarbe</value>
@@ -1629,28 +1673,28 @@ Fehler: {1}</value>
     <value>Fenstermaterial</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Description" xml:space="preserve">
-    <value>Wählen Sie das Hintergrundmaterial für das Fenster.</value>
+    <value>Wählen Sie das Fensterhintergrund-Material.</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
     <value>Dynamisches Design</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>Dynamische Themeneinstellungen aktivieren und konfigurieren.</value>
+    <value>App-Farben an das aktuelle Album-Cover anpassen.</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
-    <value>Fenstergröße speichern</value>
+    <value>Fenstergröße merken</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Description" xml:space="preserve">
     <value>Stellt die Größe des Hauptfensters beim nächsten Start auf die vorherige Größe wieder her.</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Header" xml:space="preserve">
-    <value>Fensterposition speichern</value>
+    <value>Fensterposition merken</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Description" xml:space="preserve">
     <value>Stellt die Position des Hauptfensters beim nächsten Start auf die vorherige Bildschirmposition wieder her.</value>
   </data>
   <data name="SettingsPage_RememberNavState_Header" xml:space="preserve">
-    <value>Navigationspanel-Status speichern</value>
+    <value>Status der Navigationsleiste merken</value>
   </data>
   <data name="SettingsPage_RememberNavState_Description" xml:space="preserve">
     <value>Behält das linke Navigationspanel geöffnet oder geschlossen, wie Sie es verlassen haben.</value>
@@ -1668,13 +1712,13 @@ Fehler: {1}</value>
     <value>Lautstärke-Normalisierung (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Passt die Lautstärke automatisch an den Standardpegel (-18 LUFS) an, um plötzliche Lautstärkeänderungen zu vermeiden.</value>
+    <value>Lautstärkeunterschiede zwischen Titeln mithilfe von ReplayGain reduzieren.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
-    <value>WASAPI exclusive mode</value>
+    <value>WASAPI-Exklusivmodus</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+    <value>Nagi die exklusive Kontrolle über das Windows-Audiogerät geben. Andere Apps bleiben möglicherweise stumm. Starten Sie Nagi nach dem Ändern dieser Einstellung neu.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>Ein-/Ausblenden bei Wiedergabe / Pause</value>
@@ -1707,16 +1751,16 @@ Fehler: {1}</value>
     <value>Einklappbarer Player</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>Animiert die Player-Leiste zum Erweitern und Einklappen.</value>
+    <value>Player-Leiste beim Bewegen der Maus darüber ausklappen.</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
     <value>Wiedergabestatus wiederherstellen</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>Speichert den aktuellen Wiedergabestatus, um ihn beim nächsten Start fortzusetzen.</value>
+    <value>Ihre Wiedergabewarteschlange und Wiedergabeposition beim Start von Nagi wiederherstellen.</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
-    <value>Automatischer Start</value>
+    <value>Beim Systemstart automatisch starten</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
     <value>Startet Nagi automatisch, wenn Sie sich bei Ihrem Computer anmelden.</value>
@@ -1725,7 +1769,7 @@ Fehler: {1}</value>
     <value>Minimiert starten</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>Beim Start wird das Anwendungsfenster standardmäßig minimiert.</value>
+    <value>Nagi mit minimiertem Fenster starten.</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
     <value>In Mini-Player minimieren</value>
@@ -1734,10 +1778,10 @@ Fehler: {1}</value>
     <value>Wenn minimiert, zeigen Sie einen kompakten schwebenden Player an, anstatt das Fenster zu verbergen.</value>
   </data>
   <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
-    <value>In den System-Tray minimieren</value>
+    <value>Im Systembereich ausblenden</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>Wenn geschlossen, in den System-Tray minimieren.</value>
+    <value>Nagi im Systembereich weiter ausführen, wenn das Fenster geschlossen wird.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
     <value>Cover-Art im Flyout anzeigen</value>
@@ -1770,13 +1814,13 @@ Fehler: {1}</value>
     <value>Bibliothek neu scannen</value>
   </data>
   <data name="SettingsPage_RescanLibrary_ToolTip" xml:space="preserve">
-    <value>Bibliothek neu scannen, um Aufteilung-Änderungen anzuwenden</value>
+    <value>Bibliothek neu scannen, um Änderungen bei der Aufteilung anzuwenden</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
     <value>Online-Metadaten abrufen</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Ruft zusätzliche Informationen wie Künstlerbilder und Biografien von Online-Diensten (z.B. Spotify, Last.fm) ab.</value>
+    <value>Künstlerbilder und Biografie-Informationen aus Online-Quellen abrufen.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Quellen</value>
@@ -1785,10 +1829,10 @@ Fehler: {1}</value>
     <value>Ziehen Sie, um die Metadatenquellen neu anzuordnen. Fahren Sie mit der Maus über jede Quelle, um Details anzuzeigen.</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Header" xml:space="preserve">
-    <value>Online-Liedtexte abrufen</value>
+    <value>Online-Songtexte abrufen</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>Ruft fehlende Liedtexte automatisch von Online-Quellen ab. (Datenschutz: sendet Titelmetadaten an Drittanbieterdienste)</value>
+    <value>Fehlende Songtexte aus Online-Quellen abrufen. Dabei werden Titel-Metadaten an Drittanbieter gesendet.</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
     <value>Quellen</value>
@@ -1797,7 +1841,7 @@ Fehler: {1}</value>
     <value>Ziehen Sie, um die Liedtextquellen neu anzuordnen. Fahren Sie mit der Maus über jede Quelle, um Details anzuzeigen.</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
-    <value>Romanisierte Liedtexte anzeigen</value>
+    <value>Romanisierte Songtexte anzeigen</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
     <value>Zeigt eine kleinere romanisierte Zeile unter unterstützten Liedtexten an, wenn ein installiertes Paket der Schrift entspricht.</value>
@@ -1806,7 +1850,7 @@ Fehler: {1}</value>
     <value>Sprachpakete</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>Installieren Sie die Sprachen, die Sie romanisiert haben möchten. Pakete sind signiert, nur Daten und werden lokal gespeichert.</value>
+    <value>Installieren Sie Sprachpakete, um unterstützte Songtexte zu romanisieren. Pakete werden lokal gespeichert.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
     <value>Aktualisieren</value>
@@ -1845,19 +1889,19 @@ Fehler: {1}</value>
     <value>{0} Lizenz</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>Playlists exportieren/importieren</value>
+    <value>Wiedergabelisten importieren &amp; exportieren</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
     <value>Exportieren Sie Playlists in M3U-Dateien zur Verwendung in anderen Playern oder importieren Sie M3U-Playlists in Nagi.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
-    <value>Alle exportieren...</value>
+    <value>Alle exportieren…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
     <value>Alle Playlists in einen Ordner exportieren</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
-    <value>Importieren...</value>
+    <value>Importieren…</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
     <value>Eine oder mehrere M3U-Dateien importieren</value>
@@ -1893,16 +1937,16 @@ Fehler: {1}</value>
     <value>Trennen</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
-    <value>Scrobbling aktivieren</value>
+    <value>Scrobbeln aktivieren</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Description" xml:space="preserve">
     <value>Fügt die Titel, die Sie auf Nagi hören, automatisch Ihrem Last.fm-Profil hinzu.</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
-    <value>'Aktuelle Wiedergabe' aktualisieren</value>
+    <value>„Wird gerade gespielt“ aktualisieren</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>Zeigen Sie Ihren Freunden auf Last.fm in Echtzeit, was Sie gerade hören.</value>
+    <value>Den aktuell abgespielten Titel auf Ihrem Last.fm-Profil anzeigen.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
     <value>ListenBrainz</value>
@@ -1926,10 +1970,10 @@ Fehler: {1}</value>
     <value>Verbindung fehlgeschlagen: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>Wiedergaben senden (Scrobbling)</value>
+    <value>Wiedergaben übertragen (Scrobbeln)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>"Aktuelle Wiedergabe"-Updates senden</value>
+    <value>„Wird gerade gespielt“-Updates übertragen</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
     <value>Erweitert</value>
@@ -1962,7 +2006,7 @@ Fehler: {1}</value>
     <value>Titel</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>In Smart-Playlist suchen...</value>
+    <value>In intelligenter Wiedergabeliste suchen…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>In Smart-Playlist suchen</value>
@@ -1977,7 +2021,7 @@ Fehler: {1}</value>
     <value>Alle mischen und abspielen</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_Play" xml:space="preserve">
-    <value>Wiedergabe</value>
+    <value>Wiedergeben</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
     <value>Als Nächstes abspielen</value>
@@ -1986,16 +2030,16 @@ Fehler: {1}</value>
     <value>Zur Warteschlange hinzufügen</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Zum Album gehen</value>
+    <value>Zum Album</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Zum Künstler gehen</value>
+    <value>Zum Künstler</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Im Explorer anzeigen</value>
+    <value>Im Datei-Explorer anzeigen</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Wiedergabe</value>
+    <value>Wiedergeben</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>Keine Titel entsprechen den aktuellen Regeln</value>
@@ -2043,7 +2087,7 @@ Fehler: {1}</value>
     <value>Anwendungssprache</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>Änderungen erfordern einen Neustart, um wirksam zu werden</value>
+    <value>Starten Sie Nagi neu, um eine Sprachänderung anzuwenden.</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
     <value>Neustart erforderlich</value>
@@ -2058,7 +2102,7 @@ Fehler: {1}</value>
     <value>Sichern &amp; Wiederherstellen</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Erstellen Sie Sicherungskopien Ihrer Musikbibliothek und Einstellungen, oder stellen Sie diese aus einer früheren Sicherung wieder her.</value>
+    <value>Erstellen Sie ein Backup Ihrer Bibliotheksdaten und Einstellungen oder stellen Sie ein früheres Backup wieder her.</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
     <value>Sicherung erstellen</value>
@@ -2070,7 +2114,7 @@ Fehler: {1}</value>
     <value>Sicherung erstellt</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Sicherung erfolgreich erstellt ({0:F2} MB) unter: {1}</value>
+    <value>Backup ({0:F2} MB) wurde erstellt unter: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
     <value>Sicherung fehlgeschlagen</value>
@@ -2097,13 +2141,13 @@ Fehler: {1}</value>
     <value>Wiederherstellung abgeschlossen</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Sicherung erfolgreich wiederhergestellt. Die App wird jetzt neu gestartet.</value>
+    <value>Backup wiederhergestellt. Nagi wird jetzt neu gestartet.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
     <value>Wiederherstellung fehlgeschlagen</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Wiederherstellung aus Sicherung fehlgeschlagen. Ihre Daten wurden nicht geändert.</value>
+    <value>Das Backup konnte nicht wiederhergestellt werden.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
     <value>Player-Design</value>
@@ -2115,25 +2159,25 @@ Fehler: {1}</value>
     <value>Einfarbig (Undurchsichtig)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Passen Sie das Erscheinungsbild des schwebenden Players an</value>
+    <value>Das Erscheinungsbild der Player-Leiste anpassen.</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
     <value>Farbintensität</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Passt die Lebendigkeit der Player-Hintergrundfarbe an</value>
+    <value>Intensität der Hintergrundfarbe des Players anpassen.</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
     <value>Einblenddauer</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
-    <value>Die Dauer des Einblendeffekts beim Abspielen (ms)</value>
+    <value>Legen Sie fest, wie lange das Einblenden der Lautstärke bei Wiederaufnahme der Wiedergabe dauert.</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
     <value>Ausblenddauer</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
-    <value>Die Dauer des Ausblendeffekts beim Pausieren (ms)</value>
+    <value>Legen Sie fest, wie lange das Ausblenden der Lautstärke beim Anhalten der Wiedergabe dauert.</value>
   </data>
   <data name="Settings_Nav_Insights" xml:space="preserve">
     <value>Statistiken</value>
@@ -2142,10 +2186,10 @@ Fehler: {1}</value>
     <value>Statistiken</value>
   </data>
   <data name="InsightsPage_TotalTime" xml:space="preserve">
-    <value>Gesamthörzeit</value>
+    <value>Gesamte Wiedergabezeit</value>
   </data>
   <data name="InsightsPage_UniqueSongs" xml:space="preserve">
-    <value>Einzigartige Titel</value>
+    <value>Verschiedene Titel</value>
   </data>
   <data name="InsightsPage_PeakHour" xml:space="preserve">
     <value>Spitzenstunde</value>
@@ -2175,7 +2219,7 @@ Fehler: {1}</value>
     <value>Spielen Sie Musik ab, um hier Ihre Statistiken zu sehen</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
-    <value>{0} Wiedergaben</value>
+    <value>Wiedergaben: {0}</value>
   </data>
   <data name="InsightsPage_Source_Albums" xml:space="preserve">
     <value>Alben</value>
@@ -2235,7 +2279,7 @@ Fehler: {1}</value>
     <value>Dauer</value>
   </data>
   <data name="PaginationControl_All" xml:space="preserve">
-    <value>All</value>
+    <value>Alle</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>Elemente pro Seite:</value>
@@ -2259,7 +2303,7 @@ Fehler: {1}</value>
     <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
-    <value>Letzter Tag</value>
+    <value>Letzter 1 Tag</value>
   </data>
   <data name="Insights_TimeRange_Last7Days" xml:space="preserve">
     <value>Letzte 7 Tage</value>
@@ -2274,12 +2318,174 @@ Fehler: {1}</value>
     <value>Letztes Jahr</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
-    <value>Gesamtzeit</value>
+    <value>Gesamte Zeit</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}h {1}m</value>
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
     <value>{0}m {1}s</value>
+  </data>
+  <data name="QueuePanel_EmptyTitle" xml:space="preserve">
+    <value>Ihre Warteschlange ist leer</value>
+  </data>
+  <data name="QueuePanel_EmptyDescription" xml:space="preserve">
+    <value>Spielen Sie Musik ab oder ziehen Sie Audiodateien hierher, um Ihre Warteschlange aufzubauen.</value>
+  </data>
+  <data name="QueuePanel_LoadError" xml:space="preserve">
+    <value>Einige Titel konnten nicht geladen werden. Wählen Sie „Wiederholen“, um die Warteschlange erneut zu laden.</value>
+  </data>
+  <data name="QueuePanel_Retry" xml:space="preserve">
+    <value>Wiederholen</value>
+  </data>
+  <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
+    <value>Die neue Reihenfolge der Wiedergabeliste konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
+    <value>Audioausgabegerät</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Description" xml:space="preserve">
+    <value>Wählen Sie aus, wo Nagi Musik wiedergibt.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Default" xml:space="preserve">
+    <value>Systemstandard</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Unavailable" xml:space="preserve">
+    <value>Das gespeicherte Gerät ist nicht verfügbar. Der Systemstandard wird verwendet.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
+    <value>Die Audioausgabe konnte nicht aktualisiert werden. Versuchen Sie es erneut oder wählen Sie ein anderes Gerät.</value>
+  </data>
+  <data name="Listening_Random" xml:space="preserve">
+    <value>Zufallswiedergabe</value>
+  </data>
+  <data name="Listening_MoreVariety" xml:space="preserve">
+    <value>Mehr Vielfalt</value>
+  </data>
+  <data name="Listening_Rediscover" xml:space="preserve">
+    <value>Neu entdecken</value>
+  </data>
+  <data name="Listening_Unheard" xml:space="preserve">
+    <value>Ungehört</value>
+  </data>
+  <data name="Listening_PlayFor" xml:space="preserve">
+    <value>Spielen für…</value>
+  </data>
+  <data name="Listening_Minutes" xml:space="preserve">
+    <value>Minuten</value>
+  </data>
+  <data name="Listening_ShuffleMode" xml:space="preserve">
+    <value>Mix-Typ</value>
+  </data>
+  <data name="Listening_AvoidRecentDays" xml:space="preserve">
+    <value>Kürzlich gespielte Titel vermeiden (Tage)</value>
+  </data>
+  <data name="Listening_MoreOptions" xml:space="preserve">
+    <value>Mehr Optionen</value>
+  </data>
+  <data name="Listening_PlayForDescription" xml:space="preserve">
+    <value>Erstellen Sie eine Warteschlange aus vollständigen Titeln, deren Gesamtdauer Ihre gewählte Zeit nicht überschreitet.</value>
+  </data>
+  <data name="Listening_NoMixTitle" xml:space="preserve">
+    <value>Keine Titel für diesen Mix</value>
+  </data>
+  <data name="Listening_NoMixDescription" xml:space="preserve">
+    <value>Keine Titel in dieser Liste erfüllen diese Anforderungen. Versuchen Sie einen anderen Mix oder eine andere Titelliste.</value>
+  </data>
+  <data name="Listening_Favorites" xml:space="preserve">
+    <value>Favoriten</value>
+  </data>
+  <data name="Listening_AddFavorite" xml:space="preserve">
+    <value>Zu Favoriten hinzufügen</value>
+  </data>
+  <data name="Listening_RemoveFavorite" xml:space="preserve">
+    <value>Aus Favoriten entfernen</value>
+  </data>
+  <data name="Listening_SleepTimer" xml:space="preserve">
+    <value>Sleeptimer</value>
+  </data>
+  <data name="Listening_FinishTrack" xml:space="preserve">
+    <value>Aktuellen Titel zu Ende spielen, wenn der Timer abläuft</value>
+  </data>
+  <data name="Listening_StopAfterTrack" xml:space="preserve">
+    <value>Nach diesem Titel anhalten</value>
+  </data>
+  <data name="Listening_StopAtQueueEnd" xml:space="preserve">
+    <value>Am Ende der Warteschlange anhalten</value>
+  </data>
+  <data name="Listening_StopPlayback" xml:space="preserve">
+    <value>Wiedergabe anhalten</value>
+  </data>
+  <data name="Listening_CustomTimer" xml:space="preserve">
+    <value>Benutzerdefinierter Timer…</value>
+  </data>
+  <data name="Listening_Timer15" xml:space="preserve">
+    <value>In 15 Minuten</value>
+  </data>
+  <data name="Listening_Timer30" xml:space="preserve">
+    <value>In 30 Minuten</value>
+  </data>
+  <data name="Listening_Timer60" xml:space="preserve">
+    <value>In 60 Minuten</value>
+  </data>
+  <data name="Listening_CancelStop" xml:space="preserve">
+    <value>Geplanten Stopp abbrechen</value>
+  </data>
+  <data name="Listening_TimerRemaining" xml:space="preserve">
+    <value>Stoppt in {0}</value>
+  </data>
+  <data name="Listening_PlayerOptions" xml:space="preserve">
+    <value>Player-Optionen</value>
+  </data>
+  <data name="Listening_RecentlyPlayed" xml:space="preserve">
+    <value>Zuletzt gespielt</value>
+  </data>
+  <data name="Listening_HistorySearch" xml:space="preserve">
+    <value>Wiedergabeverlauf durchsuchen</value>
+  </data>
+  <data name="Listening_HistoryEmpty" xml:space="preserve">
+    <value>Noch kein Wiedergabeverlauf vorhanden</value>
+  </data>
+  <data name="Listening_HistoryLoadError" xml:space="preserve">
+    <value>„Zuletzt gespielt“ konnte nicht geladen werden. Wählen Sie „Wiederholen“, um es erneut zu versuchen.</value>
+  </data>
+  <data name="Listening_Today" xml:space="preserve">
+    <value>Heute</value>
+  </data>
+  <data name="Listening_Yesterday" xml:space="preserve">
+    <value>Gestern</value>
+  </data>
+  <data name="Listening_RediscoveryReason" xml:space="preserve">
+    <value>Zuletzt gespielt am {0:d}</value>
+  </data>
+  <data name="Listening_RediscoveryTitle" xml:space="preserve">
+    <value>Ein weiteres Anhören wert</value>
+  </data>
+  <data name="Listening_Dismiss" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="Listening_ActionError" xml:space="preserve">
+    <value>Diese Aktion konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut.</value>
+  </data>
+  <data name="Listening_FavoritesEmpty" xml:space="preserve">
+    <value>Noch keine Favoriten</value>
+  </data>
+  <data name="Listening_FavoritesEmptyDescription" xml:space="preserve">
+    <value>Markieren Sie einen Titel über sein Menü als Favoriten oder wählen Sie ihn aus und drücken Sie Strg+D.</value>
+  </data>
+  <data name="Listening_VarietyDescription" xml:space="preserve">
+    <value>„Mehr Vielfalt“ vermeidet Titel, die kürzlich gespielt wurden, und trennt nach Möglichkeit Titel desselben Künstlers.</value>
+  </data>
+  <data name="Listening_RediscoverDescription" xml:space="preserve">
+    <value>„Neu entdecken“ nutzt Titel mit in Nagi erfassten Wiedergaben, die zuletzt vor mehr als 30 Tagen gespielt wurden.</value>
+  </data>
+  <data name="Listening_UnheardDescription" xml:space="preserve">
+    <value>„Ungehört“ nutzt Titel ohne in Nagi erfasste Wiedergaben.</value>
+  </data>
+  <data name="Listening_HistoryNoMatches" xml:space="preserve">
+    <value>Keine Wiedergaben entsprechen Ihrer Suche</value>
+  </data>
+  <data name="Listening_NoTimedMixDescription" xml:space="preserve">
+    <value>Keine Titel in dieser Liste erfüllen die Mix-Anforderungen und passen in die gewählte Dauer. Versuchen Sie eine längere Dauer, einen anderen Mix oder eine andere Titelliste.</value>
   </data>
 </root>

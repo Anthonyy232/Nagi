@@ -76,6 +76,9 @@
   <data name="NavItem_Folders" xml:space="preserve">
     <value>Mga Folder</value>
   </data>
+  <data name="NavItem_Favorites" xml:space="preserve">
+    <value>Mga Paborito</value>
+  </data>
   <data name="NavItem_Insights" xml:space="preserve">
     <value>Mga Insight</value>
   </data>
@@ -83,7 +86,7 @@
     <value>Mga Setting</value>
   </data>
   <data name="Status_NoTrackPlaying" xml:space="preserve">
-    <value>Walang tugtuging tumutugtog</value>
+    <value>Walang pinatutugtog na kanta</value>
   </data>
   <data name="Tooltip_Play" xml:space="preserve">
     <value>I-play</value>
@@ -116,13 +119,13 @@
     <value>I-mute</value>
   </data>
   <data name="Theme_Light" xml:space="preserve">
-    <value>Magaan</value>
+    <value>Maliwanag</value>
   </data>
   <data name="Theme_Dark" xml:space="preserve">
     <value>Madilim</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">
-    <value>Gamitin ang setting ng sistema</value>
+    <value>Default ng Sistema</value>
   </data>
   <data name="Backdrop_Mica" xml:space="preserve">
     <value>Mika</value>
@@ -141,6 +144,39 @@
   </data>
   <data name="Label_Rating" xml:space="preserve">
     <value>Rating</value>
+  </data>
+  <data name="Label_Grouping" xml:space="preserve">
+    <value>Paggrupo</value>
+  </data>
+  <data name="Label_SkipCount" xml:space="preserve">
+    <value>Bilang ng Nilaktawan</value>
+  </data>
+  <data name="Label_DiscNumber" xml:space="preserve">
+    <value>Numero ng Disko</value>
+  </data>
+  <data name="Label_Bitrate" xml:space="preserve">
+    <value>Rate ng Bit</value>
+  </data>
+  <data name="Label_SampleRate" xml:space="preserve">
+    <value>Rate ng Sample</value>
+  </data>
+  <data name="Label_IsLoved" xml:space="preserve">
+    <value>Paborito</value>
+  </data>
+  <data name="Label_HasLyrics" xml:space="preserve">
+    <value>May Liriko</value>
+  </data>
+  <data name="Operator_IsInRange" xml:space="preserve">
+    <value>Nasa pagitan ng (kasama)</value>
+  </data>
+  <data name="Operator_IsAfter" xml:space="preserve">
+    <value>Pagkatapos ng</value>
+  </data>
+  <data name="Operator_IsBefore" xml:space="preserve">
+    <value>Bago ang</value>
+  </data>
+  <data name="SmartPlaylist_UpperBound_Placeholder" xml:space="preserve">
+    <value>Pinakamataas na halaga</value>
   </data>
   <data name="Operator_Contains" xml:space="preserve">
     <value>Naglalaman ng</value>
@@ -179,10 +215,10 @@
     <value>Ay hindi hihigit sa</value>
   </data>
   <data name="Operator_IsInTheLast" xml:space="preserve">
-    <value>Ay sa huling (araw)</value>
+    <value>Nasa loob ng huling (araw)</value>
   </data>
   <data name="Operator_IsNotInTheLast" xml:space="preserve">
-    <value>Ay wala sa huling (araw)</value>
+    <value>Wala sa loob ng huling (araw)</value>
   </data>
   <data name="Operator_IsTrue" xml:space="preserve">
     <value>Ay totoo</value>
@@ -194,31 +230,31 @@
     <value>Bagong Smart Playlist</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>I-edit ang Smart Playlist - {0}</value>
+    <value>I-edit ang Smart Playlist: {0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
     <value>Ilagay ang pangalan ng playlist</value>
   </data>
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
-    <value>{0:N0} tugtugin ang tumutugma sa kasalukuyang panuntunan</value>
+    <value>Mga katugmang kanta: {0:N0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Maglagay ng pangalan upang makita ang mga tumutugmang tugtugin</value>
+    <value>Maglagay ng pangalan ng playlist upang makita ang mga katugmang kanta</value>
   </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
-    <value>Hindi makalkula</value>
+    <value>Hindi mabilang ang mga katugmang kanta</value>
   </data>
   <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
-    <value>Kinakalkula...</value>
+    <value>Kina-kalkula…</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>Mayroon nang playlist na may ganitong pangalan!</value>
+    <value>May umiiral nang playlist na may ganitong pangalan.</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>Mangyaring maglagay ng pangalan!</value>
+    <value>Maglagay ng pangalan ng playlist.</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
-    <value>Naglo-load...</value>
+    <value>Naglo-load…</value>
   </data>
   <data name="Error_FailedToLoadArtists" xml:space="preserve">
     <value>Nabigo ang pag-load ng mga artista</value>
@@ -227,7 +263,7 @@
     <value>Kritikal na Error</value>
   </data>
   <data name="CrashReport_Message" xml:space="preserve">
-    <value>Nakaranas ang Nagi ng kritikal na error at kailangang isara. Humihingi kami ng paumanhin para sa abala.</value>
+    <value>Nakararanas ng error ang Nagi at kailangang mag-sara.</value>
   </data>
   <data name="ElevationWarning_Title" xml:space="preserve">
     <value>Tumatakbo bilang Administrator</value>
@@ -295,16 +331,16 @@ Para sa pinakamahusay na karanasan, mangyaring i-restart ang Nagi nang walang mg
     <value>Nasa aklatan na ang folder na ito.</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
-    <value>Idinadagdag ang folder sa aklatan...</value>
+    <value>Idinadagdag ang folder sa library…</value>
   </data>
   <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Matagumpay na nabura ang '{0}'.</value>
+    <value>Inalis ang &apos;{0}&apos; sa iyong library.</value>
   </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
-    <value>Nabigo ang pagbura sa '{0}'.</value>
+    <value>Hindi maalis ang &apos;{0}&apos; sa iyong library.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
-    <value>Binubura ang '{0}'...</value>
+    <value>Inaalis ang &apos;{0}&apos; sa iyong library…</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
     <value>Kumpleto na ang muling pag-scan ng '{0}'.</value>
@@ -313,7 +349,7 @@ Para sa pinakamahusay na karanasan, mangyaring i-restart ang Nagi nang walang mg
     <value>Walang pagbabagong nakita para sa '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
-    <value>Muling ini-scan ang '{0}'...</value>
+    <value>Muling sinusuri ang '{0}'…</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
     <value>Walang nakitang mga folder na may musika.</value>
@@ -328,7 +364,7 @@ Para sa pinakamahusay na karanasan, mangyaring i-restart ang Nagi nang walang mg
     <value>Error sa pagdagdag ng folder: {0}</value>
   </data>
   <data name="Folders_Error_DeleteFolder" xml:space="preserve">
-    <value>Error sa pagbura ng folder: {0}</value>
+    <value>Hindi maalis ang folder sa iyong library: {0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Error sa muling pag-scan ng folder: {0}</value>
@@ -379,10 +415,10 @@ Para sa pinakamahusay na karanasan, mangyaring i-restart ang Nagi nang walang mg
     <value>I-set up natin ang iyong music library upang makapagsimula.</value>
   </data>
   <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>Naghihintay na pumili ka ng folder...</value>
+    <value>Naghihintay na pumili ka ng folder…</value>
   </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
-    <value>Ginagawa ang iyong aklatan...</value>
+    <value>Binubuo ang iyong library…</value>
   </data>
   <data name="Onboarding_Error" xml:space="preserve">
     <value>May hindi inaasahang error na naganap. Pakisubukan muli.</value>
@@ -403,7 +439,7 @@ Para sa pinakamahusay na karanasan, mangyaring i-restart ang Nagi nang walang mg
     <value>Error sa pag-load ng playlist</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Sinisimulan ang playlist...</value>
+    <value>Sinisimulan ang playlist…</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Walang kantang tumutugma sa mga panuntunan ng smart playlist na ito.</value>
@@ -412,7 +448,7 @@ Para sa pinakamahusay na karanasan, mangyaring i-restart ang Nagi nang walang mg
     <value>Error sa pagsisimula ng playback para sa playlist na ito.</value>
   </data>
   <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Pumipili ng random na playlist...</value>
+    <value>Pumipili ng random na playlist…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Walang nakitang playlist.</value>
@@ -424,13 +460,13 @@ Para sa pinakamahusay na karanasan, mangyaring i-restart ang Nagi nang walang mg
     <value>Error sa pag-play ng random na playlist.</value>
   </data>
   <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Naglo-load ng mga playlist...</value>
+    <value>Naglo-load ng mga playlist…</value>
   </data>
   <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
     <value>Error sa pag-load ng mga playlist.</value>
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Gumagawa ng bagong playlist...</value>
+    <value>Gumagawa ng bagong playlist…</value>
   </data>
   <data name="Playlist_Status_CreateFailed" xml:space="preserve">
     <value>Nabigo ang paggawa ng playlist. Maaaring mayroon na ito.</value>
@@ -439,7 +475,7 @@ Para sa pinakamahusay na karanasan, mangyaring i-restart ang Nagi nang walang mg
     <value>May error na naganap habang ginagawa ang playlist.</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Ina-update ang cover ng playlist...</value>
+    <value>Ina-update ang cover ng playlist…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Nabigo ang pag-update ng cover ng playlist.</value>
@@ -448,7 +484,7 @@ Para sa pinakamahusay na karanasan, mangyaring i-restart ang Nagi nang walang mg
     <value>May error na naganap habang ina-update ang cover ng playlist.</value>
   </data>
   <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Tinatanggal ang larawan ng playlist...</value>
+    <value>Inaalis ang larawan ng playlist…</value>
   </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Nabigo ang pagtanggal ng larawan ng playlist.</value>
@@ -457,7 +493,7 @@ Para sa pinakamahusay na karanasan, mangyaring i-restart ang Nagi nang walang mg
     <value>May error na naganap habang tinatanggal ang larawan ng playlist.</value>
   </data>
   <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Pinapalitan ang pangalan ng playlist...</value>
+    <value>Binabago ang pangalan ng playlist…</value>
   </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Nabigo ang pagpalit ng pangalan ng playlist.</value>
@@ -466,7 +502,7 @@ Para sa pinakamahusay na karanasan, mangyaring i-restart ang Nagi nang walang mg
     <value>May error na naganap habang pinapalitan ang pangalan ng playlist.</value>
   </data>
   <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Binubura ang playlist...</value>
+    <value>Binubura ang playlist…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Nabigo ang pagbura ng playlist.</value>
@@ -514,8 +550,9 @@ Para sa pinakamahusay na karanasan, mangyaring i-restart ang Nagi nang walang mg
     <value>Matagumpay na Export</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>Na-export ang {0} playlist ({1} kabuuang kanta) sa:
-{2}</value>
+    <value>Mga na-export na playlist: {0}
+Mga kanta: {1}
+Nai-save sa: {2}</value>
   </data>
   <data name="Settings_Export_Failed_Title" xml:space="preserve">
     <value>Nabigo ang Export</value>
@@ -524,17 +561,18 @@ Para sa pinakamahusay na karanasan, mangyaring i-restart ang Nagi nang walang mg
     <value>Matagumpay na Import</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>Matagumpay na na-import ang {0} playlist ({1} kanta).</value>
+    <value>Mga na-import na playlist: {0}
+Mga kanta: {1}</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
     <value>
 
-{0} kanta ang hindi makita sa iyong aklatan.</value>
+Mga kantang hindi nahanap sa iyong library: {0}.</value>
   </data>
   <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
     <value>
 
-{0} file ang nabigo na i-import.</value>
+Mga file na hindi ma-import: {0}.</value>
   </data>
   <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
     <value>Nabigo ang Import</value>
@@ -603,10 +641,10 @@ Para sa pinakamahusay na karanasan, mangyaring i-restart ang Nagi nang walang mg
     <value>Hindi nakita ang FFmpeg. Mangyaring i-install ang FFmpeg at i-click ang 'Muling Suriin'.</value>
   </data>
   <data name="FFmpeg_Status_Checking" xml:space="preserve">
-    <value>Sinusuri ang FFmpeg...</value>
+    <value>Sinusuri ang FFmpeg…</value>
   </data>
   <data name="FFmpeg_Status_Detected" xml:space="preserve">
-    <value>Nakita ang FFmpeg!</value>
+    <value>Natukoy ang FFmpeg.</value>
   </data>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>Hindi pa rin nakita ang FFmpeg. Mangyaring i-install ang FFmpeg at i-click ang 'Muling Suriin'.</value>
@@ -774,13 +812,13 @@ Para sa pinakamahusay na karanasan, mangyaring i-restart ang Nagi nang walang mg
     <value>Walang available na playlist</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
-    <value>Burahin ang Folder</value>
+    <value>Alisin ang Folder</value>
   </data>
   <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
-    <value>Sigurado ka bang gusto mong tanggalin ang folder na '{0}' mula sa aklatan? Hindi nito buburahin ang mga file mula sa iyong computer.</value>
+    <value>Alisin ang &apos;{0}&apos; sa iyong library? Mananatili ang iyong mga audio file sa iyong kompyuter.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
-    <value>Burahin</value>
+    <value>Alisin</value>
   </data>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Kanselahin</value>
@@ -819,10 +857,10 @@ Para sa pinakamahusay na karanasan, mangyaring i-restart ang Nagi nang walang mg
     <value>Maghanap ng mga playlist</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>Ilagay ang bagong pangalan ng playlist</value>
+    <value>Maglagay ng pangalan ng playlist</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
-    <value>Pumili ng Larawan</value>
+    <value>Pumili ng Cover</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
     <value>Gumawa ng Bagong Playlist</value>
@@ -858,7 +896,7 @@ Para sa pinakamahusay na karanasan, mangyaring i-restart ang Nagi nang walang mg
     <value>Isara ang paghahanap</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Maghanap sa aklatan</value>
+    <value>Maghanap sa genre</value>
   </data>
   <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Walang available na playlist</value>
@@ -879,13 +917,13 @@ Para sa pinakamahusay na karanasan, mangyaring i-restart ang Nagi nang walang mg
     <value>Muling I-scan ang Metadata</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>Muling i-scan nito ang lahat ng kanta sa iyong aklatan upang ilapat ang mga bagong setting ng metadata (tulad ng artist split characters). Maaaring tumagal ito depende sa laki ng aklatan. Gusto mo bang magpatuloy?</value>
+    <value>Muling i-scan ang iyong library upang ilapat ang mga setting ng metadata, tulad ng paghahati sa artist. Maaari itong tumagal para sa mga malalaking library. Magpatuloy?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
     <value>Muling I-scan</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
-    <value>Inihahanda ang muling pag-scan ng aklatan...</value>
+    <value>Inihahanda ang muling pag-scan sa library…</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
     <value>Kumpleto na ang Muling Pag-scan</value>
@@ -916,7 +954,7 @@ Gusto mo bang magpatuloy?</value>
     <value>Paganahin at I-scan</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>Inihahanda ang scan para sa volume normalization...</value>
+    <value>Inihahanda ang pag-scan sa normalization ng lakas ng tunog…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
     <value>Kinansela ang scan para sa volume normalization.</value>
@@ -1053,7 +1091,7 @@ Error: {1}</value>
     <value>Nagi</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Tuklasin muli ang iyong lokal na koleksyon ng musika gamit ang Nagi, isang music player na nakatuon sa bilis, pagiging simple, at privacy. Ang Nagi ay binuo gamit ang C# at WinUI 3 upang mag-alok ng malinis, katutubong karanasan sa Fluent. Ito ay maganda, mahusay, at iginagalang ang iyong privacy.</value>
+    <value>Muling tuklasin ang iyong lokal na koleksyon ng musika gamit ang Nagi, isang music player na nakatuon sa bilis, pagiging simple, at privacy.</value>
   </data>
   <data name="AppShortName" xml:space="preserve">
     <value>Nagi</value>
@@ -1080,61 +1118,61 @@ Error: {1}</value>
     <value>Susunod</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
-    <value>Pumunta sa album</value>
+    <value>Pumunta sa Album</value>
   </data>
   <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Drop files or folders onto the player to add them to the queue.</value>
+    <value>I-drop ang mga file o folder sa player para idagdag sa queue.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Susunod</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
-    <value>Clear queue</value>
+    <value>I-clear ang Pila</value>
   </data>
   <data name="QueuePanel_DisplayOptions" xml:space="preserve">
-    <value>Queue display options</value>
+    <value>Mga Opsyon sa Pagpapakita ng Pila</value>
   </data>
   <data name="QueuePanel_Close" xml:space="preserve">
-    <value>Close queue</value>
+    <value>Isara ang Pila</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
-    <value>Artist</value>
+    <value>Artista</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
-    <value>Duration</value>
+    <value>Tagal</value>
   </data>
   <data name="QueuePanel_ShowTrackCount" xml:space="preserve">
-    <value>Track count</value>
+    <value>Bilang ng Kanta</value>
   </data>
   <data name="QueuePanel_TrackCount" xml:space="preserve">
-    <value>Tracks: {0:N0}</value>
+    <value>Mga Kanta: {0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
-    <value>Queue position</value>
+    <value>Posisyon sa Pila</value>
   </data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve">
     <value>Genre</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
-    <value>Total duration</value>
+    <value>Kabuuan ng Tagal</value>
   </data>
   <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>I-play</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
-    <value>Move up</value>
+    <value>Itaas</value>
   </data>
   <data name="QueuePanel_MoveDown" xml:space="preserve">
-    <value>Move down</value>
+    <value>Ibaba</value>
   </data>
   <data name="QueuePanel_Remove" xml:space="preserve">
-    <value>Remove from queue</value>
+    <value>Alisin sa Pila</value>
   </data>
   <data name="AlbumPage_Title" xml:space="preserve">
     <value>Mga Album</value>
   </data>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Maghanap ng mga album...</value>
+    <value>Maghanap ng mga album…</value>
   </data>
   <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Maghanap ng mga album</value>
@@ -1158,7 +1196,7 @@ Error: {1}</value>
     <value>Mga Kanta</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Maghanap sa album...</value>
+    <value>Maghanap sa album…</value>
   </data>
   <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Maghanap sa album</value>
@@ -1179,13 +1217,13 @@ Error: {1}</value>
     <value>Idagdag sa Queue</value>
   </data>
   <data name="AlbumViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Idagdag sa playlist</value>
+    <value>Idagdag sa Playlist</value>
   </data>
   <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Pumunta sa artist</value>
+    <value>Pumunta sa Artist</value>
   </data>
   <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Ipakita sa explorer</value>
+    <value>Ipakita sa File Explorer</value>
   </data>
   <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>I-play</value>
@@ -1197,10 +1235,10 @@ Error: {1}</value>
     <value>Subukang maghanap ng iba</value>
   </data>
   <data name="ArtistPage_Title" xml:space="preserve">
-    <value>Mga Artist</value>
+    <value>Mga Artista</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Maghanap ng mga artist...</value>
+    <value>Maghanap ng mga artist…</value>
   </data>
   <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Maghanap ng mga artist</value>
@@ -1242,7 +1280,7 @@ Error: {1}</value>
     <value>Mga Kanta</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Maghanap sa artist...</value>
+    <value>Maghanap sa artist…</value>
   </data>
   <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Maghanap sa artist</value>
@@ -1263,13 +1301,13 @@ Error: {1}</value>
     <value>Idagdag sa Queue</value>
   </data>
   <data name="ArtistViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Idagdag sa playlist</value>
+    <value>Idagdag sa Playlist</value>
   </data>
   <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Pumunta sa album</value>
+    <value>Pumunta sa Album</value>
   </data>
   <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Ipakita sa explorer</value>
+    <value>Ipakita sa File Explorer</value>
   </data>
   <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>I-play</value>
@@ -1299,7 +1337,7 @@ Error: {1}</value>
     <value>I-rescan</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>Burahin</value>
+    <value>Alisin sa Library</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Wala pang folder na idinagdag</value>
@@ -1311,7 +1349,7 @@ Error: {1}</value>
     <value>I-play</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>Idagdag sa playlist</value>
+    <value>Idagdag sa Playlist</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_Play" xml:space="preserve">
     <value>I-play</value>
@@ -1323,16 +1361,16 @@ Error: {1}</value>
     <value>Idagdag sa Queue</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Idagdag sa playlist</value>
+    <value>Idagdag sa Playlist</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Pumunta sa album</value>
+    <value>Pumunta sa Album</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Pumunta sa artist</value>
+    <value>Pumunta sa Artist</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Ipakita sa explorer</value>
+    <value>Ipakita sa File Explorer</value>
   </data>
   <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>I-play</value>
@@ -1344,7 +1382,7 @@ Error: {1}</value>
     <value>Mga Kanta</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Maghanap sa folder...</value>
+    <value>Maghanap sa folder…</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Maghanap sa folder</value>
@@ -1359,13 +1397,13 @@ Error: {1}</value>
     <value>Walang laman ang folder na ito</value>
   </data>
   <data name="FolderSongViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Walang kantang o subfolder na natagpuan</value>
+    <value>Walang kanta o subfolder na natagpuan</value>
   </data>
   <data name="GenrePage_Title" xml:space="preserve">
     <value>Mga Genre</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Maghanap ng mga genre...</value>
+    <value>Maghanap ng mga genre…</value>
   </data>
   <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
     <value>Maghanap ng mga genre</value>
@@ -1383,10 +1421,10 @@ Error: {1}</value>
     <value>I-scan ang iyong library ng musika upang punan ang mga genre</value>
   </data>
   <data name="LibraryPage_Title" xml:space="preserve">
-    <value>Library</value>
+    <value>Aklatan</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Maghanap sa library...</value>
+    <value>Maghanap sa library…</value>
   </data>
   <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Maghanap sa library</value>
@@ -1407,19 +1445,25 @@ Error: {1}</value>
     <value>Idagdag sa Queue</value>
   </data>
   <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Idagdag sa playlist</value>
+    <value>Idagdag sa Playlist</value>
   </data>
   <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Pumunta sa album</value>
+    <value>Pumunta sa Album</value>
   </data>
   <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
-    <value>Pumunta sa artist</value>
+    <value>Pumunta sa Artist</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Ipakita sa explorer</value>
+    <value>Ipakita sa File Explorer</value>
   </data>
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>I-play</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
+    <value>Walang nahanap na kanta</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+    <value>Subukang maghanap ng iba pa</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
     <value>Walang laman ang iyong library</value>
@@ -1428,31 +1472,31 @@ Error: {1}</value>
     <value>Magdagdag ng mga folder sa iyong library sa Mga Setting</value>
   </data>
   <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
-    <value>Walang lyrics na natagpuan para sa track na ito</value>
+    <value>Walang nahanap na liriko para sa kantang ito</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
     <value>Subukan ang ibang kanta</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
-    <value>Edit or replace lyrics</value>
+    <value>I-edit o palitan ang mga lyrics</value>
   </data>
   <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
-    <value>Edit lyrics</value>
+    <value>I-edit ang Liriko</value>
   </data>
   <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
-    <value>Paste plain text or timestamped LRC lyrics</value>
+    <value>Mag-paste ng plain text o may timestamp na LRC lyrics</value>
   </data>
   <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
-    <value>Save</value>
+    <value>I-save</value>
   </data>
   <data name="LyricsPage_EditLyrics_Remove" xml:space="preserve">
-    <value>Remove saved lyrics</value>
+    <value>Alisin ang Nai-save na Liriko</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
-    <value>Lyrics could not be updated</value>
+    <value>Hindi na-update ang lyrics</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Nagi could not save the lyrics. Check the log for details and try again.</value>
+    <value>Hindi na-save ng Nagi ang lyrics. Suriin ang log para sa mga detalye at subukan muli.</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Maligayang Pagdating sa Nagi</value>
@@ -1467,7 +1511,7 @@ Error: {1}</value>
     <value>Mga Playlist</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Maghanap ng mga playlist...</value>
+    <value>Maghanap ng mga playlist…</value>
   </data>
   <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Maghanap ng mga playlist</value>
@@ -1515,7 +1559,7 @@ Error: {1}</value>
     <value>Mga Kanta</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Maghanap sa playlist...</value>
+    <value>Maghanap sa playlist…</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Maghanap sa playlist</value>
@@ -1536,16 +1580,16 @@ Error: {1}</value>
     <value>Idagdag sa Queue</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Pumunta sa album</value>
+    <value>Pumunta sa Album</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Pumunta sa artist</value>
+    <value>Pumunta sa Artist</value>
   </data>
   <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Ipakita sa explorer</value>
+    <value>Ipakita sa File Explorer</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
-    <value>Alisin mula sa playlist</value>
+    <value>Alisin sa Playlist</value>
   </data>
   <data name="PlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>I-play</value>
@@ -1563,7 +1607,7 @@ Error: {1}</value>
     <value>Mga Kanta</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Maghanap sa genre...</value>
+    <value>Maghanap sa genre…</value>
   </data>
   <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Maghanap sa genre</value>
@@ -1584,16 +1628,16 @@ Error: {1}</value>
     <value>Idagdag sa Queue</value>
   </data>
   <data name="GenreViewPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Idagdag sa playlist</value>
+    <value>Idagdag sa Playlist</value>
   </data>
   <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Pumunta sa album</value>
+    <value>Pumunta sa Album</value>
   </data>
   <data name="GenreViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Pumunta sa artist</value>
+    <value>Pumunta sa Artist</value>
   </data>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Ipakita sa explorer</value>
+    <value>Ipakita sa File Explorer</value>
   </data>
   <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
     <value>Walang available na playlist</value>
@@ -1617,40 +1661,40 @@ Error: {1}</value>
     <value>Tema</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>Piliin ang tema ng application.</value>
+    <value>Pumili ng maliwanag, madilim, o tema ng sistema.</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
     <value>Kulay ng Accent</value>
   </data>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
-    <value>I-reset sa default</value>
+    <value>Ibalik sa Default</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Materyal ng Window</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Description" xml:space="preserve">
-    <value>Piliin ang materyal ng backdrop para sa window.</value>
+    <value>Pumili ng materyal ng background ng window.</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
     <value>Dynamic Theming</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>Paganahin at i-configure ang mga opsyon sa dynamic theming.</value>
+    <value>I-tutugma ang mga kulay ng app sa kasalukuyang artwork ng album.</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
-    <value>Tandaan ang laki ng window</value>
+    <value>Tandaan ang Laki ng Window</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Description" xml:space="preserve">
     <value>Ibalik ang pangunahing window sa nakaraan nitong laki sa susunod na paglunsad.</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Header" xml:space="preserve">
-    <value>Tandaan ang posisyon ng window</value>
+    <value>Tandaan ang Posisyon ng Window</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Description" xml:space="preserve">
     <value>Ibalik ang pangunahing window sa nakaraan nitong lokasyon sa screen sa susunod na paglunsad.</value>
   </data>
   <data name="SettingsPage_RememberNavState_Header" xml:space="preserve">
-    <value>Tandaan ang estado ng navigation panel</value>
+    <value>Tandaan ang Katayuan ng Navigation Panel</value>
   </data>
   <data name="SettingsPage_RememberNavState_Description" xml:space="preserve">
     <value>Panatilihing bukas o sarado ang kaliwang navigation panel tulad ng pagkaka-iwan mo rito.</value>
@@ -1668,13 +1712,13 @@ Error: {1}</value>
     <value>Pag-normalize ng Volume (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Awtomatikong ayusin ang volume sa standard na antas (-18 LUFS) upang maiwasan ang biglaang pagbabago sa lakas ng tunog.</value>
+    <value>Bawasan ang mga pagkakaiba sa lakas ng tunog ng mga kanta gamit ang ReplayGain.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
-    <value>WASAPI exclusive mode</value>
+    <value>Eksklusibong Mode ng WASAPI</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+    <value>Bigyan ang Nagi ng eksklusibong kontrol sa Windows audio device. Maaaring mapatahimik ang ibang apps. I-restart ang Nagi pagkatapos baguhin ang setting na ito.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>Fade sa Play / Pause</value>
@@ -1686,7 +1730,7 @@ Error: {1}</value>
     <value>Audio Equalizer</value>
   </data>
   <data name="SettingsPage_ResetEqualizer_Content" xml:space="preserve">
-    <value>I-reset sa default</value>
+    <value>Ibalik sa Default</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Preamp</value>
@@ -1698,55 +1742,55 @@ Error: {1}</value>
     <value>I-customize ang Mga Kontrol ng Player</value>
   </data>
   <data name="SettingsPage_ResetPlayerButtons_Content" xml:space="preserve">
-    <value>I-reset sa default</value>
+    <value>Ibalik sa Default</value>
   </data>
   <data name="SettingsPage_CustomizePlayer_Instructions" xml:space="preserve">
     <value>Mag-hover upang i-toggle ang visibility. I-drag upang muling ayusin. Pinaghihiwalay ng divider ang mga kontrol sa gitna at kanan.</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Header" xml:space="preserve">
-    <value>Collapsable na player</value>
+    <value>Maitutuping Player</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>I-animate ang player bar upang lumawak at bumalik.</value>
+    <value>Palakihin ang bar ng player kapag itinapat mo ang cursor dito.</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
-    <value>Ibalik ang estado ng pag-playback</value>
+    <value>Ibalik ang Katayuan ng Pagpapatugtog</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>I-save ang kasalukuyang estado ng pag-playback upang magpatuloy sa susunod na paglunsad.</value>
+    <value>Ibalik ang iyong pila at posisyon ng pagpapatugtog kapag nagsimula ang Nagi.</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
-    <value>Auto-launch sa startup</value>
+    <value>Awtomatikong Ilunsad sa Pagsimula</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
     <value>Awtomatikong simulan ang Nagi kapag nag-log in ka sa iyong computer.</value>
   </data>
   <data name="SettingsPage_StartMinimized_Header" xml:space="preserve">
-    <value>Simulan nang minimized</value>
+    <value>Magsimula nang Naka-minimize</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>Kapag inilunsad, ang window ng application ay awtomatikong magiging minimized.</value>
+    <value>Simulan ang Nagi nang naka-minimize ang window nito.</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
-    <value>I-minimize sa mini-player</value>
+    <value>I-minimize sa Mini-Player</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Description" xml:space="preserve">
     <value>Kapag na-minimize, magpakita ng compact na floating player sa halip na itago ang window.</value>
   </data>
   <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
-    <value>Itago sa system tray</value>
+    <value>I-tago sa System Tray</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>Kapag isinara, itago sa system tray sa halip.</value>
+    <value>Panatilihing gumagana ang Nagi sa system tray kapag isinara mo ang window nito.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
-    <value>Ipakita ang cover art sa flyout</value>
+    <value>Ipakita ang Cover Art sa Flyout</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
     <value>Ipakita ang cover art sa compact player na lumalabas kapag kino-click ang tray icon.</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
-    <value>Balewalain ang mga artikulo kapag inaayos</value>
+    <value>Ibalewala ang mga Artikulo Kapag Nag-uuri</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
     <value>Ayusin ang mga album, artist, at kanta batay sa kanilang unang makabuluhang salita (hal. Ang "The Beatles" ay inaayos sa ilalim ng B).</value>
@@ -1773,10 +1817,10 @@ Error: {1}</value>
     <value>I-rescan ang library upang ilapat ang mga pagbabago sa paghihiwalay</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
-    <value>Kuhanin ang online metadata</value>
+    <value>Kumuha ng Online Metadata</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Kuhanin ang karagdagang impormasyon tulad ng mga larawan ng artist at biography mula sa mga online na serbisyo (hal., Spotify, Last.fm).</value>
+    <value>Kumuha ng mga larawan at talambuhay ng artist mula sa mga online na pinagmulan.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Mga Pinagmulan</value>
@@ -1785,10 +1829,10 @@ Error: {1}</value>
     <value>I-drag upang muling ayusin ang mga pinagmulan ng metadata. Mag-hover sa bawat pinagmulan para sa mga detalye.</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Header" xml:space="preserve">
-    <value>Kuhanin ang online lyrics</value>
+    <value>Kumuha ng Liriko Online</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>Awtomatikong kuhanin ang nawawalang lyrics mula sa mga online na pinagmulan. (Privacy: nagpapadala ng track metadata sa mga serbisyo ng third-party)</value>
+    <value>Kumuha ng mga nawawalang liriko mula sa mga online na pinagmulan. Nagpapadala ito ng metadata ng kanta sa mga serbisyo ng ikatlong partido.</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
     <value>Mga Pinagmulan</value>
@@ -1797,16 +1841,16 @@ Error: {1}</value>
     <value>I-drag upang muling ayusin ang mga pinagmulan ng lyrics. Mag-hover sa bawat pinagmulan para sa mga detalye.</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
-    <value>Ipakita ang mga romanized na liriko</value>
+    <value>Ipakita ang Naka-Romanize na Liriko</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
     <value>Ipakita ang mas maliit na romanized na linya sa ilalim ng mga sinusuportahang liriko kapag tumugma ang naka-install na pack sa script.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
-    <value>Mga Language pack</value>
+    <value>Mga Pakete ng Wika</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>I-install ang mga wikang gusto mong i-romanize. Ang mga pack ay signed, data-only, at naka-imbak nang lokal.</value>
+    <value>Mag-install ng mga pakete ng wika upang i-romanize ang mga suportadong liriko. Nakatago sa lokal ang mga pakete.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
     <value>I-refresh</value>
@@ -1845,25 +1889,25 @@ Error: {1}</value>
     <value>{0} lisensya</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>I-export/I-import ang Mga Playlist</value>
+    <value>I-import at I-export ang mga Playlist</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
     <value>I-export ang mga playlist sa mga M3U file para magamit sa ibang mga player, o i-import ang mga M3U playlist sa Nagi.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
-    <value>I-export Lahat...</value>
+    <value>I-export Lahat…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
     <value>I-export ang lahat ng playlist sa isang folder</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
-    <value>I-import...</value>
+    <value>I-import…</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
     <value>Mag-import ng isa o higit pang M3U file</value>
   </data>
   <data name="SettingsPage_ResetApp_Header" xml:space="preserve">
-    <value>I-reset ang application</value>
+    <value>I-reset ang App</value>
   </data>
   <data name="SettingsPage_ResetApp_Description" xml:space="preserve">
     <value>Buburahin nito ang lahat ng data ng library, mga playlist, at ire-reset ang lahat ng setting sa kanilang mga default. Magre-restart ang application.</value>
@@ -1893,16 +1937,16 @@ Error: {1}</value>
     <value>Idiskonekta</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
-    <value>Paganahin ang scrobbling</value>
+    <value>I-enable ang Scrobbling</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Description" xml:space="preserve">
     <value>Awtomatikong idagdag ang mga track na pinapakinggan mo sa Nagi sa iyong Last.fm profile.</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
-    <value>I-update ang 'Kasalukuyang Pinapatugtog'</value>
+    <value>I-update ang Kasalukuyang Pinatutugtog</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>Ipakita sa iyong mga kaibigan sa Last.fm kung ano ang kasalukuyan mong pinapakinggan sa real-time.</value>
+    <value>Ipakita ang kantang kasalukuyang pinatutugtog sa iyong profile sa Last.fm.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
     <value>ListenBrainz</value>
@@ -1917,7 +1961,7 @@ Error: {1}</value>
     <value>Idikit ang iyong token mula sa listenbrainz.org/settings</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TestConnection" xml:space="preserve">
-    <value>Subukan ang koneksyon</value>
+    <value>Subukan ang Koneksyon</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Connected" xml:space="preserve">
     <value>Konektado bilang {0}</value>
@@ -1926,10 +1970,10 @@ Error: {1}</value>
     <value>Nabigo ang koneksyon: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>Isumite ang mga pinakinggan (scrobbling)</value>
+    <value>Ipadala ang mga Pakikinig (Scrobbling)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>Isumite ang mga update sa "ngayon ay tumutugtog"</value>
+    <value>Ipadala ang mga Update sa Kasalukuyang Pinatutugtog</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
     <value>Mas Detalyado</value>
@@ -1962,7 +2006,7 @@ Error: {1}</value>
     <value>Mga Kanta</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Maghanap sa smart playlist...</value>
+    <value>Maghanap sa smart playlist…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Maghanap sa smart playlist</value>
@@ -1986,13 +2030,13 @@ Error: {1}</value>
     <value>Idagdag sa Queue</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Pumunta sa album</value>
+    <value>Pumunta sa Album</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Pumunta sa artist</value>
+    <value>Pumunta sa Artist</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Ipakita sa explorer</value>
+    <value>Ipakita sa File Explorer</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>I-play</value>
@@ -2034,7 +2078,7 @@ Error: {1}</value>
     <value>Magpadala ng Feedback</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Tingnan ang mga update sa pagsisimula</value>
+    <value>Tingnan ang mga Update sa Pagsimula</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
     <value>Awtomatikong tingnan ang mga bagong bersyon kapag nagsimula ang application.</value>
@@ -2043,7 +2087,7 @@ Error: {1}</value>
     <value>Wika ng Application</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>Ang mga pagbabago ay nangangailangan ng restart upang magkabisa</value>
+    <value>I-restart ang Nagi upang ilapat ang pagbabago ng wika.</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
     <value>Kinakailangan ang Restart</value>
@@ -2058,7 +2102,7 @@ Error: {1}</value>
     <value>Pag-backup at Pagbabalik</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Gumawa ng mga backup ng iyong music library at settings, o ibalik mula sa nakaraang backup</value>
+    <value>Gumawa ng backup ng iyong data at mga setting ng library, o i-restore ang nakaraang backup.</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
     <value>Gumawa ng Backup</value>
@@ -2070,7 +2114,7 @@ Error: {1}</value>
     <value>Nalikha ang Backup</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Matagumpay na nalikha ang backup ({0:F2} MB) sa: {1}</value>
+    <value>Gumawa ng backup ({0:F2} MB) sa: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
     <value>Nabigo ang Backup</value>
@@ -2097,13 +2141,13 @@ Error: {1}</value>
     <value>Kumpleto na ang Pagbabalik</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Matagumpay na naibalik ang backup. Ang app ay magre-restart na ngayon.</value>
+    <value>Nai-restore na ang backup. Muling magsisimula ngayon ang Nagi.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
     <value>Nabigo ang Pagbabalik</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Nabigong ibalik mula sa backup. Hindi binago ang iyong data.</value>
+    <value>Hindi mai-restore ang backup.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
     <value>Pag-istilo ng Player</value>
@@ -2115,25 +2159,25 @@ Error: {1}</value>
     <value>Solid (Malabo)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>I-customize ang hitsura ng lumulutang na player</value>
+    <value>Ibagay ang hitsura ng bar ng player.</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
     <value>Intensidad ng Tint</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Inaayos ang sigla ng kulay ng background ng player</value>
+    <value>I-adjust ang intensidad ng kulay ng background ng player.</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
-    <value>Tagal ng fade-in</value>
+    <value>Tagal ng Fade-In</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
-    <value>Ang tagal ng fade-in effect kapag nagpe-play (ms)</value>
+    <value>I-set kung gaano katagal ang lakas ng tunog bago mag-fade in kapag nagpatuloy ang pagpapatugtog.</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
-    <value>Tagal ng fade-out</value>
+    <value>Tagal ng Fade-Out</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
-    <value>Ang tagal ng fade-out effect kapag naka-pause (ms)</value>
+    <value>I-set kung gaano katagal ang lakas ng tunog bago mag-fade out kapag huminto ang pagpapatugtog.</value>
   </data>
   <data name="Settings_Nav_Insights" xml:space="preserve">
     <value>Mga Insight</value>
@@ -2142,16 +2186,16 @@ Error: {1}</value>
     <value>Mga Insight</value>
   </data>
   <data name="InsightsPage_TotalTime" xml:space="preserve">
-    <value>Kabuuang oras ng pakikinig</value>
+    <value>Kabuuan ng Oras ng Pakikinig</value>
   </data>
   <data name="InsightsPage_UniqueSongs" xml:space="preserve">
-    <value>Natatanging kanta</value>
+    <value>Mga Natatanging Kanta</value>
   </data>
   <data name="InsightsPage_PeakHour" xml:space="preserve">
-    <value>Pinakamataas na oras</value>
+    <value>Pinaka-abalang Oras</value>
   </data>
   <data name="InsightsPage_MostActiveDay" xml:space="preserve">
-    <value>Pinakaaktibong araw</value>
+    <value>Pinaka-abalang Araw</value>
   </data>
   <data name="InsightsPage_TopSongs" xml:space="preserve">
     <value>Nangungunang Kanta</value>
@@ -2175,13 +2219,13 @@ Error: {1}</value>
     <value>Simulan ang pag-play ng musika upang makita ang iyong mga insight dito</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
-    <value>{0} pag-play</value>
+    <value>Mga Pagpapatugtog: {0}</value>
   </data>
   <data name="InsightsPage_Source_Albums" xml:space="preserve">
     <value>Mga Album</value>
   </data>
   <data name="InsightsPage_Source_Artists" xml:space="preserve">
-    <value>Mga Artist</value>
+    <value>Mga Artista</value>
   </data>
   <data name="InsightsPage_Source_Playlists" xml:space="preserve">
     <value>Mga Playlist</value>
@@ -2199,7 +2243,7 @@ Error: {1}</value>
     <value>Paghahanap</value>
   </data>
   <data name="InsightsPage_Source_Library" xml:space="preserve">
-    <value>Librarya</value>
+    <value>Aklatan</value>
   </data>
   <data name="InsightsPage_Source_Files" xml:space="preserve">
     <value>Mga File</value>
@@ -2235,7 +2279,7 @@ Error: {1}</value>
     <value>Tagal</value>
   </data>
   <data name="PaginationControl_All" xml:space="preserve">
-    <value>All</value>
+    <value>Lahat</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>Mga item bawat pahina:</value>
@@ -2259,27 +2303,189 @@ Error: {1}</value>
     <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
-    <value>Huling 1 araw</value>
+    <value>Huling 1 Araw</value>
   </data>
   <data name="Insights_TimeRange_Last7Days" xml:space="preserve">
-    <value>Huling 7 araw</value>
+    <value>Huling 7 Araw</value>
   </data>
   <data name="Insights_TimeRange_Last30Days" xml:space="preserve">
-    <value>Huling 30 araw</value>
+    <value>Huling 30 Araw</value>
   </data>
   <data name="Insights_TimeRange_Last90Days" xml:space="preserve">
-    <value>Huling 90 araw</value>
+    <value>Huling 90 Araw</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>Nakaraang taon</value>
+    <value>Nakaraang Taon</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
-    <value>Lahat ng oras</value>
+    <value>Lahat ng Panahon</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}h {1}m</value>
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
     <value>{0}m {1}s</value>
+  </data>
+  <data name="QueuePanel_EmptyTitle" xml:space="preserve">
+    <value>Walang laman ang iyong pila</value>
+  </data>
+  <data name="QueuePanel_EmptyDescription" xml:space="preserve">
+    <value>Magpatugtog ng musika o maglagay ng mga audio file dito upang bumuo ng iyong pila.</value>
+  </data>
+  <data name="QueuePanel_LoadError" xml:space="preserve">
+    <value>Hindi ma-load ang ilang kanta. Piliin ang Subukang Muli upang i-load ulit ang pila.</value>
+  </data>
+  <data name="QueuePanel_Retry" xml:space="preserve">
+    <value>Subukang Muli</value>
+  </data>
+  <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
+    <value>Hindi mai-save ang bagong pagkakasunod-sunod ng playlist. Mangyaring subukang muli.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
+    <value>Device ng Output ng Audio</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Description" xml:space="preserve">
+    <value>Pumili kung saan magpapatugtog ng musika ang Nagi.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Default" xml:space="preserve">
+    <value>Default ng Sistema</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Unavailable" xml:space="preserve">
+    <value>Hindi available ang nai-save na device. Ginagamit ang default ng sistema.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
+    <value>Hindi ma-update ang output ng audio. Subukang muli o pumili ng ibang device.</value>
+  </data>
+  <data name="Listening_Random" xml:space="preserve">
+    <value>I-shuffle</value>
+  </data>
+  <data name="Listening_MoreVariety" xml:space="preserve">
+    <value>Mas Maraming Pagkakaiba</value>
+  </data>
+  <data name="Listening_Rediscover" xml:space="preserve">
+    <value>Muling Tuklasin</value>
+  </data>
+  <data name="Listening_Unheard" xml:space="preserve">
+    <value>Hindi Pa Napapakinggan</value>
+  </data>
+  <data name="Listening_PlayFor" xml:space="preserve">
+    <value>Patugtugin nang…</value>
+  </data>
+  <data name="Listening_Minutes" xml:space="preserve">
+    <value>Mga Minuto</value>
+  </data>
+  <data name="Listening_ShuffleMode" xml:space="preserve">
+    <value>Uri ng Mix</value>
+  </data>
+  <data name="Listening_AvoidRecentDays" xml:space="preserve">
+    <value>Iwasan ang Kamakailang Pinatutugtog (Mga Araw)</value>
+  </data>
+  <data name="Listening_MoreOptions" xml:space="preserve">
+    <value>Iba Pang Opsyon</value>
+  </data>
+  <data name="Listening_PlayForDescription" xml:space="preserve">
+    <value>Bumuo ng pila ng buong mga kanta na hindi lalampas sa napili mong tagal.</value>
+  </data>
+  <data name="Listening_NoMixTitle" xml:space="preserve">
+    <value>Walang mga kanta para sa mix na ito</value>
+  </data>
+  <data name="Listening_NoMixDescription" xml:space="preserve">
+    <value>Walang kanta sa listahang ito ang nakatutugon sa mga kinakailangang ito. Subukan ang ibang mix o listahan ng kanta.</value>
+  </data>
+  <data name="Listening_Favorites" xml:space="preserve">
+    <value>Mga Paborito</value>
+  </data>
+  <data name="Listening_AddFavorite" xml:space="preserve">
+    <value>Idagdag sa mga Paborito</value>
+  </data>
+  <data name="Listening_RemoveFavorite" xml:space="preserve">
+    <value>Alisin sa mga Paborito</value>
+  </data>
+  <data name="Listening_SleepTimer" xml:space="preserve">
+    <value>Timer sa Pagtulog</value>
+  </data>
+  <data name="Listening_FinishTrack" xml:space="preserve">
+    <value>Tapusin ang kasalukuyang kanta kapag nag-expire ang timer</value>
+  </data>
+  <data name="Listening_StopAfterTrack" xml:space="preserve">
+    <value>Huminto Pagkatapos ng Kantang Ito</value>
+  </data>
+  <data name="Listening_StopAtQueueEnd" xml:space="preserve">
+    <value>Huminto sa Dulo ng Pila</value>
+  </data>
+  <data name="Listening_StopPlayback" xml:space="preserve">
+    <value>Itigil ang Pagpapatugtog</value>
+  </data>
+  <data name="Listening_CustomTimer" xml:space="preserve">
+    <value>Custom na Timer…</value>
+  </data>
+  <data name="Listening_Timer15" xml:space="preserve">
+    <value>Sa Loob ng 15 Minuto</value>
+  </data>
+  <data name="Listening_Timer30" xml:space="preserve">
+    <value>Sa Loob ng 30 Minuto</value>
+  </data>
+  <data name="Listening_Timer60" xml:space="preserve">
+    <value>Sa Loob ng 60 Minuto</value>
+  </data>
+  <data name="Listening_CancelStop" xml:space="preserve">
+    <value>Kanselahin ang Nakaiskedyul na Hinto</value>
+  </data>
+  <data name="Listening_TimerRemaining" xml:space="preserve">
+    <value>Hihinto sa loob ng {0}</value>
+  </data>
+  <data name="Listening_PlayerOptions" xml:space="preserve">
+    <value>Mga Opsyon ng Player</value>
+  </data>
+  <data name="Listening_RecentlyPlayed" xml:space="preserve">
+    <value>Kamakailang Pinatutugtog</value>
+  </data>
+  <data name="Listening_HistorySearch" xml:space="preserve">
+    <value>Maghanap sa kasaysayan ng pakikinig</value>
+  </data>
+  <data name="Listening_HistoryEmpty" xml:space="preserve">
+    <value>Wala pang kasaysayan ng pakikinig</value>
+  </data>
+  <data name="Listening_HistoryLoadError" xml:space="preserve">
+    <value>Hindi ma-load ang Kamakailang Pinatutugtog. Piliin ang Subukang Muli upang subukan ulit.</value>
+  </data>
+  <data name="Listening_Today" xml:space="preserve">
+    <value>Ngayong Araw</value>
+  </data>
+  <data name="Listening_Yesterday" xml:space="preserve">
+    <value>Kahapon</value>
+  </data>
+  <data name="Listening_RediscoveryReason" xml:space="preserve">
+    <value>Huling pinatugtog noong {0:d}</value>
+  </data>
+  <data name="Listening_RediscoveryTitle" xml:space="preserve">
+    <value>Dapat pakinggan muli</value>
+  </data>
+  <data name="Listening_Dismiss" xml:space="preserve">
+    <value>Ibalewala</value>
+  </data>
+  <data name="Listening_ActionError" xml:space="preserve">
+    <value>Hindi makumpleto ang aksyong ito. Mangyaring subukang muli.</value>
+  </data>
+  <data name="Listening_FavoritesEmpty" xml:space="preserve">
+    <value>Wala pang mga paborito</value>
+  </data>
+  <data name="Listening_FavoritesEmptyDescription" xml:space="preserve">
+    <value>I-paborito ang kanta mula sa menu nito, o piliin ito at pindutin ang Ctrl+D.</value>
+  </data>
+  <data name="Listening_VarietyDescription" xml:space="preserve">
+    <value>Iniiwasan ng Mas Maraming Pagkakaiba ang mga kantang pinatugtog sa loob ng nakaraang panahon ng pagpapatugtog at pinaghihiwalay ang mga kanta ng parehong artist hangga't maaari.</value>
+  </data>
+  <data name="Listening_RediscoverDescription" xml:space="preserve">
+    <value>Pumipili ang Muling Tuklasin ng mga kantang may naitalang pagpapatugtog sa Nagi na huling pinatugtog nang higit sa 30 araw na ang nakalipas.</value>
+  </data>
+  <data name="Listening_UnheardDescription" xml:space="preserve">
+    <value>Gumagamit ang Hindi Pa Napapakinggan ng mga kantang walang naitalang pagpapatugtog sa Nagi.</value>
+  </data>
+  <data name="Listening_HistoryNoMatches" xml:space="preserve">
+    <value>Walang pakikinig na tumutugma sa iyong paghahanap</value>
+  </data>
+  <data name="Listening_NoTimedMixDescription" xml:space="preserve">
+    <value>Walang kanta sa listahang ito ang nakatutugon sa mga kinakailangan ng mix at umaakasya sa napili mong tagal. Subukan ang mas mahabang tagal, ibang mix, o iba pang listahan ng kanta.</value>
   </data>
 </root>

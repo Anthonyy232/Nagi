@@ -102,7 +102,7 @@
     <value>Numer utworu</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Liczba odtworzeń</value>
+    <value>Odtworzenia</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>Utwory</value>
@@ -148,10 +148,10 @@
     <value>{0} (Najstarsze)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Rosnąco)</value>
+    <value>{0} (rosnąco)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Malejąco)</value>
+    <value>{0} (malejąco)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>Najkrótsze najpierw</value>
@@ -169,7 +169,7 @@
     <value>Najwięcej {0}</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
-    <value>Najmniej {0}</value>
+    <value>Najmniej: {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Skanowanie folderu {0} z {1}: {2} - {3}</value>
@@ -178,11 +178,11 @@
     <value>Skanowanie zakończone. Dodano lub zaktualizowano {0} {1}.</value>
   </data>
   <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Zapisywanie partii {0}...</value>
+    <value>Zapisywanie partii {0}…</value>
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Skanowanie folderu...</value>
+    <value>Skanowanie folderu…</value>
   </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Skanowanie zakończone. Biblioteka jest aktualna.</value>
@@ -194,16 +194,16 @@
     <value>Skanowanie nie powiodło się. Sprawdź logi, aby uzyskać szczegóły.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Przygotowywanie pamięci podręcznych skanowania...</value>
+    <value>Przygotowywanie skanowania biblioteki…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Odczytywanie szczegółów utworów...</value>
+    <value>Odczytywanie szczegółów utworów…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Czyszczenie biblioteki...</value>
+    <value>Porządkowanie biblioteki…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Finalizowanie...</value>
+    <value>Finalizowanie…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Normalizacja głośności nie powiodła się. Sprawdź logi, aby uzyskać szczegóły.</value>
@@ -216,7 +216,7 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Nie udało się dodać folderu.</value>
+    <value>Nie można dodać folderu.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Nazwa playlisty nie może być pusta.</value>
@@ -248,7 +248,15 @@
     <value>Sortuj według: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg jest wymagany do wysokoprecyzyjnej normalizacji głośności (analiza ReplayGain), ale nie został znaleziony w Twoim systemie.\n\nWykonaj następujące kroki, aby go skonfigurować:\n\n1. **Pobierz**: Odwiedź https://www.gyan.dev/ffmpeg/builds/ i pobierz pakiet 'ffmpeg-git-full.7z' (lub podobny) z podstawowymi składnikami.\n2. **Przewodnik**: Możesz skorzystać z tego przewodnika, aby uzyskać szczegółowe instrukcje: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Wypakuj**: Otwórz folder architektury i znajdź katalog 'bin' zawierający `ffmpeg.exe`.\n4. **Zainstaluj**: Skopiuj `ffmpeg.exe` do stałego folderu (np. `C:\ffmpeg\`) i **dodaj ten folder do zmiennej środowiskowej System PATH**.\n5. **Uruchom ponownie**: Prosimy o ponowne uruchomienie Nagi po instalacji, aby zmiany weszły w życie.</value>
+    <value>Program FFmpeg jest potrzebny do analizy utworów pod kątem wyrównywania głośności, ale aplikacja Nagi nie mogła go odnaleźć.
+
+1. Pobierz wersję dla systemu Windows ze strony https://ffmpeg.org/download.html.
+2. Rozpakuj archiwum i zlokalizuj plik ffmpeg.exe w folderze bin.
+3. Dodaj folder zawierający plik ffmpeg.exe do zmiennej PATH w systemie Windows.
+4. Uruchom ponownie aplikację Nagi, a następnie ponownie włącz wyrównywanie głośności.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>Playlista została utworzona, ale nie można było dodać do niej utworów. Spróbuj zaimportować ponownie.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Żadne utwory z playlisty nie zostały znalezione w Twojej bibliotece.</value>
@@ -293,12 +301,39 @@
     <value>Wszystkie utwory mają już dane dotyczące głośności.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Obliczanie głośności dla {0} utworów...</value>
+    <value>Analizowanie głośności… Utwory: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Obliczanie normalizacji głośności ({0}/{1})...</value>
+    <value>Obliczanie wyrównywania głośności ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Normalizacja głośności zakończona. Przetworzono {0} utworów.</value>
+    <value>Wyrównywanie głośności zakończone. Przetworzone utwory: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Wprowadź token użytkownika ListenBrainz.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Nie można odczytać odpowiedzi z serwisu ListenBrainz. Spróbuj ponownie później.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Wprowadź adres URL serwera rozpoczynający się od http:// lub https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Token użytkownika jest nieprawidłowy. Sprawdź go i spróbuj ponownie.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>Serwis ListenBrainz zwrócił błąd (HTTP {0}). Spróbuj ponownie później.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Nie można połączyć się z serwisem ListenBrainz. Sprawdź połączenie i adres URL serwera.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Aplikacja Nagi nie mogła znaleźć swojego folderu danych biblioteki.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Przywracanie nie powiodło się, a poprzednie dane nie mogły zostać w pełni przywrócone. Pliki odzyskiwania zostały zapisane w &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Wybrany plik nie jest prawidłową kopią zapasową aplikacji Nagi.</value>
   </data>
 </root>

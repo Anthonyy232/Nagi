@@ -102,7 +102,7 @@
     <value>Номер на песен</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Брой възпроизвеждания</value>
+    <value>Възпроизвеждания</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>Песни</value>
@@ -148,10 +148,10 @@
     <value>{0} (Най-старо)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Възходящ)</value>
+    <value>{0} (Възходящо)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Низходящ)</value>
+    <value>{0} (Низходящо)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>Най-кратките първи</value>
@@ -178,11 +178,11 @@
     <value>Сканирането завърши. Добавени или актуализирани {0} {1}.</value>
   </data>
   <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Записване на партида {0}...</value>
+    <value>Запазване на партида {0}…</value>
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Сканиране на папка...</value>
+    <value>Сканиране на папка…</value>
   </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Сканирането завърши. Библиотеката е актуална.</value>
@@ -194,16 +194,16 @@
     <value>Сканирането е неуспешно. Проверете логовете за подробности.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Подготовка на кешовете за сканиране...</value>
+    <value>Подготовка за сканиране на библиотеката…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Четене на данни за песните...</value>
+    <value>Четене на подробности за песните…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Почистване на вашата библиотека...</value>
+    <value>Почистване на библиотеката…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Приключване...</value>
+    <value>Финализиране…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Нормализацията на силата на звука е неуспешна. Проверете логовете за подробности.</value>
@@ -216,7 +216,7 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Неуспешно добавяне на папка.</value>
+    <value>Папката не можа да бъде добавена.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Името на плейлиста не може да бъде празно.</value>
@@ -248,7 +248,15 @@
     <value>Сортирай по: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg е необходим за високоточна нормализация на силата на звука (анализ на ReplayGain), но не е намерен във вашата система.\n\nСледвайте тези стъпки, за да го настроите:\n\n1. **Изтегляне**: Посетете https://www.gyan.dev/ffmpeg/builds/ и изтеглете 'ffmpeg-git-full.7z' (или подобна) основна компилация.\n2. **Ръководство**: Можете да следвате това ръководство за подробни инструкции: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Разархивиране**: Отворете папката с архитектурата и намерете директорията 'bin', съдържаща `ffmpeg.exe`.\n4. **Инсталиране**: Копирайте `ffmpeg.exe` в постоянна папка (напр. `C:\ffmpeg\`) и **добавете тази папка към променливата на средата System PATH**.\n5. **Рестартиране**: Моля, рестартирайте Nagi след инсталацията, за да влязат промените в сила.</value>
+    <value>FFmpeg е необходим за анализиране на песните за нормализиране на силата на звука, но Nagi не можа да го намери.
+
+1. Изтеглете версия за Windows от https://ffmpeg.org/download.html.
+2. Разархивирайте архива и намерете ffmpeg.exe в неговата папка bin.
+3. Добавете папката, съдържаща ffmpeg.exe, към вашия Windows PATH.
+4. Рестартирайте Nagi и активирайте отново нормализирането на силата на звука.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>Плейлистът беше създаден, но песните му не можаха да бъдат добавени. Моля, опитайте да импортирате отново.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Няма намерени песни от плейлиста във вашата библиотека.</value>
@@ -293,12 +301,39 @@
     <value>Всички песни вече имат данни за силата на звука.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Изчисляване на силата на звука за {0} песни...</value>
+    <value>Анализиране на силата на звука… Песни: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Изчисляване на нормализация на силата на звука ({0}/{1})...</value>
+    <value>Изчисляване на нормализирането на силата на звука ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Нормализацията на силата на звука завърши. Обработени {0} песни.</value>
+    <value>Нормализирането на силата на звука завърши. Обработени песни: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Въведете вашия потребителски токен за ListenBrainz.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Отговорът от ListenBrainz не можа да бъде прочетен. Опитайте отново по-късно.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Въведете URL адрес на сървър, започващ с http:// или https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Потребителският токен е невалиден. Проверете го и опитайте отново.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz върна грешка (HTTP {0}). Опитайте отново по-късно.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Не можа да се установи връзка с ListenBrainz. Проверете връзката си и URL адреса на сървъра.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi не можа да намери папката с данни за библиотеката си.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Възстановяването се провали и предишните ви данни не можаха да бъдат възстановени напълно. Файловете за възстановяване бяха запазени в &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Избраният файл не е валидно резервно копие на Nagi.</value>
   </data>
 </root>

@@ -76,6 +76,9 @@
   <data name="NavItem_Folders" xml:space="preserve">
     <value>Dosare</value>
   </data>
+  <data name="NavItem_Favorites" xml:space="preserve">
+    <value>Favorite</value>
+  </data>
   <data name="NavItem_Insights" xml:space="preserve">
     <value>Statistici</value>
   </data>
@@ -83,10 +86,10 @@
     <value>Setări</value>
   </data>
   <data name="Status_NoTrackPlaying" xml:space="preserve">
-    <value>Nu se redă nicio piesă</value>
+    <value>Nicio piesă în redare</value>
   </data>
   <data name="Tooltip_Play" xml:space="preserve">
-    <value>Redare</value>
+    <value>Redă</value>
   </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Pauză</value>
@@ -122,7 +125,7 @@
     <value>Întunecat</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">
-    <value>Utilizați setarea sistemului</value>
+    <value>Implicit din sistem</value>
   </data>
   <data name="Backdrop_Mica" xml:space="preserve">
     <value>Mica</value>
@@ -141,6 +144,39 @@
   </data>
   <data name="Label_Rating" xml:space="preserve">
     <value>Evaluare</value>
+  </data>
+  <data name="Label_Grouping" xml:space="preserve">
+    <value>Grupare</value>
+  </data>
+  <data name="Label_SkipCount" xml:space="preserve">
+    <value>Număr de omiteri</value>
+  </data>
+  <data name="Label_DiscNumber" xml:space="preserve">
+    <value>Număr disc</value>
+  </data>
+  <data name="Label_Bitrate" xml:space="preserve">
+    <value>Rată de biți</value>
+  </data>
+  <data name="Label_SampleRate" xml:space="preserve">
+    <value>Rată de eșantionare</value>
+  </data>
+  <data name="Label_IsLoved" xml:space="preserve">
+    <value>Favorit</value>
+  </data>
+  <data name="Label_HasLyrics" xml:space="preserve">
+    <value>Are versuri</value>
+  </data>
+  <data name="Operator_IsInRange" xml:space="preserve">
+    <value>Este între (inclusiv)</value>
+  </data>
+  <data name="Operator_IsAfter" xml:space="preserve">
+    <value>Este după</value>
+  </data>
+  <data name="Operator_IsBefore" xml:space="preserve">
+    <value>Este înainte de</value>
+  </data>
+  <data name="SmartPlaylist_UpperBound_Placeholder" xml:space="preserve">
+    <value>Valoare maximă</value>
   </data>
   <data name="Operator_Contains" xml:space="preserve">
     <value>Conține</value>
@@ -194,31 +230,31 @@
     <value>Listă de redare inteligentă nouă</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>Editare listă de redare inteligentă - {0}</value>
+    <value>Editează lista inteligentă: {0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
     <value>Introduceți un nume pentru lista de redare</value>
   </data>
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
-    <value>{0} piese se potrivesc cu regulile curente</value>
+    <value>Piese potrivite: {0:N0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Introduceți un nume pentru a vedea piesele potrivite</value>
+    <value>Introduceți un nume de listă de redare pentru a vedea piesele potrivite</value>
   </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
-    <value>Nu se poate calcula</value>
+    <value>Nu s-au putut număra piesele potrivite</value>
   </data>
   <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
-    <value>Se calculează...</value>
+    <value>Se calculează…</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>Există deja o listă de redare cu acest nume!</value>
+    <value>Există deja o listă de redare cu acest nume.</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>Vă rugăm să introduceți un nume!</value>
+    <value>Introduceți un nume pentru lista de redare.</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
-    <value>Se încarcă...</value>
+    <value>Se încarcă…</value>
   </data>
   <data name="Error_FailedToLoadArtists" xml:space="preserve">
     <value>Nu s-au putut încărca artiștii</value>
@@ -227,13 +263,15 @@
     <value>Eroare critică</value>
   </data>
   <data name="CrashReport_Message" xml:space="preserve">
-    <value>Nagi a întâmpinat o eroare critică și trebuie să se închidă. Ne cerem scuze pentru neplăcere.</value>
+    <value>Nagi a întâmpinat o eroare și trebuie să se închidă.</value>
   </data>
   <data name="ElevationWarning_Title" xml:space="preserve">
     <value>Se execută ca administrator</value>
   </data>
   <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi se execută în prezent ca Administrator. Acest lucru poate împiedica funcționarea corectă a unor caracteristici (cum ar fi adăugarea de foldere de muzică).\n\nPentru cea mai bună experiență, vă rugăm să reporniți Nagi fără privilegii de administrator.</value>
+    <value>Nagi se execută în prezent ca Administrator. Acest lucru poate împiedica funcționarea corectă a unor caracteristici (cum ar fi adăugarea de foldere de muzică).
+
+Pentru cea mai bună experiență, vă rugăm să reporniți Nagi fără privilegii de administrator.</value>
   </data>
   <data name="ElevationWarning_Restart" xml:space="preserve">
     <value>Reporniți normal</value>
@@ -293,16 +331,16 @@
     <value>Acest dosar este deja în bibliotecă.</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
-    <value>Se adaugă dosarul în bibliotecă...</value>
+    <value>Se adaugă dosarul în bibliotecă…</value>
   </data>
   <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>„{0}” a fost șters cu succes.</value>
+    <value>S-a eliminat &apos;{0}&apos; din bibliotecă.</value>
   </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
-    <value>Ștergerea „{0}” a eșuat.</value>
+    <value>Nu s-a putut elimina &apos;{0}&apos; din bibliotecă.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
-    <value>Se șterge „{0}”...</value>
+    <value>Se elimină &apos;{0}&apos; din bibliotecă…</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
     <value>Re-scanarea „{0}” este completă.</value>
@@ -311,7 +349,7 @@
     <value>Nu s-au detectat modificări pentru „{0}”.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
-    <value>Se re-scanează „{0}”...</value>
+    <value>Se rescanează „{0}”…</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
     <value>Nu s-au găsit dosare cu muzică.</value>
@@ -326,7 +364,7 @@
     <value>Eroare la adăugarea dosarului: {0}</value>
   </data>
   <data name="Folders_Error_DeleteFolder" xml:space="preserve">
-    <value>Eroare la ștergerea dosarului: {0}</value>
+    <value>Nu s-a putut elimina dosarul din bibliotecă: {0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Eroare la re-scanarea dosarului: {0}</value>
@@ -377,10 +415,10 @@
     <value>Să configurăm biblioteca muzicală pentru a începe.</value>
   </data>
   <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>Se așteaptă să selectați un dosar...</value>
+    <value>Se așteaptă selectarea unui dosar…</value>
   </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
-    <value>Se construiește biblioteca dvs....</value>
+    <value>Se construiește biblioteca…</value>
   </data>
   <data name="Onboarding_Error" xml:space="preserve">
     <value>A apărut o eroare neașteptată. Vă rugăm să încercați din nou.</value>
@@ -401,7 +439,7 @@
     <value>Eroare la încărcarea listei de redare</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Se pornește lista de redare...</value>
+    <value>Se pornește lista de redare…</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Nicio piesă nu se potrivește cu regulile acestei liste de redare inteligente.</value>
@@ -410,7 +448,7 @@
     <value>Eroare la pornirea redării pentru această listă de redare.</value>
   </data>
   <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Se alege o listă de redare aleatorie...</value>
+    <value>Se alege o listă de redare aleatorie…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Nu s-au găsit liste de redare.</value>
@@ -422,13 +460,13 @@
     <value>Eroare la redarea listei de redare aleatorii.</value>
   </data>
   <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Se încarcă listele de redare...</value>
+    <value>Se încarcă listele de redare…</value>
   </data>
   <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
     <value>Eroare la încărcarea listelor de redare.</value>
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Se creează o listă de redare nouă...</value>
+    <value>Se creează o nouă listă de redare…</value>
   </data>
   <data name="Playlist_Status_CreateFailed" xml:space="preserve">
     <value>Crearea listei de redare a eșuat. Poate că există deja.</value>
@@ -437,7 +475,7 @@
     <value>A apărut o eroare la crearea listei de redare.</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Se actualizează coperta listei de redare...</value>
+    <value>Se actualizează coperta listei de redare…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Actualizarea copertei listei de redare a eșuat.</value>
@@ -446,7 +484,7 @@
     <value>A apărut o eroare la actualizarea copertei listei de redare.</value>
   </data>
   <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Se elimină imaginea listei de redare...</value>
+    <value>Se elimină imaginea listei de redare…</value>
   </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Eliminarea imaginii listei de redare a eșuat.</value>
@@ -455,7 +493,7 @@
     <value>A apărut o eroare la eliminarea imaginii listei de redare.</value>
   </data>
   <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Se redenumește lista de redare...</value>
+    <value>Se redenumește lista de redare…</value>
   </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Redenumirea listei de redare a eșuat.</value>
@@ -464,7 +502,7 @@
     <value>A apărut o eroare la redenumirea listei de redare.</value>
   </data>
   <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Se șterge lista de redare...</value>
+    <value>Se șterge lista de redare…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Ștergerea listei de redare a eșuat.</value>
@@ -512,7 +550,9 @@
     <value>Export reușit</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>S-au exportat {0} liste de redare ({1} piese în total) către:\n{2}</value>
+    <value>Liste de redare exportate: {0}
+Piese: {1}
+Salvate în: {2}</value>
   </data>
   <data name="Settings_Export_Failed_Title" xml:space="preserve">
     <value>Export eșuat</value>
@@ -521,13 +561,18 @@
     <value>Import reușit</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>S-au importat cu succes {0} liste de redare ({1} piese).</value>
+    <value>Liste de redare importate: {0}
+Piese: {1}</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
-    <value>\n\n{0} piese nu au putut fi găsite în biblioteca dvs.</value>
+    <value>
+
+Piese negăsite în bibliotecă: {0}.</value>
   </data>
   <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
-    <value>\n\n{0} fișiere nu au putut fi importate.</value>
+    <value>
+
+Fișiere care nu au putut fi importate: {0}.</value>
   </data>
   <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
     <value>Import eșuat</value>
@@ -557,7 +602,7 @@
     <value>reguli</value>
   </data>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
-    <value>Piese</value>
+    <value>Melodii</value>
   </data>
   <data name="SongList_TotalItems_Default" xml:space="preserve">
     <value>0 elemente</value>
@@ -596,10 +641,10 @@
     <value>FFmpeg nu a fost detectat. Vă rugăm să instalați FFmpeg și să faceți clic pe „Verificați din nou”.</value>
   </data>
   <data name="FFmpeg_Status_Checking" xml:space="preserve">
-    <value>Se verifică FFmpeg...</value>
+    <value>Se verifică prezența FFmpeg…</value>
   </data>
   <data name="FFmpeg_Status_Detected" xml:space="preserve">
-    <value>FFmpeg detectat!</value>
+    <value>FFmpeg a fost detectat.</value>
   </data>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg nu este încă detectat. Vă rugăm să instalați FFmpeg și să faceți clic pe „Verificați din nou”.</value>
@@ -611,7 +656,7 @@
     <value>Anterior</value>
   </data>
   <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>Redare</value>
+    <value>Redă</value>
   </data>
   <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
     <value>Pauză</value>
@@ -716,7 +761,7 @@
     <value>Serviciu muzical chinezesc, excelent pentru muzica asiatică</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Prelucrează ID-urile artiștilor (necesar pentru TheAudioDB și Fanart.tv)</value>
+    <value>Obține ID-urile artiștilor (necesare pentru TheAudioDB și Fanart.tv)</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
     <value>Imagini și biografii de înaltă calitate ale artiștilor (necesită MusicBrainz)</value>
@@ -767,13 +812,13 @@
     <value>Nicio listă de redare disponibilă</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
-    <value>Șterge dosarul</value>
+    <value>Elimină dosarul</value>
   </data>
   <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
-    <value>Sigur doriți să eliminați dosarul „{0}” din bibliotecă? Acest lucru nu va șterge fișierele de pe computerul dvs.</value>
+    <value>Eliminați &apos;{0}&apos; din bibliotecă? Fișierele audio vor rămâne pe calculator.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
-    <value>Ștergeți</value>
+    <value>Elimină</value>
   </data>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Anulează</value>
@@ -812,10 +857,10 @@
     <value>Căutați liste de redare</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>Introduceți numele noii liste de redare</value>
+    <value>Introduceți numele listei de redare</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
-    <value>Alegeți imaginea</value>
+    <value>Alegeți coperta</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
     <value>Creați o listă de redare nouă</value>
@@ -851,7 +896,7 @@
     <value>Închide căutarea</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Căutați în bibliotecă</value>
+    <value>Căutare în gen</value>
   </data>
   <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Nicio listă de redare disponibilă</value>
@@ -872,13 +917,13 @@
     <value>Re-scanați metadatele</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>Această acțiune va re-scana toate piesele din biblioteca dvs. pentru a aplica noi setări de metadate (cum ar fi caracterele de separare ale artiștilor). Acest lucru poate dura ceva timp, în funcție de dimensiunea bibliotecii. Doriți să continuați?</value>
+    <value>Rescanați biblioteca pentru a aplica setările de metadate, cum ar fi separarea artiștilor. Procesul poate dura ceva timp pentru biblioteci mari. Continuați?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
     <value>Re-scanați</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
-    <value>Se pregătește re-scanarea bibliotecii...</value>
+    <value>Se pregătește rescanarea bibliotecii…</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
     <value>Re-scanare completă</value>
@@ -899,13 +944,17 @@
     <value>Activați normalizarea volumului</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
-    <value>Normalizarea volumului (ReplayGain) asigură un nivel de volum consistent pentru toată muzica dvs.\n\nAceastă acțiune va analiza biblioteca dvs. muzicală și va modifica direct fișierele audio prin scrierea etichetelor ReplayGain. Vor fi procesate doar fișierele fără etichete existente. Acest lucru poate dura ceva timp, în funcție de dimensiunea bibliotecii dvs.\n\nDoriți să continuați?</value>
+    <value>Normalizarea volumului (ReplayGain) asigură un nivel de volum consistent pentru toată muzica dvs.
+
+Această acțiune va analiza biblioteca dvs. muzicală și va modifica direct fișierele audio prin scrierea etichetelor ReplayGain. Vor fi procesate doar fișierele fără etichete existente. Acest lucru poate dura ceva timp, în funcție de dimensiunea bibliotecii dvs.
+
+Doriți să continuați?</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Activați și scanați</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>Se pregătește scanarea pentru normalizarea volumului...</value>
+    <value>Se pregătește scanarea pentru normalizarea volumului…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
     <value>Scanarea pentru normalizarea volumului a fost anulată.</value>
@@ -914,7 +963,9 @@
     <value>Eroare în timpul scanării: {0}</value>
   </data>
   <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Nu s-au putut recupera jurnalele din memorie. Încercarea de rezervă de a citi fișierul jurnal a eșuat.\nCale așteptată: „{0}”\nEroare: {1}</value>
+    <value>Nu s-au putut recupera jurnalele din memorie. Încercarea de rezervă de a citi fișierul jurnal a eșuat.
+Cale așteptată: „{0}”
+Eroare: {1}</value>
   </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Nicio listă de redare de exportat.</value>
@@ -1040,7 +1091,7 @@
     <value>Nagi</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Redescoperă colecția ta de muzică locală cu Nagi, un player de muzică axat pe viteză, simplitate și confidențialitate. Nagi este construit cu C# și WinUI 3 pentru a oferi o experiență Fluent curată și nativă. Este frumos, eficient și respectă confidențialitatea ta.</value>
+    <value>Redescoperiți colecția locală de muzică cu Nagi, un player muzical axat pe viteză, simplitate și confidențialitate.</value>
   </data>
   <data name="AppShortName" xml:space="preserve">
     <value>Nagi</value>
@@ -1067,61 +1118,61 @@
     <value>Urmează</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
-    <value>Mergi la album</value>
+    <value>Merg la album</value>
   </data>
   <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Drop files or folders onto the player to add them to the queue.</value>
+    <value>Glisează fișiere sau foldere în player pentru a le adăuga în coadă.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Urmează</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
-    <value>Clear queue</value>
+    <value>Golește coada</value>
   </data>
   <data name="QueuePanel_DisplayOptions" xml:space="preserve">
-    <value>Queue display options</value>
+    <value>Opțiuni de afișare a cozii</value>
   </data>
   <data name="QueuePanel_Close" xml:space="preserve">
-    <value>Close queue</value>
+    <value>Închide coada</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
     <value>Artist</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
-    <value>Duration</value>
+    <value>Durată</value>
   </data>
   <data name="QueuePanel_ShowTrackCount" xml:space="preserve">
-    <value>Track count</value>
+    <value>Număr de piese</value>
   </data>
   <data name="QueuePanel_TrackCount" xml:space="preserve">
-    <value>Tracks: {0:N0}</value>
+    <value>Piese: {0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
-    <value>Queue position</value>
+    <value>Poziție în coadă</value>
   </data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve">
-    <value>Genre</value>
+    <value>Gen</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
-    <value>Total duration</value>
+    <value>Durată totală</value>
   </data>
   <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Redă</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
-    <value>Move up</value>
+    <value>Mută mai sus</value>
   </data>
   <data name="QueuePanel_MoveDown" xml:space="preserve">
-    <value>Move down</value>
+    <value>Mută mai jos</value>
   </data>
   <data name="QueuePanel_Remove" xml:space="preserve">
-    <value>Remove from queue</value>
+    <value>Elimină din coadă</value>
   </data>
   <data name="AlbumPage_Title" xml:space="preserve">
     <value>Albume</value>
   </data>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Căutați albume...</value>
+    <value>Căutare albume…</value>
   </data>
   <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Căutați albume</value>
@@ -1145,7 +1196,7 @@
     <value>Melodii</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Căutați în album...</value>
+    <value>Căutare în album…</value>
   </data>
   <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Căutați în album</value>
@@ -1166,13 +1217,13 @@
     <value>Adaugă la coadă</value>
   </data>
   <data name="AlbumViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Adaugă la playlist</value>
+    <value>Adaugă la lista de redare</value>
   </data>
   <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Mergi la artist</value>
+    <value>Merg la artist</value>
   </data>
   <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Afișează în explorator</value>
+    <value>Afișează în File Explorer</value>
   </data>
   <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Redă</value>
@@ -1187,7 +1238,7 @@
     <value>Artiști</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Căutați artiști...</value>
+    <value>Căutare artiști…</value>
   </data>
   <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Căutați artiști</value>
@@ -1229,7 +1280,7 @@
     <value>Melodii</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Căutați în artist...</value>
+    <value>Căutare în artist…</value>
   </data>
   <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Căutați în artist</value>
@@ -1250,13 +1301,13 @@
     <value>Adaugă la coadă</value>
   </data>
   <data name="ArtistViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Adaugă la playlist</value>
+    <value>Adaugă la lista de redare</value>
   </data>
   <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Mergi la album</value>
+    <value>Merg la album</value>
   </data>
   <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Afișează în explorator</value>
+    <value>Afișează în File Explorer</value>
   </data>
   <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Redă</value>
@@ -1286,7 +1337,7 @@
     <value>Rescanează</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>Șterge</value>
+    <value>Elimină din bibliotecă</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Nu s-au adăugat dosare încă</value>
@@ -1298,7 +1349,7 @@
     <value>Redă</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>Adaugă la playlist</value>
+    <value>Adaugă la lista de redare</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_Play" xml:space="preserve">
     <value>Redă</value>
@@ -1310,16 +1361,16 @@
     <value>Adaugă la coadă</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Adaugă la playlist</value>
+    <value>Adaugă la lista de redare</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Mergi la album</value>
+    <value>Merg la album</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Mergi la artist</value>
+    <value>Merg la artist</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Afișează în explorator</value>
+    <value>Afișează în File Explorer</value>
   </data>
   <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Redă</value>
@@ -1331,7 +1382,7 @@
     <value>Melodii</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Căutați în dosar...</value>
+    <value>Căutare în dosar…</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Căutați în dosar</value>
@@ -1352,7 +1403,7 @@
     <value>Genuri</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Căutați genuri...</value>
+    <value>Căutare genuri…</value>
   </data>
   <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
     <value>Căutați genuri</value>
@@ -1373,7 +1424,7 @@
     <value>Bibliotecă</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Căutați în bibliotecă...</value>
+    <value>Căutare în bibliotecă…</value>
   </data>
   <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Căutați în bibliotecă</value>
@@ -1394,19 +1445,25 @@
     <value>Adaugă la coadă</value>
   </data>
   <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Adaugă la playlist</value>
+    <value>Adaugă la lista de redare</value>
   </data>
   <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Mergi la album</value>
+    <value>Merg la album</value>
   </data>
   <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
-    <value>Mergi la artist</value>
+    <value>Merg la artist</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Afișează în explorator</value>
+    <value>Afișează în File Explorer</value>
   </data>
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Redă</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
+    <value>Nu s-au găsit piese</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+    <value>Încercați să căutați altceva</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
     <value>Biblioteca ta este goală</value>
@@ -1421,25 +1478,25 @@
     <value>Încearcă o altă melodie</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
-    <value>Edit or replace lyrics</value>
+    <value>Editează sau înlocuiește versurile</value>
   </data>
   <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
-    <value>Edit lyrics</value>
+    <value>Editează versurile</value>
   </data>
   <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
-    <value>Paste plain text or timestamped LRC lyrics</value>
+    <value>Lipește text simplu sau versuri LRC cu marcaj temporal</value>
   </data>
   <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
-    <value>Save</value>
+    <value>Salvează</value>
   </data>
   <data name="LyricsPage_EditLyrics_Remove" xml:space="preserve">
-    <value>Remove saved lyrics</value>
+    <value>Elimină versurile salvate</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
-    <value>Lyrics could not be updated</value>
+    <value>Versurile nu au putut fi actualizate</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Nagi could not save the lyrics. Check the log for details and try again.</value>
+    <value>Nagi nu a putut salva versurile. Verifică jurnalul pentru detalii și încearcă din nou.</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Bun venit la Nagi</value>
@@ -1454,7 +1511,7 @@
     <value>Playlisturi</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Căutați playlisturi...</value>
+    <value>Căutare liste de redare…</value>
   </data>
   <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Căutați playlisturi</value>
@@ -1502,7 +1559,7 @@
     <value>Melodii</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Căutați în playlist...</value>
+    <value>Căutare în lista de redare…</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Căutați în playlist</value>
@@ -1523,16 +1580,16 @@
     <value>Adaugă la coadă</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Mergi la album</value>
+    <value>Merg la album</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Mergi la artist</value>
+    <value>Merg la artist</value>
   </data>
   <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Afișează în explorator</value>
+    <value>Afișează în File Explorer</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
-    <value>Elimină din playlist</value>
+    <value>Elimină din lista de redare</value>
   </data>
   <data name="PlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Redă</value>
@@ -1550,7 +1607,7 @@
     <value>Melodii</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Căutați în gen...</value>
+    <value>Căutare în gen…</value>
   </data>
   <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Căutați în gen</value>
@@ -1571,16 +1628,16 @@
     <value>Adaugă la coadă</value>
   </data>
   <data name="GenreViewPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Adaugă la playlist</value>
+    <value>Adaugă la lista de redare</value>
   </data>
   <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Mergi la album</value>
+    <value>Merg la album</value>
   </data>
   <data name="GenreViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Mergi la artist</value>
+    <value>Merg la artist</value>
   </data>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Afișează în explorator</value>
+    <value>Afișează în File Explorer</value>
   </data>
   <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
     <value>Nu sunt disponibile playlisturi</value>
@@ -1604,7 +1661,7 @@
     <value>Temă</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>Alege tema aplicației.</value>
+    <value>Alegeți o temă luminoasă, întunecată sau pe cea a sistemului.</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
     <value>Culoare accent</value>
@@ -1616,28 +1673,28 @@
     <value>Material Fereastră</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Description" xml:space="preserve">
-    <value>Selectează materialul de fundal pentru fereastră.</value>
+    <value>Alegeți materialul de fundal al ferestrei.</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
     <value>Tematică dinamică</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>Activează și configurează opțiunile de tematică dinamică.</value>
+    <value>Adaptează culorile aplicației la coperta albumului curent.</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
-    <value>Memorează dimensiunea ferestrei</value>
+    <value>Reține dimensiunea ferestrei</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Description" xml:space="preserve">
     <value>Restabilește fereastra principală la dimensiunea sa anterioară la următoarea pornire.</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Header" xml:space="preserve">
-    <value>Memorează poziția ferestrei</value>
+    <value>Reține poziția ferestrei</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Description" xml:space="preserve">
     <value>Restabilește fereastra principală la locația sa anterioară pe ecran la următoarea pornire.</value>
   </data>
   <data name="SettingsPage_RememberNavState_Header" xml:space="preserve">
-    <value>Memorează starea panoului de navigare</value>
+    <value>Reține starea panoului de navigare</value>
   </data>
   <data name="SettingsPage_RememberNavState_Description" xml:space="preserve">
     <value>Păstrează panoul de navigare din stânga deschis sau închis așa cum l-ai lăsat.</value>
@@ -1655,13 +1712,13 @@
     <value>Normalizare Volum (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Reglează automat volumul la nivelul standard (-18 LUFS) pentru a evita modificările bruște de volum.</value>
+    <value>Reduce diferențele de volum dintre piese folosind ReplayGain.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
-    <value>WASAPI exclusive mode</value>
+    <value>Mod exclusiv WASAPI</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+    <value>Oferă lui Nagi control exclusiv asupra dispozitivului audio Windows. Este posibil ca alte aplicații să nu redea sunet. Repornește Nagi după modificarea acestei setări.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>Atenuare la Redare / Pauză</value>
@@ -1694,16 +1751,16 @@
     <value>Player pliabil</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>Animați bara playerului pentru a se extinde și a se restrânge.</value>
+    <value>Extinde bara playerului la trecerea cursorului peste ea.</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
-    <value>Restabilește starea redării</value>
+    <value>Restaurează starea redării</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>Salvează starea curentă a redării pentru a o relua la următoarea pornire.</value>
+    <value>Restaurează coada de așteptare și poziția de redare la pornirea Nagi.</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
-    <value>Pornire automată la lansare</value>
+    <value>Lansare automată la pornirea sistemului</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
     <value>Pornește Nagi automat când te conectezi la computer.</value>
@@ -1712,7 +1769,7 @@
     <value>Pornește minimizat</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>La lansare, fereastra aplicației va fi minimizată în mod implicit.</value>
+    <value>Pornește Nagi cu fereastra minimizată.</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
     <value>Minimizează în mini-player</value>
@@ -1721,19 +1778,19 @@
     <value>Când este minimizată, afișează un player flotant compact în loc să ascunzi fereastra.</value>
   </data>
   <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
-    <value>Ascunde în bara de sistem</value>
+    <value>Ascunde în zona de notificare</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>Când este închisă, ascunde în bara de sistem în loc.</value>
+    <value>Menține Nagi în executare în zona de notificare la închiderea ferestrei.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
-    <value>Afișează coperta în fereastra pop-up</value>
+    <value>Afișează coperta în fereastra volantă</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
     <value>Afișează coperta în playerul compact care apare la clic pe pictograma din bara de sistem.</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
-    <value>Ignorați articolele la sortare</value>
+    <value>Ignoră articolele la sortare</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
     <value>Sortați albumele, artiștii și melodiile după primul cuvânt semnificativ (de ex., "The Beatles" se sortează la B).</value>
@@ -1760,10 +1817,10 @@
     <value>Rescanează biblioteca pentru a aplica modificările de separare</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
-    <value>Recuperează metadatele online</value>
+    <value>Preluare metadate online</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Recuperează informații suplimentare, cum ar fi imagini de artiști și biografii de la servicii online (ex. Spotify, Last.fm).</value>
+    <value>Preluare imagini și biografii ale artiștilor din surse online.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Surse</value>
@@ -1772,10 +1829,10 @@
     <value>Trage pentru a reordona sursele de metadate. Treceți cu mouse-ul peste fiecare sursă pentru detalii.</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Header" xml:space="preserve">
-    <value>Recuperează versuri online</value>
+    <value>Preluare versuri online</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>Recuperează automat versurile lipsă din surse online. (Confidențialitate: trimite metadatele piesei către servicii terțe)</value>
+    <value>Preia versurile lipsă din surse online. Aceasta trimite metadatele pieselor către servicii terțe.</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
     <value>Surse</value>
@@ -1793,7 +1850,7 @@
     <value>Pachete de limbi</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>Instalați limbile pe care doriți să le romanizați. Pachetele sunt semnate, conțin doar date și sunt stocate local.</value>
+    <value>Instalați pachete de limbi pentru a romaniza versurile suportate. Pachetele sunt stocate local.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
     <value>Reîmprospătare</value>
@@ -1832,19 +1889,19 @@
     <value>Licență {0}</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>Export/Import Playlisturi</value>
+    <value>Import și export liste de redare</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
     <value>Exportează playlisturi în fișiere M3U pentru a le utiliza în alte playere, sau importă playlisturi M3U în Nagi.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
-    <value>Exportează Tot...</value>
+    <value>Exportă tot…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
     <value>Exportează toate playlisturile într-un dosar</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
-    <value>Importă...</value>
+    <value>Importă…</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
     <value>Importă unul sau mai multe fișiere M3U</value>
@@ -1886,13 +1943,13 @@
     <value>Adaugă automat piesele pe care le asculți pe Nagi la profilul tău Last.fm.</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
-    <value>Actualizează 'Se redă acum'</value>
+    <value>Actualizează piesa în curs de redare</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>Arată prietenilor tăi de pe Last.fm ce asculți în timp real.</value>
+    <value>Afișează piesa în curs de redare pe profilul dvs. Last.fm.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
-    <value>Integrare ListenBrainz</value>
+    <value>ListenBrainz</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Description" xml:space="preserve">
     <value>Trimiteți ascultările dumneavoastră către ListenBrainz (o alternativă deschisă la Last.fm).</value>
@@ -1913,10 +1970,10 @@
     <value>Conexiunea a eșuat: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>Trimite ascultările (scrobbling)</value>
+    <value>Trimite ascultările (Scrobbling)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>Trimite actualizări "redare curentă"</value>
+    <value>Trimite actualizările pentru piesa în curs de redare</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
     <value>Avansat</value>
@@ -1925,7 +1982,7 @@
     <value>Adresă URL server</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ServerUrlPlaceholder" xml:space="preserve">
-    <value>Exemplu: https://api.listenbrainz.org</value>
+    <value>https://api.listenbrainz.org</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Title" xml:space="preserve">
     <value>Deconectați-vă de la ListenBrainz?</value>
@@ -1949,7 +2006,7 @@
     <value>Melodii</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Căutați în playlistul inteligent...</value>
+    <value>Căutare în lista inteligentă…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Căutați în playlistul inteligent</value>
@@ -1973,13 +2030,13 @@
     <value>Adaugă la coadă</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Mergi la album</value>
+    <value>Merg la album</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Mergi la artist</value>
+    <value>Merg la artist</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Afișează în explorator</value>
+    <value>Afișează în File Explorer</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Redă</value>
@@ -2021,7 +2078,7 @@
     <value>Trimite feedback</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Verifică actualizări la pornire</value>
+    <value>Verifică actualizările la pornire</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
     <value>Verifică automat noi versiuni la pornirea aplicației.</value>
@@ -2030,7 +2087,7 @@
     <value>Limba aplicației</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>Modificările necesită o repornire pentru a intra în vigoare</value>
+    <value>Reporniți Nagi pentru a aplica modificarea limbii.</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
     <value>Repornire necesară</value>
@@ -2045,7 +2102,7 @@
     <value>Salvare și Restaurare</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Creează copii de rezervă ale bibliotecii muzicale și setărilor tale sau restaurează dintr-o copie de rezervă anterioară</value>
+    <value>Creați o copie de rezervă a datelor și setărilor bibliotecii sau restaurați o copie anterioară.</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
     <value>Creează copie de rezervă</value>
@@ -2057,7 +2114,7 @@
     <value>Copie de rezervă creată</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Copie de rezervă creată cu succes ({0:F2} MB) la: {1}</value>
+    <value>S-a creat o copie de rezervă ({0:F2} MB) la: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
     <value>Crearea copiei de rezervă a eșuat</value>
@@ -2084,13 +2141,13 @@
     <value>Restaurare finalizată</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Copie de rezervă restaurată cu succes. Aplicația va reporni acum.</value>
+    <value>Copia de rezervă a fost restaurată. Nagi se va reporni acum.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
     <value>Restaurare eșuată</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Restaurarea din copia de rezervă a eșuat. Datele tale nu au fost modificate.</value>
+    <value>Nu s-a putut restaura copia de rezervă.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
     <value>Stilizare player</value>
@@ -2102,25 +2159,25 @@
     <value>Solid (Opac)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Personalizează aspectul player-ului flotant</value>
+    <value>Personalizați aspectul barei playerului.</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
     <value>Intensitate nuanță</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Ajustează vivacitatea culorii de fundal a player-ului</value>
+    <value>Ajustați intensitatea culorii de fundal a playerului.</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
-    <value>Durata atenuării inițiale</value>
+    <value>Durată fade-in</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
-    <value>Durata efectului de atenuare inițială la redare (ms)</value>
+    <value>Setați durata de creștere treptată a volumului la reluarea redării.</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
-    <value>Durata atenuării finale</value>
+    <value>Durată fade-out</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
-    <value>Durata efectului de atenuare finală la întrerupere (ms)</value>
+    <value>Setați durata de estompare treptată a volumului la întreruperea redării.</value>
   </data>
   <data name="Settings_Nav_Insights" xml:space="preserve">
     <value>Statistici</value>
@@ -2129,7 +2186,7 @@
     <value>Statistici</value>
   </data>
   <data name="InsightsPage_TotalTime" xml:space="preserve">
-    <value>Durată totală de ascultare</value>
+    <value>Timp total de ascultare</value>
   </data>
   <data name="InsightsPage_UniqueSongs" xml:space="preserve">
     <value>Piese unice</value>
@@ -2138,7 +2195,7 @@
     <value>Ora de vârf</value>
   </data>
   <data name="InsightsPage_MostActiveDay" xml:space="preserve">
-    <value>Ziua cea mai activă</value>
+    <value>Cea mai activă zi</value>
   </data>
   <data name="InsightsPage_TopSongs" xml:space="preserve">
     <value>Piese de top</value>
@@ -2162,7 +2219,7 @@
     <value>Începe redarea muzicii pentru a-ți vedea statisticile aici</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
-    <value>{0} redări</value>
+    <value>Redări: {0}</value>
   </data>
   <data name="InsightsPage_Source_Albums" xml:space="preserve">
     <value>Albume</value>
@@ -2222,7 +2279,7 @@
     <value>Timp</value>
   </data>
   <data name="PaginationControl_All" xml:space="preserve">
-    <value>All</value>
+    <value>Toate</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>Elemente pe pagină:</value>
@@ -2246,7 +2303,7 @@
     <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
-    <value>Ultima zi</value>
+    <value>Ultima 1 zi</value>
   </data>
   <data name="Insights_TimeRange_Last7Days" xml:space="preserve">
     <value>Ultimele 7 zile</value>
@@ -2258,15 +2315,177 @@
     <value>Ultimele 90 de zile</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>Anul trecut</value>
+    <value>Ultimul an</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
-    <value>Toată perioada</value>
+    <value>Din toate timpurile</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}h {1}m</value>
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
     <value>{0}m {1}s</value>
+  </data>
+  <data name="QueuePanel_EmptyTitle" xml:space="preserve">
+    <value>Coada dvs. este goală</value>
+  </data>
+  <data name="QueuePanel_EmptyDescription" xml:space="preserve">
+    <value>Redați muzică sau plasați fișiere audio aici pentru a vă construi coada.</value>
+  </data>
+  <data name="QueuePanel_LoadError" xml:space="preserve">
+    <value>Unele piese nu au putut fi încărcate. Selectați Reîncercare pentru a încărca din nou coada.</value>
+  </data>
+  <data name="QueuePanel_Retry" xml:space="preserve">
+    <value>Reîncercare</value>
+  </data>
+  <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
+    <value>Noua ordine a listei de redare nu a putut fi salvată. Încercați din nou.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
+    <value>Dispozitiv de ieșire audio</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Description" xml:space="preserve">
+    <value>Alegeți unde redă Nagi muzica.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Default" xml:space="preserve">
+    <value>Implicit din sistem</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Unavailable" xml:space="preserve">
+    <value>Dispozitivul salvat nu este disponibil. Se folosește opțiunea implicită din sistem.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
+    <value>Ieșirea audio nu a putut fi actualizată. Încercați din nou sau alegeți alt dispozitiv.</value>
+  </data>
+  <data name="Listening_Random" xml:space="preserve">
+    <value>Amestecare</value>
+  </data>
+  <data name="Listening_MoreVariety" xml:space="preserve">
+    <value>Mai multă varietate</value>
+  </data>
+  <data name="Listening_Rediscover" xml:space="preserve">
+    <value>Redescoperire</value>
+  </data>
+  <data name="Listening_Unheard" xml:space="preserve">
+    <value>Neascultate</value>
+  </data>
+  <data name="Listening_PlayFor" xml:space="preserve">
+    <value>Redă timp de…</value>
+  </data>
+  <data name="Listening_Minutes" xml:space="preserve">
+    <value>Minute</value>
+  </data>
+  <data name="Listening_ShuffleMode" xml:space="preserve">
+    <value>Tip de mixaj</value>
+  </data>
+  <data name="Listening_AvoidRecentDays" xml:space="preserve">
+    <value>Evită redările recente (Zile)</value>
+  </data>
+  <data name="Listening_MoreOptions" xml:space="preserve">
+    <value>Mai multe opțiuni</value>
+  </data>
+  <data name="Listening_PlayForDescription" xml:space="preserve">
+    <value>Construiește o coadă de piese întregi care nu depășesc durata aleasă.</value>
+  </data>
+  <data name="Listening_NoMixTitle" xml:space="preserve">
+    <value>Nicio piesă pentru acest mixaj</value>
+  </data>
+  <data name="Listening_NoMixDescription" xml:space="preserve">
+    <value>Nicio piesă din această listă nu îndeplinește aceste cerințe. Încercați alt mixaj sau altă listă de piese.</value>
+  </data>
+  <data name="Listening_Favorites" xml:space="preserve">
+    <value>Favorite</value>
+  </data>
+  <data name="Listening_AddFavorite" xml:space="preserve">
+    <value>Adaugă la favorite</value>
+  </data>
+  <data name="Listening_RemoveFavorite" xml:space="preserve">
+    <value>Elimină din favorite</value>
+  </data>
+  <data name="Listening_SleepTimer" xml:space="preserve">
+    <value>Temporizator de oprire</value>
+  </data>
+  <data name="Listening_FinishTrack" xml:space="preserve">
+    <value>Termină piesa curentă la expirarea temporizatorului</value>
+  </data>
+  <data name="Listening_StopAfterTrack" xml:space="preserve">
+    <value>Oprește după această piesă</value>
+  </data>
+  <data name="Listening_StopAtQueueEnd" xml:space="preserve">
+    <value>Oprește la sfârșitul cozii</value>
+  </data>
+  <data name="Listening_StopPlayback" xml:space="preserve">
+    <value>Oprește redarea</value>
+  </data>
+  <data name="Listening_CustomTimer" xml:space="preserve">
+    <value>Temporizator personalizat…</value>
+  </data>
+  <data name="Listening_Timer15" xml:space="preserve">
+    <value>În 15 minute</value>
+  </data>
+  <data name="Listening_Timer30" xml:space="preserve">
+    <value>În 30 de minute</value>
+  </data>
+  <data name="Listening_Timer60" xml:space="preserve">
+    <value>În 60 de minute</value>
+  </data>
+  <data name="Listening_CancelStop" xml:space="preserve">
+    <value>Anulează oprirea programată</value>
+  </data>
+  <data name="Listening_TimerRemaining" xml:space="preserve">
+    <value>Se oprește în {0}</value>
+  </data>
+  <data name="Listening_PlayerOptions" xml:space="preserve">
+    <value>Opțiuni player</value>
+  </data>
+  <data name="Listening_RecentlyPlayed" xml:space="preserve">
+    <value>Redate recent</value>
+  </data>
+  <data name="Listening_HistorySearch" xml:space="preserve">
+    <value>Căutare în istoricul de ascultare</value>
+  </data>
+  <data name="Listening_HistoryEmpty" xml:space="preserve">
+    <value>Niciun istoric de ascultare încă</value>
+  </data>
+  <data name="Listening_HistoryLoadError" xml:space="preserve">
+    <value>Elementele redate recent nu au putut fi încărcate. Selectați Reîncercare pentru a încerca din nou.</value>
+  </data>
+  <data name="Listening_Today" xml:space="preserve">
+    <value>Astăzi</value>
+  </data>
+  <data name="Listening_Yesterday" xml:space="preserve">
+    <value>Ieri</value>
+  </data>
+  <data name="Listening_RediscoveryReason" xml:space="preserve">
+    <value>Ultima redare: {0:d}</value>
+  </data>
+  <data name="Listening_RediscoveryTitle" xml:space="preserve">
+    <value>Merită reascultat</value>
+  </data>
+  <data name="Listening_Dismiss" xml:space="preserve">
+    <value>Respinge</value>
+  </data>
+  <data name="Listening_ActionError" xml:space="preserve">
+    <value>Acțiunea nu a putut fi finalizată. Încercați din nou.</value>
+  </data>
+  <data name="Listening_FavoritesEmpty" xml:space="preserve">
+    <value>Niciun favorit încă</value>
+  </data>
+  <data name="Listening_FavoritesEmptyDescription" xml:space="preserve">
+    <value>Adăugați o piesă la favorite din meniul ei sau selectați-o și apăsați Ctrl+D.</value>
+  </data>
+  <data name="Listening_VarietyDescription" xml:space="preserve">
+    <value>„Mai multă varietate” evită piesele redate în intervalul recent și separă piesele de la același artist acolo unde este posibil.</value>
+  </data>
+  <data name="Listening_RediscoverDescription" xml:space="preserve">
+    <value>„Redescoperire” folosește piese cu redări înregistrate în Nagi care au fost redate ultima dată cu mai mult de 30 de zile în urmă.</value>
+  </data>
+  <data name="Listening_UnheardDescription" xml:space="preserve">
+    <value>„Neascultate” folosește piese care nu au redări înregistrate în Nagi.</value>
+  </data>
+  <data name="Listening_HistoryNoMatches" xml:space="preserve">
+    <value>Nicio ascultare nu se potrivește căutării</value>
+  </data>
+  <data name="Listening_NoTimedMixDescription" xml:space="preserve">
+    <value>Nicio piesă din această listă nu îndeplinește cerințele mixajului și nu se încadrează în durata aleasă. Încercați o durată mai lungă, alt mixaj sau altă listă de piese.</value>
   </data>
 </root>

@@ -59,31 +59,34 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NavItem_Library" xml:space="preserve">
-    <value>Matoketare</value>
+    <value>Gwokwer</value>
   </data>
   <data name="NavItem_Albums" xml:space="preserve">
-    <value>Albom</value>
+    <value>Album-i</value>
   </data>
   <data name="NavItem_Artists" xml:space="preserve">
-    <value>Danokwaya</value>
+    <value>Luwer</value>
   </data>
   <data name="NavItem_Genres" xml:space="preserve">
-    <value>Kecce</value>
+    <value>Kit Wer</value>
   </data>
   <data name="NavItem_Playlists" xml:space="preserve">
-    <value>Tukpajobi</value>
+    <value>Chen Wer</value>
   </data>
   <data name="NavItem_Folders" xml:space="preserve">
-    <value>Giyikol</value>
+    <value>Pukuluk</value>
+  </data>
+  <data name="NavItem_Favorites" xml:space="preserve">
+    <value>Ma imaroo</value>
   </data>
   <data name="NavItem_Insights" xml:space="preserve">
-    <value>Nongere</value>
+    <value>Ngec me Tic</value>
   </data>
   <data name="NavItem_Settings" xml:space="preserve">
-    <value>Yub</value>
+    <value>Ter</value>
   </data>
   <data name="Status_NoTrackPlaying" xml:space="preserve">
-    <value>Tukpajobi pe tuke</value>
+    <value>Pe tye wer mo ma tye ka tuk</value>
   </data>
   <data name="Tooltip_Play" xml:space="preserve">
     <value>Tuk</value>
@@ -92,37 +95,37 @@
     <value>Cung</value>
   </data>
   <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>Kwerri me piny</value>
+    <value>Ruc Wer Tye On</value>
   </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
-    <value>Kwerri me woko</value>
+    <value>Ruc Wer Tye Off</value>
   </data>
   <data name="Tooltip_RepeatOff" xml:space="preserve">
-    <value>Dok dok pe</value>
+    <value>Nwoyo Tye Off</value>
   </data>
   <data name="Tooltip_RepeatAll" xml:space="preserve">
-    <value>Dok dok ducu</value>
+    <value>Nwo Weng</value>
   </data>
   <data name="Tooltip_RepeatOne" xml:space="preserve">
-    <value>Dok dok acel</value>
+    <value>Nwo Acel</value>
   </data>
   <data name="Tooltip_Repeat" xml:space="preserve">
-    <value>Dok dok</value>
+    <value>Nwoyo</value>
   </data>
   <data name="Tooltip_Unmute" xml:space="preserve">
-    <value>Ko dwong</value>
+    <value>Yab Dwon</value>
   </data>
   <data name="Tooltip_Mute" xml:space="preserve">
-    <value>Cung dwong</value>
+    <value>Ceng Dwon</value>
   </data>
   <data name="Theme_Light" xml:space="preserve">
-    <value>Apaya</value>
+    <value>Ryeny</value>
   </data>
   <data name="Theme_Dark" xml:space="preserve">
-    <value>Gotopiny</value>
+    <value>Col</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">
-    <value>Ti ki yub me dong yo</value>
+    <value>Me Cicitim</value>
   </data>
   <data name="Backdrop_Mica" xml:space="preserve">
     <value>Mica</value>
@@ -134,112 +137,147 @@
     <value>Acrylic</value>
   </data>
   <data name="Label_Composer" xml:space="preserve">
-    <value>Angatwec</value>
+    <value>Lacoy Wer</value>
   </data>
   <data name="Label_Comment" xml:space="preserve">
-    <value>Koment</value>
+    <value>Lok Ma Imiyo</value>
   </data>
   <data name="Label_Rating" xml:space="preserve">
-    <value>Kop me tim</value>
+    <value>Wel Miyo</value>
+  </data>
+  <data name="Label_Grouping" xml:space="preserve">
+    <value>Dulceng</value>
+  </data>
+  <data name="Label_SkipCount" xml:space="preserve">
+    <value>Wel ma kikaloo</value>
+  </data>
+  <data name="Label_DiscNumber" xml:space="preserve">
+    <value>Namba me disc</value>
+  </data>
+  <data name="Label_Bitrate" xml:space="preserve">
+    <value>Bitrate</value>
+  </data>
+  <data name="Label_SampleRate" xml:space="preserve">
+    <value>Sample Rate</value>
+  </data>
+  <data name="Label_IsLoved" xml:space="preserve">
+    <value>Ma imaroo</value>
+  </data>
+  <data name="Label_HasLyrics" xml:space="preserve">
+    <value>Tye ki lok me wer</value>
+  </data>
+  <data name="Operator_IsInRange" xml:space="preserve">
+    <value>Tye i dyere (ki dyere ducu)</value>
+  </data>
+  <data name="Operator_IsAfter" xml:space="preserve">
+    <value>Tye i nge</value>
+  </data>
+  <data name="Operator_IsBefore" xml:space="preserve">
+    <value>Tye i nyim</value>
+  </data>
+  <data name="SmartPlaylist_UpperBound_Placeholder" xml:space="preserve">
+    <value>Wel ma lamal loyo</value>
   </data>
   <data name="Operator_Contains" xml:space="preserve">
-    <value>Tye iye</value>
+    <value>Tye ki</value>
   </data>
   <data name="Operator_DoesNotContain" xml:space="preserve">
-    <value>Pe tye iye</value>
+    <value>Pe tye ki</value>
   </data>
   <data name="Operator_Is" xml:space="preserve">
-    <value>Cal woko woko</value>
+    <value>Tye Kakare</value>
   </data>
   <data name="Operator_IsNot" xml:space="preserve">
     <value>Pe tye</value>
   </data>
   <data name="Operator_StartsWith" xml:space="preserve">
-    <value>Cakke ki</value>
+    <value>Cakko ki</value>
   </data>
   <data name="Operator_EndsWith" xml:space="preserve">
-    <value>Tye i agikki</value>
+    <value>Agikki ki</value>
   </data>
   <data name="Operator_Equals" xml:space="preserve">
-    <value>Cal woko woko</value>
+    <value>Rom ki</value>
   </data>
   <data name="Operator_NotEquals" xml:space="preserve">
-    <value>Pe cal woko woko</value>
+    <value>Pe rom ki</value>
   </data>
   <data name="Operator_GreaterThan" xml:space="preserve">
-    <value>Kare twol loyo</value>
+    <value>Dito loyo</value>
   </data>
   <data name="Operator_LessThan" xml:space="preserve">
-    <value>Kare nino loyo</value>
+    <value>Tidi loyo</value>
   </data>
   <data name="Operator_GreaterThanOrEqual" xml:space="preserve">
-    <value>Pe nino loyo</value>
+    <value>Pe nok loyo</value>
   </data>
   <data name="Operator_LessThanOrEqual" xml:space="preserve">
-    <value>Pe twol loyo</value>
+    <value>Pe kato</value>
   </data>
   <data name="Operator_IsInTheLast" xml:space="preserve">
-    <value>Tye i dyere (nino)</value>
+    <value>Tye i iye me (nino) mukato</value>
   </data>
   <data name="Operator_IsNotInTheLast" xml:space="preserve">
-    <value>Pe tye i dyere (nino)</value>
+    <value>Pe tye i iye me (nino) mukato</value>
   </data>
   <data name="Operator_IsTrue" xml:space="preserve">
-    <value>Adwong</value>
+    <value>Tye Ada</value>
   </data>
   <data name="Operator_IsFalse" xml:space="preserve">
-    <value>Goronyo</value>
+    <value>Pe Ada</value>
   </data>
   <data name="SmartPlaylist_Title_New" xml:space="preserve">
-    <value>Tukpajobi manyen me ryeko</value>
+    <value>Chen Wer Me Ryeko Nyen</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>Lar tukpajobi me ryeko - {0}</value>
+    <value>Yub Chen Wer Me Ryeko: {0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
-    <value>Koc nyim tukpajobi</value>
+    <value>Coy nying chen wer</value>
   </data>
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
-    <value>{0:N0} wecce calo cikke ma tye</value>
+    <value>Wer ma rom: {0:N0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Koc nyim wek inen wecce ma cal</value>
+    <value>Coy nying chen wer me neno wer ma rom</value>
   </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
-    <value>Pe twere me kwanyo</value>
+    <value>Pe otwero kwano wer ma rom</value>
   </data>
   <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
-    <value>Kwanyo...</value>
+    <value>Kwano…</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>Tukpajobi ki nyim man dong tye!</value>
+    <value>Chen wer ki nying man tye dong.</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>Koc nyim!</value>
+    <value>Coy nying chen wer.</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
-    <value>Yako...</value>
+    <value>Keto i iye…</value>
   </data>
   <data name="Error_FailedToLoadArtists" xml:space="preserve">
-    <value>Pe ooye me yako danokwaya</value>
+    <value>Pe otwero keto luwer</value>
   </data>
   <data name="CrashReport_Title" xml:space="preserve">
-    <value>Tim marac madit</value>
+    <value>Bal Mutuk Tek</value>
   </data>
   <data name="CrashReport_Message" xml:space="preserve">
-    <value>Nagi ocako tim marac madit dok myero egor. Wa kwero botwu pi jami ma ocoko.</value>
+    <value>Nagi onwanggo bal ento opor me cengge.</value>
   </data>
   <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>Lubo calo Laric</value>
+    <value>Tiyo macalo Administrator</value>
   </data>
   <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi tye ka lubo calo Laric. Man twero goro jami mukene (calo medo giyikol me welo wecce) me lubo atir. Pi tic ma ber loyo, lak Nagi labongo twero me laric.</value>
+    <value>Nagi tye ka tic macalo Administrator. Man twero genggo gin mo (calocwalo meddo pukuluk me wer) me tic maber.
+
+Me nwanggo tic maber, cak Nagi odoco pe ki twor me administrator.</value>
   </data>
   <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>Lak atir</value>
+    <value>Cak Odoco Kakare</value>
   </data>
   <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>Medde ki lobo</value>
+    <value>Mede Atyer</value>
   </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
     <value>Nagi</value>
@@ -248,367 +286,374 @@
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
-    <value>Albom pe oyenge</value>
+    <value>Pe Onwanggo Album</value>
   </data>
   <data name="AlbumView_Error" xml:space="preserve">
-    <value>Tim marac i yako albom</value>
+    <value>Bal i Keto Album</value>
   </data>
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
-    <value>Albom</value>
+    <value>Album</value>
   </data>
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>Danokwaya</value>
+    <value>Luwer</value>
   </data>
   <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} wecc</value>
+    <value>{0, plural, one {# wer} other {# wer}}</value>
   </data>
   <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} wecce</value>
+    <value>{0, plural, one {# wer} other {# wer-gi}}</value>
   </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
-    <value>Danokwaya pe oyenge</value>
+    <value>Pe Onwanggo Luwer</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
-    <value>Tim marac i yako danokwaya</value>
+    <value>Bal i Keto Luwer</value>
   </data>
   <data name="ArtistView_DefaultArtistName" xml:space="preserve">
-    <value>Danokwaya</value>
+    <value>Luwer</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
-    <value>Kop me kwo me danokwaya man pe tye.</value>
+    <value>Pe tye lok me kwena me luwer man.</value>
   </data>
   <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>Pe ooye me yako kop me danokwaya.</value>
+    <value>Pe otwero keto lok me iye me luwer.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
-    <value>Tim marac i yako giyikol</value>
+    <value>Bal i keto puk</value>
   </data>
   <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>Omoko dok ojwa '{0}' atir.</value>
+    <value>Omeddo ki ocano '{0}' maber.</value>
   </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
-    <value>Pe ooye me medo giyikol. Yo twero bedo macalo pe tye.</value>
+    <value>Pe otwero meddo puk. Yo twero bedo ki bal.</value>
   </data>
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
-    <value>Giyikol man dong tye i matoketare.</value>
+    <value>Puk man dong tye i gwokwer.</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
-    <value>Medo giyikol i matoketare...</value>
+    <value>Meddo puk i gwokwer…</value>
   </data>
   <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Olonyo '{0}' atir.</value>
+    <value>Okwanyo &apos;{0}&apos; ki i gwokwer meryi.</value>
   </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
-    <value>Pe ooye me lonyo '{0}'.</value>
+    <value>Pe otwero kwanyo &apos;{0}&apos; ki i gwokwer meryi.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
-    <value>Lonyo '{0}'...</value>
+    <value>Kwanyo &apos;{0}&apos; ki i gwokwer meryi…</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Jwako ki dok '{0}' okwe.</value>
+    <value>Cano odoco me '{0}' otum.</value>
   </data>
   <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Pe otim alokaloka mo pi '{0}'.</value>
+    <value>Pe onwanggo alokaloka mo me '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
-    <value>Jwako ki dok '{0}'...</value>
+    <value>Cano '{0}' odoco…</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
-    <value>Giyikol labongo welo wecce pe oyenge.</value>
+    <value>Pe onwanggo puk mo ma tye ki wer.</value>
   </data>
   <data name="Folders_Error_Playback" xml:space="preserve">
-    <value>Tim marac i cakko tukpajobi pi giyikol man.</value>
+    <value>Bal i cako tuk me puk man.</value>
   </data>
   <data name="Folders_Error_RandomPlayback" xml:space="preserve">
-    <value>Tim marac i cakko tukpajobi me giyikol ma pe olanyo.</value>
+    <value>Bal i cako tuk me puk ata.</value>
   </data>
   <data name="Folders_Error_AddFolder" xml:space="preserve">
-    <value>Tim marac i medo giyikol: {0}</value>
+    <value>Bal i meddo puk: {0}</value>
   </data>
   <data name="Folders_Error_DeleteFolder" xml:space="preserve">
-    <value>Tim marac i lonyo giyikol: {0}</value>
+    <value>Pe otwero kwanyo puk ki i gwokwer meryi: {0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
-    <value>Tim marac i jwako ki dok giyikol: {0}</value>
+    <value>Bal i cano puk odoco: {0}</value>
   </data>
   <data name="Folders_Count_Singular" xml:space="preserve">
-    <value>{0} giyikol</value>
+    <value>{0, plural, one {# puk} other {# puk}}</value>
   </data>
   <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} giyikol</value>
+    <value>{0, plural, one {# puk} other {# puk-i}}</value>
   </data>
   <data name="Songs_Count_Singular" xml:space="preserve">
-    <value>{0} wecc</value>
+    <value>{0, plural, one {# wer} other {# wer}}</value>
   </data>
   <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} wecce</value>
+    <value>{0, plural, one {# wer} other {# wer-gi}}</value>
   </data>
   <data name="Albums_Count_Singular" xml:space="preserve">
-    <value>{0} albom</value>
+    <value>{0, plural, one {# album} other {# album}}</value>
   </data>
   <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} albom</value>
+    <value>{0, plural, one {# album} other {# album-i}}</value>
   </data>
   <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} danokwaya</value>
+    <value>{0, plural, one {# luwer} other {# luwer}}</value>
   </data>
   <data name="Artists_Count_Plural" xml:space="preserve">
-    <value>{0} danokwaya</value>
+    <value>{0, plural, one {# luwer} other {# luwer-gi}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
-    <value>Jammi pe tye</value>
+    <value>Pe tye jami mo</value>
   </data>
   <data name="Generic_Error" xml:space="preserve">
-    <value>Tim marac</value>
+    <value>Bal</value>
   </data>
   <data name="GenreView_DefaultName" xml:space="preserve">
-    <value>Kecce</value>
+    <value>Kit Wer</value>
   </data>
   <data name="GenreView_Error" xml:space="preserve">
-    <value>Tim marac i yako kecce</value>
+    <value>Bal i Keto Kit Wer</value>
   </data>
   <data name="Lyrics_NoSongSelected" xml:space="preserve">
-    <value>Wecc mo pe olanyo</value>
+    <value>Pe oyero wer mo</value>
   </data>
   <data name="Lyrics_SongTitleFormat" xml:space="preserve">
-    <value>{0} ki bot {1}</value>
+    <value>{0} ki {1}</value>
   </data>
   <data name="Onboarding_Welcome" xml:space="preserve">
-    <value>Kong wayub matoketare me welo wecce-ni wek wacakkere.</value>
+    <value>Bin wayub gwokwer meryi me cako.</value>
   </data>
   <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>Kacel kica pi ilany giyikol...</value>
+    <value>Kuru ni iyer puk…</value>
   </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
-    <value>Gero matoketare-ni...</value>
+    <value>Yubbo gwokwer meryi…</value>
   </data>
   <data name="Onboarding_Error" xml:space="preserve">
-    <value>Tim marac ma pe kigeno otim. Lak iket ki dok.</value>
+    <value>Bal pe okurre otimre. Tim ber item odoco.</value>
   </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
-    <value>Ryeko • {0} wecc</value>
+    <value>Me Ryeko • {0, plural, one {# wer} other {# wer}}</value>
   </data>
   <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Ryeko • {0} wecce</value>
+    <value>Me Ryeko • {0, plural, one {# wer} other {# wer-gi}}</value>
   </data>
   <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} wecc</value>
+    <value>{0, plural, one {# wer} other {# wer}}</value>
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} wecce</value>
+    <value>{0, plural, one {# wer} other {# wer-gi}}</value>
   </data>
   <data name="Playlist_ErrorLoading" xml:space="preserve">
-    <value>Tim marac i yako tukpajobi</value>
+    <value>Bal i keto chen wer</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Cakko tukpajobi...</value>
+    <value>Cako chen wer…</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
-    <value>Wecc mo pe calo cikke me tukpajobi me ryeko man.</value>
+    <value>Pe tye wer mo ma rom ki cik me chen wer me ryeko man.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
-    <value>Tim marac i cakko tukpajobi pi tukpajobi man.</value>
+    <value>Bal i cako tuk me chen wer man.</value>
   </data>
   <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Lanyo tukpajobi ma pe olanyo...</value>
+    <value>Yero chen wer ata…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
-    <value>Tukpajobi mo pe oyenge.</value>
+    <value>Pe onwanggo chen wer mo.</value>
   </data>
   <data name="Playlist_Status_SmartSelectedEmpty" xml:space="preserve">
-    <value>Tukpajobi me ryeko ma olanyo tye nono.</value>
+    <value>Chen wer me ryeko ma oyere tye nono.</value>
   </data>
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
-    <value>Tim marac i tukko tukpajobi ma pe olanyo.</value>
+    <value>Bal i tuk me chen wer ata.</value>
   </data>
   <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Yako tukpajobi...</value>
+    <value>Keto chen wer-gi…</value>
   </data>
   <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>Tim marac i yako tukpajobi.</value>
+    <value>Bal i keto chen wer-gi.</value>
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Gero tukpajobi manyen...</value>
+    <value>Yubbo chen wer nyen…</value>
   </data>
   <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Pe ooye me gero tukpajobi. Twero bedo dong tye.</value>
+    <value>Pe otwero yubbo chen wer. Twero bedo ni dong tye.</value>
   </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
-    <value>Tim marac otim i kare ma otye ka gero tukpajobi.</value>
+    <value>Bal mo otimre i kare me yubbo chen wer.</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Loko wang tukpajobi...</value>
+    <value>Yubbo odoco cal me chen wer…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
-    <value>Pe ooye me loko wang tukpajobi.</value>
+    <value>Pe otwero yubbo cal me chen wer.</value>
   </data>
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
-    <value>Tim marac otim i kare ma otye ka loko wang tukpajobi.</value>
+    <value>Bal mo otimre i kare me yubbo cal me chen wer.</value>
   </data>
   <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Golo picha me tukpajobi...</value>
+    <value>Kwanyo cal me chen wer…</value>
   </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
-    <value>Pe ooye me golo picha me tukpajobi.</value>
+    <value>Pe otwero kwanyo cal me chen wer.</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
-    <value>Tim marac otim i kare ma otye ka golo picha me tukpajobi.</value>
+    <value>Bal mo otimre i kare me kwanyo cal me chen wer.</value>
   </data>
   <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Loko nyim tukpajobi...</value>
+    <value>Loko nying chen wer…</value>
   </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
-    <value>Pe ooye me loko nyim tukpajobi.</value>
+    <value>Pe otwero loko nying chen wer.</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
-    <value>Tim marac otim i kare ma otye ka loko nyim tukpajobi.</value>
+    <value>Bal mo otimre i kare me loko nying chen wer.</value>
   </data>
   <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Lonyo tukpajobi...</value>
+    <value>Juko chen wer…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
-    <value>Pe ooye me lonyo tukpajobi.</value>
+    <value>Pe otwero juko chen wer.</value>
   </data>
   <data name="Playlist_Status_DeleteError" xml:space="preserve">
-    <value>Tim marac otim i kare ma otye ka lonyo tukpajobi.</value>
+    <value>Bal mo otimre i kare me juko chen wer.</value>
   </data>
   <data name="Settings_Reset_Title" xml:space="preserve">
-    <value>Keto dok atir</value>
+    <value>Moko me Dwoko Cere</value>
   </data>
   <data name="Settings_Reset_Message" xml:space="preserve">
-    <value>Inyeko ni imito keto dok ducu kop me nagi ki yubbe? Tic man pe twere me dwoko. Nagi-ni bidwogo i yub ma okwongo.</value>
+    <value>Iye ada me dwoko jami weng me purugiram ki ter cere? Tic man pe otwero dwoko cen. Purugiram bidwong i cako yub me acaki.</value>
   </data>
   <data name="Settings_Reset_Button" xml:space="preserve">
-    <value>Keto dok</value>
+    <value>Dwok Cere</value>
   </data>
   <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>Tim marac me keto dok</value>
+    <value>Bal i Dwoko Cere</value>
   </data>
   <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>Tim marac otim i kare ma otye ka keto dok kop me nagi: {0}. Lak ilak nagi-ni ki lwetwu keken.</value>
+    <value>Bal mo otimre i kare me dwoko jami me purugiram: {0}. Tim ber item me cako purugiram ki cingyi.</value>
   </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
-    <value>Tim marac</value>
+    <value>Bal</value>
   </data>
   <data name="Settings_LastFm_AuthError_Message" xml:space="preserve">
-    <value>Pe ooye me moko ki Last.fm. Lak iket ki dok lacen.</value>
+    <value>Pe otwero kube ki Last.fm. Tim ber item odoco lanyen.</value>
   </data>
   <data name="Settings_LastFm_FinalizeError_Title" xml:space="preserve">
-    <value>Moko pe ooye</value>
+    <value>Moko Pe Otimre</value>
   </data>
   <data name="Settings_LastFm_FinalizeError_Message" xml:space="preserve">
-    <value>Pe ooye me nongo tic ki Last.fm. Lak imok ki dok.</value>
+    <value>Pe otwero nwanggo kare ki i Last.fm. Tim ber item me kube odoco.</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Title" xml:space="preserve">
-    <value>Golo Last.fm</value>
+    <value>Geng Kube ki Last.fm</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
-    <value>Inyeko ni imito golo account-ti me Last.fm? Kop me tukpi-ni bibedo ka kany i Last.fm, ento Nagi pe bidwong twero me tukko.</value>
+    <value>Iye ada me genggo akawunt meryi me Last.fm? Lok me tic meryi bidong i Last.fm, ento Nagi pe bidong twero scrobble.</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Golo</value>
+    <value>Geng Kube</value>
   </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
-    <value>Gwoko owok atir</value>
+    <value>Cwal Cing Onwang Ber</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>Ogwoko {0} tukpajobi ({1} wecce ducu) i: {2}</value>
+    <value>Chen wer ma ocwal: {0, plural, one {#} other {#}}
+Wer-gi: {1, plural, one {#} other {#}}
+Ogwoyo i: {2}</value>
   </data>
   <data name="Settings_Export_Failed_Title" xml:space="preserve">
-    <value>Gwoko pe owok</value>
+    <value>Cwal Cing Pe Ogoy Maber</value>
   </data>
   <data name="Settings_Import_Success_Title" xml:space="preserve">
-    <value>Yako owok atir</value>
+    <value>Ter i Iye Onwang Ber</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>Oya {0} tukpajobi ({1} wecce) atir.</value>
+    <value>Chen wer ma otero i iye: {0, plural, one {#} other {#}}
+Wer-gi: {1, plural, one {#} other {#}}</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
-    <value> {0} wecce pe oyenge i matoketare-ni.</value>
+    <value>
+
+Wer-gi ma pe onwanggo i gwokwer meryi: {0, plural, one {#} other {#}}.</value>
   </data>
   <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
-    <value> {0} failo pe ooye me yako.</value>
+    <value>
+
+Puk ma pe otwero tero i iye: {0, plural, one {#} other {#}}.</value>
   </data>
   <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
-    <value>Yako pe owok</value>
+    <value>Ter i Iye Pe Ogoy Maber</value>
   </data>
   <data name="Settings_Import_FailedTotal_Message" xml:space="preserve">
-    <value>Tukpajobi mo pe ooye me yako.</value>
+    <value>Pe otwero tero chen wer mo i iye.</value>
   </data>
   <data name="SmartPlaylist_ErrorLoading" xml:space="preserve">
-    <value>Tim marac i yako tukpajobi me ryeko</value>
+    <value>Bal i keto chen wer me ryeko</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
-    <value>Cikke mo pe oyub • Wecce ducu cal</value>
+    <value>Pe ogoyo cik mo • Wer-gi weng rom</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Cal {0} i kin {1} {2}</value>
+    <value>Rom {0} me {1} {2}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>ducu</value>
+    <value>weng</value>
   </data>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>mo keken</value>
+    <value>mo</value>
   </data>
   <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>cikk</value>
+    <value>cik</value>
   </data>
   <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>cikke</value>
+    <value>cik-i</value>
   </data>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
-    <value>Wecce</value>
+    <value>Wer-gi</value>
   </data>
   <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>Jammi 0</value>
+    <value>Jami 0</value>
   </data>
   <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>Tim marac i yako jammi</value>
+    <value>Bal i keto jami</value>
   </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} jam</value>
+    <value>{0, plural, one {# gin} other {# gin}}</value>
   </data>
   <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
-    <value>{0} jammi</value>
+    <value>{0, plural, one {# gin} other {# jami}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
-    <value>{0} olanyo</value>
+    <value>{0, plural, one {# ma oyere} other {# ma oyere}}</value>
   </data>
   <data name="AlbumView_DiscHeader" xml:space="preserve">
-    <value>Disk {0}</value>
+    <value>Ote {0}</value>
   </data>
   <data name="Generic_OK" xml:space="preserve">
-    <value>Atir</value>
+    <value>OK</value>
   </data>
   <data name="Generic_Cancel" xml:space="preserve">
-    <value>Gore</value>
+    <value>Juk</value>
   </data>
   <data name="Generic_Close" xml:space="preserve">
-    <value>Gore</value>
+    <value>Ceng</value>
   </data>
   <data name="Generic_Recheck" xml:space="preserve">
-    <value>Jwa ki dok</value>
+    <value>Ngiy Odoco</value>
   </data>
   <data name="CrashReport_Button_Reset" xml:space="preserve">
-    <value>Keto dok Nagi &amp; Kop</value>
+    <value>Dwok Purugiram &amp; Jami Cere</value>
   </data>
   <data name="FFmpeg_Status_NotDetected" xml:space="preserve">
-    <value>FFmpeg pe oyenge. Lak imok FFmpeg dok ikany 'Jwa ki dok'.</value>
+    <value>Pe onwanggo FFmpeg. Tim ber iket FFmpeg ka idii 'Ngiy Odoco'.</value>
   </data>
   <data name="FFmpeg_Status_Checking" xml:space="preserve">
-    <value>Jwa FFmpeg...</value>
+    <value>Yenyo FFmpeg…</value>
   </data>
   <data name="FFmpeg_Status_Detected" xml:space="preserve">
-    <value>FFmpeg oyenge!</value>
+    <value>Onwanggo FFmpeg.</value>
   </data>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
-    <value>FFmpeg pod pe oyenge. Lak imok FFmpeg dok ikany 'Jwa ki dok'.</value>
+    <value>Pud pe onwanggo FFmpeg. Tim ber iket FFmpeg ka idii 'Ngiy Odoco'.</value>
   </data>
   <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Tim marac i jwa FFmpeg. Lak iket ki dok.</value>
+    <value>Bal i ngiyo FFmpeg. Tim ber item odoco.</value>
   </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>Ma okato</value>
+    <value>Mukato</value>
   </data>
   <data name="Taskbar_Tooltip_Play" xml:space="preserve">
     <value>Tuk</value>
@@ -617,406 +662,412 @@
     <value>Cung</value>
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>Ma bino</value>
+    <value>Luwyo</value>
   </data>
   <data name="Update_Available_Title" xml:space="preserve">
-    <value>Alokaloka tye</value>
+    <value>Yub Nyen Tye</value>
   </data>
   <data name="Update_Available_Message" xml:space="preserve">
-    <value>Paka manyen ({0}) tye. Imitto dwokko dok mokko kombeddi?</value>
+    <value>Yub nyen ({0}) tye. Imit me gamo ki keto kombeddi?</value>
   </data>
   <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>Mok kombeddi</value>
+    <value>Ket Kombeddi</value>
   </data>
   <data name="Update_Button_Later" xml:space="preserve">
-    <value>Lacen</value>
+    <value>Lanyen</value>
   </data>
   <data name="Update_Button_Skip" xml:space="preserve">
-    <value>Ka paka man</value>
+    <value>Kalo Yub Man</value>
   </data>
   <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>Otir ki kare</value>
+    <value>Tye me Kombeddi</value>
   </data>
   <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>In lubo paka manyen loyo me Nagi.</value>
+    <value>Itye ka tiyo ki yub me agikki me Nagi.</value>
   </data>
   <data name="Update_Error_Title" xml:space="preserve">
-    <value>Tim marac me alokaloka</value>
+    <value>Bal i Yubbo Nyen</value>
   </data>
   <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>Tim marac otim i kare ma otye ka jwa alokaloka: {0}</value>
+    <value>Bal mo otimre i kare me ngiyo me yub nyen: {0}</value>
   </data>
   <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>Tim marac otim i kare ma otye ka mokko alokaloka: {0}</value>
+    <value>Bal mo otimre i kare me keto yub nyen: {0}</value>
   </data>
   <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>Dwokko alokaloka</value>
+    <value>Gamo Yub Nyen</value>
   </data>
   <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>Paka {0} tye ka dwokko. Nagi-ni bilak ki kenne kace otir.</value>
+    <value>Yub {0} tye ka gama. Purugiram bicakge kene i kare ma oyubbe.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC otim tim marac ma pe konyo.</value>
+    <value>LibVLC onwanggo bal pe ongenne.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Tim marac me LibVLC: {0}</value>
+    <value>Bal me LibVLC: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Pe ooye me yako '{0}'.</value>
+    <value>Pe otwero keto '{0}'.</value>
   </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
-    <value>Matoketare</value>
+    <value>Gwokwer</value>
   </data>
   <data name="Settings_Nav_Folders" xml:space="preserve">
-    <value>Giyikol</value>
+    <value>Pukuluk</value>
   </data>
   <data name="Settings_Nav_Playlists" xml:space="preserve">
-    <value>Tukpajobi</value>
+    <value>Chen Wer</value>
   </data>
   <data name="Settings_Nav_Artists" xml:space="preserve">
-    <value>Danokwaya</value>
+    <value>Luwer</value>
   </data>
   <data name="Settings_Nav_Albums" xml:space="preserve">
-    <value>Albom</value>
+    <value>Album-i</value>
   </data>
   <data name="Settings_Nav_Genres" xml:space="preserve">
-    <value>Kecce</value>
+    <value>Kit Wer</value>
   </data>
   <data name="Settings_Button_Shuffle" xml:space="preserve">
-    <value>Kwerri</value>
+    <value>Ruc</value>
   </data>
   <data name="Settings_Button_Previous" xml:space="preserve">
-    <value>Ma okato</value>
+    <value>Mukato</value>
   </data>
   <data name="Settings_Button_PlayPause" xml:space="preserve">
     <value>Tuk/Cung</value>
   </data>
   <data name="Settings_Button_Next" xml:space="preserve">
-    <value>Ma bino</value>
+    <value>Luwyo</value>
   </data>
   <data name="Settings_Button_Repeat" xml:space="preserve">
-    <value>Dok dok</value>
+    <value>Nwoyo</value>
   </data>
   <data name="Settings_Button_Divider" xml:space="preserve">
-    <value>Goro me yub</value>
+    <value>Pok Kiboo</value>
   </data>
   <data name="Settings_Button_Lyrics" xml:space="preserve">
-    <value>Wecce me wecc</value>
+    <value>Lok Wer</value>
   </data>
   <data name="Settings_Button_Queue" xml:space="preserve">
-    <value>Dok iye</value>
+    <value>Chen</value>
   </data>
   <data name="Settings_Button_Volume" xml:space="preserve">
-    <value>Dwong</value>
+    <value>Dwon</value>
   </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
-    <value>Matoketare me wecce me welo wecce ma jone oyub</value>
+    <value>Gwok lok wer ma jo ocoyo</value>
   </data>
   <data name="Settings_Provider_NetEase_Desc" xml:space="preserve">
-    <value>Tic me welo wecce me Caina, ber pi welo wecce me Asia</value>
+    <value>Tic me wer me China, maber me wer me Asia</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Yako namba me danokwaya (myero pi TheAudioDB ki Fanart.tv)</value>
+    <value>Nwanggo ID me luwer (mitte me TheAudioDB ki Fanart.tv)</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>Picca me danokwaya ma ber ki kop me kwogi (myero MusicBrainz)</value>
+    <value>Cal ki lok me luwer maber (mitte MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>Picca me danokwaya ma ber keken (myero MusicBrainz)</value>
+    <value>Cal me lugero ma kite ber keken (mito MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>Picca me danokwaya keken</value>
+    <value>Cal me luwer keken</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Kop me kwo ki picca me danokwaya (dwoko iye)</value>
+    <value>Lok me kwo ki cal me luwer (lalub kor)</value>
   </data>
   <data name="App_Name_Default" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="App_Version_Unknown" xml:space="preserve">
-    <value>Pe tye</value>
+    <value>N/A</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Gore lworo</value>
+    <value>Ceng yenyo</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Lworo albom</value>
+    <value>Reny album-i</value>
   </data>
   <data name="AlbumViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Gore lworo</value>
+    <value>Ceng yenyo</value>
   </data>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Lworo i albom</value>
+    <value>Reny i iye me album</value>
   </data>
   <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Tukpajobi mo pe tye</value>
+    <value>Pe tye chen wer mo</value>
   </data>
   <data name="ArtistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Gore lworo</value>
+    <value>Ceng yenyo</value>
   </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Lworo danokwaya</value>
+    <value>Reny luwer</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Gore lworo</value>
+    <value>Ceng yenyo</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Lworo i danokwaya</value>
+    <value>Reny i iye me luwer</value>
   </data>
   <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Tukpajobi mo pe tye</value>
+    <value>Pe tye chen wer mo</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
-    <value>Lonyo Giyikol</value>
+    <value>Kwany Puk</value>
   </data>
   <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
-    <value>Inyeko ni imitto golo giyikol '{0}' ki i matoketare? Man pe bilonyo failo ki i kompiuta-ni.</value>
+    <value>Kwany &apos;{0}&apos; ki i gwokwer meryi? Puk wer meryi bidong i kompiuta meryi.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
-    <value>Lonyo</value>
+    <value>Kwany</value>
   </data>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Gore</value>
+    <value>Juk</value>
   </data>
   <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Giyikol ma pe kingeyo</value>
+    <value>Puk Pe Onge</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Gore lworo</value>
+    <value>Ceng yenyo</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Lworo i giyikol</value>
+    <value>Reny i puk</value>
   </data>
   <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Tukpajobi mo pe tye</value>
+    <value>Pe tye chen wer mo</value>
   </data>
   <data name="GenrePage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Gore lworo</value>
+    <value>Ceng yenyo</value>
   </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Lworo kecce</value>
+    <value>Reny kit wer</value>
   </data>
   <data name="LibraryPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Gore lworo</value>
+    <value>Ceng yenyo</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Lworo matoketare</value>
+    <value>Reny gwokwer</value>
   </data>
   <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Tukpajobi mo pe tye</value>
+    <value>Pe tye chen wer mo</value>
   </data>
   <data name="PlaylistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Gore lworo</value>
+    <value>Ceng yenyo</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Lworo tukpajobi</value>
+    <value>Reny chen wer</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>Koc nyim tukpajobi manyen</value>
+    <value>Coy nying chen wer</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
-    <value>Lany Picha</value>
+    <value>Yer Cal</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
-    <value>Gero Tukpajobi Manyen</value>
+    <value>Yub Chen Wer Nyen</value>
   </data>
   <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
-    <value>Gero</value>
+    <value>Yub</value>
   </data>
   <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>Gore</value>
+    <value>Juk</value>
   </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
-    <value>Loko nyim '{0}'</value>
+    <value>Lok nying '{0}'</value>
   </data>
   <data name="PlaylistPage_RenameDialog_RenameButton" xml:space="preserve">
-    <value>Loko nyim</value>
+    <value>Lok nying</value>
   </data>
   <data name="PlaylistPage_DeleteDialog_Title" xml:space="preserve">
-    <value>Lonyo Tukpajobi</value>
+    <value>Juk Chen Wer</value>
   </data>
   <data name="PlaylistPage_DeleteDialog_Content_Format" xml:space="preserve">
-    <value>Inyeko ni imitto lonyo tukpajobi '{0}'? Tic man pe twere me dwoko.</value>
+    <value>Iye ada me juko chen wer '{0}'? Tic man pe otwero dwoko cen.</value>
   </data>
   <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
-    <value>Lonyo</value>
+    <value>Juk</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Gore lworo</value>
+    <value>Ceng yenyo</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Lworo i tukpajobi</value>
+    <value>Reny i chen wer</value>
   </data>
   <data name="GenreViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Gore lworo</value>
+    <value>Ceng yenyo</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Lworo matoketare</value>
+    <value>Reny i kit wer</value>
   </data>
   <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Tukpajobi mo pe tye</value>
+    <value>Pe tye chen wer mo</value>
   </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Tukpajobi ma pe kingeyo</value>
+    <value>Chen Wer Pe Onge</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Gore lworo</value>
+    <value>Ceng yenyo</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Lworo i tukpajobi me ryeko</value>
+    <value>Reny i chen wer me ryeko</value>
   </data>
   <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Tukpajobi me ryeko ma pe kingeyo</value>
+    <value>Chen Wer Me Ryeko Pe Onge</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
-    <value>Jwa ki dok Kop me jammi</value>
+    <value>Ngiy Odoco Lok me Iye</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>Man bijwa ki dok wecce ducu i matoketare-ni me ketto yub me kop me jammi manyen (calo koro danokwaya). Man twero kwanyo kare malac gin ki dit me matoketare-ni. Imitto medde ki lobo?</value>
+    <value>Ngiy gwokwer meryi me keto ter me lok me iye. Man twero tero kare. Imede?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
-    <value>Jwa ki dok</value>
+    <value>Ngiy Odoco</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
-    <value>Yubbo jwa ki dok me matoketare...</value>
+    <value>Yubbo me cano gwokwer odoco…</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
-    <value>Jwa ki dok okwe</value>
+    <value>Cano Odoco Otum</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Content" xml:space="preserve">
-    <value>Kop me jammi me matoketare oloko.</value>
+    <value>Lok me iye me gwokwer oyubbe nyen.</value>
   </data>
   <data name="Settings_Dialog_RescanFailed_Title" xml:space="preserve">
-    <value>Jwa ki dok pe owok</value>
+    <value>Cano Odoco Oyengge</value>
   </data>
   <data name="Settings_Dialog_RescanFailed_Content" xml:space="preserve">
-    <value>Tim marac otim i kare ma otye ka jwa. Jwa kodi pi kop ducu.</value>
+    <value>Bal mo otimre i kare me ngiyo.</value>
   </data>
   <data name="Settings_Dialog_FFmpegNotFound_Title" xml:space="preserve">
-    <value>FFmpeg pe oyenge</value>
+    <value>Pe Onwanggo FFmpeg</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Title" xml:space="preserve">
-    <value>Twero yubbo dwong</value>
+    <value>Cak Yubbo Dwon me Wer</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
-    <value>Yubbo dwong (ReplayGain) cuko nget dwong ma tye acel i welo wecce-ni ducu. Man bijwa matoketare me welo wecce-ni dok biloko failo me dwong-ni ki cwalo tag me ReplayGain. Failo ma pe tye ki tag-gi keken gibilubo. Man twero kwanyo kare mo gin ki dit me matoketare-ni. Imitto medde ki lobo?</value>
+    <value>Yubbo Dwon me Wer (ReplayGain) gwoyo dwon me wer-gi weng me bedo rom.
+
+Man bingiyo gwokwer meryi ki biloko puk wer meryi.
+
+Imide?</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
-    <value>Twero &amp; Jwa</value>
+    <value>Cak &amp; Ngiy</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>Yubbo jwa me yubbo dwong...</value>
+    <value>Yubbo cano dwon me wer…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Jwa me yubbo dwong ogore.</value>
+    <value>Ojuko cano dwon me wer.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
-    <value>Tim marac i kare ma otye ka jwa: {0}</value>
+    <value>Bal i kare me cano: {0}</value>
   </data>
   <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Pe ooye me nongo kodi ki i par. Lak ma ogo me kwano failo me kodi pe otim. Yo ma kigeno: '{0}' Tim marac: '{1}'</value>
+    <value>Pe otwero nwanggo lok me tic ki i wi-kompiuta.
+Yo ma ongenne: '{0}'
+Bal: {1}</value>
   </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
-    <value>Tukpajobi mo pe tye me gwoko.</value>
+    <value>Pe tye chen wer mo me cwal.</value>
   </data>
   <data name="Language_Auto" xml:space="preserve">
-    <value>Kenyere kene</value>
+    <value>Kene</value>
   </data>
   <data name="TrayIcon_ShowWindow" xml:space="preserve">
-    <value>Nyut dirica</value>
+    <value>Nyutu Dirisa</value>
   </data>
   <data name="TrayIcon_Exit" xml:space="preserve">
-    <value>Wuok woko</value>
+    <value>Aya</value>
   </data>
   <data name="MiniPlayer_BackButton_ToolTip" xml:space="preserve">
-    <value>Doo bot Kwat</value>
+    <value>Dwong i Tuk Wer</value>
   </data>
   <data name="MiniPlayer_UpNextHeader" xml:space="preserve">
-    <value>Man olubbe</value>
+    <value>Luwyo me Tuk</value>
   </data>
   <data name="MiniPlayer_RestoreButton_ToolTip" xml:space="preserve">
-    <value>Nyut Nagi</value>
+    <value>Nyutu Nagi</value>
   </data>
   <data name="MiniPlayer_PreviousButton_ToolTip" xml:space="preserve">
     <value>Mukato</value>
   </data>
   <data name="MiniPlayer_NextButton_ToolTip" xml:space="preserve">
-    <value>Molubbe</value>
+    <value>Luwyo</value>
   </data>
   <data name="MiniPlayer_QueueButton_ToolTip" xml:space="preserve">
-    <value>Man olubbe</value>
+    <value>Luwyo me Tuk</value>
   </data>
   <data name="CrashReport_ReportIssuePreLink" xml:space="preserve">
-    <value>Pwoyo keto turo kit man i </value>
+    <value>Tim ber imi lok man ki me yubbo peko i </value>
   </data>
   <data name="CrashReport_IssueLink" xml:space="preserve">
-    <value>Lacen pa turo kit</value>
+    <value>Paji me Peko</value>
   </data>
   <data name="CrashReport_ReportIssuePostLink" xml:space="preserve">
     <value>.</value>
   </data>
   <data name="CrashReport_ResetAppAdvice" xml:space="preserve">
-    <value>Ka gin man timme amok, in mono itwero tute 'Juku App ki Data'. Gin man bijuko jami mu keto ki libari ni, man mono otweyo konyo doko app ki i kit ma ocabbi ki.</value>
+    <value>Ka man tye ka timme maroo, itwero temo 'Dwok Purugiram &amp; Jami Cere'.</value>
   </data>
   <data name="CrashReport_CopyLogButton_ToolTip" xml:space="preserve">
-    <value>Kopi log i kwat waraga</value>
+    <value>Gwany lok me tic</value>
   </data>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
-    <value>Kopi Log</value>
+    <value>Gwany Lok</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
-    <value>Yere cover</value>
+    <value>Yer Cal</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_ToolTip" xml:space="preserve">
-    <value>Yere cal pa cover</value>
+    <value>Yer cal me nyutu</value>
   </data>
   <data name="SmartPlaylist_PlaylistNameLabel" xml:space="preserve">
-    <value>Nying pa Playlist</value>
+    <value>Nying Chen Wer</value>
   </data>
   <data name="SmartPlaylist_PlaylistNameTextBox_Placeholder" xml:space="preserve">
-    <value>Keto nying pi smart playlist ni</value>
+    <value>Coy nying me chen wer meryi me ryeko</value>
   </data>
   <data name="SmartPlaylist_SortOrderLabel" xml:space="preserve">
-    <value>Keto kit</value>
+    <value>Yo me Cano</value>
   </data>
   <data name="SmartPlaylist_MatchLabel" xml:space="preserve">
-    <value>Romme</value>
+    <value>Rom</value>
   </data>
   <data name="SmartPlaylist_MatchLogic_All_Content" xml:space="preserve">
-    <value>Ducu</value>
+    <value>Weng</value>
   </data>
   <data name="SmartPlaylist_MatchLogic_Any_Content" xml:space="preserve">
-    <value>Gin acel keken</value>
+    <value>Mo</value>
   </data>
   <data name="SmartPlaylist_MatchSuffixLabel" xml:space="preserve">
-    <value>i kom cik man molubbe:</value>
+    <value>me cik-i magi:</value>
   </data>
   <data name="SmartPlaylist_AddRuleButton_ToolTip" xml:space="preserve">
-    <value>Keto cik manyen</value>
+    <value>Med cik nyen</value>
   </data>
   <data name="SmartPlaylist_AddRuleLabel" xml:space="preserve">
-    <value>Keto Cik</value>
+    <value>Med Cik</value>
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
-    <value>Kare</value>
+    <value>Wel</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
-    <value>Juk cik man</value>
+    <value>Kwany cik man</value>
   </data>
   <data name="SmartPlaylist_NoRulesTitle" xml:space="preserve">
-    <value>Cik peke ma oket</value>
+    <value>Pe ogoyo cik mo</value>
   </data>
   <data name="SmartPlaylist_NoRulesMessage" xml:space="preserve">
-    <value>Wer ducu ma i libari ni biketogi i playlist man.</value>
+    <value>Wer-gi weng i gwokwer meryi bibedo i chen wer man.</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_Content" xml:space="preserve">
-    <value>Keto Cik ni mukwongo</value>
+    <value>Med Cik Ni Mukwongo</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_ToolTip" xml:space="preserve">
-    <value>Keto cik ni mukwongo</value>
+    <value>Med cik meryi mukwongo</value>
   </data>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
-    <value>Nyeko</value>
+    <value>Gwok</value>
   </data>
   <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
     <value>Juk</value>
@@ -1025,1219 +1076,1225 @@
     <value>Mukato</value>
   </data>
   <data name="TrayPopup_NextButton_ToolTip" xml:space="preserve">
-    <value>Molubbe</value>
+    <value>Luwyo</value>
   </data>
   <data name="TrayPopup_QueueButton_ToolTip" xml:space="preserve">
-    <value>Man olubbe</value>
+    <value>Luwyo me Tuk</value>
   </data>
   <data name="TrayPopup_BackButton_ToolTip" xml:space="preserve">
-    <value>Doo bot Kwat</value>
+    <value>Dwong i Tuk Wer</value>
   </data>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
-    <value>Man olubbe</value>
+    <value>Luwyo me Tuk</value>
   </data>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Dok i kumo wer me gangi ki Nagi, kwat wer ma tye ki yelle, kit ma laye, ki me nongo kuc pa in keken. Nagi oloko ki C# ki WinUI 3 me miyo kit ma rom, ma tye Fluent me Acholi. En ber, yelle, ki oloro kuc pa in keken.</value>
+    <value>Nwang odoco wer meryi ki Nagi, ma tye me dwir, yot ki gwok me mungu.</value>
   </data>
   <data name="AppShortName" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AppDisplayName" xml:space="preserve">
-    <value>Kwat Wer pa Nagi</value>
+    <value>Tuk Wer me Nagi</value>
   </data>
   <data name="AppInfoTip" xml:space="preserve">
-    <value>Yab ki Kwat Wer pa Nagi</value>
+    <value>Yab ki Tuk Wer me Nagi</value>
   </data>
   <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Nagi Acakke</value>
+    <value>Cako Nagi</value>
   </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Mukato</value>
   </data>
   <data name="Player_NextButton_ToolTip" xml:space="preserve">
-    <value>Molubbe</value>
+    <value>Luwyo</value>
   </data>
   <data name="Player_LyricsButton_ToolTip" xml:space="preserve">
-    <value>Lok pa wer</value>
+    <value>Lok Wer</value>
   </data>
   <data name="Player_QueueButton_ToolTip" xml:space="preserve">
-    <value>Man olubbe</value>
+    <value>Luwyo me Tuk</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
-    <value>Ceto bot album</value>
+    <value>Cit i Album</value>
   </data>
   <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Drop files or folders onto the player to add them to the queue.</value>
+    <value>Bol poc ma giko onyo purupuru i kom gitug wer me medogi i ryek me wer.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>Man olubbe</value>
+    <value>Luwyo me Tuk</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
-    <value>Clear queue</value>
+    <value>Jwoo ryek me wer</value>
   </data>
   <data name="QueuePanel_DisplayOptions" xml:space="preserve">
-    <value>Queue display options</value>
+    <value>Yera me nyuto ryek me wer</value>
   </data>
   <data name="QueuePanel_Close" xml:space="preserve">
-    <value>Close queue</value>
+    <value>Lor ryek me wer</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
-    <value>Artist</value>
+    <value>Lewer</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
-    <value>Duration</value>
+    <value>Kare</value>
   </data>
   <data name="QueuePanel_ShowTrackCount" xml:space="preserve">
-    <value>Track count</value>
+    <value>Wel wer</value>
   </data>
   <data name="QueuePanel_TrackCount" xml:space="preserve">
-    <value>Tracks: {0:N0}</value>
+    <value>Wer: {0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
-    <value>Queue position</value>
+    <value>Kabedo i ryek me wer</value>
   </data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve">
-    <value>Genre</value>
+    <value>Kit wer</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
-    <value>Total duration</value>
+    <value>Kare ducu</value>
   </data>
   <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Tug</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
-    <value>Move up</value>
+    <value>Ter i mal</value>
   </data>
   <data name="QueuePanel_MoveDown" xml:space="preserve">
-    <value>Move down</value>
+    <value>Ter i piny</value>
   </data>
   <data name="QueuePanel_Remove" xml:space="preserve">
-    <value>Remove from queue</value>
+    <value>Kwany ki i ryek me wer</value>
   </data>
   <data name="AlbumPage_Title" xml:space="preserve">
-    <value>Album</value>
+    <value>Album-i</value>
   </data>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Mano album...</value>
+    <value>Reny album-i…</value>
   </data>
   <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Mano album</value>
+    <value>Reny album-i</value>
   </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Yere acel ma kom kede</value>
+    <value>Yer acel ata</value>
   </data>
   <data name="AlbumPage_Menu_Play" xml:space="preserve">
-    <value>Kwat</value>
+    <value>Tuk</value>
   </data>
   <data name="AlbumPage_Empty_Title" xml:space="preserve">
-    <value>Album peke ma onongo</value>
+    <value>Pe onwanggo album mo</value>
   </data>
   <data name="AlbumPage_Empty_Subtitle" xml:space="preserve">
-    <value>Pim libari wer ni me cito ki album</value>
+    <value>Ngiy gwokwer meryi me pango album-i</value>
   </data>
   <data name="AlbumViewPage_Header_Label" xml:space="preserve">
     <value>Album</value>
   </data>
   <data name="AlbumViewPage_Songs_Title" xml:space="preserve">
-    <value>Wer</value>
+    <value>Wer-gi</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Mano i album...</value>
+    <value>Reny i album…</value>
   </data>
   <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Mano i album</value>
+    <value>Reny i album</value>
   </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Kwat ducu</value>
+    <value>Tuk weng</value>
   </data>
   <data name="AlbumViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Cuku ki kwat ducu</value>
+    <value>Ruc ka ituk weng</value>
   </data>
   <data name="AlbumViewPage_SongMenu_Play" xml:space="preserve">
-    <value>Kwat</value>
+    <value>Tuk</value>
   </data>
   <data name="AlbumViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>Kwat Molubbe</value>
+    <value>Tuk Mukate</value>
   </data>
   <data name="AlbumViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>Keto i alaini</value>
+    <value>Med i Chen</value>
   </data>
   <data name="AlbumViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Keto i playlist</value>
+    <value>Med i Chen Wer</value>
   </data>
   <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Ceto bot artist</value>
+    <value>Cit i Luwer</value>
   </data>
   <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Nyut i explorer</value>
+    <value>Nyutu i File Explorer</value>
   </data>
   <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>Kwat</value>
+    <value>Tuk</value>
   </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
-    <value>Wer peke ma onongo i album man</value>
+    <value>Pe onwanggo wer mo i album man</value>
   </data>
   <data name="AlbumViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Tute me mano gin mukene</value>
+    <value>Tem renyo gin mukene</value>
   </data>
   <data name="ArtistPage_Title" xml:space="preserve">
-    <value>Artist</value>
+    <value>Luwer</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Mano artist...</value>
+    <value>Reny luwer…</value>
   </data>
   <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Mano artist</value>
+    <value>Reny luwer</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Yere acel ma kom kede</value>
+    <value>Yer acel ata</value>
   </data>
   <data name="ArtistPage_Menu_Play" xml:space="preserve">
-    <value>Kwat</value>
+    <value>Tuk</value>
   </data>
   <data name="ArtistPage_Menu_ChangeImage" xml:space="preserve">
-    <value>Lok cal</value>
+    <value>Lok Cal</value>
   </data>
   <data name="ArtistPage_Menu_RemoveImage" xml:space="preserve">
-    <value>Juk cal</value>
+    <value>Kwany Cal</value>
   </data>
   <data name="ArtistPage_Empty_Title" xml:space="preserve">
-    <value>Artist peke ma onongo</value>
+    <value>Pe onwanggo luwer mo</value>
   </data>
   <data name="ArtistPage_Empty_Subtitle" xml:space="preserve">
-    <value>Pim libari wer ni me cito ki artist</value>
+    <value>Ngiy gwokwer meryi me pango luwer</value>
   </data>
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
-    <value>Lok cal pa artist</value>
+    <value>Lok cal me luwer</value>
   </data>
   <data name="ArtistViewPage_ImageMenu_ChangeImage" xml:space="preserve">
-    <value>Lok cal</value>
+    <value>Lok Cal</value>
   </data>
   <data name="ArtistViewPage_ImageMenu_RemoveImage" xml:space="preserve">
-    <value>Juk cal</value>
+    <value>Kwany Cal</value>
   </data>
   <data name="ArtistViewPage_Header_Label" xml:space="preserve">
-    <value>Artist</value>
+    <value>Luwer</value>
   </data>
   <data name="ArtistViewPage_Albums_Title" xml:space="preserve">
-    <value>Album maloyo</value>
+    <value>Album-i Mutelo</value>
   </data>
   <data name="ArtistViewPage_Songs_Title" xml:space="preserve">
-    <value>Wer</value>
+    <value>Wer-gi</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Mano i artist...</value>
+    <value>Reny i luwer…</value>
   </data>
   <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Mano i artist</value>
+    <value>Reny i luwer</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Kwat ducu</value>
+    <value>Tuk weng</value>
   </data>
   <data name="ArtistViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Cuku ki kwat ducu</value>
+    <value>Ruc ka ituk weng</value>
   </data>
   <data name="ArtistViewPage_SongMenu_Play" xml:space="preserve">
-    <value>Kwat</value>
+    <value>Tuk</value>
   </data>
   <data name="ArtistViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>Kwat Molubbe</value>
+    <value>Tuk Mukate</value>
   </data>
   <data name="ArtistViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>Keto i alaini</value>
+    <value>Med i Chen</value>
   </data>
   <data name="ArtistViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Keto i playlist</value>
+    <value>Med i Chen Wer</value>
   </data>
   <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Ceto bot album</value>
+    <value>Cit i Album</value>
   </data>
   <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Nyut i explorer</value>
+    <value>Nyutu i File Explorer</value>
   </data>
   <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>Kwat</value>
+    <value>Tuk</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
-    <value>Wer peke ma onongo pi artist man</value>
+    <value>Pe onwanggo wer mo me luwer man</value>
   </data>
   <data name="ArtistViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Tute me mano gin mukene</value>
+    <value>Tem renyo gin mukene</value>
   </data>
   <data name="FolderPage_Title" xml:space="preserve">
-    <value>Folder</value>
+    <value>Pukuluk</value>
   </data>
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Yere acel ma kom kede</value>
+    <value>Yer acel ata</value>
   </data>
   <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Keto folder wer</value>
+    <value>Med puk wer</value>
   </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
-    <value>Keto Folder</value>
+    <value>Med Puk</value>
   </data>
   <data name="FolderPage_Menu_Play" xml:space="preserve">
-    <value>Kwat</value>
+    <value>Tuk</value>
   </data>
   <data name="FolderPage_Menu_Rescan" xml:space="preserve">
-    <value>Pim doki</value>
+    <value>Ngiy Odoco</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>Juk</value>
+    <value>Kwany ki i Gwokwer</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
-    <value>Folder peke ma oketo yam</value>
+    <value>Pud pe omeddo puk mo</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Keto folder wer me cako</value>
+    <value>Med pukuluk me wer me cako</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
-    <value>Kwat</value>
+    <value>Tuk</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>Keto i playlist</value>
+    <value>Med i Chen Wer</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_Play" xml:space="preserve">
-    <value>Kwat</value>
+    <value>Tuk</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>Kwat Molubbe</value>
+    <value>Tuk Mukate</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>Keto i alaini</value>
+    <value>Med i Chen</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Keto i playlist</value>
+    <value>Med i Chen Wer</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Ceto bot album</value>
+    <value>Cit i Album</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Ceto bot artist</value>
+    <value>Cit i Luwer</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Nyut i explorer</value>
+    <value>Nyutu i File Explorer</value>
   </data>
   <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>Kwat</value>
+    <value>Tuk</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
-    <value>Folder</value>
+    <value>Puk</value>
   </data>
   <data name="FolderSongViewPage_Songs_Title" xml:space="preserve">
-    <value>Wer</value>
+    <value>Wer-gi</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Mano i folder...</value>
+    <value>Reny i puk…</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Mano i folder</value>
+    <value>Reny i puk</value>
   </data>
   <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Kwat ducu</value>
+    <value>Tuk weng</value>
   </data>
   <data name="FolderSongViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Cuku ki kwat ducu</value>
+    <value>Ruc ka ituk weng</value>
   </data>
   <data name="FolderSongViewPage_Empty_Title" xml:space="preserve">
-    <value>Folder man tye nono</value>
+    <value>Puk man tye nono</value>
   </data>
   <data name="FolderSongViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Wer onyo subfolder peke ma onongo</value>
+    <value>Pe onwanggo wer konyo pukuluk me iye</value>
   </data>
   <data name="GenrePage_Title" xml:space="preserve">
-    <value>Genere</value>
+    <value>Kit Wer</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Mano genere...</value>
+    <value>Reny kit wer…</value>
   </data>
   <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Mano genere</value>
+    <value>Reny kit wer</value>
   </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Yere acel ma kom kede</value>
+    <value>Yer acel ata</value>
   </data>
   <data name="GenrePage_Menu_Play" xml:space="preserve">
-    <value>Kwat</value>
+    <value>Tuk</value>
   </data>
   <data name="GenrePage_Empty_Title" xml:space="preserve">
-    <value>Genere peke ma onongo</value>
+    <value>Pe onwanggo kit wer mo</value>
   </data>
   <data name="GenrePage_Empty_Subtitle" xml:space="preserve">
-    <value>Pim libari wer ni me cito ki genere</value>
+    <value>Ngiy gwokwer meryi me pango kit wer</value>
   </data>
   <data name="LibraryPage_Title" xml:space="preserve">
-    <value>Libari</value>
+    <value>Gwokwer</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Mano libari...</value>
+    <value>Reny gwokwer…</value>
   </data>
   <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Mano libari</value>
+    <value>Reny gwokwer</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Kwat ducu</value>
+    <value>Tuk weng</value>
   </data>
   <data name="LibraryPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Cuku ki kwat ducu</value>
+    <value>Ruc ka ituk weng</value>
   </data>
   <data name="LibraryPage_Context_Play" xml:space="preserve">
-    <value>Kwat</value>
+    <value>Tuk</value>
   </data>
   <data name="LibraryPage_Context_PlayNext" xml:space="preserve">
-    <value>Kwat Molubbe</value>
+    <value>Tuk Mukate</value>
   </data>
   <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
-    <value>Keto i alaini</value>
+    <value>Med i Chen</value>
   </data>
   <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Keto i playlist</value>
+    <value>Med i Chen Wer</value>
   </data>
   <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Ceto bot album</value>
+    <value>Cit i Album</value>
   </data>
   <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
-    <value>Ceto bot artist</value>
+    <value>Cit i Luwer</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Nyut i explorer</value>
+    <value>Nyutu i File Explorer</value>
   </data>
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Kwat</value>
+    <value>Tuk</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
+    <value>Pe kinwangoo wer mo</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+    <value>Tem yenyo gin mukene</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
-    <value>Libari ni tye nono</value>
+    <value>Gwokwer meryi tye nono</value>
   </data>
   <data name="LibraryPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Keto folder i libari ni i Keto jami</value>
+    <value>Med pukuluk i gwokwer meryi i Ter</value>
   </data>
   <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
-    <value>Lok pa wer peke ma onongo pi track man</value>
+    <value>Pe onwanggo lok wer me wer man</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
-    <value>Tute wer mukene</value>
+    <value>Tem wer mukene</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
-    <value>Edit or replace lyrics</value>
+    <value>Yub onyo lok lok wer</value>
   </data>
   <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
-    <value>Edit lyrics</value>
+    <value>Yub Lok Wer</value>
   </data>
   <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
-    <value>Paste plain text or timestamped LRC lyrics</value>
+    <value>Mwon lok wer atak onyo ma tye ki cawa me LRC</value>
   </data>
   <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
-    <value>Save</value>
+    <value>Gwok</value>
   </data>
   <data name="LyricsPage_EditLyrics_Remove" xml:space="preserve">
-    <value>Remove saved lyrics</value>
+    <value>Kwany Lok Wer Ma Ogwokke</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
-    <value>Lyrics could not be updated</value>
+    <value>Lok wer pe otwero oyubbe nyen</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Nagi could not save the lyrics. Check the log for details and try again.</value>
+    <value>Nagi pe otwero gwoko lok wer. Ngiy lok me tic ka item odoco.</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
-    <value>Kuc bote Nagi</value>
+    <value>Wollyo i Nagi</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Keto folder wer me cako</value>
+    <value>Med puk wer me cako</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
-    <value>Keto Folder Wer</value>
+    <value>Med Puk Wer</value>
   </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
-    <value>Playlist</value>
+    <value>Chen Wer</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Mano playlist...</value>
+    <value>Reny chen wer…</value>
   </data>
   <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Mano playlist</value>
+    <value>Reny chen wer</value>
   </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Yere acel ma kom kede</value>
+    <value>Yer acel ata</value>
   </data>
   <data name="PlaylistPage_NewPlaylistButton_ToolTip" xml:space="preserve">
-    <value>Keto playlist manyen</value>
+    <value>Yub chen wer nyen</value>
   </data>
   <data name="PlaylistPage_NewPlaylistButton_Content" xml:space="preserve">
-    <value>Playlist Manyen</value>
+    <value>Chen Wer Nyen</value>
   </data>
   <data name="PlaylistPage_NewPlaylistMenu_Regular" xml:space="preserve">
-    <value>Playlist ma kite calo</value>
+    <value>Chen Wer Muto</value>
   </data>
   <data name="PlaylistPage_NewPlaylistMenu_Smart" xml:space="preserve">
-    <value>Smart Playlist</value>
+    <value>Chen Wer Me Ryeko</value>
   </data>
   <data name="PlaylistPage_Context_Play" xml:space="preserve">
-    <value>Kwat</value>
+    <value>Tuk</value>
   </data>
   <data name="PlaylistPage_Context_Rename" xml:space="preserve">
     <value>Lok nying</value>
   </data>
   <data name="PlaylistPage_Context_ChangeImage" xml:space="preserve">
-    <value>Lok cal</value>
+    <value>Lok Cal</value>
   </data>
   <data name="PlaylistPage_Context_RemoveImage" xml:space="preserve">
-    <value>Juk cal</value>
+    <value>Kwany Cal</value>
   </data>
   <data name="PlaylistPage_Context_Delete" xml:space="preserve">
     <value>Juk</value>
   </data>
   <data name="PlaylistPage_EmptyState_Title" xml:space="preserve">
-    <value>Playlist peke yam</value>
+    <value>Pud pe tye chen wer mo</value>
   </data>
   <data name="PlaylistPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Keto playlist me cako</value>
+    <value>Yub chen wer me cako</value>
   </data>
   <data name="PlaylistSongViewPage_Header_Caption" xml:space="preserve">
-    <value>Playlist</value>
+    <value>Chen Wer</value>
   </data>
   <data name="PlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Wer</value>
+    <value>Wer-gi</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Mano i playlist...</value>
+    <value>Reny i chen wer…</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Mano i playlist</value>
+    <value>Reny i chen wer</value>
   </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Kwat ducu</value>
+    <value>Tuk weng</value>
   </data>
   <data name="PlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Cuku ki kwat ducu</value>
+    <value>Ruc ka ituk weng</value>
   </data>
   <data name="PlaylistSongViewPage_Context_Play" xml:space="preserve">
-    <value>Kwat</value>
+    <value>Tuk</value>
   </data>
   <data name="PlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
-    <value>Kwat Molubbe</value>
+    <value>Tuk Mukate</value>
   </data>
   <data name="PlaylistSongViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>Keto i alaini</value>
+    <value>Med i Chen</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Ceto bot album</value>
+    <value>Cit i Album</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Ceto bot artist</value>
+    <value>Cit i Luwer</value>
   </data>
   <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Nyut i explorer</value>
+    <value>Nyutu i File Explorer</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
-    <value>Juk ki i playlist</value>
+    <value>Kwany ki i Chen Wer</value>
   </data>
   <data name="PlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Kwat</value>
+    <value>Tuk</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
-    <value>Playlist man tye nono</value>
+    <value>Chen wer man tye nono</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Keto wer ki i libari ni</value>
+    <value>Med wer-gi ki i gwokwer meryi</value>
   </data>
   <data name="GenreViewPage_Header_Caption" xml:space="preserve">
-    <value>Genere</value>
+    <value>Kit Wer</value>
   </data>
   <data name="GenreViewPage_Section_Songs" xml:space="preserve">
-    <value>Wer</value>
+    <value>Wer-gi</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Mano i genere...</value>
+    <value>Reny i kit wer…</value>
   </data>
   <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Mano i genere</value>
+    <value>Reny i kit wer</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Kwat ducu</value>
+    <value>Tuk weng</value>
   </data>
   <data name="GenreViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Cuku ki kwat ducu</value>
+    <value>Ruc ka ituk weng</value>
   </data>
   <data name="GenreViewPage_Context_Play" xml:space="preserve">
-    <value>Kwat</value>
+    <value>Tuk</value>
   </data>
   <data name="GenreViewPage_Context_PlayNext" xml:space="preserve">
-    <value>Kwat Molubbe</value>
+    <value>Tuk Mukate</value>
   </data>
   <data name="GenreViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>Keto i alaini</value>
+    <value>Med i Chen</value>
   </data>
   <data name="GenreViewPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Keto i playlist</value>
+    <value>Med i Chen Wer</value>
   </data>
   <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Ceto bot album</value>
+    <value>Cit i Album</value>
   </data>
   <data name="GenreViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Ceto bot artist</value>
+    <value>Cit i Luwer</value>
   </data>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Nyut i explorer</value>
+    <value>Nyutu i File Explorer</value>
   </data>
   <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>Playlist peke ma yot nongo</value>
+    <value>Pe tye chen wer mo</value>
   </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Kwat</value>
+    <value>Tuk</value>
   </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
-    <value>Wer peke ma onongo pi genere man</value>
+    <value>Pe onwanggo wer mo me kit wer man</value>
   </data>
   <data name="GenreViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Tute me mano gin mukene</value>
+    <value>Tem renyo gin mukene</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
-    <value>Keto jami</value>
+    <value>Ter</value>
   </data>
   <data name="SettingsPage_Section_Appearance" xml:space="preserve">
-    <value>Kit ma nen</value>
+    <value>Nen me Woko</value>
   </data>
   <data name="SettingsPage_Theme_Header" xml:space="preserve">
-    <value>Theme</value>
+    <value>Kit Nen</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>Yere theme pa app.</value>
+    <value>Yer ryeny, col, onyo me cicitim.</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
-    <value>Accenti ranggi</value>
+    <value>Rangi me Yub</value>
   </data>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
-    <value>Juk me dok i macalo acakke</value>
+    <value>Dwok i Me Cako</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
-    <value>Gin ma oloko dirica ki</value>
+    <value>Ceng me Dirisa</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Description" xml:space="preserve">
-    <value>Yere gin ma oloko dirica ki.</value>
+    <value>Yer ceng me nge dirisa.</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
-    <value>Dynamic Theming</value>
+    <value>Loko Rangi Kene</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>Mi twero ki keto dynamic theming options.</value>
+    <value>Nywako rangi me purugiram ki cal me album me kombeddi.</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
-    <value>Po dul pa dirica</value>
+    <value>Poy Dito me Dirisa</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Description" xml:space="preserve">
-    <value>Dok dirica madit i dul ne mukato i kwat macalo molubbe.</value>
+    <value>Dwok dirisa madit i dito-ne me yam con i cako mukene.</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Header" xml:space="preserve">
-    <value>Po kero pa dirica</value>
+    <value>Poy Kaba me Dirisa</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Description" xml:space="preserve">
-    <value>Dok dirica madit i kero ne mukato i screen i kwat macalo molubbe.</value>
+    <value>Dwok dirisa madit i kaba-ne me yam con i cako mukene.</value>
   </data>
   <data name="SettingsPage_RememberNavState_Header" xml:space="preserve">
-    <value>Po kit pa navigation panel</value>
+    <value>Poy Kit me Kiboo me Luyo</value>
   </data>
   <data name="SettingsPage_RememberNavState_Description" xml:space="preserve">
-    <value>Keto navigation panel me acam ma aye ki onyo ma ogengo kit ma in inene.</value>
+    <value>Gwok kiboo me luyo me cam me yabbe onyo cengge.</value>
   </data>
   <data name="SettingsPage_CustomizeNav_Header" xml:space="preserve">
-    <value>Lok kit pa Navigation</value>
+    <value>Yub me Luyo</value>
   </data>
   <data name="SettingsPage_CustomizeNav_Description" xml:space="preserve">
-    <value>Dog me keto lacen doki i menu pa navigation. Ti ki toggle me nyuto onyo cano lacen.</value>
+    <value>Yway me loko paji i nyutu me luyo.</value>
   </data>
   <data name="SettingsPage_Section_Player" xml:space="preserve">
-    <value>Nyak pa Kwat</value>
+    <value>Loyo me Tuk Wer</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Header" xml:space="preserve">
-    <value>Keto dwon ma rom (ReplayGain)</value>
+    <value>Yubbo Dwon me Wer (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Keto dwon i kare ne me nongo ma rom ( -18 LUFS) me gwoko dwon ki me cito malit onyo ma gin nongo.</value>
+    <value>Juk pokko dwon i kin wer-gi me ReplayGain.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
-    <value>WASAPI exclusive mode</value>
+    <value>WASAPI Exclusive Mode</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+    <value>Mii Nagi twor me gwoyo dwon kompiuta kene. Purugiram mukene twero ling. Cak Nagi odoco nge loko man.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
-    <value>Ywen i Kany/Juk</value>
+    <value>Loko Dwon me Yot i Tuk / Cung</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Ywen dwong jore kenken ka imedo dok iye, dok iye woko ka ijuko ma pe lworo dwong.</value>
+    <value>Yubbo dwon me medde onyo jukke yot-yot i kare me tuk onyo cung.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
-    <value>Audio Equalizer</value>
+    <value>Yub Dwon Wer</value>
   </data>
   <data name="SettingsPage_ResetEqualizer_Content" xml:space="preserve">
-    <value>Juk me dok i macalo acakke</value>
+    <value>Dwok i Me Cako</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
-    <value>Preamp</value>
+    <value>Dwon me Acaki</value>
   </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
-    <value>Me ngat keken</value>
+    <value>Me Cingyi</value>
   </data>
   <data name="SettingsPage_CustomizePlayer" xml:space="preserve">
-    <value>Lok kit pa Player Controls</value>
+    <value>Yub Luel me Tuk Wer</value>
   </data>
   <data name="SettingsPage_ResetPlayerButtons_Content" xml:space="preserve">
-    <value>Juk me dok i macalo acakke</value>
+    <value>Dwok i Me Cako</value>
   </data>
   <data name="SettingsPage_CustomizePlayer_Instructions" xml:space="preserve">
-    <value>Cuk me keto me neno onyo cano. Dog me keto doki. Gin ma poko poko gin ma tye i wiye ki gin ma tye i acam.</value>
+    <value>Keto cing me loko nenne. Yway me loko yo.</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Header" xml:space="preserve">
-    <value>Kwat ma twero nyap</value>
+    <value>Bar me Tuk Wer Ma Yabbe</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>Keto kwat bar me dongo ki nyap.</value>
+    <value>Yab bar me tuk wer ka iketo cingyi i kom-e.</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
-    <value>Dok kit pa kwat</value>
+    <value>Dwok Kit me Tuk Wer</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>Nyeko kit pa kwat man me dok cako i kwat macalo molubbe.</value>
+    <value>Dwok chen meryi ki kabedo me tuk wer ka Nagi ocakke.</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
-    <value>Cako keken i acakke</value>
+    <value>Cak Kene i Cako Kompiuta</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
-    <value>Cako Nagi keken ka in idonyo i computer ni.</value>
+    <value>Cak Nagi kene ka idonyo i kompiuta meryi.</value>
   </data>
   <data name="SettingsPage_StartMinimized_Header" xml:space="preserve">
-    <value>Cako ma onyap</value>
+    <value>Cak ki Matidi</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>Ka onongo ocako, dirica pa app binyap keken.</value>
+    <value>Cak Nagi ki dirisa-ne ma olyit.</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
-    <value>Nyap me cito i mini-player</value>
+    <value>Lyit i Tuk Wer Matidi</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Description" xml:space="preserve">
-    <value>Ka onyap, nyut kwat ma coko ma yenyo kare macalo nyuto dirica ma cano.</value>
+    <value>Ka olyito, nyut tuk wer matidi me kakare.</value>
   </data>
   <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
-    <value>Cano me cito i system tray</value>
+    <value>Kani i Cicitim Tray</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>Ka ogengo, cano me cito i system tray macalo.</value>
+    <value>Gwok Nagi me mede ki tic i cicitim tray ka icengo dirisa-ne.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
-    <value>Nyut cover art i flyout</value>
+    <value>Nyut Cal me Album</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
-    <value>Nyut cover art i kwat ma coko ma nen ka in idwaro tray icon.</value>
+    <value>Nyut cal me album i tuk wer matidi ka idii ladim me tray.</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
-    <value>Pe ikaŋ pwony ka ingeyo</value>
+    <value>Kalo Lok Acaki i Cano</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Geyo albam, luwimbi, ki wer ki pwony me acel ma pire tek (labongo calo "The Beatles" inyere i te B).</value>
+    <value>Can album-i, luwer, ki wer-gi ki nyig lok me acaki me ada (labole "The Beatles" canne i te B).</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
-    <value>Nyak pa Data</value>
+    <value>Loyo Jami</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Header" xml:space="preserve">
-    <value>Poko Artist</value>
+    <value>Pok Luwer</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Ket characters ma tigi pi poko artist mapol (macalo ';/'). Wee nono me gonyo.</value>
+    <value>Coy goba ma itiyo me pok luwer Pol (e.g. ';/'). Week nono me juko.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
-    <value>Pogo Jore</value>
+    <value>Pok Kit Wer</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Nyut kodi gin ma kimiyo ka pogo jore mapol (labong ';/'). Wem guti me jukke.</value>
+    <value>Coy goba ma itiyo me pok kit wer Pol (e.g. ';/'). Week nono me juko.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
-    <value>Pim Libari doki</value>
+    <value>Ngiy Gwokwer Odoco</value>
   </data>
   <data name="SettingsPage_RescanLibrary_ToolTip" xml:space="preserve">
-    <value>Pim libari doki me timo lok pa poko</value>
+    <value>Ngiy gwokwer odoco me keto alokaloka me pokko</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
-    <value>Mano metadata ki i intanet</value>
+    <value>Nwang Lok me Iye ki Net</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Kwany jami mukene macalo cal pa artist ki jami pa kwo ki i online services (macalo Spotify, Last.fm).</value>
+    <value>Nwang cal ki lok me luwer ki i intanet.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
-    <value>Gwok</value>
+    <value>Yo me Nwanggo</value>
   </data>
   <data name="SettingsPage_MetadataSources_Description" xml:space="preserve">
-    <value>Dog me keto gwok pa metadata doki. Cuk i kom gwok acel acel pi kony.</value>
+    <value>Yway me loko yo me nwanggo lok. Ket cing i kom-e me neno lok me iye.</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Header" xml:space="preserve">
-    <value>Kwany lok pa wer ki i intanet</value>
+    <value>Kwany Lok me Wer ki i Kakube</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>Kwan lok pa wer ma onongo keken ki i online sources. (Kuc: oro metadata pa track bot services ma laco lwak oceng).</value>
+    <value>Nwang lok wer ma pe tye ki i net.</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
-    <value>Gwok</value>
+    <value>Yo me Nwanggo</value>
   </data>
   <data name="SettingsPage_LyricsSources_Description" xml:space="preserve">
-    <value>Dog me keto gwok pa lok pa wer doki. Cuk i kom gwok acel acel pi kony.</value>
+    <value>Yway me loko yo me nwanggo lok wer.</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
-    <value>Nyut wer ma gicoyo i curi Roma</value>
+    <value>Nyut Lok Wer Me Kwan</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
-    <value>Nyut odok ma baceŋ me wer ma gicoyo i curi Roma i te wer ma gingolo gin ka paket ma giketo ocito kede cwot-coyo.</value>
+    <value>Nyut kwan me leb mukene i te lok wer.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
-    <value>Paket me leb</value>
+    <value>Yub me Leb</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>Ket paket me leb ma imito ni gicoyo wergi i curi Roma. Paket-kwan gitemo, gin dok gin ma gitye ki data kake, dok gikana i komputa.</value>
+    <value>Ket yub me leb me kwan me lok wer.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
-    <value>Lok anyim</value>
+    <value>Nyieny</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Install" xml:space="preserve">
     <value>Ket</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Update" xml:space="preserve">
-    <value>Lok anyim</value>
+    <value>Yub Nyen</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Remove" xml:space="preserve">
-    <value>Gony</value>
+    <value>Kwany</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
-    <value>Pe tye paket me curi Roma ma twero cito kede.</value>
+    <value>Pe tye yub me kwan mo ma twero tic.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Onongo pe twero loyo paket me curi Roma: {0}</value>
+    <value>Pe otwero keto yub me kwan nyen: {0}</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
-    <value>Keto paket opye.</value>
+    <value>Keto yub oyengge.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_RemoveFailed" xml:space="preserve">
-    <value>Gonyo paket opye.</value>
+    <value>Kwanyo yub oyengge.</value>
   </data>
   <data name="SettingsPage_RomanizationPack_UpdateAvailable" xml:space="preserve">
-    <value>Tye lok anyim ma tye</value>
+    <value>Yub nyen tye</value>
   </data>
   <data name="SettingsPage_RomanizationPack_InstalledFormat" xml:space="preserve">
-    <value>Keto {0}</value>
+    <value>Oketo {0}</value>
   </data>
   <data name="SettingsPage_RomanizationPack_NotInstalled" xml:space="preserve">
-    <value>Pe giketo</value>
+    <value>Pe oketo</value>
   </data>
   <data name="SettingsPage_RomanizationPack_LicenseFormat" xml:space="preserve">
-    <value>Laysen me {0}</value>
+    <value>Twor me {0}</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>Oro/Nwang Playlists</value>
+    <value>Tero i Iye ki Cwal Koko me Chen Wer</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
-    <value>Oro playlists i M3U files me tiyo ki kwat mukene, onyo nwang M3U playlists i Nagi.</value>
+    <value>Cwal chen wer-gi me M3U onyo ter M3U i Nagi.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
-    <value>Oro ducu...</value>
+    <value>Cwal Weng…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
-    <value>Oro playlist ducu i folder</value>
+    <value>Cwal chen wer-gi weng i puk</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
-    <value>Nwang...</value>
+    <value>Ter i Iye…</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
-    <value>Nwang acel onyo M3U files mapol</value>
+    <value>Ter puk M3U mo mo i iye</value>
   </data>
   <data name="SettingsPage_ResetApp_Header" xml:space="preserve">
-    <value>Juk app</value>
+    <value>Dwok Purugiram Cere</value>
   </data>
   <data name="SettingsPage_ResetApp_Description" xml:space="preserve">
-    <value>Man bijuko data pa libari ducu, playlists, ki juku keto jami ducu i kit ma acakke. App bicako doki.</value>
+    <value>Man bijuko jami me gwokwer, chen wer-gi, ki dwoko ter weng i me acaki. Purugiram bicakge odoco.</value>
   </data>
   <data name="SettingsPage_ResetButton_Content" xml:space="preserve">
-    <value>Juk Data Ducu</value>
+    <value>Dwok Jami Weng Cere</value>
   </data>
   <data name="SettingsPage_Section_Integrations" xml:space="preserve">
-    <value>Keto macalo acel</value>
+    <value>Kube me Woko</value>
   </data>
   <data name="SettingsPage_LastFm_Header" xml:space="preserve">
     <value>Last.fm</value>
   </data>
   <data name="SettingsPage_LastFm_Description" xml:space="preserve">
-    <value>Keto account pa Last.fm me keto track ki nyuto wer ni ma tye ka kwat.</value>
+    <value>Kub akawunt meryi me Last.fm me scrobble ki nyutu wer ma itye ka tuk.</value>
   </data>
   <data name="SettingsPage_LastFm_Connect_Content" xml:space="preserve">
-    <value>Keto</value>
+    <value>Kub</value>
   </data>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
-    <value>Tundo</value>
+    <value>Otum</value>
   </data>
   <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
     <value>Juk</value>
   </data>
   <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
-    <value>Gony</value>
+    <value>Geng Kube</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
-    <value>Mi twero me scrobbling</value>
+    <value>Cak Scrobbling</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Description" xml:space="preserve">
-    <value>Keto keken track ducu ma in iwinyo i Nagi i profile pa Last.fm ni.</value>
+    <value>Med wer-gi ma iwinyo i Nagi kene i Last.fm.</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
-    <value>Timo 'Man tye ka kwat'</value>
+    <value>Yub Wer Ma Tye Ka Tuk</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>Nyut lurem ni i Last.fm gin ma in iwinyo i kare man.</value>
+    <value>Nyut wer ma tye ka tuk kombeddi i Last.fm.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
-    <value>Winnyo Obwongo</value>
+    <value>ListenBrainz</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Description" xml:space="preserve">
-    <value>Oro luyeeu pa in bot ListenBrainz (kamyero ma opyere calo Last.fm).</value>
+    <value>Cwal wer ma iwinyo i ListenBrainz (yo mukene me Last.fm).</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenLabel" xml:space="preserve">
-    <value>Token pa agon</value>
+    <value>Ladim me Latiyo</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenPlaceholder" xml:space="preserve">
-    <value>Got token pa in ki i listenbrainz.org/settings</value>
+    <value>Mwon ladim meryi ki i listenbrainz.org/settings</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TestConnection" xml:space="preserve">
-    <value>Tem juk</value>
+    <value>Tem Kube</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Connected" xml:space="preserve">
-    <value>Ajuk kede {0}</value>
+    <value>Okube macalo {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ConnectionFailed" xml:space="preserve">
-    <value>Juk opye: {0}</value>
+    <value>Kube pe ogoy maber: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>Oro luyeeu (scrobbling)</value>
+    <value>Cwal Wer Ma Iwinyo (Scrobbling)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>Oro pwony me "ka yeeu" manyen</value>
+    <value>Cwal Lok me Wer Ma Tye Ka Tuk</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
-    <value>Ma tye i nyim</value>
+    <value>Me Iye Matal</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ServerUrlLabel" xml:space="preserve">
-    <value>URL pa Server</value>
+    <value>URL me Cawa</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ServerUrlPlaceholder" xml:space="preserve">
     <value>https://api.listenbrainz.org</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Title" xml:space="preserve">
-    <value>Yeng ki ListenBrainz?</value>
+    <value>Geng kube ki ListenBrainz?</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Content" xml:space="preserve">
-    <value>Man biwango token pa in ma ikano. In itwero juk anyim i kare ducu.</value>
+    <value>Man bikwanyo ladim meryi ma ogwokke. Itwero kube odoco i kare mo mo.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Button" xml:space="preserve">
-    <value>Yeng</value>
+    <value>Geng Kube</value>
   </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
     <value>Discord</value>
   </data>
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
-    <value>Nyut gin ma in iwinyo i kare man macalo status ni i Discord.</value>
+    <value>Nyut tic meryi me winyo wer macalo kit tye meryi i Discord.</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
-    <value>Smart Playlist</value>
+    <value>Chen Wer Me Ryeko</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Wer</value>
+    <value>Wer-gi</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Mano i smart playlist...</value>
+    <value>Reny i chen wer me ryeko…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Mano i smart playlist</value>
+    <value>Reny i chen wer me ryeko</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
-    <value>Lok cik</value>
+    <value>Yub cik-i</value>
   </data>
   <data name="SmartPlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Kwat ducu</value>
+    <value>Tuk weng</value>
   </data>
   <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Cuku ki kwat ducu</value>
+    <value>Ruc ka ituk weng</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_Play" xml:space="preserve">
-    <value>Kwat</value>
+    <value>Tuk</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
-    <value>Kwat Molubbe</value>
+    <value>Tuk Mukate</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>Keto i alaini</value>
+    <value>Med i Chen</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Ceto bot album</value>
+    <value>Cit i Album</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Ceto bot artist</value>
+    <value>Cit i Luwer</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Nyut i explorer</value>
+    <value>Nyutu i File Explorer</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Kwat</value>
+    <value>Tuk</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
-    <value>Wer peke ma romo ki cik man ma tye</value>
+    <value>Pe tye wer mo ma rom ki cik-i me kombeddi</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Tute me lok cik</value>
+    <value>Tem yubbo cik-i</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
-    <value>Lok Cik</value>
+    <value>Yub Cik-i</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>Lok cik</value>
+    <value>Yub cik-i</value>
   </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
-    <value>I kom</value>
+    <value>Lok i Kom-e</value>
   </data>
   <data name="SettingsPage_AboutExpander_Header" xml:space="preserve">
-    <value>I kom Nagi</value>
+    <value>Lok i kom Nagi</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
-    <value>Dok i kumo wer me gangi ki Nagi, kwat wer ma tye ki yelle, kit ma laye, ki me nongo kuc pa in keken.</value>
+    <value>Nwang odoco wer meryi ki Nagi, ma tye me dwir, yot ki gwok me mungu.</value>
   </data>
   <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
-    <value>Version </value>
+    <value>Yub </value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
-    <value>Nen License</value>
+    <value>Nen Twor</value>
   </data>
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
-    <value>Source Code</value>
+    <value>Coy me Acaki</value>
   </data>
   <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>Kwano pi timo manyen</value>
+    <value>Ngiy Yub Nyen</value>
   </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
-    <value>Oro lok ma owinye</value>
+    <value>Cwal Lok me Cing</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Kwano pi timo manyen i acakke</value>
+    <value>Ngiy Yub Nyen i Cako Purugiram</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>Kwano keken pi version manyen ka app ocako.</value>
+    <value>Ngiy yub nyen kene i kare ma purugiram ocakke.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
-    <value>Lok pa App</value>
+    <value>Leb me Purugiram</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>Lok ma otimmi penyo me cako doki me timo dwole</value>
+    <value>Cak Nagi odoco me keto alokaloka me leb.</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
-    <value>Penyo me cako doki</value>
+    <value>Mitte me Cako Odoco</value>
   </data>
   <data name="SettingsPage_RestartRequired_Message" xml:space="preserve">
-    <value>Pwoyo cako app doki me miyo lok pa lok me timo dwole ducu.</value>
+    <value>Tim ber icak purugiram odoco me keto leb maber.</value>
   </data>
   <data name="SettingsPage_About_PrivacyPolicy_Content" xml:space="preserve">
-    <value>Cik me gwokke i kom kombeddi</value>
+    <value>Cik me Gwoko Mungu</value>
   </data>
   <data name="SettingsPage_BackupRestore_Header" xml:space="preserve">
-    <value>Kweco ki Dok Kwany</value>
+    <value>Gwok ki Dwok Cen</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Kwec dwongi jami mutwer ki settings, nyo kwany ki kweco ma onongo otim mukato.</value>
+    <value>Yub poyo me jami me gwokwer ki ter, onyo dwok poyo me yam con.</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
-    <value>Kwec Jami</value>
+    <value>Yub Poyo</value>
   </data>
   <data name="SettingsPage_RestoreBackup_Content" xml:space="preserve">
-    <value>Kwany Jami ma Okwec</value>
+    <value>Dwok Poyo</value>
   </data>
   <data name="Settings_Backup_Success_Title" xml:space="preserve">
-    <value>Jami Okwec Woko</value>
+    <value>Oyubbo Poyo Maber</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Okwec jami woko kenken ({0:F2} MB) i: {1}</value>
+    <value>Oyubbo poyo ({0:F2} MB) i: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
-    <value>Kweco Jami Onongo Pe Otum</value>
+    <value>Pe Otwero Yubbo Poyo</value>
   </data>
   <data name="Settings_Backup_Failed_Message" xml:space="preserve">
-    <value>Pe otum kweco jami. Tem dong apac.</value>
+    <value>Pe otwero yubbo poyo. Tim ber item odoco.</value>
   </data>
   <data name="Settings_Restore_Invalid_Title" xml:space="preserve">
-    <value>Fail me Kweco Jami ma pe rwatte</value>
+    <value>Puk me Poyo Pe Atir</value>
   </data>
   <data name="Settings_Restore_Invalid_Message" xml:space="preserve">
-    <value>Fail ma oyero-ni pe kweco jami me Nagi ma rwatte.</value>
+    <value>Puk ma oyere pe tye poyo me Nagi ma atir.</value>
   </data>
   <data name="Settings_Restore_Confirm_Title" xml:space="preserve">
-    <value>Kwany Jami ma Okwec?</value>
+    <value>Dwok Poyo?</value>
   </data>
   <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
-    <value>Kwanyo ki jami ma okwec biwok jami ducu ma tye i app. Tic man pe twero gonyo. App bijol apac ka otiyo kwany. Medde?</value>
+    <value>Dwoko poyo biloko jami me purugiram me kombeddi. Tic man pe otwero dwoko cen. Purugiram bicakge odoco. Medde?</value>
   </data>
   <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
-    <value>Kwany</value>
+    <value>Dwok Poyo</value>
   </data>
   <data name="Settings_Restore_Success_Title" xml:space="preserve">
-    <value>Kwany Otum</value>
+    <value>Dwoko Poyo Otum</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Okwany jami ma okwec woko kenken. App bijol apac kombeddi.</value>
+    <value>Odwoko poyo maber. Nagi kombeddi bicakge odoco.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
-    <value>Kwany Onongo Pe Otum</value>
+    <value>Dwoko Poyo Oyengge</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Pe otum kwanyo ki jami ma okwec. Dwongi jami onongo pe kilar.</value>
+    <value>Pe otwero dwoko poyo.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
-    <value>Kit ma Player Olal kwede</value>
+    <value>Kit me Bar me Tuk Wer</value>
   </data>
   <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
-    <value>Acrylic (Galasi)</value>
+    <value>Acrylic (Galac)</value>
   </data>
   <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
-    <value>Tek (Ma pe nen iye)</value>
+    <value>Solid (Tek)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Lor kit ma player ma tye ka yengo-ni nen kwede</value>
+    <value>Yub kit nen me bar me tuk wer.</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
-    <value>Twero me Rwom</value>
+    <value>Tek me Rangi</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Lor twero me rwom me piny player</value>
+    <value>Yub tek me rangi me nge bar me tuk wer.</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
-    <value>Cawa me donyo</value>
+    <value>Kare me Dwon me Medde</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
-    <value>Cawa me donyo ka wer tye ka winyo (ms)</value>
+    <value>Goy kare ma dwon me wer tero me medde i cako tuk.</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
-    <value>Cawa me woko</value>
+    <value>Kare me Dwon me Jukke</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
-    <value>Cawa me woko ka wer ocano (ms)</value>
+    <value>Goy kare ma dwon me wer tero me jukke i kare me cung.</value>
   </data>
   <data name="Settings_Nav_Insights" xml:space="preserve">
-    <value>Nongere</value>
+    <value>Ngec me Tic</value>
   </data>
   <data name="InsightsPage_Title" xml:space="preserve">
-    <value>Nongere</value>
+    <value>Ngec me Tic</value>
   </data>
   <data name="InsightsPage_TotalTime" xml:space="preserve">
-    <value>Cawa ducu me winyo</value>
+    <value>Kare Weng me Winyo</value>
   </data>
   <data name="InsightsPage_UniqueSongs" xml:space="preserve">
-    <value>Wer mapatpat</value>
+    <value>Wer-gi Mapat</value>
   </data>
   <data name="InsightsPage_PeakHour" xml:space="preserve">
-    <value>Cawa ma winyo tutwal</value>
+    <value>Cawawa me Wer Maroo</value>
   </data>
   <data name="InsightsPage_MostActiveDay" xml:space="preserve">
-    <value>Nino ma winyo tutwal</value>
+    <value>Ceng Ma Itiyo ki Maroo</value>
   </data>
   <data name="InsightsPage_TopSongs" xml:space="preserve">
-    <value>Wer ma gineno tutwal</value>
+    <value>Wer-gi Mutelo</value>
   </data>
   <data name="InsightsPage_TopArtists" xml:space="preserve">
-    <value>Lwer ma gineno tutwal</value>
+    <value>Luwer Mutelo</value>
   </data>
   <data name="InsightsPage_TopAlbums" xml:space="preserve">
-    <value>Bukwer ma gineno tutwal</value>
+    <value>Album-i Mutelo</value>
   </data>
   <data name="InsightsPage_TopGenres" xml:space="preserve">
-    <value>Kit wer ma gineno tutwal</value>
+    <value>Kit Wer Mutelo</value>
   </data>
   <data name="InsightsPage_Sources" xml:space="preserve">
-    <value>Ka ma winyo ocakke kede</value>
+    <value>Kabedo me Tuk Wer</value>
   </data>
   <data name="InsightsPage_Empty_Title" xml:space="preserve">
-    <value>Pe tye ngec me winyo kica</value>
+    <value>Pud pe tye lok me winyo wer</value>
   </data>
   <data name="InsightsPage_Empty_Subtitle" xml:space="preserve">
-    <value>Cakk winyo wer wek inen nongere ma tye kany</value>
+    <value>Cak tuk wer me neno ngec meryi me tic kany</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
-    <value>{0} winyo</value>
+    <value>Tuk: {0, plural, one {#} other {#}}</value>
   </data>
   <data name="InsightsPage_Source_Albums" xml:space="preserve">
-    <value>Bukwer</value>
+    <value>Album-i</value>
   </data>
   <data name="InsightsPage_Source_Artists" xml:space="preserve">
-    <value>Lwer</value>
+    <value>Luwer</value>
   </data>
   <data name="InsightsPage_Source_Playlists" xml:space="preserve">
-    <value>Okweto wer</value>
+    <value>Chen Wer</value>
   </data>
   <data name="InsightsPage_Source_SmartPlaylists" xml:space="preserve">
-    <value>Okweto wer ma ngec</value>
+    <value>Chen Wer Me Ryeko</value>
   </data>
   <data name="InsightsPage_Source_Folders" xml:space="preserve">
-    <value>Bokic</value>
+    <value>Pukuluk</value>
   </data>
   <data name="InsightsPage_Source_Genres" xml:space="preserve">
-    <value>Kit wer</value>
+    <value>Kit Wer</value>
   </data>
   <data name="InsightsPage_Source_Search" xml:space="preserve">
-    <value>Yeny</value>
+    <value>Reny</value>
   </data>
   <data name="InsightsPage_Source_Library" xml:space="preserve">
-    <value>Bukwer</value>
+    <value>Gwokwer</value>
   </data>
   <data name="InsightsPage_Source_Files" xml:space="preserve">
-    <value>Kop</value>
+    <value>Puk-i</value>
   </data>
   <data name="InsightsPage_Reset_ToolTip" xml:space="preserve">
-    <value>Juk ngec winyo woko</value>
+    <value>Dwok lok me winyo wer cere</value>
   </data>
   <data name="InsightsPage_Reset_Confirm_Title" xml:space="preserve">
-    <value>Ijuki ngec winyo woko?</value>
+    <value>Dwok lok me winyo wer cere?</value>
   </data>
   <data name="InsightsPage_Reset_Confirm_Message" xml:space="preserve">
-    <value>Man bijuk ngec winyo ducu kacel ki jami acaka winyo. Pe tito cako odoko.</value>
+    <value>Man bijuko lok me winyo wer ki wel me tic weng matwal. Man pe otwero dwoko cen.</value>
   </data>
   <data name="InsightsPage_Reset_Confirm_Button" xml:space="preserve">
-    <value>Juk</value>
+    <value>Dwok Cere</value>
   </data>
   <data name="SplashPage_AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="SplashPage_Tagline" xml:space="preserve">
-    <value>Werri, kitwongere maber</value>
+    <value>Wer meryi, oyubbe maber</value>
   </data>
   <data name="SplashPage_Status" xml:space="preserve">
-    <value>Kaworo Nagi…</value>
+    <value>Cako Nagi…</value>
   </data>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
-    <value>Nen ducu</value>
+    <value>Nen weng</value>
   </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
-    <value>Kwan me tugu</value>
+    <value>Tuk</value>
   </data>
   <data name="InsightsPage_SortBy_Duration" xml:space="preserve">
-    <value>Pola</value>
+    <value>Kare</value>
   </data>
   <data name="PaginationControl_All" xml:space="preserve">
-    <value>All</value>
+    <value>Weng</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
-    <value>Gin ducu i poti:</value>
+    <value>Jami i paji:</value>
   </data>
   <data name="PaginationControl_PreviousPage_ToolTip" xml:space="preserve">
-    <value>Pot meno ma okato</value>
+    <value>Paji Mukato</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
-    <value>Pot manyen</value>
+    <value>Paji Luwyo</value>
   </data>
   <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Kop ngec me log</value>
+    <value>Gwany lok me tic</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
-    <value>labol: ;/\</value>
+    <value>e.g. ;/\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
     <value> ms</value>
@@ -2246,27 +2303,189 @@
     <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
-    <value>Nino acel ma okato</value>
+    <value>Nino 1 Mukato</value>
   </data>
   <data name="Insights_TimeRange_Last7Days" xml:space="preserve">
-    <value>Nino abic ki aryo ma okato</value>
+    <value>Nino 7 Mukato</value>
   </data>
   <data name="Insights_TimeRange_Last30Days" xml:space="preserve">
-    <value>Nino pyere adek ma okato</value>
+    <value>Nino 30 Mukato</value>
   </data>
   <data name="Insights_TimeRange_Last90Days" xml:space="preserve">
-    <value>Nino pyere abic ki adek ma okato</value>
+    <value>Nino 90 Mukato</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>Mwaka ma okato</value>
+    <value>Mwaka Mukato</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
-    <value>Cawa ducu</value>
+    <value>Kare Weng</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}h {1}m</value>
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
     <value>{0}m {1}s</value>
+  </data>
+  <data name="QueuePanel_EmptyTitle" xml:space="preserve">
+    <value>Ryek me wer ni tye nono</value>
+  </data>
+  <data name="QueuePanel_EmptyDescription" xml:space="preserve">
+    <value>Tug wer onyo bol poc me dwol anyan me yuboo ryek me wer ni.</value>
+  </data>
+  <data name="QueuePanel_LoadError" xml:space="preserve">
+    <value>Pe ki kwayo wer moko. Yer Tem doki me kwayo ryek me wer doki.</value>
+  </data>
+  <data name="QueuePanel_Retry" xml:space="preserve">
+    <value>Tem doki</value>
+  </data>
+  <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
+    <value>Pe kikanu yub me chena me wer manyen. Tim ber tem doki.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
+    <value>Gining me dwol me woko</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Description" xml:space="preserve">
+    <value>Yer kabedo ma Nagi tugg iye wer.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Default" xml:space="preserve">
+    <value>Me Cistem</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Unavailable" xml:space="preserve">
+    <value>Gining ma kikanu pe tye. Tiye ki system default.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
+    <value>Pe kitwoo yuboo dwol me woko. Tem doki onyo yer gining mukene.</value>
+  </data>
+  <data name="Listening_Random" xml:space="preserve">
+    <value>Rube</value>
+  </data>
+  <data name="Listening_MoreVariety" xml:space="preserve">
+    <value>Kit Mapatpat Mukene</value>
+  </data>
+  <data name="Listening_Rediscover" xml:space="preserve">
+    <value>Nwang doki</value>
+  </data>
+  <data name="Listening_Unheard" xml:space="preserve">
+    <value>Ma pe kiwinyo</value>
+  </data>
+  <data name="Listening_PlayFor" xml:space="preserve">
+    <value>Tug me…</value>
+  </data>
+  <data name="Listening_Minutes" xml:space="preserve">
+    <value>Dakika</value>
+  </data>
+  <data name="Listening_ShuffleMode" xml:space="preserve">
+    <value>Kit me rubo</value>
+  </data>
+  <data name="Listening_AvoidRecentDays" xml:space="preserve">
+    <value>Kwero wer ma kiweru cotcot (Ceng)</value>
+  </data>
+  <data name="Listening_MoreOptions" xml:space="preserve">
+    <value>Yera Mukene</value>
+  </data>
+  <data name="Listening_PlayForDescription" xml:space="preserve">
+    <value>Yub ryek me wer me wer ducu ma kare gi pe kattoo kare ma iyeru.</value>
+  </data>
+  <data name="Listening_NoMixTitle" xml:space="preserve">
+    <value>Pe tye wer me kit me rubo man</value>
+  </data>
+  <data name="Listening_NoMixDescription" xml:space="preserve">
+    <value>Pe tye wer mo i dye chena man ma lubo jami magi. Tem rubo mukene onyo chena me wer mukene.</value>
+  </data>
+  <data name="Listening_Favorites" xml:space="preserve">
+    <value>Ma imaroo</value>
+  </data>
+  <data name="Listening_AddFavorite" xml:space="preserve">
+    <value>Med i Ma Imaroo</value>
+  </data>
+  <data name="Listening_RemoveFavorite" xml:space="preserve">
+    <value>Kwany ki i Ma Imaroo</value>
+  </data>
+  <data name="Listening_SleepTimer" xml:space="preserve">
+    <value>Pire me nino</value>
+  </data>
+  <data name="Listening_FinishTrack" xml:space="preserve">
+    <value>Tye me tyeko wer ma tye ka weru ka pire me nino ocung</value>
+  </data>
+  <data name="Listening_StopAfterTrack" xml:space="preserve">
+    <value>Cung i nge wer man</value>
+  </data>
+  <data name="Listening_StopAtQueueEnd" xml:space="preserve">
+    <value>Cung i agim me ryek me wer</value>
+  </data>
+  <data name="Listening_StopPlayback" xml:space="preserve">
+    <value>Geng tug wer</value>
+  </data>
+  <data name="Listening_CustomTimer" xml:space="preserve">
+    <value>Pire me cawa ma iyuboo…</value>
+  </data>
+  <data name="Listening_Timer15" xml:space="preserve">
+    <value>I dakika 15</value>
+  </data>
+  <data name="Listening_Timer30" xml:space="preserve">
+    <value>I dakika 30</value>
+  </data>
+  <data name="Listening_Timer60" xml:space="preserve">
+    <value>I dakika 60</value>
+  </data>
+  <data name="Listening_CancelStop" xml:space="preserve">
+    <value>Geng cung ma kicanu</value>
+  </data>
+  <data name="Listening_TimerRemaining" xml:space="preserve">
+    <value>Cung i {0}</value>
+  </data>
+  <data name="Listening_PlayerOptions" xml:space="preserve">
+    <value>Yera me gitug wer</value>
+  </data>
+  <data name="Listening_RecentlyPlayed" xml:space="preserve">
+    <value>Ma Otuko Cokcok</value>
+  </data>
+  <data name="Listening_HistorySearch" xml:space="preserve">
+    <value>Yen i gin ma kiwinyo con</value>
+  </data>
+  <data name="Listening_HistoryEmpty" xml:space="preserve">
+    <value>Pe tye gin ma kiwinyo con</value>
+  </data>
+  <data name="Listening_HistoryLoadError" xml:space="preserve">
+    <value>Recently Played pe kikwayo. Yer Tem doki me temmo doki.</value>
+  </data>
+  <data name="Listening_Today" xml:space="preserve">
+    <value>Tin</value>
+  </data>
+  <data name="Listening_Yesterday" xml:space="preserve">
+    <value>Laworo</value>
+  </data>
+  <data name="Listening_RediscoveryReason" xml:space="preserve">
+    <value>Kagikweru i {0:d}</value>
+  </data>
+  <data name="Listening_RediscoveryTitle" xml:space="preserve">
+    <value>Mite me winyo doki</value>
+  </data>
+  <data name="Listening_Dismiss" xml:space="preserve">
+    <value>Kwany woko</value>
+  </data>
+  <data name="Listening_ActionError" xml:space="preserve">
+    <value>Pe kitwoo tyeko tic man. Tim ber tem doki.</value>
+  </data>
+  <data name="Listening_FavoritesEmpty" xml:space="preserve">
+    <value>Pe tye wer ma imaroo</value>
+  </data>
+  <data name="Listening_FavoritesEmptyDescription" xml:space="preserve">
+    <value>Ket wer i Ma imaroo ki i menu meere, onyo yer lung dii Ctrl+D.</value>
+  </data>
+  <data name="Listening_VarietyDescription" xml:space="preserve">
+    <value>Kit Mapatpat Mukene kweru wer ma kiweru cotcot dok poko wer me lewer acel ka tye twinza.</value>
+  </data>
+  <data name="Listening_RediscoverDescription" xml:space="preserve">
+    <value>Nwang doki tiyo ki wer ma kiketto i Nagi ma kiweru con ma okatto ceng 30.</value>
+  </data>
+  <data name="Listening_UnheardDescription" xml:space="preserve">
+    <value>Ma pe kiwinyo tiyo ki wer ma pe kiketto wergi i Nagi.</value>
+  </data>
+  <data name="Listening_HistoryNoMatches" xml:space="preserve">
+    <value>Pe tye wer ma imito i yenyo ni</value>
+  </data>
+  <data name="Listening_NoTimedMixDescription" xml:space="preserve">
+    <value>Pe tye wer i chena man ma rwatte ki yub me rubo dok ma romo kare ma iyeru. Tem kare ma lacing, rubo mukene, onyo chena me wer mukene.</value>
   </data>
 </root>

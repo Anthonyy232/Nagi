@@ -76,6 +76,9 @@
   <data name="NavItem_Folders" xml:space="preserve">
     <value>Folder</value>
   </data>
+  <data name="NavItem_Favorites" xml:space="preserve">
+    <value>Kegemaran</value>
+  </data>
   <data name="NavItem_Insights" xml:space="preserve">
     <value>Wawasan</value>
   </data>
@@ -95,10 +98,10 @@
     <value>Rawak Hidup</value>
   </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
-    <value>Rawak Mati</value>
+    <value>Rawak dinyahaktifkan</value>
   </data>
   <data name="Tooltip_RepeatOff" xml:space="preserve">
-    <value>Ulang Mati</value>
+    <value>Ulang dinyahaktifkan</value>
   </data>
   <data name="Tooltip_RepeatAll" xml:space="preserve">
     <value>Ulang Semua</value>
@@ -110,7 +113,7 @@
     <value>Ulang</value>
   </data>
   <data name="Tooltip_Unmute" xml:space="preserve">
-    <value>Nyaring</value>
+    <value>Nyahsenyap</value>
   </data>
   <data name="Tooltip_Mute" xml:space="preserve">
     <value>Bisukan</value>
@@ -122,7 +125,7 @@
     <value>Gelap</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">
-    <value>Guna tetapan sistem</value>
+    <value>Lalai Sistem</value>
   </data>
   <data name="Backdrop_Mica" xml:space="preserve">
     <value>Mika</value>
@@ -141,6 +144,39 @@
   </data>
   <data name="Label_Rating" xml:space="preserve">
     <value>Penilaian</value>
+  </data>
+  <data name="Label_Grouping" xml:space="preserve">
+    <value>Pengelompokan</value>
+  </data>
+  <data name="Label_SkipCount" xml:space="preserve">
+    <value>Bilangan Langkauan</value>
+  </data>
+  <data name="Label_DiscNumber" xml:space="preserve">
+    <value>Nombor Cakera</value>
+  </data>
+  <data name="Label_Bitrate" xml:space="preserve">
+    <value>Kadar Bit</value>
+  </data>
+  <data name="Label_SampleRate" xml:space="preserve">
+    <value>Kadar Sampel</value>
+  </data>
+  <data name="Label_IsLoved" xml:space="preserve">
+    <value>Kegemaran</value>
+  </data>
+  <data name="Label_HasLyrics" xml:space="preserve">
+    <value>Mempunyai Lirik</value>
+  </data>
+  <data name="Operator_IsInRange" xml:space="preserve">
+    <value>Antara (termasuk)</value>
+  </data>
+  <data name="Operator_IsAfter" xml:space="preserve">
+    <value>Selepas</value>
+  </data>
+  <data name="Operator_IsBefore" xml:space="preserve">
+    <value>Sebelum</value>
+  </data>
+  <data name="SmartPlaylist_UpperBound_Placeholder" xml:space="preserve">
+    <value>Nilai maksimum</value>
   </data>
   <data name="Operator_Contains" xml:space="preserve">
     <value>Mengandungi</value>
@@ -176,13 +212,13 @@
     <value>Sekurang-kurangnya</value>
   </data>
   <data name="Operator_LessThanOrEqual" xml:space="preserve">
-    <value>Selewat-lewatnya</value>
+    <value>Paling banyak</value>
   </data>
   <data name="Operator_IsInTheLast" xml:space="preserve">
-    <value>Dalam tempoh (hari) terakhir</value>
+    <value>Dalam tempoh (hari) yang lalu</value>
   </data>
   <data name="Operator_IsNotInTheLast" xml:space="preserve">
-    <value>Bukan dalam tempoh (hari) terakhir</value>
+    <value>Bukan dalam tempoh (hari) yang lalu</value>
   </data>
   <data name="Operator_IsTrue" xml:space="preserve">
     <value>Benar</value>
@@ -194,31 +230,31 @@
     <value>Senarai Main Pintar Baharu</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>Edit Senarai Main Pintar - {0}</value>
+    <value>Sunting Senarai Main Pintar: {0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
     <value>Masukkan nama senarai main</value>
   </data>
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
-    <value>{0:N0} lagu sepadan dengan peraturan semasa</value>
+    <value>Lagu yang sepadan: {0:N0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Masukkan nama untuk melihat lagu yang sepadan</value>
+    <value>Masukkan nama senarai main untuk melihat lagu yang sepadan</value>
   </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
-    <value>Tidak dapat mengira</value>
+    <value>Tidak dapat mengira lagu yang sepadan</value>
   </data>
   <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
-    <value>Mengira...</value>
+    <value>Mengira…</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>Senarai main dengan nama ini sudah wujud!</value>
+    <value>Senarai main dengan nama ini sudah wujud.</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>Sila masukkan nama!</value>
+    <value>Masukkan nama senarai main.</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
-    <value>Memuatkan...</value>
+    <value>Memuatkan…</value>
   </data>
   <data name="Error_FailedToLoadArtists" xml:space="preserve">
     <value>Gagal memuatkan artis</value>
@@ -227,13 +263,15 @@
     <value>Ralat Kritikal</value>
   </data>
   <data name="CrashReport_Message" xml:space="preserve">
-    <value>Nagi telah menghadapi ralat kritikal dan mesti ditutup. Kami memohon maaf atas kesulitan ini.</value>
+    <value>Nagi menghadapi ralat dan perlu ditutup.</value>
   </data>
   <data name="ElevationWarning_Title" xml:space="preserve">
     <value>Berjalan sebagai Pentadbir</value>
   </data>
   <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi sedang berjalan sebagai Pentadbir. Ini mungkin menghalang beberapa ciri (seperti menambah folder muzik) daripada berfungsi dengan betul.\n\nUntuk pengalaman terbaik, sila mulakan semula Nagi tanpa keistimewaan pentadbir.</value>
+    <value>Nagi sedang berjalan sebagai Pentadbir. Ini mungkin menghalang beberapa ciri (seperti menambah folder muzik) daripada berfungsi dengan betul.
+
+Untuk pengalaman terbaik, sila mulakan semula Nagi tanpa keistimewaan pentadbir.</value>
   </data>
   <data name="ElevationWarning_Restart" xml:space="preserve">
     <value>Mulakan Semula Secara Normal</value>
@@ -293,16 +331,16 @@
     <value>Folder ini sudah ada dalam pustaka.</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
-    <value>Menambah folder ke pustaka...</value>
+    <value>Menambah folder ke pustaka…</value>
   </data>
   <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Berjaya memadam '{0}'.</value>
+    <value>Mengalih keluar &apos;{0}&apos; daripada pustaka anda.</value>
   </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
-    <value>Gagal memadam '{0}'.</value>
+    <value>Tidak dapat mengalih keluar &apos;{0}&apos; daripada pustaka anda.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
-    <value>Memadam '{0}'...</value>
+    <value>Mengalih keluar &apos;{0}&apos; daripada pustaka anda…</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
     <value>Pengimbasan semula '{0}' selesai.</value>
@@ -311,7 +349,7 @@
     <value>Tiada perubahan dikesan untuk '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
-    <value>Mengimbas semula '{0}'...</value>
+    <value>Mengimbas semula '{0}'…</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
     <value>Tiada folder dengan muzik ditemui.</value>
@@ -326,7 +364,7 @@
     <value>Ralat menambah folder: {0}</value>
   </data>
   <data name="Folders_Error_DeleteFolder" xml:space="preserve">
-    <value>Ralat memadam folder: {0}</value>
+    <value>Tidak dapat mengalih keluar folder daripada pustaka anda: {0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Ralat mengimbas semula folder: {0}</value>
@@ -377,10 +415,10 @@
     <value>Mari sediakan pustaka muzik anda untuk bermula.</value>
   </data>
   <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>Menunggu anda memilih folder...</value>
+    <value>Menunggu anda memilih folder…</value>
   </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
-    <value>Membina pustaka anda...</value>
+    <value>Membina pustaka anda…</value>
   </data>
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Ralat tidak dijangka berlaku. Sila cuba lagi.</value>
@@ -401,7 +439,7 @@
     <value>Ralat memuatkan senarai main</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Memulakan senarai main...</value>
+    <value>Memulakan senarai main…</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Tiada lagu sepadan dengan peraturan senarai main pintar ini.</value>
@@ -410,7 +448,7 @@
     <value>Ralat memulakan main balik untuk senarai main ini.</value>
   </data>
   <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Memilih senarai main rawak...</value>
+    <value>Memilih senarai main rawak…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Tiada senarai main ditemui.</value>
@@ -422,13 +460,13 @@
     <value>Ralat memainkan senarai main rawak.</value>
   </data>
   <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Memuatkan senarai main...</value>
+    <value>Memuatkan senarai main…</value>
   </data>
   <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
     <value>Ralat memuatkan senarai main.</value>
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Mencipta senarai main baharu...</value>
+    <value>Mencipta senarai main baharu…</value>
   </data>
   <data name="Playlist_Status_CreateFailed" xml:space="preserve">
     <value>Gagal mencipta senarai main. Ia mungkin sudah wujud.</value>
@@ -437,7 +475,7 @@
     <value>Ralat berlaku semasa mencipta senarai main.</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Mengemas kini kulit senarai main...</value>
+    <value>Mengemas kini muka depan senarai main…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Gagal mengemas kini kulit senarai main.</value>
@@ -446,7 +484,7 @@
     <value>Ralat berlaku semasa mengemas kini kulit senarai main.</value>
   </data>
   <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Mengalih keluar imej senarai main...</value>
+    <value>Mengalih keluar imej senarai main…</value>
   </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Gagal mengalih keluar imej senarai main.</value>
@@ -455,7 +493,7 @@
     <value>Ralat berlaku semasa mengalih keluar imej senarai main.</value>
   </data>
   <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Menama semula senarai main...</value>
+    <value>Menukar nama senarai main…</value>
   </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Gagal menama semula senarai main.</value>
@@ -464,7 +502,7 @@
     <value>Ralat berlaku semasa menama semula senarai main.</value>
   </data>
   <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Memadam senarai main...</value>
+    <value>Memadam senarai main…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Gagal memadam senarai main.</value>
@@ -512,7 +550,9 @@
     <value>Eksport Berjaya</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>Dieksport {0} senarai main ({1} lagu keseluruhan) ke:\n{2}</value>
+    <value>Senarai main dieksport: {0}
+Lagu: {1}
+Disimpan ke: {2}</value>
   </data>
   <data name="Settings_Export_Failed_Title" xml:space="preserve">
     <value>Eksport Gagal</value>
@@ -521,13 +561,18 @@
     <value>Import Berjaya</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>Berjaya mengimport {0} senarai main ({1} lagu).</value>
+    <value>Senarai main diimport: {0}
+Lagu: {1}</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
-    <value>\n\n{0} lagu tidak dapat ditemui dalam pustaka anda.</value>
+    <value>
+
+Lagu tidak ditemui dalam pustaka anda: {0}.</value>
   </data>
   <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
-    <value>\n\n{0} fail gagal diimport.</value>
+    <value>
+
+Fail yang tidak dapat diimport: {0}.</value>
   </data>
   <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
     <value>Import Gagal</value>
@@ -596,10 +641,10 @@
     <value>FFmpeg tidak dikesan. Sila pasang FFmpeg dan klik 'Semak Semula'.</value>
   </data>
   <data name="FFmpeg_Status_Checking" xml:space="preserve">
-    <value>Menyemak untuk FFmpeg...</value>
+    <value>Memeriksa FFmpeg…</value>
   </data>
   <data name="FFmpeg_Status_Detected" xml:space="preserve">
-    <value>FFmpeg dikesan!</value>
+    <value>FFmpeg dikesan.</value>
   </data>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg masih belum dikesan. Sila pasang FFmpeg dan klik 'Semak Semula'.</value>
@@ -767,13 +812,13 @@
     <value>Tiada senarai main tersedia</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
-    <value>Padam Folder</value>
+    <value>Alih Keluar Folder</value>
   </data>
   <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
-    <value>Adakah anda pasti ingin mengalih keluar folder '{0}' daripada pustaka? Ini tidak akan memadam fail daripada komputer anda.</value>
+    <value>Alih keluar &apos;{0}&apos; daripada pustaka anda? Fail audio anda akan kekal di komputer anda.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
-    <value>Padam</value>
+    <value>Alih Keluar</value>
   </data>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Batal</value>
@@ -812,10 +857,10 @@
     <value>Cari senarai main</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>Masukkan nama senarai main baharu</value>
+    <value>Masukkan nama senarai main</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
-    <value>Pilih Imej</value>
+    <value>Pilih Muka Depan</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
     <value>Cipta Senarai Main Baharu</value>
@@ -851,7 +896,7 @@
     <value>Tutup carian</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Cari pustaka</value>
+    <value>Cari dalam genre</value>
   </data>
   <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Tiada senarai main tersedia</value>
@@ -872,13 +917,13 @@
     <value>Imbas Semula Metadata</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>Ini akan mengimbas semula semua lagu dalam pustaka anda untuk menggunakan tetapan metadata baharu (seperti aksara pemisah artis). Ini mungkin mengambil sedikit masa bergantung pada saiz pustaka. Adakah anda ingin meneruskan?</value>
+    <value>Imbas semula pustaka anda untuk mengaplikasikan tetapan metadata, seperti pemisahan artis. Ini mungkin mengambil masa untuk pustaka yang besar. Teruskan?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
     <value>Imbas Semula</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
-    <value>Menyediakan pengimbasan semula pustaka...</value>
+    <value>Menyediakan imbasan semula pustaka…</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
     <value>Pengimbasan Semula Selesai</value>
@@ -899,13 +944,17 @@
     <value>Dayakan Penormalan Kelantangan</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
-    <value>Penormalan Kelantangan (ReplayGain) memastikan tahap kelantangan yang konsisten pada semua muzik anda.\n\nIni akan menganalisis pustaka muzik anda dan mengubah suai fail audio anda secara langsung dengan menulis teg ReplayGain. Hanya fail tanpa teg sedia ada yang akan diproses. Ini mungkin mengambil sedikit masa bergantung pada saiz pustaka anda.\n\nAdakah anda ingin meneruskan?</value>
+    <value>Penormalan Kelantangan (ReplayGain) memastikan tahap kelantangan yang konsisten pada semua muzik anda.
+
+Ini akan menganalisis pustaka muzik anda dan mengubah suai fail audio anda secara langsung dengan menulis teg ReplayGain. Hanya fail tanpa teg sedia ada yang akan diproses. Ini mungkin mengambil sedikit masa bergantung pada saiz pustaka anda.
+
+Adakah anda ingin meneruskan?</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Dayakan &amp; Imbas</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>Menyediakan pengimbasan penormalan kelantangan...</value>
+    <value>Menyediakan imbasan penormalan kelantangan…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
     <value>Pengimbasan penormalan kelantangan dibatalkan.</value>
@@ -914,7 +963,9 @@
     <value>Ralat semasa mengimbas: {0}</value>
   </data>
   <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Tidak dapat mendapatkan log daripada memori. Percubaan sandaran untuk membaca fail log gagal.\nLaluan Dijangka: '{0}'\nRalat: {1}</value>
+    <value>Tidak dapat mendapatkan log daripada memori. Percubaan sandaran untuk membaca fail log gagal.
+Laluan Dijangka: '{0}'
+Ralat: {1}</value>
   </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Tiada senarai main untuk dieksport.</value>
@@ -1040,7 +1091,7 @@
     <value>Nagi</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Temukan semula koleksi muzik tempatan anda dengan Nagi, pemain muzik yang memberi tumpuan kepada kelajuan, kesederhanaan, dan privasi. Nagi dibina dengan C# dan WinUI 3 untuk menawarkan pengalaman Fluent yang bersih dan asli. Ia cantik, cekap, dan menghormati privasi anda.</value>
+    <value>Temui semula koleksi muzik tempatan anda dengan Nagi, pemain muzik yang mengutamakan kelajuan, kesederhanaan dan privasi.</value>
   </data>
   <data name="AppShortName" xml:space="preserve">
     <value>Nagi</value>
@@ -1067,61 +1118,61 @@
     <value>Seterusnya</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
-    <value>Pergi ke album</value>
+    <value>Pergi ke Album</value>
   </data>
   <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Drop files or folders onto the player to add them to the queue.</value>
+    <value>Lepaskan fail atau folder ke dalam pemain untuk menambahkannya ke baris gilir.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Seterusnya</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
-    <value>Clear queue</value>
+    <value>Kosongkan Giliran</value>
   </data>
   <data name="QueuePanel_DisplayOptions" xml:space="preserve">
-    <value>Queue display options</value>
+    <value>Pilihan Paparan Giliran</value>
   </data>
   <data name="QueuePanel_Close" xml:space="preserve">
-    <value>Close queue</value>
+    <value>Tutup Giliran</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
-    <value>Artist</value>
+    <value>Artis</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
-    <value>Duration</value>
+    <value>Tempoh</value>
   </data>
   <data name="QueuePanel_ShowTrackCount" xml:space="preserve">
-    <value>Track count</value>
+    <value>Bilangan Trek</value>
   </data>
   <data name="QueuePanel_TrackCount" xml:space="preserve">
-    <value>Tracks: {0:N0}</value>
+    <value>Trek: {0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
-    <value>Queue position</value>
+    <value>Kedudukan Giliran</value>
   </data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve">
     <value>Genre</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
-    <value>Total duration</value>
+    <value>Jumlah Tempoh</value>
   </data>
   <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Main</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
-    <value>Move up</value>
+    <value>Alih ke Atas</value>
   </data>
   <data name="QueuePanel_MoveDown" xml:space="preserve">
-    <value>Move down</value>
+    <value>Alih ke Bawah</value>
   </data>
   <data name="QueuePanel_Remove" xml:space="preserve">
-    <value>Remove from queue</value>
+    <value>Alih Keluar daripada Giliran</value>
   </data>
   <data name="AlbumPage_Title" xml:space="preserve">
     <value>Album</value>
   </data>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Cari album...</value>
+    <value>Cari album…</value>
   </data>
   <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Cari album</value>
@@ -1145,7 +1196,7 @@
     <value>Lagu</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Cari dalam album...</value>
+    <value>Cari dalam album…</value>
   </data>
   <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Cari dalam album</value>
@@ -1166,13 +1217,13 @@
     <value>Tambah ke Barisan</value>
   </data>
   <data name="AlbumViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Tambah ke senarai main</value>
+    <value>Tambah ke Senarai Main</value>
   </data>
   <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Pergi ke artis</value>
+    <value>Pergi ke Artis</value>
   </data>
   <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Tunjukkan dalam explorer</value>
+    <value>Tunjukkan dalam Penjelajah Fail</value>
   </data>
   <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Main</value>
@@ -1187,7 +1238,7 @@
     <value>Artis</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Cari artis...</value>
+    <value>Cari artis…</value>
   </data>
   <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Cari artis</value>
@@ -1229,7 +1280,7 @@
     <value>Lagu</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Cari dalam artis...</value>
+    <value>Cari dalam artis…</value>
   </data>
   <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Cari dalam artis</value>
@@ -1250,13 +1301,13 @@
     <value>Tambah ke Barisan</value>
   </data>
   <data name="ArtistViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Tambah ke senarai main</value>
+    <value>Tambah ke Senarai Main</value>
   </data>
   <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Pergi ke album</value>
+    <value>Pergi ke Album</value>
   </data>
   <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Tunjukkan dalam explorer</value>
+    <value>Tunjukkan dalam Penjelajah Fail</value>
   </data>
   <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Main</value>
@@ -1286,7 +1337,7 @@
     <value>Imbas Semula</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>Padam</value>
+    <value>Alih Keluar daripada Pustaka</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Tiada folder ditambahkan lagi</value>
@@ -1298,7 +1349,7 @@
     <value>Main</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>Tambah ke senarai main</value>
+    <value>Tambah ke Senarai Main</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_Play" xml:space="preserve">
     <value>Main</value>
@@ -1310,16 +1361,16 @@
     <value>Tambah ke Barisan</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Tambah ke senarai main</value>
+    <value>Tambah ke Senarai Main</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Pergi ke album</value>
+    <value>Pergi ke Album</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Pergi ke artis</value>
+    <value>Pergi ke Artis</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Tunjukkan dalam explorer</value>
+    <value>Tunjukkan dalam Penjelajah Fail</value>
   </data>
   <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Main</value>
@@ -1331,7 +1382,7 @@
     <value>Lagu</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Cari dalam folder...</value>
+    <value>Cari dalam folder…</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Cari dalam folder</value>
@@ -1352,7 +1403,7 @@
     <value>Genre</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Cari genre...</value>
+    <value>Cari genre…</value>
   </data>
   <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
     <value>Cari genre</value>
@@ -1373,7 +1424,7 @@
     <value>Pustaka</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Cari pustaka...</value>
+    <value>Cari pustaka…</value>
   </data>
   <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Cari pustaka</value>
@@ -1394,19 +1445,25 @@
     <value>Tambah ke Barisan</value>
   </data>
   <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Tambah ke senarai main</value>
+    <value>Tambah ke Senarai Main</value>
   </data>
   <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Pergi ke album</value>
+    <value>Pergi ke Album</value>
   </data>
   <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
-    <value>Pergi ke artis</value>
+    <value>Pergi ke Artis</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Tunjukkan dalam explorer</value>
+    <value>Tunjukkan dalam Penjelajah Fail</value>
   </data>
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Main</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
+    <value>Tiada lagu ditemui</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+    <value>Cuba cari perkara lain</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
     <value>Pustaka anda kosong</value>
@@ -1415,31 +1472,31 @@
     <value>Tambah folder ke pustaka anda dalam Tetapan</value>
   </data>
   <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
-    <value>Tiada lirik ditemui untuk trek ini</value>
+    <value>Tiada lirik ditemui untuk lagu ini</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
     <value>Cuba lagu lain</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
-    <value>Edit or replace lyrics</value>
+    <value>Sunting atau gantikan lirik</value>
   </data>
   <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
-    <value>Edit lyrics</value>
+    <value>Sunting Lirik</value>
   </data>
   <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
-    <value>Paste plain text or timestamped LRC lyrics</value>
+    <value>Tampal teks biasa atau lirik LRC bertanda masa</value>
   </data>
   <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
-    <value>Save</value>
+    <value>Simpan</value>
   </data>
   <data name="LyricsPage_EditLyrics_Remove" xml:space="preserve">
-    <value>Remove saved lyrics</value>
+    <value>Alih Keluar Lirik Disimpan</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
-    <value>Lyrics could not be updated</value>
+    <value>Lirik tidak dapat dikemas kini</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Nagi could not save the lyrics. Check the log for details and try again.</value>
+    <value>Nagi tidak dapat menyimpan lirik. Semak log untuk butiran dan cuba lagi.</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Selamat datang ke Nagi</value>
@@ -1454,7 +1511,7 @@
     <value>Senarai Main</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Cari senarai main...</value>
+    <value>Cari senarai main…</value>
   </data>
   <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Cari senarai main</value>
@@ -1502,7 +1559,7 @@
     <value>Lagu</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Cari dalam senarai main...</value>
+    <value>Cari dalam senarai main…</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Cari dalam senarai main</value>
@@ -1523,16 +1580,16 @@
     <value>Tambah ke Barisan</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Pergi ke album</value>
+    <value>Pergi ke Album</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Pergi ke artis</value>
+    <value>Pergi ke Artis</value>
   </data>
   <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Tunjukkan dalam explorer</value>
+    <value>Tunjukkan dalam Penjelajah Fail</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
-    <value>Alih keluar daripada senarai main</value>
+    <value>Alih Keluar daripada Senarai Main</value>
   </data>
   <data name="PlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Main</value>
@@ -1550,7 +1607,7 @@
     <value>Lagu</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Cari dalam genre...</value>
+    <value>Cari dalam genre…</value>
   </data>
   <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Cari dalam genre</value>
@@ -1571,16 +1628,16 @@
     <value>Tambah ke Barisan</value>
   </data>
   <data name="GenreViewPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Tambah ke senarai main</value>
+    <value>Tambah ke Senarai Main</value>
   </data>
   <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Pergi ke album</value>
+    <value>Pergi ke Album</value>
   </data>
   <data name="GenreViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Pergi ke artis</value>
+    <value>Pergi ke Artis</value>
   </data>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Tunjukkan dalam explorer</value>
+    <value>Tunjukkan dalam Penjelajah Fail</value>
   </data>
   <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
     <value>Tiada senarai main tersedia</value>
@@ -1604,40 +1661,40 @@
     <value>Tema</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>Pilih tema aplikasi.</value>
+    <value>Pilih tema cerah, gelap atau sistem.</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
     <value>Warna Aksen</value>
   </data>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
-    <value>Tetapkan semula ke lalai</value>
+    <value>Tetap Semula ke Lalai</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Bahan Tetingkap</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Description" xml:space="preserve">
-    <value>Pilih bahan latar belakang untuk tetingkap.</value>
+    <value>Pilih bahan latar belakang tetingkap.</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
     <value>Tema Dinamik</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>Dayakan dan konfigurasi pilihan tema dinamik.</value>
+    <value>Padankan warna aplikasi dengan seni kulit album semasa.</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
-    <value>Ingat saiz tetingkap</value>
+    <value>Ingat Saiz Tetingkap</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Description" xml:space="preserve">
     <value>Pulihkan tetingkap utama ke saiz sebelumnya pada pelancaran seterusnya.</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Header" xml:space="preserve">
-    <value>Ingat kedudukan tetingkap</value>
+    <value>Ingat Kedudukan Tetingkap</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Description" xml:space="preserve">
     <value>Pulihkan tetingkap utama ke lokasi skrin sebelumnya pada pelancaran seterusnya.</value>
   </data>
   <data name="SettingsPage_RememberNavState_Header" xml:space="preserve">
-    <value>Ingat keadaan panel navigasi</value>
+    <value>Ingat Keadaan Panel Navigasi</value>
   </data>
   <data name="SettingsPage_RememberNavState_Description" xml:space="preserve">
     <value>Pastikan panel navigasi kiri dibuka atau ditutup seperti yang anda tinggalkan.</value>
@@ -1655,13 +1712,13 @@
     <value>Normalisasi Kelantangan (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Laraskan kelantangan secara automatik ke tahap standard (-18 LUFS) untuk mengelakkan perubahan kelantangan secara tiba-tiba.</value>
+    <value>Kurangkan perbezaan kelantangan antara lagu menggunakan ReplayGain.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
-    <value>WASAPI exclusive mode</value>
+    <value>Mod Eksklusif WASAPI</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+    <value>Beri Nagi kawalan eksklusif pada peranti audio Windows. Apl lain mungkin menjadi senyap. Mulakan semula Nagi selepas menukar tetapan ini.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>Pudar Semasa Main / Jeda</value>
@@ -1673,7 +1730,7 @@
     <value>Penyama Audio</value>
   </data>
   <data name="SettingsPage_ResetEqualizer_Content" xml:space="preserve">
-    <value>Tetapkan semula ke lalai</value>
+    <value>Tetap Semula ke Lalai</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Pra-amp</value>
@@ -1685,55 +1742,55 @@
     <value>Sesuaikan Kawalan Pemain</value>
   </data>
   <data name="SettingsPage_ResetPlayerButtons_Content" xml:space="preserve">
-    <value>Tetapkan semula ke lalai</value>
+    <value>Tetap Semula ke Lalai</value>
   </data>
   <data name="SettingsPage_CustomizePlayer_Instructions" xml:space="preserve">
     <value>Arahkan kursor untuk menogol keterlihatan. Seret untuk menyusun semula. Pembahagi memisahkan kawalan tengah dan kanan.</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Header" xml:space="preserve">
-    <value>Pemain yang boleh dilipat</value>
+    <value>Pemain Boleh Lipat</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>Animasi bar pemain untuk mengembangkan dan melipat.</value>
+    <value>Kembangkan bar pemain apabila anda mengarahkan kursor ke atasnya.</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
-    <value>Pulihkan keadaan main balik</value>
+    <value>Pulihkan Keadaan Main Balik</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>Simpan keadaan main balik semasa untuk disambung semula pada pelancaran seterusnya.</value>
+    <value>Pulihkan giliran dan kedudukan main balik anda apabila Nagi bermula.</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
-    <value>Pelancaran automatik semasa permulaan</value>
+    <value>Pelancaran Automatik semasa Permulaan</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
     <value>Mulakan Nagi secara automatik apabila anda log masuk ke komputer anda.</value>
   </data>
   <data name="SettingsPage_StartMinimized_Header" xml:space="preserve">
-    <value>Mula diminimumkan</value>
+    <value>Mula Diminimumkan</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>Apabila dilancarkan, tetingkap aplikasi akan diminimumkan secara lalai.</value>
+    <value>Mula Nagi dengan tetingkap diminimumkan.</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
-    <value>Minimumkan ke pemain mini</value>
+    <value>Minimumkan ke Pemain Mini</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Description" xml:space="preserve">
     <value>Apabila diminimumkan, tunjukkan pemain terapung padat dan bukannya menyembunyikan tetingkap.</value>
   </data>
   <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
-    <value>Sembunyikan ke dulang sistem</value>
+    <value>Sembunyi ke Dulang Sistem</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>Apabila ditutup, sembunyikan ke dulang sistem.</value>
+    <value>Biarkan Nagi berjalan dalam dulang sistem apabila anda menutup tetingkapnya.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
-    <value>Tunjukkan seni kulit album dalam flyout</value>
+    <value>Tunjukkan Seni Kulit dalam Flyout</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
     <value>Paparkan seni kulit album dalam pemain padat yang muncul apabila mengklik ikon dulang.</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
-    <value>Abaikan artikel ketika mengisih</value>
+    <value>Abaikan Kata Sandang Semasa Mengisih</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
     <value>Isih album, artis dan lagu mengikut perkataan penting pertama mereka (cth. "The Beatles" diisih di bawah B).</value>
@@ -1760,10 +1817,10 @@
     <value>Imbas semula pustaka untuk menggunakan perubahan pemisahan</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
-    <value>Dapatkan metadata dalam talian</value>
+    <value>Dapatkan Metadata Dalam Talian</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Dapatkan maklumat tambahan seperti imej artis dan biografi daripada perkhidmatan dalam talian (cth., Spotify, Last.fm).</value>
+    <value>Dapatkan imej dan biografi artis daripada sumber dalam talian.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Sumber</value>
@@ -1772,10 +1829,10 @@
     <value>Seret untuk menyusun semula sumber metadata. Arahkan kursor ke setiap sumber untuk butiran.</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Header" xml:space="preserve">
-    <value>Dapatkan lirik dalam talian</value>
+    <value>Dapatkan Lirik Dalam Talian</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>Dapatkan lirik yang tiada secara automatik daripada sumber dalam talian. (Privasi: menghantar metadata trek ke perkhidmatan pihak ketiga)</value>
+    <value>Dapatkan lirik yang hilang daripada sumber dalam talian. Ini menghantar metadata lagu ke perkhidmatan pihak ketiga.</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
     <value>Sumber</value>
@@ -1784,16 +1841,16 @@
     <value>Seret untuk menyusun semula sumber lirik. Arahkan kursor ke setiap sumber untuk butiran.</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
-    <value>Tunjukkan lirik yang diromanisasi</value>
+    <value>Tunjukkan Lirik Rumi</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
     <value>Tunjukkan baris romanisasi yang lebih kecil di bawah lirik yang disokong apabila pek yang dipasang sepadan dengan skrip.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
-    <value>Pek bahasa</value>
+    <value>Pek Bahasa</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>Pasang bahasa yang anda mahu diromanisasi. Pek adalah ditandatangani, data sahaja, dan disimpan secara tempatan.</value>
+    <value>Pasang pek bahasa untuk merumikan lirik yang disokong. Pek disimpan secara tempatan.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
     <value>Segarkan semula</value>
@@ -1832,25 +1889,25 @@
     <value>Lesen {0}</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>Eksport/Import Senarai Main</value>
+    <value>Import &amp; Eksport Senarai Main</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
     <value>Eksport senarai main ke fail M3U untuk digunakan dalam pemain lain, atau import senarai main M3U ke dalam Nagi.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
-    <value>Eksport Semua...</value>
+    <value>Eksport Semua…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
     <value>Eksport semua senarai main ke folder</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
-    <value>Import...</value>
+    <value>Import…</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
     <value>Import satu atau lebih fail M3U</value>
   </data>
   <data name="SettingsPage_ResetApp_Header" xml:space="preserve">
-    <value>Tetapkan semula aplikasi</value>
+    <value>Tetap Semula Aplikasi</value>
   </data>
   <data name="SettingsPage_ResetApp_Description" xml:space="preserve">
     <value>Ini akan memadamkan semua data pustaka, senarai main, dan menetapkan semula semua tetapan ke lalai. Aplikasi akan dimulakan semula.</value>
@@ -1880,16 +1937,16 @@
     <value>Putuskan Sambungan</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
-    <value>Dayakan scrobbling</value>
+    <value>Dayakan Scrobbling</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Description" xml:space="preserve">
     <value>Tambah trek yang anda dengar di Nagi secara automatik ke profil Last.fm anda.</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
-    <value>Kemaskini 'Sedang Dimainkan'</value>
+    <value>Kemas Kini Sedang Dimainkan</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>Tunjukkan kepada rakan anda di Last.fm apa yang anda sedang dengar dalam masa nyata.</value>
+    <value>Tunjukkan lagu yang sedang dimainkan pada profil Last.fm anda.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
     <value>ListenBrainz</value>
@@ -1904,7 +1961,7 @@
     <value>Tampal token anda daripada listenbrainz.org/settings</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TestConnection" xml:space="preserve">
-    <value>Uji sambungan</value>
+    <value>Uji Sambungan</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Connected" xml:space="preserve">
     <value>Disambungkan sebagai {0}</value>
@@ -1913,10 +1970,10 @@
     <value>Sambungan gagal: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>Hantar data pendengaran (scrobbling)</value>
+    <value>Hantar Pendengaran (Scrobbling)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>Hantar kemas kini "sedang dimainkan"</value>
+    <value>Hantar Kemas Kini Sedang Dimainkan</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
     <value>Lanjutan</value>
@@ -1949,7 +2006,7 @@
     <value>Lagu</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Cari dalam senarai main pintar...</value>
+    <value>Cari dalam senarai main pintar…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Cari dalam senarai main pintar</value>
@@ -1973,13 +2030,13 @@
     <value>Tambah ke Barisan</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Pergi ke album</value>
+    <value>Pergi ke Album</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Pergi ke artis</value>
+    <value>Pergi ke Artis</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Tunjukkan dalam explorer</value>
+    <value>Tunjukkan dalam Penjelajah Fail</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Main</value>
@@ -2021,7 +2078,7 @@
     <value>Hantar Maklum Balas</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Semak kemas kini semasa permulaan</value>
+    <value>Semak Kemas Kini semasa Permulaan</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
     <value>Semak versi baharu secara automatik apabila aplikasi bermula.</value>
@@ -2030,7 +2087,7 @@
     <value>Bahasa Aplikasi</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>Perubahan memerlukan permulaan semula untuk berkuat kuasa</value>
+    <value>Mula semula Nagi untuk mengaplikasikan pertukaran bahasa.</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
     <value>Memerlukan Permulaan Semula</value>
@@ -2045,7 +2102,7 @@
     <value>Sandaran &amp; Pemulihan</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Cipta sandaran pustaka muzik dan tetapan anda, atau pulihkan dari sandaran sebelumnya</value>
+    <value>Cipta sandaran data pustaka dan tetapan anda, atau pulihkan sandaran sebelumnya.</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
     <value>Cipta Sandaran</value>
@@ -2057,7 +2114,7 @@
     <value>Sandaran Dicipta</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Berjaya mencipta sandaran ({0:F2} MB) pada: {1}</value>
+    <value>Sandaran dicipta ({0:F2} MB) di: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
     <value>Sandaran Gagal</value>
@@ -2084,13 +2141,13 @@
     <value>Pemulihan Selesai</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Berjaya memulihkan sandaran. Aplikasi akan dimulakan semula sekarang.</value>
+    <value>Sandaran dipulihkan. Nagi akan dimulakan semula sekarang.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
     <value>Pemulihan Gagal</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Gagal memulihkan dari sandaran. Data anda tidak diubah suai.</value>
+    <value>Tidak dapat memulihkan sandaran.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
     <value>Penggayaan Pemain</value>
@@ -2102,25 +2159,25 @@
     <value>Pepejal (Legap)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Sesuaikan penampilan pemain terapung</value>
+    <value>Sesuaikan penampilan bar pemain.</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
     <value>Keamatan Warna</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Melaraskan kecerahan warna latar belakang pemain</value>
+    <value>Laraskan keamatan warna latar belakang pemain.</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
-    <value>Tempoh fade-in</value>
+    <value>Tempoh Resap Masuk</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
-    <value>Tempoh kesan fade-in semasa main balik (ms)</value>
+    <value>Tetapkan tempoh masa kelantangan untuk meresap masuk apabila main balik disambung semula.</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
-    <value>Tempoh fade-out</value>
+    <value>Tempoh Resap Keluar</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
-    <value>Tempoh kesan fade-out semasa jeda (ms)</value>
+    <value>Tetapkan tempoh masa kelantangan untuk meresap keluar apabila main balik dijeda.</value>
   </data>
   <data name="Settings_Nav_Insights" xml:space="preserve">
     <value>Wawasan</value>
@@ -2129,16 +2186,16 @@
     <value>Wawasan</value>
   </data>
   <data name="InsightsPage_TotalTime" xml:space="preserve">
-    <value>Jumlah masa mendengar</value>
+    <value>Jumlah Masa Mendengar</value>
   </data>
   <data name="InsightsPage_UniqueSongs" xml:space="preserve">
-    <value>Lagu unik</value>
+    <value>Lagu Unik</value>
   </data>
   <data name="InsightsPage_PeakHour" xml:space="preserve">
-    <value>Waktu puncak</value>
+    <value>Waktu Kemuncak</value>
   </data>
   <data name="InsightsPage_MostActiveDay" xml:space="preserve">
-    <value>Hari paling aktif</value>
+    <value>Hari Paling Aktif</value>
   </data>
   <data name="InsightsPage_TopSongs" xml:space="preserve">
     <value>Lagu Teratas</value>
@@ -2162,7 +2219,7 @@
     <value>Mula main muzik untuk melihat wawasan anda di sini</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
-    <value>{0} mainan</value>
+    <value>Dimainkan: {0}</value>
   </data>
   <data name="InsightsPage_Source_Albums" xml:space="preserve">
     <value>Album</value>
@@ -2186,7 +2243,7 @@
     <value>Cari</value>
   </data>
   <data name="InsightsPage_Source_Library" xml:space="preserve">
-    <value>Perpustakaan</value>
+    <value>Pustaka</value>
   </data>
   <data name="InsightsPage_Source_Files" xml:space="preserve">
     <value>Fail</value>
@@ -2222,7 +2279,7 @@
     <value>Masa</value>
   </data>
   <data name="PaginationControl_All" xml:space="preserve">
-    <value>All</value>
+    <value>Semua</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>Item setiap halaman:</value>
@@ -2246,27 +2303,189 @@
     <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
-    <value>1 hari lepas</value>
+    <value>1 Hari Terakhir</value>
   </data>
   <data name="Insights_TimeRange_Last7Days" xml:space="preserve">
-    <value>7 hari lepas</value>
+    <value>7 Hari Terakhir</value>
   </data>
   <data name="Insights_TimeRange_Last30Days" xml:space="preserve">
-    <value>30 hari lepas</value>
+    <value>30 Hari Terakhir</value>
   </data>
   <data name="Insights_TimeRange_Last90Days" xml:space="preserve">
-    <value>90 hari lepas</value>
+    <value>90 Hari Terakhir</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>Tahun lepas</value>
+    <value>Tahun Lepas</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
-    <value>Sepanjang masa</value>
+    <value>Sepanjang Masa</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}j {1}m</value>
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
     <value>{0}m {1}s</value>
+  </data>
+  <data name="QueuePanel_EmptyTitle" xml:space="preserve">
+    <value>Giliran anda kosong</value>
+  </data>
+  <data name="QueuePanel_EmptyDescription" xml:space="preserve">
+    <value>Mainkan muzik atau lepaskan fail audio di sini untuk membina giliran anda.</value>
+  </data>
+  <data name="QueuePanel_LoadError" xml:space="preserve">
+    <value>Sesetengah lagu tidak dapat dimuatkan. Pilih Cuba Lagi untuk memuatkan giliran sekali lagi.</value>
+  </data>
+  <data name="QueuePanel_Retry" xml:space="preserve">
+    <value>Cuba Lagi</value>
+  </data>
+  <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
+    <value>Susunan senarai main baharu tidak dapat disimpan. Sila cuba lagi.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
+    <value>Peranti Output Audio</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Description" xml:space="preserve">
+    <value>Pilih tempat Nagi memainkan muzik.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Default" xml:space="preserve">
+    <value>Lalai Sistem</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Unavailable" xml:space="preserve">
+    <value>Peranti yang disimpan tidak tersedia. Menggunakan lalai sistem.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
+    <value>Tidak dapat mengemas kini output audio. Cuba lagi atau pilih peranti lain.</value>
+  </data>
+  <data name="Listening_Random" xml:space="preserve">
+    <value>Rawak</value>
+  </data>
+  <data name="Listening_MoreVariety" xml:space="preserve">
+    <value>Kepelbagaian Tambahan</value>
+  </data>
+  <data name="Listening_Rediscover" xml:space="preserve">
+    <value>Temui Semula</value>
+  </data>
+  <data name="Listening_Unheard" xml:space="preserve">
+    <value>Belum Didengar</value>
+  </data>
+  <data name="Listening_PlayFor" xml:space="preserve">
+    <value>Mainkan selama…</value>
+  </data>
+  <data name="Listening_Minutes" xml:space="preserve">
+    <value>Minit</value>
+  </data>
+  <data name="Listening_ShuffleMode" xml:space="preserve">
+    <value>Jenis Campuran</value>
+  </data>
+  <data name="Listening_AvoidRecentDays" xml:space="preserve">
+    <value>Elakkan Dimainkan Baru-baru Ini (Hari)</value>
+  </data>
+  <data name="Listening_MoreOptions" xml:space="preserve">
+    <value>Pilihan Lain</value>
+  </data>
+  <data name="Listening_PlayForDescription" xml:space="preserve">
+    <value>Bina giliran lagu penuh yang jumlah keseluruhannya tidak melebihi tempoh pilihan anda.</value>
+  </data>
+  <data name="Listening_NoMixTitle" xml:space="preserve">
+    <value>Tiada lagu untuk campuran ini</value>
+  </data>
+  <data name="Listening_NoMixDescription" xml:space="preserve">
+    <value>Tiada lagu dalam senarai ini yang memenuhi keperluan ini. Cuba campuran atau senarai lagu yang lain.</value>
+  </data>
+  <data name="Listening_Favorites" xml:space="preserve">
+    <value>Kegemaran</value>
+  </data>
+  <data name="Listening_AddFavorite" xml:space="preserve">
+    <value>Tambah ke Kegemaran</value>
+  </data>
+  <data name="Listening_RemoveFavorite" xml:space="preserve">
+    <value>Alih Keluar daripada Kegemaran</value>
+  </data>
+  <data name="Listening_SleepTimer" xml:space="preserve">
+    <value>Pemasa Tidur</value>
+  </data>
+  <data name="Listening_FinishTrack" xml:space="preserve">
+    <value>Tamatkan lagu semasa apabila pemasa tamat</value>
+  </data>
+  <data name="Listening_StopAfterTrack" xml:space="preserve">
+    <value>Hentikan Selepas Lagu Ini</value>
+  </data>
+  <data name="Listening_StopAtQueueEnd" xml:space="preserve">
+    <value>Hentikan di Penghujung Giliran</value>
+  </data>
+  <data name="Listening_StopPlayback" xml:space="preserve">
+    <value>Hentikan Main Balik</value>
+  </data>
+  <data name="Listening_CustomTimer" xml:space="preserve">
+    <value>Pemasa Tersuai…</value>
+  </data>
+  <data name="Listening_Timer15" xml:space="preserve">
+    <value>Dalam 15 Minit</value>
+  </data>
+  <data name="Listening_Timer30" xml:space="preserve">
+    <value>Dalam 30 Minit</value>
+  </data>
+  <data name="Listening_Timer60" xml:space="preserve">
+    <value>Dalam 60 Minit</value>
+  </data>
+  <data name="Listening_CancelStop" xml:space="preserve">
+    <value>Batalkan Henti Dijadualkan</value>
+  </data>
+  <data name="Listening_TimerRemaining" xml:space="preserve">
+    <value>Terhenti dalam {0}</value>
+  </data>
+  <data name="Listening_PlayerOptions" xml:space="preserve">
+    <value>Pilihan Pemain</value>
+  </data>
+  <data name="Listening_RecentlyPlayed" xml:space="preserve">
+    <value>Baru-baru Ini Dimainkan</value>
+  </data>
+  <data name="Listening_HistorySearch" xml:space="preserve">
+    <value>Cari sejarah pendengaran</value>
+  </data>
+  <data name="Listening_HistoryEmpty" xml:space="preserve">
+    <value>Belum ada sejarah pendengaran</value>
+  </data>
+  <data name="Listening_HistoryLoadError" xml:space="preserve">
+    <value>Baru-baru Ini Dimainkan tidak dapat dimuatkan. Pilih Cuba Lagi untuk mencuba semula.</value>
+  </data>
+  <data name="Listening_Today" xml:space="preserve">
+    <value>Hari Ini</value>
+  </data>
+  <data name="Listening_Yesterday" xml:space="preserve">
+    <value>Semalam</value>
+  </data>
+  <data name="Listening_RediscoveryReason" xml:space="preserve">
+    <value>Terakhir dimainkan pada {0:d}</value>
+  </data>
+  <data name="Listening_RediscoveryTitle" xml:space="preserve">
+    <value>Layak didengar lagi</value>
+  </data>
+  <data name="Listening_Dismiss" xml:space="preserve">
+    <value>Abaikan</value>
+  </data>
+  <data name="Listening_ActionError" xml:space="preserve">
+    <value>Tidak dapat melengkapkan tindakan ini. Sila cuba lagi.</value>
+  </data>
+  <data name="Listening_FavoritesEmpty" xml:space="preserve">
+    <value>Belum ada kegemaran</value>
+  </data>
+  <data name="Listening_FavoritesEmptyDescription" xml:space="preserve">
+    <value>Jadikan lagu sebagai kegemaran daripada menunya, atau pilih lagu dan tekan Ctrl+D.</value>
+  </data>
+  <data name="Listening_VarietyDescription" xml:space="preserve">
+    <value>Kepelbagaian Tambahan mengelakkan lagu yang dimainkan dalam tempoh baru-baru ini dan mengasingkan lagu daripada artis yang sama jika boleh.</value>
+  </data>
+  <data name="Listening_RediscoverDescription" xml:space="preserve">
+    <value>Temui Semula menggunakan lagu dengan rekod mainan dalam Nagi yang terakhir dimainkan lebih daripada 30 hari yang lalu.</value>
+  </data>
+  <data name="Listening_UnheardDescription" xml:space="preserve">
+    <value>Belum Didengar menggunakan lagu tanpa rekod mainan dalam Nagi.</value>
+  </data>
+  <data name="Listening_HistoryNoMatches" xml:space="preserve">
+    <value>Tiada pendengaran yang sepadan dengan carian anda</value>
+  </data>
+  <data name="Listening_NoTimedMixDescription" xml:space="preserve">
+    <value>Tiada lagu dalam senarai ini yang memenuhi keperluan campuran dan muat dalam tempoh pilihan anda. Cuba tempoh yang lebih lama, campuran lain, atau senarai lagu yang berbeza.</value>
   </data>
 </root>

@@ -102,7 +102,7 @@
     <value>Sporenummer</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Afspilningsantal</value>
+    <value>Afspilninger</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>Sange</value>
@@ -148,10 +148,10 @@
     <value>{0} (Ældste)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Stigende)</value>
+    <value>{0} (stigende)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Faldende)</value>
+    <value>{0} (faldende)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>Korteste først</value>
@@ -169,7 +169,7 @@
     <value>Mest {0}</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
-    <value>Mindst {0}</value>
+    <value>Færrest {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Scanner mappe {0} af {1}: {2} - {3}</value>
@@ -178,11 +178,11 @@
     <value>Scanning fuldført. Tilføjede eller opdaterede {0} {1}.</value>
   </data>
   <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Gemmer batch {0}...</value>
+    <value>Gemmer batch {0}…</value>
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Scanner mappe...</value>
+    <value>Scanner mappe…</value>
   </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Scanning fuldført. Biblioteket er opdateret.</value>
@@ -194,16 +194,16 @@
     <value>Scanning mislykkedes. Se logs for detaljer.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Forbereder scanningscacher...</value>
+    <value>Forbereder scanning af bibliotek…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Indlæser sangdetaljer...</value>
+    <value>Læser sangdetaljer…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Rydder op i dit bibliotek...</value>
+    <value>Rydder op i dit bibliotek…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Afslutter...</value>
+    <value>Færdiggør…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Volumennormalisering mislykkedes. Se logs for detaljer.</value>
@@ -216,7 +216,7 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Kunne ikke tilføje mappe.</value>
+    <value>Kunne ikke tilføje mappen.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Afspilningslistenavn kan ikke være tomt.</value>
@@ -248,7 +248,15 @@
     <value>Sortér efter: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg er påkrævet for volumennormalisering med høj præcision (ReplayGain-analyse), men blev ikke fundet på dit system.\n\nFølg disse trin for at konfigurere det:\n\n1. **Download**: Besøg https://www.gyan.dev/ffmpeg/builds/ og download 'ffmpeg-git-full.7z' (eller lignende) essentials-bygning.\n2. **Guide**: Du kan følge denne guide for detaljerede instruktioner: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Udpak**: Åbn arkitekturmappen og find 'bin'-mappen, der indeholder `ffmpeg.exe`.\n4. **Installer**: Kopier `ffmpeg.exe` til en permanent mappe (f.eks. `C:\ffmpeg\`) og **tilføj den mappe til din System PATH**-miljøvariabel.\n5. **Genstart**: Genstart Nagi efter installationen for at ændringerne træder i kraft.</value>
+    <value>FFmpeg er nødvendig for at analysere sange til lydstyrkenormalisering, men Nagi kunne ikke finde det.
+
+1. Download en Windows-version fra https://ffmpeg.org/download.html.
+2. Udpak arkivet, og find ffmpeg.exe i dets bin-mappe.
+3. Tilføj mappen, der indeholder ffmpeg.exe, til din Windows PATH.
+4. Genstart Nagi, og slå lydstyrkenormalisering til igen.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>Spillelisten blev oprettet, men dens sange kunne ikke tilføjes. Prøv at importere igen.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Ingen sange fra afspilningslisten blev fundet i dit bibliotek.</value>
@@ -293,12 +301,39 @@
     <value>Alle sange har allerede volumedata.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Beregner volumen for {0} sange...</value>
+    <value>Analyserer lydstyrke… Sange: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Beregner volumennormalisering ({0}/{1})...</value>
+    <value>Beregner lydstyrkenormalisering ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Volumennormalisering fuldført. Behandlede {0} sange.</value>
+    <value>Lydstyrkenormalisering fuldført. Sange behandlet: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Indtast din ListenBrainz-brugertoken.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Kunne ikke læse svaret fra ListenBrainz. Prøv igen senere.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Indtast en server-URL, der begynder med http:// eller https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Brugertokenen er ugyldig. Kontroller den, og prøv igen.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz returnerede en fejl (HTTP {0}). Prøv igen senere.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Kunne ikke oprette forbindelse til ListenBrainz. Kontroller din forbindelse og server-URL.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi kunne ikke finde sin biblioteksdatamappe.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Genoprettelsen mislykkedes, og dine tidligere data kunne ikke genoprettes fuldstændigt. Genoprettelsesfiler blev gemt i &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Den valgte fil er ikke en gyldig Nagi-sikkerhedskopi.</value>
   </data>
 </root>

@@ -60,239 +60,280 @@
   </resheader>
   <!-- Noun Labels -->
   <data name="Label_Artist" xml:space="preserve">
-    <value>Artista</value>
+    <value>فنان</value>
   </data>
   <data name="Label_Album" xml:space="preserve">
-    <value>Album</value>
+    <value>ألبوم</value>
   </data>
   <data name="Label_Genre" xml:space="preserve">
-    <value>Genre</value>
+    <value>نوع</value>
   </data>
   <data name="Label_Title" xml:space="preserve">
-    <value>Pamagat</value>
+    <value>عنوان</value>
   </data>
   <data name="Label_Playlist" xml:space="preserve">
-    <value>Playlist</value>
+    <value>قائمة تشغيل</value>
   </data>
   <data name="Label_File" xml:space="preserve">
-    <value>File</value>
+    <value>ملف</value>
   </data>
   <data name="Label_Year" xml:space="preserve">
-    <value>Taon</value>
+    <value>سنة</value>
   </data>
   <data name="Label_DateAdded" xml:space="preserve">
-    <value>Petsa Idinagdag</value>
+    <value>تاريخ الإضافة</value>
   </data>
   <data name="Label_DateCreated" xml:space="preserve">
-    <value>Petsa Nilikha</value>
+    <value>تاريخ الإنشاء</value>
   </data>
   <data name="Label_DateModified" xml:space="preserve">
-    <value>Petsa Binago</value>
+    <value>تاريخ التعديل</value>
   </data>
   <data name="Label_LastPlayed" xml:space="preserve">
-    <value>Huling Pinatugtog</value>
+    <value>آخر تشغيل</value>
   </data>
   <data name="Label_Duration" xml:space="preserve">
-    <value>Tagal</value>
+    <value>المدة</value>
   </data>
   <data name="Label_Bpm" xml:space="preserve">
     <value>BPM</value>
   </data>
   <data name="Label_TrackNumber" xml:space="preserve">
-    <value>Numero ng Track</value>
+    <value>رقم المقطع</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Bilang ng Pagpapatugtog</value>
+    <value>مرات التشغيل</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
-    <value>Mga Kanta</value>
+    <value>الأغاني</value>
+  </data>
+  <data name="Label_Artists" xml:space="preserve">
+    <value>الفنانون</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
-    <value>Kanta</value>
+    <value>أغنية</value>
   </data>
   <data name="Label_Folder" xml:space="preserve">
-    <value>Folder</value>
+    <value>مجلد</value>
   </data>
   <data name="Label_Folders" xml:space="preserve">
-    <value>Mga Folder</value>
+    <value>المجلدات</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
-    <value>Manu-manong Pagkakasunod-sunod</value>
+    <value>ترتيب يدوي</value>
   </data>
   <data name="Label_Random" xml:space="preserve">
-    <value>Random</value>
+    <value>عشوائي</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
-    <value>Hindi Kilala {0}</value>
+    <value>{0} غير معروف</value>
   </data>
   <data name="Format_New" xml:space="preserve">
-    <value>Bagong {0}</value>
+    <value>{0} جديد</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
-    <value>{0} hindi natagpuan.</value>
+    <value>{0} لم يتم العثور عليه.</value>
   </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (A hanggang Z)</value>
+    <value>{0} (من الألف إلى الياء)</value>
   </data>
   <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (Z hanggang A)</value>
+    <value>{0} (من الياء إلى الألف)</value>
   </data>
   <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Pinakabago)</value>
+    <value>{0} (الأحدث)</value>
   </data>
   <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Pinakaluma)</value>
+    <value>{0} (الأقدم)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Pataas)</value>
+    <value>{0} (تصاعدي)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Pababa)</value>
+    <value>{0} (تنازلي)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>Pinakamaikli Muna</value>
+    <value>الأقصر أولاً</value>
   </data>
   <data name="Format_LongestFirst" xml:space="preserve">
-    <value>Pinakamahaba Muna</value>
+    <value>الأطول أولاً</value>
   </data>
   <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>Pinakamabagal Muna ({0})</value>
+    <value>الأبطأ أولاً ({0})</value>
   </data>
   <data name="Format_FastestFirst" xml:space="preserve">
-    <value>Pinakamabilis Muna ({0})</value>
+    <value>الأسرع أولاً ({0})</value>
   </data>
   <data name="Format_Most" xml:space="preserve">
-    <value>Pinakamaraming {0}</value>
+    <value>الأكثر {0}</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
-    <value>Pinakakaunting {0}</value>
+    <value>أقل {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
-    <value>Sine-scan ang folder {0} ng {1}: {2} - {3}</value>
+    <value>جاري فحص المجلد {0} من {1}: {2} - {3}</value>
   </data>
   <data name="Format_ScanCompleteResult" xml:space="preserve">
-    <value>Kumpleto na ang pag-scan. Idinagdag o na-update ang {0} {1}.</value>
+    <value>اكتمل الفحص. تمت إضافة أو تحديث {0} {1}.</value>
   </data>
   <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Sine-save ang batch {0}...</value>
+    <value>جاري حفظ الدفعة {0}…</value>
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Sine-scan ang folder...</value>
+    <value>جاري فحص المجلد…</value>
   </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
-    <value>Kumpleto na ang pag-scan. Updated ang library.</value>
+    <value>اكتمل الفحص. المكتبة محدّثة.</value>
   </data>
   <data name="Status_ScanCancelled" xml:space="preserve">
-    <value>Nakansela ang pag-scan.</value>
+    <value>تم إلغاء الفحص.</value>
   </data>
   <data name="Status_ScanFailed" xml:space="preserve">
-    <value>Nabigo ang pag-scan. Tingnan ang mga log para sa detalye.</value>
+    <value>فشل الفحص. تحقق من السجلات للحصول على التفاصيل.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Inihahanda ang mga cache ng scan...</value>
+    <value>جاري تحضير فحص المكتبة…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Binabasa ang mga detalye ng kanta...</value>
+    <value>جاري قراءة تفاصيل الأغنية…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Nililinis ang iyong library...</value>
+    <value>جاري تنظيف مكتبتك…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Pagtatapos...</value>
+    <value>جاري الإنهاء…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
-    <value>Nabigo ang normalisasyon ng volume. Tingnan ang mga log para sa detalye.</value>
+    <value>فشل تطبيع مستوى الصوت. تحقق من السجلات للحصول على التفاصيل.</value>
   </data>
   <data name="Status_NoFoldersToRefresh" xml:space="preserve">
-    <value>Walang mga folder sa library na ire-refresh.</value>
+    <value>لا توجد مجلدات في المكتبة لتحديثها.</value>
   </data>
   <data name="Status_LibraryRefreshComplete" xml:space="preserve">
-    <value>Kumpleto na ang pag-refresh ng library.</value>
+    <value>اكتمل تحديث المكتبة.</value>
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Nabigo ang pagdagdag ng folder.</value>
+    <value>تعذرت إضافة المجلد.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
-    <value>Hindi maaaring walang laman ang pangalan ng playlist.</value>
+    <value>لا يمكن أن يكون اسم قائمة التشغيل فارغًا.</value>
   </data>
   <data name="Error_RatingRange" xml:space="preserve">
-    <value>Ang rating ay dapat nasa pagitan ng 1 at 5.</value>
+    <value>يجب أن يكون التقييم بين 1 و 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
-    <value>may lyrics</value>
+    <value>مع كلمات الأغنية</value>
   </data>
   <data name="Label_WithCoverArt" xml:space="preserve">
-    <value>may cover art</value>
+    <value>مع غلاف الألبوم</value>
+  </data>
+  <data name="Label_WithArtistImage" xml:space="preserve">
+    <value>مع صورة الفنان</value>
   </data>
   <data name="Label_And" xml:space="preserve">
-    <value>at</value>
+    <value>و</value>
   </data>
   <!-- Static Strings -->
   <data name="UnknownFilename" xml:space="preserve">
-    <value>hindi kilala</value>
+    <value>غير معروف</value>
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
-    <value> &amp; </value>
+    <value> و </value>
   </data>
   <data name="SortByPrefix" xml:space="preserve">
-    <value>Ayusin Ayon Sa: </value>
+    <value>الترتيب حسب: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg ay kinakailangan para sa High-Precision Volume Normalization (ReplayGain analysis) ngunit hindi natagpuan sa iyong system.\n\nSundin ang mga hakbang na ito upang i-set up ito:\n\n1. **I-download**: Bisitahin ang https://www.gyan.dev/ffmpeg/builds/ at i-download ang 'ffmpeg-git-full.7z' (o katulad) na essentials build.\n2. **Gabay**: Maaari mong sundin ang gabay na ito para sa detalyadong tagubilin: https://phoenixnap.com/kb/ffmpeg-windows\n3. **I-extract**: Buksan ang architecture folder at hanapin ang 'bin' directory na naglalaman ng `ffmpeg.exe`.\n4. **I-install**: Kopyahin ang `ffmpeg.exe` sa isang permanenteng folder (hal., `C:\ffmpeg\`) at **idagdag ang folder na iyon sa iyong System PATH** environment variable.\n5. **I-restart**: Paki-restart ang Nagi pagkatapos ng pag-install para magkabisa ang mga pagbabago.</value>
+    <value>يلزم وجود FFmpeg لتحليل الأغاني لمعايرة مستوى الصوت، لكن تعذر على Nagi العثور عليه.
+
+1. نزّل نسخة Windows من https://ffmpeg.org/download.html.
+2. استخرج الأرشيف وابحث عن ffmpeg.exe في مجلد bin الخاص به.
+3. أضف المجلد الذي يحتوي على ffmpeg.exe إلى PATH في Windows.
+4. أعد تشغيل Nagi، ثم فعّل معايرة مستوى الصوت مجددًا.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>تم إنشاء قائمة التشغيل، ولكن تعذرت إضافة أغانيها. يُرجى محاولة الاستيراد مجددًا.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Walang kanta mula sa playlist ang natagpuan sa iyong library.</value>
+    <value>لم يتم العثور على أي أغانٍ من قائمة التشغيل في مكتبتك.</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
-    <value>Walang playlist na i-e-export.</value>
+    <value>لا توجد قوائم تشغيل لتصديرها.</value>
   </data>
   <data name="EqPreset_None" xml:space="preserve">
-    <value>Wala</value>
+    <value>بلا</value>
   </data>
   <data name="EqPreset_Classical" xml:space="preserve">
-    <value>Klasikal</value>
+    <value>كلاسيكي</value>
   </data>
   <data name="EqPreset_Dance" xml:space="preserve">
-    <value>Dance</value>
+    <value>رقص</value>
   </data>
   <data name="EqPreset_FullBass" xml:space="preserve">
-    <value>Buong Bass</value>
+    <value>جهير كامل</value>
   </data>
   <data name="EqPreset_FullTreble" xml:space="preserve">
-    <value>Buong Treble</value>
+    <value>صوت ثلاثي كامل</value>
   </data>
   <data name="EqPreset_Jazz" xml:space="preserve">
-    <value>Jazz</value>
+    <value>جاز</value>
   </data>
   <data name="EqPreset_Pop" xml:space="preserve">
-    <value>Pop</value>
+    <value>بوب</value>
   </data>
   <data name="EqPreset_Rock" xml:space="preserve">
-    <value>Rock</value>
+    <value>روك</value>
   </data>
   <data name="EqPreset_Soft" xml:space="preserve">
-    <value>Malambot</value>
+    <value>ناعم</value>
   </data>
   <data name="EqPreset_Techno" xml:space="preserve">
-    <value>Techno</value>
+    <value>تكنو</value>
   </data>
   <data name="EqPreset_Vocal" xml:space="preserve">
-    <value>Vocal</value>
+    <value>صوتي</value>
   </data>
   <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
-    <value>Lahat ng kanta ay mayroon nang data ng volume.</value>
+    <value>جميع الأغاني تحتوي بالفعل على بيانات مستوى الصوت.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Kinakalkula ang volume para sa {0} kanta...</value>
+    <value>جاري تحليل مستوى الصوت… الأغاني: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Kinakalkula ang normalisasyon ng volume ({0}/{1})...</value>
+    <value>جاري حساب معايرة مستوى الصوت ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Kumpleto na ang normalisasyon ng volume. Naproseso ang {0} kanta.</value>
+    <value>اكتملت معايرة مستوى الصوت. الأغاني المعالجة: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>أدخل رمز مستخدم ListenBrainz الخاص بك.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>تعذرت قراءة الاستجابة من ListenBrainz. حاول مرة أخرى لاحقًا.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>أدخل عنوان URL للخادم يبدأ بـ http:// أو https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>رمز المستخدم غير صالح. تحقق منه وحاول مرة أخرى.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>أرجع ListenBrainz خطأً (HTTP {0}). حاول مرة أخرى لاحقًا.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>تعذر الاتصال بـ ListenBrainz. تحقق من اتصالك وعنوان URL للخادم.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>تعذر على Nagi العثور على مجلد بيانات المكتبة الخاص به.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>فشلت الاستعادة، وتعذرت استعادة بياناتك السابقة بالكامل. تم حفظ ملفات الاسترداد في &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>الملف المحدد ليس ملف نسخ احتياطي صالحًا لـ Nagi.</value>
   </data>
 </root>

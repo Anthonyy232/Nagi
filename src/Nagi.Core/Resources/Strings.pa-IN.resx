@@ -102,10 +102,10 @@
     <value>ਟਰੈਕ ਨੰਬਰ</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>ਪਲੇ ਕਾਉਂਟ</value>
+    <value>ਚਲਾਏ ਗਏ</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
-    <value>ਗੀਤ</value>
+    <value>ਗਾਣੇ</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
     <value>ਕਲਾਕਾਰ</value>
@@ -148,10 +148,10 @@
     <value>{0} (ਪੁਰਾਣਾ)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (ਚੜ੍ਹਦਾ)</value>
+    <value>{0} (ਚੜ੍ਹਦਾ ਕ੍ਰਮ)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (ਉਤਰਦਾ)</value>
+    <value>{0} (ਉਤਰਦਾ ਕ੍ਰਮ)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>ਸਭ ਤੋਂ ਛੋਟਾ ਪਹਿਲਾਂ</value>
@@ -178,11 +178,11 @@
     <value>ਸਕੈਨ ਪੂਰਾ ਹੋ ਗਿਆ। {0} {1} ਸ਼ਾਮਲ ਕੀਤੇ ਜਾਂ ਅੱਪਡੇਟ ਕੀਤੇ ਗਏ।</value>
   </data>
   <data name="Format_SavingBatch" xml:space="preserve">
-    <value>ਬੈਚ {0} ਸੁਰੱਖਿਅਤ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ...</value>
+    <value>ਬੈਚ {0} ਸੇਵ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ…</value>
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>ਫੋਲਡਰ ਸਕੈਨ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ...</value>
+    <value>ਫ਼ੋਲਡਰ ਸਕੈਨ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ…</value>
   </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>ਸਕੈਨ ਪੂਰਾ ਹੋ ਗਿਆ। ਲਾਇਬ੍ਰੇਰੀ ਅੱਪ ਟੂ ਡੇਟ ਹੈ।</value>
@@ -194,16 +194,16 @@
     <value>ਸਕੈਨ ਅਸਫਲ ਰਿਹਾ। ਵੇਰਵਿਆਂ ਲਈ ਲੌਗਸ ਦੀ ਜਾਂਚ ਕਰੋ।</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>ਸਕੈਨ ਕੈਸ਼ ਤਿਆਰ ਕੀਤੇ ਜਾ ਰਹੇ ਹਨ...</value>
+    <value>ਲਾਇਬ੍ਰੇਰੀ ਸਕੈਨ ਦੀ ਤਿਆਰੀ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>ਗੀਤਾਂ ਦੇ ਵੇਰਵੇ ਪੜ੍ਹੇ ਜਾ ਰਹੇ ਹਨ...</value>
+    <value>ਗਾਣੇ ਦੇ ਵੇਰਵੇ ਪੜ੍ਹੇ ਜਾ ਰਹੇ ਹਨ…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਸਾਫ਼ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ...</value>
+    <value>ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਸਾਫ਼ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>ਅੰਤਿਮ ਰੂਪ ਦਿੱਤਾ ਜਾ ਰਿਹਾ ਹੈ...</value>
+    <value>ਅੰਤਿਮ ਰੂਪ ਦਿੱਤਾ ਜਾ ਰਿਹਾ ਹੈ…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>ਵਾਲੀਅਮ ਨੋਰਮਲਾਈਜ਼ੇਸ਼ਨ ਅਸਫਲ ਰਿਹਾ। ਵੇਰਵਿਆਂ ਲਈ ਲੌਗਸ ਦੀ ਜਾਂਚ ਕਰੋ।</value>
@@ -216,7 +216,7 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>ਫੋਲਡਰ ਸ਼ਾਮਲ ਕਰਨ ਵਿੱਚ ਅਸਫਲ।</value>
+    <value>ਫ਼ੋਲਡਰ ਜੋੜਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ।</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>ਪਲੇਲਿਸਟ ਦਾ ਨਾਮ ਖਾਲੀ ਨਹੀਂ ਹੋ ਸਕਦਾ।</value>
@@ -248,7 +248,15 @@
     <value>ਦੁਆਰਾ ਕ੍ਰਮਬੱਧ ਕਰੋ: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>ਹਾਈ-ਪ੍ਰੀਸੀਜ਼ਨ ਵਾਲੀਅਮ ਨੋਰਮਲਾਈਜ਼ੇਸ਼ਨ (ਰੀਪਲੇਗੇਨ ਵਿਸ਼ਲੇਸ਼ਣ) ਲਈ FFmpeg ਦੀ ਲੋੜ ਹੈ ਪਰ ਇਹ ਤੁਹਾਡੇ ਸਿਸਟਮ 'ਤੇ ਨਹੀਂ ਲੱਭਿਆ ਗਿਆ।\n\nਇਸਨੂੰ ਸਥਾਪਤ ਕਰਨ ਲਈ ਇਹਨਾਂ ਕਦਮਾਂ ਦੀ ਪਾਲਣਾ ਕਰੋ:\n\n1. **ਡਾਊਨਲੋਡ ਕਰੋ**: https://www.gyan.dev/ffmpeg/builds/ 'ਤੇ ਜਾਓ ਅਤੇ 'ffmpeg-git-full.7z' (ਜਾਂ ਇਸੇ ਤਰ੍ਹਾਂ ਦਾ) ਜ਼ਰੂਰੀ ਬਿਲਡ ਡਾਊਨਲੋਡ ਕਰੋ।\n2. **ਗਾਈਡ**: ਤੁਸੀਂ ਵਿਸਤ੍ਰਿਤ ਨਿਰਦੇਸ਼ਾਂ ਲਈ ਇਸ ਗਾਈਡ ਦੀ ਪਾਲਣਾ ਕਰ ਸਕਦੇ ਹੋ: https://phoenixnap.com/kb/ffmpeg-windows\n3. **ਐਕਸਟਰੈਕਟ ਕਰੋ**: ਆਰਕੀਟੈਕਚਰ ਫੋਲਡਰ ਖੋਲ੍ਹੋ ਅਤੇ `ffmpeg.exe` ਵਾਲੀ 'ਬਿਨ' ਡਾਇਰੈਕਟਰੀ ਲੱਭੋ।\n4. **ਸਥਾਪਤ ਕਰੋ**: `ffmpeg.exe` ਨੂੰ ਇੱਕ ਸਥਾਈ ਫੋਲਡਰ (ਜਿਵੇਂ ਕਿ, `C:\ffmpeg\`) ਵਿੱਚ ਕਾਪੀ ਕਰੋ ਅਤੇ **ਉਸ ਫੋਲਡਰ ਨੂੰ ਆਪਣੇ ਸਿਸਟਮ PATH** ਵਾਤਾਵਰਨ ਵੇਰੀਏਬਲ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ।\n5. **ਰੀਸਟਾਰਟ ਕਰੋ**: ਬਦਲਾਵਾਂ ਨੂੰ ਲਾਗੂ ਕਰਨ ਲਈ ਕਿਰਪਾ ਕਰਕੇ ਇੰਸਟਾਲੇਸ਼ਨ ਤੋਂ ਬਾਅਦ Nagi ਨੂੰ ਰੀਸਟਾਰਟ ਕਰੋ।</value>
+    <value>ਆਵਾਜ਼ ਦੇ ਸਧਾਰਨੀਕਰਨ ਲਈ ਗਾਣਿਆਂ ਦੀ ਜਾਂਚ ਕਰਨ ਵਾਸਤੇ FFmpeg ਦੀ ਲੋੜ ਹੈ, ਪਰ Nagi ਨੂੰ ਇਹ ਨਹੀਂ ਮਿਲਿਆ।
+
+1. https://ffmpeg.org/download.html ਤੋਂ Windows ਬਿਲਡ ਡਾਊਨਲੋਡ ਕਰੋ।
+2. ਆਰਕਾਈਵ ਨੂੰ ਐਕਸਟ੍ਰੈਕਟ ਕਰੋ ਅਤੇ ਇਸਦੇ bin ਫ਼ੋਲਡਰ ਵਿੱਚ ffmpeg.exe ਲੱਭੋ।
+3. ffmpeg.exe ਵਾਲੇ ਫ਼ੋਲਡਰ ਨੂੰ ਆਪਣੇ Windows PATH ਵਿੱਚ ਜੋੜੋ।
+4. Nagi ਨੂੰ ਮੁੜ ਚਾਲੂ ਕਰੋ, ਅਤੇ ਫਿਰ ਆਵਾਜ਼ ਸਧਾਰਨੀਕਰਨ ਨੂੰ ਮੁੜ ਚਾਲੂ ਕਰੋ।</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>ਪਲੇਅਲਿਸਟ ਬਣਾ ਦਿੱਤੀ ਗਈ ਸੀ, ਪਰ ਇਸਦੇ ਗਾਣੇ ਜੋੜੇ ਨਹੀਂ ਜਾ ਸਕੇ। ਕਿਰਪਾ ਕਰਕੇ ਮੁੜ ਇੰਪੋਰਟ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>ਪਲੇਲਿਸਟ ਵਿੱਚੋਂ ਕੋਈ ਵੀ ਗੀਤ ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚ ਨਹੀਂ ਲੱਭਿਆ ਗਿਆ।</value>
@@ -293,12 +301,39 @@
     <value>ਸਾਰੇ ਗੀਤਾਂ ਵਿੱਚ ਪਹਿਲਾਂ ਹੀ ਵਾਲੀਅਮ ਡੇਟਾ ਹੈ।</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>{0} ਗੀਤਾਂ ਲਈ ਵਾਲੀਅਮ ਦੀ ਗਣਨਾ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ...</value>
+    <value>ਆਵਾਜ਼ ਦੀ ਜਾਂਚ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ… ਗਾਣੇ: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>ਵਾਲੀਅਮ ਨੋਰਮਲਾਈਜ਼ੇਸ਼ਨ ਦੀ ਗਣਨਾ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ ({0}/{1})...</value>
+    <value>ਆਵਾਜ਼ ਸਧਾਰਨੀਕਰਨ ਦੀ ਗਣਨਾ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>ਵਾਲੀਅਮ ਨੋਰਮਲਾਈਜ਼ੇਸ਼ਨ ਪੂਰਾ ਹੋ ਗਿਆ। {0} ਗੀਤ ਪ੍ਰੋਸੈਸ ਕੀਤੇ ਗਏ।</value>
+    <value>ਆਵਾਜ਼ ਸਧਾਰਨੀਕਰਨ ਪੂਰਾ ਹੋਇਆ। ਪ੍ਰੋਸੈਸ ਕੀਤੇ ਗਾਣੇ: {0}।</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>ਆਪਣਾ ListenBrainz ਵਰਤੋਂਕਾਰ ਟੋਕਨ ਦਰਜ ਕਰੋ।</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>ListenBrainz ਤੋਂ ਜਵਾਬ ਪੜ੍ਹਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ। ਬਾਅਦ ਵਿੱਚ ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>ਇੱਕ ਸਰਵਰ URL ਦਰਜ ਕਰੋ ਜੋ http:// ਜਾਂ https:// ਨਾਲ ਸ਼ੁਰੂ ਹੁੰਦਾ ਹੋਵੇ।</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>ਵਰਤੋਂਕਾਰ ਟੋਕਨ ਅਵੈਧ ਹੈ। ਇਸਦੀ ਜਾਂਚ ਕਰੋ ਅਤੇ ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz ਨੇ ਇੱਕ ਖਾਮੀ ਦਿੱਤੀ (HTTP {0})। ਬਾਅਦ ਵਿੱਚ ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>ListenBrainz ਨਾਲ ਕਨੈਕਟ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ। ਆਪਣੇ ਕਨੈਕਸ਼ਨ ਅਤੇ ਸਰਵਰ URL ਦੀ ਜਾਂਚ ਕਰੋ।</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi ਨੂੰ ਆਪਣਾ ਲਾਇਬ੍ਰੇਰੀ ਡਾਟਾ ਫ਼ੋਲਡਰ ਨਹੀਂ ਮਿਲਿਆ।</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>ਰਿਸਟੋਰ ਅਸਫ਼ਲ ਰਿਹਾ, ਅਤੇ ਤੁਹਾਡਾ ਪਿਛਲਾ ਡਾਟਾ ਪੂਰੀ ਤਰ੍ਹਾਂ ਬਹਾਲ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ। ਰਿਕਵਰੀ ਫ਼ਾਈਲਾਂ &apos;{0}&apos; 'ਤੇ ਸੰਭਾਲੀਆਂ ਗਈਆਂ ਸਨ।</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>ਚੁਣੀ ਗਈ ਫ਼ਾਈਲ ਇੱਕ ਵੈਧ Nagi ਬੈਕਅੱਪ ਨਹੀਂ ਹੈ।</value>
   </data>
 </root>

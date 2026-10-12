@@ -102,13 +102,13 @@
     <value>Raja number</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Mängimiskordade arv</value>
+    <value>Esituskorrad</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
-    <value>Laule</value>
+    <value>Laulud</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Esitajad</value>
+    <value>Artistid</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>Lugu</value>
@@ -148,10 +148,10 @@
     <value>{0} (Vanim)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Kasvavalt)</value>
+    <value>{0} (kasvavalt)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Kahanevalt)</value>
+    <value>{0} (kahanevalt)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>Lühimad enne</value>
@@ -169,7 +169,7 @@
     <value>Kõige rohkem {0}</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
-    <value>Kõige vähem {0}</value>
+    <value>Vähim {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Kausta {0}/{1} skaneerimine: {2} - {3}</value>
@@ -178,11 +178,11 @@
     <value>Skaneerimine lõpetatud. Lisatud või uuendatud {0} {1}.</value>
   </data>
   <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Salvestatakse partiid {0}...</value>
+    <value>Paketi {0} salvestamine…</value>
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Kausta skaneerimine...</value>
+    <value>Kausta skannimine…</value>
   </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Skaneerimine lõpetatud. Teek on ajakohane.</value>
@@ -194,16 +194,16 @@
     <value>Skaneerimine ebaõnnestus. Vaadake logidest lisateavet.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Skaneerimisvahemälude ettevalmistamine...</value>
+    <value>Kogu skannimise ettevalmistamine…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Loo üksikasjade lugemine...</value>
+    <value>Loo üksikasjade lugemine…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Teegi puhastamine...</value>
+    <value>Kogu puhastamine…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Lõpetamine...</value>
+    <value>Lõpetamine…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Helitugevuse normaliseerimine ebaõnnestus. Vaadake logidest lisateavet.</value>
@@ -216,7 +216,7 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Kausta lisamine ebaõnnestus.</value>
+    <value>Kausta ei saanud lisada.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Esitusloendi nimi ei tohi olla tühi.</value>
@@ -248,7 +248,15 @@
     <value>Sorteeri: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg on vajalik suure täpsusega helitugevuse normaliseerimiseks (ReplayGain analüüsiks), kuid seda ei leitud teie süsteemist.\n\nJärgige neid samme seadistamiseks:\n\n1. **Laadi alla**: Külastage aadressi https://www.gyan.dev/ffmpeg/builds/ ja laadige alla 'ffmpeg-git-full.7z' (või sarnane) essentials versioon.\n2. **Juhend**: Saate jälgida seda juhendit üksikasjalike juhiste saamiseks: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Paki lahti**: Avage arhitektuuri kaust ja leidke 'bin' kataloog, mis sisaldab `ffmpeg.exe`.\n4. **Paigalda**: Kopeerige `ffmpeg.exe` püsivasse kausta (nt `C:\ffmpeg\`) ja **lisage see kaust oma süsteemi PATH** keskkonnamuutujasse.\n5. **Taaskäivita**: Palun taaskäivitage Nagi pärast installimist, et muudatused jõustuksid.</value>
+    <value>FFmpeg on vajalik lugude analüüsimiseks helitugevuse normaliseerimise jaoks, kuid Nagi ei leidnud seda.
+
+1. Laadi Windowsi versioon alla aadressilt https://ffmpeg.org/download.html.
+2. Paki arhiiv lahti ja leia selle bin-kaustast ffmpeg.exe.
+3. Lisa ffmpeg.exe-t sisaldav kaust oma Windowsi PATH-i.
+4. Taaskäivita Nagi ja lülita helitugevuse normaliseerimine uuesti sisse.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>Esitusloend loodi, kuid selle lugusid ei saanud lisada. Palun proovi uuesti importida.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Teie teegist ei leitud ühtegi laulu esitusloendist.</value>
@@ -293,12 +301,39 @@
     <value>Kõigil lugudel on juba helitugevuse andmed.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Arvutatakse helitugevust {0} laulu jaoks...</value>
+    <value>Helitugevuse analüüsimine… Lood: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Arvutatakse helitugevuse normaliseerimist ({0}/{1})...</value>
+    <value>Helitugevuse normaliseerimise arvutamine ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Helitugevuse normaliseerimine lõpetatud. Töödeldud {0} laulu.</value>
+    <value>Helitugevuse normaliseerimine on valmis. Töödeldud lood: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Sisesta oma ListenBrainz-i kasutajatoken.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>ListenBrainz-i vastust ei saanud lugeda. Proovi hiljem uuesti.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Sisesta serveri URL, mis algab eesliitega http:// või https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Kasutajatoken on vigane. Kontrolli seda ja proovi uuesti.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz tagastas veateate (HTTP {0}). Proovi hiljem uuesti.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>ListenBrainz-iga ei saanud ühendust luua. Kontrolli oma ühendust ja serveri URL-i.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi ei leidnud oma kogu andmekausta.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Taastamine ebaõnnestus ja sinu varasemaid andmeid ei saanud täielikult taastada. Taastefailid salvestati asukohta &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Valitud fail ei ole kehtiv Nagi varukoopia.</value>
   </data>
 </root>

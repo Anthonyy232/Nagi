@@ -76,6 +76,9 @@
   <data name="NavItem_Folders" xml:space="preserve">
     <value>フォルダー</value>
   </data>
+  <data name="NavItem_Favorites" xml:space="preserve">
+    <value>お気に入り</value>
+  </data>
   <data name="NavItem_Insights" xml:space="preserve">
     <value>インサイト</value>
   </data>
@@ -83,7 +86,7 @@
     <value>設定</value>
   </data>
   <data name="Status_NoTrackPlaying" xml:space="preserve">
-    <value>再生中のトラックはありません</value>
+    <value>再生中の曲はありません</value>
   </data>
   <data name="Tooltip_Play" xml:space="preserve">
     <value>再生</value>
@@ -122,7 +125,7 @@
     <value>ダーク</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">
-    <value>システム設定を使用</value>
+    <value>システム設定に従う</value>
   </data>
   <data name="Backdrop_Mica" xml:space="preserve">
     <value>ミカ</value>
@@ -141,6 +144,39 @@
   </data>
   <data name="Label_Rating" xml:space="preserve">
     <value>評価</value>
+  </data>
+  <data name="Label_Grouping" xml:space="preserve">
+    <value>グループ化</value>
+  </data>
+  <data name="Label_SkipCount" xml:space="preserve">
+    <value>スキップ回数</value>
+  </data>
+  <data name="Label_DiscNumber" xml:space="preserve">
+    <value>ディスク番号</value>
+  </data>
+  <data name="Label_Bitrate" xml:space="preserve">
+    <value>ビットレート</value>
+  </data>
+  <data name="Label_SampleRate" xml:space="preserve">
+    <value>サンプルレート</value>
+  </data>
+  <data name="Label_IsLoved" xml:space="preserve">
+    <value>お気に入り</value>
+  </data>
+  <data name="Label_HasLyrics" xml:space="preserve">
+    <value>歌詞あり</value>
+  </data>
+  <data name="Operator_IsInRange" xml:space="preserve">
+    <value>範囲内（境界値を含む）</value>
+  </data>
+  <data name="Operator_IsAfter" xml:space="preserve">
+    <value>指定日時より後</value>
+  </data>
+  <data name="Operator_IsBefore" xml:space="preserve">
+    <value>指定日時より前</value>
+  </data>
+  <data name="SmartPlaylist_UpperBound_Placeholder" xml:space="preserve">
+    <value>最大値</value>
   </data>
   <data name="Operator_Contains" xml:space="preserve">
     <value>を含む</value>
@@ -179,10 +215,10 @@
     <value>以下</value>
   </data>
   <data name="Operator_IsInTheLast" xml:space="preserve">
-    <value>最後の（日数）以内</value>
+    <value>指定日数以内（日）</value>
   </data>
   <data name="Operator_IsNotInTheLast" xml:space="preserve">
-    <value>最後の（日数）以外</value>
+    <value>指定日数以内ではない（日）</value>
   </data>
   <data name="Operator_IsTrue" xml:space="preserve">
     <value>真</value>
@@ -194,31 +230,31 @@
     <value>新しいスマートプレイリスト</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>スマートプレイリストを編集 - {0}</value>
+    <value>スマート プレイリストの編集: {0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
     <value>プレイリスト名を入力してください</value>
   </data>
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
-    <value>現在設定されているルールに一致する曲が{0}件あります</value>
+    <value>一致する曲: {0:N0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>一致する曲を表示するには名前を入力してください</value>
+    <value>一致する曲を表示するにはプレイリスト名を入力してください</value>
   </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
-    <value>計算できません</value>
+    <value>一致する曲の数を計算できませんでした</value>
   </data>
   <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
-    <value>計算中...</value>
+    <value>計算中…</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>この名前のプレイリストはすでに存在します！</value>
+    <value>この名前のプレイリストは既に存在します。</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>名前を入力してください！</value>
+    <value>プレイリスト名を入力してください。</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
-    <value>読み込み中...</value>
+    <value>読み込み中…</value>
   </data>
   <data name="Error_FailedToLoadArtists" xml:space="preserve">
     <value>アーティストの読み込みに失敗しました</value>
@@ -227,13 +263,15 @@
     <value>致命的なエラー</value>
   </data>
   <data name="CrashReport_Message" xml:space="preserve">
-    <value>Nagiは致命的なエラーが発生したため、終了する必要があります。ご不便をおかけして申し訳ありません。</value>
+    <value>Nagi でエラーが発生したため、終了する必要があります。</value>
   </data>
   <data name="ElevationWarning_Title" xml:space="preserve">
     <value>管理者として実行中</value>
   </data>
   <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagiは現在、管理者として実行されています。これにより、一部の機能（音楽フォルダーの追加など）が正しく動作しない可能性があります。最適なエクスペリエンスを得るには、管理者権限なしでNagiを再起動してください。</value>
+    <value>Nagiは現在、管理者として実行されています。これにより、一部の機能（音楽フォルダーの追加など）が正しく動作しない可能性があります。
+
+最適なエクスペリエンスを得るには、管理者権限なしでNagiを再起動してください。</value>
   </data>
   <data name="ElevationWarning_Restart" xml:space="preserve">
     <value>通常起動</value>
@@ -293,16 +331,16 @@
     <value>このフォルダーはすでにライブラリにあります。</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
-    <value>ライブラリにフォルダーを追加中...</value>
+    <value>フォルダーをライブラリに追加中…</value>
   </data>
   <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>'{0}'を削除しました。</value>
+    <value>ライブラリから &apos;{0}&apos; を削除しました。</value>
   </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
-    <value>'{0}'の削除に失敗しました。</value>
+    <value>ライブラリから &apos;{0}&apos; を削除できませんでした。</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
-    <value>'{0}'を削除中...</value>
+    <value>ライブラリから &apos;{0}&apos; を削除中…</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
     <value>'{0}'の再スキャンが完了しました。</value>
@@ -311,7 +349,7 @@
     <value>'{0}'の変更は検出されませんでした。</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
-    <value>'{0}'を再スキャン中...</value>
+    <value>'{0}' を再スキャン中…</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
     <value>音楽のあるフォルダーが見つかりません。</value>
@@ -326,7 +364,7 @@
     <value>フォルダーの追加エラー: {0}</value>
   </data>
   <data name="Folders_Error_DeleteFolder" xml:space="preserve">
-    <value>フォルダーの削除エラー: {0}</value>
+    <value>ライブラリからフォルダーを削除できませんでした: {0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>フォルダーの再スキャンエラー: {0}</value>
@@ -377,10 +415,10 @@
     <value>まず、音楽ライブラリを設定しましょう。</value>
   </data>
   <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>フォルダーの選択をお待ちしています...</value>
+    <value>フォルダーの選択を待っています…</value>
   </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
-    <value>ライブラリを構築中...</value>
+    <value>ライブラリを構築中…</value>
   </data>
   <data name="Onboarding_Error" xml:space="preserve">
     <value>予期せぬエラーが発生しました。もう一度お試しください。</value>
@@ -401,7 +439,7 @@
     <value>プレイリストの読み込みエラー</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>プレイリストを開始中...</value>
+    <value>プレイリストを開始中…</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>このスマートプレイリストのルールに一致する曲はありません。</value>
@@ -410,7 +448,7 @@
     <value>このプレイリストの再生を開始できませんでした。</value>
   </data>
   <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>ランダムなプレイリストを選択中...</value>
+    <value>ランダムにプレイリストを選択中…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>プレイリストが見つかりません。</value>
@@ -422,13 +460,13 @@
     <value>ランダムプレイリストの再生エラー。</value>
   </data>
   <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>プレイリストを読み込み中...</value>
+    <value>プレイリストを読み込み中…</value>
   </data>
   <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
     <value>プレイリストの読み込みエラー。</value>
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>新しいプレイリストを作成中...</value>
+    <value>新しいプレイリストを作成中…</value>
   </data>
   <data name="Playlist_Status_CreateFailed" xml:space="preserve">
     <value>プレイリストの作成に失敗しました。すでに存在している可能性があります。</value>
@@ -437,7 +475,7 @@
     <value>プレイリストの作成中にエラーが発生しました。</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>プレイリストカバーを更新中...</value>
+    <value>プレイリストのカバーを更新中…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>プレイリストカバーの更新に失敗しました。</value>
@@ -446,7 +484,7 @@
     <value>プレイリストカバーの更新中にエラーが発生しました。</value>
   </data>
   <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>プレイリスト画像を削除中...</value>
+    <value>プレイリストの画像を削除中…</value>
   </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>プレイリスト画像の削除に失敗しました。</value>
@@ -455,7 +493,7 @@
     <value>プレイリスト画像の削除中にエラーが発生しました。</value>
   </data>
   <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>プレイリスト名を変更中...</value>
+    <value>プレイリスト名を変更中…</value>
   </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>プレイリスト名の変更に失敗しました。</value>
@@ -464,7 +502,7 @@
     <value>プレイリスト名の変更中にエラーが発生しました。</value>
   </data>
   <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>プレイリストを削除中...</value>
+    <value>プレイリストを削除中…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>プレイリストの削除に失敗しました。</value>
@@ -512,7 +550,9 @@
     <value>エクスポート成功</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>{0}個のプレイリスト（合計{1}曲）を以下にエクスポートしました:\n{2}</value>
+    <value>エクスポートされたプレイリスト: {0}
+曲数: {1}
+保存先: {2}</value>
   </data>
   <data name="Settings_Export_Failed_Title" xml:space="preserve">
     <value>エクスポート失敗</value>
@@ -521,13 +561,18 @@
     <value>インポート成功</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>{0}個のプレイリスト（{1}曲）のインポートに成功しました。</value>
+    <value>インポートされたプレイリスト: {0}
+曲数: {1}</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
-    <value>\n\n{0}曲がライブラリで見つかりませんでした。</value>
+    <value>
+
+ライブラリで見つからなかった曲: {0}。</value>
   </data>
   <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
-    <value>\n\n{0}ファイルのインポートに失敗しました。</value>
+    <value>
+
+インポートできなかったファイル: {0}。</value>
   </data>
   <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
     <value>インポート失敗</value>
@@ -596,10 +641,10 @@
     <value>FFmpegが検出されませんでした。FFmpegをインストールし、「再確認」をクリックしてください。</value>
   </data>
   <data name="FFmpeg_Status_Checking" xml:space="preserve">
-    <value>FFmpegを確認中...</value>
+    <value>FFmpeg を確認中…</value>
   </data>
   <data name="FFmpeg_Status_Detected" xml:space="preserve">
-    <value>FFmpegを検出しました！</value>
+    <value>FFmpeg が検出されました。</value>
   </data>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpegはまだ検出されていません。FFmpegをインストールし、「再確認」をクリックしてください。</value>
@@ -770,7 +815,7 @@
     <value>フォルダーを削除</value>
   </data>
   <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
-    <value>フォルダー'{0}'をライブラリから削除してもよろしいですか？これにより、コンピューターからファイルが削除されることはありません。</value>
+    <value>ライブラリから &apos;{0}&apos; を削除しますか？音声ファイルはコンピューター上に残ります。</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>削除</value>
@@ -812,10 +857,10 @@
     <value>プレイリストを検索</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>新しいプレイリスト名を入力</value>
+    <value>プレイリスト名を入力</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
-    <value>画像を選択</value>
+    <value>カバーを選択</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
     <value>新しいプレイリストを作成</value>
@@ -851,7 +896,7 @@
     <value>検索を閉じる</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>ライブラリを検索</value>
+    <value>ジャンル内を検索</value>
   </data>
   <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>利用可能なプレイリストはありません</value>
@@ -872,13 +917,13 @@
     <value>メタデータを再スキャン</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>これにより、ライブラリ内のすべての曲が再スキャンされ、新しいメタデータ設定（アーティストの分割文字など）が適用されます。ライブラリのサイズによっては時間がかかる場合があります。続行しますか？</value>
+    <value>アーティストの分割などのメタデータ設定を適用するためにライブラリを再スキャンします。ライブラリが大きい場合、これにはしばらく時間がかかることがあります。続行しますか？</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
     <value>再スキャン</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
-    <value>ライブラリの再スキャンを準備中...</value>
+    <value>ライブラリの再スキャンを準備中…</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
     <value>再スキャン完了</value>
@@ -899,13 +944,17 @@
     <value>音量ノーマライゼーションを有効にする</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
-    <value>音量ノーマライゼーション (ReplayGain) により、すべての音楽で一貫した音量レベルが保証されます。\n\nこれにより、音楽ライブラリが分析され、ReplayGainタグを書き込むことによってオーディオファイルが直接変更されます。既存のタグがないファイルのみが処理されます。ライブラリのサイズによっては時間がかかる場合があります。\n\n続行しますか？</value>
+    <value>音量ノーマライゼーション (ReplayGain) により、すべての音楽で一貫した音量レベルが保証されます。
+
+これにより、音楽ライブラリが分析され、ReplayGainタグを書き込むことによってオーディオファイルが直接変更されます。既存のタグがないファイルのみが処理されます。ライブラリのサイズによっては時間がかかる場合があります。
+
+続行しますか？</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>有効にしてスキャン</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>音量ノーマライゼーションのスキャンを準備中...</value>
+    <value>音量平坦化スキャンを準備中…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
     <value>音量ノーマライゼーションのスキャンがキャンセルされました。</value>
@@ -914,7 +963,9 @@
     <value>スキャン中にエラーが発生しました: {0}</value>
   </data>
   <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>メモリからログを取得できませんでした。ログファイルの読み取りのフォールバック試行が失敗しました。\n予期されるパス: '{0}'\nエラー: {1}</value>
+    <value>メモリからログを取得できませんでした。ログファイルの読み取りのフォールバック試行が失敗しました。
+予期されるパス: '{0}'
+エラー: {1}</value>
   </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>エクスポートするプレイリストがありません。</value>
@@ -1040,7 +1091,7 @@
     <value>Nagi</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Nagiでローカルの音楽コレクションを再発見しましょう。Nagiは速度、シンプルさ、プライバシーに焦点を当てた音楽プレイヤーです。C#とWinUI 3で構築されており、クリーンでネイティブなFluent体験を提供します。美しく、効率的で、プライバシーを尊重します。</value>
+    <value>スピード、シンプルさ、プライバシーに特化した音楽プレーヤー Nagi で、ローカルの音楽コレクションを再発見しましょう。</value>
   </data>
   <data name="AppShortName" xml:space="preserve">
     <value>Nagi</value>
@@ -1070,58 +1121,58 @@
     <value>アルバムへ移動</value>
   </data>
   <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Drop files or folders onto the player to add them to the queue.</value>
+    <value>ファイルやフォルダーをプレイヤーにドロップしてキューに追加します。</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>次に再生</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
-    <value>Clear queue</value>
+    <value>キューを消去</value>
   </data>
   <data name="QueuePanel_DisplayOptions" xml:space="preserve">
-    <value>Queue display options</value>
+    <value>キューの表示オプション</value>
   </data>
   <data name="QueuePanel_Close" xml:space="preserve">
-    <value>Close queue</value>
+    <value>キューを閉じる</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
-    <value>Artist</value>
+    <value>アーティスト</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
-    <value>Duration</value>
+    <value>再生時間</value>
   </data>
   <data name="QueuePanel_ShowTrackCount" xml:space="preserve">
-    <value>Track count</value>
+    <value>トラック数</value>
   </data>
   <data name="QueuePanel_TrackCount" xml:space="preserve">
-    <value>Tracks: {0:N0}</value>
+    <value>トラック: {0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
-    <value>Queue position</value>
+    <value>キューの位置</value>
   </data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve">
-    <value>Genre</value>
+    <value>ジャンル</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
-    <value>Total duration</value>
+    <value>合計時間</value>
   </data>
   <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>再生</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
-    <value>Move up</value>
+    <value>上に移動</value>
   </data>
   <data name="QueuePanel_MoveDown" xml:space="preserve">
-    <value>Move down</value>
+    <value>下に移動</value>
   </data>
   <data name="QueuePanel_Remove" xml:space="preserve">
-    <value>Remove from queue</value>
+    <value>キューから削除</value>
   </data>
   <data name="AlbumPage_Title" xml:space="preserve">
     <value>アルバム</value>
   </data>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>アルバムを検索...</value>
+    <value>アルバムを検索…</value>
   </data>
   <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
     <value>アルバムを検索</value>
@@ -1145,7 +1196,7 @@
     <value>曲</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>アルバム内を検索...</value>
+    <value>アルバム内を検索…</value>
   </data>
   <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>アルバム内を検索</value>
@@ -1187,7 +1238,7 @@
     <value>アーティスト</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>アーティストを検索...</value>
+    <value>アーティストを検索…</value>
   </data>
   <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>アーティストを検索</value>
@@ -1229,7 +1280,7 @@
     <value>曲</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>アーティスト内を検索...</value>
+    <value>アーティスト内を検索…</value>
   </data>
   <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>アーティスト内を検索</value>
@@ -1286,7 +1337,7 @@
     <value>再スキャン</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>削除</value>
+    <value>ライブラリから削除</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>フォルダーがまだ追加されていません</value>
@@ -1331,7 +1382,7 @@
     <value>曲</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>フォルダー内を検索...</value>
+    <value>フォルダー内を検索…</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>フォルダー内を検索</value>
@@ -1352,7 +1403,7 @@
     <value>ジャンル</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>ジャンルを検索...</value>
+    <value>ジャンルを検索…</value>
   </data>
   <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
     <value>ジャンルを検索</value>
@@ -1373,7 +1424,7 @@
     <value>ライブラリ</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>ライブラリを検索...</value>
+    <value>ライブラリを検索…</value>
   </data>
   <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
     <value>ライブラリを検索</value>
@@ -1408,6 +1459,12 @@
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>再生</value>
   </data>
+  <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
+    <value>曲が見つかりませんでした</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+    <value>別のキーワードで検索してみてください</value>
+  </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
     <value>ライブラリは空です</value>
   </data>
@@ -1415,31 +1472,31 @@
     <value>設定でライブラリにフォルダーを追加してください</value>
   </data>
   <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
-    <value>このトラックの歌詞が見つかりません</value>
+    <value>この曲の歌詞が見つかりません</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
     <value>別の曲を試してください</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
-    <value>Edit or replace lyrics</value>
+    <value>歌詞の編集または置き換え</value>
   </data>
   <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
-    <value>Edit lyrics</value>
+    <value>歌詞を編集</value>
   </data>
   <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
-    <value>Paste plain text or timestamped LRC lyrics</value>
+    <value>プレーンテキストまたはタイムスタンプ付き LRC 歌詞を貼り付け</value>
   </data>
   <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
-    <value>Save</value>
+    <value>保存</value>
   </data>
   <data name="LyricsPage_EditLyrics_Remove" xml:space="preserve">
-    <value>Remove saved lyrics</value>
+    <value>保存された歌詞を削除</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
-    <value>Lyrics could not be updated</value>
+    <value>歌詞を更新できませんでした</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Nagi could not save the lyrics. Check the log for details and try again.</value>
+    <value>Nagi で歌詞を保存できませんでした。ログを確認してもう一度お試しください。</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Nagiへようこそ</value>
@@ -1454,7 +1511,7 @@
     <value>プレイリスト</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>プレイリストを検索...</value>
+    <value>プレイリストを検索…</value>
   </data>
   <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>プレイリストを検索</value>
@@ -1502,7 +1559,7 @@
     <value>曲</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>プレイリスト内を検索...</value>
+    <value>プレイリスト内を検索…</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>プレイリスト内を検索</value>
@@ -1550,7 +1607,7 @@
     <value>曲</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>ジャンル内を検索...</value>
+    <value>ジャンル内を検索…</value>
   </data>
   <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>ジャンル内を検索</value>
@@ -1604,40 +1661,40 @@
     <value>テーマ</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>アプリケーションのテーマを選択します。</value>
+    <value>ライト、ダーク、またはシステムのテーマを選択します。</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
     <value>アクセントカラー</value>
   </data>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
-    <value>デフォルトにリセット</value>
+    <value>デフォルトに戻す</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>ウィンドウマテリアル</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Description" xml:space="preserve">
-    <value>ウィンドウの背景マテリアルを選択します。</value>
+    <value>ウィンドウの背景素材を選択します。</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
     <value>動的テーマ設定</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>動的テーマ設定オプションを有効にして設定します。</value>
+    <value>現在のアルバム アートワークにアプリの色を合わせます。</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
-    <value>ウィンドウサイズを記憶</value>
+    <value>ウィンドウ サイズを記憶する</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Description" xml:space="preserve">
     <value>次回の起動時にメインウィンドウを以前のサイズに復元します。</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Header" xml:space="preserve">
-    <value>ウィンドウ位置を記憶</value>
+    <value>ウィンドウ 位置を記憶する</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Description" xml:space="preserve">
     <value>次回の起動時にメインウィンドウを以前の画面位置に復元します。</value>
   </data>
   <data name="SettingsPage_RememberNavState_Header" xml:space="preserve">
-    <value>ナビゲーションパネルの状態を記憶</value>
+    <value>ナビゲーション パネルの状態を記憶する</value>
   </data>
   <data name="SettingsPage_RememberNavState_Description" xml:space="preserve">
     <value>左側のナビゲーションパネルを開いたままにするか、閉じたままにするかを記憶します。</value>
@@ -1655,13 +1712,13 @@
     <value>音量正規化 (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>急な音量変化を避けるため、音量を標準レベル (-18 LUFS) に自動調整します。</value>
+    <value>ReplayGain を使用して曲間の音量差を減らします。</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
-    <value>WASAPI exclusive mode</value>
+    <value>WASAPI 排他モード</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+    <value>Windows オーディオデバイスを Nagi が独占的に制御します。他のアプリの音声が出なくなる場合があります。この設定を変更した後は Nagi を再起動してください。</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>再生/一時停止時のフェード</value>
@@ -1673,7 +1730,7 @@
     <value>オーディオイコライザー</value>
   </data>
   <data name="SettingsPage_ResetEqualizer_Content" xml:space="preserve">
-    <value>デフォルトにリセット</value>
+    <value>デフォルトに戻す</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>プリアンプ</value>
@@ -1685,55 +1742,55 @@
     <value>プレイヤーコントロールをカスタマイズ</value>
   </data>
   <data name="SettingsPage_ResetPlayerButtons_Content" xml:space="preserve">
-    <value>デフォルトにリセット</value>
+    <value>デフォルトに戻す</value>
   </data>
   <data name="SettingsPage_CustomizePlayer_Instructions" xml:space="preserve">
     <value>ホバーして表示/非表示を切り替えます。ドラッグして並べ替えます。区切り線は中央と右のコントロールを分離します。</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Header" xml:space="preserve">
-    <value>折りたたみ可能なプレイヤー</value>
+    <value>折りたたみ可能なプレーヤー</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>プレイヤーバーをアニメーションで展開・折りたたみます。</value>
+    <value>カーソルを合わせるとプレーヤー バーを展開します。</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
     <value>再生状態を復元</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>次回の起動時に再開できるよう、現在の再生状態を保存します。</value>
+    <value>Nagi の起動時にキューと再生位置を復元します。</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
-    <value>起動時に自動起動</value>
+    <value>スタートアップ時に自動起動</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
     <value>コンピューターにログインしたときにNagiを自動的に起動します。</value>
   </data>
   <data name="SettingsPage_StartMinimized_Header" xml:space="preserve">
-    <value>最小化して起動</value>
+    <value>最小化状態で起動</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>起動時、アプリケーションウィンドウはデフォルトで最小化されます。</value>
+    <value>Nagi をウィンドウ最小化状態で起動します。</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
-    <value>ミニプレイヤーに最小化</value>
+    <value>ミニプレーヤーに最小化</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Description" xml:space="preserve">
     <value>最小化された場合、ウィンドウを隠す代わりにコンパクトなフローティングプレイヤーを表示します。</value>
   </data>
   <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
-    <value>システムトレイに隠す</value>
+    <value>システム トレイに格納</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>閉じられた場合、代わりにシステムトレイに隠します。</value>
+    <value>ウィンドウを閉じた際、Nagi をシステム トレイで実行し続けます。</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
-    <value>フライアウトにカバーアートを表示</value>
+    <value>フライアウトにカバー アートを表示</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
     <value>トレイアイコンをクリックしたときに表示されるコンパクトプレイヤーにカバーアートを表示します。</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
-    <value>ソート時に冠詞を無視する</value>
+    <value>並べ替え時に冠詞を無視</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
     <value>アルバム、アーティスト、曲を最初の意味のある単語でソートします (例：「The Beatles」は「B」でソートされます)。</value>
@@ -1760,10 +1817,10 @@
     <value>分割の変更を適用するためにライブラリを再スキャンします</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
-    <value>オンラインメタデータを取得</value>
+    <value>オンライン メタデータを取得</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>アーティストの画像やバイオグラフィーなどの追加情報をオンラインサービス（例：Spotify、Last.fm）から取得します。</value>
+    <value>オンライン ソースからアーティストの画像とバイオグラフィを取得します。</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>ソース</value>
@@ -1772,10 +1829,10 @@
     <value>メタデータソースをドラッグして並べ替えます。各ソースにカーソルを合わせると詳細が表示されます。</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Header" xml:space="preserve">
-    <value>オンライン歌詞を取得</value>
+    <value>オンラインで歌詞を取得</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>オンラインソースから見つからない歌詞を自動的に取得します。（プライバシー：トラックメタデータをサードパーティサービスに送信します）</value>
+    <value>不足している歌詞をオンライン ソースから取得します。これによりサードパーティ サービスに曲のメタデータが送信されます。</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
     <value>ソース</value>
@@ -1793,7 +1850,7 @@
     <value>言語パック</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>ローマ字化したい言語をインストールします。パックは署名されており、データのみで、ローカルに保存されます。</value>
+    <value>対応する歌詞をローマ字化するための言語パックをインストールします。パックはローカルに保存されます。</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
     <value>更新</value>
@@ -1832,19 +1889,19 @@
     <value>{0} ライセンス</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>プレイリストのエクスポート/インポート</value>
+    <value>プレイリストのインポートとエクスポート</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
     <value>プレイリストをM3Uファイルにエクスポートして他のプレイヤーで使用したり、M3UプレイリストをNagiにインポートしたりできます。</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
-    <value>すべてエクスポート...</value>
+    <value>すべてエクスポート…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
     <value>すべてのプレイリストをフォルダーにエクスポートします</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
-    <value>インポート...</value>
+    <value>インポート…</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
     <value>1つ以上のM3Uファイルをインポートします</value>
@@ -1880,7 +1937,7 @@
     <value>切断</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
-    <value>Scrobblingを有効にする</value>
+    <value>スクロブルを有効化</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Description" xml:space="preserve">
     <value>Nagiで聴いたトラックをLast.fmプロフィールに自動的に追加します。</value>
@@ -1889,7 +1946,7 @@
     <value>「再生中」を更新</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>Last.fmの友達に、現在聴いている曲をリアルタイムで表示します。</value>
+    <value>Last.fm プロフィールに現在再生中の曲を表示します。</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
     <value>ListenBrainz</value>
@@ -1904,7 +1961,7 @@
     <value>listenbrainz.org/settings からトークンを貼り付けてください</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TestConnection" xml:space="preserve">
-    <value>接続をテスト</value>
+    <value>接続テスト</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Connected" xml:space="preserve">
     <value>{0}として接続済み</value>
@@ -1913,7 +1970,7 @@
     <value>接続に失敗しました: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>再生履歴を送信（スクロブリング）</value>
+    <value>再生履歴を送信 (スクロブル)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
     <value>「再生中」の更新を送信</value>
@@ -1949,7 +2006,7 @@
     <value>曲</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>スマートプレイリスト内を検索...</value>
+    <value>スマート プレイリスト内を検索…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>スマートプレイリスト内を検索</value>
@@ -2030,7 +2087,7 @@
     <value>アプリケーションの言語</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>変更を適用するには再起動が必要です</value>
+    <value>言語の変更を適用するには Nagi を再起動してください。</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
     <value>再起動が必要です</value>
@@ -2045,7 +2102,7 @@
     <value>バックアップと復元</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>音楽ライブラリや設定のバックアップを作成したり、以前のバックアップから復元したりできます。</value>
+    <value>ライブラリのデータと設定のバックアップを作成するか、以前のバックアップを復元します。</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
     <value>バックアップを作成</value>
@@ -2057,7 +2114,7 @@
     <value>バックアップを作成しました</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>バックアップを正常に作成しました ({0:F2} MB): {1}</value>
+    <value>バックアップ ({0:F2} MB) を作成しました: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
     <value>バックアップに失敗しました</value>
@@ -2084,13 +2141,13 @@
     <value>復元が完了しました</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>バックアップが正常に復元されました。アプリを再起動します。</value>
+    <value>バックアップが復元されました。Nagi を再起動します。</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
     <value>復元に失敗しました</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>バックアップからの復元に失敗しました。データは変更されていません。</value>
+    <value>バックアップを復元できませんでした。</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
     <value>プレイヤーのスタイル設定</value>
@@ -2102,25 +2159,25 @@
     <value>ソリッド (不透明)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>フローティングプレイヤーの外観をカスタマイズします</value>
+    <value>プレーヤー バーの外観をカスタマイズします。</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
     <value>色合いの強度</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>プレイヤーの背景色の鮮やかさを調整します</value>
+    <value>プレーヤーの背景色の濃さを調整します。</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
     <value>フェードイン時間</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
-    <value>再生時のフェードイン効果の持続時間（ミリ秒）</value>
+    <value>再生再開時に音量がフェードインする時間を設定します。</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
     <value>フェードアウト時間</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
-    <value>一時停止時のフェードアウト効果の持続時間（ミリ秒）</value>
+    <value>再生一時停止時に音量がフェードアウトする時間を設定します。</value>
   </data>
   <data name="Settings_Nav_Insights" xml:space="preserve">
     <value>インサイト</value>
@@ -2132,10 +2189,10 @@
     <value>総再生時間</value>
   </data>
   <data name="InsightsPage_UniqueSongs" xml:space="preserve">
-    <value>ユニークな曲</value>
+    <value>ユニークな曲数</value>
   </data>
   <data name="InsightsPage_PeakHour" xml:space="preserve">
-    <value>ピーク時間</value>
+    <value>ピーク時間帯</value>
   </data>
   <data name="InsightsPage_MostActiveDay" xml:space="preserve">
     <value>最もアクティブな日</value>
@@ -2162,7 +2219,7 @@
     <value>音楽を再生して、ここにインサイトを表示しましょう</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
-    <value>{0} 回再生</value>
+    <value>再生回数: {0}</value>
   </data>
   <data name="InsightsPage_Source_Albums" xml:space="preserve">
     <value>アルバム</value>
@@ -2222,7 +2279,7 @@
     <value>再生時間</value>
   </data>
   <data name="PaginationControl_All" xml:space="preserve">
-    <value>All</value>
+    <value>すべて</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>1ページあたりの項目数:</value>
@@ -2246,19 +2303,19 @@
     <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
-    <value>過去1日</value>
+    <value>過去 1 日</value>
   </data>
   <data name="Insights_TimeRange_Last7Days" xml:space="preserve">
-    <value>過去7日</value>
+    <value>過去 7 日間</value>
   </data>
   <data name="Insights_TimeRange_Last30Days" xml:space="preserve">
-    <value>過去30日</value>
+    <value>過去 30 日間</value>
   </data>
   <data name="Insights_TimeRange_Last90Days" xml:space="preserve">
-    <value>過去90日</value>
+    <value>過去 90 日間</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>過去1年</value>
+    <value>昨年</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>全期間</value>
@@ -2268,5 +2325,167 @@
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
     <value>{0}分 {1}秒</value>
+  </data>
+  <data name="QueuePanel_EmptyTitle" xml:space="preserve">
+    <value>キューは空です</value>
+  </data>
+  <data name="QueuePanel_EmptyDescription" xml:space="preserve">
+    <value>音楽を再生するか、ここに音声ファイルをドロップしてキューを作成します。</value>
+  </data>
+  <data name="QueuePanel_LoadError" xml:space="preserve">
+    <value>一部の曲を読み込めませんでした。キューを再度読み込むには「再試行」を選択してください。</value>
+  </data>
+  <data name="QueuePanel_Retry" xml:space="preserve">
+    <value>再試行</value>
+  </data>
+  <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
+    <value>新しいプレイリストの順序を保存できませんでした。もう一度お試しください。</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
+    <value>音声出力デバイス</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Description" xml:space="preserve">
+    <value>Nagi が音楽を再生する出力先を選択します。</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Default" xml:space="preserve">
+    <value>システム設定に従う</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Unavailable" xml:space="preserve">
+    <value>保存されたデバイスは利用できません。システム設定に従います。</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
+    <value>音声出力を更新できませんでした。もう一度試すか、別のデバイスを選択してください。</value>
+  </data>
+  <data name="Listening_Random" xml:space="preserve">
+    <value>シャッフル</value>
+  </data>
+  <data name="Listening_MoreVariety" xml:space="preserve">
+    <value>バラエティ重視</value>
+  </data>
+  <data name="Listening_Rediscover" xml:space="preserve">
+    <value>再発見</value>
+  </data>
+  <data name="Listening_Unheard" xml:space="preserve">
+    <value>未再生</value>
+  </data>
+  <data name="Listening_PlayFor" xml:space="preserve">
+    <value>指定時間再生…</value>
+  </data>
+  <data name="Listening_Minutes" xml:space="preserve">
+    <value>分</value>
+  </data>
+  <data name="Listening_ShuffleMode" xml:space="preserve">
+    <value>ミックスの種類</value>
+  </data>
+  <data name="Listening_AvoidRecentDays" xml:space="preserve">
+    <value>最近再生した曲を回避（日数）</value>
+  </data>
+  <data name="Listening_MoreOptions" xml:space="preserve">
+    <value>その他のオプション</value>
+  </data>
+  <data name="Listening_PlayForDescription" xml:space="preserve">
+    <value>選択した時間内に収まるように、曲単位でキューを作成します。</value>
+  </data>
+  <data name="Listening_NoMixTitle" xml:space="preserve">
+    <value>このミックスに該当する曲がありません</value>
+  </data>
+  <data name="Listening_NoMixDescription" xml:space="preserve">
+    <value>このリストには条件を満たす曲がありません。別のミックスまたは曲リストをお試しください。</value>
+  </data>
+  <data name="Listening_Favorites" xml:space="preserve">
+    <value>お気に入り</value>
+  </data>
+  <data name="Listening_AddFavorite" xml:space="preserve">
+    <value>お気に入りに追加</value>
+  </data>
+  <data name="Listening_RemoveFavorite" xml:space="preserve">
+    <value>お気に入りから削除</value>
+  </data>
+  <data name="Listening_SleepTimer" xml:space="preserve">
+    <value>スリープ タイマー</value>
+  </data>
+  <data name="Listening_FinishTrack" xml:space="preserve">
+    <value>タイマー終了時に現在の曲の再生を最後まで行う</value>
+  </data>
+  <data name="Listening_StopAfterTrack" xml:space="preserve">
+    <value>この曲が終わったら停止</value>
+  </data>
+  <data name="Listening_StopAtQueueEnd" xml:space="preserve">
+    <value>キューの最後で停止</value>
+  </data>
+  <data name="Listening_StopPlayback" xml:space="preserve">
+    <value>再生を停止</value>
+  </data>
+  <data name="Listening_CustomTimer" xml:space="preserve">
+    <value>カスタム タイマー…</value>
+  </data>
+  <data name="Listening_Timer15" xml:space="preserve">
+    <value>15 分後</value>
+  </data>
+  <data name="Listening_Timer30" xml:space="preserve">
+    <value>30 分後</value>
+  </data>
+  <data name="Listening_Timer60" xml:space="preserve">
+    <value>60 分後</value>
+  </data>
+  <data name="Listening_CancelStop" xml:space="preserve">
+    <value>停止スケジュールのキャンセル</value>
+  </data>
+  <data name="Listening_TimerRemaining" xml:space="preserve">
+    <value>{0} 後に停止</value>
+  </data>
+  <data name="Listening_PlayerOptions" xml:space="preserve">
+    <value>プレーヤー オプション</value>
+  </data>
+  <data name="Listening_RecentlyPlayed" xml:space="preserve">
+    <value>最近再生した曲</value>
+  </data>
+  <data name="Listening_HistorySearch" xml:space="preserve">
+    <value>再生履歴を検索</value>
+  </data>
+  <data name="Listening_HistoryEmpty" xml:space="preserve">
+    <value>再生履歴はまだありません</value>
+  </data>
+  <data name="Listening_HistoryLoadError" xml:space="preserve">
+    <value>「最近再生した曲」を読み込めませんでした。「再試行」を選択してもう一度お試しください。</value>
+  </data>
+  <data name="Listening_Today" xml:space="preserve">
+    <value>今日</value>
+  </data>
+  <data name="Listening_Yesterday" xml:space="preserve">
+    <value>昨日</value>
+  </data>
+  <data name="Listening_RediscoveryReason" xml:space="preserve">
+    <value>最終再生日: {0:d}</value>
+  </data>
+  <data name="Listening_RediscoveryTitle" xml:space="preserve">
+    <value>もう一度聴きたい曲</value>
+  </data>
+  <data name="Listening_Dismiss" xml:space="preserve">
+    <value>閉じる</value>
+  </data>
+  <data name="Listening_ActionError" xml:space="preserve">
+    <value>操作を完了できませんでした。もう一度お試しください。</value>
+  </data>
+  <data name="Listening_FavoritesEmpty" xml:space="preserve">
+    <value>お気に入りはまだありません</value>
+  </data>
+  <data name="Listening_FavoritesEmptyDescription" xml:space="preserve">
+    <value>メニューから曲をお気に入りに追加するか、曲を選択して Ctrl+D キーを押します。</value>
+  </data>
+  <data name="Listening_VarietyDescription" xml:space="preserve">
+    <value>「バラエティ重視」では、最近再生された期間内の曲を避け、可能な限り同一アーティストの曲が連続しないように配置します。</value>
+  </data>
+  <data name="Listening_RediscoverDescription" xml:space="preserve">
+    <value>「再発見」では、Nagi で再生記録があり、最後に再生してから 30 日以上経過している曲を使用します。</value>
+  </data>
+  <data name="Listening_UnheardDescription" xml:space="preserve">
+    <value>「未再生」では、Nagi での再生記録がない曲を使用します。</value>
+  </data>
+  <data name="Listening_HistoryNoMatches" xml:space="preserve">
+    <value>検索に一致する再生履歴はありません</value>
+  </data>
+  <data name="Listening_NoTimedMixDescription" xml:space="preserve">
+    <value>このリストには、ミックスの条件を満たし、指定された時間内に収まる曲がありません。再生時間を長くするか、別のミックスまたは曲リストをお試しください。</value>
   </data>
 </root>

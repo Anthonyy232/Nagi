@@ -76,6 +76,9 @@
   <data name="NavItem_Folders" xml:space="preserve">
     <value>Mape</value>
   </data>
+  <data name="NavItem_Favorites" xml:space="preserve">
+    <value>Omiljeno</value>
+  </data>
   <data name="NavItem_Insights" xml:space="preserve">
     <value>Uvidi</value>
   </data>
@@ -83,7 +86,7 @@
     <value>Postavke</value>
   </data>
   <data name="Status_NoTrackPlaying" xml:space="preserve">
-    <value>Nijedna pjesma se ne reproducira</value>
+    <value>Ne reproducira se nijedna pjesma</value>
   </data>
   <data name="Tooltip_Play" xml:space="preserve">
     <value>Reproduciraj</value>
@@ -122,7 +125,7 @@
     <value>Tamno</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">
-    <value>Koristi postavku sustava</value>
+    <value>Zadano sustavom</value>
   </data>
   <data name="Backdrop_Mica" xml:space="preserve">
     <value>Mica</value>
@@ -141,6 +144,39 @@
   </data>
   <data name="Label_Rating" xml:space="preserve">
     <value>Ocjena</value>
+  </data>
+  <data name="Label_Grouping" xml:space="preserve">
+    <value>Grupiranje</value>
+  </data>
+  <data name="Label_SkipCount" xml:space="preserve">
+    <value>Broj preskakanja</value>
+  </data>
+  <data name="Label_DiscNumber" xml:space="preserve">
+    <value>Broj diska</value>
+  </data>
+  <data name="Label_Bitrate" xml:space="preserve">
+    <value>Brzina prijenosa</value>
+  </data>
+  <data name="Label_SampleRate" xml:space="preserve">
+    <value>Frekvencija uzorkovanja</value>
+  </data>
+  <data name="Label_IsLoved" xml:space="preserve">
+    <value>Omiljeno</value>
+  </data>
+  <data name="Label_HasLyrics" xml:space="preserve">
+    <value>Ima tekst</value>
+  </data>
+  <data name="Operator_IsInRange" xml:space="preserve">
+    <value>Je između (uključujući)</value>
+  </data>
+  <data name="Operator_IsAfter" xml:space="preserve">
+    <value>Je nakon</value>
+  </data>
+  <data name="Operator_IsBefore" xml:space="preserve">
+    <value>Je prije</value>
+  </data>
+  <data name="SmartPlaylist_UpperBound_Placeholder" xml:space="preserve">
+    <value>Maksimalna vrijednost</value>
   </data>
   <data name="Operator_Contains" xml:space="preserve">
     <value>Sadrži</value>
@@ -179,10 +215,10 @@
     <value>Najviše je</value>
   </data>
   <data name="Operator_IsInTheLast" xml:space="preserve">
-    <value>Je u zadnjih (dana)</value>
+    <value>Je unutar zadnjih (dana)</value>
   </data>
   <data name="Operator_IsNotInTheLast" xml:space="preserve">
-    <value>Nije u zadnjih (dana)</value>
+    <value>Nije unutar zadnjih (dana)</value>
   </data>
   <data name="Operator_IsTrue" xml:space="preserve">
     <value>Je točno</value>
@@ -194,31 +230,31 @@
     <value>Novi pametni popis pjesama</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>Uredi pametni popis pjesama - {0}</value>
+    <value>Uredi pametni popis pjesama: {0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
     <value>Unesite naziv popisa pjesama</value>
   </data>
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
-    <value>{0:N0} pjesama odgovara trenutnim pravilima</value>
+    <value>Odgovarajuće pjesme: {0:N0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Unesite naziv da biste vidjeli odgovarajuće pjesme</value>
+    <value>Unesite naziv popisa pjesama za prikaz odgovarajućih pjesama</value>
   </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
-    <value>Nije moguće izračunati</value>
+    <value>Prebrojavanje odgovarajućih pjesama nije uspjelo</value>
   </data>
   <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
-    <value>Izračunavam...</value>
+    <value>Izračunavanje…</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>Popis pjesama s ovim nazivom već postoji!</value>
+    <value>Popis pjesama s ovim nazivom već postoji.</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>Molimo unesite naziv!</value>
+    <value>Unesite naziv popisa pjesama.</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
-    <value>Učitavanje...</value>
+    <value>Učitavanje…</value>
   </data>
   <data name="Error_FailedToLoadArtists" xml:space="preserve">
     <value>Učitavanje izvođača nije uspjelo</value>
@@ -227,7 +263,7 @@
     <value>Kritična pogreška</value>
   </data>
   <data name="CrashReport_Message" xml:space="preserve">
-    <value>Nagi je naišao na kritičnu pogrešku i mora se zatvoriti. Ispričavamo se zbog neugodnosti.</value>
+    <value>Nagi je naišao na pogrešku i mora se zatvoriti.</value>
   </data>
   <data name="ElevationWarning_Title" xml:space="preserve">
     <value>Pokrenuto kao administrator</value>
@@ -295,16 +331,16 @@ Za najbolje iskustvo, molimo ponovno pokrenite Nagi bez administratorskih ovlast
     <value>Ova mapa je već u knjižnici.</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
-    <value>Dodajem mapu u knjižnicu...</value>
+    <value>Dodavanje mape u biblioteku…</value>
   </data>
   <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Uspješno izbrisano '{0}'.</value>
+    <value>Stavka &apos;{0}&apos; uklonjena je iz vaše biblioteke.</value>
   </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
-    <value>Brisanje '{0}' nije uspjelo.</value>
+    <value>Uklanjanje &apos;{0}&apos; iz vaše biblioteke nije uspjelo.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
-    <value>Brišem '{0}'...</value>
+    <value>Uklanjanje &apos;{0}&apos; iz vaše biblioteke…</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
     <value>Ponovno skeniranje '{0}' završeno.</value>
@@ -313,7 +349,7 @@ Za najbolje iskustvo, molimo ponovno pokrenite Nagi bez administratorskih ovlast
     <value>Nisu otkrivene promjene za '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
-    <value>Ponovno skeniram '{0}'...</value>
+    <value>Ponovno skeniranje '{0}'…</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
     <value>Nisu pronađene mape s glazbom.</value>
@@ -328,7 +364,7 @@ Za najbolje iskustvo, molimo ponovno pokrenite Nagi bez administratorskih ovlast
     <value>Pogreška pri dodavanju mape: {0}</value>
   </data>
   <data name="Folders_Error_DeleteFolder" xml:space="preserve">
-    <value>Pogreška pri brisanju mape: {0}</value>
+    <value>Uklanjanje mape iz biblioteke nije uspjelo: {0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Pogreška pri ponovnom skeniranju mape: {0}</value>
@@ -379,10 +415,10 @@ Za najbolje iskustvo, molimo ponovno pokrenite Nagi bez administratorskih ovlast
     <value>Postavimo vašu glazbenu knjižnicu za početak.</value>
   </data>
   <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>Čekam da odaberete mapu...</value>
+    <value>Čekanje na odabir mape…</value>
   </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
-    <value>Izgrađujem vašu knjižnicu...</value>
+    <value>Izgradnja vaše biblioteke…</value>
   </data>
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Dogodila se neočekivana pogreška. Molimo pokušajte ponovo.</value>
@@ -403,7 +439,7 @@ Za najbolje iskustvo, molimo ponovno pokrenite Nagi bez administratorskih ovlast
     <value>Pogreška pri učitavanju popisa pjesama</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Pokrećem popis pjesama...</value>
+    <value>Pokretanje popisa pjesama…</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Nijedna pjesma ne odgovara pravilima ovog pametnog popisa pjesama.</value>
@@ -412,7 +448,7 @@ Za najbolje iskustvo, molimo ponovno pokrenite Nagi bez administratorskih ovlast
     <value>Pogreška pri pokretanju reprodukcije za ovaj popis pjesama.</value>
   </data>
   <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Odabirem nasumičan popis pjesama...</value>
+    <value>Odabir nasumičnog popisa pjesama…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Nije pronađen nijedan popis pjesama.</value>
@@ -424,13 +460,13 @@ Za najbolje iskustvo, molimo ponovno pokrenite Nagi bez administratorskih ovlast
     <value>Pogreška pri reprodukciji nasumičnog popisa pjesama.</value>
   </data>
   <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Učitavam popise pjesama...</value>
+    <value>Učitavanje popisa pjesama…</value>
   </data>
   <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
     <value>Pogreška pri učitavanju popisa pjesama.</value>
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Stvaram novi popis pjesama...</value>
+    <value>Stvaranje novog popisa pjesama…</value>
   </data>
   <data name="Playlist_Status_CreateFailed" xml:space="preserve">
     <value>Stvaranje popisa pjesama nije uspjelo. Možda već postoji.</value>
@@ -439,7 +475,7 @@ Za najbolje iskustvo, molimo ponovno pokrenite Nagi bez administratorskih ovlast
     <value>Došlo je do pogreške prilikom stvaranja popisa pjesama.</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Ažuriram naslovnicu popisa pjesama...</value>
+    <value>Ažuriranje naslovnice popisa pjesama…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Ažuriranje naslovnice popisa pjesama nije uspjelo.</value>
@@ -448,7 +484,7 @@ Za najbolje iskustvo, molimo ponovno pokrenite Nagi bez administratorskih ovlast
     <value>Došlo je do pogreške prilikom ažuriranja naslovnice popisa pjesama.</value>
   </data>
   <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Uklanjam sliku popisa pjesama...</value>
+    <value>Uklanjanje slike popisa pjesama…</value>
   </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Uklanjanje slike popisa pjesama nije uspjelo.</value>
@@ -457,7 +493,7 @@ Za najbolje iskustvo, molimo ponovno pokrenite Nagi bez administratorskih ovlast
     <value>Došlo je do pogreške prilikom uklanjanja slike popisa pjesama.</value>
   </data>
   <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Preimenujem popis pjesama...</value>
+    <value>Preimenovanje popisa pjesama…</value>
   </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Preimenovanje popisa pjesama nije uspjelo.</value>
@@ -466,7 +502,7 @@ Za najbolje iskustvo, molimo ponovno pokrenite Nagi bez administratorskih ovlast
     <value>Došlo je do pogreške prilikom preimenovanja popisa pjesama.</value>
   </data>
   <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Brišem popis pjesama...</value>
+    <value>Brisanje popisa pjesama…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Brisanje popisa pjesama nije uspjelo.</value>
@@ -514,8 +550,9 @@ Za najbolje iskustvo, molimo ponovno pokrenite Nagi bez administratorskih ovlast
     <value>Izvoz uspješan</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>Izvezeno {0} popisa pjesama ({1} ukupno pjesama) u:
-{2}</value>
+    <value>Izvezeni popisi pjesama: {0}
+Pjesme: {1}
+Spremljeno u: {2}</value>
   </data>
   <data name="Settings_Export_Failed_Title" xml:space="preserve">
     <value>Izvoz nije uspio</value>
@@ -524,17 +561,18 @@ Za najbolje iskustvo, molimo ponovno pokrenite Nagi bez administratorskih ovlast
     <value>Uvoz uspješan</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>Uspješno uvezeno {0} popisa pjesama ({1} pjesama).</value>
+    <value>Uvezeni popisi pjesama: {0}
+Pjesme: {1}</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
     <value>
 
-{0} pjesama nije pronađeno u vašoj knjižnici.</value>
+Pjesme koje nisu pronađene u vašoj biblioteci: {0}.</value>
   </data>
   <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
     <value>
 
-{0} datoteka nije uvezeno.</value>
+Datoteke koje nije bilo moguće uvesti: {0}.</value>
   </data>
   <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
     <value>Uvoz nije uspio</value>
@@ -588,7 +626,7 @@ Za najbolje iskustvo, molimo ponovno pokrenite Nagi bez administratorskih ovlast
     <value>U redu</value>
   </data>
   <data name="Generic_Cancel" xml:space="preserve">
-    <value>Poništi</value>
+    <value>Odustani</value>
   </data>
   <data name="Generic_Close" xml:space="preserve">
     <value>Zatvori</value>
@@ -603,10 +641,10 @@ Za najbolje iskustvo, molimo ponovno pokrenite Nagi bez administratorskih ovlast
     <value>FFmpeg nije otkriven. Molimo instalirajte FFmpeg i kliknite 'Ponovno provjeri'.</value>
   </data>
   <data name="FFmpeg_Status_Checking" xml:space="preserve">
-    <value>Provjeravam FFmpeg...</value>
+    <value>Provjera za FFmpeg…</value>
   </data>
   <data name="FFmpeg_Status_Detected" xml:space="preserve">
-    <value>FFmpeg otkriven!</value>
+    <value>FFmpeg je otkriven.</value>
   </data>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg još uvijek nije otkriven. Molimo instalirajte FFmpeg i kliknite 'Ponovno provjeri'.</value>
@@ -774,16 +812,16 @@ Za najbolje iskustvo, molimo ponovno pokrenite Nagi bez administratorskih ovlast
     <value>Nema dostupnih popisa pjesama</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
-    <value>Izbriši mapu</value>
+    <value>Ukloni mapu</value>
   </data>
   <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
-    <value>Jeste li sigurni da želite ukloniti mapu '{0}' iz knjižnice? Ovo neće izbrisati datoteke s vašeg računala.</value>
+    <value>Želite li ukloniti &apos;{0}&apos; iz biblioteke? Vaše zvučne datoteke ostat će na računalu.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
-    <value>Izbriši</value>
+    <value>Ukloni</value>
   </data>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Poništi</value>
+    <value>Odustani</value>
   </data>
   <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
     <value>Nepoznata mapa</value>
@@ -819,10 +857,10 @@ Za najbolje iskustvo, molimo ponovno pokrenite Nagi bez administratorskih ovlast
     <value>Pretraži popise pjesama</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>Unesite novi naziv popisa pjesama</value>
+    <value>Unesite naziv popisa pjesama</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
-    <value>Odaberi sliku</value>
+    <value>Odaberite naslovnicu</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
     <value>Stvori novi popis pjesama</value>
@@ -831,7 +869,7 @@ Za najbolje iskustvo, molimo ponovno pokrenite Nagi bez administratorskih ovlast
     <value>Stvori</value>
   </data>
   <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>Poništi</value>
+    <value>Odustani</value>
   </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
     <value>Preimenuj '{0}'</value>
@@ -858,7 +896,7 @@ Za najbolje iskustvo, molimo ponovno pokrenite Nagi bez administratorskih ovlast
     <value>Zatvori pretraživanje</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Pretraži knjižnicu</value>
+    <value>Traži u žanru</value>
   </data>
   <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Nema dostupnih popisa pjesama</value>
@@ -879,13 +917,13 @@ Za najbolje iskustvo, molimo ponovno pokrenite Nagi bez administratorskih ovlast
     <value>Ponovno skeniraj metapodatke</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>Ovo će ponovno skenirati sve pjesme u vašoj knjižnici kako bi se primijenile nove postavke metapodataka (poput znakova za razdvajanje izvođača). To može potrajati ovisno o veličini knjižnice. Želite li nastaviti?</value>
+    <value>Ponovno skenirajte biblioteku kako biste primijenili postavke metapodataka, poput razdvajanja izvođača. To može potrajati za velike biblioteke. Nastaviti?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
     <value>Ponovno skeniraj</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
-    <value>Pripremam ponovno skeniranje knjižnice...</value>
+    <value>Priprema ponovnog skeniranja biblioteke…</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
     <value>Ponovno skeniranje završeno</value>
@@ -916,7 +954,7 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
     <value>Omogući i skeniraj</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>Pripremam skeniranje normalizacije glasnoće...</value>
+    <value>Priprema skeniranja za normalizaciju glasnoće…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
     <value>Skeniranje normalizacije glasnoće je otkazano.</value>
@@ -1053,7 +1091,7 @@ Pogreška: {1}</value>
     <value>Nagi</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Ponovno otkrijte svoju lokalnu glazbenu kolekciju uz Nagi, glazbeni reproduktor fokusiran na brzinu, jednostavnost i privatnost. Nagi je izgrađen u C# i WinUI 3 kako bi ponudio čisto, izvorno Fluent iskustvo. Lijep je, učinkovit i poštuje vašu privatnost.</value>
+    <value>Ponovno otkrijte svoju lokalnu glazbenu zbirku uz Nagi, glazbeni reproduktor usmjeren na brzinu, jednostavnost i privatnost.</value>
   </data>
   <data name="AppShortName" xml:space="preserve">
     <value>Nagi</value>
@@ -1083,58 +1121,58 @@ Pogreška: {1}</value>
     <value>Idi na album</value>
   </data>
   <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Drop files or folders onto the player to add them to the queue.</value>
+    <value>Povucite datoteke ili mape na svirač kako biste ih dodali u red čekanja.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Sljedeće na redu</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
-    <value>Clear queue</value>
+    <value>Očisti red čekanja</value>
   </data>
   <data name="QueuePanel_DisplayOptions" xml:space="preserve">
-    <value>Queue display options</value>
+    <value>Opcije prikaza reda čekanja</value>
   </data>
   <data name="QueuePanel_Close" xml:space="preserve">
-    <value>Close queue</value>
+    <value>Zatvori red čekanja</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
-    <value>Artist</value>
+    <value>Izvođač</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
-    <value>Duration</value>
+    <value>Trajanje</value>
   </data>
   <data name="QueuePanel_ShowTrackCount" xml:space="preserve">
-    <value>Track count</value>
+    <value>Broj zapisa</value>
   </data>
   <data name="QueuePanel_TrackCount" xml:space="preserve">
-    <value>Tracks: {0:N0}</value>
+    <value>Zapisi: {0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
-    <value>Queue position</value>
+    <value>Položaj u redu čekanja</value>
   </data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve">
-    <value>Genre</value>
+    <value>Žanr</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
-    <value>Total duration</value>
+    <value>Ukupno trajanje</value>
   </data>
   <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Reproduciraj</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
-    <value>Move up</value>
+    <value>Pomakni gore</value>
   </data>
   <data name="QueuePanel_MoveDown" xml:space="preserve">
-    <value>Move down</value>
+    <value>Pomakni dolje</value>
   </data>
   <data name="QueuePanel_Remove" xml:space="preserve">
-    <value>Remove from queue</value>
+    <value>Ukloni iz reda čekanja</value>
   </data>
   <data name="AlbumPage_Title" xml:space="preserve">
     <value>Albumi</value>
   </data>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Pretraži albume...</value>
+    <value>Traži albume…</value>
   </data>
   <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Pretraži albume</value>
@@ -1158,7 +1196,7 @@ Pogreška: {1}</value>
     <value>Pjesme</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Pretraži u albumu...</value>
+    <value>Traži u albumu…</value>
   </data>
   <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Pretraži u albumu</value>
@@ -1179,13 +1217,13 @@ Pogreška: {1}</value>
     <value>Dodaj u red čekanja</value>
   </data>
   <data name="AlbumViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Dodaj na popis za reprodukciju</value>
+    <value>Dodaj na popis pjesama</value>
   </data>
   <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
     <value>Idi na izvođača</value>
   </data>
   <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Prikaži u istraživaču</value>
+    <value>Prikaži u File Exploreru</value>
   </data>
   <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Reproduciraj</value>
@@ -1200,7 +1238,7 @@ Pogreška: {1}</value>
     <value>Izvođači</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Pretraži izvođače...</value>
+    <value>Traži izvođače…</value>
   </data>
   <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Pretraži izvođače</value>
@@ -1242,7 +1280,7 @@ Pogreška: {1}</value>
     <value>Pjesme</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Pretraži kod izvođača...</value>
+    <value>Traži kod izvođača…</value>
   </data>
   <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Pretraži kod izvođača</value>
@@ -1263,13 +1301,13 @@ Pogreška: {1}</value>
     <value>Dodaj u red čekanja</value>
   </data>
   <data name="ArtistViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Dodaj na popis za reprodukciju</value>
+    <value>Dodaj na popis pjesama</value>
   </data>
   <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
     <value>Idi na album</value>
   </data>
   <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Prikaži u istraživaču</value>
+    <value>Prikaži u File Exploreru</value>
   </data>
   <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Reproduciraj</value>
@@ -1299,7 +1337,7 @@ Pogreška: {1}</value>
     <value>Ponovno skeniraj</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>Izbriši</value>
+    <value>Ukloni iz biblioteke</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Još nema dodanih mapa</value>
@@ -1311,7 +1349,7 @@ Pogreška: {1}</value>
     <value>Reproduciraj</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>Dodaj na popis za reprodukciju</value>
+    <value>Dodaj na popis pjesama</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_Play" xml:space="preserve">
     <value>Reproduciraj</value>
@@ -1323,7 +1361,7 @@ Pogreška: {1}</value>
     <value>Dodaj u red čekanja</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Dodaj na popis za reprodukciju</value>
+    <value>Dodaj na popis pjesama</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
     <value>Idi na album</value>
@@ -1332,7 +1370,7 @@ Pogreška: {1}</value>
     <value>Idi na izvođača</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Prikaži u istraživaču</value>
+    <value>Prikaži u File Exploreru</value>
   </data>
   <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Reproduciraj</value>
@@ -1344,7 +1382,7 @@ Pogreška: {1}</value>
     <value>Pjesme</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Pretraži u mapi...</value>
+    <value>Traži u mapi…</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Pretraži u mapi</value>
@@ -1365,7 +1403,7 @@ Pogreška: {1}</value>
     <value>Žanrovi</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Pretraži žanrove...</value>
+    <value>Traži žanrove…</value>
   </data>
   <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
     <value>Pretraži žanrove</value>
@@ -1383,10 +1421,10 @@ Pogreška: {1}</value>
     <value>Skenirajte svoju glazbenu biblioteku za popunjavanje žanrova</value>
   </data>
   <data name="LibraryPage_Title" xml:space="preserve">
-    <value>Biblioteka</value>
+    <value>Knjižnica</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Pretraži biblioteku...</value>
+    <value>Traži u biblioteci…</value>
   </data>
   <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Pretraži biblioteku</value>
@@ -1407,7 +1445,7 @@ Pogreška: {1}</value>
     <value>Dodaj u red čekanja</value>
   </data>
   <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Dodaj na popis za reprodukciju</value>
+    <value>Dodaj na popis pjesama</value>
   </data>
   <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
     <value>Idi na album</value>
@@ -1416,10 +1454,16 @@ Pogreška: {1}</value>
     <value>Idi na izvođača</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Prikaži u istraživaču</value>
+    <value>Prikaži u File Exploreru</value>
   </data>
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Reproduciraj</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
+    <value>Pjesme nisu pronađene</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+    <value>Pokušajte potražiti nešto drugo</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
     <value>Vaša biblioteka je prazna</value>
@@ -1428,31 +1472,31 @@ Pogreška: {1}</value>
     <value>Dodajte mape u svoju biblioteku u Postavkama</value>
   </data>
   <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
-    <value>Nema pronađenih stihova za ovu pjesmu</value>
+    <value>Nisu pronađeni tekstovi za ovu pjesmu</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
     <value>Pokušajte s drugom pjesmom</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
-    <value>Edit or replace lyrics</value>
+    <value>Uredi ili zamijeni stihove</value>
   </data>
   <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
-    <value>Edit lyrics</value>
+    <value>Uredi tekst pjesme</value>
   </data>
   <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
-    <value>Paste plain text or timestamped LRC lyrics</value>
+    <value>Zalijepi običan tekst ili LRC stihove s vremenskim oznakama</value>
   </data>
   <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
-    <value>Save</value>
+    <value>Spremi</value>
   </data>
   <data name="LyricsPage_EditLyrics_Remove" xml:space="preserve">
-    <value>Remove saved lyrics</value>
+    <value>Ukloni spremljeni tekst</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
-    <value>Lyrics could not be updated</value>
+    <value>Stihovi se nisu mogli ažurirati</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Nagi could not save the lyrics. Check the log for details and try again.</value>
+    <value>Nagi nije mogao spremiti stihove. Provjerite zapisnik za detalje i pokušajte ponovno.</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Dobrodošli u Nagi</value>
@@ -1467,7 +1511,7 @@ Pogreška: {1}</value>
     <value>Popisi za reprodukciju</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Pretraži popise za reprodukciju...</value>
+    <value>Traži popise pjesama…</value>
   </data>
   <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Pretraži popise za reprodukciju</value>
@@ -1515,7 +1559,7 @@ Pogreška: {1}</value>
     <value>Pjesme</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Pretraži u popisu za reprodukciju...</value>
+    <value>Traži na popisu pjesama…</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Pretraži u popisu za reprodukciju</value>
@@ -1542,10 +1586,10 @@ Pogreška: {1}</value>
     <value>Idi na izvođača</value>
   </data>
   <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Prikaži u istraživaču</value>
+    <value>Prikaži u File Exploreru</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
-    <value>Ukloni s popisa za reprodukciju</value>
+    <value>Ukloni s popisa pjesama</value>
   </data>
   <data name="PlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Reproduciraj</value>
@@ -1563,7 +1607,7 @@ Pogreška: {1}</value>
     <value>Pjesme</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Pretraži u žanru...</value>
+    <value>Traži u žanru…</value>
   </data>
   <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Pretraži u žanru</value>
@@ -1584,7 +1628,7 @@ Pogreška: {1}</value>
     <value>Dodaj u red čekanja</value>
   </data>
   <data name="GenreViewPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Dodaj na popis za reprodukciju</value>
+    <value>Dodaj na popis pjesama</value>
   </data>
   <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
     <value>Idi na album</value>
@@ -1593,7 +1637,7 @@ Pogreška: {1}</value>
     <value>Idi na izvođača</value>
   </data>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Prikaži u istraživaču</value>
+    <value>Prikaži u File Exploreru</value>
   </data>
   <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
     <value>Nema dostupnih popisa za reprodukciju</value>
@@ -1617,7 +1661,7 @@ Pogreška: {1}</value>
     <value>Tema</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>Odaberite temu aplikacije.</value>
+    <value>Odaberite svijetu, tamnu ili sistemsku temu.</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
     <value>Boja naglaska</value>
@@ -1629,13 +1673,13 @@ Pogreška: {1}</value>
     <value>Materijal prozora</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Description" xml:space="preserve">
-    <value>Odaberite materijal pozadine za prozor.</value>
+    <value>Odaberite materijal pozadine prozora.</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
     <value>Dinamičko tematiziranje</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>Omogućite i konfigurirajte opcije dinamičkog tematiziranja.</value>
+    <value>Prilagodi boje aplikacije trenutnom omotu albuma.</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
     <value>Zapamti veličinu prozora</value>
@@ -1668,13 +1712,13 @@ Pogreška: {1}</value>
     <value>Normalizacija glasnoće (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Automatski prilagodite glasnoću na standardnu razinu (-18 LUFS) kako biste izbjegli nagle promjene glasnoće.</value>
+    <value>Smanjite razlike u glasnoći između pjesama pomoću značajke ReplayGain.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
-    <value>WASAPI exclusive mode</value>
+    <value>Ekskluzivni način rada WASAPI</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+    <value>Omogućite aplikaciji Nagi isključivu kontrolu nad Windows audio uređajem. Ostale aplikacije mogu biti tihe. Ponovo pokrenite Nagi nakon promjene ove postavke.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>Blijedi pri reprodukciji / pauzi</value>
@@ -1704,19 +1748,19 @@ Pogreška: {1}</value>
     <value>Pređite mišem za prebacivanje vidljivosti. Povucite za preuređivanje. Razdjelnik odvaja središnje i desne kontrole.</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Header" xml:space="preserve">
-    <value>Skrivajući reproduktor</value>
+    <value>Sklopivi reproduktor</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>Animirajte traku reproduktora za proširenje i sažimanje.</value>
+    <value>Proširi traku reproduktora kada prijeđete mišem preko nje.</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
     <value>Vrati stanje reprodukcije</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>Spremite trenutno stanje reprodukcije za nastavak pri sljedećem pokretanju.</value>
+    <value>Vratite red čekanja i položaj reprodukcije kada se Nagi pokrene.</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
-    <value>Automatsko pokretanje pri uključenju</value>
+    <value>Automatsko pokretanje pri pokretanju sustava</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
     <value>Automatski pokrenite Nagi kada se prijavite na računalo.</value>
@@ -1725,7 +1769,7 @@ Pogreška: {1}</value>
     <value>Pokreni minimizirano</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>Kada se pokrene, prozor aplikacije bit će minimiziran prema zadanim postavkama.</value>
+    <value>Pokrenite Nagi s minimiziranim prozorom.</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
     <value>Minimiziraj u mini-reproduktor</value>
@@ -1737,16 +1781,16 @@ Pogreška: {1}</value>
     <value>Sakrij u sistemsku traku</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>Kada se zatvori, sakrijte u sistemsku traku umjesto toga.</value>
+    <value>Neka Nagi nastavi raditi u sistemskoj traci kada zatvorite njegov prozor.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
-    <value>Prikaži naslovnicu u skočnom prozoru</value>
+    <value>Prikaži omot u skočnom prozoru</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
     <value>Prikažite naslovnicu u kompaktnom reproduktoru koji se pojavljuje kada kliknete ikonu u sistemskoj traci.</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
-    <value>Zanemari članke prilikom sortiranja</value>
+    <value>Zanemari članove pri razvrstavanju</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
     <value>Sortiraj albume, izvođače i pjesme prema prvoj značajnoj riječi (npr. "The Beatles" sortira se pod B).</value>
@@ -1773,10 +1817,10 @@ Pogreška: {1}</value>
     <value>Ponovno skenirajte biblioteku za primjenu promjena razdvajanja</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
-    <value>Dohvati online metapodatke</value>
+    <value>Dohvati mrežne metapodatke</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Dohvatite dodatne informacije poput slika izvođača i biografija s online usluga (npr. Spotify, Last.fm).</value>
+    <value>Dohvatite slike i biografije izvođača iz mrežnih izvora.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Izvori</value>
@@ -1785,10 +1829,10 @@ Pogreška: {1}</value>
     <value>Povucite za preuređivanje izvora metapodataka. Zadržite pokazivač miša iznad svakog izvora za detalje.</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Header" xml:space="preserve">
-    <value>Dohvati online stihove</value>
+    <value>Dohvati tekstove s mreže</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>Automatski dohvati nedostajuće stihove s online izvora. (Privatnost: šalje metapodatke pjesama trećim stranama)</value>
+    <value>Dohvatite nedostajuće tekstove s mrežnih izvora. To šalje metapodatke o pjesmama uslugama trećih strana.</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
     <value>Izvori</value>
@@ -1797,7 +1841,7 @@ Pogreška: {1}</value>
     <value>Povucite za preuređivanje izvora stihova. Zadržite pokazivač miša iznad svakog izvora za detalje.</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
-    <value>Prikaži romanizirane tekstove pjesama</value>
+    <value>Prikaži romanizirani tekst pjesama</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
     <value>Prikažite manji romanizirani redak ispod podržanih tekstova pjesama kada instalirani paket odgovara pismu.</value>
@@ -1806,7 +1850,7 @@ Pogreška: {1}</value>
     <value>Jezični paketi</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>Instalirajte jezike koje želite romanizirati. Paketi su potpisani, sadrže samo podatke i pohranjuju se lokalno.</value>
+    <value>Instalirajte jezične pakete za romanizaciju podržanih tekstova pjesama. Paketi se pohranjuju lokalno.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
     <value>Osvježi</value>
@@ -1845,25 +1889,25 @@ Pogreška: {1}</value>
     <value>Licenca za {0}</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>Izvoz/Uvoz popisa za reprodukciju</value>
+    <value>Uvoz i izvoz popisa pjesama</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
     <value>Izvezite popise za reprodukciju u M3U datoteke za upotrebu u drugim reproduktorima, ili uvezite M3U popise za reprodukciju u Nagi.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
-    <value>Izvezi sve...</value>
+    <value>Izvezi sve…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
     <value>Izvezite sve popise za reprodukciju u mapu</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
-    <value>Uvezi...</value>
+    <value>Uvezi…</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
     <value>Uvezite jednu ili više M3U datoteka</value>
   </data>
   <data name="SettingsPage_ResetApp_Header" xml:space="preserve">
-    <value>Poništi aplikaciju</value>
+    <value>Ponovno postavi aplikaciju</value>
   </data>
   <data name="SettingsPage_ResetApp_Description" xml:space="preserve">
     <value>Ovo će izbrisati sve podatke biblioteke, popise za reprodukciju i resetirati sve postavke na zadane. Aplikacija će se ponovno pokrenuti.</value>
@@ -1893,19 +1937,19 @@ Pogreška: {1}</value>
     <value>Odspoji</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
-    <value>Omogući scrobbling</value>
+    <value>Omogući bilježenje slušanja</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Description" xml:space="preserve">
     <value>Automatski dodajte pjesme koje slušate na Nagiju na svoj Last.fm profil.</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
-    <value>Ažuriraj 'Trenutno se reproducira'</value>
+    <value>Ažuriraj trenutno reproducirano</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>Prikažite svojim prijateljima na Last.fm-u što trenutno slušate u stvarnom vremenu.</value>
+    <value>Prikazuje pjesmu koja se trenutno reproducira na vašem Last.fm profilu.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
-    <value>Postavke ListenBrainz</value>
+    <value>ListenBrainz</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Description" xml:space="preserve">
     <value>Pošaljite svoja slušanja na ListenBrainz (otvorena alternativa Last.fm-u).</value>
@@ -1926,10 +1970,10 @@ Pogreška: {1}</value>
     <value>Veza nije uspjela: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>Pošalji slušanja (scrobbling)</value>
+    <value>Šalji podatke o slušanju (Scrobbling)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>Pošalji ažuriranja "trenutno se svira"</value>
+    <value>Šalji ažuriranja o trenutačnoj reprodukciji</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
     <value>Napredno</value>
@@ -1962,7 +2006,7 @@ Pogreška: {1}</value>
     <value>Pjesme</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Pretraži u pametnom popisu za reprodukciju...</value>
+    <value>Traži na pametnom popisu pjesama…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Pretraži u pametnom popisu za reprodukciju</value>
@@ -1992,7 +2036,7 @@ Pogreška: {1}</value>
     <value>Idi na izvođača</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Prikaži u istraživaču</value>
+    <value>Prikaži u File Exploreru</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Reproduciraj</value>
@@ -2034,7 +2078,7 @@ Pogreška: {1}</value>
     <value>Pošalji povratne informacije</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Provjeravaj ažuriranja pri pokretanju</value>
+    <value>Provjeri ažuriranja pri pokretanju</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
     <value>Automatski provjeri nove verzije kada se aplikacija pokrene.</value>
@@ -2043,7 +2087,7 @@ Pogreška: {1}</value>
     <value>Jezik aplikacije</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>Promjene zahtijevaju ponovno pokretanje da bi stupile na snagu</value>
+    <value>Ponovno pokrenite Nagi kako biste primijenili promjenu jezika.</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
     <value>Potrebno ponovno pokretanje</value>
@@ -2058,7 +2102,7 @@ Pogreška: {1}</value>
     <value>Sigurnosno kopiranje i vraćanje</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Stvorite sigurnosne kopije svoje glazbene biblioteke i postavki ili vratite iz prethodne sigurnosne kopije</value>
+    <value>Izradite sigurnosnu kopiju podataka biblioteke i postavki ili vratite prethodnu sigurnosnu kopiju.</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
     <value>Stvori sigurnosnu kopiju</value>
@@ -2070,7 +2114,7 @@ Pogreška: {1}</value>
     <value>Sigurnosna kopija stvorena</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Uspješno stvorena sigurnosna kopija ({0:F2} MB) na: {1}</value>
+    <value>Izrađena je sigurnosna kopija ({0:F2} MB) na: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
     <value>Stvaranje sigurnosne kopije nije uspjelo</value>
@@ -2097,13 +2141,13 @@ Pogreška: {1}</value>
     <value>Vraćanje dovršeno</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Uspješno vraćena sigurnosna kopija. Aplikacija će se sada ponovno pokrenuti.</value>
+    <value>Sigurnosna kopija je vraćena. Nagi će se sada ponovno pokrenuti.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
     <value>Vraćanje nije uspjelo</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Vraćanje iz sigurnosne kopije nije uspjelo. Vaši podaci nisu izmijenjeni.</value>
+    <value>Vraćanje sigurnosne kopije nije uspjelo.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
     <value>Stilistika reproduktora</value>
@@ -2115,25 +2159,25 @@ Pogreška: {1}</value>
     <value>Jednobojno (neprozirno)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Prilagodite izgled plutajućeg reproduktora</value>
+    <value>Prilagodite izgled trake reproduktora.</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
     <value>Intenzitet nijanse</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Podešava živost pozadinske boje reproduktora</value>
+    <value>Prilagodite intenzitet boje pozadine reproduktora.</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
-    <value>Trajanje zatamnjenja pri ulazu</value>
+    <value>Trajanje postupnog pojačavanja</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
-    <value>Trajanje efekta zatamnjenja pri ulazu prilikom reprodukcije (ms)</value>
+    <value>Postavite koliko dugo traje postupno pojačavanje glasnoće pri nastavku reprodukcije.</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
-    <value>Trajanje zatamnjenja pri izlazu</value>
+    <value>Trajanje postupnog utišavanja</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
-    <value>Trajanje efekta zatamnjenja pri izlazu prilikom pauziranja (ms)</value>
+    <value>Postavite koliko dugo traje postupno utišavanje glasnoće pri pauziranju reprodukcije.</value>
   </data>
   <data name="Settings_Nav_Insights" xml:space="preserve">
     <value>Uvidi</value>
@@ -2148,7 +2192,7 @@ Pogreška: {1}</value>
     <value>Jedinstvene pjesme</value>
   </data>
   <data name="InsightsPage_PeakHour" xml:space="preserve">
-    <value>Vršni sat</value>
+    <value>Sati najveće aktivnosti</value>
   </data>
   <data name="InsightsPage_MostActiveDay" xml:space="preserve">
     <value>Najaktivniji dan</value>
@@ -2175,7 +2219,7 @@ Pogreška: {1}</value>
     <value>Započnite reprodukciju glazbe kako biste ovdje vidjeli svoje uvide</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
-    <value>{0} reprodukcija</value>
+    <value>Reprodukcije: {0}</value>
   </data>
   <data name="InsightsPage_Source_Albums" xml:space="preserve">
     <value>Albumi</value>
@@ -2235,7 +2279,7 @@ Pogreška: {1}</value>
     <value>Trajanje</value>
   </data>
   <data name="PaginationControl_All" xml:space="preserve">
-    <value>All</value>
+    <value>Sve</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>Stavki po stranici:</value>
@@ -2259,16 +2303,16 @@ Pogreška: {1}</value>
     <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
-    <value>Posljednji 1 dan</value>
+    <value>Zadnji 1 dan</value>
   </data>
   <data name="Insights_TimeRange_Last7Days" xml:space="preserve">
-    <value>Posljednjih 7 dana</value>
+    <value>Zadnjih 7 dana</value>
   </data>
   <data name="Insights_TimeRange_Last30Days" xml:space="preserve">
-    <value>Posljednjih 30 dana</value>
+    <value>Zadnjih 30 dana</value>
   </data>
   <data name="Insights_TimeRange_Last90Days" xml:space="preserve">
-    <value>Posljednjih 90 dana</value>
+    <value>Zadnjih 90 dana</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
     <value>Prošla godina</value>
@@ -2281,5 +2325,167 @@ Pogreška: {1}</value>
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
     <value>{0}m {1}s</value>
+  </data>
+  <data name="QueuePanel_EmptyTitle" xml:space="preserve">
+    <value>Vaš red čekanja je prazan</value>
+  </data>
+  <data name="QueuePanel_EmptyDescription" xml:space="preserve">
+    <value>Reproducirajte glazbu ili ispustite zvučne datoteke ovdje kako biste izradili red čekanja.</value>
+  </data>
+  <data name="QueuePanel_LoadError" xml:space="preserve">
+    <value>Učitavanje nekih pjesama nije uspjelo. Odaberite Pokušaj ponovno kako biste ponovno učitali red čekanja.</value>
+  </data>
+  <data name="QueuePanel_Retry" xml:space="preserve">
+    <value>Pokušaj ponovno</value>
+  </data>
+  <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
+    <value>Spremanje novog redoslijeda popisa pjesama nije uspjelo. Pokušajte ponovno.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
+    <value>Uređaj za izlaz zvuka</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Description" xml:space="preserve">
+    <value>Odaberite gdje Nagi reproducira glazbu.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Default" xml:space="preserve">
+    <value>Zadano sustavom</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Unavailable" xml:space="preserve">
+    <value>Spremljeni uređaj nije dostupan. Upotrebljava se zadana postavka sustava.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
+    <value>Ažuriranje izlaza zvuka nije uspjelo. Pokušajte ponovno ili odaberite drugi uređaj.</value>
+  </data>
+  <data name="Listening_Random" xml:space="preserve">
+    <value>Nasumično</value>
+  </data>
+  <data name="Listening_MoreVariety" xml:space="preserve">
+    <value>Veća raznolikost</value>
+  </data>
+  <data name="Listening_Rediscover" xml:space="preserve">
+    <value>Ponovno otkrij</value>
+  </data>
+  <data name="Listening_Unheard" xml:space="preserve">
+    <value>Neslušano</value>
+  </data>
+  <data name="Listening_PlayFor" xml:space="preserve">
+    <value>Reproduciraj u trajanju od…</value>
+  </data>
+  <data name="Listening_Minutes" xml:space="preserve">
+    <value>Minuta</value>
+  </data>
+  <data name="Listening_ShuffleMode" xml:space="preserve">
+    <value>Vrsta miksa</value>
+  </data>
+  <data name="Listening_AvoidRecentDays" xml:space="preserve">
+    <value>Izbjegavaj nedavno reproducirano (dana)</value>
+  </data>
+  <data name="Listening_MoreOptions" xml:space="preserve">
+    <value>Više opcija</value>
+  </data>
+  <data name="Listening_PlayForDescription" xml:space="preserve">
+    <value>Izradite red čekanja od cijelih pjesama čije ukupno trajanje ne prelazi odabrano vrijeme.</value>
+  </data>
+  <data name="Listening_NoMixTitle" xml:space="preserve">
+    <value>Nema pjesama za ovaj miks</value>
+  </data>
+  <data name="Listening_NoMixDescription" xml:space="preserve">
+    <value>Nijedna pjesma na ovom popisu ne ispunjava ove uvjete. Pokušajte drugi miks ili popis pjesama.</value>
+  </data>
+  <data name="Listening_Favorites" xml:space="preserve">
+    <value>Omiljeno</value>
+  </data>
+  <data name="Listening_AddFavorite" xml:space="preserve">
+    <value>Dodaj u omiljeno</value>
+  </data>
+  <data name="Listening_RemoveFavorite" xml:space="preserve">
+    <value>Ukloni iz omiljenog</value>
+  </data>
+  <data name="Listening_SleepTimer" xml:space="preserve">
+    <value>Mjerač vremena spavanja</value>
+  </data>
+  <data name="Listening_FinishTrack" xml:space="preserve">
+    <value>Dovrši trenutnu pjesmu kada mjerač vremena istekne</value>
+  </data>
+  <data name="Listening_StopAfterTrack" xml:space="preserve">
+    <value>Zaustavi nakon ove pjesme</value>
+  </data>
+  <data name="Listening_StopAtQueueEnd" xml:space="preserve">
+    <value>Zaustavi na kraju reda čekanja</value>
+  </data>
+  <data name="Listening_StopPlayback" xml:space="preserve">
+    <value>Zaustavi reprodukciju</value>
+  </data>
+  <data name="Listening_CustomTimer" xml:space="preserve">
+    <value>Prilagođeni mjerač vremena…</value>
+  </data>
+  <data name="Listening_Timer15" xml:space="preserve">
+    <value>Za 15 minuta</value>
+  </data>
+  <data name="Listening_Timer30" xml:space="preserve">
+    <value>Za 30 minuta</value>
+  </data>
+  <data name="Listening_Timer60" xml:space="preserve">
+    <value>Za 60 minuta</value>
+  </data>
+  <data name="Listening_CancelStop" xml:space="preserve">
+    <value>Otkazi zakazano zaustavljanje</value>
+  </data>
+  <data name="Listening_TimerRemaining" xml:space="preserve">
+    <value>Zaustavlja se za {0}</value>
+  </data>
+  <data name="Listening_PlayerOptions" xml:space="preserve">
+    <value>Opcije reproduktora</value>
+  </data>
+  <data name="Listening_RecentlyPlayed" xml:space="preserve">
+    <value>Nedavno reproducirano</value>
+  </data>
+  <data name="Listening_HistorySearch" xml:space="preserve">
+    <value>Pretraži povijest slušanja</value>
+  </data>
+  <data name="Listening_HistoryEmpty" xml:space="preserve">
+    <value>Još nema povijesti slušanja</value>
+  </data>
+  <data name="Listening_HistoryLoadError" xml:space="preserve">
+    <value>Učitavanje nedavno reproduciranog sadržaja nije uspjelo. Odaberite Pokušaj ponovno za ponovni pokušaj.</value>
+  </data>
+  <data name="Listening_Today" xml:space="preserve">
+    <value>Danas</value>
+  </data>
+  <data name="Listening_Yesterday" xml:space="preserve">
+    <value>Jučer</value>
+  </data>
+  <data name="Listening_RediscoveryReason" xml:space="preserve">
+    <value>Zadnji put reproducirano {0:d}</value>
+  </data>
+  <data name="Listening_RediscoveryTitle" xml:space="preserve">
+    <value>Vrijedi ponovno poslušati</value>
+  </data>
+  <data name="Listening_Dismiss" xml:space="preserve">
+    <value>Odbaci</value>
+  </data>
+  <data name="Listening_ActionError" xml:space="preserve">
+    <value>Dovršavanje ove radnje nije uspjelo. Pokušajte ponovno.</value>
+  </data>
+  <data name="Listening_FavoritesEmpty" xml:space="preserve">
+    <value>Još nema omiljenih</value>
+  </data>
+  <data name="Listening_FavoritesEmptyDescription" xml:space="preserve">
+    <value>Označite pjesmu omiljenom iz njezinog izbornika ili je odaberite i pritisnite Ctrl+D.</value>
+  </data>
+  <data name="Listening_VarietyDescription" xml:space="preserve">
+    <value>Veća raznolikost izbjegava pjesme reproducirane unutar vremenskog okvira nedavne reprodukcije i razdvaja pjesme istog izvođača gdje je to moguće.</value>
+  </data>
+  <data name="Listening_RediscoverDescription" xml:space="preserve">
+    <value>Funkcija Ponovno otkrij koristi pjesme sa zabilježenim reprodukcijama u Nagi aplikaciji koje su zadnji put reproducirane prije više od 30 dana.</value>
+  </data>
+  <data name="Listening_UnheardDescription" xml:space="preserve">
+    <value>Funkcija Neslušano koristi pjesme bez zabilježenih reprodukcija u Nagi aplikaciji.</value>
+  </data>
+  <data name="Listening_HistoryNoMatches" xml:space="preserve">
+    <value>Nema slušanja koja odgovaraju vašem pretraživanju</value>
+  </data>
+  <data name="Listening_NoTimedMixDescription" xml:space="preserve">
+    <value>Nijedna pjesma na ovom popisu ne ispunjava uvjete miksa i ne stane u odabrano trajanje. Pokušajte dulje trajanje, drugi miks ili drugi popis pjesama.</value>
   </data>
 </root>

@@ -102,10 +102,10 @@
     <value>Numri i këngës</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Numri i luajtjeve</value>
+    <value>Dëgjimet</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
-    <value>Këngë</value>
+    <value>Këngët</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
     <value>Artistët</value>
@@ -117,7 +117,7 @@
     <value>Dosje</value>
   </data>
   <data name="Label_Folders" xml:space="preserve">
-    <value>Dosje</value>
+    <value>Dosjet</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Renditje manuale</value>
@@ -148,10 +148,10 @@
     <value>{0} (Më e vjetra)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Rritëse)</value>
+    <value>{0} (Rritës)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Zbritëse)</value>
+    <value>{0} (Zbritës)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>Më e shkurtra fillimisht</value>
@@ -169,7 +169,7 @@
     <value>Më e shumta {0}</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
-    <value>Më e pakta {0}</value>
+    <value>Më pak {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Po skanohet dosja {0} nga {1}: {2} - {3}</value>
@@ -178,11 +178,11 @@
     <value>Skanimi u përfundua. U shtuan ose u përditësuan {0} {1}.</value>
   </data>
   <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Po ruhet grupi {0}...</value>
+    <value>Po ruhet grupi {0}…</value>
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Po skanohet dosja...</value>
+    <value>Po skanohet dosja…</value>
   </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Skanimi u përfundua. Biblioteka është e përditësuar.</value>
@@ -194,16 +194,16 @@
     <value>Skanimi dështoi. Kontrolloni regjistrat për detaje.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Po përgatiten memot e shpejta të skanimit...</value>
+    <value>Po përgatitet skanimi i bibliotekës…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Po lexohen detajet e këngës...</value>
+    <value>Po lexohen detajet e këngëve…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Po pastrohet biblioteka juaj...</value>
+    <value>Po pastrohet biblioteka juaj…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Po finalizohet...</value>
+    <value>Po përfundohet…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Normalizimi i volumit dështoi. Kontrolloni regjistrat për detaje.</value>
@@ -216,7 +216,7 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Dështoi shtimi i dosjes.</value>
+    <value>Nuk u mundësua shtimi i dosjes.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Emri i listës së luajtjes nuk mund të jetë bosh.</value>
@@ -248,7 +248,15 @@
     <value>Rendit sipas: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg kërkohet për Normalizimin e Vëllimit me Precizion të Lartë (analizë ReplayGain) por nuk u gjet në sistemin tuaj.\n\nNdiqni këto hapa për ta konfiguruar:\n\n1. **Shkarkoni**: Vizitoni https://www.gyan.dev/ffmpeg/builds/ dhe shkarkoni 'ffmpeg-git-full.7z' (ose të ngjashme) ndërtimin thelbësor.\n2. **Udhëzues**: Mund të ndiqni këtë udhëzues për udhëzime të detajuara: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Ekstraktimi**: Hapni dosjen e arkitekturës dhe gjeni direktorinë 'bin' që përmban `ffmpeg.exe`.\n4. **Instalimi**: Kopjoni `ffmpeg.exe` në një dosje të përhershme (p.sh., `C:\\ffmpeg\\`) dhe **shtoni atë dosje në ndryshoren e ambientit System PATH**.\n5. **Rifilloni**: Ju lutemi, rifilloni Nagi-n pas instalimit që ndryshimet të hyjnë në fuqi.</value>
+    <value>FFmpeg nevojitet për të analizuar këngët për normalizimin e volumit, por Nagi nuk mund ta gjente.
+
+1. Shkarkoni një version për Windows nga https://ffmpeg.org/download.html.
+2. Nxjerrni arkivin dhe gjeni ffmpeg.exe në dosjen e tij bin.
+3. Shtoni dosjen që përmban ffmpeg.exe në PATH-in tuaj të Windows.
+4. Rinisni Nagi, pastaj aktivizoni përsëri normalizimin e volumit.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>Lista e dëgjimit u krijua, por këngët e saj nuk mund të shtoheshin. Ju lutemi provoni ta importoni përsëri.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Asnjë këngë nga lista e luajtjes nuk u gjet në bibliotekën tuaj.</value>
@@ -293,12 +301,39 @@
     <value>Të gjitha këngët tashmë kanë të dhëna volumi.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Po llogaritet volumi për {0} këngë...</value>
+    <value>Po analizohet volumi… Këngët: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Po llogaritet normalizimi i volumit ({0}/{1})...</value>
+    <value>Po llogaritet normalizimi i volumit ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Normalizimi i volumit u përfundua. U përpunuan {0} këngë.</value>
+    <value>Normalizimi i volumit u përfundua. Këngë të përpunuara: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Shkruani token-in e përdoruesit tuaj të ListenBrainz.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Nuk u mundësua leximi i përgjigjes nga ListenBrainz. Provoni përsëri më vonë.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Shkruani një URL serveri që fillon me http:// ose https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Token-i i përdoruesit është i pavlefshëm. Kontrollojeni dhe provoni përsëri.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz ktheu një gabim (HTTP {0}). Provoni përsëri më vonë.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Nuk u mundësua lidhja me ListenBrainz. Kontrolloni lidhjen dhe URL-në e serverit tuaj.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi nuk mund ta gjente dosjen e të dhënave të bibliotekës së tij.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Rikthimi dështoi dhe të dhënat tuaja të mëparshme nuk mund të riktheheshin plotësisht. Skedarët e rimëkëmbjes u ruajtën në &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Skedari i zgjedhur nuk është një kopje rezerve e vlefshme e Nagi.</value>
   </data>
 </root>

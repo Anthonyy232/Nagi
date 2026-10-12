@@ -102,7 +102,7 @@
     <value>Spårnummer</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Antal uppspelningar</value>
+    <value>Spelningar</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>Låtar</value>
@@ -148,10 +148,10 @@
     <value>{0} (Äldsta)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Stigande)</value>
+    <value>{0} (stigande)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Fallande)</value>
+    <value>{0} (fallande)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>Kortast först</value>
@@ -178,11 +178,11 @@
     <value>Skanning klar. Lade till eller uppdaterade {0} {1}.</value>
   </data>
   <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Sparar sats {0}...</value>
+    <value>Sparar batch {0}…</value>
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Skannar mapp...</value>
+    <value>Skannar mapp…</value>
   </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Skanning klar. Biblioteket är uppdaterat.</value>
@@ -194,16 +194,16 @@
     <value>Skanning misslyckades. Kontrollera loggar för detaljer.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Förbereder skanningscache...</value>
+    <value>Förbereder biblioteksskanning…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Läser in låtdetaljer...</value>
+    <value>Läser låtdetaljer…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Rensar ditt bibliotek...</value>
+    <value>Rensar ditt bibliotek…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Slutför...</value>
+    <value>Slutför…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Volymnormalisering misslyckades. Kontrollera loggar för detaljer.</value>
@@ -216,7 +216,7 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Kunde inte lägga till mapp.</value>
+    <value>Det gick inte att lägga till mappen.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Spellistans namn får inte vara tomt.</value>
@@ -248,7 +248,15 @@
     <value>Sortera efter: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg krävs för högprecisions-volymnormalisering (ReplayGain-analys) men hittades inte på ditt system.\n\nFölj dessa steg för att installera det:\n\n1. **Ladda ner**: Besök https://www.gyan.dev/ffmpeg/builds/ och ladda ner 'ffmpeg-git-full.7z' (eller liknande) essentials-byggnad.\n2. **Guide**: Du kan följa denna guide för detaljerade instruktioner: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Extrahera**: Öppna arkitekturmappen och lokalisera 'bin'-katalogen som innehåller `ffmpeg.exe`.\n4. **Installera**: Kopiera `ffmpeg.exe` till en permanent mapp (t.ex. `C:\ffmpeg\`) och **lägg till den mappen i din Systems PATH** miljövariabel.\n5. **Starta om**: Vänligen starta om Nagi efter installationen för att ändringarna ska träda i kraft.</value>
+    <value>FFmpeg behövs för att analysera låtar för volymnormalisering, men Nagi kunde inte hitta det.
+
+1. Ladda ned en Windows-version från https://ffmpeg.org/download.html.
+2. Packa upp arkivet och leta reda på ffmpeg.exe i mappen bin.
+3. Lägg till mappen som innehåller ffmpeg.exe i din Windows PATH.
+4. Starta om Nagi och aktivera volymnormalisering igen.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>Spellistan skapades, men dess låtar kunde inte läggas till. Försök importera igen.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Inga låtar från spellistan hittades i ditt bibliotek.</value>
@@ -293,12 +301,39 @@
     <value>Alla låtar har redan volymdata.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Beräknar volym för {0} låtar...</value>
+    <value>Analyserar volym… Låtar: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Beräknar volymnormalisering ({0}/{1})...</value>
+    <value>Beräknar volymnormalisering ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Volymnormalisering klar. Bearbetade {0} låtar.</value>
+    <value>Volymnormalisering klar. Bearbetade låtar: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Ange din ListenBrainz-användartoken.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Kunde inte läsa svaret från ListenBrainz. Försök igen senare.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Ange en server-URL som börjar med http:// eller https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Användartoken är ogiltig. Kontrollera den och försök igen.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz returnerade ett fel (HTTP {0}). Försök igen senare.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Kunde inte ansluta till ListenBrainz. Kontrollera din anslutning och server-URL.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi kunde inte hitta sin datamapp för biblioteket.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Återställningen misslyckades och dina tidigare data kunde inte återställas helt. Återställningsfiler sparades i &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Den valda filen är inte en giltig Nagi-säkerhetskopia.</value>
   </data>
 </root>

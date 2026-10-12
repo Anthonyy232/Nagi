@@ -102,7 +102,7 @@
     <value>Tracknummer</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Afspeeltellingen</value>
+    <value>Aantal keer afgespeeld</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>Nummers</value>
@@ -148,10 +148,10 @@
     <value>{0} (Oudste)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Opl.)</value>
+    <value>{0} (oplopend)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Afl.)</value>
+    <value>{0} (aflopend)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>Kortste eerst</value>
@@ -178,11 +178,11 @@
     <value>Scan voltooid. {0} {1} toegevoegd of bijgewerkt.</value>
   </data>
   <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Batch {0} opslaan...</value>
+    <value>Batch {0} opslaan…</value>
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Map scannen...</value>
+    <value>Map scannen…</value>
   </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Scan voltooid. Bibliotheek is up-to-date.</value>
@@ -194,16 +194,16 @@
     <value>Scan mislukt. Controleer logboeken voor details.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Scancaches voorbereiden...</value>
+    <value>Scannen van bibliotheek voorbereiden…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Nummerdetails lezen...</value>
+    <value>Nummerdetails lezen…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Uw bibliotheek opruimen...</value>
+    <value>Bibliotheek opschonen…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Afronden...</value>
+    <value>Afronden…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Volumenormalisatie mislukt. Controleer logboeken voor details.</value>
@@ -216,7 +216,7 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Toevoegen map mislukt.</value>
+    <value>Kon de map niet toevoegen.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Afspeellijstnaam mag niet leeg zijn.</value>
@@ -248,7 +248,15 @@
     <value>Sorteren op: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg is vereist voor hoge-precisie volumenormalisatie (ReplayGain-analyse), maar is niet gevonden op uw systeem.\n\nVolg deze stappen om het in te stellen:\n\n1. **Downloaden**: Bezoek https://www.gyan.dev/ffmpeg/builds/ en download de 'ffmpeg-git-full.7z' (of vergelijkbare) essentiële build.\n2. **Gids**: U kunt deze gids volgen voor gedetailleerde instructies: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Uitpakken**: Open de architectuurmap en zoek de 'bin'-directory met `ffmpeg.exe`.\n4. **Installeren**: Kopieer `ffmpeg.exe` naar een permanente map (bijv. `C:\ffmpeg\`) en **voeg die map toe aan uw systeem PATH** omgevingsvariabele.\n5. **Herstarten**: Herstart Nagi na installatie om de wijzigingen door te voeren.</value>
+    <value>FFmpeg is nodig om nummers te analyseren voor volumenormalisatie, maar Nagi kon het niet vinden.
+
+1. Download een Windows-versie van https://ffmpeg.org/download.html.
+2. Pak het archief uit en zoek ffmpeg.exe in de map bin.
+3. Voeg de map met ffmpeg.exe toe aan je Windows PATH.
+4. Herstart Nagi en schakel volumenormalisatie weer in.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>De afspeellijst is aangemaakt, maar de nummers konden niet worden toegevoegd. Probeer opnieuw te importeren.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Geen nummers van de afspeellijst zijn gevonden in uw bibliotheek.</value>
@@ -293,12 +301,39 @@
     <value>Alle nummers hebben al volumedata.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Volume berekenen voor {0} nummers...</value>
+    <value>Volume analyseren… Nummers: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Volumenormalisatie berekenen ({0}/{1})...</value>
+    <value>Volumenormalisatie berekenen ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Volumenormalisatie voltooid. {0} nummers verwerkt.</value>
+    <value>Volumenormalisatie voltooid. Verwerkte nummers: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Voer je ListenBrainz-gebruikerstoken in.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Kon de respons van ListenBrainz niet lezen. Probeer het later opnieuw.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Voer een server-URL in die begint met http:// of https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Het gebruikerstoken is ongeldig. Controleer het en probeer het opnieuw.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz heeft een fout gemeld (HTTP {0}). Probeer het later opnieuw.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Kon geen verbinding maken met ListenBrainz. Controleer je verbinding en server-URL.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi kon de gegevensmap van de bibliotheek niet vinden.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Het herstellen is mislukt en je vorige gegevens konden niet volledig worden hersteld. Herstelbestanden zijn opgeslagen in &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Het geselecteerde bestand is geen geldige Nagi-back-up.</value>
   </data>
 </root>

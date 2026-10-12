@@ -102,7 +102,7 @@
     <value>Szám sorszáma</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Lejátszásszám</value>
+    <value>Lejátszások</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>Dalok</value>
@@ -148,10 +148,10 @@
     <value>{0} (Legrégebbi)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Növekvő)</value>
+    <value>{0} (növekvő)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Csökkenő)</value>
+    <value>{0} (csökkenő)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>Legrövidebb elöl</value>
@@ -178,11 +178,11 @@
     <value>Beolvasás kész. Hozzáadva vagy frissítve {0} {1}.</value>
   </data>
   <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Tétel mentése {0}...</value>
+    <value>{0}. köteg mentése…</value>
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Mappa beolvasása...</value>
+    <value>Mappa beolvasása…</value>
   </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Beolvasás kész. A könyvtár naprakész.</value>
@@ -194,16 +194,16 @@
     <value>Beolvasás sikertelen. Részletekért lásd a naplókat.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Beolvasási gyorsítótárak előkészítése...</value>
+    <value>Zenetár-beolvasás előkészítése…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Dal részleteinek olvasása...</value>
+    <value>Dalok adatainak beolvasása…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Könyvtár rendbetétele...</value>
+    <value>A zenetár megtisztítása…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Befejezés...</value>
+    <value>Véglegesítés…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Hangerő-normalizálás sikertelen. Részletekért lásd a naplókat.</value>
@@ -216,7 +216,7 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Mappa hozzáadása sikertelen.</value>
+    <value>A mappa hozzáadása nem sikerült.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>A lejátszási lista neve nem lehet üres.</value>
@@ -248,7 +248,15 @@
     <value>Rendezés: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>Az FFmpeg szükséges a nagy pontosságú hangerő-normalizáláshoz (ReplayGain elemzés), de nem található a rendszerén.\n\nA beállításhoz kövesse az alábbi lépéseket:\n\n1. **Letöltés**: Látogasson el a https://www.gyan.dev/ffmpeg/builds/ weboldalra, és töltse le az 'ffmpeg-git-full.7z' (vagy hasonló) alapvető buildet.\n2. **Útmutató**: Részletes útmutatóért kövesse ezt a linket: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Kicsomagolás**: Nyissa meg az architektúra mappát, és keresse meg a `ffmpeg.exe`-t tartalmazó 'bin' könyvtárat.\n4. **Telepítés**: Másolja át a `ffmpeg.exe`-t egy állandó mappába (pl. `C:\ffmpeg\`), és **adja hozzá ezt a mappát a Rendszer PATH** környezeti változóhoz.\n5. **Újraindítás**: Kérjük, telepítés után indítsa újra a Nagi-t, hogy a változások érvénybe lépjenek.</value>
+    <value>Az FFmpeg szükséges a dalok hangerő-normalizáláshoz történő elemzéséhez, de a Nagi nem találta.
+
+1. Töltsön le egy Windows-verziót a https://ffmpeg.org/download.html oldalról.
+2. Csomagolja ki az archívumot, és keresse meg az ffmpeg.exe fájlt annak bin mappájában.
+3. Adja hozzá az ffmpeg.exe fájlt tartalmazó mappát a Windows PATH környezeti változójához.
+4. Indítsa újra a Nagi alkalmazást, majd engedélyezze újra a hangerő-normalizálást.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>A lejátszási lista létrejött, de a dalait nem sikerült hozzáadni. Próbálja meg újra az importálást.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Nem találtunk dalt a lejátszási listáról a könyvtárában.</value>
@@ -293,12 +301,39 @@
     <value>Az összes dal rendelkezik már hangerő-adatokkal.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Hangerő számítása {0} dalhoz...</value>
+    <value>Hangerő elemzése… Dalok: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Hangerő-normalizálás számítása ({0}/{1})...</value>
+    <value>Hangerő-normalizálás kiszámítása ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Hangerő-normalizálás kész. Feldolgozott {0} dalt.</value>
+    <value>A hangerő-normalizálás kész. Feldolgozott dalok: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Adja meg a ListenBrainz felhasználói tokenjét.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Nem sikerült elolvasni a választ a ListenBrainz szolgáltatástól. Próbálja újra később.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Adjon meg egy http:// vagy https:// kezdetű szerver-URL-t.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>A felhasználói token érvénytelen. Ellenőrizze, és próbálja újra.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>A ListenBrainz hibát adott vissza (HTTP {0}). Próbálja újra később.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Nem sikerült csatlakozni a ListenBrainz szolgáltatáshoz. Ellenőrizze a kapcsolatot és a szerver URL-jét.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>A Nagi nem találta a zenetára adatmappáját.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>A helyreállítás nem sikerült, és a korábbi adatokat nem sikerült teljesen visszaállítani. A helyreállítási fájlok ide lettek mentve: &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>A kiválasztott fájl nem érvényes Nagi-biztonsági mentés.</value>
   </data>
 </root>

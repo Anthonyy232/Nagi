@@ -65,7 +65,7 @@
     <value>專輯</value>
   </data>
   <data name="NavItem_Artists" xml:space="preserve">
-    <value>演出者</value>
+    <value>藝人</value>
   </data>
   <data name="NavItem_Genres" xml:space="preserve">
     <value>類型</value>
@@ -76,6 +76,9 @@
   <data name="NavItem_Folders" xml:space="preserve">
     <value>資料夾</value>
   </data>
+  <data name="NavItem_Favorites" xml:space="preserve">
+    <value>最愛</value>
+  </data>
   <data name="NavItem_Insights" xml:space="preserve">
     <value>深入分析</value>
   </data>
@@ -83,7 +86,7 @@
     <value>設定</value>
   </data>
   <data name="Status_NoTrackPlaying" xml:space="preserve">
-    <value>沒有播放中的曲目</value>
+    <value>沒有正在播放的歌曲</value>
   </data>
   <data name="Tooltip_Play" xml:space="preserve">
     <value>播放</value>
@@ -122,7 +125,7 @@
     <value>深色</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">
-    <value>使用系統設定</value>
+    <value>系統預設</value>
   </data>
   <data name="Backdrop_Mica" xml:space="preserve">
     <value>雲母</value>
@@ -141,6 +144,39 @@
   </data>
   <data name="Label_Rating" xml:space="preserve">
     <value>評分</value>
+  </data>
+  <data name="Label_Grouping" xml:space="preserve">
+    <value>群組</value>
+  </data>
+  <data name="Label_SkipCount" xml:space="preserve">
+    <value>跳過次數</value>
+  </data>
+  <data name="Label_DiscNumber" xml:space="preserve">
+    <value>光碟編號</value>
+  </data>
+  <data name="Label_Bitrate" xml:space="preserve">
+    <value>位元率</value>
+  </data>
+  <data name="Label_SampleRate" xml:space="preserve">
+    <value>取樣率</value>
+  </data>
+  <data name="Label_IsLoved" xml:space="preserve">
+    <value>最愛</value>
+  </data>
+  <data name="Label_HasLyrics" xml:space="preserve">
+    <value>有歌詞</value>
+  </data>
+  <data name="Operator_IsInRange" xml:space="preserve">
+    <value>介於（含邊界）</value>
+  </data>
+  <data name="Operator_IsAfter" xml:space="preserve">
+    <value>晚於</value>
+  </data>
+  <data name="Operator_IsBefore" xml:space="preserve">
+    <value>早於</value>
+  </data>
+  <data name="SmartPlaylist_UpperBound_Placeholder" xml:space="preserve">
+    <value>最大值</value>
   </data>
   <data name="Operator_Contains" xml:space="preserve">
     <value>包含</value>
@@ -179,10 +215,10 @@
     <value>至多是</value>
   </data>
   <data name="Operator_IsInTheLast" xml:space="preserve">
-    <value>在過去 (天) 中</value>
+    <value>在過去（天）之內</value>
   </data>
   <data name="Operator_IsNotInTheLast" xml:space="preserve">
-    <value>不在過去 (天) 中</value>
+    <value>不在過去（天）之內</value>
   </data>
   <data name="Operator_IsTrue" xml:space="preserve">
     <value>為真</value>
@@ -194,31 +230,31 @@
     <value>新增智慧播放清單</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>編輯智慧播放清單 - {0}</value>
+    <value>編輯智慧播放清單：{0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
     <value>輸入播放清單名稱</value>
   </data>
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
-    <value>{0:N0} 首歌曲符合目前規則</value>
+    <value>符合的歌曲：{0:N0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>輸入名稱以查看符合的歌曲</value>
+    <value>輸入播放清單名稱以檢視符合的歌曲</value>
   </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
-    <value>無法計算</value>
+    <value>無法計算符合的歌曲數量</value>
   </data>
   <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
-    <value>計算中...</value>
+    <value>正在計算……</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>此名稱的播放清單已存在！</value>
+    <value>已有使用此名稱的播放清單。</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>請輸入名稱！</value>
+    <value>請輸入播放清單名稱。</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
-    <value>載入中...</value>
+    <value>正在載入……</value>
   </data>
   <data name="Error_FailedToLoadArtists" xml:space="preserve">
     <value>載入演出者失敗</value>
@@ -227,13 +263,15 @@
     <value>嚴重錯誤</value>
   </data>
   <data name="CrashReport_Message" xml:space="preserve">
-    <value>Nagi 發生嚴重錯誤，必須關閉。造成不便，敬請見諒。</value>
+    <value>Nagi 發生錯誤，需要關閉。</value>
   </data>
   <data name="ElevationWarning_Title" xml:space="preserve">
     <value>以管理員身分執行</value>
   </data>
   <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi 目前以管理員身分執行。這可能會導致某些功能（例如新增音樂資料夾）無法正常運作。\n\n為了獲得最佳體驗，請在沒有管理員權限的情況下重新啟動 Nagi。</value>
+    <value>Nagi 目前以管理員身分執行。這可能會導致某些功能（例如新增音樂資料夾）無法正常運作。
+
+為了獲得最佳體驗，請在沒有管理員權限的情況下重新啟動 Nagi。</value>
   </data>
   <data name="ElevationWarning_Restart" xml:space="preserve">
     <value>正常重新啟動</value>
@@ -293,16 +331,16 @@
     <value>此資料夾已存在於媒體庫中。</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
-    <value>正在將資料夾新增至媒體庫...</value>
+    <value>正在新增資料夾至媒體庫……</value>
   </data>
   <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>已成功刪除 '{0}'。</value>
+    <value>已從您的媒體庫移除 &apos;{0}&apos;。</value>
   </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
-    <value>刪除 '{0}' 失敗。</value>
+    <value>無法從您的媒體庫移除 &apos;{0}&apos;。</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
-    <value>正在刪除 '{0}'...</value>
+    <value>正在從您的媒體庫移除 &apos;{0}&apos;……</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
     <value>'{0}' 的重新掃描完成。</value>
@@ -311,7 +349,7 @@
     <value>'{0}' 未偵測到任何變更。</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
-    <value>正在重新掃描 '{0}'...</value>
+    <value>正在重新掃描 '{0}'……</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
     <value>找不到包含音樂的資料夾。</value>
@@ -326,7 +364,7 @@
     <value>新增資料夾錯誤：{0}</value>
   </data>
   <data name="Folders_Error_DeleteFolder" xml:space="preserve">
-    <value>刪除資料夾錯誤：{0}</value>
+    <value>無法從您的媒體庫移除資料夾：{0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>重新掃描資料夾錯誤：{0}</value>
@@ -377,10 +415,10 @@
     <value>讓我們設定您的音樂媒體庫以開始使用。</value>
   </data>
   <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>正在等待您選擇資料夾...</value>
+    <value>等待您選擇資料夾……</value>
   </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
-    <value>正在建立您的媒體庫...</value>
+    <value>正在建立您的媒體庫……</value>
   </data>
   <data name="Onboarding_Error" xml:space="preserve">
     <value>發生意外錯誤。請再試一次。</value>
@@ -401,7 +439,7 @@
     <value>載入播放清單錯誤</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>正在啟動播放清單...</value>
+    <value>正在開始播放清單……</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>沒有歌曲符合此智慧播放清單的規則。</value>
@@ -410,7 +448,7 @@
     <value>啟動此播放清單播放時發生錯誤。</value>
   </data>
   <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>正在隨機挑選播放清單...</value>
+    <value>正在隨機選擇播放清單……</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>找不到播放清單。</value>
@@ -422,13 +460,13 @@
     <value>播放隨機播放清單時發生錯誤。</value>
   </data>
   <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>正在載入播放清單...</value>
+    <value>正在載入播放清單……</value>
   </data>
   <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
     <value>載入播放清單錯誤。</value>
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>正在建立新播放清單...</value>
+    <value>正在建立新播放清單……</value>
   </data>
   <data name="Playlist_Status_CreateFailed" xml:space="preserve">
     <value>建立播放清單失敗。它可能已存在。</value>
@@ -437,7 +475,7 @@
     <value>建立播放清單時發生錯誤。</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>正在更新播放清單封面...</value>
+    <value>正在更新播放清單封面……</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>更新播放清單封面失敗。</value>
@@ -446,7 +484,7 @@
     <value>更新播放清單封面時發生錯誤。</value>
   </data>
   <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>正在移除播放清單圖片...</value>
+    <value>正在移除播放清單圖片……</value>
   </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>移除播放清單圖片失敗。</value>
@@ -455,7 +493,7 @@
     <value>移除播放清單圖片時發生錯誤。</value>
   </data>
   <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>正在重新命名播放清單...</value>
+    <value>正在重新命名播放清單……</value>
   </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>重新命名播放清單失敗。</value>
@@ -464,7 +502,7 @@
     <value>重新命名播放清單時發生錯誤。</value>
   </data>
   <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>正在刪除播放清單...</value>
+    <value>正在刪除播放清單……</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>刪除播放清單失敗。</value>
@@ -512,7 +550,9 @@
     <value>匯出成功</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>已將 {0} 個播放清單（共 {1} 首歌曲）匯出至：\n{2}</value>
+    <value>已匯出播放清單：{0}
+歌曲：{1}
+已儲存至：{2}</value>
   </data>
   <data name="Settings_Export_Failed_Title" xml:space="preserve">
     <value>匯出失敗</value>
@@ -521,13 +561,18 @@
     <value>匯入成功</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>已成功匯入 {0} 個播放清單（{1} 首歌曲）。</value>
+    <value>已匯入播放清單：{0}
+歌曲：{1}</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
-    <value>\n\n在您的媒體庫中找不到 {0} 首歌曲。</value>
+    <value>
+
+在您的媒體庫中找不到歌曲：{0}。</value>
   </data>
   <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
-    <value>\n\n{0} 個檔案匯入失敗。</value>
+    <value>
+
+無法匯入的檔案：{0}。</value>
   </data>
   <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
     <value>匯入失敗</value>
@@ -596,10 +641,10 @@
     <value>未偵測到 FFmpeg。請安裝 FFmpeg 並點擊「重新檢查」。</value>
   </data>
   <data name="FFmpeg_Status_Checking" xml:space="preserve">
-    <value>正在檢查 FFmpeg...</value>
+    <value>正在檢查 FFmpeg……</value>
   </data>
   <data name="FFmpeg_Status_Detected" xml:space="preserve">
-    <value>已偵測到 FFmpeg！</value>
+    <value>已偵測到 FFmpeg。</value>
   </data>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>仍未偵測到 FFmpeg。請安裝 FFmpeg 並點擊「重新檢查」。</value>
@@ -674,7 +719,7 @@
     <value>播放清單</value>
   </data>
   <data name="Settings_Nav_Artists" xml:space="preserve">
-    <value>演出者</value>
+    <value>藝人</value>
   </data>
   <data name="Settings_Nav_Albums" xml:space="preserve">
     <value>專輯</value>
@@ -767,13 +812,13 @@
     <value>無可用播放清單</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
-    <value>刪除資料夾</value>
+    <value>移除資料夾</value>
   </data>
   <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
-    <value>您確定要從媒體庫中移除資料夾 '{0}' 嗎？這不會從您的電腦中刪除檔案。</value>
+    <value>要從您的媒體庫移除 &apos;{0}&apos; 嗎？您的音訊檔案仍會留在電腦上。</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
-    <value>刪除</value>
+    <value>移除</value>
   </data>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>取消</value>
@@ -812,10 +857,10 @@
     <value>搜尋播放清單</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>輸入新播放清單名稱</value>
+    <value>輸入播放清單名稱</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
-    <value>挑選圖片</value>
+    <value>選擇封面</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
     <value>建立新播放清單</value>
@@ -851,7 +896,7 @@
     <value>關閉搜尋</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>搜尋媒體庫</value>
+    <value>在曲風中搜尋</value>
   </data>
   <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>無可用播放清單</value>
@@ -872,13 +917,13 @@
     <value>重新掃描中繼資料</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>這將重新掃描您媒體庫中的所有歌曲，以套用新的中繼資料設定（例如演出者分隔符號）。這可能需要一些時間，具體取決於媒體庫大小。您要繼續嗎？</value>
+    <value>重新掃描您的媒體庫以套用元資料設定，例如藝人拆分。媒體庫較大時可能需要一些時間。要繼續嗎？</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
     <value>重新掃描</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
-    <value>正在準備媒體庫重新掃描...</value>
+    <value>正在準備重新掃描媒體庫……</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
     <value>重新掃描完成</value>
@@ -899,13 +944,17 @@
     <value>啟用音量正常化</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
-    <value>音量正常化 (ReplayGain) 可確保您所有音樂的音量一致。\n\n這將分析您的音樂媒體庫，並透過寫入 ReplayGain 標籤直接修改您的音訊檔案。只會處理沒有現有標籤的檔案。這可能需要一些時間，具體取決於您的媒體庫大小。\n\n您要繼續嗎？</value>
+    <value>音量正常化 (ReplayGain) 可確保您所有音樂的音量一致。
+
+這將分析您的音樂媒體庫，並透過寫入 ReplayGain 標籤直接修改您的音訊檔案。只會處理沒有現有標籤的檔案。這可能需要一些時間，具體取決於您的媒體庫大小。
+
+您要繼續嗎？</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>啟用並掃描</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>正在準備音量正常化掃描...</value>
+    <value>正在準備音量標準化掃描……</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
     <value>音量正常化掃描已取消。</value>
@@ -914,7 +963,9 @@
     <value>掃描期間發生錯誤：{0}</value>
   </data>
   <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>無法從記憶體中擷取日誌。嘗試讀取日誌檔案的備用方案失敗。\n預期路徑：'{0}'\n錯誤：{1}</value>
+    <value>無法從記憶體中擷取日誌。嘗試讀取日誌檔案的備用方案失敗。
+預期路徑：'{0}'
+錯誤：{1}</value>
   </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>沒有播放清單可匯出。</value>
@@ -1040,7 +1091,7 @@
     <value>Nagi</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>使用 Nagi 重新探索您的本地音樂收藏，這是一款專注於速度、簡潔和隱私的音樂播放器。Nagi 採用 C# 和 WinUI 3 打造，提供簡潔、原生的 Fluent 體驗。它美觀、高效，並尊重您的隱私。</value>
+    <value>透過 Nagi 重新發現您的本機音樂收藏。這是一款專注於速度、簡潔與隱私的音樂播放器。</value>
   </data>
   <data name="AppShortName" xml:space="preserve">
     <value>Nagi</value>
@@ -1070,58 +1121,58 @@
     <value>前往專輯</value>
   </data>
   <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Drop files or folders onto the player to add them to the queue.</value>
+    <value>將檔案或資料夾拖放至播放程式以將其加入佇列。</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>即將播放</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
-    <value>Clear queue</value>
+    <value>清除佇列</value>
   </data>
   <data name="QueuePanel_DisplayOptions" xml:space="preserve">
-    <value>Queue display options</value>
+    <value>佇列顯示選項</value>
   </data>
   <data name="QueuePanel_Close" xml:space="preserve">
-    <value>Close queue</value>
+    <value>關閉佇列</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
-    <value>Artist</value>
+    <value>演出者</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
-    <value>Duration</value>
+    <value>時長</value>
   </data>
   <data name="QueuePanel_ShowTrackCount" xml:space="preserve">
-    <value>Track count</value>
+    <value>曲目數量</value>
   </data>
   <data name="QueuePanel_TrackCount" xml:space="preserve">
-    <value>Tracks: {0:N0}</value>
+    <value>曲目：{0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
-    <value>Queue position</value>
+    <value>佇列位置</value>
   </data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve">
-    <value>Genre</value>
+    <value>流派</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
-    <value>Total duration</value>
+    <value>總時長</value>
   </data>
   <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>播放</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
-    <value>Move up</value>
+    <value>向上移動</value>
   </data>
   <data name="QueuePanel_MoveDown" xml:space="preserve">
-    <value>Move down</value>
+    <value>向下移動</value>
   </data>
   <data name="QueuePanel_Remove" xml:space="preserve">
-    <value>Remove from queue</value>
+    <value>從佇列移除</value>
   </data>
   <data name="AlbumPage_Title" xml:space="preserve">
     <value>專輯</value>
   </data>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>搜尋專輯...</value>
+    <value>搜尋專輯……</value>
   </data>
   <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
     <value>搜尋專輯</value>
@@ -1145,7 +1196,7 @@
     <value>歌曲</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>在專輯中搜尋...</value>
+    <value>在專輯中搜尋……</value>
   </data>
   <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>在專輯中搜尋</value>
@@ -1166,7 +1217,7 @@
     <value>加入佇列</value>
   </data>
   <data name="AlbumViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>加入播放清單</value>
+    <value>新增至播放清單</value>
   </data>
   <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
     <value>前往藝人</value>
@@ -1187,7 +1238,7 @@
     <value>藝人</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>搜尋藝人...</value>
+    <value>搜尋藝人……</value>
   </data>
   <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>搜尋藝人</value>
@@ -1229,7 +1280,7 @@
     <value>歌曲</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>在藝人中搜尋...</value>
+    <value>在藝人中搜尋……</value>
   </data>
   <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>在藝人中搜尋</value>
@@ -1250,7 +1301,7 @@
     <value>加入佇列</value>
   </data>
   <data name="ArtistViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>加入播放清單</value>
+    <value>新增至播放清單</value>
   </data>
   <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
     <value>前往專輯</value>
@@ -1286,7 +1337,7 @@
     <value>重新掃描</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>刪除</value>
+    <value>從媒體庫移除</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>尚未新增任何資料夾</value>
@@ -1298,7 +1349,7 @@
     <value>播放</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>加入播放清單</value>
+    <value>新增至播放清單</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_Play" xml:space="preserve">
     <value>播放</value>
@@ -1310,7 +1361,7 @@
     <value>加入佇列</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>加入播放清單</value>
+    <value>新增至播放清單</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
     <value>前往專輯</value>
@@ -1331,7 +1382,7 @@
     <value>歌曲</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>在資料夾中搜尋...</value>
+    <value>在資料夾中搜尋……</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>在資料夾中搜尋</value>
@@ -1352,7 +1403,7 @@
     <value>類型</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>搜尋類型...</value>
+    <value>搜尋曲風……</value>
   </data>
   <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
     <value>搜尋類型</value>
@@ -1373,7 +1424,7 @@
     <value>媒體庫</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>搜尋媒體庫...</value>
+    <value>搜尋媒體庫……</value>
   </data>
   <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
     <value>搜尋媒體庫</value>
@@ -1394,7 +1445,7 @@
     <value>加入佇列</value>
   </data>
   <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>加入播放清單</value>
+    <value>新增至播放清單</value>
   </data>
   <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
     <value>前往專輯</value>
@@ -1408,6 +1459,12 @@
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>播放</value>
   </data>
+  <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
+    <value>找不到歌曲</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+    <value>嘗試搜尋其他內容</value>
+  </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
     <value>您的媒體庫是空的</value>
   </data>
@@ -1415,31 +1472,31 @@
     <value>在設定中將資料夾新增到您的媒體庫</value>
   </data>
   <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
-    <value>此曲目沒有找到歌詞</value>
+    <value>找不到這首歌的歌詞</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
     <value>嘗試另一首歌曲</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
-    <value>Edit or replace lyrics</value>
+    <value>編輯或取代歌詞</value>
   </data>
   <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
-    <value>Edit lyrics</value>
+    <value>編輯歌詞</value>
   </data>
   <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
-    <value>Paste plain text or timestamped LRC lyrics</value>
+    <value>貼上純文字或帶有時間軸的 LRC 歌詞</value>
   </data>
   <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
-    <value>Save</value>
+    <value>儲存</value>
   </data>
   <data name="LyricsPage_EditLyrics_Remove" xml:space="preserve">
-    <value>Remove saved lyrics</value>
+    <value>移除已儲存的歌詞</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
-    <value>Lyrics could not be updated</value>
+    <value>無法更新歌詞</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Nagi could not save the lyrics. Check the log for details and try again.</value>
+    <value>Nagi 無法儲存歌詞。請檢查日誌以了解詳細資料後再試一次。</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>歡迎使用 Nagi</value>
@@ -1454,7 +1511,7 @@
     <value>播放清單</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>搜尋播放清單...</value>
+    <value>搜尋播放清單……</value>
   </data>
   <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>搜尋播放清單</value>
@@ -1502,7 +1559,7 @@
     <value>歌曲</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>在播放清單中搜尋...</value>
+    <value>在播放清單中搜尋……</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>在播放清單中搜尋</value>
@@ -1532,7 +1589,7 @@
     <value>在檔案總管中顯示</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
-    <value>從播放清單中移除</value>
+    <value>從播放清單移除</value>
   </data>
   <data name="PlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>播放</value>
@@ -1550,7 +1607,7 @@
     <value>歌曲</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>在類型中搜尋...</value>
+    <value>在曲風中搜尋……</value>
   </data>
   <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>在類型中搜尋</value>
@@ -1571,7 +1628,7 @@
     <value>加入佇列</value>
   </data>
   <data name="GenreViewPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>加入播放清單</value>
+    <value>新增至播放清單</value>
   </data>
   <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
     <value>前往專輯</value>
@@ -1604,7 +1661,7 @@
     <value>主題</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>選擇應用程式主題。</value>
+    <value>選擇淺色、深色或系統主題。</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
     <value>強調色彩</value>
@@ -1616,28 +1673,28 @@
     <value>視窗材質</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Description" xml:space="preserve">
-    <value>選擇視窗的背景材質。</value>
+    <value>選擇視窗背景材質。</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
     <value>動態佈景</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>啟用並設定動態主題選項。</value>
+    <value>使應用程式色彩配合當前專輯封面。</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
-    <value>記住視窗大小</value>
+    <value>記憶視窗大小</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Description" xml:space="preserve">
     <value>下次啟動時，將主視窗恢復到上次的大小。</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Header" xml:space="preserve">
-    <value>記住視窗位置</value>
+    <value>記憶視窗位置</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Description" xml:space="preserve">
     <value>下次啟動時，將主視窗恢復到上次的螢幕位置。</value>
   </data>
   <data name="SettingsPage_RememberNavState_Header" xml:space="preserve">
-    <value>記住導覽面板狀態</value>
+    <value>記憶導覽面板狀態</value>
   </data>
   <data name="SettingsPage_RememberNavState_Description" xml:space="preserve">
     <value>保持左側導覽面板開啟或關閉，如同您上次離開時的狀態。</value>
@@ -1655,13 +1712,13 @@
     <value>音量標準化 (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>自動將音量調整到標準等級 (-18 LUFS)，以避免音量突然變化。</value>
+    <value>使用 ReplayGain 減少歌曲之間的音量差異。</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
-    <value>WASAPI exclusive mode</value>
+    <value>WASAPI 獨佔模式</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+    <value>讓 Nagi 獨佔控制 Windows 音訊裝置。其他應用程式可能會靜音。變更此設定後請重新啟動 Nagi。</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>播放/暫停時淡入淡出</value>
@@ -1694,40 +1751,40 @@
     <value>可折疊播放器</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>為播放器條設置展開和折疊動畫。</value>
+    <value>將游標懸停時展開播放器列。</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
-    <value>恢復播放狀態</value>
+    <value>還原播放狀態</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>儲存目前的播放狀態，以便在下次啟動時繼續播放。</value>
+    <value>在 Nagi 啟動時還原您的佇列與播放位置。</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
-    <value>開機自動啟動</value>
+    <value>開機時自動啟動</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
     <value>當您登入電腦時自動啟動 Nagi。</value>
   </data>
   <data name="SettingsPage_StartMinimized_Header" xml:space="preserve">
-    <value>最小化啟動</value>
+    <value>啟動時最小化</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>啟動時，應用程式視窗預設將最小化。</value>
+    <value>啟動 Nagi 時將視窗最小化。</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
-    <value>最小化到迷你播放器</value>
+    <value>最小化至迷你播放器</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Description" xml:space="preserve">
     <value>最小化時，顯示一個精簡的浮動播放器，而不是隱藏視窗。</value>
   </data>
   <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
-    <value>隱藏到系統匣</value>
+    <value>隱藏至系統列</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>關閉時，改為隱藏到系統匣。</value>
+    <value>關閉視窗時讓 Nagi 繼續在系統列執行。</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
-    <value>在浮出視窗中顯示專輯封面</value>
+    <value>在彈出視窗中顯示封面圖</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
     <value>在點擊系統匣圖示時出現的精簡播放器中顯示專輯封面。</value>
@@ -1760,10 +1817,10 @@
     <value>重新掃描媒體庫以套用分割變更</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
-    <value>擷取線上中繼資料</value>
+    <value>擷取線上元資料</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>從線上服務（例如 Spotify、Last.fm）擷取額外資訊，例如藝人圖片和簡介。</value>
+    <value>從線上來源取得藝人圖片與個人簡介。</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>來源</value>
@@ -1772,10 +1829,10 @@
     <value>拖曳以重新排序中繼資料來源。將滑鼠懸停在每個來源上以查看詳細資訊。</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Header" xml:space="preserve">
-    <value>擷取線上歌詞</value>
+    <value>取得線上歌詞</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>自動從線上來源擷取遺失的歌詞。（隱私：將曲目中繼資料發送到第三方服務）</value>
+    <value>從線上來源取得缺失的歌詞。這會將歌曲元資料傳送給第三方服務。</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
     <value>來源</value>
@@ -1784,7 +1841,7 @@
     <value>拖曳以重新排序歌詞來源。將滑鼠懸停在每個來源上以查看詳細資訊。</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
-    <value>顯示羅馬拼音歌詞</value>
+    <value>顯示羅馬化歌詞</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
     <value>當安裝的語言包與腳本匹配時，在支援的歌詞下方顯示一行較小的羅馬拼音。</value>
@@ -1793,7 +1850,7 @@
     <value>語言包</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>安裝您想要羅馬拼音化的語言。語言包經過簽署，僅包含資料，並儲存在本機。</value>
+    <value>安裝語言包以將支援的歌詞轉換為羅馬拼音。語言包會儲存在本機。</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
     <value>重新整理</value>
@@ -1832,19 +1889,19 @@
     <value>{0} 授權</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>匯出/匯入播放清單</value>
+    <value>匯入與匯出播放清單</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
     <value>將播放清單匯出為 M3U 檔案以在其他播放器中使用，或將 M3U 播放清單匯入 Nagi。</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
-    <value>匯出全部...</value>
+    <value>全部匯出……</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
     <value>將所有播放清單匯出到資料夾</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
-    <value>匯入...</value>
+    <value>匯入……</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
     <value>匯入一個或多個 M3U 檔案</value>
@@ -1880,19 +1937,19 @@
     <value>中斷連接</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
-    <value>啟用記錄</value>
+    <value>啟用 Scrobble</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Description" xml:space="preserve">
     <value>自動將您在 Nagi 上收聽的曲目新增到您的 Last.fm 個人檔案。</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
-    <value>更新「正在播放」</value>
+    <value>更新正在播放狀態</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>向 Last.fm 上的朋友即時顯示您正在收聽的內容。</value>
+    <value>在您的 Last.fm 個人檔案中顯示目前正在播放的歌曲。</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
-    <value>聆聽腦</value>
+    <value>ListenBrainz</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Description" xml:space="preserve">
     <value>將您的收聽記錄提交至 ListenBrainz（Last.fm 的開放替代方案）。</value>
@@ -1913,10 +1970,10 @@
     <value>連線失敗：{0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>提交收聽記錄 (scrobbling)</value>
+    <value>傳送聆聽紀錄 (Scrobbling)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>提交「正在播放」更新</value>
+    <value>傳送正在播放更新</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
     <value>進階</value>
@@ -1949,7 +2006,7 @@
     <value>歌曲</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>在智慧播放清單中搜尋...</value>
+    <value>在智慧播放清單中搜尋……</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>在智慧播放清單中搜尋</value>
@@ -2021,7 +2078,7 @@
     <value>傳送意見回饋</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>開機時檢查更新</value>
+    <value>啟動時檢查更新</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
     <value>應用程式啟動時自動檢查新版本。</value>
@@ -2030,7 +2087,7 @@
     <value>應用程式語言</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>變更需要重新啟動才能生效</value>
+    <value>重新啟動 Nagi 以套用語言變更。</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
     <value>需要重新啟動</value>
@@ -2045,7 +2102,7 @@
     <value>備份與還原</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>建立音樂庫與設定的備份，或從之前的備份還原</value>
+    <value>建立媒體庫資料與設定的備份，或還原之前的備份。</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
     <value>建立備份</value>
@@ -2057,7 +2114,7 @@
     <value>備份已建立</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>已成功建立備份 ({0:F2} MB)，位置：{1}</value>
+    <value>已建立備份 ({0:F2} MB)，路徑：{1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
     <value>備份失敗</value>
@@ -2084,13 +2141,13 @@
     <value>還原完成</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>已成功還原備份。應用程式現在將重新啟動。</value>
+    <value>已還原備份。Nagi 即將重新啟動。</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
     <value>還原失敗</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>從備份還原失敗。您的資料未經修改。</value>
+    <value>無法還原備份。</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
     <value>播放器樣式</value>
@@ -2102,25 +2159,25 @@
     <value>純色 (不透明)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>自訂浮動播放器的外觀</value>
+    <value>自訂播放器列的外觀。</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
     <value>色調強度</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>調整播放器背景色彩的鮮豔度</value>
+    <value>調整播放器背景色彩的強度。</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
-    <value>淡入持續時間</value>
+    <value>淡入時間</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
-    <value>播放時淡入效果的持續時間 (毫秒)</value>
+    <value>設定恢復播放時音量淡入所需的時間。</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
-    <value>淡出持續時間</value>
+    <value>淡出時間</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
-    <value>暫停時淡出效果的持續時間 (毫秒)</value>
+    <value>設定暫停播放時音量淡出所需的時間。</value>
   </data>
   <data name="Settings_Nav_Insights" xml:space="preserve">
     <value>深入分析</value>
@@ -2132,10 +2189,10 @@
     <value>總聆聽時間</value>
   </data>
   <data name="InsightsPage_UniqueSongs" xml:space="preserve">
-    <value>獨特歌曲數</value>
+    <value>不重複歌曲數</value>
   </data>
   <data name="InsightsPage_PeakHour" xml:space="preserve">
-    <value>高峰時段</value>
+    <value>聆聽高峰時段</value>
   </data>
   <data name="InsightsPage_MostActiveDay" xml:space="preserve">
     <value>最活躍的一天</value>
@@ -2162,7 +2219,7 @@
     <value>開始播放音樂以在此查看您的深入分析</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
-    <value>{0} 次播放</value>
+    <value>播放次數：{0}</value>
   </data>
   <data name="InsightsPage_Source_Albums" xml:space="preserve">
     <value>專輯</value>
@@ -2222,7 +2279,7 @@
     <value>時長</value>
   </data>
   <data name="PaginationControl_All" xml:space="preserve">
-    <value>All</value>
+    <value>全部</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>每頁項目數：</value>
@@ -2258,7 +2315,7 @@
     <value>過去 90 天</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>去年</value>
+    <value>過去一年</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>所有時間</value>
@@ -2268,5 +2325,167 @@
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
     <value>{0}分鐘 {1}秒</value>
+  </data>
+  <data name="QueuePanel_EmptyTitle" xml:space="preserve">
+    <value>您的佇列是空的</value>
+  </data>
+  <data name="QueuePanel_EmptyDescription" xml:space="preserve">
+    <value>播放音樂或將音訊檔案拖曳至此以建立佇列。</value>
+  </data>
+  <data name="QueuePanel_LoadError" xml:space="preserve">
+    <value>無法載入部分歌曲。選擇「重試」以重新載入佇列。</value>
+  </data>
+  <data name="QueuePanel_Retry" xml:space="preserve">
+    <value>重試</value>
+  </data>
+  <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
+    <value>無法儲存新的播放清單順序。請重試。</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
+    <value>音訊輸出裝置</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Description" xml:space="preserve">
+    <value>選擇 Nagi 播放音樂的位置。</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Default" xml:space="preserve">
+    <value>系統預設</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Unavailable" xml:space="preserve">
+    <value>已儲存的裝置不可用。將使用系統預設。</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
+    <value>無法更新音訊輸出。請重試或選擇其他裝置。</value>
+  </data>
+  <data name="Listening_Random" xml:space="preserve">
+    <value>隨機播放</value>
+  </data>
+  <data name="Listening_MoreVariety" xml:space="preserve">
+    <value>多樣化播放</value>
+  </data>
+  <data name="Listening_Rediscover" xml:space="preserve">
+    <value>重溫經典</value>
+  </data>
+  <data name="Listening_Unheard" xml:space="preserve">
+    <value>未播放過</value>
+  </data>
+  <data name="Listening_PlayFor" xml:space="preserve">
+    <value>播放時長……</value>
+  </data>
+  <data name="Listening_Minutes" xml:space="preserve">
+    <value>分鐘</value>
+  </data>
+  <data name="Listening_ShuffleMode" xml:space="preserve">
+    <value>隨機模式</value>
+  </data>
+  <data name="Listening_AvoidRecentDays" xml:space="preserve">
+    <value>避開最近播放 (天)</value>
+  </data>
+  <data name="Listening_MoreOptions" xml:space="preserve">
+    <value>更多選項</value>
+  </data>
+  <data name="Listening_PlayForDescription" xml:space="preserve">
+    <value>建立總時長不超過您所選時間的完整歌曲佇列。</value>
+  </data>
+  <data name="Listening_NoMixTitle" xml:space="preserve">
+    <value>此模式沒有適用的歌曲</value>
+  </data>
+  <data name="Listening_NoMixDescription" xml:space="preserve">
+    <value>此清單中沒有符合這些條件的歌曲。請嘗試其他模式或歌曲清單。</value>
+  </data>
+  <data name="Listening_Favorites" xml:space="preserve">
+    <value>最愛</value>
+  </data>
+  <data name="Listening_AddFavorite" xml:space="preserve">
+    <value>新增至最愛</value>
+  </data>
+  <data name="Listening_RemoveFavorite" xml:space="preserve">
+    <value>從最愛移除</value>
+  </data>
+  <data name="Listening_SleepTimer" xml:space="preserve">
+    <value>睡眠定時器</value>
+  </data>
+  <data name="Listening_FinishTrack" xml:space="preserve">
+    <value>計時結束時播放完當前歌曲</value>
+  </data>
+  <data name="Listening_StopAfterTrack" xml:space="preserve">
+    <value>這首歌結束後停止</value>
+  </data>
+  <data name="Listening_StopAtQueueEnd" xml:space="preserve">
+    <value>佇列結束時停止</value>
+  </data>
+  <data name="Listening_StopPlayback" xml:space="preserve">
+    <value>停止播放</value>
+  </data>
+  <data name="Listening_CustomTimer" xml:space="preserve">
+    <value>自訂計時器……</value>
+  </data>
+  <data name="Listening_Timer15" xml:space="preserve">
+    <value>15 分鐘後</value>
+  </data>
+  <data name="Listening_Timer30" xml:space="preserve">
+    <value>30 分鐘後</value>
+  </data>
+  <data name="Listening_Timer60" xml:space="preserve">
+    <value>60 分鐘後</value>
+  </data>
+  <data name="Listening_CancelStop" xml:space="preserve">
+    <value>取消預定停止</value>
+  </data>
+  <data name="Listening_TimerRemaining" xml:space="preserve">
+    <value>將於 {0} 後停止</value>
+  </data>
+  <data name="Listening_PlayerOptions" xml:space="preserve">
+    <value>播放器選項</value>
+  </data>
+  <data name="Listening_RecentlyPlayed" xml:space="preserve">
+    <value>最近播放</value>
+  </data>
+  <data name="Listening_HistorySearch" xml:space="preserve">
+    <value>搜尋播放紀錄</value>
+  </data>
+  <data name="Listening_HistoryEmpty" xml:space="preserve">
+    <value>尚無播放紀錄</value>
+  </data>
+  <data name="Listening_HistoryLoadError" xml:space="preserve">
+    <value>無法載入「最近播放」。選擇「重試」以再試一次。</value>
+  </data>
+  <data name="Listening_Today" xml:space="preserve">
+    <value>今天</value>
+  </data>
+  <data name="Listening_Yesterday" xml:space="preserve">
+    <value>昨天</value>
+  </data>
+  <data name="Listening_RediscoveryReason" xml:space="preserve">
+    <value>上次播放於 {0:d}</value>
+  </data>
+  <data name="Listening_RediscoveryTitle" xml:space="preserve">
+    <value>值得再次聆聽</value>
+  </data>
+  <data name="Listening_Dismiss" xml:space="preserve">
+    <value>關閉</value>
+  </data>
+  <data name="Listening_ActionError" xml:space="preserve">
+    <value>無法完成此操作。請重試。</value>
+  </data>
+  <data name="Listening_FavoritesEmpty" xml:space="preserve">
+    <value>尚無最愛</value>
+  </data>
+  <data name="Listening_FavoritesEmptyDescription" xml:space="preserve">
+    <value>從選單中將歌曲新增至最愛，或選取歌曲並按 Ctrl+D。</value>
+  </data>
+  <data name="Listening_VarietyDescription" xml:space="preserve">
+    <value>「多樣化播放」會避開最近播放過的歌曲，並盡可能將同一藝人的歌曲分開。</value>
+  </data>
+  <data name="Listening_RediscoverDescription" xml:space="preserve">
+    <value>「重溫經典」會使用 Nagi 中有播放紀錄且距上次播放已超過 30 天的歌曲。</value>
+  </data>
+  <data name="Listening_UnheardDescription" xml:space="preserve">
+    <value>「未播放過」會使用 Nagi 中沒有播放紀錄的歌曲。</value>
+  </data>
+  <data name="Listening_HistoryNoMatches" xml:space="preserve">
+    <value>沒有符合您搜尋的播放紀錄</value>
+  </data>
+  <data name="Listening_NoTimedMixDescription" xml:space="preserve">
+    <value>此清單中沒有符合條件且在您所選時長內的歌曲。請嘗試延長時間、使用其他模式或選擇不同的歌曲清單。</value>
   </data>
 </root>

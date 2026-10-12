@@ -3,7 +3,18 @@ name: Crowdin Sync
 on:
   push:
     branches: [ master ]
+    paths:
+      - src/Nagi.Core/Resources/Strings.resx
+      - src/Nagi.WinUI/Resources/Strings.resx
+      - src/Nagi.WinUI/Strings/en-US/Resources.resw
+      - crowdin.yml
+      - .github/workflows/crowdin.yml
+  schedule:
+    - cron: '0 8 * * 1'
   workflow_dispatch:
+
+concurrency:
+  group: crowdin-sync
 
 permissions:
   contents: write

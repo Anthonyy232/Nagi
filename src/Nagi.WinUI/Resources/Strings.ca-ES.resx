@@ -76,6 +76,9 @@
   <data name="NavItem_Folders" xml:space="preserve">
     <value>Carpetes</value>
   </data>
+  <data name="NavItem_Favorites" xml:space="preserve">
+    <value>Preferits</value>
+  </data>
   <data name="NavItem_Insights" xml:space="preserve">
     <value>Estadístiques</value>
   </data>
@@ -83,10 +86,10 @@
     <value>Configuració</value>
   </data>
   <data name="Status_NoTrackPlaying" xml:space="preserve">
-    <value>No s'està reproduint cap pista</value>
+    <value>Cap cançó en reproducció</value>
   </data>
   <data name="Tooltip_Play" xml:space="preserve">
-    <value>Reproduir</value>
+    <value>Reprodueix</value>
   </data>
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Pausa</value>
@@ -122,7 +125,7 @@
     <value>Fosc</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">
-    <value>Utilitzar la configuració del sistema</value>
+    <value>Per defecte del sistema</value>
   </data>
   <data name="Backdrop_Mica" xml:space="preserve">
     <value>Mica</value>
@@ -141,6 +144,39 @@
   </data>
   <data name="Label_Rating" xml:space="preserve">
     <value>Puntuació</value>
+  </data>
+  <data name="Label_Grouping" xml:space="preserve">
+    <value>Agrupament</value>
+  </data>
+  <data name="Label_SkipCount" xml:space="preserve">
+    <value>Comptador d'omissions</value>
+  </data>
+  <data name="Label_DiscNumber" xml:space="preserve">
+    <value>Número de disc</value>
+  </data>
+  <data name="Label_Bitrate" xml:space="preserve">
+    <value>Taxa de bits</value>
+  </data>
+  <data name="Label_SampleRate" xml:space="preserve">
+    <value>Freqüència de mostratge</value>
+  </data>
+  <data name="Label_IsLoved" xml:space="preserve">
+    <value>Preferit</value>
+  </data>
+  <data name="Label_HasLyrics" xml:space="preserve">
+    <value>Té lletra</value>
+  </data>
+  <data name="Operator_IsInRange" xml:space="preserve">
+    <value>És entre (inclusiu)</value>
+  </data>
+  <data name="Operator_IsAfter" xml:space="preserve">
+    <value>És posterior a</value>
+  </data>
+  <data name="Operator_IsBefore" xml:space="preserve">
+    <value>És anterior a</value>
+  </data>
+  <data name="SmartPlaylist_UpperBound_Placeholder" xml:space="preserve">
+    <value>Valor màxim</value>
   </data>
   <data name="Operator_Contains" xml:space="preserve">
     <value>Conté</value>
@@ -179,10 +215,10 @@
     <value>És com a màxim</value>
   </data>
   <data name="Operator_IsInTheLast" xml:space="preserve">
-    <value>És dels darrers (dies)</value>
+    <value>És en els últims (dies)</value>
   </data>
   <data name="Operator_IsNotInTheLast" xml:space="preserve">
-    <value>No és dels darrers (dies)</value>
+    <value>No és en els últims (dies)</value>
   </data>
   <data name="Operator_IsTrue" xml:space="preserve">
     <value>És cert</value>
@@ -194,31 +230,31 @@
     <value>Nova llista de reproducció intel·ligent</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>Edita la llista de reproducció intel·ligent - {0}</value>
+    <value>Edita la llista de reproducció intel·ligent: {0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
     <value>Introdueix un nom de llista de reproducció</value>
   </data>
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
-    <value>{0:N0} cançons coincideixen amb les regles actuals</value>
+    <value>Cançons coincidents: {0:N0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Introdueix un nom per veure les cançons que coincideixen</value>
+    <value>Escriu un nom de llista de reproducció per veure les cançons coincidents</value>
   </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
-    <value>No s'ha pogut calcular</value>
+    <value>No s'han pogut comptar les cançons coincidents</value>
   </data>
   <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
-    <value>Calculant...</value>
+    <value>S'està calculant…</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>Ja existeix una llista de reproducció amb aquest nom!</value>
+    <value>Ja existeix una llista de reproducció amb aquest nom.</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>Introdueix un nom, si us plau!</value>
+    <value>Escriu un nom de llista de reproducció.</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
-    <value>Carregant...</value>
+    <value>S'està carregant…</value>
   </data>
   <data name="Error_FailedToLoadArtists" xml:space="preserve">
     <value>No s'han pogut carregar els artistes</value>
@@ -227,13 +263,15 @@
     <value>Error crític</value>
   </data>
   <data name="CrashReport_Message" xml:space="preserve">
-    <value>Nagi ha trobat un error crític i s'ha de tancar. Disculpeu les molèsties.</value>
+    <value>Nagi ha trobat un error i s'ha de tancar.</value>
   </data>
   <data name="ElevationWarning_Title" xml:space="preserve">
     <value>S'està executant com a administrador</value>
   </data>
   <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi s'està executant actualment com a administrador. Això pot evitar que algunes funcions (com afegir carpetes de música) funcionin correctament. Per a la millor experiència, reinicia Nagi sense privilegis d'administrador.</value>
+    <value>Nagi s'està executant actualment com a administrador. Això pot evitar que algunes funcions (com afegir carpetes de música) funcionin correctament.
+
+Per a la millor experiència, reinicia Nagi sense privilegis d'administrador.</value>
   </data>
   <data name="ElevationWarning_Restart" xml:space="preserve">
     <value>Reiniciar normalment</value>
@@ -293,16 +331,16 @@
     <value>Aquesta carpeta ja és a la biblioteca.</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
-    <value>S'està afegint la carpeta a la biblioteca...</value>
+    <value>S'està afegint la carpeta a la biblioteca…</value>
   </data>
   <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>S'ha suprimit '{0}' correctament.</value>
+    <value>S'ha eliminat &apos;{0}&apos; de la biblioteca.</value>
   </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
-    <value>No s'ha pogut suprimir '{0}'.</value>
+    <value>No s'ha pogut eliminar &apos;{0}&apos; de la biblioteca.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
-    <value>S'està suprimint '{0}'...</value>
+    <value>S'està eliminant &apos;{0}&apos; de la biblioteca…</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
     <value>Escaneig de '{0}' completat.</value>
@@ -311,7 +349,7 @@
     <value>No s'han detectat canvis per a '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
-    <value>S'està escanejant '{0}' de nou...</value>
+    <value>S'està tornant a escanejar '{0}'…</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
     <value>No s'han trobat carpetes amb música.</value>
@@ -326,7 +364,7 @@
     <value>Error en afegir la carpeta: {0}</value>
   </data>
   <data name="Folders_Error_DeleteFolder" xml:space="preserve">
-    <value>Error en suprimir la carpeta: {0}</value>
+    <value>No s'ha pogut eliminar la carpeta de la biblioteca: {0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Error en reescanejar la carpeta: {0}</value>
@@ -377,10 +415,10 @@
     <value>Configura la teva biblioteca de música per començar.</value>
   </data>
   <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>S'està esperant que seleccionis una carpeta...</value>
+    <value>S'està esperant que seleccionis una carpeta…</value>
   </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
-    <value>S'està construint la teva biblioteca...</value>
+    <value>S'està creant la biblioteca…</value>
   </data>
   <data name="Onboarding_Error" xml:space="preserve">
     <value>S'ha produït un error inesperat. Torna-ho a provar.</value>
@@ -401,7 +439,7 @@
     <value>Error en carregar la llista de reproducció</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>S'està iniciant la llista de reproducció...</value>
+    <value>S'està iniciant la llista de reproducció…</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Cap cançó coincideix amb les regles d'aquesta llista de reproducció intel·ligent.</value>
@@ -410,7 +448,7 @@
     <value>Error en iniciar la reproducció d'aquesta llista.</value>
   </data>
   <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>S'està escollint una llista de reproducció aleatòria...</value>
+    <value>S'està triant una llista de reproducció aleatòria…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>No s'han trobat llistes de reproducció.</value>
@@ -422,13 +460,13 @@
     <value>Error en reproduir la llista de reproducció aleatòria.</value>
   </data>
   <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>S'estan carregant les llistes de reproducció...</value>
+    <value>S'estan carregant les llistes de reproducció…</value>
   </data>
   <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
     <value>Error en carregar les llistes de reproducció.</value>
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>S'està creant una nova llista de reproducció...</value>
+    <value>S'està creant una llista de reproducció nova…</value>
   </data>
   <data name="Playlist_Status_CreateFailed" xml:space="preserve">
     <value>No s'ha pogut crear la llista de reproducció. Potser ja existeix.</value>
@@ -437,7 +475,7 @@
     <value>S'ha produït un error en crear la llista de reproducció.</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>S'està actualitzant la portada de la llista de reproducció...</value>
+    <value>S'està actualitzant la portada de la llista de reproducció…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>No s'ha pogut actualitzar la portada de la llista de reproducció.</value>
@@ -446,7 +484,7 @@
     <value>S'ha produït un error en actualitzar la portada de la llista de reproducció.</value>
   </data>
   <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>S'està eliminant la imatge de la llista de reproducció...</value>
+    <value>S'està eliminant la imatge de la llista de reproducció…</value>
   </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>No s'ha pogut eliminar la imatge de la llista de reproducció.</value>
@@ -455,7 +493,7 @@
     <value>S'ha produït un error en eliminar la imatge de la llista de reproducció.</value>
   </data>
   <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>S'està canviant el nom de la llista de reproducció...</value>
+    <value>S'està canviant el nom de la llista de reproducció…</value>
   </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>No s'ha pogut canviar el nom de la llista de reproducció.</value>
@@ -464,7 +502,7 @@
     <value>S'ha produït un error en canviar el nom de la llista de reproducció.</value>
   </data>
   <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>S'està suprimint la llista de reproducció...</value>
+    <value>S'està eliminant la llista de reproducció…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>No s'ha pogut suprimir la llista de reproducció.</value>
@@ -512,8 +550,9 @@
     <value>Exportació correcta</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>S'han exportat {0} llistes de reproducció ({1} cançons totals) a:
-{2}</value>
+    <value>Llistes de reproducció exportades: {0}
+Cançons: {1}
+Desat a: {2}</value>
   </data>
   <data name="Settings_Export_Failed_Title" xml:space="preserve">
     <value>Error en exportar</value>
@@ -522,17 +561,18 @@
     <value>Importació correcta</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>S'han importat {0} llistes de reproducció ({1} cançons) correctament.</value>
+    <value>Llistes de reproducció importades: {0}
+Cançons: {1}</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
     <value>
 
-{0} cançons no s'han trobat a la teva biblioteca.</value>
+Cançons no trobades a la biblioteca: {0}.</value>
   </data>
   <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
     <value>
 
-{0} fitxers no s'han pogut importar.</value>
+Fitxers que no s'han pogut importar: {0}.</value>
   </data>
   <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
     <value>Error en importar</value>
@@ -586,7 +626,7 @@
     <value>D'acord</value>
   </data>
   <data name="Generic_Cancel" xml:space="preserve">
-    <value>Cancel·lar</value>
+    <value>Cancel·la</value>
   </data>
   <data name="Generic_Close" xml:space="preserve">
     <value>Tancar</value>
@@ -601,10 +641,10 @@
     <value>FFmpeg no detectat. Instal·la FFmpeg i fes clic a 'Tornar a comprovar'.</value>
   </data>
   <data name="FFmpeg_Status_Checking" xml:space="preserve">
-    <value>S'està comprovant FFmpeg...</value>
+    <value>S'està comprovant FFmpeg…</value>
   </data>
   <data name="FFmpeg_Status_Detected" xml:space="preserve">
-    <value>FFmpeg detectat!</value>
+    <value>S'ha detectat FFmpeg.</value>
   </data>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg encara no detectat. Instal·la FFmpeg i fes clic a 'Tornar a comprovar'.</value>
@@ -616,7 +656,7 @@
     <value>Anterior</value>
   </data>
   <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>Reproduir</value>
+    <value>Reprodueix</value>
   </data>
   <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
     <value>Pausa</value>
@@ -772,16 +812,16 @@
     <value>No hi ha llistes de reproducció disponibles</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
-    <value>Suprimir carpeta</value>
+    <value>Elimina la carpeta</value>
   </data>
   <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
-    <value>Estàs segur que vols eliminar la carpeta '{0}' de la biblioteca? Això no suprimirà els fitxers del teu ordinador.</value>
+    <value>Vols eliminar &apos;{0}&apos; de la biblioteca? Els fitxers d'àudio romandran a l'ordinador.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
-    <value>Suprimir</value>
+    <value>Elimina</value>
   </data>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Cancel·lar</value>
+    <value>Cancel·la</value>
   </data>
   <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
     <value>Carpeta desconeguda</value>
@@ -817,10 +857,10 @@
     <value>Cercar llistes de reproducció</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>Introdueix el nom de la nova llista de reproducció</value>
+    <value>Escriu un nom de llista de reproducció</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
-    <value>Seleccionar imatge</value>
+    <value>Tria una portada</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
     <value>Crear nova llista de reproducció</value>
@@ -829,7 +869,7 @@
     <value>Crear</value>
   </data>
   <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>Cancel·lar</value>
+    <value>Cancel·la</value>
   </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
     <value>Canviar nom '{0}'</value>
@@ -856,7 +896,7 @@
     <value>Tancar cerca</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Cercar a la biblioteca</value>
+    <value>Cerca al gènere</value>
   </data>
   <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>No hi ha llistes de reproducció disponibles</value>
@@ -877,13 +917,13 @@
     <value>Reescanejar metadades</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>Això reescanejarà totes les cançons de la teva biblioteca per aplicar les noves configuracions de metadades (com ara els caràcters de divisió d'artista). Això pot trigar una mica depenent de la mida de la teva biblioteca. Vols continuar?</value>
+    <value>Torna a escanejar la biblioteca per aplicar la configuració de metadades, com ara la divisió d'artistes. Això pot trigar una mica en biblioteques grans. Vols continuar?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
     <value>Reescanejar</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
-    <value>S'està preparant el reescaneig de la biblioteca...</value>
+    <value>S'està preparant el nou escaneig de la biblioteca…</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
     <value>Reescaneig completat</value>
@@ -904,13 +944,17 @@
     <value>Activar normalització de volum</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
-    <value>La normalització de volum (ReplayGain) assegura un nivell de volum consistent en tota la teva música. Això analitzarà la teva biblioteca de música i modificarà directament els teus fitxers d'àudio escrivint etiquetes ReplayGain. Només es processaran els fitxers sense etiquetes existents. Això pot trigar un temps depenent de la mida de la teva biblioteca. Vols continuar?</value>
+    <value>La normalització de volum (ReplayGain) assegura un nivell de volum consistent en tota la teva música.
+
+Això analitzarà la teva biblioteca de música i modificarà directament els teus fitxers d'àudio escrivint etiquetes ReplayGain. Només es processaran els fitxers sense etiquetes existents. Això pot trigar un temps depenent de la mida de la teva biblioteca.
+
+Vols continuar?</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Activar i Escanejar</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>S'està preparant l'escaneig de normalització de volum...</value>
+    <value>S'està preparant l'escaneig de normalització del volum…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
     <value>L'escaneig de normalització de volum s'ha cancel·lat.</value>
@@ -919,7 +963,9 @@
     <value>Error durant l'escaneig: {0}</value>
   </data>
   <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>No s'han pogut recuperar els registres de la memòria. L'intent de reserva de llegir el fitxer de registre ha fallat. Ruta esperada: '{0}' Error: {1}</value>
+    <value>No s'han pogut recuperar els registres de la memòria. L'intent de reserva de llegir el fitxer de registre ha fallat.
+Ruta esperada: '{0}'
+Error: {1}</value>
   </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>No hi ha llistes de reproducció per exportar.</value>
@@ -1045,7 +1091,7 @@
     <value>Nagi</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Redescobreix la teva col·lecció de música local amb Nagi, un reproductor de música centrat en la velocitat, la simplicitat i la privadesa. Nagi està construït amb C# i WinUI 3 per oferir una experiència Fluent neta i nativa. És bonic, eficient i respecta la teva privadesa.</value>
+    <value>Torna a descobrir la teva col·lecció de música local amb Nagi, un reproductor de música centrat en la velocitat, la simplicitat i la privacitat.</value>
   </data>
   <data name="AppShortName" xml:space="preserve">
     <value>Nagi</value>
@@ -1072,61 +1118,61 @@
     <value>Següent</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
-    <value>Anar a l'àlbum</value>
+    <value>Vés a l'àlbum</value>
   </data>
   <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Drop files or folders onto the player to add them to the queue.</value>
+    <value>Arrossegueu fitxers o carpetes al reproductor per afegir-los a la cua.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Següent</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
-    <value>Clear queue</value>
+    <value>Neteja la cua</value>
   </data>
   <data name="QueuePanel_DisplayOptions" xml:space="preserve">
-    <value>Queue display options</value>
+    <value>Opcions de visualització de la cua</value>
   </data>
   <data name="QueuePanel_Close" xml:space="preserve">
-    <value>Close queue</value>
+    <value>Tanca la cua</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
-    <value>Artist</value>
+    <value>Artista</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
-    <value>Duration</value>
+    <value>Durada</value>
   </data>
   <data name="QueuePanel_ShowTrackCount" xml:space="preserve">
-    <value>Track count</value>
+    <value>Nombre de pistes</value>
   </data>
   <data name="QueuePanel_TrackCount" xml:space="preserve">
-    <value>Tracks: {0:N0}</value>
+    <value>Pistes: {0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
-    <value>Queue position</value>
+    <value>Posició a la cua</value>
   </data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve">
-    <value>Genre</value>
+    <value>Gènere</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
-    <value>Total duration</value>
+    <value>Durada total</value>
   </data>
   <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Reprodueix</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
-    <value>Move up</value>
+    <value>Mou cap amunt</value>
   </data>
   <data name="QueuePanel_MoveDown" xml:space="preserve">
-    <value>Move down</value>
+    <value>Mou cap avall</value>
   </data>
   <data name="QueuePanel_Remove" xml:space="preserve">
-    <value>Remove from queue</value>
+    <value>Elimina de la cua</value>
   </data>
   <data name="AlbumPage_Title" xml:space="preserve">
     <value>Àlbums</value>
   </data>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Cercar àlbums...</value>
+    <value>Cerca àlbums…</value>
   </data>
   <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Cercar àlbums</value>
@@ -1150,7 +1196,7 @@
     <value>Cançons</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Cercar a l'àlbum...</value>
+    <value>Cerca a l'àlbum…</value>
   </data>
   <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Cercar a l'àlbum</value>
@@ -1174,10 +1220,10 @@
     <value>Afegeix a la llista de reproducció</value>
   </data>
   <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Anar a l'artista</value>
+    <value>Vés a l'artista</value>
   </data>
   <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Mostrar a l'explorador</value>
+    <value>Mostra a l'Explorador de fitxers</value>
   </data>
   <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Reprodueix</value>
@@ -1192,7 +1238,7 @@
     <value>Artistes</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Cercar artistes...</value>
+    <value>Cerca artistes…</value>
   </data>
   <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Cercar artistes</value>
@@ -1234,7 +1280,7 @@
     <value>Cançons</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Cercar a l'artista...</value>
+    <value>Cerca a l'artista…</value>
   </data>
   <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Cercar a l'artista</value>
@@ -1258,10 +1304,10 @@
     <value>Afegeix a la llista de reproducció</value>
   </data>
   <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Anar a l'àlbum</value>
+    <value>Vés a l'àlbum</value>
   </data>
   <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Mostrar a l'explorador</value>
+    <value>Mostra a l'Explorador de fitxers</value>
   </data>
   <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Reprodueix</value>
@@ -1291,7 +1337,7 @@
     <value>Torna a escanejar</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>Eliminar</value>
+    <value>Elimina de la biblioteca</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Encara no s'han afegit carpetes</value>
@@ -1318,13 +1364,13 @@
     <value>Afegeix a la llista de reproducció</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Anar a l'àlbum</value>
+    <value>Vés a l'àlbum</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Anar a l'artista</value>
+    <value>Vés a l'artista</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Mostrar a l'explorador</value>
+    <value>Mostra a l'Explorador de fitxers</value>
   </data>
   <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Reprodueix</value>
@@ -1336,7 +1382,7 @@
     <value>Cançons</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Cercar a la carpeta...</value>
+    <value>Cerca a la carpeta…</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Cercar a la carpeta</value>
@@ -1357,7 +1403,7 @@
     <value>Gèneres</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Cercar gèneres...</value>
+    <value>Cerca gèneres…</value>
   </data>
   <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
     <value>Cercar gèneres</value>
@@ -1378,7 +1424,7 @@
     <value>Biblioteca</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Cercar a la biblioteca...</value>
+    <value>Cerca a la biblioteca…</value>
   </data>
   <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Cercar a la biblioteca</value>
@@ -1402,16 +1448,22 @@
     <value>Afegeix a la llista de reproducció</value>
   </data>
   <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Anar a l'àlbum</value>
+    <value>Vés a l'àlbum</value>
   </data>
   <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
-    <value>Anar a l'artista</value>
+    <value>Vés a l'artista</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Mostrar a l'explorador</value>
+    <value>Mostra a l'Explorador de fitxers</value>
   </data>
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Reprodueix</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
+    <value>No s'ha trobat cap cançó</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+    <value>Prova de cercar una altra cosa</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
     <value>La teva biblioteca està buida</value>
@@ -1426,25 +1478,25 @@
     <value>Prova una altra cançó</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
-    <value>Edit or replace lyrics</value>
+    <value>Edita o substitueix la lletra</value>
   </data>
   <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
-    <value>Edit lyrics</value>
+    <value>Edita les lletres</value>
   </data>
   <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
-    <value>Paste plain text or timestamped LRC lyrics</value>
+    <value>Enganxa text pla o lletra LRC amb marques de temps</value>
   </data>
   <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
-    <value>Save</value>
+    <value>Desa</value>
   </data>
   <data name="LyricsPage_EditLyrics_Remove" xml:space="preserve">
-    <value>Remove saved lyrics</value>
+    <value>Elimina les lletres desades</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
-    <value>Lyrics could not be updated</value>
+    <value>No s'ha pogut actualitzar la lletra</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Nagi could not save the lyrics. Check the log for details and try again.</value>
+    <value>Nagi no ha pogut desar la lletra. Comproveu el registre per veure els detalls i torneu-ho a provar.</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Benvingut a Nagi</value>
@@ -1459,7 +1511,7 @@
     <value>Llistes de reproducció</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Cercar llistes de reproducció...</value>
+    <value>Cerca llistes de reproducció…</value>
   </data>
   <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Cercar llistes de reproducció</value>
@@ -1507,7 +1559,7 @@
     <value>Cançons</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Cercar a la llista de reproducció...</value>
+    <value>Cerca a la llista de reproducció…</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Cercar a la llista de reproducció</value>
@@ -1528,16 +1580,16 @@
     <value>Afegeix a la cua</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Anar a l'àlbum</value>
+    <value>Vés a l'àlbum</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Anar a l'artista</value>
+    <value>Vés a l'artista</value>
   </data>
   <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Mostrar a l'explorador</value>
+    <value>Mostra a l'Explorador de fitxers</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
-    <value>Eliminar de la llista de reproducció</value>
+    <value>Elimina de la llista de reproducció</value>
   </data>
   <data name="PlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Reprodueix</value>
@@ -1555,7 +1607,7 @@
     <value>Cançons</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Cercar al gènere...</value>
+    <value>Cerca al gènere…</value>
   </data>
   <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Cercar al gènere</value>
@@ -1579,13 +1631,13 @@
     <value>Afegeix a la llista de reproducció</value>
   </data>
   <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Anar a l'àlbum</value>
+    <value>Vés a l'àlbum</value>
   </data>
   <data name="GenreViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Anar a l'artista</value>
+    <value>Vés a l'artista</value>
   </data>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Mostrar a l'explorador</value>
+    <value>Mostra a l'Explorador de fitxers</value>
   </data>
   <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
     <value>No hi ha llistes de reproducció disponibles</value>
@@ -1609,40 +1661,40 @@
     <value>Tema</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>Tria el tema de l'aplicació.</value>
+    <value>Tria un tema clar, fosc o del sistema.</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
     <value>Color d'accent</value>
   </data>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
-    <value>Restablir per defecte</value>
+    <value>Restableix als valors per defecte</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Material de la finestra</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Description" xml:space="preserve">
-    <value>Selecciona el material de fons per a la finestra.</value>
+    <value>Tria el material de fons de la finestra.</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
     <value>Temes dinàmics</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>Activa i configura les opcions de temes dinàmics.</value>
+    <value>Fes coincidir els colors de l'aplicació amb la portada de l'àlbum actual.</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
-    <value>Recordar mida de la finestra</value>
+    <value>Recorda la mida de la finestra</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Description" xml:space="preserve">
     <value>Restaura la finestra principal a la seva mida anterior en el proper inici.</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Header" xml:space="preserve">
-    <value>Recordar posició de la finestra</value>
+    <value>Recorda la posició de la finestra</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Description" xml:space="preserve">
     <value>Restaura la finestra principal a la seva ubicació anterior a la pantalla en el proper inici.</value>
   </data>
   <data name="SettingsPage_RememberNavState_Header" xml:space="preserve">
-    <value>Recordar estat del panell de navegació</value>
+    <value>Recorda l'estat del panell de navegació</value>
   </data>
   <data name="SettingsPage_RememberNavState_Description" xml:space="preserve">
     <value>Manté el panell de navegació esquerre obert o tancat tal com el vas deixar.</value>
@@ -1660,13 +1712,13 @@
     <value>Normalització de volum (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Ajusta automàticament el volum al nivell estàndard (-18 LUFS) per evitar canvis sobtats de volum.</value>
+    <value>Redueix les diferències de volum entre cançons mitjançant ReplayGain.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
-    <value>WASAPI exclusive mode</value>
+    <value>Mode exclusiu de WASAPI</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+    <value>Dona a Nagi el control exclusiu del dispositiu d'àudio de Windows. Altres aplicacions poden quedar-se sense so. Reinicieu Nagi després de canviar aquesta configuració.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>Enfocament en reproducció / pausa</value>
@@ -1678,7 +1730,7 @@
     <value>Equalitzador d'àudio</value>
   </data>
   <data name="SettingsPage_ResetEqualizer_Content" xml:space="preserve">
-    <value>Restablir per defecte</value>
+    <value>Restableix als valors per defecte</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Preamp</value>
@@ -1690,7 +1742,7 @@
     <value>Personalitzar controls del reproductor</value>
   </data>
   <data name="SettingsPage_ResetPlayerButtons_Content" xml:space="preserve">
-    <value>Restablir per defecte</value>
+    <value>Restableix als valors per defecte</value>
   </data>
   <data name="SettingsPage_CustomizePlayer_Instructions" xml:space="preserve">
     <value>Passa el ratolí per activar/desactivar la visibilitat. Arrossega per reordenar. El divisor separa els controls centrals i drets.</value>
@@ -1699,46 +1751,46 @@
     <value>Reproductor plegable</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>Anima la barra del reproductor per expandir-se i contraure's.</value>
+    <value>Amplia la barra del reproductor quan hi passes el cursor per sobre.</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
-    <value>Restaurar estat de reproducció</value>
+    <value>Restaura l'estat de reproducció</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>Guarda l'estat de reproducció actual per reprendre'l en el proper inici.</value>
+    <value>Restaura la cua i la posició de reproducció quan s'iniciï Nagi.</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
-    <value>Inici automàtic a l'arrencada</value>
+    <value>Inicia automàticament en arrencar</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
     <value>Inicia Nagi automàticament quan iniciïs sessió a l'ordinador.</value>
   </data>
   <data name="SettingsPage_StartMinimized_Header" xml:space="preserve">
-    <value>Iniciar minimitzat</value>
+    <value>Inicia minimitzat</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>Quan s'iniciï, la finestra de l'aplicació es minimitzarà per defecte.</value>
+    <value>Inicia Nagi amb la finestra minimitzada.</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
-    <value>Minimitzar a mini-reproductor</value>
+    <value>Minimitza al mini reproductor</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Description" xml:space="preserve">
     <value>Quan es minimitza, mostra un reproductor flotant compacte en lloc d'amagar la finestra.</value>
   </data>
   <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
-    <value>Amagar a la safata del sistema</value>
+    <value>Amaga a la safata del sistema</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>Quan es tanca, amaga's a la safata del sistema en lloc d'això.</value>
+    <value>Mantén Nagi en execució a la safata del sistema en tancar la finestra.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
-    <value>Mostrar caràtula a la finestra emergent</value>
+    <value>Mostra la portada a la finestra emergent</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
     <value>Mostra la caràtula al reproductor compacte que apareix en fer clic a la icona de la safata.</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
-    <value>Ignora els articles en ordenar</value>
+    <value>Ignora els articles quan s'ordeni</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
     <value>Ordena àlbums, artistes i cançons per la seva primera paraula significativa (p. ex., "The Beatles" s'ordena per B).</value>
@@ -1765,10 +1817,10 @@
     <value>Torna a escanejar la biblioteca per aplicar els canvis de divisió</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
-    <value>Recuperar metadades en línia</value>
+    <value>Obtén metadades en línia</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Recupera informació addicional com ara imatges d'artista i biografies de serveis en línia (p. ex., Spotify, Last.fm).</value>
+    <value>Obtén imatges i biografies d'artistes des de fonts en línia.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Fonts</value>
@@ -1777,10 +1829,10 @@
     <value>Arrossega per reordenar les fonts de metadades. Passa el ratolí per sobre de cada font per a més detalls.</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Header" xml:space="preserve">
-    <value>Recuperar lletres en línia</value>
+    <value>Obtén lletres en línia</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>Recupera automàticament les lletres que falten de fonts en línia. (Privadesa: envia metadades de la cançó a serveis de tercers)</value>
+    <value>Obtén les lletres que faltin des de fonts en línia. Això envia metadades de les cançons a serveis de tercers.</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
     <value>Fonts</value>
@@ -1789,16 +1841,16 @@
     <value>Arrossega per reordenar les fonts de lletres. Passa el ratolí per sobre de cada font per a més detalls.</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
-    <value>Mostra lletres romanitzades</value>
+    <value>Mostra les lletres romanitzades</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
     <value>Mostra una línia romanitzada més petita sota les lletres compatibles quan un paquet instal·lat coincideix amb l'script.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
-    <value>Paquets d'idiomes</value>
+    <value>Paquets d'idioma</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>Instal·la els idiomes que vulguis romanitzar. Els paquets estan signats, són només de dades i s'emmagatzemen localment.</value>
+    <value>Instal·la paquets d'idioma per romanitzar les lletres compatibles. Els paquets s'emmagatzemen localment.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
     <value>Actualitza</value>
@@ -1837,25 +1889,25 @@
     <value>Llicència de {0}</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>Exportar/Importar llistes de reproducció</value>
+    <value>Importa i exporta llistes de reproducció</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
     <value>Exporta llistes de reproducció a fitxers M3U per utilitzar-les en altres reproductors, o importa llistes de reproducció M3U a Nagi.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
-    <value>Exportar tot...</value>
+    <value>Exporta-ho tot…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
     <value>Exportar totes les llistes de reproducció a una carpeta</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
-    <value>Importar...</value>
+    <value>Importa…</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
     <value>Importar un o més fitxers M3U</value>
   </data>
   <data name="SettingsPage_ResetApp_Header" xml:space="preserve">
-    <value>Reiniciar aplicació</value>
+    <value>Restableix l'aplicació</value>
   </data>
   <data name="SettingsPage_ResetApp_Description" xml:space="preserve">
     <value>Això esborrarà totes les dades de la biblioteca, les llistes de reproducció i restablirà tota la configuració als valors predeterminats. L'aplicació es reiniciarà.</value>
@@ -1885,16 +1937,16 @@
     <value>Desconnectar</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
-    <value>Activar "scrobbling"</value>
+    <value>Habilita l'scrobbling</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Description" xml:space="preserve">
     <value>Afegeix automàticament les cançons que escoltes a Nagi al teu perfil de Last.fm.</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
-    <value>Actualitzar 'Ara sonant'</value>
+    <value>Actualitza «S'està reproduint»</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>Mostra als teus amics de Last.fm el que estàs escoltant actualment en temps real.</value>
+    <value>Mostra la cançó que s'està reproduint actualment al teu perfil de Last.fm.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
     <value>ListenBrainz</value>
@@ -1909,7 +1961,7 @@
     <value>Enganxa el teu testimoni des de listenbrainz.org/settings</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TestConnection" xml:space="preserve">
-    <value>Prova la connexió</value>
+    <value>Comprova la connexió</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Connected" xml:space="preserve">
     <value>Connectat com a {0}</value>
@@ -1918,10 +1970,10 @@
     <value>La connexió ha fallat: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>Envia escoltes (scrobbling)</value>
+    <value>Envia les escoltes (Scrobbling)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>Envia actualitzacions de "s'està reproduint"</value>
+    <value>Envia actualitzacions de «S'està reproduint»</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
     <value>Avançat</value>
@@ -1954,7 +2006,7 @@
     <value>Cançons</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Cercar a la llista de reproducció intel·ligent...</value>
+    <value>Cerca a la llista de reproducció intel·ligent…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Cercar a la llista de reproducció intel·ligent</value>
@@ -1978,13 +2030,13 @@
     <value>Afegeix a la cua</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Anar a l'àlbum</value>
+    <value>Vés a l'àlbum</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Anar a l'artista</value>
+    <value>Vés a l'artista</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Mostrar a l'explorador</value>
+    <value>Mostra a l'Explorador de fitxers</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Reprodueix</value>
@@ -2026,7 +2078,7 @@
     <value>Enviar comentaris</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Cercar actualitzacions a l'inici</value>
+    <value>Cerca actualitzacions en arrencar</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
     <value>Comprova automàticament si hi ha noves versions quan s'inicia l'aplicació.</value>
@@ -2035,7 +2087,7 @@
     <value>Idioma de l'aplicació</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>Els canvis requereixen un reinici per fer-se efectius</value>
+    <value>Reinicia Nagi per aplicar el canvi d'idioma.</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
     <value>Reinici necessari</value>
@@ -2050,7 +2102,7 @@
     <value>Còpia de seguretat i restauració</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Crea còpies de seguretat de la teva biblioteca de música i configuració, o restaura-les d'una còpia anterior</value>
+    <value>Crea una còpia de seguretat de les dades i la configuració de la biblioteca, o restaura'n una de anterior.</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
     <value>Crear còpia de seguretat</value>
@@ -2062,7 +2114,7 @@
     <value>Còpia de seguretat creada</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Còpia de seguretat creada correctament ({0:F2} MB) a: {1}</value>
+    <value>S'ha creat una còpia de seguretat ({0:F2} MB) a: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
     <value>La còpia de seguretat ha fallat</value>
@@ -2089,13 +2141,13 @@
     <value>Restauració completada</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Còpia de seguretat restaurada correctament. L'aplicació es reiniciarà ara.</value>
+    <value>S'ha restaurat la còpia de seguretat. Ara Nagi es reiniciarà.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
     <value>La restauració ha fallat</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>No s'ha pogut restaurar des de la còpia de seguretat. Les teves dades no han estat modificades.</value>
+    <value>No s'ha pogut restaurar la còpia de seguretat.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
     <value>Estil del reproductor</value>
@@ -2107,25 +2159,25 @@
     <value>Sòlid (Opac)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Personalitza l'aparença del reproductor flotant</value>
+    <value>Personalitza l'aspecte de la barra del reproductor.</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
     <value>Intensitat del tint</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Ajusta la vivacitat del color de fons del reproductor</value>
+    <value>Ajusta l'intensitat del color de fons del reproductor.</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
-    <value>Durada de l'entrada gradual</value>
+    <value>Durada de l'aparició gradual</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
-    <value>La durada de l'efecte d'entrada gradual en reproduir (ms)</value>
+    <value>Defineix quant de temps triga el volum a augmentar gradualment quan es reprèn la reproducció.</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
-    <value>Durada de la sortida gradual</value>
+    <value>Durada de la desaparició gradual</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
-    <value>La durada de l'efecte de sortida gradual en pausar (ms)</value>
+    <value>Defineix quant de temps triga el volum a reduir-se gradualment quan es pausa la reproducció.</value>
   </data>
   <data name="Settings_Nav_Insights" xml:space="preserve">
     <value>Estadístiques</value>
@@ -2140,10 +2192,10 @@
     <value>Cançons úniques</value>
   </data>
   <data name="InsightsPage_PeakHour" xml:space="preserve">
-    <value>Hora punta</value>
+    <value>Hora de màxima activitat</value>
   </data>
   <data name="InsightsPage_MostActiveDay" xml:space="preserve">
-    <value>Dia de més activitat</value>
+    <value>Dia més actiu</value>
   </data>
   <data name="InsightsPage_TopSongs" xml:space="preserve">
     <value>Cançons principals</value>
@@ -2167,7 +2219,7 @@
     <value>Comença a reproduir música per veure les teves estadístiques aquí</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
-    <value>{0} reproduccions</value>
+    <value>Reproduccions: {0}</value>
   </data>
   <data name="InsightsPage_Source_Albums" xml:space="preserve">
     <value>Àlbums</value>
@@ -2227,7 +2279,7 @@
     <value>Durada</value>
   </data>
   <data name="PaginationControl_All" xml:space="preserve">
-    <value>All</value>
+    <value>Tots</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>Elements per pàgina:</value>
@@ -2266,12 +2318,174 @@
     <value>Últim any</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
-    <value>Tot el temps</value>
+    <value>Sempre</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}h {1}m</value>
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
     <value>{0}m {1}s</value>
+  </data>
+  <data name="QueuePanel_EmptyTitle" xml:space="preserve">
+    <value>La cua està buida</value>
+  </data>
+  <data name="QueuePanel_EmptyDescription" xml:space="preserve">
+    <value>Reprodueix música o arrossega fitxers d'àudio aquí per crear la teva cua.</value>
+  </data>
+  <data name="QueuePanel_LoadError" xml:space="preserve">
+    <value>No s'han pogut carregar algunes cançons. Selecciona Torna-ho a provar per tornar a carregar la cua.</value>
+  </data>
+  <data name="QueuePanel_Retry" xml:space="preserve">
+    <value>Torna-ho a provar</value>
+  </data>
+  <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
+    <value>No s'ha pogut desar el nou ordre de la llista de reproducció. Torna-ho a provar.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
+    <value>Dispositiu de sortida d'àudio</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Description" xml:space="preserve">
+    <value>Tria on vols que Nagi reprodueixi la música.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Default" xml:space="preserve">
+    <value>Per defecte del sistema</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Unavailable" xml:space="preserve">
+    <value>El dispositiu desat no està disponible. S'està utilitzant el valor per defecte del sistema.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
+    <value>No s'ha pogut actualitzar la sortida d'àudio. Torna-ho a provar o tria un altre dispositiu.</value>
+  </data>
+  <data name="Listening_Random" xml:space="preserve">
+    <value>Aleatori</value>
+  </data>
+  <data name="Listening_MoreVariety" xml:space="preserve">
+    <value>Més varietat</value>
+  </data>
+  <data name="Listening_Rediscover" xml:space="preserve">
+    <value>Torna a descobrir</value>
+  </data>
+  <data name="Listening_Unheard" xml:space="preserve">
+    <value>No escoltades</value>
+  </data>
+  <data name="Listening_PlayFor" xml:space="preserve">
+    <value>Reprodueix durant…</value>
+  </data>
+  <data name="Listening_Minutes" xml:space="preserve">
+    <value>Minuts</value>
+  </data>
+  <data name="Listening_ShuffleMode" xml:space="preserve">
+    <value>Tipus de mescla</value>
+  </data>
+  <data name="Listening_AvoidRecentDays" xml:space="preserve">
+    <value>Evita les reproduccions recents (dies)</value>
+  </data>
+  <data name="Listening_MoreOptions" xml:space="preserve">
+    <value>Més opcions</value>
+  </data>
+  <data name="Listening_PlayForDescription" xml:space="preserve">
+    <value>Crea una cua de cançons senceres que no superi la durada triada.</value>
+  </data>
+  <data name="Listening_NoMixTitle" xml:space="preserve">
+    <value>No hi ha cap cançó per a aquesta mescla</value>
+  </data>
+  <data name="Listening_NoMixDescription" xml:space="preserve">
+    <value>Cap cançó d'aquesta llista no compleix aquests requisits. Prova una altra mescla o llista de cançons.</value>
+  </data>
+  <data name="Listening_Favorites" xml:space="preserve">
+    <value>Preferits</value>
+  </data>
+  <data name="Listening_AddFavorite" xml:space="preserve">
+    <value>Afegeix als preferits</value>
+  </data>
+  <data name="Listening_RemoveFavorite" xml:space="preserve">
+    <value>Elimina dels preferits</value>
+  </data>
+  <data name="Listening_SleepTimer" xml:space="preserve">
+    <value>Temporitzador de desconnexió</value>
+  </data>
+  <data name="Listening_FinishTrack" xml:space="preserve">
+    <value>Acaba la cançó actual quan expiri el temporitzador</value>
+  </data>
+  <data name="Listening_StopAfterTrack" xml:space="preserve">
+    <value>Atura després d'aquesta cançó</value>
+  </data>
+  <data name="Listening_StopAtQueueEnd" xml:space="preserve">
+    <value>Atura al final de la cua</value>
+  </data>
+  <data name="Listening_StopPlayback" xml:space="preserve">
+    <value>Atura la reproducció</value>
+  </data>
+  <data name="Listening_CustomTimer" xml:space="preserve">
+    <value>Temporitzador personalitzat…</value>
+  </data>
+  <data name="Listening_Timer15" xml:space="preserve">
+    <value>D'aquí a 15 minuts</value>
+  </data>
+  <data name="Listening_Timer30" xml:space="preserve">
+    <value>D'aquí a 30 minuts</value>
+  </data>
+  <data name="Listening_Timer60" xml:space="preserve">
+    <value>D'aquí a 60 minuts</value>
+  </data>
+  <data name="Listening_CancelStop" xml:space="preserve">
+    <value>Cancel·la l'aturada programada</value>
+  </data>
+  <data name="Listening_TimerRemaining" xml:space="preserve">
+    <value>S'atura d'aquí a {0}</value>
+  </data>
+  <data name="Listening_PlayerOptions" xml:space="preserve">
+    <value>Opcions del reproductor</value>
+  </data>
+  <data name="Listening_RecentlyPlayed" xml:space="preserve">
+    <value>Reproduït recentment</value>
+  </data>
+  <data name="Listening_HistorySearch" xml:space="preserve">
+    <value>Cerca a l'historial de reproducció</value>
+  </data>
+  <data name="Listening_HistoryEmpty" xml:space="preserve">
+    <value>Encara no hi ha cap historial de reproducció</value>
+  </data>
+  <data name="Listening_HistoryLoadError" xml:space="preserve">
+    <value>No s'ha pogut carregar «Reproduït recentment». Selecciona Torna-ho a provar per provar-ho de nou.</value>
+  </data>
+  <data name="Listening_Today" xml:space="preserve">
+    <value>Avui</value>
+  </data>
+  <data name="Listening_Yesterday" xml:space="preserve">
+    <value>Ahir</value>
+  </data>
+  <data name="Listening_RediscoveryReason" xml:space="preserve">
+    <value>Reproduït per última vegada el {0:d}</value>
+  </data>
+  <data name="Listening_RediscoveryTitle" xml:space="preserve">
+    <value>Val la pena tornar-ho a escoltar</value>
+  </data>
+  <data name="Listening_Dismiss" xml:space="preserve">
+    <value>Descarta</value>
+  </data>
+  <data name="Listening_ActionError" xml:space="preserve">
+    <value>No s'ha pogut completar aquesta acció. Torna-ho a provar.</value>
+  </data>
+  <data name="Listening_FavoritesEmpty" xml:space="preserve">
+    <value>Encara no hi ha cap preferit</value>
+  </data>
+  <data name="Listening_FavoritesEmptyDescription" xml:space="preserve">
+    <value>Afegeix una cançó als preferits des del seu menú, o selecciona-la i prem Ctrl+D.</value>
+  </data>
+  <data name="Listening_VarietyDescription" xml:space="preserve">
+    <value>Més varietat evita les cançons reproduïdes recentment i separa les cançons del mateix artista quan sigui possible.</value>
+  </data>
+  <data name="Listening_RediscoverDescription" xml:space="preserve">
+    <value>Torna a descobrir utilitza cançons amb reproduccions registrades a Nagi que es van reproduir per última vegada fa més de 30 dies.</value>
+  </data>
+  <data name="Listening_UnheardDescription" xml:space="preserve">
+    <value>No escoltades utilitza cançons sense reproduccions registrades a Nagi.</value>
+  </data>
+  <data name="Listening_HistoryNoMatches" xml:space="preserve">
+    <value>Cap escolta no coincideix amb la cerca</value>
+  </data>
+  <data name="Listening_NoTimedMixDescription" xml:space="preserve">
+    <value>Cap cançó d'aquesta llista no compleix els requisits de la mescla i s'ajusta a la durada triada. Prova una durada més llarga, una altra mescla o una llista de cançons diferent.</value>
   </data>
 </root>

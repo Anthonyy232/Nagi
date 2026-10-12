@@ -102,7 +102,7 @@
     <value>Número da Faixa</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Contagem de Reproduções</value>
+    <value>Reproduções</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>Músicas</value>
@@ -148,10 +148,10 @@
     <value>{0} (Mais Antigo)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Cresc.)</value>
+    <value>{0} (Crescente)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Decresc.)</value>
+    <value>{0} (Decrescente)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>Mais Curto Primeiro</value>
@@ -178,11 +178,11 @@
     <value>Verificação concluída. Adicionados ou atualizados {0} {1}.</value>
   </data>
   <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Salvando lote {0}...</value>
+    <value>Salvando lote {0}…</value>
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Escaneando pasta...</value>
+    <value>Escaneando pasta…</value>
   </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Verificação concluída. Biblioteca atualizada.</value>
@@ -194,16 +194,16 @@
     <value>Falha na verificação. Verifique os logs para mais detalhes.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Preparando caches de verificação...</value>
+    <value>Preparando verificação da biblioteca…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Lendo detalhes das músicas...</value>
+    <value>Lendo detalhes das músicas…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Limpando sua biblioteca...</value>
+    <value>Limpando sua biblioteca…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Finalizando...</value>
+    <value>Finalizando…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Falha na normalização de volume. Verifique os logs para mais detalhes.</value>
@@ -216,7 +216,7 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Falha ao adicionar pasta.</value>
+    <value>Não foi possível adicionar a pasta.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>O nome da playlist não pode estar vazio.</value>
@@ -248,7 +248,15 @@
     <value>Ordenar por: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg é necessário para Normalização de Volume de Alta Precisão (análise ReplayGain), mas não foi encontrado no seu sistema.\n\nSiga estas etapas para configurá-lo:\n\n1. **Baixar**: Visite https://www.gyan.dev/ffmpeg/builds/ e baixe a compilação essencial 'ffmpeg-git-full.7z' (ou similar).\n2. **Guia**: Você pode seguir este guia para instruções detalhadas: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Extrair**: Abra a pasta da arquitetura e localize o diretório 'bin' contendo `ffmpeg.exe`.\n4. **Instalar**: Copie `ffmpeg.exe` para uma pasta permanente (ex: `C:\ffmpeg\`) e **adicione essa pasta à sua variável de ambiente PATH do Sistema**.\n5. **Reiniciar**: Por favor, reinicie Nagi após a instalação para que as alterações tenham efeito.</value>
+    <value>O FFmpeg é necessário para analisar as músicas para a normalização de volume, mas o Nagi não o encontrou.
+
+1. Baixe uma versão para Windows em https://ffmpeg.org/download.html.
+2. Extraia o arquivo e localize o ffmpeg.exe em sua pasta bin.
+3. Adicione a pasta que contém o ffmpeg.exe ao PATH do Windows.
+4. Reinicie o Nagi e ative a normalização de volume novamente.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>A playlist foi criada, mas não foi possível adicionar suas músicas. Tente importar novamente.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Nenhuma música da playlist foi encontrada em sua biblioteca.</value>
@@ -293,12 +301,39 @@
     <value>Todas as músicas já possuem dados de volume.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Calculando volume para {0} músicas...</value>
+    <value>Analisando volume… Músicas: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Calculando normalização de volume ({0}/{1})...</value>
+    <value>Calculando a normalização de volume ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Normalização de volume concluída. {0} músicas processadas.</value>
+    <value>Normalização de volume concluída. Músicas processadas: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Insira seu token de usuário do ListenBrainz.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Não foi possível ler a resposta do ListenBrainz. Tente novamente mais tarde.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Insira uma URL de servidor que comece com http:// ou https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>O token de usuário é inválido. Verifique-o e tente novamente.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>O ListenBrainz retornou um erro (HTTP {0}). Tente novamente mais tarde.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Não foi possível conectar ao ListenBrainz. Verifique sua conexão e a URL do servidor.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>O Nagi não encontrou sua pasta de dados da biblioteca.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>A restauração falhou e seus dados anteriores não puderam ser completamente restaurados. Os arquivos de recuperação foram salvos em &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>O arquivo selecionado não é um backup válido do Nagi.</value>
   </data>
 </root>

@@ -76,6 +76,9 @@
   <data name="NavItem_Folders" xml:space="preserve">
     <value>Kaustad</value>
   </data>
+  <data name="NavItem_Favorites" xml:space="preserve">
+    <value>Lemmikud</value>
+  </data>
   <data name="NavItem_Insights" xml:space="preserve">
     <value>Ülevaated</value>
   </data>
@@ -83,7 +86,7 @@
     <value>Seaded</value>
   </data>
   <data name="Status_NoTrackPlaying" xml:space="preserve">
-    <value>Ühtegi lugu ei esitata</value>
+    <value>Lugu ei esitata</value>
   </data>
   <data name="Tooltip_Play" xml:space="preserve">
     <value>Esita</value>
@@ -122,7 +125,7 @@
     <value>Tume</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">
-    <value>Kasuta süsteemi seadet</value>
+    <value>Süsteemi vaikeväärtus</value>
   </data>
   <data name="Backdrop_Mica" xml:space="preserve">
     <value>Mica</value>
@@ -141,6 +144,39 @@
   </data>
   <data name="Label_Rating" xml:space="preserve">
     <value>Hinnang</value>
+  </data>
+  <data name="Label_Grouping" xml:space="preserve">
+    <value>Rühmitamine</value>
+  </data>
+  <data name="Label_SkipCount" xml:space="preserve">
+    <value>Vahelejätmiste arv</value>
+  </data>
+  <data name="Label_DiscNumber" xml:space="preserve">
+    <value>Plaadi number</value>
+  </data>
+  <data name="Label_Bitrate" xml:space="preserve">
+    <value>Bitikiirus</value>
+  </data>
+  <data name="Label_SampleRate" xml:space="preserve">
+    <value>Sämplimissagedus</value>
+  </data>
+  <data name="Label_IsLoved" xml:space="preserve">
+    <value>Lemmik</value>
+  </data>
+  <data name="Label_HasLyrics" xml:space="preserve">
+    <value>Laulusõnad olemas</value>
+  </data>
+  <data name="Operator_IsInRange" xml:space="preserve">
+    <value>On vahemikus (kaasa arvatud)</value>
+  </data>
+  <data name="Operator_IsAfter" xml:space="preserve">
+    <value>On pärast</value>
+  </data>
+  <data name="Operator_IsBefore" xml:space="preserve">
+    <value>On enne</value>
+  </data>
+  <data name="SmartPlaylist_UpperBound_Placeholder" xml:space="preserve">
+    <value>Maksimaalne väärtus</value>
   </data>
   <data name="Operator_Contains" xml:space="preserve">
     <value>Sisaldab</value>
@@ -179,10 +215,10 @@
     <value>On maksimaalselt</value>
   </data>
   <data name="Operator_IsInTheLast" xml:space="preserve">
-    <value>On viimase (päeva) jooksul</value>
+    <value>On viimase (päeva jooksul)</value>
   </data>
   <data name="Operator_IsNotInTheLast" xml:space="preserve">
-    <value>Ei ole viimase (päeva) jooksul</value>
+    <value>Ei ole viimase (päeva jooksul)</value>
   </data>
   <data name="Operator_IsTrue" xml:space="preserve">
     <value>On tõene</value>
@@ -194,31 +230,31 @@
     <value>Uus nutikas esitusloend</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>Muuda nutikat esitusloendit – {0}</value>
+    <value>Muuda nutikat esitusloendit: {0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
     <value>Sisesta esitusloendi nimi</value>
   </data>
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
-    <value>{0} laulu vastab praegustele reeglitele</value>
+    <value>Vastavad lood: {0:N0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Sisesta nimi, et näha sobivaid lugusid</value>
+    <value>Vastavate lugude nägemiseks sisesta esitusloendi nimi</value>
   </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
-    <value>Ei saa arvutada</value>
+    <value>Vastavate lugude arvu ei õnnestunud loendada</value>
   </data>
   <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
-    <value>Arvutamine...</value>
+    <value>Arvutamine…</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>Selle nimega esitusloend on juba olemas!</value>
+    <value>Selle nimega esitusloend on juba olemas.</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>Palun sisesta nimi!</value>
+    <value>Sisesta esitusloendi nimi.</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
-    <value>Laadimine...</value>
+    <value>Laadimine…</value>
   </data>
   <data name="Error_FailedToLoadArtists" xml:space="preserve">
     <value>Artistide laadimine ebaõnnestus</value>
@@ -227,13 +263,15 @@
     <value>Kriitiline viga</value>
   </data>
   <data name="CrashReport_Message" xml:space="preserve">
-    <value>Nagi leidis kriitilise vea ja peab sulguma. Vabandame ebamugavuste pärast.</value>
+    <value>Nagi kohtas viga ja peab sulguma.</value>
   </data>
   <data name="ElevationWarning_Title" xml:space="preserve">
     <value>Käivitamine administraatorina</value>
   </data>
   <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi töötab praegu administraatorina. See võib takistada mõnede funktsioonide (nt muusikakaustade lisamise) korrektset toimimist. Parima kasutuskogemuse tagamiseks taaskäivita Nagi ilma administraatoriõigusteta.</value>
+    <value>Nagi töötab praegu administraatorina. See võib takistada mõnede funktsioonide (nt muusikakaustade lisamise) korrektset toimimist.
+
+Parima kasutuskogemuse tagamiseks taaskäivita Nagi ilma administraatoriõigusteta.</value>
   </data>
   <data name="ElevationWarning_Restart" xml:space="preserve">
     <value>Taaskäivita tavapäraselt</value>
@@ -293,16 +331,16 @@
     <value>See kaust on juba teegis.</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
-    <value>Kausta lisamine teeki...</value>
+    <value>Kausta lisamine kogusse…</value>
   </data>
   <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Kaust '{0}' kustutati edukalt.</value>
+    <value>&apos;{0}&apos; eemaldati sinu kogust.</value>
   </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
-    <value>Kausta '{0}' kustutamine ebaõnnestus.</value>
+    <value>&apos;{0}&apos; eemaldamine sinu kogust ebaõnnestus.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
-    <value>Kausta '{0}' kustutamine...</value>
+    <value>&apos;{0}&apos; eemaldamine sinu kogust…</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
     <value>Kausta '{0}' uus skaneerimine on lõpetatud.</value>
@@ -311,7 +349,7 @@
     <value>Kaustas '{0}' ei tuvastatud muutusi.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
-    <value>Skaneeritakse uuesti '{0}'...</value>
+    <value>'{0}' uuesti skannimine…</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
     <value>Muusikaga kaustu ei leitud.</value>
@@ -326,7 +364,7 @@
     <value>Kausta lisamise viga: {0}</value>
   </data>
   <data name="Folders_Error_DeleteFolder" xml:space="preserve">
-    <value>Kausta kustutamise viga: {0}</value>
+    <value>Kausta eemaldamine sinu kogust ebaõnnestus: {0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Kausta uuesti skaneerimise viga: {0}</value>
@@ -377,10 +415,10 @@
     <value>Alustamiseks seadistame teie muusikakogu.</value>
   </data>
   <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>Ootan, et valiksite kausta...</value>
+    <value>Oodatakse kausta valimist…</value>
   </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
-    <value>Teegi loomine...</value>
+    <value>Kogu loomine…</value>
   </data>
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Ilmnes ootamatu viga. Palun proovige uuesti.</value>
@@ -401,7 +439,7 @@
     <value>Esitusloendi laadimise viga</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Esitusloendi käivitamine...</value>
+    <value>Esitusloendi käivitamine…</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Ükski lugu ei vasta selle nutika esitusloendi reeglitele.</value>
@@ -410,7 +448,7 @@
     <value>Selle esitusloendi esituse käivitamise viga.</value>
   </data>
   <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Juhusliku esitusloendi valimine...</value>
+    <value>Juhusliku esitusloendi valimine…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Esitusloendeid ei leitud.</value>
@@ -422,13 +460,13 @@
     <value>Juhusliku esitusloendi esitamise viga.</value>
   </data>
   <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Esitusloendite laadimine...</value>
+    <value>Esitusloendite laadimine…</value>
   </data>
   <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
     <value>Esitusloendite laadimise viga.</value>
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Uue esitusloendi loomine...</value>
+    <value>Uue esitusloendi loomine…</value>
   </data>
   <data name="Playlist_Status_CreateFailed" xml:space="preserve">
     <value>Esitusloendi loomine ebaõnnestus. See võib juba olemas olla.</value>
@@ -437,7 +475,7 @@
     <value>Esitusloendi loomisel ilmnes viga.</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Esitusloendi kaanepildi uuendamine...</value>
+    <value>Esitusloendi kaane värskendamine…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Esitusloendi kaanepildi uuendamine ebaõnnestus.</value>
@@ -446,7 +484,7 @@
     <value>Esitusloendi kaanepildi uuendamisel ilmnes viga.</value>
   </data>
   <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Esitusloendi pildi eemaldamine...</value>
+    <value>Esitusloendi pildi eemaldamine…</value>
   </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Esitusloendi pildi eemaldamine ebaõnnestus.</value>
@@ -455,7 +493,7 @@
     <value>Esitusloendi pildi eemaldamisel ilmnes viga.</value>
   </data>
   <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Esitusloendi ümbernimetamine...</value>
+    <value>Esitusloendi ümbernimetamine…</value>
   </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Esitusloendi ümbernimetamine ebaõnnestus.</value>
@@ -464,7 +502,7 @@
     <value>Esitusloendi ümbernimetamisel ilmnes viga.</value>
   </data>
   <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Esitusloendi kustutamine...</value>
+    <value>Esitusloendi kustutamine…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Esitusloendi kustutamine ebaõnnestus.</value>
@@ -512,8 +550,9 @@
     <value>Eksportimine õnnestus</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>Eksporditi {0} esitusloendit ({1} lugu kokku) asukohta:
-{2}</value>
+    <value>Eksporditud esitusloendid: {0}
+Lood: {1}
+Salvestatud kohta: {2}</value>
   </data>
   <data name="Settings_Export_Failed_Title" xml:space="preserve">
     <value>Eksportimine ebaõnnestus</value>
@@ -522,17 +561,18 @@
     <value>Importimine õnnestus</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>Edukalt imporditi {0} esitusloendit ({1} lugu).</value>
+    <value>Imporditud esitusloendid: {0}
+Lood: {1}</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
     <value>
 
-{0} lugu ei leitud teie teegist.</value>
+Lood, mida ei leitud sinu kogust: {0}.</value>
   </data>
   <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
     <value>
 
-{0} faili importimine ebaõnnestus.</value>
+Failid, mida ei õnnestunud importida: {0}.</value>
   </data>
   <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
     <value>Importimine ebaõnnestus</value>
@@ -601,10 +641,10 @@
     <value>FFmpeg'i ei tuvastatud. Palun installige FFmpeg ja klõpsake 'Kontrolli uuesti'.</value>
   </data>
   <data name="FFmpeg_Status_Checking" xml:space="preserve">
-    <value>Kontrollin FFmpeg'i olemasolu...</value>
+    <value>FFmpegi kontrollimine…</value>
   </data>
   <data name="FFmpeg_Status_Detected" xml:space="preserve">
-    <value>FFmpeg tuvastatud!</value>
+    <value>Tuvastati FFmpeg.</value>
   </data>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg'i ikka veel ei tuvastatud. Palun installige FFmpeg ja klõpsake 'Kontrolli uuesti'.</value>
@@ -772,13 +812,13 @@
     <value>Esitusloendeid pole saadaval</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
-    <value>Kustuta kaust</value>
+    <value>Eemalda kaust</value>
   </data>
   <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
-    <value>Kas olete kindel, et soovite kausta '{0}' teegist eemaldada? See ei kustuta faile teie arvutist.</value>
+    <value>Kas eemaldada &apos;{0}&apos; sinu kogust? Sinu helifailid jäävad arvutisse alles.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
-    <value>Kustuta</value>
+    <value>Eemalda</value>
   </data>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Tühista</value>
@@ -817,10 +857,10 @@
     <value>Otsi esitusloendeid</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>Sisesta uue esitusloendi nimi</value>
+    <value>Sisesta esitusloendi nimi</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
-    <value>Vali pilt</value>
+    <value>Vali kaas</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
     <value>Loo uus esitusloend</value>
@@ -856,7 +896,7 @@
     <value>Sulge otsing</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Otsi teegist</value>
+    <value>Otsi žanrist</value>
   </data>
   <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Esitusloendeid pole saadaval</value>
@@ -874,22 +914,22 @@
     <value>Tundmatu nutikas esitusloend</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
-    <value>Skaneeri metadata uuesti</value>
+    <value>Skaneeri metaandmed uuesti</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>See skaneerib kõik teie teegis olevad laulud uuesti, et rakendada uusi metadata seadeid (nt artisti eraldussümbolid). See võib olenevalt teegi suurusest aega võtta. Kas soovite jätkata?</value>
+    <value>Skannige oma kogu uuesti, et rakendada metaandmete seadeid, näiteks esitajate eraldamist. Suurte kogude puhul võib see aega võtta. Kas jätkata?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
     <value>Skaneeri uuesti</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
-    <value>Valmistatakse ette teegi uuesti skaneerimist...</value>
+    <value>Kogu uuesti skannimise ettevalmistamine…</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
     <value>Uuesti skaneerimine lõpetatud</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Content" xml:space="preserve">
-    <value>Teegi metadata on uuendatud.</value>
+    <value>Teegi metaandmed on uuendatud.</value>
   </data>
   <data name="Settings_Dialog_RescanFailed_Title" xml:space="preserve">
     <value>Uuesti skaneerimine ebaõnnestus</value>
@@ -914,7 +954,7 @@ Kas soovite jätkata?</value>
     <value>Luba ja skaneeri</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>Valmistatakse ette helitugevuse normaliseerimise skaneerimist...</value>
+    <value>Helitugevuse normaliseerimise skannimise ettevalmistamine…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
     <value>Helitugevuse normaliseerimise skaneerimine tühistatud.</value>
@@ -1051,7 +1091,7 @@ Viga: {1}</value>
     <value>Nagi</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Avasta oma kohalik muusikakogu uuesti Nagiga – muusikapleieriga, mis keskendub kiirusele, lihtsusele ja privaatsusele. Nagi on ehitatud C# ja WinUI 3-ga, et pakkuda puhast, natiivset Fluent-kogemust. See on ilus, tõhus ja austab teie privaatsust.</value>
+    <value>Avasta oma kohalik muusikakogu uuesti Nagi abil – see on kiirusele, lihtsusele ja privaatsusele keskendunud muusikamängija.</value>
   </data>
   <data name="AppShortName" xml:space="preserve">
     <value>Nagi</value>
@@ -1078,61 +1118,61 @@ Viga: {1}</value>
     <value>Järgmisena</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
-    <value>Mine albumisse</value>
+    <value>Mine albumile</value>
   </data>
   <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Drop files or folders onto the player to add them to the queue.</value>
+    <value>Lohistage failid või kaustad esitajale, et lisada need esitusjärjekorda.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Järgmisena</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
-    <value>Clear queue</value>
+    <value>Tühjenda esitusjärjekord</value>
   </data>
   <data name="QueuePanel_DisplayOptions" xml:space="preserve">
-    <value>Queue display options</value>
+    <value>Esitusjärjekorra kuvamissätted</value>
   </data>
   <data name="QueuePanel_Close" xml:space="preserve">
-    <value>Close queue</value>
+    <value>Sulge esitusjärjekord</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
-    <value>Artist</value>
+    <value>Esitaja</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
-    <value>Duration</value>
+    <value>Kestus</value>
   </data>
   <data name="QueuePanel_ShowTrackCount" xml:space="preserve">
-    <value>Track count</value>
+    <value>Lugude arv</value>
   </data>
   <data name="QueuePanel_TrackCount" xml:space="preserve">
-    <value>Tracks: {0:N0}</value>
+    <value>Lugusid: {0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
-    <value>Queue position</value>
+    <value>Koht esitusjärjekorras</value>
   </data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve">
-    <value>Genre</value>
+    <value>Žanr</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
-    <value>Total duration</value>
+    <value>Kogukestus</value>
   </data>
   <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Esita</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
-    <value>Move up</value>
+    <value>Liiguta üles</value>
   </data>
   <data name="QueuePanel_MoveDown" xml:space="preserve">
-    <value>Move down</value>
+    <value>Liiguta alla</value>
   </data>
   <data name="QueuePanel_Remove" xml:space="preserve">
-    <value>Remove from queue</value>
+    <value>Eemalda esitusjärjekorrast</value>
   </data>
   <data name="AlbumPage_Title" xml:space="preserve">
     <value>Albumid</value>
   </data>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Otsi albumeid...</value>
+    <value>Otsi albumeid…</value>
   </data>
   <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Otsi albumeid</value>
@@ -1156,7 +1196,7 @@ Viga: {1}</value>
     <value>Laulud</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Otsi albumist...</value>
+    <value>Otsi albumist…</value>
   </data>
   <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Otsi albumist</value>
@@ -1180,10 +1220,10 @@ Viga: {1}</value>
     <value>Lisa esitusloendisse</value>
   </data>
   <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Mine artistile</value>
+    <value>Mine esitaja juurde</value>
   </data>
   <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Näita exploreris</value>
+    <value>Näita failihalduris</value>
   </data>
   <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Esita</value>
@@ -1198,7 +1238,7 @@ Viga: {1}</value>
     <value>Artistid</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Otsi artiste...</value>
+    <value>Otsi esitajaid…</value>
   </data>
   <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Otsi artiste</value>
@@ -1240,7 +1280,7 @@ Viga: {1}</value>
     <value>Laulud</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Otsi artistilt...</value>
+    <value>Otsi esitajalt…</value>
   </data>
   <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Otsi artistilt</value>
@@ -1264,10 +1304,10 @@ Viga: {1}</value>
     <value>Lisa esitusloendisse</value>
   </data>
   <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Mine albumisse</value>
+    <value>Mine albumile</value>
   </data>
   <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Näita exploreris</value>
+    <value>Näita failihalduris</value>
   </data>
   <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Esita</value>
@@ -1297,7 +1337,7 @@ Viga: {1}</value>
     <value>Skaneeri uuesti</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>Kustuta</value>
+    <value>Eemalda kogust</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Ühtegi kausta pole veel lisatud</value>
@@ -1324,13 +1364,13 @@ Viga: {1}</value>
     <value>Lisa esitusloendisse</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Mine albumisse</value>
+    <value>Mine albumile</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Mine artistile</value>
+    <value>Mine esitaja juurde</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Näita exploreris</value>
+    <value>Näita failihalduris</value>
   </data>
   <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Esita</value>
@@ -1342,7 +1382,7 @@ Viga: {1}</value>
     <value>Laulud</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Otsi kaustast...</value>
+    <value>Otsi kaustast…</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Otsi kaustast</value>
@@ -1363,7 +1403,7 @@ Viga: {1}</value>
     <value>Žanrid</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Otsi žanreid...</value>
+    <value>Otsi žanreid…</value>
   </data>
   <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
     <value>Otsi žanreid</value>
@@ -1384,7 +1424,7 @@ Viga: {1}</value>
     <value>Teek</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Otsi teegist...</value>
+    <value>Otsi kogust…</value>
   </data>
   <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Otsi teegist</value>
@@ -1408,16 +1448,22 @@ Viga: {1}</value>
     <value>Lisa esitusloendisse</value>
   </data>
   <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Mine albumisse</value>
+    <value>Mine albumile</value>
   </data>
   <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
-    <value>Mine artistile</value>
+    <value>Mine esitaja juurde</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Näita exploreris</value>
+    <value>Näita failihalduris</value>
   </data>
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Esita</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
+    <value>Ühtegi lugu ei leitud</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+    <value>Proovi otsida midagi muud</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
     <value>Teie teek on tühi</value>
@@ -1426,31 +1472,31 @@ Viga: {1}</value>
     <value>Lisage kaustad oma teeki seadetes</value>
   </data>
   <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
-    <value>Selle loo jaoks sõnu ei leitud</value>
+    <value>Selle loo sõnu ei leitud</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
     <value>Proovi teist lugu</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
-    <value>Edit or replace lyrics</value>
+    <value>Muuda või asenda laulusõnad</value>
   </data>
   <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
-    <value>Edit lyrics</value>
+    <value>Muuda laulusõnu</value>
   </data>
   <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
-    <value>Paste plain text or timestamped LRC lyrics</value>
+    <value>Kleebi lihttekst või ajatatud LRC-laulusõnad</value>
   </data>
   <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
-    <value>Save</value>
+    <value>Salvesta</value>
   </data>
   <data name="LyricsPage_EditLyrics_Remove" xml:space="preserve">
-    <value>Remove saved lyrics</value>
+    <value>Eemalda salvestatud laulusõnad</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
-    <value>Lyrics could not be updated</value>
+    <value>Laulusõnu ei õnnestunud värskendada</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Nagi could not save the lyrics. Check the log for details and try again.</value>
+    <value>Nagi ei saanud laulusõnu salvestada. Kontrollige üksikasjade saamiseks logi ja proovige uuesti.</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Tere tulemast Nagisse</value>
@@ -1465,7 +1511,7 @@ Viga: {1}</value>
     <value>Esitusloendid</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Otsi esitusloendeid...</value>
+    <value>Otsi esitusloendeid…</value>
   </data>
   <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Otsi esitusloendeid</value>
@@ -1513,7 +1559,7 @@ Viga: {1}</value>
     <value>Laulud</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Otsi esitusloendist...</value>
+    <value>Otsi esitusloendist…</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Otsi esitusloendist</value>
@@ -1534,13 +1580,13 @@ Viga: {1}</value>
     <value>Lisa järjekorda</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Mine albumisse</value>
+    <value>Mine albumile</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Mine artistile</value>
+    <value>Mine esitaja juurde</value>
   </data>
   <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Näita exploreris</value>
+    <value>Näita failihalduris</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
     <value>Eemalda esitusloendist</value>
@@ -1561,7 +1607,7 @@ Viga: {1}</value>
     <value>Laulud</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Otsi žanrist...</value>
+    <value>Otsi žanrist…</value>
   </data>
   <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Otsi žanrist</value>
@@ -1585,13 +1631,13 @@ Viga: {1}</value>
     <value>Lisa esitusloendisse</value>
   </data>
   <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Mine albumisse</value>
+    <value>Mine albumile</value>
   </data>
   <data name="GenreViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Mine artistile</value>
+    <value>Mine esitaja juurde</value>
   </data>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Näita exploreris</value>
+    <value>Näita failihalduris</value>
   </data>
   <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
     <value>Esitusloendeid pole saadaval</value>
@@ -1615,13 +1661,13 @@ Viga: {1}</value>
     <value>Teema</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>Vali rakenduse teema.</value>
+    <value>Vali hele, tume või süsteemi teema.</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
     <value>Aktsentvärv</value>
   </data>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
-    <value>Lähtesta vaikeväärtusele</value>
+    <value>Taasta vaikeväärtus</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Akna materjal</value>
@@ -1633,22 +1679,22 @@ Viga: {1}</value>
     <value>Dünaamiline teema</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>Luba ja konfigureeri dünaamilise teema valikuid.</value>
+    <value>Kohanda rakenduse värvid praeguse albumi kaanepildi järgi.</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
-    <value>Jäta akna suurus meelde</value>
+    <value>Mäleta akna suurust</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Description" xml:space="preserve">
     <value>Taasta peaakna eelmine suurus järgmisel käivitamisel.</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Header" xml:space="preserve">
-    <value>Jäta akna asukoht meelde</value>
+    <value>Mäleta akna asukohta</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Description" xml:space="preserve">
     <value>Taasta peaakna eelmine ekraani asukoht järgmisel käivitamisel.</value>
   </data>
   <data name="SettingsPage_RememberNavState_Header" xml:space="preserve">
-    <value>Jäta navigeerimispaneeli olek meelde</value>
+    <value>Mäleta navigeerimispaneeli olekut</value>
   </data>
   <data name="SettingsPage_RememberNavState_Description" xml:space="preserve">
     <value>Hoia vasakpoolne navigeerimispaneel avatuna või suletuna, nagu te selle jätsite.</value>
@@ -1666,13 +1712,13 @@ Viga: {1}</value>
     <value>Helitugevuse normaliseerimine (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Reguleeri helitugevust automaatselt standardtasemele (-18 LUFS), et vältida äkilisi helitugevuse muutusi.</value>
+    <value>Vähenda lugudevahelisi helitugevuse erinevusi ReplayGaini abil.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
-    <value>WASAPI exclusive mode</value>
+    <value>WASAPI eksklusiivrežiim</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+    <value>Anna Nagile Windowsi heliseadme üle eksklusiivne juhtimine. Teised rakendused võivad olla vaigistatud. Taaskäivitage Nagi pärast selle sätte muutmist.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>Hajumine esitamisel / peatamisel</value>
@@ -1684,7 +1730,7 @@ Viga: {1}</value>
     <value>Heliekvalaiser</value>
   </data>
   <data name="SettingsPage_ResetEqualizer_Content" xml:space="preserve">
-    <value>Lähtesta vaikeväärtusele</value>
+    <value>Taasta vaikeväärtus</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Eelvõimendi</value>
@@ -1696,25 +1742,25 @@ Viga: {1}</value>
     <value>Kohanda mängija juhtnuppe</value>
   </data>
   <data name="SettingsPage_ResetPlayerButtons_Content" xml:space="preserve">
-    <value>Lähtesta vaikeväärtusele</value>
+    <value>Taasta vaikeväärtus</value>
   </data>
   <data name="SettingsPage_CustomizePlayer_Instructions" xml:space="preserve">
     <value>Nähtavuse sisse/välja lülitamiseks hõljutage kursorit. Ümberjärjestamiseks lohistage. Jagaja eraldab keskmised ja parempoolsed juhtnupud.</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Header" xml:space="preserve">
-    <value>Kokkupandav mängija</value>
+    <value>Ahendatav mängija</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>Animeeri mänguriba laiendamiseks ja kokkutõmbamiseks.</value>
+    <value>Laienda mängijariba, kui liigud hiirega selle kohale.</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
-    <value>Taasta taasesituse olek</value>
+    <value>Taasta esituse olek</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>Salvesta praegune taasesituse olek, et jätkata järgmisel käivitamisel.</value>
+    <value>Taasta esitusjärjekord ja esituse koht Nagi käivitumisel.</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
-    <value>Käivita automaatselt käivitamisel</value>
+    <value>Automaatne käivitamine sisselülitamisel</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
     <value>Käivita Nagi automaatselt, kui logite arvutisse sisse.</value>
@@ -1723,28 +1769,28 @@ Viga: {1}</value>
     <value>Käivita minimeeritult</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>Käivitamisel minimeeritakse rakenduse aken vaikimisi.</value>
+    <value>Käivita Nagi minimeeritud aknaga.</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
-    <value>Minimeeri minipleieriks</value>
+    <value>Minimeeri minimängijaks</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Description" xml:space="preserve">
     <value>Minimeerimisel näita akna peitmise asemel kompaktset ujuvat mängijat.</value>
   </data>
   <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
-    <value>Peida süsteemialale</value>
+    <value>Peida süsteemisalve</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>Sulemisel peida süsteemialale.</value>
+    <value>Jäta Nagi akna sulgemisel taustal süsteemisalves tööle.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
-    <value>Näita kaanepilti hüpikaknas</value>
+    <value>Kuva hüpikaknas kaanepilt</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
     <value>Kuva kaanepilt kompaktses mängijas, mis ilmub salve ikooni klõpsamisel.</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
-    <value>Eira artikleid sortimisel</value>
+    <value>Eira sortimisel artikleid</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
     <value>Sordi albumeid, artiste ja laule nende esimese olulise sõna järgi (nt "The Beatles" sorteeritakse tähe B alla).</value>
@@ -1771,10 +1817,10 @@ Viga: {1}</value>
     <value>Jagatud muudatuste rakendamiseks skaneeri teek uuesti</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
-    <value>Too veebist metaandmed</value>
+    <value>Hangi metaandmed internetist</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Too lisateavet, nagu artisti pildid ja elulood, veebiteenustest (nt Spotify, Last.fm).</value>
+    <value>Laadi esitajate pildid ja biograafiad veebiallikatest.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Allikad</value>
@@ -1783,10 +1829,10 @@ Viga: {1}</value>
     <value>Lohista metaandmete allikate ümberjärjestamiseks. Lisateabe saamiseks hõljuta kursorit iga allika kohal.</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Header" xml:space="preserve">
-    <value>Too veebist laulusõnad</value>
+    <value>Laadi laulusõnad veebist</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>Too puuduvad laulusõnad automaatselt veebiallikatest. (Privaatsus: saadab loo metaandmed kolmanda osapoole teenustele)</value>
+    <value>Laadi puuduvad laulusõnad veebiallikatest. See saadab loo metaandmed kolmandate osapoolte teenustele.</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
     <value>Allikad</value>
@@ -1795,16 +1841,16 @@ Viga: {1}</value>
     <value>Lohista laulusõnade allikate ümberjärjestamiseks. Lisateabe saamiseks hõljuta kursorit iga allika kohal.</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
-    <value>Näita romaniseeritud laulusõnu</value>
+    <value>Kuva romaniseeritud laulusõnad</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
-    <value>Näita väiksemat romaniseeritud rida toetatud laulusõnade all, kui installitud pakett vastab kirillitsale.</value>
+    <value>Näita toetatud laulusõnade all väiksemat ladina kirjas rida, kui installitud pakett vastab kirjasüsteemile.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
-    <value>Keelepaketid</value>
+    <value>Keelepakid</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>Installige keeled, mida soovite romaniseerida. Paketid on allkirjastatud, ainult andmeid sisaldavad ja salvestatakse kohalikult.</value>
+    <value>Paigalda keelepakid toetatud laulusõnade romaniseerimiseks. Pakid salvestatakse kohalikult.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
     <value>Värskenda</value>
@@ -1843,19 +1889,19 @@ Viga: {1}</value>
     <value>{0} litsents</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>Ekspordi/Impordi esitusloendid</value>
+    <value>Esitusloendite import ja eksport</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
     <value>Eksportige esitusloendid M3U-failidena teistes pleierites kasutamiseks või importige M3U esitusloendid Nagisse.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
-    <value>Ekspordi kõik...</value>
+    <value>Ekspordi kõik…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
     <value>Ekspordi kõik esitusloendid kausta</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
-    <value>Impordi...</value>
+    <value>Impordi…</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
     <value>Impordi üks või mitu M3U faili</value>
@@ -1897,10 +1943,10 @@ Viga: {1}</value>
     <value>Lisage automaatselt Nagi's kuulatud lood oma Last.fm profiilile.</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
-    <value>Uuenda 'Hetkel mängib'</value>
+    <value>Uuenda praegu mängitavat lugu</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>Näita oma sõpradele Last.fm-is, mida sa hetkel kuulad, reaalajas.</value>
+    <value>Kuva praegu mängitav lugu oma Last.fm profiilil.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
     <value>ListenBrainz</value>
@@ -1909,7 +1955,7 @@ Viga: {1}</value>
     <value>Edasta oma kuulamised ListenBrainzile (avatud alternatiiv Last.fm-ile).</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenLabel" xml:space="preserve">
-    <value>Kasutajatunnus</value>
+    <value>Kasutaja token</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenPlaceholder" xml:space="preserve">
     <value>Kleebi oma tunnus lehelt listenbrainz.org/settings</value>
@@ -1924,10 +1970,10 @@ Viga: {1}</value>
     <value>Ühendus ebaõnnestus: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>Edasta kuulamised (scrobbling)</value>
+    <value>Saada kuulamised (skroblimine)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>Edasta "praegu mängib" uuendused</value>
+    <value>Saada praegu mängitava loo uuendused</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
     <value>Täpsemad seaded</value>
@@ -1960,7 +2006,7 @@ Viga: {1}</value>
     <value>Laulud</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Otsi nutikast esitusloendist...</value>
+    <value>Otsi nutikast esitusloendist…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Otsi nutikast esitusloendist</value>
@@ -1984,13 +2030,13 @@ Viga: {1}</value>
     <value>Lisa järjekorda</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Mine albumisse</value>
+    <value>Mine albumile</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Mine artistile</value>
+    <value>Mine esitaja juurde</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Näita exploreris</value>
+    <value>Näita failihalduris</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Esita</value>
@@ -2032,7 +2078,7 @@ Viga: {1}</value>
     <value>Saada tagasisidet</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Kontrolli uuendusi käivitamisel</value>
+    <value>Kontrolli käivitamisel värskendusi</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
     <value>Kontrolli automaatselt uute versioonide olemasolu, kui rakendus käivitub.</value>
@@ -2041,7 +2087,7 @@ Viga: {1}</value>
     <value>Rakenduse keel</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>Muudatused jõustuvad pärast taaskäivitust</value>
+    <value>Keelevahetuse rakendamiseks taaskäivita Nagi.</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
     <value>Vajalik taaskäivitus</value>
@@ -2056,7 +2102,7 @@ Viga: {1}</value>
     <value>Varundamine ja taastamine</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Looge oma muusikakogu ja seadete varukoopiaid või taastage varasemast varukoopiast</value>
+    <value>Loo varukoopia oma kogu andmetest ja sätetest või taasta varasem varukoopia.</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
     <value>Loo varukoopia</value>
@@ -2068,7 +2114,7 @@ Viga: {1}</value>
     <value>Varukoopia loodud</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Varukoopia ({0:F2} MB) loodud edukalt asukohta: {1}</value>
+    <value>Varukoopia ({0:F2} MB) loodud asukohta: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
     <value>Varundamine ebaõnnestus</value>
@@ -2095,13 +2141,13 @@ Viga: {1}</value>
     <value>Taastamine lõpetatud</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Varukoopia edukalt taastatud. Rakendus taaskäivitub nüüd.</value>
+    <value>Varukoopia taastatud. Nagi taaskäivitub nüüd.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
     <value>Taastamine ebaõnnestus</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Varukoopiast taastamine ebaõnnestus. Teie andmeid ei muudetud.</value>
+    <value>Varukoopia taastamine ebaõnnestus.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
     <value>Mängija stiil</value>
@@ -2113,25 +2159,25 @@ Viga: {1}</value>
     <value>Ühevärviline (läbipaistmatu)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Kohandage ujuva mängija välimust</value>
+    <value>Kohanda mängijariba välimust.</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
     <value>Tooni intensiivsus</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Reguleerib mängija taustavärvi elavust</value>
+    <value>Kohanda mängija taustavärvi intensiivsust.</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
-    <value>Sissehaalimise kestus</value>
+    <value>Sissesulamise kestus</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
-    <value>Sissehaalimise efekti kestus esitamisel (ms)</value>
+    <value>Määra, kui kaua võtab helitugevuse sissesulamine aega esituse jätkamisel.</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
-    <value>Väljahalise kestus</value>
+    <value>Väljasulamise kestus</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
-    <value>Väljahalise efekti kestus peatamisel (ms)</value>
+    <value>Määra, kui kaua võtab helitugevuse väljasulamine aega esituse pausimisel.</value>
   </data>
   <data name="Settings_Nav_Insights" xml:space="preserve">
     <value>Ülevaated</value>
@@ -2143,13 +2189,13 @@ Viga: {1}</value>
     <value>Kogu kuulamisaeg</value>
   </data>
   <data name="InsightsPage_UniqueSongs" xml:space="preserve">
-    <value>Unikaalsed lood</value>
+    <value>Kordumatud lood</value>
   </data>
   <data name="InsightsPage_PeakHour" xml:space="preserve">
     <value>Tipptund</value>
   </data>
   <data name="InsightsPage_MostActiveDay" xml:space="preserve">
-    <value>Aktiivseim päev</value>
+    <value>Kõige aktiivsem päev</value>
   </data>
   <data name="InsightsPage_TopSongs" xml:space="preserve">
     <value>Parimad lood</value>
@@ -2173,13 +2219,13 @@ Viga: {1}</value>
     <value>Alusta muusika esitamist, et näha siin oma ülevaateid</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
-    <value>{0} esitust</value>
+    <value>Esitusi: {0}</value>
   </data>
   <data name="InsightsPage_Source_Albums" xml:space="preserve">
     <value>Albumid</value>
   </data>
   <data name="InsightsPage_Source_Artists" xml:space="preserve">
-    <value>Esitajad</value>
+    <value>Artistid</value>
   </data>
   <data name="InsightsPage_Source_Playlists" xml:space="preserve">
     <value>Esitusloendid</value>
@@ -2197,7 +2243,7 @@ Viga: {1}</value>
     <value>Otsing</value>
   </data>
   <data name="InsightsPage_Source_Library" xml:space="preserve">
-    <value>Kogu</value>
+    <value>Teek</value>
   </data>
   <data name="InsightsPage_Source_Files" xml:space="preserve">
     <value>Failid</value>
@@ -2233,7 +2279,7 @@ Viga: {1}</value>
     <value>Kestus</value>
   </data>
   <data name="PaginationControl_All" xml:space="preserve">
-    <value>All</value>
+    <value>Kõik</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>Üksusi lehel:</value>
@@ -2257,7 +2303,7 @@ Viga: {1}</value>
     <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
-    <value>Viimane päev</value>
+    <value>Viimane 1 päev</value>
   </data>
   <data name="Insights_TimeRange_Last7Days" xml:space="preserve">
     <value>Viimased 7 päeva</value>
@@ -2279,5 +2325,167 @@ Viga: {1}</value>
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
     <value>{0}m {1}s</value>
+  </data>
+  <data name="QueuePanel_EmptyTitle" xml:space="preserve">
+    <value>Esitusjärjekord on tühi</value>
+  </data>
+  <data name="QueuePanel_EmptyDescription" xml:space="preserve">
+    <value>Mängi muusikat või lohista helifailid siia esitusjärjekorra loomiseks.</value>
+  </data>
+  <data name="QueuePanel_LoadError" xml:space="preserve">
+    <value>Mõnda lugu ei õnnestunud laadida. Esitusjärjekorra uuesti laadimiseks vali Proovi uuesti.</value>
+  </data>
+  <data name="QueuePanel_Retry" xml:space="preserve">
+    <value>Proovi uuesti</value>
+  </data>
+  <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
+    <value>Esitusloendi uut järjestust ei õnnestunud salvestada. Palun proovi uuesti.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
+    <value>Heliväljundseade</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Description" xml:space="preserve">
+    <value>Vali, kus Nagi muusikat mängib.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Default" xml:space="preserve">
+    <value>Süsteemi vaikeväärtus</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Unavailable" xml:space="preserve">
+    <value>Salvestatud seade pole saadaval. Kasutatakse süsteemi vaikeväärtust.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
+    <value>Heliväljundi värskendamine ebaõnnestus. Proovi uuesti või vali teine seade.</value>
+  </data>
+  <data name="Listening_Random" xml:space="preserve">
+    <value>Juhuesitus</value>
+  </data>
+  <data name="Listening_MoreVariety" xml:space="preserve">
+    <value>Rohkem vaheldust</value>
+  </data>
+  <data name="Listening_Rediscover" xml:space="preserve">
+    <value>Taasavasta</value>
+  </data>
+  <data name="Listening_Unheard" xml:space="preserve">
+    <value>Kuulamata</value>
+  </data>
+  <data name="Listening_PlayFor" xml:space="preserve">
+    <value>Mängi kestusega…</value>
+  </data>
+  <data name="Listening_Minutes" xml:space="preserve">
+    <value>Minutid</value>
+  </data>
+  <data name="Listening_ShuffleMode" xml:space="preserve">
+    <value>Miksi tüüp</value>
+  </data>
+  <data name="Listening_AvoidRecentDays" xml:space="preserve">
+    <value>Väildi hiljuti esitatud lugusid (päeva)</value>
+  </data>
+  <data name="Listening_MoreOptions" xml:space="preserve">
+    <value>Rohkem valikuid</value>
+  </data>
+  <data name="Listening_PlayForDescription" xml:space="preserve">
+    <value>Loo täispikkuses lugudest esitusjärjekord, mille kogukestus ei ületa valitud aega.</value>
+  </data>
+  <data name="Listening_NoMixTitle" xml:space="preserve">
+    <value>Selle miksi jaoks pole lugusid</value>
+  </data>
+  <data name="Listening_NoMixDescription" xml:space="preserve">
+    <value>Ükski selle loendi lugu ei vasta nõuetele. Proovi teisest miksist või lugude loendist.</value>
+  </data>
+  <data name="Listening_Favorites" xml:space="preserve">
+    <value>Lemmikud</value>
+  </data>
+  <data name="Listening_AddFavorite" xml:space="preserve">
+    <value>Lisa lemmikutesse</value>
+  </data>
+  <data name="Listening_RemoveFavorite" xml:space="preserve">
+    <value>Eemalda lemmikutest</value>
+  </data>
+  <data name="Listening_SleepTimer" xml:space="preserve">
+    <value>Unetaimer</value>
+  </data>
+  <data name="Listening_FinishTrack" xml:space="preserve">
+    <value>Taimeri aja täitumisel mängi praegune lugu lõpuni</value>
+  </data>
+  <data name="Listening_StopAfterTrack" xml:space="preserve">
+    <value>Peata pärast seda lugu</value>
+  </data>
+  <data name="Listening_StopAtQueueEnd" xml:space="preserve">
+    <value>Peata esitusjärjekorra lõpus</value>
+  </data>
+  <data name="Listening_StopPlayback" xml:space="preserve">
+    <value>Peata esitus</value>
+  </data>
+  <data name="Listening_CustomTimer" xml:space="preserve">
+    <value>Kohandatud taimer…</value>
+  </data>
+  <data name="Listening_Timer15" xml:space="preserve">
+    <value>15 minuti pärast</value>
+  </data>
+  <data name="Listening_Timer30" xml:space="preserve">
+    <value>30 minuti pärast</value>
+  </data>
+  <data name="Listening_Timer60" xml:space="preserve">
+    <value>60 minuti pärast</value>
+  </data>
+  <data name="Listening_CancelStop" xml:space="preserve">
+    <value>Tühista ajastatud peatamine</value>
+  </data>
+  <data name="Listening_TimerRemaining" xml:space="preserve">
+    <value>Peatub: {0}</value>
+  </data>
+  <data name="Listening_PlayerOptions" xml:space="preserve">
+    <value>Mängija valikud</value>
+  </data>
+  <data name="Listening_RecentlyPlayed" xml:space="preserve">
+    <value>Viimati esitatud</value>
+  </data>
+  <data name="Listening_HistorySearch" xml:space="preserve">
+    <value>Otsi kuulamisajaloost</value>
+  </data>
+  <data name="Listening_HistoryEmpty" xml:space="preserve">
+    <value>Kuulamisajalugu veel puudub</value>
+  </data>
+  <data name="Listening_HistoryLoadError" xml:space="preserve">
+    <value>Viimati esitatud lugusid ei õnnestunud laadida. Uuesti proovimiseks vali Proovi uuesti.</value>
+  </data>
+  <data name="Listening_Today" xml:space="preserve">
+    <value>Täna</value>
+  </data>
+  <data name="Listening_Yesterday" xml:space="preserve">
+    <value>Eile</value>
+  </data>
+  <data name="Listening_RediscoveryReason" xml:space="preserve">
+    <value>Viimati esitatud {0:d}</value>
+  </data>
+  <data name="Listening_RediscoveryTitle" xml:space="preserve">
+    <value>Väärib uuesti kuulamist</value>
+  </data>
+  <data name="Listening_Dismiss" xml:space="preserve">
+    <value>Loobu</value>
+  </data>
+  <data name="Listening_ActionError" xml:space="preserve">
+    <value>Seda toimingut ei õnnestunud lõpule viia. Palun proovi uuesti.</value>
+  </data>
+  <data name="Listening_FavoritesEmpty" xml:space="preserve">
+    <value>Lemmikuid veel pole</value>
+  </data>
+  <data name="Listening_FavoritesEmptyDescription" xml:space="preserve">
+    <value>Märgi lugu lemmikuks selle menüüst või vali see ja vajuta Ctrl+D.</value>
+  </data>
+  <data name="Listening_VarietyDescription" xml:space="preserve">
+    <value>Valik „Rohkem vaheldust” väldib hiljuti esitatud lugusid ning paigutab võimalusel sama esitaja lood üksteisest eemale.</value>
+  </data>
+  <data name="Listening_RediscoverDescription" xml:space="preserve">
+    <value>Valik „Taasavasta” kasutab Nagis esitatud lugusid, mida mängiti viimati rohkem kui 30 päeva tagasi.</value>
+  </data>
+  <data name="Listening_UnheardDescription" xml:space="preserve">
+    <value>Valik „Kuulamata” kasutab lugusid, mida pole Nagis kordagi esitatud.</value>
+  </data>
+  <data name="Listening_HistoryNoMatches" xml:space="preserve">
+    <value>Ükski kuulatud lugu ei vasta otsingule</value>
+  </data>
+  <data name="Listening_NoTimedMixDescription" xml:space="preserve">
+    <value>Ükski selle loendi lugu ei vasta miksi nõuetele ega mahu valitud kestuse sisse. Proovi pikemat kestust, teist miksi või muud lugude loendit.</value>
   </data>
 </root>

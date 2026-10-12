@@ -76,6 +76,9 @@
   <data name="NavItem_Folders" xml:space="preserve">
     <value>Mappák</value>
   </data>
+  <data name="NavItem_Favorites" xml:space="preserve">
+    <value>Kedvencek</value>
+  </data>
   <data name="NavItem_Insights" xml:space="preserve">
     <value>Statisztikák</value>
   </data>
@@ -83,7 +86,7 @@
     <value>Beállítások</value>
   </data>
   <data name="Status_NoTrackPlaying" xml:space="preserve">
-    <value>Nincs lejátszott szám</value>
+    <value>Nem szól dal</value>
   </data>
   <data name="Tooltip_Play" xml:space="preserve">
     <value>Lejátszás</value>
@@ -122,7 +125,7 @@
     <value>Sötét</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">
-    <value>Rendszerbeállítás használata</value>
+    <value>Rendszeralapértelmezett</value>
   </data>
   <data name="Backdrop_Mica" xml:space="preserve">
     <value>Mica</value>
@@ -141,6 +144,39 @@
   </data>
   <data name="Label_Rating" xml:space="preserve">
     <value>Értékelés</value>
+  </data>
+  <data name="Label_Grouping" xml:space="preserve">
+    <value>Csoportosítás</value>
+  </data>
+  <data name="Label_SkipCount" xml:space="preserve">
+    <value>Átugrások száma</value>
+  </data>
+  <data name="Label_DiscNumber" xml:space="preserve">
+    <value>Lemez száma</value>
+  </data>
+  <data name="Label_Bitrate" xml:space="preserve">
+    <value>Bitráta</value>
+  </data>
+  <data name="Label_SampleRate" xml:space="preserve">
+    <value>Mintavételezési frekvencia</value>
+  </data>
+  <data name="Label_IsLoved" xml:space="preserve">
+    <value>Kedvenc</value>
+  </data>
+  <data name="Label_HasLyrics" xml:space="preserve">
+    <value>Van dalszövege</value>
+  </data>
+  <data name="Operator_IsInRange" xml:space="preserve">
+    <value>A kettő között van (beleértve)</value>
+  </data>
+  <data name="Operator_IsAfter" xml:space="preserve">
+    <value>Utána van</value>
+  </data>
+  <data name="Operator_IsBefore" xml:space="preserve">
+    <value>Előtte van</value>
+  </data>
+  <data name="SmartPlaylist_UpperBound_Placeholder" xml:space="preserve">
+    <value>Maximális érték</value>
   </data>
   <data name="Operator_Contains" xml:space="preserve">
     <value>Tartalmazza</value>
@@ -179,10 +215,10 @@
     <value>Legfeljebb</value>
   </data>
   <data name="Operator_IsInTheLast" xml:space="preserve">
-    <value>Az elmúlt (napokban)</value>
+    <value>Az elmúlt (nap)</value>
   </data>
   <data name="Operator_IsNotInTheLast" xml:space="preserve">
-    <value>Nem az elmúlt (napokban)</value>
+    <value>Nincs az elmúlt (napban)</value>
   </data>
   <data name="Operator_IsTrue" xml:space="preserve">
     <value>Igaz</value>
@@ -194,31 +230,31 @@
     <value>Új intelligens lejátszási lista</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>Intelligens lejátszási lista szerkesztése - {0}</value>
+    <value>Okos lejátszási lista szerkesztése: {0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
     <value>Adjon meg egy lejátszási lista nevet</value>
   </data>
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
-    <value>{0:N0} dal egyezik a jelenlegi szabályokkal</value>
+    <value>Egyező dalok: {0:N0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Adjon meg egy nevet az egyező dalok megtekintéséhez</value>
+    <value>Adja meg a lejátszási lista nevét az egyező dalok megtekintéséhez</value>
   </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
-    <value>Nem számítható ki</value>
+    <value>Nem sikerült megszámlálni az egyező dalokat</value>
   </data>
   <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
-    <value>Számítás folyamatban...</value>
+    <value>Számítás…</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>Már létezik lejátszási lista ezzel a névvel!</value>
+    <value>Már létezik ilyen nevű lejátszási lista.</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>Kérjük, adjon meg egy nevet!</value>
+    <value>Adja meg a lejátszási lista nevét.</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
-    <value>Betöltés...</value>
+    <value>Betöltés…</value>
   </data>
   <data name="Error_FailedToLoadArtists" xml:space="preserve">
     <value>Nem sikerült betölteni az előadókat</value>
@@ -227,13 +263,15 @@
     <value>Kritikus hiba</value>
   </data>
   <data name="CrashReport_Message" xml:space="preserve">
-    <value>A Nagi kritikus hibába ütközött, és be kell zárni. Elnézést kérünk a kellemetlenségért.</value>
+    <value>A Nagi hibába ütközött, ezért be kell záródnia.</value>
   </data>
   <data name="ElevationWarning_Title" xml:space="preserve">
     <value>Futtatás rendszergazdaként</value>
   </data>
   <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>A Nagi jelenleg rendszergazdaként fut. Ez megakadályozhatja egyes funkciók (például zenemappák hozzáadása) helyes működését.\n\nA legjobb élmény érdekében indítsa újra a Nagit rendszergazdai jogosultságok nélkül.</value>
+    <value>A Nagi jelenleg rendszergazdaként fut. Ez megakadályozhatja egyes funkciók (például zenemappák hozzáadása) helyes működését.
+
+A legjobb élmény érdekében indítsa újra a Nagit rendszergazdai jogosultságok nélkül.</value>
   </data>
   <data name="ElevationWarning_Restart" xml:space="preserve">
     <value>Normál újraindítás</value>
@@ -293,16 +331,16 @@
     <value>Ez a mappa már a könyvtárban van.</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
-    <value>Mappa hozzáadása a könyvtárhoz...</value>
+    <value>Mappa hozzáadása a könyvtárhoz…</value>
   </data>
   <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Sikeresen törölve: „{0}”.</value>
+    <value>&apos;{0}&apos; eltávolítva a könyvtárból.</value>
   </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
-    <value>Nem sikerült törölni: „{0}”.</value>
+    <value>Nem sikerült eltávolítani a &apos;{0}&apos; elemet a könyvtárból.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
-    <value>Törlés: „{0}”...</value>
+    <value>&apos;{0}&apos; eltávolítása a könyvtárból…</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
     <value>„{0}” újraolvasása befejeződött.</value>
@@ -311,7 +349,7 @@
     <value>Nincs változás érzékelve ennél: „{0}”.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
-    <value>Újraolvasás: „{0}”...</value>
+    <value>'{0}' újravizsgálata…</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
     <value>Nem található zenei mappa.</value>
@@ -326,7 +364,7 @@
     <value>Hiba a mappa hozzáadásakor: {0}</value>
   </data>
   <data name="Folders_Error_DeleteFolder" xml:space="preserve">
-    <value>Hiba a mappa törlésekor: {0}</value>
+    <value>Nem sikerült eltávolítani a mappát a könyvtárból: {0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Hiba a mappa újraolvasásakor: {0}</value>
@@ -377,10 +415,10 @@
     <value>Állítsa be zenei könyvtárát a kezdéshez.</value>
   </data>
   <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>Várakozás, hogy kiválasszon egy mappát...</value>
+    <value>Várakozás a mappa kiválasztására…</value>
   </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
-    <value>Könyvtár építése...</value>
+    <value>Könyvtár összeállítása…</value>
   </data>
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Váratlan hiba történt. Kérjük, próbálja újra.</value>
@@ -401,7 +439,7 @@
     <value>Hiba a lejátszási lista betöltésekor</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Lejátszási lista indítása...</value>
+    <value>Lejátszási lista indítása…</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Egy dal sem egyezik ezzel az intelligens lejátszási lista szabályaival.</value>
@@ -410,7 +448,7 @@
     <value>Hiba a lejátszás elindításakor ehhez a lejátszási listához.</value>
   </data>
   <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Véletlenszerű lejátszási lista kiválasztása...</value>
+    <value>Véletlenszerű lejátszási lista kiválasztása…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Nem található lejátszási lista.</value>
@@ -422,13 +460,13 @@
     <value>Hiba a véletlenszerű lejátszási lista lejátszásakor.</value>
   </data>
   <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Lejátszási listák betöltése...</value>
+    <value>Lejátszási listák betöltése…</value>
   </data>
   <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
     <value>Hiba a lejátszási listák betöltésekor.</value>
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Új lejátszási lista létrehozása...</value>
+    <value>Új lejátszási lista létrehozása…</value>
   </data>
   <data name="Playlist_Status_CreateFailed" xml:space="preserve">
     <value>Nem sikerült létrehozni a lejátszási listát. Lehet, hogy már létezik.</value>
@@ -437,7 +475,7 @@
     <value>Hiba történt a lejátszási lista létrehozása során.</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Lejátszási lista borítóképének frissítése...</value>
+    <value>Lejátszási lista borítójának frissítése…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Nem sikerült frissíteni a lejátszási lista borítóképét.</value>
@@ -446,7 +484,7 @@
     <value>Hiba történt a lejátszási lista borítóképének frissítése során.</value>
   </data>
   <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Lejátszási lista képének eltávolítása...</value>
+    <value>Lejátszási lista képének eltávolítása…</value>
   </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Nem sikerült eltávolítani a lejátszási lista képét.</value>
@@ -455,7 +493,7 @@
     <value>Hiba történt a lejátszási lista képének eltávolítása során.</value>
   </data>
   <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Lejátszási lista átnevezése...</value>
+    <value>Lejátszási lista átnevezése…</value>
   </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Nem sikerült átnevezni a lejátszási listát.</value>
@@ -464,7 +502,7 @@
     <value>Hiba történt a lejátszási lista átnevezése során.</value>
   </data>
   <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Lejátszási lista törlése...</value>
+    <value>Lejátszási lista törlése…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Nem sikerült törölni a lejátszási listát.</value>
@@ -512,7 +550,9 @@
     <value>Exportálás sikeres</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>Exportálva {0} lejátszási lista ({1} összes dal) ide:\n{2}</value>
+    <value>Exportált lejátszási listák: {0}
+Dalok: {1}
+Mentés helye: {2}</value>
   </data>
   <data name="Settings_Export_Failed_Title" xml:space="preserve">
     <value>Exportálás sikertelen</value>
@@ -521,13 +561,18 @@
     <value>Importálás sikeres</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>Sikeresen importálva {0} lejátszási lista ({1} dal).</value>
+    <value>Importált lejátszási listák: {0}
+Dalok: {1}</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
-    <value>\n\n{0} dal nem található a könyvtárában.</value>
+    <value>
+
+A könyvtárban nem található dalok: {0}.</value>
   </data>
   <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
-    <value>\n\n{0} fájlt nem sikerült importálni.</value>
+    <value>
+
+Nem importálható fájlok: {0}.</value>
   </data>
   <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
     <value>Importálás sikertelen</value>
@@ -596,10 +641,10 @@
     <value>Az FFmpeg nem észlelhető. Kérjük, telepítse az FFmpeg-et, majd kattintson az „Újraellenőrzés” gombra.</value>
   </data>
   <data name="FFmpeg_Status_Checking" xml:space="preserve">
-    <value>FFmpeg ellenőrzése...</value>
+    <value>FFmpeg ellenőrzése…</value>
   </data>
   <data name="FFmpeg_Status_Detected" xml:space="preserve">
-    <value>FFmpeg észlelve!</value>
+    <value>FFmpeg észlelve.</value>
   </data>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>Az FFmpeg továbbra sem észlelhető. Kérjük, telepítse az FFmpeg-et, majd kattintson az „Újraellenőrzés” gombra.</value>
@@ -767,13 +812,13 @@
     <value>Nincs elérhető lejátszási lista</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
-    <value>Mappa törlése</value>
+    <value>Mappa eltávolítása</value>
   </data>
   <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
-    <value>Biztosan el szeretné távolítani a(z) „{0}” mappát a könyvtárból? Ez nem törli a fájlokat a számítógépről.</value>
+    <value>Eltávolítja a &apos;{0}&apos; mappát a könyvtárból? A hangfájlok a számítógépen maradnak.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
-    <value>Törlés</value>
+    <value>Eltávolítás</value>
   </data>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Mégse</value>
@@ -812,10 +857,10 @@
     <value>Lejátszási listák keresése</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>Adjon meg új lejátszási lista nevet</value>
+    <value>Adja meg a lejátszási lista nevét</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
-    <value>Kép kiválasztása</value>
+    <value>Borító kiválasztása</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
     <value>Új lejátszási lista létrehozása</value>
@@ -851,7 +896,7 @@
     <value>Keresés bezárása</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Könyvtár keresése</value>
+    <value>Keresés a műfajban</value>
   </data>
   <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Nincs elérhető lejátszási lista</value>
@@ -872,13 +917,13 @@
     <value>Metaadatok újraolvasása</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>Ez újra beolvassa az összes dalt a könyvtárában, hogy alkalmazza az új metaadat-beállításokat (például előadó elválasztó karakterek). Ez eltarthat egy ideig, a könyvtár méretétől függően. Szeretné folytatni?</value>
+    <value>Vizsgálja újra a könyvtárat a metaadat-beállítások, például az előadók szétválasztásának alkalmazásához. Ez nagy könyvtárak esetén eltarthat egy ideig. Folytatja?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
     <value>Újraolvasás</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
-    <value>Könyvtár újraolvasásának előkészítése...</value>
+    <value>Könyvtár újravizsgálatának előkészítése…</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
     <value>Újraolvasás kész</value>
@@ -899,13 +944,17 @@
     <value>Hangerő-normalizálás engedélyezése</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
-    <value>A hangerő-normalizálás (ReplayGain) egységes hangerőszintet biztosít az összes zenéjénél.\n\nEz elemzi a zenei könyvtárát, és közvetlenül módosítja az audiofájljait ReplayGain címkék írásával. Csak a meglévő címkék nélküli fájlok lesznek feldolgozva. Ez eltarthat egy ideig a könyvtár méretétől függően.\n\nSzeretné folytatni?</value>
+    <value>A hangerő-normalizálás (ReplayGain) egységes hangerőszintet biztosít az összes zenéjénél.
+
+Ez elemzi a zenei könyvtárát, és közvetlenül módosítja az audiofájljait ReplayGain címkék írásával. Csak a meglévő címkék nélküli fájlok lesznek feldolgozva. Ez eltarthat egy ideig a könyvtár méretétől függően.
+
+Szeretné folytatni?</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Engedélyezés és beolvasás</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>Hangerő-normalizálási beolvasás előkészítése...</value>
+    <value>Hangerő-normalizálási vizsgálat előkészítése…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
     <value>Hangerő-normalizálási beolvasás megszakítva.</value>
@@ -914,7 +963,9 @@
     <value>Hiba a beolvasás során: {0}</value>
   </data>
   <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Nem sikerült lekérni a naplókat a memóriából. A naplófájl olvasására tett tartalék kísérlet sikertelen volt.\nVárható elérési út: „{0}”\nHiba: {1}</value>
+    <value>Nem sikerült lekérni a naplókat a memóriából. A naplófájl olvasására tett tartalék kísérlet sikertelen volt.
+Várható elérési út: „{0}”
+Hiba: {1}</value>
   </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Nincsenek exportálandó lejátszási listák.</value>
@@ -1040,7 +1091,7 @@
     <value>Nagi</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Fedezze fel újra helyi zenei gyűjteményét a Nagival, egy zenelejátszóval, amely a sebességre, az egyszerűségre és az adatvédelemre összpontosít. A Nagi C# és WinUI 3 segítségével készült, hogy tiszta, natív Fluent élményt nyújtson. Szép, hatékony és tiszteletben tartja az adatvédelmét.</value>
+    <value>Fedezze fel újra helyi zenei gyűjteményét a Nagi segítségével, amely a sebességre, az egyszerűségre és az adatvédelemre összpontosító zenelejátszó.</value>
   </data>
   <data name="AppShortName" xml:space="preserve">
     <value>Nagi</value>
@@ -1070,58 +1121,58 @@
     <value>Ugrás az albumhoz</value>
   </data>
   <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Drop files or folders onto the player to add them to the queue.</value>
+    <value>Húzzon fájlokat vagy mappákat a lejátszóra a várólistához adásukhoz.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Következő</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
-    <value>Clear queue</value>
+    <value>Lejátszási sor ürítése</value>
   </data>
   <data name="QueuePanel_DisplayOptions" xml:space="preserve">
-    <value>Queue display options</value>
+    <value>Lejátszási sor megjelenítési beállításai</value>
   </data>
   <data name="QueuePanel_Close" xml:space="preserve">
-    <value>Close queue</value>
+    <value>Lejátszási sor bezárása</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
-    <value>Artist</value>
+    <value>Előadó</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
-    <value>Duration</value>
+    <value>Időtartam</value>
   </data>
   <data name="QueuePanel_ShowTrackCount" xml:space="preserve">
-    <value>Track count</value>
+    <value>Dalok száma</value>
   </data>
   <data name="QueuePanel_TrackCount" xml:space="preserve">
-    <value>Tracks: {0:N0}</value>
+    <value>Számok: {0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
-    <value>Queue position</value>
+    <value>Pozíció a lejátszási sorban</value>
   </data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve">
-    <value>Genre</value>
+    <value>Műfaj</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
-    <value>Total duration</value>
+    <value>Teljes időtartam</value>
   </data>
   <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Lejátszás</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
-    <value>Move up</value>
+    <value>Mozgatás felfelé</value>
   </data>
   <data name="QueuePanel_MoveDown" xml:space="preserve">
-    <value>Move down</value>
+    <value>Mozgatás lefelé</value>
   </data>
   <data name="QueuePanel_Remove" xml:space="preserve">
-    <value>Remove from queue</value>
+    <value>Eltávolítás a lejátszási sorból</value>
   </data>
   <data name="AlbumPage_Title" xml:space="preserve">
     <value>Albumok</value>
   </data>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Albumok keresése...</value>
+    <value>Albumok keresése…</value>
   </data>
   <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Albumok keresése</value>
@@ -1145,7 +1196,7 @@
     <value>Dalok</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Keresés az albumban...</value>
+    <value>Keresés az albumban…</value>
   </data>
   <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Keresés az albumban</value>
@@ -1172,7 +1223,7 @@
     <value>Ugrás az előadóhoz</value>
   </data>
   <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Megnyitás a fájlkezelőben</value>
+    <value>Megjelenítés a Fájlkezelőben</value>
   </data>
   <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Lejátszás</value>
@@ -1187,7 +1238,7 @@
     <value>Előadók</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Előadók keresése...</value>
+    <value>Előadók keresése…</value>
   </data>
   <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Előadók keresése</value>
@@ -1229,7 +1280,7 @@
     <value>Dalok</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Keresés az előadóban...</value>
+    <value>Keresés az előadónál…</value>
   </data>
   <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Keresés az előadóban</value>
@@ -1256,7 +1307,7 @@
     <value>Ugrás az albumhoz</value>
   </data>
   <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Megnyitás a fájlkezelőben</value>
+    <value>Megjelenítés a Fájlkezelőben</value>
   </data>
   <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Lejátszás</value>
@@ -1286,7 +1337,7 @@
     <value>Újraolvasás</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>Törlés</value>
+    <value>Eltávolítás a könyvtárból</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Még nem lett mappa hozzáadva</value>
@@ -1319,7 +1370,7 @@
     <value>Ugrás az előadóhoz</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Megnyitás a fájlkezelőben</value>
+    <value>Megjelenítés a Fájlkezelőben</value>
   </data>
   <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Lejátszás</value>
@@ -1331,7 +1382,7 @@
     <value>Dalok</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Keresés a mappában...</value>
+    <value>Keresés a mappában…</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Keresés a mappában</value>
@@ -1352,7 +1403,7 @@
     <value>Műfajok</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Műfajok keresése...</value>
+    <value>Műfajok keresése…</value>
   </data>
   <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
     <value>Műfajok keresése</value>
@@ -1373,7 +1424,7 @@
     <value>Könyvtár</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Keresés a könyvtárban...</value>
+    <value>Keresés a könyvtárban…</value>
   </data>
   <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Keresés a könyvtárban</value>
@@ -1403,10 +1454,16 @@
     <value>Ugrás az előadóhoz</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Megnyitás a fájlkezelőben</value>
+    <value>Megjelenítés a Fájlkezelőben</value>
   </data>
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Lejátszás</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
+    <value>Nem találhatók dalok</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+    <value>Próbáljon másra keresni</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
     <value>A könyvtára üres</value>
@@ -1415,31 +1472,31 @@
     <value>Adjon hozzá mappákat a könyvtárához a Beállításokban</value>
   </data>
   <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
-    <value>Nem található dalszöveg ehhez a számhoz</value>
+    <value>Nem található dalszöveg ehhez a dalhoz</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
     <value>Próbáljon meg másik dalt</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
-    <value>Edit or replace lyrics</value>
+    <value>Dalszöveg szerkesztése vagy cseréje</value>
   </data>
   <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
-    <value>Edit lyrics</value>
+    <value>Dalszöveg szerkesztése</value>
   </data>
   <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
-    <value>Paste plain text or timestamped LRC lyrics</value>
+    <value>Illesszen be sima szöveget vagy időbélyeggel ellátott LRC dalszöveget</value>
   </data>
   <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
-    <value>Save</value>
+    <value>Mentés</value>
   </data>
   <data name="LyricsPage_EditLyrics_Remove" xml:space="preserve">
-    <value>Remove saved lyrics</value>
+    <value>Mentett dalszöveg eltávolítása</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
-    <value>Lyrics could not be updated</value>
+    <value>A dalszöveget nem sikerült frissíteni</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Nagi could not save the lyrics. Check the log for details and try again.</value>
+    <value>A Nagi nem tudta menteni a dalszöveget. Ellenőrizze a naplót a részletekért, majd próbálja újra.</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Üdvözöljük a Nagiban</value>
@@ -1454,7 +1511,7 @@
     <value>Lejátszási listák</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Lejátszási listák keresése...</value>
+    <value>Lejátszási listák keresése…</value>
   </data>
   <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Lejátszási listák keresése</value>
@@ -1502,7 +1559,7 @@
     <value>Dalok</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Keresés a lejátszási listában...</value>
+    <value>Keresés a lejátszási listában…</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Keresés a lejátszási listában</value>
@@ -1529,10 +1586,10 @@
     <value>Ugrás az előadóhoz</value>
   </data>
   <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Megnyitás a fájlkezelőben</value>
+    <value>Megjelenítés a Fájlkezelőben</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
-    <value>Eltávolítás a lejátszási listából</value>
+    <value>Eltávolítás a lejátszási listáról</value>
   </data>
   <data name="PlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Lejátszás</value>
@@ -1550,7 +1607,7 @@
     <value>Dalok</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Keresés a műfajban...</value>
+    <value>Keresés a műfajban…</value>
   </data>
   <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Keresés a műfajban</value>
@@ -1580,7 +1637,7 @@
     <value>Ugrás az előadóhoz</value>
   </data>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Megnyitás a fájlkezelőben</value>
+    <value>Megjelenítés a Fájlkezelőben</value>
   </data>
   <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
     <value>Nincsenek elérhető lejátszási listák</value>
@@ -1604,13 +1661,13 @@
     <value>Téma</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>Válassza ki az alkalmazás témáját.</value>
+    <value>Válasszon világos, sötét vagy rendszerstílusú témát.</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
     <value>Kiemelő szín</value>
   </data>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
-    <value>Alapértelmezettre visszaállítás</value>
+    <value>Visszaállítás alapértelmezettre</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Ablak anyaga</value>
@@ -1622,7 +1679,7 @@
     <value>Dinamikus témázás</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>Engedélyezze és konfigurálja a dinamikus témázási lehetőségeket.</value>
+    <value>Az alkalmazás színeinek igazítása az aktuális albumborítóhoz.</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
     <value>Ablakméret megjegyzése</value>
@@ -1655,13 +1712,13 @@
     <value>Hangerő-normalizálás (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Automatikusan beállítja a hangerőt a standard szintre (-18 LUFS) a hirtelen hangerőváltozások elkerülése érdekében.</value>
+    <value>A dalok közötti hangerőkülönbségek csökkentése a ReplayGain használatával.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
-    <value>WASAPI exclusive mode</value>
+    <value>WASAPI exkluzív mód</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+    <value>A Nagi kizárólagos irányítást kap a Windows hangeszköz felett. Más alkalmazások elnémulhatnak. A beállítás módosítása után indítsa újra a Nagit.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>Áttűnés lejátszás/szünet esetén</value>
@@ -1673,7 +1730,7 @@
     <value>Hangszínszabályzó</value>
   </data>
   <data name="SettingsPage_ResetEqualizer_Content" xml:space="preserve">
-    <value>Alapértelmezettre visszaállítás</value>
+    <value>Visszaállítás alapértelmezettre</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Előerősítő</value>
@@ -1685,7 +1742,7 @@
     <value>Lejátszóvezérlők testreszabása</value>
   </data>
   <data name="SettingsPage_ResetPlayerButtons_Content" xml:space="preserve">
-    <value>Alapértelmezettre visszaállítás</value>
+    <value>Visszaállítás alapértelmezettre</value>
   </data>
   <data name="SettingsPage_CustomizePlayer_Instructions" xml:space="preserve">
     <value>Vigye az egeret fölé a láthatóság váltásához. Húzza az elemeket a sorrend megváltoztatásához. Az elválasztó választja el a középső és a jobb oldali vezérlőket.</value>
@@ -1694,13 +1751,13 @@
     <value>Összecsukható lejátszó</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>Animálja a lejátszó sávot a kibontáshoz és összecsukáshoz.</value>
+    <value>A lejátszósáv kibontása, ha fölé viszi a kurzort.</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
     <value>Lejátszási állapot visszaállítása</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>Mentse az aktuális lejátszási állapotot, hogy a következő indításkor folytathassa.</value>
+    <value>A lejátszási sor és a lejátszási pozíció visszaállítása a Nagi indításakor.</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
     <value>Automatikus indítás a rendszerindításkor</value>
@@ -1709,13 +1766,13 @@
     <value>Indítsa el a Nagi-t automatikusan, amikor bejelentkezik a számítógépére.</value>
   </data>
   <data name="SettingsPage_StartMinimized_Header" xml:space="preserve">
-    <value>Indítás minimalizálva</value>
+    <value>Indítás kis méretben</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>Indításkor az alkalmazásablak alapértelmezetten minimalizált lesz.</value>
+    <value>A Nagi indítása kisméretű ablakban.</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
-    <value>Minimalizálás mini lejátszóra</value>
+    <value>Lekicsinyítés mini lejátszóvá</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Description" xml:space="preserve">
     <value>Minimalizáláskor egy kompakt lebegő lejátszót jelenítsen meg az ablak elrejtése helyett.</value>
@@ -1724,16 +1781,16 @@
     <value>Elrejtés a tálcára</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>Bezáráskor inkább a tálcára rejtse.</value>
+    <value>A Nagi futtatása a tálcán az ablak bezárásakor.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
-    <value>Borítókép megjelenítése a felugró ablakban</value>
+    <value>Albumborító megjelenítése a felugró ablakban</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
     <value>Jelenítse meg a borítóképet a kompakt lejátszóban, amely a tálcaikonra kattintáskor jelenik meg.</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
-    <value>Mellőzze a névelőket rendezéskor</value>
+    <value>Névelők figyelmen kívül hagyása rendezéskor</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
     <value>Albumok, előadók és dalok rendezése az első jelentős szó szerint (pl. „The Beatles” a B betűnél rendeződik).</value>
@@ -1763,7 +1820,7 @@
     <value>Online metaadatok lekérése</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>További információk, például előadóképek és életrajzok lekérése online szolgáltatásokból (pl. Spotify, Last.fm).</value>
+    <value>Előadóképek és életrajzok lekérése online forrásokból.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Források</value>
@@ -1775,7 +1832,7 @@
     <value>Online dalszövegek lekérése</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>Automatikusan lekéri a hiányzó dalszövegeket online forrásokból. (Adatvédelem: szám metaadatait elküldi harmadik féltől származó szolgáltatásoknak)</value>
+    <value>Hiányzó dalszövegek lekérése online forrásokból. Ez elküldi a dalok metaadatait harmadik féltől származó szolgáltatásoknak.</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
     <value>Források</value>
@@ -1784,7 +1841,7 @@
     <value>Húzza az elemeket a dalszövegforrások sorrendjének megváltoztatásához. Vigye az egeret minden forrás fölé a részletekért.</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
-    <value>Romanizált dalszövegek megjelenítése</value>
+    <value>Latin betűs dalszövegek megjelenítése</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
     <value>Jelenítsen meg egy kisebb romanizált sort a támogatott dalszövegek alatt, ha a telepített csomag egyezik az írásrendszerrel.</value>
@@ -1793,7 +1850,7 @@
     <value>Nyelvi csomagok</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>Telepítse azokat a nyelveket, amelyeket romanizálni szeretne. A csomagok aláírva, csak adatokat tartalmaznak és helyileg tárolódnak.</value>
+    <value>Telepítsen nyelvi csomagokat a támogatott dalszövegek latin betűs átírásához. A csomagok helyileg tárolódnak.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
     <value>Frissítés</value>
@@ -1832,25 +1889,25 @@
     <value>{0} licenc</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>Lejátszási listák exportálása/importálása</value>
+    <value>Lejátszási listák importálása és exportálása</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
     <value>Exportálja a lejátszási listákat M3U fájlokba más lejátszókban való használatra, vagy importáljon M3U lejátszási listákat a Nagiba.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
-    <value>Összes exportálása...</value>
+    <value>Összes exportálása…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
     <value>Összes lejátszási lista exportálása egy mappába</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
-    <value>Importálás...</value>
+    <value>Importálás…</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
     <value>Egy vagy több M3U fájl importálása</value>
   </data>
   <data name="SettingsPage_ResetApp_Header" xml:space="preserve">
-    <value>Alkalmazás visszaállítása</value>
+    <value>Alkalmazás alaphelyzetbe állítása</value>
   </data>
   <data name="SettingsPage_ResetApp_Description" xml:space="preserve">
     <value>Ez törli az összes könyvtári adatot, lejátszási listát, és visszaállítja az összes beállítást az alapértelmezettekre. Az alkalmazás újraindul.</value>
@@ -1880,16 +1937,16 @@
     <value>Leválasztás</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
-    <value>Scrobblálás engedélyezése</value>
+    <value>Scrobbling engedélyezése</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Description" xml:space="preserve">
     <value>Automatikusan hozzáadja a Nagi-n hallgatott számokat a Last.fm profiljához.</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
-    <value>„Most játszott” frissítése</value>
+    <value>Most szóló dal frissítése</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>Mutassa meg barátainak a Last.fm-en, mit hallgat éppen valós időben.</value>
+    <value>A jelenleg játszott dal megjelenítése a Last.fm profilján.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
     <value>ListenBrainz</value>
@@ -1913,10 +1970,10 @@
     <value>Kapcsolat sikertelen: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>Hallgatások küldése (scrobbling)</value>
+    <value>Zenehallgatások beküldése (Scrobbling)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>„Most játszott” frissítések küldése</value>
+    <value>Most szóló adatok frissítésének beküldése</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
     <value>Haladó</value>
@@ -1949,7 +2006,7 @@
     <value>Dalok</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Keresés okos lejátszási listában...</value>
+    <value>Keresés az okos lejátszási listában…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Keresés okos lejátszási listában</value>
@@ -1979,7 +2036,7 @@
     <value>Ugrás az előadóhoz</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Megnyitás a fájlkezelőben</value>
+    <value>Megjelenítés a Fájlkezelőben</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Lejátszás</value>
@@ -2030,7 +2087,7 @@
     <value>Alkalmazás nyelve</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>A változtatások érvénybelépéséhez újraindítás szükséges</value>
+    <value>Indítsa újra a Nagit a nyelvváltás alkalmazásához.</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
     <value>Újraindítás szükséges</value>
@@ -2045,7 +2102,7 @@
     <value>Mentés és visszaállítás</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Készítsen biztonsági másolatot zenekönyvtáráról és beállításairól, vagy állítsa vissza egy korábbi mentésből</value>
+    <value>Készítsen biztonsági mentést a könyvtár adatairól és beállításairól, vagy állítson vissza egy korábbi mentést.</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
     <value>Mentés létrehozása</value>
@@ -2057,7 +2114,7 @@
     <value>Mentés létrehozva</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Sikeresen létrehozott biztonsági mentés ({0:F2} MB) a következő helyen: {1}</value>
+    <value>Biztonsági mentés létrehozva ({0:F2} MB) itt: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
     <value>Mentés sikertelen</value>
@@ -2084,13 +2141,13 @@
     <value>Visszaállítás kész</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Sikeresen visszaállított biztonsági mentés. Az alkalmazás most újraindul.</value>
+    <value>Biztonsági mentés visszaállítva. A Nagi most újraindul.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
     <value>Visszaállítás sikertelen</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Nem sikerült visszaállítani a biztonsági mentésből. Az adatok nem módosultak.</value>
+    <value>Nem sikerült visszaállítani a biztonsági mentést.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
     <value>Lejátszó stílus</value>
@@ -2102,25 +2159,25 @@
     <value>Tömör (Opak)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>A lebegő lejátszó megjelenésének testreszabása</value>
+    <value>A lejátszósáv megjelenésének testreszabása.</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
     <value>Színárnyalat intenzitása</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Beállítja a lejátszó háttérszínének élénkségét</value>
+    <value>A lejátszó háttérszíne intenzitásának módosítása.</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
-    <value>Beúszás időtartama</value>
+    <value>Fokozatos elhangosítás időtartama</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
-    <value>A beúszó effektus időtartama lejátszáskor (ms)</value>
+    <value>Állítsa be, mennyi ideig tart a hangerő fokozatos felerősítése a lejátszás folytatásakor.</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
-    <value>Kihalványítás időtartama</value>
+    <value>Fokozatos lehalkítás időtartama</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
-    <value>A kihalványuló effektus időtartama szüneteltetéskor (ms)</value>
+    <value>Állítsa be, mennyi ideig tart a hangerő fokozatos lehalkítása a lejátszás szüneteltetésekor.</value>
   </data>
   <data name="Settings_Nav_Insights" xml:space="preserve">
     <value>Statisztikák</value>
@@ -2129,13 +2186,13 @@
     <value>Statisztikák</value>
   </data>
   <data name="InsightsPage_TotalTime" xml:space="preserve">
-    <value>Összes hallgatási idő</value>
+    <value>Összes zenehallgatási idő</value>
   </data>
   <data name="InsightsPage_UniqueSongs" xml:space="preserve">
     <value>Egyedi dalok</value>
   </data>
   <data name="InsightsPage_PeakHour" xml:space="preserve">
-    <value>Csúcsidő</value>
+    <value>Csúcsidőszak</value>
   </data>
   <data name="InsightsPage_MostActiveDay" xml:space="preserve">
     <value>Legaktívabb nap</value>
@@ -2162,7 +2219,7 @@
     <value>Kezdj el zenét lejátszani, hogy lásd a statisztikáidat itt</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
-    <value>{0} lejátszás</value>
+    <value>Lejátszások: {0}</value>
   </data>
   <data name="InsightsPage_Source_Albums" xml:space="preserve">
     <value>Albumok</value>
@@ -2222,7 +2279,7 @@
     <value>Hossz</value>
   </data>
   <data name="PaginationControl_All" xml:space="preserve">
-    <value>All</value>
+    <value>Összes</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>Elemek oldalanként:</value>
@@ -2246,27 +2303,189 @@
     <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
-    <value>Utolsó nap</value>
+    <value>Elmúlt 1 nap</value>
   </data>
   <data name="Insights_TimeRange_Last7Days" xml:space="preserve">
-    <value>Utolsó 7 nap</value>
+    <value>Elmúlt 7 nap</value>
   </data>
   <data name="Insights_TimeRange_Last30Days" xml:space="preserve">
-    <value>Utolsó 30 nap</value>
+    <value>Elmúlt 30 nap</value>
   </data>
   <data name="Insights_TimeRange_Last90Days" xml:space="preserve">
-    <value>Utolsó 90 nap</value>
+    <value>Elmúlt 90 nap</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>Utolsó év</value>
+    <value>Elmúlt év</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
-    <value>Mindig</value>
+    <value>Kezdetektől</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}ó {1}p</value>
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
     <value>{0}p {1}mp</value>
+  </data>
+  <data name="QueuePanel_EmptyTitle" xml:space="preserve">
+    <value>A lejátszási sor üres</value>
+  </data>
+  <data name="QueuePanel_EmptyDescription" xml:space="preserve">
+    <value>Játsszon le zenét, vagy húzzon ide hangfájlokat a lejátszási sor összeállításához.</value>
+  </data>
+  <data name="QueuePanel_LoadError" xml:space="preserve">
+    <value>Néhány dalt nem sikerült betölteni. Válassza az Újra gombot a lejátszási sor ismételt betöltéséhez.</value>
+  </data>
+  <data name="QueuePanel_Retry" xml:space="preserve">
+    <value>Újra</value>
+  </data>
+  <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
+    <value>Az új lejátszásilista-sorrendet nem sikerült menteni. Kérjük, próbálja újra.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
+    <value>Kimeneti audioeszköz</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Description" xml:space="preserve">
+    <value>Válassza ki, hol játsszon le zenét a Nagi.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Default" xml:space="preserve">
+    <value>Rendszeralapértelmezett</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Unavailable" xml:space="preserve">
+    <value>A mentett eszköz nem érhető el. A rendszer alapértelmezett beállításának használata.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
+    <value>Nem sikerült frissíteni a hangkimenetet. Próbálja újra, vagy válasszon másik eszközt.</value>
+  </data>
+  <data name="Listening_Random" xml:space="preserve">
+    <value>Keverés</value>
+  </data>
+  <data name="Listening_MoreVariety" xml:space="preserve">
+    <value>Változatosabb</value>
+  </data>
+  <data name="Listening_Rediscover" xml:space="preserve">
+    <value>Újrafelfedezés</value>
+  </data>
+  <data name="Listening_Unheard" xml:space="preserve">
+    <value>Még nem hallgatott</value>
+  </data>
+  <data name="Listening_PlayFor" xml:space="preserve">
+    <value>Lejátszás eddig…</value>
+  </data>
+  <data name="Listening_Minutes" xml:space="preserve">
+    <value>Perc</value>
+  </data>
+  <data name="Listening_ShuffleMode" xml:space="preserve">
+    <value>Keverés típusa</value>
+  </data>
+  <data name="Listening_AvoidRecentDays" xml:space="preserve">
+    <value>Nemrég játszottak elkerülése (nap)</value>
+  </data>
+  <data name="Listening_MoreOptions" xml:space="preserve">
+    <value>További lehetőségek</value>
+  </data>
+  <data name="Listening_PlayForDescription" xml:space="preserve">
+    <value>Lejátszási sor összeállítása teljes dalokból, amelyek összidőtartama nem haladja meg a kiválasztott időtartamot.</value>
+  </data>
+  <data name="Listening_NoMixTitle" xml:space="preserve">
+    <value>Nincsenek dalok ehhez a keveréshez</value>
+  </data>
+  <data name="Listening_NoMixDescription" xml:space="preserve">
+    <value>Ebben a listában egyetlen dal sem felel meg ezeknek a követelményeknek. Próbáljon ki egy másik keverést vagy dallistát.</value>
+  </data>
+  <data name="Listening_Favorites" xml:space="preserve">
+    <value>Kedvencek</value>
+  </data>
+  <data name="Listening_AddFavorite" xml:space="preserve">
+    <value>Hozzáadás a kedvencekhez</value>
+  </data>
+  <data name="Listening_RemoveFavorite" xml:space="preserve">
+    <value>Eltávolítás a kedvencek közül</value>
+  </data>
+  <data name="Listening_SleepTimer" xml:space="preserve">
+    <value>Elalvási időzítő</value>
+  </data>
+  <data name="Listening_FinishTrack" xml:space="preserve">
+    <value>Aktuális dal befejezése az időzítő lejártakor</value>
+  </data>
+  <data name="Listening_StopAfterTrack" xml:space="preserve">
+    <value>Leállítás ezen dal után</value>
+  </data>
+  <data name="Listening_StopAtQueueEnd" xml:space="preserve">
+    <value>Leállítás a lejátszási sor végén</value>
+  </data>
+  <data name="Listening_StopPlayback" xml:space="preserve">
+    <value>Lejátszás leállítása</value>
+  </data>
+  <data name="Listening_CustomTimer" xml:space="preserve">
+    <value>Egyéni időzítő…</value>
+  </data>
+  <data name="Listening_Timer15" xml:space="preserve">
+    <value>15 perc múlva</value>
+  </data>
+  <data name="Listening_Timer30" xml:space="preserve">
+    <value>30 perc múlva</value>
+  </data>
+  <data name="Listening_Timer60" xml:space="preserve">
+    <value>60 perc múlva</value>
+  </data>
+  <data name="Listening_CancelStop" xml:space="preserve">
+    <value>Ütemezett leállítás törlése</value>
+  </data>
+  <data name="Listening_TimerRemaining" xml:space="preserve">
+    <value>Leállítás {0} múlva</value>
+  </data>
+  <data name="Listening_PlayerOptions" xml:space="preserve">
+    <value>Lejátszó beállításai</value>
+  </data>
+  <data name="Listening_RecentlyPlayed" xml:space="preserve">
+    <value>Legutóbb játszott</value>
+  </data>
+  <data name="Listening_HistorySearch" xml:space="preserve">
+    <value>Keresés a lejátszási előzményekben</value>
+  </data>
+  <data name="Listening_HistoryEmpty" xml:space="preserve">
+    <value>Még nincsenek lejátszási előzmények</value>
+  </data>
+  <data name="Listening_HistoryLoadError" xml:space="preserve">
+    <value>A Legutóbb játszott elemeket nem sikerült betölteni. Válassza az Újra lehetőséget az ismételt próbálkozáshoz.</value>
+  </data>
+  <data name="Listening_Today" xml:space="preserve">
+    <value>Ma</value>
+  </data>
+  <data name="Listening_Yesterday" xml:space="preserve">
+    <value>Tegnap</value>
+  </data>
+  <data name="Listening_RediscoveryReason" xml:space="preserve">
+    <value>Legutóbb lejátszva: {0:d}</value>
+  </data>
+  <data name="Listening_RediscoveryTitle" xml:space="preserve">
+    <value>Megér még egy hallgatást</value>
+  </data>
+  <data name="Listening_Dismiss" xml:space="preserve">
+    <value>Elvetés</value>
+  </data>
+  <data name="Listening_ActionError" xml:space="preserve">
+    <value>Nem sikerült végrehajtani a műveletet. Kérjük, próbálja újra.</value>
+  </data>
+  <data name="Listening_FavoritesEmpty" xml:space="preserve">
+    <value>Még nincsenek kedvencek</value>
+  </data>
+  <data name="Listening_FavoritesEmptyDescription" xml:space="preserve">
+    <value>Adjon hozzá egy dalt a kedvencekhez a menüjéből, vagy jelölje ki, és nyomja meg a Ctrl+D billentyűkombinációt.</value>
+  </data>
+  <data name="Listening_VarietyDescription" xml:space="preserve">
+    <value>A Változatosabb opció elkerüli a nemrég lejátszott dalokat, és lehetőség szerint elkülöníti az ugyanazon előadótól származó dalokat.</value>
+  </data>
+  <data name="Listening_RediscoverDescription" xml:space="preserve">
+    <value>Az Újrafelfedezés olyan dalokat használ a Nagiban rögzített lejátszások közül, amelyeket több mint 30 napja játszottak le utoljára.</value>
+  </data>
+  <data name="Listening_UnheardDescription" xml:space="preserve">
+    <value>A Még nem hallgatott opció olyan dalokat használ, amelyeknek nincs rögzített lejátszásuk a Nagiban.</value>
+  </data>
+  <data name="Listening_HistoryNoMatches" xml:space="preserve">
+    <value>Nincs a keresésnek megfelelő lejátszás</value>
+  </data>
+  <data name="Listening_NoTimedMixDescription" xml:space="preserve">
+    <value>Ebben a listában egyetlen dal sem felel meg a keverés követelményeinek és a kiválasztott időtartamnak. Próbáljon meg hosszabb időtartamot, egy másik keverést vagy egy eltérő dallistát.</value>
   </data>
 </root>

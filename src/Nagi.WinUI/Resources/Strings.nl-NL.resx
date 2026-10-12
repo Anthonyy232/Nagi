@@ -76,6 +76,9 @@
   <data name="NavItem_Folders" xml:space="preserve">
     <value>Mappen</value>
   </data>
+  <data name="NavItem_Favorites" xml:space="preserve">
+    <value>Favorieten</value>
+  </data>
   <data name="NavItem_Insights" xml:space="preserve">
     <value>Inzichten</value>
   </data>
@@ -83,7 +86,7 @@
     <value>Instellingen</value>
   </data>
   <data name="Status_NoTrackPlaying" xml:space="preserve">
-    <value>Geen nummer wordt afgespeeld</value>
+    <value>Er speelt geen nummer</value>
   </data>
   <data name="Tooltip_Play" xml:space="preserve">
     <value>Afspelen</value>
@@ -122,7 +125,7 @@
     <value>Donker</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">
-    <value>Systeeminstelling gebruiken</value>
+    <value>Systeemstandaard</value>
   </data>
   <data name="Backdrop_Mica" xml:space="preserve">
     <value>Mica</value>
@@ -141,6 +144,39 @@
   </data>
   <data name="Label_Rating" xml:space="preserve">
     <value>Beoordeling</value>
+  </data>
+  <data name="Label_Grouping" xml:space="preserve">
+    <value>Groepering</value>
+  </data>
+  <data name="Label_SkipCount" xml:space="preserve">
+    <value>Aantal keer overgeslagen</value>
+  </data>
+  <data name="Label_DiscNumber" xml:space="preserve">
+    <value>Discnummer</value>
+  </data>
+  <data name="Label_Bitrate" xml:space="preserve">
+    <value>Bitsnelheid</value>
+  </data>
+  <data name="Label_SampleRate" xml:space="preserve">
+    <value>Samplerate</value>
+  </data>
+  <data name="Label_IsLoved" xml:space="preserve">
+    <value>Favoriet</value>
+  </data>
+  <data name="Label_HasLyrics" xml:space="preserve">
+    <value>Heeft songtekst</value>
+  </data>
+  <data name="Operator_IsInRange" xml:space="preserve">
+    <value>Ligt tussen (inclusief)</value>
+  </data>
+  <data name="Operator_IsAfter" xml:space="preserve">
+    <value>Is na</value>
+  </data>
+  <data name="Operator_IsBefore" xml:space="preserve">
+    <value>Is voor</value>
+  </data>
+  <data name="SmartPlaylist_UpperBound_Placeholder" xml:space="preserve">
+    <value>Maximale waarde</value>
   </data>
   <data name="Operator_Contains" xml:space="preserve">
     <value>Bevat</value>
@@ -179,10 +215,10 @@
     <value>Is maximaal</value>
   </data>
   <data name="Operator_IsInTheLast" xml:space="preserve">
-    <value>Is in de laatste (dagen)</value>
+    <value>Is binnen de afgelopen (dagen)</value>
   </data>
   <data name="Operator_IsNotInTheLast" xml:space="preserve">
-    <value>Is niet in de laatste (dagen)</value>
+    <value>Is niet binnen de afgelopen (dagen)</value>
   </data>
   <data name="Operator_IsTrue" xml:space="preserve">
     <value>Is waar</value>
@@ -194,31 +230,31 @@
     <value>Nieuwe slimme afspeellijst</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>Slimme afspeellijst bewerken - {0}</value>
+    <value>Slimme afspeellijst bewerken: {0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
     <value>Voer een afspeellijstnaam in</value>
   </data>
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
-    <value>{0:N0} nummers voldoen aan de huidige regels</value>
+    <value>Overeenkomende nummers: {0:N0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Voer een naam in om overeenkomende nummers te zien</value>
+    <value>Voer een afspeellijstnaam in om overeenkomende nummers te zien</value>
   </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
-    <value>Kan niet berekenen</value>
+    <value>Kon aantal overeenkomende nummers niet tellen</value>
   </data>
   <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
-    <value>Bezig met berekenen...</value>
+    <value>Berekenen…</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>Er bestaat al een afspeellijst met deze naam!</value>
+    <value>Er bestaat al een afspeellijst met deze naam.</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>Voer een naam in!</value>
+    <value>Voer een afspeellijstnaam in.</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
-    <value>Laden...</value>
+    <value>Laden…</value>
   </data>
   <data name="Error_FailedToLoadArtists" xml:space="preserve">
     <value>Artiesten laden mislukt</value>
@@ -227,13 +263,15 @@
     <value>Kritieke fout</value>
   </data>
   <data name="CrashReport_Message" xml:space="preserve">
-    <value>Nagi heeft een kritieke fout ondervonden en moet worden afgesloten. Onze excuses voor het ongemak.</value>
+    <value>Er is een fout opgetreden in Nagi. Het programma moet worden gesloten.</value>
   </data>
   <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>Uitgevoerd als beheerder</value>
+    <value>Wordt uitgevoerd als beheerder</value>
   </data>
   <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi wordt momenteel als beheerder uitgevoerd. Dit kan voorkomen dat sommige functies (zoals het toevoegen van muziekmappen) correct werken.\n\nVoor de beste ervaring, start Nagi opnieuw zonder beheerdersrechten.</value>
+    <value>Nagi wordt momenteel als beheerder uitgevoerd. Dit kan voorkomen dat sommige functies (zoals het toevoegen van muziekmappen) correct werken.
+
+Voor de beste ervaring, start Nagi opnieuw zonder beheerdersrechten.</value>
   </data>
   <data name="ElevationWarning_Restart" xml:space="preserve">
     <value>Normaal opnieuw starten</value>
@@ -293,16 +331,16 @@
     <value>Deze map bevindt zich al in de bibliotheek.</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
-    <value>Map toevoegen aan bibliotheek...</value>
+    <value>Map toevoegen aan bibliotheek…</value>
   </data>
   <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>'{0}' is succesvol verwijderd.</value>
+    <value>&apos;{0}&apos; verwijderd uit je bibliotheek.</value>
   </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
-    <value>Verwijderen van '{0}' mislukt.</value>
+    <value>Kon &apos;{0}&apos; niet verwijderen uit je bibliotheek.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
-    <value>'{0}' verwijderen...</value>
+    <value>&apos;{0}&apos; verwijderen uit je bibliotheek…</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
     <value>Herscan van '{0}' voltooid.</value>
@@ -311,7 +349,7 @@
     <value>Geen wijzigingen gedetecteerd voor '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
-    <value>'{0}' opnieuw scannen...</value>
+    <value>'{0}' opnieuw scannen…</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
     <value>Geen mappen met muziek gevonden.</value>
@@ -326,7 +364,7 @@
     <value>Fout bij toevoegen map: {0}</value>
   </data>
   <data name="Folders_Error_DeleteFolder" xml:space="preserve">
-    <value>Fout bij verwijderen map: {0}</value>
+    <value>Kon map niet verwijderen uit je bibliotheek: {0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Fout bij opnieuw scannen map: {0}</value>
@@ -377,19 +415,19 @@
     <value>Laten we uw muziekbibliotheek instellen om te beginnen.</value>
   </data>
   <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>Wachten tot u een map selecteert...</value>
+    <value>Wachten op het selecteren van een map…</value>
   </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
-    <value>Uw bibliotheek opbouwen...</value>
+    <value>Je bibliotheek opbouwen…</value>
   </data>
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Er is een onverwachte fout opgetreden. Probeer het opnieuw.</value>
   </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
-    <value>Slimme • {0} nummer</value>
+    <value>Slimme afspeellijst • {0} nummer</value>
   </data>
   <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Slimme • {0} nummers</value>
+    <value>Slimme afspeellijst • {0} nummers</value>
   </data>
   <data name="Playlist_Count_Singular" xml:space="preserve">
     <value>{0} nummer</value>
@@ -401,7 +439,7 @@
     <value>Fout bij laden afspeellijst</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Afspeellijst starten...</value>
+    <value>Afspeellijst starten…</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Geen nummers voldoen aan de regels van deze slimme afspeellijst.</value>
@@ -410,7 +448,7 @@
     <value>Fout bij starten afspelen voor deze afspeellijst.</value>
   </data>
   <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Een willekeurige afspeellijst kiezen...</value>
+    <value>Willekeurige afspeellijst kiezen…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Geen afspeellijsten gevonden.</value>
@@ -422,13 +460,13 @@
     <value>Fout bij afspelen willekeurige afspeellijst.</value>
   </data>
   <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Afspeellijsten laden...</value>
+    <value>Afspeellijsten laden…</value>
   </data>
   <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
     <value>Fout bij laden afspeellijsten.</value>
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Nieuwe afspeellijst aanmaken...</value>
+    <value>Nieuwe afspeellijst maken…</value>
   </data>
   <data name="Playlist_Status_CreateFailed" xml:space="preserve">
     <value>Aanmaken afspeellijst mislukt. Deze bestaat mogelijk al.</value>
@@ -437,7 +475,7 @@
     <value>Er is een fout opgetreden bij het aanmaken van de afspeellijst.</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Afspeellijsthoes bijwerken...</value>
+    <value>Afspeellijsthoes bijwerken…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Bijwerken afspeellijsthoes mislukt.</value>
@@ -446,7 +484,7 @@
     <value>Er is een fout opgetreden bij het bijwerken van de afspeellijsthoes.</value>
   </data>
   <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Afspeellijstafbeelding verwijderen...</value>
+    <value>Afspeellijstafbeelding verwijderen…</value>
   </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Verwijderen afspeellijstafbeelding mislukt.</value>
@@ -455,7 +493,7 @@
     <value>Er is een fout opgetreden bij het verwijderen van de afspeellijstafbeelding.</value>
   </data>
   <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Afspeellijst hernoemen...</value>
+    <value>Naam van afspeellijst wijzigen…</value>
   </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Hernoemen afspeellijst mislukt.</value>
@@ -464,7 +502,7 @@
     <value>Er is een fout opgetreden bij het hernoemen van de afspeellijst.</value>
   </data>
   <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Afspeellijst verwijderen...</value>
+    <value>Afspeellijst verwijderen…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Verwijderen afspeellijst mislukt.</value>
@@ -512,7 +550,9 @@
     <value>Export geslaagd</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>{0} afspeellijsten ({1} totaal aantal nummers) geëxporteerd naar:\n{2}</value>
+    <value>Geëxporteerde afspeellijsten: {0}
+Nummers: {1}
+Opgeslagen in: {2}</value>
   </data>
   <data name="Settings_Export_Failed_Title" xml:space="preserve">
     <value>Export mislukt</value>
@@ -521,13 +561,18 @@
     <value>Import geslaagd</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>{0} afspeellijsten ({1} nummers) succesvol geïmporteerd.</value>
+    <value>Geïmporteerde afspeellijsten: {0}
+Nummers: {1}</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
-    <value>\n\n{0} nummers konden niet worden gevonden in uw bibliotheek.</value>
+    <value>
+
+Nummers niet gevonden in je bibliotheek: {0}.</value>
   </data>
   <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
-    <value>\n\n{0} bestanden konden niet worden geïmporteerd.</value>
+    <value>
+
+Bestanden die niet konden worden geïmporteerd: {0}.</value>
   </data>
   <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
     <value>Import mislukt</value>
@@ -542,13 +587,13 @@
     <value>Geen regels gedefinieerd • Alle nummers komen overeen</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Overeenkomst {0} van {1} {2}</value>
+    <value>Voldoet aan {0} van {1} {2}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>alle</value>
   </data>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>willekeurig</value>
+    <value>minstens één</value>
   </data>
   <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
     <value>regel</value>
@@ -596,10 +641,10 @@
     <value>FFmpeg niet gedetecteerd. Installeer FFmpeg en klik op 'Opnieuw controleren'.</value>
   </data>
   <data name="FFmpeg_Status_Checking" xml:space="preserve">
-    <value>Controleren op FFmpeg...</value>
+    <value>Controleren op FFmpeg…</value>
   </data>
   <data name="FFmpeg_Status_Detected" xml:space="preserve">
-    <value>FFmpeg gedetecteerd!</value>
+    <value>FFmpeg gedetecteerd.</value>
   </data>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg nog steeds niet gedetecteerd. Installeer FFmpeg en klik op 'Opnieuw controleren'.</value>
@@ -770,7 +815,7 @@
     <value>Map verwijderen</value>
   </data>
   <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
-    <value>Weet u zeker dat u de map '{0}' uit de bibliotheek wilt verwijderen? Dit verwijdert de bestanden niet van uw computer.</value>
+    <value>&apos;{0}&apos; verwijderen uit je bibliotheek? Je audiobestanden blijven op je computer staan.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Verwijderen</value>
@@ -812,10 +857,10 @@
     <value>Zoek afspeellijsten</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>Voer nieuwe afspeellijstnaam in</value>
+    <value>Voer een afspeellijstnaam in</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
-    <value>Afbeelding kiezen</value>
+    <value>Hoes kiezen</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
     <value>Nieuwe afspeellijst maken</value>
@@ -851,7 +896,7 @@
     <value>Zoeken sluiten</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Zoek bibliotheek</value>
+    <value>Zoeken in genre</value>
   </data>
   <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Geen afspeellijsten beschikbaar</value>
@@ -872,13 +917,13 @@
     <value>Metagegevens opnieuw scannen</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>Dit scant alle nummers in uw bibliotheek opnieuw om nieuwe metagegevensinstellingen (zoals scheidingstekens voor artiesten) toe te passen. Dit kan enige tijd duren, afhankelijk van de grootte van uw bibliotheek. Wilt u doorgaan?</value>
+    <value>Scan je bibliotheek opnieuw om metadatainstellingen toe te passen, zoals het splitsen van artiesten. Dit kan even duren bij grote bibliotheken. Doorgaan?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
     <value>Opnieuw scannen</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
-    <value>Bibliotheek opnieuw scannen voorbereiden...</value>
+    <value>Opnieuw scannen van bibliotheek voorbereiden…</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
     <value>Herscan voltooid</value>
@@ -899,13 +944,17 @@
     <value>Volumennormalisatie inschakelen</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
-    <value>Volumennormalisatie (ReplayGain) zorgt voor een consistent volumeniveau in al uw muziek.\n\nDit analyseert uw muziekbibliotheek en wijzigt uw audiobestanden direct door ReplayGain-tags te schrijven. Alleen bestanden zonder bestaande tags worden verwerkt. Dit kan enige tijd duren, afhankelijk van de grootte van uw bibliotheek.\n\nWilt u doorgaan?</value>
+    <value>Volumennormalisatie (ReplayGain) zorgt voor een consistent volumeniveau in al uw muziek.
+
+Dit analyseert uw muziekbibliotheek en wijzigt uw audiobestanden direct door ReplayGain-tags te schrijven. Alleen bestanden zonder bestaande tags worden verwerkt. Dit kan enige tijd duren, afhankelijk van de grootte van uw bibliotheek.
+
+Wilt u doorgaan?</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Inschakelen &amp; scannen</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>Scannen volumennormalisatie voorbereiden...</value>
+    <value>Scan voor volumenormalisatie voorbereiden…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
     <value>Scannen volumennormalisatie geannuleerd.</value>
@@ -914,7 +963,9 @@
     <value>Fout tijdens scan: {0}</value>
   </data>
   <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Kon logboeken niet uit het geheugen ophalen. De terugvalpoging om het logbestand te lezen is mislukt.\nVerwacht pad: '{0}'\nFout: {1}</value>
+    <value>Kon logboeken niet uit het geheugen ophalen. De terugvalpoging om het logbestand te lezen is mislukt.
+Verwacht pad: '{0}'
+Fout: {1}</value>
   </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Geen afspeellijsten om te exporteren.</value>
@@ -986,7 +1037,7 @@
     <value>Alle</value>
   </data>
   <data name="SmartPlaylist_MatchLogic_Any_Content" xml:space="preserve">
-    <value>Enkele</value>
+    <value>Minstens één</value>
   </data>
   <data name="SmartPlaylist_MatchSuffixLabel" xml:space="preserve">
     <value>van de volgende regels:</value>
@@ -1040,7 +1091,7 @@
     <value>Nagi</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Herontdek uw lokale muziekcollectie met Nagi, een muziekspeler gericht op snelheid, eenvoud en privacy. Nagi is gebouwd met C# en WinUI 3 om een schone, native Fluent-ervaring te bieden. Het is mooi, efficiënt en respecteert uw privacy.</value>
+    <value>Herontdek je lokale muziekcollectie met Nagi, een muziekspeler gericht op snelheid, eenvoud en privacy.</value>
   </data>
   <data name="AppShortName" xml:space="preserve">
     <value>Nagi</value>
@@ -1067,61 +1118,61 @@
     <value>Volgende</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
-    <value>Ga naar album</value>
+    <value>Naar album</value>
   </data>
   <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Drop files or folders onto the player to add them to the queue.</value>
+    <value>Sleep bestanden of mappen naar de speler om ze aan de wachtrij toe te voegen.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Volgende</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
-    <value>Clear queue</value>
+    <value>Wachtrij wissen</value>
   </data>
   <data name="QueuePanel_DisplayOptions" xml:space="preserve">
-    <value>Queue display options</value>
+    <value>Weergave-opties voor wachtrij</value>
   </data>
   <data name="QueuePanel_Close" xml:space="preserve">
-    <value>Close queue</value>
+    <value>Wachtrij sluiten</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
-    <value>Artist</value>
+    <value>Artiest</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
-    <value>Duration</value>
+    <value>Duur</value>
   </data>
   <data name="QueuePanel_ShowTrackCount" xml:space="preserve">
-    <value>Track count</value>
+    <value>Aantal nummers</value>
   </data>
   <data name="QueuePanel_TrackCount" xml:space="preserve">
-    <value>Tracks: {0:N0}</value>
+    <value>Nummers: {0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
-    <value>Queue position</value>
+    <value>Wachtrijpositie</value>
   </data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve">
     <value>Genre</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
-    <value>Total duration</value>
+    <value>Totale duur</value>
   </data>
   <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Afspelen</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
-    <value>Move up</value>
+    <value>Omhoog verplaatsen</value>
   </data>
   <data name="QueuePanel_MoveDown" xml:space="preserve">
-    <value>Move down</value>
+    <value>Omlaag verplaatsen</value>
   </data>
   <data name="QueuePanel_Remove" xml:space="preserve">
-    <value>Remove from queue</value>
+    <value>Verwijderen uit wachtrij</value>
   </data>
   <data name="AlbumPage_Title" xml:space="preserve">
     <value>Albums</value>
   </data>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Zoek albums...</value>
+    <value>Albums zoeken…</value>
   </data>
   <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Zoek albums</value>
@@ -1145,7 +1196,7 @@
     <value>Nummers</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Zoek in album...</value>
+    <value>Zoeken in album…</value>
   </data>
   <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Zoek in album</value>
@@ -1169,10 +1220,10 @@
     <value>Toevoegen aan afspeellijst</value>
   </data>
   <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Ga naar artiest</value>
+    <value>Naar artiest</value>
   </data>
   <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Weergeven in verkenner</value>
+    <value>Weergeven in Verkenner</value>
   </data>
   <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Afspelen</value>
@@ -1187,7 +1238,7 @@
     <value>Artiesten</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Zoek artiesten...</value>
+    <value>Artiesten zoeken…</value>
   </data>
   <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Zoek artiesten</value>
@@ -1229,7 +1280,7 @@
     <value>Nummers</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Zoek in artiest...</value>
+    <value>Zoeken in artiest…</value>
   </data>
   <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Zoek in artiest</value>
@@ -1253,10 +1304,10 @@
     <value>Toevoegen aan afspeellijst</value>
   </data>
   <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Ga naar album</value>
+    <value>Naar album</value>
   </data>
   <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Weergeven in verkenner</value>
+    <value>Weergeven in Verkenner</value>
   </data>
   <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Afspelen</value>
@@ -1286,7 +1337,7 @@
     <value>Opnieuw scannen</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>Verwijderen</value>
+    <value>Verwijderen uit bibliotheek</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Nog geen mappen toegevoegd</value>
@@ -1313,13 +1364,13 @@
     <value>Toevoegen aan afspeellijst</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Ga naar album</value>
+    <value>Naar album</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Ga naar artiest</value>
+    <value>Naar artiest</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Weergeven in verkenner</value>
+    <value>Weergeven in Verkenner</value>
   </data>
   <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Afspelen</value>
@@ -1331,7 +1382,7 @@
     <value>Nummers</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Zoek in map...</value>
+    <value>Zoeken in map…</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Zoek in map</value>
@@ -1352,7 +1403,7 @@
     <value>Genres</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Zoek genres...</value>
+    <value>Genres zoeken…</value>
   </data>
   <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
     <value>Zoek genres</value>
@@ -1373,7 +1424,7 @@
     <value>Bibliotheek</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Zoek in bibliotheek...</value>
+    <value>Bibliotheek zoeken…</value>
   </data>
   <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Zoek in bibliotheek</value>
@@ -1397,16 +1448,22 @@
     <value>Toevoegen aan afspeellijst</value>
   </data>
   <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Ga naar album</value>
+    <value>Naar album</value>
   </data>
   <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
-    <value>Ga naar artiest</value>
+    <value>Naar artiest</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Weergeven in verkenner</value>
+    <value>Weergeven in Verkenner</value>
   </data>
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Afspelen</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
+    <value>Geen nummers gevonden</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+    <value>Probeer te zoeken naar iets anders</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
     <value>Uw bibliotheek is leeg</value>
@@ -1421,25 +1478,25 @@
     <value>Probeer een ander nummer</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
-    <value>Edit or replace lyrics</value>
+    <value>Songtekst bewerken of vervangen</value>
   </data>
   <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
-    <value>Edit lyrics</value>
+    <value>Songtekst bewerken</value>
   </data>
   <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
-    <value>Paste plain text or timestamped LRC lyrics</value>
+    <value>Plak platte tekst of LRC-songtekst met tijdstempels</value>
   </data>
   <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
-    <value>Save</value>
+    <value>Opslaan</value>
   </data>
   <data name="LyricsPage_EditLyrics_Remove" xml:space="preserve">
-    <value>Remove saved lyrics</value>
+    <value>Opgeslagen songtekst verwijderen</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
-    <value>Lyrics could not be updated</value>
+    <value>Songtekst kan niet worden bijgewerkt</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Nagi could not save the lyrics. Check the log for details and try again.</value>
+    <value>Nagi kan de songtekst niet opslaan. Controleer het logboek voor details en probeer het opnieuw.</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Welkom bij Nagi</value>
@@ -1454,7 +1511,7 @@
     <value>Afspeellijsten</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Zoek afspeellijsten...</value>
+    <value>Afspeellijsten zoeken…</value>
   </data>
   <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Zoek afspeellijsten</value>
@@ -1502,7 +1559,7 @@
     <value>Nummers</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Zoek in afspeellijst...</value>
+    <value>Zoeken in afspeellijst…</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Zoek in afspeellijst</value>
@@ -1523,13 +1580,13 @@
     <value>Toevoegen aan wachtrij</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Ga naar album</value>
+    <value>Naar album</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Ga naar artiest</value>
+    <value>Naar artiest</value>
   </data>
   <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Weergeven in verkenner</value>
+    <value>Weergeven in Verkenner</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
     <value>Verwijderen uit afspeellijst</value>
@@ -1550,7 +1607,7 @@
     <value>Nummers</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Zoek in genre...</value>
+    <value>Zoeken in genre…</value>
   </data>
   <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Zoek in genre</value>
@@ -1574,13 +1631,13 @@
     <value>Toevoegen aan afspeellijst</value>
   </data>
   <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Ga naar album</value>
+    <value>Naar album</value>
   </data>
   <data name="GenreViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Ga naar artiest</value>
+    <value>Naar artiest</value>
   </data>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Weergeven in verkenner</value>
+    <value>Weergeven in Verkenner</value>
   </data>
   <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
     <value>Geen afspeellijsten beschikbaar</value>
@@ -1604,25 +1661,25 @@
     <value>Thema</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>Kies het thema van de applicatie.</value>
+    <value>Kies een licht, donker of systeemthema.</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
     <value>Accentkleur</value>
   </data>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
-    <value>Terug naar standaard</value>
+    <value>Standaardwaarden herstellen</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Venstermateriaal</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Description" xml:space="preserve">
-    <value>Selecteer het achtergrondmateriaal voor het venster.</value>
+    <value>Kies het achtergrondmateriaal van het venster.</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
     <value>Dynamische thema's</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>Schakel dynamische thema-opties in en configureer deze.</value>
+    <value>Pas de app-kleuren aan op de hoes van het huidige album.</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
     <value>Venstergrootte onthouden</value>
@@ -1637,7 +1694,7 @@
     <value>Herstel het hoofdvenster naar de vorige schermlocatie bij de volgende start.</value>
   </data>
   <data name="SettingsPage_RememberNavState_Header" xml:space="preserve">
-    <value>Navigatiepaneelstatus onthouden</value>
+    <value>Status navigatiepaneel onthouden</value>
   </data>
   <data name="SettingsPage_RememberNavState_Description" xml:space="preserve">
     <value>Houd het linker navigatiepaneel open of gesloten zoals u het hebt achtergelaten.</value>
@@ -1655,13 +1712,13 @@
     <value>Volumenormalisatie (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Pas het volume automatisch aan naar het standaardniveau (-18 LUFS) om plotselinge volumeveranderingen te voorkomen.</value>
+    <value>Verminder volumeverschillen tussen nummers met ReplayGain.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
-    <value>WASAPI exclusive mode</value>
+    <value>Exclusieve WASAPI-modus</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+    <value>Geef Nagi exclusieve controle over het Windows-audioapparaat. Andere apps zijn mogelijk stil. Start Nagi opnieuw op nadat u deze instelling hebt gewijzigd.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>Faden bij Afspelen / Pauzeren</value>
@@ -1673,7 +1730,7 @@
     <value>Audio-equalizer</value>
   </data>
   <data name="SettingsPage_ResetEqualizer_Content" xml:space="preserve">
-    <value>Terug naar standaard</value>
+    <value>Standaardwaarden herstellen</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Voorversterker</value>
@@ -1685,7 +1742,7 @@
     <value>Spelerbediening aanpassen</value>
   </data>
   <data name="SettingsPage_ResetPlayerButtons_Content" xml:space="preserve">
-    <value>Terug naar standaard</value>
+    <value>Standaardwaarden herstellen</value>
   </data>
   <data name="SettingsPage_CustomizePlayer_Instructions" xml:space="preserve">
     <value>Beweeg de muis om de zichtbaarheid te schakelen. Sleep om te herschikken. De scheidingslijn scheidt de midden- en rechterbediening.</value>
@@ -1694,13 +1751,13 @@
     <value>Inklapbare speler</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>Animeer de afspeelbalk om uit te vouwen en in te klappen.</value>
+    <value>Vouw de spelersbalk uit wanneer je erover zweeft.</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
     <value>Afspeelstatus herstellen</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>Sla de huidige afspeelstatus op om deze bij de volgende start te hervatten.</value>
+    <value>Herstel je wachtrij en afspeelpositie wanneer Nagi start.</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
     <value>Automatisch starten bij opstarten</value>
@@ -1712,22 +1769,22 @@
     <value>Geminimaliseerd starten</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>Wanneer gestart, zal het toepassingsvenster standaard geminimaliseerd zijn.</value>
+    <value>Start Nagi met een geminimaliseerd venster.</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
-    <value>Minimaliseren naar minispeler</value>
+    <value>Minimaliseren naar mini-speler</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Description" xml:space="preserve">
     <value>Wanneer geminimaliseerd, toon een compacte zwevende speler in plaats van het venster te verbergen.</value>
   </data>
   <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
-    <value>Verbergen naar systeemvak</value>
+    <value>Verbergen in systeemvak</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>Wanneer gesloten, verbergen naar het systeemvak.</value>
+    <value>Laat Nagi op de achtergrond actief blijven in het systeemvak wanneer je het venster sluit.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
-    <value>Omslagafbeelding weergeven in flyout</value>
+    <value>Albumhoes tonen in pop-up</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
     <value>Geef de omslagafbeelding weer in de compacte speler die verschijnt wanneer u op het pictogram in het systeemvak klikt.</value>
@@ -1763,7 +1820,7 @@
     <value>Online metadata ophalen</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Haal aanvullende informatie, zoals artiestafbeeldingen en biografieën, op van online services (bijv. Spotify, Last.fm).</value>
+    <value>Haal artiestenafbeeldingen en biografieën op uit online bronnen.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Bronnen</value>
@@ -1775,7 +1832,7 @@
     <value>Online songteksten ophalen</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>Haal automatisch ontbrekende songteksten op van online bronnen. (Privacy: stuurt trackmetadata naar services van derden)</value>
+    <value>Haal ontbrekende songteksten op van online bronnen. Hiermee worden nummermetadata naar externe diensten verzonden.</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
     <value>Bronnen</value>
@@ -1784,7 +1841,7 @@
     <value>Sleep om songtekstbronnen te herschikken. Beweeg de muis over elke bron voor details.</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
-    <value>Geroniseerde songteksten weergeven</value>
+    <value>Gefonetiseerde songteksten tonen</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
     <value>Toon een kleinere geromaniseerde regel onder ondersteunde songteksten wanneer een geïnstalleerd pakket overeenkomt met het script.</value>
@@ -1793,7 +1850,7 @@
     <value>Taalpakketten</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>Installeer de talen die u geromaniseerd wilt hebben. Pakketten zijn ondertekend, bevatten alleen gegevens en worden lokaal opgeslagen.</value>
+    <value>Installeer taalpakketten om ondersteunde songteksten te romaniseren. Pakketten worden lokaal opgeslagen.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
     <value>Vernieuwen</value>
@@ -1832,25 +1889,25 @@
     <value>{0} licentie</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>Afspeellijsten exporteren/importeren</value>
+    <value>Afspeellijsten importeren en exporteren</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
     <value>Exporteer afspeellijsten naar M3U-bestanden voor gebruik in andere spelers, of importeer M3U-afspeellijsten in Nagi.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
-    <value>Alles exporteren...</value>
+    <value>Alles exporteren…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
     <value>Exporteer alle afspeellijsten naar een map</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
-    <value>Importeren...</value>
+    <value>Importeren…</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
     <value>Eén of meer M3U-bestanden importeren</value>
   </data>
   <data name="SettingsPage_ResetApp_Header" xml:space="preserve">
-    <value>Applicatie opnieuw instellen</value>
+    <value>App herstellen</value>
   </data>
   <data name="SettingsPage_ResetApp_Description" xml:space="preserve">
     <value>Hiermee worden alle bibliotheekgegevens en afspeellijsten verwijderd en alle instellingen teruggezet naar de standaardwaarden. De applicatie zal opnieuw opstarten.</value>
@@ -1880,19 +1937,19 @@
     <value>Verbreken</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
-    <value>Scrobbling inschakelen</value>
+    <value>Scrobbelen inschakelen</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Description" xml:space="preserve">
     <value>Voeg de nummers die u op Nagi beluistert automatisch toe aan uw Last.fm-profiel.</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
-    <value>'Nu afspelen' bijwerken</value>
+    <value>'Nu afgespeeld' bijwerken</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>Laat uw vrienden op Last.fm in realtime zien waarnaar u momenteel luistert.</value>
+    <value>Toon het nummer dat momenteel speelt op je Last.fm-profiel.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
-    <value>ListenBrainz-integratie</value>
+    <value>ListenBrainz</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Description" xml:space="preserve">
     <value>Verzend uw beluisterde nummers naar ListenBrainz (een open alternatief voor Last.fm).</value>
@@ -1913,10 +1970,10 @@
     <value>Verbinding mislukt: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>Beluisterde nummers verzenden (scrobbling)</value>
+    <value>Luisterbeurten verzenden (scrobbelen)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>Updates "nu spelend" verzenden</value>
+    <value>Updates voor 'Nu afgespeeld' verzenden</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
     <value>Geavanceerd</value>
@@ -1949,7 +2006,7 @@
     <value>Nummers</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Zoek in slimme afspeellijst...</value>
+    <value>Zoeken in slimme afspeellijst…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Zoek in slimme afspeellijst</value>
@@ -1973,13 +2030,13 @@
     <value>Toevoegen aan wachtrij</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Ga naar album</value>
+    <value>Naar album</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Ga naar artiest</value>
+    <value>Naar artiest</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Weergeven in verkenner</value>
+    <value>Weergeven in Verkenner</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Afspelen</value>
@@ -2030,7 +2087,7 @@
     <value>Applicatietaal</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>Wijzigingen vereisen een herstart om van kracht te worden</value>
+    <value>Herstart Nagi om de taalwijziging toe te passen.</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
     <value>Herstart vereist</value>
@@ -2045,7 +2102,7 @@
     <value>Back-up &amp; Herstel</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Maak back-ups van uw muziekbibliotheek en instellingen, of herstel vanaf een eerdere back-up</value>
+    <value>Maak een back-up van je bibliotheekgegevens en instellingen, of herstel een eerdere back-up.</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
     <value>Back-up maken</value>
@@ -2057,7 +2114,7 @@
     <value>Back-up gemaakt</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Back-up succesvol gemaakt ({0:F2} MB) op: {1}</value>
+    <value>Back-up ({0:F2} MB) gemaakt op: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
     <value>Back-up mislukt</value>
@@ -2084,13 +2141,13 @@
     <value>Herstel voltooid</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Back-up succesvol hersteld. De app zal nu opnieuw starten.</value>
+    <value>Back-up hersteld. Nagi wordt nu opnieuw opgestart.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
     <value>Herstel mislukt</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Herstellen vanaf back-up mislukt. Uw gegevens zijn niet gewijzigd.</value>
+    <value>Kon de back-up niet herstellen.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
     <value>Spelerstijl</value>
@@ -2102,25 +2159,25 @@
     <value>Effen (Ondoorzichtig)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Pas het uiterlijk van de zwevende speler aan</value>
+    <value>Pas het uiterlijk van de spelersbalk aan.</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
     <value>Tintintensiteit</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Past de levendigheid van de achtergrondkleur van de speler aan</value>
+    <value>Pas de intensiteit van de achtergrondkleur van de speler aan.</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
-    <value>Infadeerduur</value>
+    <value>Fade-in-duur</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
-    <value>De duur van het infade-effect bij afspelen (ms)</value>
+    <value>Stel in hoelang het duurt voordat het volume infaadt wanneer het afspelen hervat.</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
-    <value>Outfadeerduur</value>
+    <value>Fade-out-duur</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
-    <value>De duur van het outfade-effect bij pauzeren (ms)</value>
+    <value>Stel in hoelang het duurt voordat het volume uitfaadt wanneer het afspelen pauzeert.</value>
   </data>
   <data name="Settings_Nav_Insights" xml:space="preserve">
     <value>Inzichten</value>
@@ -2135,10 +2192,10 @@
     <value>Unieke nummers</value>
   </data>
   <data name="InsightsPage_PeakHour" xml:space="preserve">
-    <value>Piekuren</value>
+    <value>Piekuur</value>
   </data>
   <data name="InsightsPage_MostActiveDay" xml:space="preserve">
-    <value>Actiefste dag</value>
+    <value>Meest actieve dag</value>
   </data>
   <data name="InsightsPage_TopSongs" xml:space="preserve">
     <value>Topnummers</value>
@@ -2153,7 +2210,7 @@
     <value>Topgenres</value>
   </data>
   <data name="InsightsPage_Sources" xml:space="preserve">
-    <value>Afbronnen</value>
+    <value>Afspeelbronnen</value>
   </data>
   <data name="InsightsPage_Empty_Title" xml:space="preserve">
     <value>Nog geen luistergegevens</value>
@@ -2162,7 +2219,7 @@
     <value>Begin met het afspelen van muziek om hier uw inzichten te zien</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
-    <value>{0} weergaven</value>
+    <value>Afgespeeld: {0}</value>
   </data>
   <data name="InsightsPage_Source_Albums" xml:space="preserve">
     <value>Albums</value>
@@ -2222,7 +2279,7 @@
     <value>Duur</value>
   </data>
   <data name="PaginationControl_All" xml:space="preserve">
-    <value>All</value>
+    <value>Alles</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>Items per pagina:</value>
@@ -2261,12 +2318,174 @@
     <value>Afgelopen jaar</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
-    <value>Alle tijden</value>
+    <value>Altijd</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}u {1}m</value>
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
     <value>{0}m {1}s</value>
+  </data>
+  <data name="QueuePanel_EmptyTitle" xml:space="preserve">
+    <value>Je wachtrij is leeg</value>
+  </data>
+  <data name="QueuePanel_EmptyDescription" xml:space="preserve">
+    <value>Speel muziek af of sleep audiobestanden hiernaartoe om je wachtrij op te bouwen.</value>
+  </data>
+  <data name="QueuePanel_LoadError" xml:space="preserve">
+    <value>Sommige nummers konden niet worden geladen. Selecteer Opnieuw proberen om de wachtrij opnieuw te laden.</value>
+  </data>
+  <data name="QueuePanel_Retry" xml:space="preserve">
+    <value>Opnieuw proberen</value>
+  </data>
+  <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
+    <value>De nieuwe volgorde van de afspeellijst kon niet worden opgeslagen. Probeer het opnieuw.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
+    <value>Audio-uitvoerapparaat</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Description" xml:space="preserve">
+    <value>Kies waar Nagi muziek afspeelt.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Default" xml:space="preserve">
+    <value>Systeemstandaard</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Unavailable" xml:space="preserve">
+    <value>Het opgeslagen apparaat is niet beschikbaar. De systeemstandaard wordt gebruikt.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
+    <value>Kon de audio-uitvoer niet bijwerken. Probeer het opnieuw of kies een ander apparaat.</value>
+  </data>
+  <data name="Listening_Random" xml:space="preserve">
+    <value>Willekeurig</value>
+  </data>
+  <data name="Listening_MoreVariety" xml:space="preserve">
+    <value>Meer variatie</value>
+  </data>
+  <data name="Listening_Rediscover" xml:space="preserve">
+    <value>Herontdekken</value>
+  </data>
+  <data name="Listening_Unheard" xml:space="preserve">
+    <value>Ongehoord</value>
+  </data>
+  <data name="Listening_PlayFor" xml:space="preserve">
+    <value>Afspelen gedurende…</value>
+  </data>
+  <data name="Listening_Minutes" xml:space="preserve">
+    <value>Minuten</value>
+  </data>
+  <data name="Listening_ShuffleMode" xml:space="preserve">
+    <value>Mix-type</value>
+  </data>
+  <data name="Listening_AvoidRecentDays" xml:space="preserve">
+    <value>Recent afgespeeld vermijden (dagen)</value>
+  </data>
+  <data name="Listening_MoreOptions" xml:space="preserve">
+    <value>Meer opties</value>
+  </data>
+  <data name="Listening_PlayForDescription" xml:space="preserve">
+    <value>Bouw een wachtrij op van volledige nummers die samen niet langer duren dan de gekozen tijdsduur.</value>
+  </data>
+  <data name="Listening_NoMixTitle" xml:space="preserve">
+    <value>Geen nummers voor deze mix</value>
+  </data>
+  <data name="Listening_NoMixDescription" xml:space="preserve">
+    <value>Geen enkel nummer in deze lijst voldoet aan deze vereisten. Probeer een andere mix of nummerlijst.</value>
+  </data>
+  <data name="Listening_Favorites" xml:space="preserve">
+    <value>Favorieten</value>
+  </data>
+  <data name="Listening_AddFavorite" xml:space="preserve">
+    <value>Toevoegen aan favorieten</value>
+  </data>
+  <data name="Listening_RemoveFavorite" xml:space="preserve">
+    <value>Verwijderen uit favorieten</value>
+  </data>
+  <data name="Listening_SleepTimer" xml:space="preserve">
+    <value>Slaaptimer</value>
+  </data>
+  <data name="Listening_FinishTrack" xml:space="preserve">
+    <value>Huidige nummer afmaken als de timer afloopt</value>
+  </data>
+  <data name="Listening_StopAfterTrack" xml:space="preserve">
+    <value>Stoppen na dit nummer</value>
+  </data>
+  <data name="Listening_StopAtQueueEnd" xml:space="preserve">
+    <value>Stoppen aan einde van wachtrij</value>
+  </data>
+  <data name="Listening_StopPlayback" xml:space="preserve">
+    <value>Afspelen stoppen</value>
+  </data>
+  <data name="Listening_CustomTimer" xml:space="preserve">
+    <value>Aangepaste timer…</value>
+  </data>
+  <data name="Listening_Timer15" xml:space="preserve">
+    <value>Over 15 minuten</value>
+  </data>
+  <data name="Listening_Timer30" xml:space="preserve">
+    <value>Over 30 minuten</value>
+  </data>
+  <data name="Listening_Timer60" xml:space="preserve">
+    <value>Over 60 minuten</value>
+  </data>
+  <data name="Listening_CancelStop" xml:space="preserve">
+    <value>Geplande stop annuleren</value>
+  </data>
+  <data name="Listening_TimerRemaining" xml:space="preserve">
+    <value>Stopt over {0}</value>
+  </data>
+  <data name="Listening_PlayerOptions" xml:space="preserve">
+    <value>Speleropties</value>
+  </data>
+  <data name="Listening_RecentlyPlayed" xml:space="preserve">
+    <value>Onlangs afgespeeld</value>
+  </data>
+  <data name="Listening_HistorySearch" xml:space="preserve">
+    <value>Luistergeschiedenis zoeken</value>
+  </data>
+  <data name="Listening_HistoryEmpty" xml:space="preserve">
+    <value>Nog geen luistergeschiedenis</value>
+  </data>
+  <data name="Listening_HistoryLoadError" xml:space="preserve">
+    <value>'Onlangs afgespeeld' kon niet worden geladen. Selecteer Opnieuw proberen om het opnieuw te proberen.</value>
+  </data>
+  <data name="Listening_Today" xml:space="preserve">
+    <value>Vandaag</value>
+  </data>
+  <data name="Listening_Yesterday" xml:space="preserve">
+    <value>Gisteren</value>
+  </data>
+  <data name="Listening_RediscoveryReason" xml:space="preserve">
+    <value>Laatst afgespeeld op {0:d}</value>
+  </data>
+  <data name="Listening_RediscoveryTitle" xml:space="preserve">
+    <value>Het beluisteren waard</value>
+  </data>
+  <data name="Listening_Dismiss" xml:space="preserve">
+    <value>Negeren</value>
+  </data>
+  <data name="Listening_ActionError" xml:space="preserve">
+    <value>Kon deze actie niet voltooien. Probeer het opnieuw.</value>
+  </data>
+  <data name="Listening_FavoritesEmpty" xml:space="preserve">
+    <value>Nog geen favorieten</value>
+  </data>
+  <data name="Listening_FavoritesEmptyDescription" xml:space="preserve">
+    <value>Voeg een nummer toe aan je favorieten vanuit het menu, of selecteer het en druk op Ctrl+D.</value>
+  </data>
+  <data name="Listening_VarietyDescription" xml:space="preserve">
+    <value>'Meer variatie' vermijdt nummers die recent zijn afgespeeld en scheidt nummers van dezelfde artiest waar mogelijk.</value>
+  </data>
+  <data name="Listening_RediscoverDescription" xml:space="preserve">
+    <value>'Herontdekken' gebruikt nummers met geregistreerde afspeelbeurten in Nagi die meer dan 30 dagen geleden voor het laatst zijn afgespeeld.</value>
+  </data>
+  <data name="Listening_UnheardDescription" xml:space="preserve">
+    <value>'Ongehoord' gebruikt nummers zonder geregistreerde afspeelbeurten in Nagi.</value>
+  </data>
+  <data name="Listening_HistoryNoMatches" xml:space="preserve">
+    <value>Geen afspeelbeurten komen overeen met je zoekopdracht</value>
+  </data>
+  <data name="Listening_NoTimedMixDescription" xml:space="preserve">
+    <value>Geen nummers in deze lijst voldoen aan de mixvereisten en passen binnen de gekozen tijdsduur. Probeer een langere tijdsduur, een andere mix of een andere nummerlijst.</value>
   </data>
 </root>

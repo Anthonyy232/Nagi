@@ -76,6 +76,9 @@
   <data name="NavItem_Folders" xml:space="preserve">
     <value>Klasörler</value>
   </data>
+  <data name="NavItem_Favorites" xml:space="preserve">
+    <value>Favoriler</value>
+  </data>
   <data name="NavItem_Insights" xml:space="preserve">
     <value>İstatistikler</value>
   </data>
@@ -83,7 +86,7 @@
     <value>Ayarlar</value>
   </data>
   <data name="Status_NoTrackPlaying" xml:space="preserve">
-    <value>Çalan parça yok</value>
+    <value>Çalan şarkı yok</value>
   </data>
   <data name="Tooltip_Play" xml:space="preserve">
     <value>Oynat</value>
@@ -122,7 +125,7 @@
     <value>Koyu</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">
-    <value>Sistem ayarını kullan</value>
+    <value>Sistem Varsayılanı</value>
   </data>
   <data name="Backdrop_Mica" xml:space="preserve">
     <value>Mika</value>
@@ -141,6 +144,39 @@
   </data>
   <data name="Label_Rating" xml:space="preserve">
     <value>Derecelendirme</value>
+  </data>
+  <data name="Label_Grouping" xml:space="preserve">
+    <value>Gruplama</value>
+  </data>
+  <data name="Label_SkipCount" xml:space="preserve">
+    <value>Atlama Sayısı</value>
+  </data>
+  <data name="Label_DiscNumber" xml:space="preserve">
+    <value>Disk Numarası</value>
+  </data>
+  <data name="Label_Bitrate" xml:space="preserve">
+    <value>Bit Hızı</value>
+  </data>
+  <data name="Label_SampleRate" xml:space="preserve">
+    <value>Örnekleme Hızı</value>
+  </data>
+  <data name="Label_IsLoved" xml:space="preserve">
+    <value>Favori</value>
+  </data>
+  <data name="Label_HasLyrics" xml:space="preserve">
+    <value>Şarkı Sözü Var</value>
+  </data>
+  <data name="Operator_IsInRange" xml:space="preserve">
+    <value>Arasında (dahil)</value>
+  </data>
+  <data name="Operator_IsAfter" xml:space="preserve">
+    <value>Sonra</value>
+  </data>
+  <data name="Operator_IsBefore" xml:space="preserve">
+    <value>Önce</value>
+  </data>
+  <data name="SmartPlaylist_UpperBound_Placeholder" xml:space="preserve">
+    <value>Maksimum değer</value>
   </data>
   <data name="Operator_Contains" xml:space="preserve">
     <value>İçerir</value>
@@ -194,31 +230,31 @@
     <value>Yeni Akıllı Çalma Listesi</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>Akıllı Çalma Listesini Düzenle - {0}</value>
+    <value>Akıllı Çalma Listesini Düzenle: {0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
     <value>Bir çalma listesi adı girin</value>
   </data>
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
-    <value>{0:N0} şarkı mevcut kurallarla eşleşiyor</value>
+    <value>Eşleşen şarkılar: {0:N0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Eşleşen şarkıları görmek için bir ad girin</value>
+    <value>Eşleşen şarkıları görmek için bir çalma listesi adı girin</value>
   </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
-    <value>Hesaplama yapılamıyor</value>
+    <value>Eşleşen şarkılar sayılamadı</value>
   </data>
   <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
-    <value>Hesaplanıyor...</value>
+    <value>Hesaplanıyor…</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>Bu isimde bir çalma listesi zaten var!</value>
+    <value>Bu isimde bir çalma listesi zaten var.</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>Lütfen bir ad girin!</value>
+    <value>Bir çalma listesi adı girin.</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
-    <value>Yükleniyor...</value>
+    <value>Yükleniyor…</value>
   </data>
   <data name="Error_FailedToLoadArtists" xml:space="preserve">
     <value>Sanatçılar yüklenemedi</value>
@@ -227,7 +263,7 @@
     <value>Kritik Hata</value>
   </data>
   <data name="CrashReport_Message" xml:space="preserve">
-    <value>Nagi kritik bir hatayla karşılaştı ve kapanması gerekiyor. Verdiğimiz rahatsızlıktan dolayı özür dileriz.</value>
+    <value>Nagi bir hatayla karşılaştı ve kapatılması gerekiyor.</value>
   </data>
   <data name="ElevationWarning_Title" xml:space="preserve">
     <value>Yönetici olarak çalışıyor</value>
@@ -295,16 +331,16 @@ En iyi deneyim için lütfen Nagi'yi yönetici ayrıcalıkları olmadan yeniden 
     <value>Bu klasör zaten kütüphanede.</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
-    <value>Klasör kütüphaneye ekleniyor...</value>
+    <value>Klasör kitaplığa ekleniyor…</value>
   </data>
   <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>'{0}' başarıyla silindi.</value>
+    <value>&apos;{0}&apos; kitaplığınızdan kaldırıldı.</value>
   </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
-    <value>'{0}' silinemedi.</value>
+    <value>&apos;{0}&apos; kitaplığınızdan kaldırılamadı.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
-    <value>'{0}' siliniyor...</value>
+    <value>&apos;{0}&apos; kitaplığınızdan kaldırılıyor…</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
     <value>'{0}' yeniden taraması tamamlandı.</value>
@@ -313,7 +349,7 @@ En iyi deneyim için lütfen Nagi'yi yönetici ayrıcalıkları olmadan yeniden 
     <value>'{0}' için değişiklik algılanmadı.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
-    <value>'{0}' yeniden taranıyor...</value>
+    <value>'{0}' yeniden taranıyor…</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
     <value>Müzik içeren klasör bulunamadı.</value>
@@ -328,7 +364,7 @@ En iyi deneyim için lütfen Nagi'yi yönetici ayrıcalıkları olmadan yeniden 
     <value>Klasör eklenirken hata oluştu: {0}</value>
   </data>
   <data name="Folders_Error_DeleteFolder" xml:space="preserve">
-    <value>Klasör silinirken hata oluştu: {0}</value>
+    <value>Klasör kitaplığınızdan kaldırılamadı: {0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Klasör yeniden taranırken hata oluştu: {0}</value>
@@ -379,10 +415,10 @@ En iyi deneyim için lütfen Nagi'yi yönetici ayrıcalıkları olmadan yeniden 
     <value>Başlamak için müzik arşivinizi ayarlayalım.</value>
   </data>
   <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>Bir klasör seçmenizi bekliyorum...</value>
+    <value>Bir klasör seçmeniz bekleniyor…</value>
   </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
-    <value>Arşiviniz oluşturuluyor...</value>
+    <value>Kitaplığınız oluşturuluyor…</value>
   </data>
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Beklenmedik bir hata oluştu. Lütfen tekrar deneyin.</value>
@@ -403,7 +439,7 @@ En iyi deneyim için lütfen Nagi'yi yönetici ayrıcalıkları olmadan yeniden 
     <value>Çalma listesi yüklenirken hata oluştu</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Çalma listesi başlatılıyor...</value>
+    <value>Çalma listesi başlatılıyor…</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Bu akıllı çalma listesinin kurallarıyla eşleşen şarkı yok.</value>
@@ -412,7 +448,7 @@ En iyi deneyim için lütfen Nagi'yi yönetici ayrıcalıkları olmadan yeniden 
     <value>Bu çalma listesi için oynatma başlatılırken hata oluştu.</value>
   </data>
   <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Rastgele bir çalma listesi seçiliyor...</value>
+    <value>Rastgele bir çalma listesi seçiliyor…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Çalma listesi bulunamadı.</value>
@@ -424,13 +460,13 @@ En iyi deneyim için lütfen Nagi'yi yönetici ayrıcalıkları olmadan yeniden 
     <value>Rastgele çalma listesi oynatılırken hata oluştu.</value>
   </data>
   <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Çalma listeleri yükleniyor...</value>
+    <value>Çalma listeleri yükleniyor…</value>
   </data>
   <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
     <value>Çalma listeleri yüklenirken hata oluştu.</value>
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Yeni çalma listesi oluşturuluyor...</value>
+    <value>Yeni çalma listesi oluşturuluyor…</value>
   </data>
   <data name="Playlist_Status_CreateFailed" xml:space="preserve">
     <value>Çalma listesi oluşturulamadı. Zaten mevcut olabilir.</value>
@@ -439,7 +475,7 @@ En iyi deneyim için lütfen Nagi'yi yönetici ayrıcalıkları olmadan yeniden 
     <value>Çalma listesi oluşturulurken bir hata oluştu.</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Çalma listesi kapağı güncelleniyor...</value>
+    <value>Çalma listesi kapağı güncelleniyor…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Çalma listesi kapağı güncellenemedi.</value>
@@ -448,7 +484,7 @@ En iyi deneyim için lütfen Nagi'yi yönetici ayrıcalıkları olmadan yeniden 
     <value>Çalma listesi kapağı güncellenirken bir hata oluştu.</value>
   </data>
   <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Çalma listesi görseli kaldırılıyor...</value>
+    <value>Çalma listesi görseli kaldırılıyor…</value>
   </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Çalma listesi görseli kaldırılamadı.</value>
@@ -457,7 +493,7 @@ En iyi deneyim için lütfen Nagi'yi yönetici ayrıcalıkları olmadan yeniden 
     <value>Çalma listesi görseli kaldırılırken bir hata oluştu.</value>
   </data>
   <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Çalma listesi yeniden adlandırılıyor...</value>
+    <value>Çalma listesi yeniden adlandırılıyor…</value>
   </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Çalma listesi yeniden adlandırılamadı.</value>
@@ -466,7 +502,7 @@ En iyi deneyim için lütfen Nagi'yi yönetici ayrıcalıkları olmadan yeniden 
     <value>Çalma listesi yeniden adlandırılırken bir hata oluştu.</value>
   </data>
   <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Çalma listesi siliniyor...</value>
+    <value>Çalma listesi siliniyor…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Çalma listesi silinemedi.</value>
@@ -514,8 +550,9 @@ En iyi deneyim için lütfen Nagi'yi yönetici ayrıcalıkları olmadan yeniden 
     <value>Dışa Aktarma Başarılı</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>{0} çalma listesi ({1} toplam şarkı) şuraya aktarıldı:
-{2}</value>
+    <value>Dışa aktarılan çalma listeleri: {0}
+Şarkılar: {1}
+Kaydedilen konum: {2}</value>
   </data>
   <data name="Settings_Export_Failed_Title" xml:space="preserve">
     <value>Dışa Aktarma Başarısız</value>
@@ -524,17 +561,18 @@ En iyi deneyim için lütfen Nagi'yi yönetici ayrıcalıkları olmadan yeniden 
     <value>İçe Aktarma Başarılı</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>{0} çalma listesi ({1} şarkı) başarıyla içe aktarıldı.</value>
+    <value>İçe aktarılan çalma listeleri: {0}
+Şarkılar: {1}</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
     <value>
 
-{0} şarkı kütüphanenizde bulunamadı.</value>
+Kitaplığınızda bulunamayan şarkılar: {0}.</value>
   </data>
   <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
     <value>
 
-{0} dosya içe aktarılamadı.</value>
+İçe aktarılamayan dosyalar: {0}.</value>
   </data>
   <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
     <value>İçe Aktarma Başarısız</value>
@@ -603,10 +641,10 @@ En iyi deneyim için lütfen Nagi'yi yönetici ayrıcalıkları olmadan yeniden 
     <value>FFmpeg algılanmadı. Lütfen FFmpeg'i yükleyin ve 'Yeniden kontrol et'e tıklayın.</value>
   </data>
   <data name="FFmpeg_Status_Checking" xml:space="preserve">
-    <value>FFmpeg kontrol ediliyor...</value>
+    <value>FFmpeg kontrol ediliyor…</value>
   </data>
   <data name="FFmpeg_Status_Detected" xml:space="preserve">
-    <value>FFmpeg algılandı!</value>
+    <value>FFmpeg algılandı.</value>
   </data>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg hala algılanmadı. Lütfen FFmpeg'i yükleyin ve 'Yeniden kontrol et'e tıklayın.</value>
@@ -774,13 +812,13 @@ En iyi deneyim için lütfen Nagi'yi yönetici ayrıcalıkları olmadan yeniden 
     <value>Çalma listesi yok</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
-    <value>Klasörü Sil</value>
+    <value>Klasörü Kaldır</value>
   </data>
   <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
-    <value>'{0}' klasörünü kütüphaneden kaldırmak istediğinizden emin misiniz? Bu işlem dosyaları bilgisayarınızdan silmeyecektir.</value>
+    <value>&apos;{0}&apos; kitaplığınızdan kaldırılsın mı? Ses dosyalarınız bilgisayarınızda kalacaktır.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
-    <value>Sil</value>
+    <value>Kaldır</value>
   </data>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>İptal</value>
@@ -819,10 +857,10 @@ En iyi deneyim için lütfen Nagi'yi yönetici ayrıcalıkları olmadan yeniden 
     <value>Çalma listelerinde ara</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>Yeni çalma listesi adı girin</value>
+    <value>Bir çalma listesi adı girin</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
-    <value>Görsel Seç</value>
+    <value>Kapak Seç</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
     <value>Yeni Çalma Listesi Oluştur</value>
@@ -858,7 +896,7 @@ En iyi deneyim için lütfen Nagi'yi yönetici ayrıcalıkları olmadan yeniden 
     <value>Aramayı kapat</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Arşivde ara</value>
+    <value>Tür içinde ara</value>
   </data>
   <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Çalma listesi yok</value>
@@ -879,13 +917,13 @@ En iyi deneyim için lütfen Nagi'yi yönetici ayrıcalıkları olmadan yeniden 
     <value>Meta Verileri Yeniden Tara</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>Bu işlem, yeni meta veri ayarlarını (sanatçı ayırma karakterleri gibi) uygulamak için kütüphanenizdeki tüm şarkıları yeniden tarayacaktır. Kütüphane boyutuna bağlı olarak bu biraz zaman alabilir. Devam etmek ister misiniz?</value>
+    <value>Sanatçı ayrıştırma gibi üst veri ayarlarını uygulamak için kitaplığınızı yeniden tarayın. Büyük kitaplıklar için bu işlem biraz zaman alabilir. Devam edilsin mi?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
     <value>Yeniden Tara</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
-    <value>Kütüphane yeniden taraması hazırlanıyor...</value>
+    <value>Kitaplık yeniden taraması hazırlanıyor…</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
     <value>Yeniden Tarama Tamamlandı</value>
@@ -916,7 +954,7 @@ Devam etmek ister misiniz?</value>
     <value>Etkinleştir ve Tara</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>Ses normalleştirme taraması hazırlanıyor...</value>
+    <value>Ses düzeyi normalleştirme taraması hazırlanıyor…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
     <value>Ses normalleştirme taraması iptal edildi.</value>
@@ -1053,7 +1091,7 @@ Hata: {1}</value>
     <value>Nagi</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Hız, basitlik ve gizliliğe odaklanan bir müzik çalar olan Nagi ile yerel müzik koleksiyonunuzu yeniden keşfedin. Nagi, temiz ve yerel bir Fluent deneyimi sunmak için C# ve WinUI 3 ile geliştirilmiştir. Güzel, verimli ve gizliliğinize saygı duyar.</value>
+    <value>Hız, sadelik ve gizliliğe odaklanan müzik çalar Nagi ile yerel müzik koleksiyonunuzu yeniden keşfedin.</value>
   </data>
   <data name="AppShortName" xml:space="preserve">
     <value>Nagi</value>
@@ -1080,61 +1118,61 @@ Hata: {1}</value>
     <value>Sıradaki</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
-    <value>Albüm sayfasına git</value>
+    <value>Albümüne Git</value>
   </data>
   <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Drop files or folders onto the player to add them to the queue.</value>
+    <value>Kuyruğa eklemek için dosyaları veya klasörleri oynatıcıya bırakın.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Sıradaki</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
-    <value>Clear queue</value>
+    <value>Sırayı Temizle</value>
   </data>
   <data name="QueuePanel_DisplayOptions" xml:space="preserve">
-    <value>Queue display options</value>
+    <value>Sıra Görüntüleme Seçenekleri</value>
   </data>
   <data name="QueuePanel_Close" xml:space="preserve">
-    <value>Close queue</value>
+    <value>Sırayı Kapat</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
-    <value>Artist</value>
+    <value>Sanatçı</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
-    <value>Duration</value>
+    <value>Süre</value>
   </data>
   <data name="QueuePanel_ShowTrackCount" xml:space="preserve">
-    <value>Track count</value>
+    <value>Parça Sayısı</value>
   </data>
   <data name="QueuePanel_TrackCount" xml:space="preserve">
-    <value>Tracks: {0:N0}</value>
+    <value>Parçalar: {0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
-    <value>Queue position</value>
+    <value>Sıradaki Konum</value>
   </data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve">
-    <value>Genre</value>
+    <value>Tür</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
-    <value>Total duration</value>
+    <value>Toplam Süre</value>
   </data>
   <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Oynat</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
-    <value>Move up</value>
+    <value>Yukarı Taşı</value>
   </data>
   <data name="QueuePanel_MoveDown" xml:space="preserve">
-    <value>Move down</value>
+    <value>Aşağı Taşı</value>
   </data>
   <data name="QueuePanel_Remove" xml:space="preserve">
-    <value>Remove from queue</value>
+    <value>Sıradan Kaldır</value>
   </data>
   <data name="AlbumPage_Title" xml:space="preserve">
     <value>Albümler</value>
   </data>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Albümleri ara...</value>
+    <value>Albümlerde ara…</value>
   </data>
   <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Albümleri ara</value>
@@ -1158,7 +1196,7 @@ Hata: {1}</value>
     <value>Şarkılar</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Albümde ara...</value>
+    <value>Albümde ara…</value>
   </data>
   <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Albümde ara</value>
@@ -1179,13 +1217,13 @@ Hata: {1}</value>
     <value>Sıraya Ekle</value>
   </data>
   <data name="AlbumViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Çalma listesine ekle</value>
+    <value>Çalma Listesine Ekle</value>
   </data>
   <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Sanatçı sayfasına git</value>
+    <value>Sanatçıya Git</value>
   </data>
   <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Dosya Gezgini'nde göster</value>
+    <value>Dosya Gezgini'nde Göster</value>
   </data>
   <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Oynat</value>
@@ -1200,7 +1238,7 @@ Hata: {1}</value>
     <value>Sanatçılar</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Sanatçıları ara...</value>
+    <value>Sanatçılarda ara…</value>
   </data>
   <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Sanatçıları ara</value>
@@ -1242,7 +1280,7 @@ Hata: {1}</value>
     <value>Şarkılar</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Sanatçıda ara...</value>
+    <value>Sanatçıda ara…</value>
   </data>
   <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Sanatçıda ara</value>
@@ -1263,13 +1301,13 @@ Hata: {1}</value>
     <value>Sıraya Ekle</value>
   </data>
   <data name="ArtistViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Çalma listesine ekle</value>
+    <value>Çalma Listesine Ekle</value>
   </data>
   <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Albüm sayfasına git</value>
+    <value>Albümüne Git</value>
   </data>
   <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Dosya Gezgini'nde göster</value>
+    <value>Dosya Gezgini'nde Göster</value>
   </data>
   <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Oynat</value>
@@ -1299,7 +1337,7 @@ Hata: {1}</value>
     <value>Yeniden tara</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>Sil</value>
+    <value>Kitaplıktan Kaldır</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Henüz klasör eklenmedi</value>
@@ -1311,7 +1349,7 @@ Hata: {1}</value>
     <value>Oynat</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>Çalma listesine ekle</value>
+    <value>Çalma Listesine Ekle</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_Play" xml:space="preserve">
     <value>Oynat</value>
@@ -1323,16 +1361,16 @@ Hata: {1}</value>
     <value>Sıraya Ekle</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Çalma listesine ekle</value>
+    <value>Çalma Listesine Ekle</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Albüm sayfasına git</value>
+    <value>Albümüne Git</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Sanatçı sayfasına git</value>
+    <value>Sanatçıya Git</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Dosya Gezgini'nde göster</value>
+    <value>Dosya Gezgini'nde Göster</value>
   </data>
   <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Oynat</value>
@@ -1344,7 +1382,7 @@ Hata: {1}</value>
     <value>Şarkılar</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Klasörde ara...</value>
+    <value>Klasörde ara…</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Klasörde ara</value>
@@ -1365,7 +1403,7 @@ Hata: {1}</value>
     <value>Türler</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Türleri ara...</value>
+    <value>Türlerde ara…</value>
   </data>
   <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
     <value>Türleri ara</value>
@@ -1386,7 +1424,7 @@ Hata: {1}</value>
     <value>Arşiv</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Arşivde ara...</value>
+    <value>Kitaplıkta ara…</value>
   </data>
   <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Arşivde ara</value>
@@ -1407,19 +1445,25 @@ Hata: {1}</value>
     <value>Sıraya Ekle</value>
   </data>
   <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Çalma listesine ekle</value>
+    <value>Çalma Listesine Ekle</value>
   </data>
   <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Albüm sayfasına git</value>
+    <value>Albümüne Git</value>
   </data>
   <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
-    <value>Sanatçı sayfasına git</value>
+    <value>Sanatçıya Git</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Dosya Gezgini'nde göster</value>
+    <value>Dosya Gezgini'nde Göster</value>
   </data>
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Oynat</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
+    <value>Şarkı bulunamadı</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+    <value>Başka bir şey aramayı deneyin</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
     <value>Arşiviniz boş</value>
@@ -1428,31 +1472,31 @@ Hata: {1}</value>
     <value>Ayarlar'dan arşivinize klasör ekleyin</value>
   </data>
   <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
-    <value>Bu parça için şarkı sözü bulunamadı</value>
+    <value>Bu şarkı için şarkı sözü bulunamadı</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
     <value>Başka bir şarkı deneyin</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
-    <value>Edit or replace lyrics</value>
+    <value>Şarkı sözlerini düzenle veya değiştir</value>
   </data>
   <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
-    <value>Edit lyrics</value>
+    <value>Şarkı Sözlerini Düzenle</value>
   </data>
   <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
-    <value>Paste plain text or timestamped LRC lyrics</value>
+    <value>Düz metin veya zaman damgalı LRC şarkı sözlerini yapıştırın</value>
   </data>
   <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
-    <value>Save</value>
+    <value>Kaydet</value>
   </data>
   <data name="LyricsPage_EditLyrics_Remove" xml:space="preserve">
-    <value>Remove saved lyrics</value>
+    <value>Kaydedilen Şarkı Sözlerini Kaldır</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
-    <value>Lyrics could not be updated</value>
+    <value>Şarkı sözleri güncellenemedi</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Nagi could not save the lyrics. Check the log for details and try again.</value>
+    <value>Nagi şarkı sözlerini kaydedemedi. Ayrıntılar için günlüğü kontrol edin ve tekrar deneyin.</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Nagi'ye Hoş Geldiniz</value>
@@ -1467,7 +1511,7 @@ Hata: {1}</value>
     <value>Çalma Listeleri</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Çalma listelerini ara...</value>
+    <value>Çalma listelerinde ara…</value>
   </data>
   <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Çalma listelerini ara</value>
@@ -1515,7 +1559,7 @@ Hata: {1}</value>
     <value>Şarkılar</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Çalma listesinde ara...</value>
+    <value>Çalma listesinde ara…</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Çalma listesinde ara</value>
@@ -1536,16 +1580,16 @@ Hata: {1}</value>
     <value>Sıraya Ekle</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Albüm sayfasına git</value>
+    <value>Albümüne Git</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Sanatçı sayfasına git</value>
+    <value>Sanatçıya Git</value>
   </data>
   <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Dosya Gezgini'nde göster</value>
+    <value>Dosya Gezgini'nde Göster</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
-    <value>Çalma listesinden kaldır</value>
+    <value>Çalma Listesinden Kaldır</value>
   </data>
   <data name="PlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Oynat</value>
@@ -1563,7 +1607,7 @@ Hata: {1}</value>
     <value>Şarkılar</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Türde ara...</value>
+    <value>Türde ara…</value>
   </data>
   <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Türde ara</value>
@@ -1584,16 +1628,16 @@ Hata: {1}</value>
     <value>Sıraya Ekle</value>
   </data>
   <data name="GenreViewPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Çalma listesine ekle</value>
+    <value>Çalma Listesine Ekle</value>
   </data>
   <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Albüm sayfasına git</value>
+    <value>Albümüne Git</value>
   </data>
   <data name="GenreViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Sanatçı sayfasına git</value>
+    <value>Sanatçıya Git</value>
   </data>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Dosya Gezgini'nde göster</value>
+    <value>Dosya Gezgini'nde Göster</value>
   </data>
   <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
     <value>Çalma listesi mevcut değil</value>
@@ -1617,40 +1661,40 @@ Hata: {1}</value>
     <value>Tema</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>Uygulama temasını seçin.</value>
+    <value>Açık, koyu veya sistem teması seçin.</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
     <value>Vurgu Rengi</value>
   </data>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
-    <value>Varsayılana sıfırla</value>
+    <value>Varsayılana Sıfırla</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Pencere Malzemesi</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Description" xml:space="preserve">
-    <value>Pencerenin arka plan malzemesini seçin.</value>
+    <value>Pencere arka plan malzemesini seçin.</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
     <value>Dinamik Temalandırma</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>Dinamik temalandırma seçeneklerini etkinleştirin ve yapılandırın.</value>
+    <value>Uygulama renklerini mevcut albüm kapağıyla eşleştirin.</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
-    <value>Pencere boyutunu hatırla</value>
+    <value>Pencere Boyutunu Hatırla</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Description" xml:space="preserve">
     <value>Ana pencereyi bir sonraki başlatmada önceki boyutuna geri yükle.</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Header" xml:space="preserve">
-    <value>Pencere konumunu hatırla</value>
+    <value>Pencere Konumunu Hatırla</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Description" xml:space="preserve">
     <value>Ana pencereyi bir sonraki başlatmada önceki ekran konumuna geri yükle.</value>
   </data>
   <data name="SettingsPage_RememberNavState_Header" xml:space="preserve">
-    <value>Navigasyon paneli durumunu hatırla</value>
+    <value>Gezinti Paneli Durumunu Hatırla</value>
   </data>
   <data name="SettingsPage_RememberNavState_Description" xml:space="preserve">
     <value>Sol navigasyon panelini bıraktığınız gibi açık veya kapalı tutun.</value>
@@ -1668,13 +1712,13 @@ Hata: {1}</value>
     <value>Ses Normalizasyonu (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Ani ses yüksekliği değişikliklerini önlemek için sesi otomatik olarak standart seviyeye (-18 LUFS) ayarlayın.</value>
+    <value>ReplayGain kullanarak şarkılar arasındaki ses düzeyi farklarını azaltın.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
-    <value>WASAPI exclusive mode</value>
+    <value>WASAPI Özel Modu</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+    <value>Nagi'ye Windows ses aygıtı üzerinde özel denetim verin. Diğer uygulamalar sessize alınabilir. Bu ayarı değiştirdikten sonra Nagi'yi yeniden başlatın.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>Oynatma/Duraklatmada Ses Geçişi</value>
@@ -1686,7 +1730,7 @@ Hata: {1}</value>
     <value>Ses Ekolayzır</value>
   </data>
   <data name="SettingsPage_ResetEqualizer_Content" xml:space="preserve">
-    <value>Varsayılana sıfırla</value>
+    <value>Varsayılana Sıfırla</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Ön Yükseltici</value>
@@ -1698,55 +1742,55 @@ Hata: {1}</value>
     <value>Oynatıcı Kontrollerini Özelleştir</value>
   </data>
   <data name="SettingsPage_ResetPlayerButtons_Content" xml:space="preserve">
-    <value>Varsayılana sıfırla</value>
+    <value>Varsayılana Sıfırla</value>
   </data>
   <data name="SettingsPage_CustomizePlayer_Instructions" xml:space="preserve">
     <value>Görünürlüğü değiştirmek için üzerine gelin. Yeniden sıralamak için sürükleyin. Ayırıcı, orta ve sağ kontrolleri ayırır.</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Header" xml:space="preserve">
-    <value>Katlanabilir oynatıcı</value>
+    <value>Daraltılabilir Oynatıcı</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>Oynatıcı çubuğunun genişlemesini ve daralmasını canlandırın.</value>
+    <value>Üzerine geldiğinizde oynatıcı çubuğunu genişletin.</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
-    <value>Oynatma durumunu geri yükle</value>
+    <value>Oynatma Durumunu Geri Yükle</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>Bir sonraki başlatmada devam etmek için mevcut oynatma durumunu kaydedin.</value>
+    <value>Nagi başladığında sıranızı ve oynatma konumunuzu geri yükleyin.</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
-    <value>Başlangıçta otomatik başlat</value>
+    <value>Başlangıçta Otomatik Çalıştır</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
     <value>Bilgisayarınızda oturum açtığınızda Nagi'yi otomatik olarak başlatın.</value>
   </data>
   <data name="SettingsPage_StartMinimized_Header" xml:space="preserve">
-    <value>Küçültülmüş olarak başlat</value>
+    <value>Simge Durumunda Başlat</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>Başlatıldığında, uygulama penceresi varsayılan olarak küçültülmüş olacaktır.</value>
+    <value>Nagi'yi penceresi simge durumuna küçültülmüş olarak başlatın.</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
-    <value>Mini oynatıcıya küçült</value>
+    <value>Mini Oynatıcıya Küçült</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Description" xml:space="preserve">
     <value>Küçültüldüğünde, pencereyi gizlemek yerine kompakt bir yüzen oynatıcı göster.</value>
   </data>
   <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
-    <value>Sistem tepsisine gizle</value>
+    <value>Sistem Tepsisine Gizle</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>Kapatıldığında, bunun yerine sistem tepsisine gizle.</value>
+    <value>Penceresini kapattığınızda Nagi'yi sistem tepsisinde çalışır durumda tutun.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
-    <value>Açılır menüde kapak resmi göster</value>
+    <value>Açılır Menüde Albüm Kapağını Göster</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
     <value>Tepsi simgesine tıklandığında beliren kompakt oynatıcıda kapak resmini göster.</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
-    <value>Sıralarken makaleleri yoksay</value>
+    <value>Sıralarken Tanımlıkları Yoksay</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
     <value>Albümleri, sanatçıları ve şarkıları ilk önemli kelimelerine göre sıralayın (örneğin, "The Beatles" B altında sıralanır).</value>
@@ -1773,10 +1817,10 @@ Hata: {1}</value>
     <value>Bölme değişikliklerini uygulamak için arşivi yeniden tarayın</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
-    <value>Çevrimiçi meta verileri al</value>
+    <value>Çevrim İçi Üst Verileri Al</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Sanatçı görselleri ve biyografileri gibi ek bilgileri çevrimiçi hizmetlerden (örn. Spotify, Last.fm) alın.</value>
+    <value>Çevrim içi kaynaklardan sanatçı görsellerini ve biyografilerini alın.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Kaynaklar</value>
@@ -1785,10 +1829,10 @@ Hata: {1}</value>
     <value>Meta veri kaynaklarını yeniden sıralamak için sürükleyin. Ayrıntılar için her bir kaynağın üzerine gelin.</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Header" xml:space="preserve">
-    <value>Çevrimiçi şarkı sözlerini al</value>
+    <value>Çevrim İçi Şarkı Sözlerini Al</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>Eksik şarkı sözlerini çevrimiçi kaynaklardan otomatik olarak alın. (Gizlilik: parça meta verilerini üçüncü taraf hizmetlere gönderir)</value>
+    <value>Eksik şarkı sözlerini çevrim içi kaynaklardan alın. Bu işlem şarkı üst verilerini üçüncü taraf hizmetlere gönderir.</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
     <value>Kaynaklar</value>
@@ -1797,16 +1841,16 @@ Hata: {1}</value>
     <value>Şarkı sözü kaynaklarını yeniden sıralamak için sürükleyin. Ayrıntılar için her bir kaynağın üzerine gelin.</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
-    <value>Latinize edilmiş şarkı sözlerini göster</value>
+    <value>Latin Harfli Şarkı Sözlerini Göster</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
     <value>Yüklü bir paket komut dosyasıyla eşleştiğinde, desteklenen şarkı sözlerinin altında daha küçük bir latinize edilmiş satır göster.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
-    <value>Dil paketleri</value>
+    <value>Dil Paketleri</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>Latinize etmek istediğiniz dilleri yükleyin. Paketler imzalı, yalnızca veri içeren ve yerel olarak depolanır.</value>
+    <value>Desteklenen şarkı sözlerini Latin harflerine dönüştürmek için dil paketleri yükleyin. Paketler yerel olarak saklanır.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
     <value>Yenile</value>
@@ -1845,25 +1889,25 @@ Hata: {1}</value>
     <value>{0} lisansı</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>Çalma Listelerini Dışa/İçe Aktar</value>
+    <value>Çalma Listelerini İçe ve Dışa Aktar</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
     <value>Çalma listelerini diğer oynatıcılarda kullanmak üzere M3U dosyalarına dışa aktarın veya M3U çalma listelerini Nagi'ye içe aktarın.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
-    <value>Tümünü Dışa Aktar...</value>
+    <value>Tümünü Dışa Aktar…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
     <value>Tüm çalma listelerini bir klasöre dışa aktar</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
-    <value>İçe Aktar...</value>
+    <value>İçe Aktar…</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
     <value>Bir veya daha fazla M3U dosyasını içe aktar</value>
   </data>
   <data name="SettingsPage_ResetApp_Header" xml:space="preserve">
-    <value>Uygulamayı sıfırla</value>
+    <value>Uygulamayı Sıfırla</value>
   </data>
   <data name="SettingsPage_ResetApp_Description" xml:space="preserve">
     <value>Bu işlem, tüm arşiv verilerini, çalma listelerini siler ve tüm ayarları varsayılan değerlerine sıfırlar. Uygulama yeniden başlatılacaktır.</value>
@@ -1893,16 +1937,16 @@ Hata: {1}</value>
     <value>Bağlantıyı Kes</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
-    <value>Scrobbling'i etkinleştir</value>
+    <value>Scrobble Yapmayı Etkinleştir</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Description" xml:space="preserve">
     <value>Nagi'de dinlediğiniz parçaları Last.fm profilinize otomatik olarak ekleyin.</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
-    <value>'Şimdi Çalıyor'u Güncelle</value>
+    <value>Şu An Çalınanı Güncelle</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>Last.fm'deki arkadaşlarınıza o anda ne dinlediğinizi gerçek zamanlı olarak gösterin.</value>
+    <value>Last.fm profilinizde o an çalınan şarkıyı gösterin.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
     <value>ListenBrainz</value>
@@ -1917,7 +1961,7 @@ Hata: {1}</value>
     <value>Anahtarınızı listenbrainz.org/settings adresinden yapıştırın</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TestConnection" xml:space="preserve">
-    <value>Bağlantıyı test et</value>
+    <value>Bağlantıyı Test Et</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Connected" xml:space="preserve">
     <value>{0} olarak bağlandı</value>
@@ -1926,10 +1970,10 @@ Hata: {1}</value>
     <value>Bağlantı başarısız: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>Dinlemeleri gönder (scrobbling)</value>
+    <value>Dinlemeleri Gönder (Scrobble)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>"Şimdi çalıyor" güncellemelerini gönder</value>
+    <value>Şu An Çalınan Güncellemelerini Gönder</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
     <value>Gelişmiş</value>
@@ -1962,7 +2006,7 @@ Hata: {1}</value>
     <value>Şarkılar</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Akıllı çalma listesinde ara...</value>
+    <value>Akıllı çalma listesinde ara…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Akıllı çalma listesinde ara</value>
@@ -1986,13 +2030,13 @@ Hata: {1}</value>
     <value>Sıraya Ekle</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Albüm sayfasına git</value>
+    <value>Albümüne Git</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Sanatçı sayfasına git</value>
+    <value>Sanatçıya Git</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Dosya Gezgini'nde göster</value>
+    <value>Dosya Gezgini'nde Göster</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Oynat</value>
@@ -2034,7 +2078,7 @@ Hata: {1}</value>
     <value>Geri Bildirim Gönder</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Başlangıçta güncellemeleri kontrol et</value>
+    <value>Başlangıçta Güncellemeleri Kontrol Et</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
     <value>Uygulama başladığında yeni sürümleri otomatik olarak kontrol edin.</value>
@@ -2043,7 +2087,7 @@ Hata: {1}</value>
     <value>Uygulama Dili</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>Değişikliklerin etkili olması için yeniden başlatma gerekir</value>
+    <value>Dil değişikliğini uygulamak için Nagi'yi yeniden başlatın.</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
     <value>Yeniden Başlatma Gerekli</value>
@@ -2058,7 +2102,7 @@ Hata: {1}</value>
     <value>Yedekle ve Geri Yükle</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Müzik arşivinizin ve ayarlarınızın yedeklerini oluşturun veya önceki bir yedekten geri yükleyin</value>
+    <value>Kitaplık verilerinizin ve ayarlarınızın yedeğini oluşturun veya önceki bir yedeği geri yükleyin.</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
     <value>Yedek Oluştur</value>
@@ -2070,7 +2114,7 @@ Hata: {1}</value>
     <value>Yedek Oluşturuldu</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Yedek başarıyla oluşturuldu ({0:F2} MB) konumunda: {1}</value>
+    <value>Şu konumda bir yedek oluşturuldu ({0:F2} MB): {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
     <value>Yedekleme Başarısız Oldu</value>
@@ -2097,13 +2141,13 @@ Hata: {1}</value>
     <value>Geri Yükleme Tamamlandı</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Yedek başarıyla geri yüklendi. Uygulama şimdi yeniden başlayacak.</value>
+    <value>Yedek geri yüklendi. Nagi şimdi yeniden başlatılacak.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
     <value>Geri Yükleme Başarısız Oldu</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Yedekten geri yüklenemedi. Verileriniz değiştirilmedi.</value>
+    <value>Yedek geri yüklenemedi.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
     <value>Oynatıcı Biçimlendirme</value>
@@ -2115,25 +2159,25 @@ Hata: {1}</value>
     <value>Düz (Opak)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Hareketli oynatıcının görünümünü özelleştirin</value>
+    <value>Oynatıcı çubuğunun görünümünü özelleştirin.</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
     <value>Ton Yoğunluğu</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Oynatıcı arka plan renginin canlılığını ayarlar</value>
+    <value>Oynatıcı arka plan renginin yoğunluğunu ayarlayın.</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
-    <value>Giriş süresi</value>
+    <value>Sesi Artırarak Açma Süresi</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
-    <value>Çalarken uygulanan giriş sesi efektinin süresi (ms)</value>
+    <value>Oynatma devam ettiğinde sesin ne kadar sürede artarak açılacağını ayarlayın.</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
-    <value>Çıkış süresi</value>
+    <value>Sesi Kısarak Bitirme Süresi</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
-    <value>Duraklatıldığında uygulanan çıkış sesi efektinin süresi (ms)</value>
+    <value>Oynatma duraklatıldığında sesin ne kadar sürede azalarak kısılacağını ayarlayın.</value>
   </data>
   <data name="Settings_Nav_Insights" xml:space="preserve">
     <value>İstatistikler</value>
@@ -2142,16 +2186,16 @@ Hata: {1}</value>
     <value>İstatistikler</value>
   </data>
   <data name="InsightsPage_TotalTime" xml:space="preserve">
-    <value>Toplam dinleme süresi</value>
+    <value>Toplam Dinleme Süresi</value>
   </data>
   <data name="InsightsPage_UniqueSongs" xml:space="preserve">
-    <value>Benzersiz şarkılar</value>
+    <value>Farklı Şarkılar</value>
   </data>
   <data name="InsightsPage_PeakHour" xml:space="preserve">
-    <value>Yoğun saat</value>
+    <value>En Yoğun Saat</value>
   </data>
   <data name="InsightsPage_MostActiveDay" xml:space="preserve">
-    <value>En aktif gün</value>
+    <value>En Aktif Gün</value>
   </data>
   <data name="InsightsPage_TopSongs" xml:space="preserve">
     <value>En Popüler Şarkılar</value>
@@ -2175,7 +2219,7 @@ Hata: {1}</value>
     <value>İstatistiklerinizi görmek için müzik çalmaya başlayın</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
-    <value>{0} çalma</value>
+    <value>Çalma sayısı: {0}</value>
   </data>
   <data name="InsightsPage_Source_Albums" xml:space="preserve">
     <value>Albümler</value>
@@ -2235,7 +2279,7 @@ Hata: {1}</value>
     <value>Süre</value>
   </data>
   <data name="PaginationControl_All" xml:space="preserve">
-    <value>All</value>
+    <value>Tümü</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>Sayfa başına öğe:</value>
@@ -2259,27 +2303,189 @@ Hata: {1}</value>
     <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
-    <value>Son 1 gün</value>
+    <value>Son 1 Gün</value>
   </data>
   <data name="Insights_TimeRange_Last7Days" xml:space="preserve">
-    <value>Son 7 gün</value>
+    <value>Son 7 Gün</value>
   </data>
   <data name="Insights_TimeRange_Last30Days" xml:space="preserve">
-    <value>Son 30 gün</value>
+    <value>Son 30 Gün</value>
   </data>
   <data name="Insights_TimeRange_Last90Days" xml:space="preserve">
-    <value>Son 90 gün</value>
+    <value>Son 90 Gün</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>Geçen yıl</value>
+    <value>Geçen Yıl</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
-    <value>Tüm zamanlar</value>
+    <value>Tüm Zamanlar</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
-    <value>{0}s {1}d</value>
+    <value>{0}sa {1}dk</value>
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
-    <value>{0}d {1}sn</value>
+    <value>{0}dk {1}sn</value>
+  </data>
+  <data name="QueuePanel_EmptyTitle" xml:space="preserve">
+    <value>Sıranız boş</value>
+  </data>
+  <data name="QueuePanel_EmptyDescription" xml:space="preserve">
+    <value>Sıranızı oluşturmak için müzik çalın veya ses dosyalarını buraya bırakın.</value>
+  </data>
+  <data name="QueuePanel_LoadError" xml:space="preserve">
+    <value>Bazı şarkılar yüklenemedi. Sırayı tekrar yüklemek için Yeniden Dene'yi seçin.</value>
+  </data>
+  <data name="QueuePanel_Retry" xml:space="preserve">
+    <value>Yeniden Dene</value>
+  </data>
+  <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
+    <value>Yeni çalma listesi sırası kaydedilemedi. Lütfen tekrar deneyin.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
+    <value>Ses Çıkış Cihazı</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Description" xml:space="preserve">
+    <value>Nagi'nin müziği nerede çalacağını seçin.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Default" xml:space="preserve">
+    <value>Sistem Varsayılanı</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Unavailable" xml:space="preserve">
+    <value>Kaydedilen cihaz kullanılamıyor. Sistem varsayılanı kullanılıyor.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
+    <value>Ses çıkışı güncellenemedi. Tekrar deneyin veya başka bir cihaz seçin.</value>
+  </data>
+  <data name="Listening_Random" xml:space="preserve">
+    <value>Karıştır</value>
+  </data>
+  <data name="Listening_MoreVariety" xml:space="preserve">
+    <value>Daha Fazla Çeşitlilik</value>
+  </data>
+  <data name="Listening_Rediscover" xml:space="preserve">
+    <value>Yeniden Keşfet</value>
+  </data>
+  <data name="Listening_Unheard" xml:space="preserve">
+    <value>Dinlenmemiş</value>
+  </data>
+  <data name="Listening_PlayFor" xml:space="preserve">
+    <value>Şu kadar süre çal…</value>
+  </data>
+  <data name="Listening_Minutes" xml:space="preserve">
+    <value>Dakika</value>
+  </data>
+  <data name="Listening_ShuffleMode" xml:space="preserve">
+    <value>Karışım Türü</value>
+  </data>
+  <data name="Listening_AvoidRecentDays" xml:space="preserve">
+    <value>Son Çalınanlardan Kaçın (Gün)</value>
+  </data>
+  <data name="Listening_MoreOptions" xml:space="preserve">
+    <value>Diğer Seçenekler</value>
+  </data>
+  <data name="Listening_PlayForDescription" xml:space="preserve">
+    <value>Seçtiğiniz süreyi aşmayacak şekilde tam şarkılardan oluşan bir sıra oluşturun.</value>
+  </data>
+  <data name="Listening_NoMixTitle" xml:space="preserve">
+    <value>Bu karışım için şarkı yok</value>
+  </data>
+  <data name="Listening_NoMixDescription" xml:space="preserve">
+    <value>Bu listedeki hiçbir şarkı bu gereksinimleri karşılamıyor. Başka bir karışım veya şarkı listesi deneyin.</value>
+  </data>
+  <data name="Listening_Favorites" xml:space="preserve">
+    <value>Favoriler</value>
+  </data>
+  <data name="Listening_AddFavorite" xml:space="preserve">
+    <value>Favorilere Ekle</value>
+  </data>
+  <data name="Listening_RemoveFavorite" xml:space="preserve">
+    <value>Favorilerden Kaldır</value>
+  </data>
+  <data name="Listening_SleepTimer" xml:space="preserve">
+    <value>Uyku Zamanlayıcısı</value>
+  </data>
+  <data name="Listening_FinishTrack" xml:space="preserve">
+    <value>Zamanlayıcı dolduğunda mevcut şarkıyı bitir</value>
+  </data>
+  <data name="Listening_StopAfterTrack" xml:space="preserve">
+    <value>Bu Şarkıdan Sonra Durdur</value>
+  </data>
+  <data name="Listening_StopAtQueueEnd" xml:space="preserve">
+    <value>Sıra Sonunda Durdur</value>
+  </data>
+  <data name="Listening_StopPlayback" xml:space="preserve">
+    <value>Oynatmayı Durdur</value>
+  </data>
+  <data name="Listening_CustomTimer" xml:space="preserve">
+    <value>Özel Zamanlayıcı…</value>
+  </data>
+  <data name="Listening_Timer15" xml:space="preserve">
+    <value>15 Dakika İçinde</value>
+  </data>
+  <data name="Listening_Timer30" xml:space="preserve">
+    <value>30 Dakika İçinde</value>
+  </data>
+  <data name="Listening_Timer60" xml:space="preserve">
+    <value>60 Dakika İçinde</value>
+  </data>
+  <data name="Listening_CancelStop" xml:space="preserve">
+    <value>Zamanlanmış Durdurmayı İptal Et</value>
+  </data>
+  <data name="Listening_TimerRemaining" xml:space="preserve">
+    <value>{0} içinde duracak</value>
+  </data>
+  <data name="Listening_PlayerOptions" xml:space="preserve">
+    <value>Oynatıcı Seçenekleri</value>
+  </data>
+  <data name="Listening_RecentlyPlayed" xml:space="preserve">
+    <value>Son Çalınanlar</value>
+  </data>
+  <data name="Listening_HistorySearch" xml:space="preserve">
+    <value>Dinleme geçmişinde ara</value>
+  </data>
+  <data name="Listening_HistoryEmpty" xml:space="preserve">
+    <value>Henüz dinleme geçmişi yok</value>
+  </data>
+  <data name="Listening_HistoryLoadError" xml:space="preserve">
+    <value>Son Çalınanlar yüklenemedi. Tekrar denemek için Yeniden Dene'yi seçin.</value>
+  </data>
+  <data name="Listening_Today" xml:space="preserve">
+    <value>Bugün</value>
+  </data>
+  <data name="Listening_Yesterday" xml:space="preserve">
+    <value>Dün</value>
+  </data>
+  <data name="Listening_RediscoveryReason" xml:space="preserve">
+    <value>En son {0:d} tarihinde çalındı</value>
+  </data>
+  <data name="Listening_RediscoveryTitle" xml:space="preserve">
+    <value>Tekrar dinlemeye değer</value>
+  </data>
+  <data name="Listening_Dismiss" xml:space="preserve">
+    <value>Yoksay</value>
+  </data>
+  <data name="Listening_ActionError" xml:space="preserve">
+    <value>Bu işlem tamamlanamadı. Lütfen tekrar deneyin.</value>
+  </data>
+  <data name="Listening_FavoritesEmpty" xml:space="preserve">
+    <value>Henüz favori yok</value>
+  </data>
+  <data name="Listening_FavoritesEmptyDescription" xml:space="preserve">
+    <value>Bir şarkıyı menüsünden favorilere ekleyin veya şarkıyı seçip Ctrl+D tuşlarına basın.</value>
+  </data>
+  <data name="Listening_VarietyDescription" xml:space="preserve">
+    <value>Daha Fazla Çeşitlilik, yakın zamanda çalınan penceresindeki şarkılardan kaçınır ve mümkün olduğunca aynı sanatçıya ait şarkıları ayırır.</value>
+  </data>
+  <data name="Listening_RediscoverDescription" xml:space="preserve">
+    <value>Yeniden Keşfet, Nagi'de dinleme kaydı bulunan ve en son 30 günden daha uzun bir süre önce çalınan şarkıları kullanır.</value>
+  </data>
+  <data name="Listening_UnheardDescription" xml:space="preserve">
+    <value>Dinlenmemiş, Nagi'de dinleme kaydı bulunmayan şarkıları kullanır.</value>
+  </data>
+  <data name="Listening_HistoryNoMatches" xml:space="preserve">
+    <value>Aramanızla eşleşen dinleme yok</value>
+  </data>
+  <data name="Listening_NoTimedMixDescription" xml:space="preserve">
+    <value>Bu listedeki hiçbir şarkı karışım gereksinimlerini karşılamıyor ve seçtiğiniz süreye uymuyor. Daha uzun bir süre, başka bir karışım veya farklı bir şarkı listesi deneyin.</value>
   </data>
 </root>

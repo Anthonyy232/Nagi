@@ -13,10 +13,8 @@ namespace Nagi.WinUI.Tests;
 public class InsightsViewModelTests
 {
     [Theory]
-    [InlineData("ru-RU", 1, "1 воспроизведение")]
-    [InlineData("ru-RU", 2, "2 воспроизведения")]
-    [InlineData("ru-RU", 5, "5 воспроизведений")]
-    [InlineData("es-ES", 2, "2 reproducciones")]
+    [InlineData("ru-RU", 1, "Воспроизведений: 1")]
+    [InlineData("es-ES", 2, "Reproducciones: 2")]
     public async Task LocalizedPlayCounts_LoadInDashboardAndOverlay(string culture, int count, string expected)
     {
         var originalCulture = CultureInfo.CurrentUICulture;

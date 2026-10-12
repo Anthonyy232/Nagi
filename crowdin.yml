@@ -4,12 +4,33 @@ base_path: .
 
 preserve_hierarchy: true
 
-
 files:
   # Nagi.Core Shared Resources (.resx)
   - source: /src/Nagi.Core/Resources/Strings.resx
     translation: /src/Nagi.Core/Resources/Strings.%locale%.resx
+    languages_mapping:
+      locale:
+        ar: ar
+        sr: sr-Cyrl-RS
+        zh-CN: zh-Hans
+        zh-TW: zh-Hant
 
   # Nagi.WinUI C# Resources (.resx)
   - source: /src/Nagi.WinUI/Resources/Strings.resx
     translation: /src/Nagi.WinUI/Resources/Strings.%locale%.resx
+    languages_mapping:
+      locale:
+        ar: ar
+        sr: sr-Cyrl-RS
+        zh-CN: zh-Hans
+        zh-TW: zh-Hant
+
+  # Windows package metadata (.resw)
+  - source: /src/Nagi.WinUI/Strings/en-US/Resources.resw
+    translation: /src/Nagi.WinUI/Strings/%locale%/Resources.resw
+    languages_mapping:
+      locale:
+        ar: ar
+        sr: sr-Cyrl-RS
+        zh-CN: zh-Hans
+        zh-TW: zh-Hant

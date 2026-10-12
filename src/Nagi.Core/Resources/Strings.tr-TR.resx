@@ -169,7 +169,7 @@
     <value>En Çok {0}</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
-    <value>En Az {0}</value>
+    <value>En az {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>{1} klasöründen {0} taranıyor: {2} - {3}</value>
@@ -178,11 +178,11 @@
     <value>Tarama tamamlandı. {0} {1} eklendi veya güncellendi.</value>
   </data>
   <data name="Format_SavingBatch" xml:space="preserve">
-    <value>{0}. parti kaydediliyor...</value>
+    <value>{0}. grup kaydediliyor…</value>
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Klasör taranıyor...</value>
+    <value>Klasör taranıyor…</value>
   </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Tarama tamamlandı. Kütüphane güncel.</value>
@@ -194,16 +194,16 @@
     <value>Tarama başarısız oldu. Ayrıntılar için günlükleri kontrol edin.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Tarama önbellekleri hazırlanıyor...</value>
+    <value>Kitaplık taraması hazırlanıyor…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Şarkı ayrıntıları okunuyor...</value>
+    <value>Şarkı ayrıntıları okunuyor…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Kütüphaneniz temizleniyor...</value>
+    <value>Kitaplığınız temizleniyor…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Sonlandırılıyor...</value>
+    <value>Tamamlanıyor…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Ses normalizasyonu başarısız oldu. Ayrıntılar için günlükleri kontrol edin.</value>
@@ -248,7 +248,15 @@
     <value>Sırala: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg Yüksek Hassasiyetli Ses Normalizasyonu (ReplayGain analizi) için gereklidir ancak sisteminizde bulunamadı.\n\nKurulum için şu adımları izleyin:\n\n1. **İndir**: https://www.gyan.dev/ffmpeg/builds/ adresini ziyaret edin ve 'ffmpeg-git-full.7z' (veya benzeri) temel sürümü indirin.\n2. **Rehber**: Ayrıntılı talimatlar için bu rehberi takip edebilirsiniz: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Çıkar**: Mimari klasörünü açın ve 'ffmpeg.exe' içeren 'bin' dizinini bulun.\n4. **Kur**: 'ffmpeg.exe' dosyasını kalıcı bir klasöre (örn. 'C:\\ffmpeg\\') kopyalayın ve **bu klasörü Sistem PATH** ortam değişkeninize ekleyin.\n5. **Yeniden Başlat**: Değişikliklerin etkili olması için kurulumdan sonra Nagi'yi yeniden başlatın.</value>
+    <value>Şarkıları ses düzeyi normalleştirmesi için analiz etmek üzere FFmpeg gerekiyor, ancak Nagi onu bulamadı.
+
+1. https://ffmpeg.org/download.html adresinden bir Windows sürümü indirin.
+2. Arşivi çıkarın ve bin klasöründeki ffmpeg.exe dosyasını bulun.
+3. ffmpeg.exe dosyasını içeren klasörü Windows PATH değişkeninize ekleyin.
+4. Nagi'yi yeniden başlatın, ardından ses düzeyi normalleştirmesini tekrar etkinleştirin.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>Çalma listesi oluşturuldu, ancak şarkıları eklenemedi. Lütfen tekrar içe aktarmayı deneyin.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Çalma listesindeki şarkılardan hiçbiri kütüphanenizde bulunamadı.</value>
@@ -293,12 +301,39 @@
     <value>Tüm şarkıların ses verileri zaten mevcut.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>{0} şarkı için ses hesaplanıyor...</value>
+    <value>Ses düzeyi analiz ediliyor… Şarkılar: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Ses normalizasyonu hesaplanıyor ({0}/{1})...</value>
+    <value>Ses düzeyi normalleştirmesi hesaplanıyor ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Ses normalizasyonu tamamlandı. {0} şarkı işlendi.</value>
+    <value>Ses düzeyi normalleştirmesi tamamlandı. İşlenen şarkı sayısı: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>ListenBrainz kullanıcı belirtecinizi girin.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>ListenBrainz'den gelen yanıt okunamadı. Daha sonra tekrar deneyin.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Sunucu URL'sini http:// veya https:// ile başlayacak şekilde girin.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Kullanıcı belirteci geçersiz. Kontrol edip tekrar deneyin.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz bir hata döndürdü (HTTP {0}). Daha sonra tekrar deneyin.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>ListenBrainz'e bağlanılamadı. Bağlantınızı ve sunucu URL'nizi kontrol edin.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi kitaplık veri klasörünü bulamadı.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Geri yükleme başarısız oldu ve önceki verileriniz tamamen geri yüklenemedi. Kurtarma dosyaları &apos;{0}&apos; konumuna kaydedildi.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Seçilen dosya geçerli bir Nagi yedeği değil.</value>
   </data>
 </root>

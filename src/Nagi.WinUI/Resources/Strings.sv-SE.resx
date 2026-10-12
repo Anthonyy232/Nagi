@@ -76,6 +76,9 @@
   <data name="NavItem_Folders" xml:space="preserve">
     <value>Mappar</value>
   </data>
+  <data name="NavItem_Favorites" xml:space="preserve">
+    <value>Favoriter</value>
+  </data>
   <data name="NavItem_Insights" xml:space="preserve">
     <value>Insikter</value>
   </data>
@@ -122,7 +125,7 @@
     <value>Mörk</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">
-    <value>Använd systeminställning</value>
+    <value>Systemstandard</value>
   </data>
   <data name="Backdrop_Mica" xml:space="preserve">
     <value>Mica</value>
@@ -141,6 +144,39 @@
   </data>
   <data name="Label_Rating" xml:space="preserve">
     <value>Betyg</value>
+  </data>
+  <data name="Label_Grouping" xml:space="preserve">
+    <value>Gruppering</value>
+  </data>
+  <data name="Label_SkipCount" xml:space="preserve">
+    <value>Antal överhoppningar</value>
+  </data>
+  <data name="Label_DiscNumber" xml:space="preserve">
+    <value>Skivnummer</value>
+  </data>
+  <data name="Label_Bitrate" xml:space="preserve">
+    <value>Bithastighet</value>
+  </data>
+  <data name="Label_SampleRate" xml:space="preserve">
+    <value>Samplingsfrekvens</value>
+  </data>
+  <data name="Label_IsLoved" xml:space="preserve">
+    <value>Favorit</value>
+  </data>
+  <data name="Label_HasLyrics" xml:space="preserve">
+    <value>Har låttext</value>
+  </data>
+  <data name="Operator_IsInRange" xml:space="preserve">
+    <value>Är mellan (inklusive)</value>
+  </data>
+  <data name="Operator_IsAfter" xml:space="preserve">
+    <value>Är efter</value>
+  </data>
+  <data name="Operator_IsBefore" xml:space="preserve">
+    <value>Är före</value>
+  </data>
+  <data name="SmartPlaylist_UpperBound_Placeholder" xml:space="preserve">
+    <value>Maximalt värde</value>
   </data>
   <data name="Operator_Contains" xml:space="preserve">
     <value>Innehåller</value>
@@ -179,10 +215,10 @@
     <value>Är högst</value>
   </data>
   <data name="Operator_IsInTheLast" xml:space="preserve">
-    <value>Är under de senaste (dagar)</value>
+    <value>Är inom de senaste (dagarna)</value>
   </data>
   <data name="Operator_IsNotInTheLast" xml:space="preserve">
-    <value>Är inte under de senaste (dagar)</value>
+    <value>Är inte inom de senaste (dagarna)</value>
   </data>
   <data name="Operator_IsTrue" xml:space="preserve">
     <value>Är sant</value>
@@ -194,31 +230,31 @@
     <value>Ny smart spellista</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>Redigera smart spellista - {0}</value>
+    <value>Redigera smart spellista: {0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
     <value>Ange ett namn för spellistan</value>
   </data>
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
-    <value>{0:N0} låtar matchar aktuella regler</value>
+    <value>Matchande låtar: {0:N0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Ange ett namn för att se matchande låtar</value>
+    <value>Ange ett namn på spellistan för att se matchande låtar</value>
   </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
-    <value>Kan inte beräkna</value>
+    <value>Kunde inte räkna matchande låtar</value>
   </data>
   <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
-    <value>Beräknar...</value>
+    <value>Beräknar…</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>En spellista med detta namn finns redan!</value>
+    <value>Det finns redan en spellista med det här namnet.</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>Ange ett namn!</value>
+    <value>Ange ett namn på spellistan.</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
-    <value>Laddar...</value>
+    <value>Laddar…</value>
   </data>
   <data name="Error_FailedToLoadArtists" xml:space="preserve">
     <value>Kunde inte ladda artister</value>
@@ -227,13 +263,15 @@
     <value>Kritiskt fel</value>
   </data>
   <data name="CrashReport_Message" xml:space="preserve">
-    <value>Nagi har stött på ett kritiskt fel och måste stängas. Vi ber om ursäkt för besväret.</value>
+    <value>Nagi stötte på ett fel och måste stängas.</value>
   </data>
   <data name="ElevationWarning_Title" xml:space="preserve">
     <value>Kör som administratör</value>
   </data>
   <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi körs för närvarande som administratör. Detta kan förhindra att vissa funktioner (som att lägga till musikmappar) fungerar korrekt. För bästa upplevelse, vänligen starta om Nagi utan administratörsbehörighet.</value>
+    <value>Nagi körs för närvarande som administratör. Detta kan förhindra att vissa funktioner (som att lägga till musikmappar) fungerar korrekt.
+
+För bästa upplevelse, vänligen starta om Nagi utan administratörsbehörighet.</value>
   </data>
   <data name="ElevationWarning_Restart" xml:space="preserve">
     <value>Starta om normalt</value>
@@ -293,16 +331,16 @@
     <value>Denna mapp finns redan i biblioteket.</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
-    <value>Lägger till mapp i biblioteket...</value>
+    <value>Lägger till mapp i biblioteket…</value>
   </data>
   <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>'{0}' har raderats.</value>
+    <value>Tog bort &apos;{0}&apos; från ditt bibliotek.</value>
   </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
-    <value>Kunde inte radera '{0}'.</value>
+    <value>Kunde inte ta bort &apos;{0}&apos; från ditt bibliotek.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
-    <value>Raderar '{0}'...</value>
+    <value>Tar bort &apos;{0}&apos; från ditt bibliotek…</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
     <value>Omsökning av '{0}' slutförd.</value>
@@ -311,7 +349,7 @@
     <value>Inga ändringar upptäcktes för '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
-    <value>Söker om '{0}'...</value>
+    <value>Skannar om '{0}'…</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
     <value>Inga mappar med musik hittades.</value>
@@ -326,7 +364,7 @@
     <value>Fel vid tillägg av mapp: {0}</value>
   </data>
   <data name="Folders_Error_DeleteFolder" xml:space="preserve">
-    <value>Fel vid radering av mapp: {0}</value>
+    <value>Kunde inte ta bort mappen från ditt bibliotek: {0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Fel vid omsökning av mapp: {0}</value>
@@ -377,10 +415,10 @@
     <value>Låt oss ställa in ditt musikbibliotek för att komma igång.</value>
   </data>
   <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>Väntar på att du ska välja en mapp...</value>
+    <value>Väntar på att du ska välja en mapp…</value>
   </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
-    <value>Bygger ditt bibliotek...</value>
+    <value>Bygger ditt bibliotek…</value>
   </data>
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Ett oväntat fel uppstod. Försök igen.</value>
@@ -401,7 +439,7 @@
     <value>Fel vid laddning av spellista</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Startar spellista...</value>
+    <value>Startar spellista…</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Inga låtar matchar den här smarta spellistans regler.</value>
@@ -410,7 +448,7 @@
     <value>Fel vid start av uppspelning för den här spellistan.</value>
   </data>
   <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Väljer en slumpmässig spellista...</value>
+    <value>Väljer en slumpmässig spellista…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Inga spellistor hittades.</value>
@@ -422,13 +460,13 @@
     <value>Fel vid uppspelning av slumpmässig spellista.</value>
   </data>
   <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Laddar spellistor...</value>
+    <value>Laddar spellistor…</value>
   </data>
   <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
     <value>Fel vid laddning av spellistor.</value>
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Skapar ny spellista...</value>
+    <value>Skapar ny spellista…</value>
   </data>
   <data name="Playlist_Status_CreateFailed" xml:space="preserve">
     <value>Kunde inte skapa spellistan. Den kanske redan finns.</value>
@@ -437,7 +475,7 @@
     <value>Ett fel uppstod när spellistan skulle skapas.</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Uppdaterar spellistans omslag...</value>
+    <value>Uppdaterar spellistans omslag…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Kunde inte uppdatera spellistans omslag.</value>
@@ -446,7 +484,7 @@
     <value>Ett fel uppstod när spellistans omslag skulle uppdateras.</value>
   </data>
   <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Tar bort spellistans bild...</value>
+    <value>Tar bort spellistans bild…</value>
   </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Kunde inte ta bort spellistans bild.</value>
@@ -455,7 +493,7 @@
     <value>Ett fel uppstod när spellistans bild skulle tas bort.</value>
   </data>
   <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Byter namn på spellista...</value>
+    <value>Döper om spellista…</value>
   </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Kunde inte byta namn på spellistan.</value>
@@ -464,7 +502,7 @@
     <value>Ett fel uppstod när spellistan skulle döpas om.</value>
   </data>
   <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Raderar spellista...</value>
+    <value>Tar bort spellista…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Kunde inte radera spellistan.</value>
@@ -512,7 +550,9 @@
     <value>Export lyckades</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>Exporterade {0} spellistor ({1} totalt antal låtar) till: {2}</value>
+    <value>Exporterade spellistor: {0}
+Låtar: {1}
+Sparad i: {2}</value>
   </data>
   <data name="Settings_Export_Failed_Title" xml:space="preserve">
     <value>Export misslyckades</value>
@@ -521,13 +561,18 @@
     <value>Import lyckades</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>Importerade {0} spellistor ({1} låtar).</value>
+    <value>Importerade spellistor: {0}
+Låtar: {1}</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
-    <value>{0} låtar kunde inte hittas i ditt bibliotek.</value>
+    <value>
+
+Låtar som inte hittades i ditt bibliotek: {0}.</value>
   </data>
   <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
-    <value>{0} filer kunde inte importeras.</value>
+    <value>
+
+Filer som inte kunde importeras: {0}.</value>
   </data>
   <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
     <value>Import misslyckades</value>
@@ -596,10 +641,10 @@
     <value>FFmpeg hittades inte. Installera FFmpeg och klicka på 'Kontrollera igen'.</value>
   </data>
   <data name="FFmpeg_Status_Checking" xml:space="preserve">
-    <value>Söker efter FFmpeg...</value>
+    <value>Söker efter FFmpeg…</value>
   </data>
   <data name="FFmpeg_Status_Detected" xml:space="preserve">
-    <value>FFmpeg hittades!</value>
+    <value>FFmpeg upptäcktes.</value>
   </data>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg hittades fortfarande inte. Installera FFmpeg och klicka på 'Kontrollera igen'.</value>
@@ -767,13 +812,13 @@
     <value>Inga spellistor tillgängliga</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
-    <value>Radera mapp</value>
+    <value>Ta bort mapp</value>
   </data>
   <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
-    <value>Är du säker på att du vill ta bort mappen '{0}' från biblioteket? Detta kommer inte att radera filerna från din dator.</value>
+    <value>Vill du ta bort &apos;{0}&apos; från ditt bibliotek? Dina ljudfiler ligger kvar på datorn.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
-    <value>Radera</value>
+    <value>Ta bort</value>
   </data>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Avbryt</value>
@@ -812,10 +857,10 @@
     <value>Sök spellistor</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>Ange nytt namn för spellista</value>
+    <value>Ange ett namn på spellistan</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
-    <value>Välj bild</value>
+    <value>Välj omslag</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
     <value>Skapa ny spellista</value>
@@ -851,7 +896,7 @@
     <value>Stäng sökning</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Sök bibliotek</value>
+    <value>Sök i genre</value>
   </data>
   <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Inga spellistor tillgängliga</value>
@@ -872,13 +917,13 @@
     <value>Sök om metadata</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>Detta kommer att söka igenom alla låtar i ditt bibliotek för att tillämpa nya metadata-inställningar (som artistavgränsare). Detta kan ta en stund beroende på bibliotekets storlek. Vill du fortsätta?</value>
+    <value>Skanna om ditt bibliotek för att tillämpa metadatainställningar, som delning av artister. Detta kan ta en stund för stora bibliotek. Vill du fortsätta?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
     <value>Sök om</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
-    <value>Förbereder omsökning av bibliotek...</value>
+    <value>Förbereder omskanning av biblioteket…</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
     <value>Omsökning klar</value>
@@ -899,13 +944,17 @@
     <value>Aktivera volymnormalisering</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
-    <value>Volymnormalisering (ReplayGain) säkerställer en konsekvent volymnivå över all din musik. Detta kommer att analysera ditt musikbibliotek och direkt modifiera dina ljudfiler genom att skriva ReplayGain-taggar. Endast filer utan befintliga taggar kommer att bearbetas. Detta kan ta en viss tid beroende på ditt biblioteks storlek. Vill du fortsätta?</value>
+    <value>Volymnormalisering (ReplayGain) säkerställer en konsekvent volymnivå över all din musik.
+
+Detta kommer att analysera ditt musikbibliotek och direkt modifiera dina ljudfiler genom att skriva ReplayGain-taggar. Endast filer utan befintliga taggar kommer att bearbetas. Detta kan ta en viss tid beroende på ditt biblioteks storlek.
+
+Vill du fortsätta?</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Aktivera &amp; Skanna</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>Förbereder skanning för volymnormalisering...</value>
+    <value>Förbereder skanning för volymnormalisering…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
     <value>Skanning för volymnormalisering avbruten.</value>
@@ -914,7 +963,9 @@
     <value>Fel under skanning: {0}</value>
   </data>
   <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Kunde inte hämta loggar från minnet. Återställningsförsöket att läsa loggfilen misslyckades. Förväntad sökväg: '{0}' Fel: {1}</value>
+    <value>Kunde inte hämta loggar från minnet. Återställningsförsöket att läsa loggfilen misslyckades.
+Förväntad sökväg: '{0}'
+Fel: {1}</value>
   </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Inga spellistor att exportera.</value>
@@ -1040,7 +1091,7 @@
     <value>Nagi</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Återupptäck din lokala musiksamling med Nagi, en musikspelare fokuserad på snabbhet, enkelhet och integritet. Nagi är byggd med C# och WinUI 3 för att erbjuda en ren, nativ Fluent-upplevelse. Den är vacker, effektiv och respekterar din integritet.</value>
+    <value>Återupptäck din lokala musiksamling med Nagi, en musikspelare med fokus på snabbhet, enkelhet och integritet.</value>
   </data>
   <data name="AppShortName" xml:space="preserve">
     <value>Nagi</value>
@@ -1070,58 +1121,58 @@
     <value>Gå till album</value>
   </data>
   <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Drop files or folders onto the player to add them to the queue.</value>
+    <value>Släpp filer eller mappar på spelaren för att lägga till dem i kön.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Nästa i kö</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
-    <value>Clear queue</value>
+    <value>Rensa kö</value>
   </data>
   <data name="QueuePanel_DisplayOptions" xml:space="preserve">
-    <value>Queue display options</value>
+    <value>Visningsalternativ för kö</value>
   </data>
   <data name="QueuePanel_Close" xml:space="preserve">
-    <value>Close queue</value>
+    <value>Stäng kö</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
     <value>Artist</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
-    <value>Duration</value>
+    <value>Speltid</value>
   </data>
   <data name="QueuePanel_ShowTrackCount" xml:space="preserve">
-    <value>Track count</value>
+    <value>Antal spår</value>
   </data>
   <data name="QueuePanel_TrackCount" xml:space="preserve">
-    <value>Tracks: {0:N0}</value>
+    <value>Spår: {0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
-    <value>Queue position</value>
+    <value>Köposition</value>
   </data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve">
     <value>Genre</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
-    <value>Total duration</value>
+    <value>Total längd</value>
   </data>
   <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Spela</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
-    <value>Move up</value>
+    <value>Flytta upp</value>
   </data>
   <data name="QueuePanel_MoveDown" xml:space="preserve">
-    <value>Move down</value>
+    <value>Flytta ned</value>
   </data>
   <data name="QueuePanel_Remove" xml:space="preserve">
-    <value>Remove from queue</value>
+    <value>Ta bort från kön</value>
   </data>
   <data name="AlbumPage_Title" xml:space="preserve">
     <value>Album</value>
   </data>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Sök album...</value>
+    <value>Sök album…</value>
   </data>
   <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Sök album</value>
@@ -1145,7 +1196,7 @@
     <value>Låtar</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Sök i album...</value>
+    <value>Sök i album…</value>
   </data>
   <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Sök i album</value>
@@ -1172,7 +1223,7 @@
     <value>Gå till artist</value>
   </data>
   <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Visa i utforskaren</value>
+    <value>Visa i Utforskaren</value>
   </data>
   <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Spela</value>
@@ -1187,7 +1238,7 @@
     <value>Artister</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Sök artister...</value>
+    <value>Sök artister…</value>
   </data>
   <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Sök artister</value>
@@ -1229,7 +1280,7 @@
     <value>Låtar</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Sök i artist...</value>
+    <value>Sök hos artist…</value>
   </data>
   <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Sök i artist</value>
@@ -1256,7 +1307,7 @@
     <value>Gå till album</value>
   </data>
   <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Visa i utforskaren</value>
+    <value>Visa i Utforskaren</value>
   </data>
   <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Spela</value>
@@ -1286,7 +1337,7 @@
     <value>Skanna om</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>Ta bort</value>
+    <value>Ta bort från biblioteket</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Inga mappar har lagts till än</value>
@@ -1319,7 +1370,7 @@
     <value>Gå till artist</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Visa i utforskaren</value>
+    <value>Visa i Utforskaren</value>
   </data>
   <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Spela</value>
@@ -1331,7 +1382,7 @@
     <value>Låtar</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Sök i mapp...</value>
+    <value>Sök i mapp…</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Sök i mapp</value>
@@ -1352,7 +1403,7 @@
     <value>Genrer</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Sök genrer...</value>
+    <value>Sök genrer…</value>
   </data>
   <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
     <value>Sök genrer</value>
@@ -1373,7 +1424,7 @@
     <value>Bibliotek</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Sök i bibliotek...</value>
+    <value>Sök i biblioteket…</value>
   </data>
   <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Sök i bibliotek</value>
@@ -1403,10 +1454,16 @@
     <value>Gå till artist</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Visa i utforskaren</value>
+    <value>Visa i Utforskaren</value>
   </data>
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Spela</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
+    <value>Inga låtar hittades</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+    <value>Försök att söka efter något annat</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
     <value>Ditt bibliotek är tomt</value>
@@ -1415,31 +1472,31 @@
     <value>Lägg till mappar till ditt bibliotek i Inställningar</value>
   </data>
   <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
-    <value>Ingen låttext hittades för detta spår</value>
+    <value>Ingen låttext hittades för den här låten</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
     <value>Prova en annan låt</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
-    <value>Edit or replace lyrics</value>
+    <value>Redigera eller ersätt låttext</value>
   </data>
   <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
-    <value>Edit lyrics</value>
+    <value>Redigera låttext</value>
   </data>
   <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
-    <value>Paste plain text or timestamped LRC lyrics</value>
+    <value>Klistra in ren text eller tidsstämplad LRC-låttext</value>
   </data>
   <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
-    <value>Save</value>
+    <value>Spara</value>
   </data>
   <data name="LyricsPage_EditLyrics_Remove" xml:space="preserve">
-    <value>Remove saved lyrics</value>
+    <value>Ta bort sparad låttext</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
-    <value>Lyrics could not be updated</value>
+    <value>Låttexten kunde inte uppdateras</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Nagi could not save the lyrics. Check the log for details and try again.</value>
+    <value>Nagi kunde inte spara låttexten. Kontrollera loggen för information och försök igen.</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Välkommen till Nagi</value>
@@ -1454,7 +1511,7 @@
     <value>Spellistor</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Sök spellistor...</value>
+    <value>Sök spellistor…</value>
   </data>
   <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Sök spellistor</value>
@@ -1502,7 +1559,7 @@
     <value>Låtar</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Sök i spellista...</value>
+    <value>Sök i spellista…</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Sök i spellista</value>
@@ -1529,7 +1586,7 @@
     <value>Gå till artist</value>
   </data>
   <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Visa i utforskaren</value>
+    <value>Visa i Utforskaren</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
     <value>Ta bort från spellista</value>
@@ -1550,7 +1607,7 @@
     <value>Låtar</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Sök i genre...</value>
+    <value>Sök i genre…</value>
   </data>
   <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Sök i genre</value>
@@ -1580,7 +1637,7 @@
     <value>Gå till artist</value>
   </data>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Visa i utforskaren</value>
+    <value>Visa i Utforskaren</value>
   </data>
   <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
     <value>Inga spellistor tillgängliga</value>
@@ -1604,7 +1661,7 @@
     <value>Tema</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>Välj applikationstema.</value>
+    <value>Välj ett ljust, mörkt eller systemanpassat tema.</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
     <value>Accentfärg</value>
@@ -1616,13 +1673,13 @@
     <value>Fönstermaterial</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Description" xml:space="preserve">
-    <value>Välj bakgrundsmaterial för fönstret.</value>
+    <value>Välj fönstrets bakgrundsmaterial.</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
     <value>Dynamisk tematisering</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>Aktivera och konfigurera dynamiska temaalternativ.</value>
+    <value>Anpassa appens färger efter det aktuella albumomslaget.</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
     <value>Kom ihåg fönsterstorlek</value>
@@ -1637,7 +1694,7 @@
     <value>Återställ huvudfönstret till dess tidigare skärmplats vid nästa start.</value>
   </data>
   <data name="SettingsPage_RememberNavState_Header" xml:space="preserve">
-    <value>Kom ihåg navigationspanelens tillstånd</value>
+    <value>Kom ihåg navigeringspanelens läge</value>
   </data>
   <data name="SettingsPage_RememberNavState_Description" xml:space="preserve">
     <value>Håll vänster navigationspanel öppen eller stängd som du lämnade den.</value>
@@ -1655,13 +1712,13 @@
     <value>Volymnormalisering (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Justera volymen automatiskt till standardnivån (-18 LUFS) för att undvika plötsliga volymförändringar.</value>
+    <value>Minska volymskillnader mellan låtar med ReplayGain.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
-    <value>WASAPI exclusive mode</value>
+    <value>WASAPI exklusivt läge</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+    <value>Ge Nagi exklusiv kontroll över Windows-ljudenheten. Andra appar kan bli tysta. Starta om Nagi efter att du har ändrat denna inställning.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>Tona vid uppspelning / paus</value>
@@ -1691,19 +1748,19 @@
     <value>Håll muspekaren över för att växla synlighet. Dra för att ändra ordning. Avdelaren separerar mitt- och högerkontroller.</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Header" xml:space="preserve">
-    <value>Hopfällbar spelare</value>
+    <value>Ihopfällbar spelare</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>Animera spelarfältet att expandera och fälla ihop.</value>
+    <value>Expandera spelarfältet när du för pekaren över det.</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
-    <value>Återställ uppspelningsläge</value>
+    <value>Återställ uppspelningsstatus</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>Spara det nuvarande uppspelningsläget för att återuppta vid nästa start.</value>
+    <value>Återställ din kö och uppspelningsposition när Nagi startar.</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
-    <value>Autostarta vid uppstart</value>
+    <value>Starta automatiskt vid systemstart</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
     <value>Starta Nagi automatiskt när du loggar in på din dator.</value>
@@ -1712,7 +1769,7 @@
     <value>Starta minimerad</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>När applikationen startas kommer fönstret att vara minimerat som standard.</value>
+    <value>Starta Nagi med fönstret minimerat.</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
     <value>Minimera till minispelare</value>
@@ -1721,13 +1778,13 @@
     <value>När minimerat, visa en kompakt flytande spelare istället för att dölja fönstret.</value>
   </data>
   <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
-    <value>Dölj till systemfältet</value>
+    <value>Dölj i meddelandefältet</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>När stängt, dölj till systemfältet istället.</value>
+    <value>Låt Nagi köra i meddelandefältet när du stänger fönstret.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
-    <value>Visa omslag i flyout</value>
+    <value>Visa omslag i snabbfönster</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
     <value>Visa omslagsbilden i den kompakta spelaren som visas när du klickar på systemfältikonen.</value>
@@ -1760,10 +1817,10 @@
     <value>Skanna om bibliotek för att tillämpa uppdelningsändringar</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
-    <value>Hämta onlinemetadata</value>
+    <value>Hämta metadata online</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Hämta ytterligare information som artistbilder och biografier från onlinetjänster (t.ex. Spotify, Last.fm).</value>
+    <value>Hämta artistbilder och biografier från källor online.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Källor</value>
@@ -1772,10 +1829,10 @@
     <value>Dra för att ändra ordning på metadatakällor. Håll muspekaren över varje källa för detaljer.</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Header" xml:space="preserve">
-    <value>Hämta online låttexter</value>
+    <value>Hämta låttexter online</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>Hämta automatiskt saknade låttexter från onlinekällor. (Integritet: skickar spårmetadata till tredjepartstjänster)</value>
+    <value>Hämta saknade låttexter från källor online. Detta skickar låtmetadata till tredjepartstjänster.</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
     <value>Källor</value>
@@ -1784,7 +1841,7 @@
     <value>Dra för att ändra ordning på låttextkällor. Håll muspekaren över varje källa för detaljer.</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
-    <value>Visa romaniserade texter</value>
+    <value>Visa romaniserad låttext</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
     <value>Visa en mindre romaniserad rad under stödda texter när ett installerat paket matchar skriptet.</value>
@@ -1793,7 +1850,7 @@
     <value>Språkpaket</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>Installera de språk du vill ha romaniserade. Paket är signerade, endast data och lagras lokalt.</value>
+    <value>Installera språkpaket för att romanisera låttexter som stöds. Paketen lagras lokalt.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
     <value>Uppdatera</value>
@@ -1832,25 +1889,25 @@
     <value>{0} licens</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>Exportera/importera spellistor</value>
+    <value>Importera och exportera spellistor</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
     <value>Exportera spellistor till M3U-filer för användning i andra spelare, eller importera M3U-spellistor till Nagi.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
-    <value>Exportera alla...</value>
+    <value>Exportera alla…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
     <value>Exportera alla spellistor till en mapp</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
-    <value>Importera...</value>
+    <value>Importera…</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
     <value>Importera en eller flera M3U-filer</value>
   </data>
   <data name="SettingsPage_ResetApp_Header" xml:space="preserve">
-    <value>Återställ applikation</value>
+    <value>Återställ applikationen</value>
   </data>
   <data name="SettingsPage_ResetApp_Description" xml:space="preserve">
     <value>Detta kommer att radera all biblioteksdata, spellistor och återställa alla inställningar till standard. Applikationen kommer att startas om.</value>
@@ -1880,16 +1937,16 @@
     <value>Koppla från</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
-    <value>Aktivera "scrobbling"</value>
+    <value>Aktivera scrobbling</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Description" xml:space="preserve">
     <value>Lägg automatiskt till de spår du lyssnar på i Nagi till din Last.fm-profil.</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
-    <value>Uppdatera "Spelas nu"</value>
+    <value>Uppdatera spelas nu</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>Visa dina vänner på Last.fm vad du lyssnar på i realtid.</value>
+    <value>Visa låten som spelas för närvarande på din Last.fm-profil.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
     <value>ListenBrainz</value>
@@ -1913,10 +1970,10 @@
     <value>Anslutning misslyckades: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>Skicka lyssningar (scrobbling)</value>
+    <value>Skicka lyssningar (Scrobbling)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>Skicka "spelar nu"-uppdateringar</value>
+    <value>Skicka uppdateringar för spelas nu</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
     <value>Avancerat</value>
@@ -1949,7 +2006,7 @@
     <value>Låtar</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Sök i smart spellista...</value>
+    <value>Sök i smart spellista…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Sök i smart spellista</value>
@@ -1979,7 +2036,7 @@
     <value>Gå till artist</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Visa i utforskaren</value>
+    <value>Visa i Utforskaren</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Spela</value>
@@ -2030,7 +2087,7 @@
     <value>Applikationsspråk</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>Ändringar kräver en omstart för att träda i kraft</value>
+    <value>Starta om Nagi för att tillämpa språkändringen.</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
     <value>Omstart krävs</value>
@@ -2045,7 +2102,7 @@
     <value>Säkerhetskopiera och återställa</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Skapa säkerhetskopior av ditt musikbibliotek och dina inställningar, eller återställ från en tidigare säkerhetskopia</value>
+    <value>Skapa en säkerhetskopia av dina biblioteksdata och inställningar, eller återställ en tidigare säkerhetskopia.</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
     <value>Skapa säkerhetskopia</value>
@@ -2057,7 +2114,7 @@
     <value>Säkerhetskopia skapad</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Säkerhetskopia skapades framgångsrikt ({0:F2} MB) vid: {1}</value>
+    <value>Skapade en säkerhetskopia ({0:F2} MB) på: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
     <value>Säkerhetskopiering misslyckades</value>
@@ -2084,13 +2141,13 @@
     <value>Återställning klar</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Säkerhetskopia återställd. Appen kommer nu att starta om.</value>
+    <value>Säkerhetskopian har återställts. Nagi kommer nu att starta om.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
     <value>Återställning misslyckades</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Misslyckades att återställa från säkerhetskopia. Dina data ändrades inte.</value>
+    <value>Kunde inte återställa säkerhetskopian.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
     <value>Spelarstil</value>
@@ -2102,25 +2159,25 @@
     <value>Solid (ogenomskinlig)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Anpassa utseendet på den flytande spelaren</value>
+    <value>Anpassa spelarfältets utseende.</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
     <value>Toningsintensitet</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Justerar livfullheten i spelarens bakgrundsfärg</value>
+    <value>Justera intensiteten för spelarens bakgrundsfärg.</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
-    <value>Toningslängd in</value>
+    <value>Intoningstid</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
-    <value>Varaktigheten för toningseffekten vid uppspelning (ms)</value>
+    <value>Ställ in hur lång tid det tar för volymen att tona in när uppspelningen återupptas.</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
-    <value>Toningslängd ut</value>
+    <value>Uttoningstid</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
-    <value>Varaktigheten för toningseffekten vid paus (ms)</value>
+    <value>Ställ in hur lång tid det tar för volymen att tona ut när uppspelningen pausas.</value>
   </data>
   <data name="Settings_Nav_Insights" xml:space="preserve">
     <value>Insikter</value>
@@ -2135,7 +2192,7 @@
     <value>Unika låtar</value>
   </data>
   <data name="InsightsPage_PeakHour" xml:space="preserve">
-    <value>Topptimme</value>
+    <value>Mest aktiva timme</value>
   </data>
   <data name="InsightsPage_MostActiveDay" xml:space="preserve">
     <value>Mest aktiva dag</value>
@@ -2162,7 +2219,7 @@
     <value>Börja spela musik för att se dina insikter här</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
-    <value>{0} spelningar</value>
+    <value>Uppspelningar: {0}</value>
   </data>
   <data name="InsightsPage_Source_Albums" xml:space="preserve">
     <value>Album</value>
@@ -2222,7 +2279,7 @@
     <value>Tid</value>
   </data>
   <data name="PaginationControl_All" xml:space="preserve">
-    <value>All</value>
+    <value>Alla</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>Objekt per sida:</value>
@@ -2246,7 +2303,7 @@
     <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
-    <value>Senaste 1 dagen</value>
+    <value>Senaste 1 dygnet</value>
   </data>
   <data name="Insights_TimeRange_Last7Days" xml:space="preserve">
     <value>Senaste 7 dagarna</value>
@@ -2261,12 +2318,174 @@
     <value>Senaste året</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
-    <value>Alla tider</value>
+    <value>Genom tiderna</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}t {1}m</value>
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
     <value>{0}m {1}s</value>
+  </data>
+  <data name="QueuePanel_EmptyTitle" xml:space="preserve">
+    <value>Din kö är tom</value>
+  </data>
+  <data name="QueuePanel_EmptyDescription" xml:space="preserve">
+    <value>Spela musik eller släpp ljudfiler här för att skapa din kö.</value>
+  </data>
+  <data name="QueuePanel_LoadError" xml:space="preserve">
+    <value>Vissa låtar kunde inte laddas. Välj Försök igen för att ladda kön igen.</value>
+  </data>
+  <data name="QueuePanel_Retry" xml:space="preserve">
+    <value>Försök igen</value>
+  </data>
+  <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
+    <value>Den nya ordningen i spellistan kunde inte sparas. Försök igen.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
+    <value>Ljudutgång</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Description" xml:space="preserve">
+    <value>Välj var Nagi ska spela upp musik.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Default" xml:space="preserve">
+    <value>Systemstandard</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Unavailable" xml:space="preserve">
+    <value>Den sparade enheten är inte tillgänglig. Använder systemstandard.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
+    <value>Kunde inte uppdatera ljudutgången. Försök igen eller välj en annan enhet.</value>
+  </data>
+  <data name="Listening_Random" xml:space="preserve">
+    <value>Blanda</value>
+  </data>
+  <data name="Listening_MoreVariety" xml:space="preserve">
+    <value>Större variation</value>
+  </data>
+  <data name="Listening_Rediscover" xml:space="preserve">
+    <value>Återupptäck</value>
+  </data>
+  <data name="Listening_Unheard" xml:space="preserve">
+    <value>Ospelat</value>
+  </data>
+  <data name="Listening_PlayFor" xml:space="preserve">
+    <value>Spela i…</value>
+  </data>
+  <data name="Listening_Minutes" xml:space="preserve">
+    <value>Minuter</value>
+  </data>
+  <data name="Listening_ShuffleMode" xml:space="preserve">
+    <value>Mixtyp</value>
+  </data>
+  <data name="Listening_AvoidRecentDays" xml:space="preserve">
+    <value>Undvik nyligen spelade (dagar)</value>
+  </data>
+  <data name="Listening_MoreOptions" xml:space="preserve">
+    <value>Fler alternativ</value>
+  </data>
+  <data name="Listening_PlayForDescription" xml:space="preserve">
+    <value>Bygg en kö med hela låtar vars sammanlagda tid inte överstiger den valda längden.</value>
+  </data>
+  <data name="Listening_NoMixTitle" xml:space="preserve">
+    <value>Inga låtar för den här mixen</value>
+  </data>
+  <data name="Listening_NoMixDescription" xml:space="preserve">
+    <value>Inga låtar i den här listan uppfyller kraven. Försök med en annan mix eller låtlista.</value>
+  </data>
+  <data name="Listening_Favorites" xml:space="preserve">
+    <value>Favoriter</value>
+  </data>
+  <data name="Listening_AddFavorite" xml:space="preserve">
+    <value>Lägg till i favoriter</value>
+  </data>
+  <data name="Listening_RemoveFavorite" xml:space="preserve">
+    <value>Ta bort från favoriter</value>
+  </data>
+  <data name="Listening_SleepTimer" xml:space="preserve">
+    <value>Insomningstimer</value>
+  </data>
+  <data name="Listening_FinishTrack" xml:space="preserve">
+    <value>Spela klart den aktuella låten när timern går ut</value>
+  </data>
+  <data name="Listening_StopAfterTrack" xml:space="preserve">
+    <value>Stoppa efter den här låten</value>
+  </data>
+  <data name="Listening_StopAtQueueEnd" xml:space="preserve">
+    <value>Stoppa i slutet av kön</value>
+  </data>
+  <data name="Listening_StopPlayback" xml:space="preserve">
+    <value>Stoppa uppspelning</value>
+  </data>
+  <data name="Listening_CustomTimer" xml:space="preserve">
+    <value>Anpassad timer…</value>
+  </data>
+  <data name="Listening_Timer15" xml:space="preserve">
+    <value>Om 15 minuter</value>
+  </data>
+  <data name="Listening_Timer30" xml:space="preserve">
+    <value>Om 30 minuter</value>
+  </data>
+  <data name="Listening_Timer60" xml:space="preserve">
+    <value>Om 60 minuter</value>
+  </data>
+  <data name="Listening_CancelStop" xml:space="preserve">
+    <value>Avbryt schemalagt stopp</value>
+  </data>
+  <data name="Listening_TimerRemaining" xml:space="preserve">
+    <value>Stoppar om {0}</value>
+  </data>
+  <data name="Listening_PlayerOptions" xml:space="preserve">
+    <value>Spelaralternativ</value>
+  </data>
+  <data name="Listening_RecentlyPlayed" xml:space="preserve">
+    <value>Senast spelade</value>
+  </data>
+  <data name="Listening_HistorySearch" xml:space="preserve">
+    <value>Sök i uppspelningshistoriken</value>
+  </data>
+  <data name="Listening_HistoryEmpty" xml:space="preserve">
+    <value>Ingen uppspelningshistorik ännu</value>
+  </data>
+  <data name="Listening_HistoryLoadError" xml:space="preserve">
+    <value>Senast spelade kunde inte laddas. Välj Försök igen för att försöka igen.</value>
+  </data>
+  <data name="Listening_Today" xml:space="preserve">
+    <value>I dag</value>
+  </data>
+  <data name="Listening_Yesterday" xml:space="preserve">
+    <value>I går</value>
+  </data>
+  <data name="Listening_RediscoveryReason" xml:space="preserve">
+    <value>Spelades senast {0:d}</value>
+  </data>
+  <data name="Listening_RediscoveryTitle" xml:space="preserve">
+    <value>Värd att lyssna på igen</value>
+  </data>
+  <data name="Listening_Dismiss" xml:space="preserve">
+    <value>Avfärda</value>
+  </data>
+  <data name="Listening_ActionError" xml:space="preserve">
+    <value>Kunde inte slutföra åtgärden. Försök igen.</value>
+  </data>
+  <data name="Listening_FavoritesEmpty" xml:space="preserve">
+    <value>Inga favoriter ännu</value>
+  </data>
+  <data name="Listening_FavoritesEmptyDescription" xml:space="preserve">
+    <value>Märk en låt som favorit från dess meny, eller markera den och tryck på Ctrl+D.</value>
+  </data>
+  <data name="Listening_VarietyDescription" xml:space="preserve">
+    <value>Större variation undviker låtar som spelats nyligen och separerar låtar med samma artist när det är möjligt.</value>
+  </data>
+  <data name="Listening_RediscoverDescription" xml:space="preserve">
+    <value>Återupptäck använder låtar som har registrerade uppspelningar i Nagi och som senast spelades för mer än 30 dagar sedan.</value>
+  </data>
+  <data name="Listening_UnheardDescription" xml:space="preserve">
+    <value>Ospelat använder låtar som inte har några registrerade uppspelningar i Nagi.</value>
+  </data>
+  <data name="Listening_HistoryNoMatches" xml:space="preserve">
+    <value>Inga lyssningar matchar din sökning</value>
+  </data>
+  <data name="Listening_NoTimedMixDescription" xml:space="preserve">
+    <value>Inga låtar i den här listan uppfyller mixkraven och ryms inom din valda längd. Försök med en längre tid, en annan mix eller en annan låtlista.</value>
   </data>
 </root>

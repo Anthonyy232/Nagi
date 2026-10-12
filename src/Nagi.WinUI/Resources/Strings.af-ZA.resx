@@ -76,6 +76,9 @@
   <data name="NavItem_Folders" xml:space="preserve">
     <value>Vouers</value>
   </data>
+  <data name="NavItem_Favorites" xml:space="preserve">
+    <value>Gunstelinge</value>
+  </data>
   <data name="NavItem_Insights" xml:space="preserve">
     <value>Insigte</value>
   </data>
@@ -83,7 +86,7 @@
     <value>Instellings</value>
   </data>
   <data name="Status_NoTrackPlaying" xml:space="preserve">
-    <value>Geen snit speel nie</value>
+    <value>Geen liedjie speel nie</value>
   </data>
   <data name="Tooltip_Play" xml:space="preserve">
     <value>Speel</value>
@@ -122,7 +125,7 @@
     <value>Donker</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">
-    <value>Gebruik stelselinstelling</value>
+    <value>Stelselverstek</value>
   </data>
   <data name="Backdrop_Mica" xml:space="preserve">
     <value>Mica</value>
@@ -141,6 +144,39 @@
   </data>
   <data name="Label_Rating" xml:space="preserve">
     <value>Gradering</value>
+  </data>
+  <data name="Label_Grouping" xml:space="preserve">
+    <value>Groepering</value>
+  </data>
+  <data name="Label_SkipCount" xml:space="preserve">
+    <value>Oorslaantelling</value>
+  </data>
+  <data name="Label_DiscNumber" xml:space="preserve">
+    <value>Disknommer</value>
+  </data>
+  <data name="Label_Bitrate" xml:space="preserve">
+    <value>Bistempo</value>
+  </data>
+  <data name="Label_SampleRate" xml:space="preserve">
+    <value>Monstertempo</value>
+  </data>
+  <data name="Label_IsLoved" xml:space="preserve">
+    <value>Gunsteling</value>
+  </data>
+  <data name="Label_HasLyrics" xml:space="preserve">
+    <value>Het lirieke</value>
+  </data>
+  <data name="Operator_IsInRange" xml:space="preserve">
+    <value>Is tussen (ingesluit)</value>
+  </data>
+  <data name="Operator_IsAfter" xml:space="preserve">
+    <value>Is ná</value>
+  </data>
+  <data name="Operator_IsBefore" xml:space="preserve">
+    <value>Is voor</value>
+  </data>
+  <data name="SmartPlaylist_UpperBound_Placeholder" xml:space="preserve">
+    <value>Maksimum waarde</value>
   </data>
   <data name="Operator_Contains" xml:space="preserve">
     <value>Bevat</value>
@@ -179,10 +215,10 @@
     <value>Is hoogstens</value>
   </data>
   <data name="Operator_IsInTheLast" xml:space="preserve">
-    <value>Is in die laaste (dae)</value>
+    <value>Is binne die afgelope (dae)</value>
   </data>
   <data name="Operator_IsNotInTheLast" xml:space="preserve">
-    <value>Is nie in die laaste (dae) nie</value>
+    <value>Is nie binne die afgelope (dae) nie</value>
   </data>
   <data name="Operator_IsTrue" xml:space="preserve">
     <value>Is waar</value>
@@ -194,31 +230,31 @@
     <value>Nuwe Slim Snitlys</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>Wysig Slim Snitlys - {0}</value>
+    <value>Wysig slimsnitlys: {0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
     <value>Voer 'n snitlysnaam in</value>
   </data>
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
-    <value>{0:N0} liedjies pas by huidige reëls</value>
+    <value>Passende liedjies: {0:N0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Voer 'n naam in om passende liedjies te sien</value>
+    <value>Voer 'n snitlysnaam in om passende liedjies te sien</value>
   </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
-    <value>Kan nie bereken nie</value>
+    <value>Kon nie passende liedjies tel nie</value>
   </data>
   <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
-    <value>Besig om te bereken...</value>
+    <value>Bereken tans…</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>'n Snitlys met hierdie naam bestaan reeds!</value>
+    <value>'n Snitlys met hierdie naam bestaan reeds.</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>Voer asseblief 'n naam in!</value>
+    <value>Voer 'n snitlysnaam in.</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
-    <value>Laai tans...</value>
+    <value>Laai tans…</value>
   </data>
   <data name="Error_FailedToLoadArtists" xml:space="preserve">
     <value>Kon nie kunstenaars laai nie</value>
@@ -227,7 +263,7 @@
     <value>Kritieke Fout</value>
   </data>
   <data name="CrashReport_Message" xml:space="preserve">
-    <value>Nagi het 'n kritieke fout teëgekom en moet toemaak. Ons is jammer vir die ongerief.</value>
+    <value>Nagi het 'n fout ondervind en moet sluit.</value>
   </data>
   <data name="ElevationWarning_Title" xml:space="preserve">
     <value>Loop as Administrateur</value>
@@ -295,16 +331,16 @@ Vir die beste ervaring, herbegin asseblief Nagi sonder administrateurvoorregte.<
     <value>Hierdie vouer is reeds in die biblioteek.</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
-    <value>Voeg vouer by biblioteek...</value>
+    <value>Voeg vouer by biblioteek toe…</value>
   </data>
   <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>'{0}' is suksesvol uitgevee.</value>
+    <value>&apos;{0}&apos; is uit jou biblioteek verwyder.</value>
   </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
-    <value>Kon nie '{0}' uitvee nie.</value>
+    <value>Kon nie &apos;{0}&apos; uit jou biblioteek verwyder nie.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
-    <value>Vee tans '{0}' uit...</value>
+    <value>Verwyder tans &apos;{0}&apos; uit jou biblioteek…</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
     <value>Herskandering van '{0}' is voltooi.</value>
@@ -313,7 +349,7 @@ Vir die beste ervaring, herbegin asseblief Nagi sonder administrateurvoorregte.<
     <value>Geen veranderinge vir '{0}' bespeur nie.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
-    <value>Herskandeer tans '{0}'...</value>
+    <value>Herskandeer tans '{0}'…</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
     <value>Geen vouers met musiek gevind nie.</value>
@@ -328,7 +364,7 @@ Vir die beste ervaring, herbegin asseblief Nagi sonder administrateurvoorregte.<
     <value>Fout met byvoeging van vouer: {0}</value>
   </data>
   <data name="Folders_Error_DeleteFolder" xml:space="preserve">
-    <value>Fout met uitvee van vouer: {0}</value>
+    <value>Kon nie vouer uit jou biblioteek verwyder nie: {0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Fout met herskandering van vouer: {0}</value>
@@ -379,10 +415,10 @@ Vir die beste ervaring, herbegin asseblief Nagi sonder administrateurvoorregte.<
     <value>Kom ons stel jou musiekbiblioteek op om te begin.</value>
   </data>
   <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>Wag vir jou om 'n vouer te kies...</value>
+    <value>Wag vir jou om 'n vouer te kies…</value>
   </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
-    <value>Besig om jou biblioteek te bou...</value>
+    <value>Bou tans jou biblioteek…</value>
   </data>
   <data name="Onboarding_Error" xml:space="preserve">
     <value>'n Onverwagte fout het voorgekom. Probeer asseblief weer.</value>
@@ -403,7 +439,7 @@ Vir die beste ervaring, herbegin asseblief Nagi sonder administrateurvoorregte.<
     <value>Fout met laai van snitlys</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Begin tans snitlys...</value>
+    <value>Begin tans snitlys…</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Geen liedjies pas by hierdie slim snitlys se reëls nie.</value>
@@ -412,7 +448,7 @@ Vir die beste ervaring, herbegin asseblief Nagi sonder administrateurvoorregte.<
     <value>Fout met begin van terugspeel vir hierdie snitlys.</value>
   </data>
   <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Kies tans 'n ewekansige snitlys...</value>
+    <value>Kies tans 'n ewekansige snitlys…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Geen snitlyste gevind nie.</value>
@@ -424,13 +460,13 @@ Vir die beste ervaring, herbegin asseblief Nagi sonder administrateurvoorregte.<
     <value>Fout met speel van ewekansige snitlys.</value>
   </data>
   <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Laai tans snitlyste...</value>
+    <value>Laai tans snitlyste…</value>
   </data>
   <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
     <value>Fout met laai van snitlyste.</value>
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Skep tans nuwe snitlys...</value>
+    <value>Skep tans nuwe snitlys…</value>
   </data>
   <data name="Playlist_Status_CreateFailed" xml:space="preserve">
     <value>Kon nie snitlys skep nie. Dit bestaan dalk reeds.</value>
@@ -439,7 +475,7 @@ Vir die beste ervaring, herbegin asseblief Nagi sonder administrateurvoorregte.<
     <value>'n Fout het voorgekom terwyl die snitlys geskep is.</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Dateer tans snitlysomslag op...</value>
+    <value>Opdateer tans snitlysomslag…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Kon nie snitlysomslag opdateer nie.</value>
@@ -448,7 +484,7 @@ Vir die beste ervaring, herbegin asseblief Nagi sonder administrateurvoorregte.<
     <value>'n Fout het voorgekom terwyl die snitlysomslag opgedateer is.</value>
   </data>
   <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Verwyder tans snitlysprent...</value>
+    <value>Verwyder tans snitlysbeeld…</value>
   </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Kon nie snitlysprent verwyder nie.</value>
@@ -457,7 +493,7 @@ Vir die beste ervaring, herbegin asseblief Nagi sonder administrateurvoorregte.<
     <value>'n Fout het voorgekom terwyl die snitlysprent verwyder is.</value>
   </data>
   <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Hernoem tans snitlys...</value>
+    <value>Hernoem tans snitlys…</value>
   </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Kon nie snitlys hernoem nie.</value>
@@ -466,7 +502,7 @@ Vir die beste ervaring, herbegin asseblief Nagi sonder administrateurvoorregte.<
     <value>'n Fout het voorgekom terwyl die snitlys hernoem is.</value>
   </data>
   <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Vee tans snitlys uit...</value>
+    <value>Skrap tans snitlys…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Kon nie snitlys uitvee nie.</value>
@@ -514,8 +550,9 @@ Vir die beste ervaring, herbegin asseblief Nagi sonder administrateurvoorregte.<
     <value>Uitvoer Suksesvol</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>{0} snitlyste ({1} liedjies in totaal) uitgevoer na:
-{2}</value>
+    <value>Snitlyste uitgevoer: {0}
+Liedjies: {1}
+Opgeslaan in: {2}</value>
   </data>
   <data name="Settings_Export_Failed_Title" xml:space="preserve">
     <value>Uitvoer Misluk</value>
@@ -524,17 +561,18 @@ Vir die beste ervaring, herbegin asseblief Nagi sonder administrateurvoorregte.<
     <value>Invoer Suksesvol</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>{0} snitlyste ({1} liedjies) suksesvol ingevoer.</value>
+    <value>Snitlyste ingevoer: {0}
+Liedjies: {1}</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
     <value>
 
-{0} liedjies kon nie in jou biblioteek gevind word nie.</value>
+Liedjies nie in jou biblioteek gevind nie: {0}.</value>
   </data>
   <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
     <value>
 
-{0} lêers kon nie ingevoer word nie.</value>
+Lêers wat nie ingevoer kon word nie: {0}.</value>
   </data>
   <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
     <value>Invoer Misluk</value>
@@ -603,10 +641,10 @@ Vir die beste ervaring, herbegin asseblief Nagi sonder administrateurvoorregte.<
     <value>FFmpeg nie bespeur nie. Installeer asseblief FFmpeg en klik 'Her-kontroleer'.</value>
   </data>
   <data name="FFmpeg_Status_Checking" xml:space="preserve">
-    <value>Soek vir FFmpeg...</value>
+    <value>Kyk tans vir FFmpeg…</value>
   </data>
   <data name="FFmpeg_Status_Detected" xml:space="preserve">
-    <value>FFmpeg bespeur!</value>
+    <value>FFmpeg bespeur.</value>
   </data>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg steeds nie bespeur nie. Installeer asseblief FFmpeg en klik 'Her-kontroleer'.</value>
@@ -774,13 +812,13 @@ Vir die beste ervaring, herbegin asseblief Nagi sonder administrateurvoorregte.<
     <value>Geen snitlyste beskikbaar nie</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
-    <value>Vee Vouer Uit</value>
+    <value>Verwyder vouer</value>
   </data>
   <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
-    <value>Is jy seker jy wil die vouer '{0}' uit die biblioteek verwyder? Dit sal nie die lêers van jou rekenaar uitvee nie.</value>
+    <value>Verwyder &apos;{0}&apos; uit jou biblioteek? Jou oudiolêers sal op jou rekenaar bly.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
-    <value>Vee uit</value>
+    <value>Verwyder</value>
   </data>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Kanselleer</value>
@@ -819,10 +857,10 @@ Vir die beste ervaring, herbegin asseblief Nagi sonder administrateurvoorregte.<
     <value>Soek snitlyste</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>Voer nuwe snitlysnaam in</value>
+    <value>Voer 'n snitlysnaam in</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
-    <value>Kies Prent</value>
+    <value>Kies omslag</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
     <value>Skep Nuwe Snitlys</value>
@@ -858,7 +896,7 @@ Vir die beste ervaring, herbegin asseblief Nagi sonder administrateurvoorregte.<
     <value>Maak soektog toe</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Soek biblioteek</value>
+    <value>Soek in genre</value>
   </data>
   <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Geen snitlyste beskikbaar nie</value>
@@ -879,13 +917,13 @@ Vir die beste ervaring, herbegin asseblief Nagi sonder administrateurvoorregte.<
     <value>Herskandeer Metadata</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>Dit sal alle liedjies in jou biblioteek herskandeer om nuwe metadata-instellings (soos kunstenaar-skeidingskarakters) toe te pas. Dit kan 'n rukkie neem afhangende van die biblioteekgrootte. Wil jy voortgaan?</value>
+    <value>Herskandeer jou biblioteek om metadata-instellings toe te pas, soos kunstenaarverdeling. Dit kan 'n rukkie neem vir groot biblioteke. Gaan voort?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
     <value>Herskandeer</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
-    <value>Berei biblioteekherskandering voor...</value>
+    <value>Berei tans biblioteekherskandering voor…</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
     <value>Herskandering Voltooi</value>
@@ -916,7 +954,7 @@ Wil jy voortgaan?</value>
     <value>Aktiveer &amp; Skandeer</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>Berei volumenormaliseringskandering voor...</value>
+    <value>Berei tans volumenormaliseringskandering voor…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
     <value>Volumenormaliseringskandering gekanselleer.</value>
@@ -1053,7 +1091,7 @@ Fout: {1}</value>
     <value>Nagi</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Herontdek jou plaaslike musiekversameling met Nagi, 'n musiekspeler gefokus op spoed, eenvoud en privaatheid. Nagi is gebou met C# en WinUI 3 om 'n skoon, inheemse Fluent-ervaring te bied. Dit is pragtig, doeltreffend en respekteer jou privaatheid.</value>
+    <value>Herontdek jou plaaslike musiekversameling met Nagi, 'n musiekspeler wat fokus op spoed, eenvoud en privaatheid.</value>
   </data>
   <data name="AppShortName" xml:space="preserve">
     <value>Nagi</value>
@@ -1083,58 +1121,58 @@ Fout: {1}</value>
     <value>Gaan na album</value>
   </data>
   <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Drop files or folders onto the player to add them to the queue.</value>
+    <value>Los lêers of vouers op die speler om dit by die tou te voeg.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Volgende</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
-    <value>Clear queue</value>
+    <value>Maak waglys skoon</value>
   </data>
   <data name="QueuePanel_DisplayOptions" xml:space="preserve">
-    <value>Queue display options</value>
+    <value>Waglys-vertoonopsies</value>
   </data>
   <data name="QueuePanel_Close" xml:space="preserve">
-    <value>Close queue</value>
+    <value>Sluit waglys</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
-    <value>Artist</value>
+    <value>Kunstenaar</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
-    <value>Duration</value>
+    <value>Duur</value>
   </data>
   <data name="QueuePanel_ShowTrackCount" xml:space="preserve">
-    <value>Track count</value>
+    <value>Aantal snitte</value>
   </data>
   <data name="QueuePanel_TrackCount" xml:space="preserve">
-    <value>Tracks: {0:N0}</value>
+    <value>Snitte: {0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
-    <value>Queue position</value>
+    <value>Waglysposisie</value>
   </data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve">
     <value>Genre</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
-    <value>Total duration</value>
+    <value>Totale duur</value>
   </data>
   <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Speel</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
-    <value>Move up</value>
+    <value>Skuif op</value>
   </data>
   <data name="QueuePanel_MoveDown" xml:space="preserve">
-    <value>Move down</value>
+    <value>Skuif af</value>
   </data>
   <data name="QueuePanel_Remove" xml:space="preserve">
-    <value>Remove from queue</value>
+    <value>Verwyder uit waglys</value>
   </data>
   <data name="AlbumPage_Title" xml:space="preserve">
     <value>Albums</value>
   </data>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Soek albums...</value>
+    <value>Soek albums…</value>
   </data>
   <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Soek albums</value>
@@ -1158,7 +1196,7 @@ Fout: {1}</value>
     <value>Liedjies</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Soek in album...</value>
+    <value>Soek in album…</value>
   </data>
   <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Soek in album</value>
@@ -1179,13 +1217,13 @@ Fout: {1}</value>
     <value>Voeg by Tou</value>
   </data>
   <data name="AlbumViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Voeg by snitlys</value>
+    <value>Voeg by snitlys toe</value>
   </data>
   <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
     <value>Gaan na kunstenaar</value>
   </data>
   <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Wys in verkenner</value>
+    <value>Wys in Lêerkenner</value>
   </data>
   <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Speel</value>
@@ -1200,7 +1238,7 @@ Fout: {1}</value>
     <value>Kunstenaars</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Soek kunstenaars...</value>
+    <value>Soek kunstenaars…</value>
   </data>
   <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Soek kunstenaars</value>
@@ -1242,7 +1280,7 @@ Fout: {1}</value>
     <value>Liedjies</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Soek in kunstenaar...</value>
+    <value>Soek in kunstenaar…</value>
   </data>
   <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Soek in kunstenaar</value>
@@ -1263,13 +1301,13 @@ Fout: {1}</value>
     <value>Voeg by Tou</value>
   </data>
   <data name="ArtistViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Voeg by snitlys</value>
+    <value>Voeg by snitlys toe</value>
   </data>
   <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
     <value>Gaan na album</value>
   </data>
   <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Wys in verkenner</value>
+    <value>Wys in Lêerkenner</value>
   </data>
   <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Speel</value>
@@ -1281,7 +1319,7 @@ Fout: {1}</value>
     <value>Probeer om vir iets anders te soek</value>
   </data>
   <data name="FolderPage_Title" xml:space="preserve">
-    <value>Gidse</value>
+    <value>Vouers</value>
   </data>
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Kies een ewekansig</value>
@@ -1299,7 +1337,7 @@ Fout: {1}</value>
     <value>Herskan</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>Vee uit</value>
+    <value>Verwyder uit biblioteek</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Geen gidse is nog bygevoeg nie</value>
@@ -1311,7 +1349,7 @@ Fout: {1}</value>
     <value>Speel</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>Voeg by snitlys</value>
+    <value>Voeg by snitlys toe</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_Play" xml:space="preserve">
     <value>Speel</value>
@@ -1323,7 +1361,7 @@ Fout: {1}</value>
     <value>Voeg by Tou</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Voeg by snitlys</value>
+    <value>Voeg by snitlys toe</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
     <value>Gaan na album</value>
@@ -1332,7 +1370,7 @@ Fout: {1}</value>
     <value>Gaan na kunstenaar</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Wys in verkenner</value>
+    <value>Wys in Lêerkenner</value>
   </data>
   <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Speel</value>
@@ -1344,7 +1382,7 @@ Fout: {1}</value>
     <value>Liedjies</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Soek in gids...</value>
+    <value>Soek in vouer…</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Soek in gids</value>
@@ -1365,7 +1403,7 @@ Fout: {1}</value>
     <value>Genres</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Soek genres...</value>
+    <value>Soek genres…</value>
   </data>
   <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
     <value>Soek genres</value>
@@ -1386,7 +1424,7 @@ Fout: {1}</value>
     <value>Biblioteek</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Soek biblioteek...</value>
+    <value>Soek biblioteek…</value>
   </data>
   <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Soek biblioteek</value>
@@ -1407,7 +1445,7 @@ Fout: {1}</value>
     <value>Voeg by Tou</value>
   </data>
   <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Voeg by snitlys</value>
+    <value>Voeg by snitlys toe</value>
   </data>
   <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
     <value>Gaan na album</value>
@@ -1416,10 +1454,16 @@ Fout: {1}</value>
     <value>Gaan na kunstenaar</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Wys in verkenner</value>
+    <value>Wys in Lêerkenner</value>
   </data>
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Speel</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
+    <value>Geen liedjies gevind nie</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+    <value>Probeer vir iets anders soek</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
     <value>Jou biblioteek is leeg</value>
@@ -1428,31 +1472,31 @@ Fout: {1}</value>
     <value>Voeg gidse by jou biblioteek in Instellings</value>
   </data>
   <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
-    <value>Geen lirieke vir hierdie snit gevind nie</value>
+    <value>Geen lirieke vir hierdie liedjie gevind nie</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
     <value>Probeer 'n ander liedjie</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
-    <value>Edit or replace lyrics</value>
+    <value>Wysig of vervang lirieke</value>
   </data>
   <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
-    <value>Edit lyrics</value>
+    <value>Wysig lirieke</value>
   </data>
   <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
-    <value>Paste plain text or timestamped LRC lyrics</value>
+    <value>Plak gewone teks of LRC-lirieke met tydstempels</value>
   </data>
   <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
-    <value>Save</value>
+    <value>Stoor</value>
   </data>
   <data name="LyricsPage_EditLyrics_Remove" xml:space="preserve">
-    <value>Remove saved lyrics</value>
+    <value>Verwyder gestoorde lirieke</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
-    <value>Lyrics could not be updated</value>
+    <value>Lirieke kon nie opgedateer word nie</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Nagi could not save the lyrics. Check the log for details and try again.</value>
+    <value>Nagi kon nie die lirieke stoor nie. Gaan die logboek na vir besonderhede en probeer weer.</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Welkom by Nagi</value>
@@ -1467,7 +1511,7 @@ Fout: {1}</value>
     <value>Snitlyste</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Soek snitlyste...</value>
+    <value>Soek snitlyste…</value>
   </data>
   <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Soek snitlyste</value>
@@ -1515,7 +1559,7 @@ Fout: {1}</value>
     <value>Liedjies</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Soek in snitlys...</value>
+    <value>Soek in snitlys…</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Soek in snitlys</value>
@@ -1542,10 +1586,10 @@ Fout: {1}</value>
     <value>Gaan na kunstenaar</value>
   </data>
   <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Wys in verkenner</value>
+    <value>Wys in Lêerkenner</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
-    <value>Verwyder van snitlys</value>
+    <value>Verwyder uit snitlys</value>
   </data>
   <data name="PlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Speel</value>
@@ -1563,7 +1607,7 @@ Fout: {1}</value>
     <value>Liedjies</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Soek in genre...</value>
+    <value>Soek in genre…</value>
   </data>
   <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Soek in genre</value>
@@ -1584,7 +1628,7 @@ Fout: {1}</value>
     <value>Voeg by Tou</value>
   </data>
   <data name="GenreViewPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Voeg by snitlys</value>
+    <value>Voeg by snitlys toe</value>
   </data>
   <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
     <value>Gaan na album</value>
@@ -1593,7 +1637,7 @@ Fout: {1}</value>
     <value>Gaan na kunstenaar</value>
   </data>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Wys in verkenner</value>
+    <value>Wys in Lêerkenner</value>
   </data>
   <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
     <value>Geen snitlyste beskikbaar nie</value>
@@ -1617,7 +1661,7 @@ Fout: {1}</value>
     <value>Tema</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>Kies die toepassingtema.</value>
+    <value>Kies 'n ligte, donker of stelseltema.</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
     <value>Aksentkleur</value>
@@ -1629,13 +1673,13 @@ Fout: {1}</value>
     <value>Venstermateriaal</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Description" xml:space="preserve">
-    <value>Kies die agtergrondmateriaal vir die venster.</value>
+    <value>Kies die vensteragtergrondmateriaal.</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
     <value>Dinamiese Tematisering</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>Aktiveer en stel dinamiese tema-opsies in.</value>
+    <value>Pas die toepkleure aan by die huidige albumkunswerk.</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
     <value>Onthou venstergrootte</value>
@@ -1650,7 +1694,7 @@ Fout: {1}</value>
     <value>Herstel die hoofvenster na sy vorige skermligging met die volgende bekendstelling.</value>
   </data>
   <data name="SettingsPage_RememberNavState_Header" xml:space="preserve">
-    <value>Onthou navigasiepaneelstaat</value>
+    <value>Onthou navigasiepaneelstatus</value>
   </data>
   <data name="SettingsPage_RememberNavState_Description" xml:space="preserve">
     <value>Hou die linker navigasiepaneel oop of toe soos jy dit gelaat het.</value>
@@ -1668,13 +1712,13 @@ Fout: {1}</value>
     <value>Volume Normalisering (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Verstel volume outomaties na die standaardvlak (-18 LUFS) om skielike volume-veranderinge te vermy.</value>
+    <value>Verminder volumeverskille tussen liedjies met behulp van ReplayGain.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
-    <value>WASAPI exclusive mode</value>
+    <value>WASAPI-eksklusiewe modus</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+    <value>Gee aan Nagi eksklusiewe beheer oor die Windows-oudiodiwice. Ander toepassings sal dalk stil wees. Herbegin Nagi nadat u hierdie instelling verander het.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>Vervaag by Speel / Pouse</value>
@@ -1707,46 +1751,46 @@ Fout: {1}</value>
     <value>Invoubare speler</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>Animeer die spelerbalk om uit te brei en in te vou.</value>
+    <value>Vou die spelerbalk oop wanneer jy daaroor beweeg.</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
-    <value>Herstel afspeelstaat</value>
+    <value>Herstel afspeelstatus</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>Stoor die huidige afspeelstaat om by die volgende bekendstelling te hervat.</value>
+    <value>Herstel jou waglys en afspeelposisie wanneer Nagi begin.</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
-    <value>Outo-bekendstelling by opstart</value>
+    <value>Outobegin by opstart</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
     <value>Begin Nagi outomaties wanneer jy by jou rekenaar aanmeld.</value>
   </data>
   <data name="SettingsPage_StartMinimized_Header" xml:space="preserve">
-    <value>Begin geminimaliseer</value>
+    <value>Begin geminimeer</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>Wanneer bekendgestel, sal die toepassingsvenster by verstek geminimaliseer word.</value>
+    <value>Begin Nagi met sy venster geminimeer.</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
-    <value>Minimaliseer na minispeelspeler</value>
+    <value>Minimiseer na minispeler</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Description" xml:space="preserve">
     <value>Wanneer geminimaliseer, wys 'n kompakte drywende speler in plaas daarvan om die venster te versteek.</value>
   </data>
   <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
-    <value>Versteek na stelselbalk</value>
+    <value>Versteek na stelsellaai</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>Wanneer toegemaak, versteek eerder na die stelselbalk.</value>
+    <value>Hou Nagi aan die gang in die stelsellaai wanneer jy die venster sluit.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
-    <value>Wys omslagkuns in uitskuifvenster</value>
+    <value>Wys omslagkuns in uitvouvenster</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
     <value>Vertoon die omslagkuns in die kompakte speler wat verskyn wanneer die skinkbordikoon geklik word.</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
-    <value>Ignoreer lidwoorde tydens sortering</value>
+    <value>Ignoreer lidwoorde wanneer gesorteer word</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
     <value>Sorteer albums, kunstenaars en liedjies volgens hul eerste betekenisvolle woord (bv. "The Beatles" sorteer onder B).</value>
@@ -1773,10 +1817,10 @@ Fout: {1}</value>
     <value>Herskan biblioteek om veranderings toe te pas</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
-    <value>Haal aanlyn metadata op</value>
+    <value>Kry aanlyn metadata</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Haal addisionele inligting soos kunstenaarbeelde en biografieë van aanlyndienste (bv. Spotify, Last.fm) op.</value>
+    <value>Haal kunstenaarbeelde en -biografieë van aanlyn bronne af.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Bronne</value>
@@ -1785,10 +1829,10 @@ Fout: {1}</value>
     <value>Sleep om metadata-bronne te herrangskik. Beweeg oor elke bron vir besonderhede.</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Header" xml:space="preserve">
-    <value>Haal aanlyn lirieke op</value>
+    <value>Haal aanlyn lirieke af</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>Haal ontbrekende lirieke outomaties van aanlyn bronne op. (Privaatheid: stuur snitmetadata na derdeparty-dienste)</value>
+    <value>Haal ontbrekende lirieke van aanlyn bronne af. Dit stuur liedjiemetadata na derdeparty-dienste.</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
     <value>Bronne</value>
@@ -1806,7 +1850,7 @@ Fout: {1}</value>
     <value>Taalpakkette</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>Installeer die tale wat jy geromaniseer wil hê. Pakkette is geteken, slegs data, en plaaslik gestoor.</value>
+    <value>Installeer taalpakkette om ondersteunde lirieke te romaniseer. Pakkette word plaaslik gestoor.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
     <value>Verfris</value>
@@ -1845,19 +1889,19 @@ Fout: {1}</value>
     <value>{0} lisensie</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>Uitvoer/Invoer Snitlyste</value>
+    <value>Voer snitlyste in en uit</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
     <value>Voer snitlyste uit na M3U-lêers vir gebruik in ander spelers, of voer M3U-snitlyste in Nagi in.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
-    <value>Voer Alles Uit...</value>
+    <value>Voer alles uit…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
     <value>Voer alle snitlyste na 'n gids uit</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
-    <value>Invoer...</value>
+    <value>Voer in…</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
     <value>Voer een of meer M3U-lêers in</value>
@@ -1878,7 +1922,7 @@ Fout: {1}</value>
     <value>Last.fm</value>
   </data>
   <data name="SettingsPage_LastFm_Description" xml:space="preserve">
-    <value> en jou huidige speelende liedjie te wys.</value>
+    <value>Koppel jou Last.fm-rekening om snitte te scrobble en jou huidige liedjie te wys.</value>
   </data>
   <data name="SettingsPage_LastFm_Connect_Content" xml:space="preserve">
     <value>Koppel</value>
@@ -1899,10 +1943,10 @@ Fout: {1}</value>
     <value>Voeg die snitte waarna jy op Nagi luister, outomaties by jou Last.fm-profiel.</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
-    <value>Werk 'Speel Nou' op</value>
+    <value>Opdateer Speel tans</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>Wys jou vriende op Last.fm waarna jy tans luister in real-time.</value>
+    <value>Wys die liedjie wat tans speel op jou Last.fm-profiel.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
     <value>ListenBrainz</value>
@@ -1926,10 +1970,10 @@ Fout: {1}</value>
     <value>Verbinding het misluk: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>Stuur luisterdata in (scrobbling)</value>
+    <value>Stuur luistergeskiedenis (scrobbling)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>Stuur "speel tans"-opdaterings in</value>
+    <value>Stuur Speel tans-opdaterings</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
     <value>Gevorderd</value>
@@ -1962,7 +2006,7 @@ Fout: {1}</value>
     <value>Liedjies</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Soek in slim snitlys...</value>
+    <value>Soek in slimsnitlys…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Soek in slim snitlys</value>
@@ -1992,7 +2036,7 @@ Fout: {1}</value>
     <value>Gaan na kunstenaar</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Wys in verkenner</value>
+    <value>Wys in Lêerkenner</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Speel</value>
@@ -2034,7 +2078,7 @@ Fout: {1}</value>
     <value>Stuur Terugvoer</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Kontroleer vir opdaterings by opstart</value>
+    <value>Kyk vir opdaterings by opstart</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
     <value>Kontroleer outomaties vir nuwe weergawes wanneer die toepassing begin.</value>
@@ -2043,7 +2087,7 @@ Fout: {1}</value>
     <value>Toepassingstaal</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>Veranderings vereis 'n herbegin om in werking te tree</value>
+    <value>Herbegin Nagi om 'n taalverandering toe te pas.</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
     <value>Herbegin Vereis</value>
@@ -2058,7 +2102,7 @@ Fout: {1}</value>
     <value>Rugsteun &amp; Herstel</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Skep rugsteun van jou musiekbiblioteek en -instellings, of herstel vanaf 'n vorige rugsteun</value>
+    <value>Skep 'n rugsteun van jou biblioteekdata en -instellings, of herstel 'n vorige rugsteun.</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
     <value>Skep Rugsteun</value>
@@ -2070,7 +2114,7 @@ Fout: {1}</value>
     <value>Rugsteun Geskep</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Rugsteun suksesvol geskep ({0:F2} MB) by: {1}</value>
+    <value>'n Rugsteun ({0:F2} MB) is geskep by: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
     <value>Rugsteun Misluk</value>
@@ -2097,13 +2141,13 @@ Fout: {1}</value>
     <value>Herstel Voltooi</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Rugsteun suksesvol herstel. Die toepassing sal nou herbegin.</value>
+    <value>Rugsteun herstel. Nagi sal nou herbegin.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
     <value>Herstel Misluk</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Kon nie vanaf rugsteun herstel nie. Jou data is nie gewysig nie.</value>
+    <value>Kon nie die rugsteun herstel nie.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
     <value>Speler-stilering</value>
@@ -2115,25 +2159,25 @@ Fout: {1}</value>
     <value>Solied (Ondeursigtig)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Pasmaak die voorkoms van die swewende speler</value>
+    <value>Pas die voorkoms van die spelerbalk aan.</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
     <value>Tintintensiteit</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Verstel die lewendigheid van die speler se agtergrondkleur</value>
+    <value>Pas die intensiteit van die speler se agtergrondkleur aan.</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
-    <value>Invaar-duur</value>
+    <value>Invaagduur</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
-    <value>Die duur van die invaar-effek wanneer musiek speel (ms)</value>
+    <value>Stel hoe lank die volume neem om in te vaag wanneer afspeel hervat.</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
-    <value>Uitvaar-duur</value>
+    <value>Uitvaagduur</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
-    <value>Die duur van die uitvaar-effek wanneer musiek onderbreek word (ms)</value>
+    <value>Stel hoe lank die volume neem om uit te vaag wanneer afspeel laat wag word.</value>
   </data>
   <data name="Settings_Nav_Insights" xml:space="preserve">
     <value>Insigte</value>
@@ -2148,7 +2192,7 @@ Fout: {1}</value>
     <value>Unieke liedjies</value>
   </data>
   <data name="InsightsPage_PeakHour" xml:space="preserve">
-    <value>Spitsuur</value>
+    <value>Piekuur</value>
   </data>
   <data name="InsightsPage_MostActiveDay" xml:space="preserve">
     <value>Mees aktiewe dag</value>
@@ -2175,7 +2219,7 @@ Fout: {1}</value>
     <value>Begin musiek speel om jou insigte hier te sien</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
-    <value>one: {0} keer gespeel; other: {0} keer gespeel</value>
+    <value>Afspeelkeer: {0}</value>
   </data>
   <data name="InsightsPage_Source_Albums" xml:space="preserve">
     <value>Albums</value>
@@ -2190,7 +2234,7 @@ Fout: {1}</value>
     <value>Slim snitlyste</value>
   </data>
   <data name="InsightsPage_Source_Folders" xml:space="preserve">
-    <value>Gidse</value>
+    <value>Vouers</value>
   </data>
   <data name="InsightsPage_Source_Genres" xml:space="preserve">
     <value>Genres</value>
@@ -2235,7 +2279,7 @@ Fout: {1}</value>
     <value>Duur</value>
   </data>
   <data name="PaginationControl_All" xml:space="preserve">
-    <value>All</value>
+    <value>Alles</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>Items per bladsy:</value>
@@ -2259,19 +2303,19 @@ Fout: {1}</value>
     <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
-    <value>Laaste 1 dag</value>
+    <value>Afgelope 1 dag</value>
   </data>
   <data name="Insights_TimeRange_Last7Days" xml:space="preserve">
-    <value>Laaste 7 dae</value>
+    <value>Afgelope 7 dae</value>
   </data>
   <data name="Insights_TimeRange_Last30Days" xml:space="preserve">
-    <value>Laaste 30 dae</value>
+    <value>Afgelope 30 dae</value>
   </data>
   <data name="Insights_TimeRange_Last90Days" xml:space="preserve">
-    <value>Laaste 90 dae</value>
+    <value>Afgelope 90 dae</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>Verlede jaar</value>
+    <value>Afgelope jaar</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>Alle tye</value>
@@ -2281,5 +2325,167 @@ Fout: {1}</value>
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
     <value>{0}m {1}s</value>
+  </data>
+  <data name="QueuePanel_EmptyTitle" xml:space="preserve">
+    <value>Jou waglys is leeg</value>
+  </data>
+  <data name="QueuePanel_EmptyDescription" xml:space="preserve">
+    <value>Speel musiek of los oudiolêers hier om jou waglys te bou.</value>
+  </data>
+  <data name="QueuePanel_LoadError" xml:space="preserve">
+    <value>Sommige liedjies kon nie gelaai word nie. Kies Herprobeer om die waglys weer te laai.</value>
+  </data>
+  <data name="QueuePanel_Retry" xml:space="preserve">
+    <value>Herprobeer</value>
+  </data>
+  <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
+    <value>Die nuwe snitlysvolgorde kon nie opgeslaan word nie. Probeer asseblief weer.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
+    <value>Oudio-afvoertoestel</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Description" xml:space="preserve">
+    <value>Kies waar Nagi musiek speel.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Default" xml:space="preserve">
+    <value>Stelselverstek</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Unavailable" xml:space="preserve">
+    <value>Die gestoorde toestel is onbeskikbaar. Stelselverstek word gebruik.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
+    <value>Kon nie die oudio-afvoer opdateer nie. Probeer weer of kies 'n ander toestel.</value>
+  </data>
+  <data name="Listening_Random" xml:space="preserve">
+    <value>Skommel</value>
+  </data>
+  <data name="Listening_MoreVariety" xml:space="preserve">
+    <value>Meer verskeidenheid</value>
+  </data>
+  <data name="Listening_Rediscover" xml:space="preserve">
+    <value>Herontdek</value>
+  </data>
+  <data name="Listening_Unheard" xml:space="preserve">
+    <value>Ongehoord</value>
+  </data>
+  <data name="Listening_PlayFor" xml:space="preserve">
+    <value>Speel vir…</value>
+  </data>
+  <data name="Listening_Minutes" xml:space="preserve">
+    <value>Minute</value>
+  </data>
+  <data name="Listening_ShuffleMode" xml:space="preserve">
+    <value>Mengseltipe</value>
+  </data>
+  <data name="Listening_AvoidRecentDays" xml:space="preserve">
+    <value>Vermy onlangse afspeelkeer (dae)</value>
+  </data>
+  <data name="Listening_MoreOptions" xml:space="preserve">
+    <value>Meer opsies</value>
+  </data>
+  <data name="Listening_PlayForDescription" xml:space="preserve">
+    <value>Bou 'n waglys van volledige liedjies wat nie jou gekose duur oorskry nie.</value>
+  </data>
+  <data name="Listening_NoMixTitle" xml:space="preserve">
+    <value>Geen liedjies vir hierdie mengsel nie</value>
+  </data>
+  <data name="Listening_NoMixDescription" xml:space="preserve">
+    <value>Geen liedjies in hierdie lys voldoen aan hierdie vereistes nie. Probeer 'n ander mengsel of liedjielys.</value>
+  </data>
+  <data name="Listening_Favorites" xml:space="preserve">
+    <value>Gunstelinge</value>
+  </data>
+  <data name="Listening_AddFavorite" xml:space="preserve">
+    <value>Voeg by gunstelinge toe</value>
+  </data>
+  <data name="Listening_RemoveFavorite" xml:space="preserve">
+    <value>Verwyder uit gunstelinge</value>
+  </data>
+  <data name="Listening_SleepTimer" xml:space="preserve">
+    <value>Slaaptydhouer</value>
+  </data>
+  <data name="Listening_FinishTrack" xml:space="preserve">
+    <value>Voltooi die huidige liedjie wanneer die tydhouer verval</value>
+  </data>
+  <data name="Listening_StopAfterTrack" xml:space="preserve">
+    <value>Stop ná hierdie liedjie</value>
+  </data>
+  <data name="Listening_StopAtQueueEnd" xml:space="preserve">
+    <value>Stop aan die einde van die waglys</value>
+  </data>
+  <data name="Listening_StopPlayback" xml:space="preserve">
+    <value>Stop afspeel</value>
+  </data>
+  <data name="Listening_CustomTimer" xml:space="preserve">
+    <value>Pasmaaktydhouer…</value>
+  </data>
+  <data name="Listening_Timer15" xml:space="preserve">
+    <value>Oor 15 minute</value>
+  </data>
+  <data name="Listening_Timer30" xml:space="preserve">
+    <value>Oor 30 minute</value>
+  </data>
+  <data name="Listening_Timer60" xml:space="preserve">
+    <value>Oor 60 minute</value>
+  </data>
+  <data name="Listening_CancelStop" xml:space="preserve">
+    <value>Kanselleer geskeduleerde stop</value>
+  </data>
+  <data name="Listening_TimerRemaining" xml:space="preserve">
+    <value>Stop oor {0}</value>
+  </data>
+  <data name="Listening_PlayerOptions" xml:space="preserve">
+    <value>Speleropsies</value>
+  </data>
+  <data name="Listening_RecentlyPlayed" xml:space="preserve">
+    <value>Onlangs gespeel</value>
+  </data>
+  <data name="Listening_HistorySearch" xml:space="preserve">
+    <value>Soek luistergeskiedenis</value>
+  </data>
+  <data name="Listening_HistoryEmpty" xml:space="preserve">
+    <value>Nog geen luistergeskiedenis nie</value>
+  </data>
+  <data name="Listening_HistoryLoadError" xml:space="preserve">
+    <value>Onlangs gespeel kon nie gelaai word nie. Kies Herprobeer om weer te probeer.</value>
+  </data>
+  <data name="Listening_Today" xml:space="preserve">
+    <value>Vandag</value>
+  </data>
+  <data name="Listening_Yesterday" xml:space="preserve">
+    <value>Gister</value>
+  </data>
+  <data name="Listening_RediscoveryReason" xml:space="preserve">
+    <value>Laas gespeel {0:d}</value>
+  </data>
+  <data name="Listening_RediscoveryTitle" xml:space="preserve">
+    <value>Nog 'n luister werd</value>
+  </data>
+  <data name="Listening_Dismiss" xml:space="preserve">
+    <value>Wys af</value>
+  </data>
+  <data name="Listening_ActionError" xml:space="preserve">
+    <value>Kon nie hierdie aksie voltooi nie. Probeer asseblief weer.</value>
+  </data>
+  <data name="Listening_FavoritesEmpty" xml:space="preserve">
+    <value>Nog geen gunstelinge nie</value>
+  </data>
+  <data name="Listening_FavoritesEmptyDescription" xml:space="preserve">
+    <value>Voeg 'n liedjie by gunstelinge vanuit sy kieslys, of kies dit en druk Ctrl+D.</value>
+  </data>
+  <data name="Listening_VarietyDescription" xml:space="preserve">
+    <value>'Meer verskeidenheid' vermy liedjies wat binne die onlangse afspeelvenster gespeel is en skei liedjies deur dieselfde kunstenaar waar moontlik.</value>
+  </data>
+  <data name="Listening_RediscoverDescription" xml:space="preserve">
+    <value>'Herontdek' gebruik liedjies met aangetekende afspeelkeer in Nagi wat meer as 30 dae gelede laas gespeel is.</value>
+  </data>
+  <data name="Listening_UnheardDescription" xml:space="preserve">
+    <value>'Ongehoord' gebruik liedjies sonder enige aangetekende afspeelkeer in Nagi.</value>
+  </data>
+  <data name="Listening_HistoryNoMatches" xml:space="preserve">
+    <value>Geen afspeelkeer stem ooreen met jou soektog nie</value>
+  </data>
+  <data name="Listening_NoTimedMixDescription" xml:space="preserve">
+    <value>Geen liedjies in hierdie lys voldoen aan die mengselvereistes en pas binne jou gekose duur nie. Probeer 'n langer duur, 'n ander mengsel of 'n ander liedjielys.</value>
   </data>
 </root>

@@ -76,6 +76,9 @@
   <data name="NavItem_Folders" xml:space="preserve">
     <value>Thư mục</value>
   </data>
+  <data name="NavItem_Favorites" xml:space="preserve">
+    <value>Yêu thích</value>
+  </data>
   <data name="NavItem_Insights" xml:space="preserve">
     <value>Thống kê</value>
   </data>
@@ -83,7 +86,7 @@
     <value>Cài đặt</value>
   </data>
   <data name="Status_NoTrackPlaying" xml:space="preserve">
-    <value>Không có bản nhạc nào đang phát</value>
+    <value>Không có bài hát nào đang phát</value>
   </data>
   <data name="Tooltip_Play" xml:space="preserve">
     <value>Phát</value>
@@ -98,7 +101,7 @@
     <value>Phát ngẫu nhiên tắt</value>
   </data>
   <data name="Tooltip_RepeatOff" xml:space="preserve">
-    <value>Lặp lại Tắt</value>
+    <value>Tắt lặp lại</value>
   </data>
   <data name="Tooltip_RepeatAll" xml:space="preserve">
     <value>Lặp lại tất cả</value>
@@ -122,7 +125,7 @@
     <value>Tối</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">
-    <value>Sử dụng cài đặt hệ thống</value>
+    <value>Mặc định hệ thống</value>
   </data>
   <data name="Backdrop_Mica" xml:space="preserve">
     <value>Mica</value>
@@ -141,6 +144,39 @@
   </data>
   <data name="Label_Rating" xml:space="preserve">
     <value>Xếp hạng</value>
+  </data>
+  <data name="Label_Grouping" xml:space="preserve">
+    <value>Gom nhóm</value>
+  </data>
+  <data name="Label_SkipCount" xml:space="preserve">
+    <value>Số lần bỏ qua</value>
+  </data>
+  <data name="Label_DiscNumber" xml:space="preserve">
+    <value>Số đĩa</value>
+  </data>
+  <data name="Label_Bitrate" xml:space="preserve">
+    <value>Tốc độ bít</value>
+  </data>
+  <data name="Label_SampleRate" xml:space="preserve">
+    <value>Tần số lấy mẫu</value>
+  </data>
+  <data name="Label_IsLoved" xml:space="preserve">
+    <value>Yêu thích</value>
+  </data>
+  <data name="Label_HasLyrics" xml:space="preserve">
+    <value>Có lời bài hát</value>
+  </data>
+  <data name="Operator_IsInRange" xml:space="preserve">
+    <value>Trong khoảng (bao gồm)</value>
+  </data>
+  <data name="Operator_IsAfter" xml:space="preserve">
+    <value>Sau ngày</value>
+  </data>
+  <data name="Operator_IsBefore" xml:space="preserve">
+    <value>Trước ngày</value>
+  </data>
+  <data name="SmartPlaylist_UpperBound_Placeholder" xml:space="preserve">
+    <value>Giá trị tối đa</value>
   </data>
   <data name="Operator_Contains" xml:space="preserve">
     <value>Có chứa</value>
@@ -179,10 +215,10 @@
     <value>Nhiều nhất là</value>
   </data>
   <data name="Operator_IsInTheLast" xml:space="preserve">
-    <value>Trong vòng (ngày)</value>
+    <value>Trong vòng (ngày) qua</value>
   </data>
   <data name="Operator_IsNotInTheLast" xml:space="preserve">
-    <value>Không trong vòng (ngày)</value>
+    <value>Không trong vòng (ngày) qua</value>
   </data>
   <data name="Operator_IsTrue" xml:space="preserve">
     <value>Là đúng</value>
@@ -194,31 +230,31 @@
     <value>Danh sách phát thông minh mới</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>Chỉnh sửa Danh sách phát thông minh - {0}</value>
+    <value>Chỉnh sửa danh sách phát thông minh: {0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
     <value>Nhập tên danh sách phát</value>
   </data>
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
-    <value>{0:N0} bài hát khớp với các quy tắc hiện tại</value>
+    <value>Bài hát phù hợp: {0:N0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Nhập tên để xem các bài hát phù hợp</value>
+    <value>Nhập tên danh sách phát để xem các bài hát phù hợp</value>
   </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
-    <value>Không thể tính toán</value>
+    <value>Không thể đếm số bài hát phù hợp</value>
   </data>
   <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
-    <value>Đang tính toán...</value>
+    <value>Đang tính toán…</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>Tên danh sách phát này đã tồn tại!</value>
+    <value>Danh sách phát với tên này đã tồn tại.</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>Vui lòng nhập tên!</value>
+    <value>Nhập tên danh sách phát.</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
-    <value>Đang tải...</value>
+    <value>Đang tải…</value>
   </data>
   <data name="Error_FailedToLoadArtists" xml:space="preserve">
     <value>Không thể tải nghệ sĩ</value>
@@ -227,13 +263,15 @@
     <value>Lỗi nghiêm trọng</value>
   </data>
   <data name="CrashReport_Message" xml:space="preserve">
-    <value>Nagi đã gặp lỗi nghiêm trọng và phải đóng. Chúng tôi xin lỗi vì sự bất tiện này.</value>
+    <value>Nagi đã gặp sự cố và cần phải đóng.</value>
   </data>
   <data name="ElevationWarning_Title" xml:space="preserve">
     <value>Đang chạy với quyền Quản trị viên</value>
   </data>
   <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi hiện đang chạy với quyền Quản trị viên. Điều này có thể ngăn một số tính năng (như thêm thư mục nhạc) hoạt động chính xác.nĐể có trải nghiệm tốt nhất, vui lòng khởi động lại Nagi mà không có quyền quản trị viên.</value>
+    <value>Nagi hiện đang chạy với quyền Quản trị viên. Điều này có thể ngăn một số tính năng (như thêm thư mục nhạc) hoạt động chính xác.
+
+Để có trải nghiệm tốt nhất, vui lòng khởi động lại Nagi mà không có quyền quản trị viên.</value>
   </data>
   <data name="ElevationWarning_Restart" xml:space="preserve">
     <value>Khởi động lại bình thường</value>
@@ -293,16 +331,16 @@
     <value>Thư mục này đã có trong thư viện.</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
-    <value>Đang thêm thư mục vào thư viện...</value>
+    <value>Đang thêm thư mục vào thư viện…</value>
   </data>
   <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Đã xóa '{0}' thành công.</value>
+    <value>Đã xóa &apos;{0}&apos; khỏi thư viện của bạn.</value>
   </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
-    <value>Không thể xóa '{0}'.</value>
+    <value>Không thể xóa &apos;{0}&apos; khỏi thư viện của bạn.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
-    <value>Đang xóa '{0}'...</value>
+    <value>Đang xóa &apos;{0}&apos; khỏi thư viện của bạn…</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
     <value>Quét lại '{0}' hoàn tất.</value>
@@ -311,7 +349,7 @@
     <value>Không phát hiện thay đổi nào cho '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
-    <value>Đang quét lại '{0}'...</value>
+    <value>Đang quét lại '{0}'…</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
     <value>Không tìm thấy thư mục nào chứa nhạc.</value>
@@ -326,7 +364,7 @@
     <value>Lỗi khi thêm thư mục: {0}</value>
   </data>
   <data name="Folders_Error_DeleteFolder" xml:space="preserve">
-    <value>Lỗi khi xóa thư mục: {0}</value>
+    <value>Không thể xóa thư mục khỏi thư viện của bạn: {0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Lỗi khi quét lại thư mục: {0}</value>
@@ -377,10 +415,10 @@
     <value>Hãy thiết lập thư viện nhạc của bạn để bắt đầu.</value>
   </data>
   <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>Đang chờ bạn chọn thư mục...</value>
+    <value>Đang chờ bạn chọn một thư mục…</value>
   </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
-    <value>Đang xây dựng thư viện của bạn...</value>
+    <value>Đang xây dựng thư viện của bạn…</value>
   </data>
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.</value>
@@ -401,7 +439,7 @@
     <value>Lỗi khi tải danh sách phát</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Đang bắt đầu danh sách phát...</value>
+    <value>Đang bắt đầu danh sách phát…</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Không có bài hát nào khớp với quy tắc của danh sách phát thông minh này.</value>
@@ -410,7 +448,7 @@
     <value>Lỗi khi bắt đầu phát lại cho danh sách phát này.</value>
   </data>
   <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Đang chọn một danh sách phát ngẫu nhiên...</value>
+    <value>Đang chọn một danh sách phát ngẫu nhiên…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Không tìm thấy danh sách phát nào.</value>
@@ -422,13 +460,13 @@
     <value>Lỗi khi phát danh sách phát ngẫu nhiên.</value>
   </data>
   <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Đang tải danh sách phát...</value>
+    <value>Đang tải các danh sách phát…</value>
   </data>
   <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
     <value>Lỗi khi tải danh sách phát.</value>
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Đang tạo danh sách phát mới...</value>
+    <value>Đang tạo danh sách phát mới…</value>
   </data>
   <data name="Playlist_Status_CreateFailed" xml:space="preserve">
     <value>Không thể tạo danh sách phát. Nó có thể đã tồn tại.</value>
@@ -437,7 +475,7 @@
     <value>Đã xảy ra lỗi khi tạo danh sách phát.</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Đang cập nhật ảnh bìa danh sách phát...</value>
+    <value>Đang cập nhật ảnh bìa danh sách phát…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Không thể cập nhật ảnh bìa danh sách phát.</value>
@@ -446,7 +484,7 @@
     <value>Đã xảy ra lỗi khi cập nhật ảnh bìa danh sách phát.</value>
   </data>
   <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Đang xóa ảnh danh sách phát...</value>
+    <value>Đang xóa ảnh danh sách phát…</value>
   </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Không thể xóa ảnh danh sách phát.</value>
@@ -455,7 +493,7 @@
     <value>Đã xảy ra lỗi khi xóa ảnh danh sách phát.</value>
   </data>
   <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Đang đổi tên danh sách phát...</value>
+    <value>Đang đổi tên danh sách phát…</value>
   </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Không thể đổi tên danh sách phát.</value>
@@ -464,7 +502,7 @@
     <value>Đã xảy ra lỗi khi đổi tên danh sách phát.</value>
   </data>
   <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Đang xóa danh sách phát...</value>
+    <value>Đang xóa danh sách phát…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Không thể xóa danh sách phát.</value>
@@ -512,7 +550,9 @@
     <value>Xuất thành công</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>Đã xuất {0} danh sách phát ({1} bài hát tổng cộng) tới:n{2}</value>
+    <value>Số danh sách phát đã xuất: {0}
+Số bài hát: {1}
+Đã lưu vào: {2}</value>
   </data>
   <data name="Settings_Export_Failed_Title" xml:space="preserve">
     <value>Xuất thất bại</value>
@@ -521,13 +561,18 @@
     <value>Nhập thành công</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>Đã nhập thành công {0} danh sách phát ({1} bài hát).</value>
+    <value>Số danh sách phát đã nhập: {0}
+Số bài hát: {1}</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
-    <value>nnKhông tìm thấy {0} bài hát trong thư viện của bạn.</value>
+    <value>
+
+Các bài hát không tìm thấy trong thư viện của bạn: {0}.</value>
   </data>
   <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
-    <value>nn{0} tệp không thể nhập.</value>
+    <value>
+
+Các tệp không thể nhập: {0}.</value>
   </data>
   <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
     <value>Nhập thất bại</value>
@@ -596,10 +641,10 @@
     <value>Không phát hiện FFmpeg. Vui lòng cài đặt FFmpeg và nhấp 'Kiểm tra lại'.</value>
   </data>
   <data name="FFmpeg_Status_Checking" xml:space="preserve">
-    <value>Đang kiểm tra FFmpeg...</value>
+    <value>Đang kiểm tra FFmpeg…</value>
   </data>
   <data name="FFmpeg_Status_Detected" xml:space="preserve">
-    <value>Đã phát hiện FFmpeg!</value>
+    <value>Đã phát hiện FFmpeg.</value>
   </data>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg vẫn chưa được phát hiện. Vui lòng cài đặt FFmpeg và nhấp 'Kiểm tra lại'.</value>
@@ -767,10 +812,10 @@
     <value>Không có danh sách phát nào khả dụng</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
-    <value>Xóa Thư mục</value>
+    <value>Xóa thư mục</value>
   </data>
   <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
-    <value>Bạn có chắc chắn muốn xóa thư mục '{0}' khỏi thư viện không? Thao tác này sẽ không xóa các tệp khỏi máy tính của bạn.</value>
+    <value>Xóa &apos;{0}&apos; khỏi thư viện của bạn? Các tệp âm thanh của bạn sẽ vẫn được giữ trên máy tính.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Xóa</value>
@@ -812,10 +857,10 @@
     <value>Tìm kiếm danh sách phát</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>Nhập tên danh sách phát mới</value>
+    <value>Nhập tên danh sách phát</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
-    <value>Chọn hình ảnh</value>
+    <value>Chọn ảnh bìa</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
     <value>Tạo danh sách phát mới</value>
@@ -851,7 +896,7 @@
     <value>Đóng tìm kiếm</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Tìm kiếm thư viện</value>
+    <value>Tìm kiếm trong thể loại</value>
   </data>
   <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Không có danh sách phát nào khả dụng</value>
@@ -872,13 +917,13 @@
     <value>Quét lại siêu dữ liệu</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>Thao tác này sẽ quét lại tất cả bài hát trong thư viện của bạn để áp dụng cài đặt siêu dữ liệu mới (như ký tự phân tách nghệ sĩ). Việc này có thể mất một chút thời gian tùy thuộc vào kích thước thư viện. Bạn có muốn tiếp tục không?</value>
+    <value>Quét lại thư viện của bạn để áp dụng các cài đặt siêu dữ liệu, chẳng hạn như tách nghệ sĩ. Quá trình này có thể mất một lúc đối với thư viện lớn. Tiếp tục?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
     <value>Quét lại</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
-    <value>Đang chuẩn bị quét lại thư viện...</value>
+    <value>Đang chuẩn bị quét lại thư viện…</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
     <value>Quét lại hoàn tất</value>
@@ -899,13 +944,17 @@
     <value>Bật chuẩn hóa âm lượng</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
-    <value>Chuẩn hóa âm lượng (ReplayGain) đảm bảo mức âm lượng nhất quán trên tất cả nhạc của bạn.nThao tác này sẽ phân tích thư viện nhạc của bạn và trực tiếp sửa đổi các tệp âm thanh bằng cách ghi thẻ ReplayGain. Chỉ các tệp không có thẻ hiện có mới được xử lý. Việc này có thể mất một chút thời gian tùy thuộc vào kích thước thư viện của bạn.nBạn có muốn tiếp tục không?</value>
+    <value>Chuẩn hóa âm lượng (ReplayGain) đảm bảo mức âm lượng nhất quán trên tất cả nhạc của bạn.
+
+Thao tác này sẽ phân tích thư viện nhạc của bạn và trực tiếp sửa đổi các tệp âm thanh bằng cách ghi thẻ ReplayGain. Chỉ các tệp không có thẻ hiện có mới được xử lý. Việc này có thể mất một chút thời gian tùy thuộc vào kích thước thư viện của bạn.
+
+Bạn có muốn tiếp tục không?</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Bật &amp; Quét</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>Đang chuẩn bị quét chuẩn hóa âm lượng...</value>
+    <value>Đang chuẩn bị quét chuẩn hóa âm lượng…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
     <value>Đã hủy quét chuẩn hóa âm lượng.</value>
@@ -914,7 +963,9 @@
     <value>Lỗi trong quá trình quét: {0}</value>
   </data>
   <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Không thể truy xuất nhật ký từ bộ nhớ. Nỗ lực dự phòng để đọc tệp nhật ký đã thất bại.nĐường dẫn dự kiến: '{0}'nLỗi: {1}</value>
+    <value>Không thể truy xuất nhật ký từ bộ nhớ. Nỗ lực dự phòng để đọc tệp nhật ký đã thất bại.
+Đường dẫn dự kiến: '{0}'
+Lỗi: {1}</value>
   </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Không có danh sách phát nào để xuất.</value>
@@ -1040,7 +1091,7 @@
     <value>Nagi</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Tái khám phá bộ sưu tập nhạc cục bộ của bạn với Nagi, một trình phát nhạc tập trung vào tốc độ, sự đơn giản và quyền riêng tư. Nagi được xây dựng bằng C# và WinUI 3 để mang đến trải nghiệm Fluent sạch sẽ, nguyên bản. Nó đẹp, hiệu quả và tôn trọng quyền riêng tư của bạn.</value>
+    <value>Khám phá lại bộ sưu tập nhạc cục bộ của bạn với Nagi, trình phát nhạc chú trọng vào tốc độ, sự đơn giản và quyền riêng tư.</value>
   </data>
   <data name="AppShortName" xml:space="preserve">
     <value>Nagi</value>
@@ -1067,61 +1118,61 @@
     <value>Tiếp theo</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
-    <value>Đi đến album</value>
+    <value>Đi tới album</value>
   </data>
   <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Drop files or folders onto the player to add them to the queue.</value>
+    <value>Thả tệp hoặc thư mục vào trình phát để thêm vào hàng đợi.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Tiếp theo</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
-    <value>Clear queue</value>
+    <value>Xóa hàng chờ</value>
   </data>
   <data name="QueuePanel_DisplayOptions" xml:space="preserve">
-    <value>Queue display options</value>
+    <value>Tùy chọn hiển thị hàng chờ</value>
   </data>
   <data name="QueuePanel_Close" xml:space="preserve">
-    <value>Close queue</value>
+    <value>Đóng hàng chờ</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
-    <value>Artist</value>
+    <value>Nghệ sĩ</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
-    <value>Duration</value>
+    <value>Thời lượng</value>
   </data>
   <data name="QueuePanel_ShowTrackCount" xml:space="preserve">
-    <value>Track count</value>
+    <value>Số lượng bài hát</value>
   </data>
   <data name="QueuePanel_TrackCount" xml:space="preserve">
-    <value>Tracks: {0:N0}</value>
+    <value>Bài hát: {0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
-    <value>Queue position</value>
+    <value>Vị trí trong hàng chờ</value>
   </data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve">
-    <value>Genre</value>
+    <value>Thể loại</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
-    <value>Total duration</value>
+    <value>Tổng thời lượng</value>
   </data>
   <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Phát</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
-    <value>Move up</value>
+    <value>Di chuyển lên</value>
   </data>
   <data name="QueuePanel_MoveDown" xml:space="preserve">
-    <value>Move down</value>
+    <value>Di chuyển xuống</value>
   </data>
   <data name="QueuePanel_Remove" xml:space="preserve">
-    <value>Remove from queue</value>
+    <value>Xóa khỏi hàng chờ</value>
   </data>
   <data name="AlbumPage_Title" xml:space="preserve">
     <value>Album</value>
   </data>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Tìm album...</value>
+    <value>Tìm kiếm album…</value>
   </data>
   <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Tìm album</value>
@@ -1145,7 +1196,7 @@
     <value>Bài hát</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Tìm trong album...</value>
+    <value>Tìm kiếm trong album…</value>
   </data>
   <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Tìm trong album</value>
@@ -1169,10 +1220,10 @@
     <value>Thêm vào danh sách phát</value>
   </data>
   <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Đi đến nghệ sĩ</value>
+    <value>Đi tới nghệ sĩ</value>
   </data>
   <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Hiện trong trình khám phá</value>
+    <value>Hiển thị trong File Explorer</value>
   </data>
   <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Phát</value>
@@ -1187,7 +1238,7 @@
     <value>Nghệ sĩ</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Tìm nghệ sĩ...</value>
+    <value>Tìm kiếm nghệ sĩ…</value>
   </data>
   <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Tìm nghệ sĩ</value>
@@ -1229,7 +1280,7 @@
     <value>Bài hát</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Tìm trong nghệ sĩ...</value>
+    <value>Tìm kiếm trong nghệ sĩ…</value>
   </data>
   <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Tìm trong nghệ sĩ</value>
@@ -1253,10 +1304,10 @@
     <value>Thêm vào danh sách phát</value>
   </data>
   <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Đi đến album</value>
+    <value>Đi tới album</value>
   </data>
   <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Hiện trong trình khám phá</value>
+    <value>Hiển thị trong File Explorer</value>
   </data>
   <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Phát</value>
@@ -1286,7 +1337,7 @@
     <value>Quét lại</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>Xóa</value>
+    <value>Xóa khỏi thư viện</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Chưa có thư mục nào được thêm</value>
@@ -1313,13 +1364,13 @@
     <value>Thêm vào danh sách phát</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Đi đến album</value>
+    <value>Đi tới album</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Đi đến nghệ sĩ</value>
+    <value>Đi tới nghệ sĩ</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Hiện trong trình khám phá</value>
+    <value>Hiển thị trong File Explorer</value>
   </data>
   <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Phát</value>
@@ -1331,7 +1382,7 @@
     <value>Bài hát</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Tìm trong thư mục...</value>
+    <value>Tìm kiếm trong thư mục…</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Tìm trong thư mục</value>
@@ -1352,7 +1403,7 @@
     <value>Thể loại</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Tìm thể loại...</value>
+    <value>Tìm kiếm thể loại…</value>
   </data>
   <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
     <value>Tìm thể loại</value>
@@ -1373,7 +1424,7 @@
     <value>Thư viện</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Tìm thư viện...</value>
+    <value>Tìm kiếm thư viện…</value>
   </data>
   <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Tìm thư viện</value>
@@ -1397,16 +1448,22 @@
     <value>Thêm vào danh sách phát</value>
   </data>
   <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Đi đến album</value>
+    <value>Đi tới album</value>
   </data>
   <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
-    <value>Đi đến nghệ sĩ</value>
+    <value>Đi tới nghệ sĩ</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Hiện trong trình khám phá</value>
+    <value>Hiển thị trong File Explorer</value>
   </data>
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Phát</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
+    <value>Không tìm thấy bài hát nào</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+    <value>Hãy thử tìm kiếm nội dung khác</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
     <value>Thư viện của bạn trống</value>
@@ -1415,31 +1472,31 @@
     <value>Thêm thư mục vào thư viện của bạn trong Cài đặt</value>
   </data>
   <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
-    <value>Không tìm thấy lời bài hát cho bản nhạc này</value>
+    <value>Không tìm thấy lời cho bài hát này</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
     <value>Thử bài hát khác</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
-    <value>Edit or replace lyrics</value>
+    <value>Chỉnh sửa hoặc thay thế lời bài hát</value>
   </data>
   <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
-    <value>Edit lyrics</value>
+    <value>Chỉnh sửa lời bài hát</value>
   </data>
   <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
-    <value>Paste plain text or timestamped LRC lyrics</value>
+    <value>Dán văn bản thuần túy hoặc lời bài hát LRC có dấu thời gian</value>
   </data>
   <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
-    <value>Save</value>
+    <value>Lưu</value>
   </data>
   <data name="LyricsPage_EditLyrics_Remove" xml:space="preserve">
-    <value>Remove saved lyrics</value>
+    <value>Xóa lời bài hát đã lưu</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
-    <value>Lyrics could not be updated</value>
+    <value>Không thể cập nhật lời bài hát</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Nagi could not save the lyrics. Check the log for details and try again.</value>
+    <value>Nagi không thể lưu lời bài hát. Kiểm tra nhật ký để biết chi tiết và thử lại.</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Chào mừng đến với Nagi</value>
@@ -1454,7 +1511,7 @@
     <value>Danh sách phát</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Tìm danh sách phát...</value>
+    <value>Tìm kiếm danh sách phát…</value>
   </data>
   <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Tìm danh sách phát</value>
@@ -1502,7 +1559,7 @@
     <value>Bài hát</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Tìm trong danh sách phát...</value>
+    <value>Tìm kiếm trong danh sách phát…</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Tìm trong danh sách phát</value>
@@ -1523,13 +1580,13 @@
     <value>Thêm vào hàng đợi</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Đi đến album</value>
+    <value>Đi tới album</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Đi đến nghệ sĩ</value>
+    <value>Đi tới nghệ sĩ</value>
   </data>
   <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Hiện trong trình khám phá</value>
+    <value>Hiển thị trong File Explorer</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
     <value>Xóa khỏi danh sách phát</value>
@@ -1550,7 +1607,7 @@
     <value>Bài hát</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Tìm trong thể loại...</value>
+    <value>Tìm kiếm trong thể loại…</value>
   </data>
   <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Tìm trong thể loại</value>
@@ -1574,13 +1631,13 @@
     <value>Thêm vào danh sách phát</value>
   </data>
   <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Đi đến album</value>
+    <value>Đi tới album</value>
   </data>
   <data name="GenreViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Đi đến nghệ sĩ</value>
+    <value>Đi tới nghệ sĩ</value>
   </data>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Hiện trong trình khám phá</value>
+    <value>Hiển thị trong File Explorer</value>
   </data>
   <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
     <value>Không có danh sách phát nào</value>
@@ -1604,25 +1661,25 @@
     <value>Chủ đề</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>Chọn chủ đề ứng dụng.</value>
+    <value>Chọn chủ đề sáng, tối hoặc hệ thống.</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
     <value>Màu nhấn</value>
   </data>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
-    <value>Đặt lại mặc định</value>
+    <value>Đặt lại về mặc định</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Chất liệu cửa sổ</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Description" xml:space="preserve">
-    <value>Chọn chất liệu nền cho cửa sổ.</value>
+    <value>Chọn chất liệu nền cửa sổ.</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
     <value>Chủ đề động</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>Bật và cấu hình tùy chọn chủ đề động.</value>
+    <value>Khớp màu sắc ứng dụng với ảnh bìa album hiện tại.</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
     <value>Ghi nhớ kích thước cửa sổ</value>
@@ -1655,13 +1712,13 @@
     <value>Chuẩn hóa âm lượng (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Tự động điều chỉnh âm lượng về mức chuẩn (-18 LUFS) để tránh thay đổi độ lớn đột ngột.</value>
+    <value>Giảm sự chênh lệch âm lượng giữa các bài hát bằng ReplayGain.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
-    <value>WASAPI exclusive mode</value>
+    <value>Chế độ độc quyền WASAPI</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+    <value>Cấp cho Nagi quyền điều khiển độc quyền thiết bị âm thanh Windows. Các ứng dụng khác có thể bị mất tiếng. Khởi động lại Nagi sau khi thay đổi cài đặt này.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>Hiệu ứng mờ dần khi Phát / Tạm dừng</value>
@@ -1673,7 +1730,7 @@
     <value>Bộ cân bằng âm thanh</value>
   </data>
   <data name="SettingsPage_ResetEqualizer_Content" xml:space="preserve">
-    <value>Đặt lại mặc định</value>
+    <value>Đặt lại về mặc định</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Tiền khuếch đại</value>
@@ -1685,7 +1742,7 @@
     <value>Tùy chỉnh điều khiển trình phát</value>
   </data>
   <data name="SettingsPage_ResetPlayerButtons_Content" xml:space="preserve">
-    <value>Đặt lại mặc định</value>
+    <value>Đặt lại về mặc định</value>
   </data>
   <data name="SettingsPage_CustomizePlayer_Instructions" xml:space="preserve">
     <value>Di chuột để bật/tắt hiển thị. Kéo để sắp xếp lại. Dấu phân cách phân tách các điều khiển trung tâm và bên phải.</value>
@@ -1694,16 +1751,16 @@
     <value>Trình phát có thể thu gọn</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>Tạo hoạt ảnh cho thanh trình phát để mở rộng và thu gọn.</value>
+    <value>Mở rộng thanh trình phát khi bạn di chuột qua.</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
     <value>Khôi phục trạng thái phát</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>Lưu trạng thái phát hiện tại để tiếp tục vào lần khởi chạy tiếp theo.</value>
+    <value>Khôi phục hàng chờ và vị trí phát của bạn khi Nagi khởi động.</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
-    <value>Tự động khởi chạy khi khởi động</value>
+    <value>Tự động chạy khi khởi động</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
     <value>Khởi động Nagi tự động khi bạn đăng nhập vào máy tính của mình.</value>
@@ -1712,22 +1769,22 @@
     <value>Khởi động thu nhỏ</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>Khi khởi chạy, cửa sổ ứng dụng sẽ được thu nhỏ theo mặc định.</value>
+    <value>Khởi động Nagi với cửa sổ thu nhỏ.</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
-    <value>Thu nhỏ thành trình phát mini</value>
+    <value>Thu nhỏ thành trình phát thu nhỏ</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Description" xml:space="preserve">
     <value>Khi thu nhỏ, hiển thị một trình phát nổi nhỏ gọn thay vì ẩn cửa sổ.</value>
   </data>
   <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
-    <value>Ẩn vào khay hệ thống</value>
+    <value>Ẩn xuống khay hệ thống</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>Khi đóng, ẩn vào khay hệ thống thay vì đóng hoàn toàn.</value>
+    <value>Tiếp tục chạy Nagi trong khay hệ thống khi bạn đóng cửa sổ.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
-    <value>Hiện ảnh bìa trong cửa sổ bật lên</value>
+    <value>Hiển thị ảnh bìa trong cửa sổ bật lên</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
     <value>Hiển thị ảnh bìa trong trình phát nhỏ gọn xuất hiện khi nhấp vào biểu tượng khay.</value>
@@ -1760,10 +1817,10 @@
     <value>Quét lại thư viện để áp dụng thay đổi tách</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
-    <value>Truy xuất siêu dữ liệu trực tuyến</value>
+    <value>Lấy siêu dữ liệu trực tuyến</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Tải thêm thông tin như ảnh nghệ sĩ và tiểu sử từ các dịch vụ trực tuyến (ví dụ: Spotify, Last.fm).</value>
+    <value>Tải hình ảnh và tiểu sử nghệ sĩ từ các nguồn trực tuyến.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Nguồn</value>
@@ -1775,7 +1832,7 @@
     <value>Tải lời bài hát trực tuyến</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>Tự động tải lời bài hát bị thiếu từ các nguồn trực tuyến. (Quyền riêng tư: gửi siêu dữ liệu bài hát đến các dịch vụ của bên thứ ba)</value>
+    <value>Tải lời bài hát còn thiếu từ các nguồn trực tuyến. Thao tác này sẽ gửi siêu dữ liệu bài hát đến các dịch vụ bên thứ ba.</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
     <value>Nguồn</value>
@@ -1784,7 +1841,7 @@
     <value>Kéo để sắp xếp lại các nguồn lời bài hát. Di chuột qua từng nguồn để biết chi tiết.</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
-    <value>Hiển thị lời bài hát đã phiên âm Latinh</value>
+    <value>Hiển thị lời bài hát phiên âm La-tinh</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
     <value>Hiển thị một dòng phiên âm Latinh nhỏ hơn bên dưới lời bài hát được hỗ trợ khi một gói đã cài đặt khớp với tập lệnh.</value>
@@ -1793,7 +1850,7 @@
     <value>Gói ngôn ngữ</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>Cài đặt các ngôn ngữ bạn muốn phiên âm Latinh. Các gói này được ký, chỉ chứa dữ liệu và được lưu trữ cục bộ.</value>
+    <value>Cài đặt các gói ngôn ngữ để phiên âm La-tinh lời bài hát được hỗ trợ. Các gói được lưu trữ cục bộ.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
     <value>Làm mới</value>
@@ -1832,19 +1889,19 @@
     <value>Giấy phép {0}</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>Xuất/Nhập danh sách phát</value>
+    <value>Nhập &amp; xuất danh sách phát</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
     <value>Xuất danh sách phát sang tệp M3U để sử dụng trong các trình phát khác, hoặc nhập danh sách phát M3U vào Nagi.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
-    <value>Xuất tất cả...</value>
+    <value>Xuất tất cả…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
     <value>Xuất tất cả danh sách phát vào một thư mục</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
-    <value>Nhập...</value>
+    <value>Nhập…</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
     <value>Nhập một hoặc nhiều tệp M3U</value>
@@ -1880,16 +1937,16 @@
     <value>Ngắt kết nối</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
-    <value>Bật scrobbling</value>
+    <value>Bật Scrobble</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Description" xml:space="preserve">
     <value>Tự động thêm các bản nhạc bạn nghe trên Nagi vào hồ sơ Last.fm của bạn.</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
-    <value>Cập nhật 'Đang phát'</value>
+    <value>Cập nhật Đang phát</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>Hiển thị cho bạn bè trên Last.fm những gì bạn đang nghe theo thời gian thực.</value>
+    <value>Hiển thị bài hát đang phát trên hồ sơ Last.fm của bạn.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
     <value>ListenBrainz</value>
@@ -1913,10 +1970,10 @@
     <value>Kết nối thất bại: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>Gửi lượt nghe (theo dõi)</value>
+    <value>Gửi thông tin lượt nghe (Scrobble)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>Gửi cập nhật "đang phát"</value>
+    <value>Gửi cập nhật bài hát đang phát</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
     <value>Nâng cao</value>
@@ -1949,7 +2006,7 @@
     <value>Bài hát</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Tìm trong danh sách phát thông minh...</value>
+    <value>Tìm kiếm trong danh sách phát thông minh…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Tìm trong danh sách phát thông minh</value>
@@ -1973,13 +2030,13 @@
     <value>Thêm vào hàng đợi</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Đi đến album</value>
+    <value>Đi tới album</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Đi đến nghệ sĩ</value>
+    <value>Đi tới nghệ sĩ</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Hiện trong trình khám phá</value>
+    <value>Hiển thị trong File Explorer</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Phát</value>
@@ -2021,7 +2078,7 @@
     <value>Gửi phản hồi</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Kiểm tra cập nhật khi khởi động</value>
+    <value>Kiểm tra bản cập nhật khi khởi động</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
     <value>Tự động kiểm tra phiên bản mới khi ứng dụng khởi động.</value>
@@ -2030,7 +2087,7 @@
     <value>Ngôn ngữ ứng dụng</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>Thay đổi yêu cầu khởi động lại để có hiệu lực</value>
+    <value>Khởi động lại Nagi để áp dụng thay đổi ngôn ngữ.</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
     <value>Yêu cầu khởi động lại</value>
@@ -2045,7 +2102,7 @@
     <value>Sao lưu &amp; Khôi phục</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Tạo bản sao lưu thư viện nhạc và cài đặt của bạn, hoặc khôi phục từ bản sao lưu trước đó</value>
+    <value>Tạo bản sao lưu dữ liệu thư viện và cài đặt của bạn, hoặc khôi phục bản sao lưu trước đó.</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
     <value>Tạo bản sao lưu</value>
@@ -2057,7 +2114,7 @@
     <value>Đã tạo bản sao lưu</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Đã tạo bản sao lưu thành công ({0:F2} MB) tại: {1}</value>
+    <value>Đã tạo bản sao lưu ({0:F2} MB) tại: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
     <value>Tạo bản sao lưu thất bại</value>
@@ -2084,13 +2141,13 @@
     <value>Khôi phục hoàn tất</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Đã khôi phục bản sao lưu thành công. Ứng dụng sẽ khởi động lại.</value>
+    <value>Đã khôi phục bản sao lưu. Nagi sẽ khởi động lại ngay.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
     <value>Khôi phục thất bại</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Không thể khôi phục từ bản sao lưu. Dữ liệu của bạn không bị sửa đổi.</value>
+    <value>Không thể khôi phục bản sao lưu.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
     <value>Kiểu trình phát</value>
@@ -2102,25 +2159,25 @@
     <value>Đặc (Mờ đục)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Tùy chỉnh giao diện của trình phát nổi</value>
+    <value>Tùy chỉnh giao diện của thanh trình phát.</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
     <value>Cường độ màu sắc</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Điều chỉnh độ sống động của màu nền trình phát</value>
+    <value>Điều chỉnh độ đậm nhạt của màu nền trình phát.</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
-    <value>Thời lượng tăng âm dần</value>
+    <value>Thời gian mờ dần vào</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
-    <value>Thời lượng hiệu ứng tăng âm dần khi phát (ms)</value>
+    <value>Đặt thời gian âm lượng tăng dần khi tiếp tục phát.</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
-    <value>Thời lượng giảm âm dần</value>
+    <value>Thời gian giảm dần âm lượng</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
-    <value>Thời lượng hiệu ứng giảm âm dần khi tạm dừng (ms)</value>
+    <value>Đặt thời gian âm lượng giảm dần khi tạm dừng phát.</value>
   </data>
   <data name="Settings_Nav_Insights" xml:space="preserve">
     <value>Thống kê</value>
@@ -2132,13 +2189,13 @@
     <value>Tổng thời gian nghe</value>
   </data>
   <data name="InsightsPage_UniqueSongs" xml:space="preserve">
-    <value>Bài hát riêng biệt</value>
+    <value>Số bài hát riêng biệt</value>
   </data>
   <data name="InsightsPage_PeakHour" xml:space="preserve">
-    <value>Giờ cao điểm</value>
+    <value>Giờ nghe nhiều nhất</value>
   </data>
   <data name="InsightsPage_MostActiveDay" xml:space="preserve">
-    <value>Ngày hoạt động nhiều nhất</value>
+    <value>Ngày nghe nhiều nhất</value>
   </data>
   <data name="InsightsPage_TopSongs" xml:space="preserve">
     <value>Bài hát hàng đầu</value>
@@ -2162,7 +2219,7 @@
     <value>Bắt đầu phát nhạc để xem thống kê của bạn tại đây</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
-    <value>{0} lượt phát</value>
+    <value>Lượt phát: {0}</value>
   </data>
   <data name="InsightsPage_Source_Albums" xml:space="preserve">
     <value>Album</value>
@@ -2222,7 +2279,7 @@
     <value>Thời lượng</value>
   </data>
   <data name="PaginationControl_All" xml:space="preserve">
-    <value>All</value>
+    <value>Tất cả</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>Mục trên mỗi trang:</value>
@@ -2246,27 +2303,189 @@
     <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
-    <value>1 ngày trước</value>
+    <value>1 ngày qua</value>
   </data>
   <data name="Insights_TimeRange_Last7Days" xml:space="preserve">
-    <value>7 ngày trước</value>
+    <value>7 ngày qua</value>
   </data>
   <data name="Insights_TimeRange_Last30Days" xml:space="preserve">
-    <value>30 ngày trước</value>
+    <value>30 ngày qua</value>
   </data>
   <data name="Insights_TimeRange_Last90Days" xml:space="preserve">
-    <value>90 ngày trước</value>
+    <value>90 ngày qua</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>Năm trước</value>
+    <value>Năm qua</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
-    <value>Mọi lúc</value>
+    <value>Tất cả thời gian</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0} giờ {1} phút</value>
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
     <value>{0} phút {1} giây</value>
+  </data>
+  <data name="QueuePanel_EmptyTitle" xml:space="preserve">
+    <value>Hàng chờ của bạn đang trống</value>
+  </data>
+  <data name="QueuePanel_EmptyDescription" xml:space="preserve">
+    <value>Phát nhạc hoặc thả các tệp âm thanh vào đây để tạo hàng chờ của bạn.</value>
+  </data>
+  <data name="QueuePanel_LoadError" xml:space="preserve">
+    <value>Không thể tải một số bài hát. Chọn Thử lại để tải lại hàng chờ.</value>
+  </data>
+  <data name="QueuePanel_Retry" xml:space="preserve">
+    <value>Thử lại</value>
+  </data>
+  <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
+    <value>Không thể lưu thứ tự danh sách phát mới. Vui lòng thử lại.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
+    <value>Thiết bị đầu ra âm thanh</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Description" xml:space="preserve">
+    <value>Chọn nơi Nagi phát nhạc.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Default" xml:space="preserve">
+    <value>Mặc định hệ thống</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Unavailable" xml:space="preserve">
+    <value>Thiết bị đã lưu không khả dụng. Đang dùng mặc định hệ thống.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
+    <value>Không thể cập nhật đầu ra âm thanh. Hãy thử lại hoặc chọn một thiết bị khác.</value>
+  </data>
+  <data name="Listening_Random" xml:space="preserve">
+    <value>Trộn bài</value>
+  </data>
+  <data name="Listening_MoreVariety" xml:space="preserve">
+    <value>Đa dạng hơn</value>
+  </data>
+  <data name="Listening_Rediscover" xml:space="preserve">
+    <value>Khám phá lại</value>
+  </data>
+  <data name="Listening_Unheard" xml:space="preserve">
+    <value>Chưa từng nghe</value>
+  </data>
+  <data name="Listening_PlayFor" xml:space="preserve">
+    <value>Phát trong…</value>
+  </data>
+  <data name="Listening_Minutes" xml:space="preserve">
+    <value>Phút</value>
+  </data>
+  <data name="Listening_ShuffleMode" xml:space="preserve">
+    <value>Kiểu trộn</value>
+  </data>
+  <data name="Listening_AvoidRecentDays" xml:space="preserve">
+    <value>Tránh phát gần đây (Số ngày)</value>
+  </data>
+  <data name="Listening_MoreOptions" xml:space="preserve">
+    <value>Tùy chọn khác</value>
+  </data>
+  <data name="Listening_PlayForDescription" xml:space="preserve">
+    <value>Tạo hàng chờ các bài hát nguyên vẹn với tổng thời lượng không vượt quá khoảng thời gian bạn đã chọn.</value>
+  </data>
+  <data name="Listening_NoMixTitle" xml:space="preserve">
+    <value>Không có bài hát nào cho bản trộn này</value>
+  </data>
+  <data name="Listening_NoMixDescription" xml:space="preserve">
+    <value>Không có bài hát nào trong danh sách này đáp ứng các yêu cầu này. Hãy thử một bản trộn hoặc danh sách bài hát khác.</value>
+  </data>
+  <data name="Listening_Favorites" xml:space="preserve">
+    <value>Yêu thích</value>
+  </data>
+  <data name="Listening_AddFavorite" xml:space="preserve">
+    <value>Thêm vào danh sách yêu thích</value>
+  </data>
+  <data name="Listening_RemoveFavorite" xml:space="preserve">
+    <value>Xóa khỏi danh sách yêu thích</value>
+  </data>
+  <data name="Listening_SleepTimer" xml:space="preserve">
+    <value>Hẹn giờ ngủ</value>
+  </data>
+  <data name="Listening_FinishTrack" xml:space="preserve">
+    <value>Phát hết bài hát hiện tại khi hết giờ hẹn</value>
+  </data>
+  <data name="Listening_StopAfterTrack" xml:space="preserve">
+    <value>Dừng sau bài hát này</value>
+  </data>
+  <data name="Listening_StopAtQueueEnd" xml:space="preserve">
+    <value>Dừng khi hết hàng chờ</value>
+  </data>
+  <data name="Listening_StopPlayback" xml:space="preserve">
+    <value>Dừng phát</value>
+  </data>
+  <data name="Listening_CustomTimer" xml:space="preserve">
+    <value>Bộ hẹn giờ tùy chỉnh…</value>
+  </data>
+  <data name="Listening_Timer15" xml:space="preserve">
+    <value>Sau 15 phút</value>
+  </data>
+  <data name="Listening_Timer30" xml:space="preserve">
+    <value>Sau 30 phút</value>
+  </data>
+  <data name="Listening_Timer60" xml:space="preserve">
+    <value>Sau 60 phút</value>
+  </data>
+  <data name="Listening_CancelStop" xml:space="preserve">
+    <value>Hủy lịch dừng</value>
+  </data>
+  <data name="Listening_TimerRemaining" xml:space="preserve">
+    <value>Dừng sau {0}</value>
+  </data>
+  <data name="Listening_PlayerOptions" xml:space="preserve">
+    <value>Tùy chọn trình phát</value>
+  </data>
+  <data name="Listening_RecentlyPlayed" xml:space="preserve">
+    <value>Đã nghe gần đây</value>
+  </data>
+  <data name="Listening_HistorySearch" xml:space="preserve">
+    <value>Tìm kiếm lịch sử nghe</value>
+  </data>
+  <data name="Listening_HistoryEmpty" xml:space="preserve">
+    <value>Chưa có lịch sử nghe</value>
+  </data>
+  <data name="Listening_HistoryLoadError" xml:space="preserve">
+    <value>Không thể tải Đã nghe gần đây. Chọn Thử lại để thử lại.</value>
+  </data>
+  <data name="Listening_Today" xml:space="preserve">
+    <value>Hôm nay</value>
+  </data>
+  <data name="Listening_Yesterday" xml:space="preserve">
+    <value>Hôm qua</value>
+  </data>
+  <data name="Listening_RediscoveryReason" xml:space="preserve">
+    <value>Phát lần cuối vào {0:d}</value>
+  </data>
+  <data name="Listening_RediscoveryTitle" xml:space="preserve">
+    <value>Đáng để nghe lại</value>
+  </data>
+  <data name="Listening_Dismiss" xml:space="preserve">
+    <value>Bỏ qua</value>
+  </data>
+  <data name="Listening_ActionError" xml:space="preserve">
+    <value>Không thể hoàn thành hành động này. Vui lòng thử lại.</value>
+  </data>
+  <data name="Listening_FavoritesEmpty" xml:space="preserve">
+    <value>Chưa có bài hát yêu thích</value>
+  </data>
+  <data name="Listening_FavoritesEmptyDescription" xml:space="preserve">
+    <value>Thêm bài hát vào danh sách yêu thích từ menu của bài hát, hoặc chọn bài hát và nhấn Ctrl+D.</value>
+  </data>
+  <data name="Listening_VarietyDescription" xml:space="preserve">
+    <value>Chế độ Đa dạng hơn sẽ tránh các bài hát đã phát trong khoảng thời gian phát gần đây và tách các bài hát của cùng một nghệ sĩ nếu có thể.</value>
+  </data>
+  <data name="Listening_RediscoverDescription" xml:space="preserve">
+    <value>Chế độ Khám phá lại sử dụng các bài hát có ghi nhận lượt phát trong Nagi mà lần cuối được phát là hơn 30 ngày trước.</value>
+  </data>
+  <data name="Listening_UnheardDescription" xml:space="preserve">
+    <value>Chế độ Chưa từng nghe sử dụng các bài hát chưa có ghi nhận lượt phát trong Nagi.</value>
+  </data>
+  <data name="Listening_HistoryNoMatches" xml:space="preserve">
+    <value>Không có lượt nghe nào khớp với tìm kiếm của bạn</value>
+  </data>
+  <data name="Listening_NoTimedMixDescription" xml:space="preserve">
+    <value>Không có bài hát nào trong danh sách này đáp ứng các yêu cầu trộn và phù hợp với thời lượng bạn đã chọn. Hãy thử thời lượng dài hơn, một bản trộn khác hoặc một danh sách bài hát khác.</value>
   </data>
 </root>

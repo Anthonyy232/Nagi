@@ -102,7 +102,7 @@
     <value>Номер треку</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Кількість відтворень</value>
+    <value>Відтворень</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>Пісні</value>
@@ -178,11 +178,11 @@
     <value>Сканування завершено. Додано або оновлено {0} {1}.</value>
   </data>
   <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Збереження партії {0}...</value>
+    <value>Збереження пакету {0}…</value>
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Сканування папки...</value>
+    <value>Сканування папки…</value>
   </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Сканування завершено. Бібліотека актуальна.</value>
@@ -194,16 +194,16 @@
     <value>Помилка сканування. Перевірте журнали для деталей.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Підготовка кешів сканування...</value>
+    <value>Підготовка до сканування бібліотеки…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Читання деталей пісні...</value>
+    <value>Зчитування відомостей про пісні…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Очищення вашої бібліотеки...</value>
+    <value>Очищення вашої бібліотеки…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Завершення...</value>
+    <value>Завершення…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Не вдалося нормалізувати гучність. Перевірте журнали для деталей.</value>
@@ -248,7 +248,15 @@
     <value>Сортувати за: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg потрібен для високоточного вирівнювання гучності (аналіз ReplayGain), але його не знайдено у вашій системі.\n\nВиконайте такі кроки для налаштування:\n\n1. **Завантажте**: Відвідайте https://www.gyan.dev/ffmpeg/builds/ та завантажте 'ffmpeg-git-full.7z' (або подібну) основну збірку.\n2. **Посібник**: Ви можете дотримуватися цього посібника для детальних інструкцій: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Видобудьте**: Відкрийте папку архітектури та знайдіть каталог 'bin', що містить `ffmpeg.exe`.\n4. **Встановіть**: Скопіюйте `ffmpeg.exe` до постійної папки (наприклад, `C:\ffmpeg\`) та **додайте цю папку до змінної середовища System PATH**.\n5. **Перезапустіть**: Будь ласка, перезапустіть Nagi після встановлення, щоб зміни набули чинності.</value>
+    <value>FFmpeg потрібен для аналізу пісень для нормалізації гучності, але Nagi не вдалося його знайти.
+
+1. Завантажте збірку для Windows із https://ffmpeg.org/download.html.
+2. Розархівуйте архів і знайдіть ffmpeg.exe у його папці bin.
+3. Додайте папку з ffmpeg.exe до змінної PATH у Windows.
+4. Перезапустіть Nagi, а потім знову увімкніть нормалізацію гучності.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>Список відтворення було створено, але його пісні не вдалося додати. Спробуйте імпортувати знову.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Пісень зі списку відтворення не знайдено у вашій бібліотеці.</value>
@@ -293,12 +301,39 @@
     <value>Всі пісні вже мають дані про гучність.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Обчислення гучності для {0} пісень...</value>
+    <value>Аналіз гучності… Пісні: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Обчислення нормалізації гучності ({0}/{1})...</value>
+    <value>Обчислення нормалізації гучності ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Нормалізацію гучності завершено. Оброблені {0} пісень.</value>
+    <value>Нормалізацію гучності завершено. Опрацьовано пісень: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Введіть ваш токен користувача ListenBrainz.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Не вдалося прочитати відповідь від ListenBrainz. Спробуйте пізніше.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Введіть URL-адресу сервера, яка починається з http:// або https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Токен користувача недійсний. Перевірте його та спробуйте знову.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz повернув помилку (HTTP {0}). Спробуйте пізніше.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Не вдалося підключитися до ListenBrainz. Перевірте з'єднання та URL-адресу сервера.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi не вдалося знайти папку даних бібліотеки.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Не вдалося виконати відновлення, і ваші попередні дані не вдалося відновити повністю. Файли відновлення збережено в &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Вибраний файл не є дійсним файлом резервної копії Nagi.</value>
   </data>
 </root>

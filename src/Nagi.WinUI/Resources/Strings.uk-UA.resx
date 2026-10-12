@@ -76,6 +76,9 @@
   <data name="NavItem_Folders" xml:space="preserve">
     <value>Папки</value>
   </data>
+  <data name="NavItem_Favorites" xml:space="preserve">
+    <value>Улюблені</value>
+  </data>
   <data name="NavItem_Insights" xml:space="preserve">
     <value>Аналітика</value>
   </data>
@@ -83,7 +86,7 @@
     <value>Налаштування</value>
   </data>
   <data name="Status_NoTrackPlaying" xml:space="preserve">
-    <value>Трек не відтворюється</value>
+    <value>Нічого не відтворюється</value>
   </data>
   <data name="Tooltip_Play" xml:space="preserve">
     <value>Відтворити</value>
@@ -122,7 +125,7 @@
     <value>Темна</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">
-    <value>Використовувати системні налаштування</value>
+    <value>Системний за замовчуванням</value>
   </data>
   <data name="Backdrop_Mica" xml:space="preserve">
     <value>Mica</value>
@@ -141,6 +144,39 @@
   </data>
   <data name="Label_Rating" xml:space="preserve">
     <value>Рейтинг</value>
+  </data>
+  <data name="Label_Grouping" xml:space="preserve">
+    <value>Групування</value>
+  </data>
+  <data name="Label_SkipCount" xml:space="preserve">
+    <value>Кількість пропусків</value>
+  </data>
+  <data name="Label_DiscNumber" xml:space="preserve">
+    <value>Номер диска</value>
+  </data>
+  <data name="Label_Bitrate" xml:space="preserve">
+    <value>Бітрейт</value>
+  </data>
+  <data name="Label_SampleRate" xml:space="preserve">
+    <value>Частота дискретизації</value>
+  </data>
+  <data name="Label_IsLoved" xml:space="preserve">
+    <value>Улюблене</value>
+  </data>
+  <data name="Label_HasLyrics" xml:space="preserve">
+    <value>Має текст пісні</value>
+  </data>
+  <data name="Operator_IsInRange" xml:space="preserve">
+    <value>Входить до діапазону (включно)</value>
+  </data>
+  <data name="Operator_IsAfter" xml:space="preserve">
+    <value>Пізніше ніж</value>
+  </data>
+  <data name="Operator_IsBefore" xml:space="preserve">
+    <value>Раніше ніж</value>
+  </data>
+  <data name="SmartPlaylist_UpperBound_Placeholder" xml:space="preserve">
+    <value>Максимальне значення</value>
   </data>
   <data name="Operator_Contains" xml:space="preserve">
     <value>Містить</value>
@@ -179,10 +215,10 @@
     <value>Щонайбільше</value>
   </data>
   <data name="Operator_IsInTheLast" xml:space="preserve">
-    <value>За останні (дні)</value>
+    <value>За останні (днів)</value>
   </data>
   <data name="Operator_IsNotInTheLast" xml:space="preserve">
-    <value>Не за останні (дні)</value>
+    <value>Не за останні (днів)</value>
   </data>
   <data name="Operator_IsTrue" xml:space="preserve">
     <value>Істина</value>
@@ -194,31 +230,31 @@
     <value>Новий розумний список відтворення</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>Редагувати розумний список відтворення - {0}</value>
+    <value>Редагувати розумний плейлист: {0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
     <value>Введіть назву списку відтворення</value>
   </data>
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
-    <value>{0} пісень відповідають поточним правилам</value>
+    <value>Відповідних пісень: {0:N0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Введіть назву, щоб побачити відповідні пісні</value>
+    <value>Введіть назву плейлиста, щоб побачити відповідні пісні</value>
   </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
-    <value>Неможливо обчислити</value>
+    <value>Не вдалося порахувати відповідні пісні</value>
   </data>
   <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
-    <value>Обчислення...</value>
+    <value>Обчислення…</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>Список відтворення з такою назвою вже існує!</value>
+    <value>Плейлист із такою назвою вже існує.</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>Будь ласка, введіть назву!</value>
+    <value>Введіть назву плейлиста.</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
-    <value>Завантаження...</value>
+    <value>Завантаження…</value>
   </data>
   <data name="Error_FailedToLoadArtists" xml:space="preserve">
     <value>Не вдалося завантажити виконавців</value>
@@ -227,13 +263,15 @@
     <value>Критична помилка</value>
   </data>
   <data name="CrashReport_Message" xml:space="preserve">
-    <value>У Nagi сталася критична помилка, і програма має закритися. Вибачте за незручності.</value>
+    <value>Сталася помилка, Nagi необхідно закрити.</value>
   </data>
   <data name="ElevationWarning_Title" xml:space="preserve">
     <value>Запущено від імені адміністратора</value>
   </data>
   <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi зараз працює від імені адміністратора. Це може перешкоджати коректній роботі деяких функцій (наприклад, додавання музичних папок). Для кращого досвіду, будь ласка, перезапустіть Nagi без прав адміністратора.</value>
+    <value>Nagi зараз працює від імені адміністратора. Це може перешкоджати коректній роботі деяких функцій (наприклад, додавання музичних папок).
+
+Для кращого досвіду, будь ласка, перезапустіть Nagi без прав адміністратора.</value>
   </data>
   <data name="ElevationWarning_Restart" xml:space="preserve">
     <value>Перезапустити нормально</value>
@@ -263,7 +301,7 @@
     <value>{0} пісня</value>
   </data>
   <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} пісень</value>
+    <value>{0, plural, one {# пісня} few {# пісні} many {# пісень} other {# пісні}}</value>
   </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Виконавця не знайдено</value>
@@ -293,16 +331,16 @@
     <value>Ця папка вже є в бібліотеці.</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
-    <value>Додавання папки до бібліотеки...</value>
+    <value>Додавання папки до бібліотеки…</value>
   </data>
   <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Папку '{0}' успішно видалено.</value>
+    <value>Вилучено &apos;{0}&apos; з вашої бібліотеки.</value>
   </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
-    <value>Не вдалося видалити папку '{0}'.</value>
+    <value>Не вдалося вилучити &apos;{0}&apos; з вашої бібліотеки.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
-    <value>Видалення '{0}'...</value>
+    <value>Вилучення &apos;{0}&apos; з вашої бібліотеки…</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
     <value>Повторне сканування '{0}' завершено.</value>
@@ -311,7 +349,7 @@
     <value>Змін для '{0}' не виявлено.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
-    <value>Повторне сканування '{0}'...</value>
+    <value>Повторне сканування «{0}»…</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
     <value>Не знайдено папок з музикою.</value>
@@ -326,7 +364,7 @@
     <value>Помилка додавання папки: {0}</value>
   </data>
   <data name="Folders_Error_DeleteFolder" xml:space="preserve">
-    <value>Помилка видалення папки: {0}</value>
+    <value>Не вдалося вилучити папку з бібліотеки: {0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Помилка повторного сканування папки: {0}</value>
@@ -335,25 +373,25 @@
     <value>{0} папка</value>
   </data>
   <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} папок</value>
+    <value>{0, plural, one {# папка} few {# папки} many {# папок} other {# папки}}</value>
   </data>
   <data name="Songs_Count_Singular" xml:space="preserve">
     <value>{0} пісня</value>
   </data>
   <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} пісень</value>
+    <value>{0, plural, one {# пісня} few {# пісні} many {# пісень} other {# пісні}}</value>
   </data>
   <data name="Albums_Count_Singular" xml:space="preserve">
     <value>{0} альбом</value>
   </data>
   <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} альбомів</value>
+    <value>{0, plural, one {# альбом} few {# альбоми} many {# альбомів} other {# альбому}}</value>
   </data>
   <data name="Artists_Count_Singular" xml:space="preserve">
     <value>{0} виконавець</value>
   </data>
   <data name="Artists_Count_Plural" xml:space="preserve">
-    <value>{0} виконавців</value>
+    <value>{0, plural, one {# виконавець} few {# виконавці} many {# виконавців} other {# виконавця}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Немає елементів</value>
@@ -377,10 +415,10 @@
     <value>Давайте налаштуємо вашу музичну бібліотеку, щоб почати.</value>
   </data>
   <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>Чекаємо, поки ви виберете папку...</value>
+    <value>Очікування вибору папки…</value>
   </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
-    <value>Створення вашої бібліотеки...</value>
+    <value>Створення вашої бібліотеки…</value>
   </data>
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Виникла несподівана помилка. Будь ласка, спробуйте ще раз.</value>
@@ -389,19 +427,19 @@
     <value>Розумний • {0} пісня</value>
   </data>
   <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Розумний • {0} пісень</value>
+    <value>Розумний • {0, plural, one {# пісня} few {# пісні} many {# пісень} other {# пісні}}</value>
   </data>
   <data name="Playlist_Count_Singular" xml:space="preserve">
     <value>{0} пісня</value>
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} пісень</value>
+    <value>{0, plural, one {# пісня} few {# пісні} many {# пісень} other {# пісні}}</value>
   </data>
   <data name="Playlist_ErrorLoading" xml:space="preserve">
     <value>Помилка завантаження списку відтворення</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Запуск списку відтворення...</value>
+    <value>Запуск плейлиста…</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Жодна пісня не відповідає правилам цього розумного списку відтворення.</value>
@@ -410,7 +448,7 @@
     <value>Помилка початку відтворення для цього списку відтворення.</value>
   </data>
   <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Вибір випадкового списку відтворення...</value>
+    <value>Вибір випадкового плейлиста…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Списки відтворення не знайдено.</value>
@@ -422,13 +460,13 @@
     <value>Помилка відтворення випадкового списку відтворення.</value>
   </data>
   <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Завантаження списків відтворення...</value>
+    <value>Завантаження плейлистів…</value>
   </data>
   <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
     <value>Помилка завантаження списків відтворення.</value>
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Створення нового списку відтворення...</value>
+    <value>Створення нового плейлиста…</value>
   </data>
   <data name="Playlist_Status_CreateFailed" xml:space="preserve">
     <value>Не вдалося створити список відтворення. Можливо, він вже існує.</value>
@@ -437,7 +475,7 @@
     <value>Виникла помилка під час створення списку відтворення.</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Оновлення обкладинки списку відтворення...</value>
+    <value>Оновлення обкладинки плейлиста…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Не вдалося оновити обкладинку списку відтворення.</value>
@@ -446,7 +484,7 @@
     <value>Виникла помилка під час оновлення обкладинки списку відтворення.</value>
   </data>
   <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Видалення зображення списку відтворення...</value>
+    <value>Вилучення зображення плейлиста…</value>
   </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Не вдалося видалити зображення списку відтворення.</value>
@@ -455,7 +493,7 @@
     <value>Виникла помилка під час видалення зображення списку відтворення.</value>
   </data>
   <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Перейменування списку відтворення...</value>
+    <value>Перейменування плейлиста…</value>
   </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Не вдалося перейменувати список відтворення.</value>
@@ -464,7 +502,7 @@
     <value>Виникла помилка під час перейменування списку відтворення.</value>
   </data>
   <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Видалення списку відтворення...</value>
+    <value>Видалення плейлиста…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Не вдалося видалити список відтворення.</value>
@@ -512,8 +550,9 @@
     <value>Експорт успішний</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>Експортовано {0} списків відтворення ({1} загалом пісень) до:
-{2}</value>
+    <value>Експортовано плейлистів: {0}
+Пісень: {1}
+Збережено до: {2}</value>
   </data>
   <data name="Settings_Export_Failed_Title" xml:space="preserve">
     <value>Помилка експорту</value>
@@ -522,17 +561,18 @@
     <value>Імпорт успішний</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>Успішно імпортовано {0} списків відтворення ({1} пісень).</value>
+    <value>Імпортовано плейлистів: {0}
+Пісень: {1}</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
     <value>
 
-{0} пісень не знайдено у вашій бібліотеці.</value>
+Пісні, не знайдені у вашій бібліотеці: {0}.</value>
   </data>
   <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
     <value>
 
-{0} файлів не вдалося імпортувати.</value>
+Файли, які не вдалося імпортувати: {0}.</value>
   </data>
   <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
     <value>Помилка імпорту</value>
@@ -574,7 +614,7 @@
     <value>{0} елемент</value>
   </data>
   <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
-    <value>{0} елементів</value>
+    <value>{0, plural, one {# елемент} few {# елементи} many {# елементів} other {# елемента}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>Вибрано: {0}</value>
@@ -601,10 +641,10 @@
     <value>FFmpeg не виявлено. Будь ласка, встановіть FFmpeg і натисніть 'Перевірити ще раз'.</value>
   </data>
   <data name="FFmpeg_Status_Checking" xml:space="preserve">
-    <value>Перевірка FFmpeg...</value>
+    <value>Перевірка наявності FFmpeg…</value>
   </data>
   <data name="FFmpeg_Status_Detected" xml:space="preserve">
-    <value>FFmpeg виявлено!</value>
+    <value>Виявлено FFmpeg.</value>
   </data>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg все ще не виявлено. Будь ласка, встановіть FFmpeg і натисніть 'Перевірити ще раз'.</value>
@@ -772,13 +812,13 @@
     <value>Немає доступних списків відтворення</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
-    <value>Видалити папку</value>
+    <value>Вилучити папку</value>
   </data>
   <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
-    <value>Ви впевнені, що хочете видалити папку '{0}' з бібліотеки? Це не видалить файли з вашого комп'ютера.</value>
+    <value>Вилучити &apos;{0}&apos; з вашої бібліотеки? Ваші аудіофайли залишаться на комп’ютері.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
-    <value>Видалити</value>
+    <value>Вилучити</value>
   </data>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Скасувати</value>
@@ -817,10 +857,10 @@
     <value>Пошук списків відтворення</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>Введіть назву нового списку відтворення</value>
+    <value>Введіть назву плейлиста</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
-    <value>Вибрати зображення</value>
+    <value>Вибрати обкладинку</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
     <value>Створити новий список відтворення</value>
@@ -856,7 +896,7 @@
     <value>Закрити пошук</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Пошук у бібліотеці</value>
+    <value>Шукати в жанрі</value>
   </data>
   <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Немає доступних списків відтворення</value>
@@ -877,13 +917,13 @@
     <value>Повторно сканувати метадані</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>Це повторно просканує всі пісні у вашій бібліотеці для застосування нових налаштувань метаданих (наприклад, символів розділення виконавців). Це може зайняти деякий час залежно від розміру бібліотеки. Хочете продовжити?</value>
+    <value>Повторно зіскануйте бібліотеку, щоб застосувати налаштування метаданих, як-от розділення виконавців. Для великих бібліотек це може зайняти трохи часу. Продовжити?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
     <value>Повторно сканувати</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
-    <value>Підготовка до повторного сканування бібліотеки...</value>
+    <value>Підготовка до повторного сканування бібліотеки…</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
     <value>Повторне сканування завершено</value>
@@ -914,7 +954,7 @@
     <value>Увімкнути та сканувати</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>Підготовка до сканування нормалізації гучності...</value>
+    <value>Підготовка до сканування нормалізації гучності…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
     <value>Сканування нормалізації гучності скасовано.</value>
@@ -1051,7 +1091,7 @@
     <value>Nagi</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Відкрийте заново свою локальну музичну колекцію з Nagi — музичним програвачем, орієнтованим на швидкість, простоту та конфіденційність. Nagi створено на C# та WinUI 3, щоб запропонувати чистий, нативний досвід Fluent. Він красивий, ефективний та поважає вашу конфіденційність.</value>
+    <value>Відкрийте заново свою локальну музичну колекцію з Nagi — музичним програвачем, створеним з акцентом на швидкість, простоту та приватність.</value>
   </data>
   <data name="AppShortName" xml:space="preserve">
     <value>Nagi</value>
@@ -1081,58 +1121,58 @@
     <value>Перейти до альбому</value>
   </data>
   <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Drop files or folders onto the player to add them to the queue.</value>
+    <value>Перетягніть файли або папки у програвач, щоб додати їх до черги.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Далі грає</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
-    <value>Clear queue</value>
+    <value>Очистити чергу</value>
   </data>
   <data name="QueuePanel_DisplayOptions" xml:space="preserve">
-    <value>Queue display options</value>
+    <value>Параметри відображення черги</value>
   </data>
   <data name="QueuePanel_Close" xml:space="preserve">
-    <value>Close queue</value>
+    <value>Закрити чергу</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
-    <value>Artist</value>
+    <value>Виконавець</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
-    <value>Duration</value>
+    <value>Тривалість</value>
   </data>
   <data name="QueuePanel_ShowTrackCount" xml:space="preserve">
-    <value>Track count</value>
+    <value>Кількість треків</value>
   </data>
   <data name="QueuePanel_TrackCount" xml:space="preserve">
-    <value>Tracks: {0:N0}</value>
+    <value>Треків: {0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
-    <value>Queue position</value>
+    <value>Позиція в черзі</value>
   </data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve">
-    <value>Genre</value>
+    <value>Жанр</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
-    <value>Total duration</value>
+    <value>Загальна тривалість</value>
   </data>
   <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Відтворити</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
-    <value>Move up</value>
+    <value>Перемістити вгору</value>
   </data>
   <data name="QueuePanel_MoveDown" xml:space="preserve">
-    <value>Move down</value>
+    <value>Перемістити вниз</value>
   </data>
   <data name="QueuePanel_Remove" xml:space="preserve">
-    <value>Remove from queue</value>
+    <value>Вилучити з черги</value>
   </data>
   <data name="AlbumPage_Title" xml:space="preserve">
     <value>Альбоми</value>
   </data>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Пошук альбомів...</value>
+    <value>Пошук альбомів…</value>
   </data>
   <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Пошук альбомів</value>
@@ -1156,7 +1196,7 @@
     <value>Пісні</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Пошук в альбомі...</value>
+    <value>Шукати в альбомі…</value>
   </data>
   <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Пошук в альбомі</value>
@@ -1177,13 +1217,13 @@
     <value>Додати до черги</value>
   </data>
   <data name="AlbumViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Додати до списку відтворення</value>
+    <value>Додати до плейлиста</value>
   </data>
   <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
     <value>Перейти до виконавця</value>
   </data>
   <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Показати в провіднику</value>
+    <value>Показати у Провіднику</value>
   </data>
   <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Відтворити</value>
@@ -1198,7 +1238,7 @@
     <value>Виконавці</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Пошук виконавців...</value>
+    <value>Пошук виконавців…</value>
   </data>
   <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Пошук виконавців</value>
@@ -1240,7 +1280,7 @@
     <value>Пісні</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Пошук у виконавці...</value>
+    <value>Шукати у виконавця…</value>
   </data>
   <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Пошук у виконавці</value>
@@ -1261,13 +1301,13 @@
     <value>Додати до черги</value>
   </data>
   <data name="ArtistViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Додати до списку відтворення</value>
+    <value>Додати до плейлиста</value>
   </data>
   <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
     <value>Перейти до альбому</value>
   </data>
   <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Показати в провіднику</value>
+    <value>Показати у Провіднику</value>
   </data>
   <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Відтворити</value>
@@ -1297,7 +1337,7 @@
     <value>Повторне сканування</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>Видалити</value>
+    <value>Вилучити з бібліотеки</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Папки ще не додано</value>
@@ -1309,7 +1349,7 @@
     <value>Відтворити</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>Додати до списку відтворення</value>
+    <value>Додати до плейлиста</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_Play" xml:space="preserve">
     <value>Відтворити</value>
@@ -1321,7 +1361,7 @@
     <value>Додати до черги</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Додати до списку відтворення</value>
+    <value>Додати до плейлиста</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
     <value>Перейти до альбому</value>
@@ -1330,7 +1370,7 @@
     <value>Перейти до виконавця</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Показати в провіднику</value>
+    <value>Показати у Провіднику</value>
   </data>
   <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Відтворити</value>
@@ -1342,7 +1382,7 @@
     <value>Пісні</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Пошук у папці...</value>
+    <value>Шукати в папці…</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Пошук у папці</value>
@@ -1363,7 +1403,7 @@
     <value>Жанри</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Пошук жанрів...</value>
+    <value>Пошук жанрів…</value>
   </data>
   <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
     <value>Пошук жанрів</value>
@@ -1384,7 +1424,7 @@
     <value>Бібліотека</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Пошук у бібліотеці...</value>
+    <value>Пошук у бібліотеці…</value>
   </data>
   <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Пошук у бібліотеці</value>
@@ -1405,7 +1445,7 @@
     <value>Додати до черги</value>
   </data>
   <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Додати до списку відтворення</value>
+    <value>Додати до плейлиста</value>
   </data>
   <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
     <value>Перейти до альбому</value>
@@ -1414,10 +1454,16 @@
     <value>Перейти до виконавця</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Показати в провіднику</value>
+    <value>Показати у Провіднику</value>
   </data>
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Відтворити</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
+    <value>Пісень не знайдено</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+    <value>Спробуйте пошукати щось інше</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
     <value>Ваша бібліотека порожня</value>
@@ -1426,31 +1472,31 @@
     <value>Додайте папки до своєї бібліотеки в Налаштуваннях</value>
   </data>
   <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
-    <value>Текст пісні для цього треку не знайдено</value>
+    <value>Текст для цієї пісні не знайдено</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
     <value>Спробуйте іншу пісню</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
-    <value>Edit or replace lyrics</value>
+    <value>Редагувати або замінити текст пісні</value>
   </data>
   <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
-    <value>Edit lyrics</value>
+    <value>Редагувати текст пісні</value>
   </data>
   <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
-    <value>Paste plain text or timestamped LRC lyrics</value>
+    <value>Вставте звичайний текст або LRC-текст з мітками часу</value>
   </data>
   <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
-    <value>Save</value>
+    <value>Зберегти</value>
   </data>
   <data name="LyricsPage_EditLyrics_Remove" xml:space="preserve">
-    <value>Remove saved lyrics</value>
+    <value>Вилучити збережений текст пісні</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
-    <value>Lyrics could not be updated</value>
+    <value>Не вдалося оновити текст пісні</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Nagi could not save the lyrics. Check the log for details and try again.</value>
+    <value>Nagi не вдалося зберегти текст пісні. Перевірте журнал подій для детальної інформації та спробуйте знову.</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Ласкаво просимо до Nagi</value>
@@ -1465,7 +1511,7 @@
     <value>Списки відтворення</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Пошук списків відтворення...</value>
+    <value>Пошук плейлистів…</value>
   </data>
   <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Пошук списків відтворення</value>
@@ -1513,7 +1559,7 @@
     <value>Пісні</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Пошук у списку відтворення...</value>
+    <value>Шукати в плейлисті…</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Пошук у списку відтворення</value>
@@ -1540,10 +1586,10 @@
     <value>Перейти до виконавця</value>
   </data>
   <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Показати в провіднику</value>
+    <value>Показати у Провіднику</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
-    <value>Видалити зі списку відтворення</value>
+    <value>Вилучити з плейлиста</value>
   </data>
   <data name="PlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Відтворити</value>
@@ -1561,7 +1607,7 @@
     <value>Пісні</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Пошук у жанрі...</value>
+    <value>Шукати в жанрі…</value>
   </data>
   <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Пошук у жанрі</value>
@@ -1582,7 +1628,7 @@
     <value>Додати до черги</value>
   </data>
   <data name="GenreViewPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Додати до списку відтворення</value>
+    <value>Додати до плейлиста</value>
   </data>
   <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
     <value>Перейти до альбому</value>
@@ -1591,7 +1637,7 @@
     <value>Перейти до виконавця</value>
   </data>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Показати в провіднику</value>
+    <value>Показати у Провіднику</value>
   </data>
   <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
     <value>Списки відтворення відсутні</value>
@@ -1615,40 +1661,40 @@
     <value>Тема</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>Виберіть тему програми.</value>
+    <value>Оберіть світлу, темну або системну тему.</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
     <value>Колір акценту</value>
   </data>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
-    <value>Скинути до стандартних</value>
+    <value>Скинути за замовчуванням</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Матеріал вікна</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Description" xml:space="preserve">
-    <value>Виберіть матеріал фону для вікна.</value>
+    <value>Виберіть матеріал фону вікна.</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
     <value>Динамічна тема</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>Увімкніть та налаштуйте параметри динамічної теми.</value>
+    <value>Узгоджувати кольори програми з обкладинкою поточного альбому.</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
-    <value>Запам'ятати розмір вікна</value>
+    <value>Запам'ятовувати розмір вікна</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Description" xml:space="preserve">
     <value>Відновити головне вікно до його попереднього розміру при наступному запуску.</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Header" xml:space="preserve">
-    <value>Запам'ятати позицію вікна</value>
+    <value>Запам'ятовувати позицію вікна</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Description" xml:space="preserve">
     <value>Відновити головне вікно до його попереднього розташування на екрані при наступному запуску.</value>
   </data>
   <data name="SettingsPage_RememberNavState_Header" xml:space="preserve">
-    <value>Запам'ятати стан панелі навігації</value>
+    <value>Запам'ятовувати стан панелі навігації</value>
   </data>
   <data name="SettingsPage_RememberNavState_Description" xml:space="preserve">
     <value>Залишити ліву панель навігації відкритою або закритою так, як ви її залишили.</value>
@@ -1666,13 +1712,13 @@
     <value>Нормалізація гучності (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Автоматично налаштовувати гучність до стандартного рівня (-18 LUFS), щоб уникнути раптових змін гучності.</value>
+    <value>Зменшуйте різницю в гучності між піснями за допомогою ReplayGain.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
-    <value>WASAPI exclusive mode</value>
+    <value>Ексклюзивний режим WASAPI</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+    <value>Надати Nagi ексклюзивний контроль над аудіопристроєм Windows. Інші програми можуть не відтворювати звук. Перезапустіть Nagi після зміни цього налаштування.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>Згасання при відтворенні / паузі</value>
@@ -1684,7 +1730,7 @@
     <value>Аудіо еквалайзер</value>
   </data>
   <data name="SettingsPage_ResetEqualizer_Content" xml:space="preserve">
-    <value>Скинути до стандартних</value>
+    <value>Скинути за замовчуванням</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Попередній підсилювач</value>
@@ -1696,25 +1742,25 @@
     <value>Налаштувати елементи керування програвача</value>
   </data>
   <data name="SettingsPage_ResetPlayerButtons_Content" xml:space="preserve">
-    <value>Скинути до стандартних</value>
+    <value>Скинути за замовчуванням</value>
   </data>
   <data name="SettingsPage_CustomizePlayer_Instructions" xml:space="preserve">
     <value>Наведіть курсор, щоб перемкнути видимість. Перетягніть, щоб змінити порядок. Роздільник відокремлює центральні та праві елементи керування.</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Header" xml:space="preserve">
-    <value>Згортаний програвач</value>
+    <value>Згортний програвач</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>Анімувати панель програвача для розгортання та згортання.</value>
+    <value>Розгортати панель програвача під час наведення вказівника.</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
-    <value>Відновити стан відтворення</value>
+    <value>Відновлювати стан відтворення</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>Зберегти поточний стан відтворення для продовження при наступному запуску.</value>
+    <value>Відновлювати чергу та позицію відтворення під час запуску Nagi.</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
-    <value>Автозапуск при вході</value>
+    <value>Автоматичний запуск під час старту системи</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
     <value>Автоматично запускати Nagi, коли ви входите в систему.</value>
@@ -1723,28 +1769,28 @@
     <value>Запускати згорнутим</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>При запуску вікно програми буде згорнуто за замовчуванням.</value>
+    <value>Запускати Nagi зі згорнутим вікном.</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
-    <value>Згорнути до міні-програвача</value>
+    <value>Згортати в мініпрогравач</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Description" xml:space="preserve">
     <value>При згортанні показувати компактний плаваючий програвач замість приховування вікна.</value>
   </data>
   <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
-    <value>Приховати в системний трей</value>
+    <value>Ховати в системний трей</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>При закритті ховати до системного трею замість виходу.</value>
+    <value>Залишати Nagi працювати у треї після закриття вікна.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
-    <value>Показати обкладинку у спливаючому вікні</value>
+    <value>Показувати обкладинку у випливаючому вікні</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
     <value>Відображати обкладинку в компактному програвачі, який з'являється при натисканні на піктограму в треї.</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
-    <value>Ігнорувати артиклі при сортуванні</value>
+    <value>Ігнорувати артиклі під час сортування</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
     <value>Сортувати альбоми, виконавців та пісні за їхнім першим значущим словом (наприклад, "The Beatles" сортується під літерою "Б").</value>
@@ -1771,10 +1817,10 @@
     <value>Повторно просканувати бібліотеку, щоб застосувати зміни в розділенні</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
-    <value>Отримати онлайн-метадані</value>
+    <value>Отримувати метадані з мережі</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Отримувати додаткову інформацію, таку як зображення виконавців та біографії, з онлайн-сервісів (наприклад, Spotify, Last.fm).</value>
+    <value>Завантажувати зображення та біографії виконавців з онлайн-джерел.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Джерела</value>
@@ -1783,10 +1829,10 @@
     <value>Перетягніть, щоб змінити порядок джерел метаданих. Наведіть курсор на кожне джерело для отримання деталей.</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Header" xml:space="preserve">
-    <value>Отримати онлайн-тексти пісень</value>
+    <value>Завантажувати тексти пісень з мережі</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>Автоматично отримувати відсутні тексти пісень з онлайн-джерел. (Конфіденційність: надсилає метадані треку стороннім сервісам)</value>
+    <value>Завантажувати відсутні тексти пісень з онлайн-джерел. Це надсилає метадані пісень стороннім сервісам.</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
     <value>Джерела</value>
@@ -1795,7 +1841,7 @@
     <value>Перетягніть, щоб змінити порядок джерел текстів пісень. Наведіть курсор на кожне джерело для отримання деталей.</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
-    <value>Показувати романізовані тексти пісень</value>
+    <value>Показувати текст романізацією</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
     <value>Показувати менший романізований рядок під підтримуваними текстами пісень, якщо встановлений пакет відповідає скрипту.</value>
@@ -1804,7 +1850,7 @@
     <value>Мовні пакети</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>Встановіть мови, які ви хочете романізувати. Пакети підписані, містять лише дані та зберігаються локально.</value>
+    <value>Установлюйте мовні пакети для романізації текстів пісень. Пакети зберігаються локально.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
     <value>Оновити</value>
@@ -1843,25 +1889,25 @@
     <value>Ліцензія {0}</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>Експорт/Імпорт списків відтворення</value>
+    <value>Імпорт та експорт плейлистів</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
     <value>Експортуйте списки відтворення у файли M3U для використання в інших програвачах або імпортуйте списки відтворення M3U в Nagi.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
-    <value>Експортувати все...</value>
+    <value>Експортувати все…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
     <value>Експортувати всі списки відтворення до папки</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
-    <value>Імпорт...</value>
+    <value>Імпортувати…</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
     <value>Імпортувати один або декілька файлів M3U</value>
   </data>
   <data name="SettingsPage_ResetApp_Header" xml:space="preserve">
-    <value>Скинути додаток</value>
+    <value>Скинути налаштування програми</value>
   </data>
   <data name="SettingsPage_ResetApp_Description" xml:space="preserve">
     <value>Це видалить усі дані бібліотеки, списки відтворення та скине всі налаштування до стандартних. Додаток буде перезапущено.</value>
@@ -1897,13 +1943,13 @@
     <value>Автоматично додавати треки, які ви слухаєте в Nagi, до вашого профілю Last.fm.</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
-    <value>Оновити 'Зараз грає'</value>
+    <value>Оновлювати статус «Зараз відтворюється»</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>Показуйте своїм друзям на Last.fm, що ви слухаєте в реальному часі.</value>
+    <value>Показувати поточну пісню у вашому профілі Last.fm.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
-    <value>ЛістенБрейнз</value>
+    <value>ListenBrainz</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Description" xml:space="preserve">
     <value>Надсилати ваші прослуховування до ListenBrainz (відкрита альтернатива Last.fm).</value>
@@ -1924,10 +1970,10 @@
     <value>З'єднання не вдалося: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>Надсилати прослуховування (скробблінг)</value>
+    <value>Надсилати прослуховування (скроблінг)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>Надсилати оновлення "зараз грає"</value>
+    <value>Надсилати оновлення «Зараз відтворюється»</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
     <value>Додатково</value>
@@ -1960,7 +2006,7 @@
     <value>Пісні</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Пошук у розумному списку відтворення...</value>
+    <value>Шукати в розумному плейлисті…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Пошук у розумному списку відтворення</value>
@@ -1990,7 +2036,7 @@
     <value>Перейти до виконавця</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Показати в провіднику</value>
+    <value>Показати у Провіднику</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Відтворити</value>
@@ -2032,7 +2078,7 @@
     <value>Надіслати відгук</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Перевіряти оновлення під час запуску</value>
+    <value>Перевіряти наявність оновлень під час запуску</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
     <value>Автоматично перевіряти наявність нових версій при запуску програми.</value>
@@ -2041,7 +2087,7 @@
     <value>Мова програми</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>Зміни вимагають перезапуску для набуття чинності</value>
+    <value>Перезапустіть Nagi, щоб застосувати зміну мови.</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
     <value>Потрібен перезапуск</value>
@@ -2056,7 +2102,7 @@
     <value>Резервне копіювання та відновлення</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Створюйте резервні копії своєї музичної бібліотеки та налаштувань або відновлюйтеся з попередньої резервної копії</value>
+    <value>Створюйте резервну копію даних бібліотеки та налаштувань або відновлюйте її з попередньої резервної копії.</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
     <value>Створити резервну копію</value>
@@ -2068,7 +2114,7 @@
     <value>Резервну копію створено</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Резервну копію успішно створено ({0:F2} МБ) за адресою: {1}</value>
+    <value>Створено резервну копію ({0:F2} МБ) за адресою: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
     <value>Не вдалося створити резервну копію</value>
@@ -2095,13 +2141,13 @@
     <value>Відновлення завершено</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Резервну копію успішно відновлено. Програма перезапуститься.</value>
+    <value>Резервну копію відновлено. Nagi зараз перезапуститься.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
     <value>Не вдалося відновити</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Не вдалося відновити з резервної копії. Ваші дані не було змінено.</value>
+    <value>Не вдалося відновити резервну копію.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
     <value>Стиль програвача</value>
@@ -2113,25 +2159,25 @@
     <value>Суцільний (непрозорий)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Налаштуйте вигляд спливаючого програвача</value>
+    <value>Налаштуйте зовнішній вигляд панелі програвача.</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
     <value>Інтенсивність відтінку</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Налаштовує насиченість кольору фону програвача</value>
+    <value>Налаштуйте інтенсивність фонового кольору програвача.</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
-    <value>Тривалість плавного входу</value>
+    <value>Тривалість плавної появи</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
-    <value>Тривалість ефекту плавного входу під час відтворення (мс)</value>
+    <value>Вкажіть час плавного наростання гучності під час відновлення відтворення.</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
-    <value>Тривалість плавного виходу</value>
+    <value>Тривалість плавного загасання</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
-    <value>Тривалість ефекту плавного виходу під час паузи (мс)</value>
+    <value>Вкажіть час плавного зменшення гучності під час паузи.</value>
   </data>
   <data name="Settings_Nav_Insights" xml:space="preserve">
     <value>Аналітика</value>
@@ -2146,7 +2192,7 @@
     <value>Унікальні пісні</value>
   </data>
   <data name="InsightsPage_PeakHour" xml:space="preserve">
-    <value>Година пік</value>
+    <value>Пікова година</value>
   </data>
   <data name="InsightsPage_MostActiveDay" xml:space="preserve">
     <value>Найактивніший день</value>
@@ -2173,7 +2219,7 @@
     <value>Почніть відтворювати музику, щоб побачити свою аналітику тут</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
-    <value>{0} відтворень</value>
+    <value>Прослуховувань: {0}</value>
   </data>
   <data name="InsightsPage_Source_Albums" xml:space="preserve">
     <value>Альбоми</value>
@@ -2233,7 +2279,7 @@
     <value>Тривалість</value>
   </data>
   <data name="PaginationControl_All" xml:space="preserve">
-    <value>All</value>
+    <value>Усі</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>Елементів на сторінку:</value>
@@ -2269,7 +2315,7 @@
     <value>Останні 90 днів</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>Останній рік</value>
+    <value>Минулий рік</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>За весь час</value>
@@ -2279,5 +2325,167 @@
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
     <value>{0}хв {1}с</value>
+  </data>
+  <data name="QueuePanel_EmptyTitle" xml:space="preserve">
+    <value>Ваша черга порожня</value>
+  </data>
+  <data name="QueuePanel_EmptyDescription" xml:space="preserve">
+    <value>Увімкніть музику або перетягніть аудіофайли сюди, щоб сформувати чергу.</value>
+  </data>
+  <data name="QueuePanel_LoadError" xml:space="preserve">
+    <value>Деякі пісні не вдалося завантажити. Натисніть «Повторити», щоб завантажити чергу знову.</value>
+  </data>
+  <data name="QueuePanel_Retry" xml:space="preserve">
+    <value>Повторити</value>
+  </data>
+  <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
+    <value>Не вдалося зберегти новий порядок плейлиста. Спробуйте ще раз.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
+    <value>Пристрій виведення аудіо</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Description" xml:space="preserve">
+    <value>Виберіть, куди Nagi виводитиме аудіо.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Default" xml:space="preserve">
+    <value>Системний за замовчуванням</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Unavailable" xml:space="preserve">
+    <value>Збережений пристрій недоступний. Використовується системний за замовчуванням.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
+    <value>Не вдалося оновити виведення аудіо. Спробуйте ще раз або виберіть інший пристрій.</value>
+  </data>
+  <data name="Listening_Random" xml:space="preserve">
+    <value>Перемішати</value>
+  </data>
+  <data name="Listening_MoreVariety" xml:space="preserve">
+    <value>Більше різноманітності</value>
+  </data>
+  <data name="Listening_Rediscover" xml:space="preserve">
+    <value>Згадати забуте</value>
+  </data>
+  <data name="Listening_Unheard" xml:space="preserve">
+    <value>Непрослухане</value>
+  </data>
+  <data name="Listening_PlayFor" xml:space="preserve">
+    <value>Грати протягом…</value>
+  </data>
+  <data name="Listening_Minutes" xml:space="preserve">
+    <value>Хвилин</value>
+  </data>
+  <data name="Listening_ShuffleMode" xml:space="preserve">
+    <value>Тип міксу</value>
+  </data>
+  <data name="Listening_AvoidRecentDays" xml:space="preserve">
+    <value>Уникати нещодавно відтворених (днів)</value>
+  </data>
+  <data name="Listening_MoreOptions" xml:space="preserve">
+    <value>Більше параметрів</value>
+  </data>
+  <data name="Listening_PlayForDescription" xml:space="preserve">
+    <value>Сформувати чергу з повних пісень загальною тривалістю не більше вибраної.</value>
+  </data>
+  <data name="Listening_NoMixTitle" xml:space="preserve">
+    <value>Немає пісень для цього міксу</value>
+  </data>
+  <data name="Listening_NoMixDescription" xml:space="preserve">
+    <value>Жодна пісня з цього списку не відповідає вимогам. Спробуйте інший мікс або список пісень.</value>
+  </data>
+  <data name="Listening_Favorites" xml:space="preserve">
+    <value>Улюблені</value>
+  </data>
+  <data name="Listening_AddFavorite" xml:space="preserve">
+    <value>Додати до улюблених</value>
+  </data>
+  <data name="Listening_RemoveFavorite" xml:space="preserve">
+    <value>Вилучити з улюблених</value>
+  </data>
+  <data name="Listening_SleepTimer" xml:space="preserve">
+    <value>Таймер сну</value>
+  </data>
+  <data name="Listening_FinishTrack" xml:space="preserve">
+    <value>Завершити поточну пісню, коли час таймера вичерпається</value>
+  </data>
+  <data name="Listening_StopAfterTrack" xml:space="preserve">
+    <value>Зупинити після цієї пісні</value>
+  </data>
+  <data name="Listening_StopAtQueueEnd" xml:space="preserve">
+    <value>Зупинити в кінці черги</value>
+  </data>
+  <data name="Listening_StopPlayback" xml:space="preserve">
+    <value>Зупинити відтворення</value>
+  </data>
+  <data name="Listening_CustomTimer" xml:space="preserve">
+    <value>Власний таймер…</value>
+  </data>
+  <data name="Listening_Timer15" xml:space="preserve">
+    <value>Через 15 хвилин</value>
+  </data>
+  <data name="Listening_Timer30" xml:space="preserve">
+    <value>Через 30 хвилин</value>
+  </data>
+  <data name="Listening_Timer60" xml:space="preserve">
+    <value>Через 60 хвилин</value>
+  </data>
+  <data name="Listening_CancelStop" xml:space="preserve">
+    <value>Скасувати заплановану зупинку</value>
+  </data>
+  <data name="Listening_TimerRemaining" xml:space="preserve">
+    <value>Зупиниться через {0}</value>
+  </data>
+  <data name="Listening_PlayerOptions" xml:space="preserve">
+    <value>Параметри програвача</value>
+  </data>
+  <data name="Listening_RecentlyPlayed" xml:space="preserve">
+    <value>Нещодавно прослухані</value>
+  </data>
+  <data name="Listening_HistorySearch" xml:space="preserve">
+    <value>Пошук в історії прослуховувань</value>
+  </data>
+  <data name="Listening_HistoryEmpty" xml:space="preserve">
+    <value>Історія прослуховувань поки порожня</value>
+  </data>
+  <data name="Listening_HistoryLoadError" xml:space="preserve">
+    <value>Не вдалося завантажити нещодавно прослухані. Натисніть «Повторити», щоб спробувати ще раз.</value>
+  </data>
+  <data name="Listening_Today" xml:space="preserve">
+    <value>Сьогодні</value>
+  </data>
+  <data name="Listening_Yesterday" xml:space="preserve">
+    <value>Учора</value>
+  </data>
+  <data name="Listening_RediscoveryReason" xml:space="preserve">
+    <value>Востаннє відтворювалося {0:d}</value>
+  </data>
+  <data name="Listening_RediscoveryTitle" xml:space="preserve">
+    <value>Варто послухати ще раз</value>
+  </data>
+  <data name="Listening_Dismiss" xml:space="preserve">
+    <value>Відхилити</value>
+  </data>
+  <data name="Listening_ActionError" xml:space="preserve">
+    <value>Не вдалося виконати цю дію. Спробуйте ще раз.</value>
+  </data>
+  <data name="Listening_FavoritesEmpty" xml:space="preserve">
+    <value>Улюблених пісень поки немає</value>
+  </data>
+  <data name="Listening_FavoritesEmptyDescription" xml:space="preserve">
+    <value>Додайте пісню до улюблених з її меню або виберіть її та натисніть Ctrl+D.</value>
+  </data>
+  <data name="Listening_VarietyDescription" xml:space="preserve">
+    <value>Режим «Більше різноманітності» уникає пісень, відтворених у вікні нещодавніх прослуховувань, і за можливості чергує різних виконавців.</value>
+  </data>
+  <data name="Listening_RediscoverDescription" xml:space="preserve">
+    <value>Режим «Згадати забуте» використовує пісні з історією відтворення в Nagi, які востаннє слухали понад 30 днів тому.</value>
+  </data>
+  <data name="Listening_UnheardDescription" xml:space="preserve">
+    <value>Режим «Непрослухане» використовує пісні без історії відтворення в Nagi.</value>
+  </data>
+  <data name="Listening_HistoryNoMatches" xml:space="preserve">
+    <value>За вашим запитом прослуховувань не знайдено</value>
+  </data>
+  <data name="Listening_NoTimedMixDescription" xml:space="preserve">
+    <value>Жодна пісня з цього списку не відповідає вимогам міксу та не вкладається у вибрану тривалість. Спробуйте збільшити тривалість, вибрати інший мікс або список пісень.</value>
   </data>
 </root>

@@ -102,7 +102,7 @@
     <value>Αριθμός κομματιού</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Αριθμός αναπαραγωγών</value>
+    <value>Αναπαραγωγές</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>Τραγούδια</value>
@@ -169,7 +169,7 @@
     <value>Πιο πολλά {0}</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
-    <value>Πιο λίγα {0}</value>
+    <value>Λιγότερα {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Σάρωση φακέλου {0} από {1}: {2} - {3}</value>
@@ -178,11 +178,11 @@
     <value>Ολοκληρώθηκε η σάρωση. Προστέθηκαν ή ενημερώθηκαν {0} {1}.</value>
   </data>
   <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Αποθήκευση παρτίδας {0}...</value>
+    <value>Αποθήκευση δέσμης {0}…</value>
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Σάρωση φακέλου...</value>
+    <value>Σάρωση φακέλου…</value>
   </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Ολοκληρώθηκε η σάρωση. Η βιβλιοθήκη είναι ενημερωμένη.</value>
@@ -194,16 +194,16 @@
     <value>Η σάρωση απέτυχε. Ελέγξτε τα αρχεία καταγραφής για λεπτομέρειες.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Προετοιμασία προσωρινών μνημών σάρωσης...</value>
+    <value>Προετοιμασία σάρωσης βιβλιοθήκης…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Ανάγνωση λεπτομερειών τραγουδιού...</value>
+    <value>Ανάγνωση λεπτομερειών τραγουδιών…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Εκκαθάριση της βιβλιοθήκης σας...</value>
+    <value>Εκκαθάριση της βιβλιοθήκης σας…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Ολοκλήρωση...</value>
+    <value>Ολοκλήρωση…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Η ομαλοποίηση έντασης απέτυχε. Ελέγξτε τα αρχεία καταγραφής για λεπτομέρειες.</value>
@@ -216,7 +216,7 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Αποτυχία προσθήκης φακέλου.</value>
+    <value>Δεν ήταν δυνατή η προσθήκη του φακέλου.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Το όνομα της λίστας αναπαραγωγής δεν μπορεί να είναι κενό.</value>
@@ -248,7 +248,15 @@
     <value>Ταξινόμηση ανά: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>Το FFmpeg απαιτείται για την Υψηλής Ακρίβειας Ομαλοποίηση Έντασης (ανάλυση ReplayGain), αλλά δεν βρέθηκε στο σύστημά σας.\n\nΓια να το ρυθμίσετε, ακολουθήστε αυτά τα βήματα:\n\n1. **Λήψη**: Επισκεφθείτε τη διεύθυνση https://www.gyan.dev/ffmpeg/builds/ και κατεβάστε το 'ffmpeg-git-full.7z' (ή παρόμοιο) essentials build.\n2. **Οδηγός**: Μπορείτε να ακολουθήσετε αυτόν τον οδηγό για λεπτομερείς οδηγίες: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Εξαγωγή**: Ανοίξτε τον φάκελο αρχιτεκτονικής και εντοπίστε τον κατάλογο 'bin' που περιέχει το `ffmpeg.exe`.\n4. **Εγκατάσταση**: Αντιγράψτε το `ffmpeg.exe` σε έναν μόνιμο φάκελο (π.χ., `C:\ffmpeg\`) και **προσθέστε αυτόν τον φάκελο στη μεταβλητή περιβάλλοντος System PATH`.\n5. **Επανεκκίνηση**: Παρακαλούμε επανεκκινήστε το Nagi μετά την εγκατάσταση για να εφαρμοστούν οι αλλαγές.</value>
+    <value>Το FFmpeg είναι απαραίτητο για την ανάλυση τραγουδιών για κανονικοποίηση έντασης, αλλά το Nagi δεν μπόρεσε να το βρει.
+
+1. Κατεβάστε μια έκδοση για Windows από το https://ffmpeg.org/download.html.
+2. Εξαγάγετε το αρχείο και εντοπίστε το ffmpeg.exe στον φάκελο bin.
+3. Προσθέστε τον φάκελο που περιέχει το ffmpeg.exe στη διαδρομή PATH των Windows.
+4. Επανεκκινήστε το Nagi και ενεργοποιήστε ξανά την κανονικοποίηση έντασης.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>Η λίστα αναπαραγωγής δημιουργήθηκε, αλλά δεν ήταν δυνατή η προσθήκη των τραγουδιών της. Δοκιμάστε να κάνετε εισαγωγή ξανά.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Δεν βρέθηκαν τραγούδια από τη λίστα αναπαραγωγής στη βιβλιοθήκη σας.</value>
@@ -293,12 +301,39 @@
     <value>Όλα τα τραγούδια έχουν ήδη δεδομένα έντασης.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Υπολογισμός έντασης για {0} τραγούδια...</value>
+    <value>Ανάλυση έντασης… Τραγούδια: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Υπολογισμός ομαλοποίησης έντασης ({0}/{1})...</value>
+    <value>Υπολογισμός κανονικοποίησης έντασης ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Ολοκληρώθηκε η ομαλοποίηση έντασης. Επεξεργάστηκαν {0} τραγούδια.</value>
+    <value>Η κανονικοποίηση έντασης ολοκληρώθηκε. Τραγούδια που επεξεργάστηκαν: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Εισαγάγετε το διακριτικό χρήστη ListenBrainz.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η ανάγνωση της απάντησης από το ListenBrainz. Δοκιμάστε ξανά αργότερα.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Εισαγάγετε μια διεύθυνση URL διακομιστή που ξεκινά με http:// ή https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Το διακριτικό χρήστη δεν είναι έγκυρο. Ελέγξτε το και δοκιμάστε ξανά.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>Το ListenBrainz επέστρεψε σφάλμα (HTTP {0}). Δοκιμάστε ξανά αργότερα.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η σύνδεση στο ListenBrainz. Ελέγξτε τη σύνδεσή σας και τη διεύθυνση URL του διακομιστή.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Το Nagi δεν μπόρεσε να βρει τον φάκελο δεδομένων της βιβλιοθήκης του.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Η επαναφορά απέτυχε και τα προηγούμενα δεδομένα σας δεν ήταν δυνατό να αποκατασταθούν πλήρως. Τα αρχεία ανάκτησης αποθηκεύτηκαν στο &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Το επιλεγμένο αρχείο δεν είναι έγκυρο αντίγραφο ασφαλείας του Nagi.</value>
   </data>
 </root>

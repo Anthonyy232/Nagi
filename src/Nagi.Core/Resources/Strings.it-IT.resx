@@ -102,7 +102,7 @@
     <value>Numero traccia</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Conteggio riproduzioni</value>
+    <value>Riproduzioni</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>Brani</value>
@@ -148,10 +148,10 @@
     <value>{0} (Meno recente)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Cresc.)</value>
+    <value>{0} (crescente)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Decresc.)</value>
+    <value>{0} (decrescente)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>Più breve prima</value>
@@ -178,11 +178,11 @@
     <value>Scansione completata. Aggiunti o aggiornati {0} {1}.</value>
   </data>
   <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Salvataggio lotto {0}...</value>
+    <value>Salvataggio lotto {0}…</value>
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Scansione cartella...</value>
+    <value>Scansione cartella…</value>
   </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Scansione completata. La libreria è aggiornata.</value>
@@ -194,16 +194,16 @@
     <value>Scansione fallita. Controllare i registri per i dettagli.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Preparazione cache di scansione...</value>
+    <value>Preparazione scansione libreria…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Lettura dettagli brano...</value>
+    <value>Lettura dettagli brani…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Pulizia libreria...</value>
+    <value>Pulizia della libreria…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Finalizzazione...</value>
+    <value>Completamento…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Normalizzazione volume fallita. Controllare i registri per i dettagli.</value>
@@ -248,7 +248,15 @@
     <value>Ordina per: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg è richiesto per la normalizzazione del volume ad alta precisione (analisi ReplayGain) ma non è stato trovato sul sistema.\n\nSeguire questi passaggi per configurarlo:\n\n1. **Scarica**: Visita https://www.gyan.dev/ffmpeg/builds/ e scarica la build 'ffmpeg-git-full.7z' (o simile) essenziale.\n2. **Guida**: Puoi seguire questa guida per istruzioni dettagliate: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Estrai**: Apri la cartella dell'architettura e individua la directory 'bin' contenente `ffmpeg.exe`.\n4. **Installa**: Copia `ffmpeg.exe` in una cartella permanente (es. `C:\ffmpeg\`) e **aggiungi quella cartella alla variabile d'ambiente PATH del sistema**.\n5. **Riavvia**: Riavvia Nagi dopo l'installazione affinché le modifiche abbiano effetto.</value>
+    <value>FFmpeg è necessario per analizzare i brani per la normalizzazione del volume, ma Nagi non l'ha trovato.
+
+1. Scarica una build per Windows da https://ffmpeg.org/download.html.
+2. Estrai l'archivio e individua ffmpeg.exe nella relativa cartella bin.
+3. Aggiungi la cartella contenente ffmpeg.exe alla variabile PATH di Windows.
+4. Riavvia Nagi, quindi abilita di nuovo la normalizzazione del volume.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>La playlist è stata creata, ma non è stato possibile aggiungere i brani. Riprova a importare.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Nessun brano della playlist è stato trovato nella tua libreria.</value>
@@ -293,12 +301,39 @@
     <value>Tutti i brani hanno già i dati del volume.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Calcolo volume per {0} brani...</value>
+    <value>Analisi del volume… Brani: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Calcolo normalizzazione volume ({0}/{1})...</value>
+    <value>Calcolo normalizzazione del volume ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Normalizzazione volume completata. Elaborati {0} brani.</value>
+    <value>Normalizzazione del volume completata. Brani elaborati: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Inserisci il token utente di ListenBrainz.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Impossibile leggere la risposta da ListenBrainz. Riprova più tardi.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Inserisci un URL del server che inizia con http:// o https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Il token utente non è valido. Verificalo e riprova.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz ha restituito un errore (HTTP {0}). Riprova più tardi.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Impossibile connettersi a ListenBrainz. Controlla la connessione e l'URL del server.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi non ha trovato la cartella dei dati della libreria.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Il ripristino non è riuscito e non è stato possibile ripristinare completamente i dati precedenti. I file di ripristino sono stati salvati in &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Il file selezionato non è un backup di Nagi valido.</value>
   </data>
 </root>

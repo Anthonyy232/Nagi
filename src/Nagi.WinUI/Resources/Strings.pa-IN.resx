@@ -71,10 +71,13 @@
     <value>ਸ਼ੈਲੀਆਂ</value>
   </data>
   <data name="NavItem_Playlists" xml:space="preserve">
-    <value>ਫੋਲਡਰ</value>
+    <value>ਪਲੇਲਿਸਟਾਂ</value>
   </data>
   <data name="NavItem_Folders" xml:space="preserve">
     <value>ਫੋਲਡਰ</value>
+  </data>
+  <data name="NavItem_Favorites" xml:space="preserve">
+    <value>ਪਸੰਦੀਦਾ</value>
   </data>
   <data name="NavItem_Insights" xml:space="preserve">
     <value>ਇਨਸਾਈਟਸ</value>
@@ -83,7 +86,7 @@
     <value>ਸੈਟਿੰਗਾਂ</value>
   </data>
   <data name="Status_NoTrackPlaying" xml:space="preserve">
-    <value>ਕੋਈ ਟਰੈਕ ਨਹੀਂ ਚੱਲ ਰਿਹਾ</value>
+    <value>ਕੋਈ ਗੀਤ ਨਹੀਂ ਚੱਲ ਰਿਹਾ</value>
   </data>
   <data name="Tooltip_Play" xml:space="preserve">
     <value>ਚਲਾਓ</value>
@@ -122,7 +125,7 @@
     <value>ਹਨੇਰਾ</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">
-    <value>ਸਿਸਟਮ ਸੈਟਿੰਗ ਵਰਤੋ</value>
+    <value>ਸਿਸਟਮ ਡਿਫ਼ਾਲਟ</value>
   </data>
   <data name="Backdrop_Mica" xml:space="preserve">
     <value>ਮੀਕਾ</value>
@@ -141,6 +144,39 @@
   </data>
   <data name="Label_Rating" xml:space="preserve">
     <value>ਰੇਟਿੰਗ</value>
+  </data>
+  <data name="Label_Grouping" xml:space="preserve">
+    <value>ਸਮੂਹੀਕਰਨ</value>
+  </data>
+  <data name="Label_SkipCount" xml:space="preserve">
+    <value>ਛੱਡਣ ਦੀ ਗਿਣਤੀ</value>
+  </data>
+  <data name="Label_DiscNumber" xml:space="preserve">
+    <value>ਡਿਸਕ ਨੰਬਰ</value>
+  </data>
+  <data name="Label_Bitrate" xml:space="preserve">
+    <value>ਬਿੱਟਰੇਟ</value>
+  </data>
+  <data name="Label_SampleRate" xml:space="preserve">
+    <value>ਸੈਂਪਲ ਰੇਟ</value>
+  </data>
+  <data name="Label_IsLoved" xml:space="preserve">
+    <value>ਪਸੰਦੀਦਾ</value>
+  </data>
+  <data name="Label_HasLyrics" xml:space="preserve">
+    <value>ਬੋਲ ਮੌਜੂਦ ਹਨ</value>
+  </data>
+  <data name="Operator_IsInRange" xml:space="preserve">
+    <value>ਵਿਚਕਾਰ ਹੈ (ਸ਼ਾਮਲ)</value>
+  </data>
+  <data name="Operator_IsAfter" xml:space="preserve">
+    <value>ਬਾਅਦ ਵਿੱਚ ਹੈ</value>
+  </data>
+  <data name="Operator_IsBefore" xml:space="preserve">
+    <value>ਪਹਿਲਾਂ ਹੈ</value>
+  </data>
+  <data name="SmartPlaylist_UpperBound_Placeholder" xml:space="preserve">
+    <value>ਵੱਧ ਤੋਂ ਵੱਧ ਮੁੱਲ</value>
   </data>
   <data name="Operator_Contains" xml:space="preserve">
     <value>ਸ਼ਾਮਲ ਹੈ</value>
@@ -179,10 +215,10 @@
     <value>ਵੱਧ ਤੋਂ ਵੱਧ ਹੈ</value>
   </data>
   <data name="Operator_IsInTheLast" xml:space="preserve">
-    <value>ਪਿਛਲੇ (ਦਿਨਾਂ) ਵਿੱਚ ਹੈ</value>
+    <value>ਪਿਛਲੇ (ਦਿਨਾਂ) ਦੇ ਅੰਦਰ ਹੈ</value>
   </data>
   <data name="Operator_IsNotInTheLast" xml:space="preserve">
-    <value>ਪਿਛਲੇ (ਦਿਨਾਂ) ਵਿੱਚ ਨਹੀਂ ਹੈ</value>
+    <value>ਪਿਛਲੇ (ਦਿਨਾਂ) ਦੇ ਅੰਦਰ ਨਹੀਂ ਹੈ</value>
   </data>
   <data name="Operator_IsTrue" xml:space="preserve">
     <value>ਸੱਚ ਹੈ</value>
@@ -194,31 +230,31 @@
     <value>ਨਵੀਂ ਸਮਾਰਟ ਪਲੇਲਿਸਟ</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>ਸਮਾਰਟ ਪਲੇਲਿਸਟ ਸੰਪਾਦਿਤ ਕਰੋ - {0}</value>
+    <value>ਸਮਾਰਟ ਪਲੇਅਲਿਸਟ ਸੰਪਾਦਿਤ ਕਰੋ: {0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
     <value>ਇੱਕ ਪਲੇਲਿਸਟ ਨਾਮ ਦਰਜ ਕਰੋ</value>
   </data>
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
-    <value>{0:N0} ਗੀਤ ਮੌਜੂਦਾ ਨਿਯਮਾਂ ਨਾਲ ਮੇਲ ਖਾਂਦੇ ਹਨ</value>
+    <value>ਮੇਲ ਖਾਂਦੇ ਗੀਤ: {0:N0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>ਮੇਲ ਖਾਂਦੇ ਗੀਤਾਂ ਨੂੰ ਦੇਖਣ ਲਈ ਇੱਕ ਨਾਮ ਦਰਜ ਕਰੋ</value>
+    <value>ਮੇਲ ਖਾਂਦੇ ਗੀਤ ਦੇਖਣ ਲਈ ਪਲੇਅਲਿਸਟ ਦਾ ਨਾਂ ਦਰਜ ਕਰੋ</value>
   </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
-    <value>ਗਣਨਾ ਕਰਨ ਵਿੱਚ ਅਸਮਰੱਥ</value>
+    <value>ਮੇਲ ਖਾਂਦੇ ਗੀਤ ਗਿਣੇ ਨਹੀਂ ਜਾ ਸਕੇ</value>
   </data>
   <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
-    <value>ਗਣਨਾ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ...</value>
+    <value>ਗਣਨਾ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ…</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>ਇਸ ਨਾਮ ਦੀ ਇੱਕ ਪਲੇਲਿਸਟ ਪਹਿਲਾਂ ਹੀ ਮੌਜੂਦ ਹੈ!</value>
+    <value>ਇਸ ਨਾਂ ਦੀ ਇੱਕ ਪਲੇਅਲਿਸਟ ਪਹਿਲਾਂ ਹੀ ਮੌਜੂਦ ਹੈ।</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>ਕਿਰਪਾ ਕਰਕੇ ਇੱਕ ਨਾਮ ਦਰਜ ਕਰੋ!</value>
+    <value>ਪਲੇਅਲਿਸਟ ਦਾ ਨਾਂ ਦਰਜ ਕਰੋ।</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
-    <value>ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ...</value>
+    <value>ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ…</value>
   </data>
   <data name="Error_FailedToLoadArtists" xml:space="preserve">
     <value>ਕਲਾਕਾਰਾਂ ਨੂੰ ਲੋਡ ਕਰਨ ਵਿੱਚ ਅਸਫਲ</value>
@@ -227,13 +263,15 @@
     <value>ਨਾਜ਼ੁਕ ਗਲਤੀ</value>
   </data>
   <data name="CrashReport_Message" xml:space="preserve">
-    <value>ਨਾਗੀ ਨੂੰ ਇੱਕ ਨਾਜ਼ੁਕ ਗਲਤੀ ਆਈ ਹੈ ਅਤੇ ਬੰਦ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ। ਅਸੀਂ ਅਸੁਵਿਧਾ ਲਈ ਮੁਆਫੀ ਚਾਹੁੰਦੇ ਹਾਂ।</value>
+    <value>Nagi ਵਿੱਚ ਇੱਕ ਖ਼ਾਮੀ ਆਈ ਹੈ ਅਤੇ ਇਸਨੂੰ ਬੰਦ ਕਰਨ ਦੀ ਲੋੜ ਹੈ।</value>
   </data>
   <data name="ElevationWarning_Title" xml:space="preserve">
     <value>ਪ੍ਰਸ਼ਾਸਕ ਵਜੋਂ ਚੱਲ ਰਿਹਾ ਹੈ</value>
   </data>
   <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>ਨਾਗੀ ਇਸ ਸਮੇਂ ਪ੍ਰਸ਼ਾਸਕ ਵਜੋਂ ਚੱਲ ਰਿਹਾ ਹੈ। ਇਹ ਕੁਝ ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ (ਜਿਵੇਂ ਕਿ ਸੰਗੀਤ ਫੋਲਡਰ ਸ਼ਾਮਲ ਕਰਨਾ) ਨੂੰ ਸਹੀ ਢੰਗ ਨਾਲ ਕੰਮ ਕਰਨ ਤੋਂ ਰੋਕ ਸਕਦਾ ਹੈ।\n\nਸਰਵੋਤਮ ਅਨੁਭਵ ਲਈ, ਕਿਰਪਾ ਕਰਕੇ ਪ੍ਰਸ਼ਾਸਕੀ ਅਧਿਕਾਰਾਂ ਤੋਂ ਬਿਨਾਂ ਨਾਗੀ ਨੂੰ ਮੁੜ ਚਾਲੂ ਕਰੋ।</value>
+    <value>Nagi ਇਸ ਸਮੇਂ ਪ੍ਰਸ਼ਾਸਕ ਵਜੋਂ ਚੱਲ ਰਿਹਾ ਹੈ। ਇਹ ਕੁਝ ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ (ਜਿਵੇਂ ਕਿ ਸੰਗੀਤ ਫੋਲਡਰ ਸ਼ਾਮਲ ਕਰਨਾ) ਨੂੰ ਸਹੀ ਢੰਗ ਨਾਲ ਕੰਮ ਕਰਨ ਤੋਂ ਰੋਕ ਸਕਦਾ ਹੈ।
+
+ਸਰਵੋਤਮ ਅਨੁਭਵ ਲਈ, ਕਿਰਪਾ ਕਰਕੇ ਪ੍ਰਸ਼ਾਸਕੀ ਅਧਿਕਾਰਾਂ ਤੋਂ ਬਿਨਾਂ Nagi ਨੂੰ ਮੁੜ ਚਾਲੂ ਕਰੋ।</value>
   </data>
   <data name="ElevationWarning_Restart" xml:space="preserve">
     <value>ਆਮ ਤੌਰ 'ਤੇ ਮੁੜ ਚਾਲੂ ਕਰੋ</value>
@@ -242,10 +280,10 @@
     <value>ਫਿਰ ਵੀ ਜਾਰੀ ਰੱਖੋ</value>
   </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>ਨਾਗੀ</value>
+    <value>Nagi</value>
   </data>
   <data name="App_Title" xml:space="preserve">
-    <value>ਨਾਗੀ</value>
+    <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
     <value>ਐਲਬਮ ਨਹੀਂ ਮਿਲੀ</value>
@@ -293,16 +331,16 @@
     <value>ਇਹ ਫੋਲਡਰ ਪਹਿਲਾਂ ਹੀ ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚ ਹੈ।</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
-    <value>ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚ ਫੋਲਡਰ ਸ਼ਾਮਲ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ...</value>
+    <value>ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚ ਫੋਲਡਰ ਜੋੜਿਆ ਜਾ ਰਿਹਾ ਹੈ…</value>
   </data>
   <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>'{0}' ਸਫਲਤਾਪੂਰਵਕ ਮਿਟਾਇਆ ਗਿਆ।</value>
+    <value>ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚੋਂ &apos;{0}&apos; ਹਟਾਇਆ ਗਿਆ।</value>
   </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
-    <value>'{0}' ਨੂੰ ਮਿਟਾਉਣ ਵਿੱਚ ਅਸਫਲ।</value>
+    <value>ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚੋਂ &apos;{0}&apos; ਹਟਾਇਆ ਨਹੀਂ ਜਾ ਸਕਿਆ।</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
-    <value>'{0}' ਮਿਟਾਇਆ ਜਾ ਰਿਹਾ ਹੈ...</value>
+    <value>ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚੋਂ &apos;{0}&apos; ਹਟਾਇਆ ਜਾ ਰਿਹਾ ਹੈ…</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
     <value>'{0}' ਦਾ ਮੁੜ-ਸਕੈਨ ਪੂਰਾ ਹੋ ਗਿਆ।</value>
@@ -311,7 +349,7 @@
     <value>'{0}' ਲਈ ਕੋਈ ਬਦਲਾਅ ਨਹੀਂ ਮਿਲੇ।</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
-    <value>'{0}' ਮੁੜ-ਸਕੈਨ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ...</value>
+    <value>'{0}' ਨੂੰ ਮੁੜ-ਸਕੈਨ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ…</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
     <value>ਸੰਗੀਤ ਵਾਲੇ ਕੋਈ ਫੋਲਡਰ ਨਹੀਂ ਮਿਲੇ।</value>
@@ -326,7 +364,7 @@
     <value>ਫੋਲਡਰ ਜੋੜਨ ਵਿੱਚ ਗਲਤੀ: {0}</value>
   </data>
   <data name="Folders_Error_DeleteFolder" xml:space="preserve">
-    <value>ਫੋਲਡਰ ਮਿਟਾਉਣ ਵਿੱਚ ਗਲਤੀ: {0}</value>
+    <value>ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚੋਂ ਫੋਲਡਰ ਨਹੀਂ ਹਟਾਇਆ ਜਾ ਸਕਿਆ: {0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>ਫੋਲਡਰ ਨੂੰ ਮੁੜ-ਸਕੈਨ ਕਰਨ ਵਿੱਚ ਗਲਤੀ: {0}</value>
@@ -377,10 +415,10 @@
     <value>ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਆਓ ਤੁਹਾਡੀ ਸੰਗੀਤ ਲਾਇਬ੍ਰੇਰੀ ਸੈਟ ਅਪ ਕਰੀਏ।</value>
   </data>
   <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>ਤੁਹਾਡੇ ਦੁਆਰਾ ਫੋਲਡਰ ਚੁਣਨ ਦੀ ਉਡੀਕ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ...</value>
+    <value>ਤੁਹਾਡੇ ਵਲੋਂ ਫੋਲਡਰ ਚੁਣਨ ਦੀ ਉਡੀਕ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ…</value>
   </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
-    <value>ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਬਣਾਈ ਜਾ ਰਹੀ ਹੈ...</value>
+    <value>ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਬਣਾਈ ਜਾ ਰਹੀ ਹੈ…</value>
   </data>
   <data name="Onboarding_Error" xml:space="preserve">
     <value>ਇੱਕ ਅਚਾਨਕ ਗਲਤੀ ਹੋਈ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</value>
@@ -401,7 +439,7 @@
     <value>ਪਲੇਲਿਸਟ ਲੋਡ ਕਰਨ ਵਿੱਚ ਗਲਤੀ</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>ਪਲੇਲਿਸਟ ਸ਼ੁਰੂ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ...</value>
+    <value>ਪਲੇਅਲਿਸਟ ਸ਼ੁਰੂ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ…</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>ਇਸ ਸਮਾਰਟ ਪਲੇਲਿਸਟ ਦੇ ਨਿਯਮਾਂ ਨਾਲ ਕੋਈ ਗੀਤ ਮੇਲ ਨਹੀਂ ਖਾਂਦੇ।</value>
@@ -410,7 +448,7 @@
     <value>ਇਸ ਪਲੇਲਿਸਟ ਲਈ ਪਲੇਬੈਕ ਸ਼ੁਰੂ ਕਰਨ ਵਿੱਚ ਗਲਤੀ।</value>
   </data>
   <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>ਇੱਕ ਰੈਂਡਮ ਪਲੇਲਿਸਟ ਚੁਣੀ ਜਾ ਰਹੀ ਹੈ...</value>
+    <value>ਇੱਕ ਰੈਂਡਮ ਪਲੇਅਲਿਸਟ ਚੁਣੀ ਜਾ ਰਹੀ ਹੈ…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>ਕੋਈ ਪਲੇਲਿਸਟ ਨਹੀਂ ਮਿਲੀ।</value>
@@ -422,13 +460,13 @@
     <value>ਰੈਂਡਮ ਪਲੇਲਿਸਟ ਚਲਾਉਣ ਵਿੱਚ ਗਲਤੀ।</value>
   </data>
   <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>ਪਲੇਲਿਸਟਾਂ ਲੋਡ ਕੀਤੀਆਂ ਜਾ ਰਹੀਆਂ ਹਨ...</value>
+    <value>ਪਲੇਅਲਿਸਟਾਂ ਲੋਡ ਕੀਤੀਆਂ ਜਾ ਰਹੀਆਂ ਹਨ…</value>
   </data>
   <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
     <value>ਪਲੇਲਿਸਟਾਂ ਲੋਡ ਕਰਨ ਵਿੱਚ ਗਲਤੀ।</value>
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>ਨਵੀਂ ਪਲੇਲਿਸਟ ਬਣਾਈ ਜਾ ਰਹੀ ਹੈ...</value>
+    <value>ਨਵੀਂ ਪਲੇਅਲਿਸਟ ਬਣਾਈ ਜਾ ਰਹੀ ਹੈ…</value>
   </data>
   <data name="Playlist_Status_CreateFailed" xml:space="preserve">
     <value>ਪਲੇਲਿਸਟ ਬਣਾਉਣ ਵਿੱਚ ਅਸਫਲ। ਇਹ ਪਹਿਲਾਂ ਹੀ ਮੌਜੂਦ ਹੋ ਸਕਦੀ ਹੈ।</value>
@@ -437,7 +475,7 @@
     <value>ਪਲੇਲਿਸਟ ਬਣਾਉਣ ਦੌਰਾਨ ਇੱਕ ਗਲਤੀ ਹੋਈ।</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>ਪਲੇਲਿਸਟ ਕਵਰ ਅਪਡੇਟ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ...</value>
+    <value>ਪਲੇਅਲਿਸਟ ਕਵਰ ਅੱਪਡੇਟ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>ਪਲੇਲਿਸਟ ਕਵਰ ਅਪਡੇਟ ਕਰਨ ਵਿੱਚ ਅਸਫਲ।</value>
@@ -446,7 +484,7 @@
     <value>ਪਲੇਲਿਸਟ ਕਵਰ ਅਪਡੇਟ ਕਰਨ ਦੌਰਾਨ ਇੱਕ ਗਲਤੀ ਹੋਈ।</value>
   </data>
   <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>ਪਲੇਲਿਸਟ ਚਿੱਤਰ ਹਟਾਇਆ ਜਾ ਰਿਹਾ ਹੈ...</value>
+    <value>ਪਲੇਅਲਿਸਟ ਚਿੱਤਰ ਹਟਾਇਆ ਜਾ ਰਿਹਾ ਹੈ…</value>
   </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>ਪਲੇਲਿਸਟ ਚਿੱਤਰ ਹਟਾਉਣ ਵਿੱਚ ਅਸਫਲ।</value>
@@ -455,7 +493,7 @@
     <value>ਪਲੇਲਿਸਟ ਚਿੱਤਰ ਹਟਾਉਣ ਦੌਰਾਨ ਇੱਕ ਗਲਤੀ ਹੋਈ।</value>
   </data>
   <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>ਪਲੇਲਿਸਟ ਦਾ ਨਾਮ ਬਦਲਿਆ ਜਾ ਰਿਹਾ ਹੈ...</value>
+    <value>ਪਲੇਅਲਿਸਟ ਦਾ ਨਾਂ ਬਦਲਿਆ ਜਾ ਰਿਹਾ ਹੈ…</value>
   </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>ਪਲੇਲਿਸਟ ਦਾ ਨਾਮ ਬਦਲਣ ਵਿੱਚ ਅਸਫਲ।</value>
@@ -464,7 +502,7 @@
     <value>ਪਲੇਲਿਸਟ ਦਾ ਨਾਮ ਬਦਲਣ ਦੌਰਾਨ ਇੱਕ ਗਲਤੀ ਹੋਈ।</value>
   </data>
   <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>ਪਲੇਲਿਸਟ ਮਿਟਾਈ ਜਾ ਰਹੀ ਹੈ...</value>
+    <value>ਪਲੇਅਲਿਸਟ ਹਟਾਈ ਜਾ ਰਹੀ ਹੈ…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>ਪਲੇਲਿਸਟ ਮਿਟਾਉਣ ਵਿੱਚ ਅਸਫਲ।</value>
@@ -503,7 +541,7 @@
     <value>Last.fm ਡਿਸਕਨੈਕਟ ਕਰੋ</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
-    <value>ਕੀ ਤੁਸੀਂ ਆਪਣੇ Last.fm ਖਾਤੇ ਨੂੰ ਡਿਸਕਨੈਕਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ? ਤੁਹਾਡਾ ਸਕ੍ਰੌਬਲਿੰਗ ਇਤਿਹਾਸ Last.fm 'ਤੇ ਸੁਰੱਖਿਅਤ ਰਹੇਗਾ, ਪਰ ਨਾਗੀ ਹੁਣ ਸਕ੍ਰੌਬਲ ਨਹੀਂ ਕਰ ਸਕੇਗਾ।</value>
+    <value>ਕੀ ਤੁਸੀਂ ਆਪਣੇ Last.fm ਖਾਤੇ ਨੂੰ ਡਿਸਕਨੈਕਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ? ਤੁਹਾਡਾ ਸਕ੍ਰੌਬਲਿੰਗ ਇਤਿਹਾਸ Last.fm 'ਤੇ ਸੁਰੱਖਿਅਤ ਰਹੇਗਾ, ਪਰ Nagi ਹੁਣ ਸਕ੍ਰੌਬਲ ਨਹੀਂ ਕਰ ਸਕੇਗਾ।</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
     <value>ਡਿਸਕਨੈਕਟ ਕਰੋ</value>
@@ -512,7 +550,9 @@
     <value>ਨਿਰਯਾਤ ਸਫਲ</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>{0} ਪਲੇਲਿਸਟਾਂ ({1} ਕੁੱਲ ਗੀਤ) ਨੂੰ ਇੱਥੇ ਨਿਰਯਾਤ ਕੀਤਾ ਗਿਆ:\n{2}</value>
+    <value>ਐਕਸਪੋਰਟ ਕੀਤੀਆਂ ਪਲੇਅਲਿਸਟਾਂ: {0}
+ਗੀਤ: {1}
+ਇੱਥੇ ਸੰਭਾਲਿਆ ਗਿਆ: {2}</value>
   </data>
   <data name="Settings_Export_Failed_Title" xml:space="preserve">
     <value>ਨਿਰਯਾਤ ਅਸਫਲ</value>
@@ -521,13 +561,18 @@
     <value>ਆਯਾਤ ਸਫਲ</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>{0} ਪਲੇਲਿਸਟਾਂ ({1} ਗੀਤ) ਸਫਲਤਾਪੂਰਵਕ ਆਯਾਤ ਕੀਤੀਆਂ ਗਈਆਂ।</value>
+    <value>ਇੰਪੋਰਟ ਕੀਤੀਆਂ ਪਲੇਅਲਿਸਟਾਂ: {0}
+ਗੀਤ: {1}</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
-    <value>\n\nਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚ {0} ਗੀਤ ਨਹੀਂ ਮਿਲੇ।</value>
+    <value>
+
+ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚ ਗੀਤ ਨਹੀਂ ਮਿਲੇ: {0}।</value>
   </data>
   <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
-    <value>\n\n{0} ਫਾਈਲਾਂ ਆਯਾਤ ਕਰਨ ਵਿੱਚ ਅਸਫਲ ਰਹੀਆਂ।</value>
+    <value>
+
+ਫਾਈਲਾਂ ਜੋ ਇੰਪੋਰਟ ਨਹੀਂ ਕੀਤੀਆਂ ਜਾ ਸਕੀਆਂ: {0}।</value>
   </data>
   <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
     <value>ਆਯਾਤ ਅਸਫਲ</value>
@@ -557,7 +602,7 @@
     <value>ਨਿਯਮ</value>
   </data>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
-    <value>ਗੀਤ</value>
+    <value>ਗਾਣੇ</value>
   </data>
   <data name="SongList_TotalItems_Default" xml:space="preserve">
     <value>0 ਆਈਟਮਾਂ</value>
@@ -596,10 +641,10 @@
     <value>FFmpeg ਨਹੀਂ ਮਿਲਿਆ। ਕਿਰਪਾ ਕਰਕੇ FFmpeg ਇੰਸਟਾਲ ਕਰੋ ਅਤੇ 'ਦੁਬਾਰਾ ਜਾਂਚ ਕਰੋ' 'ਤੇ ਕਲਿੱਕ ਕਰੋ।</value>
   </data>
   <data name="FFmpeg_Status_Checking" xml:space="preserve">
-    <value>FFmpeg ਦੀ ਜਾਂਚ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ...</value>
+    <value>FFmpeg ਦੀ ਜਾਂਚ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ…</value>
   </data>
   <data name="FFmpeg_Status_Detected" xml:space="preserve">
-    <value>FFmpeg ਮਿਲਿਆ!</value>
+    <value>FFmpeg ਮਿਲਿਆ।</value>
   </data>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg ਅਜੇ ਵੀ ਨਹੀਂ ਮਿਲਿਆ। ਕਿਰਪਾ ਕਰਕੇ FFmpeg ਇੰਸਟਾਲ ਕਰੋ ਅਤੇ 'ਦੁਬਾਰਾ ਜਾਂਚ ਕਰੋ' 'ਤੇ ਕਲਿੱਕ ਕਰੋ।</value>
@@ -638,7 +683,7 @@
     <value>ਅੱਪ ਟੂ ਡੇਟ</value>
   </data>
   <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>ਤੁਸੀਂ ਨਾਗੀ ਦਾ ਨਵੀਨਤਮ ਸੰਸਕਰਣ ਚਲਾ ਰਹੇ ਹੋ।</value>
+    <value>ਤੁਸੀਂ Nagi ਦਾ ਨਵੀਨਤਮ ਸੰਸਕਰਣ ਚਲਾ ਰਹੇ ਹੋ।</value>
   </data>
   <data name="Update_Error_Title" xml:space="preserve">
     <value>ਅੱਪਡੇਟ ਗਲਤੀ</value>
@@ -731,7 +776,7 @@
     <value>ਕਲਾਕਾਰ ਦੀਆਂ ਜੀਵਨੀਆਂ ਅਤੇ ਚਿੱਤਰ (ਫਾਲਬੈਕ)</value>
   </data>
   <data name="App_Name_Default" xml:space="preserve">
-    <value>ਨਾਗੀ</value>
+    <value>Nagi</value>
   </data>
   <data name="App_Version_Unknown" xml:space="preserve">
     <value>ਲਾਗੂ ਨਹੀਂ</value>
@@ -767,13 +812,13 @@
     <value>ਕੋਈ ਪਲੇਲਿਸਟ ਉਪਲਬਧ ਨਹੀਂ</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
-    <value>ਫੋਲਡਰ ਮਿਟਾਓ</value>
+    <value>ਫੋਲਡਰ ਹਟਾਓ</value>
   </data>
   <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
-    <value>ਕੀ ਤੁਸੀਂ ਲਾਇਬ੍ਰੇਰੀ ਤੋਂ ਫੋਲਡਰ '{0}' ਨੂੰ ਹਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ? ਇਹ ਤੁਹਾਡੇ ਕੰਪਿਊਟਰ ਤੋਂ ਫਾਈਲਾਂ ਨੂੰ ਨਹੀਂ ਮਿਟਾਏਗਾ।</value>
+    <value>ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚੋਂ &apos;{0}&apos; ਹਟਾਉਣਾ ਹੈ? ਤੁਹਾਡੀਆਂ ਆਡੀਓ ਫਾਈਲਾਂ ਤੁਹਾਡੇ ਕੰਪਿਊਟਰ 'ਤੇ ਹੀ ਰਹਿਣਗੀਆਂ।</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
-    <value>ਮਿਟਾਓ</value>
+    <value>ਹਟਾਓ</value>
   </data>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>ਰੱਦ ਕਰੋ</value>
@@ -812,10 +857,10 @@
     <value>ਪਲੇਲਿਸਟਾਂ ਖੋਜੋ</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>ਨਵਾਂ ਪਲੇਲਿਸਟ ਨਾਮ ਦਰਜ ਕਰੋ</value>
+    <value>ਪਲੇਅਲਿਸਟ ਦਾ ਨਾਂ ਦਰਜ ਕਰੋ</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
-    <value>ਚਿੱਤਰ ਚੁਣੋ</value>
+    <value>ਕਵਰ ਚੁਣੋ</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
     <value>ਨਵੀਂ ਪਲੇਲਿਸਟ ਬਣਾਓ</value>
@@ -851,7 +896,7 @@
     <value>ਖੋਜ ਬੰਦ ਕਰੋ</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>ਲਾਇਬ੍ਰੇਰੀ ਖੋਜੋ</value>
+    <value>ਸ਼ੈਲੀ ਵਿੱਚ ਖੋਜੋ</value>
   </data>
   <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>ਕੋਈ ਪਲੇਲਿਸਟ ਉਪਲਬਧ ਨਹੀਂ</value>
@@ -872,13 +917,13 @@
     <value>ਮੈਟਾਡਾਟਾ ਮੁੜ-ਸਕੈਨ ਕਰੋ</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>ਇਹ ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਦੇ ਸਾਰੇ ਗੀਤਾਂ ਨੂੰ ਨਵੀਆਂ ਮੈਟਾਡਾਟਾ ਸੈਟਿੰਗਾਂ (ਜਿਵੇਂ ਕਿ ਕਲਾਕਾਰ ਵੱਖਰੇ ਅੱਖਰ) ਲਾਗੂ ਕਰਨ ਲਈ ਮੁੜ-ਸਕੈਨ ਕਰੇਗਾ। ਲਾਇਬ੍ਰੇਰੀ ਦੇ ਆਕਾਰ ਦੇ ਆਧਾਰ 'ਤੇ ਇਸ ਵਿੱਚ ਕੁਝ ਸਮਾਂ ਲੱਗ ਸਕਦਾ ਹੈ। ਕੀ ਤੁਸੀਂ ਜਾਰੀ ਰੱਖਣਾ ਚਾਹੁੰਦੇ ਹੋ?</value>
+    <value>ਮੈਟਾਡੇਟਾ ਸੈਟਿੰਗਾਂ, ਜਿਵੇਂ ਕਿ ਕਲਾਕਾਰ ਵੰਡ, ਲਾਗੂ ਕਰਨ ਲਈ ਆਪਣੀ ਲਾਇਬ੍ਰੇਰੀ ਨੂੰ ਮੁੜ ਸਕੈਨ ਕਰੋ। ਵੱਡੀਆਂ ਲਾਇਬ੍ਰੇਰੀਆਂ ਲਈ ਇਸ ਵਿੱਚ ਕੁਝ ਸਮਾਂ ਲੱਗ ਸਕਦਾ ਹੈ। ਜਾਰੀ ਰੱਖਣਾ ਹੈ?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
     <value>ਮੁੜ-ਸਕੈਨ ਕਰੋ</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
-    <value>ਲਾਇਬ੍ਰੇਰੀ ਮੁੜ-ਸਕੈਨ ਦੀ ਤਿਆਰੀ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ...</value>
+    <value>ਲਾਇਬ੍ਰੇਰੀ ਮੁੜ-ਸਕੈਨ ਦੀ ਤਿਆਰੀ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ…</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
     <value>ਮੁੜ-ਸਕੈਨ ਪੂਰਾ ਹੋ ਗਿਆ</value>
@@ -899,13 +944,17 @@
     <value>ਆਵਾਜ਼ ਨੂੰ ਆਮ ਬਣਾਉਣਾ ਸਮਰੱਥ ਕਰੋ</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
-    <value>ਆਵਾਜ਼ ਨੂੰ ਆਮ ਬਣਾਉਣਾ (ਰੀਪਲੇਗੇਨ) ਤੁਹਾਡੇ ਸਾਰੇ ਸੰਗੀਤ ਵਿੱਚ ਇੱਕ ਸਥਿਰ ਆਵਾਜ਼ ਪੱਧਰ ਨੂੰ ਯਕੀਨੀ ਬਣਾਉਂਦਾ ਹੈ।\n\nਇਹ ਤੁਹਾਡੀ ਸੰਗੀਤ ਲਾਇਬ੍ਰੇਰੀ ਦਾ ਵਿਸ਼ਲੇਸ਼ਣ ਕਰੇਗਾ ਅਤੇ ਰੀਪਲੇਗੇਨ ਟੈਗਸ ਲਿਖ ਕੇ ਤੁਹਾਡੀਆਂ ਆਡੀਓ ਫਾਈਲਾਂ ਨੂੰ ਸਿੱਧਾ ਸੋਧੇਗਾ। ਸਿਰਫ਼ ਉਹ ਫਾਈਲਾਂ ਜਿਨ੍ਹਾਂ ਵਿੱਚ ਮੌਜੂਦਾ ਟੈਗ ਨਹੀਂ ਹਨ, ਉਹਨਾਂ 'ਤੇ ਪ੍ਰਕਿਰਿਆ ਕੀਤੀ ਜਾਵੇਗੀ। ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਦੇ ਆਕਾਰ ਦੇ ਆਧਾਰ 'ਤੇ ਇਸ ਵਿੱਚ ਕੁਝ ਸਮਾਂ ਲੱਗ ਸਕਦਾ ਹੈ।\n\nਕੀ ਤੁਸੀਂ ਜਾਰੀ ਰੱਖਣਾ ਚਾਹੁੰਦੇ ਹੋ?</value>
+    <value>ਆਵਾਜ਼ ਨੂੰ ਆਮ ਬਣਾਉਣਾ (ReplayGain) ਤੁਹਾਡੇ ਸਾਰੇ ਸੰਗੀਤ ਵਿੱਚ ਇੱਕ ਸਥਿਰ ਆਵਾਜ਼ ਪੱਧਰ ਨੂੰ ਯਕੀਨੀ ਬਣਾਉਂਦਾ ਹੈ।
+
+ਇਹ ਤੁਹਾਡੀ ਸੰਗੀਤ ਲਾਇਬ੍ਰੇਰੀ ਦਾ ਵਿਸ਼ਲੇਸ਼ਣ ਕਰੇਗਾ ਅਤੇ ReplayGain ਟੈਗਸ ਲਿਖ ਕੇ ਤੁਹਾਡੀਆਂ ਆਡੀਓ ਫਾਈਲਾਂ ਨੂੰ ਸਿੱਧਾ ਸੋਧੇਗਾ। ਸਿਰਫ਼ ਉਹ ਫਾਈਲਾਂ ਜਿਨ੍ਹਾਂ ਵਿੱਚ ਮੌਜੂਦਾ ਟੈਗ ਨਹੀਂ ਹਨ, ਉਹਨਾਂ 'ਤੇ ਪ੍ਰਕਿਰਿਆ ਕੀਤੀ ਜਾਵੇਗੀ। ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਦੇ ਆਕਾਰ ਦੇ ਆਧਾਰ 'ਤੇ ਇਸ ਵਿੱਚ ਕੁਝ ਸਮਾਂ ਲੱਗ ਸਕਦਾ ਹੈ।
+
+ਕੀ ਤੁਸੀਂ ਜਾਰੀ ਰੱਖਣਾ ਚਾਹੁੰਦੇ ਹੋ?</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>ਸਮਰੱਥ ਕਰੋ ਅਤੇ ਸਕੈਨ ਕਰੋ</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>ਆਵਾਜ਼ ਨੂੰ ਆਮ ਬਣਾਉਣ ਲਈ ਸਕੈਨ ਦੀ ਤਿਆਰੀ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ...</value>
+    <value>ਅਵਾਜ਼ ਨੌਰਮਲਾਈਜ਼ੇਸ਼ਨ ਸਕੈਨ ਦੀ ਤਿਆਰੀ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
     <value>ਆਵਾਜ਼ ਨੂੰ ਆਮ ਬਣਾਉਣ ਲਈ ਸਕੈਨ ਰੱਦ ਕੀਤਾ ਗਿਆ।</value>
@@ -914,7 +963,9 @@
     <value>ਸਕੈਨ ਦੌਰਾਨ ਗਲਤੀ: {0}</value>
   </data>
   <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>ਮੈਮੋਰੀ ਤੋਂ ਲੌਗਸ ਪ੍ਰਾਪਤ ਨਹੀਂ ਕਰ ਸਕਿਆ। ਲੌਗ ਫਾਈਲ ਪੜ੍ਹਨ ਦੀ ਫਾਲਬੈਕ ਕੋਸ਼ਿਸ਼ ਅਸਫਲ ਰਹੀ।\nਅਨੁਮਾਨਿਤ ਮਾਰਗ: '{0}'\nਗਲਤੀ: {1}</value>
+    <value>ਮੈਮੋਰੀ ਤੋਂ ਲੌਗਸ ਪ੍ਰਾਪਤ ਨਹੀਂ ਕਰ ਸਕਿਆ। ਲੌਗ ਫਾਈਲ ਪੜ੍ਹਨ ਦੀ ਫਾਲਬੈਕ ਕੋਸ਼ਿਸ਼ ਅਸਫਲ ਰਹੀ।
+ਅਨੁਮਾਨਿਤ ਮਾਰਗ: '{0}'
+ਗਲਤੀ: {1}</value>
   </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>ਨਿਰਯਾਤ ਕਰਨ ਲਈ ਕੋਈ ਪਲੇਲਿਸਟ ਨਹੀਂ।</value>
@@ -935,7 +986,7 @@
     <value>ਅਗਲਾ</value>
   </data>
   <data name="MiniPlayer_RestoreButton_ToolTip" xml:space="preserve">
-    <value>ਨਾਗੀ ਦਿਖਾਓ</value>
+    <value>Nagi ਦਿਖਾਓ</value>
   </data>
   <data name="MiniPlayer_PreviousButton_ToolTip" xml:space="preserve">
     <value>ਪਿਛਲਾ</value>
@@ -1037,22 +1088,22 @@
     <value>ਅਗਲਾ</value>
   </data>
   <data name="AppName" xml:space="preserve">
-    <value>ਨਾਗੀ</value>
+    <value>Nagi</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>ਨਾਗੀ ਨਾਲ ਆਪਣੇ ਸਥਾਨਕ ਸੰਗੀਤ ਸੰਗ੍ਰਹਿ ਨੂੰ ਮੁੜ ਖੋਜੋ, ਇੱਕ ਸੰਗੀਤ ਪਲੇਅਰ ਜੋ ਗਤੀ, ਸਰਲਤਾ ਅਤੇ ਗੋਪਨੀਯਤਾ 'ਤੇ ਕੇਂਦਰਿਤ ਹੈ। ਨਾਗੀ ਇੱਕ ਸਾਫ਼, ਮੂਲ ਫਲੂਐਂਟ ਅਨੁਭਵ ਪ੍ਰਦਾਨ ਕਰਨ ਲਈ C# ਅਤੇ WinUI 3 ਨਾਲ ਬਣਾਇਆ ਗਿਆ ਹੈ। ਇਹ ਸੁੰਦਰ, ਕੁਸ਼ਲ ਅਤੇ ਤੁਹਾਡੀ ਗੋਪਨੀਯਤਾ ਦਾ ਸਤਿਕਾਰ ਕਰਦਾ ਹੈ।</value>
+    <value>Nagi ਨਾਲ ਆਪਣੇ ਸਥਾਨਕ ਸੰਗੀਤ ਸੰਗ੍ਰਹਿ ਨੂੰ ਮੁੜ ਖੋਜੋ, ਇੱਕ ਸੰਗੀਤ ਪਲੇਅਰ ਜੋ ਗਤੀ, ਸਰਲਤਾ ਅਤੇ ਗੋਪਨੀਯਤਾ 'ਤੇ ਕੇਂਦਰਿਤ ਹੈ।</value>
   </data>
   <data name="AppShortName" xml:space="preserve">
-    <value>ਨਾਗੀ</value>
+    <value>Nagi</value>
   </data>
   <data name="AppDisplayName" xml:space="preserve">
-    <value>ਨਾਗੀ ਸੰਗੀਤ ਪਲੇਅਰ</value>
+    <value>Nagi ਸੰਗੀਤ ਪਲੇਅਰ</value>
   </data>
   <data name="AppInfoTip" xml:space="preserve">
-    <value>ਨਾਗੀ ਸੰਗੀਤ ਪਲੇਅਰ ਨਾਲ ਖੋਲ੍ਹੋ</value>
+    <value>Nagi ਸੰਗੀਤ ਪਲੇਅਰ ਨਾਲ ਖੋਲ੍ਹੋ</value>
   </data>
   <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>ਨਾਗੀ ਸ਼ੁਰੂਆਤ</value>
+    <value>Nagi ਸ਼ੁਰੂਆਤ</value>
   </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>ਪਿਛਲਾ</value>
@@ -1070,58 +1121,58 @@
     <value>ਐਲਬਮ 'ਤੇ ਜਾਓ</value>
   </data>
   <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Drop files or folders onto the player to add them to the queue.</value>
+    <value>ਉਨ੍ਹਾਂ ਨੂੰ ਕਤਾਰ ਵਿੱਚ ਜੋੜਨ ਲਈ ਪਲੇਅਰ ਉੱਤੇ ਫ਼ਾਈਲਾਂ ਜਾਂ ਫੋਲਡਰ ਸੁੱਟੋ।</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>ਅਗਲਾ</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
-    <value>Clear queue</value>
+    <value>ਕਤਾਰ ਖਾਲੀ ਕਰੋ</value>
   </data>
   <data name="QueuePanel_DisplayOptions" xml:space="preserve">
-    <value>Queue display options</value>
+    <value>ਕਤਾਰ ਦਿਖਾਉਣ ਦੇ ਬਦਲ</value>
   </data>
   <data name="QueuePanel_Close" xml:space="preserve">
-    <value>Close queue</value>
+    <value>ਕਤਾਰ ਬੰਦ ਕਰੋ</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
-    <value>Artist</value>
+    <value>ਕਲਾਕਾਰ</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
-    <value>Duration</value>
+    <value>ਅੰਤਰਾਲ</value>
   </data>
   <data name="QueuePanel_ShowTrackCount" xml:space="preserve">
-    <value>Track count</value>
+    <value>ਟਰੈਕ ਗਿਣਤੀ</value>
   </data>
   <data name="QueuePanel_TrackCount" xml:space="preserve">
-    <value>Tracks: {0:N0}</value>
+    <value>ਟਰੈਕ: {0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
-    <value>Queue position</value>
+    <value>ਕਤਾਰ ਵਿੱਚ ਸਥਿਤੀ</value>
   </data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve">
-    <value>Genre</value>
+    <value>ਸ਼ੈਲੀ</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
-    <value>Total duration</value>
+    <value>ਕੁੱਲ ਸਮਾਂ</value>
   </data>
   <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>ਚਲਾਓ</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
-    <value>Move up</value>
+    <value>ਉੱਪਰ ਕਰੋ</value>
   </data>
   <data name="QueuePanel_MoveDown" xml:space="preserve">
-    <value>Move down</value>
+    <value>ਹੇਠਾਂ ਕਰੋ</value>
   </data>
   <data name="QueuePanel_Remove" xml:space="preserve">
-    <value>Remove from queue</value>
+    <value>ਕਤਾਰ ਵਿੱਚੋਂ ਹਟਾਓ</value>
   </data>
   <data name="AlbumPage_Title" xml:space="preserve">
     <value>ਐਲਬਮਾਂ</value>
   </data>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>ਐਲਬਮਾਂ ਖੋਜੋ...</value>
+    <value>ਐਲਬਮਾਂ ਖੋਜੋ…</value>
   </data>
   <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
     <value>ਐਲਬਮਾਂ ਖੋਜੋ</value>
@@ -1145,7 +1196,7 @@
     <value>ਗਾਣੇ</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>ਐਲਬਮ ਵਿੱਚ ਖੋਜੋ...</value>
+    <value>ਐਲਬਮ ਵਿੱਚ ਖੋਜੋ…</value>
   </data>
   <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>ਐਲਬਮ ਵਿੱਚ ਖੋਜੋ</value>
@@ -1166,13 +1217,13 @@
     <value>ਕਤਾਰ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ</value>
   </data>
   <data name="AlbumViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>ਪਲੇਲਿਸਟ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ</value>
+    <value>ਪਲੇਅਲਿਸਟ ਵਿੱਚ ਜੋੜੋ</value>
   </data>
   <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
     <value>ਕਲਾਕਾਰ 'ਤੇ ਜਾਓ</value>
   </data>
   <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>ਐਕਸਪਲੋਰਰ ਵਿੱਚ ਦਿਖਾਓ</value>
+    <value>ਫਾਈਲ ਐਕਸਪਲੋਰਰ ਵਿੱਚ ਦਿਖਾਓ</value>
   </data>
   <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>ਚਲਾਓ</value>
@@ -1187,7 +1238,7 @@
     <value>ਕਲਾਕਾਰ</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>ਕਲਾਕਾਰ ਖੋਜੋ...</value>
+    <value>ਕਲਾਕਾਰ ਖੋਜੋ…</value>
   </data>
   <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>ਕਲਾਕਾਰ ਖੋਜੋ</value>
@@ -1229,7 +1280,7 @@
     <value>ਗਾਣੇ</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>ਕਲਾਕਾਰ ਵਿੱਚ ਖੋਜੋ...</value>
+    <value>ਕਲਾਕਾਰ ਵਿੱਚ ਖੋਜੋ…</value>
   </data>
   <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>ਕਲਾਕਾਰ ਵਿੱਚ ਖੋਜੋ</value>
@@ -1250,13 +1301,13 @@
     <value>ਕਤਾਰ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ</value>
   </data>
   <data name="ArtistViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>ਪਲੇਲਿਸਟ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ</value>
+    <value>ਪਲੇਅਲਿਸਟ ਵਿੱਚ ਜੋੜੋ</value>
   </data>
   <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
     <value>ਐਲਬਮ 'ਤੇ ਜਾਓ</value>
   </data>
   <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>ਐਕਸਪਲੋਰਰ ਵਿੱਚ ਦਿਖਾਓ</value>
+    <value>ਫਾਈਲ ਐਕਸਪਲੋਰਰ ਵਿੱਚ ਦਿਖਾਓ</value>
   </data>
   <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>ਚਲਾਓ</value>
@@ -1286,7 +1337,7 @@
     <value>ਮੁੜ ਸਕੈਨ ਕਰੋ</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>ਮਿਟਾਓ</value>
+    <value>ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚੋਂ ਹਟਾਓ</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>ਹਾਲੇ ਕੋਈ ਫੋਲਡਰ ਨਹੀਂ ਜੋੜਿਆ ਗਿਆ</value>
@@ -1298,7 +1349,7 @@
     <value>ਚਲਾਓ</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>ਪਲੇਲਿਸਟ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ</value>
+    <value>ਪਲੇਅਲਿਸਟ ਵਿੱਚ ਜੋੜੋ</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_Play" xml:space="preserve">
     <value>ਚਲਾਓ</value>
@@ -1310,7 +1361,7 @@
     <value>ਕਤਾਰ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>ਪਲੇਲਿਸਟ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ</value>
+    <value>ਪਲੇਅਲਿਸਟ ਵਿੱਚ ਜੋੜੋ</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
     <value>ਐਲਬਮ 'ਤੇ ਜਾਓ</value>
@@ -1319,7 +1370,7 @@
     <value>ਕਲਾਕਾਰ 'ਤੇ ਜਾਓ</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>ਐਕਸਪਲੋਰਰ ਵਿੱਚ ਦਿਖਾਓ</value>
+    <value>ਫਾਈਲ ਐਕਸਪਲੋਰਰ ਵਿੱਚ ਦਿਖਾਓ</value>
   </data>
   <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>ਚਲਾਓ</value>
@@ -1331,7 +1382,7 @@
     <value>ਗਾਣੇ</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>ਫੋਲਡਰ ਵਿੱਚ ਖੋਜੋ...</value>
+    <value>ਫੋਲਡਰ ਵਿੱਚ ਖੋਜੋ…</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>ਫੋਲਡਰ ਵਿੱਚ ਖੋਜੋ</value>
@@ -1352,7 +1403,7 @@
     <value>ਸ਼ੈਲੀਆਂ</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>ਸ਼ੈਲੀਆਂ ਖੋਜੋ...</value>
+    <value>ਸ਼ੈਲੀਆਂ ਖੋਜੋ…</value>
   </data>
   <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
     <value>ਸ਼ੈਲੀਆਂ ਖੋਜੋ</value>
@@ -1373,7 +1424,7 @@
     <value>ਲਾਇਬ੍ਰੇਰੀ</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>ਲਾਇਬ੍ਰੇਰੀ ਖੋਜੋ...</value>
+    <value>ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚ ਖੋਜੋ…</value>
   </data>
   <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
     <value>ਲਾਇਬ੍ਰੇਰੀ ਖੋਜੋ</value>
@@ -1394,7 +1445,7 @@
     <value>ਕਤਾਰ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ</value>
   </data>
   <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>ਪਲੇਲਿਸਟ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ</value>
+    <value>ਪਲੇਅਲਿਸਟ ਵਿੱਚ ਜੋੜੋ</value>
   </data>
   <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
     <value>ਐਲਬਮ 'ਤੇ ਜਾਓ</value>
@@ -1403,10 +1454,16 @@
     <value>ਕਲਾਕਾਰ 'ਤੇ ਜਾਓ</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>ਐਕਸਪਲੋਰਰ ਵਿੱਚ ਦਿਖਾਓ</value>
+    <value>ਫਾਈਲ ਐਕਸਪਲੋਰਰ ਵਿੱਚ ਦਿਖਾਓ</value>
   </data>
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>ਚਲਾਓ</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
+    <value>ਕੋਈ ਗੀਤ ਨਹੀਂ ਮਿਲੇ</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+    <value>ਕੁਝ ਹੋਰ ਖੋਜਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
     <value>ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਖਾਲੀ ਹੈ</value>
@@ -1415,34 +1472,34 @@
     <value>ਸੈਟਿੰਗਾਂ ਵਿੱਚ ਆਪਣੀ ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚ ਫੋਲਡਰ ਜੋੜੋ</value>
   </data>
   <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
-    <value>ਇਸ ਟ੍ਰੈਕ ਲਈ ਕੋਈ ਬੋਲ ਨਹੀਂ ਮਿਲੇ</value>
+    <value>ਇਸ ਗੀਤ ਲਈ ਕੋਈ ਬੋਲ ਨਹੀਂ ਮਿਲੇ</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
     <value>ਕੋਈ ਹੋਰ ਗਾਣਾ ਅਜ਼ਮਾਓ</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
-    <value>Edit or replace lyrics</value>
+    <value>ਬੋਲ ਸੰਪਾਦਿਤ ਕਰੋ ਜਾਂ ਬਦਲੋ</value>
   </data>
   <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
-    <value>Edit lyrics</value>
+    <value>ਬੋਲ ਸੰਪਾਦਿਤ ਕਰੋ</value>
   </data>
   <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
-    <value>Paste plain text or timestamped LRC lyrics</value>
+    <value>ਸਾਦਾ ਟੈਕਸਟ ਜਾਂ ਸਮਾਂ-ਅੰਕਿਤ LRC ਬੋਲ ਪੇਸਟ ਕਰੋ</value>
   </data>
   <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
-    <value>Save</value>
+    <value>ਸੁਰੱਖਿਅਤ ਕਰੋ</value>
   </data>
   <data name="LyricsPage_EditLyrics_Remove" xml:space="preserve">
-    <value>Remove saved lyrics</value>
+    <value>ਸੰਭਾਲੇ ਬੋਲ ਹਟਾਓ</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
-    <value>Lyrics could not be updated</value>
+    <value>ਬੋਲ ਅੱਪਡੇਟ ਨਹੀਂ ਕੀਤੇ ਜਾ ਸਕੇ</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Nagi could not save the lyrics. Check the log for details and try again.</value>
+    <value>Nagi ਬੋਲਾਂ ਨੂੰ ਸੇਵ ਨਹੀਂ ਕਰ ਸਕਿਆ। ਵੇਰਵਿਆਂ ਲਈ ਲੌਗ ਦੀ ਜਾਂਚ ਕਰੋ ਅਤੇ ਦੁਬਾਰਾ کوشش ਕਰੋ।</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
-    <value>ਨਾਗੀ ਵਿੱਚ ਤੁਹਾਡਾ ਸੁਆਗਤ ਹੈ</value>
+    <value>Nagi ਵਿੱਚ ਤੁਹਾਡਾ ਸੁਆਗਤ ਹੈ</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_ToolTip" xml:space="preserve">
     <value>ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਇੱਕ ਸੰਗੀਤ ਫੋਲਡਰ ਜੋੜੋ</value>
@@ -1454,7 +1511,7 @@
     <value>ਪਲੇਲਿਸਟਾਂ</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>ਪਲੇਲਿਸਟਾਂ ਖੋਜੋ...</value>
+    <value>ਪਲੇਅਲਿਸਟਾਂ ਖੋਜੋ…</value>
   </data>
   <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>ਪਲੇਲਿਸਟਾਂ ਖੋਜੋ</value>
@@ -1502,7 +1559,7 @@
     <value>ਗਾਣੇ</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>ਪਲੇਲਿਸਟ ਵਿੱਚ ਖੋਜੋ...</value>
+    <value>ਪਲੇਅਲਿਸਟ ਵਿੱਚ ਖੋਜੋ…</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>ਪਲੇਲਿਸਟ ਵਿੱਚ ਖੋਜੋ</value>
@@ -1529,10 +1586,10 @@
     <value>ਕਲਾਕਾਰ 'ਤੇ ਜਾਓ</value>
   </data>
   <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>ਐਕਸਪਲੋਰਰ ਵਿੱਚ ਦਿਖਾਓ</value>
+    <value>ਫਾਈਲ ਐਕਸਪਲੋਰਰ ਵਿੱਚ ਦਿਖਾਓ</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
-    <value>ਪਲੇਲਿਸਟ ਤੋਂ ਹਟਾਓ</value>
+    <value>ਪਲੇਅਲਿਸਟ ਵਿੱਚੋਂ ਹਟਾਓ</value>
   </data>
   <data name="PlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>ਚਲਾਓ</value>
@@ -1550,7 +1607,7 @@
     <value>ਗਾਣੇ</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>ਸ਼ੈਲੀ ਵਿੱਚ ਖੋਜੋ...</value>
+    <value>ਸ਼ੈਲੀ ਵਿੱਚ ਖੋਜੋ…</value>
   </data>
   <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>ਸ਼ੈਲੀ ਵਿੱਚ ਖੋਜੋ</value>
@@ -1571,7 +1628,7 @@
     <value>ਕਤਾਰ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ</value>
   </data>
   <data name="GenreViewPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>ਪਲੇਲਿਸਟ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ</value>
+    <value>ਪਲੇਅਲਿਸਟ ਵਿੱਚ ਜੋੜੋ</value>
   </data>
   <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
     <value>ਐਲਬਮ 'ਤੇ ਜਾਓ</value>
@@ -1580,7 +1637,7 @@
     <value>ਕਲਾਕਾਰ 'ਤੇ ਜਾਓ</value>
   </data>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>ਐਕਸਪਲੋਰਰ ਵਿੱਚ ਦਿਖਾਓ</value>
+    <value>ਫਾਈਲ ਐਕਸਪਲੋਰਰ ਵਿੱਚ ਦਿਖਾਓ</value>
   </data>
   <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
     <value>ਕੋਈ ਪਲੇਲਿਸਟ ਉਪਲਬਧ ਨਹੀਂ</value>
@@ -1604,25 +1661,25 @@
     <value>ਥੀਮ</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>ਐਪਲੀਕੇਸ਼ਨ ਥੀਮ ਚੁਣੋ।</value>
+    <value>ਲਾਈਟ, ਡਾਰਕ, ਜਾਂ ਸਿਸਟਮ ਥੀਮ ਚੁਣੋ।</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
     <value>ਐਕਸੈਂਟ ਰੰਗ</value>
   </data>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
-    <value>ਮੂਲ ਤੇ ਰੀਸੈਟ ਕਰੋ</value>
+    <value>ਡਿਫ਼ਾਲਟ 'ਤੇ ਰੀਸੈੱਟ ਕਰੋ</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>ਵਿੰਡੋ ਸਮੱਗਰੀ</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Description" xml:space="preserve">
-    <value>ਵਿੰਡੋ ਲਈ ਬੈਕਡ੍ਰੌਪ ਸਮੱਗਰੀ ਚੁਣੋ।</value>
+    <value>ਵਿੰਡੋ ਦੀ ਪਿਛੋਕੜ ਸਮੱਗਰੀ ਚੁਣੋ।</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
     <value>ਡਾਇਨਾਮਿਕ ਥੀਮਿੰਗ</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>ਡਾਇਨਾਮਿਕ ਥੀਮਿੰਗ ਵਿਕਲਪਾਂ ਨੂੰ ਸਮਰੱਥ ਅਤੇ ਸੰਰਚਿਤ ਕਰੋ।</value>
+    <value>ਐਪ ਦੇ ਰੰਗਾਂ ਨੂੰ ਮੌਜੂਦਾ ਐਲਬਮ ਆਰਟਵਰਕ ਨਾਲ ਮਿਲਾਓ।</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
     <value>ਵਿੰਡੋ ਦਾ ਆਕਾਰ ਯਾਦ ਰੱਖੋ</value>
@@ -1637,7 +1694,7 @@
     <value>ਅਗਲੀ ਸ਼ੁਰੂਆਤ 'ਤੇ ਮੁੱਖ ਵਿੰਡੋ ਨੂੰ ਇਸਦੀ ਪਿਛਲੀ ਸਕ੍ਰੀਨ ਸਥਿਤੀ 'ਤੇ ਬਹਾਲ ਕਰੋ।</value>
   </data>
   <data name="SettingsPage_RememberNavState_Header" xml:space="preserve">
-    <value>ਨੈਵੀਗੇਸ਼ਨ ਪੈਨਲ ਦੀ ਸਥਿਤੀ ਯਾਦ ਰੱਖੋ</value>
+    <value>ਨੇਵੀਗੇਸ਼ਨ ਪੈਨਲ ਦੀ ਸਥਿਤੀ ਯਾਦ ਰੱਖੋ</value>
   </data>
   <data name="SettingsPage_RememberNavState_Description" xml:space="preserve">
     <value>ਖੱਬੇ ਨੈਵੀਗੇਸ਼ਨ ਪੈਨਲ ਨੂੰ ਖੁੱਲ੍ਹਾ ਜਾਂ ਬੰਦ ਰੱਖੋ ਜਿਵੇਂ ਤੁਸੀਂ ਇਸਨੂੰ ਛੱਡਿਆ ਸੀ।</value>
@@ -1652,16 +1709,16 @@
     <value>ਪਲੇਅਰ ਪ੍ਰਬੰਧਨ</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Header" xml:space="preserve">
-    <value>ਵਾਲੀਅਮ ਨਾਰਮਲਾਈਜ਼ੇਸ਼ਨ (ਰੀਪਲੇਗੇਨ)</value>
+    <value>ਵਾਲੀਅਮ ਨਾਰਮਲਾਈਜ਼ੇਸ਼ਨ (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>ਅਚਾਨਕ ਉੱਚੀ ਆਵਾਜ਼ ਦੀਆਂ ਤਬਦੀਲੀਆਂ ਤੋਂ ਬਚਣ ਲਈ ਵਾਲੀਅਮ ਨੂੰ ਸਟੈਂਡਰਡ ਪੱਧਰ (-18 LUFS) 'ਤੇ ਆਪਣੇ ਆਪ ਐਡਜਸਟ ਕਰੋ।</value>
+    <value>ReplayGain ਦੀ ਵਰਤੋਂ ਕਰਕੇ ਗੀਤਾਂ ਵਿਚਕਾਰ ਅਵਾਜ਼ ਦੇ ਫ਼ਰਕ ਨੂੰ ਘਟਾਓ।</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
-    <value>WASAPI exclusive mode</value>
+    <value>WASAPI ਐਕਸਕਲੂਸਿਵ ਮੋਡ</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+    <value>Nagi ਨੂੰ Windows ਆਡੀਓ ਡਿਵਾਈਸ ਦਾ ਵਿਸ਼ੇਸ਼ ਕੰਟਰੋਲ ਦਿਓ। ਹੋਰ ਐਪਾਂ ਬੰਦ ਰਹਿ ਸਕਦੀਆਂ ਹਨ। ਇਸ ਸੈਟਿੰਗ ਨੂੰ ਬਦਲਣ ਤੋਂ ਬਾਅਦ Nagi ਨੂੰ ਰੀਸਟਾਰਟ ਕਰੋ।</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>ਪਲੇ / ਪੌਜ਼ 'ਤੇ ਫੇਡ</value>
@@ -1673,7 +1730,7 @@
     <value>ਆਡੀਓ ਇਕੁਅਲਾਈਜ਼ਰ</value>
   </data>
   <data name="SettingsPage_ResetEqualizer_Content" xml:space="preserve">
-    <value>ਮੂਲ ਤੇ ਰੀਸੈਟ ਕਰੋ</value>
+    <value>ਡਿਫ਼ਾਲਟ 'ਤੇ ਰੀਸੈੱਟ ਕਰੋ</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>ਪ੍ਰੀਐਂਪ</value>
@@ -1685,37 +1742,37 @@
     <value>ਪਲੇਅਰ ਨਿਯੰਤਰਣਾਂ ਨੂੰ ਅਨੁਕੂਲਿਤ ਕਰੋ</value>
   </data>
   <data name="SettingsPage_ResetPlayerButtons_Content" xml:space="preserve">
-    <value>ਮੂਲ ਤੇ ਰੀਸੈਟ ਕਰੋ</value>
+    <value>ਡਿਫ਼ਾਲਟ 'ਤੇ ਰੀਸੈੱਟ ਕਰੋ</value>
   </data>
   <data name="SettingsPage_CustomizePlayer_Instructions" xml:space="preserve">
     <value>ਦਿੱਖ ਨੂੰ ਟੌਗਲ ਕਰਨ ਲਈ ਹੋਵਰ ਕਰੋ। ਮੁੜ ਕ੍ਰਮਬੱਧ ਕਰਨ ਲਈ ਖਿੱਚੋ। ਡਿਵਾਈਡਰ ਕੇਂਦਰ ਅਤੇ ਸੱਜੇ ਨਿਯੰਤਰਣਾਂ ਨੂੰ ਵੱਖ ਕਰਦਾ ਹੈ।</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Header" xml:space="preserve">
-    <value>ਸੁੰਗੜਨਯੋਗ ਪਲੇਅਰ</value>
+    <value>ਸਮੇਟਣਯੋਗ ਪਲੇਅਰ</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>ਪਲੇਅਰ ਬਾਰ ਨੂੰ ਫੈਲਾਉਣ ਅਤੇ ਸੁੰਗੜਨ ਲਈ ਐਨੀਮੇਟ ਕਰੋ।</value>
+    <value>ਜਦੋਂ ਤੁਸੀਂ ਪਲੇਅਰ ਬਾਰ 'ਤੇ ਕਰਸਰ ਲੈ ਕੇ ਜਾਓ ਤਾਂ ਇਸਨੂੰ ਫੈਲਾਓ।</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
-    <value>ਪਲੇਬੈਕ ਸਥਿਤੀ ਬਹਾਲ ਕਰੋ</value>
+    <value>ਪਲੇਅਬੈਕ ਸਥਿਤੀ ਬਹਾਲ ਕਰੋ</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>ਅਗਲੀ ਸ਼ੁਰੂਆਤ 'ਤੇ ਮੁੜ ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਮੌਜੂਦਾ ਪਲੇਬੈਕ ਸਥਿਤੀ ਨੂੰ ਸੁਰੱਖਿਅਤ ਕਰੋ।</value>
+    <value>ਜਦੋਂ Nagi ਸ਼ੁਰੂ ਹੋਵੇ ਤਾਂ ਆਪਣੀ ਕਤਾਰ ਅਤੇ ਪਲੇਅਬੈਕ ਸਥਿਤੀ ਨੂੰ ਬਹਾਲ ਕਰੋ।</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
-    <value>ਸ਼ੁਰੂਆਤ 'ਤੇ ਆਟੋ ਲਾਂਚ</value>
+    <value>ਸਟਾਰਟਅੱਪ 'ਤੇ ਸਵੈ-ਚਾਲੂ ਕਰੋ</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
-    <value>ਜਦੋਂ ਤੁਸੀਂ ਆਪਣੇ ਕੰਪਿਊਟਰ ਵਿੱਚ ਲੌਗ ਇਨ ਕਰਦੇ ਹੋ ਤਾਂ ਨਾਗੀ ਨੂੰ ਆਪਣੇ ਆਪ ਸ਼ੁਰੂ ਕਰੋ।</value>
+    <value>ਜਦੋਂ ਤੁਸੀਂ ਆਪਣੇ ਕੰਪਿਊਟਰ ਵਿੱਚ ਲੌਗ ਇਨ ਕਰਦੇ ਹੋ ਤਾਂ Nagi ਨੂੰ ਆਪਣੇ ਆਪ ਸ਼ੁਰੂ ਕਰੋ।</value>
   </data>
   <data name="SettingsPage_StartMinimized_Header" xml:space="preserve">
-    <value>ਛੋਟਾ ਕਰਕੇ ਸ਼ੁਰੂ ਕਰੋ</value>
+    <value>ਮਿਨੀਮਾਈਜ਼ ਕਰਕੇ ਸ਼ੁਰੂ ਕਰੋ</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>ਜਦੋਂ ਲਾਂਚ ਕੀਤਾ ਜਾਂਦਾ ਹੈ, ਤਾਂ ਐਪਲੀਕੇਸ਼ਨ ਵਿੰਡੋ ਡਿਫੌਲਟ ਰੂਪ ਵਿੱਚ ਘੱਟੋ-ਘੱਟ ਹੋਵੇਗੀ।</value>
+    <value>Nagi ਦੀ ਵਿੰਡੋ ਮਿਨੀਮਾਈਜ਼ ਕਰਕੇ ਸ਼ੁਰੂ ਕਰੋ।</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
-    <value>ਮਿਨੀ-ਪਲੇਅਰ ਤੱਕ ਘੱਟੋ-ਘੱਟ ਕਰੋ</value>
+    <value>ਮਿਨੀ-ਪਲੇਅਰ ਵਿੱਚ ਮਿਨੀਮਾਈਜ਼ ਕਰੋ</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Description" xml:space="preserve">
     <value>ਜਦੋਂ ਘੱਟੋ-ਘੱਟ ਕੀਤਾ ਜਾਂਦਾ ਹੈ, ਤਾਂ ਵਿੰਡੋ ਨੂੰ ਲੁਕਾਉਣ ਦੀ ਬਜਾਏ ਇੱਕ ਸੰਖੇਪ ਫਲੋਟਿੰਗ ਪਲੇਅਰ ਦਿਖਾਓ।</value>
@@ -1724,16 +1781,16 @@
     <value>ਸਿਸਟਮ ਟਰੇ ਵਿੱਚ ਲੁਕਾਓ</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>ਜਦੋਂ ਬੰਦ ਕੀਤਾ ਜਾਂਦਾ ਹੈ, ਤਾਂ ਇਸਦੀ ਬਜਾਏ ਸਿਸਟਮ ਟਰੇ ਵਿੱਚ ਲੁਕਾਓ।</value>
+    <value>ਜਦੋਂ ਤੁਸੀਂ ਵਿੰਡੋ ਬੰਦ ਕਰੋ ਤਾਂ Nagi ਨੂੰ ਸਿਸਟਮ ਟਰੇ ਵਿੱਚ ਚੱਲਦਾ ਰੱਖੋ।</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
-    <value>ਫਲਾਈਆਊਟ ਵਿੱਚ ਕਵਰ ਆਰਟ ਦਿਖਾਓ</value>
+    <value>ਫਲਾਇਆਊਟ ਵਿੱਚ ਕਵਰ ਆਰਟ ਦਿਖਾਓ</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
     <value>ਟਰੇ ਆਈਕਨ 'ਤੇ ਕਲਿੱਕ ਕਰਨ 'ਤੇ ਦਿਖਾਈ ਦੇਣ ਵਾਲੇ ਸੰਖੇਪ ਪਲੇਅਰ ਵਿੱਚ ਕਵਰ ਆਰਟ ਪ੍ਰਦਰਸ਼ਿਤ ਕਰੋ।</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
-    <value>ਕ੍ਰਮਬੱਧ ਕਰਦੇ ਸਮੇਂ ਲੇਖਾਂ ਨੂੰ ਅਣਡਿੱਠਾ ਕਰੋ</value>
+    <value>ਲੜੀਬੱਧ ਕਰਦੇ ਸਮੇਂ ਆਰਟੀਕਲ ਅਣਡਿੱਠ ਕਰੋ</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
     <value>ਐਲਬਮਾਂ, ਕਲਾਕਾਰਾਂ ਅਤੇ ਗੀਤਾਂ ਨੂੰ ਉਹਨਾਂ ਦੇ ਪਹਿਲੇ ਮਹੱਤਵਪੂਰਨ ਸ਼ਬਦ ਦੁਆਰਾ ਕ੍ਰਮਬੱਧ ਕਰੋ (ਉਦਾਹਰਨ ਲਈ, "The Beatles" B ਅਧੀਨ ਕ੍ਰਮਬੱਧ ਹੁੰਦਾ ਹੈ)।</value>
@@ -1760,10 +1817,10 @@
     <value>ਵੰਡਣ ਦੀਆਂ ਤਬਦੀਲੀਆਂ ਨੂੰ ਲਾਗੂ ਕਰਨ ਲਈ ਲਾਇਬ੍ਰੇਰੀ ਨੂੰ ਮੁੜ ਸਕੈਨ ਕਰੋ</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
-    <value>ਆਨਲਾਈਨ ਮੈਟਾਡੇਟਾ ਪ੍ਰਾਪਤ ਕਰੋ</value>
+    <value>ਔਨਲਾਈਨ ਮੈਟਾਡੇਟਾ ਪ੍ਰਾਪਤ ਕਰੋ</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>ਆਨਲਾਈਨ ਸੇਵਾਵਾਂ (ਜਿਵੇਂ, ਸਪੋਟੀਫਾਈ, ਲਾਸਟ.ਐਫ.ਐਮ.) ਤੋਂ ਕਲਾਕਾਰ ਚਿੱਤਰਾਂ ਅਤੇ ਜੀਵਨੀਆਂ ਵਰਗੀਆਂ ਵਾਧੂ ਜਾਣਕਾਰੀਆਂ ਪ੍ਰਾਪਤ ਕਰੋ।</value>
+    <value>ਔਨਲਾਈਨ ਸਰੋਤਾਂ ਤੋਂ ਕਲਾਕਾਰਾਂ ਦੀਆਂ ਤਸਵੀਰਾਂ ਅਤੇ ਜੀਵਨੀ ਪ੍ਰਾਪਤ ਕਰੋ।</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>ਸਰੋਤ</value>
@@ -1772,10 +1829,10 @@
     <value>ਮੈਟਾਡੇਟਾ ਸਰੋਤਾਂ ਨੂੰ ਮੁੜ ਕ੍ਰਮਬੱਧ ਕਰਨ ਲਈ ਖਿੱਚੋ। ਵੇਰਵਿਆਂ ਲਈ ਹਰੇਕ ਸਰੋਤ ਉੱਤੇ ਹੋਵਰ ਕਰੋ।</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Header" xml:space="preserve">
-    <value>ਆਨਲਾਈਨ ਬੋਲ ਪ੍ਰਾਪਤ ਕਰੋ</value>
+    <value>ਔਨਲਾਈਨ ਬੋਲ ਪ੍ਰਾਪਤ ਕਰੋ</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>ਆਨਲਾਈਨ ਸਰੋਤਾਂ ਤੋਂ ਗੁੰਮ ਹੋਏ ਬੋਲਾਂ ਨੂੰ ਆਪਣੇ ਆਪ ਪ੍ਰਾਪਤ ਕਰੋ। (ਗੋਪਨੀਯਤਾ: ਟ੍ਰੈਕ ਮੈਟਾਡੇਟਾ ਨੂੰ ਤੀਜੀ-ਧਿਰ ਸੇਵਾਵਾਂ 'ਤੇ ਭੇਜਦਾ ਹੈ)</value>
+    <value>ਔਨਲਾਈਨ ਸਰੋਤਾਂ ਤੋਂ ਗੁੰਮ ਹੋਏ ਬੋਲ ਪ੍ਰਾਪਤ ਕਰੋ। ਇਹ ਤੀਜੀ-ਧਿਰ ਦੀਆਂ ਸੇਵਾਵਾਂ ਨੂੰ ਗੀਤ ਦਾ ਮੈਟਾਡੇਟਾ ਭੇਜਦਾ ਹੈ।</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
     <value>ਸਰੋਤ</value>
@@ -1790,10 +1847,10 @@
     <value>ਸਮਰਥਿਤ ਬੋਲਾਂ ਦੇ ਹੇਠਾਂ ਇੱਕ ਛੋਟੀ ਰੋਮਨਾਈਜ਼ਡ ਲਾਈਨ ਦਿਖਾਓ ਜਦੋਂ ਇੱਕ ਸਥਾਪਿਤ ਪੈਕ ਸਕ੍ਰਿਪਟ ਨਾਲ ਮੇਲ ਖਾਂਦਾ ਹੋਵੇ।</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
-    <value>ਭਾਸ਼ਾਈ ਪੈਕ</value>
+    <value>ਭਾਸ਼ਾ ਪੈਕ</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>ਉਹ ਭਾਸ਼ਾਵਾਂ ਸਥਾਪਿਤ ਕਰੋ ਜਿਨ੍ਹਾਂ ਨੂੰ ਤੁਸੀਂ ਰੋਮਨਾਈਜ਼ਡ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ। ਪੈਕ ਹਸਤਾਖਰਿਤ, ਸਿਰਫ਼ ਡੇਟਾ-ਮਾਤਰ, ਅਤੇ ਸਥਾਨਕ ਤੌਰ 'ਤੇ ਸਟੋਰ ਕੀਤੇ ਜਾਂਦੇ ਹਨ।</value>
+    <value>ਸਮਰਥਿਤ ਬੋਲਾਂ ਨੂੰ ਰੋਮਨਾਈਜ਼ ਕਰਨ ਲਈ ਭਾਸ਼ਾ ਪੈਕ ਇੰਸਟਾਲ ਕਰੋ। ਪੈਕ ਸਥਾਨਕ ਤੌਰ 'ਤੇ ਸਟੋਰ ਕੀਤੇ ਜਾਂਦੇ ਹਨ।</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
     <value>ਰੀਫ੍ਰੈਸ਼ ਕਰੋ</value>
@@ -1832,25 +1889,25 @@
     <value>{0} ਲਾਇਸੈਂਸ</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>ਪਲੇਲਿਸਟਾਂ ਐਕਸਪੋਰਟ/ਇੰਪੋਰਟ ਕਰੋ</value>
+    <value>ਪਲੇਅਲਿਸਟਾਂ ਇੰਪੋਰਟ ਅਤੇ ਐਕਸਪੋਰਟ ਕਰੋ</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
-    <value>ਦੂਜੇ ਪਲੇਅਰਾਂ ਵਿੱਚ ਵਰਤੋਂ ਲਈ ਪਲੇਲਿਸਟਾਂ ਨੂੰ M3U ਫਾਈਲਾਂ ਵਿੱਚ ਐਕਸਪੋਰਟ ਕਰੋ, ਜਾਂ M3U ਪਲੇਲਿਸਟਾਂ ਨੂੰ ਨਾਗੀ ਵਿੱਚ ਇੰਪੋਰਟ ਕਰੋ।</value>
+    <value>ਦੂਜੇ ਪਲੇਅਰਾਂ ਵਿੱਚ ਵਰਤੋਂ ਲਈ ਪਲੇਲਿਸਟਾਂ ਨੂੰ M3U ਫਾਈਲਾਂ ਵਿੱਚ ਐਕਸਪੋਰਟ ਕਰੋ, ਜਾਂ M3U ਪਲੇਲਿਸਟਾਂ ਨੂੰ Nagi ਵਿੱਚ ਇੰਪੋਰਟ ਕਰੋ।</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
-    <value>ਸਭ ਐਕਸਪੋਰਟ ਕਰੋ...</value>
+    <value>ਸਾਰੇ ਐਕਸਪੋਰਟ ਕਰੋ…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
     <value>ਸਾਰੀਆਂ ਪਲੇਲਿਸਟਾਂ ਨੂੰ ਇੱਕ ਫੋਲਡਰ ਵਿੱਚ ਐਕਸਪੋਰਟ ਕਰੋ</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
-    <value>ਇੰਪੋਰਟ ਕਰੋ...</value>
+    <value>ਇੰਪੋਰਟ ਕਰੋ…</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
     <value>ਇੱਕ ਜਾਂ ਵੱਧ M3U ਫਾਈਲਾਂ ਇੰਪੋਰਟ ਕਰੋ</value>
   </data>
   <data name="SettingsPage_ResetApp_Header" xml:space="preserve">
-    <value>ਐਪਲੀਕੇਸ਼ਨ ਰੀਸੈਟ ਕਰੋ</value>
+    <value>ਐਪਲੀਕੇਸ਼ਨ ਰੀਸੈੱਟ ਕਰੋ</value>
   </data>
   <data name="SettingsPage_ResetApp_Description" xml:space="preserve">
     <value>ਇਹ ਸਾਰੇ ਲਾਇਬ੍ਰੇਰੀ ਡਾਟਾ, ਪਲੇਲਿਸਟਾਂ ਨੂੰ ਮਿਟਾ ਦੇਵੇਗਾ, ਅਤੇ ਸਾਰੀਆਂ ਸੈਟਿੰਗਾਂ ਨੂੰ ਉਹਨਾਂ ਦੇ ਡਿਫੌਲਟ 'ਤੇ ਰੀਸੈਟ ਕਰ ਦੇਵੇਗਾ। ਐਪਲੀਕੇਸ਼ਨ ਮੁੜ ਚਾਲੂ ਹੋ ਜਾਵੇਗੀ।</value>
@@ -1862,7 +1919,7 @@
     <value>ਏਕੀਕਰਣ</value>
   </data>
   <data name="SettingsPage_LastFm_Header" xml:space="preserve">
-    <value>ਲਾਸਟ.ਐਫ.ਐਮ.</value>
+    <value>Last.fm</value>
   </data>
   <data name="SettingsPage_LastFm_Description" xml:space="preserve">
     <value>ਟਰੈਕ ਸਕ੍ਰੌਬਲ ਕਰਨ ਅਤੇ ਆਪਣੇ ਮੌਜੂਦਾ ਚੱਲ ਰਹੇ ਗੀਤ ਨੂੰ ਦਿਖਾਉਣ ਲਈ ਆਪਣੇ Last.fm ਖਾਤੇ ਨੂੰ ਕਨੈਕਟ ਕਰੋ।</value>
@@ -1880,22 +1937,22 @@
     <value>ਡਿਸਕਨੈਕਟ ਕਰੋ</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
-    <value>ਸਕ੍ਰੌਬਲਿੰਗ ਸਮਰੱਥ ਕਰੋ</value>
+    <value>ਸਕ੍ਰੋਬਲਿੰਗ ਚਾਲੂ ਕਰੋ</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Description" xml:space="preserve">
-    <value>ਨਾਗੀ 'ਤੇ ਸੁਣੇ ਗਏ ਟ੍ਰੈਕਾਂ ਨੂੰ ਆਪਣੇ ਆਪ ਆਪਣੇ Last.fm ਪ੍ਰੋਫਾਈਲ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ।</value>
+    <value>Nagi 'ਤੇ ਸੁਣੇ ਗਏ ਟ੍ਰੈਕਾਂ ਨੂੰ ਆਪਣੇ ਆਪ ਆਪਣੇ Last.fm ਪ੍ਰੋਫਾਈਲ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ।</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
-    <value>'ਹੁਣ ਚੱਲ ਰਿਹਾ' ਅੱਪਡੇਟ ਕਰੋ</value>
+    <value>ਹੁਣ ਚੱਲ ਰਿਹਾ ਹੈ ਅੱਪਡੇਟ ਕਰੋ</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>ਆਪਣੇ Last.fm ਦੋਸਤਾਂ ਨੂੰ ਦਿਖਾਓ ਕਿ ਤੁਸੀਂ ਰੀਅਲ-ਟਾਈਮ ਵਿੱਚ ਕੀ ਸੁਣ ਰਹੇ ਹੋ।</value>
+    <value>ਆਪਣੀ Last.fm ਪ੍ਰੋਫਾਈਲ 'ਤੇ ਇਸ ਵੇਲੇ ਚੱਲ ਰਿਹਾ ਗੀਤ ਦਿਖਾਓ।</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
-    <value>ਲਿਸਨਬ੍ਰੇਨਜ਼</value>
+    <value>ListenBrainz</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Description" xml:space="preserve">
-    <value>ਆਪਣੀਆਂ ਸੁਣੀਆਂ ਆਵਾਜ਼ਾਂ ਲਿਸਨਬ੍ਰੇਨਜ਼ ਨੂੰ ਭੇਜੋ (Last.fm ਦਾ ਇੱਕ ਖੁੱਲ੍ਹਾ ਬਦਲ ਹੈ)।</value>
+    <value>ਆਪਣੀਆਂ ਸੁਣੀਆਂ ਆਵਾਜ਼ਾਂ ListenBrainz ਨੂੰ ਭੇਜੋ (Last.fm ਦਾ ਇੱਕ ਖੁੱਲ੍ਹਾ ਬਦਲ ਹੈ)।</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenLabel" xml:space="preserve">
     <value>ਉਪਭੋਗਤਾ ਟੋਕਨ</value>
@@ -1913,10 +1970,10 @@
     <value>ਕਨੈਕਸ਼ਨ ਫੇਲ੍ਹ ਹੋ ਗਿਆ: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>ਸੁਣੀਆਂ ਆਵਾਜ਼ਾਂ ਜਮ੍ਹਾਂ ਕਰੋ (ਸਕ੍ਰੋਬਲਿੰਗ)</value>
+    <value>ਸੁਣੇ ਗਏ ਗੀਤ ਭੇਜੋ (ਸਕ੍ਰੋਬਲਿੰਗ)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>"ਹੁਣ ਚੱਲ ਰਿਹਾ ਹੈ" ਅੱਪਡੇਟ ਜਮ੍ਹਾਂ ਕਰੋ</value>
+    <value>ਹੁਣ ਚੱਲ ਰਿਹਾ ਹੈ ਅੱਪਡੇਟ ਭੇਜੋ</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
     <value>ਐਡਵਾਂਸਡ</value>
@@ -1928,7 +1985,7 @@
     <value>https://api.listenbrainz.org</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Title" xml:space="preserve">
-    <value>ਲਿਸਨਬ੍ਰੇਨਜ਼ ਤੋਂ ਡਿਸਕਨੈਕਟ ਕਰੀਏ?</value>
+    <value>ListenBrainz ਤੋਂ ਡਿਸਕਨੈਕਟ ਕਰੀਏ?</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Content" xml:space="preserve">
     <value>ਇਹ ਤੁਹਾਡੇ ਸੁਰੱਖਿਅਤ ਕੀਤੇ ਟੋਕਨ ਨੂੰ ਹਟਾ ਦੇਵੇਗਾ। ਤੁਸੀਂ ਕਿਸੇ ਵੀ ਸਮੇਂ ਦੁਬਾਰਾ ਕਨੈਕਟ ਕਰ ਸਕਦੇ ਹੋ।</value>
@@ -1949,7 +2006,7 @@
     <value>ਗਾਣੇ</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>ਸਮਾਰਟ ਪਲੇਲਿਸਟ ਵਿੱਚ ਖੋਜੋ...</value>
+    <value>ਸਮਾਰਟ ਪਲੇਅਲਿਸਟ ਵਿੱਚ ਖੋਜੋ…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>ਸਮਾਰਟ ਪਲੇਲਿਸਟ ਵਿੱਚ ਖੋਜੋ</value>
@@ -1979,7 +2036,7 @@
     <value>ਕਲਾਕਾਰ 'ਤੇ ਜਾਓ</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>ਐਕਸਪਲੋਰਰ ਵਿੱਚ ਦਿਖਾਓ</value>
+    <value>ਫਾਈਲ ਐਕਸਪਲੋਰਰ ਵਿੱਚ ਦਿਖਾਓ</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>ਚਲਾਓ</value>
@@ -2000,10 +2057,10 @@
     <value>ਬਾਰੇ</value>
   </data>
   <data name="SettingsPage_AboutExpander_Header" xml:space="preserve">
-    <value>ਨਾਗੀ ਬਾਰੇ</value>
+    <value>Nagi ਬਾਰੇ</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
-    <value>ਨਾਗੀ ਨਾਲ ਆਪਣੇ ਸਥਾਨਕ ਸੰਗੀਤ ਸੰਗ੍ਰਹਿ ਨੂੰ ਮੁੜ ਖੋਜੋ, ਇੱਕ ਸੰਗੀਤ ਪਲੇਅਰ ਜੋ ਗਤੀ, ਸਰਲਤਾ ਅਤੇ ਗੋਪਨੀਯਤਾ 'ਤੇ ਕੇਂਦਰਿਤ ਹੈ।</value>
+    <value>Nagi ਨਾਲ ਆਪਣੇ ਸਥਾਨਕ ਸੰਗੀਤ ਸੰਗ੍ਰਹਿ ਨੂੰ ਮੁੜ ਖੋਜੋ, ਇੱਕ ਸੰਗੀਤ ਪਲੇਅਰ ਜੋ ਗਤੀ, ਸਰਲਤਾ ਅਤੇ ਗੋਪਨੀਯਤਾ 'ਤੇ ਕੇਂਦਰਿਤ ਹੈ।</value>
   </data>
   <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
     <value>ਸੰਸਕਰਣ </value>
@@ -2021,7 +2078,7 @@
     <value>ਫੀਡਬੈਕ ਭੇਜੋ</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>ਸ਼ੁਰੂਆਤ 'ਤੇ ਅੱਪਡੇਟ ਲਈ ਜਾਂਚ ਕਰੋ</value>
+    <value>ਸਟਾਰਟਅੱਪ 'ਤੇ ਅੱਪਡੇਟਾਂ ਦੀ ਜਾਂਚ ਕਰੋ</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
     <value>ਜਦੋਂ ਐਪਲੀਕੇਸ਼ਨ ਸ਼ੁਰੂ ਹੁੰਦੀ ਹੈ ਤਾਂ ਨਵੇਂ ਸੰਸਕਰਣਾਂ ਲਈ ਆਪਣੇ ਆਪ ਜਾਂਚ ਕਰੋ।</value>
@@ -2030,7 +2087,7 @@
     <value>ਐਪਲੀਕੇਸ਼ਨ ਭਾਸ਼ਾ</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>ਬਦਲਾਵਾਂ ਨੂੰ ਲਾਗੂ ਹੋਣ ਲਈ ਮੁੜ ਚਾਲੂ ਕਰਨ ਦੀ ਲੋੜ ਹੈ</value>
+    <value>ਭਾਸ਼ਾ ਦੀ ਤਬਦੀਲੀ ਲਾਗੂ ਕਰਨ ਲਈ Nagi ਨੂੰ ਮੁੜ-ਚਾਲੂ ਕਰੋ।</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
     <value>ਮੁੜ ਚਾਲੂ ਕਰਨਾ ਲੋੜੀਂਦਾ</value>
@@ -2045,7 +2102,7 @@
     <value>ਬੈਕਅੱਪ ਅਤੇ ਰੀਸਟੋਰ</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>ਆਪਣੀ ਸੰਗੀਤ ਲਾਇਬ੍ਰੇਰੀ ਅਤੇ ਸੈਟਿੰਗਾਂ ਦਾ ਬੈਕਅੱਪ ਬਣਾਓ, ਜਾਂ ਪਿਛਲੇ ਬੈਕਅੱਪ ਤੋਂ ਰੀਸਟੋਰ ਕਰੋ</value>
+    <value>ਆਪਣੀ ਲਾਇਬ੍ਰੇਰੀ ਡਾਟਾ ਅਤੇ ਸੈਟਿੰਗਾਂ ਦਾ ਬੈਕਅੱਪ ਬਣਾਓ, ਜਾਂ ਪਿਛਲਾ ਬੈਕਅੱਪ ਬਹਾਲ ਕਰੋ।</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
     <value>ਬੈਕਅੱਪ ਬਣਾਓ</value>
@@ -2057,7 +2114,7 @@
     <value>ਬੈਕਅੱਪ ਬਣ ਗਿਆ</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>ਬੈਕਅੱਪ ਸਫ਼ਲਤਾਪੂਰਵਕ ਬਣਾਇਆ ਗਿਆ ({0:F2} MB) ਇੱਥੇ: {1}</value>
+    <value>ਇੱਥੇ ਬੈਕਅੱਪ ({0:F2} MB) ਬਣਾਇਆ ਗਿਆ: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
     <value>ਬੈਕਅੱਪ ਅਸਫਲ</value>
@@ -2084,13 +2141,13 @@
     <value>ਰੀਸਟੋਰ ਪੂਰਾ ਹੋ ਗਿਆ</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>ਬੈਕਅੱਪ ਸਫ਼ਲਤਾਪੂਰਵਕ ਰੀਸਟੋਰ ਹੋ ਗਿਆ। ਐਪ ਹੁਣ ਮੁੜ ਚਾਲੂ ਹੋ ਜਾਵੇਗੀ।</value>
+    <value>ਬੈਕਅੱਪ ਬਹਾਲ ਹੋ ਗਿਆ। Nagi ਹੁਣ ਮੁੜ-ਚਾਲੂ ਹੋਵੇਗਾ।</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
     <value>ਰੀਸਟੋਰ ਅਸਫਲ</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>ਬੈਕਅੱਪ ਤੋਂ ਰੀਸਟੋਰ ਕਰਨ ਵਿੱਚ ਅਸਫਲ। ਤੁਹਾਡਾ ਡਾਟਾ ਸੋਧਿਆ ਨਹੀਂ ਗਿਆ।</value>
+    <value>ਬੈਕਅੱਪ ਬਹਾਲ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ।</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
     <value>ਪਲੇਅਰ ਸਟਾਈਲਿੰਗ</value>
@@ -2102,25 +2159,25 @@
     <value>ਠੋਸ (ਅਪਾਰਦਰਸ਼ੀ)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>ਫਲੋਟਿੰਗ ਪਲੇਅਰ ਦੀ ਦਿੱਖ ਨੂੰ ਅਨੁਕੂਲਿਤ ਕਰੋ</value>
+    <value>ਪਲੇਅਰ ਬਾਰ ਦੀ ਦਿੱਖ ਨੂੰ ਆਪਣੀ ਪਸੰਦ ਮੁਤਾਬਕ ਬਦਲੋ।</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
     <value>ਟਿੰਟ ਦੀ ਤੀਬਰਤਾ</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>ਪਲੇਅਰ ਬੈਕਗ੍ਰਾਊਂਡ ਰੰਗ ਦੀ ਚਮਕ ਨੂੰ ਵਿਵਸਥਿਤ ਕਰਦਾ ਹੈ</value>
+    <value>ਪਲੇਅਰ ਦੇ ਪਿਛੋਕੜ ਰੰਗ ਦੀ ਗੂੜ੍ਹਤਾ ਨੂੰ ਵਿਵਸਥਿਤ ਕਰੋ।</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
-    <value>ਫੇਡ-ਇਨ ਦੀ ਮਿਆਦ</value>
+    <value>ਫੇਡ-ਇਨ ਸਮਾਂ</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
-    <value>ਚਲਾਉਂਦੇ ਸਮੇਂ ਫੇਡ-ਇਨ ਪ੍ਰਭਾਵ ਦੀ ਮਿਆਦ (ਮਿ.ਸ.)</value>
+    <value>ਜਦੋਂ ਪਲੇਅਬੈਕ ਮੁੜ ਸ਼ੁਰੂ ਹੁੰਦਾ ਹੈ ਤਾਂ ਅਵਾਜ਼ ਦੇ ਫੇਡ-ਇਨ ਹੋਣ ਦਾ ਸਮਾਂ ਤੈਅ ਕਰੋ।</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
-    <value>ਫੇਡ-ਆਊਟ ਦੀ ਮਿਆਦ</value>
+    <value>ਫੇਡ-ਆਊਟ ਸਮਾਂ</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
-    <value>ਰੋਕਦੇ ਸਮੇਂ ਫੇਡ-ਆਊਟ ਪ੍ਰਭਾਵ ਦੀ ਮਿਆਦ (ਮਿ.ਸ.)</value>
+    <value>ਜਦੋਂ ਪਲੇਅਬੈਕ ਰੋਕਿਆ ਜਾਂਦਾ ਹੈ ਤਾਂ ਅਵਾਜ਼ ਦੇ ਫੇਡ-ਆਊਟ ਹੋਣ ਦਾ ਸਮਾਂ ਤੈਅ ਕਰੋ।</value>
   </data>
   <data name="Settings_Nav_Insights" xml:space="preserve">
     <value>ਇਨਸਾਈਟਸ</value>
@@ -2132,10 +2189,10 @@
     <value>ਕੁੱਲ ਸੁਣਨ ਦਾ ਸਮਾਂ</value>
   </data>
   <data name="InsightsPage_UniqueSongs" xml:space="preserve">
-    <value>ਵਿਲੱਖਣ ਗੀਤ</value>
+    <value>ਵੱਖ-ਵੱਖ ਗੀਤ</value>
   </data>
   <data name="InsightsPage_PeakHour" xml:space="preserve">
-    <value>ਸਿਖਰ ਦਾ ਘੰਟਾ</value>
+    <value>ਸਭ ਤੋਂ ਸਰਗਰਮ ਘੰਟਾ</value>
   </data>
   <data name="InsightsPage_MostActiveDay" xml:space="preserve">
     <value>ਸਭ ਤੋਂ ਸਰਗਰਮ ਦਿਨ</value>
@@ -2162,7 +2219,7 @@
     <value>ਇੱਥੇ ਆਪਣੀਆਂ ਇਨਸਾਈਟਸ ਦੇਖਣ ਲਈ ਸੰਗੀਤ ਚਲਾਉਣਾ ਸ਼ੁਰੂ ਕਰੋ</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
-    <value>{0} ਪਲੇਅ</value>
+    <value>ਚਲਾਏ ਗਏ: {0}</value>
   </data>
   <data name="InsightsPage_Source_Albums" xml:space="preserve">
     <value>ਐਲਬਮਾਂ</value>
@@ -2222,7 +2279,7 @@
     <value>ਸਮਾਂ</value>
   </data>
   <data name="PaginationControl_All" xml:space="preserve">
-    <value>All</value>
+    <value>ਸਭ</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>ਪ੍ਰਤੀ ਪੰਨਾ ਆਈਟਮਾਂ:</value>
@@ -2261,12 +2318,174 @@
     <value>ਪਿਛਲਾ ਸਾਲ</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
-    <value>ਸਾਰਾ ਸਮਾਂ</value>
+    <value>ਸਭ ਸਮਾਂ</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}h {1}m</value>
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
     <value>{0}m {1}s</value>
+  </data>
+  <data name="QueuePanel_EmptyTitle" xml:space="preserve">
+    <value>ਤੁਹਾਡੀ ਕਤਾਰ ਖਾਲੀ ਹੈ</value>
+  </data>
+  <data name="QueuePanel_EmptyDescription" xml:space="preserve">
+    <value>ਕਤਾਰ ਬਣਾਉਣ ਲਈ ਸੰਗੀਤ ਚਲਾਓ ਜਾਂ ਇੱਥੇ ਆਡੀਓ ਫਾਈਲਾਂ ਸੁੱਟੋ।</value>
+  </data>
+  <data name="QueuePanel_LoadError" xml:space="preserve">
+    <value>ਕੁਝ ਗੀਤ ਲੋਡ ਨਹੀਂ ਕੀਤੇ ਜਾ ਸਕੇ। ਕਤਾਰ ਨੂੰ ਮੁੜ ਲੋਡ ਕਰਨ ਲਈ ਮੁੜ-ਕੋਸ਼ਿਸ਼ ਕਰੋ ਚੁਣੋ।</value>
+  </data>
+  <data name="QueuePanel_Retry" xml:space="preserve">
+    <value>ਮੁੜ-ਕੋਸ਼ਿਸ਼ ਕਰੋ</value>
+  </data>
+  <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
+    <value>ਨਵਾਂ ਪਲੇਅਲਿਸਟ ਕ੍ਰਮ ਸੰਭਾਲਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
+    <value>ਆਡੀਓ ਆਊਟਪੁੱਟ ਡਿਵਾਈਸ</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Description" xml:space="preserve">
+    <value>ਚੁਣੋ ਕਿ Nagi ਸੰਗੀਤ ਕਿੱਥੇ ਚਲਾਵੇ।</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Default" xml:space="preserve">
+    <value>ਸਿਸਟਮ ਡਿਫ਼ਾਲਟ</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Unavailable" xml:space="preserve">
+    <value>ਸੰਭਾਲੀ ਗਈ ਡਿਵਾਈਸ ਉਪਲਬਧ ਨਹੀਂ ਹੈ। ਸਿਸਟਮ ਡਿਫ਼ਾਲਟ ਦੀ ਵਰਤੋਂ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ।</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
+    <value>ਆਡੀਓ ਆਊਟਪੁੱਟ ਅੱਪਡੇਟ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕੀ। ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ ਜਾਂ ਕੋਈ ਹੋਰ ਡਿਵਾਈਸ ਚੁਣੋ।</value>
+  </data>
+  <data name="Listening_Random" xml:space="preserve">
+    <value>ਸ਼ਫਲ</value>
+  </data>
+  <data name="Listening_MoreVariety" xml:space="preserve">
+    <value>ਹੋਰ ਵੰਨ-ਸੁਵੰਨਤਾ</value>
+  </data>
+  <data name="Listening_Rediscover" xml:space="preserve">
+    <value>ਮੁੜ-ਖੋਜੋ</value>
+  </data>
+  <data name="Listening_Unheard" xml:space="preserve">
+    <value>ਅਣ-ਸੁਣੇ</value>
+  </data>
+  <data name="Listening_PlayFor" xml:space="preserve">
+    <value>ਇਸ ਸਮੇਂ ਲਈ ਚਲਾਓ…</value>
+  </data>
+  <data name="Listening_Minutes" xml:space="preserve">
+    <value>ਮਿੰਟ</value>
+  </data>
+  <data name="Listening_ShuffleMode" xml:space="preserve">
+    <value>ਮਿਕਸ ਕਿਸਮ</value>
+  </data>
+  <data name="Listening_AvoidRecentDays" xml:space="preserve">
+    <value>ਹਾਲ ਹੀ ਵਿੱਚ ਚਲਾਏ ਗਏ ਗੀਤਾਂ ਤੋਂ ਬਚੋ (ਦਿਨ)</value>
+  </data>
+  <data name="Listening_MoreOptions" xml:space="preserve">
+    <value>ਹੋਰ ਬਦਲ</value>
+  </data>
+  <data name="Listening_PlayForDescription" xml:space="preserve">
+    <value>ਤੁਹਾਡੀ ਚੁਣੀ ਹੋਈ ਸਮਾਂ ਸੀਮਾ ਤੋਂ ਵੱਧ ਨਾ ਹੋਣ ਵਾਲੇ ਪੂਰੇ ਗੀਤਾਂ ਦੀ ਇੱਕ ਕਤਾਰ ਬਣਾਓ।</value>
+  </data>
+  <data name="Listening_NoMixTitle" xml:space="preserve">
+    <value>ਇਸ ਮਿਕਸ ਲਈ ਕੋਈ ਗੀਤ ਨਹੀਂ</value>
+  </data>
+  <data name="Listening_NoMixDescription" xml:space="preserve">
+    <value>ਇਸ ਸੂਚੀ ਵਿੱਚ ਕੋਈ ਵੀ ਗੀਤ ਇਹਨਾਂ ਸ਼ਰਤਾਂ ਨੂੰ ਪੂਰਾ ਨਹੀਂ ਕਰਦਾ। ਕੋਈ ਹੋਰ ਮਿਕਸ ਜਾਂ ਗੀਤ ਸੂਚੀ ਅਜ਼ਮਾਓ।</value>
+  </data>
+  <data name="Listening_Favorites" xml:space="preserve">
+    <value>ਪਸੰਦੀਦਾ</value>
+  </data>
+  <data name="Listening_AddFavorite" xml:space="preserve">
+    <value>ਪਸੰਦੀਦਾ ਵਿੱਚ ਜੋੜੋ</value>
+  </data>
+  <data name="Listening_RemoveFavorite" xml:space="preserve">
+    <value>ਪਸੰਦੀਦਾ ਵਿੱਚੋਂ ਹਟਾਓ</value>
+  </data>
+  <data name="Listening_SleepTimer" xml:space="preserve">
+    <value>ਸਲੀਪ ਟਾਈਮਰ</value>
+  </data>
+  <data name="Listening_FinishTrack" xml:space="preserve">
+    <value>ਟਾਈਮਰ ਸਮਾਪਤ ਹੋਣ 'ਤੇ ਮੌਜੂਦਾ ਗੀਤ ਪੂਰਾ ਕਰੋ</value>
+  </data>
+  <data name="Listening_StopAfterTrack" xml:space="preserve">
+    <value>ਇਸ ਗੀਤ ਤੋਂ ਬਾਅਦ ਰੋਕੋ</value>
+  </data>
+  <data name="Listening_StopAtQueueEnd" xml:space="preserve">
+    <value>ਕਤਾਰ ਦੇ ਅੰਤ 'ਤੇ ਰੋਕੋ</value>
+  </data>
+  <data name="Listening_StopPlayback" xml:space="preserve">
+    <value>ਪਲੇਅਬੈਕ ਰੋਕੋ</value>
+  </data>
+  <data name="Listening_CustomTimer" xml:space="preserve">
+    <value>ਕਸਟਮ ਟਾਈਮਰ…</value>
+  </data>
+  <data name="Listening_Timer15" xml:space="preserve">
+    <value>15 ਮਿੰਟਾਂ ਵਿੱਚ</value>
+  </data>
+  <data name="Listening_Timer30" xml:space="preserve">
+    <value>30 ਮਿੰਟਾਂ ਵਿੱਚ</value>
+  </data>
+  <data name="Listening_Timer60" xml:space="preserve">
+    <value>60 ਮਿੰਟਾਂ ਵਿੱਚ</value>
+  </data>
+  <data name="Listening_CancelStop" xml:space="preserve">
+    <value>ਨਿਰਧਾਰਿਤ ਰੋਕ ਰੱਦ ਕਰੋ</value>
+  </data>
+  <data name="Listening_TimerRemaining" xml:space="preserve">
+    <value>{0} ਵਿੱਚ ਬੰਦ ਹੋ ਜਾਵੇਗਾ</value>
+  </data>
+  <data name="Listening_PlayerOptions" xml:space="preserve">
+    <value>ਪਲੇਅਰ ਬਦਲ</value>
+  </data>
+  <data name="Listening_RecentlyPlayed" xml:space="preserve">
+    <value>ਹਾਲ ਹੀ ਵਿੱਚ ਚਲਾਏ ਗਏ</value>
+  </data>
+  <data name="Listening_HistorySearch" xml:space="preserve">
+    <value>ਸੁਣਨ ਦੇ ਇਤਿਹਾਸ ਵਿੱਚ ਖੋਜੋ</value>
+  </data>
+  <data name="Listening_HistoryEmpty" xml:space="preserve">
+    <value>ਅਜੇ ਕੋਈ ਸੁਣਨ ਦਾ ਇਤਿਹਾਸ ਨਹੀਂ ਹੈ</value>
+  </data>
+  <data name="Listening_HistoryLoadError" xml:space="preserve">
+    <value>ਹਾਲ ਹੀ ਵਿੱਚ ਚਲਾਏ ਗਏ ਲੋਡ ਨਹੀਂ ਕੀਤੇ ਜਾ ਸਕੇ। ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰਨ ਲਈ ਮੁੜ-ਕੋਸ਼ਿਸ਼ ਕਰੋ ਚੁਣੋ।</value>
+  </data>
+  <data name="Listening_Today" xml:space="preserve">
+    <value>ਅੱਜ</value>
+  </data>
+  <data name="Listening_Yesterday" xml:space="preserve">
+    <value>ਕੱਲ੍ਹ</value>
+  </data>
+  <data name="Listening_RediscoveryReason" xml:space="preserve">
+    <value>ਆਖਰੀ ਵਾਰ {0:d} ਨੂੰ ਚਲਾਇਆ ਗਿਆ</value>
+  </data>
+  <data name="Listening_RediscoveryTitle" xml:space="preserve">
+    <value>ਮੁੜ ਸੁਣਨ ਦੇ ਯੋਗ</value>
+  </data>
+  <data name="Listening_Dismiss" xml:space="preserve">
+    <value>ਰੱਦ ਕਰੋ</value>
+  </data>
+  <data name="Listening_ActionError" xml:space="preserve">
+    <value>ਇਹ ਕਾਰਵਾਈ ਪੂਰੀ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕੀ। ਕਿਰਪਾ ਕਰਕੇ ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</value>
+  </data>
+  <data name="Listening_FavoritesEmpty" xml:space="preserve">
+    <value>ਅਜੇ ਕੋਈ ਪਸੰਦੀਦਾ ਨਹੀਂ ਹੈ</value>
+  </data>
+  <data name="Listening_FavoritesEmptyDescription" xml:space="preserve">
+    <value>ਇਸਦੇ ਮੀਨੂ ਤੋਂ ਕਿਸੇ ਗੀਤ ਨੂੰ ਪਸੰਦੀਦਾ ਬਣਾਓ, ਜਾਂ ਇਸਨੂੰ ਚੁਣੋ ਅਤੇ Ctrl+D ਦਬਾਓ।</value>
+  </data>
+  <data name="Listening_VarietyDescription" xml:space="preserve">
+    <value>'ਹੋਰ ਵੰਨ-ਸੁਵੰਨਤਾ' ਹਾਲ ਹੀ ਵਿੱਚ ਚਲਾਏ ਗਏ ਗੀਤਾਂ ਤੋਂ ਬਚਦੀ ਹੈ ਅਤੇ ਜਿੱਥੇ ਸੰਭਵ ਹੋਵੇ ਇੱਕੋ ਕਲਾਕਾਰ ਦੇ ਗੀਤਾਂ ਨੂੰ ਵੱਖ ਕਰਦੀ ਹੈ।</value>
+  </data>
+  <data name="Listening_RediscoverDescription" xml:space="preserve">
+    <value>'ਮੁੜ-ਖੋਜੋ' Nagi ਵਿੱਚ ਰਿਕਾਰਡ ਕੀਤੇ ਚਲਾਏ ਗਏ ਗੀਤਾਂ ਦੀ ਵਰਤੋਂ ਕਰਦੀ ਹੈ ਜੋ ਆਖਰੀ ਵਾਰ 30 ਦਿਨਾਂ ਤੋਂ ਵੱਧ ਪਹਿਲਾਂ ਚਲਾਏ ਗਏ ਸਨ।</value>
+  </data>
+  <data name="Listening_UnheardDescription" xml:space="preserve">
+    <value>'ਅਣ-ਸੁਣੇ' Nagi ਵਿੱਚ ਬਿਨਾਂ ਰਿਕਾਰਡ ਕੀਤੇ ਚਲਾਏ ਗਏ ਗੀਤਾਂ ਦੀ ਵਰਤੋਂ ਕਰਦੀ ਹੈ।</value>
+  </data>
+  <data name="Listening_HistoryNoMatches" xml:space="preserve">
+    <value>ਤੁਹਾਡੀ ਖੋਜ ਨਾਲ ਕੋਈ ਵੀ ਸੁਣੇ ਗਏ ਗੀਤ ਮੇਲ ਨਹੀਂ ਖਾਂਦੇ</value>
+  </data>
+  <data name="Listening_NoTimedMixDescription" xml:space="preserve">
+    <value>ਇਸ ਸੂਚੀ ਵਿੱਚ ਕੋਈ ਵੀ ਗੀਤ ਮਿਕਸ ਸ਼ਰਤਾਂ ਨੂੰ ਪੂਰਾ ਨਹੀਂ ਕਰਦਾ ਅਤੇ ਤੁਹਾਡੀ ਚੁਣੀ ਹੋਈ ਸਮਾਂ ਸੀਮਾ ਵਿੱਚ ਫਿੱਟ ਨਹੀਂ ਬੈਠਦਾ। ਲੰਬੀ ਸਮਾਂ ਸੀਮਾ, ਕੋਈ ਹੋਰ ਮਿਕਸ, ਜਾਂ ਵੱਖਰੀ ਗੀਤ ਸੂਚੀ ਅਜ਼ਮਾਓ।</value>
   </data>
 </root>

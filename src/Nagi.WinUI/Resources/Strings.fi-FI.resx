@@ -76,6 +76,9 @@
   <data name="NavItem_Folders" xml:space="preserve">
     <value>Kansiot</value>
   </data>
+  <data name="NavItem_Favorites" xml:space="preserve">
+    <value>Suosikit</value>
+  </data>
   <data name="NavItem_Insights" xml:space="preserve">
     <value>Tilastot</value>
   </data>
@@ -122,7 +125,7 @@
     <value>Tumma</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">
-    <value>Käytä järjestelmän asetusta</value>
+    <value>Järjestelmän oletus</value>
   </data>
   <data name="Backdrop_Mica" xml:space="preserve">
     <value>Mica</value>
@@ -141,6 +144,39 @@
   </data>
   <data name="Label_Rating" xml:space="preserve">
     <value>Arvosana</value>
+  </data>
+  <data name="Label_Grouping" xml:space="preserve">
+    <value>Ryhmittely</value>
+  </data>
+  <data name="Label_SkipCount" xml:space="preserve">
+    <value>Ohituskerrat</value>
+  </data>
+  <data name="Label_DiscNumber" xml:space="preserve">
+    <value>Levynumero</value>
+  </data>
+  <data name="Label_Bitrate" xml:space="preserve">
+    <value>Bittinopeus</value>
+  </data>
+  <data name="Label_SampleRate" xml:space="preserve">
+    <value>Näytteenottotaajuus</value>
+  </data>
+  <data name="Label_IsLoved" xml:space="preserve">
+    <value>Suosikki</value>
+  </data>
+  <data name="Label_HasLyrics" xml:space="preserve">
+    <value>Sisältää sanoitukset</value>
+  </data>
+  <data name="Operator_IsInRange" xml:space="preserve">
+    <value>On välillä (mukaan lukien)</value>
+  </data>
+  <data name="Operator_IsAfter" xml:space="preserve">
+    <value>On jälkeen</value>
+  </data>
+  <data name="Operator_IsBefore" xml:space="preserve">
+    <value>On ennen</value>
+  </data>
+  <data name="SmartPlaylist_UpperBound_Placeholder" xml:space="preserve">
+    <value>Enimmäisarvo</value>
   </data>
   <data name="Operator_Contains" xml:space="preserve">
     <value>Sisältää</value>
@@ -179,10 +215,10 @@
     <value>On enintään</value>
   </data>
   <data name="Operator_IsInTheLast" xml:space="preserve">
-    <value>On viimeisten (päivien) aikana</value>
+    <value>On viimeisen (päivää) aikana</value>
   </data>
   <data name="Operator_IsNotInTheLast" xml:space="preserve">
-    <value>Ei ole viimeisten (päivien) aikana</value>
+    <value>Ei ole viimeisen (päivää) aikana</value>
   </data>
   <data name="Operator_IsTrue" xml:space="preserve">
     <value>On tosi</value>
@@ -194,31 +230,31 @@
     <value>Uusi älykäs soittolista</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>Muokkaa älykästä soittolistaa - {0}</value>
+    <value>Muokkaa älykästä soittolistaa: {0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
     <value>Anna soittolistan nimi</value>
   </data>
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
-    <value>{0:N0} kappaletta vastaa nykyisiä sääntöjä</value>
+    <value>Täsmäävät kappaleet: {0:N0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Anna nimi nähdäksesi vastaavat kappaleet</value>
+    <value>Syötä soittolistan nimi nähdäksesi täsmäävät kappaleet</value>
   </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
-    <value>Ei voida laskea</value>
+    <value>Täsmäävien kappaleiden määrää ei voitu laskea</value>
   </data>
   <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
-    <value>Lasketaan...</value>
+    <value>Lasketaan…</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>Tämän niminen soittolista on jo olemassa!</value>
+    <value>Samanniminen soittolista on jo olemassa.</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>Anna nimi!</value>
+    <value>Syötä soittolistan nimi.</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
-    <value>Ladataan...</value>
+    <value>Ladataan…</value>
   </data>
   <data name="Error_FailedToLoadArtists" xml:space="preserve">
     <value>Artistien lataus epäonnistui</value>
@@ -227,13 +263,15 @@
     <value>Kriittinen virhe</value>
   </data>
   <data name="CrashReport_Message" xml:space="preserve">
-    <value>Nagi kohtasi kriittisen virheen ja sen on suljettava. Pahoittelemme häiriötä.</value>
+    <value>Nagi kohtasi virheen ja se on suljettava.</value>
   </data>
   <data name="ElevationWarning_Title" xml:space="preserve">
     <value>Suoritetaan järjestelmänvalvojana</value>
   </data>
   <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagiä suoritetaan tällä hetkellä järjestelmänvalvojana. Tämä saattaa estää joitakin ominaisuuksia (kuten musiikkikansioiden lisäämisen) toimimasta oikein.\n\nParhaan käyttökokemuksen saamiseksi käynnistä Nagi uudelleen ilman järjestelmänvalvojan oikeuksia.</value>
+    <value>Nagiä suoritetaan tällä hetkellä järjestelmänvalvojana. Tämä saattaa estää joitakin ominaisuuksia (kuten musiikkikansioiden lisäämisen) toimimasta oikein.
+
+Parhaan käyttökokemuksen saamiseksi käynnistä Nagi uudelleen ilman järjestelmänvalvojan oikeuksia.</value>
   </data>
   <data name="ElevationWarning_Restart" xml:space="preserve">
     <value>Käynnistä normaalisti uudelleen</value>
@@ -293,16 +331,16 @@
     <value>Tämä kansio on jo kirjastossa.</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
-    <value>Lisätään kansiota kirjastoon...</value>
+    <value>Lisätään kansiota kirjastoon…</value>
   </data>
   <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>'{0}' poistettu onnistuneesti.</value>
+    <value>Poistettiin &apos;{0}&apos; kirjastostasi.</value>
   </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
-    <value>'{0}' poistaminen epäonnistui.</value>
+    <value>Ei voitu poistaa kohdetta &apos;{0}&apos; kirjastostasi.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
-    <value>Poistetaan '{0}'...</value>
+    <value>Poistetaan kohdetta &apos;{0}&apos; kirjastostasi…</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
     <value>'{0}' uudelleenskannaus valmis.</value>
@@ -311,7 +349,7 @@
     <value>Ei muutoksia havaittu kohteelle '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
-    <value>Uudelleenskannataan '{0}'...</value>
+    <value>Skannataan '{0}' uudelleen…</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
     <value>Musiikkia sisältäviä kansioita ei löytynyt.</value>
@@ -326,7 +364,7 @@
     <value>Virhe kansion lisäyksessä: {0}</value>
   </data>
   <data name="Folders_Error_DeleteFolder" xml:space="preserve">
-    <value>Virhe kansion poistossa: {0}</value>
+    <value>Kansiota ei voitu poistaa kirjastostasi: {0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Virhe kansion uudelleenskannauksessa: {0}</value>
@@ -377,10 +415,10 @@
     <value>Aloita perustamalla musiikkikirjastosi.</value>
   </data>
   <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>Odotetaan kansion valintaa...</value>
+    <value>Odotetaan kansion valintaa…</value>
   </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
-    <value>Rakennetaan kirjastoa...</value>
+    <value>Luodaan kirjastoa…</value>
   </data>
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Odottamaton virhe tapahtui. Yritä uudelleen.</value>
@@ -401,7 +439,7 @@
     <value>Soittolistan latausvirhe</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Käynnistetään soittolistaa...</value>
+    <value>Käynnistetään soittolistaa…</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Yksikään kappale ei vastaa tämän älykkään soittolistan sääntöjä.</value>
@@ -410,7 +448,7 @@
     <value>Virhe toiston aloittamisessa tälle soittolistalle.</value>
   </data>
   <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Valitaan satunnaista soittolistaa...</value>
+    <value>Valitaan satunnainen soittolista…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Soittolistoja ei löytynyt.</value>
@@ -422,13 +460,13 @@
     <value>Virhe satunnaisen soittolistan toistossa.</value>
   </data>
   <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Ladataan soittolistoja...</value>
+    <value>Ladataan soittolistoja…</value>
   </data>
   <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
     <value>Virhe soittolistojen latauksessa.</value>
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Luodaan uutta soittolistaa...</value>
+    <value>Luodaan uutta soittolistaa…</value>
   </data>
   <data name="Playlist_Status_CreateFailed" xml:space="preserve">
     <value>Soittolistan luominen epäonnistui. Se saattaa jo olla olemassa.</value>
@@ -437,7 +475,7 @@
     <value>Virhe soittolistan luomisessa.</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Päivitetään soittolistan kantta...</value>
+    <value>Päivitetään soittolistan kantta…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Soittolistan kannen päivittäminen epäonnistui.</value>
@@ -446,7 +484,7 @@
     <value>Virhe soittolistan kannen päivittämisessä.</value>
   </data>
   <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Poistetaan soittolistan kuvaa...</value>
+    <value>Poistetaan soittolistan kuvaa…</value>
   </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Soittolistan kuvan poistaminen epäonnistui.</value>
@@ -455,7 +493,7 @@
     <value>Virhe soittolistan kuvan poistamisessa.</value>
   </data>
   <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Nimetään soittolistaa uudelleen...</value>
+    <value>Nimetään soittolistaa uudelleen…</value>
   </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Soittolistan uudelleennimeäminen epäonnistui.</value>
@@ -464,7 +502,7 @@
     <value>Virhe soittolistan uudelleennimeämisessä.</value>
   </data>
   <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Poistetaan soittolistaa...</value>
+    <value>Poistetaan soittolistaa…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Soittolistan poistaminen epäonnistui.</value>
@@ -512,7 +550,9 @@
     <value>Vienti onnistui</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>Vietiin {0} soittolistaa ({1} kappaletta yhteensä) kohteeseen:\n{2}</value>
+    <value>Vietyjä soittolistoja: {0}
+Kappaleita: {1}
+Tallennettu kohteeseen: {2}</value>
   </data>
   <data name="Settings_Export_Failed_Title" xml:space="preserve">
     <value>Vienti epäonnistui</value>
@@ -521,13 +561,18 @@
     <value>Tuonti onnistui</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>Tuotiin onnistuneesti {0} soittolistaa ({1} kappaletta).</value>
+    <value>Tuotuja soittolistoja: {0}
+Kappaleita: {1}</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
-    <value>\n\n{0} kappaletta ei löytynyt kirjastostasi.</value>
+    <value>
+
+Kappaleita, joita ei löytynyt kirjastostasi: {0}.</value>
   </data>
   <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
-    <value>\n\n{0} tiedoston tuonti epäonnistui.</value>
+    <value>
+
+Tiedostoja, joita ei voitu tuoda: {0}.</value>
   </data>
   <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
     <value>Tuonti epäonnistui kokonaan</value>
@@ -596,10 +641,10 @@
     <value>FFmpegia ei havaittu. Asenna FFmpeg ja napsauta 'Tarkista uudelleen'.</value>
   </data>
   <data name="FFmpeg_Status_Checking" xml:space="preserve">
-    <value>Etsitään FFmpegia...</value>
+    <value>Tarkistetaan FFmpeg-sovellusta…</value>
   </data>
   <data name="FFmpeg_Status_Detected" xml:space="preserve">
-    <value>FFmpeg havaittu!</value>
+    <value>FFmpeg havaittu.</value>
   </data>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpegia ei edelleenkään havaittu. Asenna FFmpeg ja napsauta 'Tarkista uudelleen'.</value>
@@ -770,7 +815,7 @@
     <value>Poista kansio</value>
   </data>
   <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
-    <value>Haluatko varmasti poistaa kansion '{0}' kirjastosta? Tämä ei poista tiedostoja tietokoneeltasi.</value>
+    <value>Poistetaanko &apos;{0}&apos; kirjastostasi? Äänitiedostot säilyvät tietokoneellasi.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>Poista</value>
@@ -812,10 +857,10 @@
     <value>Hae soittolistoista</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>Anna uuden soittolistan nimi</value>
+    <value>Syötä soittolistan nimi</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
-    <value>Valitse kuva</value>
+    <value>Valitse kansikuva</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
     <value>Luo uusi soittolista</value>
@@ -851,7 +896,7 @@
     <value>Sulje haku</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Hae kirjastosta</value>
+    <value>Etsi genrestä</value>
   </data>
   <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Ei soittolistoja saatavilla</value>
@@ -872,13 +917,13 @@
     <value>Skannaa metatiedot uudelleen</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>Tämä skannaa kaikki kappaleet kirjastostasi uudelleen soveltaakseen uusia metatietoasetuksia (kuten artistien erotinmerkkejä). Tämä voi kestää hetken kirjaston koosta riippuen. Haluatko jatkaa?</value>
+    <value>Skannaa kirjastosi uudelleen ottaaksesi käyttöön metatietoasetukset, kuten esittäjien jakamisen. Tämä voi kestää hetken suurissa kirjastoissa. Jatketaanko?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
     <value>Skannaa uudelleen</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
-    <value>Valmistellaan kirjaston uudelleenskannausta...</value>
+    <value>Valmistellaan kirjaston uudellenskannausta…</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
     <value>Uudelleenskannaus valmis</value>
@@ -899,13 +944,17 @@
     <value>Ota äänenvoimakkuuden normalisointi käyttöön</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
-    <value>Äänenvoimakkuuden normalisointi (ReplayGain) varmistaa tasaisen äänenvoimakkuuden kaikessa musiikissasi.\n\nTämä analysoi musiikkikirjastosi ja muokkaa suoraan äänitiedostojasi kirjoittamalla niihin ReplayGain-tageja. Vain tiedostot, joissa ei ole olemassa olevia tageja, käsitellään. Tämä voi kestää jonkin aikaa kirjastosi koosta riippuen.\n\nHaluatko jatkaa?</value>
+    <value>Äänenvoimakkuuden normalisointi (ReplayGain) varmistaa tasaisen äänenvoimakkuuden kaikessa musiikissasi.
+
+Tämä analysoi musiikkikirjastosi ja muokkaa suoraan äänitiedostojasi kirjoittamalla niihin ReplayGain-tageja. Vain tiedostot, joissa ei ole olemassa olevia tageja, käsitellään. Tämä voi kestää jonkin aikaa kirjastosi koosta riippuen.
+
+Haluatko jatkaa?</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
     <value>Ota käyttöön ja skannaa</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>Valmistellaan äänenvoimakkuuden normalisoinnin skannausta...</value>
+    <value>Valmistellaan äänenvoimakkuuden tasauksen skannausta…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
     <value>Äänenvoimakkuuden normalisoinnin skannaus peruutettu.</value>
@@ -914,7 +963,9 @@
     <value>Virhe skannauksen aikana: {0}</value>
   </data>
   <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Lokitietoja ei saatu muistista. Varasuunnitelma lokitiedoston lukemiseksi epäonnistui.\nOdotettu polku: '{0}'\nVirhe: {1}</value>
+    <value>Lokitietoja ei saatu muistista. Varasuunnitelma lokitiedoston lukemiseksi epäonnistui.
+Odotettu polku: '{0}'
+Virhe: {1}</value>
   </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Ei vietäviä soittolistoja.</value>
@@ -1040,7 +1091,7 @@
     <value>Nagi</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Löydä paikallinen musiikkikokoelmasi uudelleen Nagin avulla. Nagi on musiikkisoitin, joka keskittyy nopeuteen, yksinkertaisuuteen ja yksityisyyteen. Nagi on rakennettu C#:lla ja WinUI 3:lla tarjotakseen puhtaan, natiivin Fluent-kokemuksen. Se on kaunis, tehokas ja kunnioittaa yksityisyyttäsi.</value>
+    <value>Löydä paikallinen musiikkikokoelmasi uudelleen Nagilla – musiikkisoittimella, joka keskittyy nopeuteen, yksinkertaisuuteen ja yksityisyyteen.</value>
   </data>
   <data name="AppShortName" xml:space="preserve">
     <value>Nagi</value>
@@ -1070,58 +1121,58 @@
     <value>Siirry albumiin</value>
   </data>
   <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Drop files or folders onto the player to add them to the queue.</value>
+    <value>Pudota tiedostoja tai kansioita soittimelle lisätäksesi ne jonoon.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Seuraavat</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
-    <value>Clear queue</value>
+    <value>Tyhjennä jono</value>
   </data>
   <data name="QueuePanel_DisplayOptions" xml:space="preserve">
-    <value>Queue display options</value>
+    <value>Jonon näyttöasetukset</value>
   </data>
   <data name="QueuePanel_Close" xml:space="preserve">
-    <value>Close queue</value>
+    <value>Sulje jono</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
-    <value>Artist</value>
+    <value>Esittäjä</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
-    <value>Duration</value>
+    <value>Kesto</value>
   </data>
   <data name="QueuePanel_ShowTrackCount" xml:space="preserve">
-    <value>Track count</value>
+    <value>Kappalemäärä</value>
   </data>
   <data name="QueuePanel_TrackCount" xml:space="preserve">
-    <value>Tracks: {0:N0}</value>
+    <value>Kappaleita: {0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
-    <value>Queue position</value>
+    <value>Sijainti jonossa</value>
   </data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve">
-    <value>Genre</value>
+    <value>Tyylilaji</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
-    <value>Total duration</value>
+    <value>Kokonaiskesto</value>
   </data>
   <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Toista</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
-    <value>Move up</value>
+    <value>Siirrä ylös</value>
   </data>
   <data name="QueuePanel_MoveDown" xml:space="preserve">
-    <value>Move down</value>
+    <value>Siirrä alas</value>
   </data>
   <data name="QueuePanel_Remove" xml:space="preserve">
-    <value>Remove from queue</value>
+    <value>Poista jonosta</value>
   </data>
   <data name="AlbumPage_Title" xml:space="preserve">
     <value>Albumit</value>
   </data>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Hae albumeista...</value>
+    <value>Etsi albumeita…</value>
   </data>
   <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Hae albumeista</value>
@@ -1145,7 +1196,7 @@
     <value>Kappaleet</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Hae albumista...</value>
+    <value>Etsi albumista…</value>
   </data>
   <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Hae albumista</value>
@@ -1169,7 +1220,7 @@
     <value>Lisää soittolistaan</value>
   </data>
   <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Siirry artistiin</value>
+    <value>Siirry esittäjään</value>
   </data>
   <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
     <value>Näytä Resurssienhallinnassa</value>
@@ -1187,7 +1238,7 @@
     <value>Artistit</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Hae artisteista...</value>
+    <value>Etsi esittäjiä…</value>
   </data>
   <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Hae artisteista</value>
@@ -1229,7 +1280,7 @@
     <value>Kappaleet</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Hae artistista...</value>
+    <value>Etsi esittäjästä…</value>
   </data>
   <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Hae artistista</value>
@@ -1286,7 +1337,7 @@
     <value>Skannaa uudelleen</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>Poista</value>
+    <value>Poista kirjastosta</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Kansioita ei ole vielä lisätty</value>
@@ -1316,7 +1367,7 @@
     <value>Siirry albumiin</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Siirry artistiin</value>
+    <value>Siirry esittäjään</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
     <value>Näytä Resurssienhallinnassa</value>
@@ -1331,7 +1382,7 @@
     <value>Kappaleet</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Hae kansiosta...</value>
+    <value>Etsi kansiosta…</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Hae kansiosta</value>
@@ -1352,7 +1403,7 @@
     <value>Genret</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Hae genreistä...</value>
+    <value>Etsi genrejä…</value>
   </data>
   <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
     <value>Hae genreistä</value>
@@ -1373,7 +1424,7 @@
     <value>Kirjasto</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Hae kirjastosta...</value>
+    <value>Etsi kirjastosta…</value>
   </data>
   <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Hae kirjastosta</value>
@@ -1400,13 +1451,19 @@
     <value>Siirry albumiin</value>
   </data>
   <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
-    <value>Siirry artistiin</value>
+    <value>Siirry esittäjään</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Näytä Resurssienhallinnassa</value>
   </data>
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Toista</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
+    <value>Kappaleita ei löytynyt</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+    <value>Kokeile hakea jotain muuta</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
     <value>Kirjastosi on tyhjä</value>
@@ -1421,25 +1478,25 @@
     <value>Kokeile toista kappaletta</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
-    <value>Edit or replace lyrics</value>
+    <value>Muokkaa tai korvaa sanoitukset</value>
   </data>
   <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
-    <value>Edit lyrics</value>
+    <value>Muokkaa sanoituksia</value>
   </data>
   <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
-    <value>Paste plain text or timestamped LRC lyrics</value>
+    <value>Liitä pelkkää tekstiä tai aikaleimattuja LRC-sanoituksia</value>
   </data>
   <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
-    <value>Save</value>
+    <value>Tallenna</value>
   </data>
   <data name="LyricsPage_EditLyrics_Remove" xml:space="preserve">
-    <value>Remove saved lyrics</value>
+    <value>Poista tallennetut sanoitukset</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
-    <value>Lyrics could not be updated</value>
+    <value>Sanoituksia ei voitu päivittää</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Nagi could not save the lyrics. Check the log for details and try again.</value>
+    <value>Nagi ei voinut tallentaa sanoituksia. Tarkista lokista lisätiedot ja yritä uudelleen.</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Tervetuloa Nagiin</value>
@@ -1454,7 +1511,7 @@
     <value>Soittolistat</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Hae soittolistoista...</value>
+    <value>Etsi soittolistoja…</value>
   </data>
   <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Hae soittolistoista</value>
@@ -1502,7 +1559,7 @@
     <value>Kappaleet</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Hae soittolistasta...</value>
+    <value>Etsi soittolistalta…</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Hae soittolistasta</value>
@@ -1526,13 +1583,13 @@
     <value>Siirry albumiin</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Siirry artistiin</value>
+    <value>Siirry esittäjään</value>
   </data>
   <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Näytä Resurssienhallinnassa</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
-    <value>Poista soittolistasta</value>
+    <value>Poista soittolistalta</value>
   </data>
   <data name="PlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Toista</value>
@@ -1550,7 +1607,7 @@
     <value>Kappaleet</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Hae genrestä...</value>
+    <value>Etsi genrestä…</value>
   </data>
   <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Hae genrestä</value>
@@ -1577,7 +1634,7 @@
     <value>Siirry albumiin</value>
   </data>
   <data name="GenreViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Siirry artistiin</value>
+    <value>Siirry esittäjään</value>
   </data>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Näytä Resurssienhallinnassa</value>
@@ -1604,7 +1661,7 @@
     <value>Teema</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>Valitse sovelluksen teema.</value>
+    <value>Valitse vaalea, tumma tai järjestelmän teema.</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
     <value>Korostusväri</value>
@@ -1622,7 +1679,7 @@
     <value>Dynaaminen teema</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>Ota käyttöön ja määritä dynaamisen teeman asetukset.</value>
+    <value>Mukauta sovelluksen värit nykyiseen albumikuvitukseen.</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
     <value>Muista ikkunan koko</value>
@@ -1655,13 +1712,13 @@
     <value>Äänenvoimakkuuden normalisointi (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Säädä äänenvoimakkuus automaattisesti standarditasolle (-18 LUFS) välttääksesi äkillisiä äänenvoimakkuuden muutoksia.</value>
+    <value>Pienennä kappaleiden välisiä äänenvoimakkuuseroja ReplayGainin avulla.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
-    <value>WASAPI exclusive mode</value>
+    <value>Eksklusiivinen WASAPI-tila</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+    <value>Anna Nagille yksinoikeus Windowsin äänilaitteeseen. Muut sovellukset saattavat olla hiljaa. Käynnistä Nagi uudelleen tämän asetuksen muuttamisen jälkeen.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>Himmennys toistettaessa / keskeytettäessä</value>
@@ -1691,19 +1748,19 @@
     <value>Vie hiiri päälle vaihtaaksesi näkyvyyttä. Vedä järjestelläksesi uudelleen. Erotin erottaa keskimmäiset ja oikeat säätimet.</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Header" xml:space="preserve">
-    <value>Kasaanmenevä soitin</value>
+    <value>Kokoontaitettava soitin</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>Animoi soittopalkin laajeneminen ja kasaan meneminen.</value>
+    <value>Laajenna soitinpalkki, kun viet hiiren sen päälle.</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
-    <value>Palauta toiston tila</value>
+    <value>Palauta toistotila</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>Tallenna nykyinen toiston tila jatkaaksesi seuraavalla käynnistyksellä.</value>
+    <value>Palauta jono ja toistokohta, kun Nagi käynnistyy.</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
-    <value>Käynnistä automaattisesti käynnistyksen yhteydessä</value>
+    <value>Käynnistä automaattisesti järjestelmän käynnistyessä</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
     <value>Käynnistä Nagi automaattisesti, kun kirjaudut tietokoneellesi.</value>
@@ -1712,28 +1769,28 @@
     <value>Käynnistä pienennettynä</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>Käynnistyessään sovellusikkuna on oletuksena pienennetty.</value>
+    <value>Käynnistä Nagi ikkuna pienennettynä.</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
-    <value>Pienennä minisoittimeksi</value>
+    <value>Pienennä pienoissoittimeksi</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Description" xml:space="preserve">
     <value>Kun ikkuna on pienennetty, näytä kompakti kelluva soitin sen piilottamisen sijaan.</value>
   </data>
   <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
-    <value>Piilota järjestelmäpalkkiin</value>
+    <value>Piilota ilmoitusalueelle</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>Kun suljetaan, piilota järjestelmäpalkkiin sen sijaan.</value>
+    <value>Pidä Nagi käynnissä ilmoitusalueella, kun suljet sen ikkunan.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
-    <value>Näytä kansikuva pikaikkunassa</value>
+    <value>Näytä kansikuva ponnahdusikkunassa</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
     <value>Näytä kansikuva kompaktissa soittimessa, joka ilmestyy napsautettaessa ilmaisinalueen kuvaketta.</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
-    <value>Ohita artikkelit lajiteltaessa</value>
+    <value>Jätä artikkelit huomiotta järjestettäessä</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
     <value>Lajittele albumit, artistit ja kappaleet niiden ensimmäisen merkitsevän sanan mukaan (esim. "The Beatles" lajitellaan B-kirjaimen alle).</value>
@@ -1763,7 +1820,7 @@
     <value>Hae metatiedot verkosta</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Hae lisätietoja, kuten artistikuvia ja -elämäkertoja, verkkopalveluista (esim. Spotify, Last.fm).</value>
+    <value>Hae esittäjien kuvat ja elämäkerrat verkkolähteistä.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Lähteet</value>
@@ -1775,7 +1832,7 @@
     <value>Hae sanoitukset verkosta</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>Hae puuttuvat sanoitukset automaattisesti verkkolähteistä. (Yksityisyys: lähettää kappaleiden metatiedot kolmannen osapuolen palveluihin)</value>
+    <value>Hae puuttuvat sanoitukset verkkolähteistä. Tämä lähettää kappaleen metatiedot kolmannen osapuolen palveluihin.</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
     <value>Lähteet</value>
@@ -1793,7 +1850,7 @@
     <value>Kielipaketit</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>Asenna kielet, jotka haluat romanisoida. Paketit ovat allekirjoitettuja, sisältävät vain dataa ja tallennetaan paikallisesti.</value>
+    <value>Asenna kielipaketteja tuettujen sanoitusten romanisoimiseksi. Paketit tallennetaan paikallisesti.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
     <value>Päivitä</value>
@@ -1832,19 +1889,19 @@
     <value>{0} lisenssi</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>Vie/Tuo soittolistoja</value>
+    <value>Tuo ja vie soittolistoja</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
     <value>Vie soittolistat M3U-tiedostoiksi käytettäväksi muissa soittimissa tai tuo M3U-soittolistoja Nagiin.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
-    <value>Vie kaikki...</value>
+    <value>Vie kaikki…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
     <value>Vie kaikki soittolistat kansioon</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
-    <value>Tuo...</value>
+    <value>Tuo…</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
     <value>Tuo yksi tai useampi M3U-tiedosto</value>
@@ -1880,16 +1937,16 @@
     <value>Katkaise yhteys</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
-    <value>Ota skrobblaus käyttöön</value>
+    <value>Ota scrobblaus käyttöön</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Description" xml:space="preserve">
     <value>Lisää automaattisesti Nagissa kuuntelemasi kappaleet Last.fm-profiiliisi.</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
-    <value>Päivitä 'Toistossa nyt'</value>
+    <value>Päivitä ”Toistetaan nyt”</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>Näytä Last.fm-ystävillesi, mitä kuuntelet parhaillaan reaaliaikaisesti.</value>
+    <value>Näytä parhaillaan toistettava kappale Last.fm-profiilissasi.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
     <value>ListenBrainz</value>
@@ -1904,7 +1961,7 @@
     <value>Liitä tunnus osoitteesta listenbrainz.org/settings</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TestConnection" xml:space="preserve">
-    <value>Testaa yhteys</value>
+    <value>Testaa yhteyttä</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Connected" xml:space="preserve">
     <value>Yhdistetty nimellä {0}</value>
@@ -1913,10 +1970,10 @@
     <value>Yhteyden muodostaminen epäonnistui: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>Lähetä kuuntelut (skrobbauksen)</value>
+    <value>Lähetä kuuntelut (scrobblaus)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>Lähetä "nyt toistossa" -päivitykset</value>
+    <value>Lähetä ”Toistetaan nyt” -päivitykset</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
     <value>Lisäasetukset</value>
@@ -1949,7 +2006,7 @@
     <value>Kappaleet</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Hae älykkäästä soittolistasta...</value>
+    <value>Etsi älykkäältä soittolistalta…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Hae älykkäästä soittolistasta</value>
@@ -1976,7 +2033,7 @@
     <value>Siirry albumiin</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Siirry artistiin</value>
+    <value>Siirry esittäjään</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Näytä Resurssienhallinnassa</value>
@@ -2030,7 +2087,7 @@
     <value>Sovelluksen kieli</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>Muutokset edellyttävät uudelleenkäynnistyksen tullakseen voimaan</value>
+    <value>Käynnistä Nagi uudelleen kielenvaihdon käyttöönottamiseksi.</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
     <value>Uudelleenkäynnistys vaaditaan</value>
@@ -2045,7 +2102,7 @@
     <value>Varmuuskopiointi ja palautus</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Luo varmuuskopioita musiikkikirjastostasi ja asetuksistasi tai palauta aiemmasta varmuuskopiosta</value>
+    <value>Luo varmuuskopio kirjastotiedoistasi ja asetuksistasi tai palauta aiempi varmuuskopio.</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
     <value>Luo varmuuskopio</value>
@@ -2057,7 +2114,7 @@
     <value>Varmuuskopio luotu</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Varmuuskopio luotu onnistuneesti ({0:F2} Mt) sijaintiin: {1}</value>
+    <value>Luotiin varmuuskopio ({0:F2} Mt) kohteeseen: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
     <value>Varmuuskopiointi epäonnistui</value>
@@ -2084,13 +2141,13 @@
     <value>Palautus valmis</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Varmuuskopio palautettu onnistuneesti. Sovellus käynnistyy nyt uudelleen.</value>
+    <value>Varmuuskopio palautettu. Nagi käynnistyy nyt uudelleen.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
     <value>Palautus epäonnistui</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Palautus varmuuskopiosta epäonnistui. Tietojasi ei muutettu.</value>
+    <value>Varmuuskopiota ei voitu palauttaa.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
     <value>Soittimen tyyli</value>
@@ -2102,25 +2159,25 @@
     <value>Kiinteä (Läpinäkymätön)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Mukauta kelluvan soittimen ulkoasua</value>
+    <value>Mukauta soitinpalkin ulkoasua.</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
     <value>Sävyn voimakkuus</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Säätää soittimen taustavärin eloisuutta</value>
+    <value>Säädä soittimen taustavärin voimakkuutta.</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
-    <value>Häivytysaika sisään</value>
+    <value>Sisäänhäivytyksen kesto</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
-    <value>Sisään häivytyksen kesto toiston aikana (ms)</value>
+    <value>Aseta, kuinka kauan äänenvoimakkuuden sisäänhäivytys kestää toistoa jatkettaessa.</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
-    <value>Häivytysaika ulos</value>
+    <value>Uloshäivytyksen kesto</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
-    <value>Ulos häivytyksen kesto keskeytyksen aikana (ms)</value>
+    <value>Aseta, kuinka kauan äänenvoimakkuuden uloshäivytys kestää toistoa tauotettaessa.</value>
   </data>
   <data name="Settings_Nav_Insights" xml:space="preserve">
     <value>Tilastot</value>
@@ -2132,7 +2189,7 @@
     <value>Kokonaiskuunteluaika</value>
   </data>
   <data name="InsightsPage_UniqueSongs" xml:space="preserve">
-    <value>Ainutlaatuiset kappaleet</value>
+    <value>Eri kappaleet</value>
   </data>
   <data name="InsightsPage_PeakHour" xml:space="preserve">
     <value>Aktiivisin tunti</value>
@@ -2162,7 +2219,7 @@
     <value>Aloita musiikin toisto nähdäksesi tilastosi täällä</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
-    <value>{0} toistoa</value>
+    <value>Toistokerrat: {0}</value>
   </data>
   <data name="InsightsPage_Source_Albums" xml:space="preserve">
     <value>Albumit</value>
@@ -2222,7 +2279,7 @@
     <value>Kesto</value>
   </data>
   <data name="PaginationControl_All" xml:space="preserve">
-    <value>All</value>
+    <value>Kaikki</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>Kohteita sivulla:</value>
@@ -2258,15 +2315,177 @@
     <value>Viimeiset 90 päivää</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>Viimeisin vuosi</value>
+    <value>Viime vuosi</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
-    <value>Koko aika</value>
+    <value>Kaikki ajat</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0} t {1} min</value>
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
     <value>{0} min {1} s</value>
+  </data>
+  <data name="QueuePanel_EmptyTitle" xml:space="preserve">
+    <value>Jonosi on tyhjä</value>
+  </data>
+  <data name="QueuePanel_EmptyDescription" xml:space="preserve">
+    <value>Toista musiikkia tai pudota äänitiedostoja tähän luodaksesi jonon.</value>
+  </data>
+  <data name="QueuePanel_LoadError" xml:space="preserve">
+    <value>Joitakin kappaleita ei voitu ladata. Valitse Yritä uudelleen ladataksesi jonon uudelleen.</value>
+  </data>
+  <data name="QueuePanel_Retry" xml:space="preserve">
+    <value>Yritä uudelleen</value>
+  </data>
+  <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
+    <value>Soittolistan uutta järjestystä ei voitu tallentaa. Yritä uudelleen.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
+    <value>Äänilähtölaite</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Description" xml:space="preserve">
+    <value>Valitse, mihin laitteeseen Nagi toistaa musiikkia.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Default" xml:space="preserve">
+    <value>Järjestelmän oletus</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Unavailable" xml:space="preserve">
+    <value>Tallennettu laite ei ole käytettävissä. Käytetään järjestelmän oletusta.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
+    <value>Äänilähtöä ei voitu päivittää. Yritä uudelleen tai valitse toinen laite.</value>
+  </data>
+  <data name="Listening_Random" xml:space="preserve">
+    <value>Sekoitus</value>
+  </data>
+  <data name="Listening_MoreVariety" xml:space="preserve">
+    <value>Enemmän vaihtelua</value>
+  </data>
+  <data name="Listening_Rediscover" xml:space="preserve">
+    <value>Löydä uudelleen</value>
+  </data>
+  <data name="Listening_Unheard" xml:space="preserve">
+    <value>Kuuntelemattomat</value>
+  </data>
+  <data name="Listening_PlayFor" xml:space="preserve">
+    <value>Toista ajan…</value>
+  </data>
+  <data name="Listening_Minutes" xml:space="preserve">
+    <value>Minuutit</value>
+  </data>
+  <data name="Listening_ShuffleMode" xml:space="preserve">
+    <value>Miksaustyyppi</value>
+  </data>
+  <data name="Listening_AvoidRecentDays" xml:space="preserve">
+    <value>Vältä äskettäin toistettuja (päivää)</value>
+  </data>
+  <data name="Listening_MoreOptions" xml:space="preserve">
+    <value>Lisää asetuksia</value>
+  </data>
+  <data name="Listening_PlayForDescription" xml:space="preserve">
+    <value>Luo jono kokonaisista kappaleista, joiden kokonaiskesto ei ylitä valitsemaasi aikaa.</value>
+  </data>
+  <data name="Listening_NoMixTitle" xml:space="preserve">
+    <value>Ei kappaleita tähän miksaukseen</value>
+  </data>
+  <data name="Listening_NoMixDescription" xml:space="preserve">
+    <value>Yksikään tämän listan kappale ei täytä näitä vaatimuksia. Kokeile toista miksausta tai kappalelistaa.</value>
+  </data>
+  <data name="Listening_Favorites" xml:space="preserve">
+    <value>Suosikit</value>
+  </data>
+  <data name="Listening_AddFavorite" xml:space="preserve">
+    <value>Lisää suosikkeihin</value>
+  </data>
+  <data name="Listening_RemoveFavorite" xml:space="preserve">
+    <value>Poista suosikeista</value>
+  </data>
+  <data name="Listening_SleepTimer" xml:space="preserve">
+    <value>Uniajastin</value>
+  </data>
+  <data name="Listening_FinishTrack" xml:space="preserve">
+    <value>Toista nykyinen kappale loppuun ajastimen päättyessä</value>
+  </data>
+  <data name="Listening_StopAfterTrack" xml:space="preserve">
+    <value>Pysäytä tämän kappaleen jälkeen</value>
+  </data>
+  <data name="Listening_StopAtQueueEnd" xml:space="preserve">
+    <value>Pysäytä jonon lopussa</value>
+  </data>
+  <data name="Listening_StopPlayback" xml:space="preserve">
+    <value>Pysäytä toisto</value>
+  </data>
+  <data name="Listening_CustomTimer" xml:space="preserve">
+    <value>Mukautettu ajastin…</value>
+  </data>
+  <data name="Listening_Timer15" xml:space="preserve">
+    <value>15 minuutin kuluttua</value>
+  </data>
+  <data name="Listening_Timer30" xml:space="preserve">
+    <value>30 minuutin kuluttua</value>
+  </data>
+  <data name="Listening_Timer60" xml:space="preserve">
+    <value>60 minuutin kuluttua</value>
+  </data>
+  <data name="Listening_CancelStop" xml:space="preserve">
+    <value>Peruuta ajastettu pysäytys</value>
+  </data>
+  <data name="Listening_TimerRemaining" xml:space="preserve">
+    <value>Pysähtyy ajassa {0}</value>
+  </data>
+  <data name="Listening_PlayerOptions" xml:space="preserve">
+    <value>Soittimen asetukset</value>
+  </data>
+  <data name="Listening_RecentlyPlayed" xml:space="preserve">
+    <value>Äskettäin toistetut</value>
+  </data>
+  <data name="Listening_HistorySearch" xml:space="preserve">
+    <value>Etsi kuunteluhistoriasta</value>
+  </data>
+  <data name="Listening_HistoryEmpty" xml:space="preserve">
+    <value>Ei vielä kuunteluhistoriaa</value>
+  </data>
+  <data name="Listening_HistoryLoadError" xml:space="preserve">
+    <value>Äskettäin toistettuja ei voitu ladata. Valitse Yritä uudelleen yrittääksesi uudelleen.</value>
+  </data>
+  <data name="Listening_Today" xml:space="preserve">
+    <value>Tänään</value>
+  </data>
+  <data name="Listening_Yesterday" xml:space="preserve">
+    <value>Eilen</value>
+  </data>
+  <data name="Listening_RediscoveryReason" xml:space="preserve">
+    <value>Viimeksi toistettu {0:d}</value>
+  </data>
+  <data name="Listening_RediscoveryTitle" xml:space="preserve">
+    <value>Uudelleenkuuntelun arvoinen</value>
+  </data>
+  <data name="Listening_Dismiss" xml:space="preserve">
+    <value>Hylkää</value>
+  </data>
+  <data name="Listening_ActionError" xml:space="preserve">
+    <value>Toimintoa ei voitu suorittaa. Yritä uudelleen.</value>
+  </data>
+  <data name="Listening_FavoritesEmpty" xml:space="preserve">
+    <value>Ei vielä suosikkeja</value>
+  </data>
+  <data name="Listening_FavoritesEmptyDescription" xml:space="preserve">
+    <value>Lisää kappale suosikkeihin sen valikosta tai valitse se ja paina Ctrl+D.</value>
+  </data>
+  <data name="Listening_VarietyDescription" xml:space="preserve">
+    <value>Enemmän vaihtelua välttelee äskettäin toistettuja kappaleita ja erottelee saman esittäjän kappaleet mahdollisuuksien mukaan.</value>
+  </data>
+  <data name="Listening_RediscoverDescription" xml:space="preserve">
+    <value>Löydä uudelleen käyttää Nagissa toistettuja kappaleita, joita on viimeksi toistettu yli 30 päivää sitten.</value>
+  </data>
+  <data name="Listening_UnheardDescription" xml:space="preserve">
+    <value>Kuuntelemattomat käyttää kappaleita, joilla ei ole toistokertoja Nagissa.</value>
+  </data>
+  <data name="Listening_HistoryNoMatches" xml:space="preserve">
+    <value>Mikään kuuntelu ei vastaa hakuasi</value>
+  </data>
+  <data name="Listening_NoTimedMixDescription" xml:space="preserve">
+    <value>Yksikään tämän listan kappale ei täytä miksauksen vaatimuksia ja mahdu valitsemaasi kestoon. Kokeile pidempää kestoa, toista miksausta tai eri kappalelistaa.</value>
   </data>
 </root>

@@ -102,7 +102,7 @@
     <value>Takelio numeris</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Grojimų skaičius</value>
+    <value>Perklausos</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>Dainos</value>
@@ -148,10 +148,10 @@
     <value>{0} (Seniausia)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (didėjančiai)</value>
+    <value>{0} (didėjančia tvarka)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (mažėjančiai)</value>
+    <value>{0} (mažėjančia tvarka)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>Trumpiausi pirmiausia</value>
@@ -178,11 +178,11 @@
     <value>Nuskaitymas baigtas. Pridėta arba atnaujinta {0} {1}.</value>
   </data>
   <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Saugoma partija {0}...</value>
+    <value>Saugomas paketas {0}…</value>
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Nuskaitomas aplankas...</value>
+    <value>Nuskaitomas aplankas…</value>
   </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Nuskaitymas baigtas. Biblioteka atnaujinta.</value>
@@ -194,16 +194,16 @@
     <value>Nuskaitymas nepavyko. Išsamią informaciją rasite žurnaluose.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Ruošiami nuskaitymo talpyklos...</value>
+    <value>Ruošiamasi bibliotekos nuskaitymui…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Skaitoma dainų informacija...</value>
+    <value>Nuskaitoma dainų informacija…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Valoma jūsų biblioteka...</value>
+    <value>Tvarkoma biblioteka…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Baigiama...</value>
+    <value>Baigiama…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Garso normalizavimas nepavyko. Išsamią informaciją rasite žurnaluose.</value>
@@ -248,7 +248,15 @@
     <value>Rūšiuoti pagal: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg reikalingas didelio tikslumo garso normalizavimui (ReplayGain analizei), tačiau jis nebuvo rastas jūsų sistemoje.\n\nNorėdami jį nustatyti, atlikite šiuos veiksmus:\n\n1. **Atsisiųsti**: Apsilankykite https://www.gyan.dev/ffmpeg/builds/ ir atsisiųskite „ffmpeg-git-full.7z“ (arba panašų) esminį kūrimą.\n2. **Vadovas**: Išsamias instrukcijas rasite šiame vadove: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Išskleisti**: Atidarykite architektūros aplanką ir raskite „bin“ katalogą, kuriame yra `ffmpeg.exe`.\n4. **Įdiegti**: Nukopijuokite `ffmpeg.exe` į nuolatinį aplanką (pvz., `C:\\ffmpeg\\`) ir **pridėkite tą aplanką prie savo sistemos PATH** aplinkos kintamojo.\n5. **Paleisti iš naujo**: Kad pakeitimai įsigaliotų, po įdiegimo iš naujo paleiskite Nagi.</value>
+    <value>Norint analizuoti dainas garsumo normalizavimui, reikalingas FFmpeg, bet Nagi jo nerado.
+
+1. Atsisiųskite „Windows“ versiją iš https://ffmpeg.org/download.html.
+2. Išpakuokite archyvą ir jo aplanke „bin“ suraskite ffmpeg.exe.
+3. Pridėkite aplanką, kuriame yra ffmpeg.exe, į Windows PATH.
+4. Paleiskite Nagi iš naujo, tada vėl įjunkite garsumo normalizavimą.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>Grojaraštis sukurtas, tačiau nepavyko pridėti jo dainų. Bandykite importuoti dar kartą.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Jūsų bibliotekoje nerasta dainų iš grojaraščio.</value>
@@ -293,12 +301,39 @@
     <value>Visos dainos jau turi garso duomenis.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Skaičiuojamas garso lygis {0} dainoms...</value>
+    <value>Analizuojamas garsumas… Dainų: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Skaičiuojamas garso normalizavimas ({0}/{1})...</value>
+    <value>Skaičiuojamas garsumo normalizavimas ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Garso normalizavimas baigtas. Apdorota {0} dainų.</value>
+    <value>Garsumo normalizavimas baigtas. Apdorota dainų: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Įveskite savo ListenBrainz naudotojo žetoną.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Nepavyko perskaityti atsakymo iš ListenBrainz. Bandykite vėliau dar kartą.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Įveskite serverio URL adresą, prasidedantį http:// arba https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Naudotojo žetonas netinkamas. Patikrinkite jį ir bandykite dar kartą.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz grąžino klaidą (HTTP {0}). Bandykite vėliau dar kartą.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Nepavyko prisijungti prie ListenBrainz. Patikrinkite ryšį ir serverio URL.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi nerado savo bibliotekos duomenų aplanko.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Atkūrimas nepavyko, ir ankstesni duomenys nebuvo visiškai atkurti. Atkūrimo failai išsaugoti čia: &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Pasirinktas failas nėra tinkama Nagi atsarginė kopija.</value>
   </data>
 </root>

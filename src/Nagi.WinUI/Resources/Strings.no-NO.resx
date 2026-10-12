@@ -76,6 +76,9 @@
   <data name="NavItem_Folders" xml:space="preserve">
     <value>Mapper</value>
   </data>
+  <data name="NavItem_Favorites" xml:space="preserve">
+    <value>Favoritter</value>
+  </data>
   <data name="NavItem_Insights" xml:space="preserve">
     <value>Innsikt</value>
   </data>
@@ -83,7 +86,7 @@
     <value>Innstillinger</value>
   </data>
   <data name="Status_NoTrackPlaying" xml:space="preserve">
-    <value>Ingen spor spilles av</value>
+    <value>Ingen sang spilles</value>
   </data>
   <data name="Tooltip_Play" xml:space="preserve">
     <value>Spill av</value>
@@ -92,10 +95,10 @@
     <value>Pause</value>
   </data>
   <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>Bland avspilling på</value>
+    <value>Tilfeldig avspilling på</value>
   </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
-    <value>Bland avspilling av</value>
+    <value>Tilfeldig avspilling av</value>
   </data>
   <data name="Tooltip_RepeatOff" xml:space="preserve">
     <value>Gjenta av</value>
@@ -122,13 +125,13 @@
     <value>Mørk</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">
-    <value>Bruk systeminnstilling</value>
+    <value>Systemstandard</value>
   </data>
   <data name="Backdrop_Mica" xml:space="preserve">
-    <value>Mika</value>
+    <value>Mica</value>
   </data>
   <data name="Backdrop_MicaAlt" xml:space="preserve">
-    <value>Mika Alt</value>
+    <value>Mica Alt</value>
   </data>
   <data name="Backdrop_Acrylic" xml:space="preserve">
     <value>Akryl</value>
@@ -141,6 +144,39 @@
   </data>
   <data name="Label_Rating" xml:space="preserve">
     <value>Vurdering</value>
+  </data>
+  <data name="Label_Grouping" xml:space="preserve">
+    <value>Gruppering</value>
+  </data>
+  <data name="Label_SkipCount" xml:space="preserve">
+    <value>Antall hopp over</value>
+  </data>
+  <data name="Label_DiscNumber" xml:space="preserve">
+    <value>Platenummer</value>
+  </data>
+  <data name="Label_Bitrate" xml:space="preserve">
+    <value>Bitfrekvens</value>
+  </data>
+  <data name="Label_SampleRate" xml:space="preserve">
+    <value>Samplingsfrekvens</value>
+  </data>
+  <data name="Label_IsLoved" xml:space="preserve">
+    <value>Favoritt</value>
+  </data>
+  <data name="Label_HasLyrics" xml:space="preserve">
+    <value>Har sangtekst</value>
+  </data>
+  <data name="Operator_IsInRange" xml:space="preserve">
+    <value>Er mellom (inkludert)</value>
+  </data>
+  <data name="Operator_IsAfter" xml:space="preserve">
+    <value>Er etter</value>
+  </data>
+  <data name="Operator_IsBefore" xml:space="preserve">
+    <value>Er før</value>
+  </data>
+  <data name="SmartPlaylist_UpperBound_Placeholder" xml:space="preserve">
+    <value>Maksimal verdi</value>
   </data>
   <data name="Operator_Contains" xml:space="preserve">
     <value>Inneholder</value>
@@ -194,31 +230,31 @@
     <value>Ny smart spilleliste</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>Rediger smart spilleliste - {0}</value>
+    <value>Rediger smart spilleliste: {0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
     <value>Skriv inn et spillelistenavn</value>
   </data>
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
-    <value>{0} sanger passer gjeldende regler</value>
+    <value>Matchende sanger: {0:N0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Skriv inn et navn for å se matchende sanger</value>
+    <value>Skriv inn et spillelistenavn for å se matchende sanger</value>
   </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
-    <value>Kan ikke beregnes</value>
+    <value>Kunne ikke telle matchende sanger</value>
   </data>
   <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
-    <value>Beregner...</value>
+    <value>Beregner…</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>En spilleliste med dette navnet eksisterer allerede!</value>
+    <value>En spilleliste med dette navnet finnes allerede.</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>Vennligst skriv inn et navn!</value>
+    <value>Skriv inn et spillelistenavn.</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
-    <value>Laster inn...</value>
+    <value>Laster…</value>
   </data>
   <data name="Error_FailedToLoadArtists" xml:space="preserve">
     <value>Klarte ikke å laste inn artister</value>
@@ -227,7 +263,7 @@
     <value>Kritisk feil</value>
   </data>
   <data name="CrashReport_Message" xml:space="preserve">
-    <value>Nagi har støtt på en kritisk feil og må lukkes. Vi beklager ulempen.</value>
+    <value>Nagi støtte på en feil og må lukkes.</value>
   </data>
   <data name="ElevationWarning_Title" xml:space="preserve">
     <value>Kjører som administrator</value>
@@ -295,16 +331,16 @@ For den beste opplevelsen, vennligst start Nagi på nytt uten administratorretti
     <value>Denne mappen er allerede i biblioteket.</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
-    <value>Legger til mappe i biblioteket...</value>
+    <value>Legger til mappe i biblioteket…</value>
   </data>
   <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>'{0}' ble slettet.</value>
+    <value>Fjernet &apos;{0}&apos; fra biblioteket ditt.</value>
   </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
-    <value>Klarte ikke å slette '{0}'.</value>
+    <value>Kunne ikke fjerne &apos;{0}&apos; fra biblioteket ditt.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
-    <value>Sletter '{0}'...</value>
+    <value>Fjerner &apos;{0}&apos; fra biblioteket ditt…</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
     <value>Omskaning av '{0}' fullført.</value>
@@ -313,7 +349,7 @@ For den beste opplevelsen, vennligst start Nagi på nytt uten administratorretti
     <value>Ingen endringer oppdaget for '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
-    <value>Omskanner '{0}'...</value>
+    <value>Skanner '{0}' på nytt…</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
     <value>Ingen mapper med musikk funnet.</value>
@@ -328,7 +364,7 @@ For den beste opplevelsen, vennligst start Nagi på nytt uten administratorretti
     <value>Feil ved tillegging av mappe: {0}</value>
   </data>
   <data name="Folders_Error_DeleteFolder" xml:space="preserve">
-    <value>Feil ved sletting av mappe: {0}</value>
+    <value>Kunne ikke fjerne mappe fra biblioteket ditt: {0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>Feil ved omskaning av mappe: {0}</value>
@@ -379,10 +415,10 @@ For den beste opplevelsen, vennligst start Nagi på nytt uten administratorretti
     <value>La oss sette opp musikkbiblioteket ditt for å komme i gang.</value>
   </data>
   <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>Venter på at du skal velge en mappe...</value>
+    <value>Venter på at du skal velge en mappe…</value>
   </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
-    <value>Bygger biblioteket ditt...</value>
+    <value>Bygger biblioteket ditt…</value>
   </data>
   <data name="Onboarding_Error" xml:space="preserve">
     <value>En uventet feil oppsto. Vennligst prøv igjen.</value>
@@ -403,7 +439,7 @@ For den beste opplevelsen, vennligst start Nagi på nytt uten administratorretti
     <value>Feil ved lasting av spilleliste</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Starter spilleliste...</value>
+    <value>Starter spilleliste…</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Ingen sanger samsvarer med denne smarte spillelistens regler.</value>
@@ -412,7 +448,7 @@ For den beste opplevelsen, vennligst start Nagi på nytt uten administratorretti
     <value>Feil ved start av avspilling for denne spillelisten.</value>
   </data>
   <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Velger en tilfeldig spilleliste...</value>
+    <value>Velger en tilfeldig spilleliste…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Ingen spillelister funnet.</value>
@@ -424,13 +460,13 @@ For den beste opplevelsen, vennligst start Nagi på nytt uten administratorretti
     <value>Feil ved avspilling av tilfeldig spilleliste.</value>
   </data>
   <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Laster inn spillelister...</value>
+    <value>Laster spillelister…</value>
   </data>
   <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
     <value>Feil ved lasting av spillelister.</value>
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Oppretter ny spilleliste...</value>
+    <value>Oppretter ny spilleliste…</value>
   </data>
   <data name="Playlist_Status_CreateFailed" xml:space="preserve">
     <value>Klarte ikke å opprette spilleliste. Den kan allerede eksistere.</value>
@@ -439,7 +475,7 @@ For den beste opplevelsen, vennligst start Nagi på nytt uten administratorretti
     <value>Det oppsto en feil under oppretting av spillelisten.</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Oppdaterer spillelistebilde...</value>
+    <value>Oppdaterer spillelistebilde…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Klarte ikke å oppdatere spillelistebilde.</value>
@@ -448,7 +484,7 @@ For den beste opplevelsen, vennligst start Nagi på nytt uten administratorretti
     <value>Det oppsto en feil under oppdatering av spillelistebildet.</value>
   </data>
   <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Fjerner spillelistebilde...</value>
+    <value>Fjerner bilde for spilleliste…</value>
   </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Klarte ikke å fjerne spillelistebildet.</value>
@@ -457,7 +493,7 @@ For den beste opplevelsen, vennligst start Nagi på nytt uten administratorretti
     <value>Det oppsto en feil under fjerning av spillelistebildet.</value>
   </data>
   <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Døper om spilleliste...</value>
+    <value>Endrer navn på spilleliste…</value>
   </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Klarte ikke å døpe om spillelisten.</value>
@@ -466,7 +502,7 @@ For den beste opplevelsen, vennligst start Nagi på nytt uten administratorretti
     <value>Det oppsto en feil under omdøping av spillelisten.</value>
   </data>
   <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Sletter spilleliste...</value>
+    <value>Sletter spilleliste…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Klarte ikke å slette spillelisten.</value>
@@ -478,7 +514,7 @@ For den beste opplevelsen, vennligst start Nagi på nytt uten administratorretti
     <value>Bekreft tilbakestilling</value>
   </data>
   <data name="Settings_Reset_Message" xml:space="preserve">
-    <value>Er du sikker på at du vil tilbakestille alle programdata og innstillinger? Denne handlingen kan ikke angres. Applikasjonen vil gå tilbake til den første oppsettet.</value>
+    <value>Er du sikker på at du vil tilbakestille alle programdata og innstillinger? Denne handlingen kan ikke angres. Applikasjonen vil gå tilbake til det første oppsettet.</value>
   </data>
   <data name="Settings_Reset_Button" xml:space="preserve">
     <value>Tilbakestill</value>
@@ -514,8 +550,9 @@ For den beste opplevelsen, vennligst start Nagi på nytt uten administratorretti
     <value>Eksport vellykket</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>Eksporterte {0} spillelister ({1} totale sanger) til:
-{2}</value>
+    <value>Spillelister eksportert: {0}
+Sanger: {1}
+Lagret i: {2}</value>
   </data>
   <data name="Settings_Export_Failed_Title" xml:space="preserve">
     <value>Eksport mislyktes</value>
@@ -524,17 +561,18 @@ For den beste opplevelsen, vennligst start Nagi på nytt uten administratorretti
     <value>Import vellykket</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>Vellykket import av {0} spillelister ({1} sanger).</value>
+    <value>Spillelister importert: {0}
+Sanger: {1}</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
     <value>
 
-{0} sanger kunne ikke finnes i biblioteket ditt.</value>
+Sanger ikke funnet i biblioteket ditt: {0}.</value>
   </data>
   <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
     <value>
 
-{0} filer kunne ikke importeres.</value>
+Filer som ikke kunne importeres: {0}.</value>
   </data>
   <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
     <value>Import mislyktes</value>
@@ -603,10 +641,10 @@ For den beste opplevelsen, vennligst start Nagi på nytt uten administratorretti
     <value>FFmpeg ikke oppdaget. Vennligst installer FFmpeg og klikk 'Sjekk på nytt'.</value>
   </data>
   <data name="FFmpeg_Status_Checking" xml:space="preserve">
-    <value>Sjekker etter FFmpeg...</value>
+    <value>Sjekker etter FFmpeg…</value>
   </data>
   <data name="FFmpeg_Status_Detected" xml:space="preserve">
-    <value>FFmpeg oppdaget!</value>
+    <value>FFmpeg oppdaget.</value>
   </data>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg fortsatt ikke oppdaget. Vennligst installer FFmpeg og klikk 'Sjekk på nytt'.</value>
@@ -774,13 +812,13 @@ For den beste opplevelsen, vennligst start Nagi på nytt uten administratorretti
     <value>Ingen spillelister tilgjengelig</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
-    <value>Slett mappe</value>
+    <value>Fjern mappe</value>
   </data>
   <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
-    <value>Er du sikker på at du vil fjerne mappen '{0}' fra biblioteket? Dette vil ikke slette filene fra datamaskinen din.</value>
+    <value>Fjerne &apos;{0}&apos; fra biblioteket ditt? Lydfilene blir værende på datamaskinen.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
-    <value>Slett</value>
+    <value>Fjern</value>
   </data>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Avbryt</value>
@@ -819,10 +857,10 @@ For den beste opplevelsen, vennligst start Nagi på nytt uten administratorretti
     <value>Søk spillelister</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>Skriv inn nytt spillelistenavn</value>
+    <value>Skriv inn et spillelistenavn</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
-    <value>Velg bilde</value>
+    <value>Velg omslag</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
     <value>Opprett ny spilleliste</value>
@@ -858,7 +896,7 @@ For den beste opplevelsen, vennligst start Nagi på nytt uten administratorretti
     <value>Lukk søk</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Søk i bibliotek</value>
+    <value>Søk i sjanger</value>
   </data>
   <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Ingen spillelister tilgjengelig</value>
@@ -876,25 +914,25 @@ For den beste opplevelsen, vennligst start Nagi på nytt uten administratorretti
     <value>Ukjent smart spilleliste</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
-    <value>Omskan metadata</value>
+    <value>Skann metadata på nytt</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>Dette vil omskanne alle sanger i biblioteket ditt for å bruke nye metadatainnstillinger (som artist-skilletegn). Dette kan ta litt tid avhengig av bibliotekets størrelse. Vil du fortsette?</value>
+    <value>Skann biblioteket på nytt for å ta i bruk metadatasandlinger, som oppdeling av artister. Dette kan ta litt tid for store bibliotek. Vil du fortsette?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
-    <value>Omskan</value>
+    <value>Skann på nytt</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
-    <value>Forbereder omskaning av bibliotek...</value>
+    <value>Forbereder nyskanning av bibliotek…</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
-    <value>Omskaning fullført</value>
+    <value>Ny skanning fullført</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Content" xml:space="preserve">
     <value>Bibliotekets metadata er oppdatert.</value>
   </data>
   <data name="Settings_Dialog_RescanFailed_Title" xml:space="preserve">
-    <value>Omskaning mislyktes</value>
+    <value>Ny skanning mislyktes</value>
   </data>
   <data name="Settings_Dialog_RescanFailed_Content" xml:space="preserve">
     <value>Det oppsto en feil under skanning. Sjekk logger for detaljer.</value>
@@ -916,7 +954,7 @@ Vil du fortsette?</value>
     <value>Aktiver og skann</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>Forbereder skanning for volumnormalisering...</value>
+    <value>Forbereder skanning for volumnormalisering…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
     <value>Skanning for volumnormalisering avbrutt.</value>
@@ -1053,7 +1091,7 @@ Feil: {1}</value>
     <value>Nagi</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Gjenoppdag din lokale musikksamling med Nagi, en musikkspiller fokusert på hastighet, enkelhet og personvern. Nagi er bygget med C# og WinUI 3 for å tilby en ren, innfødt Fluent-opplevelse. Den er vakker, effektiv og respekterer personvernet ditt.</value>
+    <value>Gjenoppdag din lokale musikksamling med Nagi, en musikkspiller med fokus på hastighet, enkelhet og personvern.</value>
   </data>
   <data name="AppShortName" xml:space="preserve">
     <value>Nagi</value>
@@ -1083,58 +1121,58 @@ Feil: {1}</value>
     <value>Gå til album</value>
   </data>
   <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Drop files or folders onto the player to add them to the queue.</value>
+    <value>Slipp filer eller mapper på spilleren for å legge dem til i køen.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Neste i kø</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
-    <value>Clear queue</value>
+    <value>Tøm kø</value>
   </data>
   <data name="QueuePanel_DisplayOptions" xml:space="preserve">
-    <value>Queue display options</value>
+    <value>Visningsalternativer for kø</value>
   </data>
   <data name="QueuePanel_Close" xml:space="preserve">
-    <value>Close queue</value>
+    <value>Lukk kø</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
     <value>Artist</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
-    <value>Duration</value>
+    <value>Varighet</value>
   </data>
   <data name="QueuePanel_ShowTrackCount" xml:space="preserve">
-    <value>Track count</value>
+    <value>Antall spor</value>
   </data>
   <data name="QueuePanel_TrackCount" xml:space="preserve">
-    <value>Tracks: {0:N0}</value>
+    <value>Spor: {0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
-    <value>Queue position</value>
+    <value>Køposisjon</value>
   </data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve">
-    <value>Genre</value>
+    <value>Sjanger</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
-    <value>Total duration</value>
+    <value>Total varighet</value>
   </data>
   <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Spill av</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
-    <value>Move up</value>
+    <value>Flytt opp</value>
   </data>
   <data name="QueuePanel_MoveDown" xml:space="preserve">
-    <value>Move down</value>
+    <value>Flytt ned</value>
   </data>
   <data name="QueuePanel_Remove" xml:space="preserve">
-    <value>Remove from queue</value>
+    <value>Fjern fra kø</value>
   </data>
   <data name="AlbumPage_Title" xml:space="preserve">
     <value>Album</value>
   </data>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Søk album...</value>
+    <value>Søk etter album…</value>
   </data>
   <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Søk album</value>
@@ -1158,7 +1196,7 @@ Feil: {1}</value>
     <value>Sanger</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Søk i album...</value>
+    <value>Søk i album…</value>
   </data>
   <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Søk i album</value>
@@ -1185,7 +1223,7 @@ Feil: {1}</value>
     <value>Gå til artist</value>
   </data>
   <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Vis i utforsker</value>
+    <value>Vis i Filutforsker</value>
   </data>
   <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Spill av</value>
@@ -1200,7 +1238,7 @@ Feil: {1}</value>
     <value>Artister</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Søk artister...</value>
+    <value>Søk etter artister…</value>
   </data>
   <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Søk artister</value>
@@ -1242,7 +1280,7 @@ Feil: {1}</value>
     <value>Sanger</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Søk i artist...</value>
+    <value>Søk hos artist…</value>
   </data>
   <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Søk i artist</value>
@@ -1269,7 +1307,7 @@ Feil: {1}</value>
     <value>Gå til album</value>
   </data>
   <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Vis i utforsker</value>
+    <value>Vis i Filutforsker</value>
   </data>
   <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Spill av</value>
@@ -1299,7 +1337,7 @@ Feil: {1}</value>
     <value>Skann på nytt</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>Slett</value>
+    <value>Fjern fra bibliotek</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Ingen mapper lagt til ennå</value>
@@ -1332,7 +1370,7 @@ Feil: {1}</value>
     <value>Gå til artist</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Vis i utforsker</value>
+    <value>Vis i Filutforsker</value>
   </data>
   <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
     <value>Spill av</value>
@@ -1344,7 +1382,7 @@ Feil: {1}</value>
     <value>Sanger</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Søk i mappe...</value>
+    <value>Søk i mappe…</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Søk i mappe</value>
@@ -1365,7 +1403,7 @@ Feil: {1}</value>
     <value>Sjangere</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Søk sjangere...</value>
+    <value>Søk etter sjangere…</value>
   </data>
   <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
     <value>Søk sjangere</value>
@@ -1386,7 +1424,7 @@ Feil: {1}</value>
     <value>Bibliotek</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Søk i bibliotek...</value>
+    <value>Søk i bibliotek…</value>
   </data>
   <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Søk i bibliotek</value>
@@ -1416,10 +1454,16 @@ Feil: {1}</value>
     <value>Gå til artist</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Vis i utforsker</value>
+    <value>Vis i Filutforsker</value>
   </data>
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Spill av</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
+    <value>Ingen sanger funnet</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+    <value>Prøv å søke etter noe annet</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
     <value>Biblioteket ditt er tomt</value>
@@ -1428,31 +1472,31 @@ Feil: {1}</value>
     <value>Legg til mapper i biblioteket ditt i Innstillinger</value>
   </data>
   <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
-    <value>Ingen tekster funnet for dette sporet</value>
+    <value>Ingen sangtekst funnet for denne sangen</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
     <value>Prøv en annen sang</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
-    <value>Edit or replace lyrics</value>
+    <value>Rediger eller erstatt tekster</value>
   </data>
   <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
-    <value>Edit lyrics</value>
+    <value>Rediger sangtekst</value>
   </data>
   <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
-    <value>Paste plain text or timestamped LRC lyrics</value>
+    <value>Lim inn ren tekst eller tidsstemplede LRC-tekster</value>
   </data>
   <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
-    <value>Save</value>
+    <value>Lagre</value>
   </data>
   <data name="LyricsPage_EditLyrics_Remove" xml:space="preserve">
-    <value>Remove saved lyrics</value>
+    <value>Fjern lagret sangtekst</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
-    <value>Lyrics could not be updated</value>
+    <value>Teksten kunne ikke oppdateres</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Nagi could not save the lyrics. Check the log for details and try again.</value>
+    <value>Nagi kunne ikke lagre teksten. Sjekk loggen for detaljer og prøv igjen.</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Velkommen til Nagi</value>
@@ -1467,7 +1511,7 @@ Feil: {1}</value>
     <value>Spillelister</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Søk spillelister...</value>
+    <value>Søk etter spillelister…</value>
   </data>
   <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Søk spillelister</value>
@@ -1515,7 +1559,7 @@ Feil: {1}</value>
     <value>Sanger</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Søk i spilleliste...</value>
+    <value>Søk i spilleliste…</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Søk i spilleliste</value>
@@ -1542,7 +1586,7 @@ Feil: {1}</value>
     <value>Gå til artist</value>
   </data>
   <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Vis i utforsker</value>
+    <value>Vis i Filutforsker</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
     <value>Fjern fra spilleliste</value>
@@ -1563,7 +1607,7 @@ Feil: {1}</value>
     <value>Sanger</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Søk i sjanger...</value>
+    <value>Søk i sjanger…</value>
   </data>
   <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Søk i sjanger</value>
@@ -1593,7 +1637,7 @@ Feil: {1}</value>
     <value>Gå til artist</value>
   </data>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Vis i utforsker</value>
+    <value>Vis i Filutforsker</value>
   </data>
   <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
     <value>Ingen spillelister tilgjengelige</value>
@@ -1617,7 +1661,7 @@ Feil: {1}</value>
     <value>Tema</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>Velg applikasjonstema.</value>
+    <value>Velg et lyst, mørkt eller systemtema.</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
     <value>Aksentfarge</value>
@@ -1629,13 +1673,13 @@ Feil: {1}</value>
     <value>Vindusmateriale</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Description" xml:space="preserve">
-    <value>Velg bakgrunnsmateriale for vinduet.</value>
+    <value>Velg vinduets bakgrunnsmateriale.</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
     <value>Dynamisk tema</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>Aktiver og konfigurer alternativer for dynamisk tema.</value>
+    <value>Tilpass appfargene til nåværende albumomslag.</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
     <value>Husk vindusstørrelse</value>
@@ -1650,7 +1694,7 @@ Feil: {1}</value>
     <value>Gjenopprett hovedvinduet til forrige skjermposisjon ved neste oppstart.</value>
   </data>
   <data name="SettingsPage_RememberNavState_Header" xml:space="preserve">
-    <value>Husk navigasjonspanelstatus</value>
+    <value>Husk tilstand for navigasjonspanel</value>
   </data>
   <data name="SettingsPage_RememberNavState_Description" xml:space="preserve">
     <value>Hold venstre navigasjonspanel åpent eller lukket slik du forlot det.</value>
@@ -1668,13 +1712,13 @@ Feil: {1}</value>
     <value>Volumnormalisering (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Juster volumet automatisk til standardnivået (-18 LUFS) for å unngå plutselige volumendringer.</value>
+    <value>Reduser volumforskjeller mellom sanger med ReplayGain.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
-    <value>WASAPI exclusive mode</value>
+    <value>Eksklusiv WASAPI-modus</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+    <value>Gi Nagi eksklusiv kontroll over Windows-lydenheten. Andre apper kan bli stumme. Start Nagi på nytt etter at du har endret denne innstillingen.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>Ton ut/inn ved avspilling / pause</value>
@@ -1707,16 +1751,16 @@ Feil: {1}</value>
     <value>Sammenleggbar spiller</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>Animer spillerlinjen for å utvide og kollapse.</value>
+    <value>Utvid spillerlinjen når du fører musepekeren over den.</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
-    <value>Gjenopprett avspillingsstatus</value>
+    <value>Gjenopprett avspillingstilstand</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>Lagre gjeldende avspillingsstatus for å gjenoppta ved neste oppstart.</value>
+    <value>Gjenopprett køen og avspillingsposisjonen når Nagi starter.</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
-    <value>Automatisk oppstart</value>
+    <value>Start automatisk ved oppstart</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
     <value>Start Nagi automatisk når du logger deg på datamaskinen din.</value>
@@ -1725,7 +1769,7 @@ Feil: {1}</value>
     <value>Start minimert</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>Når den startes, vil applikasjonsvinduet som standard være minimert.</value>
+    <value>Start Nagi med vinduet minimert.</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
     <value>Minimer til minispiller</value>
@@ -1737,10 +1781,10 @@ Feil: {1}</value>
     <value>Skjul til systemstatusfeltet</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>Når lukket, skjul til systemstatusfeltet i stedet.</value>
+    <value>La Nagi kjøre i systemstatusfeltet når du lukker vinduet.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
-    <value>Vis plateomslag i flyout</value>
+    <value>Vis omslag i sprett-opp-vindu</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
     <value>Vis plateomslaget i den kompakte spilleren som vises når du klikker på ikonet i systemstatusfeltet.</value>
@@ -1773,10 +1817,10 @@ Feil: {1}</value>
     <value>Skann biblioteket på nytt for å bruke splittingendringer</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
-    <value>Hent online metadata</value>
+    <value>Hent metadata på nettet</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Hent tilleggsinformasjon som artistbilder og biografier fra onlinetjenester (f.eks. Spotify, Last.fm).</value>
+    <value>Hent artistbilder og biografier fra nettkilder.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Kilder</value>
@@ -1785,10 +1829,10 @@ Feil: {1}</value>
     <value>Dra for å endre rekkefølgen på metadatakilder. Hold musepekeren over hver kilde for detaljer.</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Header" xml:space="preserve">
-    <value>Hent online tekster</value>
+    <value>Hent sangtekster på nettet</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>Hent manglende tekster automatisk fra online kilder. (Personvern: sender spormetadata til tredjepartstjenester)</value>
+    <value>Hent manglende sangtekster fra nettkilder. Dette sender sangmetadata til tredjepartstjenester.</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
     <value>Kilder</value>
@@ -1797,7 +1841,7 @@ Feil: {1}</value>
     <value>Dra for å endre rekkefølgen på tekstkilder. Hold musepekeren over hver kilde for detaljer.</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
-    <value>Vis romaniserte tekster</value>
+    <value>Vis romaniserte sangtekster</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
     <value>Vis en mindre romanisert linje under støttede tekster når en installert pakke samsvarer med skriptet.</value>
@@ -1806,7 +1850,7 @@ Feil: {1}</value>
     <value>Språkpakker</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>Installer språkene du ønsker romanisert. Pakkene er signerte, kun data, og lagres lokalt.</value>
+    <value>Installer språkpakker for å romanisere støttede sangtekster. Pakkene lagres lokalt.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
     <value>Oppdater</value>
@@ -1845,25 +1889,25 @@ Feil: {1}</value>
     <value>{0} lisens</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>Eksporter/Importer spillelister</value>
+    <value>Importer og eksporter spillelister</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
     <value>Eksporter spillelister til M3U-filer for bruk i andre spillere, eller importer M3U-spillelister til Nagi.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
-    <value>Eksporter alle...</value>
+    <value>Eksporter alle…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
     <value>Eksporter alle spillelister til en mappe</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
-    <value>Importer...</value>
+    <value>Importer…</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
     <value>Importer en eller flere M3U-filer</value>
   </data>
   <data name="SettingsPage_ResetApp_Header" xml:space="preserve">
-    <value>Tilbakestill applikasjon</value>
+    <value>Tilbakestill applikasjonen</value>
   </data>
   <data name="SettingsPage_ResetApp_Description" xml:space="preserve">
     <value>Dette vil slette alle bibliotekdata, spillelister og tilbakestille alle innstillinger til standardverdiene. Applikasjonen vil starte på nytt.</value>
@@ -1899,10 +1943,10 @@ Feil: {1}</value>
     <value>Legg automatisk til sporene du lytter til på Nagi i Last.fm-profilen din.</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
-    <value>Oppdater 'Spiller nå'</value>
+    <value>Oppdater «Spilles nå»</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>Vis vennene dine på Last.fm hva du lytter til akkurat nå i sanntid.</value>
+    <value>Vis sangen som spilles nå på Last.fm-profilen din.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
     <value>ListenBrainz</value>
@@ -1926,10 +1970,10 @@ Feil: {1}</value>
     <value>Tilkobling mislyktes: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>Send lyttinger (scrobbling)</value>
+    <value>Send inn avspillinger (skrobbling)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>Send "spiller nå"-oppdateringer</value>
+    <value>Send inn oppdateringer for «Spilles nå»</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
     <value>Avansert</value>
@@ -1962,7 +2006,7 @@ Feil: {1}</value>
     <value>Sanger</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Søk i smart spilleliste...</value>
+    <value>Søk i smart spilleliste…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
     <value>Søk i smart spilleliste</value>
@@ -1992,7 +2036,7 @@ Feil: {1}</value>
     <value>Gå til artist</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Vis i utforsker</value>
+    <value>Vis i Filutforsker</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Spill av</value>
@@ -2034,7 +2078,7 @@ Feil: {1}</value>
     <value>Send tilbakemelding</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Se etter oppdateringer ved oppstart</value>
+    <value>Sjekk etter oppdateringer ved oppstart</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
     <value>Se automatisk etter nye versjoner når applikasjonen starter.</value>
@@ -2043,7 +2087,7 @@ Feil: {1}</value>
     <value>Applikasjonsspråk</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>Endringer krever en omstart for å tre i kraft</value>
+    <value>Start Nagi på nytt for å bruke språkendringen.</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
     <value>Omstart nødvendig</value>
@@ -2058,7 +2102,7 @@ Feil: {1}</value>
     <value>Sikkerhetskopiering og gjenoppretting</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Opprett sikkerhetskopier av musikkbiblioteket og innstillingene dine, eller gjenopprett fra en tidligere sikkerhetskopi</value>
+    <value>Opprett en sikkerhetskopi av biblioteksdata og innstillinger, eller gjenopprett en tidligere sikkerhetskopi.</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
     <value>Opprett sikkerhetskopi</value>
@@ -2070,7 +2114,7 @@ Feil: {1}</value>
     <value>Sikkerhetskopi opprettet</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Sikkerhetskopi opprettet ({0:F2} MB) på: {1}</value>
+    <value>Opprettet en sikkerhetskopi ({0:F2} MB) i: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
     <value>Sikkerhetskopiering mislyktes</value>
@@ -2097,13 +2141,13 @@ Feil: {1}</value>
     <value>Gjenoppretting fullført</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Sikkerhetskopi gjenopprettet. Appen vil nå starte på nytt.</value>
+    <value>Sikkerhetskopi gjenopprettet. Nagi vil nå starte på nytt.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
     <value>Gjenoppretting mislyktes</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Kunne ikke gjenopprette fra sikkerhetskopi. Dataene dine ble ikke endret.</value>
+    <value>Kunne ikke gjenopprette sikkerhetskopien.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
     <value>Avspillerstil</value>
@@ -2115,25 +2159,25 @@ Feil: {1}</value>
     <value>Solid (Ugjenomsiktig)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Tilpass utseendet til den flytende avspilleren</value>
+    <value>Tilpass utseendet til spillerlinjen.</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
     <value>Fargestyrke</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Justerer livligheten til avspillerens bakgrunnsfarge</value>
+    <value>Juster intensiteten på spillerens bakgrunnsfarge.</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
-    <value>Innfade-varighet</value>
+    <value>Inntoningsvarighet</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
-    <value>Varigheten av innfade-effekten ved avspilling (ms)</value>
+    <value>Angi hvor lang tid volumet bruker på å tone inn når avspillingen gjenopptas.</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
-    <value>Utfade-varighet</value>
+    <value>Uttoningsvarighet</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
-    <value>Varigheten av utfade-effekten ved pausing (ms)</value>
+    <value>Angi hvor lang tid volumet bruker på å tone ut når avspillingen settes på pause.</value>
   </data>
   <data name="Settings_Nav_Insights" xml:space="preserve">
     <value>Innsikt</value>
@@ -2175,7 +2219,7 @@ Feil: {1}</value>
     <value>Start avspilling for å se din innsikt her</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
-    <value>{0} avspillinger</value>
+    <value>Avspillinger: {0}</value>
   </data>
   <data name="InsightsPage_Source_Albums" xml:space="preserve">
     <value>Album</value>
@@ -2235,7 +2279,7 @@ Feil: {1}</value>
     <value>Spilletid</value>
   </data>
   <data name="PaginationControl_All" xml:space="preserve">
-    <value>All</value>
+    <value>Alle</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>Elementer per side:</value>
@@ -2274,12 +2318,174 @@ Feil: {1}</value>
     <value>Siste år</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
-    <value>Hele perioden</value>
+    <value>Gjennom tidene</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}t {1}m</value>
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
     <value>{0}m {1}s</value>
+  </data>
+  <data name="QueuePanel_EmptyTitle" xml:space="preserve">
+    <value>Køen din er tom</value>
+  </data>
+  <data name="QueuePanel_EmptyDescription" xml:space="preserve">
+    <value>Spill musikk eller slipp lydfiler her for å bygge køen din.</value>
+  </data>
+  <data name="QueuePanel_LoadError" xml:space="preserve">
+    <value>Noen sanger kunne ikke lastes inn. Velg Prøv på nytt for å laste inn køen igjen.</value>
+  </data>
+  <data name="QueuePanel_Retry" xml:space="preserve">
+    <value>Prøv på nytt</value>
+  </data>
+  <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
+    <value>Den nye spillelisterekkefølgen kunne ikke lagres. Prøv igjen.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
+    <value>Lydutgangsenhet</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Description" xml:space="preserve">
+    <value>Velg hvor Nagi skal spille av musikk.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Default" xml:space="preserve">
+    <value>Systemstandard</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Unavailable" xml:space="preserve">
+    <value>Den lagrede enheten er ikke tilgjengelig. Bruker systemstandard.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
+    <value>Kunne ikke oppdatere lydutgangen. Prøv igjen eller velg en annen enhet.</value>
+  </data>
+  <data name="Listening_Random" xml:space="preserve">
+    <value>Tilfeldig</value>
+  </data>
+  <data name="Listening_MoreVariety" xml:space="preserve">
+    <value>Mer variasjon</value>
+  </data>
+  <data name="Listening_Rediscover" xml:space="preserve">
+    <value>Gjenoppdag</value>
+  </data>
+  <data name="Listening_Unheard" xml:space="preserve">
+    <value>Uspilt</value>
+  </data>
+  <data name="Listening_PlayFor" xml:space="preserve">
+    <value>Spill i…</value>
+  </data>
+  <data name="Listening_Minutes" xml:space="preserve">
+    <value>Minutter</value>
+  </data>
+  <data name="Listening_ShuffleMode" xml:space="preserve">
+    <value>Mikstype</value>
+  </data>
+  <data name="Listening_AvoidRecentDays" xml:space="preserve">
+    <value>Unngå nylig spilte (dager)</value>
+  </data>
+  <data name="Listening_MoreOptions" xml:space="preserve">
+    <value>Flere alternativer</value>
+  </data>
+  <data name="Listening_PlayForDescription" xml:space="preserve">
+    <value>Bygg en kø med hele sanger som samlet ikke overstiger din valgte varighet.</value>
+  </data>
+  <data name="Listening_NoMixTitle" xml:space="preserve">
+    <value>Ingen sanger for denne miksen</value>
+  </data>
+  <data name="Listening_NoMixDescription" xml:space="preserve">
+    <value>Ingen sanger i denne listen oppfyller disse kravene. Prøv en annen miks eller sangliste.</value>
+  </data>
+  <data name="Listening_Favorites" xml:space="preserve">
+    <value>Favoritter</value>
+  </data>
+  <data name="Listening_AddFavorite" xml:space="preserve">
+    <value>Legg til i favoritter</value>
+  </data>
+  <data name="Listening_RemoveFavorite" xml:space="preserve">
+    <value>Fjern fra favoritter</value>
+  </data>
+  <data name="Listening_SleepTimer" xml:space="preserve">
+    <value>Innsovningstidtaker</value>
+  </data>
+  <data name="Listening_FinishTrack" xml:space="preserve">
+    <value>Fullfør nåværende sang når tidtakeren utløper</value>
+  </data>
+  <data name="Listening_StopAfterTrack" xml:space="preserve">
+    <value>Stopp etter denne sangen</value>
+  </data>
+  <data name="Listening_StopAtQueueEnd" xml:space="preserve">
+    <value>Stopp ved køslutt</value>
+  </data>
+  <data name="Listening_StopPlayback" xml:space="preserve">
+    <value>Stopp avspilling</value>
+  </data>
+  <data name="Listening_CustomTimer" xml:space="preserve">
+    <value>Egendefinert tidtaker…</value>
+  </data>
+  <data name="Listening_Timer15" xml:space="preserve">
+    <value>Om 15 minutter</value>
+  </data>
+  <data name="Listening_Timer30" xml:space="preserve">
+    <value>Om 30 minutter</value>
+  </data>
+  <data name="Listening_Timer60" xml:space="preserve">
+    <value>Om 60 minutter</value>
+  </data>
+  <data name="Listening_CancelStop" xml:space="preserve">
+    <value>Avbryt planlagt stopp</value>
+  </data>
+  <data name="Listening_TimerRemaining" xml:space="preserve">
+    <value>Stopper om {0}</value>
+  </data>
+  <data name="Listening_PlayerOptions" xml:space="preserve">
+    <value>Spilleralternativer</value>
+  </data>
+  <data name="Listening_RecentlyPlayed" xml:space="preserve">
+    <value>Sist spilt</value>
+  </data>
+  <data name="Listening_HistorySearch" xml:space="preserve">
+    <value>Søk i avspillingshistorikk</value>
+  </data>
+  <data name="Listening_HistoryEmpty" xml:space="preserve">
+    <value>Ingen avspillingshistorikk ennå</value>
+  </data>
+  <data name="Listening_HistoryLoadError" xml:space="preserve">
+    <value>Sist spilt kunne ikke lastes inn. Velg Prøv på nytt for å prøve igjen.</value>
+  </data>
+  <data name="Listening_Today" xml:space="preserve">
+    <value>I dag</value>
+  </data>
+  <data name="Listening_Yesterday" xml:space="preserve">
+    <value>I går</value>
+  </data>
+  <data name="Listening_RediscoveryReason" xml:space="preserve">
+    <value>Sist spilt {0:d}</value>
+  </data>
+  <data name="Listening_RediscoveryTitle" xml:space="preserve">
+    <value>Verdt å høre på nytt</value>
+  </data>
+  <data name="Listening_Dismiss" xml:space="preserve">
+    <value>Avvis</value>
+  </data>
+  <data name="Listening_ActionError" xml:space="preserve">
+    <value>Kunne ikke utføre denne handlingen. Prøv igjen.</value>
+  </data>
+  <data name="Listening_FavoritesEmpty" xml:space="preserve">
+    <value>Ingen favoritter ennå</value>
+  </data>
+  <data name="Listening_FavoritesEmptyDescription" xml:space="preserve">
+    <value>Favorittmarker en sang fra menyen, eller velg den og trykk Ctrl+D.</value>
+  </data>
+  <data name="Listening_VarietyDescription" xml:space="preserve">
+    <value>Mer variasjon unngår sanger som er spilt nylig, og skiller sanger fra samme artist der det er mulig.</value>
+  </data>
+  <data name="Listening_RediscoverDescription" xml:space="preserve">
+    <value>Gjenoppdag bruker sanger med registrerte avspillinger i Nagi som sist ble spilt for mer enn 30 dager siden.</value>
+  </data>
+  <data name="Listening_UnheardDescription" xml:space="preserve">
+    <value>Uspilt bruker sanger uten registrerte avspillinger i Nagi.</value>
+  </data>
+  <data name="Listening_HistoryNoMatches" xml:space="preserve">
+    <value>Ingen avspillinger samsvarer med søket ditt</value>
+  </data>
+  <data name="Listening_NoTimedMixDescription" xml:space="preserve">
+    <value>Ingen sanger i denne listen oppfyller mikskravene og passer innenfor din valgte varighet. Prøv en lengre varighet, en annen miks eller en annen sangliste.</value>
   </data>
 </root>

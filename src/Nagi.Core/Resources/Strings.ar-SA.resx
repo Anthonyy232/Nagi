@@ -102,13 +102,13 @@
     <value>رقم المقطع</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>عدد مرات التشغيل</value>
+    <value>عدد التشغيلات</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
-    <value>أغاني</value>
+    <value>الأغاني</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>فنانون</value>
+    <value>الفنانون</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>أغنية</value>
@@ -117,7 +117,7 @@
     <value>مجلد</value>
   </data>
   <data name="Label_Folders" xml:space="preserve">
-    <value>مجلدات</value>
+    <value>المجلدات</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>ترتيب يدوي</value>
@@ -169,7 +169,7 @@
     <value>الأكثر {0}</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
-    <value>الأقل {0}</value>
+    <value>أقل {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>مسح المجلد {0} من {1}: {2} - {3}</value>
@@ -178,11 +178,11 @@
     <value>اكتمل المسح. تمت إضافة أو تحديث {0} {1}.</value>
   </data>
   <data name="Format_SavingBatch" xml:space="preserve">
-    <value>حفظ الدفعة {0}...</value>
+    <value>جاري حفظ الدفعة {0}…</value>
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>جارٍ مسح المجلد...</value>
+    <value>جاري فحص المجلد…</value>
   </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>اكتمل المسح. المكتبة محدثة.</value>
@@ -194,16 +194,16 @@
     <value>فشل المسح. تحقق من السجلات للحصول على التفاصيل.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>جارٍ إعداد ذاكرات التخزين المؤقت للمسح...</value>
+    <value>جاري التحضير لفحص المكتبة…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>جارٍ قراءة تفاصيل الأغنية...</value>
+    <value>جاري قراءة تفاصيل الأغاني…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>جارٍ تنظيف مكتبتك...</value>
+    <value>جاري تنظيف مكتبتك…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>جارٍ الإنهاء...</value>
+    <value>جاري الإنهاء…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>فشل تطبيع مستوى الصوت. تحقق من السجلات للحصول على التفاصيل.</value>
@@ -216,7 +216,7 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>فشل في إضافة المجلد.</value>
+    <value>تعذر إضافة المجلد.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>لا يمكن أن يكون اسم قائمة التشغيل فارغًا.</value>
@@ -248,7 +248,15 @@
     <value>فرز حسب: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>مطلوب FFmpeg لتطبيع مستوى الصوت عالي الدقة (تحليل ReplayGain) ولكنه لم يتم العثور عليه على نظامك.\n\nاتبع هذه الخطوات لإعداده:\n\n1. **تنزيل**: قم بزيارة https://www.gyan.dev/ffmpeg/builds/ وقم بتنزيل البنية الأساسية 'ffmpeg-git-full.7z' (أو ما شابه ذلك).\n2. **دليل**: يمكنك اتباع هذا الدليل للحصول على تعليمات مفصلة: https://phoenixnap.com/kb/ffmpeg-windows\n3. **استخراج**: افتح مجلد البنية وحدد موقع دليل 'bin' الذي يحتوي على `ffmpeg.exe`.\n4. **تثبيت**: انسخ `ffmpeg.exe` إلى مجلد دائم (على سبيل المثال، `C:\ffmpeg\`) و **أضف هذا المجلد إلى متغير بيئة System PATH الخاص بك**.\n5. **إعادة التشغيل**: يرجى إعادة تشغيل Nagi بعد التثبيت لتصبح التغييرات سارية المفعول.</value>
+    <value>يلزم وجود FFmpeg لتحليل الأغاني لمعايرة الصوت، ولكن لم يتمكن Nagi من العثور عليه.
+
+1. نزّل نسخة Windows من https://ffmpeg.org/download.html.
+2. استخرج الأرشيف وحدد موقع ffmpeg.exe في مجلد bin الخاص به.
+3. أضف المجلد الذي يحتوي على ffmpeg.exe إلى متغير Windows PATH.
+4. أعد تشغيل Nagi، ثم فعّل معايرة الصوت مرة أخرى.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>تم إنشاء قائمة التشغيل، ولكن تعذر إضافة أغانيها. يُرجى محاولة الاستيراد مرة أخرى.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>لم يتم العثور على أغاني من قائمة التشغيل في مكتبتك.</value>
@@ -293,12 +301,39 @@
     <value>جميع الأغاني تحتوي بالفعل على بيانات مستوى الصوت.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>جارٍ حساب مستوى الصوت لـ {0} أغنية...</value>
+    <value>جاري تحليل مستوى الصوت… الأغاني: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>جارٍ حساب تطبيع مستوى الصوت ({0}/{1})...</value>
+    <value>جاري حساب معايرة الصوت ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>اكتمل تطبيع مستوى الصوت. تمت معالجة {0} أغنية.</value>
+    <value>اكتملت معايرة الصوت. الأغاني المعالجة: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>أدخل رمز المستخدم الخاص بك في ListenBrainz.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>تعذر قراءة الاستجابة من ListenBrainz. حاول مرة أخرى لاحقًا.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>أدخل عنوان URL للخادم يبدأ بـ http:// أو https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>رمز المستخدم غير صالح. تحقق منه وحاول مرة أخرى.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>أرجع ListenBrainz خطأً (HTTP {0}). حاول مرة أخرى لاحقًا.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>تعذر الاتصال بـ ListenBrainz. تحقق من اتصالك وعنوان URL للخادم.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>لم يتمكن Nagi من العثور على مجلد بيانات مكتبته.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>فشلت الاستعادة، ولم يتم التمكن من استعادة بياناتك السابقة بالكامل. تم حفظ ملفات الاسترداد في &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>الملف المحدد ليس نسخة احتياطية صالحة لـ Nagi.</value>
   </data>
 </root>

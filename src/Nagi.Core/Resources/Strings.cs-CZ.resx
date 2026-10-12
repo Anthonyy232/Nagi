@@ -102,13 +102,13 @@
     <value>Číslo stopy</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Počet přehrání</value>
+    <value>Přehrání</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>Skladby</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Umělci</value>
+    <value>Interpreti</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>Skladba</value>
@@ -148,10 +148,10 @@
     <value>{0} (Nejstarší)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Vzestupně)</value>
+    <value>{0} (vzestupně)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Sestupně)</value>
+    <value>{0} (sestupně)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>Nejkratší první</value>
@@ -178,11 +178,11 @@
     <value>Skenování dokončeno. Přidáno nebo aktualizováno {0} {1}.</value>
   </data>
   <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Ukládám dávku {0}...</value>
+    <value>Ukládání dávky {0}…</value>
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Skenuji složku...</value>
+    <value>Skenování složky…</value>
   </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Skenování dokončeno. Knihovna je aktuální.</value>
@@ -194,16 +194,16 @@
     <value>Skenování selhalo. Podrobnosti naleznete v protokolech.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Připravuji cache skenování...</value>
+    <value>Příprava skenování knihovny…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Načítám detaily skladeb...</value>
+    <value>Načítání podrobností o skladbách…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Čistím vaši knihovnu...</value>
+    <value>Čištění knihovny…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Dokončuji...</value>
+    <value>Dokončování…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Normalizace hlasitosti selhala. Podrobnosti naleznete v protokolech.</value>
@@ -216,7 +216,7 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Nepodařilo se přidat složku.</value>
+    <value>Složku se nepodařilo přidat.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Název seznamu skladeb nemůže být prázdný.</value>
@@ -248,7 +248,15 @@
     <value>Seřadit podle: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg je vyžadován pro vysoce přesnou normalizaci hlasitosti (analýza ReplayGain), ale nebyl nalezen ve vašem systému.\n\nPostupujte podle těchto kroků pro nastavení:\n\n1. **Stáhněte**: Navštivte https://www.gyan.dev/ffmpeg/builds/ a stáhněte 'ffmpeg-git-full.7z' (nebo podobnou) základní sestavu.\n2. **Průvodce**: Podrobné pokyny naleznete v tomto průvodci: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Rozbalte**: Otevřete složku architektury a vyhledejte adresář 'bin' obsahující `ffmpeg.exe`.\n4. **Nainstalujte**: Zkopírujte `ffmpeg.exe` do trvalé složky (např. `C:\\ffmpeg\\`) a **přidejte tuto složku do proměnné prostředí System PATH**.\n5. **Restartujte**: Pro projevení změn prosím restartujte Nagi po instalaci.</value>
+    <value>Aplikace FFmpeg je potřeba k analýze skladeb pro vyrovnání hlasitosti, ale Nagi ji nemohl najít.
+
+1. Stáhněte si verzi pro Windows ze stránky https://ffmpeg.org/download.html.
+2. Rozbalte archiv a ve složce bin vyhledejte soubor ffmpeg.exe.
+3. Přidejte složku obsahující ffmpeg.exe do proměnné prostředí Windows PATH.
+4. Restartujte Nagi a znovu zapněte vyrovnání hlasitosti.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>Seznam skladeb byl vytvořen, ale jeho skladby se nepodařilo přidat. Zkuste import zopakovat.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>V knihovně nebyly nalezeny žádné skladby ze seznamu skladeb.</value>
@@ -293,12 +301,39 @@
     <value>Všechny skladby již mají data o hlasitosti.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Počítám hlasitost pro {0} skladeb...</value>
+    <value>Analýza hlasitosti… Skladby: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Počítám normalizaci hlasitosti ({0}/{1})...</value>
+    <value>Výpočet vyrovnání hlasitosti ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Normalizace hlasitosti dokončena. Zpracováno {0} skladeb.</value>
+    <value>Vyrovnání hlasitosti je dokončeno. Zpracované skladby: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Zadejte uživatelský token ListenBrainz.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Odpověď ze služby ListenBrainz se nepodařilo přečíst. Zkuste to znovu později.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Zadejte URL serveru začínající na http:// nebo https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Uživatelský token je neplatný. Zkontrolujte jej a zkuste to znovu.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>Služba ListenBrainz vrátila chybu (HTTP {0}). Zkuste to znovu později.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>K ListenBrainz se nepodařilo připojit. Zkontrolujte připojení a URL serveru.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi nemohl najít svou složku s daty knihovny.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Obnovení selhalo a vaše předchozí data se nepodařilo plně obnovit. Záchranné soubory byly uloženy do &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Vybraný soubor není platnou zálohou Nagi.</value>
   </data>
 </root>
