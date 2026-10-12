@@ -446,7 +446,7 @@
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
-                        IsOn="{x:Bind ViewModel.IsVolumeNormalizationEnabled, Mode=TwoWay}" />
+                        IsOn="{x:Bind ViewModel.Audio.IsVolumeNormalizationEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
@@ -457,7 +457,7 @@
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
-                        IsOn="{x:Bind ViewModel.IsWasapiExclusiveModeEnabled, Mode=TwoWay}" />
+                        IsOn="{x:Bind ViewModel.Audio.IsWasapiExclusiveModeEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
@@ -493,7 +493,7 @@
                     </controls:SettingsExpander.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
-                        IsOn="{x:Bind ViewModel.IsFadeOnPlayPauseEnabled, Mode=TwoWay}" />
+                        IsOn="{x:Bind ViewModel.Audio.IsFadeOnPlayPauseEnabled, Mode=TwoWay}" />
                     <controls:SettingsExpander.Items>
                         <controls:SettingsCard Header="{x:Bind resources:Strings.SettingsPage_FadeInDuration_Header, Mode=OneTime}"
                             Description="{x:Bind resources:Strings.SettingsPage_FadeInDuration_Description, Mode=OneTime}">
@@ -505,12 +505,12 @@
                                     Minimum="0"
                                     StepFrequency="50"
                                     Style="{StaticResource DefaultSliderStyle}"
-                                    Value="{x:Bind ViewModel.FadeInDurationMs, Mode=TwoWay}" />
+                                    Value="{x:Bind ViewModel.Audio.FadeInDurationMs, Mode=TwoWay}" />
                                 <TextBlock
                                     VerticalAlignment="Center"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                     Style="{ThemeResource CaptionTextBlockStyle}">
-                                    <Run Text="{x:Bind ViewModel.FadeInDurationMs, Mode=OneWay}" />
+                                    <Run Text="{x:Bind ViewModel.Audio.FadeInDurationMs, Mode=OneWay}" />
                                     <Run Text="{x:Bind resources:Strings.SettingsPage_Unit_Milliseconds, Mode=OneTime}" />
                                 </TextBlock>
                             </StackPanel>
@@ -525,12 +525,12 @@
                                     Minimum="0"
                                     StepFrequency="50"
                                     Style="{StaticResource DefaultSliderStyle}"
-                                    Value="{x:Bind ViewModel.FadeOutDurationMs, Mode=TwoWay}" />
+                                    Value="{x:Bind ViewModel.Audio.FadeOutDurationMs, Mode=TwoWay}" />
                                 <TextBlock
                                     VerticalAlignment="Center"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                     Style="{ThemeResource CaptionTextBlockStyle}">
-                                    <Run Text="{x:Bind ViewModel.FadeOutDurationMs, Mode=OneWay}" />
+                                    <Run Text="{x:Bind ViewModel.Audio.FadeOutDurationMs, Mode=OneWay}" />
                                     <Run Text="{x:Bind resources:Strings.SettingsPage_Unit_Milliseconds, Mode=OneTime}" />
                                 </TextBlock>
                             </StackPanel>

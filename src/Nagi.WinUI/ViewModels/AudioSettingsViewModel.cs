@@ -16,7 +16,8 @@ using Nagi.WinUI.Services.Abstractions;
 namespace Nagi.WinUI.ViewModels;
 
 /// <summary>
-///     Settings section for the equalizer and the audio output device.
+///     Settings section for audio playback: volume normalization, exclusive mode, fades, the equalizer
+///     and the audio output device.
 /// </summary>
 public partial class AudioSettingsViewModel : SettingsSectionViewModel
 {
@@ -25,16 +26,26 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
     private readonly IMusicPlaybackService _playbackService;
     private readonly IAudioPlayer _audioPlayer;
     private readonly IUISettingsService _settingsService;
+    private readonly IUIService _uiService;
+    private readonly IFFmpegService _ffmpegService;
+    private readonly IReplayGainService _replayGainService;
+    private readonly PlayerViewModel _playerViewModel;
     private readonly TimeProvider _timeProvider;
     private readonly Debouncer _preampDebouncer;
     private bool _isRefreshingAudioOutputDevices;
     private bool _isSynchronizingAudioOutputSelection;
     private bool _isApplyingPreset;
+    private int _volumeNormalizationVersion;
+    private CancellationTokenSource? _replayGainScanCts;
 
     public AudioSettingsViewModel(
         IMusicPlaybackService playbackService,
         IAudioPlayer audioPlayer,
         IUISettingsService settingsService,
+        IUIService uiService,
+        IFFmpegService ffmpegService,
+        IReplayGainService replayGainService,
+        PlayerViewModel playerViewModel,
         IDispatcherService dispatcherService,
         ILogger<AudioSettingsViewModel> logger,
         TimeProvider? timeProvider = null)
@@ -43,14 +54,30 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
         _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
         _audioPlayer = audioPlayer ?? throw new ArgumentNullException(nameof(audioPlayer));
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
+        _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
+        _ffmpegService = ffmpegService ?? throw new ArgumentNullException(nameof(ffmpegService));
+        _replayGainService = replayGainService ?? throw new ArgumentNullException(nameof(replayGainService));
+        _playerViewModel = playerViewModel ?? throw new ArgumentNullException(nameof(playerViewModel));
         _timeProvider = timeProvider ?? TimeProvider.System;
         _preampDebouncer = new Debouncer(TimeSpan.FromMilliseconds(EqualizerDebounceDelayMilliseconds), _timeProvider);
 
         _playbackService.EqualizerChanged += OnPlaybackService_EqualizerChanged;
         AvailableEqualizerPresets = _playbackService.AvailablePresets;
 
-        ApplyWithoutSaving(() => EqualizerPreamp = SettingsDefaults.EqualizerPreamp);
+        ApplyWithoutSaving(() =>
+        {
+            EqualizerPreamp = SettingsDefaults.EqualizerPreamp;
+            IsVolumeNormalizationEnabled = SettingsDefaults.VolumeNormalizationEnabled;
+            IsWasapiExclusiveModeEnabled = SettingsDefaults.WasapiExclusiveModeEnabled;
+            IsFadeOnPlayPauseEnabled = SettingsDefaults.FadeOnPlayPauseEnabled;
+        });
     }
+
+    [ObservableProperty] public partial bool IsVolumeNormalizationEnabled { get; set; }
+    [ObservableProperty] public partial bool IsWasapiExclusiveModeEnabled { get; set; }
+    [ObservableProperty] public partial bool IsFadeOnPlayPauseEnabled { get; set; }
+    [ObservableProperty] public partial double FadeInDurationMs { get; set; }
+    [ObservableProperty] public partial double FadeOutDurationMs { get; set; }
 
     [ObservableProperty] public partial IReadOnlyList<AudioOutputDeviceInfo> AudioOutputDevices { get; set; } = Array.Empty<AudioOutputDeviceInfo>();
     [ObservableProperty] public partial AudioOutputDeviceInfo? SelectedAudioOutputDevice { get; set; }
@@ -65,12 +92,35 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
     internal Task PendingSettingsSaves => _preampDebouncer.PendingInvocation;
 
     /// <summary>
-    ///     Rebuilds the equalizer bands from the playback service without writing anything back.
+    ///     Loads the saved playback settings and rebuilds the equalizer bands from the playback service,
+    ///     without writing anything back.
     /// </summary>
-    public void Load() => ApplyWithoutSaving(LoadEqualizerState);
+    public async Task LoadAsync()
+    {
+        var volumeNormTask = _settingsService.GetVolumeNormalizationEnabledAsync();
+        var wasapiExclusiveTask = _settingsService.GetWasapiExclusiveModeEnabledAsync();
+        var fadeTask = _settingsService.GetFadeOnPlayPauseEnabledAsync();
+        var fadeInTask = _settingsService.GetFadeInDurationMsAsync();
+        var fadeOutTask = _settingsService.GetFadeOutDurationMsAsync();
+
+        await Task.WhenAll(volumeNormTask, wasapiExclusiveTask, fadeTask, fadeInTask, fadeOutTask);
+
+        if (_isDisposed) return;
+
+        ApplyWithoutSaving(() =>
+        {
+            IsVolumeNormalizationEnabled = volumeNormTask.Result;
+            IsWasapiExclusiveModeEnabled = wasapiExclusiveTask.Result;
+            IsFadeOnPlayPauseEnabled = fadeTask.Result;
+            FadeInDurationMs = fadeInTask.Result;
+            FadeOutDurationMs = fadeOutTask.Result;
+            LoadEqualizerState();
+        });
+    }
 
     protected override void OnDisposing()
     {
+        _replayGainScanCts?.Cancel();
         _playbackService.EqualizerChanged -= OnPlaybackService_EqualizerChanged;
         foreach (var bandVm in EqualizerBands)
         {
@@ -266,5 +316,109 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
     {
         if (_isInitializing) return;
         QueueSettingsSave(_preampDebouncer, _ => _playbackService.SetEqualizerPreampAsync(value), nameof(EqualizerPreamp));
+    }
+
+    async partial void OnIsVolumeNormalizationEnabledChanged(bool value)
+    {
+        if (_isInitializing || _isDisposed) return;
+        var version = ++_volumeNormalizationVersion;
+        bool IsCurrent() => !_isDisposed && version == _volumeNormalizationVersion;
+
+        try
+        {
+            if (!value)
+            {
+                _replayGainScanCts?.Cancel();
+                await _settingsService.SetVolumeNormalizationEnabledAsync(false);
+                return;
+            }
+
+            var ffmpegInstalled = await _ffmpegService.IsFFmpegInstalledAsync();
+            if (!IsCurrent()) return;
+            if (!ffmpegInstalled)
+            {
+                ffmpegInstalled = await _uiService.ShowFFmpegSetupDialogAsync(
+                    Strings.Settings_Dialog_FFmpegNotFound_Title,
+                    _ffmpegService.GetFFmpegSetupInstructions(),
+                    () => _ffmpegService.IsFFmpegInstalledAsync(forceRecheck: true));
+                if (!IsCurrent()) return;
+                if (!ffmpegInstalled)
+                {
+                    IsVolumeNormalizationEnabled = false;
+                    return;
+                }
+            }
+
+            var confirmed = await _uiService.ShowConfirmationDialogAsync(
+                Strings.Settings_Dialog_VolumeNorm_Title,
+                Strings.Settings_Dialog_VolumeNorm_Content,
+                Strings.Settings_Dialog_VolumeNorm_PrimaryButton,
+                Strings.Generic_Cancel);
+            if (!IsCurrent()) return;
+            if (!confirmed)
+            {
+                IsVolumeNormalizationEnabled = false;
+                return;
+            }
+
+            await _settingsService.SetVolumeNormalizationEnabledAsync(true);
+            if (IsCurrent()) await ScanLibraryForReplayGainAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error toggling volume normalization to {Value}", value);
+            if (value && IsCurrent()) IsVolumeNormalizationEnabled = false;
+        }
+    }
+
+    partial void OnIsWasapiExclusiveModeEnabledChanged(bool value) =>
+        _ = SaveSettingAsync(() => _settingsService.SetWasapiExclusiveModeEnabledAsync(value));
+
+    partial void OnIsFadeOnPlayPauseEnabledChanged(bool value) =>
+        _ = SaveSettingAsync(() => _settingsService.SetFadeOnPlayPauseEnabledAsync(value));
+
+    partial void OnFadeInDurationMsChanged(double value) =>
+        _ = SaveSettingAsync(() => _settingsService.SetFadeInDurationMsAsync((int)value));
+
+    partial void OnFadeOutDurationMsChanged(double value) =>
+        _ = SaveSettingAsync(() => _settingsService.SetFadeOutDurationMsAsync((int)value));
+
+    /// <summary>
+    ///     Scans the library for songs missing ReplayGain data and writes the tags.
+    /// </summary>
+    private async Task ScanLibraryForReplayGainAsync()
+    {
+        if (_isDisposed || _playerViewModel.IsGlobalOperationInProgress) return;
+
+        using var scanCts = new CancellationTokenSource();
+        _replayGainScanCts = scanCts;
+        var cancellationToken = scanCts.Token;
+
+        _playerViewModel.IsGlobalOperationInProgress = true;
+        _playerViewModel.GlobalOperationStatusMessage = Nagi.WinUI.Resources.Strings.Settings_Status_VolumeNorm_Preparing;
+        _playerViewModel.IsGlobalOperationIndeterminate = true;
+        _playerViewModel.SetGlobalOperationCancellation(scanCts.Cancel);
+
+        try
+        {
+            await _replayGainService.ScanLibraryAsync(CreateGlobalOperationProgress(_playerViewModel, cancellationToken), cancellationToken);
+        }
+        catch (OperationCanceledException)
+        {
+            _playerViewModel.GlobalOperationStatusMessage = Nagi.WinUI.Resources.Strings.Settings_Status_VolumeNorm_Cancelled;
+        }
+        catch (Exception ex)
+        {
+            _playerViewModel.GlobalOperationStatusMessage = string.Format(Nagi.WinUI.Resources.Strings.Settings_Status_VolumeNorm_Error_Format, ex.Message);
+            _logger.LogError(ex, "Failed to scan library for ReplayGain");
+        }
+        finally
+        {
+            scanCts.Cancel();
+            _replayGainScanCts = null;
+            _playerViewModel.SetGlobalOperationCancellation(null);
+            _playerViewModel.IsGlobalOperationInProgress = false;
+            _playerViewModel.IsGlobalOperationIndeterminate = false;
+        }
     }
 }

@@ -12,7 +12,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Nagi.WinUI.Resources;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Data;
 using Nagi.Core.Models;
 using Nagi.WinUI.Models;
 using Nagi.WinUI.Navigation;
@@ -38,16 +37,12 @@ public partial class SettingsViewModel : SettingsSectionViewModel
     private readonly IUIService _uiService;
     private readonly ILibraryScanner _libraryScanner;
     private readonly PlayerViewModel _playerViewModel;
-    private readonly IReplayGainService _replayGainService;
-    private readonly IFFmpegService _ffmpegService;
     private readonly SemaphoreSlim _loadLock = new(1, 1);
 
     private const int SettingsSaveDebounceMs = 300;
     private readonly TimeProvider _timeProvider;
 
     private bool _isLoaded;
-    private int _volumeNormalizationVersion;
-    private CancellationTokenSource? _replayGainScanCts;
     private CancellationTokenSource? _metadataRescanCts;
     private readonly Debouncer _playerButtonSaveDebouncer;
     private readonly Debouncer _navigationItemSaveDebouncer;
@@ -65,8 +60,6 @@ public partial class SettingsViewModel : SettingsSectionViewModel
         IAppInfoService appInfoService,
         ILibraryScanner libraryScanner,
         PlayerViewModel playerViewModel,
-        IReplayGainService replayGainService,
-        IFFmpegService ffmpegService,
         IDispatcherService dispatcherService,
         AudioSettingsViewModel audio,
         ScrobblingSettingsViewModel scrobbling,
@@ -83,8 +76,6 @@ public partial class SettingsViewModel : SettingsSectionViewModel
         _libraryScanner = libraryScanner ?? throw new ArgumentNullException(nameof(libraryScanner));
         _playerViewModel = playerViewModel ?? throw new ArgumentNullException(nameof(playerViewModel));
         _playerViewModel.PropertyChanged += OnPlayerViewModelPropertyChanged;
-        _replayGainService = replayGainService ?? throw new ArgumentNullException(nameof(replayGainService));
-        _ffmpegService = ffmpegService ?? throw new ArgumentNullException(nameof(ffmpegService));
         Audio = audio ?? throw new ArgumentNullException(nameof(audio));
         Scrobbling = scrobbling ?? throw new ArgumentNullException(nameof(scrobbling));
         Romanization = romanizationPacks ?? throw new ArgumentNullException(nameof(romanizationPacks));
@@ -124,9 +115,6 @@ public partial class SettingsViewModel : SettingsSectionViewModel
         IsRememberWindowSizeEnabled = SettingsDefaults.RememberWindowSizeEnabled;
         IsRememberWindowPositionEnabled = SettingsDefaults.RememberWindowPositionEnabled;
         IsRememberPaneStateEnabled = SettingsDefaults.RememberPaneStateEnabled;
-        IsVolumeNormalizationEnabled = SettingsDefaults.VolumeNormalizationEnabled;
-        IsWasapiExclusiveModeEnabled = SettingsDefaults.WasapiExclusiveModeEnabled;
-        IsFadeOnPlayPauseEnabled = SettingsDefaults.FadeOnPlayPauseEnabled;
 
         _isInitializing = false;
     }
@@ -156,12 +144,6 @@ public partial class SettingsViewModel : SettingsSectionViewModel
     [ObservableProperty] public partial bool IsRememberWindowSizeEnabled { get; set; }
     [ObservableProperty] public partial bool IsRememberWindowPositionEnabled { get; set; }
     [ObservableProperty] public partial bool IsRememberPaneStateEnabled { get; set; }
-    [ObservableProperty] public partial bool IsVolumeNormalizationEnabled { get; set; }
-    [ObservableProperty] public partial bool IsWasapiExclusiveModeEnabled { get; set; }
-
-    [ObservableProperty] public partial bool IsFadeOnPlayPauseEnabled { get; set; }
-    [ObservableProperty] public partial double FadeInDurationMs { get; set; }
-    [ObservableProperty] public partial double FadeOutDurationMs { get; set; }
     [ObservableProperty] public partial Windows.UI.Color AccentColor { get; set; }
     [ObservableProperty] public partial string ArtistSplitCharacters { get; set; } = string.Empty;
     [ObservableProperty] public partial string GenreSplitCharacters { get; set; } = string.Empty;
@@ -243,7 +225,6 @@ public partial class SettingsViewModel : SettingsSectionViewModel
 
         foreach (var item in MetadataProviders) item.PropertyChanged -= OnMetadataProviderPropertyChanged;
 
-        _replayGainScanCts?.Cancel();
         _metadataRescanCts?.Cancel();
         _playerButtonSaveDebouncer.Dispose();
         _navigationItemSaveDebouncer.Dispose();
@@ -307,11 +288,7 @@ public partial class SettingsViewModel : SettingsSectionViewModel
             var rememberWindowTask = _settingsService.GetRememberWindowSizeEnabledAsync();
             var rememberPositionTask = _settingsService.GetRememberWindowPositionEnabledAsync();
             var rememberPaneTask = _settingsService.GetRememberPaneStateEnabledAsync();
-            var volumeNormTask = _settingsService.GetVolumeNormalizationEnabledAsync();
-            var wasapiExclusiveTask = _settingsService.GetWasapiExclusiveModeEnabledAsync();
-            var fadeTask = _settingsService.GetFadeOnPlayPauseEnabledAsync();
-            var fadeInTask = _settingsService.GetFadeInDurationMsAsync();
-            var fadeOutTask = _settingsService.GetFadeOutDurationMsAsync();
+            var audioLoadTask = Audio.LoadAsync();
             var scrobblingLoadTask = Scrobbling.LoadAsync();
 
             var accentColorTask = _settingsService.GetAccentColorAsync();
@@ -330,7 +307,7 @@ public partial class SettingsViewModel : SettingsSectionViewModel
                 playerAnimationTask, restorePlaybackTask, autoLaunchTask, startMinimizedTask,
                 hideToTrayTask, miniPlayerTask, trayFlyoutTask, onlineMetadataTask,
                 onlineLyricsTask, lyricsRomanizationTask, discordRpcTask, rememberWindowTask,
-                rememberPositionTask, rememberPaneTask, volumeNormTask, wasapiExclusiveTask, fadeTask, fadeInTask, fadeOutTask,
+                rememberPositionTask, rememberPaneTask, audioLoadTask,
                 scrobblingLoadTask, accentColorTask, artistSplitTask, genreSplitTask, languageTask, lyricsProvidersTask, metadataProvidersTask,
                 playerMaterialTask, playerTintTask,
                 ignoreArticlesTask);
@@ -367,11 +344,6 @@ public partial class SettingsViewModel : SettingsSectionViewModel
             IsRememberWindowSizeEnabled = rememberWindowTask.Result;
             IsRememberWindowPositionEnabled = rememberPositionTask.Result;
             IsRememberPaneStateEnabled = rememberPaneTask.Result;
-            IsVolumeNormalizationEnabled = volumeNormTask.Result;
-            IsWasapiExclusiveModeEnabled = wasapiExclusiveTask.Result;
-            IsFadeOnPlayPauseEnabled = fadeTask.Result;
-            FadeInDurationMs = fadeInTask.Result;
-            FadeOutDurationMs = fadeOutTask.Result;
 
             SelectedPlayerBackgroundMaterial = playerMaterialTask.Result;
             PlayerTintIntensity = playerTintTask.Result;
@@ -391,8 +363,6 @@ public partial class SettingsViewModel : SettingsSectionViewModel
             SelectedLanguage = ResolveSelectedLanguage(currentLangCode);
 
             _ = PopulateAvailableLanguagesAsync(currentLangCode);
-
-            Audio.Load();
 
             // Load service providers
             var lyricsMapped = lyricsProvidersTask.Result
@@ -563,7 +533,7 @@ public partial class SettingsViewModel : SettingsSectionViewModel
         {
             await SaveMetadataSplitSettingsAsync();
             token.ThrowIfCancellationRequested();
-            await _libraryScanner.ForceRescanMetadataAsync(CreateScanProgress(token), token);
+            await _libraryScanner.ForceRescanMetadataAsync(CreateGlobalOperationProgress(_playerViewModel, token), token);
             token.ThrowIfCancellationRequested();
 
             await _uiService.ShowMessageDialogAsync(Nagi.WinUI.Resources.Strings.Settings_Dialog_RescanComplete_Title, Nagi.WinUI.Resources.Strings.Settings_Dialog_RescanComplete_Content);
@@ -828,118 +798,6 @@ public partial class SettingsViewModel : SettingsSectionViewModel
 
     partial void OnIsRememberPaneStateEnabledChanged(bool value) =>
         _ = SaveSettingAsync(() => _settingsService.SetRememberPaneStateEnabledAsync(value));
-
-    async partial void OnIsVolumeNormalizationEnabledChanged(bool value)
-    {
-        if (_isInitializing || _isDisposed) return;
-        var version = ++_volumeNormalizationVersion;
-        bool IsCurrent() => !_isDisposed && version == _volumeNormalizationVersion;
-
-        try
-        {
-            if (!value)
-            {
-                _replayGainScanCts?.Cancel();
-                await _settingsService.SetVolumeNormalizationEnabledAsync(false);
-                return;
-            }
-
-            var ffmpegInstalled = await _ffmpegService.IsFFmpegInstalledAsync();
-            if (!IsCurrent()) return;
-            if (!ffmpegInstalled)
-            {
-                ffmpegInstalled = await _uiService.ShowFFmpegSetupDialogAsync(
-                    Strings.Settings_Dialog_FFmpegNotFound_Title,
-                    _ffmpegService.GetFFmpegSetupInstructions(),
-                    () => _ffmpegService.IsFFmpegInstalledAsync(forceRecheck: true));
-                if (!IsCurrent()) return;
-                if (!ffmpegInstalled)
-                {
-                    IsVolumeNormalizationEnabled = false;
-                    return;
-                }
-            }
-
-            var confirmed = await _uiService.ShowConfirmationDialogAsync(
-                Strings.Settings_Dialog_VolumeNorm_Title,
-                Strings.Settings_Dialog_VolumeNorm_Content,
-                Strings.Settings_Dialog_VolumeNorm_PrimaryButton,
-                Strings.Generic_Cancel);
-            if (!IsCurrent()) return;
-            if (!confirmed)
-            {
-                IsVolumeNormalizationEnabled = false;
-                return;
-            }
-
-            await _settingsService.SetVolumeNormalizationEnabledAsync(true);
-            if (IsCurrent()) await ScanLibraryForReplayGainAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error toggling volume normalization to {Value}", value);
-            if (value && IsCurrent()) IsVolumeNormalizationEnabled = false;
-        }
-    }
-
-    partial void OnIsWasapiExclusiveModeEnabledChanged(bool value) =>
-        _ = SaveSettingAsync(() => _settingsService.SetWasapiExclusiveModeEnabledAsync(value));
-
-    partial void OnIsFadeOnPlayPauseEnabledChanged(bool value) =>
-        _ = SaveSettingAsync(() => _settingsService.SetFadeOnPlayPauseEnabledAsync(value));
-
-    partial void OnFadeInDurationMsChanged(double value) =>
-        _ = SaveSettingAsync(() => _settingsService.SetFadeInDurationMsAsync((int)value));
-
-    partial void OnFadeOutDurationMsChanged(double value) =>
-        _ = SaveSettingAsync(() => _settingsService.SetFadeOutDurationMsAsync((int)value));
-
-    /// <summary>
-    ///     Scans the library for songs missing ReplayGain data and writes the tags.
-    /// </summary>
-    private async Task ScanLibraryForReplayGainAsync()
-    {
-        if (_isDisposed || _playerViewModel.IsGlobalOperationInProgress) return;
-
-        using var scanCts = new CancellationTokenSource();
-        _replayGainScanCts = scanCts;
-        var cancellationToken = scanCts.Token;
-
-        _playerViewModel.IsGlobalOperationInProgress = true;
-        _playerViewModel.GlobalOperationStatusMessage = Nagi.WinUI.Resources.Strings.Settings_Status_VolumeNorm_Preparing;
-        _playerViewModel.IsGlobalOperationIndeterminate = true;
-        _playerViewModel.SetGlobalOperationCancellation(scanCts.Cancel);
-
-        try
-        {
-            await _replayGainService.ScanLibraryAsync(CreateScanProgress(cancellationToken), cancellationToken);
-        }
-        catch (OperationCanceledException)
-        {
-            _playerViewModel.GlobalOperationStatusMessage = Nagi.WinUI.Resources.Strings.Settings_Status_VolumeNorm_Cancelled;
-        }
-        catch (Exception ex)
-        {
-            _playerViewModel.GlobalOperationStatusMessage = string.Format(Nagi.WinUI.Resources.Strings.Settings_Status_VolumeNorm_Error_Format, ex.Message);
-            _logger.LogError(ex, "Failed to scan library for ReplayGain");
-        }
-        finally
-        {
-            scanCts.Cancel();
-            _replayGainScanCts = null;
-            _playerViewModel.SetGlobalOperationCancellation(null);
-            _playerViewModel.IsGlobalOperationInProgress = false;
-            _playerViewModel.IsGlobalOperationIndeterminate = false;
-        }
-    }
-
-    private IProgress<ScanProgress> CreateScanProgress(CancellationToken token) => new Progress<ScanProgress>(progress =>
-    {
-        if (token.IsCancellationRequested || _isDisposed) return;
-        _playerViewModel.GlobalOperationStatusMessage = progress.StatusText;
-        _playerViewModel.IsGlobalOperationIndeterminate = progress.IsIndeterminate || progress.Percentage < 5;
-        _playerViewModel.GlobalOperationProgressValue = progress.Percentage;
-    });
 
     partial void OnAccentColorChanged(Windows.UI.Color value)
     {

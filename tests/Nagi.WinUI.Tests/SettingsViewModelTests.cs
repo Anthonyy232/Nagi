@@ -43,9 +43,8 @@ public class SettingsViewModelTests : IDisposable
         _dispatcher.EnqueueAsync(Arg.Any<Func<Task>>()).Returns(call => call.Arg<Func<Task>>()());
         _player = new PlayerViewModel(_playback, Substitute.For<IMusicNavigationService>(), _dispatcher,
             _settings, Substitute.For<IWindowService>(), _library.Reader, _library.Writer, _library.Scanner, NullLogger<PlayerViewModel>.Instance, Substitute.For<IUIService>());
-        _viewModel = new SettingsViewModel(_settings, _ui, _theme, _appInfo, _library.Scanner, _player,
-            _replayGain, _ffmpeg, _dispatcher,
-            new AudioSettingsViewModel(_playback, _audioPlayer, _settings, _dispatcher,
+        _viewModel = new SettingsViewModel(_settings, _ui, _theme, _appInfo, _library.Scanner, _player, _dispatcher,
+            new AudioSettingsViewModel(_playback, _audioPlayer, _settings, _ui, _ffmpeg, _replayGain, _player, _dispatcher,
                 NullLogger<AudioSettingsViewModel>.Instance, _timeProvider),
             new ScrobblingSettingsViewModel(_settings, _ui, _lastFm, _listenBrainz, _dispatcher,
                 NullLogger<ScrobblingSettingsViewModel>.Instance),
@@ -298,7 +297,7 @@ public class SettingsViewModelTests : IDisposable
                 finished.TrySetResult();
         };
 
-        _viewModel.IsVolumeNormalizationEnabled = true;
+        _viewModel.Audio.IsVolumeNormalizationEnabled = true;
         _player.IsGlobalOperationCancellable.Should().BeTrue();
         _player.CancelGlobalOperationCommand.Execute(null);
         await finished.Task.WaitAsync(TimeSpan.FromSeconds(5));
@@ -346,15 +345,15 @@ public class SettingsViewModelTests : IDisposable
         try
         {
             SynchronizationContext.SetSynchronizationContext(context);
-            _viewModel.IsVolumeNormalizationEnabled = true;
-            _viewModel.IsVolumeNormalizationEnabled = false;
+            _viewModel.Audio.IsVolumeNormalizationEnabled = true;
+            _viewModel.Audio.IsVolumeNormalizationEnabled = false;
         }
         finally { SynchronizationContext.SetSynchronizationContext(previous); }
 
         ffmpeg.SetResult(true);
         context.RunAll();
 
-        _viewModel.IsVolumeNormalizationEnabled.Should().BeFalse();
+        _viewModel.Audio.IsVolumeNormalizationEnabled.Should().BeFalse();
         await _settings.Received(1).SetVolumeNormalizationEnabledAsync(false);
         await _settings.DidNotReceive().SetVolumeNormalizationEnabledAsync(true);
         await _replayGain.DidNotReceive().ScanLibraryAsync(Arg.Any<IProgress<ScanProgress>>(), Arg.Any<CancellationToken>());
@@ -442,6 +441,23 @@ public class SettingsViewModelTests : IDisposable
 
         _viewModel.AvailableLanguages.Should().BeEmpty();
         _viewModel.IsAutoLaunchEnabled.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task Load_FillsAudioSectionWithoutSavingItBack()
+    {
+        _settings.GetWasapiExclusiveModeEnabledAsync().Returns(true);
+        _settings.GetFadeOnPlayPauseEnabledAsync().Returns(true);
+        _settings.GetFadeInDurationMsAsync().Returns(450);
+
+        await _viewModel.LoadSettingsAsync();
+
+        _viewModel.Audio.IsWasapiExclusiveModeEnabled.Should().BeTrue();
+        _viewModel.Audio.IsFadeOnPlayPauseEnabled.Should().BeTrue();
+        _viewModel.Audio.FadeInDurationMs.Should().Be(450);
+        await _settings.DidNotReceive().SetWasapiExclusiveModeEnabledAsync(Arg.Any<bool>());
+        await _settings.DidNotReceive().SetFadeOnPlayPauseEnabledAsync(Arg.Any<bool>());
+        await _settings.DidNotReceive().SetFadeInDurationMsAsync(Arg.Any<int>());
     }
 
     [Fact]

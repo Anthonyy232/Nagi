@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Services.Data;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Services.Abstractions;
 
@@ -77,4 +78,17 @@ public abstract class SettingsSectionViewModel : ObservableObject, IDisposable
             _logger.LogError(ex, "Failed to save setting {SettingName}", settingName);
         }
     }
+
+    /// <summary>
+    ///     Reports a library-wide scan on the player's global operation bar until <paramref name="token" />
+    ///     is cancelled or this section is disposed.
+    /// </summary>
+    protected IProgress<ScanProgress> CreateGlobalOperationProgress(PlayerViewModel player, CancellationToken token) =>
+        new Progress<ScanProgress>(progress =>
+        {
+            if (token.IsCancellationRequested || _isDisposed) return;
+            player.GlobalOperationStatusMessage = progress.StatusText;
+            player.IsGlobalOperationIndeterminate = progress.IsIndeterminate || progress.Percentage < 5;
+            player.GlobalOperationProgressValue = progress.Percentage;
+        });
 }
