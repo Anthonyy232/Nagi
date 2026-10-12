@@ -21,7 +21,8 @@ namespace Nagi.WinUI.ViewModels;
 /// </summary>
 public partial class GenreViewModel : SearchableViewModelBase, IDisposable
 {
-    private readonly ILibraryService _libraryService;
+    private readonly ILibraryReader _libraryReader;
+    private readonly ILibraryScanner _libraryScanner;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly INavigationService _navigationService;
     private readonly IUISettingsService _settingsService;
@@ -30,18 +31,19 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
     private readonly Debouncer _debouncer = new(TimeSpan.FromSeconds(1));
     private readonly SemaphoreSlim _loadLock = new(1, 1);
 
-    public GenreViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService,
+    public GenreViewModel(ILibraryReader libraryReader, ILibraryScanner libraryScanner, IMusicPlaybackService musicPlaybackService,
         INavigationService navigationService, IUISettingsService settingsService, IDispatcherService dispatcherService, ILogger<GenreViewModel> logger)
         : base(dispatcherService, logger)
     {
-        _libraryService = libraryService;
+        _libraryReader = libraryReader;
+        _libraryScanner = libraryScanner;
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
         _settingsService = settingsService;
 
         Genres.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasGenres));
 
-        _libraryService.LibraryContentChanged += OnLibraryContentChanged;
+        _libraryScanner.LibraryContentChanged += OnLibraryContentChanged;
 
     }
 
@@ -74,7 +76,7 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
 
     public void Dispose()
     {
-        _libraryService.LibraryContentChanged -= OnLibraryContentChanged;
+        _libraryScanner.LibraryContentChanged -= OnLibraryContentChanged;
         ResetState();
     }
 
@@ -131,7 +133,7 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
                 CurrentSortOrder = await _settingsService.GetSortOrderAsync<GenreSortOrder>(SortOrderHelper.GenresSortOrderKey);
                 _hasSortOrderLoaded = true;
             }
-            var genreModels = await Task.Run(() => _libraryService.GetGenreSummariesAsync(cancellationToken), cancellationToken);
+            var genreModels = await Task.Run(() => _libraryReader.GetGenreSummariesAsync(cancellationToken), cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
 
             _allGenres = genreModels.ToList();
@@ -227,7 +229,7 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
 
         try
         {
-            var randomGenreId = await _libraryService.GetRandomGenreIdAsync();
+            var randomGenreId = await _libraryReader.GetRandomGenreIdAsync();
             if (randomGenreId.HasValue)
             {
                 await _musicPlaybackService.PlayGenreAsync(randomGenreId.Value);

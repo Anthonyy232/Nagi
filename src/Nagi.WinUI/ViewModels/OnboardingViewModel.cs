@@ -13,14 +13,14 @@ public partial class OnboardingViewModel : ObservableObject
 {
     private readonly IApplicationLifecycle _applicationLifecycle;
 
-    private readonly ILibraryService _libraryService;
+    private readonly ILibraryScanner _libraryScanner;
     private readonly ILogger<OnboardingViewModel> _logger;
     private readonly IUIService _uiService;
 
-    public OnboardingViewModel(ILibraryService libraryService, IUIService uiService,
+    public OnboardingViewModel(ILibraryScanner libraryScanner, IUIService uiService,
         IApplicationLifecycle applicationLifecycle, ILogger<OnboardingViewModel> logger)
     {
-        _libraryService = libraryService ?? throw new ArgumentNullException(nameof(libraryService));
+        _libraryScanner = libraryScanner ?? throw new ArgumentNullException(nameof(libraryScanner));
         _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
         _applicationLifecycle = applicationLifecycle ?? throw new ArgumentNullException(nameof(applicationLifecycle));
         _logger = logger;
@@ -67,7 +67,7 @@ public partial class OnboardingViewModel : ObservableObject
                     IsProgressIndeterminate = progress.IsIndeterminate;
                 });
 
-                await _libraryService.ScanFolderForMusicAsync(folderPath, progressReporter);
+                await _libraryScanner.ScanFolderForMusicAsync(folderPath, progressReporter);
 
                 _logger.LogInformation("Onboarding scan complete. Navigating to main content");
                 await _applicationLifecycle.NavigateToMainContentAsync();

@@ -46,8 +46,8 @@ public class ApplicationLifecycle : IApplicationLifecycle
             await settingsService.ResetToDefaultsAsync();
             _logger.LogDebug("UI settings have been reset.");
 
-            var libraryService = _serviceProvider.GetRequiredService<ILibraryService>();
-            await libraryService.ClearAllLibraryDataAsync();
+            var libraryWriter = _serviceProvider.GetRequiredService<ILibraryWriter>();
+            await libraryWriter.ClearAllLibraryDataAsync();
             _logger.LogDebug("Library data has been cleared.");
 
             var playbackService = _serviceProvider.GetRequiredService<IMusicPlaybackService>();

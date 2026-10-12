@@ -178,7 +178,7 @@ public class FolderSongListViewModelTests
 
     private static FolderSongListViewModel CreateViewModel(ILibraryService library, IUISettingsService settings,
         IMusicPlaybackService? playback = null) =>
-        new(library, Substitute.For<IPlaylistService>(), playback ?? Substitute.For<IMusicPlaybackService>(),
+        new(library, library, library, Substitute.For<IPlaylistService>(), playback ?? Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(),
             new ImmediateDispatcher(), settings, Substitute.For<IUIService>(),
             NullLogger<FolderSongListViewModel>.Instance);
@@ -248,7 +248,7 @@ public class FolderSongListViewModelTests
     }
 
     private sealed class SelectionFolderList(ILibraryService library)
-        : FolderSongListViewModel(library, Substitute.For<IPlaylistService>(), Substitute.For<IMusicPlaybackService>(),
+        : FolderSongListViewModel(library, library, library, Substitute.For<IPlaylistService>(), Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(),
             Substitute.For<IUISettingsService>(), Substitute.For<IUIService>(), NullLogger<FolderSongListViewModel>.Instance)
     {

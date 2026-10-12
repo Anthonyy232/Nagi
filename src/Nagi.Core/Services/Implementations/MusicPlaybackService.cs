@@ -10,7 +10,8 @@ namespace Nagi.Core.Services.Implementations;
 public partial class MusicPlaybackService : IMusicPlaybackService
 {
     private readonly IAudioPlayer _audioPlayer;
-    private readonly ILibraryService _libraryService;
+    private readonly ILibraryReader _libraryReader;
+    private readonly ILibraryWriter _libraryWriter;
     private readonly ILogger<MusicPlaybackService> _logger;
     private readonly IMetadataService _metadataService;
     private readonly ISettingsService _settingsService;
@@ -40,13 +41,15 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     public MusicPlaybackService(
         ISettingsService settingsService,
         IAudioPlayer audioPlayer,
-        ILibraryService libraryService,
+        ILibraryReader libraryReader,
+        ILibraryWriter libraryWriter,
         IMetadataService metadataService,
         ILogger<MusicPlaybackService> logger, TimeProvider? timeProvider = null)
     {
         _settingsService = settingsService;
         _audioPlayer = audioPlayer;
-        _libraryService = libraryService;
+        _libraryReader = libraryReader;
+        _libraryWriter = libraryWriter;
         _metadataService = metadataService;
         _logger = logger;
         _timeProvider = timeProvider ?? TimeProvider.System;
@@ -264,7 +267,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             var sessionId = CurrentListenHistoryId.Value;
             var position = _audioPlayer.CurrentPosition;
             CurrentListenHistoryId = null;
-            FireAndForgetSafe(() => _libraryService.FinalizeListenSessionAsync(sessionId, position, PlaybackEndReason.Skipped), "Finalizing session on Transient Playback", trackForDisposal: true);
+            FireAndForgetSafe(() => _libraryWriter.FinalizeListenSessionAsync(sessionId, position, PlaybackEndReason.Skipped), "Finalizing session on Transient Playback", trackForDisposal: true);
         }
 
         _isEligibilityMarked = false;
@@ -281,7 +284,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
         // Track listens for transient playback only when the file maps to a known library song.
         // Truly external files remain untracked because ListenHistory requires a Song FK.
-        var existingLibrarySong = await _libraryService.GetSongByFilePathAsync(filePath);
+        var existingLibrarySong = await _libraryReader.GetSongByFilePathAsync(filePath);
         if (!IsCurrentRequest(request)) return;
         if (existingLibrarySong != null)
             await StartListenSessionAsync(existingLibrarySong.Id, request);
@@ -381,7 +384,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
                 continue;
             }
 
-            var librarySong = await _libraryService.GetSongByFilePathAsync(path);
+            var librarySong = await _libraryReader.GetSongByFilePathAsync(path);
             if (_isDisposed || queueVersion != _queueVersion) return;
             if (librarySong != null)
             {
@@ -434,7 +437,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
         if (libraryIds.Count > 0)
         {
-            var libraryTracks = await _libraryService.GetSongsByIdsAsync(libraryIds);
+            var libraryTracks = await _libraryReader.GetSongsByIdsAsync(libraryIds);
             foreach (var pair in libraryTracks) result[pair.Key] = pair.Value;
         }
 
@@ -446,7 +449,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     {
         var ids = songIds.Distinct().ToArray();
         var transient = ids.Where(_transientTracks.ContainsKey).ToDictionary(id => id, id => _transientTracks[id]);
-        var songs = await Task.Run(() => _libraryService.GetQueueSongsAsync(
+        var songs = await Task.Run(() => _libraryReader.GetQueueSongsAsync(
             ids.Where(id => !transient.ContainsKey(id)), cancellationToken), cancellationToken);
         foreach (var pair in songs) transient[pair.Key] = pair.Value;
         return transient;
@@ -462,7 +465,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             if (_transientTracks.TryGetValue(id, out var song)) transientTicks += song.DurationTicks;
             else libraryIds.Add(id);
         }
-        var duration = await Task.Run(() => _libraryService.GetSongsDurationAsync(libraryIds, cancellationToken),
+        var duration = await Task.Run(() => _libraryReader.GetSongsDurationAsync(libraryIds, cancellationToken),
             cancellationToken);
         return duration + TimeSpan.FromTicks(transientTicks);
     }
@@ -631,7 +634,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             var sessionId = CurrentListenHistoryId.Value;
             var position = _audioPlayer.CurrentPosition;
             CurrentListenHistoryId = null;
-            FireAndForgetSafe(() => _libraryService.FinalizeListenSessionAsync(sessionId, position, PlaybackEndReason.PausedAndAbandoned), "Finalizing session on Stop", trackForDisposal: true);
+            FireAndForgetSafe(() => _libraryWriter.FinalizeListenSessionAsync(sessionId, position, PlaybackEndReason.PausedAndAbandoned), "Finalizing session on Stop", trackForDisposal: true);
         }
 
         await _audioPlayer.StopAsync();
@@ -722,35 +725,35 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
     public Task PlayAlbumAsync(Guid albumId) => RunPlaybackRequest(async request =>
     {
-        var songIds = await _libraryService.GetAllSongIdsByAlbumIdAsync(albumId, SongSortOrder.TrackNumberAsc);
+        var songIds = await _libraryReader.GetAllSongIdsByAlbumIdAsync(albumId, SongSortOrder.TrackNumberAsc);
         if (IsCurrentRequest(request))
             await PlayInternalAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.Album, albumId), request);
     });
 
     public Task PlayArtistAsync(Guid artistId) => RunPlaybackRequest(async request =>
     {
-        var songIds = await _libraryService.GetAllSongIdsByArtistIdAsync(artistId, SongSortOrder.TitleAsc);
+        var songIds = await _libraryReader.GetAllSongIdsByArtistIdAsync(artistId, SongSortOrder.TitleAsc);
         if (IsCurrentRequest(request))
             await PlayInternalAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.Artist, artistId), request);
     });
 
     public Task PlayFolderAsync(Guid folderId) => RunPlaybackRequest(async request =>
     {
-        var songIds = await _libraryService.GetAllSongIdsByFolderIdAsync(folderId, SongSortOrder.TitleAsc);
+        var songIds = await _libraryReader.GetAllSongIdsByFolderIdAsync(folderId, SongSortOrder.TitleAsc);
         if (IsCurrentRequest(request))
             await PlayInternalAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.Folder, folderId), request);
     });
 
     public Task PlayPlaylistAsync(Guid playlistId) => RunPlaybackRequest(async request =>
     {
-        var songIds = await _libraryService.GetAllSongIdsByPlaylistIdAsync(playlistId, SongSortOrder.PlaylistOrder);
+        var songIds = await _libraryReader.GetAllSongIdsByPlaylistIdAsync(playlistId, SongSortOrder.PlaylistOrder);
         if (IsCurrentRequest(request))
             await PlayInternalAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.Playlist, playlistId), request);
     });
 
     public Task PlayGenreAsync(Guid genreId) => RunPlaybackRequest(async request =>
     {
-        var songIds = await _libraryService.GetAllSongIdsByGenreIdAsync(genreId, SongSortOrder.TitleAsc);
+        var songIds = await _libraryReader.GetAllSongIdsByGenreIdAsync(genreId, SongSortOrder.TitleAsc);
         if (IsCurrentRequest(request))
             await PlayInternalAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.Genre, genreId), request);
     });
@@ -887,7 +890,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         var position = _audioPlayer.CurrentPosition;
         CurrentListenHistoryId = null;
         FireAndForgetSafe(
-            () => _libraryService.FinalizeListenSessionAsync(sessionId, position, PlaybackEndReason.Skipped),
+            () => _libraryWriter.FinalizeListenSessionAsync(sessionId, position, PlaybackEndReason.Skipped),
             "Finalizing session removed from queue",
             trackForDisposal: true);
     }
@@ -961,7 +964,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             var previousSessionId = CurrentListenHistoryId.Value;
             var position = _audioPlayer.CurrentPosition;
             CurrentListenHistoryId = null;
-            FireAndForgetSafe(() => _libraryService.FinalizeListenSessionAsync(previousSessionId, position, PlaybackEndReason.Skipped), "Finalizing skipped session", trackForDisposal: true);
+            FireAndForgetSafe(() => _libraryWriter.FinalizeListenSessionAsync(previousSessionId, position, PlaybackEndReason.Skipped), "Finalizing skipped session", trackForDisposal: true);
         }
 
         _isEligibilityMarked = false;
@@ -979,7 +982,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         {
             var songId = _playbackQueue[currentIndex];
             song = _transientTracks.GetValueOrDefault(songId)
-                   ?? await _libraryService.GetSongByIdAsync(songId);
+                   ?? await _libraryReader.GetSongByIdAsync(songId);
             if (!IsCurrentRequest(request)) return;
             currentIndex = GetPlaybackQueueIndex(songId);
             if (currentIndex < 0)
@@ -1029,11 +1032,11 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     {
         // Presence listeners need the session before LoadAsync can raise MediaOpened.
         var startedUtc = DateTime.UtcNow;
-        var sessionId = await _libraryService.StartListenSessionAsync(songId, _currentContext);
+        var sessionId = await _libraryWriter.StartListenSessionAsync(songId, _currentContext);
         if (!IsCurrentRequest(request))
         {
             if (sessionId.HasValue)
-                await _libraryService.FinalizeListenSessionAsync(sessionId.Value, TimeSpan.Zero, PlaybackEndReason.PausedAndAbandoned);
+                await _libraryWriter.FinalizeListenSessionAsync(sessionId.Value, TimeSpan.Zero, PlaybackEndReason.PausedAndAbandoned);
             return;
         }
 
@@ -1152,7 +1155,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             CurrentListenHistoryId = null;
             try
             {
-                await _libraryService.FinalizeListenSessionAsync(sessionId, position, PlaybackEndReason.PausedAndAbandoned);
+                await _libraryWriter.FinalizeListenSessionAsync(sessionId, position, PlaybackEndReason.PausedAndAbandoned);
             }
             catch (Exception ex)
             {
@@ -1208,7 +1211,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         if (state.CurrentTrackId.HasValue)
         {
             var currentSong = GetPlaybackQueueIndex(state.CurrentTrackId.Value) >= 0
-                ? await _libraryService.GetSongByIdAsync(state.CurrentTrackId.Value)
+                ? await _libraryReader.GetSongByIdAsync(state.CurrentTrackId.Value)
                 : null;
             if (_isDisposed) return false;
             if (currentSong != null)
@@ -1445,7 +1448,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         {
             if (finishedSessionId.HasValue)
             {
-                await _libraryService.FinalizeListenSessionAsync(finishedSessionId.Value, duration, PlaybackEndReason.Finished);
+                await _libraryWriter.FinalizeListenSessionAsync(finishedSessionId.Value, duration, PlaybackEndReason.Finished);
             }
             if (IsCurrentRequest(request)) await NextAsync();
         }, "PlaybackEnded transition", trackForDisposal: true);
@@ -1498,7 +1501,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
                 var marked = false;
                 try
                 {
-                    marked = await _libraryService.MarkListenAsEligibleForScrobblingAsync(sessionId);
+                    marked = await _libraryWriter.MarkListenAsEligibleForScrobblingAsync(sessionId);
                     if (marked && !_isDisposed) ScrobbleEligibilityReached?.Invoke(song, sessionId, listenStartedUtc);
                 }
                 finally
@@ -1553,7 +1556,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         if (isEnabled && !_transientTracks.ContainsKey(song.Id) &&
             !song.ReplayGainTrackGain.HasValue && !song.ReplayGainCheckPerformed)
         {
-            var refreshed = await _libraryService.GetSongByIdAsync(song.Id);
+            var refreshed = await _libraryReader.GetSongByIdAsync(song.Id);
             if (!IsCurrentRequest(request) || version != _replayGainVersion) return;
             song.ReplayGainCheckPerformed = true;
             if (refreshed != null)

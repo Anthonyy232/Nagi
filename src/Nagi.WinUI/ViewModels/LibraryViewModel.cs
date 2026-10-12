@@ -19,7 +19,9 @@ public partial class LibraryViewModel : SongListViewModelBase
     private bool _isInitialScanTriggered;
 
     public LibraryViewModel(
-        ILibraryService libraryService,
+        ILibraryReader libraryReader,
+        ILibraryWriter libraryWriter,
+        ILibraryScanner libraryScanner,
         IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
         IMusicNavigationService musicNavigationService,
@@ -27,7 +29,7 @@ public partial class LibraryViewModel : SongListViewModelBase
         IUISettingsService settingsService,
         IUIService uiService,
         ILogger<LibraryViewModel> logger)
-        : base(libraryService, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryReader, libraryWriter, libraryScanner, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
         PageTitle = Nagi.WinUI.Resources.Strings.LibraryPage_Title;
         _settingsService.IgnoreLeadingArticlesOnSortEnabledChanged += OnIgnoreLeadingArticlesOnSortChanged;
@@ -90,7 +92,7 @@ public partial class LibraryViewModel : SongListViewModelBase
             {
                 // Run the dedup pass before refresh so the UI doesn't briefly show duplicate
                 // entries from a prior (pre-canonicalization) run.
-                await _libraryService.DeduplicateLibraryAsync().ConfigureAwait(false);
+                await _libraryScanner.DeduplicateLibraryAsync().ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -98,7 +100,7 @@ public partial class LibraryViewModel : SongListViewModelBase
             }
             try
             {
-                await _libraryService.RefreshAllFoldersAsync().ConfigureAwait(false);
+                await _libraryScanner.RefreshAllFoldersAsync().ConfigureAwait(false);
             }
             catch (Exception ex)
             {

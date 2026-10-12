@@ -20,7 +20,8 @@ namespace Nagi.WinUI.ViewModels;
 /// </summary>
 public abstract partial class PagedListViewModelBase<TItem> : SearchableViewModelBase, IPagedListViewModel, IDisposable
 {
-    protected readonly ILibraryService _libraryService;
+    protected readonly ILibraryReader _libraryReader;
+    protected readonly ILibraryScanner _libraryScanner;
     protected readonly IUISettingsService _settingsService;
 
     protected readonly object _loadLock = new();
@@ -60,15 +61,17 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     protected int PageSize => !IsPaginationEnabled || SongsPerPage == 0 ? 500 : SongsPerPage;
 
     protected PagedListViewModelBase(
-        ILibraryService libraryService,
+        ILibraryReader libraryReader,
+        ILibraryScanner libraryScanner,
         IUISettingsService settingsService,
         IDispatcherService dispatcherService,
         ILogger logger)
         : base(dispatcherService, logger)
     {
-        _libraryService = libraryService;
+        _libraryReader = libraryReader;
+        _libraryScanner = libraryScanner;
         _settingsService = settingsService;
-        _libraryService.LibraryContentChanged += OnLibraryContentChanged;
+        _libraryScanner.LibraryContentChanged += OnLibraryContentChanged;
         _settingsService.SongsPerPageChanged += OnSettingsSongsPerPageChanged;
     }
 
@@ -403,7 +406,7 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
         _isDisposed = true;
         CancelPendingSearch();
 
-        _libraryService.LibraryContentChanged -= OnLibraryContentChanged;
+        _libraryScanner.LibraryContentChanged -= OnLibraryContentChanged;
         _settingsService.SongsPerPageChanged -= OnSettingsSongsPerPageChanged;
         CancelInflightPageLoad();
         _libraryChangeDebouncer.Dispose();

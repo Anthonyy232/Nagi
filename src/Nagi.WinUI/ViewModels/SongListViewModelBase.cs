@@ -21,7 +21,7 @@ namespace Nagi.WinUI.ViewModels;
 /// </summary>
 public abstract partial class SongListViewModelBase : PagedListViewModelBase<Song>
 {
-    protected readonly ILibraryReader _libraryReader;
+    protected readonly ILibraryWriter _libraryWriter;
     protected readonly IMusicPlaybackService _playbackService;
     protected readonly IPlaylistService _playlistService;
     protected readonly IUIService _uiService;
@@ -57,7 +57,9 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     public SelectionState SelectionState { get; } = new();
 
     protected SongListViewModelBase(
-        ILibraryService libraryService,
+        ILibraryReader libraryReader,
+        ILibraryWriter libraryWriter,
+        ILibraryScanner libraryScanner,
         IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
         IMusicNavigationService musicNavigationService,
@@ -65,9 +67,9 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         IUISettingsService settingsService,
         IUIService uiService,
         ILogger logger)
-        : base(libraryService, settingsService, dispatcherService, logger)
+        : base(libraryReader, libraryScanner, settingsService, dispatcherService, logger)
     {
-        _libraryReader = libraryService ?? throw new ArgumentNullException(nameof(libraryService));
+        _libraryWriter = libraryWriter ?? throw new ArgumentNullException(nameof(libraryWriter));
         _playlistService = playlistService ?? throw new ArgumentNullException(nameof(playlistService));
         _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
         _musicNavigationService = musicNavigationService ?? throw new ArgumentNullException(nameof(musicNavigationService));

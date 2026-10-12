@@ -44,7 +44,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         _service = new MusicPlaybackService(
             _settingsService,
             _audioPlayer,
-            _libraryService,
+            _libraryService, _libraryService,
             _metadataService,
             _logger);
 
@@ -1355,7 +1355,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
 
         _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
         _settingsService.GetPlaybackStateAsync().Returns(savedState);
-        using var restored = new MusicPlaybackService(_settingsService, _audioPlayer, _libraryService, _metadataService, _logger);
+        using var restored = new MusicPlaybackService(_settingsService, _audioPlayer, _libraryService, _libraryService, _metadataService, _logger);
         await restored.InitializeAsync();
         restored.PlaybackQueue.Should().BeEmpty();
         restored.CurrentTrack.Should().BeNull();

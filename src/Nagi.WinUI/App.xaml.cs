@@ -734,11 +734,11 @@ public partial class App : Application
                 try
                 {
                     var settingsService = Services.GetRequiredService<ISettingsService>();
-                    var libraryService = Services.GetRequiredService<ILibraryService>();
+                    var libraryWriter = Services.GetRequiredService<ILibraryWriter>();
 
                     // Use robust service methods first
                     await settingsService.ResetToDefaultsAsync();
-                    await libraryService.ClearAllLibraryDataAsync();
+                    await libraryWriter.ClearAllLibraryDataAsync();
                 }
                 catch (Exception serviceEx)
                 {
@@ -847,8 +847,8 @@ public partial class App : Application
     {
         if (_isExiting || RootWindow is null || Services is null) return;
 
-        var libraryService = Services.GetRequiredService<ILibraryService>();
-        var hasFolders = await libraryService.HasAnyFolderAsync();
+        var libraryReader = Services.GetRequiredService<ILibraryReader>();
+        var hasFolders = await libraryReader.HasAnyFolderAsync();
         if (_isExiting) return;
         if (hasFolders)
         {

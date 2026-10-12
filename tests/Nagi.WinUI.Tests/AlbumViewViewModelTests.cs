@@ -97,7 +97,7 @@ public class AlbumViewViewModelTests
     {
         var settings = Substitute.For<IUISettingsService>();
         settings.GetSongsPerPageAsync().Returns(50);
-        return new AlbumViewViewModel(library, Substitute.For<IPlaylistService>(),
+        return new AlbumViewViewModel(library, library, library, Substitute.For<IPlaylistService>(),
             Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), dispatcher ?? new ImmediateDispatcher(), settings,
             Substitute.For<IUIService>(), NullLogger<AlbumViewViewModel>.Instance);

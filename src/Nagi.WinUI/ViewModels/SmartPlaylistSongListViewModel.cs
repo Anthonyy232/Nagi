@@ -31,7 +31,9 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
     private RandomSnapshotKey? _randomSnapshotKey;
 
     public SmartPlaylistSongListViewModel(
-        ILibraryService libraryService,
+        ILibraryReader libraryReader,
+        ILibraryWriter libraryWriter,
+        ILibraryScanner libraryScanner,
         IPlaylistService playlistService,
         ISmartPlaylistService smartPlaylistService,
         IMusicPlaybackService playbackService,
@@ -40,7 +42,7 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
         IUISettingsService settingsService,
         IUIService uiService,
         ILogger<SmartPlaylistSongListViewModel> logger)
-        : base(libraryService, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryReader, libraryWriter, libraryScanner, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
         _smartPlaylistService = smartPlaylistService;
     }

@@ -80,7 +80,8 @@ public partial class PlaylistViewModelItem : ObservableObject
 public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
 {
     private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
-    private readonly ILibraryService _libraryService;
+    private readonly ILibraryReader _libraryReader;
+    private readonly IPlaylistService _playlistService;
     private readonly ISmartPlaylistService _smartPlaylistService;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly INavigationService _navigationService;
@@ -92,12 +93,13 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     private int _loadVersion;
     private bool _isDisposed;
 
-    public PlaylistViewModel(ILibraryService libraryService, ISmartPlaylistService smartPlaylistService,
+    public PlaylistViewModel(ILibraryReader libraryReader, IPlaylistService playlistService, ISmartPlaylistService smartPlaylistService,
         IMusicPlaybackService musicPlaybackService, INavigationService navigationService,
         IUISettingsService settingsService, IDispatcherService dispatcherService, ILogger<PlaylistViewModel> logger)
         : base(dispatcherService, logger)
     {
-        _libraryService = libraryService;
+        _libraryReader = libraryReader;
+        _playlistService = playlistService;
         _smartPlaylistService = smartPlaylistService;
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
@@ -106,10 +108,10 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         _collectionChangedHandler = (s, e) => OnPropertyChanged(nameof(HasPlaylists));
         Playlists.CollectionChanged += _collectionChangedHandler;
 
-        _libraryService.PlaylistUpdated += OnPlaylistUpdated;
+        _playlistService.PlaylistUpdated += OnPlaylistUpdated;
         _smartPlaylistService.PlaylistUpdated += OnPlaylistUpdated;
 
-        _libraryService.PlaylistsChanged += OnPlaylistsChanged;
+        _playlistService.PlaylistsChanged += OnPlaylistsChanged;
         _smartPlaylistService.PlaylistsChanged += OnPlaylistsChanged;
 
         UpdateSortOrderText();
@@ -248,7 +250,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
 
         try
         {
-            var regularCountTask = _libraryService.GetPlaylistCountAsync();
+            var regularCountTask = _libraryReader.GetPlaylistCountAsync();
             var smartCountTask = _smartPlaylistService.GetSmartPlaylistCountAsync();
             await Task.WhenAll(regularCountTask, smartCountTask);
             var regularCount = await regularCountTask;
@@ -265,7 +267,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
 
             if (randomTicket < regularCount)
             {
-                var id = await _libraryService.GetRandomPlaylistIdAsync();
+                var id = await _libraryReader.GetRandomPlaylistIdAsync();
                 if (id.HasValue)
                 {
                     await _musicPlaybackService.PlayPlaylistAsync(id.Value);
@@ -317,7 +319,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
                 sortTask = _settingsService.GetSortOrderAsync<PlaylistSortOrder>(SortOrderHelper.PlaylistsSortOrderKey);
             }
 
-            var playlistsTask = _libraryService.GetAllPlaylistsAsync();
+            var playlistsTask = _libraryReader.GetAllPlaylistsAsync();
             var smartPlaylistsTask = _smartPlaylistService.GetAllSmartPlaylistsAsync();
             var matchCountsTask = _smartPlaylistService.GetAllMatchingSongCountsAsync();
 
@@ -373,7 +375,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         try
         {
             var normalizedName = ArtistNameHelper.NormalizeStringCore(playlistName) ?? playlistName;
-            var newPlaylist = await _libraryService.CreatePlaylistAsync(normalizedName, coverImageUri: coverImageUri);
+            var newPlaylist = await _playlistService.CreatePlaylistAsync(normalizedName, coverImageUri: coverImageUri);
             if (newPlaylist != null)
             {
                 var newItem = new PlaylistViewModelItem(newPlaylist);
@@ -429,7 +431,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         {
             var success = isSmart
                 ? await _smartPlaylistService.UpdateSmartPlaylistCoverAsync(playlistId, coverImageUri)
-                : await _libraryService.UpdatePlaylistCoverAsync(playlistId, coverImageUri);
+                : await _playlistService.UpdatePlaylistCoverAsync(playlistId, coverImageUri);
 
             // PlaylistUpdated supplies the persisted cache path, not the selected source image.
             StatusMessage = success ? string.Empty : coverImageUri is null
@@ -472,7 +474,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
             if (isSmart)
                 success = await _smartPlaylistService.RenameSmartPlaylistAsync(playlistId, normalizedName);
             else
-                success = await _libraryService.RenamePlaylistAsync(playlistId, normalizedName);
+                success = await _playlistService.RenamePlaylistAsync(playlistId, normalizedName);
 
             if (success)
             {
@@ -520,7 +522,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
             if (isSmart)
                 success = await _smartPlaylistService.DeleteSmartPlaylistAsync(playlistId);
             else
-                success = await _libraryService.DeletePlaylistAsync(playlistId);
+                success = await _playlistService.DeletePlaylistAsync(playlistId);
 
             if (success)
             {
@@ -594,9 +596,9 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         _isDisposed = true;
         CancelPendingSearch();
         Playlists.CollectionChanged -= _collectionChangedHandler;
-        _libraryService.PlaylistUpdated -= OnPlaylistUpdated;
+        _playlistService.PlaylistUpdated -= OnPlaylistUpdated;
         _smartPlaylistService.PlaylistUpdated -= OnPlaylistUpdated;
-        _libraryService.PlaylistsChanged -= OnPlaylistsChanged;
+        _playlistService.PlaylistsChanged -= OnPlaylistsChanged;
         _smartPlaylistService.PlaylistsChanged -= OnPlaylistsChanged;
     }
 

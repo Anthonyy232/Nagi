@@ -47,10 +47,10 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
 
     private bool _isNavigating;
 
-    public AlbumViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService,
+    public AlbumViewModel(ILibraryReader libraryReader, ILibraryScanner libraryScanner, IMusicPlaybackService musicPlaybackService,
         IMusicNavigationService musicNavigationService,
         IUISettingsService settingsService, IDispatcherService dispatcherService, ILogger<AlbumViewModel> logger)
-        : base(libraryService, settingsService, dispatcherService, logger)
+        : base(libraryReader, libraryScanner, settingsService, dispatcherService, logger)
     {
         _musicPlaybackService = musicPlaybackService;
         _musicNavigationService = musicNavigationService;
@@ -78,8 +78,8 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
 
     protected override Task<PagedResult<Album>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token) =>
         IsSearchActive
-            ? _libraryService.SearchAlbumsPagedAsync(SearchTerm, pageNumber, pageSize, token)
-            : _libraryService.GetAllAlbumsPagedAsync(pageNumber, pageSize, CurrentSortOrder, token);
+            ? _libraryReader.SearchAlbumsPagedAsync(SearchTerm, pageNumber, pageSize, token)
+            : _libraryReader.GetAllAlbumsPagedAsync(pageNumber, pageSize, CurrentSortOrder, token);
 
     protected override void ApplyItemsToCollection(PagedResult<Album> result, bool append)
     {
@@ -108,7 +108,7 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
         if (IsLoading) return;
         try
         {
-            var id = await _libraryService.GetRandomAlbumIdAsync();
+            var id = await _libraryReader.GetRandomAlbumIdAsync();
             if (id.HasValue) await _musicPlaybackService.PlayAlbumAsync(id.Value);
         }
         catch (Exception ex) { _logger.LogCritical(ex, "Error playing random album"); }

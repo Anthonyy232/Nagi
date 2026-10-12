@@ -42,7 +42,9 @@ public sealed class FolderViewModelItem
 /// </summary>
 public partial class FolderViewModel : ObservableObject, IDisposable
 {
-    private readonly ILibraryService _libraryService;
+    private readonly ILibraryReader _libraryReader;
+    private readonly ILibraryWriter _libraryWriter;
+    private readonly ILibraryScanner _libraryScanner;
     private readonly ILogger<FolderViewModel> _logger;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly INavigationService _navigationService;
@@ -50,11 +52,13 @@ public partial class FolderViewModel : ObservableObject, IDisposable
     private readonly PlayerViewModel _playerViewModel;
     private readonly Debouncer _debouncer = new(TimeSpan.FromSeconds(1));
 
-    public FolderViewModel(ILibraryService libraryService, PlayerViewModel playerViewModel,
+    public FolderViewModel(ILibraryReader libraryReader, ILibraryWriter libraryWriter, ILibraryScanner libraryScanner, PlayerViewModel playerViewModel,
         IMusicPlaybackService musicPlaybackService, INavigationService navigationService,
         IDispatcherService dispatcherService, ILogger<FolderViewModel> logger)
     {
-        _libraryService = libraryService;
+        _libraryReader = libraryReader;
+        _libraryWriter = libraryWriter;
+        _libraryScanner = libraryScanner;
         _playerViewModel = playerViewModel;
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
@@ -63,7 +67,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
 
         Folders.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasFolders));
 
-        _libraryService.LibraryContentChanged += OnLibraryContentChanged;
+        _libraryScanner.LibraryContentChanged += OnLibraryContentChanged;
     }
 
     private void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
@@ -90,7 +94,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
 
     public void Dispose()
     {
-        _libraryService.LibraryContentChanged -= OnLibraryContentChanged;
+        _libraryScanner.LibraryContentChanged -= OnLibraryContentChanged;
         _debouncer.Dispose();
         LoadFoldersCommand.Cancel();
     }
@@ -156,7 +160,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         try
         {
             // The service method already filters for folders that contain songs
-            var randomFolderId = await _libraryService.GetRandomFolderIdAsync();
+            var randomFolderId = await _libraryReader.GetRandomFolderIdAsync();
             if (randomFolderId.HasValue)
             {
                 await _musicPlaybackService.PlayFolderAsync(randomFolderId.Value);
@@ -178,7 +182,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
     {
         try
         {
-            var foldersFromDb = await _libraryService.GetRootFoldersWithCountsAsync(cancellationToken);
+            var foldersFromDb = await _libraryReader.GetRootFoldersWithCountsAsync(cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
             var newItems = foldersFromDb
                 .Select(item => new FolderViewModelItem(item.Folder, item.SongCount))
@@ -221,7 +225,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
 
         try
         {
-            var folder = await _libraryService.AddFolderAsync(folderPath);
+            var folder = await _libraryWriter.AddFolderAsync(folderPath);
             if (folder == null)
             {
                 _playerViewModel.GlobalOperationStatusMessage = Nagi.WinUI.Resources.Strings.Folders_AddFolder_Failed;
@@ -237,7 +241,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
                 _playerViewModel.GlobalOperationProgressValue = p.Percentage;
             });
 
-            await _libraryService.ScanFolderForMusicAsync(folder.Path, progress);
+            await _libraryScanner.ScanFolderForMusicAsync(folder.Path, progress);
 
             _playerViewModel.GlobalOperationStatusMessage = string.Format(Nagi.WinUI.Resources.Strings.Folders_AddFolder_Success, folder.Name);
         }
@@ -270,7 +274,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
 
         try
         {
-            var success = await _libraryService.RemoveFolderAsync(folderId);
+            var success = await _libraryWriter.RemoveFolderAsync(folderId);
             if (success)
             {
                 _playerViewModel.GlobalOperationStatusMessage = string.Format(Nagi.WinUI.Resources.Strings.Folders_Delete_Success, folderToDelete.Name);
@@ -316,7 +320,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
                 _playerViewModel.GlobalOperationProgressValue = p.Percentage;
             });
 
-            var changesDetected = await _libraryService.RescanFolderForMusicAsync(folderId, progress, cancellationToken);
+            var changesDetected = await _libraryScanner.RescanFolderForMusicAsync(folderId, progress, cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
 
             _playerViewModel.GlobalOperationStatusMessage = changesDetected

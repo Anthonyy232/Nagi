@@ -37,7 +37,7 @@ public partial class PlayerViewModel
     private void InitializeListeningEvents()
     {
         _playbackService.StopScheduleChanged += OnStopScheduleChanged;
-        _libraryService.LibraryContentChanged += OnFavoriteLibraryChanged;
+        _libraryScanner.LibraryContentChanged += OnFavoriteLibraryChanged;
         _playbackService.TrackChanged += OnHistoryTrackChanged;
         OnStopScheduleChanged();
     }
@@ -47,7 +47,7 @@ public partial class PlayerViewModel
         _stopTimer?.Dispose();
         History.Dispose();
         _playbackService.StopScheduleChanged -= OnStopScheduleChanged;
-        _libraryService.LibraryContentChanged -= OnFavoriteLibraryChanged;
+        _libraryScanner.LibraryContentChanged -= OnFavoriteLibraryChanged;
         _playbackService.TrackChanged -= OnHistoryTrackChanged;
     }
 
@@ -74,7 +74,7 @@ public partial class PlayerViewModel
         if (current is null) return;
         try
         {
-            var song = await _libraryService.GetSongByIdAsync(current.Id);
+            var song = await _libraryReader.GetSongByIdAsync(current.Id);
             if (!_isCleanedUp && ReferenceEquals(current, CurrentPlayingTrack) && song is not null)
             {
                 current.IsLoved = song.IsLoved;
@@ -92,7 +92,7 @@ public partial class PlayerViewModel
         var current = CurrentPlayingTrack;
         if (current is null) return;
         var loved = !IsCurrentTrackFavorite;
-        if (await Task.Run(() => _libraryService.SetSongsLovedAsync([current.Id], loved)) && ReferenceEquals(current, CurrentPlayingTrack))
+        if (await Task.Run(() => _libraryWriter.SetSongsLovedAsync([current.Id], loved)) && ReferenceEquals(current, CurrentPlayingTrack))
         {
             current.IsLoved = loved;
             IsCurrentTrackFavorite = loved;

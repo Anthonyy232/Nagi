@@ -32,7 +32,7 @@ public class LibraryViewModelTests
             .Returns([favorite.Id]);
         library.GetAllSongIdsAsync(Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns([favorite.Id, other.Id]);
-        using var viewModel = new LibraryViewModel(library, Substitute.For<IPlaylistService>(), playback,
+        using var viewModel = new LibraryViewModel(library, library, library, Substitute.For<IPlaylistService>(), playback,
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), settings,
             Substitute.For<IUIService>(), NullLogger<LibraryViewModel>.Instance);
 
@@ -67,7 +67,7 @@ public class LibraryViewModelTests
             });
         library.GetAllSongIdsAsync(Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns(_ => orderedSongs.Select(song => song.Id).ToList());
-        using var viewModel = new LibraryViewModel(library, Substitute.For<IPlaylistService>(), playback,
+        using var viewModel = new LibraryViewModel(library, library, library, Substitute.For<IPlaylistService>(), playback,
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), settings,
             Substitute.For<IUIService>(), NullLogger<LibraryViewModel>.Instance);
         await viewModel.RefreshOrSortSongsAsync();
@@ -117,7 +117,7 @@ public class LibraryViewModelTests
             scanFinished.TrySetResult();
             return Task.FromResult(true);
         });
-        using var viewModel = new LibraryViewModel(library, Substitute.For<IPlaylistService>(),
+        using var viewModel = new LibraryViewModel(library, library, library, Substitute.For<IPlaylistService>(),
             Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), settings,
             Substitute.For<IUIService>(), NullLogger<LibraryViewModel>.Instance);
@@ -150,7 +150,7 @@ public class LibraryViewModelTests
                 PageNumber = 1, PageSize = 50, TotalCount = 1, Items = [new Song { Title = "New song" }]
             });
         var dispatcher = new HeldDispatcher();
-        using var viewModel = new LibraryViewModel(library, Substitute.For<IPlaylistService>(),
+        using var viewModel = new LibraryViewModel(library, library, library, Substitute.For<IPlaylistService>(),
             Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), dispatcher, settings, Substitute.For<IUIService>(),
             NullLogger<LibraryViewModel>.Instance);

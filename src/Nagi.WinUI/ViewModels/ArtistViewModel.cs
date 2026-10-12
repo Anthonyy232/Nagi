@@ -39,20 +39,24 @@ public partial class ArtistViewModelItem : ObservableObject
 public partial class ArtistViewModel : PagedListViewModelBase<Artist>
 {
     private readonly Dictionary<Guid, ArtistViewModelItem> _artistLookup = new();
+    private readonly ILibraryWriter _libraryWriter;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly IMusicNavigationService _musicNavigationService;
 
     private bool _isNavigating;
 
     public ArtistViewModel(
-        ILibraryService libraryService,
+        ILibraryReader libraryReader,
+        ILibraryWriter libraryWriter,
+        ILibraryScanner libraryScanner,
         IUISettingsService settingsService,
         IMusicPlaybackService musicPlaybackService,
         IDispatcherService dispatcherService,
         IMusicNavigationService musicNavigationService,
         ILogger<ArtistViewModel> logger)
-        : base(libraryService, settingsService, dispatcherService, logger)
+        : base(libraryReader, libraryScanner, settingsService, dispatcherService, logger)
     {
+        _libraryWriter = libraryWriter;
         _musicPlaybackService = musicPlaybackService;
         _musicNavigationService = musicNavigationService;
 
@@ -79,8 +83,8 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
 
     protected override Task<PagedResult<Artist>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token) =>
         IsSearchActive
-            ? _libraryService.SearchArtistsPagedAsync(SearchTerm, pageNumber, pageSize, token)
-            : _libraryService.GetAllArtistsPagedAsync(pageNumber, pageSize, CurrentSortOrder, token);
+            ? _libraryReader.SearchArtistsPagedAsync(SearchTerm, pageNumber, pageSize, token)
+            : _libraryReader.GetAllArtistsPagedAsync(pageNumber, pageSize, CurrentSortOrder, token);
 
     protected override void ApplyItemsToCollection(PagedResult<Artist> result, bool append)
     {
@@ -105,7 +109,7 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
     protected override async Task OnPageLoadedAsync(PagedResult<Artist> result, CancellationToken token)
     {
         if (await _settingsService.GetFetchOnlineMetadataEnabledAsync())
-            _ = _libraryService.StartArtistMetadataBackgroundFetchAsync();
+            _ = _libraryScanner.StartArtistMetadataBackgroundFetchAsync();
     }
 
     [RelayCommand]
@@ -130,7 +134,7 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
         if (IsLoading) return;
         try
         {
-            var id = await _libraryService.GetRandomArtistIdAsync();
+            var id = await _libraryReader.GetRandomArtistIdAsync();
             if (id.HasValue) await _musicPlaybackService.PlayArtistAsync(id.Value);
         }
         catch (Exception ex) { _logger.LogCritical(ex, "Error playing random artist"); }
@@ -175,14 +179,14 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
 
     public void SubscribeToEvents()
     {
-        _libraryService.ArtistMetadataUpdated += OnArtistMetadataUpdated;
-        _libraryService.ArtistMetadataBatchUpdated += OnArtistMetadataBatchUpdated;
+        _libraryScanner.ArtistMetadataUpdated += OnArtistMetadataUpdated;
+        _libraryScanner.ArtistMetadataBatchUpdated += OnArtistMetadataBatchUpdated;
     }
 
     public void UnsubscribeFromEvents()
     {
-        _libraryService.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
-        _libraryService.ArtistMetadataBatchUpdated -= OnArtistMetadataBatchUpdated;
+        _libraryScanner.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
+        _libraryScanner.ArtistMetadataBatchUpdated -= OnArtistMetadataBatchUpdated;
     }
 
     public override void Dispose()
@@ -196,9 +200,9 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
     {
         if (artistData == null) return;
         var (artistId, localPath) = artistData;
-        await _libraryService.UpdateArtistImageAsync(artistId, localPath);
+        await _libraryWriter.UpdateArtistImageAsync(artistId, localPath);
     }
 
     [RelayCommand]
-    public Task RemoveArtistImageAsync(Guid artistId) => _libraryService.RemoveArtistImageAsync(artistId);
+    public Task RemoveArtistImageAsync(Guid artistId) => _libraryWriter.RemoveArtistImageAsync(artistId);
 }

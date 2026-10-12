@@ -113,7 +113,7 @@ public class PlaylistViewModelTests
         viewModel.Playlists.Should().BeEmpty();
     }
 
-    private PlaylistViewModel CreateViewModel() => new(_library, _smart, Substitute.For<IMusicPlaybackService>(),
+    private PlaylistViewModel CreateViewModel() => new(_library, _library, _smart, Substitute.For<IMusicPlaybackService>(),
         Substitute.For<INavigationService>(), Substitute.For<IUISettingsService>(), new ImmediateDispatcher(),
         NullLogger<PlaylistViewModel>.Instance);
 

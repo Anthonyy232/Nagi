@@ -43,7 +43,9 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     private bool _isNavigating;
 
     public FolderSongListViewModel(
-        ILibraryService libraryService,
+        ILibraryReader libraryReader,
+        ILibraryWriter libraryWriter,
+        ILibraryScanner libraryScanner,
         IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
         IMusicNavigationService musicNavigationService,
@@ -51,7 +53,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         IUISettingsService settingsService,
         IUIService uiService,
         ILogger<FolderSongListViewModel> logger)
-        : base(libraryService, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryReader, libraryWriter, libraryScanner, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
     }
 

@@ -38,25 +38,23 @@ public sealed class ArtistAlbumViewModelItem
 /// </summary>
 public partial class ArtistViewViewModel : SongListViewModelBase
 {
-    private readonly ILibraryScanner _libraryScanner;
     private Guid _artistId;
     private bool _isNavigatingToAlbum;
     private CancellationTokenSource? _pageCts;
 
     public ArtistViewViewModel(
-        ILibraryService libraryService,
-        IPlaylistService playlistService,
+        ILibraryReader libraryReader,
+        ILibraryWriter libraryWriter,
         ILibraryScanner libraryScanner,
+        IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
         IMusicNavigationService musicNavigationService,
         IUISettingsService settingsService,
         IDispatcherService dispatcherService,
         IUIService uiService,
         ILogger<ArtistViewViewModel> logger)
-        : base(libraryService, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryReader, libraryWriter, libraryScanner, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
-        _libraryScanner = libraryScanner;
-
         ArtistName = Nagi.WinUI.Resources.Strings.ArtistView_DefaultArtistName;
         ArtistBio = Nagi.WinUI.Resources.Strings.Status_Loading;
 
@@ -282,7 +280,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
 
         _logger.LogInformation("Updating custom image for current artist ({ArtistName}) from {Path}", ArtistName, localPath);
 
-        await _libraryService.UpdateArtistImageAsync(_artistId, localPath);
+        await _libraryWriter.UpdateArtistImageAsync(_artistId, localPath);
     }
 
     [RelayCommand]
@@ -290,6 +288,6 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     {
         _logger.LogInformation("Removing custom image for current artist ({ArtistName})", ArtistName);
 
-        return _libraryService.RemoveArtistImageAsync(_artistId);
+        return _libraryWriter.RemoveArtistImageAsync(_artistId);
     }
 }

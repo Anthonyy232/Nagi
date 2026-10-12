@@ -31,7 +31,7 @@ public partial class PlayerViewModelTests : IDisposable
         _settings.GetQueueDisplaySettingsAsync().Returns(new QueueDisplaySettings());
         _viewModel = new PlayerViewModel(_playback, Substitute.For<IMusicNavigationService>(),
             _dispatcher, _settings, Substitute.For<IWindowService>(),
-            _library, NullLogger<PlayerViewModel>.Instance, Substitute.For<IUIService>());
+            _library, _library, _library, NullLogger<PlayerViewModel>.Instance, Substitute.For<IUIService>());
     }
 
     public void Dispose() => _viewModel.Cleanup();

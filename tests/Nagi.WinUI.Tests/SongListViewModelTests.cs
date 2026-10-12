@@ -91,7 +91,7 @@ public class SongListViewModelTests
     }
 
     private sealed class TestSongList(Func<int, int, CancellationToken, Task<PagedResult<Song>>> load)
-        : SongListViewModelBase(Substitute.For<ILibraryService>(), Substitute.For<IPlaylistService>(),
+        : SongListViewModelBase(Substitute.For<ILibraryReader>(), Substitute.For<ILibraryWriter>(), Substitute.For<ILibraryScanner>(), Substitute.For<IPlaylistService>(),
             Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), Substitute.For<IUISettingsService>(),
             Substitute.For<IUIService>(), NullLogger.Instance)
@@ -157,7 +157,7 @@ public class SongListViewModelTests
     }
 
     private sealed class SelectionTestList(Task<List<Guid>> ids, IMusicPlaybackService? playback = null)
-        : SongListViewModelBase(Substitute.For<ILibraryService>(), Substitute.For<IPlaylistService>(),
+        : SongListViewModelBase(Substitute.For<ILibraryReader>(), Substitute.For<ILibraryWriter>(), Substitute.For<ILibraryScanner>(), Substitute.For<IPlaylistService>(),
             playback ?? Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), Substitute.For<IUISettingsService>(),
             Substitute.For<IUIService>(), NullLogger.Instance)

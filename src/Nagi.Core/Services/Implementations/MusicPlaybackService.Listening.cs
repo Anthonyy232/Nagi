@@ -31,7 +31,7 @@ public partial class MusicPlaybackService
             var now = _timeProvider.GetUtcNow().UtcDateTime;
             var order = await Task.Run(async () =>
             {
-                var candidates = (await _libraryService.GetMixCandidatesAsync(ids)).ToList();
+                var candidates = (await _libraryReader.GetMixCandidatesAsync(ids)).ToList();
                 candidates.AddRange(transient);
                 return PlaybackMixBuilder.Build(candidates, mode, now, duration, avoidRecentDays);
             });

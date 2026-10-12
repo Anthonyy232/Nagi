@@ -38,7 +38,7 @@ public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
         _service = new MusicPlaybackService(
             settingsService,
             _audioPlayer,
-            _libraryService,
+            _libraryService, _libraryService,
             metadataService,
             logger);
 

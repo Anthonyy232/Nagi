@@ -63,7 +63,7 @@ public class ArtistViewViewModelTests
             });
         var settings = Substitute.For<IUISettingsService>();
         settings.GetSongsPerPageAsync().Returns(50);
-        return new ArtistViewViewModel(library, Substitute.For<IPlaylistService>(), scanner,
+        return new ArtistViewViewModel(library, library, scanner, Substitute.For<IPlaylistService>(),
             Substitute.For<IMusicPlaybackService>(), Substitute.For<IMusicNavigationService>(),
             settings, new ImmediateDispatcher(), Substitute.For<IUIService>(), NullLogger<ArtistViewViewModel>.Instance);
     }

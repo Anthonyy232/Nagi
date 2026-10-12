@@ -24,7 +24,9 @@ public partial class AlbumViewViewModel : SongListViewModelBase
     private CancellationTokenSource? _durationFetchCts;
 
     public AlbumViewViewModel(
-        ILibraryService libraryService,
+        ILibraryReader libraryReader,
+        ILibraryWriter libraryWriter,
+        ILibraryScanner libraryScanner,
         IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
         IMusicNavigationService musicNavigationService,
@@ -32,7 +34,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         IUISettingsService settingsService,
         IUIService uiService,
         ILogger<AlbumViewViewModel> logger)
-        : base(libraryService, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryReader, libraryWriter, libraryScanner, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
         AlbumTitle = Nagi.WinUI.Resources.Strings.AlbumView_DefaultAlbumTitle;
         ArtistName = Nagi.WinUI.Resources.Strings.AlbumView_DefaultArtistName;

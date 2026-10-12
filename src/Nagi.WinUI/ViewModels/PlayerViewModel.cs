@@ -43,7 +43,9 @@ public partial class PlayerViewModel : ObservableObject
     private readonly IMusicPlaybackService _playbackService;
     private readonly IUISettingsService _settingsService;
     private readonly IWindowService _windowService;
-    private readonly ILibraryService _libraryService;
+    private readonly ILibraryReader _libraryReader;
+    private readonly ILibraryWriter _libraryWriter;
+    private readonly ILibraryScanner _libraryScanner;
 
     private bool _isUpdatingFromService;
     private bool _isEfficiencyModeEnabled;
@@ -60,21 +62,23 @@ public partial class PlayerViewModel : ObservableObject
     public PlayerViewModel(IMusicPlaybackService playbackService,
         IMusicNavigationService musicNavigationService,
         IDispatcherService dispatcherService, IUISettingsService settingsService, IWindowService windowService,
-        ILibraryService libraryService, ILogger<PlayerViewModel> logger, IUIService uiService)
+        ILibraryReader libraryReader, ILibraryWriter libraryWriter, ILibraryScanner libraryScanner, ILogger<PlayerViewModel> logger, IUIService uiService)
     {
         _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
         _musicNavigationService = musicNavigationService ?? throw new ArgumentNullException(nameof(musicNavigationService));
         _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _windowService = windowService ?? throw new ArgumentNullException(nameof(windowService));
-        _libraryService = libraryService ?? throw new ArgumentNullException(nameof(libraryService));
+        _libraryReader = libraryReader ?? throw new ArgumentNullException(nameof(libraryReader));
+        _libraryWriter = libraryWriter ?? throw new ArgumentNullException(nameof(libraryWriter));
+        _libraryScanner = libraryScanner ?? throw new ArgumentNullException(nameof(libraryScanner));
         _logger = logger;
         _uiService = uiService;
 
         SongTitle = Strings.Status_NoTrackPlaying;
         ArtistName = string.Empty;
         SidebarQueue = new PlaybackQueueCollection(_playbackService, _logger);
-        History = new RecentHistoryViewModel(_libraryService, _dispatcherService, _logger);
+        History = new RecentHistoryViewModel(_libraryReader, _dispatcherService, _logger);
         CurrentTimeText = "0:00";
         TotalDurationText = "0:00";
         GlobalOperationStatusMessage = string.Empty;
@@ -82,7 +86,7 @@ public partial class PlayerViewModel : ObservableObject
 
         SubscribeToPlaybackServiceEvents();
         InitializeListeningEvents();
-        _libraryService.LibraryContentChanged += OnQueueLibraryContentChanged;
+        _libraryScanner.LibraryContentChanged += OnQueueLibraryContentChanged;
         SubscribeToSettingsServiceEvents();
         SubscribeToWindowServiceEvents();
         InitializeStateFromService();
@@ -239,7 +243,7 @@ public partial class PlayerViewModel : ObservableObject
         _logger.LogDebug("Cleaning up PlayerViewModel resources");
         UnsubscribeFromPlaybackServiceEvents();
         CleanupListening();
-        _libraryService.LibraryContentChanged -= OnQueueLibraryContentChanged;
+        _libraryScanner.LibraryContentChanged -= OnQueueLibraryContentChanged;
         UnsubscribeFromSettingsServiceEvents();
         UnsubscribeFromWindowServiceEvents();
         QueueDisplaySettings.PropertyChanged -= OnQueueDisplaySettingChanged;

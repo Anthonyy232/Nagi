@@ -240,7 +240,7 @@ public class PagedListViewModelTests
     private sealed class TestViewModel(IUISettingsService settings,
         Func<int, int, CancellationToken, Task<PagedResult<int>>> load,
         IDispatcherService? dispatcher = null)
-        : PagedListViewModelBase<int>(Substitute.For<ILibraryService>(), settings,
+        : PagedListViewModelBase<int>(Substitute.For<ILibraryReader>(), Substitute.For<ILibraryScanner>(), settings,
             dispatcher ?? new ImmediateDispatcher(), NullLogger.Instance)
     {
         public List<int> Items { get; } = [];

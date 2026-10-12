@@ -134,7 +134,7 @@ public class SmartPlaylistSongListViewModelTests
     private TestSmartPlaylist CreateViewModel() => new(_library, _playlists);
 
     private sealed class TestSmartPlaylist(ILibraryService library, ISmartPlaylistService playlists)
-        : SmartPlaylistSongListViewModel(library, Substitute.For<IPlaylistService>(), playlists,
+        : SmartPlaylistSongListViewModel(library, library, library, Substitute.For<IPlaylistService>(), playlists,
             Substitute.For<IMusicPlaybackService>(), Substitute.For<IMusicNavigationService>(),
             new ImmediateDispatcher(), Substitute.For<IUISettingsService>(), Substitute.For<IUIService>(),
             NullLogger<SmartPlaylistSongListViewModel>.Instance)
