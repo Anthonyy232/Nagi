@@ -27,10 +27,12 @@ public partial class UIService : IUIService
     private readonly IWin32InteropService _win32InteropService;
     private readonly IViewModelFactory _viewModelFactory;
     private readonly ILogger<UIService> _logger;
+    private readonly MainWindow _window;
 
-    public UIService(IWin32InteropService win32InteropService, IViewModelFactory viewModelFactory,
+    public UIService(MainWindow window, IWin32InteropService win32InteropService, IViewModelFactory viewModelFactory,
         ILogger<UIService> logger)
     {
+        _window = window;
         _win32InteropService = win32InteropService;
         _viewModelFactory = viewModelFactory;
         _logger = logger;
@@ -58,9 +60,7 @@ public partial class UIService : IUIService
 
     public async Task<string?> PickSingleFolderAsync()
     {
-        if (App.RootWindow is null) return null;
-
-        var folderPicker = new FolderPicker(App.RootWindow.AppWindow.Id);
+        var folderPicker = new FolderPicker(_window.AppWindow.Id);
 
         var selectedFolder = await folderPicker.PickSingleFolderAsync();
         return selectedFolder?.Path;
@@ -124,7 +124,7 @@ public partial class UIService : IUIService
         catch (Exception)
         {
             // Fallback to Win32 MessageBox if ContentDialog fails (e.g. another dialog is open)
-            var hwnd = App.RootWindow != null ? WindowNative.GetWindowHandle(App.RootWindow) : IntPtr.Zero;
+            var hwnd = WindowNative.GetWindowHandle(_window);
             var message = $"{introduction}\n\n{logContent}";
             _win32InteropService.ShowMessageBox(hwnd, message, title, MB_ICONERROR | MB_OK);
             return CrashReportResult.Close;
@@ -133,9 +133,7 @@ public partial class UIService : IUIService
 
     public async Task<string?> PickSingleFileAsync(IEnumerable<string> fileTypes)
     {
-        if (App.RootWindow is null) return null;
-
-        var filePicker = new FileOpenPicker(App.RootWindow.AppWindow.Id);
+        var filePicker = new FileOpenPicker(_window.AppWindow.Id);
 
         foreach (var ext in fileTypes)
         {
@@ -148,9 +146,7 @@ public partial class UIService : IUIService
 
     public async Task<IReadOnlyList<string>> PickOpenMultipleFilesAsync(IEnumerable<string> fileTypes)
     {
-        if (App.RootWindow is null) return [];
-
-        var filePicker = new FileOpenPicker(App.RootWindow.AppWindow.Id);
+        var filePicker = new FileOpenPicker(_window.AppWindow.Id);
 
         foreach (var ext in fileTypes)
         {
@@ -243,9 +239,9 @@ public partial class UIService : IUIService
         return result == ContentDialogResult.Primary;
     }
 
-    private static bool TryGetXamlRoot(out XamlRoot? xamlRoot)
+    private bool TryGetXamlRoot(out XamlRoot? xamlRoot)
     {
-        xamlRoot = App.RootWindow?.Content?.XamlRoot;
+        xamlRoot = _window.Content?.XamlRoot;
         return xamlRoot is not null;
     }
 }

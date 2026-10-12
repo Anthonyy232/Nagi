@@ -1,30 +1,25 @@
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 using Windows.Storage;
-using Windows.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.UI;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Services.Implementations;
@@ -141,7 +136,7 @@ public partial class App : Application
             await InitializeCoreServicesAsync(Services!, restoreSession);
             if (_isExiting) return;
             _coreServicesInitialized = true;
-            await CheckAndNavigateToMainContent();
+            await Services!.GetRequiredService<IApplicationLifecycle>().NavigateToMainContentAsync();
 
             _ = ProcessFileActivationQueueAsync();
 
@@ -287,15 +282,15 @@ public partial class App : Application
         _logger?.LogInformation("Core services initialized successfully.");
     }
 
-    private static IServiceProvider ConfigureServices(DispatcherQueue dispatcherQueue, App appInstance,
-        IConfiguration configuration)
+    private static IServiceProvider ConfigureServices(MainWindow mainWindow, IConfiguration configuration)
     {
         var services = new ServiceCollection();
 
         services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog());
         services.AddSingleton(configuration);
         services.AddNagiHttpClients();
-        services.AddNagiPlatformServices(dispatcherQueue, appInstance);
+        services.AddNagiMainWindow(mainWindow);
+        services.AddNagiPlatformServices();
         services.AddNagiCore();
         services.AddNagiViewModels();
 
@@ -318,9 +313,10 @@ public partial class App : Application
         _window = mainWindow;
         _window.Closed += OnWindowClosed;
 
-        Services = ConfigureServices(_window.DispatcherQueue, this, configuration);
+        Services = ConfigureServices(mainWindow, configuration);
 
-        mainWindow.InitializeDependencies(Services.GetRequiredService<IUISettingsService>());
+        mainWindow.InitializeDependencies(Services.GetRequiredService<IUISettingsService>(),
+            Services.GetRequiredService<ITaskbarService>(), Services.GetRequiredService<ILogger<MainWindow>>());
     }
 
     private void InitializeSystemIntegration()
@@ -362,6 +358,8 @@ public partial class App : Application
         args.Handled = true;
         if (_isExiting) return;
         _isExiting = true;
+        // Stops ApplicationLifecycle from replacing the content of a window that is closing.
+        if (Services?.GetService<IWindowService>() is { } windowService) windowService.IsExiting = true;
 
         try
         {
@@ -581,142 +579,6 @@ public partial class App : Application
         {
             Log.Warning(ex, "Failed to delete directory: {Path}", path);
         }
-    }
-
-    /// <summary>
-    ///     Sets the initial page of the application based on whether a music library has been configured.
-    /// </summary>
-    public async Task CheckAndNavigateToMainContent()
-    {
-        if (_isExiting || RootWindow is null || Services is null) return;
-
-        var libraryReader = Services.GetRequiredService<ILibraryReader>();
-        var hasFolders = await libraryReader.HasAnyFolderAsync();
-        if (_isExiting) return;
-        if (hasFolders)
-        {
-            if (RootWindow.Content is not MainPage) RootWindow.Content = new MainPage();
-        }
-        else
-        {
-            if (RootWindow.Content is not OnboardingPage) RootWindow.Content = new OnboardingPage();
-        }
-        if (RootWindow is MainWindow mainWindow)
-        {
-            var settingsService = Services.GetRequiredService<IUISettingsService>();
-            var themeService = Services.GetRequiredService<IThemeService>();
-            var savedTheme = await settingsService.GetThemeAsync();
-            themeService.ApplyTheme(savedTheme);
-
-            mainWindow.NotifyContentLoaded();
-            mainWindow.InitializeCustomTitleBar();
-        }
-    }
-
-    internal void ApplyThemeInternal(ElementTheme themeToApply)
-    {
-        EnsureOnUIThread(() =>
-        {
-            if (RootWindow?.Content is not FrameworkElement rootElement) return;
-
-            rootElement.RequestedTheme = themeToApply;
-            Services?.GetRequiredService<IThemeService>().ReapplyCurrentDynamicThemeAsync();
-
-            if (RootWindow is MainWindow mainWindow) mainWindow.InitializeCustomTitleBar();
-        }, nameof(ApplyThemeInternal));
-    }
-
-    public void SetAppPrimaryColorBrushColor(Color newColor)
-    {
-        SetSolidColorBrushColor(
-            "AppPrimaryColorBrush",
-            newColor,
-            nameof(SetAppPrimaryColorBrushColor),
-            refreshTaskbarIcons: true);
-    }
-
-    public void SetPlayerColors(Color tintColor, Color backgroundColor, Color accentColor)
-    {
-        SetSolidColorBrushColor("PlayerTintColorBrush", tintColor, nameof(SetPlayerColors));
-        SetSolidColorBrushColor("PlayerBackgroundBrush", backgroundColor, nameof(SetPlayerColors));
-        SetSolidColorBrushColor("PlayerAccentBrush", accentColor, nameof(SetPlayerColors));
-    }
-
-    public void SetMediaOnImageAccentBrushColor(Color newColor)
-    {
-        SetSolidColorBrushColor("MediaOnImageAccentBrush", newColor, nameof(SetMediaOnImageAccentBrushColor));
-    }
-
-    private void SetSolidColorBrushColor(
-        string resourceKey,
-        Color newColor,
-        string methodName,
-        bool refreshTaskbarIcons = false)
-    {
-        EnsureOnUIThread(() =>
-        {
-            if (Resources.TryGetValue(resourceKey, out var brushObject) &&
-                brushObject is SolidColorBrush brush)
-            {
-                if (brush.Color == newColor) return;
-
-                brush.Color = newColor;
-                if (refreshTaskbarIcons)
-                {
-                    _ = (RootWindow as MainWindow)?.TaskbarService?.RefreshIconsAsync();
-                }
-            }
-            else
-            {
-                _logger?.LogCritical("{ResourceKey} resource not found", resourceKey);
-            }
-        }, methodName);
-    }
-
-    private void EnsureOnUIThread(Action action, string methodName)
-    {
-        if (RootWindow?.DispatcherQueue is { } dispatcher)
-        {
-            if (dispatcher.HasThreadAccess)
-            {
-                action();
-            }
-            else
-            {
-                dispatcher.TryEnqueue(action.Invoke);
-            }
-        }
-        else if (RootWindow != null)
-        {
-            _logger?.LogWarning("{Method}: RootWindow exists but DispatcherQueue is null. Skipping update.", methodName);
-        }
-        else
-        {
-            _logger?.LogDebug("{Method}: RootWindow is null. Skipping update.", methodName);
-        }
-    }
-
-    internal static bool TryParseHexColor(string hex, out Color color)
-    {
-        color = Colors.Transparent;
-        if (string.IsNullOrEmpty(hex)) return false;
-
-        hex = hex.TrimStart('#');
-        if (!uint.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var argb)) return false;
-
-        if (hex.Length == 8) // AARRGGBB
-        {
-            color = Color.FromArgb((byte)(argb >> 24), (byte)(argb >> 16), (byte)(argb >> 8), (byte)argb);
-            return true;
-        }
-
-        if (hex.Length == 6) // RRGGBB
-        {
-            color = Color.FromArgb(255, (byte)(argb >> 16), (byte)(argb >> 8), (byte)argb);
-            return true;
-        }
-
-        return false;
     }
 
     private async Task HandleWindowActivationAsync(bool isStartupLaunch = false)

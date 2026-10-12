@@ -25,12 +25,14 @@ public sealed class WindowService : IWindowService, IDisposable
     private volatile bool _isMiniPlayerEnabled;
     private bool? _lastEfficiencyMode;
 
+    private readonly MainWindow _mainWindow;
     private MiniPlayerWindow? _miniPlayerWindow;
     private Window? _window;
 
-    public WindowService(IWin32InteropService win32InteropService, IUISettingsService settingsService,
-        IDispatcherService dispatcherService, ILogger<WindowService> logger)
+    public WindowService(MainWindow mainWindow, IWin32InteropService win32InteropService,
+        IUISettingsService settingsService, IDispatcherService dispatcherService, ILogger<WindowService> logger)
     {
+        _mainWindow = mainWindow ?? throw new ArgumentNullException(nameof(mainWindow));
         _win32InteropService = win32InteropService ?? throw new ArgumentNullException(nameof(win32InteropService));
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
@@ -107,13 +109,12 @@ public sealed class WindowService : IWindowService, IDisposable
     public bool IsExiting { get; set; }
 
     /// <inheritdoc />
-    public bool IsShowingOnboarding => App.RootWindow?.Content is Pages.OnboardingPage;
+    public bool IsShowingOnboarding => _mainWindow.Content is Pages.OnboardingPage;
 
     /// <inheritdoc />
     public async Task InitializeAsync()
     {
-        _window = App.RootWindow ??
-                  throw new InvalidOperationException("Root window is not available for WindowService initialization.");
+        _window = _mainWindow;
         _appWindow = _window.AppWindow;
 
         _appWindow.Closing += OnAppWindowClosing;

@@ -14,6 +14,7 @@ using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Models;
 using Nagi.WinUI.Navigation;
 using Nagi.WinUI.Services.Abstractions;
@@ -829,7 +830,7 @@ public class SettingsService : IUISettingsService, IDisposable
     {
         var hex = GetValue<string?>(AccentColorKey, null);
         if (string.IsNullOrEmpty(hex)) return Task.FromResult<Windows.UI.Color?>(null);
-        if (App.TryParseHexColor(hex, out var color))
+        if (HexColorParser.TryParse(hex, out var color))
             return Task.FromResult<Windows.UI.Color?>(color);
         return Task.FromResult<Windows.UI.Color?>(null);
     }

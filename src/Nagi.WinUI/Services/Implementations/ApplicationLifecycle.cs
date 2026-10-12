@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
+using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 using Microsoft.Windows.AppLifecycle;
 
@@ -13,24 +13,54 @@ namespace Nagi.WinUI.Services.Implementations;
 /// </summary>
 public class ApplicationLifecycle : IApplicationLifecycle
 {
-    private readonly App _app;
+    private readonly MainWindow _window;
+    private readonly IWindowService _windowService;
+    private readonly ILibraryReader _libraryReader;
+    private readonly ILibraryWriter _libraryWriter;
+    private readonly IUISettingsService _settingsService;
+    private readonly IThemeService _themeService;
+    private readonly IMusicPlaybackService _playbackService;
     private readonly ILogger<ApplicationLifecycle> _logger;
-    private readonly IServiceProvider _serviceProvider;
 
-    public ApplicationLifecycle(App app, IServiceProvider serviceProvider, ILogger<ApplicationLifecycle> logger)
+    public ApplicationLifecycle(MainWindow window, IWindowService windowService, ILibraryReader libraryReader,
+        ILibraryWriter libraryWriter, IUISettingsService settingsService, IThemeService themeService,
+        IMusicPlaybackService playbackService, ILogger<ApplicationLifecycle> logger)
     {
-        _app = app;
-        _serviceProvider = serviceProvider;
+        _window = window;
+        _windowService = windowService;
+        _libraryReader = libraryReader;
+        _libraryWriter = libraryWriter;
+        _settingsService = settingsService;
+        _themeService = themeService;
+        _playbackService = playbackService;
         _logger = logger;
     }
 
     /// <summary>
-    ///     Navigates to the main content of the application, performing initial setup checks if necessary.
+    ///     Shows the main shell when a music library has been configured, or onboarding when it has not,
+    ///     then applies the saved theme to the new content.
     /// </summary>
-    public Task NavigateToMainContentAsync()
+    public async Task NavigateToMainContentAsync()
     {
+        if (_windowService.IsExiting) return;
         _logger.LogInformation("Navigating to main application content.");
-        return _app.CheckAndNavigateToMainContent();
+
+        var hasFolders = await _libraryReader.HasAnyFolderAsync();
+        if (_windowService.IsExiting) return;
+        if (hasFolders)
+        {
+            if (_window.Content is not MainPage) _window.Content = new MainPage();
+        }
+        else
+        {
+            if (_window.Content is not OnboardingPage) _window.Content = new OnboardingPage();
+        }
+
+        var savedTheme = await _settingsService.GetThemeAsync();
+        _themeService.ApplyTheme(savedTheme);
+
+        _window.NotifyContentLoaded();
+        _window.InitializeCustomTitleBar();
     }
 
     /// <summary>
@@ -42,16 +72,13 @@ public class ApplicationLifecycle : IApplicationLifecycle
         _logger.LogInformation("Starting application reset process.");
         try
         {
-            var settingsService = _serviceProvider.GetRequiredService<IUISettingsService>();
-            await settingsService.ResetToDefaultsAsync();
+            await _settingsService.ResetToDefaultsAsync();
             _logger.LogDebug("UI settings have been reset.");
 
-            var libraryWriter = _serviceProvider.GetRequiredService<ILibraryWriter>();
-            await libraryWriter.ClearAllLibraryDataAsync();
+            await _libraryWriter.ClearAllLibraryDataAsync();
             _logger.LogDebug("Library data has been cleared.");
 
-            var playbackService = _serviceProvider.GetRequiredService<IMusicPlaybackService>();
-            await playbackService.ClearQueueAsync();
+            await _playbackService.ClearQueueAsync();
             _logger.LogDebug("Playback queue has been cleared.");
 
             _logger.LogInformation("Application reset completed successfully. Restarting...");

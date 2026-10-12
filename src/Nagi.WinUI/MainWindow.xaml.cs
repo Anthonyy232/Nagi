@@ -57,11 +57,12 @@ public sealed partial class MainWindow : Window
     /// <summary>
     ///     Initializes the window with required services and subscribes to necessary events.
     /// </summary>
-    public void InitializeDependencies(IUISettingsService settingsService)
+    public void InitializeDependencies(IUISettingsService settingsService, ITaskbarService taskbarService,
+        ILogger<MainWindow> logger)
     {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-        _logger = App.Services!.GetRequiredService<ILogger<MainWindow>>();
-        _taskbarService = App.Services!.GetRequiredService<ITaskbarService>();
+        _taskbarService = taskbarService ?? throw new ArgumentNullException(nameof(taskbarService));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _appWindow = AppWindow;
         _lastWindowSize = _appWindow.Size;
         _lastWindowPosition = _appWindow.Position;

@@ -1,8 +1,6 @@
 using System;
 using System.Net.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.UI.Dispatching;
 using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Helpers;
@@ -46,11 +44,21 @@ public static class AppServiceRegistration
     }
 
     /// <summary>
-    ///     Adds the Windows implementations of Core abstractions plus the window, theme, navigation,
-    ///     and dispatcher services that need the running <see cref="App" />.
+    ///     Registers <paramref name="mainWindow" /> and its dispatcher queue, which the window, theme,
+    ///     dialog and dispatcher services work with.
     /// </summary>
-    public static IServiceCollection AddNagiPlatformServices(this IServiceCollection services,
-        DispatcherQueue dispatcherQueue, App appInstance)
+    public static IServiceCollection AddNagiMainWindow(this IServiceCollection services, MainWindow mainWindow)
+    {
+        services.AddSingleton(mainWindow);
+        services.AddSingleton(mainWindow.DispatcherQueue);
+        return services;
+    }
+
+    /// <summary>
+    ///     Adds the Windows implementations of Core abstractions plus the window, theme, navigation,
+    ///     and dispatcher services. They need the window registered by <see cref="AddNagiMainWindow" />.
+    /// </summary>
+    public static IServiceCollection AddNagiPlatformServices(this IServiceCollection services)
     {
         services.AddSingleton<IPathConfiguration, PathConfiguration>();
         services.AddSingleton<IFileSystemService, FileSystemService>();
@@ -62,12 +70,9 @@ public static class AppServiceRegistration
         services.AddSingleton<IWin32InteropService, Win32InteropService>();
         services.AddSingleton<IWindowService, WindowService>();
         services.AddSingleton<IUIService, UIService>();
-        services.AddSingleton(dispatcherQueue);
         services.AddSingleton<IDispatcherService, DispatcherService>();
-        services.AddSingleton<IThemeService>(sp =>
-            new ThemeService(appInstance, sp, sp.GetRequiredService<ILogger<ThemeService>>()));
-        services.AddSingleton<IApplicationLifecycle>(sp =>
-            new ApplicationLifecycle(appInstance, sp, sp.GetRequiredService<ILogger<ApplicationLifecycle>>()));
+        services.AddSingleton<IThemeService, ThemeService>();
+        services.AddSingleton<IApplicationLifecycle, ApplicationLifecycle>();
         services.AddSingleton<IAppInfoService, AppInfoService>();
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<IMusicNavigationService, MusicNavigationService>();
