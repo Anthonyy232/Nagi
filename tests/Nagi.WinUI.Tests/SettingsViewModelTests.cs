@@ -43,9 +43,11 @@ public class SettingsViewModelTests : IDisposable
         _dispatcher.EnqueueAsync(Arg.Any<Func<Task>>()).Returns(call => call.Arg<Func<Task>>()());
         _player = new PlayerViewModel(_playback, Substitute.For<IMusicNavigationService>(), _dispatcher,
             _settings, Substitute.For<IWindowService>(), _library.Reader, _library.Writer, _library.Scanner, NullLogger<PlayerViewModel>.Instance, Substitute.For<IUIService>());
-        _viewModel = new SettingsViewModel(_settings, _ui, _theme, _appInfo, _library.Scanner, _player, _dispatcher,
+        _viewModel = new SettingsViewModel(_settings, _ui, _theme, _appInfo, _dispatcher,
             new AudioSettingsViewModel(_playback, _audioPlayer, _settings, _ui, _ffmpeg, _replayGain, _player, _dispatcher,
                 NullLogger<AudioSettingsViewModel>.Instance, _timeProvider),
+            new LibrarySettingsViewModel(_settings, _ui, _library.Scanner, _player, _dispatcher,
+                NullLogger<LibrarySettingsViewModel>.Instance, _timeProvider),
             new ScrobblingSettingsViewModel(_settings, _ui, _lastFm, _listenBrainz, _dispatcher,
                 NullLogger<ScrobblingSettingsViewModel>.Instance),
             new RomanizationPacksSettingsViewModel(Substitute.For<IRomanizationPackManager>(), _dispatcher,
@@ -252,7 +254,7 @@ public class SettingsViewModelTests : IDisposable
     {
         var confirmation = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<bool>()).Returns(confirmation.Task);
-        var scan = _viewModel.RescanMetadataCommand.ExecuteAsync(null);
+        var scan = _viewModel.Library.RescanMetadataCommand.ExecuteAsync(null);
         _player.IsGlobalOperationInProgress = true;
 
         confirmation.SetResult(true);
@@ -268,7 +270,7 @@ public class SettingsViewModelTests : IDisposable
         _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<bool>()).Returns(true);
         var scanning = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         _library.Scanner.ForceRescanMetadataAsync(Arg.Any<IProgress<ScanProgress>>(), Arg.Any<CancellationToken>()).Returns(scanning.Task);
-        var scan = _viewModel.RescanMetadataCommand.ExecuteAsync(null);
+        var scan = _viewModel.Library.RescanMetadataCommand.ExecuteAsync(null);
 
         _viewModel.Dispose();
         scanning.SetResult(true);
@@ -321,7 +323,7 @@ public class SettingsViewModelTests : IDisposable
         try
         {
             SynchronizationContext.SetSynchronizationContext(context);
-            scan = _viewModel.RescanMetadataCommand.ExecuteAsync(null);
+            scan = _viewModel.Library.RescanMetadataCommand.ExecuteAsync(null);
         }
         finally { SynchronizationContext.SetSynchronizationContext(previous); }
         await scan.WaitAsync(TimeSpan.FromSeconds(5));
@@ -461,6 +463,29 @@ public class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
+    public async Task Load_FillsLibrarySectionWithMusicBrainzFirstAndWithoutSaving()
+    {
+        _settings.GetArtistSplitCharactersAsync().Returns(";");
+        _settings.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _settings.GetServiceProvidersAsync(ServiceCategory.Metadata).Returns(new List<ServiceProviderSetting>
+        {
+            new() { Id = ServiceProviderIds.TheAudioDb, Category = ServiceCategory.Metadata },
+            new() { Id = ServiceProviderIds.MusicBrainz, Category = ServiceCategory.Metadata }
+        });
+
+        await _viewModel.LoadSettingsAsync();
+        _timeProvider.Advance(TimeSpan.FromSeconds(1));
+        await _viewModel.PendingSettingsSaves.WaitAsync(TimeSpan.FromSeconds(5));
+
+        _viewModel.Library.ArtistSplitCharacters.Should().Be(";");
+        _viewModel.Library.IsFetchOnlineLyricsEnabled.Should().BeTrue();
+        _viewModel.Library.MetadataProviders.Select(p => p.Id).Should().Equal(ServiceProviderIds.MusicBrainz, ServiceProviderIds.TheAudioDb);
+        await _settings.DidNotReceive().SetArtistSplitCharactersAsync(Arg.Any<string>());
+        await _settings.DidNotReceive().SetFetchOnlineLyricsEnabledAsync(Arg.Any<bool>());
+        await _settings.DidNotReceive().SetServiceProvidersAsync(Arg.Any<ServiceCategory>(), Arg.Any<List<ServiceProviderSetting>>());
+    }
+
+    [Fact]
     public async Task ResetPlayerDesign_CancelsOlderTintSave()
     {
         _viewModel.PlayerTintIntensity = .75;
@@ -595,10 +620,10 @@ public class SettingsViewModelTests : IDisposable
     [InlineData(true)]
     public async Task PendingSaves_CoalesceIndependently_AndCancelOnDisposal(bool dispose)
     {
-        _viewModel.ArtistSplitCharacters = "first";
-        _viewModel.ArtistSplitCharacters = "artist";
-        _viewModel.GenreSplitCharacters = "first";
-        _viewModel.GenreSplitCharacters = "genre";
+        _viewModel.Library.ArtistSplitCharacters = "first";
+        _viewModel.Library.ArtistSplitCharacters = "artist";
+        _viewModel.Library.GenreSplitCharacters = "first";
+        _viewModel.Library.GenreSplitCharacters = "genre";
         _viewModel.Audio.EqualizerPreamp = 1;
         _viewModel.Audio.EqualizerPreamp = 2;
         if (dispose) _viewModel.Dispose();

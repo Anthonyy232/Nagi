@@ -867,7 +867,7 @@
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
-                        IsOn="{x:Bind ViewModel.IsIgnoreLeadingArticlesOnSortEnabled, Mode=TwoWay}" />
+                        IsOn="{x:Bind ViewModel.Library.IsIgnoreLeadingArticlesOnSortEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
@@ -879,9 +879,9 @@
                         <TextBox
                             Width="150"
                             PlaceholderText="{x:Bind resources:Strings.SettingsPage_FolderExclusion_Placeholder, Mode=OneTime}"
-                            Text="{x:Bind ViewModel.ArtistSplitCharacters, Mode=TwoWay}" />
+                            Text="{x:Bind ViewModel.Library.ArtistSplitCharacters, Mode=TwoWay}" />
                         <Button
-                            Command="{x:Bind ViewModel.RescanMetadataCommand}"
+                            Command="{x:Bind ViewModel.Library.RescanMetadataCommand}"
                             Content="{x:Bind resources:Strings.SettingsPage_RescanLibrary_Content, Mode=OneTime}" ToolTipService.ToolTip="{x:Bind resources:Strings.SettingsPage_RescanLibrary_ToolTip, Mode=OneTime}" />
                     </StackPanel>
                 </controls:SettingsCard>
@@ -895,22 +895,22 @@
                         <TextBox
                             Width="150"
                             PlaceholderText="{x:Bind resources:Strings.SettingsPage_FolderExclusion_Placeholder, Mode=OneTime}"
-                            Text="{x:Bind ViewModel.GenreSplitCharacters, Mode=TwoWay}" />
+                            Text="{x:Bind ViewModel.Library.GenreSplitCharacters, Mode=TwoWay}" />
                         <Button
-                            Command="{x:Bind ViewModel.RescanMetadataCommand}"
+                            Command="{x:Bind ViewModel.Library.RescanMetadataCommand}"
                             Content="{x:Bind resources:Strings.SettingsPage_RescanLibrary_Content, Mode=OneTime}" ToolTipService.ToolTip="{x:Bind resources:Strings.SettingsPage_RescanLibrary_ToolTip, Mode=OneTime}" />
                     </StackPanel>
                 </controls:SettingsCard>
 
                 <controls:SettingsExpander
-                    IsExpanded="{x:Bind ViewModel.IsFetchOnlineMetadataEnabled, Mode=OneWay}"
+                    IsExpanded="{x:Bind ViewModel.Library.IsFetchOnlineMetadataEnabled, Mode=OneWay}"
                     Header="{x:Bind resources:Strings.SettingsPage_OnlineMetadata_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_OnlineMetadata_Description, Mode=OneTime}">
                     <controls:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8EC;" />
                     </controls:SettingsExpander.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
-                        IsOn="{x:Bind ViewModel.IsFetchOnlineMetadataEnabled, Mode=TwoWay}" />
+                        IsOn="{x:Bind ViewModel.Library.IsFetchOnlineMetadataEnabled, Mode=TwoWay}" />
 
                     <controls:SettingsExpander.Items>
                         <controls:SettingsCard Header="{x:Bind resources:Strings.SettingsPage_MetadataSources_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_MetadataSources_Description, Mode=OneTime}">
@@ -928,7 +928,7 @@
                                     CanDragItems="True"
                                     CanReorderItems="True"
                                     CornerRadius="{ThemeResource ControlCornerRadius}"
-                                    ItemsSource="{x:Bind ViewModel.MetadataProviders}"
+                                    ItemsSource="{x:Bind ViewModel.Library.MetadataProviders}"
                                     DragItemsStarting="ProvidersListView_DragItemsStarting"
                                     ItemContainerStyle="{StaticResource NavigationListViewItemStyle}"
                                     ItemTemplate="{StaticResource ServiceProviderItemTemplate}"
@@ -938,14 +938,14 @@
                 </controls:SettingsExpander>
 
                 <controls:SettingsExpander
-                    IsExpanded="{x:Bind ViewModel.IsFetchOnlineLyricsEnabled, Mode=OneWay}"
+                    IsExpanded="{x:Bind ViewModel.Library.IsFetchOnlineLyricsEnabled, Mode=OneWay}"
                     Header="{x:Bind resources:Strings.SettingsPage_OnlineLyrics_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_OnlineLyrics_Description, Mode=OneTime}">
                     <controls:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED1E;" />
                     </controls:SettingsExpander.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
-                        IsOn="{x:Bind ViewModel.IsFetchOnlineLyricsEnabled, Mode=TwoWay}" />
+                        IsOn="{x:Bind ViewModel.Library.IsFetchOnlineLyricsEnabled, Mode=TwoWay}" />
 
                     <controls:SettingsExpander.Items>
                         <controls:SettingsCard Header="{x:Bind resources:Strings.SettingsPage_LyricsSources_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_LyricsSources_Description, Mode=OneTime}">
@@ -963,7 +963,7 @@
                                 CanDragItems="True"
                                 CanReorderItems="True"
                                 CornerRadius="{ThemeResource ControlCornerRadius}"
-                                ItemsSource="{x:Bind ViewModel.LyricsProviders}"
+                                ItemsSource="{x:Bind ViewModel.Library.LyricsProviders}"
                                 DragItemsStarting="ProvidersListView_DragItemsStarting"
                                 ItemContainerStyle="{StaticResource NavigationListViewItemStyle}"
                                 ItemTemplate="{StaticResource ServiceProviderItemTemplate}"
@@ -974,14 +974,14 @@
                 </controls:SettingsExpander>
 
                 <controls:SettingsExpander
-                    IsExpanded="{x:Bind ViewModel.IsLyricsRomanizationEnabled, Mode=OneWay}"
+                    IsExpanded="{x:Bind ViewModel.Library.IsLyricsRomanizationEnabled, Mode=OneWay}"
                     Header="{x:Bind resources:Strings.SettingsPage_RomanizedLyrics_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_RomanizedLyrics_Description, Mode=OneTime}">
                     <controls:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8D2;" />
                     </controls:SettingsExpander.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
-                        IsOn="{x:Bind ViewModel.IsLyricsRomanizationEnabled, Mode=TwoWay}" />
+                        IsOn="{x:Bind ViewModel.Library.IsLyricsRomanizationEnabled, Mode=TwoWay}" />
 
                     <controls:SettingsExpander.Items>
                         <controls:SettingsCard Header="{x:Bind resources:Strings.SettingsPage_RomanizationPacks_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_RomanizationPacks_Description, Mode=OneTime}">
