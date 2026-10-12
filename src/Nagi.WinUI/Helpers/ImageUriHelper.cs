@@ -8,9 +8,6 @@ using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace Nagi.WinUI.Helpers;
 
-/// <summary>
-///     Provides utility methods for formatting image URIs and safe ImageSource creation.
-/// </summary>
 public static class ImageUriHelper
 {
     // Shared artwork appears repeatedly in song lists; avoid repeating disk reads for each row.
@@ -25,7 +22,6 @@ public static class ImageUriHelper
     ///     This method only performs a disk read for rooted, physical file paths (e.g., C:\... or \\server\...).
     ///     For non-physical URIs (ms-appx, http, etc.), the original path is returned unchanged.
     /// </remarks>
-    /// <returns>A URI string with a cache-buster query parameter if it's a local file; otherwise, the original path.</returns>
     public static string? GetUriWithCacheBuster(string? path)
     {
         if (string.IsNullOrEmpty(path)) return null;
@@ -70,7 +66,6 @@ public static class ImageUriHelper
     ///     Appends a cache-busting query parameter to a path using a provided modification date.
     ///     Avoids querying the timestamp; local file existence is still checked.
     /// </summary>
-    /// <returns>A URI string with a cache-buster query parameter.</returns>
     public static string? GetUriWithCacheBuster(string? path, DateTime? modifiedDate)
     {
         if (string.IsNullOrEmpty(path)) return null;
@@ -114,7 +109,6 @@ public static class ImageUriHelper
     ///     Safely converts a URI string to an ImageSource (BitmapImage).
     ///     Returns null if the input is null, empty, or an invalid URI.
     /// </summary>
-    /// <returns>A BitmapImage if successful; otherwise, null.</returns>
     public static ImageSource? SafeGetImageSource(string? uriString)
     {
         if (!Uri.TryCreate(uriString, UriKind.Absolute, out var uri))
@@ -126,7 +120,6 @@ public static class ImageUriHelper
         }
         catch
         {
-            // Catch all to prevent crashes during state transitions or for invalid paths
             return null;
         }
     }
@@ -138,7 +131,6 @@ public static class ImageUriHelper
     ///     immediately and ignores any subsequent DecodePixelWidth assignment.
     ///     The framework multiplies the logical width by the active DPI scale.
     /// </summary>
-    /// <returns>A configured BitmapImage, or null on invalid input.</returns>
     public static ImageSource? GetDecodedBitmap(string? uriString, int decodePixelWidth)
     {
         if (decodePixelWidth <= 0 || !Uri.TryCreate(uriString, UriKind.Absolute, out var uri))

@@ -1,8 +1,5 @@
 ﻿namespace Nagi.Core.Models;
 
-/// <summary>
-///     Fields that can be used in smart playlist rules.
-/// </summary>
 public enum SmartPlaylistField
 {
     // Text Fields
@@ -37,9 +34,6 @@ public enum SmartPlaylistField
     FileModifiedDate
 }
 
-/// <summary>
-///     Comparison operators for smart playlist rules.
-/// </summary>
 public enum SmartPlaylistOperator
 {
     // Text operators
@@ -68,9 +62,6 @@ public enum SmartPlaylistOperator
     IsFalse
 }
 
-/// <summary>
-///     Sort order for smart playlist results.
-/// </summary>
 public enum SmartPlaylistSortOrder
 {
     TitleAsc,

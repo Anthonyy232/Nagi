@@ -1,13 +1,7 @@
 namespace Nagi.Core.Services.Data;
 
-/// <summary>
-///     Defines the possible outcomes of a service operation.
-/// </summary>
 public enum ServiceResultStatus
 {
-    /// <summary>
-    ///     The operation completed successfully and returned data.
-    /// </summary>
     Success,
 
     /// <summary>
@@ -21,11 +15,6 @@ public enum ServiceResultStatus
     TemporaryError
 }
 
-/// <summary>
-///     A generic wrapper for service method return values, encapsulating the result status,
-///     and data.
-/// </summary>
-/// <typeparam name="T">The type of the data returned by the service.</typeparam>
 public class ServiceResult<T> where T : class
 {
     private ServiceResult(T? data, ServiceResultStatus status)
@@ -34,9 +23,6 @@ public class ServiceResult<T> where T : class
         Status = status;
     }
 
-    /// <summary>
-    ///     The data payload of a successful operation. Null otherwise.
-    /// </summary>
     public T? Data { get; }
 
     public ServiceResultStatus Status { get; }

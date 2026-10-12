@@ -1,17 +1,11 @@
 ﻿namespace Nagi.Core.Models;
 
-/// <summary>
-///     Constants for service provider identifiers used throughout the application.
-///     Centralizes provider IDs to prevent typos and enable compile-time checking.
-/// </summary>
 public static class ServiceProviderIds
 {
     #region Lyrics Providers
 
-    /// <summary>LRCLIB</summary>
     public const string LrcLib = "lrclib";
 
-    /// <summary>NetEase</summary>
     public const string NetEase = "netease";
 
     #endregion
@@ -33,7 +27,6 @@ public static class ServiceProviderIds
     /// <summary>Last.fm API Secret name for retrieval.</summary>
     public const string LastFmSecret = "lastfm-secret";
 
-    /// <summary>ListenBrainz - Open scrobbling service from MetaBrainz.</summary>
     public const string ListenBrainz = "listenbrainz";
 
     #endregion

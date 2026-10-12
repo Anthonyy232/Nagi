@@ -71,9 +71,6 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
         if (edited is not null) await InitializeAsync(edited.Name, smartPlaylistId, edited.CoverImageUri);
     }
 
-    /// <summary>
-    ///     Gets the rule summary text for display in the UI.
-    /// </summary>
     [ObservableProperty]
     public partial string RuleSummary { get; set; } = string.Empty;
 
@@ -85,9 +82,6 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
 
 
 
-    /// <summary>
-    ///     Initializes the view model for a specific smart playlist.
-    /// </summary>
     public async Task InitializeAsync(string title, Guid? smartPlaylistId, string? coverImageUri = null)
     {
         if (_isDisposed) return;

@@ -347,7 +347,6 @@ public sealed partial class ArtistViewPage : Page
         {
             _isUpdatingAlbumsLayout = true;
 
-            // Calculate new height: Max - ScrollOffset, clamped to 0
             var scrollOffset = _songsScrollViewer.VerticalOffset;
             var newHeight = Math.Max(0, _lastKnownAlbumsHeight - scrollOffset);
 

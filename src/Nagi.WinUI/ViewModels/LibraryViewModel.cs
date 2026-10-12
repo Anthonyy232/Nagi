@@ -11,9 +11,6 @@ using Nagi.Core.Helpers;
 
 namespace Nagi.WinUI.ViewModels;
 
-/// <summary>
-///     Manages the main library view, displaying all songs and handling the initial library scan.
-/// </summary>
 public partial class LibraryViewModel : SongListViewModelBase
 {
     private bool _isInitialScanTriggered;

@@ -202,8 +202,6 @@ public sealed partial class FolderSongViewPage : Page
         _logger.LogDebug("Ctrl+A invoked. Selecting all songs in folder.");
         ViewModel.SelectAllCommand.Execute(null);
 
-        // Sync the current visible items (only song items will be visually selected in the list via ContainerContentChanging if we use logical state)
-        // But for visual feedback, we call SelectAll on the list view.
         try
         {
             _isUpdatingSelection = true;

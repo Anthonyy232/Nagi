@@ -49,9 +49,6 @@ public sealed partial class TrayPopup : Window
 
     public PlayerViewModel ViewModel { get; }
 
-    /// <summary>
-    ///     Occurs when the popup window loses focus and should be hidden.
-    /// </summary>
     public event EventHandler? Deactivated;
 
     public void SetWindowOpacity(byte alpha)

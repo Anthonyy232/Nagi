@@ -12,9 +12,6 @@ using Color = Windows.UI.Color;
 
 namespace Nagi.WinUI.Services.Implementations;
 
-/// <summary>
-///     A service that manages the application's visual theme, including static and dynamic theming.
-/// </summary>
 public class ThemeService : IThemeService
 {
     // Roughly 4.5:1 contrast against the dark media overlay surface (#303030).

@@ -13,9 +13,6 @@ using Nagi.Core.Services.Data;
 
 namespace Nagi.WinUI.Pages;
 
-/// <summary>
-///     A page that displays a list of all genres from the user's library.
-/// </summary>
 public sealed partial class GenrePage : Page
 {
     private readonly ILogger<GenrePage> _logger;

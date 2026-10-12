@@ -6,9 +6,6 @@ using Nagi.Core.Models;
 
 namespace Nagi.WinUI.ViewModels;
 
-/// <summary>
-///     ViewModel for a single smart playlist rule in the editor.
-/// </summary>
 public class RuleViewModel : ObservableObject
 {
     public static IReadOnlyList<FieldOption> AvailableFields { get; } = new List<FieldOption>

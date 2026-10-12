@@ -9,9 +9,6 @@ using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.Services.Implementations;
 
-/// <summary>
-///     Provides a service for navigating between pages within a XAML Frame.
-/// </summary>
 public class NavigationService : INavigationService, IDisposable
 {
     private static readonly Dictionary<Type, Type> DetailPages = new()
@@ -36,9 +33,6 @@ public class NavigationService : INavigationService, IDisposable
         _logger = logger;
     }
 
-    /// <summary>
-    ///     Cleans up resources by unsubscribing from the Frame's Navigated event.
-    /// </summary>
     public void Dispose()
     {
         if (_isDisposed) return;
@@ -49,10 +43,6 @@ public class NavigationService : INavigationService, IDisposable
         GC.SuppressFinalize(this);
     }
 
-    /// <summary>
-    ///     Initializes the navigation service with the application's root frame.
-    /// </summary>
-    /// <param name="frame">The root frame used for navigation.</param>
     public void Initialize(Frame frame)
     {
         ArgumentNullException.ThrowIfNull(frame);
@@ -63,11 +53,6 @@ public class NavigationService : INavigationService, IDisposable
         _frame.Navigated += OnFrameNavigated;
     }
 
-    /// <summary>
-    ///     Navigates to the specified page type.
-    /// </summary>
-    /// <param name="pageType">The type of the page to navigate to.</param>
-    /// <param name="parameter">An optional parameter to pass to the target page.</param>
     public void Navigate(Type pageType, object? parameter = null)
     {
         if (_frame is null)
@@ -86,7 +71,6 @@ public class NavigationService : INavigationService, IDisposable
         _frame.Navigate(pageType, parameter);
     }
 
-    /// <inheritdoc />
     public void NavigateTo(object parameter)
     {
         ArgumentNullException.ThrowIfNull(parameter);
@@ -95,9 +79,6 @@ public class NavigationService : INavigationService, IDisposable
         Navigate(pageType, parameter);
     }
 
-    /// <summary>
-    ///     Updates the service's state after a navigation has completed.
-    /// </summary>
     private void OnFrameNavigated(object sender, NavigationEventArgs e)
     {
         _lastPageType = e.SourcePageType;

@@ -10,9 +10,6 @@ using WinRT.Interop;
 
 namespace Nagi.WinUI.Services.Implementations;
 
-/// <summary>
-///     Manages the lifecycle and positioning of the tray popup window.
-/// </summary>
 public class TrayPopupService : ITrayPopupService, IDisposable
 {
     private const int VERTICAL_OFFSET = 24;

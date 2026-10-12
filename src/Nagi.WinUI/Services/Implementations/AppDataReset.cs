@@ -32,7 +32,6 @@ internal static class AppDataReset
                 var settingsService = services.GetRequiredService<ISettingsService>();
                 var libraryWriter = services.GetRequiredService<ILibraryWriter>();
 
-                // Use robust service methods first
                 await settingsService.ResetToDefaultsAsync();
                 await libraryWriter.ClearAllLibraryDataAsync();
             }
@@ -44,7 +43,6 @@ internal static class AppDataReset
         }
         else
         {
-            // Fallback: Manually delete files if DI hasn't initialized
             Log.Warning("Services not available during reset. Performing manual file deletion.");
             PerformManualFileReset(pathConfig);
         }

@@ -2,14 +2,8 @@ using System.Collections.Frozen;
 
 namespace Nagi.Core.Constants;
 
-/// <summary>
-///     Provides centralized file extension constants for music files and cover art images.
-/// </summary>
 public static class FileExtensions
 {
-    /// <summary>
-    ///     Supported audio and video file extensions for the music library.
-    /// </summary>
     public static readonly HashSet<string> MusicFileExtensions = new(new[]
     {
         ".aa", ".aac", ".aiff", ".ape", ".dsf", ".flac",

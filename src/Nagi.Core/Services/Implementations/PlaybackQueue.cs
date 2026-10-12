@@ -65,9 +65,6 @@ internal sealed class PlaybackQueue
         _shuffledIndex.Clear();
     }
 
-    /// <summary>
-    ///     Moves <paramref name="songId" /> to the front of the shuffled order.
-    /// </summary>
     public void MoveToShuffledFront(Guid songId)
     {
         _shuffled.Remove(songId);

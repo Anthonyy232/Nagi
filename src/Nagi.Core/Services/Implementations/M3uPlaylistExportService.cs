@@ -7,9 +7,6 @@ using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Services.Implementations;
 
-/// <summary>
-///     Implementation of <see cref="IPlaylistExportService" /> for M3U/M3U8 playlist format.
-/// </summary>
 public class M3uPlaylistExportService : IPlaylistExportService
 {
     private readonly ILibraryReader _libraryReader;
@@ -26,7 +23,6 @@ public class M3uPlaylistExportService : IPlaylistExportService
         _logger = logger;
     }
 
-    /// <inheritdoc />
     public async Task<PlaylistImportResult> ImportPlaylistAsync(string filePath, string playlistName)
     {
         try
@@ -142,7 +138,6 @@ public class M3uPlaylistExportService : IPlaylistExportService
         }
     }
 
-    /// <inheritdoc />
     public async Task<BatchExportResult> ExportAllPlaylistsAsync(string directoryPath)
     {
         try
@@ -245,7 +240,6 @@ public class M3uPlaylistExportService : IPlaylistExportService
         return Path.Combine(directoryPath, fileName);
     }
 
-    /// <inheritdoc />
     public async Task<BatchImportResult> ImportMultiplePlaylistsAsync(IEnumerable<string> filePaths)
     {
         var importedCount = 0;

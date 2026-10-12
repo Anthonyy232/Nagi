@@ -413,7 +413,6 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             return;
         }
 
-        // If no track is loaded but a queue exists, play from the last known position.
         if (_queue.Order.Any())
         {
             var indexToPlay = CurrentQueueIndex >= 0 ? CurrentQueueIndex : 0;
@@ -500,7 +499,6 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
     private async Task PreviousInternalAsync(int request)
     {
-        // If the track has played for more than 3 seconds, restart it.
         if (CurrentTrack != null && _audioPlayer.CurrentPosition.TotalSeconds > 3 &&
             CurrentRepeatMode != RepeatMode.RepeatOne)
         {

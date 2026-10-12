@@ -40,7 +40,6 @@ public class MemoryLog : ILogEventSink
     /// <summary>
     ///     Retrieves all stored log events as a single formatted string.
     /// </summary>
-    /// <returns>A string containing all rendered log messages and exceptions.</returns>
     public string GetContent()
     {
         LogEvent[] events;

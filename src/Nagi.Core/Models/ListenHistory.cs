@@ -3,9 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Nagi.Core.Models;
 
-/// <summary>
-///     Records a single listening event for a song, used for tracking playback history.
-/// </summary>
 public class ListenHistory
 {
     [Key]
@@ -17,9 +14,6 @@ public class ListenHistory
     [ForeignKey("SongId")]
     public virtual Song Song { get; set; } = null!;
 
-    /// <summary>
-    ///     The Coordinated Universal Time (UTC) when the song was listened to.
-    /// </summary>
     public DateTime ListenTimestampUtc { get; set; } = DateTime.UtcNow;
 
     /// <summary>
@@ -28,24 +22,12 @@ public class ListenHistory
     /// </summary>
     public bool IsEligibleForScrobbling { get; set; }
 
-    /// <summary>
-    ///     Indicates how much of the track was listened to in this session (in ticks).
-    /// </summary>
     public long ListenDurationTicks { get; set; }
 
-    /// <summary>
-    ///    The reason why the track finished playing in this session.
-    /// </summary>
     public PlaybackEndReason EndReason { get; set; }
 
-    /// <summary>
-    ///     The type of context (Album, Playlist, etc.) from which the track was played.
-    /// </summary>
     public PlaybackContextType ContextType { get; set; }
 
-    /// <summary>
-    ///     The ID of the context from which the track was played (e.g., AlbumId, PlaylistId).
-    /// </summary>
     public Guid? ContextId { get; set; }
 
     /// <summary>
@@ -54,8 +36,5 @@ public class ListenHistory
     /// </summary>
     public bool IsScrobbled { get; set; }
 
-    /// <summary>
-    ///     Indicates whether this listen event has been successfully submitted to ListenBrainz.
-    /// </summary>
     public bool IsSubmittedToListenBrainz { get; set; }
 }

@@ -16,7 +16,6 @@ namespace Nagi.Core.Services.Implementations;
 /// </summary>
 public partial class LibraryService
 {
-    /// <inheritdoc />
     public async Task<Artist?> GetArtistDetailsAsync(Guid artistId, bool allowOnlineFetch, CancellationToken cancellationToken = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
@@ -44,7 +43,6 @@ public partial class LibraryService
             .FirstOrDefaultAsync(a => a.Id == artistId, cancellationToken).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task StartArtistMetadataBackgroundFetchAsync()
     {
         if (_shutdownCts.IsCancellationRequested) return;
@@ -258,9 +256,6 @@ public partial class LibraryService
         return pendingEvents.Count;
     }
 
-    /// <summary>
-    ///     Searches for an artist image file (e.g., artist.jpg) in a specific directory.
-    /// </summary>
     private string? FindArtistImageInDirectory(string directory)
     {
         try
@@ -313,9 +308,6 @@ public partial class LibraryService
             artistName, ct, directoryCache);
     }
 
-    /// <summary>
-    ///     Helper method to scan a set of directories for a valid artist image file.
-    /// </summary>
     private async Task<byte[]?> ScanDirectoriesForArtistImageAsync(IEnumerable<string> directories, string artistName, CancellationToken ct, Dictionary<string, string?>? directoryCache = null)
     {
         foreach (var dir in directories)
@@ -350,7 +342,6 @@ public partial class LibraryService
         return null;
     }
 
-    /// <inheritdoc />
     public async Task<bool> UpdateArtistImageAsync(Guid artistId, string localFilePath)
     {
         if (string.IsNullOrWhiteSpace(localFilePath) || !_fileSystem.FileExists(localFilePath)) return false;
@@ -382,7 +373,6 @@ public partial class LibraryService
         }
     }
 
-    /// <inheritdoc />
     public async Task<bool> RemoveArtistImageAsync(Guid artistId)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -408,9 +398,6 @@ public partial class LibraryService
         }
     }
 
-    /// <summary>
-    ///     Fetches metadata from remote sources and updates availability status.
-    /// </summary>
     private async Task<(bool Updated, string? NewImagePath)> FetchAndUpdateArtistFromRemoteAsync(
         MusicDbContext context,
         Artist artist,
@@ -551,7 +538,6 @@ public partial class LibraryService
                         _logger.LogDebug("Using biography from {Provider} for artist '{ArtistName}'.", provider.DisplayName, artist.Name);
                     }
 
-                    // Early exit if we have both primary values
                     if (!string.IsNullOrEmpty(finalImageUrl) && !string.IsNullOrEmpty(finalBiography))
                         break;
                 }

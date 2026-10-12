@@ -39,10 +39,8 @@ public sealed record ProviderPolicy
     /// <summary>Stable provider id; matches <see cref="Models.ServiceProviderIds"/>.</summary>
     public required string ProviderId { get; init; }
 
-    /// <summary>Rate-limit and retry settings for this provider.</summary>
     public required ChannelPolicy Channel { get; init; }
 
-    /// <summary>Circuit-breaker configuration for this provider.</summary>
     public CircuitBreakerSettings CircuitBreaker { get; init; } = new();
 }
 

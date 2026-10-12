@@ -13,7 +13,6 @@ namespace Nagi.Core.Services.Implementations;
 /// </summary>
 public partial class LibraryReader
 {
-    /// <inheritdoc />
     public async Task<PagedResult<Song>> GetAllSongsPagedAsync(int pageNumber, int pageSize,
         SongSortOrder sortOrder = SongSortOrder.TitleAsc, CancellationToken token = default)
     {
@@ -22,7 +21,6 @@ public partial class LibraryReader
         return await ReadSongPageAsync(context.Songs, pageNumber, pageSize, sortOrder, token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<PagedResult<Song>> SearchSongsPagedAsync(string searchTerm, int pageNumber, int pageSize, CancellationToken token = default)
     {
         SanitizePaging(ref pageNumber, ref pageSize);
@@ -33,7 +31,6 @@ public partial class LibraryReader
         return await ReadSongPageAsync(query, pageNumber, pageSize, SongSortOrder.TitleAsc, token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<PagedResult<Song>> GetSongsByAlbumIdPagedAsync(Guid albumId, int pageNumber, int pageSize,
         SongSortOrder sortOrder, CancellationToken token = default)
     {
@@ -42,7 +39,6 @@ public partial class LibraryReader
         return await ReadSongPageAsync(context.Songs.Where(s => s.AlbumId == albumId), pageNumber, pageSize, sortOrder, token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<PagedResult<Song>> GetSongsByArtistIdPagedAsync(Guid artistId, int pageNumber, int pageSize,
         SongSortOrder sortOrder, CancellationToken token = default)
     {
@@ -51,7 +47,6 @@ public partial class LibraryReader
         return await ReadSongPageAsync(context.Songs.Where(s => s.SongArtists.Any(sa => sa.ArtistId == artistId)), pageNumber, pageSize, sortOrder, token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<PagedResult<Song>> GetSongsByGenreIdPagedAsync(Guid genreId, int pageNumber, int pageSize,
         SongSortOrder sortOrder, CancellationToken token = default)
     {
@@ -60,7 +55,6 @@ public partial class LibraryReader
         return await ReadSongPageAsync(context.Songs.Where(s => s.Genres.Any(g => g.Id == genreId)), pageNumber, pageSize, sortOrder, token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<PagedResult<Song>> GetSongsByPlaylistPagedAsync(Guid playlistId, int pageNumber, int pageSize, SongSortOrder sortOrder, CancellationToken token = default)
     {
         SanitizePaging(ref pageNumber, ref pageSize);
@@ -103,7 +97,6 @@ public partial class LibraryReader
         return await ReadSongPageAsync(query.Select(ps => ps.Song), pageNumber, pageSize, sortOrder, token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<PagedResult<Artist>> GetAllArtistsPagedAsync(int pageNumber, int pageSize,
         ArtistSortOrder sortOrder = ArtistSortOrder.NameAsc, CancellationToken token = default)
     {
@@ -142,7 +135,6 @@ public partial class LibraryReader
         { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
     }
 
-    /// <inheritdoc />
     public async Task<PagedResult<Artist>> SearchArtistsPagedAsync(string searchTerm, int pageNumber, int pageSize, CancellationToken token = default)
     {
         SanitizePaging(ref pageNumber, ref pageSize);
@@ -163,7 +155,6 @@ public partial class LibraryReader
         { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
     }
 
-    /// <inheritdoc />
     public async Task<PagedResult<Album>> GetAllAlbumsPagedAsync(int pageNumber, int pageSize,
         AlbumSortOrder sortOrder = AlbumSortOrder.ArtistAsc, CancellationToken token = default)
     {
@@ -181,7 +172,6 @@ public partial class LibraryReader
         { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
     }
 
-    /// <inheritdoc />
     public async Task<PagedResult<Album>> SearchAlbumsPagedAsync(string searchTerm, int pageNumber, int pageSize, CancellationToken token = default)
     {
         SanitizePaging(ref pageNumber, ref pageSize);
@@ -197,14 +187,12 @@ public partial class LibraryReader
         { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
     }
 
-    /// <inheritdoc />
     public async Task<List<Guid>> GetAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await ApplySongSortOrder(context.Songs.AsNoTracking(), sortOrder).Select(s => s.Id).ToListAsync(token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<List<Guid>> SearchAllSongIdsAsync(string searchTerm, SongSortOrder sortOrder, CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -216,7 +204,6 @@ public partial class LibraryReader
         return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync(token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<List<Guid>> GetAllSongIdsByFolderIdAsync(Guid folderId, SongSortOrder sortOrder, CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -224,13 +211,11 @@ public partial class LibraryReader
         return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync(token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<List<Guid>> GetAllSongIdsInDirectoryRecursiveAsync(Guid folderId, string directoryPath,
         SongSortOrder sortOrder, CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
-        // Normalize the directory path for comparison
         var normalizedPath = PathCanonicalizer.NormalizeDirectoryPath(directoryPath);
 
         // Get all song IDs where DirectoryPath equals normalizedPath or starts with normalizedPath followed by a separator
@@ -244,14 +229,12 @@ public partial class LibraryReader
         return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync(token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public Task<PagedResult<Song>> GetSongsInDirectoryOffsetAsync(Guid folderId, string directoryPath,
         int skip, int take, SongSortOrder sortOrder, CancellationToken token = default)
     {
         return SearchSongsInFolderOffsetAsync(folderId, directoryPath, string.Empty, skip, take, sortOrder, token);
     }
 
-    /// <inheritdoc />
     public async Task<PagedResult<Song>> SearchSongsInFolderOffsetAsync(Guid folderId, string directoryPath, string searchTerm, int skip, int take, SongSortOrder sortOrder, CancellationToken token = default)
     {
         skip = Math.Max(0, skip);
@@ -279,7 +262,6 @@ public partial class LibraryReader
         return new PagedResult<Song> { Items = items, TotalCount = totalCount, PageNumber = 0, PageSize = take };
     }
 
-    /// <inheritdoc />
     public async Task<List<Guid>> GetAllSongIdsByArtistIdAsync(Guid artistId, SongSortOrder sortOrder, CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -287,7 +269,6 @@ public partial class LibraryReader
         return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync(token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<List<Guid>> GetAllSongIdsByAlbumIdAsync(Guid albumId, SongSortOrder sortOrder, CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -295,7 +276,6 @@ public partial class LibraryReader
         return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync(token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<List<Guid>> GetAllSongIdsByPlaylistIdAsync(Guid playlistId, SongSortOrder sortOrder, CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -311,7 +291,6 @@ public partial class LibraryReader
         return await ApplySongSortOrder(songQuery, sortOrder).Select(s => s.Id).ToListAsync(token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<List<Guid>> GetAllSongIdsByGenreIdAsync(Guid genreId, SongSortOrder sortOrder, CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -319,7 +298,6 @@ public partial class LibraryReader
         return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync(token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<PagedResult<Song>> SearchSongsInAlbumPagedAsync(Guid albumId, string searchTerm, int pageNumber,
         int pageSize, CancellationToken token = default)
     {
@@ -335,7 +313,6 @@ public partial class LibraryReader
             pageNumber, pageSize, SongSortOrder.TrackNumberAsc, token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<PagedResult<Song>> SearchSongsInArtistPagedAsync(Guid artistId, string searchTerm, int pageNumber,
         int pageSize, CancellationToken token = default)
     {
@@ -351,7 +328,6 @@ public partial class LibraryReader
             pageNumber, pageSize, SongSortOrder.AlbumAsc, token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<PagedResult<Song>> SearchSongsInPlaylistPagedAsync(Guid playlistId, string searchTerm,
         int pageNumber, int pageSize, SongSortOrder sortOrder, CancellationToken token = default)
     {
@@ -365,7 +341,6 @@ public partial class LibraryReader
         return await ReadPlaylistPageAsync(context, query, pageNumber, pageSize, sortOrder, token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<PagedResult<Song>> SearchSongsInGenrePagedAsync(Guid genreId, string searchTerm, int pageNumber,
         int pageSize, CancellationToken token = default)
     {
@@ -381,7 +356,6 @@ public partial class LibraryReader
             pageNumber, pageSize, SongSortOrder.TitleAsc, token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<List<Guid>> SearchAllSongIdsInFolderAsync(Guid folderId, string directoryPath, string searchTerm,
         SongSortOrder sortOrder, CancellationToken token = default)
     {
@@ -395,7 +369,6 @@ public partial class LibraryReader
         return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync(token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<List<Guid>> SearchAllSongIdsInArtistAsync(Guid artistId, string searchTerm,
         SongSortOrder sortOrder, CancellationToken token = default)
     {
@@ -407,7 +380,6 @@ public partial class LibraryReader
         return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync(token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<List<Guid>> SearchAllSongIdsInAlbumAsync(Guid albumId, string searchTerm, SongSortOrder sortOrder, CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -418,7 +390,6 @@ public partial class LibraryReader
         return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync(token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<List<Guid>> SearchAllSongIdsInPlaylistAsync(Guid playlistId, string searchTerm, SongSortOrder sortOrder, CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -437,7 +408,6 @@ public partial class LibraryReader
             .ToListAsync(token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<List<Guid>> SearchAllSongIdsInGenreAsync(Guid genreId, string searchTerm, SongSortOrder sortOrder, CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);

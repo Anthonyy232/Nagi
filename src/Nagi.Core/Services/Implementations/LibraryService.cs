@@ -103,20 +103,14 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
     private void ClearActiveScanCancellationSource(CancellationTokenSource cts) =>
         Interlocked.CompareExchange(ref _activeScanCts, null, cts);
 
-    /// <summary>
-    ///     Occurs when an artist's metadata (e.g., biography, image) has been successfully updated from a remote source.
-    /// </summary>
     public event EventHandler<ArtistMetadataUpdatedEventArgs>? ArtistMetadataUpdated;
 
-    /// <inheritdoc />
     public event EventHandler<IEnumerable<ArtistMetadataUpdatedEventArgs>>? ArtistMetadataBatchUpdated;
 
-    /// <inheritdoc />
     public event EventHandler<LibraryContentChangedEventArgs>? LibraryContentChanged;
 
     #region Data Reset
 
-    /// <inheritdoc />
     public async Task ClearListenHistoryAsync()
     {
         _logger.LogInformation("Clearing all listen history.");
@@ -197,7 +191,6 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
 
     #region Folder Management
 
-    /// <inheritdoc />
     public async Task<Folder?> AddFolderAsync(string path, string? name = null)
     {
         if (string.IsNullOrWhiteSpace(path)) return null;
@@ -236,7 +229,6 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
         return folder;
     }
 
-    /// <inheritdoc />
     public async Task<bool> RemoveFolderAsync(Guid folderId)
     {
         CancelActiveScan("folder removal");
@@ -330,13 +322,11 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
 
     #region Song Metadata Updates
 
-    /// <inheritdoc />
     public Task<bool> UpdateSongLrcPathAsync(Guid songId, string? lrcPath)
     {
         return UpdateSongPropertyAsync(songId, s => s.LrcFilePath = lrcPath);
     }
 
-    /// <inheritdoc />
     public Task<bool> UpdateSongLyricsLastCheckedAsync(Guid songId)
     {
         return UpdateSongPropertyAsync(songId, s => s.LyricsLastCheckedUtc = DateTime.UtcNow);
@@ -346,7 +336,6 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
 
     #region Listen History
 
-    /// <inheritdoc />
     public async Task<long?> StartListenSessionAsync(Guid songId, PlaybackContext context)
     {
         await using var dbContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -366,7 +355,6 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
         return historyEntry.Id;
     }
 
-    /// <inheritdoc />
     public async Task FinalizeListenSessionAsync(long listenHistoryId, TimeSpan finalDuration, PlaybackEndReason endReason)
     {
         await using var dbContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -402,7 +390,6 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
         await transaction.CommitAsync().ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<bool> MarkListenAsEligibleForScrobblingAsync(long listenHistoryId)
     {
         await using var dbContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -428,7 +415,6 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
         return true;
     }
 
-    /// <inheritdoc />
     public async Task<bool> MarkListenAsScrobbledAsync(long listenHistoryId)
     {
         await using var dbContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -437,7 +423,6 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
             .ConfigureAwait(false) > 0;
     }
 
-    /// <inheritdoc />
     public async Task<bool> MarkListenAsSubmittedToListenBrainzAsync(long listenHistoryId)
     {
         await using var dbContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);

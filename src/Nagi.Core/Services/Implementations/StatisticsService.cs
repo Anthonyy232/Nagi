@@ -14,7 +14,6 @@ public class StatisticsService : IStatisticsService
         _contextFactory = contextFactory;
     }
 
-    /// <inheritdoc />
     public async Task<IEnumerable<SongStats>> GetTopSongsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.PlayCount, int offset = 0, string? searchTerm = null, CancellationToken ct = default)
     {
         if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -55,7 +54,6 @@ public class StatisticsService : IStatisticsService
             .Select(x => new SongStats(songs[x.SongId], x.TotalPlays, TimeSpan.FromTicks(x.TotalDurationTicks), x.Skips, x.GlobalRank));
     }
 
-    /// <inheritdoc />
     public async Task<StatisticsPage<SongStats>> GetTopSongsPageAsync(TimeRange range, int limit, SortMetric metric, int offset, string? searchTerm, CancellationToken ct = default)
     {
         if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -66,7 +64,6 @@ public class StatisticsService : IStatisticsService
         return new StatisticsPage<SongStats>(items, totalCount);
     }
 
-    /// <inheritdoc />
     public async Task<IEnumerable<ArtistStats>> GetTopArtistsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.Duration, int offset = 0, string? searchTerm = null, CancellationToken ct = default)
     {
         if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -109,7 +106,6 @@ public class StatisticsService : IStatisticsService
             .Select(x => new ArtistStats(artists[x.ArtistId], x.TotalPlays, TimeSpan.FromTicks(x.TotalDurationTicks), x.GlobalRank));
     }
 
-    /// <inheritdoc />
     public async Task<StatisticsPage<ArtistStats>> GetTopArtistsPageAsync(TimeRange range, int limit, SortMetric metric, int offset, string? searchTerm, CancellationToken ct = default)
     {
         if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -133,7 +129,6 @@ public class StatisticsService : IStatisticsService
             .CountAsync(ct).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<IEnumerable<AlbumStats>> GetTopAlbumsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.PlayCount, int offset = 0, string? searchTerm = null, CancellationToken ct = default)
     {
         if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -177,7 +172,6 @@ public class StatisticsService : IStatisticsService
             .Select(x => new AlbumStats(albums[x.AlbumId], x.TotalPlays, TimeSpan.FromTicks(x.TotalDurationTicks), x.GlobalRank));
     }
 
-    /// <inheritdoc />
     public async Task<StatisticsPage<AlbumStats>> GetTopAlbumsPageAsync(TimeRange range, int limit, SortMetric metric, int offset, string? searchTerm, CancellationToken ct = default)
     {
         if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -201,7 +195,6 @@ public class StatisticsService : IStatisticsService
             .CountAsync(ct).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<IEnumerable<GenreStats>> GetTopGenresAsync(TimeRange range, int limit = 10, SortMetric metric = SortMetric.PlayCount, int offset = 0, string? searchTerm = null, CancellationToken ct = default)
     {
         if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -244,7 +237,6 @@ public class StatisticsService : IStatisticsService
             .Select(x => new GenreStats(genres[x.GenreId], x.TotalPlays, TimeSpan.FromTicks(x.TotalDurationTicks), x.GlobalRank));
     }
 
-    /// <inheritdoc />
     public async Task<StatisticsPage<GenreStats>> GetTopGenresPageAsync(TimeRange range, int limit, SortMetric metric, int offset, string? searchTerm, CancellationToken ct = default)
     {
         if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -544,7 +536,6 @@ public class StatisticsService : IStatisticsService
         return query;
     }
 
-    /// <inheritdoc />
     public async Task<TimeSpan> GetTotalListenTimeAsync(TimeRange range, CancellationToken ct = default)
     {
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
@@ -554,7 +545,6 @@ public class StatisticsService : IStatisticsService
         return TimeSpan.FromTicks(totalTicks);
     }
 
-    /// <inheritdoc />
     public async Task<int> GetUniqueSongsPlayedAsync(TimeRange range, CancellationToken ct = default)
     {
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
@@ -568,7 +558,6 @@ public class StatisticsService : IStatisticsService
             .ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<ListeningPatternStats> GetListeningPatternsAsync(TimeRange range, CancellationToken ct = default)
     {
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
@@ -594,7 +583,6 @@ public class StatisticsService : IStatisticsService
         return new ListeningPatternStats(mostActiveDay, peakHour);
     }
 
-    /// <inheritdoc />
     public async Task<IEnumerable<ContextStats>> GetPlaybackSourceDistributionAsync(TimeRange range, CancellationToken ct = default)
     {
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);

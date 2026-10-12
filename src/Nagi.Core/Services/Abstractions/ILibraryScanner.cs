@@ -3,9 +3,6 @@ using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Services.Abstractions;
 
-/// <summary>
-///     Defines the contract for scanning folders and fetching online metadata.
-/// </summary>
 public interface ILibraryScanner
 {
     event EventHandler<ArtistMetadataUpdatedEventArgs>? ArtistMetadataUpdated;

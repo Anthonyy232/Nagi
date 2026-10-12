@@ -209,7 +209,7 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
 
     /// <summary>
     /// Populates AvailableLanguages asynchronously by scanning for satellite resource assemblies.
-    /// Fires and forgets from LoadSettingsAsync — does not block startup.
+    /// Fires and forgets from LoadAsync — does not block startup.
     /// Updates SelectedLanguage once the full list is available.
     /// </summary>
     private async Task PopulateAvailableLanguagesAsync(string currentLangCode)
@@ -269,9 +269,6 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         QueueNavigationItemSave();
     }
 
-    /// <summary>
-    ///     Queues a debounced save for navigation items to prevent rapid saves.
-    /// </summary>
     private void QueueNavigationItemSave()
     {
         var snapshot = NavigationItems.ToList();

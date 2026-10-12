@@ -23,7 +23,6 @@ public partial class LibraryService
             .ToListAsync(token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task ScanFolderForMusicAsync(string folderPath, IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default)
     {
@@ -38,7 +37,6 @@ public partial class LibraryService
         await RescanFolderForMusicAsync(folder.Id, progress, cancellationToken).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public Task<bool> RescanFolderForMusicAsync(Guid folderId, IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default)
     {
@@ -48,10 +46,7 @@ public partial class LibraryService
     /// <summary>
     ///     Rescans a specific folder for music files with optional force full scan.
     /// </summary>
-    /// <param name="folderId">The unique identifier of the folder to rescan.</param>
     /// <param name="forceFullScan">If true, re-reads metadata for all files regardless of modification time.</param>
-    /// <param name="progress">Optional progress reporter for scan status updates.</param>
-    /// <param name="cancellationToken">Optional cancellation token to cancel the scan.</param>
     /// <returns>True if changes were made to the library; otherwise, false.</returns>
     public Task<bool> RescanFolderForMusicAsync(Guid folderId, bool forceFullScan, IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default)
@@ -74,7 +69,6 @@ public partial class LibraryService
 
         try
         {
-            // Wait to acquire the semaphore. If the operation is cancelled while waiting, it will throw.
             await _scanSemaphore.WaitAsync(operationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
@@ -264,7 +258,6 @@ public partial class LibraryService
                         return hasChanges;
                     }
 
-                    // Use streaming extraction for better memory efficiency
                     var filePathsBeingUpdated = filesToUpdate.ToHashSet(StringComparer.OrdinalIgnoreCase);
                     var (newSongsFound, discoveredDirs) = await ExtractAndSaveMetadataStreamingAsync(
                         folderId, filesToProcess, folder.Path, filePathsBeingUpdated, progress, operationToken,
@@ -381,21 +374,18 @@ public partial class LibraryService
         }
     }
 
-    /// <inheritdoc />
     public Task<bool> RefreshAllFoldersAsync(IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default)
     {
         return RefreshAllFoldersAsync(false, progress, cancellationToken);
     }
 
-    /// <inheritdoc />
     public Task<bool> ForceRescanMetadataAsync(IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default)
     {
         return RefreshAllFoldersCoreAsync(true, true, progress, cancellationToken);
     }
 
-    /// <inheritdoc />
     public Task<bool> RefreshAllFoldersAsync(bool forceFullScan, IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default)
     {
@@ -588,7 +578,6 @@ public partial class LibraryService
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
-        // Query songs in the folder that don't have an LRC file path set
         var songsWithoutLrc = await context.Songs
             .Where(s => s.FolderId == folderId && s.LrcFilePath == null)
             .Select(s => new { s.Id, s.FilePath })
@@ -612,7 +601,6 @@ public partial class LibraryService
 
             var nameWithoutExt = _fileSystem.GetFileNameWithoutExtension(song.FilePath);
 
-            // Lazy-populate LRC cache for this directory
             if (!lrcFilesByDir.TryGetValue(directory, out var lrcByName))
             {
                 lrcByName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -696,7 +684,6 @@ public partial class LibraryService
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
-        // Query songs in the folder that don't have cover art set
         var songsWithoutCoverArt = await context.Songs
             .Where(s => s.FolderId == folderId && s.AlbumArtUriFromTrack == null)
             .Select(s => new { s.Id, s.FilePath })
@@ -759,14 +746,12 @@ public partial class LibraryService
                 }
             }
 
-            // No cover art found for this directory
             directoryCache[songDirectory] = null;
         }
 
         if (songCoverArtMappings.Count == 0)
             return 0;
 
-        // Update songs with cover art in batches
         const int batchSize = 500;
         var totalUpdated = 0;
 
@@ -810,7 +795,6 @@ public partial class LibraryService
             var currentDirectory = _fileSystem.GetDirectoryName(songFilePath);
             if (string.IsNullOrEmpty(currentDirectory)) return null;
 
-            // Normalize the base folder path for comparison
             var normalizedBasePath = baseFolderPath?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 
             while (!string.IsNullOrEmpty(currentDirectory))
@@ -827,7 +811,6 @@ public partial class LibraryService
                 if (!string.IsNullOrEmpty(normalizedBasePath) &&
                     normalizedCurrent.Equals(normalizedBasePath, StringComparison.OrdinalIgnoreCase))
                 {
-                    // We've searched the base folder, stop here
                     break;
                 }
 

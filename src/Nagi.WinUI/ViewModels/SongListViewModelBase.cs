@@ -56,9 +56,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     private bool _isNavigatingToArtist;
     private bool _isNavigatingToAlbum;
 
-    /// <summary>
-    ///     Gets the logical selection state for this view.
-    /// </summary>
     public SelectionState SelectionState { get; } = new();
 
     protected SongListViewModelBase(
@@ -408,9 +405,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         UpdateSelectionStatus();
     }
 
-    /// <summary>
-    ///     Forces a "Select All" state for the current view.
-    /// </summary>
     [RelayCommand]
     public virtual void SelectAll()
     {
@@ -418,9 +412,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         UpdateSelectionStatus();
     }
 
-    /// <summary>
-    ///     Clears the current selection state.
-    /// </summary>
     [RelayCommand]
     public virtual void DeselectAll()
     {

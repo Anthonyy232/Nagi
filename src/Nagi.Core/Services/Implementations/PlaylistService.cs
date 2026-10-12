@@ -34,13 +34,10 @@ public class PlaylistService : IPlaylistService
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    /// <inheritdoc />
     public event EventHandler<PlaylistUpdatedEventArgs>? PlaylistUpdated;
 
-    /// <inheritdoc />
     public event EventHandler? PlaylistsChanged;
 
-    /// <inheritdoc />
     public async Task<Playlist?> CreatePlaylistAsync(string name, string? description = null,
         string? coverImageUri = null)
     {
@@ -71,7 +68,6 @@ public class PlaylistService : IPlaylistService
         return playlist;
     }
 
-    /// <inheritdoc />
     public async Task<bool> DeletePlaylistAsync(Guid playlistId)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -93,7 +89,6 @@ public class PlaylistService : IPlaylistService
         return true;
     }
 
-    /// <inheritdoc />
     public async Task<bool> RenamePlaylistAsync(Guid playlistId, string newName)
     {
         if (string.IsNullOrWhiteSpace(newName))
@@ -111,7 +106,6 @@ public class PlaylistService : IPlaylistService
         return true;
     }
 
-    /// <inheritdoc />
     public async Task<bool> UpdatePlaylistCoverAsync(Guid playlistId, string? newCoverImageUri)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -142,7 +136,6 @@ public class PlaylistService : IPlaylistService
         return true;
     }
 
-    /// <inheritdoc />
     public async Task<bool> AddSongsToPlaylistAsync(Guid playlistId, IEnumerable<Guid> songIds)
     {
         var uniqueSongIds = songIds.Distinct().ToArray();
@@ -180,7 +173,6 @@ public class PlaylistService : IPlaylistService
         return true;
     }
 
-    /// <inheritdoc />
     public async Task<bool> RemoveSongsFromPlaylistAsync(Guid playlistId, IEnumerable<Guid> songIds)
     {
         var uniqueSongIds = songIds.Distinct().ToArray();
@@ -203,7 +195,6 @@ public class PlaylistService : IPlaylistService
         return true;
     }
 
-    /// <inheritdoc />
     public async Task<bool> UpdatePlaylistOrderAsync(Guid playlistId, IEnumerable<Guid> orderedSongIds)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -246,7 +237,6 @@ public class PlaylistService : IPlaylistService
         return updated;
     }
 
-    /// <inheritdoc />
     public async Task<bool> MovePlaylistSongAsync(Guid playlistId, Guid songId, double newOrder)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);

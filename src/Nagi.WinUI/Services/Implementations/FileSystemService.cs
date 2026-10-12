@@ -8,10 +8,6 @@ using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.WinUI.Services.Implementations;
 
-/// <summary>
-///     A concrete implementation of IFileSystemService that wraps standard System.IO operations.
-///     This allows for abstracting file system interactions, which is crucial for unit testing.
-/// </summary>
 public class FileSystemService : IFileSystemService
 {
     public bool DirectoryExists(string path)

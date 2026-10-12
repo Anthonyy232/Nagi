@@ -3,20 +3,10 @@ using System.Threading.Tasks;
 
 namespace Nagi.WinUI.Services.Abstractions;
 
-/// <summary>
-///     Abstracts the UI thread dispatcher for safe cross-thread UI updates.
-/// </summary>
 public interface IDispatcherService
 {
-    /// <summary>
-    ///     Returns true if the calling code is already on the UI thread.
-    /// </summary>
     bool HasThreadAccess { get; }
 
-    /// <summary>
-    ///     Schedules the provided action on the UI thread.
-    /// </summary>
-    /// <returns>True if the action was enqueued, false otherwise.</returns>
     bool TryEnqueue(Action action);
 
     /// <summary>
@@ -24,8 +14,5 @@ public interface IDispatcherService
     /// </summary>
     Task EnqueueAsync(Func<Task> function);
 
-    /// <summary>
-    ///     Schedules the provided function on the UI thread and returns its result.
-    /// </summary>
     Task<T> EnqueueAsync<T>(Func<T> function);
 }

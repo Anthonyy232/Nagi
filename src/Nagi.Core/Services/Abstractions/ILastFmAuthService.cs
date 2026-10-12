@@ -1,8 +1,5 @@
 ﻿namespace Nagi.Core.Services.Abstractions;
 
-/// <summary>
-///     Defines a service for handling the Last.fm authentication flow.
-/// </summary>
 public interface ILastFmAuthService
 {
     /// <summary>
@@ -14,7 +11,6 @@ public interface ILastFmAuthService
     /// <summary>
     ///     Exchanges an authorized token for a long-lived session key.
     /// </summary>
-    /// <param name="token">The temporary token authorized by the user.</param>
     /// <returns>A tuple containing the username and the session key, or null on failure.</returns>
     Task<(string Username, string SessionKey)?> GetSessionAsync(string token);
 }

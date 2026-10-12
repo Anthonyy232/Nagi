@@ -3,9 +3,6 @@ using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Services.Abstractions;
 
-/// <summary>
-///     Defines the contract for managing smart playlists.
-/// </summary>
 public interface ISmartPlaylistService
 {
     event EventHandler<PlaylistUpdatedEventArgs>? PlaylistUpdated;

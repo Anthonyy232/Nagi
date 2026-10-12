@@ -12,9 +12,6 @@ using Nagi.WinUI.ViewModels;
 
 namespace Nagi.WinUI.Pages;
 
-/// <summary>
-///     A page that displays a grid of all albums from the user's library.
-/// </summary>
 public sealed partial class AlbumPage : Page
 {
     private readonly ILogger<AlbumPage> _logger;

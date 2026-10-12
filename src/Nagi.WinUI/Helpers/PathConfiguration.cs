@@ -5,9 +5,6 @@ using Nagi.Core.Helpers;
 
 namespace Nagi.WinUI.Helpers;
 
-/// <summary>
-///     Provides a centralized source of truth for all application data paths.
-/// </summary>
 public class PathConfiguration : IPathConfiguration
 {
     public PathConfiguration()
@@ -42,33 +39,23 @@ public class PathConfiguration : IPathConfiguration
         Directory.CreateDirectory(LogsDirectory);
     }
 
-    /// <inheritdoc />
     public string AppDataRoot { get; }
 
-    /// <inheritdoc />
     public string SettingsFilePath { get; }
 
-    /// <inheritdoc />
     public string PlaybackStateFilePath { get; }
 
-    /// <inheritdoc />
     public string AlbumArtCachePath { get; }
 
-    /// <inheritdoc />
     public string ArtistImageCachePath { get; }
 
-    /// <inheritdoc />
     public string PlaylistImageCachePath { get; }
 
-    /// <inheritdoc />
     public string LrcCachePath { get; }
 
-    /// <inheritdoc />
     public string RomanizationPacksPath { get; }
 
-    /// <inheritdoc />
     public string DatabasePath { get; }
 
-    /// <inheritdoc />
     public string LogsDirectory { get; }
 }

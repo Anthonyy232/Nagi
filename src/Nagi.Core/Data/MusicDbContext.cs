@@ -50,9 +50,6 @@ public class MusicDbContext : DbContext
             """, cancellationToken);
     }
 
-    /// <summary>
-    ///     Configures the database model, including table relationships, indexes, and constraints.
-    /// </summary>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -81,10 +78,8 @@ public class MusicDbContext : DbContext
             entity.HasIndex(s => s.Year);
             entity.HasIndex(s => s.TotalListenTimeTicks);
 
-            // Composite index for sorting tracks within an album.
             entity.HasIndex(s => new { s.AlbumId, s.DiscNumber, s.TrackNumber });
 
-            // Composite index for efficient folder + directory queries.
             entity.HasIndex(s => new { s.FolderId, s.DirectoryPath });
 
             entity.HasOne(s => s.Folder)
@@ -157,7 +152,6 @@ public class MusicDbContext : DbContext
             entity.HasIndex(f => f.Path).IsUnique();
             entity.HasIndex(f => f.ParentFolderId);
 
-            // Self-referencing relationship for folder hierarchy
             entity.HasOne(f => f.ParentFolder)
                 .WithMany(f => f.SubFolders)
                 .HasForeignKey(f => f.ParentFolderId)
@@ -200,7 +194,6 @@ public class MusicDbContext : DbContext
                 .HasForeignKey(r => r.SmartPlaylistId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Index for efficient, ordered retrieval of rules in a smart playlist.
             entity.HasIndex(r => new { r.SmartPlaylistId, r.Order });
         });
 

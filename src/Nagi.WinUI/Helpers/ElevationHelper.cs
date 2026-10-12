@@ -3,9 +3,6 @@ using System.Diagnostics;
 
 namespace Nagi.WinUI.Helpers;
 
-/// <summary>
-///     Handles restarting the app without administrator elevation.
-/// </summary>
 public static class ElevationHelper
 {
     /// <summary>

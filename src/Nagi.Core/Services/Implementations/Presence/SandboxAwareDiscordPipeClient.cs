@@ -29,7 +29,6 @@ public sealed class SandboxAwareDiscordPipeClient : INamedPipeClient
         Close();
         if (pipe >= 0) return TryConnect(pipe);
 
-        // Auto-discover: try pipes 0-9
         for (var i = 0; i < 10; i++)
         {
             if (TryConnect(i)) return true;

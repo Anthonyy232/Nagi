@@ -74,9 +74,6 @@ public partial class PlaylistViewModelItem : ObservableObject
     }, SongCount);
 }
 
-/// <summary>
-///     ViewModel for managing the collection of playlists.
-/// </summary>
 public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
 {
     private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
@@ -155,21 +152,12 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     partial void OnCurrentSortOrderChanged(PlaylistSortOrder value) => UpdateSortOrderText();
 
 
-    /// <summary>
-    ///     Gets a value indicating whether any background operation is in progress.
-    /// </summary>
     public bool IsAnyOperationInProgress =>
         IsLoadingPlaylists || IsCreatingPlaylist || IsRenamingPlaylist || IsDeletingPlaylist || IsUpdatingCover;
 
-    /// <summary>
-    ///     Gets a value indicating whether there are any playlists to display.
-    /// </summary>
     public bool HasPlaylists => Playlists.Count > 0;
 
 
-    /// <summary>
-    ///     Navigates to the song list for the selected playlist.
-    /// </summary>
     [RelayCommand]
     public void NavigateToPlaylistDetail(PlaylistViewModelItem? playlist)
     {
@@ -315,9 +303,6 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         if (created is not null && !_isDisposed) await LoadPlaylistsAsync();
     }
 
-    /// <summary>
-    ///     Loads all playlists (both regular and smart) from the services.
-    /// </summary>
     [RelayCommand]
     private async Task LoadPlaylistsAsync()
     {
@@ -607,9 +592,6 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
 
     }
 
-    /// <summary>
-    ///     Changes the sort order and reapplies filtering.
-    /// </summary>
     [RelayCommand]
     public async Task ChangeSortOrderAsync(string sortOrderString)
     {

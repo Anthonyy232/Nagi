@@ -15,9 +15,6 @@ using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.ViewModels;
 
-/// <summary>
-///     Manages the state and logic for the genre list page.
-/// </summary>
 public partial class GenreViewModel : SearchableViewModelBase, IDisposable
 {
     private readonly ILibraryReader _libraryReader;
@@ -92,14 +89,8 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
     public string CurrentSortOrderText => SortOrderHelper.GetDisplayName(CurrentSortOrder);
 
 
-    /// <summary>
-    ///     Gets a value indicating whether there are any genres to display.
-    /// </summary>
     public bool HasGenres => Genres.Any();
 
-    /// <summary>
-    ///     Navigates to the detailed view for the selected genre.
-    /// </summary>
     [RelayCommand]
     public void NavigateToGenreDetail(GenreSummary? genre)
     {
@@ -112,10 +103,6 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
         _navigationService.NavigateTo(navParam);
     }
 
-    /// <summary>
-    ///     Asynchronously loads all genres from the library.
-    /// </summary>
-    /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
     [RelayCommand]
     public async Task LoadGenresAsync(CancellationToken cancellationToken)
     {
@@ -184,9 +171,6 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
         Genres.ReplaceRange(sorted);
     }
 
-    /// <summary>
-    ///     Changes the sort order and reapplies filtering.
-    /// </summary>
     [RelayCommand]
     public async Task ChangeSortOrderAsync(string sortOrderString)
     {
@@ -200,9 +184,6 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
         }
     }
 
-    /// <summary>
-    ///     Clears the current queue and starts playing all songs in the selected genre.
-    /// </summary>
     [RelayCommand]
     private async Task PlayGenreAsync(Guid genreId)
     {
@@ -218,9 +199,6 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
         }
     }
 
-    /// <summary>
-    ///     Fetches a random genre ID effectively instantly and starts playback.
-    /// </summary>
     [RelayCommand]
     private async Task PlayRandomGenreAsync()
     {

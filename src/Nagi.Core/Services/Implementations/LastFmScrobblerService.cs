@@ -102,13 +102,10 @@ public class LastFmScrobblerService : ILastFmScrobblerService, IListenSubmitter
         return await PostToLastFmAsync(parameters, apiSecret, cancellationToken).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public string Id => ServiceProviderIds.LastFm;
 
-    /// <inheritdoc />
     public Task<bool> IsEnabledAsync() => _settingsService.GetLastFmScrobblingEnabledAsync();
 
-    /// <inheritdoc />
     public async Task ProcessPendingListensAsync(CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested) return;
@@ -222,9 +219,6 @@ public class LastFmScrobblerService : ILastFmScrobblerService, IListenSubmitter
             cancellationToken).ConfigureAwait(false);
     }
 
-    /// <summary>
-    ///     Retrieves all necessary API keys and session tokens for an authenticated request.
-    /// </summary>
     private async Task<(string? ApiKey, string? ApiSecret, string? SessionKey)> GetApiCredentialsAsync(
         CancellationToken cancellationToken = default)
     {

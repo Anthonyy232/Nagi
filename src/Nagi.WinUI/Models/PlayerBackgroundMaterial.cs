@@ -4,9 +4,6 @@
 
 namespace Nagi.WinUI.Models;
 
-/// <summary>
-///     Defines the available background materials for the music player.
-/// </summary>
 public enum PlayerBackgroundMaterial
 {
     /// <summary>
@@ -14,8 +11,5 @@ public enum PlayerBackgroundMaterial
     /// </summary>
     Acrylic,
 
-    /// <summary>
-    ///     Uses a solid, opaque background color.
-    /// </summary>
     Solid
 }

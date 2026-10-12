@@ -57,9 +57,6 @@ public class TimeSpanToTimeStringConverter : IValueConverter
     }
 }
 
-/// <summary>
-///     Converts a boolean value to its inverse.
-/// </summary>
 public class BooleanToInverseBooleanConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
@@ -74,9 +71,6 @@ public class BooleanToInverseBooleanConverter : IValueConverter
     }
 }
 
-/// <summary>
-///     Converts an ElementTheme enum to a user-friendly string for display.
-/// </summary>
 public class ElementThemeToFriendlyStringConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
@@ -102,9 +96,6 @@ public class ElementThemeToFriendlyStringConverter : IValueConverter
     }
 }
 
-/// <summary>
-///     Converts a boolean value to a Visibility value.
-/// </summary>
 public class BooleanToVisibilityConverter : IValueConverter
 {
     /// <summary>
@@ -132,9 +123,6 @@ public class BooleanToVisibilityConverter : IValueConverter
 /// </summary>
 public class StringToVisibilityConverter : IValueConverter
 {
-    /// <summary>
-    ///     Gets or sets a value indicating whether the conversion should be inverted.
-    /// </summary>
     public bool Invert { get; set; }
 
     public object Convert(object value, Type targetType, object parameter, string language)
@@ -180,9 +168,6 @@ public class CollectionCountToVisibilityConverter : IValueConverter
 /// </summary>
 public class NullOrEmptyStringToVisibilityConverter : IValueConverter
 {
-    /// <summary>
-    ///     Gets or sets a value indicating whether the conversion should be inverted.
-    /// </summary>
     public bool Invert { get; set; }
 
     public object Convert(object value, Type targetType, object parameter, string language)
@@ -198,9 +183,6 @@ public class NullOrEmptyStringToVisibilityConverter : IValueConverter
     }
 }
 
-/// <summary>
-///     Converts an object to Visibility. Visible if the object is not null.
-/// </summary>
 public class ObjectToVisibilityConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
@@ -287,9 +269,6 @@ public class GenreToGradientConverter : IValueConverter
     }
 }
 
-/// <summary>
-///     Converts a BackdropMaterial enum value to a user-friendly string for display in the UI.
-/// </summary>
 public class BackdropMaterialToStringConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
@@ -311,9 +290,6 @@ public class BackdropMaterialToStringConverter : IValueConverter
     }
 }
 
-/// <summary>
-///     Converts a PlayerBackgroundMaterial enum value to a user-friendly string for display in the UI.
-/// </summary>
 public class PlayerBackgroundMaterialToStringConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
@@ -334,9 +310,6 @@ public class PlayerBackgroundMaterialToStringConverter : IValueConverter
     }
 }
 
-/// <summary>
-///     Converts a boolean value to a double value for opacity.
-/// </summary>
 public class BooleanToOpacityConverter : IValueConverter
 {
     public double TrueValue { get; set; } = 1.0;

@@ -65,7 +65,6 @@ public class ImageSharpProcessor : IImageProcessor
         _albumArtStoragePath = pathConfig.AlbumArtCachePath;
     }
 
-    /// <inheritdoc />
     /// <remarks>
     /// This method uses a filename-based color cache. The filename pattern is:
     /// <c>{hash}.{lightHex}.{darkHex}.fetched.jpg</c>
@@ -217,7 +216,6 @@ public class ImageSharpProcessor : IImageProcessor
         }
     }
 
-    /// <inheritdoc />
     public async Task<byte[]> ProcessImageBytesAsync(byte[] imageData, int maxDimension = 600)
     {
         if (imageData.Length == 0 || maxDimension <= 0) return imageData;

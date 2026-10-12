@@ -15,9 +15,6 @@ namespace Nagi.Core.Services.Implementations;
 /// </summary>
 public class SmartPlaylistQueryBuilder
 {
-    /// <summary>
-    ///     Builds a queryable for songs matching the smart playlist's rules.
-    /// </summary>
     public IQueryable<Song> BuildQuery(MusicDbContext context, SmartPlaylist smartPlaylist, string? searchTerm = null, SongSortOrder? sortOrderOverride = null)
     {
         var query = BuildCountQuery(context, smartPlaylist, searchTerm)
@@ -43,9 +40,6 @@ public class SmartPlaylistQueryBuilder
         return query;
     }
 
-    /// <summary>
-    ///     Applies rule-based filtering to a query based on the smart playlist's rules and match logic.
-    /// </summary>
     private static IQueryable<Song> ApplyRuleFilters(IQueryable<Song> query, SmartPlaylist smartPlaylist)
     {
         if (smartPlaylist.MatchAllRules)

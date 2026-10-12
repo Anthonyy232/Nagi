@@ -30,12 +30,10 @@ public sealed partial class MainWindow : Window
     private const int MinMainWindowWidth = 400;
     private const int MinMainWindowHeight = 300;
 
-    // Core windowing and service references.
     private AppWindow? _appWindow;
     private SizeInt32 _lastWindowSize;
     private PointInt32 _lastWindowPosition;
 
-    // State flags to ensure one-time initialization.
     private bool _isBackdropInitialized;
     private bool _isTitleBarInitialized;
     private ILogger<MainWindow>? _logger;
@@ -54,9 +52,6 @@ public sealed partial class MainWindow : Window
         ExtendsContentIntoTitleBar = true;
     }
 
-    /// <summary>
-    ///     Initializes the window with required services and subscribes to necessary events.
-    /// </summary>
     public void InitializeDependencies(IUISettingsService settingsService, ITaskbarService taskbarService,
         ILogger<MainWindow> logger)
     {
@@ -74,7 +69,6 @@ public sealed partial class MainWindow : Window
 
     public void Cleanup()
     {
-        // Ensure cleanup only runs once to prevent race conditions
         if (Interlocked.Exchange(ref _isCleanedUp, 1) != 0) return;
 
         Activated -= OnWindowActivated;
@@ -97,15 +91,11 @@ public sealed partial class MainWindow : Window
             _wndProcDelegate = null;
         }
 
-        // Dispose the taskbar service to release COM objects and icons.
         _taskbarService?.Dispose();
 
         _appWindow = null;
     }
 
-    /// <summary>
-    ///     Notifies the window that its content has been loaded, allowing synchronization of UI themes.
-    /// </summary>
     public void NotifyContentLoaded()
     {
         if (_rootElement != null) _rootElement.ActualThemeChanged -= OnActualThemeChanged;
@@ -114,9 +104,6 @@ public sealed partial class MainWindow : Window
         UpdateTitleBarTheme();
     }
 
-    /// <summary>
-    ///     Configures the window's title bar based on the current page's content.
-    /// </summary>
     public void InitializeCustomTitleBar()
     {
         _appWindow ??= AppWindow;
@@ -228,9 +215,6 @@ public sealed partial class MainWindow : Window
         UpdateTitleBarTheme();
     }
 
-    /// <summary>
-    ///     Sets the system backdrop based on user settings.
-    /// </summary>
     private async Task TrySetBackdropAsync(BackdropMaterial? material = null)
     {
         if (_settingsService is null) return;
@@ -305,7 +289,6 @@ public sealed partial class MainWindow : Window
     {
         if (_settingsService == null) return;
 
-        // Ensure _appWindow is available.
         _appWindow ??= AppWindow;
 
         try
@@ -317,7 +300,6 @@ public sealed partial class MainWindow : Window
                 ? await _settingsService.GetLastWindowPositionAsync()
                 : null;
 
-            // Apply size and/or position using the most efficient method
             if (savedSize.HasValue && savedPosition.HasValue)
             {
                 var width = Math.Max(savedSize.Value.Width, MinMainWindowWidth);
@@ -385,7 +367,6 @@ public sealed class MiniPlayerWindow : Window
     private const float BaseDpi = 96.0f;
     private static readonly string AppIconPath = System.IO.Path.Combine(AppContext.BaseDirectory, "Assets/AppLogo.ico");
 
-    // Margins to position the window away from the screen edges.
     private const int HorizontalScreenMargin = 10;
     private const int VerticalScreenMargin = 48; // Larger to account for taskbar height.
 
@@ -403,10 +384,8 @@ public sealed class MiniPlayerWindow : Window
         Content = _view;
         _appWindow = AppWindow;
 
-        // Apply acrylic backdrop for a premium look
         SystemBackdrop = new DesktopAcrylicBackdrop();
 
-        // Ensure the mini player follows the application theme
         if (Content is FrameworkElement root)
         {
             root.RequestedTheme = themeService.CurrentTheme;
@@ -416,9 +395,6 @@ public sealed class MiniPlayerWindow : Window
         SubscribeToEvents();
     }
 
-    /// <summary>
-    ///     Configures the properties of the AppWindow for the mini-player.
-    /// </summary>
     private void ConfigureAppWindow()
     {
         ExtendsContentIntoTitleBar = true;
@@ -436,8 +412,8 @@ public sealed class MiniPlayerWindow : Window
         {
             presenter.IsAlwaysOnTop = true;
             presenter.IsResizable = true;
-            presenter.IsMaximizable = false; // Disable maximize button.
-            presenter.IsMinimizable = false; // Disable minimize button.
+            presenter.IsMaximizable = false;
+            presenter.IsMinimizable = false;
             presenter.SetBorderAndTitleBar(true, false); // Keep a border but hide the system title text.
         }
         else
@@ -446,11 +422,6 @@ public sealed class MiniPlayerWindow : Window
         }
     }
 
-    /// <summary>
-    ///     Positions the window in the bottom-right corner of the primary display's work area.
-    /// </summary>
-    /// <param name="appWindow">The app window to position.</param>
-    /// <param name="windowSize">The physical size of the window in pixels.</param>
     private void PositionWindowInBottomRight(AppWindow appWindow, int windowSize)
     {
         var displayArea = DisplayArea.GetFromWindowId(appWindow.Id, DisplayAreaFallback.Primary);
@@ -467,9 +438,6 @@ public sealed class MiniPlayerWindow : Window
         appWindow.Move(new PointInt32(positionX, positionY));
     }
 
-    /// <summary>
-    ///     Subscribes to necessary window and view events.
-    /// </summary>
     private void SubscribeToEvents()
     {
         _view.RestoreButtonClicked += OnRestoreButtonClicked;
@@ -479,7 +447,6 @@ public sealed class MiniPlayerWindow : Window
 
     private void OnAppWindowChanged(AppWindow sender, AppWindowChangedEventArgs args)
     {
-        // Enforce aspect ratio only when the size changes to avoid unnecessary calculations.
         if (args.DidSizeChange) MaintainSquareAspectRatio(sender);
     }
 
@@ -492,7 +459,6 @@ public sealed class MiniPlayerWindow : Window
         var currentPosition = window.Position;
         var currentSize = window.Size;
 
-        // Convert logical pixel constraints to physical pixels
         var dpiScale = GetDpiScale();
         var minSize = (int)(MinWindowSizeDips * dpiScale);
         var maxSize = (int)(MaxWindowSizeDips * dpiScale);

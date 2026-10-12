@@ -81,7 +81,6 @@ public sealed class TaskbarService : ITaskbarService
         _win32InteropService = win32InteropService;
     }
 
-    /// <inheritdoc />
     public void Initialize(nint windowHandle)
     {
         if (_isInitialized)
@@ -117,7 +116,6 @@ public sealed class TaskbarService : ITaskbarService
         _ = RefreshIconsAsync();
     }
 
-    /// <inheritdoc />
     public void HandleWindowMessage(int msg, nint wParam, nint lParam)
     {
         if (!_isInitialized || _isDisposed) return;
@@ -146,7 +144,6 @@ public sealed class TaskbarService : ITaskbarService
         }
     }
 
-    /// <inheritdoc />
     public Task RefreshIconsAsync()
     {
         if (!_isInitialized || _isDisposed) return Task.CompletedTask;
@@ -274,10 +271,6 @@ public sealed class TaskbarService : ITaskbarService
     ///     Renders a glyph to an HICON using Win2D.
     ///     This method uses GPU-accelerated rendering and does not require the UI thread.
     /// </summary>
-    /// <param name="glyph">The Unicode glyph character to render.</param>
-    /// <param name="size">The size of the icon in pixels.</param>
-    /// <param name="foreground">The foreground color for the glyph.</param>
-    /// <param name="fontFamily">The font family to use for rendering.</param>
     /// <returns>A handle to the created icon, or IntPtr.Zero on failure.</returns>
     private nint RenderGlyphToIcon(string glyph, int size, Color foreground, string fontFamily)
     {
@@ -313,9 +306,6 @@ public sealed class TaskbarService : ITaskbarService
     /// <summary>
     ///     Creates an HICON from raw BGRA8 pixel data using Win32 GDI.
     /// </summary>
-    /// <param name="pixels">The pixel data in BGRA8 format.</param>
-    /// <param name="width">The width of the image in pixels.</param>
-    /// <param name="height">The height of the image in pixels.</param>
     /// <returns>A handle to the created icon, or IntPtr.Zero on failure.</returns>
     private nint CreateIconFromPixels(byte[] pixels, int width, int height)
     {
@@ -462,9 +452,6 @@ public sealed class TaskbarService : ITaskbarService
                (index < queue.Count - 1 || _playbackService.CurrentRepeatMode != RepeatMode.Off);
     }
 
-    /// <summary>
-    ///     Releases unmanaged resources used by the taskbar service.
-    /// </summary>
     public void Dispose()
     {
         if (_isDisposed) return;

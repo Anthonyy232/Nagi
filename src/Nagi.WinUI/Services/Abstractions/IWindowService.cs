@@ -5,24 +5,12 @@ using System.Threading.Tasks;
 
 namespace Nagi.WinUI.Services.Abstractions;
 
-/// <summary>
-///     Defines a contract for a service that abstracts and manages interactions with the application's windows.
-/// </summary>
 public interface IWindowService
 {
-    /// <summary>
-    ///     Gets a value indicating whether the main window is currently visible on-screen.
-    /// </summary>
     bool IsVisible { get; }
 
-    /// <summary>
-    ///     Gets a value indicating whether the mini-player window is currently active.
-    /// </summary>
     bool IsMiniPlayerActive { get; }
 
-    /// <summary>
-    ///     Gets a value indicating whether the main window is currently in a standard minimized state.
-    /// </summary>
     bool IsMinimized { get; }
 
     /// <summary>
@@ -37,9 +25,6 @@ public interface IWindowService
     /// </summary>
     bool IsShowingOnboarding { get; }
 
-    /// <summary>
-    ///     Occurs when the main application window is about to close.
-    /// </summary>
     event Action<WindowClosingEventArgs>? Closing;
 
     /// <summary>
@@ -55,9 +40,6 @@ public interface IWindowService
     /// </summary>
     event Action? UIStateChanged;
 
-    /// <summary>
-    ///     Asynchronously performs initial setup for the service.
-    /// </summary>
     Task InitializeAsync();
 
     /// <summary>
@@ -65,9 +47,6 @@ public interface IWindowService
     /// </summary>
     void Hide();
 
-    /// <summary>
-    ///     Shows and activates the main window, bringing it to the foreground.
-    /// </summary>
     void ShowAndActivate();
 
     /// <summary>
@@ -75,16 +54,12 @@ public interface IWindowService
     /// </summary>
     void Close();
 
-    /// <summary>
-    ///     Creates and displays the mini-player window.
-    /// </summary>
     void ShowMiniPlayer();
 
     /// <summary>
     ///     Sets the process efficiency mode. The calling coordinator (e.g., PlayerViewModel) is responsible
     ///     for determining when this mode should be enabled or disabled.
     /// </summary>
-    /// <param name="isEnabled">True to enable efficiency mode; false to disable it.</param>
     void SetEfficiencyMode(bool isEnabled);
 }
 

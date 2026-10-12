@@ -5,18 +5,13 @@ using Nagi.Core.Models;
 
 namespace Nagi.Core.Helpers;
 
-/// <summary>
-///     Provides utility methods for working with file names.
-/// </summary>
 public static class FileNameHelper
 {
     /// <summary>
     ///     Sanitizes a string for use as a file name by removing characters that are
     ///     invalid on the file system (e.g., \ / : * ? " &lt; &gt; |).
     /// </summary>
-    /// <param name="name">The string to sanitize.</param>
     /// <param name="fallback">The fallback name if the sanitized result is empty.</param>
-    /// <returns>A sanitized string safe for use as a file name.</returns>
     public static string SanitizeFileName(string name, string? fallback = null)
     {
         fallback ??= Resources.Strings.UnknownFilename;
@@ -31,9 +26,6 @@ public static class FileNameHelper
     /// <summary>
     ///     Generates a deterministic, collision-resistant cache file name for an audio file's lyrics.
     /// </summary>
-    /// <param name="audioFileIdentity">The audio file path, or another stable per-song identity.</param>
-    /// <param name="artist">The artist name.</param>
-    /// <param name="album">The album name.</param>
     /// <param name="title">The song title.</param>
     /// <returns>A sanitized filename with a stable identity hash.</returns>
     public static string GenerateLrcCacheFileName(

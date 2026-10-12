@@ -7,9 +7,6 @@ using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.ViewModels;
 
-/// <summary>
-///     Provides the data context and command logic for the application's system tray icon.
-/// </summary>
 public partial class TrayIconViewModel : ObservableObject
 {
     private readonly IAppInfoService _appInfoService;
@@ -42,9 +39,6 @@ public partial class TrayIconViewModel : ObservableObject
     [ObservableProperty]
     public partial bool IsTrayIconVisible { get; set; }
 
-    /// <summary>
-    ///     Gets the tooltip text for the tray icon.
-    /// </summary>
     public string ToolTipText => _appInfoService.GetAppName();
 
     public void Cleanup()
@@ -56,9 +50,6 @@ public partial class TrayIconViewModel : ObservableObject
     }
 
 
-    /// <summary>
-    ///     Asynchronously initializes the ViewModel by subscribing to window events and loading initial settings.
-    /// </summary>
     public async Task InitializeAsync()
     {
         _windowService.Closing += OnAppWindowClosing;
@@ -125,9 +116,6 @@ public partial class TrayIconViewModel : ObservableObject
         });
     }
 
-    /// <summary>
-    ///     Shows or hides the popup menu associated with the tray icon.
-    /// </summary>
     [RelayCommand]
     private void ShowPopup()
     {
@@ -152,9 +140,6 @@ public partial class TrayIconViewModel : ObservableObject
         _windowService.ShowAndActivate();
     }
 
-    /// <summary>
-    ///     Commands the application to exit gracefully.
-    /// </summary>
     [RelayCommand]
     private void ExitApplication()
     {

@@ -7,10 +7,6 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Nagi.WinUI.Controls;
 
-/// <summary>
-///     A UserControl that provides the content for a crash report dialog.
-///     It displays an introduction, a link to report an issue, and the log content.
-/// </summary>
 public sealed partial class CrashReportDialogContent : UserControl
 {
     private readonly ILogger<CrashReportDialogContent>? _logger;

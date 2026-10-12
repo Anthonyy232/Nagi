@@ -85,7 +85,6 @@ public class Album
         else
         {
             var displayName = Artist.GetDisplayName(artists);
-            // Truncate to MaxLength to prevent database overflow with many collaborators
             ArtistName = displayName.Length > MaxArtistNameLength
                 ? displayName[..(MaxArtistNameLength - 3)] + "..."
                 : displayName;

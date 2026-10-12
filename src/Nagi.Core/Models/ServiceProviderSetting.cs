@@ -1,18 +1,9 @@
 namespace Nagi.Core.Models;
 
-/// <summary>
-///     Defines categories for external service providers.
-/// </summary>
 public enum ServiceCategory
 {
-    /// <summary>
-    ///     Services that provide synchronized lyrics (LRC).
-    /// </summary>
     Lyrics,
 
-    /// <summary>
-    ///     Services that provide artist/album metadata like images and biographies.
-    /// </summary>
     Metadata
 }
 

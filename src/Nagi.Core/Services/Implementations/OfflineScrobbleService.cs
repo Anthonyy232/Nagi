@@ -33,7 +33,6 @@ public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable
         _settingsService.ListenBrainzSettingsChanged += OnSettingsChanged;
     }
 
-    /// <inheritdoc />
     public void Dispose()
     {
         if (_shutdownToken.IsCancellationRequested) return;
@@ -44,14 +43,12 @@ public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable
         _cancellationTokenSource.Dispose();
     }
 
-    /// <inheritdoc />
     public void Start()
     {
         _logger.LogDebug("Starting offline scrobble service background loop.");
         _ = ScrobbleLoopAsync(_shutdownToken);
     }
 
-    /// <inheritdoc />
     public async Task ProcessQueueAsync(CancellationToken cancellationToken = default)
     {
         using var linkedCancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _shutdownToken);

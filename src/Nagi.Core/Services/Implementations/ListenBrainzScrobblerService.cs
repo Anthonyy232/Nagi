@@ -49,10 +49,8 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
         _logger = logger;
     }
 
-    /// <inheritdoc />
     public string Id => ServiceProviderIds.ListenBrainz;
 
-    /// <inheritdoc />
     public async Task<bool> IsEnabledAsync()
     {
         var token = await _settingsService.GetListenBrainzUserTokenAsync().ConfigureAwait(false);
@@ -60,7 +58,6 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
         return await _settingsService.GetListenBrainzScrobblingEnabledAsync().ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task ProcessPendingListensAsync(CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested) return;

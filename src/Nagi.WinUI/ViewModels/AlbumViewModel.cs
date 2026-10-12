@@ -16,9 +16,6 @@ using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.ViewModels;
 
-/// <summary>
-///     A display-optimized representation of an album for the user interface.
-/// </summary>
 public sealed class AlbumViewModelItem
 {
     public AlbumViewModelItem(Album album)

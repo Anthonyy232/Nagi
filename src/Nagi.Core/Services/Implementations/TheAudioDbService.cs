@@ -73,7 +73,6 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
 
     public void Dispose() => _httpClient.Dispose();
 
-    /// <inheritdoc />
     public async Task<ServiceResult<TheAudioDbArtistInfo>> GetArtistMetadataAsync(
         string musicBrainzId,
         string? languageCode = null,
@@ -166,7 +165,6 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
         if (string.IsNullOrWhiteSpace(languageCode))
             return null;
 
-        // Ensure we only use the 2-letter ISO 639-1 code (e.g. "de-DE" -> "DE")
         var isoCode = languageCode.Length > 2 ? languageCode[..2] : languageCode;
 
         return extensionData.TryGetValue($"strBiography{isoCode}", out var biography) &&

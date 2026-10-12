@@ -82,9 +82,6 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
         _artistSplitSaveDebouncer.PendingInvocation,
         _genreSplitSaveDebouncer.PendingInvocation);
 
-    /// <summary>
-    ///     Loads the saved values without writing anything back.
-    /// </summary>
     public async Task LoadAsync()
     {
         ApplyWithoutSaving(() =>

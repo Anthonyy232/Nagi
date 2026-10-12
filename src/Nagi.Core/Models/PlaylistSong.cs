@@ -10,8 +10,5 @@ public class PlaylistSong
 
     public virtual Song Song { get; set; } = null!;
 
-    /// <summary>
-    ///    The display order of the song within the playlist.
-    /// </summary>
     public double Order { get; set; }
 }

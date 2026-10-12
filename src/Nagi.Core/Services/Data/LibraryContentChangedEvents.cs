@@ -2,9 +2,6 @@ using System;
 
 namespace Nagi.Core.Services.Data;
 
-/// <summary>
-///     Specifies the type of change that occurred in the library.
-/// </summary>
 public enum LibraryChangeType
 {
     FolderAdded,
@@ -18,9 +15,6 @@ public enum LibraryChangeType
     SongsUpdated
 }
 
-/// <summary>
-///     Provides data for the <see cref="Services.Abstractions.ILibraryScanner.LibraryContentChanged"/> event.
-/// </summary>
 public class LibraryContentChangedEventArgs : EventArgs
 {
     public LibraryChangeType ChangeType { get; }

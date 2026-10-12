@@ -2,9 +2,6 @@ using Nagi.Core.Models;
 
 namespace Nagi.Core.Services.Abstractions;
 
-/// <summary>
-///     Defines the contract for writing, updating, and deleting data in the music library.
-/// </summary>
 public interface ILibraryWriter
 {
     Task<bool> SetSongsLovedAsync(IEnumerable<Guid> songIds, bool loved);

@@ -37,7 +37,6 @@ public class ApiKeyService : IApiKeyService
         _logger = logger;
     }
 
-    /// <inheritdoc />
     public async Task<string?> GetApiKeyAsync(string keyName, CancellationToken cancellationToken = default)
     {
         if (_globalAuthFailed)
@@ -58,7 +57,6 @@ public class ApiKeyService : IApiKeyService
         return result;
     }
 
-    /// <inheritdoc />
     public Task<string?> RefreshApiKeyAsync(string keyName, CancellationToken cancellationToken = default)
     {
         _logger.LogDebug("Forcing refresh for API key '{ApiKeyName}'.", keyName);

@@ -23,21 +23,12 @@ public class Artist
     [MaxLength(500)]
     public string SortName { get; set; } = string.Empty;
 
-    /// <summary>
-    ///     A biography of the artist, typically fetched from an external service.
-    /// </summary>
     [MaxLength(50000)]
     public string? Biography { get; set; }
 
-    /// <summary>
-    ///     The remote URL of the artist's image.
-    /// </summary>
     [MaxLength(2000)]
     public string? RemoteImageUrl { get; set; }
 
-    /// <summary>
-    ///     The local file path to the cached artist image.
-    /// </summary>
     [MaxLength(1000)]
     public string? LocalImageCachePath { get; set; }
 
@@ -54,19 +45,10 @@ public class Artist
     [MaxLength(100)]
     public string? MusicBrainzId { get; set; }
 
-    /// <summary>
-    ///     A collection of song-artist associations for this artist.
-    /// </summary>
     public virtual ICollection<SongArtist> SongArtists { get; set; } = new List<SongArtist>();
 
-    /// <summary>
-    ///     A collection of album-artist associations for this artist.
-    /// </summary>
     public virtual ICollection<AlbumArtist> AlbumArtists { get; set; } = new List<AlbumArtist>();
 
-    /// <summary>
-    ///     Gets a display name for a list of artist names, joined by the standard separator.
-    /// </summary>
     public static string GetDisplayName(IEnumerable<string?>? artistNames)
     {
         var displayName = string.Join(ArtistSeparator, artistNames?.Where(n => !string.IsNullOrWhiteSpace(n)) ?? []);

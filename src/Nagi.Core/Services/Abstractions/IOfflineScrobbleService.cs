@@ -6,14 +6,10 @@
 /// </summary>
 public interface IOfflineScrobbleService
 {
-    /// <summary>
-    ///     Starts the background processing task.
-    /// </summary>
     void Start();
 
     /// <summary>
     ///     Triggers an immediate, on-demand check and processing of the scrobble queue.
     /// </summary>
-    /// <returns>A task that completes when the processing is finished.</returns>
     Task ProcessQueueAsync(CancellationToken cancellationToken = default);
 }

@@ -190,7 +190,6 @@ public static class CoreServiceRegistration
         services.AddSingleton<IBackupRestoreService, BackupRestoreService>();
         services.AddSingleton<IStatisticsService, StatisticsService>();
 
-        // FFmpeg and ReplayGain services
         services.AddSingleton<IFFmpegService, FFmpegService>();
         services.AddSingleton<ILoudnessAnalyzer, FFmpegLoudnessAnalyzer>();
         services.AddSingleton<IReplayGainService, ReplayGainService>();

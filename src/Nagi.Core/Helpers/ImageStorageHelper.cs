@@ -4,10 +4,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Nagi.Core.Helpers;
 
-/// <summary>
-///     Provides standardized methods for managing entity images (Artists, Playlists, etc.)
-///     with support for multiple file extensions and priority handling.
-/// </summary>
 public static class ImageStorageHelper
 {
     internal static string? FindCoverArtInDirectory(IFileSystemService fileSystem, string directory, ILogger logger)
@@ -73,12 +69,6 @@ public static class ImageStorageHelper
     ///     Saves processed image bytes to the destination directory.
     ///     Replaces the destination only after the new image has been written successfully.
     /// </summary>
-    /// <param name="fs">File system service.</param>
-    /// <param name="directory">Target directory.</param>
-    /// <param name="baseFileName">Base file name (typically entity ID).</param>
-    /// <param name="suffix">File suffix (e.g., ".custom", ".fetched").</param>
-    /// <param name="imageBytes">Processed image bytes to save.</param>
-    /// <param name="extension">File extension to use (default ".jpg").</param>
     public static async Task<string?> SaveImageBytesAsync(IFileSystemService fs, string directory,
         string baseFileName, string suffix, byte[] imageBytes, string extension = ".jpg")
     {

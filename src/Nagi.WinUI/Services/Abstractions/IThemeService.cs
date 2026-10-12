@@ -3,17 +3,11 @@ using Microsoft.UI.Xaml;
 
 namespace Nagi.WinUI.Services.Abstractions;
 
-/// <summary>
-///     Manages the application's visual theme.
-/// </summary>
 public interface IThemeService
 {
     void ApplyTheme(ElementTheme theme);
     Task ReapplyCurrentDynamicThemeAsync();
 
-    /// <summary>
-    ///     Gets the currently applied application theme.
-    /// </summary>
     ElementTheme CurrentTheme { get; }
 
     /// <summary>

@@ -15,31 +15,16 @@ public interface IAudioPlayer : IDisposable
     /// </summary>
     event Action? PlaybackEnded;
 
-    /// <summary>
-    ///     Occurs frequently as the playback position changes.
-    /// </summary>
     event Action? PositionChanged;
 
     event Action? StateChanged;
 
-    /// <summary>
-    ///     Occurs when the volume or mute state is changed.
-    /// </summary>
     event Action? VolumeChanged;
 
-    /// <summary>
-    ///     Occurs when a media playback error is encountered. The string parameter contains the error message.
-    /// </summary>
     event Action<string>? ErrorOccurred;
 
-    /// <summary>
-    ///     Occurs when new media has been successfully opened and is ready for playback.
-    /// </summary>
     event Action? MediaOpened;
 
-    /// <summary>
-    ///     Occurs when the duration of the currently loaded media becomes known.
-    /// </summary>
     event Action? DurationChanged;
 
     event Action? SmtcNextButtonPressed;
@@ -87,9 +72,6 @@ public interface IAudioPlayer : IDisposable
     /// </summary>
     Task<bool> SetAudioOutputDeviceAsync(string deviceId);
 
-    /// <summary>
-    ///     Initializes the System Media Transport Controls for integration with the OS.
-    /// </summary>
     void InitializeSmtc();
 
     void UpdateSmtcButtonStates(bool canNext, bool canPrevious);
@@ -97,13 +79,9 @@ public interface IAudioPlayer : IDisposable
     /// <summary>
     ///     Asynchronously loads a song for playback. The returned task completes when the media is successfully opened or has
     ///     failed to load.
-    /// </summary>
     /// <param name="song">The song to load.</param>
     Task LoadAsync(Song song);
 
-    /// <summary>
-    ///     Starts or resumes playback of the loaded media.
-    /// </summary>
     Task PlayAsync();
 
     Task PauseAsync();
@@ -123,17 +101,8 @@ public interface IAudioPlayer : IDisposable
 
     Task SetMuteAsync(bool isMuted);
 
-    /// <summary>
-    ///     Applies equalizer settings to the media player.
-    /// </summary>
-    /// <param name="settings">The equalizer settings to apply.</param>
-    /// <returns>True if the equalizer was set successfully; otherwise, false.</returns>
     bool ApplyEqualizerSettings(EqualizerSettings settings);
 
-    /// <summary>
-    ///     Gets the descriptive information for each available equalizer band.
-    /// </summary>
-    /// <returns>A read-only list of band indices and their corresponding frequencies.</returns>
     IReadOnlyList<(uint Index, float Frequency)> GetEqualizerBands();
 
     /// <summary>

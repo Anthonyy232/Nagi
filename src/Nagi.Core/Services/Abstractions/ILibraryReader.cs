@@ -3,9 +3,6 @@ using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Services.Abstractions;
 
-/// <summary>
-///     Defines the contract for reading and querying data from the music library.
-/// </summary>
 public interface ILibraryReader
 {
     Task<IReadOnlyList<MixCandidate>> GetMixCandidatesAsync(IEnumerable<Guid> songIds, CancellationToken token = default);
@@ -114,9 +111,6 @@ public interface ILibraryReader
     ///     Calculates the total duration of songs in an album that match the search term.
     ///     If the search term is empty, returns the total duration of all songs in the album.
     /// </summary>
-    /// <param name="albumId">The unique identifier of the album.</param>
-    /// <param name="searchTerm">The search term to filter songs. Can be empty or null.</param>
-    /// <returns>The total duration of matching songs in the album.</returns>
     Task<TimeSpan> GetSearchTotalDurationInAlbumAsync(Guid albumId, string searchTerm, CancellationToken token = default);
 
     /// <summary>

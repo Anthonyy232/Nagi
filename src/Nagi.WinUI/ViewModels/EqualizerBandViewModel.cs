@@ -6,9 +6,6 @@ using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.ViewModels;
 
-/// <summary>
-///     ViewModel for a single band in the audio equalizer.
-/// </summary>
 public partial class EqualizerBandViewModel : ObservableObject, IDisposable
 {
     private const int KiloHertzThreshold = 1000;

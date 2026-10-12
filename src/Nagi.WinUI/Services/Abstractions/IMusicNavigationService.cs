@@ -2,9 +2,6 @@
 
 namespace Nagi.WinUI.Services.Abstractions;
 
-/// <summary>
-///     Defines a service for navigating between music-related entities (artists, albums, etc.).
-/// </summary>
 public interface IMusicNavigationService
 {
     /// <summary>

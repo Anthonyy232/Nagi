@@ -9,9 +9,6 @@ using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Services.Implementations;
 
-/// <summary>
-///     Service for fetching high-quality artist imagery from Fanart.tv.
-/// </summary>
 public class FanartTvService : IFanartTvService
 {
     private const string BaseUrl = "https://webservice.fanart.tv/v3/music";
@@ -34,7 +31,6 @@ public class FanartTvService : IFanartTvService
         _logger = logger;
     }
 
-    /// <inheritdoc />
     public async Task<ServiceResult<FanartTvArtistImages>> GetArtistImagesAsync(
         string musicBrainzId, CancellationToken cancellationToken = default)
     {

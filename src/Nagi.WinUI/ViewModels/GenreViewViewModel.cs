@@ -14,9 +14,6 @@ using Nagi.Core.Helpers;
 
 namespace Nagi.WinUI.ViewModels;
 
-/// <summary>
-///     Provides data and commands for the genre details page, displaying all songs within a specific genre.
-/// </summary>
 public partial class GenreViewViewModel : SongListViewModelBase
 {
     private Guid _genreId;
@@ -63,10 +60,6 @@ public partial class GenreViewViewModel : SongListViewModelBase
         return _libraryReader.GetAllSongIdsByGenreIdAsync(_genreId, sortOrder, token);
     }
 
-    /// <summary>
-    ///     Loads the details and songs for a specific genre.
-    /// </summary>
-    /// <param name="navParam">The navigation parameter containing the genre's ID and name.</param>
     [RelayCommand]
     public async Task LoadGenreDetailsAsync(GenreViewNavigationParameter? navParam)
     {

@@ -8,9 +8,6 @@ using Microsoft.Windows.AppLifecycle;
 
 namespace Nagi.WinUI.Services.Implementations;
 
-/// <summary>
-///     Manages high-level application lifecycle events, such as navigation and application reset.
-/// </summary>
 public class ApplicationLifecycle : IApplicationLifecycle
 {
     private readonly MainWindow _window;

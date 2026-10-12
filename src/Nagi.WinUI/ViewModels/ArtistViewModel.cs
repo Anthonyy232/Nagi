@@ -17,9 +17,6 @@ using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.ViewModels;
 
-/// <summary>
-///     A display-optimized representation of an artist for the user interface.
-/// </summary>
 public partial class ArtistViewModelItem : ObservableObject
 {
     public Guid Id { get; init; }

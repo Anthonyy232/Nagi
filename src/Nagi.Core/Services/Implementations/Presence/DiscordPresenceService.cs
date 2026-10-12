@@ -143,7 +143,6 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
             var client = _client;
             if (client == null || !client.IsInitialized || !_isReady) return;
 
-            // If no song is loaded or playback is stopped, show idling
             if (_currentSong == null)
             {
                 client.SetPresence(new RichPresence { Details = "Browsing Music Library", State = "Idling" });

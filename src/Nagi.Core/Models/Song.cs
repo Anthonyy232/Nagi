@@ -35,9 +35,6 @@ public class Song : ObservableObject
     /// </summary>
     public long DurationTicks { get; set; }
 
-    /// <summary>
-    ///     The duration of the song as a TimeSpan (computed from DurationTicks).
-    /// </summary>
     [NotMapped]
     public TimeSpan Duration
     {
@@ -76,9 +73,6 @@ public class Song : ObservableObject
     /// </summary>
     public int? Rating { get; set; }
 
-    /// <summary>
-    ///     Indicates if the user has marked this song as a favorite.
-    /// </summary>
     public bool IsLoved
     {
         get => _isLoved;
@@ -91,17 +85,11 @@ public class Song : ObservableObject
 
     public DateTime? LastPlayedDate { get; set; }
 
-    /// <summary>
-    ///     The total cumulative time this song has been listened to, stored in ticks.
-    /// </summary>
     public long TotalListenTimeTicks { get; set; }
 
     [MaxLength(50000)]
     public string? Lyrics { get; set; }
 
-    /// <summary>
-    ///     The file path to the synchronized .lrc lyrics file associated with this song.
-    /// </summary>
     [MaxLength(1000)]
     public string? LrcFilePath { get; set; }
 
@@ -111,9 +99,6 @@ public class Song : ObservableObject
     /// </summary>
     public DateTime? LyricsLastCheckedUtc { get; set; }
 
-    /// <summary>
-    ///     The beats per minute of the track.
-    /// </summary>
     public double? Bpm { get; set; }
 
     /// <summary>
@@ -133,9 +118,6 @@ public class Song : ObservableObject
     [NotMapped]
     public bool ReplayGainCheckPerformed { get; set; }
 
-    /// <summary>
-    ///     A custom grouping category for the song.
-    /// </summary>
     [MaxLength(200)]
     public string? Grouping { get; set; }
 
@@ -148,15 +130,9 @@ public class Song : ObservableObject
     [MaxLength(200)]
     public string? Conductor { get; set; }
 
-    /// <summary>
-    ///     The unique identifier for the track from the MusicBrainz database.
-    /// </summary>
     [MaxLength(100)]
     public string? MusicBrainzTrackId { get; set; }
 
-    /// <summary>
-    ///     The unique identifier for the release (album) from the MusicBrainz database.
-    /// </summary>
     [MaxLength(100)]
     public string? MusicBrainzReleaseId { get; set; }
 
@@ -180,7 +156,6 @@ public class Song : ObservableObject
         }
     }
 
-    // Navigation properties
     public virtual ICollection<SongArtist> SongArtists { get; set; } = new List<SongArtist>();
     public virtual ICollection<Genre> Genres { get; set; } = new List<Genre>();
     public virtual ICollection<PlaylistSong> PlaylistSongs { get; set; } = new List<PlaylistSong>();
@@ -244,7 +219,6 @@ public class Song : ObservableObject
         else
         {
             var displayName = Artist.GetDisplayName(artists);
-            // Truncate to MaxLength to prevent database overflow with many collaborators
             ArtistName = displayName.Length > MaxArtistNameLength
                 ? displayName[..(MaxArtistNameLength - 3)] + "..."
                 : displayName;

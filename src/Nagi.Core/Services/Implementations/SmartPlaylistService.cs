@@ -9,9 +9,6 @@ using Nagi.Core.Services.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
-/// <summary>
-///     Manages smart playlist operations including CRUD, rule management, and query execution.
-/// </summary>
 public class SmartPlaylistService : ISmartPlaylistService
 {
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
@@ -21,10 +18,8 @@ public class SmartPlaylistService : ISmartPlaylistService
     private readonly IImageProcessor _imageProcessor;
     private readonly SmartPlaylistQueryBuilder _queryBuilder;
 
-    /// <inheritdoc />
     public event EventHandler<PlaylistUpdatedEventArgs>? PlaylistUpdated;
 
-    /// <inheritdoc />
     public event EventHandler? PlaylistsChanged;
 
     public SmartPlaylistService(
@@ -86,7 +81,6 @@ public class SmartPlaylistService : ISmartPlaylistService
         return playlist;
     }
 
-    /// <inheritdoc />
     public async Task<bool> DeleteSmartPlaylistAsync(Guid smartPlaylistId)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -103,7 +97,6 @@ public class SmartPlaylistService : ISmartPlaylistService
         return rowsAffected > 0;
     }
 
-    /// <inheritdoc />
     public async Task<SmartPlaylist?> GetSmartPlaylistByIdAsync(Guid smartPlaylistId)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -112,7 +105,6 @@ public class SmartPlaylistService : ISmartPlaylistService
             .FirstOrDefaultAsync(sp => sp.Id == smartPlaylistId).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<IEnumerable<SmartPlaylist>> GetAllSmartPlaylistsAsync()
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -123,7 +115,6 @@ public class SmartPlaylistService : ISmartPlaylistService
             .ToListAsync().ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<bool> RenameSmartPlaylistAsync(Guid smartPlaylistId, string newName)
     {
         if (string.IsNullOrWhiteSpace(newName))
@@ -152,7 +143,6 @@ public class SmartPlaylistService : ISmartPlaylistService
         return true;
     }
 
-    /// <inheritdoc />
     public async Task<bool> UpdateSmartPlaylistCoverAsync(Guid smartPlaylistId, string? newCoverImageUri)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -167,7 +157,6 @@ public class SmartPlaylistService : ISmartPlaylistService
         return true;
     }
 
-    /// <inheritdoc />
     public async Task<Guid?> GetRandomSmartPlaylistIdAsync()
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -175,14 +164,12 @@ public class SmartPlaylistService : ISmartPlaylistService
             .Select(playlist => (Guid?)playlist.Id).FirstOrDefaultAsync().ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<int> GetSmartPlaylistCountAsync()
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await context.SmartPlaylists.CountAsync().ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<bool> SetSortOrderAsync(Guid smartPlaylistId, SmartPlaylistSortOrder sortOrder)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -195,7 +182,6 @@ public class SmartPlaylistService : ISmartPlaylistService
         return true;
     }
 
-    /// <inheritdoc />
     public async Task<PagedResult<Song>> GetMatchingSongsPagedAsync(Guid smartPlaylistId, int pageNumber, int pageSize, string? searchTerm = null, SongSortOrder? sortOrder = null, CancellationToken token = default)
     {
         SanitizePaging(ref pageNumber, ref pageSize);
@@ -233,7 +219,6 @@ public class SmartPlaylistService : ISmartPlaylistService
         };
     }
 
-    /// <inheritdoc />
     public async Task<int> GetMatchingSongCountAsync(Guid smartPlaylistId, string? searchTerm = null, CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
@@ -247,14 +232,12 @@ public class SmartPlaylistService : ISmartPlaylistService
         return await _queryBuilder.BuildCountQuery(context, smartPlaylist, searchTerm).CountAsync(token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<int> GetMatchingSongCountAsync(SmartPlaylist smartPlaylist, string? searchTerm = null, CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
         return await _queryBuilder.BuildCountQuery(context, smartPlaylist, searchTerm).CountAsync(token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<List<Guid>> GetMatchingSongIdsAsync(Guid smartPlaylistId, string? searchTerm = null, SongSortOrder? sortOrder = null, CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
@@ -270,7 +253,6 @@ public class SmartPlaylistService : ISmartPlaylistService
             .ToListAsync(token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<Dictionary<Guid, int>> GetAllMatchingSongCountsAsync()
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);

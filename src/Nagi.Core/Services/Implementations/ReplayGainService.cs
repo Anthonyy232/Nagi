@@ -7,9 +7,6 @@ using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Services.Implementations;
 
-/// <summary>
-///     Service for calculating, writing, and managing ReplayGain metadata.
-/// </summary>
 public class ReplayGainService : IReplayGainService
 {
     private const double ReplayGainReference = -18.0;
@@ -29,7 +26,6 @@ public class ReplayGainService : IReplayGainService
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    /// <inheritdoc />
     public async Task<(double GainDb, double Peak)?> CalculateAsync(string filePath, CancellationToken cancellationToken = default)
     {
         try
@@ -51,7 +47,6 @@ public class ReplayGainService : IReplayGainService
         }
     }
 
-    /// <inheritdoc />
     public async Task ScanLibraryAsync(IProgress<ScanProgress>? progress = null, CancellationToken cancellationToken = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
@@ -140,7 +135,6 @@ public class ReplayGainService : IReplayGainService
         }
     }
 
-    /// <inheritdoc />
     public void Dispose()
     {
         if (_disposed) return;

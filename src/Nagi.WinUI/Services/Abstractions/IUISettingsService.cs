@@ -40,7 +40,6 @@ public interface IUISettingsService : ISettingsService
     ///     Gets whether system-wide transparency effects are currently enabled.
     ///     This is a live value from the OS, not a stored setting.
     /// </summary>
-    /// <returns>True if transparency effects are enabled; otherwise, false.</returns>
     bool IsTransparencyEffectsEnabled();
 
     Task<ElementTheme> GetThemeAsync();
@@ -61,10 +60,6 @@ public interface IUISettingsService : ISettingsService
     /// <returns>A value between 0.0 (neutral) and 1.0 (vibrant).</returns>
     Task<double> GetPlayerTintIntensityAsync();
 
-    /// <summary>
-    ///     Saves the player tint intensity.
-    /// </summary>
-    /// <param name="intensity">A value between 0.0 and 1.0.</param>
     Task SetPlayerTintIntensityAsync(double intensity);
 
     Task<bool> GetDynamicThemingAsync();
@@ -95,28 +90,12 @@ public interface IUISettingsService : ISettingsService
 
     Task SetShowCoverArtInTrayFlyoutAsync(bool isEnabled);
 
-    /// <summary>
-    ///     Gets the ordered and enabled/disabled list of navigation items.
-    /// </summary>
-    /// <returns>A list of <see cref="NavigationItemSetting" />.</returns>
     Task<List<NavigationItemSetting>> GetNavigationItemsAsync();
 
-    /// <summary>
-    ///     Saves the ordered and enabled/disabled list of navigation items.
-    /// </summary>
-    /// <param name="items">The list of <see cref="NavigationItemSetting" /> to save.</param>
     Task SetNavigationItemsAsync(List<NavigationItemSetting> items);
 
-    /// <summary>
-    ///     Gets the ordered and enabled/disabled list of player control buttons.
-    /// </summary>
-    /// <returns>A list of <see cref="PlayerButtonSetting" />.</returns>
     Task<List<PlayerButtonSetting>> GetPlayerButtonSettingsAsync();
 
-    /// <summary>
-    ///     Saves the ordered and enabled/disabled list of player control buttons.
-    /// </summary>
-    /// <param name="settings">The list of <see cref="PlayerButtonSetting" /> to save.</param>
     Task SetPlayerButtonSettingsAsync(List<PlayerButtonSetting> settings);
 
     Task<QueueDisplaySettings> GetQueueDisplaySettingsAsync();

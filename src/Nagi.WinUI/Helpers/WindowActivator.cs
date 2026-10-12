@@ -9,9 +9,6 @@ using WinRT.Interop;
 
 namespace Nagi.WinUI.Helpers;
 
-/// <summary>
-///     Provides utility methods for managing window activation and state using Win32 APIs.
-/// </summary>
 internal static class WindowActivator
 {
     private const int SW_RESTORE = 9;
@@ -35,8 +32,6 @@ internal static class WindowActivator
     ///     This method handles the Win32 logic required to steal focus from another application
     ///     by temporarily attaching the input threads of the foreground and target windows.
     /// </remarks>
-    /// <param name="window">The window to show and activate.</param>
-    /// <param name="win32">A service providing Win32 interoperability functions.</param>
     public static void ShowAndActivate(Window window, IWin32InteropService win32)
     {
         var windowHandle = WindowNative.GetWindowHandle(window);
@@ -67,10 +62,6 @@ internal static class WindowActivator
         }
     }
 
-    /// <summary>
-    ///     Activates a popup window, bringing it to the foreground.
-    /// </summary>
-    /// <param name="window">The window to show and activate.</param>
     public static void ActivatePopupWindow(Window window)
     {
         var windowHandle = WindowNative.GetWindowHandle(window);

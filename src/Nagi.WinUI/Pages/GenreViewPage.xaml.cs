@@ -18,9 +18,6 @@ using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.Pages;
 
-/// <summary>
-///     A page that displays detailed information for a specific genre, including all of its associated songs.
-/// </summary>
 public sealed partial class GenreViewPage : Page
 {
     private readonly ILogger<GenreViewPage> _logger;
@@ -148,7 +145,6 @@ public sealed partial class GenreViewPage : Page
     {
         if (_isUpdatingSelection || sender is not ListView listView) return;
 
-        // Update logical selection state based on individual changes
         foreach (var song in e.AddedItems.OfType<Song>())
             ViewModel.SelectionState.Select(song.Id);
 
@@ -183,7 +179,6 @@ public sealed partial class GenreViewPage : Page
         _logger.LogDebug("Ctrl+A invoked. Selecting all songs for genre.");
         ViewModel.SelectAllCommand.Execute(null);
 
-        // Sync the current visible items
         try
         {
             _isUpdatingSelection = true;

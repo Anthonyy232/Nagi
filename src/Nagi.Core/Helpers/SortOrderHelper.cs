@@ -5,7 +5,6 @@ namespace Nagi.Core.Helpers;
 
 public static class SortOrderHelper
 {
-    // Settings Keys
     public const string LibrarySortOrderKey = "SortOrder_Library";
     public const string AlbumsSortOrderKey = "SortOrder_Albums";
     public const string ArtistsSortOrderKey = "SortOrder_Artists";
@@ -16,7 +15,6 @@ public static class SortOrderHelper
     public const string ArtistViewSortOrderKey = "SortOrder_ArtistView";
     public const string GenreViewSortOrderKey = "SortOrder_GenreView";
 
-    // Base Labels
     public static string TitleAscLabel => string.Format(Resources.Strings.Format_AlphaAsc, Resources.Strings.Label_Title);
     public static string TitleDescLabel => string.Format(Resources.Strings.Format_AlphaDesc, Resources.Strings.Label_Title);
     public static string DateCreatedNewestLabel => string.Format(Resources.Strings.Format_TemporalNewest, Resources.Strings.Label_DateCreated);

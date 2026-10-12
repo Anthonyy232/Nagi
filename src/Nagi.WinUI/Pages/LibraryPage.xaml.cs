@@ -15,9 +15,6 @@ using Nagi.WinUI.ViewModels;
 
 namespace Nagi.WinUI.Pages;
 
-/// <summary>
-///     The page for displaying and interacting with the user's music library.
-/// </summary>
 public sealed partial class LibraryPage : Page
 {
     private string GetEmptyStateTitle(bool isSearchActive, bool favorites) => isSearchActive
@@ -220,7 +217,6 @@ public sealed partial class LibraryPage : Page
         _logger.LogDebug("Ctrl+A invoked. Selecting all songs.");
         ViewModel.SelectAllCommand.Execute(null);
 
-        // Sync the current visible items
         try
         {
             _isUpdatingSelection = true;

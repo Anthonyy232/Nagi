@@ -3,22 +3,17 @@ using Nagi.Core.Models.Lyrics;
 
 namespace Nagi.Core.Services.Abstractions;
 
-/// <summary>
-///     Service for loading, parsing, and interacting with .lrc lyric files.
-/// </summary>
 public interface ILrcService
 {
     /// <summary>
     ///     Loads local lyrics or fetches them from the enabled providers.
     /// </summary>
-    /// <param name="song">The song object containing the LrcFilePath.</param>
     /// <returns>Parsed lyrics, or null if no lyrics could be loaded.</returns>
     Task<ParsedLrc?> GetLyricsAsync(Song song, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Asynchronously loads and parses an LRC file from a direct file path.
     /// </summary>
-    /// <param name="lrcFilePath">The full path to the .lrc file.</param>
     /// <returns>A ParsedLrc object containing the timed lyrics, or null if parsing fails or the file doesn't exist.</returns>
     Task<ParsedLrc?> GetLyricsAsync(string lrcFilePath);
 
@@ -34,16 +29,11 @@ public interface ILrcService
     /// <summary>
     ///     Parses a raw LRC string into a ParsedLrc object, which may contain synced or unsynced lyrics.
     /// </summary>
-    /// <param name="lrcContent">The raw LRC string content.</param>
-    /// <returns>A ParsedLrc object containing the parsed lyrics.</returns>
     ParsedLrc ParseLyrics(string? lrcContent);
 
     /// <summary>
     ///     Gets the current lyric line using a search hint for optimal sequential performance.
     /// </summary>
-    /// <param name="parsedLrc">The parsed LRC data.</param>
-    /// <param name="currentTime">The current playback time.</param>
     /// <param name="searchStartIndex">A reference to the last known line index. This will be updated by the method.</param>
-    /// <returns>The active LyricLine.</returns>
     LyricLine? GetCurrentLine(ParsedLrc parsedLrc, TimeSpan currentTime, ref int searchStartIndex);
 }

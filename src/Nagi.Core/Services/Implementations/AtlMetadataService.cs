@@ -10,9 +10,6 @@ using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.Core.Services.Implementations;
 
-/// <summary>
-///     Extracts music file metadata using the ATL.NET library.
-/// </summary>
 public partial class AtlMetadataService : IMetadataService
 {
     private const char AtlMultiValueSeparator = '\u001F';
@@ -39,7 +36,6 @@ public partial class AtlMetadataService : IMetadataService
         _settingsService = settingsService;
     }
 
-    /// <inheritdoc />
     public async Task<SongFileMetadata> ExtractMetadataAsync(string filePath, string? baseFolderPath = null,
         bool includeMediaAssets = true)
     {
@@ -71,7 +67,6 @@ public partial class AtlMetadataService : IMetadataService
 
             if (includeMediaAssets)
             {
-                // Get cached or extract new synchronized lyrics.
                 try
                 {
                     metadata.LrcFilePath = await GetLrcPathAsync(filePath, fileInfo.LastWriteTimeUtc,
@@ -127,9 +122,6 @@ public partial class AtlMetadataService : IMetadataService
         return metadata;
     }
 
-    /// <summary>
-    ///     Populates the metadata object from the ATL track, providing sane defaults for missing values.
-    /// </summary>
     private static void PopulateMetadataFromTrack(SongFileMetadata metadata, Track track, string splitCharacters, string genreSplitCharacters)
     {
         var rawArtist = ArtistNameHelper.NormalizeStringCore(track.Artist) ?? Artist.UnknownArtistName;
@@ -196,7 +188,6 @@ public partial class AtlMetadataService : IMetadataService
     {
         if (string.IsNullOrWhiteSpace(input)) return [];
 
-        // If no split characters are provided, normalize and return the whole string
         if (string.IsNullOrEmpty(splitCharacters))
         {
             var normalized = ArtistNameHelper.NormalizeStringCore(
@@ -248,7 +239,6 @@ public partial class AtlMetadataService : IMetadataService
             var coverArtPath = FindCoverArtInDirectoryHierarchy(filePath, baseFolderPath);
             if (string.IsNullOrEmpty(coverArtPath)) return default;
 
-            // Read the image file and process it
             var imageBytes = await _fileSystem.ReadAllBytesAsync(coverArtPath).ConfigureAwait(false);
             if (imageBytes.Length == 0) return default;
 
@@ -271,7 +261,6 @@ public partial class AtlMetadataService : IMetadataService
     ///     directory and walking up to the base folder path. Looks for common cover art file
     ///     names (cover, folder, album, front) with supported image extensions.
     /// </summary>
-    /// <param name="songFilePath">The path to the song file.</param>
     /// <param name="baseFolderPath">The root folder path to stop searching at.</param>
     /// <returns>The full path to the first matching cover art file, or null if none found.</returns>
     private string? FindCoverArtInDirectoryHierarchy(string songFilePath, string? baseFolderPath)
@@ -281,12 +270,10 @@ public partial class AtlMetadataService : IMetadataService
             var currentDirectory = _fileSystem.GetDirectoryName(songFilePath);
             if (string.IsNullOrEmpty(currentDirectory)) return null;
 
-            // Normalize the base folder path for comparison
             var normalizedBasePath = baseFolderPath?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 
             while (!string.IsNullOrEmpty(currentDirectory))
             {
-                // Search for cover art in the current directory
                 var coverArtPath = ImageStorageHelper.FindCoverArtInDirectory(_fileSystem, currentDirectory, _logger);
                 if (coverArtPath != null) return coverArtPath;
 
@@ -294,7 +281,6 @@ public partial class AtlMetadataService : IMetadataService
                 if (!string.IsNullOrEmpty(normalizedBasePath) &&
                     normalizedCurrent.Equals(normalizedBasePath, StringComparison.OrdinalIgnoreCase))
                 {
-                    // We've searched the base folder, stop here
                     break;
                 }
 

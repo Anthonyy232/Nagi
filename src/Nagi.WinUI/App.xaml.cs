@@ -27,10 +27,6 @@ using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArg
 
 namespace Nagi.WinUI;
 
-/// <summary>
-///     Provides application-specific behavior, manages the application lifecycle,
-///     and configures dependency injection.
-/// </summary>
 public partial class App : Application
 {
     private static string? _currentLogFilePath;
@@ -53,19 +49,10 @@ public partial class App : Application
 
     public static App? CurrentApp { get; private set; }
 
-    /// <summary>
-    ///     Gets the main application window.
-    /// </summary>
     public static Window? RootWindow => CurrentApp?._window;
 
-    /// <summary>
-    ///     Gets the configured service provider.
-    /// </summary>
     public static IServiceProvider? Services { get; private set; }
 
-    /// <summary>
-    ///     Gets the dispatcher queue for the main UI thread.
-    /// </summary>
     public static DispatcherQueue? MainDispatcherQueue => CurrentApp?._window?.DispatcherQueue;
 
     protected override async void OnLaunched(LaunchActivatedEventArgs args)
@@ -176,7 +163,6 @@ public partial class App : Application
     ///     Handles an activation request from an external source (e.g., a secondary instance).
     ///     This method orchestrates file queuing and window activation logic on the UI thread.
     /// </summary>
-    /// <param name="filePath">The file path from the activation arguments, if any.</param>
     public void HandleExternalActivation(string? filePath)
     {
         _hasExternalActivation = true;
@@ -468,7 +454,6 @@ public partial class App : Application
             Log.Information("Reset complete. Restarting application.");
             await Log.CloseAndFlushAsync();
 
-            // Restart the app cleanly
             ElevationHelper.RestartWithoutElevation();
 
         }

@@ -133,7 +133,6 @@ public partial class DataManagementSettingsViewModel : ObservableObject
         var backupFilePath = await _uiService.PickSingleFileAsync(new[] { ".zip" });
         if (string.IsNullOrEmpty(backupFilePath)) return;
 
-        // Validate backup
         var isValid = await _backupRestoreService.ValidateBackupAsync(backupFilePath);
         if (!isValid)
         {
@@ -143,7 +142,6 @@ public partial class DataManagementSettingsViewModel : ObservableObject
             return;
         }
 
-        // Confirmation dialog
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
             Resources.Strings.Settings_Restore_Confirm_Title,
             Resources.Strings.Settings_Restore_Confirm_Message,
@@ -160,7 +158,6 @@ public partial class DataManagementSettingsViewModel : ObservableObject
                 Resources.Strings.Settings_Restore_Success_Title,
                 Resources.Strings.Settings_Restore_Success_Message);
 
-            // Restart app
             if (result.RequiresRestart)
             {
                 AppInstance.Restart("");

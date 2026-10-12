@@ -58,7 +58,6 @@ public partial class LibraryService
         batchContext.ChangeTracker.AutoDetectChangesEnabled = false;
 
         {
-            // Pre-load all existing artists, albums, and genres into caches
             var existingArtists = await batchContext.Artists.Select(a => new { a.Id, a.Name })
                 .ToListAsync(cancellationToken).ConfigureAwait(false);
             foreach (var artist in existingArtists)
@@ -414,10 +413,6 @@ public partial class LibraryService
         return genreLookup;
     }
 
-    /// <summary>
-    ///     Normalizes a string using shared normalization logic from ArtistNameHelper.
-    ///     Returns null if the result is empty.
-    /// </summary>
     private static string? NormalizeString(string? s) => ArtistNameHelper.NormalizeStringCore(s);
 
     private async Task<Dictionary<(string Title, string Artist), Album>> ResolveAlbumsForBatchAsync(
@@ -510,9 +505,6 @@ public partial class LibraryService
         }
     }
 
-    /// <summary>
-    ///     Adds or updates a song using scan-scoped caches for artists, albums, and genres.
-    /// </summary>
     private void AddSongWithDetailsCached(
         MusicDbContext context,
         Guid folderId,

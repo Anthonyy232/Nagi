@@ -28,9 +28,6 @@ public sealed class SourceSegment
     public PlaybackContextType ContextType { get; init; }
 }
 
-/// <summary>
-///     A display-friendly wrapper for top-song statistics shown in the insights cards.
-/// </summary>
 public sealed class TopSongItem
 {
     public int Rank { get; init; }
@@ -41,9 +38,6 @@ public sealed class TopSongItem
     public string StatText { get; init; } = string.Empty;
 }
 
-/// <summary>
-///     A display-friendly wrapper for top-artist statistics.
-/// </summary>
 public sealed class TopArtistItem
 {
     public Guid ArtistId { get; init; }
@@ -55,9 +49,6 @@ public sealed class TopArtistItem
     public IRelayCommand<TopArtistItem>? Command { get; init; }
 }
 
-/// <summary>
-///     A display-friendly wrapper for top-album statistics.
-/// </summary>
 public sealed class TopAlbumItem
 {
     public Guid AlbumId { get; init; }
@@ -70,9 +61,6 @@ public sealed class TopAlbumItem
     public IRelayCommand<TopAlbumItem>? Command { get; init; }
 }
 
-/// <summary>
-///     A display-friendly wrapper for top-genre statistics.
-/// </summary>
 public sealed class TopGenreItem
 {
     public Guid GenreId { get; init; }
@@ -82,14 +70,8 @@ public sealed class TopGenreItem
     public IRelayCommand<TopGenreItem>? Command { get; init; }
 }
 
-/// <summary>
-///     Identifies which category is currently shown in the "See All" overlay.
-/// </summary>
 public enum SeeAllCategory { None, Songs, Artists, Albums, Genres }
 
-/// <summary>
-///     Manages the state and logic for the Listening Insights dashboard page.
-/// </summary>
 public partial class InsightsViewModel : ObservableObject
 {
     private readonly IStatisticsService _statisticsService;
@@ -124,9 +106,6 @@ public partial class InsightsViewModel : ObservableObject
 
     // ── Time range ──────────────────────────────────────────────
 
-    /// <summary>
-    ///     The available time range presets shown in the segmented control.
-    /// </summary>
     public IReadOnlyList<string> TimeRangeLabels { get; } =
         new[]
         {
@@ -367,29 +346,22 @@ public partial class InsightsViewModel : ObservableObject
 
             ct.ThrowIfCancellationRequested();
 
-            // Marshal results to UI thread.
             await _dispatcherService.EnqueueAsync(() =>
             {
                 ct.ThrowIfCancellationRequested();
-                // Hero stats
                 TotalListenTimeText = FormatListenTime(totalTimeTask.Result);
                 UniqueSongsPlayed = uniqueTask.Result;
                 PeakHourText = FormatHour(listeningPatternsTask.Result.PeakHour);
                 MostActiveDayText = CultureInfo.CurrentCulture.DateTimeFormat.GetDayName(listeningPatternsTask.Result.MostActiveDay);
 
-                // Top songs
                 TopSongs.ReplaceRange(topSongsTask.Result.Select(CreateSongItem));
 
-                // Top artists
                 TopArtists.ReplaceRange(topArtistsTask.Result.Select(CreateArtistItem));
 
-                // Top albums
                 TopAlbums.ReplaceRange(topAlbumsTask.Result.Select(CreateAlbumItem));
 
-                // Top genres
                 TopGenres.ReplaceRange(topGenresTask.Result.Select(CreateGenreItem));
 
-                // Playback source distribution
                 var sources = sourcesTask.Result.ToList();
                 var totalCount = sources.Sum(s => s.Count);
                 SourceSegments = new ObservableRangeCollection<SourceSegment>(totalCount > 0

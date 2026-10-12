@@ -5,9 +5,6 @@ using Windows.Storage;
 
 namespace Nagi.WinUI.Helpers;
 
-/// <summary>
-///     Helper class to bootstrap the application language settings before the main UI initializes.
-/// </summary>
 public static class LanguageBootstrapper
 {
     public static void Bootstrap()

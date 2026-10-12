@@ -383,9 +383,6 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
     partial void OnFadeOutDurationMsChanged(double value) =>
         _ = SaveSettingAsync(() => _settingsService.SetFadeOutDurationMsAsync((int)value));
 
-    /// <summary>
-    ///     Scans the library for songs missing ReplayGain data and writes the tags.
-    /// </summary>
     private async Task ScanLibraryForReplayGainAsync()
     {
         if (_isDisposed || _globalOperation.IsInProgress) return;

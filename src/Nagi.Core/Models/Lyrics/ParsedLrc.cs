@@ -12,9 +12,6 @@ public class ParsedLrc
         RawLyrics = rawLyrics;
     }
 
-    /// <summary>
-    ///     A sorted, read-only list of all lyric lines.
-    /// </summary>
     public IReadOnlyList<LyricLine> Lines { get; }
 
     /// <summary>
@@ -22,8 +19,5 @@ public class ParsedLrc
     /// </summary>
     public string? RawLyrics { get; }
 
-    /// <summary>
-    ///     Indicates if the parsed lyrics contain any lines.
-    /// </summary>
     public bool IsEmpty => Lines.Count == 0;
 }

@@ -17,9 +17,6 @@ using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.Pages;
 
-/// <summary>
-///     A page for displaying the list of songs that match a smart playlist's rules.
-/// </summary>
 public sealed partial class SmartPlaylistSongViewPage : Page
 {
     private readonly ILogger<SmartPlaylistSongViewPage> _logger;
@@ -162,7 +159,6 @@ public sealed partial class SmartPlaylistSongViewPage : Page
     {
         if (_isUpdatingSelection || sender is not ListView listView) return;
 
-        // Update logical selection state based on individual changes
         foreach (var song in e.AddedItems.OfType<Song>())
             ViewModel.SelectionState.Select(song.Id);
 
@@ -197,7 +193,6 @@ public sealed partial class SmartPlaylistSongViewPage : Page
         _logger.LogDebug("Ctrl+A invoked. Selecting all songs in smart playlist.");
         ViewModel.SelectAllCommand.Execute(null);
 
-        // Sync the current visible items
         try
         {
             _isUpdatingSelection = true;

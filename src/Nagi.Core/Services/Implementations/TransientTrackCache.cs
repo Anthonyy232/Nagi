@@ -33,9 +33,6 @@ internal sealed class TransientTrackCache
         _idsByPath[song.FilePath] = song.Id;
     }
 
-    /// <summary>
-    ///     Forgets every track whose id is not in <paramref name="retainedIds" />.
-    /// </summary>
     public void RetainOnly(IReadOnlySet<Guid> retainedIds)
     {
         foreach (var id in _tracks.Keys.Where(id => !retainedIds.Contains(id)).ToList())

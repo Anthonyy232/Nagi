@@ -7,9 +7,6 @@ using Nagi.WinUI.ViewModels;
 
 namespace Nagi.WinUI.Pages;
 
-/// <summary>
-///     A page that displays a grid of music folders and allows adding, deleting, and rescanning them.
-/// </summary>
 public sealed partial class FolderPage : Page
 {
     private readonly ILogger<FolderPage> _logger;

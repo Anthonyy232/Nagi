@@ -71,10 +71,6 @@ public interface ISettingsService
     /// <param name="state">The playback state to save. If null, the saved state is cleared.</param>
     Task SavePlaybackStateAsync(PlaybackState? state);
 
-    /// <summary>
-    ///     Retrieves the last saved playback state.
-    /// </summary>
-    /// <returns>The saved <see cref="PlaybackState" />, or null if none exists.</returns>
     Task<PlaybackState?> GetPlaybackStateAsync();
 
     Task ClearPlaybackStateAsync();
@@ -104,8 +100,6 @@ public interface ISettingsService
     /// <summary>
     ///     Saves the Last.fm credentials securely.
     /// </summary>
-    /// <param name="username">The username to save.</param>
-    /// <param name="sessionKey">The session key to save.</param>
     Task SaveLastFmCredentialsAsync(string username, string sessionKey);
 
     Task ClearLastFmCredentialsAsync();
@@ -129,7 +123,6 @@ public interface ISettingsService
     /// <summary>Gets the saved ListenBrainz user token from secure storage, or null.</summary>
     Task<string?> GetListenBrainzUserTokenAsync();
 
-    /// <summary>Saves the ListenBrainz user token to secure storage.</summary>
     Task SaveListenBrainzUserTokenAsync(string token);
 
     Task ClearListenBrainzUserTokenAsync();
@@ -157,10 +150,6 @@ public interface ISettingsService
 
     Task SetGenreSplitCharactersAsync(string characters);
 
-    /// <summary>
-    ///     Retrieves the last saved equalizer settings.
-    /// </summary>
-    /// <returns>The saved <see cref="EqualizerSettings" />, or null if none exist.</returns>
     Task<EqualizerSettings?> GetEqualizerSettingsAsync();
 
     Task SetEqualizerSettingsAsync(EqualizerSettings settings);
@@ -205,7 +194,6 @@ public interface ISettingsService
     /// <summary>
     ///     Gets the configured service providers for a specific category.
     /// </summary>
-    /// <param name="category">The service category to retrieve.</param>
     /// <returns>A list of service provider settings, ordered by priority.</returns>
     Task<List<ServiceProviderSetting>> GetServiceProvidersAsync(ServiceCategory category);
 
@@ -214,7 +202,5 @@ public interface ISettingsService
     /// <summary>
     ///     Gets enabled service providers for a category, sorted by priority (lowest Order first).
     /// </summary>
-    /// <param name="category">The service category to retrieve.</param>
-    /// <returns>A list of enabled service providers, sorted by priority.</returns>
     Task<List<ServiceProviderSetting>> GetEnabledServiceProvidersAsync(ServiceCategory category);
 }

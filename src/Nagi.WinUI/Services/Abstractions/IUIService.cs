@@ -6,20 +6,11 @@ namespace Nagi.WinUI.Services.Abstractions;
 
 public enum CrashReportResult
 {
-    /// <summary>
-    ///    The user chose to close the application.
-    /// </summary>
     Close,
 
-    /// <summary>
-    ///     The user chose to reset the application data.
-    /// </summary>
     Reset
 }
 
-/// <summary>
-///     Abstracts UI-related operations like showing dialogs or pickers.
-/// </summary>
 public interface IUIService
 {
     Task<Nagi.WinUI.Models.PlaybackMixOptions?> ShowPlayForDialogAsync();
@@ -27,8 +18,6 @@ public interface IUIService
     /// <summary>
     ///     Shows a confirmation dialog to the user.
     /// </summary>
-    /// <param name="title">The dialog's title.</param>
-    /// <param name="content">The main message of the dialog.</param>
     /// <param name="primaryButtonText">The text for the confirmation button.</param>
     /// <param name="closeButtonText">The text for the cancellation button, or null to use the localized Cancel label.</param>
     /// <param name="defaultToCancel">Makes the cancellation button the default, for destructive actions.</param>
@@ -36,9 +25,6 @@ public interface IUIService
     Task<bool> ShowConfirmationDialogAsync(string title, string content, string? primaryButtonText = null,
         string? closeButtonText = null, bool defaultToCancel = false);
 
-    /// <summary>
-    ///     Opens a folder picker dialog for the user to select a single folder.
-    /// </summary>
     /// <returns>The path of the selected folder, or null if the user cancelled.</returns>
     Task<string?> PickSingleFolderAsync();
 
@@ -50,18 +36,12 @@ public interface IUIService
 
     /// <summary>
     ///     Shows a simple message dialog with a single "OK" button.
-    /// </summary>
-    /// <param name="title">The dialog's title.</param>
     /// <param name="message">The message to display.</param>
     Task ShowMessageDialogAsync(string title, string message);
 
     /// <summary>
     ///     Shows a dialog informing the user about a previous application crash.
     /// </summary>
-    /// <param name="title">The dialog's title.</param>
-    /// <param name="introduction">The introductory message to the user.</param>
-    /// <param name="logContent">The content of the log file to display.</param>
-    /// <param name="githubUrl">The URL to the GitHub issues page.</param>
     /// <returns>A <see cref="CrashReportResult" /> indicating the user's choice.</returns>
     Task<CrashReportResult> ShowCrashReportDialogAsync(string title, string introduction, string logContent, string githubUrl);
 
@@ -106,8 +86,6 @@ public interface IUIService
     /// <summary>
     ///     Shows a dialog for FFmpeg setup with a recheck button that doesn't close the dialog.
     /// </summary>
-    /// <param name="title">The dialog's title.</param>
-    /// <param name="instructions">The FFmpeg setup instructions to display.</param>
     /// <param name="checkAction">An async function that checks if FFmpeg is installed. Returns true if detected.</param>
     /// <returns>True if FFmpeg was detected after a recheck, false if the user cancelled.</returns>
     Task<bool> ShowFFmpegSetupDialogAsync(string title, string instructions, Func<Task<bool>> checkAction);

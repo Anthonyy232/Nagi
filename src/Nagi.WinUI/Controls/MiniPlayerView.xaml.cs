@@ -13,10 +13,6 @@ using Nagi.WinUI.ViewModels;
 
 namespace Nagi.WinUI.Controls;
 
-/// <summary>
-///     A user control for the mini-player, which displays track information and provides
-///     media controls.
-/// </summary>
 public sealed partial class MiniPlayerView : UserControl
 {
     private readonly Window _parentWindow;
@@ -33,9 +29,6 @@ public sealed partial class MiniPlayerView : UserControl
         SubscribeToEvents();
     }
 
-    /// <summary>
-    ///     Gets the view model that provides data and commands for the player UI.
-    /// </summary>
     public PlayerViewModel ViewModel { get; }
 
     /// <summary>
@@ -43,9 +36,6 @@ public sealed partial class MiniPlayerView : UserControl
     /// </summary>
     public UIElement TitleBarDragRegion => DragHandle;
 
-    /// <summary>
-    ///     Occurs when the user clicks the button to restore the main application window.
-    /// </summary>
     public event EventHandler? RestoreButtonClicked;
 
     private void SubscribeToEvents()
@@ -152,7 +142,6 @@ public sealed partial class MiniPlayerView : UserControl
     {
         if (_isUnloaded) return;
 
-        // Hide hover controls when the window is no longer in the foreground.
         if (args.WindowActivationState == WindowActivationState.Deactivated)
             AnimateHoverControls(visible: false, useTransitions: false);
     }
@@ -174,9 +163,6 @@ public sealed partial class MiniPlayerView : UserControl
         AnimateHoverControls(visible: false);
     }
 
-    /// <summary>
-    ///     Animates the hover controls visibility using GPU-accelerated Composition.
-    /// </summary>
     private void AnimateHoverControls(bool visible, bool useTransitions = true)
     {
         var targetOpacity = visible ? 1f : 0f;

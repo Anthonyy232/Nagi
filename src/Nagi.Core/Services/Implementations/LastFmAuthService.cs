@@ -6,9 +6,6 @@ using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.Core.Services.Implementations;
 
-/// <summary>
-///     Handles the Last.fm authentication flow by making calls to the Last.fm API.
-/// </summary>
 public class LastFmAuthService : ILastFmAuthService
 {
     private const string LastFmApiBaseUrl = "https://ws.audioscrobbler.com/2.0/";
@@ -30,7 +27,6 @@ public class LastFmAuthService : ILastFmAuthService
         _logger = logger;
     }
 
-    /// <inheritdoc />
     public async Task<(string Token, string AuthUrl)?> GetAuthenticationTokenAsync()
     {
         var credentials = await GetCredentialsAsync().ConfigureAwait(false);
@@ -79,7 +75,6 @@ public class LastFmAuthService : ILastFmAuthService
             "auth token fetch").ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<(string Username, string SessionKey)?> GetSessionAsync(string token)
     {
         var credentials = await GetCredentialsAsync().ConfigureAwait(false);

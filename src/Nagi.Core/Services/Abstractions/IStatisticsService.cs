@@ -2,16 +2,8 @@
 
 namespace Nagi.Core.Services.Abstractions;
 
-/// <summary>
-///     Provides methods for aggregating and querying listening statistics and insights.
-/// </summary>
 public interface IStatisticsService
 {
-    // --- Top Item Queries ---
-
-    /// <summary>
-    ///     Gets the top songs within a specific time range.
-    /// </summary>
     Task<IEnumerable<SongStats>> GetTopSongsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.PlayCount, int offset = 0, string? searchTerm = null, CancellationToken ct = default);
 
     /// <summary>
@@ -19,66 +11,36 @@ public interface IStatisticsService
     /// </summary>
     Task<StatisticsPage<SongStats>> GetTopSongsPageAsync(TimeRange range, int limit, SortMetric metric, int offset, string? searchTerm, CancellationToken ct = default);
 
-    /// <summary>
-    ///     Gets the top artists within a specific time range.
-    /// </summary>
     Task<IEnumerable<ArtistStats>> GetTopArtistsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.Duration, int offset = 0, string? searchTerm = null, CancellationToken ct = default);
 
     Task<StatisticsPage<ArtistStats>> GetTopArtistsPageAsync(TimeRange range, int limit, SortMetric metric, int offset, string? searchTerm, CancellationToken ct = default);
 
-    /// <summary>
-    ///     Gets the top albums within a specific time range.
-    /// </summary>
     Task<IEnumerable<AlbumStats>> GetTopAlbumsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.PlayCount, int offset = 0, string? searchTerm = null, CancellationToken ct = default);
 
     Task<StatisticsPage<AlbumStats>> GetTopAlbumsPageAsync(TimeRange range, int limit, SortMetric metric, int offset, string? searchTerm, CancellationToken ct = default);
 
-    /// <summary>
-    ///     Gets the top genres within a specific time range.
-    /// </summary>
     Task<IEnumerable<GenreStats>> GetTopGenresAsync(TimeRange range, int limit = 10, SortMetric metric = SortMetric.PlayCount, int offset = 0, string? searchTerm = null, CancellationToken ct = default);
 
     Task<StatisticsPage<GenreStats>> GetTopGenresPageAsync(TimeRange range, int limit, SortMetric metric, int offset, string? searchTerm, CancellationToken ct = default);
 
-    // --- Aggregate Queries ---
-
-    /// <summary>
-    ///     Gets the total duration of music listened to within a time range.
-    /// </summary>
     Task<TimeSpan> GetTotalListenTimeAsync(TimeRange range, CancellationToken ct = default);
 
-    /// <summary>
-    ///     Gets the count of unique songs played within a time range.
-    /// </summary>
     Task<int> GetUniqueSongsPlayedAsync(TimeRange range, CancellationToken ct = default);
-
-    // --- Habit Queries ---
 
     /// <summary>
     ///     Gets the most active local day and peak local hour from one history scan.
     /// </summary>
     Task<ListeningPatternStats> GetListeningPatternsAsync(TimeRange range, CancellationToken ct = default);
 
-    /// <summary>
-    ///     Gets the distribution of playback sources (Album, Playlist, etc.) used.
-    /// </summary>
     Task<IEnumerable<ContextStats>> GetPlaybackSourceDistributionAsync(TimeRange range, CancellationToken ct = default);
 }
-
-// Support Models for Statistics
 
 public record TimeRange(DateTime? StartUtc, DateTime? EndUtc);
 
 public enum SortMetric
 {
-    /// <summary>
-    ///     Sort by the number of times a track was marked as played.
-    /// </summary>
     PlayCount,
 
-    /// <summary>
-    ///     Sort by the total cumulative duration of listening.
-    /// </summary>
     Duration
 }
 

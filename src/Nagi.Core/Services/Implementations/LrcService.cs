@@ -9,10 +9,6 @@ using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.Core.Services.Implementations;
 
-/// <summary>
-///     Service for loading, parsing, and interacting with .lrc lyric files,
-///     optimized for high-performance playback synchronization.
-/// </summary>
 public class LrcService : ILrcService, IDisposable
 {
     private readonly IFileSystemService _fileSystemService;
@@ -46,7 +42,6 @@ public class LrcService : ILrcService, IDisposable
         _settingsService.FetchOnlineLyricsEnabledChanged += OnFetchOnlineLyricsEnabledChanged;
     }
 
-    /// <inheritdoc />
     public async Task<ParsedLrc?> GetLyricsAsync(Song song, CancellationToken cancellationToken = default)
     {
         var forceOnlineRefresh = false;
@@ -179,7 +174,6 @@ public class LrcService : ILrcService, IDisposable
         return null;
     }
 
-    /// <inheritdoc />
     public async Task<ParsedLrc?> GetLyricsAsync(string lrcFilePath)
     {
         if (string.IsNullOrWhiteSpace(lrcFilePath) || !_fileSystemService.FileExists(lrcFilePath)) return null;
@@ -196,7 +190,6 @@ public class LrcService : ILrcService, IDisposable
         }
     }
 
-    /// <inheritdoc />
     public Task SaveLyricsAsync(Song song, string lrcContent)
     {
         ArgumentNullException.ThrowIfNull(song);
@@ -204,7 +197,6 @@ public class LrcService : ILrcService, IDisposable
         return WriteLyricsCacheAsync(song, lrcContent, true);
     }
 
-    /// <inheritdoc />
     public async Task<bool> RemoveCachedLyricsAsync(Song song)
     {
         ArgumentNullException.ThrowIfNull(song);
@@ -221,7 +213,6 @@ public class LrcService : ILrcService, IDisposable
         return true;
     }
 
-    /// <inheritdoc />
     public bool HasCachedLyrics(Song song)
     {
         ArgumentNullException.ThrowIfNull(song);
@@ -296,7 +287,6 @@ public class LrcService : ILrcService, IDisposable
         }
     }
 
-    /// <inheritdoc />
     public LyricLine? GetCurrentLine(ParsedLrc parsedLrc, TimeSpan currentTime, ref int searchStartIndex)
     {
         if (parsedLrc.IsEmpty) return null;

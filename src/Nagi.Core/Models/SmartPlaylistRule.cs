@@ -13,14 +13,8 @@ public class SmartPlaylistRule
     [ForeignKey("SmartPlaylistId")]
     public virtual SmartPlaylist SmartPlaylist { get; set; } = null!;
 
-    /// <summary>
-    ///     The song field being evaluated (e.g., Artist, Genre, PlayCount).
-    /// </summary>
     public SmartPlaylistField Field { get; set; }
 
-    /// <summary>
-    ///     The comparison operator (e.g., Is, Contains, GreaterThan).
-    /// </summary>
     public SmartPlaylistOperator Operator { get; set; }
 
     /// <summary>
@@ -36,8 +30,5 @@ public class SmartPlaylistRule
     [MaxLength(1000)]
     public string? SecondValue { get; set; }
 
-    /// <summary>
-    ///     The display order of this rule within the smart playlist.
-    /// </summary>
     public int Order { get; set; }
 }

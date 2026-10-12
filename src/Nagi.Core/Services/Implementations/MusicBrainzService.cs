@@ -34,7 +34,6 @@ public class MusicBrainzService : IMusicBrainzService
         _logger = logger;
     }
 
-    /// <inheritdoc />
     public async Task<ServiceResult<string>> SearchArtistAsync(string artistName, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(artistName))

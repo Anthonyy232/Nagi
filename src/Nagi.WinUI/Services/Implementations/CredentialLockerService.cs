@@ -23,7 +23,6 @@ public class CredentialLockerService : ICredentialLockerService
         _logger = logger;
     }
 
-    /// <inheritdoc />
     public void SaveCredential(string resource, string userName, string password)
     {
         try
@@ -43,7 +42,6 @@ public class CredentialLockerService : ICredentialLockerService
         }
     }
 
-    /// <inheritdoc />
     public (string? UserName, string? Password)? RetrieveCredential(string resource)
     {
         try
@@ -72,7 +70,6 @@ public class CredentialLockerService : ICredentialLockerService
         }
     }
 
-    /// <inheritdoc />
     public void RemoveCredential(string resource)
     {
         try

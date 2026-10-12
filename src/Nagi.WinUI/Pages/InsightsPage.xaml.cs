@@ -10,9 +10,6 @@ using Nagi.WinUI.ViewModels;
 
 namespace Nagi.WinUI.Pages;
 
-/// <summary>
-///     A dashboard page that displays listening insights and statistics.
-/// </summary>
 public sealed partial class InsightsPage : Page
 {
     private readonly ILogger<InsightsPage> _logger;

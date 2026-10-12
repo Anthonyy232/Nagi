@@ -36,7 +36,6 @@ public class LrcLibService : IOnlineLyricsService
         _logger = logger;
     }
 
-    /// <inheritdoc />
     public async Task<string?> GetLyricsAsync(string trackName, string? artistName, string? albumName, TimeSpan duration, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(trackName))

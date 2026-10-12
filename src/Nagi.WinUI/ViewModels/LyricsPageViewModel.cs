@@ -108,17 +108,10 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial string EditableLyrics { get; set; } = string.Empty;
     public Guid? CurrentSongId => _currentSong?.Id;
 
-    /// <summary>
-    ///     True when the "No lyrics found" message should be displayed.
-    ///     This is only when we are not loading and have no lyrics of either type.
-    /// </summary>
     public bool ShowNoLyricsMessage => !HasLyrics && !HasUnsyncedLyrics && !IsLoading;
 
     public ObservableRangeCollection<LyricLine> LyricLines { get; } = new();
 
-    /// <summary>
-    ///     Collection of unsynchronized lyric lines for display in a ListView-like format.
-    /// </summary>
     public ObservableRangeCollection<LyricLine> UnsyncedLyricLines { get; } = new();
 
     public void Dispose()

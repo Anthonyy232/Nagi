@@ -13,10 +13,6 @@ using Nagi.Core.Constants;
 
 namespace Nagi.WinUI.Pages;
 
-/// <summary>
-///     A page that displays a grid of all artists from the user's library.
-///     This page is responsible for creating and managing the lifecycle of its ViewModel.
-/// </summary>
 public sealed partial class ArtistPage : Page
 {
     private readonly ILogger<ArtistPage> _logger;

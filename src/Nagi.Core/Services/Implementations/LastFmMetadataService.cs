@@ -8,9 +8,6 @@ using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Services.Implementations;
 
-/// <summary>
-///     A service for fetching artist information from the Last.fm API.
-/// </summary>
 public class LastFmMetadataService : ILastFmMetadataService
 {
     private const string LastFmApiBaseUrl = "https://ws.audioscrobbler.com/2.0/";
@@ -39,7 +36,6 @@ public class LastFmMetadataService : ILastFmMetadataService
         _logger = logger;
     }
 
-    /// <inheritdoc />
     public async Task<ServiceResult<ArtistInfo>> GetArtistInfoAsync(string artistName,
         string? languageCode = null,
         CancellationToken cancellationToken = default)

@@ -270,7 +270,6 @@ public class PresenceManager : IPresenceManager, IAsyncDisposable, IDisposable
         _currentTrack = newTrack;
         _currentListenSessionId = newSessionId;
 
-        // Reset throttle state so new track gets immediate presence update
         _lastPresencePositionUpdate = null;
 
         _logger.LogDebug("Track changed to '{TrackTitle}' (Session: {SessionId}). Broadcasting to active services.",

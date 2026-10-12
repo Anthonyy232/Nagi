@@ -33,10 +33,6 @@ public sealed class ArtistAlbumViewModelItem
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverArtUri);
 }
 
-/// <summary>
-///     Provides data and commands for the artist details page, which displays an artist's
-///     biography, albums, and a complete list of their songs.
-/// </summary>
 public partial class ArtistViewViewModel : SongListViewModelBase
 {
     private Guid _artistId;
@@ -150,9 +146,6 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         }
     }
 
-    /// <summary>
-    ///     Populates the ViewModel's properties from the Artist model.
-    /// </summary>
     private void PopulateArtistDetails(Artist artist)
     {
         ArtistName = artist.Name;
@@ -165,9 +158,6 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         _logger.LogDebug("Populated details for artist '{ArtistName}' ({ArtistId})", artist.Name, artist.Id);
     }
 
-    /// <summary>
-    ///     Handles the UI state when an artist cannot be found in the library.
-    /// </summary>
     private void HandleArtistNotFound(Guid artistId)
     {
         _logger.LogWarning("Artist with ID {ArtistId} not found", artistId);
@@ -180,9 +170,6 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         TotalItemsText = ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Plural, 0);
     }
 
-    /// <summary>
-    ///     Handles the UI state when an exception occurs during loading.
-    /// </summary>
     private void HandleLoadError(Guid artistId, Exception ex)
     {
         _logger.LogError(ex, "Failed to load artist with ID {ArtistId}", artistId);
@@ -226,7 +213,6 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         {
             var generation = CaptureSongContext();
             _logger.LogDebug("Received metadata update for artist ID {ArtistId}", _artistId);
-            // Must be run on the UI thread to update the bound property.
             _dispatcherService.TryEnqueue(() =>
             {
                 // Guard against updates after the page has been cleaned up.
@@ -238,9 +224,6 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         }
     }
 
-    /// <summary>
-    ///     Handles batched updates to artist metadata.
-    /// </summary>
     private void OnArtistMetadataBatchUpdated(object? sender, IEnumerable<ArtistMetadataUpdatedEventArgs> updates)
     {
         var update = updates.FirstOrDefault(u => u.ArtistId == _artistId);

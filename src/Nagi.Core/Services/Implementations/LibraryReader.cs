@@ -45,14 +45,12 @@ public partial class LibraryReader : ILibraryReader, IDisposable
 
     private void OnIgnoreLeadingArticlesOnSortChanged(bool value) => _ignoreArticlesOnSort = value;
 
-    /// <inheritdoc />
     public async Task<Folder?> GetFolderByIdAsync(Guid folderId)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await context.Folders.AsNoTracking().FirstOrDefaultAsync(f => f.Id == folderId).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<Folder?> GetFolderByPathAsync(string path)
     {
         if (string.IsNullOrWhiteSpace(path)) return null;
@@ -64,14 +62,12 @@ public partial class LibraryReader : ILibraryReader, IDisposable
         return await context.Folders.AsNoTracking().FirstOrDefaultAsync(f => f.Path == normalizedPath).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<bool> HasAnyFolderAsync(CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await context.Folders.AnyAsync(token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<IEnumerable<FolderSummary>> GetRootFoldersWithCountsAsync(CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
@@ -81,11 +77,9 @@ public partial class LibraryReader : ILibraryReader, IDisposable
             .ToListAsync(token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public Task<IEnumerable<Folder>> GetSubFoldersPagedAsync(Guid parentFolderId, int skip, int take, CancellationToken token = default) =>
         SearchSubFoldersPagedAsync(parentFolderId, string.Empty, skip, take, token);
 
-    /// <inheritdoc />
     public async Task<int> GetSubFolderCountBySearchAsync(Guid parentFolderId, string searchTerm, CancellationToken token = default)
     {
         if (string.IsNullOrWhiteSpace(searchTerm))
@@ -98,7 +92,6 @@ public partial class LibraryReader : ILibraryReader, IDisposable
                              EF.Functions.Like(f.Name, term, LikePatternHelper.EscapeCharacter), token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<IEnumerable<Folder>> SearchSubFoldersPagedAsync(Guid parentFolderId, string searchTerm, int skip, int take, CancellationToken token = default)
     {
         if (take <= 0) return Enumerable.Empty<Folder>();
@@ -121,7 +114,6 @@ public partial class LibraryReader : ILibraryReader, IDisposable
             .ToListAsync(token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<int> GetSubFolderCountAsync(Guid parentFolderId, CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -133,7 +125,6 @@ public partial class LibraryReader : ILibraryReader, IDisposable
             .Select(e => (Guid?)EF.Property<Guid>(e, "Id"))
             .FirstOrDefaultAsync();
 
-    /// <inheritdoc />
     public async Task<Song?> GetSongByIdAsync(Guid songId)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -145,7 +136,6 @@ public partial class LibraryReader : ILibraryReader, IDisposable
             .FirstOrDefaultAsync(s => s.Id == songId).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<Song?> GetSongByFilePathAsync(string filePath)
     {
         if (string.IsNullOrWhiteSpace(filePath)) return null;
@@ -157,7 +147,6 @@ public partial class LibraryReader : ILibraryReader, IDisposable
             .FirstOrDefaultAsync(s => s.FilePath == filePath).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<IReadOnlyDictionary<Guid, Song>> GetSongsByIdsAsync(IEnumerable<Guid> songIds)
     {
         var result = new Dictionary<Guid, Song>();
@@ -216,7 +205,6 @@ public partial class LibraryReader : ILibraryReader, IDisposable
         return TimeSpan.FromTicks(ticks);
     }
 
-    /// <inheritdoc />
     public async Task<Artist?> GetArtistByNameAsync(string name)
     {
         if (string.IsNullOrWhiteSpace(name)) return null;
@@ -225,7 +213,6 @@ public partial class LibraryReader : ILibraryReader, IDisposable
         return await context.Artists.AsNoTracking().FirstOrDefaultAsync(a => a.Name == normalizedName).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<IEnumerable<Album>> GetTopAlbumsForArtistAsync(Guid artistId, int limit)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -243,7 +230,6 @@ public partial class LibraryReader : ILibraryReader, IDisposable
             .ToListAsync().ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<IEnumerable<Artist>> GetArtistsForSongAsync(Guid songId)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -259,7 +245,6 @@ public partial class LibraryReader : ILibraryReader, IDisposable
             .ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<Album?> GetAlbumByIdAsync(Guid albumId)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -269,7 +254,6 @@ public partial class LibraryReader : ILibraryReader, IDisposable
             .FirstOrDefaultAsync(al => al.Id == albumId).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<TimeSpan> GetSearchTotalDurationInAlbumAsync(Guid albumId, string searchTerm, CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
@@ -279,7 +263,6 @@ public partial class LibraryReader : ILibraryReader, IDisposable
         return TimeSpan.FromTicks(ticks);
     }
 
-    /// <inheritdoc />
     public async Task<Playlist?> GetPlaylistByIdAsync(Guid playlistId)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -287,7 +270,6 @@ public partial class LibraryReader : ILibraryReader, IDisposable
             .FirstOrDefaultAsync(p => p.Id == playlistId).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<IEnumerable<Playlist>> GetAllPlaylistsAsync(CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -297,7 +279,6 @@ public partial class LibraryReader : ILibraryReader, IDisposable
             .ToListAsync(token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<IEnumerable<Song>> GetSongsInPlaylistOrderedAsync(Guid playlistId, CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -311,7 +292,6 @@ public partial class LibraryReader : ILibraryReader, IDisposable
             .ToListAsync(token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<IEnumerable<GenreSummary>> GetGenreSummariesAsync(CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
@@ -321,42 +301,36 @@ public partial class LibraryReader : ILibraryReader, IDisposable
             .ToListAsync(token).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<Guid?> GetRandomAlbumIdAsync()
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await GetRandomEntityIdAsync(context.Albums.AsNoTracking()).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<Guid?> GetRandomArtistIdAsync()
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await GetRandomEntityIdAsync(context.Artists.AsNoTracking()).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<Guid?> GetRandomGenreIdAsync()
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await GetRandomEntityIdAsync(context.Genres.AsNoTracking()).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<Guid?> GetRandomPlaylistIdAsync()
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await GetRandomEntityIdAsync(context.Playlists.AsNoTracking()).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<int> GetPlaylistCountAsync()
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await context.Playlists.CountAsync().ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<Guid?> GetRandomFolderIdAsync()
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -366,10 +340,6 @@ public partial class LibraryReader : ILibraryReader, IDisposable
         return await GetRandomEntityIdAsync(query).ConfigureAwait(false);
     }
 
-    /// <summary>
-    ///     Normalizes a string using shared normalization logic from ArtistNameHelper.
-    ///     Returns null if the result is empty.
-    /// </summary>
     private static string? NormalizeString(string? s) => ArtistNameHelper.NormalizeStringCore(s);
 
     public void Dispose()

@@ -86,7 +86,6 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         EnsureInitializedAsync().GetAwaiter().GetResult();
     }
 
-    /// <inheritdoc />
     public async Task EnsureInitializedAsync()
     {
         if (_isInitialized || _isDisposed) return;
@@ -152,7 +151,6 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         _equalizer.SetPreamp(_basePreamp);
         _mediaPlayer.SetEqualizer(_equalizer);
 
-        // Register event handlers
         _mediaPlayer.PositionChanged += OnMediaPlayerPositionChanged;
         _mediaPlayer.Playing += OnMediaPlayerStateChanged;
         _mediaPlayer.Paused += OnMediaPlayerStateChanged;

@@ -14,9 +14,6 @@ using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.ViewModels;
 
-/// <summary>
-///     A specialized song list view model for displaying and managing songs within a single playlist.
-/// </summary>
 public partial class PlaylistSongListViewModel : SongListViewModelBase
 {
     protected override bool PrefetchSongIds => true;
@@ -84,9 +81,6 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         RemoveSelectedSongsFromPlaylistCommand.NotifyCanExecuteChanged();
     }
 
-    /// <summary>
-    ///     Initializes the view model for a specific playlist.
-    /// </summary>
     public async Task InitializeAsync(string title, Guid? playlistId, string? coverImageUri = null)
     {
         if (_isDisposed) return;
@@ -246,9 +240,6 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         if (Songs.Count == TotalItemCount) OnPropertyChanged(nameof(IsReorderingEnabled));
     }
 
-    /// <summary>
-    ///     Cleans up resources specific to this view model.
-    /// </summary>
     public override void ResetState()
     {
         _logger.LogDebug("Cleaning up PlaylistSongListViewModel resources");

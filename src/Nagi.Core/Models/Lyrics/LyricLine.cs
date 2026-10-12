@@ -12,9 +12,6 @@ public class LyricLine
         Text = text;
     }
 
-    /// <summary>
-    ///     The timestamp at which this lyric line should be displayed.
-    /// </summary>
     public TimeSpan StartTime { get; set; }
 
     public string Text { get; set; } = string.Empty;

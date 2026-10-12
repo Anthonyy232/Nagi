@@ -10,9 +10,6 @@ using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.Services.Implementations;
 
-/// <summary>
-///     Manages the state and interactions of the application's main window and the secondary mini-player window.
-/// </summary>
 public sealed class WindowService : IWindowService, IDisposable
 {
     private readonly IDispatcherService _dispatcherService;
@@ -87,34 +84,25 @@ public sealed class WindowService : IWindowService, IDisposable
         GC.SuppressFinalize(this);
     }
 
-    /// <inheritdoc />
     public event Action<WindowClosingEventArgs>? Closing;
 
-    /// <inheritdoc />
     public event Action? VisibilityChanged;
 
-    /// <inheritdoc />
     public event Action? UIStateChanged;
 
-    /// <inheritdoc />
     public bool IsVisible => _appWindow?.IsVisible ?? false;
 
-    /// <inheritdoc />
     public bool IsMiniPlayerActive => _miniPlayerWindow is not null;
 
-    /// <inheritdoc />
     public bool IsMinimized => _appWindow?.Presenter is OverlappedPresenter
     {
         State: OverlappedPresenterState.Minimized
     };
 
-    /// <inheritdoc />
     public bool IsExiting { get; set; }
 
-    /// <inheritdoc />
     public bool IsShowingOnboarding => _mainWindow.Content is Pages.OnboardingPage;
 
-    /// <inheritdoc />
     public async Task InitializeAsync()
     {
         _window = _mainWindow;
@@ -127,14 +115,12 @@ public sealed class WindowService : IWindowService, IDisposable
         _isMiniPlayerEnabled = await _settingsService.GetMinimizeToMiniPlayerEnabledAsync();
     }
 
-    /// <inheritdoc />
     public void Hide()
     {
         if (_window is null) return;
         _window.Hide(false);
     }
 
-    /// <inheritdoc />
     public void ShowAndActivate()
     {
         if (_window is null) return;
@@ -156,13 +142,11 @@ public sealed class WindowService : IWindowService, IDisposable
         WindowActivator.ShowAndActivate(_window, _win32InteropService);
     }
 
-    /// <inheritdoc />
     public void Close()
     {
         _dispatcherService.TryEnqueue(() => _window?.Close());
     }
 
-    /// <inheritdoc />
     public void SetEfficiencyMode(bool isEnabled)
     {
         if (_lastEfficiencyMode == isEnabled) return;
