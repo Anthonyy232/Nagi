@@ -100,6 +100,7 @@ public static class AppServiceRegistration
         services.AddSingleton<InsightsViewModel>();
 
         // Detail/Context ViewModels
+        services.AddSingleton<AppearanceSettingsViewModel>();
         services.AddSingleton<AudioSettingsViewModel>();
         services.AddSingleton<LibrarySettingsViewModel>();
         services.AddSingleton<ScrobblingSettingsViewModel>();

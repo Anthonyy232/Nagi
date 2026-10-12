@@ -197,8 +197,8 @@
                     <ComboBox
                         MinWidth="300"
                         HorizontalAlignment="Right"
-                        ItemsSource="{x:Bind ViewModel.AvailableThemes}"
-                        SelectedItem="{x:Bind ViewModel.SelectedTheme, Mode=TwoWay}">
+                        ItemsSource="{x:Bind ViewModel.Appearance.AvailableThemes}"
+                        SelectedItem="{x:Bind ViewModel.Appearance.SelectedTheme, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="mux:ElementTheme">
                                 <TextBlock Text="{x:Bind Converter={StaticResource ThemeToStringConverter}}" />
@@ -213,7 +213,7 @@
                                     <TextBlock Text="{x:Bind resources:Strings.SettingsPage_AccentColor, Mode=OneTime}" VerticalAlignment="Center" />
                                     <HyperlinkButton
                                         VerticalAlignment="Center"
-                                        Command="{x:Bind ViewModel.ResetAccentColorCommand}"
+                                        Command="{x:Bind ViewModel.Appearance.ResetAccentColorCommand}"
                                         Style="{StaticResource AnimatedHyperlinkButtonStyle}"
                                         Content="{x:Bind resources:Strings.SettingsPage_ResetAccentColor_Content, Mode=OneTime}"
                                         FontSize="12"
@@ -222,7 +222,7 @@
                             </controls:SettingsCard.Header>
                             <ColorPicker
                                 HorizontalAlignment="Right"
-                                Color="{x:Bind ViewModel.AccentColor, Mode=TwoWay}"
+                                Color="{x:Bind ViewModel.Appearance.AccentColor, Mode=TwoWay}"
                                 IsAlphaEnabled="False"
                                 IsColorChannelTextInputVisible="False"
                                 IsColorSliderVisible="True"
@@ -240,8 +240,8 @@
                     <ComboBox
                         MinWidth="300"
                         HorizontalAlignment="Right"
-                        ItemsSource="{x:Bind ViewModel.AvailableBackdropMaterials}"
-                        SelectedItem="{x:Bind ViewModel.SelectedBackdropMaterial, Mode=TwoWay}">
+                        ItemsSource="{x:Bind ViewModel.Appearance.AvailableBackdropMaterials}"
+                        SelectedItem="{x:Bind ViewModel.Appearance.SelectedBackdropMaterial, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="models:BackdropMaterial">
                                 <TextBlock
@@ -258,7 +258,7 @@
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
-                        IsOn="{x:Bind ViewModel.IsDynamicThemingEnabled, Mode=TwoWay}" />
+                        IsOn="{x:Bind ViewModel.Appearance.IsDynamicThemingEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
                 <!-- Player Styling Settings -->
@@ -269,7 +269,7 @@
                             <TextBlock Text="{x:Bind resources:Strings.SettingsPage_PlayerStyling_Header, Mode=OneTime}" VerticalAlignment="Center" />
                             <HyperlinkButton
                                 VerticalAlignment="Center"
-                                Command="{x:Bind ViewModel.ResetPlayerDesignSettingsCommand}"
+                                Command="{x:Bind ViewModel.Appearance.ResetPlayerDesignSettingsCommand}"
                                 Style="{StaticResource AnimatedHyperlinkButtonStyle}"
                                 Content="{x:Bind resources:Strings.SettingsPage_ResetAccentColor_Content, Mode=OneTime}"
                                 FontSize="12"
@@ -283,8 +283,8 @@
                     <ComboBox
                         MinWidth="300"
                         HorizontalAlignment="Right"
-                        ItemsSource="{x:Bind ViewModel.AvailablePlayerBackgroundMaterials}"
-                        SelectedItem="{x:Bind ViewModel.SelectedPlayerBackgroundMaterial, Mode=TwoWay}">
+                        ItemsSource="{x:Bind ViewModel.Appearance.AvailablePlayerBackgroundMaterials}"
+                        SelectedItem="{x:Bind ViewModel.Appearance.SelectedPlayerBackgroundMaterial, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="models:PlayerBackgroundMaterial">
                                 <TextBlock Text="{x:Bind Converter={StaticResource PlayerBackgroundMaterialToStringConverter}}" />
@@ -312,12 +312,12 @@
                                     StepFrequency="0.01"
                                     Style="{StaticResource DefaultSliderStyle}"
                                     ThumbToolTipValueConverter="{StaticResource DoubleToPercentageConverter}"
-                                    Value="{x:Bind ViewModel.PlayerTintIntensity, Mode=TwoWay}" />
+                                    Value="{x:Bind ViewModel.Appearance.PlayerTintIntensity, Mode=TwoWay}" />
                                 <TextBlock
                                     Width="40"
                                     VerticalAlignment="Center"
                                     Style="{ThemeResource CaptionTextBlockStyle}"
-                                    Text="{x:Bind ViewModel.PlayerTintIntensity, Mode=OneWay, Converter={StaticResource DoubleToPercentageConverter}}" />
+                                    Text="{x:Bind ViewModel.Appearance.PlayerTintIntensity, Mode=OneWay, Converter={StaticResource DoubleToPercentageConverter}}" />
                             </StackPanel>
                         </controls:SettingsCard>
                     </controls:SettingsExpander.Items>
@@ -332,8 +332,8 @@
                     <ComboBox
                         MinWidth="200"
                         HorizontalAlignment="Right"
-                        ItemsSource="{x:Bind ViewModel.AvailableLanguages}"
-                        SelectedItem="{x:Bind ViewModel.SelectedLanguage, Mode=TwoWay}">
+                        ItemsSource="{x:Bind ViewModel.Appearance.AvailableLanguages}"
+                        SelectedItem="{x:Bind ViewModel.Appearance.SelectedLanguage, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="models:LanguageModel">
                                 <TextBlock Text="{x:Bind DisplayName}" />
@@ -349,7 +349,7 @@
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
-                        IsOn="{x:Bind ViewModel.IsRememberWindowSizeEnabled, Mode=TwoWay}" />
+                        IsOn="{x:Bind ViewModel.Appearance.IsRememberWindowSizeEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
@@ -359,7 +359,7 @@
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
-                        IsOn="{x:Bind ViewModel.IsRememberWindowPositionEnabled, Mode=TwoWay}" />
+                        IsOn="{x:Bind ViewModel.Appearance.IsRememberWindowPositionEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
@@ -369,7 +369,7 @@
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
-                        IsOn="{x:Bind ViewModel.IsRememberPaneStateEnabled, Mode=TwoWay}" />
+                        IsOn="{x:Bind ViewModel.Appearance.IsRememberPaneStateEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
@@ -389,7 +389,7 @@
                         CanReorderItems="True"
                         CornerRadius="{ThemeResource ControlCornerRadius}"
                         ItemContainerStyle="{StaticResource NavigationListViewItemStyle}"
-                        ItemsSource="{x:Bind ViewModel.NavigationItems}"
+                        ItemsSource="{x:Bind ViewModel.Appearance.NavigationItems}"
                         SelectionMode="Single">
 
                         <ListView.ItemTemplate>

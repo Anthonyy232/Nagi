@@ -43,7 +43,9 @@ public class SettingsViewModelTests : IDisposable
         _dispatcher.EnqueueAsync(Arg.Any<Func<Task>>()).Returns(call => call.Arg<Func<Task>>()());
         _player = new PlayerViewModel(_playback, Substitute.For<IMusicNavigationService>(), _dispatcher,
             _settings, Substitute.For<IWindowService>(), _library.Reader, _library.Writer, _library.Scanner, NullLogger<PlayerViewModel>.Instance, Substitute.For<IUIService>());
-        _viewModel = new SettingsViewModel(_settings, _ui, _theme, _appInfo, _dispatcher,
+        _viewModel = new SettingsViewModel(_settings, _appInfo, _dispatcher,
+            new AppearanceSettingsViewModel(_settings, _theme, _ui, _appInfo, _dispatcher,
+                NullLogger<AppearanceSettingsViewModel>.Instance, _timeProvider),
             new AudioSettingsViewModel(_playback, _audioPlayer, _settings, _ui, _ffmpeg, _replayGain, _player, _dispatcher,
                 NullLogger<AudioSettingsViewModel>.Instance, _timeProvider),
             new LibrarySettingsViewModel(_settings, _ui, _library.Scanner, _player, _dispatcher,
@@ -406,7 +408,7 @@ public class SettingsViewModelTests : IDisposable
         _appInfo.GetAvailableLanguagesAsync().Returns(languages.Task);
         _settings.GetLanguageAsync().Returns("ja");
         await _viewModel.LoadSettingsAsync();
-        var originalSelection = _viewModel.SelectedLanguage;
+        var originalSelection = _viewModel.Appearance.SelectedLanguage;
         if (dispose) _viewModel.Dispose();
         var dispatched = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         _dispatcher.TryEnqueue(Arg.Any<Action>()).Returns(call =>
@@ -419,11 +421,11 @@ public class SettingsViewModelTests : IDisposable
         languages.SetResult(new[] { "ja-JP", "JA-jp", "en-US" });
         await dispatched.Task.WaitAsync(TimeSpan.FromSeconds(5));
 
-        if (dispose) _viewModel.SelectedLanguage.Should().BeSameAs(originalSelection);
+        if (dispose) _viewModel.Appearance.SelectedLanguage.Should().BeSameAs(originalSelection);
         else
         {
-            _viewModel.SelectedLanguage!.Code.Should().Be("ja-JP");
-            _viewModel.AvailableLanguages.Select(language => language.Code).Should().Equal("", "en-US", "ja-JP");
+            _viewModel.Appearance.SelectedLanguage!.Code.Should().Be("ja-JP");
+            _viewModel.Appearance.AvailableLanguages.Select(language => language.Code).Should().Equal("", "en-US", "ja-JP");
         }
         await _settings.DidNotReceive().SetLanguageAsync(Arg.Any<string>());
         await _ui.DidNotReceive().ShowMessageDialogAsync(Arg.Any<string>(), Arg.Any<string>());
@@ -433,15 +435,18 @@ public class SettingsViewModelTests : IDisposable
     public async Task DisposeDuringLoad_DoesNotPopulateSettings()
     {
         var startup = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var language = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
         _settings.GetAutoLaunchEnabledAsync().Returns(startup.Task);
+        _settings.GetLanguageAsync().Returns(language.Task);
         var first = _viewModel.LoadSettingsAsync();
         var second = _viewModel.LoadSettingsAsync();
 
         _viewModel.Dispose();
         startup.SetResult(true);
+        language.SetResult("en-US");
         await Task.WhenAll(first, second).WaitAsync(TimeSpan.FromSeconds(5));
 
-        _viewModel.AvailableLanguages.Should().BeEmpty();
+        _viewModel.Appearance.AvailableLanguages.Should().BeEmpty();
         _viewModel.IsAutoLaunchEnabled.Should().BeFalse();
     }
 
@@ -488,9 +493,9 @@ public class SettingsViewModelTests : IDisposable
     [Fact]
     public async Task ResetPlayerDesign_CancelsOlderTintSave()
     {
-        _viewModel.PlayerTintIntensity = .75;
+        _viewModel.Appearance.PlayerTintIntensity = .75;
 
-        await _viewModel.ResetPlayerDesignSettingsCommand.ExecuteAsync(null);
+        await _viewModel.Appearance.ResetPlayerDesignSettingsCommand.ExecuteAsync(null);
         await AdvanceDebouncesAsync();
 
         await _settings.Received(1).SetPlayerTintIntensityAsync(Nagi.WinUI.Services.SettingsDefaults.DefaultPlayerTintIntensity);
@@ -507,7 +512,7 @@ public class SettingsViewModelTests : IDisposable
         _appInfo.GetAvailableLanguagesAsync().Returns(Array.Empty<string>());
         var loading = _viewModel.LoadSettingsAsync();
 
-        await (playerDesign ? _viewModel.ResetPlayerDesignSettingsCommand : _viewModel.ResetAccentColorCommand).ExecuteAsync(null);
+        await (playerDesign ? _viewModel.Appearance.ResetPlayerDesignSettingsCommand : _viewModel.Appearance.ResetAccentColorCommand).ExecuteAsync(null);
         startup.SetResult(true);
         await loading.WaitAsync(TimeSpan.FromSeconds(5));
 
@@ -579,11 +584,11 @@ public class SettingsViewModelTests : IDisposable
     [Fact]
     public async Task ResetAccentColor_CancelsPendingColorSave()
     {
-        _viewModel.IsDynamicThemingEnabled = false;
+        _viewModel.Appearance.IsDynamicThemingEnabled = false;
         _theme.ClearReceivedCalls();
-        _viewModel.AccentColor = Windows.UI.Color.FromArgb(255, 200, 10, 20);
+        _viewModel.Appearance.AccentColor = Windows.UI.Color.FromArgb(255, 200, 10, 20);
 
-        await _viewModel.ResetAccentColorCommand.ExecuteAsync(null);
+        await _viewModel.Appearance.ResetAccentColorCommand.ExecuteAsync(null);
         await AdvanceDebouncesAsync();
 
         await _settings.Received(1).SetAccentColorAsync(null);
