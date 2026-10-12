@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Data;
+using Nagi.Core.Models;
 
 namespace Nagi.Core.Tests.Utils;
 
@@ -43,6 +44,24 @@ public class DbContextFactoryTestHelper : IDisposable
     }
 
     public IDbContextFactory<MusicDbContext> ContextFactory { get; }
+
+    /// <summary>
+    ///     Seeds one playlist whose songs carry the given <see cref="PlaylistSong.Order" /> values, in order.
+    /// </summary>
+    public async Task<(Playlist Playlist, Song[] Songs)> SeedPlaylistAsync(params double[] orders)
+    {
+        var folder = new Folder { Name = "Music", Path = @"C:\Music" };
+        var songs = orders.Select((_, i) => new Song
+        {
+            Title = $"Song {i}", FilePath = $@"C:\Music\{i}.mp3", DirectoryPath = folder.Path,
+            Folder = folder, TrackNumber = orders.Length - i, Lyrics = "Heavy lyrics", Grouping = "Group"
+        }).ToArray();
+        var playlist = new Playlist { Name = "Test", DateModified = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc) };
+        await using var context = ContextFactory.CreateDbContext();
+        context.PlaylistSongs.AddRange(songs.Select((song, i) => new PlaylistSong { Playlist = playlist, Song = song, Order = orders[i] }));
+        await context.SaveChangesAsync();
+        return (playlist, songs);
+    }
 
     public void Dispose()
     {
