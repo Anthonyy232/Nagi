@@ -31,6 +31,7 @@ public class LibraryServiceArtistImageTests : IDisposable
     private readonly IImageProcessor _imageProcessor;
     private readonly ILastFmMetadataService _lastFmService;
     private readonly LibraryService _libraryService;
+    private readonly LibraryReader _libraryReader;
     private readonly ILogger<LibraryService> _logger;
     private readonly IMetadataService _metadataService;
     private readonly IPathConfiguration _pathConfig;
@@ -87,8 +88,11 @@ public class LibraryServiceArtistImageTests : IDisposable
 
         _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
 
+        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, _settingsService, Substitute.For<ILogger<LibraryReader>>());
+
         _libraryService = new LibraryService(
             _dbHelper.ContextFactory,
+            _libraryReader,
             _fileSystem,
             _metadataService,
             _lastFmService,
@@ -139,6 +143,7 @@ public class LibraryServiceArtistImageTests : IDisposable
     public void Dispose()
     {
         _libraryService.Dispose();
+        _libraryReader.Dispose();
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _dbHelper.Dispose();
     }

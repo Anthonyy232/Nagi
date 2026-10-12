@@ -18,6 +18,7 @@ internal sealed class LibraryBenchmarkFixture : IDisposable
 
     public string RootPath { get; } = Directory.CreateTempSubdirectory("NagiBenchmarks-").FullName;
     public IDbContextFactory<MusicDbContext> ContextFactory { get; }
+    public LibraryReader Reader { get; }
     public LibraryService Library { get; }
     public SmartPlaylistService SmartPlaylists { get; }
 
@@ -51,6 +52,7 @@ internal sealed class LibraryBenchmarkFixture : IDisposable
         services.AddSingleton<ITheAudioDbService>(Substitute.For<ITheAudioDbService>());
         services.AddSingleton<IProviderPipelineProvider>(Substitute.For<IProviderPipelineProvider>());
         services.AddSingleton<IMetadataService, AtlMetadataService>();
+        services.AddSingleton<ILibraryReader, LibraryReader>();
         services.AddHttpClient();
         services.AddLogging(b => b.AddProvider(NullLoggerProvider.Instance));
 
@@ -60,6 +62,7 @@ internal sealed class LibraryBenchmarkFixture : IDisposable
         using var context = ContextFactory.CreateDbContext();
         context.Database.EnsureCreated();
 
+        Reader = (LibraryReader)_services.GetRequiredService<ILibraryReader>();
         Library = ActivatorUtilities.CreateInstance<LibraryService>(_services);
         SmartPlaylists = ActivatorUtilities.CreateInstance<SmartPlaylistService>(_services);
     }

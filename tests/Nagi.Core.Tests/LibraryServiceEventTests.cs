@@ -20,6 +20,7 @@ public class LibraryServiceEventTests : IDisposable
     private readonly DbContextFactoryTestHelper _dbHelper;
     private readonly IFileSystemService _fileSystem;
     private readonly LibraryService _libraryService;
+    private readonly LibraryReader _libraryReader;
     private readonly IMetadataService _metadataService;
     private readonly ProviderPipelineProvider _pipelines;
 
@@ -34,8 +35,11 @@ public class LibraryServiceEventTests : IDisposable
 
         _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
 
+        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, Substitute.For<ISettingsService>(), Substitute.For<ILogger<LibraryReader>>());
+
         _libraryService = new LibraryService(
             _dbHelper.ContextFactory,
+            _libraryReader,
             _fileSystem,
             _metadataService,
             Substitute.For<ILastFmMetadataService>(),
@@ -54,6 +58,7 @@ public class LibraryServiceEventTests : IDisposable
     public void Dispose()
     {
         _libraryService.Dispose();
+        _libraryReader.Dispose();
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _dbHelper.Dispose();
     }

@@ -350,12 +350,11 @@ public partial class App : Application
             options.UseSqlite(new SqliteConnectionStringBuilder { DataSource = pathConfig.DatabasePath }.ToString());
         });
 
+        services.AddSingleton<ILibraryReader, LibraryReader>();
+        services.AddSingleton<IPlaylistService, PlaylistService>();
         services.AddSingleton<LibraryService>();
-        services.AddSingleton<ILibraryService>(sp => sp.GetRequiredService<LibraryService>());
-        services.AddSingleton<ILibraryReader>(sp => sp.GetRequiredService<LibraryService>());
         services.AddSingleton<ILibraryWriter>(sp => sp.GetRequiredService<LibraryService>());
         services.AddSingleton<ILibraryScanner>(sp => sp.GetRequiredService<LibraryService>());
-        services.AddSingleton<IPlaylistService>(sp => sp.GetRequiredService<LibraryService>());
 
         services.AddSingleton<IMusicPlaybackService, MusicPlaybackService>();
         services.AddSingleton<IOfflineScrobbleService, OfflineScrobbleService>();

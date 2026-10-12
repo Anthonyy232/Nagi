@@ -4,6 +4,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Implementations;
+using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
 
@@ -17,7 +18,7 @@ namespace Nagi.Core.Tests;
 public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
 {
     private readonly IAudioPlayer _audioPlayer;
-    private readonly ILibraryService _libraryService;
+    private readonly ILibraryFake _libraryService;
     private readonly MusicPlaybackService _service;
     private readonly List<Song> _testSongs;
     private readonly List<(Song Song, long SessionId, DateTime ListenStartedUtc)> _raisedEvents = new();
@@ -25,7 +26,7 @@ public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
     public MusicPlaybackServiceScrobblingTests()
     {
         _audioPlayer = Substitute.For<IAudioPlayer>();
-        _libraryService = Substitute.For<ILibraryService>();
+        _libraryService = Substitute.For<ILibraryFake>();
         _libraryService.MarkListenAsEligibleForScrobblingAsync(Arg.Any<long>()).Returns(true);
         var settingsService = Substitute.For<ISettingsService>();
         var metadataService = Substitute.For<IMetadataService>();

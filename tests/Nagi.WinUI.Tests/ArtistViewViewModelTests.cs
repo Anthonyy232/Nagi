@@ -17,7 +17,7 @@ public class ArtistViewViewModelTests
     [InlineData(true)]
     public async Task MetadataCompletesAfterLeaving_DoesNotUpdateTheDisposedView(bool fails)
     {
-        var library = Substitute.For<ILibraryService>();
+        var library = Substitute.For<ILibraryFake>();
         var scanner = Substitute.For<ILibraryScanner>();
         var metadata = new TaskCompletionSource<Artist?>(TaskCreationOptions.RunContinuationsAsynchronously);
         scanner.GetArtistDetailsAsync(Arg.Any<Guid>(), Arg.Any<bool>(), Arg.Any<CancellationToken>())
@@ -39,7 +39,7 @@ public class ArtistViewViewModelTests
     [Fact]
     public async Task ImageCommands_UseTheLibraryWriterWhenScannerIsASeparateService()
     {
-        var library = Substitute.For<ILibraryService>();
+        var library = Substitute.For<ILibraryFake>();
         var scanner = Substitute.For<ILibraryScanner>();
         var artistId = Guid.NewGuid();
         scanner.GetArtistDetailsAsync(artistId, Arg.Any<bool>(), Arg.Any<CancellationToken>())
@@ -54,7 +54,7 @@ public class ArtistViewViewModelTests
         await library.Received(1).RemoveArtistImageAsync(artistId);
     }
 
-    private static ArtistViewViewModel CreateViewModel(ILibraryService library, ILibraryScanner scanner)
+    private static ArtistViewViewModel CreateViewModel(ILibraryFake library, ILibraryScanner scanner)
     {
         library.GetSongsByArtistIdPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
             Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>

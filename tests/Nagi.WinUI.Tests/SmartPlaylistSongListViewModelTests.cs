@@ -12,7 +12,7 @@ namespace Nagi.WinUI.Tests;
 
 public class SmartPlaylistSongListViewModelTests
 {
-    private readonly ILibraryService _library = Substitute.For<ILibraryService>();
+    private readonly ILibraryFake _library = Substitute.For<ILibraryFake>();
     private readonly ISmartPlaylistService _playlists = Substitute.For<ISmartPlaylistService>();
 
     public SmartPlaylistSongListViewModelTests()
@@ -133,7 +133,7 @@ public class SmartPlaylistSongListViewModelTests
 
     private TestSmartPlaylist CreateViewModel() => new(_library, _playlists);
 
-    private sealed class TestSmartPlaylist(ILibraryService library, ISmartPlaylistService playlists)
+    private sealed class TestSmartPlaylist(ILibraryFake library, ISmartPlaylistService playlists)
         : SmartPlaylistSongListViewModel(library, library, library, Substitute.For<IPlaylistService>(), playlists,
             Substitute.For<IMusicPlaybackService>(), Substitute.For<IMusicNavigationService>(),
             new ImmediateDispatcher(), Substitute.For<IUISettingsService>(), Substitute.For<IUIService>(),

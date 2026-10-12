@@ -17,7 +17,7 @@ public partial class PlayerViewModelTests : IDisposable
     private readonly IUISettingsService _settings = Substitute.For<IUISettingsService>();
     private readonly IDispatcherService _dispatcher = Substitute.For<IDispatcherService>();
     private readonly PlayerViewModel _viewModel;
-    private readonly ILibraryService _library = Substitute.For<ILibraryService>();
+    private readonly ILibraryFake _library = Substitute.For<ILibraryFake>();
 
     public PlayerViewModelTests()
     {

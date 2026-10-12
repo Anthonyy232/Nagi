@@ -12,7 +12,7 @@ namespace Nagi.WinUI.Tests;
 
 public class PlaylistViewModelTests
 {
-    private readonly ILibraryService _library = Substitute.For<ILibraryService>();
+    private readonly ILibraryFake _library = Substitute.For<ILibraryFake>();
     private readonly ISmartPlaylistService _smart = Substitute.For<ISmartPlaylistService>();
 
     public PlaylistViewModelTests()

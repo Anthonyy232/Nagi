@@ -19,6 +19,7 @@ public class MultiArtistTests : IDisposable
     private readonly IFileSystemService _fileSystem;
     private readonly IMetadataService _metadataService;
     private readonly LibraryService _libraryService;
+    private readonly LibraryReader _libraryReader;
     private readonly ProviderPipelineProvider _pipelines;
 
     public MultiArtistTests()
@@ -37,8 +38,11 @@ public class MultiArtistTests : IDisposable
 
         _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
 
+        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, settingsService, Substitute.For<ILogger<LibraryReader>>());
+
         _libraryService = new LibraryService(
             _dbHelper.ContextFactory,
+            _libraryReader,
             _fileSystem,
             _metadataService,
             Substitute.For<ILastFmMetadataService>(),
@@ -58,6 +62,7 @@ public class MultiArtistTests : IDisposable
     public void Dispose()
     {
         _libraryService.Dispose();
+        _libraryReader.Dispose();
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _dbHelper.Dispose();
     }

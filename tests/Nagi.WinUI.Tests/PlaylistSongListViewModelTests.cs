@@ -12,7 +12,7 @@ namespace Nagi.WinUI.Tests;
 
 public class PlaylistSongListViewModelTests
 {
-    private readonly ILibraryService _library = Substitute.For<ILibraryService>();
+    private readonly ILibraryFake _library = Substitute.For<ILibraryFake>();
     private readonly IPlaylistService _playlists = Substitute.For<IPlaylistService>();
     private readonly IUIService _ui = Substitute.For<IUIService>();
     private readonly Guid _playlistId = Guid.NewGuid();
@@ -197,7 +197,7 @@ public class PlaylistSongListViewModelTests
         await _ui.DidNotReceiveWithAnyArgs().ShowMessageDialogAsync(default!, default!);
     }
 
-    private sealed class TestPlaylist(ILibraryService library, IPlaylistService playlists, IUIService ui)
+    private sealed class TestPlaylist(ILibraryFake library, IPlaylistService playlists, IUIService ui)
         : PlaylistSongListViewModel(library, library, library, playlists, Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(),
             Substitute.For<IUISettingsService>(), ui, NullLogger<PlaylistSongListViewModel>.Instance)

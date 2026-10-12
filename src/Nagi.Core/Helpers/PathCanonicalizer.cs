@@ -52,6 +52,13 @@ public static class PathCanonicalizer
     }
 
     /// <summary>
+    ///     Unifies directory separators and trims a trailing separator. Lighter than
+    ///     <see cref="Normalize"/>: it is meant for comparing directory paths already stored in the database.
+    /// </summary>
+    public static string NormalizeDirectoryPath(string path) =>
+        Path.TrimEndingDirectorySeparator(path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar));
+
+    /// <summary>
     ///     Recognizes either slash form of a UNC prefix.
     /// </summary>
     public static bool IsUncPath(string path)

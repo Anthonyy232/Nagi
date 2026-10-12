@@ -16,7 +16,7 @@ public class LibraryViewModelTests
     [Fact]
     public async Task FavoritesNavigation_UsesFavoriteSongsAndRestoresLibraryPlaybackOrder()
     {
-        var library = Substitute.For<ILibraryService>();
+        var library = Substitute.For<ILibraryFake>();
         var settings = Substitute.For<IUISettingsService>();
         var playback = Substitute.For<IMusicPlaybackService>();
         settings.GetSongsPerPageAsync().Returns(50);
@@ -53,7 +53,7 @@ public class LibraryViewModelTests
     [Fact]
     public async Task ArticleSortSetting_RefreshesDisplayedSongsAndPlaybackOrder()
     {
-        var library = Substitute.For<ILibraryService>();
+        var library = Substitute.For<ILibraryFake>();
         var settings = Substitute.For<IUISettingsService>();
         var playback = Substitute.For<IMusicPlaybackService>();
         settings.GetSongsPerPageAsync().Returns(50);
@@ -96,7 +96,7 @@ public class LibraryViewModelTests
     [InlineData(false)]
     public async Task Initialize_AfterSettingsOrQueryFailure_CanRetry(bool settingsFailure)
     {
-        var library = Substitute.For<ILibraryService>();
+        var library = Substitute.For<ILibraryFake>();
         var settings = Substitute.For<IUISettingsService>();
         settings.GetSongsPerPageAsync().Returns(50);
         var attempts = 0;
@@ -141,7 +141,7 @@ public class LibraryViewModelTests
     [InlineData(true)]
     public async Task LibraryRefresh_RespectsResetAfterReachingTheUiQueue(bool reset)
     {
-        var library = Substitute.For<ILibraryService>();
+        var library = Substitute.For<ILibraryFake>();
         var settings = Substitute.For<IUISettingsService>();
         settings.GetSongsPerPageAsync().Returns(50);
         library.GetAllSongsPagedAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<SongSortOrder>(),

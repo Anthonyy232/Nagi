@@ -20,7 +20,7 @@ public class FolderSongListViewModelTests
     [InlineData(true, true)]
     public async Task InitializeAsync_ObsoleteFolderLookupCannotUpdateThePage(bool dispose, bool fails)
     {
-        var library = Substitute.For<ILibraryService>();
+        var library = Substitute.For<ILibraryFake>();
         var oldFolder = new Folder { Name = "Old", Path = @"C:\Old" };
         var pending = new TaskCompletionSource<Folder?>(TaskCreationOptions.RunContinuationsAsynchronously);
         library.GetFolderByIdAsync(oldFolder.Id).Returns(pending.Task);
@@ -48,7 +48,7 @@ public class FolderSongListViewModelTests
     [Fact]
     public async Task PlaySubfolder_LookupCompletesAfterDisposal_DoesNotStartPlayback()
     {
-        var library = Substitute.For<ILibraryService>();
+        var library = Substitute.For<ILibraryFake>();
         var root = ConfigureRoot(library);
         var folder = new Folder { Name = "Album", Path = @"C:\Music\Album" };
         var pending = new TaskCompletionSource<List<Guid>>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -70,7 +70,7 @@ public class FolderSongListViewModelTests
     [Fact]
     public async Task SearchPlayback_UsesTheNavigatedDirectoryAndBreadcrumbReturnsToRoot()
     {
-        var library = Substitute.For<ILibraryService>();
+        var library = Substitute.For<ILibraryFake>();
         var root = ConfigureRoot(library);
         var child = new Folder { Name = "Album", Path = @"C:\Music\Album" };
         library.GetFolderByPathAsync(child.Path).Returns(child);
@@ -106,7 +106,7 @@ public class FolderSongListViewModelTests
     public async Task InitializeAsync_BreadcrumbsHandleRootAndTrailingSeparators(
         string rootPath, string rootName, string directoryPath)
     {
-        var library = Substitute.For<ILibraryService>();
+        var library = Substitute.For<ILibraryFake>();
         var root = new Folder { Name = "Library", Path = rootPath };
         library.GetFolderByIdAsync(root.Id).Returns(root);
         using var viewModel = CreateViewModel(library, Substitute.For<IUISettingsService>());
@@ -129,7 +129,7 @@ public class FolderSongListViewModelTests
         var settings = Substitute.For<IUISettingsService>();
         settings.GetSongsPerPageAsync().Returns(Task.FromException<int>(new IOException("Settings unavailable")),
             Task.FromResult(50));
-        using var viewModel = CreateViewModel(Substitute.For<ILibraryService>(), settings);
+        using var viewModel = CreateViewModel(Substitute.For<ILibraryFake>(), settings);
 
         await viewModel.RefreshOrSortSongsAsync();
 
@@ -148,7 +148,7 @@ public class FolderSongListViewModelTests
     [InlineData(51)]
     public async Task LoadPageAsync_WhenSongsWereRemoved_UpdatesPageAndContents(int remainingSongs)
     {
-        var library = Substitute.For<ILibraryService>();
+        var library = Substitute.For<ILibraryFake>();
         var settings = Substitute.For<IUISettingsService>();
         settings.GetSongsPerPageAsync().Returns(50);
         var folder = new Folder { Id = Guid.NewGuid(), Path = @"C:\Music", Name = "Music" };
@@ -176,7 +176,7 @@ public class FolderSongListViewModelTests
         viewModel.FolderContents.Should().HaveCount(remainingSongs == 0 ? 0 : 1);
     }
 
-    private static FolderSongListViewModel CreateViewModel(ILibraryService library, IUISettingsService settings,
+    private static FolderSongListViewModel CreateViewModel(ILibraryFake library, IUISettingsService settings,
         IMusicPlaybackService? playback = null) =>
         new(library, library, library, Substitute.For<IPlaylistService>(), playback ?? Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(),
@@ -186,7 +186,7 @@ public class FolderSongListViewModelTests
     [Fact]
     public async Task ResolveSelection_WhenFolderSelectionChangesDuringQuery_ExpandsOriginalFolder()
     {
-        var library = Substitute.For<ILibraryService>();
+        var library = Substitute.For<ILibraryFake>();
         var root = ConfigureRoot(library);
         var selectedFolder = new Folder { Name = "First", Path = @"C:\Music\First" };
         var nextFolder = new Folder { Name = "Second", Path = @"C:\Music\Second" };
@@ -216,7 +216,7 @@ public class FolderSongListViewModelTests
     [Fact]
     public async Task ResolveSelection_WhenViewResetsDuringFolderExpansion_DiscardsResult()
     {
-        var library = Substitute.For<ILibraryService>();
+        var library = Substitute.For<ILibraryFake>();
         var root = ConfigureRoot(library);
         var selectedFolder = new Folder { Name = "First", Path = @"C:\Music\First" };
         var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -238,7 +238,7 @@ public class FolderSongListViewModelTests
         (await resolving.WaitAsync(TimeSpan.FromSeconds(10))).Should().BeEmpty();
     }
 
-    private static Folder ConfigureRoot(ILibraryService library)
+    private static Folder ConfigureRoot(ILibraryFake library)
     {
         var root = new Folder { Name = "Music", Path = @"C:\Music" };
         library.GetFolderByIdAsync(root.Id).Returns(root);
@@ -247,7 +247,7 @@ public class FolderSongListViewModelTests
         return root;
     }
 
-    private sealed class SelectionFolderList(ILibraryService library)
+    private sealed class SelectionFolderList(ILibraryFake library)
         : FolderSongListViewModel(library, library, library, Substitute.For<IPlaylistService>(), Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(),
             Substitute.For<IUISettingsService>(), Substitute.For<IUIService>(), NullLogger<FolderSongListViewModel>.Instance)

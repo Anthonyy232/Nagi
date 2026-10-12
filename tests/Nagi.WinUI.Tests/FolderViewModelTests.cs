@@ -16,7 +16,7 @@ public class FolderViewModelTests
     [Fact]
     public async Task CancelledFolderLoad_DoesNotApplyLateResults()
     {
-        var library = Substitute.For<ILibraryService>();
+        var library = Substitute.For<ILibraryFake>();
         var response = new TaskCompletionSource<IEnumerable<FolderSummary>>(TaskCreationOptions.RunContinuationsAsynchronously);
         var started = new TaskCompletionSource<CancellationToken>(TaskCreationOptions.RunContinuationsAsynchronously);
         library.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>()).Returns(call =>

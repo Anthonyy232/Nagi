@@ -17,6 +17,7 @@ public class LibraryServiceRandomTests : IDisposable
 {
     private readonly DbContextFactoryTestHelper _dbHelper;
     private readonly LibraryService _libraryService;
+    private readonly LibraryReader _libraryReader;
     private readonly ProviderPipelineProvider _pipelines;
 
     public LibraryServiceRandomTests()
@@ -36,8 +37,11 @@ public class LibraryServiceRandomTests : IDisposable
         var logger = Substitute.For<ILogger<LibraryService>>();
         _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
 
+        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, fileSystem, settingsService, Substitute.For<ILogger<LibraryReader>>());
+
         _libraryService = new LibraryService(
             _dbHelper.ContextFactory,
+            _libraryReader,
             fileSystem,
             metadataService,
             lastFmService,
@@ -56,6 +60,7 @@ public class LibraryServiceRandomTests : IDisposable
     public void Dispose()
     {
         _libraryService.Dispose();
+        _libraryReader.Dispose();
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _dbHelper.Dispose();
     }
@@ -73,7 +78,7 @@ public class LibraryServiceRandomTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var result = await _libraryService.GetRandomAlbumIdAsync();
+        var result = await _libraryReader.GetRandomAlbumIdAsync();
         if (albumCount == 0)
             result.Should().BeNull();
         else
@@ -101,7 +106,7 @@ public class LibraryServiceRandomTests : IDisposable
 
         for (int i = 0; i < 5; i++)
         {
-            var result = await _libraryService.GetRandomFolderIdAsync();
+            var result = await _libraryReader.GetRandomFolderIdAsync();
             result.Should().Be(musicFolder.Id);
         }
     }
@@ -117,7 +122,7 @@ public class LibraryServiceRandomTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var count = await _libraryService.GetPlaylistCountAsync();
+        var count = await _libraryReader.GetPlaylistCountAsync();
         count.Should().Be(3);
     }
 }

@@ -17,6 +17,8 @@ public class PlaylistOrderingTests : IDisposable
 {
     private readonly DbContextFactoryTestHelper _dbHelper;
     private readonly LibraryService _libraryService;
+    private readonly LibraryReader _libraryReader;
+    private readonly PlaylistService _playlistService;
     private readonly ProviderPipelineProvider _pipelines;
 
     public PlaylistOrderingTests()
@@ -24,8 +26,12 @@ public class PlaylistOrderingTests : IDisposable
         _dbHelper = new DbContextFactoryTestHelper();
         _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
 
+        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, Substitute.For<IFileSystemService>(), Substitute.For<ISettingsService>(), Substitute.For<ILogger<LibraryReader>>());
+        _playlistService = new PlaylistService(_dbHelper.ContextFactory, Substitute.For<IFileSystemService>(), Substitute.For<IImageProcessor>(), Substitute.For<IPathConfiguration>(), Substitute.For<ILogger<PlaylistService>>());
+
         _libraryService = new LibraryService(
             _dbHelper.ContextFactory,
+            _libraryReader,
             Substitute.For<IFileSystemService>(),
             Substitute.For<IMetadataService>(),
             Substitute.For<ILastFmMetadataService>(),
@@ -44,6 +50,7 @@ public class PlaylistOrderingTests : IDisposable
     public void Dispose()
     {
         _libraryService.Dispose();
+        _libraryReader.Dispose();
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _dbHelper.Dispose();
     }
@@ -51,14 +58,14 @@ public class PlaylistOrderingTests : IDisposable
     [Fact]
     public async Task RenamePlaylistAsync_EmitsPersistedModificationDate()
     {
-        var playlist = await _libraryService.CreatePlaylistAsync("Original name");
+        var playlist = await _playlistService.CreatePlaylistAsync("Original name");
         PlaylistUpdatedEventArgs? update = null;
-        _libraryService.PlaylistUpdated += (_, args) => update = args;
+        _playlistService.PlaylistUpdated += (_, args) => update = args;
 
-        var success = await _libraryService.RenamePlaylistAsync(playlist!.Id, "New name");
+        var success = await _playlistService.RenamePlaylistAsync(playlist!.Id, "New name");
 
         success.Should().BeTrue();
-        var persisted = await _libraryService.GetPlaylistByIdAsync(playlist.Id);
+        var persisted = await _libraryReader.GetPlaylistByIdAsync(playlist.Id);
         update.Should().NotBeNull();
         update!.PlaylistId.Should().Be(playlist.Id);
         update.DateModified.Should().Be(persisted!.DateModified);
@@ -68,9 +75,9 @@ public class PlaylistOrderingTests : IDisposable
     public async Task AddSongsToPlaylistAsync_AppendsUniqueSongsAfterExistingFractionalOrders()
     {
         var (playlist, songs) = await SeedPlaylistAsync(0.5, 1.5, 2.5);
-        await _libraryService.RemoveSongsFromPlaylistAsync(playlist.Id, [songs[1].Id, songs[2].Id]);
+        await _playlistService.RemoveSongsFromPlaylistAsync(playlist.Id, [songs[1].Id, songs[2].Id]);
 
-        await _libraryService.AddSongsToPlaylistAsync(playlist.Id, [songs[0].Id, songs[2].Id, songs[2].Id, songs[1].Id]);
+        await _playlistService.AddSongsToPlaylistAsync(playlist.Id, [songs[0].Id, songs[2].Id, songs[2].Id, songs[1].Id]);
 
         await using var context = _dbHelper.ContextFactory.CreateDbContext();
         var entries = await context.PlaylistSongs.OrderBy(x => x.Order).ToListAsync();
@@ -83,7 +90,7 @@ public class PlaylistOrderingTests : IDisposable
     {
         var (playlist, songs) = await SeedPlaylistAsync(1, 2, 3);
 
-        var result = await _libraryService.MovePlaylistSongAsync(playlist.Id, songs[2].Id, 1.5);
+        var result = await _playlistService.MovePlaylistSongAsync(playlist.Id, songs[2].Id, 1.5);
 
         result.Should().BeTrue();
         await using var context = _dbHelper.ContextFactory.CreateDbContext();
@@ -98,7 +105,7 @@ public class PlaylistOrderingTests : IDisposable
     {
         var (playlist, songs) = await SeedPlaylistAsync(1.0 + 1e-12, 1.5, 1.6);
 
-        await _libraryService.UpdatePlaylistOrderAsync(playlist.Id, songs.Select(s => s.Id));
+        await _playlistService.UpdatePlaylistOrderAsync(playlist.Id, songs.Select(s => s.Id));
 
         await using var context = _dbHelper.ContextFactory.CreateDbContext();
         var entries = await context.PlaylistSongs.OrderBy(x => x.Order).ToListAsync();
@@ -118,10 +125,10 @@ public class PlaylistOrderingTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var exported = await _libraryService.GetSongsInPlaylistOrderedAsync(playlist.Id);
+        var exported = await _libraryReader.GetSongsInPlaylistOrderedAsync(playlist.Id);
         exported.Where(s => s.Title.StartsWith("Song")).Select(s => s.Id).Should().Equal(expectedIds);
 
-        var page = await _libraryService.GetSongsByPlaylistPagedAsync(playlist.Id, 3, 1, SongSortOrder.PlaylistOrder);
+        var page = await _libraryReader.GetSongsByPlaylistPagedAsync(playlist.Id, 3, 1, SongSortOrder.PlaylistOrder);
         page.TotalCount.Should().Be(4);
         var row = page.Items.Should().ContainSingle().Subject;
         row.Id.Should().Be(songs[2].Id);
@@ -129,11 +136,11 @@ public class PlaylistOrderingTests : IDisposable
         row.Grouping.Should().Be("Group");
         row.Lyrics.Should().BeNull();
 
-        var search = await _libraryService.SearchSongsInPlaylistPagedAsync(playlist.Id, "Song", 2, 1, SongSortOrder.PlaylistOrder);
+        var search = await _libraryReader.SearchSongsInPlaylistPagedAsync(playlist.Id, "Song", 2, 1, SongSortOrder.PlaylistOrder);
         search.TotalCount.Should().Be(3);
         search.Items.Should().ContainSingle().Which.Id.Should().Be(songs[2].Id);
         search.Items.Single().Order.Should().Be(2);
-        var ids = await _libraryService.SearchAllSongIdsInPlaylistAsync(playlist.Id, "Song", SongSortOrder.PlaylistOrder);
+        var ids = await _libraryReader.SearchAllSongIdsInPlaylistAsync(playlist.Id, "Song", SongSortOrder.PlaylistOrder);
         ids.Should().Equal(expectedIds);
     }
 

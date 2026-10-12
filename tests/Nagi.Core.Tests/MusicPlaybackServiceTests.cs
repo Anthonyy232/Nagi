@@ -4,6 +4,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Implementations;
+using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Xunit;
@@ -13,7 +14,7 @@ namespace Nagi.Core.Tests;
 public partial class MusicPlaybackServiceTests : IAsyncDisposable
 {
     private readonly IAudioPlayer _audioPlayer;
-    private readonly ILibraryService _libraryService;
+    private readonly ILibraryFake _libraryService;
     private readonly ILogger<MusicPlaybackService> _logger;
     private readonly IMetadataService _metadataService;
 
@@ -27,7 +28,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     {
         _settingsService = Substitute.For<ISettingsService>();
         _audioPlayer = Substitute.For<IAudioPlayer>();
-        _libraryService = Substitute.For<ILibraryService>();
+        _libraryService = Substitute.For<ILibraryFake>();
         _metadataService = Substitute.For<IMetadataService>();
         _logger = Substitute.For<ILogger<MusicPlaybackService>>();
 

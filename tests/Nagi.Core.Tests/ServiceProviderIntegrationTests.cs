@@ -23,6 +23,7 @@ public class ServiceProviderIntegrationTests : IDisposable
     private readonly DbContextFactoryTestHelper _dbHelper;
 
     private readonly LibraryService _libraryService;
+    private readonly LibraryReader _libraryReader;
 
     public ServiceProviderIntegrationTests()
     {
@@ -35,8 +36,11 @@ public class ServiceProviderIntegrationTests : IDisposable
 
         _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
 
+        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, Substitute.For<IFileSystemService>(), _settingsService, Substitute.For<ILogger<LibraryReader>>());
+
         _libraryService = new LibraryService(
             _dbHelper.ContextFactory,
+            _libraryReader,
             Substitute.For<IFileSystemService>(),
             Substitute.For<IMetadataService>(),
             _lastFmService,
@@ -57,6 +61,7 @@ public class ServiceProviderIntegrationTests : IDisposable
     public void Dispose()
     {
         _libraryService.Dispose();
+        _libraryReader.Dispose();
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _dbHelper.Dispose();
     }

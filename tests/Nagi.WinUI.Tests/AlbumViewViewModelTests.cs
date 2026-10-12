@@ -17,7 +17,7 @@ public class AlbumViewViewModelTests
     [InlineData(true)]
     public async Task AlbumLookupCompletesAfterDisposal_DoesNotUpdateTheViewOrLoadSongs(bool fails)
     {
-        var library = Substitute.For<ILibraryService>();
+        var library = Substitute.For<ILibraryFake>();
         var result = new TaskCompletionSource<Album?>(TaskCreationOptions.RunContinuationsAsynchronously);
         library.GetAlbumByIdAsync(Arg.Any<Guid>()).Returns(result.Task);
         using var viewModel = CreateViewModel(library);
@@ -37,7 +37,7 @@ public class AlbumViewViewModelTests
     [Fact]
     public async Task MissingAlbum_DoesNotStartAnOrphanedSongQuery()
     {
-        var library = Substitute.For<ILibraryService>();
+        var library = Substitute.For<ILibraryFake>();
         using var viewModel = CreateViewModel(library);
 
         await viewModel.LoadAlbumDetailsAsync(Guid.NewGuid());
@@ -51,7 +51,7 @@ public class AlbumViewViewModelTests
     [Fact]
     public async Task DurationResultQueuedBeforeReset_DoesNotOverwriteTheNextAlbum()
     {
-        var library = Substitute.For<ILibraryService>();
+        var library = Substitute.For<ILibraryFake>();
         library.GetAlbumByIdAsync(Arg.Any<Guid>()).Returns(call => new Album { Id = call.Arg<Guid>(), Title = "Album" });
         library.GetSongsByAlbumIdPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
             Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>
@@ -78,7 +78,7 @@ public class AlbumViewViewModelTests
     [Fact]
     public async Task AlbumLongerThanOneDay_ShowsTotalHours()
     {
-        var library = Substitute.For<ILibraryService>();
+        var library = Substitute.For<ILibraryFake>();
         library.GetAlbumByIdAsync(Arg.Any<Guid>()).Returns(new Album { Title = "Long album" });
         library.GetSongsByAlbumIdPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
             Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>
@@ -93,7 +93,7 @@ public class AlbumViewViewModelTests
         viewModel.AlbumDetailsText.Should().EndWith("25:00:00");
     }
 
-    private static AlbumViewViewModel CreateViewModel(ILibraryService library, IDispatcherService? dispatcher = null)
+    private static AlbumViewViewModel CreateViewModel(ILibraryFake library, IDispatcherService? dispatcher = null)
     {
         var settings = Substitute.For<IUISettingsService>();
         settings.GetSongsPerPageAsync().Returns(50);

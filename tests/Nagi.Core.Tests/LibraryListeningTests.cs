@@ -25,8 +25,8 @@ public partial class LibraryServiceTests
         await _libraryService.SetSongsLovedAsync(songs.Select(s => s.Id).Append(Guid.NewGuid()), true);
         await _libraryService.SetSongsLovedAsync([songs[2].Id], false);
 
-        var page = await _libraryService.GetFavoritesPagedAsync("100%", 2, 1, SongSortOrder.TitleAsc);
-        var ids = await _libraryService.GetFavoriteSongIdsAsync("100%", SongSortOrder.TitleAsc);
+        var page = await _libraryReader.GetFavoritesPagedAsync("100%", 2, 1, SongSortOrder.TitleAsc);
+        var ids = await _libraryReader.GetFavoriteSongIdsAsync("100%", SongSortOrder.TitleAsc);
 
         page.TotalCount.Should().Be(2);
         page.Items.Should().ContainSingle().Which.Id.Should().Be(ids[1]);
@@ -46,8 +46,8 @@ public partial class LibraryServiceTests
             await context.SaveChangesAsync();
         }
 
-        var first = await _libraryService.GetRecentListensAsync("Same song", 0, 2);
-        var second = await _libraryService.GetRecentListensAsync("Same song", 2, 2);
+        var first = await _libraryReader.GetRecentListensAsync("Same song", 0, 2);
+        var second = await _libraryReader.GetRecentListensAsync("Same song", 2, 2);
 
         first.Should().HaveCount(2);
         second.Should().ContainSingle();
@@ -72,8 +72,8 @@ public partial class LibraryServiceTests
             await context.SaveChangesAsync();
         }
 
-        (await _libraryService.GetRediscoverySuggestionAsync())!.SongId.Should().Be(songs[0].Id);
+        (await _libraryReader.GetRediscoverySuggestionAsync())!.SongId.Should().Be(songs[0].Id);
         await _libraryService.SetSongsLovedAsync([songs[0].Id], false);
-        (await _libraryService.GetRediscoverySuggestionAsync())!.SongId.Should().Be(songs[1].Id);
+        (await _libraryReader.GetRediscoverySuggestionAsync())!.SongId.Should().Be(songs[1].Id);
     }
 }

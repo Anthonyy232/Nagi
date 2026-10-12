@@ -23,7 +23,7 @@ public class SettingsViewModelTests : IDisposable
     private readonly IDispatcherService _dispatcher = Substitute.For<IDispatcherService>();
     private readonly ILastFmAuthService _lastFm = Substitute.For<ILastFmAuthService>();
     private readonly IListenBrainzScrobblerService _listenBrainz = Substitute.For<IListenBrainzScrobblerService>();
-    private readonly ILibraryService _library = Substitute.For<ILibraryService>();
+    private readonly ILibraryFake _library = Substitute.For<ILibraryFake>();
     private readonly IFFmpegService _ffmpeg = Substitute.For<IFFmpegService>();
     private readonly IReplayGainService _replayGain = Substitute.For<IReplayGainService>();
     private readonly PlayerViewModel _player;

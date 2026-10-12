@@ -24,6 +24,8 @@ public partial class LibraryServiceTests : IDisposable
     private readonly ILastFmMetadataService _lastFmService;
 
     private readonly LibraryService _libraryService;
+    private readonly LibraryReader _libraryReader;
+    private readonly PlaylistService _playlistService;
 
     private readonly ILogger<LibraryService> _logger;
 
@@ -67,8 +69,12 @@ public partial class LibraryServiceTests : IDisposable
 
         _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
 
+        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, _settingsService, Substitute.For<ILogger<LibraryReader>>());
+        _playlistService = new PlaylistService(_dbHelper.ContextFactory, _fileSystem, _imageProcessor, _pathConfig, Substitute.For<ILogger<PlaylistService>>());
+
         _libraryService = new LibraryService(
             _dbHelper.ContextFactory,
+            _libraryReader,
             _fileSystem,
             _metadataService,
             _lastFmService,
@@ -87,6 +93,7 @@ public partial class LibraryServiceTests : IDisposable
     public void Dispose()
     {
         _libraryService.Dispose();
+        _libraryReader.Dispose();
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _dbHelper.Dispose();
         _httpMessageHandler.Dispose();
@@ -108,7 +115,7 @@ public partial class LibraryServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var summaries = await _libraryService.GetGenreSummariesAsync();
+        var summaries = await _libraryReader.GetGenreSummariesAsync();
 
         summaries.Should().Equal(
             new GenreSummary(empty.Id, "Empty", 0),
@@ -133,7 +140,7 @@ public partial class LibraryServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var summaries = (await _libraryService.GetRootFoldersWithCountsAsync()).ToList();
+        var summaries = (await _libraryReader.GetRootFoldersWithCountsAsync()).ToList();
 
         summaries.ToDictionary(item => item.Folder.Id, item => item.SongCount)
             .Should().BeEquivalentTo(new Dictionary<Guid, int>
@@ -462,7 +469,7 @@ public partial class LibraryServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var updated = await _libraryService.UpdatePlaylistCoverAsync(playlist.Id, @"C:\Pictures\missing.jpg");
+        var updated = await _playlistService.UpdatePlaylistCoverAsync(playlist.Id, @"C:\Pictures\missing.jpg");
 
         updated.Should().BeFalse();
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
@@ -475,15 +482,15 @@ public partial class LibraryServiceTests : IDisposable
     [Fact]
     public async Task DeletePlaylistAsync_WhenCoverCleanupFails_StillRemovesPlaylistAndNotifies()
     {
-        var playlist = await _libraryService.CreatePlaylistAsync("Playlist");
+        var playlist = await _playlistService.CreatePlaylistAsync("Playlist");
         var changed = false;
-        _libraryService.PlaylistsChanged += (_, _) => changed = true;
+        _playlistService.PlaylistsChanged += (_, _) => changed = true;
         _fileSystem.DirectoryExists(_pathConfig.PlaylistImageCachePath).Returns(true);
         _fileSystem.Combine(Arg.Any<string[]>()).Returns(call => Path.Combine(call.Arg<string[]>()));
         _fileSystem.FileExists(Arg.Any<string>()).Returns(true);
         _fileSystem.When(fs => fs.DeleteFile(Arg.Any<string>())).Do(_ => throw new IOException("File is locked"));
 
-        (await _libraryService.DeletePlaylistAsync(playlist!.Id)).Should().BeTrue();
+        (await _playlistService.DeletePlaylistAsync(playlist!.Id)).Should().BeTrue();
 
         changed.Should().BeTrue();
         await using var context = _dbHelper.ContextFactory.CreateDbContext();
@@ -672,12 +679,12 @@ public partial class LibraryServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var page = await _libraryService.GetSongsInDirectoryOffsetAsync(root.Id, root.Path, 0, 10, SongSortOrder.TitleAsc);
+        var page = await _libraryReader.GetSongsInDirectoryOffsetAsync(root.Id, root.Path, 0, 10, SongSortOrder.TitleAsc);
         page.TotalCount.Should().Be(1);
         page.Items.Should().ContainSingle().Which.Id.Should().Be(direct.Id);
-        var search = await _libraryService.SearchSongsInFolderOffsetAsync(root.Id, root.Path, "Song", 0, 10, SongSortOrder.TitleAsc);
+        var search = await _libraryReader.SearchSongsInFolderOffsetAsync(root.Id, root.Path, "Song", 0, 10, SongSortOrder.TitleAsc);
         search.Items.Should().ContainSingle().Which.Id.Should().Be(direct.Id);
-        var recursive = await _libraryService.GetAllSongIdsInDirectoryRecursiveAsync(root.Id, root.Path, SongSortOrder.TitleAsc);
+        var recursive = await _libraryReader.GetAllSongIdsInDirectoryRecursiveAsync(root.Id, root.Path, SongSortOrder.TitleAsc);
         recursive.Should().Equal(direct.Id, nested.Id);
     }
 
@@ -1013,7 +1020,7 @@ public partial class LibraryServiceTests : IDisposable
     [Fact]
     public async Task CreatePlaylistAsync_WithValidName_CreatesPlaylist()
     {
-        var playlist = await _libraryService.CreatePlaylistAsync("My Awesome Mix");
+        var playlist = await _playlistService.CreatePlaylistAsync("My Awesome Mix");
 
         playlist.Should().NotBeNull();
         playlist!.Name.Should().Be("My Awesome Mix");
@@ -1025,7 +1032,7 @@ public partial class LibraryServiceTests : IDisposable
     public async Task DeletePlaylistAsync_WithCustomCover_DeletesImageFromDisk()
     {
         var playlistName = "Playlist with Art";
-        var playlist = await _libraryService.CreatePlaylistAsync(playlistName);
+        var playlist = await _playlistService.CreatePlaylistAsync(playlistName);
         playlist.Should().NotBeNull();
 
         var cachePath = _pathConfig.PlaylistImageCachePath;
@@ -1034,7 +1041,7 @@ public partial class LibraryServiceTests : IDisposable
         _fileSystem.FileExists(expectedImagePath).Returns(true);
         _fileSystem.Combine(Arg.Any<string[]>()).Returns(callInfo => Path.Combine(callInfo.ArgAt<string[]>(0)));
 
-        var result = await _libraryService.DeletePlaylistAsync(playlist.Id);
+        var result = await _playlistService.DeletePlaylistAsync(playlist.Id);
 
         result.Should().BeTrue();
         _fileSystem.Received(1).DeleteFile(expectedImagePath);
@@ -1067,7 +1074,7 @@ public partial class LibraryServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var result = await _libraryService.GetAllSongsPagedAsync(2, 10);
+        var result = await _libraryReader.GetAllSongsPagedAsync(2, 10);
 
         result.Should().NotBeNull();
         result.TotalCount.Should().Be(25);
@@ -1198,7 +1205,7 @@ public partial class LibraryServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var result = await _libraryService.GetSongsByIdsAsync(songIds);
+        var result = await _libraryReader.GetSongsByIdsAsync(songIds);
 
         result.Keys.Should().BeEquivalentTo(songIds);
     }
@@ -1223,7 +1230,7 @@ public partial class LibraryServiceTests : IDisposable
         }
         var ids = songs.Select(s => s.Id).Append(songs[0].Id).Append(Guid.NewGuid()).ToArray();
 
-        var queue = await _libraryService.GetQueueSongsAsync(ids);
+        var queue = await _libraryReader.GetQueueSongsAsync(ids);
         queue.Should().HaveCount(601);
         queue.Values.Should().OnlyContain(s => s.Genres.Count == 1 && s.Genres.First().Name == "Rock");
         queue.Values.Should().OnlyContain(s => s.Lyrics == null && s.AlbumArtUriFromTrack == null);
@@ -1231,8 +1238,8 @@ public partial class LibraryServiceTests : IDisposable
             .Should().Equal(artists.Select(a => a.Id));
         queue[songs[0].Id].SongArtists.OrderBy(sa => sa.Order).Select(sa => sa.Artist.Name)
             .Should().Equal("Lead", "Guest");
-        (await _libraryService.GetSongsDurationAsync(ids)).Should().Be(TimeSpan.FromMinutes(601));
-        (await _libraryService.GetSongsDurationAsync([Guid.NewGuid()])).Should().Be(TimeSpan.Zero);
+        (await _libraryReader.GetSongsDurationAsync(ids)).Should().Be(TimeSpan.FromMinutes(601));
+        (await _libraryReader.GetSongsDurationAsync([Guid.NewGuid()])).Should().Be(TimeSpan.Zero);
     }
 
     [Fact]
@@ -1262,7 +1269,7 @@ public partial class LibraryServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var result = (await _libraryService.GetArtistsForSongAsync(song.Id)).ToList();
+        var result = (await _libraryReader.GetArtistsForSongAsync(song.Id)).ToList();
 
         result.Select(artist => (artist.Id, artist.Name)).Should()
             .Equal((artist1.Id, "Second Artist"), (artist2.Id, "First Artist"));
@@ -1513,7 +1520,9 @@ public partial class LibraryServiceTests : IDisposable
     public async Task ListenCallbacks_ConcurrentSessionsPreserveCounters()
     {
         using var database = new DbContextFactoryTestHelper(useFileDatabase: true);
-        using var service = new LibraryService(database.ContextFactory, _fileSystem, _metadataService,
+        using var reader = new LibraryReader(database.ContextFactory, _fileSystem, _settingsService,
+            Substitute.For<ILogger<LibraryReader>>());
+        using var service = new LibraryService(database.ContextFactory, reader, _fileSystem, _metadataService,
             _lastFmService, _musicBrainzService, _fanartTvService, _theAudioDbService, _httpClientFactory,
             _pathConfig, _settingsService, _replayGainService, _imageProcessor, _pipelines, _logger);
         var song = new Song { FilePath = @"C:\Music\song.mp3", Folder = new Folder { Path = @"C:\Music", Name = "Music" } };
@@ -1598,7 +1607,7 @@ public partial class LibraryServiceTests : IDisposable
             await ctx.SaveChangesAsync();
         }
 
-        var results = ((await _libraryService.SearchArtistsPagedAsync("   ", 1, 20)).Items).ToList();
+        var results = ((await _libraryReader.SearchArtistsPagedAsync("   ", 1, 20)).Items).ToList();
 
         results.Select(artist => artist.Name).Should().Equal("AC/DC", "Beatles", "Zeppelin");
     }
@@ -1614,7 +1623,7 @@ public partial class LibraryServiceTests : IDisposable
             await ctx.SaveChangesAsync();
         }
 
-        var results = ((await _libraryService.SearchArtistsPagedAsync("radio", 1, 20)).Items).ToList();
+        var results = ((await _libraryReader.SearchArtistsPagedAsync("radio", 1, 20)).Items).ToList();
 
         results.Select(artist => artist.Name).Should().Equal("Radiohead");
     }
@@ -1639,7 +1648,7 @@ public partial class LibraryServiceTests : IDisposable
         }
         _settingsService.IgnoreLeadingArticlesOnSortEnabledChanged += Raise.Event<Action<bool>>(ignoreArticles);
 
-        var result = await _libraryService.SearchAlbumsPagedAsync(term, 1, 20);
+        var result = await _libraryReader.SearchAlbumsPagedAsync(term, 1, 20);
         var results = result.Items.ToList();
 
         result.TotalCount.Should().Be(3);
@@ -1647,7 +1656,7 @@ public partial class LibraryServiceTests : IDisposable
             ? [apple.Id, banana.Id, beeAlbum.Id] : new[] { beeAlbum.Id, banana.Id, apple.Id });
         results.Single(a => a.Id == apple.Id).AlbumArtists.OrderBy(a => a.Order)
             .Select(a => a.Artist.Name).Should().Equal("The Ants", "Guest");
-        var allAlbums = await _libraryService.GetAllAlbumsPagedAsync(1, 20);
+        var allAlbums = await _libraryReader.GetAllAlbumsPagedAsync(1, 20);
         allAlbums.Items.Select(a => a.Id).Should().Equal(results.Select(a => a.Id));
     }
 
@@ -1678,17 +1687,17 @@ public partial class LibraryServiceTests : IDisposable
         const SongSortOrder sort = SongSortOrder.TrackNumberAsc;
         var ids = scope switch
         {
-            "album" => await _libraryService.SearchAllSongIdsInAlbumAsync(album.Id, term, sort),
-            "artist" => await _libraryService.SearchAllSongIdsInArtistAsync(artist.Id, term, sort),
-            "genre" => await _libraryService.SearchAllSongIdsInGenreAsync(genre.Id, term, sort),
-            _ => await _libraryService.SearchAllSongIdsInFolderAsync(folder.Id, folder.Path, term, sort)
+            "album" => await _libraryReader.SearchAllSongIdsInAlbumAsync(album.Id, term, sort),
+            "artist" => await _libraryReader.SearchAllSongIdsInArtistAsync(artist.Id, term, sort),
+            "genre" => await _libraryReader.SearchAllSongIdsInGenreAsync(genre.Id, term, sort),
+            _ => await _libraryReader.SearchAllSongIdsInFolderAsync(folder.Id, folder.Path, term, sort)
         };
         var page = scope switch
         {
-            "album" => await _libraryService.SearchSongsInAlbumPagedAsync(album.Id, term, 2, 1),
-            "artist" => await _libraryService.SearchSongsInArtistPagedAsync(artist.Id, term, 2, 1),
-            "genre" => await _libraryService.SearchSongsInGenrePagedAsync(genre.Id, term, 2, 1),
-            _ => await _libraryService.SearchSongsInFolderOffsetAsync(folder.Id, folder.Path, term, 1, 1, sort)
+            "album" => await _libraryReader.SearchSongsInAlbumPagedAsync(album.Id, term, 2, 1),
+            "artist" => await _libraryReader.SearchSongsInArtistPagedAsync(artist.Id, term, 2, 1),
+            "genre" => await _libraryReader.SearchSongsInGenrePagedAsync(genre.Id, term, 2, 1),
+            _ => await _libraryReader.SearchSongsInFolderOffsetAsync(folder.Id, folder.Path, term, 1, 1, sort)
         };
 
         ids.Should().Equal(songs[0].Id, songs[1].Id);
@@ -1696,8 +1705,8 @@ public partial class LibraryServiceTests : IDisposable
         page.Items.Should().ContainSingle().Which.Id.Should().Be(songs[1].Id);
         if (scope == "album")
         {
-            (await _libraryService.GetSearchTotalDurationInAlbumAsync(album.Id, term)).Should().Be(TimeSpan.FromMinutes(2));
-            (await _libraryService.GetSearchTotalDurationInAlbumAsync(album.Id, "Rock")).Should().Be(TimeSpan.Zero);
+            (await _libraryReader.GetSearchTotalDurationInAlbumAsync(album.Id, term)).Should().Be(TimeSpan.FromMinutes(2));
+            (await _libraryReader.GetSearchTotalDurationInAlbumAsync(album.Id, "Rock")).Should().Be(TimeSpan.Zero);
         }
     }
 
@@ -1717,9 +1726,9 @@ public partial class LibraryServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var ids = await _libraryService.SearchAllSongIdsInFolderAsync(root.Id, @"C:\Music\Rock\",
+        var ids = await _libraryReader.SearchAllSongIdsInFolderAsync(root.Id, @"C:\Music\Rock\",
             "Match", SongSortOrder.TrackNumberDesc);
-        var page = await _libraryService.SearchSongsInFolderOffsetAsync(root.Id, @"C:\Music\Rock\",
+        var page = await _libraryReader.SearchSongsInFolderOffsetAsync(root.Id, @"C:\Music\Rock\",
             "Match", 0, 50, SongSortOrder.TrackNumberDesc);
 
         ids.Should().Equal(songs[1].Id, songs[0].Id);
@@ -1738,7 +1747,7 @@ public partial class LibraryServiceTests : IDisposable
             await ctx.SaveChangesAsync();
         }
 
-        var results = ((await _libraryService.SearchAlbumsPagedAsync("black", 1, 20)).Items).ToList();
+        var results = ((await _libraryReader.SearchAlbumsPagedAsync("black", 1, 20)).Items).ToList();
 
         results.Select(album => album.Title).Should().Equal("Back in Black");
     }
@@ -1759,7 +1768,7 @@ public partial class LibraryServiceTests : IDisposable
             await ctx.SaveChangesAsync();
         }
 
-        var results = ((await _libraryService.GetSongsByAlbumIdPagedAsync(album.Id, 1, 20, SongSortOrder.TrackNumberAsc)).Items).ToList();
+        var results = ((await _libraryReader.GetSongsByAlbumIdPagedAsync(album.Id, 1, 20, SongSortOrder.TrackNumberAsc)).Items).ToList();
 
         results.Select(song => song.Title).Should().Equal("First", "A Title", "Z Title");
     }
@@ -1810,7 +1819,7 @@ public partial class LibraryServiceTests : IDisposable
             await ctx.SaveChangesAsync();
         }
 
-        var results = ((await _libraryService.GetSongsByArtistIdPagedAsync(artist.Id, 1, 20, SongSortOrder.AlbumAsc)).Items).ToList();
+        var results = ((await _libraryReader.GetSongsByArtistIdPagedAsync(artist.Id, 1, 20, SongSortOrder.AlbumAsc)).Items).ToList();
 
         results.Select(song => song.Title).Should().Equal("Back in Black", "Hells Bells", "Highway to Hell");
     }
@@ -1843,15 +1852,15 @@ public partial class LibraryServiceTests : IDisposable
             await ctx.SaveChangesAsync();
         }
 
-        var result = await _libraryService.SearchSongsPagedAsync("needle%", 1, 20);
+        var result = await _libraryReader.SearchSongsPagedAsync("needle%", 1, 20);
 
         result.TotalCount.Should().Be(matches.Length);
         result.Items.Select(song => song.Id).Should().BeEquivalentTo(matches.Select(song => song.Id));
-        (await _libraryService.SearchAllSongIdsAsync("needle%", SongSortOrder.TitleAsc))
+        (await _libraryReader.SearchAllSongIdsAsync("needle%", SongSortOrder.TitleAsc))
             .Should().Equal(result.Items.Select(song => song.Id));
-        (await _libraryService.SearchSongsPagedAsync("1999", 1, 20)).Items
+        (await _libraryReader.SearchSongsPagedAsync("1999", 1, 20)).Items
             .Should().ContainSingle().Which.Id.Should().Be(yearMatch.Id);
-        (await _libraryService.SearchSongsPagedAsync("absent", 1, 20)).TotalCount.Should().Be(0);
+        (await _libraryReader.SearchSongsPagedAsync("absent", 1, 20)).TotalCount.Should().Be(0);
     }
 
     [Fact]
@@ -1867,7 +1876,7 @@ public partial class LibraryServiceTests : IDisposable
             await ctx.SaveChangesAsync();
         }
 
-        var result = await _libraryService.SearchSongsPagedAsync("", 1, 10);
+        var result = await _libraryReader.SearchSongsPagedAsync("", 1, 10);
 
         result.TotalCount.Should().Be(2);
     }
@@ -1887,7 +1896,7 @@ public partial class LibraryServiceTests : IDisposable
             await ctx.SaveChangesAsync();
         }
 
-        var duration = await _libraryService.GetSearchTotalDurationInAlbumAsync(album.Id, "   ");
+        var duration = await _libraryReader.GetSearchTotalDurationInAlbumAsync(album.Id, "   ");
 
         duration.Should().Be(TimeSpan.FromMinutes(7), "empty term falls back to total album duration");
     }
@@ -1907,7 +1916,7 @@ public partial class LibraryServiceTests : IDisposable
             await ctx.SaveChangesAsync();
         }
 
-        var duration = await _libraryService.GetSearchTotalDurationInAlbumAsync(album.Id, "alpha");
+        var duration = await _libraryReader.GetSearchTotalDurationInAlbumAsync(album.Id, "alpha");
 
         duration.Should().Be(TimeSpan.FromMinutes(3), "only the matched song's duration is summed");
     }
@@ -1939,10 +1948,10 @@ public partial class LibraryServiceTests : IDisposable
             await ctx.SaveChangesAsync();
         }
 
-        var results = (await _libraryService.GetTopAlbumsForArtistAsync(artist.Id, 10)).ToList();
+        var results = (await _libraryReader.GetTopAlbumsForArtistAsync(artist.Id, 10)).ToList();
 
         results.Select(album => album.Id).Should().Equal(albumHigh.Id, albumTied.Id, albumLow.Id);
-        (await _libraryService.GetTopAlbumsForArtistAsync(artist.Id, 1))
+        (await _libraryReader.GetTopAlbumsForArtistAsync(artist.Id, 1))
             .Should().ContainSingle().Which.Id.Should().Be(albumHigh.Id);
     }
 
@@ -1968,7 +1977,7 @@ public partial class LibraryServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var albums = await _libraryService.GetTopAlbumsForArtistAsync(artist.Id, 10);
+        var albums = await _libraryReader.GetTopAlbumsForArtistAsync(artist.Id, 10);
 
         albums.Select(album => album.Id).Should().BeEquivalentTo(new[] { ownAlbum.Id, compilation.Id });
     }
@@ -2054,12 +2063,12 @@ public partial class LibraryServiceTests : IDisposable
             await ctx.SaveChangesAsync();
         }
 
-        var result = await _libraryService.GetSongByFilePathAsync("C:\\Music\\unique.mp3");
+        var result = await _libraryReader.GetSongByFilePathAsync("C:\\Music\\unique.mp3");
 
         result.Should().NotBeNull();
         result!.Title.Should().Be("S");
-        (await _libraryService.GetSongByFilePathAsync("   ")).Should().BeNull();
-        (await _libraryService.GetSongByFilePathAsync(@"C:\Music\missing.mp3")).Should().BeNull();
+        (await _libraryReader.GetSongByFilePathAsync("   ")).Should().BeNull();
+        (await _libraryReader.GetSongByFilePathAsync(@"C:\Music\missing.mp3")).Should().BeNull();
     }
 
 }
