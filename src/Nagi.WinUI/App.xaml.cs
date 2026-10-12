@@ -554,6 +554,10 @@ public partial class App : Application
         services.AddSingleton<InsightsViewModel>();
 
         // Detail/Context ViewModels
+        services.AddSingleton<AudioSettingsViewModel>();
+        services.AddSingleton<ScrobblingSettingsViewModel>();
+        services.AddSingleton<RomanizationPacksSettingsViewModel>();
+        services.AddSingleton<DataManagementSettingsViewModel>();
         services.AddSingleton<SettingsViewModel>();
         services.AddTransient<OnboardingViewModel>();
     }

@@ -1,14 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Globalization;
-using System.Runtime.CompilerServices;
-using Windows.System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
@@ -27,102 +24,29 @@ using Nagi.WinUI.Helpers;
 namespace Nagi.WinUI.ViewModels;
 
 /// <summary>
-///     ViewModel for a single band in the audio equalizer.
+///     ViewModel for the Settings page. Owns the general settings directly and exposes the
+///     self-contained sections (<see cref="Audio" />, <see cref="Scrobbling" />,
+///     <see cref="Romanization" />, <see cref="DataManagement" />) as child view models.
 /// </summary>
-public partial class EqualizerBandViewModel : ObservableObject, IDisposable
+public partial class SettingsViewModel : SettingsSectionViewModel
 {
-    private const int KiloHertzThreshold = 1000;
-
-    private readonly Debouncer _debouncer;
-    private readonly IDispatcherService _dispatcherService;
-    private bool _isExternalUpdate;
-
-    public EqualizerBandViewModel(uint index, float frequency, float initialGain, IDispatcherService dispatcherService, TimeProvider? timeProvider = null)
-    {
-        _dispatcherService = dispatcherService;
-        _debouncer = new Debouncer(TimeSpan.FromMilliseconds(SettingsViewModel.EqualizerDebounceDelayMilliseconds), timeProvider);
-        Index = index;
-        FrequencyLabel = frequency < KiloHertzThreshold ? $"{frequency:F0}" : $"{frequency / KiloHertzThreshold:F0}K";
-        SetGainFromService(initialGain);
-    }
-
-    public uint Index { get; }
-    public string FrequencyLabel { get; }
-
-    [ObservableProperty] public partial float Gain { get; set; }
-
-    public event Action<EqualizerBandViewModel>? GainChanged;
-    public event Action<EqualizerBandViewModel, float>? GainCommitted;
-
-    public void SetGainFromService(float gain)
-    {
-        _isExternalUpdate = true;
-        try { Gain = gain; }
-        finally { _isExternalUpdate = false; }
-    }
-
-    internal Task PendingGainCommit => _debouncer.PendingInvocation;
-
-    public void CancelPendingGain() => _debouncer.Cancel();
-
-    public void Dispose() => _debouncer.Dispose();
-
-    partial void OnGainChanged(float value)
-    {
-        if (_isExternalUpdate) return;
-
-        GainChanged?.Invoke(this);
-        _debouncer.Trigger(token => _dispatcherService.EnqueueAsync(() =>
-        {
-            if (!token.IsCancellationRequested) GainCommitted?.Invoke(this, value);
-            return Task.CompletedTask;
-        }));
-    }
-}
-
-
-
-
-/// <summary>
-///     ViewModel for the Settings page, providing properties and commands to manage application settings.
-/// </summary>
-public partial class SettingsViewModel : ObservableObject, IDisposable
-{
-    internal const int EqualizerDebounceDelayMilliseconds = 300;
     private const int VisualSettingDebounceMs = 200;
 
     private readonly IAppInfoService _appInfoService;
-    private readonly IApplicationLifecycle _applicationLifecycle;
-    private readonly ILastFmAuthService _lastFmAuthService;
-    private readonly IListenBrainzScrobblerService _listenBrainzScrobblerService;
-    private readonly ILogger<SettingsViewModel> _logger;
-    private readonly IMusicPlaybackService _playbackService;
-    private readonly IAudioPlayer _audioPlayer;
     private readonly IUISettingsService _settingsService;
     private readonly IThemeService _themeService;
     private readonly IUIService _uiService;
-    private readonly IPlaylistExportService _playlistExportService;
     private readonly ILibraryScanner _libraryScanner;
     private readonly PlayerViewModel _playerViewModel;
     private readonly IReplayGainService _replayGainService;
     private readonly IFFmpegService _ffmpegService;
-    private readonly IBackupRestoreService _backupRestoreService;
-    private readonly IDispatcherService _dispatcherService;
-    private readonly IRomanizationPackManager _romanizationPackManager;
     private readonly SemaphoreSlim _loadLock = new(1, 1);
 
     private const int SettingsSaveDebounceMs = 300;
     private readonly TimeProvider _timeProvider;
 
-    private bool _isDisposed;
-    private bool _isRefreshingAudioOutputDevices;
-    private bool _isSynchronizingAudioOutputSelection;
-    private bool _isInitializing;
     private bool _isLoaded;
-    private int _lastFmAuthVersion;
-    private int _listenBrainzConnectionVersion;
     private int _volumeNormalizationVersion;
-    private readonly Debouncer _preampDebouncer;
     private CancellationTokenSource? _replayGainScanCts;
     private CancellationTokenSource? _metadataRescanCts;
     private readonly Debouncer _playerButtonSaveDebouncer;
@@ -133,50 +57,39 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private readonly Debouncer _genreSplitSaveDebouncer;
     private readonly Debouncer _playerTintSaveDebouncer;
     private readonly Debouncer _accentColorSaveDebouncer;
-    private CancellationTokenSource? _romanizationPackCts;
 
     public SettingsViewModel(
         IUISettingsService settingsService,
         IUIService uiService,
         IThemeService themeService,
-        IApplicationLifecycle applicationLifecycle,
         IAppInfoService appInfoService,
-        ILastFmAuthService lastFmAuthService,
-        IListenBrainzScrobblerService listenBrainzScrobblerService,
-        IMusicPlaybackService playbackService,
-        IAudioPlayer audioPlayer,
-        IPlaylistExportService playlistExportService,
         ILibraryScanner libraryScanner,
         PlayerViewModel playerViewModel,
         IReplayGainService replayGainService,
         IFFmpegService ffmpegService,
-        IBackupRestoreService backupRestoreService,
         IDispatcherService dispatcherService,
-        IRomanizationPackManager romanizationPackManager,
+        AudioSettingsViewModel audio,
+        ScrobblingSettingsViewModel scrobbling,
+        RomanizationPacksSettingsViewModel romanizationPacks,
+        DataManagementSettingsViewModel dataManagement,
         ILogger<SettingsViewModel> logger,
         TimeProvider? timeProvider = null)
+        : base(dispatcherService, logger)
     {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
         _themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
-        _applicationLifecycle = applicationLifecycle ?? throw new ArgumentNullException(nameof(applicationLifecycle));
         _appInfoService = appInfoService ?? throw new ArgumentNullException(nameof(appInfoService));
-        _lastFmAuthService = lastFmAuthService ?? throw new ArgumentNullException(nameof(lastFmAuthService));
-        _listenBrainzScrobblerService = listenBrainzScrobblerService ?? throw new ArgumentNullException(nameof(listenBrainzScrobblerService));
-        _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
-        _audioPlayer = audioPlayer ?? throw new ArgumentNullException(nameof(audioPlayer));
-        _playlistExportService = playlistExportService ?? throw new ArgumentNullException(nameof(playlistExportService));
         _libraryScanner = libraryScanner ?? throw new ArgumentNullException(nameof(libraryScanner));
         _playerViewModel = playerViewModel ?? throw new ArgumentNullException(nameof(playerViewModel));
         _playerViewModel.PropertyChanged += OnPlayerViewModelPropertyChanged;
         _replayGainService = replayGainService ?? throw new ArgumentNullException(nameof(replayGainService));
         _ffmpegService = ffmpegService ?? throw new ArgumentNullException(nameof(ffmpegService));
-        _backupRestoreService = backupRestoreService ?? throw new ArgumentNullException(nameof(backupRestoreService));
-        _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
-        _romanizationPackManager = romanizationPackManager ?? throw new ArgumentNullException(nameof(romanizationPackManager));
-        _logger = logger;
+        Audio = audio ?? throw new ArgumentNullException(nameof(audio));
+        Scrobbling = scrobbling ?? throw new ArgumentNullException(nameof(scrobbling));
+        Romanization = romanizationPacks ?? throw new ArgumentNullException(nameof(romanizationPacks));
+        DataManagement = dataManagement ?? throw new ArgumentNullException(nameof(dataManagement));
         _timeProvider = timeProvider ?? TimeProvider.System;
-        _preampDebouncer = new Debouncer(TimeSpan.FromMilliseconds(EqualizerDebounceDelayMilliseconds), _timeProvider);
         _playerButtonSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs), _timeProvider);
         _navigationItemSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs), _timeProvider);
         _lyricsProviderSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs), _timeProvider);
@@ -190,10 +103,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         PlayerButtons.CollectionChanged += OnPlayerButtonsCollectionChanged;
         LyricsProviders.CollectionChanged += OnLyricsProvidersCollectionChanged;
         MetadataProviders.CollectionChanged += OnMetadataProvidersCollectionChanged;
-        _playbackService.EqualizerChanged += OnPlaybackService_EqualizerChanged;
-
-
-        AvailableEqualizerPresets = _playbackService.AvailablePresets;
 
         _isInitializing = true;
 
@@ -218,12 +127,14 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         IsVolumeNormalizationEnabled = SettingsDefaults.VolumeNormalizationEnabled;
         IsWasapiExclusiveModeEnabled = SettingsDefaults.WasapiExclusiveModeEnabled;
         IsFadeOnPlayPauseEnabled = SettingsDefaults.FadeOnPlayPauseEnabled;
-        EqualizerPreamp = SettingsDefaults.EqualizerPreamp;
 
         _isInitializing = false;
     }
 
-
+    public AudioSettingsViewModel Audio { get; }
+    public ScrobblingSettingsViewModel Scrobbling { get; }
+    public RomanizationPacksSettingsViewModel Romanization { get; }
+    public DataManagementSettingsViewModel DataManagement { get; }
 
 
     [ObservableProperty] public partial ElementTheme SelectedTheme { get; set; }
@@ -241,8 +152,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial bool IsIgnoreLeadingArticlesOnSortEnabled { get; set; }
     [ObservableProperty] public partial bool IsFetchOnlineLyricsEnabled { get; set; }
     [ObservableProperty] public partial bool IsLyricsRomanizationEnabled { get; set; }
-    [ObservableProperty] public partial bool IsLoadingRomanizationPacks { get; set; }
-    [ObservableProperty] public partial string? RomanizationPacksStatus { get; set; }
     [ObservableProperty] public partial bool IsDiscordRichPresenceEnabled { get; set; }
     [ObservableProperty] public partial bool IsRememberWindowSizeEnabled { get; set; }
     [ObservableProperty] public partial bool IsRememberWindowPositionEnabled { get; set; }
@@ -250,15 +159,9 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial bool IsVolumeNormalizationEnabled { get; set; }
     [ObservableProperty] public partial bool IsWasapiExclusiveModeEnabled { get; set; }
 
-    [ObservableProperty] public partial IReadOnlyList<AudioOutputDeviceInfo> AudioOutputDevices { get; set; } = Array.Empty<AudioOutputDeviceInfo>();
-    [ObservableProperty] public partial AudioOutputDeviceInfo? SelectedAudioOutputDevice { get; set; }
-    [ObservableProperty] public partial string AudioOutputDeviceMessage { get; set; } = string.Empty;
-    [ObservableProperty] public partial bool IsAudioOutputBusy { get; set; }
-
     [ObservableProperty] public partial bool IsFadeOnPlayPauseEnabled { get; set; }
     [ObservableProperty] public partial double FadeInDurationMs { get; set; }
     [ObservableProperty] public partial double FadeOutDurationMs { get; set; }
-    [ObservableProperty] public partial float EqualizerPreamp { get; set; }
     [ObservableProperty] public partial Windows.UI.Color AccentColor { get; set; }
     [ObservableProperty] public partial string ArtistSplitCharacters { get; set; } = string.Empty;
     [ObservableProperty] public partial string GenreSplitCharacters { get; set; } = string.Empty;
@@ -297,40 +200,10 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         }
     }
 
-    [ObservableProperty] public partial EqualizerPreset? SelectedEqualizerPreset { get; set; }
-    public IReadOnlyList<EqualizerPreset> AvailableEqualizerPresets { get; }
-
-    private bool _isApplyingPreset;
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsLastFmNotConnected))]
-    public partial bool IsLastFmConnected { get; set; }
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsLastFmInitialAuthEnabled))]
-    public partial bool IsConnectingToLastFm { get; set; }
-
-    [ObservableProperty]
-    public partial string? LastFmUsername { get; set; }
-    [ObservableProperty] public partial bool IsLastFmScrobblingEnabled { get; set; }
-    [ObservableProperty] public partial bool IsLastFmNowPlayingEnabled { get; set; }
-
-    // ListenBrainz bindable state
-    [ObservableProperty] public partial string ListenBrainzUserToken { get; set; } = string.Empty;
-    [ObservableProperty] public partial bool ListenBrainzScrobblingEnabled { get; set; }
-    [ObservableProperty] public partial bool ListenBrainzNowPlayingEnabled { get; set; }
-    [ObservableProperty] public partial string ListenBrainzServerUrl { get; set; } = string.Empty;
-    [ObservableProperty] public partial string? ListenBrainzConnectionStatus { get; set; }
-    [ObservableProperty] public partial bool ListenBrainzIsConnected { get; set; }
-
-    public ObservableCollection<EqualizerBandViewModel> EqualizerBands { get; } = new();
     public ObservableRangeCollection<PlayerButtonSetting> PlayerButtons { get; } = new();
-    public bool IsLastFmNotConnected => !IsLastFmConnected;
-    public bool IsLastFmInitialAuthEnabled => !IsConnectingToLastFm;
     public ObservableRangeCollection<NavigationItemSetting> NavigationItems { get; } = new();
     public ObservableRangeCollection<ServiceProviderSettingViewModel> LyricsProviders { get; } = new();
     public ObservableRangeCollection<ServiceProviderSettingViewModel> MetadataProviders { get; } = new();
-    public ObservableRangeCollection<RomanizationPackViewModel> RomanizationPacks { get; } = new();
 
 
     public IReadOnlyList<ElementTheme> AvailableThemes { get; } = Enum.GetValues<ElementTheme>();
@@ -355,16 +228,12 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
     public string ApplicationVersion => _appInfoService.GetAppVersion();
 
-    public void Dispose()
+    protected override void OnDisposing()
     {
-        if (_isDisposed) return;
-        _isDisposed = true;
-
         NavigationItems.CollectionChanged -= OnNavigationItemsCollectionChanged;
         PlayerButtons.CollectionChanged -= OnPlayerButtonsCollectionChanged;
         LyricsProviders.CollectionChanged -= OnLyricsProvidersCollectionChanged;
         MetadataProviders.CollectionChanged -= OnMetadataProvidersCollectionChanged;
-        _playbackService.EqualizerChanged -= OnPlaybackService_EqualizerChanged;
 
         foreach (var item in NavigationItems) item.PropertyChanged -= OnNavigationItemPropertyChanged;
 
@@ -374,13 +243,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
         foreach (var item in MetadataProviders) item.PropertyChanged -= OnMetadataProviderPropertyChanged;
 
-        foreach (var bandVm in EqualizerBands)
-        {
-            bandVm.GainChanged -= OnBandGainChanged;
-            bandVm.GainCommitted -= OnBandGainCommitted;
-            bandVm.Dispose();
-        }
-        _preampDebouncer.Dispose();
         _replayGainScanCts?.Cancel();
         _metadataRescanCts?.Cancel();
         _playerButtonSaveDebouncer.Dispose();
@@ -392,80 +254,9 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _genreSplitSaveDebouncer.Dispose();
         _playerTintSaveDebouncer.Dispose();
         _accentColorSaveDebouncer.Dispose();
-        _romanizationPackCts?.Cancel();
-        _romanizationPackCts?.Dispose();
-
-    }
-
-    [RelayCommand]
-    private async Task RefreshAudioOutputDevicesAsync()
-    {
-        if (_isDisposed || IsAudioOutputBusy || _isRefreshingAudioOutputDevices) return;
-        _isRefreshingAudioOutputDevices = true;
-        try
-        {
-            var devices = await _audioPlayer.GetAudioOutputDevicesAsync();
-            var savedId = await _settingsService.GetAudioOutputDeviceIdAsync();
-            // A user selection can start while enumeration is awaiting VLC. Let
-            // that operation own the displayed selection until it finishes.
-            if (_isDisposed || IsAudioOutputBusy) return;
-            _isSynchronizingAudioOutputSelection = true;
-            var defaultDevice = new AudioOutputDeviceInfo(string.Empty, Strings.SettingsPage_AudioOutput_Default);
-            var refreshedDevices = new[] { defaultDevice }.Concat(devices).ToArray();
-            if (!AudioOutputDevices.SequenceEqual(refreshedDevices))
-            {
-                // Clear the old item before replacing the collection; record equality
-                // must not leave ComboBox pointing at an item from the previous list.
-                SelectedAudioOutputDevice = null;
-                AudioOutputDevices = refreshedDevices;
-            }
-            // VLC can fall back after a disconnect. Display the live route, keeping
-            // the saved preference for the next launch until the user changes it.
-            var currentId = _audioPlayer.AudioOutputDeviceId;
-            SelectedAudioOutputDevice = AudioOutputDevices.FirstOrDefault(d => d.Id == currentId) ?? AudioOutputDevices[0];
-            AudioOutputDeviceMessage = !string.IsNullOrEmpty(savedId) && !devices.Any(d => d.Id == savedId)
-                ? Strings.SettingsPage_AudioOutput_Unavailable : string.Empty;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Could not refresh audio outputs.");
-            AudioOutputDeviceMessage = Strings.SettingsPage_AudioOutput_Error;
-        }
-        finally
-        {
-            _isSynchronizingAudioOutputSelection = false;
-            _isRefreshingAudioOutputDevices = false;
-        }
-    }
-
-    [RelayCommand]
-    private async Task SelectAudioOutputDeviceAsync(AudioOutputDeviceInfo? device)
-    {
-        if (_isDisposed || IsAudioOutputBusy || _isSynchronizingAudioOutputSelection || device is null ||
-            (device.Id == SelectedAudioOutputDevice?.Id && AudioOutputDeviceMessage.Length == 0)) return;
-        IsAudioOutputBusy = true;
-        try
-        {
-            var accepted = await _audioPlayer.SetAudioOutputDeviceAsync(device.Id);
-            if (_isDisposed) return;
-            if (!accepted)
-            {
-                AudioOutputDeviceMessage = Strings.SettingsPage_AudioOutput_Error;
-                // Restore the displayed selection when VLC rejects a request.
-                OnPropertyChanged(nameof(SelectedAudioOutputDevice));
-                return;
-            }
-            SelectedAudioOutputDevice = device;
-            await _settingsService.SetAudioOutputDeviceIdAsync(device.Id);
-            AudioOutputDeviceMessage = string.Empty;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Could not change or save audio output {DeviceId}.", device.Id);
-            AudioOutputDeviceMessage = Strings.SettingsPage_AudioOutput_Error;
-            OnPropertyChanged(nameof(SelectedAudioOutputDevice));
-        }
-        finally { IsAudioOutputBusy = false; }
+        Audio.Dispose();
+        Scrobbling.Dispose();
+        Romanization.Dispose();
     }
 
     [RelayCommand]
@@ -495,7 +286,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
             foreach (var item in MetadataProviders) item.PropertyChanged -= OnMetadataProviderPropertyChanged;
             MetadataProviders.Clear();
-            RomanizationPacks.Clear();
 
             var navItemsTask = _settingsService.GetNavigationItemsAsync();
             var playerButtonsTask = _settingsService.GetPlayerButtonSettingsAsync();
@@ -522,14 +312,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             var fadeTask = _settingsService.GetFadeOnPlayPauseEnabledAsync();
             var fadeInTask = _settingsService.GetFadeInDurationMsAsync();
             var fadeOutTask = _settingsService.GetFadeOutDurationMsAsync();
-            var lastFmCredsTask = _settingsService.GetLastFmCredentialsAsync();
-            var lastFmAuthTokenTask = _settingsService.GetLastFmAuthTokenAsync();
-            var scrobblingTask = _settingsService.GetLastFmScrobblingEnabledAsync();
-            var nowPlayingTask = _settingsService.GetLastFmNowPlayingEnabledAsync();
-            var lbTokenTask = _settingsService.GetListenBrainzUserTokenAsync();
-            var lbScrobblingTask = _settingsService.GetListenBrainzScrobblingEnabledAsync();
-            var lbNowPlayingTask = _settingsService.GetListenBrainzNowPlayingEnabledAsync();
-            var lbServerUrlTask = _settingsService.GetListenBrainzServerUrlAsync();
+            var scrobblingLoadTask = Scrobbling.LoadAsync();
 
             var accentColorTask = _settingsService.GetAccentColorAsync();
             var artistSplitTask = _settingsService.GetArtistSplitCharactersAsync();
@@ -547,10 +330,9 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
                 playerAnimationTask, restorePlaybackTask, autoLaunchTask, startMinimizedTask,
                 hideToTrayTask, miniPlayerTask, trayFlyoutTask, onlineMetadataTask,
                 onlineLyricsTask, lyricsRomanizationTask, discordRpcTask, rememberWindowTask,
-                rememberPositionTask, rememberPaneTask, volumeNormTask, wasapiExclusiveTask, fadeTask, fadeInTask, fadeOutTask, lastFmCredsTask, lastFmAuthTokenTask,
-                scrobblingTask, nowPlayingTask, accentColorTask, artistSplitTask, genreSplitTask, languageTask, lyricsProvidersTask, metadataProvidersTask,
+                rememberPositionTask, rememberPaneTask, volumeNormTask, wasapiExclusiveTask, fadeTask, fadeInTask, fadeOutTask,
+                scrobblingLoadTask, accentColorTask, artistSplitTask, genreSplitTask, languageTask, lyricsProvidersTask, metadataProvidersTask,
                 playerMaterialTask, playerTintTask,
-                lbTokenTask, lbScrobblingTask, lbNowPlayingTask, lbServerUrlTask,
                 ignoreArticlesTask);
 
             if (_isDisposed) return;
@@ -594,23 +376,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             SelectedPlayerBackgroundMaterial = playerMaterialTask.Result;
             PlayerTintIntensity = playerTintTask.Result;
 
-            var lastFmCredentials = lastFmCredsTask.Result;
-            LastFmUsername = lastFmCredentials?.Username;
-            IsLastFmConnected = lastFmCredentials is not null && !string.IsNullOrEmpty(lastFmCredentials.Value.SessionKey);
-
-            IsLastFmScrobblingEnabled = scrobblingTask.Result;
-            IsLastFmNowPlayingEnabled = nowPlayingTask.Result;
-
-            var authToken = lastFmAuthTokenTask.Result;
-            IsConnectingToLastFm = !string.IsNullOrEmpty(authToken);
-
-            ListenBrainzUserToken = lbTokenTask.Result ?? string.Empty;
-            ListenBrainzIsConnected = !string.IsNullOrEmpty(ListenBrainzUserToken);
-            ListenBrainzScrobblingEnabled = lbScrobblingTask.Result;
-            ListenBrainzNowPlayingEnabled = lbNowPlayingTask.Result;
-            ListenBrainzServerUrl = lbServerUrlTask.Result ?? string.Empty;
-            ListenBrainzConnectionStatus = null;
-
             AccentColor = accentColorTask.Result ?? App.DefaultAccentColor;
 
             ArtistSplitCharacters = artistSplitTask.Result;
@@ -627,7 +392,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
             _ = PopulateAvailableLanguagesAsync(currentLangCode);
 
-            LoadEqualizerState();
+            Audio.Load();
 
             // Load service providers
             var lyricsMapped = lyricsProvidersTask.Result
@@ -663,109 +428,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         ?? AvailableLanguages.FirstOrDefault(l => !string.IsNullOrEmpty(l.Code) && !string.IsNullOrEmpty(langCode) &&
                                                   (l.Code.StartsWith(langCode + "-", StringComparison.OrdinalIgnoreCase) || langCode.StartsWith(l.Code + "-", StringComparison.OrdinalIgnoreCase)))
         ?? AvailableLanguages.First(l => l.Code == string.Empty);
-
-    [RelayCommand]
-    private Task RefreshRomanizationPacksAsync()
-    {
-        return LoadRomanizationPacksAsync(forceRefresh: true);
-    }
-
-    public Task LoadRomanizationPacksAsync()
-    {
-        return LoadRomanizationPacksAsync(forceRefresh: false);
-    }
-
-    private async Task LoadRomanizationPacksAsync(bool forceRefresh)
-    {
-        if (_isDisposed) return;
-        _romanizationPackCts?.Cancel();
-        _romanizationPackCts?.Dispose();
-        _romanizationPackCts = new CancellationTokenSource();
-        var token = _romanizationPackCts.Token;
-
-        IsLoadingRomanizationPacks = true;
-        RomanizationPacksStatus = null;
-
-        try
-        {
-            var packs = await _romanizationPackManager.GetAvailablePacksAsync(forceRefresh, token).ConfigureAwait(false);
-            _dispatcherService.TryEnqueue(() =>
-            {
-                if (token.IsCancellationRequested || _isDisposed) return;
-                RomanizationPacks.ReplaceRange(packs.Select(p => new RomanizationPackViewModel(p)));
-                RomanizationPacksStatus = RomanizationPacks.Count == 0
-                    ? Nagi.WinUI.Resources.Strings.SettingsPage_RomanizationPacks_None
-                    : null;
-            });
-        }
-        catch (OperationCanceledException)
-        {
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to refresh romanization packs.");
-            _dispatcherService.TryEnqueue(() =>
-            {
-                if (token.IsCancellationRequested || _isDisposed) return;
-                RomanizationPacksStatus = string.Format(Nagi.WinUI.Resources.Strings.SettingsPage_RomanizationPacks_LoadFailedFormat, ex.Message);
-            });
-        }
-        finally
-        {
-            _dispatcherService.TryEnqueue(() =>
-            {
-                if (!token.IsCancellationRequested && !_isDisposed) IsLoadingRomanizationPacks = false;
-            });
-        }
-    }
-
-    [RelayCommand]
-    private async Task InstallRomanizationPackAsync(RomanizationPackViewModel? pack)
-    {
-        if (pack is null) return;
-
-        pack.IsBusy = true;
-        RomanizationPacksStatus = null;
-        try
-        {
-            var result = await _romanizationPackManager.InstallPackAsync(pack.Id);
-            if (!result.Succeeded)
-            {
-                RomanizationPacksStatus = result.ErrorMessage ?? Nagi.WinUI.Resources.Strings.SettingsPage_RomanizationPacks_InstallFailed;
-                return;
-            }
-
-            await LoadRomanizationPacksAsync(forceRefresh: false);
-        }
-        finally
-        {
-            pack.IsBusy = false;
-        }
-    }
-
-    [RelayCommand]
-    private async Task RemoveRomanizationPackAsync(RomanizationPackViewModel? pack)
-    {
-        if (pack is null) return;
-
-        pack.IsBusy = true;
-        RomanizationPacksStatus = null;
-        try
-        {
-            var result = await _romanizationPackManager.RemovePackAsync(pack.Id);
-            if (!result.Succeeded)
-            {
-                RomanizationPacksStatus = result.ErrorMessage ?? Nagi.WinUI.Resources.Strings.SettingsPage_RomanizationPacks_RemoveFailed;
-                return;
-            }
-
-            await LoadRomanizationPacksAsync(forceRefresh: false);
-        }
-        finally
-        {
-            pack.IsBusy = false;
-        }
-    }
 
     /// <summary>
     /// Populates AvailableLanguages asynchronously by scanning for satellite resource assemblies.
@@ -810,153 +472,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
-    private async Task ResetApplicationDataAsync()
-    {
-        var confirmed = await _uiService.ShowConfirmationDialogAsync(
-            Nagi.WinUI.Resources.Strings.Settings_Reset_Title,
-            Nagi.WinUI.Resources.Strings.Settings_Reset_Message,
-            Nagi.WinUI.Resources.Strings.Settings_Reset_Button,
-            null);
-
-        if (!confirmed) return;
-
-        try
-        {
-            await _applicationLifecycle.ResetAndRestartAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogCritical(ex, "Application reset failed");
-            await _uiService.ShowMessageDialogAsync(
-                Nagi.WinUI.Resources.Strings.Settings_ResetError_Title,
-                string.Format(Nagi.WinUI.Resources.Strings.Settings_ResetError_Message, ex.Message));
-        }
-    }
-
-    private bool IsLastFmAuthCurrent(int version) => !_isDisposed && version == _lastFmAuthVersion;
-
-    [RelayCommand]
-    private async Task LastFmInitialAuthAsync()
-    {
-        if (_isDisposed) return;
-        var version = ++_lastFmAuthVersion;
-        IsConnectingToLastFm = true;
-        try
-        {
-            var authData = await _lastFmAuthService.GetAuthenticationTokenAsync();
-            if (!IsLastFmAuthCurrent(version)) return;
-            if (authData is { Token: not null, AuthUrl: not null })
-            {
-                await _settingsService.SaveLastFmAuthTokenAsync(authData.Value.Token);
-                if (await Launcher.LaunchUriAsync(new Uri(authData.Value.AuthUrl))) return;
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to start Last.fm authentication.");
-        }
-
-        if (!IsLastFmAuthCurrent(version)) return;
-        IsConnectingToLastFm = false;
-        await SaveSettingAsync(() => _settingsService.SaveLastFmAuthTokenAsync(null));
-        await _uiService.ShowMessageDialogAsync(Strings.Settings_LastFm_AuthError_Title, Strings.Settings_LastFm_AuthError_Message);
-    }
-
-    [RelayCommand]
-    private async Task LastFmFinalizeAuthAsync()
-    {
-        if (_isDisposed) return;
-        var version = _lastFmAuthVersion;
-        try
-        {
-            var authToken = await _settingsService.GetLastFmAuthTokenAsync();
-            if (string.IsNullOrEmpty(authToken)) return;
-
-            var sessionData = await _lastFmAuthService.GetSessionAsync(authToken);
-            if (!IsLastFmAuthCurrent(version)) return;
-            if (sessionData is { Username: not null, SessionKey: not null })
-            {
-                await _settingsService.SaveLastFmCredentialsAsync(sessionData.Value.Username, sessionData.Value.SessionKey);
-                await Task.WhenAll(_settingsService.SetLastFmScrobblingEnabledAsync(true),
-                    _settingsService.SetLastFmNowPlayingEnabledAsync(true));
-
-                ApplyWithoutSaving(() =>
-                {
-                    LastFmUsername = sessionData.Value.Username;
-                    IsLastFmConnected = true;
-                    IsLastFmScrobblingEnabled = true;
-                    IsLastFmNowPlayingEnabled = true;
-                });
-                return;
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to finish Last.fm authentication.");
-        }
-        finally
-        {
-            if (IsLastFmAuthCurrent(version))
-            {
-                IsConnectingToLastFm = false;
-                await SaveSettingAsync(() => _settingsService.SaveLastFmAuthTokenAsync(null));
-            }
-        }
-
-        if (IsLastFmAuthCurrent(version))
-            await _uiService.ShowMessageDialogAsync(Strings.Settings_LastFm_FinalizeError_Title,
-                Strings.Settings_LastFm_FinalizeError_Message);
-    }
-
-    [RelayCommand]
-    private async Task CancelLastFmAuthAsync()
-    {
-        ++_lastFmAuthVersion;
-        IsConnectingToLastFm = false;
-        await SaveSettingAsync(() => _settingsService.SaveLastFmAuthTokenAsync(null));
-    }
-
-    [RelayCommand]
-    private async Task LastFmDisconnectAsync()
-    {
-        var confirmed = await _uiService.ShowConfirmationDialogAsync(
-            Nagi.WinUI.Resources.Strings.Settings_LastFm_Disconnect_Title,
-            Nagi.WinUI.Resources.Strings.Settings_LastFm_Disconnect_Message,
-            Nagi.WinUI.Resources.Strings.Settings_LastFm_Disconnect_Button,
-            null);
-
-        if (!confirmed) return;
-
-        ++_lastFmAuthVersion;
-        try
-        {
-            await _settingsService.ClearLastFmCredentialsAsync();
-            ApplyWithoutSaving(() =>
-            {
-                IsLastFmConnected = false;
-                LastFmUsername = null;
-                IsConnectingToLastFm = false;
-                IsLastFmScrobblingEnabled = false;
-                IsLastFmNowPlayingEnabled = false;
-            });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to disconnect Last.fm.");
-        }
-    }
-
-    [RelayCommand]
-    private async Task ResetEqualizerAsync()
-    {
-        _preampDebouncer.Cancel();
-        foreach (var band in EqualizerBands) band.CancelPendingGain();
-        await _playbackService.ResetEqualizerAsync();
-        // Resetting will result in all 0s, which matches "None".
-        SelectedEqualizerPreset = AvailableEqualizerPresets.FirstOrDefault(p => p.Name == Nagi.Core.Resources.Strings.EqPreset_None);
-    }
-
-    [RelayCommand]
     private async Task ResetPlayerButtonsAsync()
     {
         _playerButtonSaveDebouncer.Cancel();
@@ -969,221 +484,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         });
 
         await _settingsService.SetPlayerButtonSettingsAsync(defaultButtons);
-    }
-
-    [RelayCommand]
-    private async Task ExportAllPlaylistsAsync()
-    {
-        var folderPath = await _uiService.PickSingleFolderAsync();
-        if (folderPath is null) return;
-
-        var result = await _playlistExportService.ExportAllPlaylistsAsync(folderPath);
-
-        if (result.Success)
-        {
-            await _uiService.ShowMessageDialogAsync(Nagi.WinUI.Resources.Strings.Settings_Export_Success_Title,
-                ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Settings_Export_Success_Message, result.PlaylistsExported, result.TotalSongs, folderPath));
-        }
-        else
-        {
-            await _uiService.ShowMessageDialogAsync(Nagi.WinUI.Resources.Strings.Settings_Export_Failed_Title, result.ErrorMessage ?? Nagi.WinUI.Resources.Strings.Settings_Export_Failed_Message);
-        }
-    }
-
-    [RelayCommand]
-    private async Task ImportMultiplePlaylistsAsync()
-    {
-        var filePaths = await _uiService.PickOpenMultipleFilesAsync([".m3u", ".m3u8"]);
-        if (filePaths.Count == 0) return;
-
-        var result = await _playlistExportService.ImportMultiplePlaylistsAsync(filePaths);
-
-        if (result.Success)
-        {
-            var message = ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Settings_Import_Success_Message, result.PlaylistsImported, result.TotalMatchedSongs);
-            if (result.TotalUnmatchedSongs > 0)
-            {
-                message += ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Settings_Import_Unmatched_Message, result.TotalUnmatchedSongs);
-            }
-            if (result.FailedFiles.Count > 0)
-            {
-                message += ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Settings_Import_FailedFiles_Message, result.FailedFiles.Count);
-            }
-            await _uiService.ShowMessageDialogAsync(Nagi.WinUI.Resources.Strings.Settings_Import_Success_Title, message);
-        }
-        else
-        {
-            await _uiService.ShowMessageDialogAsync(Nagi.WinUI.Resources.Strings.Settings_Import_FailedTotal_Title, Nagi.WinUI.Resources.Strings.Settings_Import_FailedTotal_Message);
-        }
-    }
-
-    [RelayCommand]
-    private async Task CreateBackupAsync()
-    {
-        var folderPath = await _uiService.PickSingleFolderAsync();
-        if (folderPath is null) return;
-
-        var result = await _backupRestoreService.CreateBackupAsync(folderPath);
-
-        if (result.Success)
-        {
-            await _uiService.ShowMessageDialogAsync(
-                Resources.Strings.Settings_Backup_Success_Title,
-                string.Format(Resources.Strings.Settings_Backup_Success_Message, result.BackupSizeMB, result.BackupFilePath));
-        }
-        else
-        {
-            await _uiService.ShowMessageDialogAsync(
-                Resources.Strings.Settings_Backup_Failed_Title,
-                result.ErrorMessage ?? Resources.Strings.Settings_Backup_Failed_Message);
-        }
-    }
-
-    [RelayCommand]
-    private async Task RestoreFromBackupAsync()
-    {
-        var backupFilePath = await _uiService.PickSingleFileAsync(new[] { ".zip" });
-        if (string.IsNullOrEmpty(backupFilePath)) return;
-
-        // Validate backup
-        var isValid = await _backupRestoreService.ValidateBackupAsync(backupFilePath);
-        if (!isValid)
-        {
-            await _uiService.ShowMessageDialogAsync(
-                Resources.Strings.Settings_Restore_Invalid_Title,
-                Resources.Strings.Settings_Restore_Invalid_Message);
-            return;
-        }
-
-        // Confirmation dialog
-        var confirmed = await _uiService.ShowConfirmationDialogAsync(
-            Resources.Strings.Settings_Restore_Confirm_Title,
-            Resources.Strings.Settings_Restore_Confirm_Message,
-            Resources.Strings.Settings_Restore_Confirm_Button,
-            Resources.Strings.Generic_Cancel);
-
-        if (!confirmed) return;
-
-        var result = await _backupRestoreService.RestoreFromBackupAsync(backupFilePath);
-
-        if (result.Success)
-        {
-            await _uiService.ShowMessageDialogAsync(
-                Resources.Strings.Settings_Restore_Success_Title,
-                Resources.Strings.Settings_Restore_Success_Message);
-
-            // Restart app
-            if (result.RequiresRestart)
-            {
-                AppInstance.Restart("");
-            }
-        }
-        else
-        {
-            await _uiService.ShowMessageDialogAsync(
-                Resources.Strings.Settings_Restore_Failed_Title,
-                result.ErrorMessage ?? Resources.Strings.Settings_Restore_Failed_Message);
-        }
-    }
-
-    private void LoadEqualizerState()
-    {
-        _logger.LogDebug("Loading Equalizer State...");
-        var eqSettings = _playbackService.CurrentEqualizerSettings;
-        if (eqSettings == null)
-        {
-            _logger.LogWarning("Equalizer settings are null.");
-            return;
-        }
-
-        _logger.LogDebug("Loaded Settings - Preamp: {Preamp}, Bands: {Bands}", eqSettings.Preamp, string.Join(", ", eqSettings.BandGains));
-
-        EqualizerPreamp = eqSettings.Preamp;
-
-        foreach (var bandVm in EqualizerBands)
-        {
-            bandVm.GainChanged -= OnBandGainChanged;
-            bandVm.GainCommitted -= OnBandGainCommitted;
-            bandVm.Dispose();
-        }
-        EqualizerBands.Clear();
-
-        foreach (var bandInfo in _playbackService.EqualizerBands)
-        {
-            var gain = eqSettings.BandGains.ElementAtOrDefault((int)bandInfo.Index);
-            var bandVm = new EqualizerBandViewModel(bandInfo.Index, bandInfo.Frequency, gain, _dispatcherService, _timeProvider);
-            bandVm.GainChanged += OnBandGainChanged;
-            bandVm.GainCommitted += OnBandGainCommitted;
-            EqualizerBands.Add(bandVm);
-        }
-
-        CheckIfCurrentSettingsMatchPreset();
-    }
-
-    private async void OnBandGainCommitted(EqualizerBandViewModel sender, float gain)
-    {
-        if (_isInitializing) return;
-        try
-        {
-            await _playbackService.SetEqualizerBandAsync(sender.Index, gain);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to apply equalizer band {BandIndex}", sender.Index);
-        }
-    }
-
-    private void OnBandGainChanged(EqualizerBandViewModel sender) => CheckIfCurrentSettingsMatchPreset();
-
-    private void CheckIfCurrentSettingsMatchPreset()
-    {
-        if (_isApplyingPreset) return;
-
-        var currentGains = EqualizerBands.Select(b => b.Gain).ToArray();
-
-        var matchingPreset = _playbackService.GetMatchingPreset(currentGains);
-
-        if (SelectedEqualizerPreset != matchingPreset)
-        {
-            _isApplyingPreset = true; // Prevent re-trigger loop
-            SelectedEqualizerPreset = matchingPreset;
-            _isApplyingPreset = false;
-        }
-    }
-
-    async partial void OnSelectedEqualizerPresetChanged(EqualizerPreset? value)
-    {
-        if (_isInitializing || _isDisposed || value == null || _isApplyingPreset) return;
-
-        foreach (var band in EqualizerBands) band.CancelPendingGain();
-        try
-        {
-            await _playbackService.SetEqualizerGainsAsync(value.Gains);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error applying equalizer preset {PresetName}", value.Name);
-        }
-    }
-
-    private void OnPlaybackService_EqualizerChanged()
-    {
-        _dispatcherService.TryEnqueue(() =>
-        {
-            if (_isDisposed) return;
-
-            ApplyWithoutSaving(() =>
-            {
-                var eqSettings = _playbackService.CurrentEqualizerSettings;
-                if (eqSettings != null)
-                {
-                    EqualizerPreamp = eqSettings.Preamp;
-                    foreach (var band in EqualizerBands)
-                        band.SetGainFromService(eqSettings.BandGains.ElementAtOrDefault((int)band.Index));
-                }
-                CheckIfCurrentSettingsMatchPreset();
-            });
-        });
     }
 
     private void OnPlayerButtonsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -1216,25 +516,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         QueueSettingsSave(_playerButtonSaveDebouncer, _ => _settingsService.SetPlayerButtonSettingsAsync(snapshot), nameof(PlayerButtons));
     }
 
-    private void QueueSettingsSave(Debouncer debouncer, Func<CancellationToken, Task> save, string settingName)
-    {
-        if (_isDisposed) return;
-        debouncer.Trigger(async token =>
-        {
-            try
-            {
-                await _dispatcherService.EnqueueAsync(() => token.IsCancellationRequested || _isDisposed
-                    ? Task.CompletedTask : save(token));
-            }
-            catch (Exception ex) when (ex is not OperationCanceledException)
-            {
-                _logger.LogError(ex, "Failed to save setting {SettingName}", settingName);
-            }
-        });
-    }
-
     internal Task PendingSettingsSaves => Task.WhenAll(
-        _preampDebouncer.PendingInvocation,
+        Audio.PendingSettingsSaves,
         _playerButtonSaveDebouncer.PendingInvocation,
         _navigationItemSaveDebouncer.PendingInvocation,
         _lyricsProviderSaveDebouncer.PendingInvocation,
@@ -1243,27 +526,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _genreSplitSaveDebouncer.PendingInvocation,
         _playerTintSaveDebouncer.PendingInvocation,
         _accentColorSaveDebouncer.PendingInvocation);
-
-    private void ApplyWithoutSaving(Action update)
-    {
-        var wasInitializing = _isInitializing;
-        _isInitializing = true;
-        try { update(); }
-        finally { _isInitializing = wasInitializing; }
-    }
-
-    private async Task SaveSettingAsync(Func<Task> save, [CallerMemberName] string? settingName = null)
-    {
-        if (_isInitializing || _isDisposed) return;
-        try
-        {
-            await save();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to save setting {SettingName}", settingName);
-        }
-    }
 
     private bool CanRescanMetadata() => !_playerViewModel.IsGlobalOperationInProgress;
 
@@ -1679,155 +941,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _playerViewModel.GlobalOperationProgressValue = progress.Percentage;
     });
 
-    partial void OnIsLastFmScrobblingEnabledChanged(bool value) =>
-        _ = SaveSettingAsync(() => _settingsService.SetLastFmScrobblingEnabledAsync(value));
-
-    partial void OnIsLastFmNowPlayingEnabledChanged(bool value) =>
-        _ = SaveSettingAsync(() => _settingsService.SetLastFmNowPlayingEnabledAsync(value));
-
-    async partial void OnListenBrainzScrobblingEnabledChanged(bool value)
-    {
-        if (_isInitializing) return;
-        try
-        {
-            await _settingsService.SetListenBrainzScrobblingEnabledAsync(value);
-            if (value) await StampListenBrainzEnabledSinceIfNeededAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to persist ListenBrainz scrobbling toggle");
-        }
-    }
-
-    async partial void OnListenBrainzNowPlayingEnabledChanged(bool value)
-    {
-        if (_isInitializing) return;
-        try
-        {
-            await _settingsService.SetListenBrainzNowPlayingEnabledAsync(value);
-            if (value) await StampListenBrainzEnabledSinceIfNeededAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to persist ListenBrainz now-playing toggle");
-        }
-    }
-
-    async partial void OnListenBrainzServerUrlChanged(string value)
-    {
-        if (_isInitializing) return;
-        ++_listenBrainzConnectionVersion;
-        try
-        {
-            var normalized = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
-            await _settingsService.SetListenBrainzServerUrlAsync(normalized);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to persist ListenBrainz server URL");
-        }
-    }
-
-    /// <summary>
-    ///     Stamps <see cref="ISettingsService.SetListenBrainzEnabledSinceUtcAsync"/> with the current UTC time
-    ///     the first time any ListenBrainz submission is enabled, so historic listens are not backfilled.
-    /// </summary>
-    private async Task StampListenBrainzEnabledSinceIfNeededAsync()
-    {
-        try
-        {
-            if (await _settingsService.GetListenBrainzEnabledSinceUtcAsync() is null)
-            {
-                await _settingsService.SetListenBrainzEnabledSinceUtcAsync(DateTime.UtcNow);
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to stamp ListenBrainz EnabledSinceUtc");
-        }
-    }
-
-    [RelayCommand]
-    private async Task TestListenBrainzConnectionAsync()
-    {
-        if (_isDisposed) return;
-        var version = ++_listenBrainzConnectionVersion;
-        try
-        {
-            var token = ListenBrainzUserToken;
-            var server = string.IsNullOrWhiteSpace(ListenBrainzServerUrl) ? null : ListenBrainzServerUrl;
-            var result = await _listenBrainzScrobblerService.ValidateTokenAsync(token, server);
-            if (_isDisposed || version != _listenBrainzConnectionVersion) return;
-            if (result.IsValid)
-            {
-                await _settingsService.SaveListenBrainzUserTokenAsync(token);
-                await StampListenBrainzEnabledSinceIfNeededAsync();
-                ListenBrainzIsConnected = true;
-                ListenBrainzConnectionStatus = string.Format(
-                    Nagi.WinUI.Resources.Strings.SettingsPage_ListenBrainz_Connected,
-                    result.Username);
-            }
-            else
-            {
-                ListenBrainzIsConnected = false;
-                ListenBrainzConnectionStatus = string.Format(
-                    Nagi.WinUI.Resources.Strings.SettingsPage_ListenBrainz_ConnectionFailed,
-                    result.Error);
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "ListenBrainz token validation failed");
-            if (_isDisposed || version != _listenBrainzConnectionVersion) return;
-            ListenBrainzIsConnected = false;
-            ListenBrainzConnectionStatus = string.Format(
-                Nagi.WinUI.Resources.Strings.SettingsPage_ListenBrainz_ConnectionFailed,
-                "Could not reach ListenBrainz.");
-        }
-    }
-
-    [RelayCommand]
-    private async Task DisconnectListenBrainzAsync()
-    {
-        var confirmed = await _uiService.ShowConfirmationDialogAsync(
-            Nagi.WinUI.Resources.Strings.SettingsPage_ListenBrainz_Disconnect_Title,
-            Nagi.WinUI.Resources.Strings.SettingsPage_ListenBrainz_Disconnect_Content,
-            Nagi.WinUI.Resources.Strings.SettingsPage_ListenBrainz_Disconnect_Button,
-            null);
-
-        if (!confirmed || _isDisposed) return;
-        ++_listenBrainzConnectionVersion;
-
-        try
-        {
-            await _settingsService.ClearListenBrainzUserTokenAsync();
-            await _settingsService.SetListenBrainzScrobblingEnabledAsync(false);
-            await _settingsService.SetListenBrainzNowPlayingEnabledAsync(false);
-            await _settingsService.SetListenBrainzEnabledSinceUtcAsync(null);
-
-            ApplyWithoutSaving(() =>
-            {
-                ListenBrainzScrobblingEnabled = false;
-                ListenBrainzNowPlayingEnabled = false;
-            });
-
-            ListenBrainzUserToken = string.Empty;
-            ListenBrainzIsConnected = false;
-            ListenBrainzConnectionStatus = null;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to disconnect ListenBrainz");
-        }
-    }
-
-    partial void OnListenBrainzUserTokenChanged(string value) => ++_listenBrainzConnectionVersion;
-
-    partial void OnEqualizerPreampChanged(float value)
-    {
-        if (_isInitializing) return;
-        QueueSettingsSave(_preampDebouncer, _ => _playbackService.SetEqualizerPreampAsync(value), nameof(EqualizerPreamp));
-    }
     partial void OnAccentColorChanged(Windows.UI.Color value)
     {
         if (_isInitializing) return;

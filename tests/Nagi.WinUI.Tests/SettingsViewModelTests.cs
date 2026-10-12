@@ -43,12 +43,17 @@ public class SettingsViewModelTests : IDisposable
         _dispatcher.EnqueueAsync(Arg.Any<Func<Task>>()).Returns(call => call.Arg<Func<Task>>()());
         _player = new PlayerViewModel(_playback, Substitute.For<IMusicNavigationService>(), _dispatcher,
             _settings, Substitute.For<IWindowService>(), _library, _library, _library, NullLogger<PlayerViewModel>.Instance, Substitute.For<IUIService>());
-        _viewModel = new SettingsViewModel(_settings, _ui, _theme,
-            Substitute.For<IApplicationLifecycle>(), _appInfo,
-            _lastFm, _listenBrainz,
-            _playback, _audioPlayer, Substitute.For<IPlaylistExportService>(), _library, _player,
-            _replayGain, _ffmpeg,
-            Substitute.For<IBackupRestoreService>(), _dispatcher, Substitute.For<IRomanizationPackManager>(),
+        _viewModel = new SettingsViewModel(_settings, _ui, _theme, _appInfo, _library, _player,
+            _replayGain, _ffmpeg, _dispatcher,
+            new AudioSettingsViewModel(_playback, _audioPlayer, _settings, _dispatcher,
+                NullLogger<AudioSettingsViewModel>.Instance, _timeProvider),
+            new ScrobblingSettingsViewModel(_settings, _ui, _lastFm, _listenBrainz, _dispatcher,
+                NullLogger<ScrobblingSettingsViewModel>.Instance),
+            new RomanizationPacksSettingsViewModel(Substitute.For<IRomanizationPackManager>(), _dispatcher,
+                NullLogger<RomanizationPacksSettingsViewModel>.Instance),
+            new DataManagementSettingsViewModel(_ui, Substitute.For<IPlaylistExportService>(),
+                Substitute.For<IBackupRestoreService>(), Substitute.For<IApplicationLifecycle>(),
+                NullLogger<DataManagementSettingsViewModel>.Instance),
             NullLogger<SettingsViewModel>.Instance, _timeProvider);
     }
 
@@ -64,10 +69,10 @@ public class SettingsViewModelTests : IDisposable
         _audioPlayer.GetAudioOutputDevicesAsync().Returns(Array.Empty<AudioOutputDeviceInfo>());
         _settings.GetAudioOutputDeviceIdAsync().Returns("disconnected-dac");
 
-        await _viewModel.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
+        await _viewModel.Audio.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
 
-        _viewModel.SelectedAudioOutputDevice!.Id.Should().BeEmpty();
-        _viewModel.AudioOutputDeviceMessage.Should().NotBeEmpty();
+        _viewModel.Audio.SelectedAudioOutputDevice!.Id.Should().BeEmpty();
+        _viewModel.Audio.AudioOutputDeviceMessage.Should().NotBeEmpty();
         await _settings.DidNotReceive().SetAudioOutputDeviceIdAsync(Arg.Any<string>());
     }
 
@@ -80,9 +85,9 @@ public class SettingsViewModelTests : IDisposable
         _audioPlayer.GetAudioOutputDevicesAsync().Returns(new[] { device });
         _audioPlayer.SetAudioOutputDeviceAsync(device.Id).Returns(true);
 
-        await _viewModel.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
-        _viewModel.SelectedAudioOutputDevice!.Id.Should().BeEmpty();
-        await _viewModel.SelectAudioOutputDeviceCommand.ExecuteAsync(device);
+        await _viewModel.Audio.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
+        _viewModel.Audio.SelectedAudioOutputDevice!.Id.Should().BeEmpty();
+        await _viewModel.Audio.SelectAudioOutputDeviceCommand.ExecuteAsync(device);
 
         await _audioPlayer.Received(1).SetAudioOutputDeviceAsync(device.Id);
     }
@@ -91,19 +96,19 @@ public class SettingsViewModelTests : IDisposable
     public async Task AudioOutput_RejectedSelectionRetainsPreviousDeviceAndPreference()
     {
         var previous = new AudioOutputDeviceInfo("speakers", "Speakers");
-        _viewModel.SelectedAudioOutputDevice = previous;
+        _viewModel.Audio.SelectedAudioOutputDevice = previous;
         var selectionNotifications = 0;
-        _viewModel.PropertyChanged += (_, e) =>
+        _viewModel.Audio.PropertyChanged += (_, e) =>
         {
-            if (e.PropertyName == nameof(SettingsViewModel.SelectedAudioOutputDevice)) selectionNotifications++;
+            if (e.PropertyName == nameof(AudioSettingsViewModel.SelectedAudioOutputDevice)) selectionNotifications++;
         };
 
-        await _viewModel.SelectAudioOutputDeviceCommand.ExecuteAsync(new AudioOutputDeviceInfo("removed", "Removed"));
+        await _viewModel.Audio.SelectAudioOutputDeviceCommand.ExecuteAsync(new AudioOutputDeviceInfo("removed", "Removed"));
 
-        _viewModel.SelectedAudioOutputDevice.Should().Be(previous);
+        _viewModel.Audio.SelectedAudioOutputDevice.Should().Be(previous);
         selectionNotifications.Should().BeGreaterThan(0);
-        _viewModel.AudioOutputDeviceMessage.Should().NotBeEmpty();
-        _viewModel.IsAudioOutputBusy.Should().BeFalse();
+        _viewModel.Audio.AudioOutputDeviceMessage.Should().NotBeEmpty();
+        _viewModel.Audio.IsAudioOutputBusy.Should().BeFalse();
         await _settings.DidNotReceive().SetAudioOutputDeviceIdAsync(Arg.Any<string>());
     }
 
@@ -113,15 +118,15 @@ public class SettingsViewModelTests : IDisposable
         _audioPlayer.AudioOutputDeviceId.Returns("dac");
         _audioPlayer.GetAudioOutputDevicesAsync().Returns(new[] { new AudioOutputDeviceInfo("dac", "DAC") });
         _settings.GetAudioOutputDeviceIdAsync().Returns("dac");
-        await _viewModel.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
+        await _viewModel.Audio.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
 
         _audioPlayer.GetAudioOutputDevicesAsync().Returns(new[]
         {
             new AudioOutputDeviceInfo("dac", "DAC"), new AudioOutputDeviceInfo("speakers", "Speakers")
         });
-        await _viewModel.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
+        await _viewModel.Audio.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
 
-        _viewModel.SelectedAudioOutputDevice.Should().BeSameAs(_viewModel.AudioOutputDevices.Single(d => d.Id == "dac"));
+        _viewModel.Audio.SelectedAudioOutputDevice.Should().BeSameAs(_viewModel.Audio.AudioOutputDevices.Single(d => d.Id == "dac"));
         await _audioPlayer.DidNotReceive().SetAudioOutputDeviceAsync(Arg.Any<string>());
     }
 
@@ -134,18 +139,18 @@ public class SettingsViewModelTests : IDisposable
         _audioPlayer.GetAudioOutputDevicesAsync().Returns(enumeration.Task);
         _audioPlayer.SetAudioOutputDeviceAsync(device.Id).Returns(selection.Task);
         var defaultDevice = new AudioOutputDeviceInfo(string.Empty, "Default");
-        _viewModel.AudioOutputDevices = new[] { defaultDevice, device };
-        _viewModel.SelectedAudioOutputDevice = defaultDevice;
+        _viewModel.Audio.AudioOutputDevices = new[] { defaultDevice, device };
+        _viewModel.Audio.SelectedAudioOutputDevice = defaultDevice;
 
-        var refreshing = _viewModel.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
-        var selecting = _viewModel.SelectAudioOutputDeviceCommand.ExecuteAsync(device);
+        var refreshing = _viewModel.Audio.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
+        var selecting = _viewModel.Audio.SelectAudioOutputDeviceCommand.ExecuteAsync(device);
         enumeration.SetResult(new[] { device });
         await refreshing.WaitAsync(TimeSpan.FromSeconds(5));
-        _viewModel.SelectedAudioOutputDevice.Id.Should().BeEmpty();
+        _viewModel.Audio.SelectedAudioOutputDevice.Id.Should().BeEmpty();
         selection.SetResult(true);
         await selecting.WaitAsync(TimeSpan.FromSeconds(5));
 
-        _viewModel.SelectedAudioOutputDevice.Should().Be(device);
+        _viewModel.Audio.SelectedAudioOutputDevice.Should().Be(device);
         await _audioPlayer.Received(1).SetAudioOutputDeviceAsync(device.Id);
         await _settings.Received(1).SetAudioOutputDeviceIdAsync(device.Id);
     }
@@ -157,11 +162,11 @@ public class SettingsViewModelTests : IDisposable
         _audioPlayer.SetAudioOutputDeviceAsync(device.Id).Returns(true);
         _settings.SetAudioOutputDeviceIdAsync(device.Id).Returns(Task.FromException(new IOException("Storage unavailable")));
 
-        await _viewModel.SelectAudioOutputDeviceCommand.ExecuteAsync(device);
+        await _viewModel.Audio.SelectAudioOutputDeviceCommand.ExecuteAsync(device);
 
-        _viewModel.SelectedAudioOutputDevice.Should().Be(device);
-        _viewModel.AudioOutputDeviceMessage.Should().NotBeEmpty();
-        _viewModel.IsAudioOutputBusy.Should().BeFalse();
+        _viewModel.Audio.SelectedAudioOutputDevice.Should().Be(device);
+        _viewModel.Audio.AudioOutputDeviceMessage.Should().NotBeEmpty();
+        _viewModel.Audio.IsAudioOutputBusy.Should().BeFalse();
     }
 
     [Theory]
@@ -175,16 +180,16 @@ public class SettingsViewModelTests : IDisposable
         _settings.GetLastFmAuthTokenAsync().Returns("temporary");
         _lastFm.GetSessionAsync("temporary").Returns(session.Task);
         var authenticating = finalizing
-            ? _viewModel.LastFmFinalizeAuthCommand.ExecuteAsync(null)
-            : _viewModel.LastFmInitialAuthCommand.ExecuteAsync(null);
+            ? _viewModel.Scrobbling.LastFmFinalizeAuthCommand.ExecuteAsync(null)
+            : _viewModel.Scrobbling.LastFmInitialAuthCommand.ExecuteAsync(null);
 
-        await _viewModel.CancelLastFmAuthCommand.ExecuteAsync(null);
+        await _viewModel.Scrobbling.CancelLastFmAuthCommand.ExecuteAsync(null);
         token.SetResult(("late-token", "not a URI"));
         session.SetResult(("user", "late-session"));
         await authenticating.WaitAsync(TimeSpan.FromSeconds(5));
 
-        _viewModel.IsLastFmConnected.Should().BeFalse();
-        _viewModel.IsConnectingToLastFm.Should().BeFalse();
+        _viewModel.Scrobbling.IsLastFmConnected.Should().BeFalse();
+        _viewModel.Scrobbling.IsConnectingToLastFm.Should().BeFalse();
         await _settings.DidNotReceive().SaveLastFmAuthTokenAsync("late-token");
         await _settings.DidNotReceive().SaveLastFmCredentialsAsync(Arg.Any<string>(), Arg.Any<string>());
     }
@@ -199,11 +204,11 @@ public class SettingsViewModelTests : IDisposable
             _lastFm.GetSessionAsync("temporary").Returns(Task.FromException<(string Username, string SessionKey)?>(new IOException("Offline")));
         else
             _lastFm.GetAuthenticationTokenAsync().Returns(Task.FromException<(string Token, string AuthUrl)?>(new IOException("Offline")));
-        _viewModel.IsConnectingToLastFm = true;
+        _viewModel.Scrobbling.IsConnectingToLastFm = true;
 
-        await (finalizing ? _viewModel.LastFmFinalizeAuthCommand : _viewModel.LastFmInitialAuthCommand).ExecuteAsync(null);
+        await (finalizing ? _viewModel.Scrobbling.LastFmFinalizeAuthCommand : _viewModel.Scrobbling.LastFmInitialAuthCommand).ExecuteAsync(null);
 
-        _viewModel.IsConnectingToLastFm.Should().BeFalse();
+        _viewModel.Scrobbling.IsConnectingToLastFm.Should().BeFalse();
         await _settings.Received(1).SaveLastFmAuthTokenAsync(null);
         await _ui.Received(1).ShowMessageDialogAsync(Arg.Any<string>(), Arg.Any<string>());
     }
@@ -214,11 +219,11 @@ public class SettingsViewModelTests : IDisposable
         _settings.GetLastFmAuthTokenAsync().Returns("temporary");
         _lastFm.GetSessionAsync("temporary").Returns(("user", "session"));
 
-        await _viewModel.LastFmFinalizeAuthCommand.ExecuteAsync(null);
+        await _viewModel.Scrobbling.LastFmFinalizeAuthCommand.ExecuteAsync(null);
 
-        _viewModel.IsLastFmConnected.Should().BeTrue();
-        _viewModel.IsLastFmScrobblingEnabled.Should().BeTrue();
-        _viewModel.IsLastFmNowPlayingEnabled.Should().BeTrue();
+        _viewModel.Scrobbling.IsLastFmConnected.Should().BeTrue();
+        _viewModel.Scrobbling.IsLastFmScrobblingEnabled.Should().BeTrue();
+        _viewModel.Scrobbling.IsLastFmNowPlayingEnabled.Should().BeTrue();
         await _settings.Received(1).SetLastFmScrobblingEnabledAsync(true);
         await _settings.Received(1).SetLastFmNowPlayingEnabledAsync(true);
     }
@@ -231,15 +236,15 @@ public class SettingsViewModelTests : IDisposable
         var validation = new TaskCompletionSource<ValidateTokenResult>(TaskCreationOptions.RunContinuationsAsynchronously);
         _listenBrainz.ValidateTokenAsync("old", null).Returns(validation.Task);
         _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>()).Returns(true);
-        _viewModel.ListenBrainzUserToken = "old";
-        var checking = _viewModel.TestListenBrainzConnectionCommand.ExecuteAsync(null);
-        if (disconnect) await _viewModel.DisconnectListenBrainzCommand.ExecuteAsync(null);
-        else _viewModel.ListenBrainzUserToken = "new";
+        _viewModel.Scrobbling.ListenBrainzUserToken = "old";
+        var checking = _viewModel.Scrobbling.TestListenBrainzConnectionCommand.ExecuteAsync(null);
+        if (disconnect) await _viewModel.Scrobbling.DisconnectListenBrainzCommand.ExecuteAsync(null);
+        else _viewModel.Scrobbling.ListenBrainzUserToken = "new";
 
         validation.SetResult(new ValidateTokenResult(true, "user", null));
         await checking.WaitAsync(TimeSpan.FromSeconds(5));
 
-        _viewModel.ListenBrainzIsConnected.Should().BeFalse();
+        _viewModel.Scrobbling.ListenBrainzIsConnected.Should().BeFalse();
         await _settings.DidNotReceive().SaveListenBrainzUserTokenAsync(Arg.Any<string>());
     }
 
@@ -493,7 +498,7 @@ public class SettingsViewModelTests : IDisposable
     public async Task EqualizerPreset_CancelsOlderBandCommit()
     {
         var band = new EqualizerBandViewModel(0, 100, 0, new ImmediateDispatcher(), _timeProvider);
-        _viewModel.EqualizerBands.Add(band);
+        _viewModel.Audio.EqualizerBands.Add(band);
         var commits = new List<float>();
         band.GainCommitted += (_, gain) => commits.Add(gain);
         band.Gain = 3;
@@ -505,7 +510,7 @@ public class SettingsViewModelTests : IDisposable
             return Task.CompletedTask;
         });
 
-        _viewModel.SelectedEqualizerPreset = new EqualizerPreset("Preset", [7]);
+        _viewModel.Audio.SelectedEqualizerPreset = new EqualizerPreset("Preset", [7]);
         await AdvanceDebouncesAsync();
 
         band.Gain.Should().Be(7);
@@ -516,13 +521,13 @@ public class SettingsViewModelTests : IDisposable
     public async Task EqualizerReset_CancelsOlderPreampAndBandCommits()
     {
         var band = new EqualizerBandViewModel(0, 100, 0, new ImmediateDispatcher(), _timeProvider);
-        _viewModel.EqualizerBands.Add(band);
+        _viewModel.Audio.EqualizerBands.Add(band);
         var commits = new List<float>();
         band.GainCommitted += (_, gain) => commits.Add(gain);
         band.Gain = 3;
-        _viewModel.EqualizerPreamp = 2;
+        _viewModel.Audio.EqualizerPreamp = 2;
 
-        await _viewModel.ResetEqualizerCommand.ExecuteAsync(null);
+        await _viewModel.Audio.ResetEqualizerCommand.ExecuteAsync(null);
         await AdvanceDebouncesAsync();
 
         commits.Should().BeEmpty();
@@ -578,8 +583,8 @@ public class SettingsViewModelTests : IDisposable
         _viewModel.ArtistSplitCharacters = "artist";
         _viewModel.GenreSplitCharacters = "first";
         _viewModel.GenreSplitCharacters = "genre";
-        _viewModel.EqualizerPreamp = 1;
-        _viewModel.EqualizerPreamp = 2;
+        _viewModel.Audio.EqualizerPreamp = 1;
+        _viewModel.Audio.EqualizerPreamp = 2;
         if (dispose) _viewModel.Dispose();
 
         await AdvanceDebouncesAsync();
@@ -605,7 +610,7 @@ public class SettingsViewModelTests : IDisposable
     {
         _timeProvider.Advance(TimeSpan.FromSeconds(1));
         await Task.WhenAll(_viewModel.PendingSettingsSaves,
-            Task.WhenAll(_viewModel.EqualizerBands.Select(band => band.PendingGainCommit)))
+            Task.WhenAll(_viewModel.Audio.EqualizerBands.Select(band => band.PendingGainCommit)))
             .WaitAsync(TimeSpan.FromSeconds(5));
     }
 }

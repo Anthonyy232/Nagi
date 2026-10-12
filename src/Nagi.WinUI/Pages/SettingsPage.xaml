@@ -135,21 +135,21 @@
                             Visibility="{x:Bind IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <Button
                             MinWidth="86"
-                            Command="{Binding DataContext.InstallRomanizationPackCommand, ElementName=SettingsPageRoot}"
+                            Command="{Binding DataContext.Romanization.InstallRomanizationPackCommand, ElementName=SettingsPageRoot}"
                             CommandParameter="{x:Bind}"
                             Content="{x:Bind resources:Strings.SettingsPage_RomanizationPacks_Install, Mode=OneTime}"
                             IsEnabled="{x:Bind CanInstall, Mode=OneWay}"
                             Visibility="{x:Bind IsInstalled, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                         <Button
                             MinWidth="86"
-                            Command="{Binding DataContext.InstallRomanizationPackCommand, ElementName=SettingsPageRoot}"
+                            Command="{Binding DataContext.Romanization.InstallRomanizationPackCommand, ElementName=SettingsPageRoot}"
                             CommandParameter="{x:Bind}"
                             Content="{x:Bind resources:Strings.SettingsPage_RomanizationPacks_Update, Mode=OneTime}"
                             IsEnabled="{x:Bind CanInstall, Mode=OneWay}"
                             Visibility="{x:Bind IsUpdateAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <Button
                             MinWidth="86"
-                            Command="{Binding DataContext.RemoveRomanizationPackCommand, ElementName=SettingsPageRoot}"
+                            Command="{Binding DataContext.Romanization.RemoveRomanizationPackCommand, ElementName=SettingsPageRoot}"
                             CommandParameter="{x:Bind}"
                             Content="{x:Bind resources:Strings.SettingsPage_RomanizationPacks_Remove, Mode=OneTime}"
                             IsEnabled="{x:Bind CanRemove, Mode=OneWay}"
@@ -471,15 +471,15 @@
                             MinWidth="200"
                             HorizontalAlignment="Stretch"
                             AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_AudioOutput_Header, Mode=OneTime}"
-                            ItemsSource="{x:Bind ViewModel.AudioOutputDevices, Mode=OneWay}"
+                            ItemsSource="{x:Bind ViewModel.Audio.AudioOutputDevices, Mode=OneWay}"
                             DisplayMemberPath="DisplayName"
-                            SelectedItem="{x:Bind ViewModel.SelectedAudioOutputDevice, Mode=OneWay}"
-                            IsEnabled="{x:Bind ViewModel.IsAudioOutputBusy, Mode=OneWay, Converter={StaticResource BooleanToInverseBooleanConverter}}"
+                            SelectedItem="{x:Bind ViewModel.Audio.SelectedAudioOutputDevice, Mode=OneWay}"
+                            IsEnabled="{x:Bind ViewModel.Audio.IsAudioOutputBusy, Mode=OneWay, Converter={StaticResource BooleanToInverseBooleanConverter}}"
                             DropDownOpened="AudioOutput_DropDownOpened"
                             SelectionChanged="AudioOutput_SelectionChanged" />
                         <TextBlock
-                            Text="{x:Bind ViewModel.AudioOutputDeviceMessage, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.AudioOutputDeviceMessage, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}"
+                            Text="{x:Bind ViewModel.Audio.AudioOutputDeviceMessage, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.Audio.AudioOutputDeviceMessage, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}"
                             TextWrapping="Wrap"
                             Style="{StaticResource CaptionTextBlockStyle}" />
                     </StackPanel>
@@ -544,7 +544,7 @@
                             <TextBlock Text="{x:Bind resources:Strings.SettingsPage_Equalizer, Mode=OneTime}" VerticalAlignment="Center" />
                             <HyperlinkButton
                                 VerticalAlignment="Center"
-                                Command="{x:Bind ViewModel.ResetEqualizerCommand}"
+                                Command="{x:Bind ViewModel.Audio.ResetEqualizerCommand}"
                                 Style="{StaticResource AnimatedHyperlinkButtonStyle}"
                                 Content="{x:Bind resources:Strings.SettingsPage_ResetEqualizer_Content, Mode=OneTime}"
                                 FontSize="12"
@@ -563,18 +563,18 @@
                                 Minimum="-20"
                                 StepFrequency="0.1"
                                 Style="{StaticResource DefaultSliderStyle}"
-                                Value="{x:Bind ViewModel.EqualizerPreamp, Mode=TwoWay}" />
+                                Value="{x:Bind ViewModel.Audio.EqualizerPreamp, Mode=TwoWay}" />
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Style="{ThemeResource CaptionTextBlockStyle}">
-                                <Run Text="{x:Bind ViewModel.EqualizerPreamp, Mode=OneWay, Converter={StaticResource FloatToDecimalStringConverter}}" />
+                                <Run Text="{x:Bind ViewModel.Audio.EqualizerPreamp, Mode=OneWay, Converter={StaticResource FloatToDecimalStringConverter}}" />
                                 <Run Text="{x:Bind resources:Strings.SettingsPage_Unit_Decibels, Mode=OneTime}" />
                             </TextBlock>
                         </StackPanel>
 
                         <!-- EQ Bands -->
-                        <ItemsRepeater ItemsSource="{x:Bind ViewModel.EqualizerBands}" HorizontalAlignment="Center">
+                        <ItemsRepeater ItemsSource="{x:Bind ViewModel.Audio.EqualizerBands}" HorizontalAlignment="Center">
                             <ItemsRepeater.Layout>
                                 <StackLayout Orientation="Horizontal" Spacing="8" />
                             </ItemsRepeater.Layout>
@@ -612,9 +612,9 @@
                         <ComboBox
                             HorizontalAlignment="Center"
                             MinWidth="160"
-                            ItemsSource="{x:Bind ViewModel.AvailableEqualizerPresets}"
+                            ItemsSource="{x:Bind ViewModel.Audio.AvailableEqualizerPresets}"
                             PlaceholderText="{x:Bind resources:Strings.SettingsPage_Equalizer_Preset_Custom_Placeholder, Mode=OneTime}"
-                            SelectedItem="{x:Bind ViewModel.SelectedEqualizerPreset, Mode=TwoWay}">
+                            SelectedItem="{x:Bind ViewModel.Audio.SelectedEqualizerPreset, Mode=TwoWay}">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate x:DataType="coreModels:EqualizerPreset">
                                     <TextBlock Text="{x:Bind Name}" />
@@ -999,24 +999,24 @@
                                     <ProgressRing
                                         Width="24"
                                         Height="24"
-                                        IsActive="{x:Bind ViewModel.IsLoadingRomanizationPacks, Mode=OneWay}"
-                                        Visibility="{x:Bind ViewModel.IsLoadingRomanizationPacks, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                        IsActive="{x:Bind ViewModel.Romanization.IsLoadingRomanizationPacks, Mode=OneWay}"
+                                        Visibility="{x:Bind ViewModel.Romanization.IsLoadingRomanizationPacks, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                     <Button
                                         MinWidth="86"
-                                        Command="{x:Bind ViewModel.RefreshRomanizationPacksCommand}"
+                                        Command="{x:Bind ViewModel.Romanization.RefreshRomanizationPacksCommand}"
                                         Content="{x:Bind resources:Strings.SettingsPage_RomanizationPacks_Refresh, Mode=OneTime}"
-                                        IsEnabled="{x:Bind ViewModel.IsLoadingRomanizationPacks, Mode=OneWay, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
+                                        IsEnabled="{x:Bind ViewModel.Romanization.IsLoadingRomanizationPacks, Mode=OneWay, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
                                 </StackPanel>
 
                                 <TextBlock
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    Text="{x:Bind ViewModel.RomanizationPacksStatus, Mode=OneWay}"
+                                    Text="{x:Bind ViewModel.Romanization.RomanizationPacksStatus, Mode=OneWay}"
                                     TextWrapping="WrapWholeWords"
-                                    Visibility="{x:Bind ViewModel.RomanizationPacksStatus, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}" />
+                                    Visibility="{x:Bind ViewModel.Romanization.RomanizationPacksStatus, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}" />
 
                                 <ItemsControl
                                     ItemTemplate="{StaticResource RomanizationPackItemTemplate}"
-                                    ItemsSource="{x:Bind ViewModel.RomanizationPacks, Mode=OneWay}">
+                                    ItemsSource="{x:Bind ViewModel.Romanization.RomanizationPacks, Mode=OneWay}">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <StackPanel Spacing="8" />
@@ -1037,10 +1037,10 @@
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <Button
                             Content="{x:Bind resources:Strings.SettingsPage_ExportPlaylists_Content, Mode=OneTime}" ToolTipService.ToolTip="{x:Bind resources:Strings.SettingsPage_ExportPlaylists_ToolTip, Mode=OneTime}"
-                            Command="{x:Bind ViewModel.ExportAllPlaylistsCommand}" />
+                            Command="{x:Bind ViewModel.DataManagement.ExportAllPlaylistsCommand}" />
                         <Button
                             Content="{x:Bind resources:Strings.SettingsPage_ImportPlaylists_Content, Mode=OneTime}" ToolTipService.ToolTip="{x:Bind resources:Strings.SettingsPage_ImportPlaylists_ToolTip, Mode=OneTime}"
-                            Command="{x:Bind ViewModel.ImportMultiplePlaylistsCommand}" />
+                            Command="{x:Bind ViewModel.DataManagement.ImportMultiplePlaylistsCommand}" />
                     </StackPanel>
                 </controls:SettingsCard>
 
@@ -1053,10 +1053,10 @@
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <Button
                             Content="{x:Bind resources:Strings.SettingsPage_CreateBackup_Content, Mode=OneTime}"
-                            Command="{x:Bind ViewModel.CreateBackupCommand}" />
+                            Command="{x:Bind ViewModel.DataManagement.CreateBackupCommand}" />
                         <Button
                             Content="{x:Bind resources:Strings.SettingsPage_RestoreBackup_Content, Mode=OneTime}"
-                            Command="{x:Bind ViewModel.RestoreFromBackupCommand}" />
+                            Command="{x:Bind ViewModel.DataManagement.RestoreFromBackupCommand}" />
                     </StackPanel>
                 </controls:SettingsCard>
 
@@ -1067,7 +1067,7 @@
                     </controls:SettingsCard.HeaderIcon>
                     <Button
                         HorizontalAlignment="Right"
-                        Command="{x:Bind ViewModel.ResetApplicationDataCommand}"
+                        Command="{x:Bind ViewModel.DataManagement.ResetApplicationDataCommand}"
                         Content="{x:Bind resources:Strings.SettingsPage_ResetButton_Content, Mode=OneTime}"
                         Style="{StaticResource AnimatedAccentButtonStyle}" />
                 </controls:SettingsCard>
@@ -1075,7 +1075,7 @@
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{x:Bind resources:Strings.SettingsPage_Section_Integrations, Mode=OneTime}" />
 
                 <controls:SettingsExpander
-                    IsExpanded="{x:Bind ViewModel.IsLastFmConnected, Mode=OneWay}"
+                    IsExpanded="{x:Bind ViewModel.Scrobbling.IsLastFmConnected, Mode=OneWay}"
                     Header="{x:Bind resources:Strings.SettingsPage_LastFm_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_LastFm_Description, Mode=OneTime}">
                     <controls:SettingsExpander.HeaderIcon>
                         <PathIcon
@@ -1086,27 +1086,27 @@
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <!-- Initial Connect Button -->
                         <Button
-                            Command="{x:Bind ViewModel.LastFmInitialAuthCommand}"
+                            Command="{x:Bind ViewModel.Scrobbling.LastFmInitialAuthCommand}"
                             Content="{x:Bind resources:Strings.SettingsPage_LastFm_Connect_Content, Mode=OneTime}"
-                            Visibility="{x:Bind ViewModel.IsLastFmNotConnected, Mode=OneWay}"
-                            IsEnabled="{x:Bind ViewModel.IsLastFmInitialAuthEnabled, Mode=OneWay}" />
+                            Visibility="{x:Bind ViewModel.Scrobbling.IsLastFmNotConnected, Mode=OneWay}"
+                            IsEnabled="{x:Bind ViewModel.Scrobbling.IsLastFmInitialAuthEnabled, Mode=OneWay}" />
 
                         <!-- Flow during connection -->
-                        <StackPanel Orientation="Horizontal" Spacing="8" Visibility="{x:Bind ViewModel.IsConnectingToLastFm, Mode=OneWay}">
+                        <StackPanel Orientation="Horizontal" Spacing="8" Visibility="{x:Bind ViewModel.Scrobbling.IsConnectingToLastFm, Mode=OneWay}">
                             <Button
-                                Command="{x:Bind ViewModel.LastFmFinalizeAuthCommand}"
+                                Command="{x:Bind ViewModel.Scrobbling.LastFmFinalizeAuthCommand}"
                                 Content="{x:Bind resources:Strings.SettingsPage_LastFm_Complete_Content, Mode=OneTime}"
                                 Style="{StaticResource AccentButtonStyle}" />
                             <Button
-                                Command="{x:Bind ViewModel.CancelLastFmAuthCommand}"
+                                Command="{x:Bind ViewModel.Scrobbling.CancelLastFmAuthCommand}"
                                 Content="{x:Bind resources:Strings.SettingsPage_LastFm_Cancel_Content, Mode=OneTime}" />
                         </StackPanel>
 
                         <!-- Disconnect Button -->
                         <Button
-                            Command="{x:Bind ViewModel.LastFmDisconnectCommand}"
+                            Command="{x:Bind ViewModel.Scrobbling.LastFmDisconnectCommand}"
                             Content="{x:Bind resources:Strings.SettingsPage_LastFm_Disconnect_Content, Mode=OneTime}"
-                            Visibility="{x:Bind ViewModel.IsLastFmConnected, Mode=OneWay}" />
+                            Visibility="{x:Bind ViewModel.Scrobbling.IsLastFmConnected, Mode=OneWay}" />
                     </StackPanel>
 
                     <controls:SettingsExpander.Items>
@@ -1115,7 +1115,7 @@
                             <controls:SettingsCard.HeaderIcon>
                                 <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE81C;" />
                             </controls:SettingsCard.HeaderIcon>
-                            <ToggleSwitch IsOn="{x:Bind ViewModel.IsLastFmScrobblingEnabled, Mode=TwoWay}" />
+                            <ToggleSwitch IsOn="{x:Bind ViewModel.Scrobbling.IsLastFmScrobblingEnabled, Mode=TwoWay}" />
                         </controls:SettingsCard>
 
                         <controls:SettingsCard
@@ -1123,7 +1123,7 @@
                             <controls:SettingsCard.HeaderIcon>
                                 <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE768;" />
                             </controls:SettingsCard.HeaderIcon>
-                            <ToggleSwitch IsOn="{x:Bind ViewModel.IsLastFmNowPlayingEnabled, Mode=TwoWay}" />
+                            <ToggleSwitch IsOn="{x:Bind ViewModel.Scrobbling.IsLastFmNowPlayingEnabled, Mode=TwoWay}" />
                         </controls:SettingsCard>
                     </controls:SettingsExpander.Items>
                 </controls:SettingsExpander>
@@ -1136,9 +1136,9 @@
                     </controls:SettingsExpander.HeaderIcon>
 
                     <Button
-                        Command="{x:Bind ViewModel.DisconnectListenBrainzCommand}"
+                        Command="{x:Bind ViewModel.Scrobbling.DisconnectListenBrainzCommand}"
                         Content="{x:Bind resources:Strings.SettingsPage_ListenBrainz_Disconnect_Button, Mode=OneTime}"
-                        Visibility="{x:Bind ViewModel.ListenBrainzIsConnected, Mode=OneWay}" />
+                        Visibility="{x:Bind ViewModel.Scrobbling.ListenBrainzIsConnected, Mode=OneWay}" />
 
                     <controls:SettingsExpander.Items>
                         <controls:SettingsCard
@@ -1150,17 +1150,17 @@
                                 <PasswordBox
                                     Width="260"
                                     PlaceholderText="{x:Bind resources:Strings.SettingsPage_ListenBrainz_TokenPlaceholder, Mode=OneTime}"
-                                    Password="{x:Bind ViewModel.ListenBrainzUserToken, Mode=TwoWay}" />
+                                    Password="{x:Bind ViewModel.Scrobbling.ListenBrainzUserToken, Mode=TwoWay}" />
                                 <Button
-                                    Command="{x:Bind ViewModel.TestListenBrainzConnectionCommand}"
+                                    Command="{x:Bind ViewModel.Scrobbling.TestListenBrainzConnectionCommand}"
                                     Content="{x:Bind resources:Strings.SettingsPage_ListenBrainz_TestConnection, Mode=OneTime}" />
                             </StackPanel>
                         </controls:SettingsCard>
 
                         <controls:SettingsCard
-                            Visibility="{x:Bind ViewModel.ListenBrainzConnectionStatus, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}">
+                            Visibility="{x:Bind ViewModel.Scrobbling.ListenBrainzConnectionStatus, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}">
                             <TextBlock
-                                Text="{x:Bind ViewModel.ListenBrainzConnectionStatus, Mode=OneWay}"
+                                Text="{x:Bind ViewModel.Scrobbling.ListenBrainzConnectionStatus, Mode=OneWay}"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 TextWrapping="Wrap" />
                         </controls:SettingsCard>
@@ -1170,7 +1170,7 @@
                             <controls:SettingsCard.HeaderIcon>
                                 <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE81C;" />
                             </controls:SettingsCard.HeaderIcon>
-                            <ToggleSwitch IsOn="{x:Bind ViewModel.ListenBrainzScrobblingEnabled, Mode=TwoWay}" />
+                            <ToggleSwitch IsOn="{x:Bind ViewModel.Scrobbling.ListenBrainzScrobblingEnabled, Mode=TwoWay}" />
                         </controls:SettingsCard>
 
                         <controls:SettingsCard
@@ -1178,7 +1178,7 @@
                             <controls:SettingsCard.HeaderIcon>
                                 <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE768;" />
                             </controls:SettingsCard.HeaderIcon>
-                            <ToggleSwitch IsOn="{x:Bind ViewModel.ListenBrainzNowPlayingEnabled, Mode=TwoWay}" />
+                            <ToggleSwitch IsOn="{x:Bind ViewModel.Scrobbling.ListenBrainzNowPlayingEnabled, Mode=TwoWay}" />
                         </controls:SettingsCard>
 
                         <controls:SettingsExpander
@@ -1195,7 +1195,7 @@
                                         Width="300"
                                         HorizontalAlignment="Right"
                                         PlaceholderText="{x:Bind resources:Strings.SettingsPage_ListenBrainz_ServerUrlPlaceholder, Mode=OneTime}"
-                                        Text="{x:Bind ViewModel.ListenBrainzServerUrl, Mode=TwoWay}" />
+                                        Text="{x:Bind ViewModel.Scrobbling.ListenBrainzServerUrl, Mode=TwoWay}" />
                                 </controls:SettingsCard>
                             </controls:SettingsExpander.Items>
                         </controls:SettingsExpander>

@@ -31,11 +31,11 @@ public sealed partial class SettingsPage : Page
         try
         {
             await ViewModel.LoadSettingsAsync();
-            await ViewModel.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
+            await ViewModel.Audio.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
             _logger.LogDebug("Settings loaded successfully.");
 
             Bindings.Update();
-            _ = ViewModel.LoadRomanizationPacksAsync();
+            _ = ViewModel.Romanization.LoadRomanizationPacksAsync();
         }
         catch (Exception ex)
         {
@@ -52,11 +52,11 @@ public sealed partial class SettingsPage : Page
     }
 
     private async void AudioOutput_DropDownOpened(object sender, object e) =>
-        await ViewModel.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
+        await ViewModel.Audio.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
 
     private async void AudioOutput_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (sender is ComboBox { SelectedItem: AudioOutputDeviceInfo device })
-            await ViewModel.SelectAudioOutputDeviceCommand.ExecuteAsync(device);
+            await ViewModel.Audio.SelectAudioOutputDeviceCommand.ExecuteAsync(device);
     }
 }
