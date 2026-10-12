@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Models;
 using Nagi.Core.Models.Lyrics;
 using Nagi.Core.Services.Abstractions;
+using Nagi.WinUI.Models;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.ViewModels;
 using NSubstitute;
@@ -17,6 +18,7 @@ public class LyricsPageViewModelTests
     private readonly ILibraryReader _library = Substitute.For<ILibraryReader>();
     private readonly ILrcService _lyrics = Substitute.For<ILrcService>();
     private readonly ILyricRomanizationService _romanization = Substitute.For<ILyricRomanizationService>();
+    private readonly IUIService _ui = Substitute.For<IUIService>();
 
     public LyricsPageViewModelTests()
     {
@@ -197,6 +199,68 @@ public class LyricsPageViewModelTests
         return song;
     }
 
+    [Fact]
+    public async Task EditLyrics_SavesTheEditedTextWithPlatformLineEndings()
+    {
+        var song = PlayingSongWithLyrics("Old", cached: false);
+        using var viewModel = CreateViewModel();
+        _ui.ShowLyricsEditorAsync("Old", false).Returns(new LyricsEdit(LyricsEditAction.Save, "First\nSecond"));
+
+        await viewModel.EditLyricsCommand.ExecuteAsync(null);
+
+        await _lyrics.Received(1).SaveLyricsAsync(song, $"First{Environment.NewLine}Second");
+    }
+
+    [Fact]
+    public async Task EditLyrics_RemovesCachedLyricsWhenAsked()
+    {
+        var song = PlayingSongWithLyrics("Old", cached: true);
+        using var viewModel = CreateViewModel();
+        _ui.ShowLyricsEditorAsync("Old", true).Returns(new LyricsEdit(LyricsEditAction.Remove));
+
+        await viewModel.EditLyricsCommand.ExecuteAsync(null);
+
+        await _lyrics.Received(1).RemoveCachedLyricsAsync(song);
+        await _lyrics.DidNotReceiveWithAnyArgs().SaveLyricsAsync(default!, default!);
+    }
+
+    [Fact]
+    public async Task EditLyrics_WhenCancelled_ChangesNothing()
+    {
+        PlayingSongWithLyrics("Old", cached: true);
+        using var viewModel = CreateViewModel();
+        _ui.ShowLyricsEditorAsync("Old", true).Returns((LyricsEdit?)null);
+
+        await viewModel.EditLyricsCommand.ExecuteAsync(null);
+
+        await _lyrics.DidNotReceiveWithAnyArgs().SaveLyricsAsync(default!, default!);
+        await _lyrics.DidNotReceiveWithAnyArgs().RemoveCachedLyricsAsync(default!);
+    }
+
+    [Fact]
+    public async Task EditLyrics_WhenSavingFails_TellsTheUser()
+    {
+        var song = PlayingSongWithLyrics("Old", cached: false);
+        using var viewModel = CreateViewModel();
+        _ui.ShowLyricsEditorAsync("Old", false).Returns(new LyricsEdit(LyricsEditAction.Save, "New"));
+        _lyrics.SaveLyricsAsync(song, "New").Returns(Task.FromException(new IOException("Disk full")));
+
+        await viewModel.EditLyricsCommand.ExecuteAsync(null);
+
+        await _ui.Received(1).ShowMessageDialogAsync(Nagi.WinUI.Resources.Strings.LyricsPage_EditLyrics_Error_Title,
+            Nagi.WinUI.Resources.Strings.LyricsPage_EditLyrics_Error_Message);
+    }
+
+    private Song PlayingSongWithLyrics(string raw, bool cached)
+    {
+        var song = new Song { Title = "Song", Lyrics = raw };
+        _lyrics.ParseLyrics(raw).Returns(new ParsedLrc([], raw));
+        _lyrics.HasCachedLyrics(song).Returns(cached);
+        _library.GetSongByIdAsync(song.Id).Returns(song);
+        _playback.CurrentTrack.Returns(song);
+        return song;
+    }
+
     private void ChangeTrack(Song song)
     {
         _playback.CurrentTrack.Returns(song);
@@ -205,7 +269,7 @@ public class LyricsPageViewModelTests
 
     private LyricsPageViewModel CreateViewModel(IDispatcherService? dispatcher = null) => new(
         _playback, dispatcher ?? new ImmediateDispatcher(), _lyrics, _library, _romanization,
-        Substitute.For<ISettingsService>(), Substitute.For<IRomanizationPackManager>(),
+        Substitute.For<ISettingsService>(), Substitute.For<IRomanizationPackManager>(), _ui,
         NullLogger<LyricsPageViewModel>.Instance);
 
     private sealed class QueuedDispatcher : IDispatcherService

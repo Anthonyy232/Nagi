@@ -11,6 +11,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Models.Lyrics;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Helpers;
+using Nagi.WinUI.Models;
 using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.ViewModels;
@@ -26,6 +27,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     private readonly IMusicPlaybackService _playbackService;
     private readonly IRomanizationPackManager _romanizationPackManager;
     private readonly ISettingsService _settingsService;
+    private readonly IUIService _uiService;
     private static readonly TimeSpan _seekTimeOffset = TimeSpan.FromSeconds(0.2);
     private readonly object _lyricsFetchLock = new();
 
@@ -48,6 +50,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         ILyricRomanizationService lyricRomanizationService,
         ISettingsService settingsService,
         IRomanizationPackManager romanizationPackManager,
+        IUIService uiService,
         ILogger<LyricsPageViewModel> logger)
     {
         _playbackService = playbackService;
@@ -57,6 +60,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         _lyricRomanizationService = lyricRomanizationService;
         _settingsService = settingsService;
         _romanizationPackManager = romanizationPackManager;
+        _uiService = uiService;
         _logger = logger;
 
         _playbackService.TrackChanged += OnPlaybackServiceTrackChanged;
@@ -153,7 +157,33 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         await _playbackService.SeekAsync(targetTime);
     }
 
-    public async Task SaveLyricsAsync(Guid songId, string lyrics)
+    /// <summary>
+    ///     Opens the lyrics editor for the current song and saves or removes its lyrics as chosen.
+    /// </summary>
+    [RelayCommand]
+    private async Task EditLyricsAsync()
+    {
+        if (CurrentSongId is not { } songId) return;
+
+        var edit = await _uiService.ShowLyricsEditorAsync(EditableLyrics, CanRemoveLyrics);
+        if (edit is null) return;
+
+        try
+        {
+            if (edit.Action == LyricsEditAction.Save)
+                await SaveLyricsAsync(songId, edit.Lyrics.ReplaceLineEndings());
+            else
+                await RemoveLyricsAsync(songId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to update lyrics.");
+            await _uiService.ShowMessageDialogAsync(Nagi.WinUI.Resources.Strings.LyricsPage_EditLyrics_Error_Title,
+                Nagi.WinUI.Resources.Strings.LyricsPage_EditLyrics_Error_Message);
+        }
+    }
+
+    private async Task SaveLyricsAsync(Guid songId, string lyrics)
     {
         var song = _currentSong?.Id == songId
             ? _currentSong
@@ -164,7 +194,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         if (_currentSong?.Id == song.Id) await UpdateForTrack(song).ConfigureAwait(false);
     }
 
-    public async Task RemoveLyricsAsync(Guid songId)
+    private async Task RemoveLyricsAsync(Guid songId)
     {
         var song = _currentSong?.Id == songId
             ? _currentSong

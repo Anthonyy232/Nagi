@@ -98,6 +98,12 @@ public interface IUIService
     Task<string?> ShowRenamePlaylistDialogAsync(string currentName);
 
     /// <summary>
+    ///     Shows the lyrics editor with <paramref name="lyrics" />, offering removal when <paramref name="canRemove" /> is set.
+    /// </summary>
+    /// <returns>The user's choice, or null if the user cancelled.</returns>
+    Task<Nagi.WinUI.Models.LyricsEdit?> ShowLyricsEditorAsync(string lyrics, bool canRemove);
+
+    /// <summary>
     ///     Shows a dialog for FFmpeg setup with a recheck button that doesn't close the dialog.
     /// </summary>
     /// <param name="title">The dialog's title.</param>
