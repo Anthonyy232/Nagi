@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Graphics;
 using Windows.UI;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI;
 using Microsoft.UI.Composition.SystemBackdrops;
@@ -16,6 +15,7 @@ using Nagi.WinUI.Models;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Services.Abstractions;
+using Nagi.WinUI.ViewModels;
 using WinRT.Interop;
 
 namespace Nagi.WinUI;
@@ -394,12 +394,12 @@ public sealed class MiniPlayerWindow : Window
     private readonly MiniPlayerView _view;
     private readonly IWin32InteropService _win32InteropService;
 
-    public MiniPlayerWindow()
+    public MiniPlayerWindow(PlayerViewModel playerViewModel, IThemeService themeService,
+        IWin32InteropService win32InteropService, ILogger<MiniPlayerWindow> logger)
     {
-        var services = App.Services!;
-        _logger = services.GetRequiredService<ILogger<MiniPlayerWindow>>();
-        _win32InteropService = services.GetRequiredService<IWin32InteropService>();
-        _view = new MiniPlayerView(this);
+        _logger = logger;
+        _win32InteropService = win32InteropService;
+        _view = new MiniPlayerView(this, playerViewModel);
         Content = _view;
         _appWindow = AppWindow;
 
@@ -407,7 +407,6 @@ public sealed class MiniPlayerWindow : Window
         SystemBackdrop = new DesktopAcrylicBackdrop();
 
         // Ensure the mini player follows the application theme
-        var themeService = services.GetRequiredService<IThemeService>();
         if (Content is FrameworkElement root)
         {
             root.RequestedTheme = themeService.CurrentTheme;

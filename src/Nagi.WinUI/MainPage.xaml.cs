@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -140,21 +139,24 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private ElementTheme _lastKnownTheme;
 
-    public MainPage()
+    public MainPage(PlayerViewModel viewModel, InsightsViewModel insightsViewModel,
+        GlobalOperationViewModel globalOperation, IUISettingsService settingsService, IThemeService themeService,
+        IDispatcherService dispatcherService, IWin32InteropService win32InteropService,
+        INavigationService navigationService, ILogger<MainPage> logger)
     {
-        ViewModel = App.Services!.GetRequiredService<PlayerViewModel>();
-        InsightsVm = App.Services!.GetRequiredService<InsightsViewModel>();
-        GlobalOperation = App.Services!.GetRequiredService<GlobalOperationViewModel>();
-        _settingsService = App.Services!.GetRequiredService<IUISettingsService>();
-        _themeService = App.Services!.GetRequiredService<IThemeService>();
-        _dispatcherService = App.Services!.GetRequiredService<IDispatcherService>();
-        _win32InteropService = App.Services!.GetRequiredService<IWin32InteropService>();
-        _logger = App.Services!.GetRequiredService<ILogger<MainPage>>();
+        ViewModel = viewModel;
+        InsightsVm = insightsViewModel;
+        GlobalOperation = globalOperation;
+        _settingsService = settingsService;
+        _themeService = themeService;
+        _dispatcherService = dispatcherService;
+        _win32InteropService = win32InteropService;
+        _logger = logger;
 
         InitializeComponent();
         DataContext = ViewModel;
 
-        App.Services!.GetRequiredService<INavigationService>().Initialize(ContentFrame);
+        navigationService.Initialize(ContentFrame);
         _hoverTimer.Tick += OnHoverTimerTick;
 
         Loaded += OnMainPageLoaded;

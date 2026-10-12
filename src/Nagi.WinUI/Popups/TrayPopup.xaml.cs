@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.Foundation;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -20,16 +19,19 @@ public sealed partial class TrayPopup : Window
 {
     private readonly ILogger<TrayPopup> _logger;
     private readonly IUISettingsService _settingsService;
+    private readonly IWin32InteropService _win32InteropService;
     private bool _isClosed;
     private bool _isCoverArtInFlyoutEnabled;
 
-    public TrayPopup(ElementTheme initialTheme)
+    public TrayPopup(ElementTheme initialTheme, PlayerViewModel viewModel, IUISettingsService settingsService,
+        IWin32InteropService win32InteropService, ILogger<TrayPopup> logger)
     {
         InitializeComponent();
 
-        ViewModel = App.Services!.GetRequiredService<PlayerViewModel>();
-        _settingsService = App.Services!.GetRequiredService<IUISettingsService>();
-        _logger = App.Services!.GetRequiredService<ILogger<TrayPopup>>();
+        ViewModel = viewModel;
+        _settingsService = settingsService;
+        _win32InteropService = win32InteropService;
+        _logger = logger;
 
         OuterBorder.RequestedTheme = initialTheme;
         OuterBorder.DataContext = ViewModel;
@@ -123,8 +125,7 @@ public sealed partial class TrayPopup : Window
         exStyle |= WS_EX_LAYERED;
         SetWindowLongPtr(windowHandle, GWL_EXSTYLE, (IntPtr)exStyle);
 
-        var win32Service = App.Services!.GetRequiredService<IWin32InteropService>();
-        if (win32Service.IsWindows11OrNewer)
+        if (_win32InteropService.IsWindows11OrNewer)
         {
             var preference = DWMWCP_ROUND; // DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_ROUND
             DwmSetWindowAttribute(windowHandle, DWMWA_WINDOW_CORNER_PREFERENCE, ref preference, sizeof(uint));

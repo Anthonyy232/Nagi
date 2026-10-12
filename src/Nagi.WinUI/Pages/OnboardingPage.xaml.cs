@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -17,11 +16,11 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider
     private readonly ILogger<OnboardingPage> _logger;
     private bool _isUnloaded;
 
-    public OnboardingPage()
+    public OnboardingPage(OnboardingViewModel viewModel, ILogger<OnboardingPage> logger)
     {
         InitializeComponent();
-        ViewModel = App.Services!.GetRequiredService<OnboardingViewModel>();
-        _logger = App.Services!.GetRequiredService<ILogger<OnboardingPage>>();
+        ViewModel = viewModel;
+        _logger = logger;
         DataContext = ViewModel;
         Loaded += OnboardingPage_Loaded;
         Unloaded += OnboardingPage_Unloaded;

@@ -4,7 +4,6 @@ using System.ComponentModel;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.System;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -23,12 +22,12 @@ public sealed partial class MiniPlayerView : UserControl
     private readonly Window _parentWindow;
     private bool _isUnloaded;
 
-    public MiniPlayerView(Window parentWindow)
+    public MiniPlayerView(Window parentWindow, PlayerViewModel viewModel)
     {
         InitializeComponent();
         _parentWindow = parentWindow;
 
-        ViewModel = App.Services!.GetRequiredService<PlayerViewModel>();
+        ViewModel = viewModel;
         DataContext = this;
 
         SubscribeToEvents();

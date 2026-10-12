@@ -288,6 +288,7 @@ public partial class App : Application
         services.AddNagiPlatformServices();
         services.AddNagiCore();
         services.AddNagiViewModels();
+        services.AddNagiShell();
 
         return services.BuildServiceProvider();
     }

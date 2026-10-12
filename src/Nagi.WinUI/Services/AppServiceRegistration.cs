@@ -1,9 +1,12 @@
 using System;
 using System.Net.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml;
 using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Helpers;
+using Nagi.WinUI.Pages;
+using Nagi.WinUI.Popups;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Services.Implementations;
 using Nagi.WinUI.ViewModels;
@@ -81,6 +84,21 @@ public static class AppServiceRegistration
         services.AddSingleton<IAudioPlayer, LibVlcAudioPlayerService>();
         services.AddTransient<ITaskbarService, TaskbarService>();
 
+        return services;
+    }
+
+    /// <summary>
+    ///     Registers factories for the windows and pages that services create at runtime: the main shell,
+    ///     onboarding, the mini player and the tray popup. Each call builds a new instance with its
+    ///     dependencies from the container, which does not keep it, so closing it releases it.
+    /// </summary>
+    public static IServiceCollection AddNagiShell(this IServiceCollection services)
+    {
+        services.AddSingleton<Func<MainPage>>(sp => () => ActivatorUtilities.CreateInstance<MainPage>(sp));
+        services.AddSingleton<Func<OnboardingPage>>(sp => () => ActivatorUtilities.CreateInstance<OnboardingPage>(sp));
+        services.AddSingleton<Func<MiniPlayerWindow>>(sp => () => ActivatorUtilities.CreateInstance<MiniPlayerWindow>(sp));
+        services.AddSingleton<Func<ElementTheme, TrayPopup>>(sp =>
+            theme => ActivatorUtilities.CreateInstance<TrayPopup>(sp, theme));
         return services;
     }
 

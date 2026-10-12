@@ -26,12 +26,15 @@ public sealed class WindowService : IWindowService, IDisposable
     private bool? _lastEfficiencyMode;
 
     private readonly MainWindow _mainWindow;
+    private readonly Func<MiniPlayerWindow> _createMiniPlayerWindow;
     private MiniPlayerWindow? _miniPlayerWindow;
     private Window? _window;
 
-    public WindowService(MainWindow mainWindow, IWin32InteropService win32InteropService,
-        IUISettingsService settingsService, IDispatcherService dispatcherService, ILogger<WindowService> logger)
+    public WindowService(MainWindow mainWindow, Func<MiniPlayerWindow> createMiniPlayerWindow,
+        IWin32InteropService win32InteropService, IUISettingsService settingsService,
+        IDispatcherService dispatcherService, ILogger<WindowService> logger)
     {
+        _createMiniPlayerWindow = createMiniPlayerWindow;
         _mainWindow = mainWindow ?? throw new ArgumentNullException(nameof(mainWindow));
         _win32InteropService = win32InteropService ?? throw new ArgumentNullException(nameof(win32InteropService));
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
@@ -182,7 +185,7 @@ public sealed class WindowService : IWindowService, IDisposable
                 // Re-check inside the dispatched action to handle race conditions.
                 if (!_isMiniPlayerEnabled || _miniPlayerWindow is not null) return;
 
-                _miniPlayerWindow = new MiniPlayerWindow();
+                _miniPlayerWindow = _createMiniPlayerWindow();
                 _miniPlayerWindow.Closed += OnMiniPlayerClosed;
                 _miniPlayerWindow.Activate();
 
