@@ -235,7 +235,7 @@ public class SettingsViewModelTests : IDisposable
     {
         var validation = new TaskCompletionSource<ValidateTokenResult>(TaskCreationOptions.RunContinuationsAsynchronously);
         _listenBrainz.ValidateTokenAsync("old", null).Returns(validation.Task);
-        _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>()).Returns(true);
+        _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<bool>()).Returns(true);
         _viewModel.Scrobbling.ListenBrainzUserToken = "old";
         var checking = _viewModel.Scrobbling.TestListenBrainzConnectionCommand.ExecuteAsync(null);
         if (disconnect) await _viewModel.Scrobbling.DisconnectListenBrainzCommand.ExecuteAsync(null);
@@ -252,7 +252,7 @@ public class SettingsViewModelTests : IDisposable
     public async Task MetadataRescan_RechecksOperationStateAfterConfirmation()
     {
         var confirmation = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-        _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>()).Returns(confirmation.Task);
+        _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<bool>()).Returns(confirmation.Task);
         var scan = _viewModel.RescanMetadataCommand.ExecuteAsync(null);
         _player.IsGlobalOperationInProgress = true;
 
@@ -266,7 +266,7 @@ public class SettingsViewModelTests : IDisposable
     [Fact]
     public async Task MetadataRescan_DisposalCancelsWithoutFailureOrCompletionDialog()
     {
-        _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>()).Returns(true);
+        _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<bool>()).Returns(true);
         var scanning = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         _library.Scanner.ForceRescanMetadataAsync(Arg.Any<IProgress<ScanProgress>>(), Arg.Any<CancellationToken>()).Returns(scanning.Task);
         var scan = _viewModel.RescanMetadataCommand.ExecuteAsync(null);
@@ -284,7 +284,7 @@ public class SettingsViewModelTests : IDisposable
     public async Task ReplayGain_UsesGlobalCancelAndReleasesOperationState()
     {
         _ffmpeg.IsFFmpegInstalledAsync().Returns(true);
-        _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>()).Returns(true);
+        _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<bool>()).Returns(true);
         CancellationToken scanToken = default;
         _replayGain.ScanLibraryAsync(Arg.Any<IProgress<ScanProgress>>(), Arg.Any<CancellationToken>()).Returns(call =>
         {
@@ -310,7 +310,7 @@ public class SettingsViewModelTests : IDisposable
     [Fact]
     public async Task MetadataRescan_QueuedProgressCannotOverwriteFollowingOperation()
     {
-        _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>()).Returns(true);
+        _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<bool>()).Returns(true);
         _library.Scanner.ForceRescanMetadataAsync(Arg.Any<IProgress<ScanProgress>>(), Arg.Any<CancellationToken>()).Returns(call =>
         {
             call.Arg<IProgress<ScanProgress>>().Report(new ScanProgress { StatusText = "Old progress", Percentage = 90 });
@@ -340,7 +340,7 @@ public class SettingsViewModelTests : IDisposable
     {
         var ffmpeg = new TaskCompletionSource<bool>();
         _ffmpeg.IsFFmpegInstalledAsync().Returns(ffmpeg.Task);
-        _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>()).Returns(true);
+        _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<bool>()).Returns(true);
         var context = new QueuedContext();
         var previous = SynchronizationContext.Current;
         try

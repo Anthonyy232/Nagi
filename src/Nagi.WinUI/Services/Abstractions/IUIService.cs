@@ -31,9 +31,10 @@ public interface IUIService
     /// <param name="content">The main message of the dialog.</param>
     /// <param name="primaryButtonText">The text for the confirmation button.</param>
     /// <param name="closeButtonText">The text for the cancellation button, or null to use the localized Cancel label.</param>
+    /// <param name="defaultToCancel">Makes the cancellation button the default, for destructive actions.</param>
     /// <returns>True if the user confirmed (primary button), false otherwise.</returns>
     Task<bool> ShowConfirmationDialogAsync(string title, string content, string? primaryButtonText = null,
-        string? closeButtonText = null);
+        string? closeButtonText = null, bool defaultToCancel = false);
 
     /// <summary>
     ///     Opens a folder picker dialog for the user to select a single folder.
@@ -83,6 +84,18 @@ public interface IUIService
     /// </summary>
     /// <returns>The created or updated playlist, or null if the user cancelled.</returns>
     Task<Nagi.Core.Models.SmartPlaylist?> ShowSmartPlaylistEditorAsync(Nagi.Core.Models.SmartPlaylist? editing = null);
+
+    /// <summary>
+    ///     Asks for the name and optional cover image of a new playlist.
+    /// </summary>
+    /// <returns>The user's choices, or null if the user cancelled.</returns>
+    Task<Nagi.WinUI.Models.NewPlaylistRequest?> ShowCreatePlaylistDialogAsync();
+
+    /// <summary>
+    ///     Asks for a new name for the playlist called <paramref name="currentName" />.
+    /// </summary>
+    /// <returns>The new name, or null if the user cancelled.</returns>
+    Task<string?> ShowRenamePlaylistDialogAsync(string currentName);
 
     /// <summary>
     ///     Shows a dialog for FFmpeg setup with a recheck button that doesn't close the dialog.

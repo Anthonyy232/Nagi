@@ -80,7 +80,7 @@ public class FolderViewModelTests
         library.Reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new FolderSummary(folder, 1) });
         library.Writer.RemoveFolderAsync(folder.Id).Returns(true);
         var ui = Substitute.For<IUIService>();
-        ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>()).Returns(confirmed);
+        ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<bool>()).Returns(confirmed);
         var (viewModel, player) = CreateViewModel(library, ui);
         using (viewModel)
         {

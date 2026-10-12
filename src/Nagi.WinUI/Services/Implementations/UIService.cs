@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.System;
+using Microsoft.Extensions.Logging;
 using Microsoft.Windows.Storage.Pickers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -25,15 +26,18 @@ public partial class UIService : IUIService
 
     private readonly IWin32InteropService _win32InteropService;
     private readonly IViewModelFactory _viewModelFactory;
+    private readonly ILogger<UIService> _logger;
 
-    public UIService(IWin32InteropService win32InteropService, IViewModelFactory viewModelFactory)
+    public UIService(IWin32InteropService win32InteropService, IViewModelFactory viewModelFactory,
+        ILogger<UIService> logger)
     {
         _win32InteropService = win32InteropService;
         _viewModelFactory = viewModelFactory;
+        _logger = logger;
     }
 
     public async Task<bool> ShowConfirmationDialogAsync(string title, string content, string? primaryButtonText,
-        string? closeButtonText)
+        string? closeButtonText, bool defaultToCancel)
     {
         if (!TryGetXamlRoot(out var xamlRoot)) return false;
 
@@ -44,7 +48,7 @@ public partial class UIService : IUIService
             PrimaryButtonText = primaryButtonText ?? Resources.Strings.Generic_OK,
             CloseButtonText = closeButtonText ?? Resources.Strings.Generic_Cancel,
             XamlRoot = xamlRoot,
-            DefaultButton = ContentDialogButton.Primary
+            DefaultButton = defaultToCancel ? ContentDialogButton.Close : ContentDialogButton.Primary
         };
 
         DialogThemeHelper.ApplyThemeOverrides(dialog);

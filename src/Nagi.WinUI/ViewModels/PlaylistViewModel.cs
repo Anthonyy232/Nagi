@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Constants;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
@@ -208,10 +209,10 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     ///     Clears the current queue and starts playing the selected playlist (regular or smart).
     /// </summary>
     [RelayCommand]
-    private async Task PlayPlaylistAsync(Tuple<Guid, bool> args)
+    private async Task PlayPlaylistAsync(PlaylistViewModelItem? playlist)
     {
-        var (playlistId, isSmart) = args;
-        if (IsAnyOperationInProgress || playlistId == Guid.Empty) return;
+        if (playlist is null || IsAnyOperationInProgress || playlist.Id == Guid.Empty) return;
+        var (playlistId, isSmart) = (playlist.Id, playlist.IsSmart);
 
         StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_Starting;
         try
@@ -372,13 +373,17 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     }
 
     /// <summary>
-    ///     Creates a new playlist.
+    ///     Asks for a name and optional cover image, then creates the playlist.
     /// </summary>
-    /// <param name="args">A tuple containing the playlist name and optional cover image URI.</param>
     [RelayCommand]
-    private async Task CreatePlaylistAsync(Tuple<string, string?> args)
+    private async Task CreatePlaylistAsync()
     {
-        var (playlistName, coverImageUri) = args;
+        if (_isDisposed || IsAnyOperationInProgress) return;
+
+        var request = await _uiService.ShowCreatePlaylistDialogAsync();
+        if (request is null || _isDisposed) return;
+
+        var (playlistName, coverImageUri) = (request.Name, request.CoverImagePath);
         if (string.IsNullOrWhiteSpace(playlistName) || IsAnyOperationInProgress) return;
 
         IsCreatingPlaylist = true;
@@ -414,21 +419,26 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     }
 
     /// <summary>
-    ///     Updates the cover image for an existing playlist (regular or smart).
+    ///     Asks for an image file and makes it the cover of <paramref name="playlist" />.
     /// </summary>
-    /// <param name="args">A tuple containing the playlist ID, the new cover image URI, and whether it's a smart playlist.</param>
     [RelayCommand]
-    private Task UpdatePlaylistCoverAsync(Tuple<Guid, string, bool> args)
+    private async Task ChangePlaylistCoverAsync(PlaylistViewModelItem? playlist)
     {
-        var (playlistId, newCoverImageUri, isSmart) = args;
-        return string.IsNullOrWhiteSpace(newCoverImageUri)
-            ? Task.CompletedTask
-            : SetPlaylistCoverAsync(playlistId, isSmart, newCoverImageUri);
+        if (playlist is null || IsAnyOperationInProgress) return;
+
+        var newCoverImageUri = await _uiService.PickSingleFileAsync(FileExtensions.ImageFileExtensions);
+        if (string.IsNullOrWhiteSpace(newCoverImageUri))
+        {
+            _logger.LogDebug("User cancelled cover image selection.");
+            return;
+        }
+
+        await SetPlaylistCoverAsync(playlist.Id, playlist.IsSmart, newCoverImageUri);
     }
 
     [RelayCommand]
-    private Task RemovePlaylistCoverAsync(Tuple<Guid, bool> args) =>
-        SetPlaylistCoverAsync(args.Item1, args.Item2, null);
+    private Task RemovePlaylistCoverAsync(PlaylistViewModelItem? playlist) =>
+        playlist is null ? Task.CompletedTask : SetPlaylistCoverAsync(playlist.Id, playlist.IsSmart, null);
 
     private async Task SetPlaylistCoverAsync(Guid playlistId, bool isSmart, string? coverImageUri)
     {
@@ -466,14 +476,16 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     }
 
     /// <summary>
-    ///     Renames an existing playlist (regular or smart).
+    ///     Asks for a new name and renames <paramref name="playlist" /> (regular or smart).
     /// </summary>
-    /// <param name="args">A tuple containing the playlist ID, the new name, and whether it's a smart playlist.</param>
     [RelayCommand]
-    private async Task RenamePlaylistAsync(Tuple<Guid, string, bool> args)
+    private async Task RenamePlaylistAsync(PlaylistViewModelItem? playlist)
     {
-        var (playlistId, newName, isSmart) = args;
-        if (string.IsNullOrWhiteSpace(newName) || IsAnyOperationInProgress) return;
+        if (playlist is null || IsAnyOperationInProgress) return;
+
+        var newName = await _uiService.ShowRenamePlaylistDialogAsync(playlist.Name);
+        var (playlistId, isSmart) = (playlist.Id, playlist.IsSmart);
+        if (string.IsNullOrWhiteSpace(newName) || _isDisposed || IsAnyOperationInProgress) return;
 
         IsRenamingPlaylist = true;
         Interlocked.Increment(ref _isMutating);
@@ -516,14 +528,21 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     }
 
     /// <summary>
-    ///     Deletes a playlist (regular or smart).
+    ///     Asks for confirmation and deletes <paramref name="playlist" /> (regular or smart).
     /// </summary>
-    /// <param name="args">The playlist ID and whether it's a smart playlist.</param>
     [RelayCommand]
-    private async Task DeletePlaylistAsync(Tuple<Guid, bool> args)
+    private async Task DeletePlaylistAsync(PlaylistViewModelItem? playlist)
     {
-        var (playlistId, isSmart) = args;
-        if (IsAnyOperationInProgress) return;
+        if (playlist is null || IsAnyOperationInProgress) return;
+
+        var confirmed = await _uiService.ShowConfirmationDialogAsync(
+            Nagi.WinUI.Resources.Strings.PlaylistPage_DeleteDialog_Title,
+            string.Format(Nagi.WinUI.Resources.Strings.PlaylistPage_DeleteDialog_Content_Format, playlist.Name),
+            Nagi.WinUI.Resources.Strings.PlaylistPage_DeleteDialog_DeleteButton,
+            Nagi.WinUI.Resources.Strings.PlaylistPage_CreateDialog_CancelButton,
+            defaultToCancel: true);
+        var (playlistId, isSmart) = (playlist.Id, playlist.IsSmart);
+        if (!confirmed || _isDisposed || IsAnyOperationInProgress) return;
 
         IsDeletingPlaylist = true;
         Interlocked.Increment(ref _isMutating);
