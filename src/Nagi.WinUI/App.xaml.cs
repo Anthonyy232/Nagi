@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 using Windows.Storage;
@@ -21,14 +20,12 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
-using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
+using Nagi.Core.Services;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Implementations;
-using Nagi.Core.Services.Implementations.Presence;
-using Nagi.Core.Services.Implementations.Romanization;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Pages;
+using Nagi.WinUI.Services;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Services.Implementations;
 using Nagi.WinUI.ViewModels;
@@ -301,265 +298,13 @@ public partial class App : Application
         var services = new ServiceCollection();
 
         services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog());
-
         services.AddSingleton(configuration);
-        services.AddSingleton<IPathConfiguration, PathConfiguration>();
-        services.ConfigureHttpClientDefaults(builder => builder.ConfigureHttpClient(client =>
-            client.DefaultRequestHeaders.UserAgent.ParseAdd("Nagi/1.0 (+https://github.com/Anthonyy232/Nagi)")));
-        services.AddHttpClient("")
-            .ConfigureHttpClient(client => client.Timeout = TimeSpan.FromSeconds(20))
-            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
-            {
-                PooledConnectionLifetime = TimeSpan.FromMinutes(2),
-                ConnectTimeout = TimeSpan.FromSeconds(10),
-                KeepAlivePingPolicy = HttpKeepAlivePingPolicy.Always,
-                KeepAlivePingDelay = TimeSpan.FromSeconds(30),
-                KeepAlivePingTimeout = TimeSpan.FromSeconds(5)
-            });
-
-        // Image downloads are larger payloads and tolerate slower CDNs; use a longer timeout.
-        services.AddHttpClient("ImageDownloader")
-            .ConfigureHttpClient(client => client.Timeout = TimeSpan.FromSeconds(30))
-            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
-            {
-                PooledConnectionLifetime = TimeSpan.FromMinutes(2),
-                ConnectTimeout = TimeSpan.FromSeconds(10),
-            });
-
-        ConfigureAppSettingsServices(services);
-        ConfigureCoreLogicServices(services);
-        ConfigureWinUIServices(services, dispatcherQueue, appInstance);
-        ConfigureViewModels(services);
+        services.AddNagiHttpClients();
+        services.AddNagiPlatformServices(dispatcherQueue, appInstance);
+        services.AddNagiCore();
+        services.AddNagiViewModels();
 
         return services.BuildServiceProvider();
-    }
-
-    private static void ConfigureAppSettingsServices(IServiceCollection services)
-    {
-        services.AddSingleton<ICredentialLockerService, CredentialLockerService>();
-        services.AddSingleton<SettingsService>();
-        services.AddSingleton<IUISettingsService>(sp => sp.GetRequiredService<SettingsService>());
-        services.AddSingleton<ISettingsService>(sp => sp.GetRequiredService<SettingsService>());
-    }
-
-    private static void ConfigureCoreLogicServices(IServiceCollection services)
-    {
-        services.AddDbContextFactory<MusicDbContext>((serviceProvider, options) =>
-        {
-            var pathConfig = serviceProvider.GetRequiredService<IPathConfiguration>();
-            options.UseSqlite(new SqliteConnectionStringBuilder { DataSource = pathConfig.DatabasePath }.ToString());
-        });
-
-        services.AddSingleton<ILibraryReader, LibraryReader>();
-        services.AddSingleton<IPlaylistService, PlaylistService>();
-        services.AddSingleton<LibraryService>();
-        services.AddSingleton<ILibraryWriter>(sp => sp.GetRequiredService<LibraryService>());
-        services.AddSingleton<ILibraryScanner>(sp => sp.GetRequiredService<LibraryService>());
-
-        services.AddSingleton<IMusicPlaybackService, MusicPlaybackService>();
-        services.AddSingleton<IOfflineScrobbleService, OfflineScrobbleService>();
-        services.AddSingleton<IFileSystemService, FileSystemService>();
-        services.AddSingleton<IImageProcessor, ImageSharpProcessor>();
-        services.AddSingleton<IMetadataService, AtlMetadataService>();
-        services.AddSingleton<ILrcService, LrcService>();
-
-        services.AddSingleton<IApiKeyService, ApiKeyService>();
-
-        services.AddProviderPipelines(
-        [
-            new ProviderPolicy
-            {
-                ProviderId = ServiceProviderIds.MusicBrainz,
-                // MusicBrainz mandates 1 req/s per IP with a UA identifying the client.
-                // Excess traffic returns 503 until the rate falls back under 1 RPS.
-                Channel = new ChannelPolicy
-                {
-                    PermitsPerWindow = 1,
-                    MaxConcurrent = 1,
-                    BaseRetryDelay = TimeSpan.FromSeconds(1),
-                },
-            },
-
-            new ProviderPolicy
-            {
-                ProviderId = ServiceProviderIds.TheAudioDb,
-                // Free tier: 30 req/min. Once breached, the key is locked out for a full
-                // minute — short retry delays just waste calls. Wait the full minute, once.
-                Channel = new ChannelPolicy
-                {
-                    PermitsPerWindow = 1,
-                    Window = TimeSpan.FromSeconds(2),
-                    MaxConcurrent = 2,
-                    MaxRetries = 1,
-                    BaseRetryDelay = TimeSpan.FromSeconds(60),
-                    MaxRetryDelay = TimeSpan.FromSeconds(75),
-                },
-            },
-
-            // Last.fm: metadata, auth, and scrobbling all run through a single provider so an
-            // auth-trip on one of them pauses the others (shared breaker). Last.fm's limits
-            // are undisclosed/dynamic; 5 RPS/IP is the long-standing convention.
-            new ProviderPolicy
-            {
-                ProviderId = ServiceProviderIds.LastFm,
-                Channel = new ChannelPolicy
-                {
-                    PermitsPerWindow = 5,
-                    MaxConcurrent = 4,
-                    BaseRetryDelay = TimeSpan.FromSeconds(5),
-                },
-            },
-
-            // Fanart.tv: effectively unlimited for normal use (token bucket, 429 rare). The
-            // pipeline auto-honors Retry-After if the service ever pushes back.
-            new ProviderPolicy
-            {
-                ProviderId = ServiceProviderIds.FanartTv,
-                Channel = new ChannelPolicy
-                {
-                    PermitsPerWindow = 10,
-                    MaxConcurrent = 8,
-                },
-            },
-
-            // LRCLIB: no rate limit documented. Keep concurrency reasonable to be polite.
-            new ProviderPolicy
-            {
-                ProviderId = ServiceProviderIds.LrcLib,
-                Channel = new ChannelPolicy
-                {
-                    PermitsPerWindow = 20,
-                    MaxConcurrent = 8,
-                },
-            },
-
-            // NetEase: unofficial API; treat aggressively-rate-limited and back off fast.
-            new ProviderPolicy
-            {
-                ProviderId = ServiceProviderIds.NetEase,
-                Channel = new ChannelPolicy
-                {
-                    PermitsPerWindow = 2,
-                    MaxConcurrent = 2,
-                    BaseRetryDelay = TimeSpan.FromSeconds(3),
-                },
-            },
-
-            // ListenBrainz: dynamic limit advertised via X-RateLimit-* headers. The pipeline
-            // honors X-RateLimit-Reset-In on 429 (alongside Retry-After), so we can run at a
-            // healthy steady-state and let the server tell us when to back off.
-            new ProviderPolicy
-            {
-                ProviderId = ServiceProviderIds.ListenBrainz,
-                Channel = new ChannelPolicy
-                {
-                    PermitsPerWindow = 5,
-                    MaxConcurrent = 4,
-                },
-            },
-
-            // Nagi's own API server (key bootstrap). Internal infra; conservative retry.
-            new ProviderPolicy
-            {
-                ProviderId = ServiceProviderIds.NagiApi,
-                Channel = new ChannelPolicy
-                {
-                    PermitsPerWindow = 5,
-                    MaxConcurrent = 4,
-                },
-            },
-
-            // Generic CDN image downloads. Provider id is shared by all artist/album image
-            // fetches because the source CDN isn't always knowable from the URL.
-            new ProviderPolicy
-            {
-                ProviderId = ServiceProviderIds.ImageDownload,
-                Channel = new ChannelPolicy
-                {
-                    PermitsPerWindow = 10,
-                    MaxConcurrent = 4,
-                },
-            },
-        ]);
-
-        services.AddSingleton<ILastFmMetadataService, LastFmMetadataService>();
-        services.AddSingleton<ILastFmAuthService, LastFmAuthService>();
-        services.AddSingleton<IMusicBrainzService, MusicBrainzService>();
-        services.AddSingleton<IFanartTvService, FanartTvService>();
-        services.AddSingleton<ITheAudioDbService, TheAudioDbService>();
-        services.AddSingleton<INetEaseLyricsService, NetEaseLyricsService>();
-        services.AddSingleton<LastFmScrobblerService>();
-        services.AddSingleton<ILastFmScrobblerService>(sp => sp.GetRequiredService<LastFmScrobblerService>());
-        services.AddSingleton<IListenSubmitter>(sp => sp.GetRequiredService<LastFmScrobblerService>());
-        services.AddSingleton<ListenBrainzScrobblerService>();
-        services.AddSingleton<IListenBrainzScrobblerService>(sp => sp.GetRequiredService<ListenBrainzScrobblerService>());
-        services.AddSingleton<IListenSubmitter>(sp => sp.GetRequiredService<ListenBrainzScrobblerService>());
-        services.AddSingleton<IPresenceManager, PresenceManager>();
-        services.AddSingleton<IPresenceService, DiscordPresenceService>();
-        services.AddSingleton<IPresenceService, LastFmPresenceService>();
-        services.AddSingleton<IPresenceService, ListenBrainzPresenceService>();
-        services.AddSingleton<ISmartPlaylistService, SmartPlaylistService>();
-        services.AddSingleton<IOnlineLyricsService, LrcLibService>();
-        services.AddSingleton<IRomanizationProvider, JapaneseRomanizationProvider>();
-        services.AddSingleton<IRomanizationProvider, DevanagariRomanizationProvider>();
-        services.AddSingleton<IRomanizationProvider, KoreanRomanizationProvider>();
-        services.AddSingleton<IRomanizationCatalogVerifier, EcdsaRomanizationCatalogVerifier>();
-        services.AddSingleton<IRomanizationPackManager, RomanizationPackManager>();
-        services.AddSingleton<ILyricRomanizationService, LyricRomanizationService>();
-        services.AddSingleton<IPlaylistExportService, M3uPlaylistExportService>();
-        services.AddSingleton<IBackupRestoreService, BackupRestoreService>();
-        services.AddSingleton<IStatisticsService, StatisticsService>();
-
-        // FFmpeg and ReplayGain services
-        services.AddSingleton<IFFmpegService, FFmpegService>();
-        services.AddSingleton<ILoudnessAnalyzer, FFmpegLoudnessAnalyzer>();
-        services.AddSingleton<IReplayGainService, ReplayGainService>();
-
-    }
-
-    private static void ConfigureWinUIServices(IServiceCollection services,
-        DispatcherQueue dispatcherQueue, App appInstance)
-    {
-        services.AddSingleton<IWin32InteropService, Win32InteropService>();
-        services.AddSingleton<IWindowService, WindowService>();
-        services.AddSingleton<IUIService, UIService>();
-        services.AddSingleton(dispatcherQueue);
-        services.AddSingleton<IDispatcherService, DispatcherService>();
-        services.AddSingleton<IThemeService>(sp =>
-            new ThemeService(appInstance, sp, sp.GetRequiredService<ILogger<ThemeService>>()));
-        services.AddSingleton<IApplicationLifecycle>(sp =>
-            new ApplicationLifecycle(appInstance, sp, sp.GetRequiredService<ILogger<ApplicationLifecycle>>()));
-        services.AddSingleton<IAppInfoService, AppInfoService>();
-        services.AddSingleton<INavigationService, NavigationService>();
-        services.AddSingleton<IMusicNavigationService, MusicNavigationService>();
-        services.AddSingleton<ITrayPopupService, TrayPopupService>();
-        services.AddSingleton<IViewModelFactory, ViewModelFactory>();
-        services.AddSingleton<IAudioPlayer, LibVlcAudioPlayerService>();
-        services.AddTransient<ITaskbarService, TaskbarService>();
-    }
-
-    private static void ConfigureViewModels(IServiceCollection services)
-    {
-        // Global singletons - persist for app lifetime
-        services.AddSingleton<PlayerViewModel>();
-        services.AddSingleton<TrayIconViewModel>();
-
-        // List/Grid ViewModels - Singleton for fast navigation, refresh on data changes
-        services.AddSingleton<LibraryViewModel>();
-        services.AddSingleton<PlaylistViewModel>();
-        services.AddSingleton<FolderViewModel>();
-        services.AddSingleton<ArtistViewModel>();
-        services.AddSingleton<AlbumViewModel>();
-        services.AddSingleton<GenreViewModel>();
-        services.AddSingleton<InsightsViewModel>();
-
-        // Detail/Context ViewModels
-        services.AddSingleton<AudioSettingsViewModel>();
-        services.AddSingleton<ScrobblingSettingsViewModel>();
-        services.AddSingleton<RomanizationPacksSettingsViewModel>();
-        services.AddSingleton<DataManagementSettingsViewModel>();
-        services.AddSingleton<SettingsViewModel>();
-        services.AddTransient<OnboardingViewModel>();
     }
 
     private static Task InitializeDatabaseAsync(IServiceProvider services) =>

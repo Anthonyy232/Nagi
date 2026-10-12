@@ -1,0 +1,107 @@
+using System;
+using System.Net.Http;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.UI.Dispatching;
+using Nagi.Core.Helpers;
+using Nagi.Core.Services.Abstractions;
+using Nagi.WinUI.Helpers;
+using Nagi.WinUI.Services.Abstractions;
+using Nagi.WinUI.Services.Implementations;
+using Nagi.WinUI.ViewModels;
+
+namespace Nagi.WinUI.Services;
+
+/// <summary>
+///     Registers the WinUI host's services: HTTP clients, platform implementations of Core
+///     abstractions, window and UI services, and view models.
+/// </summary>
+public static class AppServiceRegistration
+{
+    public static IServiceCollection AddNagiHttpClients(this IServiceCollection services)
+    {
+        services.ConfigureHttpClientDefaults(builder => builder.ConfigureHttpClient(client =>
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("Nagi/1.0 (+https://github.com/Anthonyy232/Nagi)")));
+        services.AddHttpClient("")
+            .ConfigureHttpClient(client => client.Timeout = TimeSpan.FromSeconds(20))
+            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
+            {
+                PooledConnectionLifetime = TimeSpan.FromMinutes(2),
+                ConnectTimeout = TimeSpan.FromSeconds(10),
+                KeepAlivePingPolicy = HttpKeepAlivePingPolicy.Always,
+                KeepAlivePingDelay = TimeSpan.FromSeconds(30),
+                KeepAlivePingTimeout = TimeSpan.FromSeconds(5)
+            });
+
+        // Image downloads are larger payloads and tolerate slower CDNs; use a longer timeout.
+        services.AddHttpClient("ImageDownloader")
+            .ConfigureHttpClient(client => client.Timeout = TimeSpan.FromSeconds(30))
+            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
+            {
+                PooledConnectionLifetime = TimeSpan.FromMinutes(2),
+                ConnectTimeout = TimeSpan.FromSeconds(10),
+            });
+
+        return services;
+    }
+
+    /// <summary>
+    ///     Adds the Windows implementations of Core abstractions plus the window, theme, navigation,
+    ///     and dispatcher services that need the running <see cref="App" />.
+    /// </summary>
+    public static IServiceCollection AddNagiPlatformServices(this IServiceCollection services,
+        DispatcherQueue dispatcherQueue, App appInstance)
+    {
+        services.AddSingleton<IPathConfiguration, PathConfiguration>();
+        services.AddSingleton<IFileSystemService, FileSystemService>();
+        services.AddSingleton<ICredentialLockerService, CredentialLockerService>();
+        services.AddSingleton<SettingsService>();
+        services.AddSingleton<IUISettingsService>(sp => sp.GetRequiredService<SettingsService>());
+        services.AddSingleton<ISettingsService>(sp => sp.GetRequiredService<SettingsService>());
+
+        services.AddSingleton<IWin32InteropService, Win32InteropService>();
+        services.AddSingleton<IWindowService, WindowService>();
+        services.AddSingleton<IUIService, UIService>();
+        services.AddSingleton(dispatcherQueue);
+        services.AddSingleton<IDispatcherService, DispatcherService>();
+        services.AddSingleton<IThemeService>(sp =>
+            new ThemeService(appInstance, sp, sp.GetRequiredService<ILogger<ThemeService>>()));
+        services.AddSingleton<IApplicationLifecycle>(sp =>
+            new ApplicationLifecycle(appInstance, sp, sp.GetRequiredService<ILogger<ApplicationLifecycle>>()));
+        services.AddSingleton<IAppInfoService, AppInfoService>();
+        services.AddSingleton<INavigationService, NavigationService>();
+        services.AddSingleton<IMusicNavigationService, MusicNavigationService>();
+        services.AddSingleton<ITrayPopupService, TrayPopupService>();
+        services.AddSingleton<IViewModelFactory, ViewModelFactory>();
+        services.AddSingleton<IAudioPlayer, LibVlcAudioPlayerService>();
+        services.AddTransient<ITaskbarService, TaskbarService>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddNagiViewModels(this IServiceCollection services)
+    {
+        // Global singletons - persist for app lifetime
+        services.AddSingleton<PlayerViewModel>();
+        services.AddSingleton<TrayIconViewModel>();
+
+        // List/Grid ViewModels - Singleton for fast navigation, refresh on data changes
+        services.AddSingleton<LibraryViewModel>();
+        services.AddSingleton<PlaylistViewModel>();
+        services.AddSingleton<FolderViewModel>();
+        services.AddSingleton<ArtistViewModel>();
+        services.AddSingleton<AlbumViewModel>();
+        services.AddSingleton<GenreViewModel>();
+        services.AddSingleton<InsightsViewModel>();
+
+        // Detail/Context ViewModels
+        services.AddSingleton<AudioSettingsViewModel>();
+        services.AddSingleton<ScrobblingSettingsViewModel>();
+        services.AddSingleton<RomanizationPacksSettingsViewModel>();
+        services.AddSingleton<DataManagementSettingsViewModel>();
+        services.AddSingleton<SettingsViewModel>();
+        services.AddTransient<OnboardingViewModel>();
+
+        return services;
+    }
+}
