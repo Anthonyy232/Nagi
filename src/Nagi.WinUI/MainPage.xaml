@@ -737,9 +737,9 @@
         <Grid
             x:Name="ProgressOverlayGrid"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-            IsHitTestVisible="{x:Bind ViewModel.IsGlobalOperationInProgress, Mode=OneWay}"
+            IsHitTestVisible="{x:Bind GlobalOperation.IsInProgress, Mode=OneWay}"
             Opacity="0.85"
-            Visibility="{x:Bind ViewModel.IsGlobalOperationInProgress, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+            Visibility="{x:Bind GlobalOperation.IsInProgress, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
             <StackPanel
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -749,22 +749,22 @@
                     Height="10"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    IsIndeterminate="{x:Bind ViewModel.IsGlobalOperationIndeterminate, Mode=OneWay}"
+                    IsIndeterminate="{x:Bind GlobalOperation.IsIndeterminate, Mode=OneWay}"
                     Maximum="100"
-                    Value="{x:Bind ViewModel.GlobalOperationProgressValue, Mode=OneWay}" />
+                    Value="{x:Bind GlobalOperation.ProgressValue, Mode=OneWay}" />
                 <TextBlock
                     MaxWidth="400"
                     HorizontalAlignment="Center"
                     Style="{ThemeResource SubtitleTextBlockStyle}"
-                    Text="{x:Bind ViewModel.GlobalOperationStatusMessage, Mode=OneWay}"
+                    Text="{x:Bind GlobalOperation.StatusMessage, Mode=OneWay}"
                     TextAlignment="Center"
                     TextTrimming="CharacterEllipsis"
                     TextWrapping="NoWrap" />
                 <Button
                     HorizontalAlignment="Center"
-                    Command="{x:Bind ViewModel.CancelGlobalOperationCommand}"
+                    Command="{x:Bind GlobalOperation.CancelCommand}"
                     Content="{x:Bind resources:Strings.Generic_Cancel, Mode=OneTime}"
-                    Visibility="{x:Bind ViewModel.IsGlobalOperationCancellable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
+                    Visibility="{x:Bind GlobalOperation.IsCancellable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
             </StackPanel>
         </Grid>
 

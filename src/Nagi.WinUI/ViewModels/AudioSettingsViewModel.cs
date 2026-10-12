@@ -29,7 +29,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
     private readonly IUIService _uiService;
     private readonly IFFmpegService _ffmpegService;
     private readonly IReplayGainService _replayGainService;
-    private readonly PlayerViewModel _playerViewModel;
+    private readonly GlobalOperationViewModel _globalOperation;
     private readonly TimeProvider _timeProvider;
     private readonly Debouncer _preampDebouncer;
     private bool _isRefreshingAudioOutputDevices;
@@ -45,7 +45,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
         IUIService uiService,
         IFFmpegService ffmpegService,
         IReplayGainService replayGainService,
-        PlayerViewModel playerViewModel,
+        GlobalOperationViewModel globalOperation,
         IDispatcherService dispatcherService,
         ILogger<AudioSettingsViewModel> logger,
         TimeProvider? timeProvider = null)
@@ -57,7 +57,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
         _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
         _ffmpegService = ffmpegService ?? throw new ArgumentNullException(nameof(ffmpegService));
         _replayGainService = replayGainService ?? throw new ArgumentNullException(nameof(replayGainService));
-        _playerViewModel = playerViewModel ?? throw new ArgumentNullException(nameof(playerViewModel));
+        _globalOperation = globalOperation ?? throw new ArgumentNullException(nameof(globalOperation));
         _timeProvider = timeProvider ?? TimeProvider.System;
         _preampDebouncer = new Debouncer(TimeSpan.FromMilliseconds(EqualizerDebounceDelayMilliseconds), _timeProvider);
 
@@ -388,37 +388,37 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
     /// </summary>
     private async Task ScanLibraryForReplayGainAsync()
     {
-        if (_isDisposed || _playerViewModel.IsGlobalOperationInProgress) return;
+        if (_isDisposed || _globalOperation.IsInProgress) return;
 
         using var scanCts = new CancellationTokenSource();
         _replayGainScanCts = scanCts;
         var cancellationToken = scanCts.Token;
 
-        _playerViewModel.IsGlobalOperationInProgress = true;
-        _playerViewModel.GlobalOperationStatusMessage = Nagi.WinUI.Resources.Strings.Settings_Status_VolumeNorm_Preparing;
-        _playerViewModel.IsGlobalOperationIndeterminate = true;
-        _playerViewModel.SetGlobalOperationCancellation(scanCts.Cancel);
+        _globalOperation.IsInProgress = true;
+        _globalOperation.StatusMessage = Nagi.WinUI.Resources.Strings.Settings_Status_VolumeNorm_Preparing;
+        _globalOperation.IsIndeterminate = true;
+        _globalOperation.SetCancellation(scanCts.Cancel);
 
         try
         {
-            await _replayGainService.ScanLibraryAsync(CreateGlobalOperationProgress(_playerViewModel, cancellationToken), cancellationToken);
+            await _replayGainService.ScanLibraryAsync(CreateGlobalOperationProgress(_globalOperation, cancellationToken), cancellationToken);
         }
         catch (OperationCanceledException)
         {
-            _playerViewModel.GlobalOperationStatusMessage = Nagi.WinUI.Resources.Strings.Settings_Status_VolumeNorm_Cancelled;
+            _globalOperation.StatusMessage = Nagi.WinUI.Resources.Strings.Settings_Status_VolumeNorm_Cancelled;
         }
         catch (Exception ex)
         {
-            _playerViewModel.GlobalOperationStatusMessage = string.Format(Nagi.WinUI.Resources.Strings.Settings_Status_VolumeNorm_Error_Format, ex.Message);
+            _globalOperation.StatusMessage = string.Format(Nagi.WinUI.Resources.Strings.Settings_Status_VolumeNorm_Error_Format, ex.Message);
             _logger.LogError(ex, "Failed to scan library for ReplayGain");
         }
         finally
         {
             scanCts.Cancel();
             _replayGainScanCts = null;
-            _playerViewModel.SetGlobalOperationCancellation(null);
-            _playerViewModel.IsGlobalOperationInProgress = false;
-            _playerViewModel.IsGlobalOperationIndeterminate = false;
+            _globalOperation.SetCancellation(null);
+            _globalOperation.IsInProgress = false;
+            _globalOperation.IsIndeterminate = false;
         }
     }
 }

@@ -88,6 +88,7 @@ public static class AppServiceRegistration
     {
         // Global singletons - persist for app lifetime
         services.AddSingleton<PlayerViewModel>();
+        services.AddSingleton<GlobalOperationViewModel>();
         services.AddSingleton<TrayIconViewModel>();
 
         // List/Grid ViewModels - Singleton for fast navigation, refresh on data changes

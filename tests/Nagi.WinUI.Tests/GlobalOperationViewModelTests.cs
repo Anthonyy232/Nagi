@@ -1,0 +1,38 @@
+using FluentAssertions;
+using Nagi.WinUI.ViewModels;
+using Xunit;
+
+namespace Nagi.WinUI.Tests;
+
+public class GlobalOperationViewModelTests
+{
+    [Fact]
+    public void Cancel_RunsTheOfferedCancellationOnceAndWithdrawsIt()
+    {
+        var operation = new GlobalOperationViewModel();
+        var cancellations = 0;
+        operation.SetCancellation(() => cancellations++);
+        operation.CancelCommand.CanExecute(null).Should().BeTrue();
+
+        operation.CancelCommand.Execute(null);
+        operation.CancelCommand.Execute(null);
+
+        cancellations.Should().Be(1);
+        operation.IsCancellable.Should().BeFalse();
+        operation.CancelCommand.CanExecute(null).Should().BeFalse();
+    }
+
+    [Fact]
+    public void SetCancellation_WithNullWithdrawsAnEarlierOffer()
+    {
+        var operation = new GlobalOperationViewModel();
+        var cancelled = false;
+        operation.SetCancellation(() => cancelled = true);
+
+        operation.SetCancellation(null);
+        operation.CancelCommand.Execute(null);
+
+        cancelled.Should().BeFalse();
+        operation.IsCancellable.Should().BeFalse();
+    }
+}

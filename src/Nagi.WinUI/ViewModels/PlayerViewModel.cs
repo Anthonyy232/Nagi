@@ -57,8 +57,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
 
     private CancellationTokenSource? _queueDisplayCts;
 
-    private Action? _cancelGlobalOperation;
-
     public PlayerViewModel(IMusicPlaybackService playbackService,
         IMusicNavigationService musicNavigationService,
         IDispatcherService dispatcherService, IUISettingsService settingsService, IWindowService windowService,
@@ -81,7 +79,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         History = new RecentHistoryViewModel(_libraryReader, _dispatcherService, _logger);
         CurrentTimeText = "0:00";
         TotalDurationText = "0:00";
-        GlobalOperationStatusMessage = string.Empty;
         QueueDisplaySettings.PropertyChanged += OnQueueDisplaySettingChanged;
 
         SubscribeToPlaybackServiceEvents();
@@ -138,13 +135,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     [ObservableProperty] public partial bool IsUserDraggingSlider { get; set; }
     [ObservableProperty] public partial double TotalDuration { get; set; }
     [ObservableProperty] public partial string TotalDurationText { get; set; }
-    [ObservableProperty] public partial bool IsGlobalOperationInProgress { get; set; }
-    [ObservableProperty] public partial string GlobalOperationStatusMessage { get; set; }
-    [ObservableProperty] public partial double GlobalOperationProgressValue { get; set; }
-    [ObservableProperty] public partial bool IsGlobalOperationIndeterminate { get; set; }
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(CancelGlobalOperationCommand))]
-    public partial bool IsGlobalOperationCancellable { get; set; }
     [ObservableProperty] public partial bool IsQueueViewVisible { get; set; }
     [ObservableProperty] public partial bool IsQueuePanelOpen { get; set; }
     [ObservableProperty] public partial QueueDisplaySettings QueueDisplaySettings { get; set; } = new();
@@ -180,22 +170,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         RepeatMode.RepeatOne => RepeatOneIconGlyph,
         _ => RepeatOffIconGlyph
     };
-
-    public void SetGlobalOperationCancellation(Action? cancel)
-    {
-        Interlocked.Exchange(ref _cancelGlobalOperation, cancel);
-        IsGlobalOperationCancellable = cancel != null;
-    }
-
-    private bool CanCancelGlobalOperation() => IsGlobalOperationCancellable;
-
-    [RelayCommand(CanExecute = nameof(CanCancelGlobalOperation))]
-    private void CancelGlobalOperation()
-    {
-        var cancel = Interlocked.Exchange(ref _cancelGlobalOperation, null);
-        IsGlobalOperationCancellable = false;
-        cancel?.Invoke();
-    }
 
     public string RepeatButtonToolTip => CurrentRepeatMode switch
     {

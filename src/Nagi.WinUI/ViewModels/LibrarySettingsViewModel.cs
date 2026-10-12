@@ -26,7 +26,7 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
     private readonly IUISettingsService _settingsService;
     private readonly IUIService _uiService;
     private readonly ILibraryScanner _libraryScanner;
-    private readonly PlayerViewModel _playerViewModel;
+    private readonly GlobalOperationViewModel _globalOperation;
     private readonly Debouncer _lyricsProviderSaveDebouncer;
     private readonly Debouncer _metadataProviderSaveDebouncer;
     private readonly Debouncer _artistSplitSaveDebouncer;
@@ -37,7 +37,7 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
         IUISettingsService settingsService,
         IUIService uiService,
         ILibraryScanner libraryScanner,
-        PlayerViewModel playerViewModel,
+        GlobalOperationViewModel globalOperation,
         IDispatcherService dispatcherService,
         ILogger<LibrarySettingsViewModel> logger,
         TimeProvider? timeProvider = null)
@@ -46,8 +46,8 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
         _libraryScanner = libraryScanner ?? throw new ArgumentNullException(nameof(libraryScanner));
-        _playerViewModel = playerViewModel ?? throw new ArgumentNullException(nameof(playerViewModel));
-        _playerViewModel.PropertyChanged += OnPlayerViewModelPropertyChanged;
+        _globalOperation = globalOperation ?? throw new ArgumentNullException(nameof(globalOperation));
+        _globalOperation.PropertyChanged += OnGlobalOperationPropertyChanged;
         timeProvider ??= TimeProvider.System;
         _lyricsProviderSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs), timeProvider);
         _metadataProviderSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs), timeProvider);
@@ -149,7 +149,7 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
 
         _metadataRescanCts?.Cancel();
         _lyricsProviderSaveDebouncer.Dispose();
-        _playerViewModel.PropertyChanged -= OnPlayerViewModelPropertyChanged;
+        _globalOperation.PropertyChanged -= OnGlobalOperationPropertyChanged;
         _metadataProviderSaveDebouncer.Dispose();
         _artistSplitSaveDebouncer.Dispose();
         _genreSplitSaveDebouncer.Dispose();
@@ -167,11 +167,11 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
         QueueSettingsSave(_genreSplitSaveDebouncer, _ => _settingsService.SetGenreSplitCharactersAsync(value), nameof(GenreSplitCharacters));
     }
 
-    private bool CanRescanMetadata() => !_playerViewModel.IsGlobalOperationInProgress;
+    private bool CanRescanMetadata() => !_globalOperation.IsInProgress;
 
-    private void OnPlayerViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    private void OnGlobalOperationPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(PlayerViewModel.IsGlobalOperationInProgress))
+        if (e.PropertyName == nameof(GlobalOperationViewModel.IsInProgress))
         {
             RescanMetadataCommand.NotifyCanExecuteChanged();
         }
@@ -180,7 +180,7 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
     [RelayCommand(CanExecute = nameof(CanRescanMetadata))]
     private async Task RescanMetadataAsync()
     {
-        if (_playerViewModel.IsGlobalOperationInProgress) return;
+        if (_globalOperation.IsInProgress) return;
 
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
             Nagi.WinUI.Resources.Strings.Settings_Dialog_Rescan_Title,
@@ -188,22 +188,22 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
             Nagi.WinUI.Resources.Strings.Settings_Dialog_Rescan_PrimaryButton,
             null);
 
-        if (!confirmed || _isDisposed || _playerViewModel.IsGlobalOperationInProgress) return;
+        if (!confirmed || _isDisposed || _globalOperation.IsInProgress) return;
 
         using var rescanCts = new CancellationTokenSource();
         _metadataRescanCts = rescanCts;
         var token = rescanCts.Token;
 
-        _playerViewModel.IsGlobalOperationInProgress = true;
-        _playerViewModel.GlobalOperationStatusMessage = Nagi.WinUI.Resources.Strings.Settings_Status_Rescan_Preparing;
-        _playerViewModel.IsGlobalOperationIndeterminate = true;
-        _playerViewModel.SetGlobalOperationCancellation(rescanCts.Cancel);
+        _globalOperation.IsInProgress = true;
+        _globalOperation.StatusMessage = Nagi.WinUI.Resources.Strings.Settings_Status_Rescan_Preparing;
+        _globalOperation.IsIndeterminate = true;
+        _globalOperation.SetCancellation(rescanCts.Cancel);
 
         try
         {
             await SaveMetadataSplitSettingsAsync();
             token.ThrowIfCancellationRequested();
-            await _libraryScanner.ForceRescanMetadataAsync(CreateGlobalOperationProgress(_playerViewModel, token), token);
+            await _libraryScanner.ForceRescanMetadataAsync(CreateGlobalOperationProgress(_globalOperation, token), token);
             token.ThrowIfCancellationRequested();
 
             await _uiService.ShowMessageDialogAsync(Nagi.WinUI.Resources.Strings.Settings_Dialog_RescanComplete_Title, Nagi.WinUI.Resources.Strings.Settings_Dialog_RescanComplete_Content);
@@ -221,9 +221,9 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
         {
             rescanCts.Cancel();
             _metadataRescanCts = null;
-            _playerViewModel.SetGlobalOperationCancellation(null);
-            _playerViewModel.IsGlobalOperationInProgress = false;
-            _playerViewModel.IsGlobalOperationIndeterminate = false;
+            _globalOperation.SetCancellation(null);
+            _globalOperation.IsInProgress = false;
+            _globalOperation.IsIndeterminate = false;
         }
     }
 

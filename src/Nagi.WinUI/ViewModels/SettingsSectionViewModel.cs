@@ -80,15 +80,16 @@ public abstract class SettingsSectionViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>
-    ///     Reports a library-wide scan on the player's global operation bar until <paramref name="token" />
+    ///     Reports a library-wide scan on the global operation bar until <paramref name="token" />
     ///     is cancelled or this section is disposed.
     /// </summary>
-    protected IProgress<ScanProgress> CreateGlobalOperationProgress(PlayerViewModel player, CancellationToken token) =>
+    protected IProgress<ScanProgress> CreateGlobalOperationProgress(GlobalOperationViewModel operation,
+        CancellationToken token) =>
         new Progress<ScanProgress>(progress =>
         {
             if (token.IsCancellationRequested || _isDisposed) return;
-            player.GlobalOperationStatusMessage = progress.StatusText;
-            player.IsGlobalOperationIndeterminate = progress.IsIndeterminate || progress.Percentage < 5;
-            player.GlobalOperationProgressValue = progress.Percentage;
+            operation.StatusMessage = progress.StatusText;
+            operation.IsIndeterminate = progress.IsIndeterminate || progress.Percentage < 5;
+            operation.ProgressValue = progress.Percentage;
         });
 }

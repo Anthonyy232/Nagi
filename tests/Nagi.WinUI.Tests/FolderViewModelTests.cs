@@ -4,7 +4,6 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.WinUI.Services.Abstractions;
-using Nagi.WinUI.Models;
 using Nagi.WinUI.ViewModels;
 using NSubstitute;
 using Xunit;
@@ -24,16 +23,7 @@ public class FolderViewModelTests
             started.SetResult(call.Arg<CancellationToken>());
             return response.Task;
         });
-        var playback = Substitute.For<IMusicPlaybackService>();
-        var dispatcher = new ImmediateDispatcher();
-        var settings = Substitute.For<IUISettingsService>();
-        settings.GetPlayerButtonSettingsAsync().Returns(new List<PlayerButtonSetting>());
-        settings.GetQueueDisplaySettingsAsync().Returns(new QueueDisplaySettings());
-        var player = new PlayerViewModel(playback, Substitute.For<IMusicNavigationService>(),
-            dispatcher, settings, Substitute.For<IWindowService>(),
-            library.Reader, library.Writer, library.Scanner, NullLogger<PlayerViewModel>.Instance, Substitute.For<IUIService>());
-        using var viewModel = new FolderViewModel(library.Reader, library.Writer, library.Scanner, player, playback,
-            Substitute.For<INavigationService>(), Substitute.For<IUIService>(), dispatcher, NullLogger<FolderViewModel>.Instance);
+        using var viewModel = CreateViewModel(library, Substitute.For<IUIService>());
         var load = viewModel.LoadFoldersCommand.ExecuteAsync(null);
         try
         {
@@ -50,7 +40,6 @@ public class FolderViewModelTests
         {
             response.TrySetResult(Array.Empty<FolderSummary>());
             await load;
-            player.Cleanup();
         }
     }
 
@@ -60,14 +49,11 @@ public class FolderViewModelTests
         var library = new LibraryFakes();
         var ui = Substitute.For<IUIService>();
         ui.PickSingleFolderAsync().Returns((string?)null);
-        var (viewModel, player) = CreateViewModel(library, ui);
-        using (viewModel)
-        {
-            await viewModel.AddFolderCommand.ExecuteAsync(null);
+        using var viewModel = CreateViewModel(library, ui);
 
-            await library.Writer.DidNotReceiveWithAnyArgs().AddFolderAsync(default!, default);
-        }
-        player.Cleanup();
+        await viewModel.AddFolderCommand.ExecuteAsync(null);
+
+        await library.Writer.DidNotReceiveWithAnyArgs().AddFolderAsync(default!, default);
     }
 
     [Theory]
@@ -81,30 +67,17 @@ public class FolderViewModelTests
         library.Writer.RemoveFolderAsync(folder.Id).Returns(true);
         var ui = Substitute.For<IUIService>();
         ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<bool>()).Returns(confirmed);
-        var (viewModel, player) = CreateViewModel(library, ui);
-        using (viewModel)
-        {
-            await viewModel.LoadFoldersCommand.ExecuteAsync(null);
+        using var viewModel = CreateViewModel(library, ui);
 
-            await viewModel.DeleteFolderCommand.ExecuteAsync(folder.Id);
+        await viewModel.LoadFoldersCommand.ExecuteAsync(null);
 
-            await library.Writer.Received(confirmed ? 1 : 0).RemoveFolderAsync(folder.Id);
-        }
-        player.Cleanup();
+        await viewModel.DeleteFolderCommand.ExecuteAsync(folder.Id);
+
+        await library.Writer.Received(confirmed ? 1 : 0).RemoveFolderAsync(folder.Id);
     }
 
-    private static (FolderViewModel ViewModel, PlayerViewModel Player) CreateViewModel(LibraryFakes library, IUIService ui)
-    {
-        var playback = Substitute.For<IMusicPlaybackService>();
-        var dispatcher = new ImmediateDispatcher();
-        var settings = Substitute.For<IUISettingsService>();
-        settings.GetPlayerButtonSettingsAsync().Returns(new List<PlayerButtonSetting>());
-        settings.GetQueueDisplaySettingsAsync().Returns(new QueueDisplaySettings());
-        var player = new PlayerViewModel(playback, Substitute.For<IMusicNavigationService>(),
-            dispatcher, settings, Substitute.For<IWindowService>(),
-            library.Reader, library.Writer, library.Scanner, NullLogger<PlayerViewModel>.Instance, Substitute.For<IUIService>());
-        var viewModel = new FolderViewModel(library.Reader, library.Writer, library.Scanner, player, playback,
-            Substitute.For<INavigationService>(), ui, dispatcher, NullLogger<FolderViewModel>.Instance);
-        return (viewModel, player);
-    }
+    private static FolderViewModel CreateViewModel(LibraryFakes library, IUIService ui) =>
+        new(library.Reader, library.Writer, library.Scanner, new GlobalOperationViewModel(),
+            Substitute.For<IMusicPlaybackService>(), Substitute.For<INavigationService>(), ui, new ImmediateDispatcher(),
+            NullLogger<FolderViewModel>.Instance);
 }

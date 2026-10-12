@@ -49,17 +49,17 @@ public partial class FolderViewModel : ObservableObject, IDisposable
     private readonly INavigationService _navigationService;
     private readonly IUIService _uiService;
     private readonly IDispatcherService _dispatcherService;
-    private readonly PlayerViewModel _playerViewModel;
+    private readonly GlobalOperationViewModel _globalOperation;
     private readonly Debouncer _debouncer = new(TimeSpan.FromSeconds(1));
 
-    public FolderViewModel(ILibraryReader libraryReader, ILibraryWriter libraryWriter, ILibraryScanner libraryScanner, PlayerViewModel playerViewModel,
+    public FolderViewModel(ILibraryReader libraryReader, ILibraryWriter libraryWriter, ILibraryScanner libraryScanner, GlobalOperationViewModel globalOperation,
         IMusicPlaybackService musicPlaybackService, INavigationService navigationService, IUIService uiService,
         IDispatcherService dispatcherService, ILogger<FolderViewModel> logger)
     {
         _libraryReader = libraryReader;
         _libraryWriter = libraryWriter;
         _libraryScanner = libraryScanner;
-        _playerViewModel = playerViewModel;
+        _globalOperation = globalOperation;
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
         _uiService = uiService;
@@ -148,7 +148,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         }
         catch (Exception ex)
         {
-            _playerViewModel.GlobalOperationStatusMessage = Nagi.WinUI.Resources.Strings.Folders_Error_Playback;
+            _globalOperation.StatusMessage = Nagi.WinUI.Resources.Strings.Folders_Error_Playback;
             _logger.LogCritical(ex, "Error playing folder {FolderId}", folderId);
         }
     }
@@ -168,12 +168,12 @@ public partial class FolderViewModel : ObservableObject, IDisposable
             }
             else
             {
-                _playerViewModel.GlobalOperationStatusMessage = Nagi.WinUI.Resources.Strings.Folders_Empty_NoMusicFound;
+                _globalOperation.StatusMessage = Nagi.WinUI.Resources.Strings.Folders_Empty_NoMusicFound;
             }
         }
         catch (Exception ex)
         {
-            _playerViewModel.GlobalOperationStatusMessage = Nagi.WinUI.Resources.Strings.Folders_Error_RandomPlayback;
+            _globalOperation.StatusMessage = Nagi.WinUI.Resources.Strings.Folders_Error_RandomPlayback;
             _logger.LogCritical(ex, "Error playing random folder");
         }
     }
@@ -224,22 +224,22 @@ public partial class FolderViewModel : ObservableObject, IDisposable
             Folders.Any(f => Nagi.Core.Helpers.PathCanonicalizer.Normalize(f.Path)
                 .Equals(canonicalNew, StringComparison.OrdinalIgnoreCase)))
         {
-            _playerViewModel.GlobalOperationStatusMessage = Nagi.WinUI.Resources.Strings.Folders_AddFolder_Exists;
+            _globalOperation.StatusMessage = Nagi.WinUI.Resources.Strings.Folders_AddFolder_Exists;
             return;
         }
 
         IsAddingFolder = true;
-        _playerViewModel.IsGlobalOperationInProgress = true;
-        _playerViewModel.GlobalOperationStatusMessage = Nagi.WinUI.Resources.Strings.Folders_AddFolder_InProgress;
-        _playerViewModel.GlobalOperationProgressValue = 0;
-        _playerViewModel.IsGlobalOperationIndeterminate = true;
+        _globalOperation.IsInProgress = true;
+        _globalOperation.StatusMessage = Nagi.WinUI.Resources.Strings.Folders_AddFolder_InProgress;
+        _globalOperation.ProgressValue = 0;
+        _globalOperation.IsIndeterminate = true;
 
         try
         {
             var folder = await _libraryWriter.AddFolderAsync(folderPath);
             if (folder == null)
             {
-                _playerViewModel.GlobalOperationStatusMessage = Nagi.WinUI.Resources.Strings.Folders_AddFolder_Failed;
+                _globalOperation.StatusMessage = Nagi.WinUI.Resources.Strings.Folders_AddFolder_Failed;
                 return;
             }
 
@@ -247,26 +247,26 @@ public partial class FolderViewModel : ObservableObject, IDisposable
 
             var progress = new Progress<ScanProgress>(p =>
             {
-                _playerViewModel.GlobalOperationStatusMessage = p.StatusText;
-                _playerViewModel.IsGlobalOperationIndeterminate = p.IsIndeterminate || p.Percentage < 5;
-                _playerViewModel.GlobalOperationProgressValue = p.Percentage;
+                _globalOperation.StatusMessage = p.StatusText;
+                _globalOperation.IsIndeterminate = p.IsIndeterminate || p.Percentage < 5;
+                _globalOperation.ProgressValue = p.Percentage;
             });
 
             await _libraryScanner.ScanFolderForMusicAsync(folder.Path, progress);
 
-            _playerViewModel.GlobalOperationStatusMessage = string.Format(Nagi.WinUI.Resources.Strings.Folders_AddFolder_Success, folder.Name);
+            _globalOperation.StatusMessage = string.Format(Nagi.WinUI.Resources.Strings.Folders_AddFolder_Success, folder.Name);
         }
         catch (Exception ex)
         {
-            _playerViewModel.GlobalOperationStatusMessage = string.Format(Nagi.WinUI.Resources.Strings.Folders_Error_AddFolder, ex.Message);
+            _globalOperation.StatusMessage = string.Format(Nagi.WinUI.Resources.Strings.Folders_Error_AddFolder, ex.Message);
             _logger.LogError(ex, "Failed to add and scan folder '{FolderPath}'", folderPath);
         }
         finally
         {
             IsAddingFolder = false;
             IsScanning = false;
-            _playerViewModel.IsGlobalOperationInProgress = false;
-            _playerViewModel.IsGlobalOperationIndeterminate = false;
+            _globalOperation.IsInProgress = false;
+            _globalOperation.IsIndeterminate = false;
         }
     }
 
@@ -286,32 +286,32 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         if (!confirmed || IsAnyOperationInProgress) return;
 
         IsDeletingFolder = true;
-        _playerViewModel.IsGlobalOperationInProgress = true;
-        _playerViewModel.GlobalOperationStatusMessage = string.Format(Nagi.WinUI.Resources.Strings.Folders_Delete_InProgress, folderToDelete.Name);
-        _playerViewModel.IsGlobalOperationIndeterminate = true;
+        _globalOperation.IsInProgress = true;
+        _globalOperation.StatusMessage = string.Format(Nagi.WinUI.Resources.Strings.Folders_Delete_InProgress, folderToDelete.Name);
+        _globalOperation.IsIndeterminate = true;
 
         try
         {
             var success = await _libraryWriter.RemoveFolderAsync(folderId);
             if (success)
             {
-                _playerViewModel.GlobalOperationStatusMessage = string.Format(Nagi.WinUI.Resources.Strings.Folders_Delete_Success, folderToDelete.Name);
+                _globalOperation.StatusMessage = string.Format(Nagi.WinUI.Resources.Strings.Folders_Delete_Success, folderToDelete.Name);
             }
             else
             {
-                _playerViewModel.GlobalOperationStatusMessage = string.Format(Nagi.WinUI.Resources.Strings.Folders_Delete_Failed, folderToDelete.Name);
+                _globalOperation.StatusMessage = string.Format(Nagi.WinUI.Resources.Strings.Folders_Delete_Failed, folderToDelete.Name);
             }
         }
         catch (Exception ex)
         {
-            _playerViewModel.GlobalOperationStatusMessage = string.Format(Nagi.WinUI.Resources.Strings.Folders_Error_DeleteFolder, ex.Message);
+            _globalOperation.StatusMessage = string.Format(Nagi.WinUI.Resources.Strings.Folders_Error_DeleteFolder, ex.Message);
             _logger.LogError(ex, "Failed to delete folder {FolderId}", folderId);
         }
         finally
         {
             IsDeletingFolder = false;
-            _playerViewModel.IsGlobalOperationInProgress = false;
-            _playerViewModel.IsGlobalOperationIndeterminate = false;
+            _globalOperation.IsInProgress = false;
+            _globalOperation.IsIndeterminate = false;
         }
     }
 
@@ -324,24 +324,24 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         if (folderItem == null) return;
 
         IsScanning = true;
-        _playerViewModel.IsGlobalOperationInProgress = true;
-        _playerViewModel.GlobalOperationStatusMessage = string.Format(Nagi.WinUI.Resources.Strings.Folders_Rescan_InProgress, folderItem.Name);
-        _playerViewModel.IsGlobalOperationIndeterminate = true;
-        _playerViewModel.SetGlobalOperationCancellation(RescanFolderCommand.Cancel);
+        _globalOperation.IsInProgress = true;
+        _globalOperation.StatusMessage = string.Format(Nagi.WinUI.Resources.Strings.Folders_Rescan_InProgress, folderItem.Name);
+        _globalOperation.IsIndeterminate = true;
+        _globalOperation.SetCancellation(RescanFolderCommand.Cancel);
 
         try
         {
             var progress = new Progress<ScanProgress>(p =>
             {
-                _playerViewModel.GlobalOperationStatusMessage = p.StatusText;
-                _playerViewModel.IsGlobalOperationIndeterminate = p.IsIndeterminate || p.Percentage < 5;
-                _playerViewModel.GlobalOperationProgressValue = p.Percentage;
+                _globalOperation.StatusMessage = p.StatusText;
+                _globalOperation.IsIndeterminate = p.IsIndeterminate || p.Percentage < 5;
+                _globalOperation.ProgressValue = p.Percentage;
             });
 
             var changesDetected = await _libraryScanner.RescanFolderForMusicAsync(folderId, progress, cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
 
-            _playerViewModel.GlobalOperationStatusMessage = changesDetected
+            _globalOperation.StatusMessage = changesDetected
                 ? string.Format(Nagi.WinUI.Resources.Strings.Folders_Rescan_Complete, folderItem.Name)
                 : string.Format(Nagi.WinUI.Resources.Strings.Folders_Rescan_NoChanges, folderItem.Name);
         }
@@ -351,15 +351,15 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         }
         catch (Exception ex)
         {
-            _playerViewModel.GlobalOperationStatusMessage = string.Format(Nagi.WinUI.Resources.Strings.Folders_Error_RescanFolder, ex.Message);
+            _globalOperation.StatusMessage = string.Format(Nagi.WinUI.Resources.Strings.Folders_Error_RescanFolder, ex.Message);
             _logger.LogError(ex, "Failed to rescan folder {FolderId}", folderId);
         }
         finally
         {
-            _playerViewModel.SetGlobalOperationCancellation(null);
+            _globalOperation.SetCancellation(null);
             IsScanning = false;
-            _playerViewModel.IsGlobalOperationInProgress = false;
-            _playerViewModel.IsGlobalOperationIndeterminate = false;
+            _globalOperation.IsInProgress = false;
+            _globalOperation.IsIndeterminate = false;
         }
     }
 }

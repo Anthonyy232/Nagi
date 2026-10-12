@@ -144,6 +144,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     {
         ViewModel = App.Services!.GetRequiredService<PlayerViewModel>();
         InsightsVm = App.Services!.GetRequiredService<InsightsViewModel>();
+        GlobalOperation = App.Services!.GetRequiredService<GlobalOperationViewModel>();
         _settingsService = App.Services!.GetRequiredService<IUISettingsService>();
         _themeService = App.Services!.GetRequiredService<IThemeService>();
         _dispatcherService = App.Services!.GetRequiredService<IDispatcherService>();
@@ -162,6 +163,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     public PlayerViewModel ViewModel { get; }
     public InsightsViewModel InsightsVm { get; }
+    public GlobalOperationViewModel GlobalOperation { get; }
 
     public TitleBar GetAppTitleBarElement()
     {

@@ -26,7 +26,7 @@ public class SettingsViewModelTests : IDisposable
     private readonly LibraryFakes _library = new LibraryFakes();
     private readonly IFFmpegService _ffmpeg = Substitute.For<IFFmpegService>();
     private readonly IReplayGainService _replayGain = Substitute.For<IReplayGainService>();
-    private readonly PlayerViewModel _player;
+    private readonly GlobalOperationViewModel _operation = new();
     private readonly SettingsViewModel _viewModel;
     private readonly FakeTimeProvider _timeProvider = new();
 
@@ -35,20 +35,16 @@ public class SettingsViewModelTests : IDisposable
         _settings.GetPlayerButtonSettingsAsync().Returns(new List<PlayerButtonSetting>());
         _settings.GetNavigationItemsAsync().Returns(new List<Nagi.WinUI.Navigation.NavigationItemSetting>());
         _settings.GetServiceProvidersAsync(Arg.Any<ServiceCategory>()).Returns(new List<ServiceProviderSetting>());
-        _settings.GetQueueDisplaySettingsAsync().Returns(new QueueDisplaySettings());
-        _playback.PlaybackQueue.Returns(Array.Empty<Guid>());
         _playback.AvailablePresets.Returns(Array.Empty<EqualizerPreset>());
         _dispatcher.HasThreadAccess.Returns(true);
         _dispatcher.TryEnqueue(Arg.Any<Action>()).Returns(call => { call.Arg<Action>()(); return true; });
         _dispatcher.EnqueueAsync(Arg.Any<Func<Task>>()).Returns(call => call.Arg<Func<Task>>()());
-        _player = new PlayerViewModel(_playback, Substitute.For<IMusicNavigationService>(), _dispatcher,
-            _settings, Substitute.For<IWindowService>(), _library.Reader, _library.Writer, _library.Scanner, NullLogger<PlayerViewModel>.Instance, Substitute.For<IUIService>());
         _viewModel = new SettingsViewModel(_settings, _appInfo, _dispatcher,
             new AppearanceSettingsViewModel(_settings, _theme, _ui, _appInfo, _dispatcher,
                 NullLogger<AppearanceSettingsViewModel>.Instance, _timeProvider),
-            new AudioSettingsViewModel(_playback, _audioPlayer, _settings, _ui, _ffmpeg, _replayGain, _player, _dispatcher,
+            new AudioSettingsViewModel(_playback, _audioPlayer, _settings, _ui, _ffmpeg, _replayGain, _operation, _dispatcher,
                 NullLogger<AudioSettingsViewModel>.Instance, _timeProvider),
-            new LibrarySettingsViewModel(_settings, _ui, _library.Scanner, _player, _dispatcher,
+            new LibrarySettingsViewModel(_settings, _ui, _library.Scanner, _operation, _dispatcher,
                 NullLogger<LibrarySettingsViewModel>.Instance, _timeProvider),
             new ScrobblingSettingsViewModel(_settings, _ui, _lastFm, _listenBrainz, _dispatcher,
                 NullLogger<ScrobblingSettingsViewModel>.Instance),
@@ -63,7 +59,6 @@ public class SettingsViewModelTests : IDisposable
     public void Dispose()
     {
         _viewModel.Dispose();
-        _player.Cleanup();
     }
 
     [Fact]
@@ -257,13 +252,13 @@ public class SettingsViewModelTests : IDisposable
         var confirmation = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<bool>()).Returns(confirmation.Task);
         var scan = _viewModel.Library.RescanMetadataCommand.ExecuteAsync(null);
-        _player.IsGlobalOperationInProgress = true;
+        _operation.IsInProgress = true;
 
         confirmation.SetResult(true);
         await scan.WaitAsync(TimeSpan.FromSeconds(5));
 
         await _library.Scanner.DidNotReceive().ForceRescanMetadataAsync(Arg.Any<IProgress<ScanProgress>>(), Arg.Any<CancellationToken>());
-        _player.IsGlobalOperationInProgress.Should().BeTrue();
+        _operation.IsInProgress.Should().BeTrue();
     }
 
     [Fact]
@@ -278,8 +273,8 @@ public class SettingsViewModelTests : IDisposable
         scanning.SetResult(true);
         await scan.WaitAsync(TimeSpan.FromSeconds(5));
 
-        _player.IsGlobalOperationInProgress.Should().BeFalse();
-        _player.IsGlobalOperationCancellable.Should().BeFalse();
+        _operation.IsInProgress.Should().BeFalse();
+        _operation.IsCancellable.Should().BeFalse();
         await _ui.DidNotReceive().ShowMessageDialogAsync(Arg.Any<string>(), Arg.Any<string>());
     }
 
@@ -295,19 +290,19 @@ public class SettingsViewModelTests : IDisposable
             return Task.Delay(Timeout.Infinite, scanToken);
         });
         var finished = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        _player.PropertyChanged += (_, e) =>
+        _operation.PropertyChanged += (_, e) =>
         {
-            if (e.PropertyName == nameof(PlayerViewModel.IsGlobalOperationInProgress) && !_player.IsGlobalOperationInProgress)
+            if (e.PropertyName == nameof(GlobalOperationViewModel.IsInProgress) && !_operation.IsInProgress)
                 finished.TrySetResult();
         };
 
         _viewModel.Audio.IsVolumeNormalizationEnabled = true;
-        _player.IsGlobalOperationCancellable.Should().BeTrue();
-        _player.CancelGlobalOperationCommand.Execute(null);
+        _operation.IsCancellable.Should().BeTrue();
+        _operation.CancelCommand.Execute(null);
         await finished.Task.WaitAsync(TimeSpan.FromSeconds(5));
 
         scanToken.IsCancellationRequested.Should().BeTrue();
-        _player.IsGlobalOperationCancellable.Should().BeFalse();
+        _operation.IsCancellable.Should().BeFalse();
     }
 
     [Fact]
@@ -329,13 +324,13 @@ public class SettingsViewModelTests : IDisposable
         }
         finally { SynchronizationContext.SetSynchronizationContext(previous); }
         await scan.WaitAsync(TimeSpan.FromSeconds(5));
-        _player.GlobalOperationStatusMessage = "New operation";
-        _player.GlobalOperationProgressValue = 5;
+        _operation.StatusMessage = "New operation";
+        _operation.ProgressValue = 5;
 
         context.RunAll();
 
-        _player.GlobalOperationStatusMessage.Should().Be("New operation");
-        _player.GlobalOperationProgressValue.Should().Be(5);
+        _operation.StatusMessage.Should().Be("New operation");
+        _operation.ProgressValue.Should().Be(5);
     }
 
     [Fact]
