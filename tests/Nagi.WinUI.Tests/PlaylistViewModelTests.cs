@@ -14,6 +14,7 @@ public class PlaylistViewModelTests
 {
     private readonly LibraryFakes _library = new LibraryFakes();
     private readonly ISmartPlaylistService _smart = Substitute.For<ISmartPlaylistService>();
+    private readonly IUIService _ui = Substitute.For<IUIService>();
 
     public PlaylistViewModelTests()
     {
@@ -113,8 +114,22 @@ public class PlaylistViewModelTests
         viewModel.Playlists.Should().BeEmpty();
     }
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task CreateSmartPlaylist_ReloadsOnlyWhenThePlaylistWasSaved(bool saved)
+    {
+        _ui.ShowSmartPlaylistEditorAsync(null).Returns(saved ? new SmartPlaylist { Name = "Recent" } : null);
+        using var viewModel = CreateViewModel();
+        _library.Reader.ClearReceivedCalls();
+
+        await viewModel.CreateSmartPlaylistCommand.ExecuteAsync(null);
+
+        await _library.Reader.Received(saved ? 1 : 0).GetAllPlaylistsAsync(Arg.Any<CancellationToken>());
+    }
+
     private PlaylistViewModel CreateViewModel() => new(_library.Reader, _library.Playlists, _smart, Substitute.For<IMusicPlaybackService>(),
-        Substitute.For<INavigationService>(), Substitute.For<IUISettingsService>(), new ImmediateDispatcher(),
+        Substitute.For<INavigationService>(), _ui, Substitute.For<IUISettingsService>(), new ImmediateDispatcher(),
         NullLogger<PlaylistViewModel>.Instance);
 
     [Theory]

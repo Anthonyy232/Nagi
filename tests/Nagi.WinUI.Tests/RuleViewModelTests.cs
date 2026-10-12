@@ -1,7 +1,7 @@
 using FluentAssertions;
 using Nagi.Core.Models;
 using System.Globalization;
-using Nagi.WinUI.Dialogs;
+using Nagi.WinUI.ViewModels;
 using Xunit;
 
 namespace Nagi.WinUI.Tests;

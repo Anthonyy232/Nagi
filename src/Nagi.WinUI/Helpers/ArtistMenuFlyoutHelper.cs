@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -6,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.Core.Models;
-using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Navigation;
 
 namespace Nagi.WinUI.Helpers;
@@ -16,13 +16,13 @@ public static class ArtistMenuFlyoutHelper
     /// <summary>
     ///     Populates the given submenu with artists for the specified song.
     ///     If artists are already loaded in the song object, they are used immediately.
-    ///     Otherwise, they are fetched asynchronously using the provided ILibraryReader.
+    ///     Otherwise, they are fetched asynchronously through <paramref name="loadArtists" />.
     /// </summary>
     public static void PopulateSubMenu(
         MenuFlyoutSubItem subMenu,
         Song song,
         ICommand goToArtistCommand,
-        ILibraryReader libraryReader,
+        Func<Song, Task<IReadOnlyList<Artist>>> loadArtists,
         DispatcherQueue dispatcherQueue,
         ILogger logger)
     {
@@ -41,7 +41,7 @@ public static class ArtistMenuFlyoutHelper
         var loadingItem = new MenuFlyoutItem { Text = Nagi.WinUI.Resources.Strings.Status_Loading, IsEnabled = false };
         subMenu.Items.Add(loadingItem);
 
-        _ = PopulateArtistsAsync(subMenu, song, loadingItem, goToArtistCommand, libraryReader, dispatcherQueue, logger);
+        _ = PopulateArtistsAsync(subMenu, song, loadingItem, goToArtistCommand, loadArtists, dispatcherQueue, logger);
     }
 
     private static async Task PopulateArtistsAsync(
@@ -49,13 +49,13 @@ public static class ArtistMenuFlyoutHelper
         Song song,
         MenuFlyoutItem loadingItem,
         ICommand goToArtistCommand,
-        ILibraryReader libraryReader,
+        Func<Song, Task<IReadOnlyList<Artist>>> loadArtists,
         DispatcherQueue dispatcherQueue,
         ILogger logger)
     {
         try
         {
-            var artists = (await libraryReader.GetArtistsForSongAsync(song.Id).ConfigureAwait(false)).ToList();
+            var artists = (await loadArtists(song).ConfigureAwait(false)).ToList();
 
             dispatcherQueue.TryEnqueue(() =>
             {

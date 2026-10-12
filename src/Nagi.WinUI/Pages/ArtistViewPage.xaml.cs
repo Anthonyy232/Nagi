@@ -56,7 +56,6 @@ public sealed partial class ArtistViewPage : Page
         _nowPlayingBinder = new NowPlayingIndicatorBinder(
             SongsListView,
             ViewModel,
-            App.Services!.GetRequiredService<PlayerViewModel>(),
             (Brush)Application.Current.Resources["AppPrimaryColorBrush"]);
         _nowPlayingBinder.Refresh();
     }
@@ -281,13 +280,7 @@ public sealed partial class ArtistViewPage : Page
         try
         {
             _logger.LogDebug("User initiated image change for artist '{ArtistName}'.", ViewModel.ArtistName);
-            var newImagePath = await PickImageAsync();
-
-            if (!string.IsNullOrWhiteSpace(newImagePath))
-            {
-                _logger.LogDebug("User selected new image for artist '{ArtistName}'. Updating.", ViewModel.ArtistName);
-                await ViewModel.UpdateArtistImageCommand.ExecuteAsync(newImagePath);
-            }
+            await ViewModel.ChangeArtistImageCommand.ExecuteAsync(null);
         }
         catch (Exception ex)
         {
@@ -306,25 +299,6 @@ public sealed partial class ArtistViewPage : Page
         {
             _logger.LogError(ex, "Error removing image for artist {ArtistName}", ViewModel.ArtistName);
         }
-    }
-
-    private async Task<string?> PickImageAsync()
-    {
-        _logger.LogDebug("Opening file picker for artist image.");
-        var picker = new FileOpenPicker(App.RootWindow!.AppWindow.Id);
-
-        foreach (var ext in FileExtensions.ImageFileExtensions)
-            picker.FileTypeFilter.Add(ext);
-
-        var file = await picker.PickSingleFileAsync();
-        if (file != null)
-        {
-            _logger.LogDebug("User picked image file: {FilePath}", file.Path);
-            return file.Path;
-        }
-
-        _logger.LogDebug("User did not pick an image file.");
-        return null;
     }
 
     private void OnSongsListViewLoaded(object sender, RoutedEventArgs e)

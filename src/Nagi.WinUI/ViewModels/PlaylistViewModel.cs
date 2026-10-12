@@ -86,6 +86,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly INavigationService _navigationService;
     private readonly IUISettingsService _settingsService;
+    private readonly IUIService _uiService;
     private bool _hasSortOrderLoaded;
     private readonly List<PlaylistViewModelItem> _allPlaylists = new();
     private bool _isNavigating;
@@ -94,7 +95,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     private bool _isDisposed;
 
     public PlaylistViewModel(ILibraryReader libraryReader, IPlaylistService playlistService, ISmartPlaylistService smartPlaylistService,
-        IMusicPlaybackService musicPlaybackService, INavigationService navigationService,
+        IMusicPlaybackService musicPlaybackService, INavigationService navigationService, IUIService uiService,
         IUISettingsService settingsService, IDispatcherService dispatcherService, ILogger<PlaylistViewModel> logger)
         : base(dispatcherService, logger)
     {
@@ -103,6 +104,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         _smartPlaylistService = smartPlaylistService;
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
+        _uiService = uiService;
         _settingsService = settingsService;
 
         _collectionChangedHandler = (s, e) => OnPropertyChanged(nameof(HasPlaylists));
@@ -299,6 +301,18 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
             StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_ErrorRandom;
             _logger.LogCritical(ex, "Error playing random playlist");
         }
+    }
+
+    /// <summary>
+    ///     Opens the smart playlist editor and reloads the list if a playlist was created.
+    /// </summary>
+    [RelayCommand]
+    private async Task CreateSmartPlaylistAsync()
+    {
+        if (_isDisposed || IsAnyOperationInProgress) return;
+
+        var created = await _uiService.ShowSmartPlaylistEditorAsync();
+        if (created is not null && !_isDisposed) await LoadPlaylistsAsync();
     }
 
     /// <summary>

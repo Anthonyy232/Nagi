@@ -1,10 +1,8 @@
 using System;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.ViewModels;
 
 namespace Nagi.WinUI.Pages;
@@ -15,7 +13,6 @@ namespace Nagi.WinUI.Pages;
 public sealed partial class FolderPage : Page
 {
     private readonly ILogger<FolderPage> _logger;
-    private readonly IUIService _uiService;
 
     public FolderPage()
     {
@@ -23,7 +20,6 @@ public sealed partial class FolderPage : Page
 
         ViewModel = App.Services!.GetRequiredService<FolderViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<FolderPage>>();
-        _uiService = App.Services!.GetRequiredService<IUIService>();
         DataContext = ViewModel;
 
         _logger.LogDebug("FolderPage initialized.");
@@ -57,25 +53,9 @@ public sealed partial class FolderPage : Page
 
     private async void AddFolderButton_Click(object sender, RoutedEventArgs e)
     {
-        if (ViewModel.IsAnyOperationInProgress)
-        {
-            _logger.LogDebug("Add folder button clicked, but an operation is already in progress. Ignoring.");
-            return;
-        }
-
         try
         {
-            _logger.LogDebug("Add folder button clicked. Opening folder picker.");
-            var folderPath = await _uiService.PickSingleFolderAsync();
-            if (folderPath != null)
-            {
-                _logger.LogDebug("User selected folder '{FolderPath}'. Adding and scanning.", folderPath);
-                await ViewModel.AddFolderAndScanCommand.ExecuteAsync(folderPath);
-            }
-            else
-            {
-                _logger.LogDebug("User cancelled the folder picker.");
-            }
+            await ViewModel.AddFolderCommand.ExecuteAsync(null);
         }
         catch (Exception ex)
         {
@@ -85,47 +65,15 @@ public sealed partial class FolderPage : Page
 
     private async void DeleteFolder_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { DataContext: FolderViewModelItem folderItem })
-        {
-            try
-            {
-                _logger.LogDebug("Delete context menu clicked for folder '{FolderName}' (Id: {FolderId}).",
-                    folderItem.Name, folderItem.Id);
-                await ShowDeleteFolderConfirmationDialogAsync(folderItem);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error initiating folder deletion for {FolderName}", folderItem.Name);
-            }
-        }
-    }
+        if (sender is not FrameworkElement { DataContext: FolderViewModelItem folderItem }) return;
 
-    private async Task ShowDeleteFolderConfirmationDialogAsync(FolderViewModelItem folderItem)
-    {
-        if (ViewModel.IsAnyOperationInProgress)
+        try
         {
-            _logger.LogDebug(
-                "Attempted to show delete confirmation for '{FolderName}', but an operation is already in progress. Ignoring.",
-                folderItem.Name);
-            return;
-        }
-
-        _logger.LogDebug("Showing delete confirmation dialog for folder '{FolderName}'.", folderItem.Name);
-        var confirmed = await _uiService.ShowConfirmationDialogAsync(
-            Nagi.WinUI.Resources.Strings.FolderPage_DeleteDialog_Title,
-            string.Format(Nagi.WinUI.Resources.Strings.FolderPage_DeleteDialog_Format, folderItem.Name),
-            Nagi.WinUI.Resources.Strings.FolderPage_DeleteDialog_PrimaryButton,
-            Nagi.WinUI.Resources.Strings.FolderPage_DeleteDialog_CloseButton);
-        if (confirmed)
-        {
-            _logger.LogDebug(
-                "User confirmed deletion for folder '{FolderName}' (Id: {FolderId}). Executing delete command.",
-                folderItem.Name, folderItem.Id);
             await ViewModel.DeleteFolderCommand.ExecuteAsync(folderItem.Id);
         }
-        else
+        catch (Exception ex)
         {
-            _logger.LogDebug("User cancelled deletion for folder '{FolderName}'.", folderItem.Name);
+            _logger.LogError(ex, "Error deleting folder {FolderName}", folderItem.Name);
         }
     }
 }

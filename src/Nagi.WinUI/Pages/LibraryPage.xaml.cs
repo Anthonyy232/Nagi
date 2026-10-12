@@ -32,7 +32,6 @@ public sealed partial class LibraryPage : Page
         ((FrameworkElement)((Grid)sender).Children[0]).MaxWidth = e.NewSize.Width;
 
     private readonly ILogger<LibraryPage> _logger;
-    private readonly ILibraryReader _libraryReader;
     private bool _isSearchExpanded;
     private readonly Microsoft.UI.Dispatching.DispatcherQueue _dispatcherQueue;
     private NowPlayingIndicatorBinder? _nowPlayingBinder;
@@ -43,7 +42,6 @@ public sealed partial class LibraryPage : Page
         _dispatcherQueue = this.DispatcherQueue;
         ViewModel = App.Services!.GetRequiredService<LibraryViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<LibraryPage>>();
-        _libraryReader = App.Services!.GetRequiredService<ILibraryReader>();
         DataContext = ViewModel;
 
         // Recreated on each Loaded so cached-page re-navigations get a fresh binder.
@@ -60,7 +58,6 @@ public sealed partial class LibraryPage : Page
         _nowPlayingBinder = new NowPlayingIndicatorBinder(
             SongsListView,
             ViewModel,
-            App.Services!.GetRequiredService<PlayerViewModel>(),
             (Brush)Application.Current.Resources["AppPrimaryColorBrush"]);
         _nowPlayingBinder.Refresh();
     }
@@ -173,7 +170,7 @@ public sealed partial class LibraryPage : Page
         if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
                 .FirstOrDefault(item => item.Name == "GoToArtistSubMenu") is { } goToArtistSubMenu)
         {
-            ArtistMenuFlyoutHelper.PopulateSubMenu(goToArtistSubMenu, rightClickedSong, ViewModel.GoToArtistCommand, _libraryReader, _dispatcherQueue, _logger);
+            ArtistMenuFlyoutHelper.PopulateSubMenu(goToArtistSubMenu, rightClickedSong, ViewModel.GoToArtistCommand, ViewModel.GetArtistsForSongAsync, _dispatcherQueue, _logger);
         }
 
         _logger.LogDebug("Context menu opening for song '{SongTitle}'.", rightClickedSong.Title);

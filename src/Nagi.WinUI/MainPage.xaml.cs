@@ -382,12 +382,12 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             (VisualTreeHelper.GetChild(NavView, 0) as FrameworkElement)?.FindName("RootSplitView") is SplitView navigationSplitView)
             _navigationContentMotion ??= SplitViewContentMotion.Attach(navigationSplitView);
         _queuePlayingBinder ??= new NowPlayingIndicatorBinder(
-            QueueListView, null, ViewModel,
+            QueueListView, ViewModel,
             (Brush)Application.Current.Resources["AppPrimaryColorBrush"],
             item => (item as QueueEntry)?.Id);
         _queuePlayingBinder.Refresh();
         _historyPlayingBinder ??= new NowPlayingIndicatorBinder(
-            HistoryListView, null, ViewModel,
+            HistoryListView, ViewModel,
             (Brush)Application.Current.Resources["AppPrimaryColorBrush"],
             item => (item as RecentListenEntry)?.Listen.SongId);
         _historyPlayingBinder.Refresh();

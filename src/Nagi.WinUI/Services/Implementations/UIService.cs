@@ -8,9 +8,12 @@ using Windows.System;
 using Microsoft.Windows.Storage.Pickers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Nagi.Core.Models;
 using Nagi.WinUI.Controls;
+using Nagi.WinUI.Dialogs;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Services.Abstractions;
+using Nagi.WinUI.ViewModels;
 using WinRT.Interop;
 
 namespace Nagi.WinUI.Services.Implementations;
@@ -21,10 +24,12 @@ public partial class UIService : IUIService
     private const uint MB_ICONERROR = 0x00000010;
 
     private readonly IWin32InteropService _win32InteropService;
+    private readonly IViewModelFactory _viewModelFactory;
 
-    public UIService(IWin32InteropService win32InteropService)
+    public UIService(IWin32InteropService win32InteropService, IViewModelFactory viewModelFactory)
     {
         _win32InteropService = win32InteropService;
+        _viewModelFactory = viewModelFactory;
     }
 
     public async Task<bool> ShowConfirmationDialogAsync(string title, string content, string? primaryButtonText,
@@ -150,6 +155,17 @@ public partial class UIService : IUIService
 
         var files = await filePicker.PickMultipleFilesAsync();
         return files.Select(f => f.Path).ToList();
+    }
+
+    public async Task<SmartPlaylist?> ShowSmartPlaylistEditorAsync(SmartPlaylist? editing = null)
+    {
+        if (!TryGetXamlRoot(out var xamlRoot)) return null;
+
+        using var viewModel = _viewModelFactory.Create<SmartPlaylistEditorViewModel>();
+        viewModel.Initialize(editing);
+        var dialog = new SmartPlaylistEditorDialog(viewModel) { XamlRoot = xamlRoot };
+        var result = await dialog.ShowAsync();
+        return result == ContentDialogResult.Primary ? viewModel.ResultPlaylist : null;
     }
 
     public async Task<bool> ShowFFmpegSetupDialogAsync(string title, string instructions, Func<Task<bool>> checkAction)

@@ -24,7 +24,6 @@ namespace Nagi.WinUI.Pages;
 public sealed partial class GenreViewPage : Page
 {
     private readonly ILogger<GenreViewPage> _logger;
-    private readonly ILibraryReader _libraryReader;
     private bool _isSearchExpanded;
     private bool _isUpdatingSelection;
     private readonly Microsoft.UI.Dispatching.DispatcherQueue _dispatcherQueue;
@@ -36,7 +35,6 @@ public sealed partial class GenreViewPage : Page
         _dispatcherQueue = this.DispatcherQueue;
         ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<GenreViewViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<GenreViewPage>>();
-        _libraryReader = App.Services!.GetRequiredService<ILibraryReader>();
         DataContext = ViewModel;
 
         Loaded += OnNowPlayingBinderAttach;
@@ -52,7 +50,6 @@ public sealed partial class GenreViewPage : Page
         _nowPlayingBinder = new NowPlayingIndicatorBinder(
             SongsListView,
             ViewModel,
-            App.Services!.GetRequiredService<PlayerViewModel>(),
             (Brush)Application.Current.Resources["AppPrimaryColorBrush"]);
         _nowPlayingBinder.Refresh();
     }
@@ -233,7 +230,7 @@ public sealed partial class GenreViewPage : Page
                 .FirstOrDefault(item => item.Name == "GoToArtistSubMenu") is { } goToArtistSubMenu
             && menuFlyout.Target?.DataContext is Song song)
         {
-            ArtistMenuFlyoutHelper.PopulateSubMenu(goToArtistSubMenu, song, ViewModel.GoToArtistCommand, _libraryReader, _dispatcherQueue, _logger);
+            ArtistMenuFlyoutHelper.PopulateSubMenu(goToArtistSubMenu, song, ViewModel.GoToArtistCommand, ViewModel.GetArtistsForSongAsync, _dispatcherQueue, _logger);
         }
         ListeningMenuFlyoutHelper.PopulateFavorites(menuFlyout, ViewModel);
     }

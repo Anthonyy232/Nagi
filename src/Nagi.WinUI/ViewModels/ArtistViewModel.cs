@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
+using Nagi.Core.Constants;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.WinUI.Navigation;
@@ -40,6 +41,7 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
 {
     private readonly Dictionary<Guid, ArtistViewModelItem> _artistLookup = new();
     private readonly ILibraryWriter _libraryWriter;
+    private readonly IUIService _uiService;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly IMusicNavigationService _musicNavigationService;
 
@@ -53,10 +55,12 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
         IMusicPlaybackService musicPlaybackService,
         IDispatcherService dispatcherService,
         IMusicNavigationService musicNavigationService,
+        IUIService uiService,
         ILogger<ArtistViewModel> logger)
         : base(libraryReader, libraryScanner, settingsService, dispatcherService, logger)
     {
         _libraryWriter = libraryWriter;
+        _uiService = uiService;
         _musicPlaybackService = musicPlaybackService;
         _musicNavigationService = musicNavigationService;
 
@@ -195,11 +199,14 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
         base.Dispose();
     }
 
+    /// <summary>
+    ///     Lets the user pick an image file and stores it as the artist's custom image.
+    /// </summary>
     [RelayCommand]
-    public async Task UpdateArtistImageAsync(Tuple<Guid, string> artistData)
+    public async Task ChangeArtistImageAsync(Guid artistId)
     {
-        if (artistData == null) return;
-        var (artistId, localPath) = artistData;
+        var localPath = await _uiService.PickSingleFileAsync(FileExtensions.ImageFileExtensions);
+        if (string.IsNullOrWhiteSpace(localPath)) return;
         await _libraryWriter.UpdateArtistImageAsync(artistId, localPath);
     }
 

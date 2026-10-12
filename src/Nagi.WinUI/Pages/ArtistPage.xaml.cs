@@ -138,14 +138,7 @@ public sealed partial class ArtistPage : Page
         try
         {
             _logger.LogDebug("User initiated image change for artist '{ArtistName}'.", artistItem.Name);
-            var newImagePath = await App.Services!.GetRequiredService<IUIService>()
-                .PickSingleFileAsync(FileExtensions.ImageFileExtensions);
-
-            if (!string.IsNullOrWhiteSpace(newImagePath))
-            {
-                _logger.LogDebug("User selected new image for artist '{ArtistName}'. Updating.", artistItem.Name);
-                await ViewModel.UpdateArtistImageCommand.ExecuteAsync(new Tuple<Guid, string>(artistItem.Id, newImagePath));
-            }
+            await ViewModel.ChangeArtistImageCommand.ExecuteAsync(artistItem.Id);
         }
         catch (Exception ex)
         {

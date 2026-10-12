@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
+using Nagi.Core.Constants;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.WinUI.Services.Abstractions;
@@ -273,9 +274,13 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         _logger.LogDebug("Cleaned up for artist ID {ArtistId}", _artistId);
     }
 
+    /// <summary>
+    ///     Lets the user pick an image file and stores it as this artist's custom image.
+    /// </summary>
     [RelayCommand]
-    public async Task UpdateArtistImageAsync(string localPath)
+    public async Task ChangeArtistImageAsync()
     {
+        var localPath = await _uiService.PickSingleFileAsync(FileExtensions.ImageFileExtensions);
         if (string.IsNullOrWhiteSpace(localPath)) return;
 
         _logger.LogInformation("Updating custom image for current artist ({ArtistName}) from {Path}", ArtistName, localPath);

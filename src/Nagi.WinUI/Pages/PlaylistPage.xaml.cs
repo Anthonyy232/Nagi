@@ -235,33 +235,9 @@ public sealed partial class PlaylistPage : Page
 
     private async void CreateSmartPlaylistButton_Click(object sender, RoutedEventArgs e)
     {
-        if (ViewModel.IsAnyOperationInProgress)
-        {
-            _logger.LogDebug("Create smart playlist button clicked, but an operation is already in progress. Ignoring.");
-            return;
-        }
-
         try
         {
-            _logger.LogDebug("Smart playlist creation requested. Opening editor dialog.");
-
-            var dialog = new Dialogs.SmartPlaylistEditorDialog
-            {
-                XamlRoot = XamlRoot
-            };
-
-            var result = await dialog.ShowAsync();
-
-            if (result == ContentDialogResult.Primary && dialog.ResultPlaylist != null)
-            {
-                _logger.LogDebug("User created smart playlist '{PlaylistName}' (Id: {PlaylistId}).",
-                    dialog.ResultPlaylist.Name, dialog.ResultPlaylist.Id);
-                await ViewModel.LoadPlaylistsCommand.ExecuteAsync(null);
-            }
-            else
-            {
-                _logger.LogDebug("User cancelled smart playlist creation.");
-            }
+            await ViewModel.CreateSmartPlaylistCommand.ExecuteAsync(null);
         }
         catch (Exception ex)
         {

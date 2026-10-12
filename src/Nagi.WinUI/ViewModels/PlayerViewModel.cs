@@ -22,7 +22,7 @@ namespace Nagi.WinUI.ViewModels;
 ///     Manages the state and interactions for the main media player UI. This view model acts as a coordinator
 ///     between the UI and various services like <see cref="IMusicPlaybackService" /> and <see cref="IWindowService" />.
 /// </summary>
-public partial class PlayerViewModel : ObservableObject
+public partial class PlayerViewModel : ObservableObject, INowPlayingSource
 {
     private const string PlayIconGlyph = "\uE768";
     private const string PauseIconGlyph = "\uE769";
@@ -110,7 +110,10 @@ public partial class PlayerViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(GoToArtistCommand))]
     [NotifyCanExecuteChangedFor(nameof(GoToAlbumCommand))]
     [NotifyCanExecuteChangedFor(nameof(StopAfterTrackCommand))]
+    [NotifyPropertyChangedFor(nameof(CurrentPlayingSongId))]
     public partial Song? CurrentPlayingTrack { get; set; }
+
+    public Guid? CurrentPlayingSongId => CurrentPlayingTrack?.Id;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShuffleButtonToolTip))]

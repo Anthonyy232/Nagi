@@ -43,7 +43,6 @@ public class DiscGroupStyleSelector : StyleSelector
 public sealed partial class AlbumViewPage : Page
 {
     private readonly ILogger<AlbumViewPage> _logger;
-    private readonly ILibraryReader _libraryReader;
     private bool _isSearchExpanded;
     private bool _isUpdatingSelection;
     private readonly Microsoft.UI.Dispatching.DispatcherQueue _dispatcherQueue;
@@ -56,7 +55,6 @@ public sealed partial class AlbumViewPage : Page
         _dispatcherQueue = this.DispatcherQueue;
         ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<AlbumViewViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<AlbumViewPage>>();
-        _libraryReader = App.Services!.GetRequiredService<ILibraryReader>();
         DataContext = ViewModel;
 
         Loaded += OnNowPlayingBinderAttach;
@@ -69,10 +67,9 @@ public sealed partial class AlbumViewPage : Page
     private void OnNowPlayingBinderAttach(object sender, RoutedEventArgs e)
     {
         if (_flatBinder is not null || _groupedBinder is not null) return;
-        var playerViewModel = App.Services!.GetRequiredService<PlayerViewModel>();
         var playingBrush = (Brush)Application.Current.Resources["AppPrimaryColorBrush"];
-        _flatBinder = new NowPlayingIndicatorBinder(SongsListView, ViewModel, playerViewModel, playingBrush);
-        _groupedBinder = new NowPlayingIndicatorBinder(GroupedSongsListView, ViewModel, playerViewModel, playingBrush);
+        _flatBinder = new NowPlayingIndicatorBinder(SongsListView, ViewModel, playingBrush);
+        _groupedBinder = new NowPlayingIndicatorBinder(GroupedSongsListView, ViewModel, playingBrush);
         _flatBinder.Refresh();
         _groupedBinder.Refresh();
     }
@@ -269,7 +266,7 @@ public sealed partial class AlbumViewPage : Page
                 .FirstOrDefault(item => item.Name is "GoToArtistSubMenu" or "GoToArtistSubMenuGrouped") is { } goToArtistSubMenu
             && menuFlyout.Target?.DataContext is Song song)
         {
-            ArtistMenuFlyoutHelper.PopulateSubMenu(goToArtistSubMenu, song, ViewModel.GoToArtistCommand, _libraryReader, _dispatcherQueue, _logger);
+            ArtistMenuFlyoutHelper.PopulateSubMenu(goToArtistSubMenu, song, ViewModel.GoToArtistCommand, ViewModel.GetArtistsForSongAsync, _dispatcherQueue, _logger);
         }
         ListeningMenuFlyoutHelper.PopulateFavorites(menuFlyout, ViewModel);
     }

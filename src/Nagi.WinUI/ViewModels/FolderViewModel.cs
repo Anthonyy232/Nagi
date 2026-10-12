@@ -48,12 +48,13 @@ public partial class FolderViewModel : ObservableObject, IDisposable
     private readonly ILogger<FolderViewModel> _logger;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly INavigationService _navigationService;
+    private readonly IUIService _uiService;
     private readonly IDispatcherService _dispatcherService;
     private readonly PlayerViewModel _playerViewModel;
     private readonly Debouncer _debouncer = new(TimeSpan.FromSeconds(1));
 
     public FolderViewModel(ILibraryReader libraryReader, ILibraryWriter libraryWriter, ILibraryScanner libraryScanner, PlayerViewModel playerViewModel,
-        IMusicPlaybackService musicPlaybackService, INavigationService navigationService,
+        IMusicPlaybackService musicPlaybackService, INavigationService navigationService, IUIService uiService,
         IDispatcherService dispatcherService, ILogger<FolderViewModel> logger)
     {
         _libraryReader = libraryReader;
@@ -62,6 +63,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         _playerViewModel = playerViewModel;
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
+        _uiService = uiService;
         _dispatcherService = dispatcherService;
         _logger = logger;
 
@@ -199,7 +201,17 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         }
     }
 
+    /// <summary>
+    ///     Lets the user pick a folder, then adds it to the library and scans it.
+    /// </summary>
     [RelayCommand]
+    private async Task AddFolderAsync()
+    {
+        if (IsAnyOperationInProgress) return;
+        var folderPath = await _uiService.PickSingleFolderAsync();
+        if (folderPath is not null) await AddFolderAndScanAsync(folderPath);
+    }
+
     private async Task AddFolderAndScanAsync(string folderPath)
     {
         if (string.IsNullOrWhiteSpace(folderPath) || IsAnyOperationInProgress) return;
@@ -266,6 +278,13 @@ public partial class FolderViewModel : ObservableObject, IDisposable
 
         var folderToDelete = Folders.FirstOrDefault(f => f.Id == folderId);
         if (folderToDelete == null) return;
+
+        var confirmed = await _uiService.ShowConfirmationDialogAsync(
+            Nagi.WinUI.Resources.Strings.FolderPage_DeleteDialog_Title,
+            string.Format(Nagi.WinUI.Resources.Strings.FolderPage_DeleteDialog_Format, folderToDelete.Name),
+            Nagi.WinUI.Resources.Strings.FolderPage_DeleteDialog_PrimaryButton,
+            Nagi.WinUI.Resources.Strings.FolderPage_DeleteDialog_CloseButton);
+        if (!confirmed || IsAnyOperationInProgress) return;
 
         IsDeletingFolder = true;
         _playerViewModel.IsGlobalOperationInProgress = true;

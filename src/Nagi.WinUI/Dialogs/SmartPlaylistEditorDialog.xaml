@@ -7,14 +7,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:ImageEx"
     xmlns:helpers="using:Nagi.Core.Helpers"
-    xmlns:dialogs="using:Nagi.WinUI.Dialogs"
+    xmlns:viewmodels="using:Nagi.WinUI.ViewModels"
     xmlns:resources="using:Nagi.WinUI.Resources"
     mc:Ignorable="d"
     PrimaryButtonText="{x:Bind resources:Strings.SmartPlaylist_Dialog_PrimaryButton, Mode=OneTime}"
     CloseButtonText="{x:Bind resources:Strings.SmartPlaylist_Dialog_CloseButton, Mode=OneTime}"
     DefaultButton="Primary"
     PrimaryButtonClick="OnPrimaryButtonClick"
-    Loaded="OnDialogLoaded"
+    Title="{x:Bind ViewModel.Title, Mode=OneWay}"
     Style="{StaticResource DefaultContentDialogStyle}"
     FullSizeDesired="True">
 
@@ -38,6 +38,7 @@
                       Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                       CornerRadius="{StaticResource ArtworkCornerRadius}">
                     <FontIcon x:Name="CoverImagePlaceholder" Glyph="&#xE91B;" FontSize="40"
+                              Visibility="{x:Bind ViewModel.HasCoverImage, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
                               HorizontalAlignment="Center" VerticalAlignment="Center"
                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                     <controls:ImageEx Width="100" Height="100" x:Name="CoverImagePreview"
@@ -46,12 +47,12 @@
                                       DecodePixelWidth="100"
                                       DecodePixelType="Logical"
                                       CornerRadius="{StaticResource ArtworkCornerRadius}"
-                                      Visibility="Collapsed" />
+                                      Visibility="{x:Bind ViewModel.HasCoverImage, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 </Grid>
                 <Button x:Name="PickCoverImageButton"
                         Content="{x:Bind resources:Strings.SmartPlaylist_PickCoverButton_Content, Mode=OneTime}"
                         ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylist_PickCoverButton_ToolTip, Mode=OneTime}"
-                        Click="PickCoverImage_Click"
+                        Command="{x:Bind ViewModel.PickCoverImageCommand}"
                         HorizontalAlignment="Stretch" />
             </StackPanel>
 
@@ -60,39 +61,17 @@
                 <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_PlaylistNameLabel, Mode=OneTime}" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
                 <TextBox x:Name="PlaylistNameTextBox"
                          PlaceholderText="{x:Bind resources:Strings.SmartPlaylist_PlaylistNameTextBox_Placeholder, Mode=OneTime}"
-                         TextChanged="OnPlaylistNameChanged"
+                         Text="{x:Bind ViewModel.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          MaxLength="200" />
             </StackPanel>
 
             <!-- Sort Order Section -->
             <StackPanel Grid.Column="4" Spacing="4" MinWidth="200" VerticalAlignment="Top">
                 <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_SortOrderLabel, Mode=OneTime}" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
-                <ComboBox x:Name="SortByComboBox" SelectedIndex="0" HorizontalAlignment="Stretch"
-                          SelectionChanged="OnComboBoxSelectionChanged">
-                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.TitleAscLabel}" Tag="TitleAsc" />
-                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.TitleDescLabel}" Tag="TitleDesc" />
-                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.ArtistAscLabel}" Tag="ArtistAsc" />
-                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.ArtistDescLabel}" Tag="ArtistDesc" />
-                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.AlbumAscLabel}" Tag="AlbumAsc" />
-                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.AlbumDescLabel}" Tag="AlbumDesc" />
-                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.YearOldestLabel}" Tag="YearAsc" />
-                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.YearNewestLabel}" Tag="YearDesc" />
-                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.PlayCountAscLabel}" Tag="PlayCountAsc" />
-                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.PlayCountDescLabel}" Tag="PlayCountDesc" />
-                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.LastPlayedAscLabel}" Tag="LastPlayedAsc" />
-                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.LastPlayedDescLabel}" Tag="LastPlayedDesc" />
-                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.DateAddedAscLabel}" Tag="DateAddedAsc" />
-                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.DateAddedDescLabel}" Tag="DateAddedDesc" />
-                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.TrackNumberAscLabel}" Tag="TrackNumberAsc" />
-                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.TrackNumberDescLabel}" Tag="TrackNumberDesc" />
-                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.DurationAscLabel}" Tag="DurationAsc" />
-                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.DurationDescLabel}" Tag="DurationDesc" />
-                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.BpmAscLabel}" Tag="BpmAsc" />
-                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.BpmDescLabel}" Tag="BpmDesc" />
-                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.DateCreatedOldestLabel}" Tag="FileCreatedDateAsc" />
-                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.DateCreatedNewestLabel}" Tag="FileCreatedDateDesc" />
-                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.RandomLabel}" Tag="Random" />
-                </ComboBox>
+                <ComboBox x:Name="SortByComboBox" HorizontalAlignment="Stretch"
+                          ItemsSource="{x:Bind viewmodels:SmartPlaylistEditorViewModel.SortOptions}"
+                          DisplayMemberPath="DisplayName"
+                          SelectedItem="{x:Bind ViewModel.SelectedSortOption, Mode=TwoWay}" />
             </StackPanel>
         </Grid>
 
@@ -100,15 +79,15 @@
         <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,12">
             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                 <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_MatchLabel, Mode=OneTime}" VerticalAlignment="Center"/>
-                <ComboBox x:Name="MatchLogicComboBox" SelectedIndex="0" MinWidth="80"
-                          SelectionChanged="OnComboBoxSelectionChanged">
+                <ComboBox x:Name="MatchLogicComboBox" MinWidth="80"
+                          SelectedIndex="{x:Bind ViewModel.MatchLogicIndex, Mode=TwoWay}">
                     <ComboBoxItem Content="{x:Bind resources:Strings.SmartPlaylist_MatchLogic_All_Content, Mode=OneTime}" Tag="All" />
                     <ComboBoxItem Content="{x:Bind resources:Strings.SmartPlaylist_MatchLogic_Any_Content, Mode=OneTime}" Tag="Any" />
                 </ComboBox>
                 <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_MatchSuffixLabel, Mode=OneTime}" VerticalAlignment="Center"/>
             </StackPanel>
 
-            <Button Grid.Column="2" Click="AddRule_Click" ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylist_AddRuleButton_ToolTip, Mode=OneTime}" Style="{ThemeResource AccentButtonStyle}">
+            <Button Grid.Column="2" Command="{x:Bind ViewModel.AddRuleCommand}" ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylist_AddRuleButton_ToolTip, Mode=OneTime}" Style="{ThemeResource AccentButtonStyle}">
                 <StackPanel Orientation="Horizontal" Spacing="6">
                     <FontIcon Glyph="&#xE710;" FontSize="12" />
                     <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_AddRuleLabel, Mode=OneTime}" />
@@ -127,7 +106,7 @@
                 <ScrollViewer uihelpers:ScrollEdgeFade.IsEnabled="True" VerticalScrollBarVisibility="Auto" Padding="{StaticResource SurfaceContentPadding}">
                     <StackPanel Spacing="8">
                         <ListView x:Name="RulesListView"
-                                  ItemsSource="{x:Bind Rules, Mode=OneWay}"
+                                  ItemsSource="{x:Bind ViewModel.Rules}"
                                   SelectionMode="None"
                                   IsItemClickEnabled="False">
                             <ListView.ItemContainerStyle>
@@ -138,7 +117,7 @@
                                 </Style>
                             </ListView.ItemContainerStyle>
                             <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="dialogs:RuleViewModel">
+                                <DataTemplate x:DataType="viewmodels:RuleViewModel">
                                     <Border Style="{StaticResource RuleRowStyle}">
                                         <Grid ColumnSpacing="12">
                                             <Grid.ColumnDefinitions>
@@ -185,7 +164,7 @@
 
                         <!-- Empty State -->
                         <StackPanel x:Name="NoRulesPanel"
-                                   Visibility="Collapsed"
+                                   Visibility="{x:Bind ViewModel.HasNoRules, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
                                    Spacing="16"
@@ -198,7 +177,7 @@
                                        HorizontalAlignment="Center"/>
                             <Button Content="{x:Bind resources:Strings.SmartPlaylist_AddFirstRuleButton_Content, Mode=OneTime}"
                                     ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylist_AddFirstRuleButton_ToolTip, Mode=OneTime}"
-                                    Click="AddRule_Click"
+                                    Command="{x:Bind ViewModel.AddRuleCommand}"
                                     Style="{ThemeResource AccentButtonStyle}"
                                     HorizontalAlignment="Center" />
                         </StackPanel>
@@ -215,6 +194,7 @@
             <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Left">
                 <FontIcon Glyph="&#xE946;" FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
                 <TextBlock x:Name="MatchCountText"
+                           Text="{x:Bind ViewModel.MatchCountText, Mode=OneWay}"
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                            VerticalAlignment="Center"
                            Style="{ThemeResource CaptionTextBlockStyle}"/>

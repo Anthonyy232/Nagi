@@ -53,6 +53,25 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
     public Guid? GetSmartPlaylistId() => _currentSmartPlaylistId;
 
     /// <summary>
+    ///     Opens the smart playlist editor for this playlist and reloads it if the user saved changes.
+    /// </summary>
+    [RelayCommand]
+    private async Task EditRulesAsync()
+    {
+        if (_currentSmartPlaylistId is not { } smartPlaylistId) return;
+
+        var smartPlaylist = await _smartPlaylistService.GetSmartPlaylistByIdAsync(smartPlaylistId);
+        if (smartPlaylist is null)
+        {
+            _logger.LogWarning("Could not find smart playlist with ID {SmartPlaylistId}", smartPlaylistId);
+            return;
+        }
+
+        var edited = await _uiService.ShowSmartPlaylistEditorAsync(smartPlaylist);
+        if (edited is not null) await InitializeAsync(edited.Name, smartPlaylistId, edited.CoverImageUri);
+    }
+
+    /// <summary>
     ///     Gets the rule summary text for display in the UI.
     /// </summary>
     [ObservableProperty]

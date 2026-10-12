@@ -19,7 +19,7 @@ namespace Nagi.WinUI.ViewModels;
 /// <summary>
 ///     Adds selection, playback, and infinite scrolling to song lists.
 /// </summary>
-public abstract partial class SongListViewModelBase : PagedListViewModelBase<Song>
+public abstract partial class SongListViewModelBase : PagedListViewModelBase<Song>, INowPlayingSource
 {
     protected readonly ILibraryWriter _libraryWriter;
     protected readonly IMusicPlaybackService _playbackService;
@@ -34,6 +34,11 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     ///     "now playing" indicator. Null when nothing is playing.
     /// </summary>
     [ObservableProperty] public partial Guid? CurrentPlayingSongId { get; set; }
+
+    /// <summary>
+    ///     Whether playback is running, mirrored from <see cref="IMusicPlaybackService.IsPlaying" />.
+    /// </summary>
+    [ObservableProperty] public partial bool IsPlaying { get; set; }
 
     // Loaded on demand unless a view requires it for editing.
     protected readonly object _fullSongIdsLock = new();
@@ -83,7 +88,8 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         // when this view model is constructed (e.g. navigating to a list while music plays).
         CurrentPlayingSongId = _playbackService.CurrentTrack?.Id;
         _playbackService.TrackChanged += OnPlaybackTrackChanged;
-
+        IsPlaying = _playbackService.IsPlaying;
+        _playbackService.PlaybackStateChanged += OnPlaybackStateChanged;
     }
 
     private void OnPlaybackTrackChanged()
@@ -94,6 +100,17 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         {
             if (_isDisposed) return;
             CurrentPlayingSongId = newId;
+        });
+    }
+
+    private void OnPlaybackStateChanged()
+    {
+        if (_isDisposed) return;
+        var isPlaying = _playbackService.IsPlaying;
+        _dispatcherService.TryEnqueue(() =>
+        {
+            if (_isDisposed) return;
+            IsPlaying = isPlaying;
         });
     }
 
@@ -521,6 +538,12 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         }
     }
 
+    /// <summary>
+    ///     Loads a song's credited artists in credit order, for the "Go to artist" submenu.
+    /// </summary>
+    public async Task<IReadOnlyList<Artist>> GetArtistsForSongAsync(Song song) =>
+        (await _libraryReader.GetArtistsForSongAsync(song.Id).ConfigureAwait(false)).ToList();
+
     [RelayCommand]
     public async Task GoToArtistAsync(object? parameter)
     {
@@ -635,6 +658,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
         _playlistService.PlaylistsChanged -= OnPlaylistsChanged;
         _playbackService.TrackChanged -= OnPlaybackTrackChanged;
+        _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
         Songs.CollectionChanged -= OnSongsCollectionChanged;
 
         base.Dispose();

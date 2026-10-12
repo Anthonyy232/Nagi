@@ -79,6 +79,12 @@ public interface IUIService
     Task<IReadOnlyList<string>> PickOpenMultipleFilesAsync(IEnumerable<string> fileTypes);
 
     /// <summary>
+    ///     Shows the smart playlist editor for a new playlist, or for <paramref name="editing" /> when given.
+    /// </summary>
+    /// <returns>The created or updated playlist, or null if the user cancelled.</returns>
+    Task<Nagi.Core.Models.SmartPlaylist?> ShowSmartPlaylistEditorAsync(Nagi.Core.Models.SmartPlaylist? editing = null);
+
+    /// <summary>
     ///     Shows a dialog for FFmpeg setup with a recheck button that doesn't close the dialog.
     /// </summary>
     /// <param name="title">The dialog's title.</param>
