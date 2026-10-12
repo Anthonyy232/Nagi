@@ -154,20 +154,6 @@ public class MusicBrainzServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task SearchArtistAsync_WhenCancelled_ThrowsTaskCancelledException()
-    {
-        using var cts = new CancellationTokenSource();
-        cts.Cancel();
-
-        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = new StringContent("{\"artists\": [{\"id\": \"test-id\", \"score\": 100}]}")
-        });
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () => _service.SearchArtistAsync("Artist", cts.Token));
-    }
-
-    [Fact]
     public async Task SearchArtistAsync_WhenRequestIsCancelled_PropagatesCancellation()
     {
         using var cts = new CancellationTokenSource();

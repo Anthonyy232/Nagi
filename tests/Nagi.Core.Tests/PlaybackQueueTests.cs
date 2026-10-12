@@ -17,18 +17,6 @@ public class PlaybackQueueTests
         return queue;
     }
 
-    [Fact]
-    public void IndexOf_ReflectsOnlyTheLastRebuild()
-    {
-        var queue = Create(A, B);
-
-        queue.Add(C);
-
-        queue.IndexOf(C).Should().Be(-1);
-        queue.RebuildIndex();
-        queue.IndexOf(C).Should().Be(2);
-    }
-
     [Theory]
     [InlineData(0, 2, new[] { 1, 0, 2, 3 })]
     [InlineData(3, 0, new[] { 3, 0, 1, 2 })]

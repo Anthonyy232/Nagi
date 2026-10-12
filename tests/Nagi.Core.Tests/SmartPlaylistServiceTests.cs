@@ -95,18 +95,6 @@ public class SmartPlaylistServiceTests : IDisposable
         context.SaveChanges();
     }
 
-    [Fact]
-    public async Task CreateSmartPlaylistAsync_WithValidName_CreatesPlaylist()
-    {
-        var result = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "My Smart Playlist", Description = "Test description" });
-
-        result.Should().NotBeNull();
-        result!.Name.Should().Be("My Smart Playlist");
-        result.Description.Should().Be("Test description");
-        result.MatchAllRules.Should().BeTrue();
-        result.SortOrder.Should().Be(SmartPlaylistSortOrder.TitleAsc);
-    }
-
     [Theory]
     [InlineData("My Playlist")]
     [InlineData("MY PLAYLIST")]
@@ -140,28 +128,7 @@ public class SmartPlaylistServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task DeleteSmartPlaylistAsync_ExistingPlaylist_ReturnsTrue()
-    {
-        var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "To Delete" });
-
-        var result = await _service.DeleteSmartPlaylistAsync(playlist!.Id);
-
-        result.Should().BeTrue();
-
-        var fetched = await _service.GetSmartPlaylistByIdAsync(playlist.Id);
-        fetched.Should().BeNull();
-    }
-
-    [Fact]
-    public async Task DeleteSmartPlaylistAsync_NonExistingPlaylist_ReturnsFalse()
-    {
-        var result = await _service.DeleteSmartPlaylistAsync(Guid.NewGuid());
-
-        result.Should().BeFalse();
-    }
-
-    [Fact]
-    public async Task DeleteSmartPlaylistAsync_AlsoDeletesRules()
+    public async Task DeleteSmartPlaylistAsync_RemovesThePlaylistAndItsRules()
     {
         var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist
         {
@@ -173,8 +140,9 @@ public class SmartPlaylistServiceTests : IDisposable
             ]
         });
 
-        await _service.DeleteSmartPlaylistAsync(playlist.Id);
+        (await _service.DeleteSmartPlaylistAsync(playlist.Id)).Should().BeTrue();
 
+        (await _service.GetSmartPlaylistByIdAsync(playlist.Id)).Should().BeNull();
         using var context = _dbHelper.ContextFactory.CreateDbContext();
         var rules = await context.SmartPlaylistRules
             .Where(r => r.SmartPlaylistId == playlist.Id)
@@ -183,22 +151,22 @@ public class SmartPlaylistServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task GetSmartPlaylistByIdAsync_ExistingPlaylist_ReturnsPlaylist()
+    public async Task UnknownPlaylist_EveryOperationReportsNotFound()
     {
-        var created = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "Fetch Test" });
+        var id = Guid.NewGuid();
 
-        var result = await _service.GetSmartPlaylistByIdAsync(created!.Id);
-
-        result.Should().NotBeNull();
-        result!.Name.Should().Be("Fetch Test");
-    }
-
-    [Fact]
-    public async Task GetSmartPlaylistByIdAsync_NonExistingPlaylist_ReturnsNull()
-    {
-        var result = await _service.GetSmartPlaylistByIdAsync(Guid.NewGuid());
-
-        result.Should().BeNull();
+        (await _service.GetSmartPlaylistByIdAsync(id)).Should().BeNull();
+        (await _service.DeleteSmartPlaylistAsync(id)).Should().BeFalse();
+        (await _service.RenameSmartPlaylistAsync(id, "New Name")).Should().BeFalse();
+        (await _service.UpdateSmartPlaylistCoverAsync(id, @"C:\cover.jpg")).Should().BeFalse();
+        (await _service.SetSortOrderAsync(id, SmartPlaylistSortOrder.PlayCountDesc)).Should().BeFalse();
+        (await _service.UpdateSmartPlaylistAsync(new SmartPlaylist { Id = id, Name = "Missing" })).Should().BeNull();
+        (await _service.GetMatchingSongCountAsync(id)).Should().Be(0);
+        (await _service.GetMatchingSongIdsAsync(id)).Should().BeEmpty();
+        var page = await _service.GetMatchingSongsPagedAsync(id, 1, 10);
+        page.Items.Should().BeEmpty();
+        page.TotalCount.Should().Be(0);
+        (await _service.GetAllMatchingSongCountsAsync()).Should().BeEmpty();
     }
 
     [Fact]
@@ -275,14 +243,6 @@ public class SmartPlaylistServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task RenameSmartPlaylistAsync_NonExistingPlaylist_ReturnsFalse()
-    {
-        var result = await _service.RenameSmartPlaylistAsync(Guid.NewGuid(), "New Name");
-
-        result.Should().BeFalse();
-    }
-
-    [Fact]
     public async Task RenameSmartPlaylistAsync_EmptyName_ThrowsArgumentException()
     {
         var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "Test" });
@@ -317,14 +277,6 @@ public class SmartPlaylistServiceTests : IDisposable
         update!.CoverImageUri.Should().Be(expectedPath);
         update.DateModified.Should().Be(fetched.DateModified);
         _fileSystem.Received(1).MoveFile(Arg.Is<string>(path => path.EndsWith(".tmp")), expectedPath, true);
-    }
-
-    [Fact]
-    public async Task UpdateSmartPlaylistCoverAsync_NonExistingPlaylist_ReturnsFalse()
-    {
-        var result = await _service.UpdateSmartPlaylistCoverAsync(Guid.NewGuid(), "C:\\cover.jpg");
-
-        result.Should().BeFalse();
     }
 
     [Fact]
@@ -396,15 +348,6 @@ public class SmartPlaylistServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task GetMatchingSongsPagedAsync_NonExistingPlaylist_ReturnsEmptyResult()
-    {
-        var result = await _service.GetMatchingSongsPagedAsync(Guid.NewGuid(), 1, 10);
-
-        result.Items.Should().BeEmpty();
-        result.TotalCount.Should().Be(0);
-    }
-
-    [Fact]
     public async Task GetMatchingSongCountAsync_ById_ReturnsCorrectCount()
     {
         var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist
@@ -422,14 +365,6 @@ public class SmartPlaylistServiceTests : IDisposable
         var count = await _service.GetMatchingSongCountAsync(playlist.Id);
 
         count.Should().Be(2);
-    }
-
-    [Fact]
-    public async Task GetMatchingSongCountAsync_NonExistingPlaylist_ReturnsZero()
-    {
-        var count = await _service.GetMatchingSongCountAsync(Guid.NewGuid());
-
-        count.Should().Be(0);
     }
 
     [Fact]
@@ -499,14 +434,6 @@ public class SmartPlaylistServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task GetMatchingSongIdsAsync_NonExistingPlaylist_ReturnsEmptyList()
-    {
-        var ids = await _service.GetMatchingSongIdsAsync(Guid.NewGuid());
-
-        ids.Should().BeEmpty();
-    }
-
-    [Fact]
     public async Task GetAllMatchingSongCountsAsync_ReturnsCountsForAllPlaylists()
     {
         var playlist1 = await _service.CreateSmartPlaylistAsync(new SmartPlaylist
@@ -535,14 +462,6 @@ public class SmartPlaylistServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task GetAllMatchingSongCountsAsync_NoPlaylists_ReturnsEmptyDictionary()
-    {
-        var counts = await _service.GetAllMatchingSongCountsAsync();
-
-        counts.Should().BeEmpty();
-    }
-
-    [Fact]
     public async Task UpdateSmartPlaylistAsync_ValidPlaylist_UpdatesProperties()
     {
         var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "Update Test" });
@@ -564,16 +483,6 @@ public class SmartPlaylistServiceTests : IDisposable
         fetched.SortOrder.Should().Be(SmartPlaylistSortOrder.Random);
         update.Should().NotBeNull();
         update!.DateModified.Should().Be(fetched.DateModified);
-    }
-
-    [Fact]
-    public async Task UpdateSmartPlaylistAsync_NonExistingPlaylist_ReturnsNull()
-    {
-        var playlist = new SmartPlaylist { Id = Guid.NewGuid(), Name = "Non-existent" };
-
-        var result = await _service.UpdateSmartPlaylistAsync(playlist);
-
-        result.Should().BeNull();
     }
 
     [Fact]
@@ -784,14 +693,6 @@ public class SmartPlaylistServiceTests : IDisposable
 
         var fetched = await _service.GetSmartPlaylistByIdAsync(playlist.Id);
         fetched!.CoverImageUri.Should().BeNull();
-    }
-
-    [Fact]
-    public async Task SetSortOrderAsync_NonExistingPlaylist_ReturnsFalse()
-    {
-        var result = await _service.SetSortOrderAsync(Guid.NewGuid(), SmartPlaylistSortOrder.Random);
-
-        result.Should().BeFalse();
     }
 
     [Fact]

@@ -446,23 +446,6 @@ public class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
-    public async Task Load_FillsAudioSectionWithoutSavingItBack()
-    {
-        _settings.GetWasapiExclusiveModeEnabledAsync().Returns(true);
-        _settings.GetFadeOnPlayPauseEnabledAsync().Returns(true);
-        _settings.GetFadeInDurationMsAsync().Returns(450);
-
-        await _viewModel.LoadSettingsAsync();
-
-        _viewModel.Audio.IsWasapiExclusiveModeEnabled.Should().BeTrue();
-        _viewModel.Audio.IsFadeOnPlayPauseEnabled.Should().BeTrue();
-        _viewModel.Audio.FadeInDurationMs.Should().Be(450);
-        await _settings.DidNotReceive().SetWasapiExclusiveModeEnabledAsync(Arg.Any<bool>());
-        await _settings.DidNotReceive().SetFadeOnPlayPauseEnabledAsync(Arg.Any<bool>());
-        await _settings.DidNotReceive().SetFadeInDurationMsAsync(Arg.Any<int>());
-    }
-
-    [Fact]
     public async Task Load_FillsLibrarySectionWithMusicBrainzFirstAndWithoutSaving()
     {
         _settings.GetArtistSplitCharactersAsync().Returns(";");

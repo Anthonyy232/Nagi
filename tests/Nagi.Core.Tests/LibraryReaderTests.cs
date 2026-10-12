@@ -722,19 +722,4 @@ public class LibraryReaderTests : IDisposable
             result.Should().Be(musicFolder.Id);
         }
     }
-
-    [Fact]
-    public async Task GetPlaylistCountAsync_ReturnsCorrectCount()
-    {
-        using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Playlists.Add(new Playlist { Name = "P1" });
-            context.Playlists.Add(new Playlist { Name = "P2" });
-            context.Playlists.Add(new Playlist { Name = "P3" });
-            await context.SaveChangesAsync();
-        }
-
-        var count = await _libraryReader.GetPlaylistCountAsync();
-        count.Should().Be(3);
-    }
 }

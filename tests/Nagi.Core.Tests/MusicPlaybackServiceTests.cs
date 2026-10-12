@@ -720,21 +720,46 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         await _audioPlayer.Received(1).LoadAsync(_testSongs[1]);
     }
 
-    [Fact]
-    public async Task PlayAlbumAsync_StartsSessionWithAlbumContext()
+    [Theory]
+    [InlineData(PlaybackContextType.Album)]
+    [InlineData(PlaybackContextType.Artist)]
+    [InlineData(PlaybackContextType.Folder)]
+    [InlineData(PlaybackContextType.Genre)]
+    [InlineData(PlaybackContextType.Playlist)]
+    public async Task PlayingACollection_StartsTheListenSessionWithThatCollectionAsContext(PlaybackContextType type)
     {
         await _service.InitializeAsync();
-        var albumId = Guid.NewGuid();
-        _library.Reader.GetAllSongIdsByAlbumIdAsync(albumId, Arg.Any<SongSortOrder>())
-            .Returns(_testSongs.Select(s => s.Id).ToList());
-
+        var id = Guid.NewGuid();
+        var songIds = _testSongs.Select(s => s.Id).ToList();
         _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(500L);
 
-        await _service.PlayAlbumAsync(albumId);
+        switch (type)
+        {
+            case PlaybackContextType.Album:
+                _library.Reader.GetAllSongIdsByAlbumIdAsync(id, Arg.Any<SongSortOrder>()).Returns(songIds);
+                await _service.PlayAlbumAsync(id);
+                break;
+            case PlaybackContextType.Artist:
+                _library.Reader.GetAllSongIdsByArtistIdAsync(id, Arg.Any<SongSortOrder>()).Returns(songIds);
+                await _service.PlayArtistAsync(id);
+                break;
+            case PlaybackContextType.Folder:
+                _library.Reader.GetAllSongIdsByFolderIdAsync(id, Arg.Any<SongSortOrder>()).Returns(songIds);
+                await _service.PlayFolderAsync(id);
+                break;
+            case PlaybackContextType.Genre:
+                _library.Reader.GetAllSongIdsByGenreIdAsync(id, Arg.Any<SongSortOrder>()).Returns(songIds);
+                await _service.PlayGenreAsync(id);
+                break;
+            default:
+                _library.Reader.GetAllSongIdsByPlaylistIdAsync(id, Arg.Any<SongSortOrder>()).Returns(songIds);
+                await _service.PlayPlaylistAsync(id);
+                break;
+        }
 
         await _library.Writer.Received(1).StartListenSessionAsync(
-            _testSongs[0].Id,
-            Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Album && c.ContextId == albumId));
+            _testSongs[0].Id, Arg.Is<PlaybackContext>(c => c != null && c.Type == type && c.ContextId == id));
+        _service.CurrentListenHistoryId.Should().Be(500L);
     }
 
     [Fact]
@@ -909,76 +934,6 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         _service.CurrentTrack.Should().Be(_testSongs[1]);
 
         await _audioPlayer.Received(1).SeekAsync(TimeSpan.Zero);
-    }
-
-    [Fact]
-    public async Task PlayPlaylistAsync_StartsSessionWithPlaylistContext()
-    {
-        await _service.InitializeAsync();
-        var playlistId = Guid.NewGuid();
-        _library.Reader.GetAllSongIdsByPlaylistIdAsync(playlistId, Arg.Any<SongSortOrder>())
-            .Returns(_testSongs.Select(s => s.Id).ToList());
-
-        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1100L);
-
-        await _service.PlayPlaylistAsync(playlistId);
-
-        await _library.Writer.Received(1).StartListenSessionAsync(
-            _testSongs[0].Id,
-            Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Playlist && c.ContextId == playlistId));
-
-        _service.CurrentListenHistoryId.Should().Be(1100L);
-    }
-
-    [Fact]
-    public async Task PlayArtistAsync_StartsSessionWithArtistContext()
-    {
-        await _service.InitializeAsync();
-        var artistId = Guid.NewGuid();
-        _library.Reader.GetAllSongIdsByArtistIdAsync(artistId, Arg.Any<SongSortOrder>())
-            .Returns(_testSongs.Select(s => s.Id).ToList());
-        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1200L);
-
-        await _service.PlayArtistAsync(artistId);
-
-        await _library.Writer.Received(1).StartListenSessionAsync(
-            _testSongs[0].Id,
-            Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Artist && c.ContextId == artistId));
-        _service.CurrentListenHistoryId.Should().Be(1200L);
-    }
-
-    [Fact]
-    public async Task PlayFolderAsync_StartsSessionWithFolderContext()
-    {
-        await _service.InitializeAsync();
-        var folderId = Guid.NewGuid();
-        _library.Reader.GetAllSongIdsByFolderIdAsync(folderId, Arg.Any<SongSortOrder>())
-            .Returns(_testSongs.Select(s => s.Id).ToList());
-        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1300L);
-
-        await _service.PlayFolderAsync(folderId);
-
-        await _library.Writer.Received(1).StartListenSessionAsync(
-            _testSongs[0].Id,
-            Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Folder && c.ContextId == folderId));
-        _service.CurrentListenHistoryId.Should().Be(1300L);
-    }
-
-    [Fact]
-    public async Task PlayGenreAsync_StartsSessionWithGenreContext()
-    {
-        await _service.InitializeAsync();
-        var genreId = Guid.NewGuid();
-        _library.Reader.GetAllSongIdsByGenreIdAsync(genreId, Arg.Any<SongSortOrder>())
-            .Returns(_testSongs.Select(s => s.Id).ToList());
-        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1400L);
-
-        await _service.PlayGenreAsync(genreId);
-
-        await _library.Writer.Received(1).StartListenSessionAsync(
-            _testSongs[0].Id,
-            Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Genre && c.ContextId == genreId));
-        _service.CurrentListenHistoryId.Should().Be(1400L);
     }
 
     [Fact]

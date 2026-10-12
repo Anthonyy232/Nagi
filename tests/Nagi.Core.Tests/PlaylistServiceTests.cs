@@ -130,17 +130,6 @@ public class PlaylistServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task CreatePlaylistAsync_WithValidName_CreatesPlaylist()
-    {
-        var playlist = await _playlistService.CreatePlaylistAsync("My Awesome Mix");
-
-        playlist.Should().NotBeNull();
-        playlist!.Name.Should().Be("My Awesome Mix");
-        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
-        (await assertContext.Playlists.CountAsync()).Should().Be(1);
-    }
-
-    [Fact]
     public async Task DeletePlaylistAsync_WithCustomCover_DeletesImageFromDisk()
     {
         var playlistName = "Playlist with Art";

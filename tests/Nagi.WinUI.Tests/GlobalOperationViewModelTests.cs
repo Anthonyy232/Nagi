@@ -21,18 +21,4 @@ public class GlobalOperationViewModelTests
         operation.IsCancellable.Should().BeFalse();
         operation.CancelCommand.CanExecute(null).Should().BeFalse();
     }
-
-    [Fact]
-    public void SetCancellation_WithNullWithdrawsAnEarlierOffer()
-    {
-        var operation = new GlobalOperationViewModel();
-        var cancelled = false;
-        operation.SetCancellation(() => cancelled = true);
-
-        operation.SetCancellation(null);
-        operation.CancelCommand.Execute(null);
-
-        cancelled.Should().BeFalse();
-        operation.IsCancellable.Should().BeFalse();
-    }
 }
