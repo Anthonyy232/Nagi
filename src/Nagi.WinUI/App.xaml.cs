@@ -5,18 +5,13 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
-using Windows.Storage;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Nagi.Core.Data;
-using Nagi.Core.Helpers;
-using Nagi.Core.Models;
 using Nagi.Core.Services;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Helpers;
@@ -467,32 +462,7 @@ public partial class App : Application
         try
         {
             Log.Information("User requested a full application data reset from the crash dialog.");
-
-            var pathConfig = new PathConfiguration();
-
-            if (Services != null)
-            {
-                try
-                {
-                    var settingsService = Services.GetRequiredService<ISettingsService>();
-                    var libraryWriter = Services.GetRequiredService<ILibraryWriter>();
-
-                    // Use robust service methods first
-                    await settingsService.ResetToDefaultsAsync();
-                    await libraryWriter.ClearAllLibraryDataAsync();
-                }
-                catch (Exception serviceEx)
-                {
-                    Log.Warning(serviceEx, "Service-based reset failed. Falling back to manual file deletion.");
-                    PerformManualFileReset(pathConfig);
-                }
-            }
-            else
-            {
-                // Fallback: Manually delete files if DI hasn't initialized
-                Log.Warning("Services not available during reset. Performing manual file deletion.");
-                PerformManualFileReset(pathConfig);
-            }
+            await AppDataReset.ResetAsync(Services);
 
             Log.Information("Reset complete. Restarting application.");
             await Log.CloseAndFlushAsync();
@@ -509,75 +479,6 @@ public partial class App : Application
         finally
         {
             await ExitAsync(0);
-        }
-    }
-
-    private static void PerformManualFileReset(IPathConfiguration pathConfig)
-    {
-        try
-        {
-            // Packaged settings live in LocalSettings; legacy state files are cleared below.
-            try
-            {
-                ApplicationData.Current.LocalSettings.Values.Clear();
-            }
-            catch (Exception ex)
-            {
-                Log.Warning(ex, "Failed to clear LocalSettings.");
-            }
-
-            SafelyDeleteFile(pathConfig.SettingsFilePath);
-            SafelyDeleteFile(pathConfig.PlaybackStateFilePath);
-
-            DeleteDatabaseFiles(pathConfig.DatabasePath);
-
-            SafelyDeleteDir(pathConfig.AlbumArtCachePath);
-            SafelyDeleteDir(pathConfig.ArtistImageCachePath);
-            SafelyDeleteDir(pathConfig.PlaylistImageCachePath);
-            SafelyDeleteDir(pathConfig.LrcCachePath);
-            SafelyDeleteDir(pathConfig.RomanizationPacksPath);
-
-            Log.Information("Manual file reset completed.");
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Critical failure during manual file reset.");
-        }
-    }
-
-    internal static void DeleteDatabaseFiles(string databasePath)
-    {
-        SqliteConnection.ClearAllPools();
-        // Keep the journal with its database if an active connection still holds the file open.
-        if (!SafelyDeleteFile(databasePath)) return;
-        SafelyDeleteFile(databasePath + "-wal");
-        SafelyDeleteFile(databasePath + "-shm");
-        SafelyDeleteFile(databasePath + "-journal");
-    }
-
-    private static bool SafelyDeleteFile(string path)
-    {
-        try
-        {
-            File.Delete(path);
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Log.Warning(ex, "Failed to delete file: {Path}", path);
-            return false;
-        }
-    }
-
-    private static void SafelyDeleteDir(string path)
-    {
-        try
-        {
-            if (Directory.Exists(path)) Directory.Delete(path, true);
-        }
-        catch (Exception ex)
-        {
-            Log.Warning(ex, "Failed to delete directory: {Path}", path);
         }
     }
 

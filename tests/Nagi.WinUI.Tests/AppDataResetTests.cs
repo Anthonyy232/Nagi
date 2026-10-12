@@ -1,10 +1,11 @@
 using FluentAssertions;
 using Microsoft.Data.Sqlite;
+using Nagi.WinUI.Services.Implementations;
 using Xunit;
 
 namespace Nagi.WinUI.Tests;
 
-public class AppResetTests
+public class AppDataResetTests
 {
     [Fact]
     public void DeleteDatabaseFiles_ReleasesPooledDatabaseAndRemovesJournals()
@@ -23,7 +24,7 @@ public class AppResetTests
             }
             File.WriteAllText(path + "-journal", "old rollback journal");
 
-            App.DeleteDatabaseFiles(path);
+            AppDataReset.DeleteDatabaseFiles(path);
 
             Directory.GetFiles(directory.FullName).Should().BeEmpty();
         }
@@ -45,7 +46,7 @@ public class AppResetTests
             foreach (var suffix in new[] { "-wal", "-shm", "-journal" })
                 File.WriteAllText(path + suffix, suffix);
             using (File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None))
-                App.DeleteDatabaseFiles(path);
+                AppDataReset.DeleteDatabaseFiles(path);
 
             File.ReadAllText(path).Should().Be("locked database");
             foreach (var suffix in new[] { "-wal", "-shm", "-journal" })
