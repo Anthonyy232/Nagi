@@ -83,10 +83,10 @@ public sealed class WindowService : IWindowService, IDisposable
     }
 
     /// <inheritdoc />
-    public event Action<AppWindowClosingEventArgs>? Closing;
+    public event Action<WindowClosingEventArgs>? Closing;
 
     /// <inheritdoc />
-    public event Action<AppWindowChangedEventArgs>? VisibilityChanged;
+    public event Action? VisibilityChanged;
 
     /// <inheritdoc />
     public event Action? UIStateChanged;
@@ -105,6 +105,9 @@ public sealed class WindowService : IWindowService, IDisposable
 
     /// <inheritdoc />
     public bool IsExiting { get; set; }
+
+    /// <inheritdoc />
+    public bool IsShowingOnboarding => App.RootWindow?.Content is Pages.OnboardingPage;
 
     /// <inheritdoc />
     public async Task InitializeAsync()
@@ -200,14 +203,16 @@ public sealed class WindowService : IWindowService, IDisposable
 
     private void OnAppWindowClosing(AppWindow sender, AppWindowClosingEventArgs args)
     {
-        Closing?.Invoke(args);
+        var closing = new WindowClosingEventArgs();
+        Closing?.Invoke(closing);
+        if (closing.Cancel) args.Cancel = true;
     }
 
     private void OnAppWindowChanged(AppWindow sender, AppWindowChangedEventArgs args)
     {
         var didPresenterChange = args.DidPresenterChange;
 
-        if (args.DidVisibilityChange) VisibilityChanged?.Invoke(args);
+        if (args.DidVisibilityChange) VisibilityChanged?.Invoke();
 
         if (didPresenterChange && _appWindow?.Presenter is OverlappedPresenter presenter)
             switch (presenter.State)

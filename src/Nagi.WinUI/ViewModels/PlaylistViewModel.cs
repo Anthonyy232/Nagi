@@ -11,7 +11,6 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.WinUI.Navigation;
-using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.Core.Helpers;
 using Nagi.WinUI.Helpers;
@@ -186,7 +185,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
                     SmartPlaylistId = playlist.Id,
                     CoverImageUri = playlist.CoverImageUri
                 };
-                _navigationService.Navigate(typeof(SmartPlaylistSongViewPage), navParam);
+                _navigationService.NavigateTo(navParam);
             }
             else
             {
@@ -196,7 +195,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
                     PlaylistId = playlist.Id,
                     CoverImageUri = playlist.CoverImageUri
                 };
-                _navigationService.Navigate(typeof(PlaylistSongViewPage), navParam);
+                _navigationService.NavigateTo(navParam);
             }
         }
         finally

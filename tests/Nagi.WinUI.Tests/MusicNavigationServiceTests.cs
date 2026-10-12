@@ -3,7 +3,6 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Navigation;
-using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Services.Implementations;
 using NSubstitute;
@@ -31,7 +30,7 @@ public class MusicNavigationServiceTests
             : song);
 
         var expectedId = namedRequest ? guest.Id : primary.Id;
-        navigation.Received(1).Navigate(typeof(ArtistViewPage), new ArtistViewNavigationParameter(expectedId));
+        navigation.Received(1).NavigateTo(new ArtistViewNavigationParameter(expectedId));
         await library.DidNotReceive().GetSongByIdAsync(Arg.Any<Guid>());
     }
 
@@ -48,7 +47,7 @@ public class MusicNavigationServiceTests
 
         await service.NavigateToArtistAsync(new ArtistNavigationRequest { Song = song, ArtistName = requested.Name });
 
-        navigation.Received(1).Navigate(typeof(ArtistViewPage), new ArtistViewNavigationParameter(requested.Id));
+        navigation.Received(1).NavigateTo(new ArtistViewNavigationParameter(requested.Id));
         await library.DidNotReceive().GetArtistsForSongAsync(Arg.Any<Guid>());
     }
 
@@ -62,7 +61,7 @@ public class MusicNavigationServiceTests
 
         await service.NavigateToAlbumAsync(song);
 
-        navigation.Received(1).Navigate(typeof(AlbumViewPage), new AlbumViewNavigationParameter(song.AlbumId.Value));
+        navigation.Received(1).NavigateTo(new AlbumViewNavigationParameter(song.AlbumId.Value));
         await library.DidNotReceive().GetSongByIdAsync(Arg.Any<Guid>());
     }
 }

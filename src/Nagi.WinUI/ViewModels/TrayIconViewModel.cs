@@ -2,9 +2,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
-using Microsoft.UI.Windowing;
 using Nagi.Core.Services.Abstractions;
-using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.ViewModels;
@@ -78,17 +76,17 @@ public partial class TrayIconViewModel : ObservableObject
         IsTrayIconVisible = _isHideToTrayEnabled && !_windowService.IsVisible;
     }
 
-    private void OnAppWindowVisibilityChanged(AppWindowChangedEventArgs args)
+    private void OnAppWindowVisibilityChanged()
     {
         _dispatcherService.TryEnqueue(UpdateTrayIconVisibility);
     }
 
-    private void OnAppWindowClosing(AppWindowClosingEventArgs args)
+    private void OnAppWindowClosing(WindowClosingEventArgs args)
     {
         // If the application is exiting intentionally, do not intercept the close.
         if (_windowService.IsExiting) return;
 
-        if (App.RootWindow?.Content is OnboardingPage)
+        if (_windowService.IsShowingOnboarding)
         {
             _windowService.IsExiting = true;
             _logger.LogDebug("OnboardingPage is active. Allowing application to exit");

@@ -108,7 +108,7 @@ public class ThemeService : IThemeService
             _logger.LogDebug("Applying manual accent color: {Color}", color);
         }
 
-        await SetAppColorsAsync(color ?? App.DefaultAccentColor, theme);
+        await SetAppColorsAsync(color ?? SettingsDefaults.BrandAccentColor, theme);
     }
 
     private async Task SetAppColorsAsync(
@@ -147,7 +147,7 @@ public class ThemeService : IThemeService
 
     private async Task<Color> GetConfiguredAccentColorAsync()
     {
-        return await _settingsService.Value.GetAccentColorAsync() ?? App.DefaultAccentColor;
+        return await _settingsService.Value.GetAccentColorAsync() ?? SettingsDefaults.BrandAccentColor;
     }
 
     private static bool TryParseSwatch(string? swatchId, out Color color)

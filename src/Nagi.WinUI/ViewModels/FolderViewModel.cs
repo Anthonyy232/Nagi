@@ -9,7 +9,6 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.WinUI.Navigation;
-using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Helpers;
 
@@ -135,7 +134,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
             Title = folder.Name,
             FolderId = folder.Id
         };
-        _navigationService.Navigate(typeof(FolderSongViewPage), navParam);
+        _navigationService.NavigateTo(navParam);
     }
 
     [RelayCommand]

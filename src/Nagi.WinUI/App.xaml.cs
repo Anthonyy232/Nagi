@@ -78,11 +78,6 @@ public partial class App : Application
     /// </summary>
     public static DispatcherQueue? MainDispatcherQueue => CurrentApp?._window?.DispatcherQueue;
 
-    /// <summary>
-    ///     Gets Nagi's default brand accent color, derived from the app logo.
-    /// </summary>
-    public static Color DefaultAccentColor { get; } = Color.FromArgb(255, 0x21, 0x94, 0x4B);
-
     protected override async void OnLaunched(LaunchActivatedEventArgs args)
     {
         var configuration = new ConfigurationBuilder()

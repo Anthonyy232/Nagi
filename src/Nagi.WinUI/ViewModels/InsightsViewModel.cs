@@ -11,12 +11,8 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Navigation;
-using Nagi.WinUI.Pages;
 using Nagi.WinUI.Resources;
 using Nagi.WinUI.Services.Abstractions;
-using Microsoft.UI;
-using Microsoft.UI.Xaml.Media;
-using Windows.UI;
 
 namespace Nagi.WinUI.ViewModels;
 
@@ -29,7 +25,7 @@ public sealed class SourceSegment
     public string Label { get; init; } = string.Empty;
     public double Percentage { get; init; }
     public string PercentageText { get; init; } = string.Empty;
-    public Brush SegmentBrush { get; init; } = new SolidColorBrush(Colors.Gray);
+    public PlaybackContextType ContextType { get; init; }
 }
 
 /// <summary>
@@ -404,7 +400,7 @@ public partial class InsightsViewModel : ObservableObject
                             Label = FormatContextType(s.Type),
                             Percentage = Math.Round(s.Count * 100.0 / totalCount, 1),
                             PercentageText = Math.Round(s.Count * 100.0 / totalCount, 1).ToString("F1", CultureInfo.CurrentCulture) + "%",
-                            SegmentBrush = GetBrushForContextType(s.Type)
+                            ContextType = s.Type
                         })
                     : Enumerable.Empty<SourceSegment>());
 
@@ -651,15 +647,15 @@ public partial class InsightsViewModel : ObservableObject
 
     [RelayCommand]
     private void GoToArtist(TopArtistItem item) =>
-        _navigationService.Navigate(typeof(ArtistViewPage), new ArtistViewNavigationParameter(item.ArtistId));
+        _navigationService.NavigateTo(new ArtistViewNavigationParameter(item.ArtistId));
 
     [RelayCommand]
     private void GoToAlbum(TopAlbumItem item) =>
-        _navigationService.Navigate(typeof(AlbumViewPage), new AlbumViewNavigationParameter(item.AlbumId));
+        _navigationService.NavigateTo(new AlbumViewNavigationParameter(item.AlbumId));
 
     [RelayCommand]
     private void GoToGenre(TopGenreItem item) =>
-        _navigationService.Navigate(typeof(GenreViewPage), new GenreViewNavigationParameter
+        _navigationService.NavigateTo(new GenreViewNavigationParameter
         {
             GenreId = item.GenreId,
             GenreName = item.Name
@@ -835,26 +831,6 @@ public partial class InsightsViewModel : ObservableObject
         // Use 12-hour format with AM/PM for readability.
         var dt = new DateTime(2000, 1, 1, hour, 0, 0);
         return dt.ToString("h tt", CultureInfo.CurrentCulture);
-    }
-
-    private static readonly Dictionary<PlaybackContextType, Brush> _contextTypeBrushes = new()
-    {
-        [PlaybackContextType.Album] = new SolidColorBrush(ColorHelper.FromArgb(255, 239, 68, 68)),
-        [PlaybackContextType.Artist] = new SolidColorBrush(ColorHelper.FromArgb(255, 249, 115, 22)),
-        [PlaybackContextType.Playlist] = new SolidColorBrush(ColorHelper.FromArgb(255, 16, 185, 129)),
-        [PlaybackContextType.SmartPlaylist] = new SolidColorBrush(ColorHelper.FromArgb(255, 6, 182, 212)),
-        [PlaybackContextType.Folder] = new SolidColorBrush(ColorHelper.FromArgb(255, 139, 92, 246)),
-        [PlaybackContextType.Genre] = new SolidColorBrush(ColorHelper.FromArgb(255, 236, 72, 153)),
-        [PlaybackContextType.Search] = new SolidColorBrush(ColorHelper.FromArgb(255, 99, 102, 241)),
-        [PlaybackContextType.Library] = new SolidColorBrush(ColorHelper.FromArgb(255, 245, 158, 11)),
-        [PlaybackContextType.Transient] = new SolidColorBrush(ColorHelper.FromArgb(255, 107, 114, 128)),
-    };
-
-    private static readonly Brush _defaultContextBrush = new SolidColorBrush(ColorHelper.FromArgb(255, 156, 163, 175));
-
-    private static Brush GetBrushForContextType(PlaybackContextType type)
-    {
-        return _contextTypeBrushes.TryGetValue(type, out var brush) ? brush : _defaultContextBrush;
     }
 
     private static string FormatContextType(PlaybackContextType type) => type switch

@@ -2,7 +2,6 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.UI.Windowing;
 
 namespace Nagi.WinUI.Services.Abstractions;
 
@@ -34,15 +33,20 @@ public interface IWindowService
     bool IsExiting { get; set; }
 
     /// <summary>
-    ///     Occurs when the main application window is about to close.
+    ///     Whether the main window is showing first-run onboarding rather than the main shell.
     /// </summary>
-    event Action<AppWindowClosingEventArgs>? Closing;
+    bool IsShowingOnboarding { get; }
 
     /// <summary>
-    ///     Occurs when a property of the main application window has changed.
+    ///     Occurs when the main application window is about to close.
+    /// </summary>
+    event Action<WindowClosingEventArgs>? Closing;
+
+    /// <summary>
+    ///     Occurs when the main window is shown or hidden.
     ///     This is a lower-level event; prefer UIStateChanged for coordinating application logic.
     /// </summary>
-    event Action<AppWindowChangedEventArgs>? VisibilityChanged;
+    event Action? VisibilityChanged;
 
     /// <summary>
     ///     Occurs when the overall UI state of the application changes, such as when the main window is hidden,
@@ -82,4 +86,12 @@ public interface IWindowService
     /// </summary>
     /// <param name="isEnabled">True to enable efficiency mode; false to disable it.</param>
     void SetEfficiencyMode(bool isEnabled);
+}
+
+/// <summary>
+///     Lets a <see cref="IWindowService.Closing" /> handler keep the main window open.
+/// </summary>
+public sealed class WindowClosingEventArgs
+{
+    public bool Cancel { get; set; }
 }

@@ -20,4 +20,10 @@ public interface INavigationService
     /// <param name="pageType">The type of the destination page.</param>
     /// <param name="parameter">Optional parameter to pass to the destination page.</param>
     void Navigate(Type pageType, object? parameter = null);
+
+    /// <summary>
+    ///     Navigates to the detail page that accepts <paramref name="parameter" />, one of the
+    ///     <c>*NavigationParameter</c> records in <c>Nagi.WinUI.Navigation</c>.
+    /// </summary>
+    void NavigateTo(object parameter);
 }

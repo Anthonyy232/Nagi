@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
+using Nagi.WinUI.Navigation;
+using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.Services.Implementations;
@@ -11,6 +14,16 @@ namespace Nagi.WinUI.Services.Implementations;
 /// </summary>
 public class NavigationService : INavigationService, IDisposable
 {
+    private static readonly Dictionary<Type, Type> DetailPages = new()
+    {
+        [typeof(AlbumViewNavigationParameter)] = typeof(AlbumViewPage),
+        [typeof(ArtistViewNavigationParameter)] = typeof(ArtistViewPage),
+        [typeof(FolderSongViewNavigationParameter)] = typeof(FolderSongViewPage),
+        [typeof(GenreViewNavigationParameter)] = typeof(GenreViewPage),
+        [typeof(PlaylistSongViewNavigationParameter)] = typeof(PlaylistSongViewPage),
+        [typeof(SmartPlaylistSongViewNavigationParameter)] = typeof(SmartPlaylistSongViewPage),
+    };
+
     private readonly ILogger<NavigationService> _logger;
 
     private Frame? _frame;
@@ -71,6 +84,15 @@ public class NavigationService : INavigationService, IDisposable
         }
 
         _frame.Navigate(pageType, parameter);
+    }
+
+    /// <inheritdoc />
+    public void NavigateTo(object parameter)
+    {
+        ArgumentNullException.ThrowIfNull(parameter);
+        if (!DetailPages.TryGetValue(parameter.GetType(), out var pageType))
+            throw new ArgumentException($"No page accepts {parameter.GetType().Name}.", nameof(parameter));
+        Navigate(pageType, parameter);
     }
 
     /// <summary>

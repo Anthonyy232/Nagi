@@ -376,7 +376,7 @@ public partial class SettingsViewModel : SettingsSectionViewModel
             SelectedPlayerBackgroundMaterial = playerMaterialTask.Result;
             PlayerTintIntensity = playerTintTask.Result;
 
-            AccentColor = accentColorTask.Result ?? App.DefaultAccentColor;
+            AccentColor = accentColorTask.Result ?? SettingsDefaults.BrandAccentColor;
 
             ArtistSplitCharacters = artistSplitTask.Result;
             GenreSplitCharacters = genreSplitTask.Result;
@@ -957,7 +957,7 @@ public partial class SettingsViewModel : SettingsSectionViewModel
     private async Task ResetAccentColorAsync()
     {
         _accentColorSaveDebouncer.Cancel();
-        ApplyWithoutSaving(() => AccentColor = App.DefaultAccentColor);
+        ApplyWithoutSaving(() => AccentColor = SettingsDefaults.BrandAccentColor);
 
         await _settingsService.SetAccentColorAsync(null);
         if (!IsDynamicThemingEnabled)

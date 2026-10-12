@@ -6,7 +6,6 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Navigation;
-using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.ViewModels;
 
@@ -94,11 +93,11 @@ public class MusicNavigationService(
             albumId = (await libraryReader.GetAlbumByIdAsync(requestedId))?.Id;
 
         if (albumId is { } id)
-            navigationService.Navigate(typeof(AlbumViewPage), new AlbumViewNavigationParameter(id));
+            navigationService.NavigateTo(new AlbumViewNavigationParameter(id));
         else
             logger.LogWarning("Could not resolve album for navigation.");
     }
 
     private void NavigateToArtist(Guid artistId) =>
-        navigationService.Navigate(typeof(ArtistViewPage), new ArtistViewNavigationParameter(artistId));
+        navigationService.NavigateTo(new ArtistViewNavigationParameter(artistId));
 }
