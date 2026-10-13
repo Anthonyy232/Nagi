@@ -5,19 +5,17 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
-using Nagi.Core.Data;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services;
-using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Services.Implementations;
@@ -118,7 +116,7 @@ public partial class App : Application
             HandleInitialActivation(args.UWPLaunchActivatedEventArgs);
 
             var restoreSession = _fileActivationQueue.IsEmpty;
-            await InitializeCoreServicesAsync(Services!, restoreSession);
+            await AppServices.StartAsync(Services!, restoreSession, _logger!);
             if (_isExiting) return;
             _coreServicesInitialized = true;
             await Services!.GetRequiredService<IApplicationLifecycle>().NavigateToMainContentAsync();
@@ -221,51 +219,6 @@ public partial class App : Application
         }
     }
 
-    private async Task InitializeCoreServicesAsync(IServiceProvider services, bool restoreSession)
-    {
-        _logger?.LogDebug("Starting core services initialization.");
-
-        // Pre-warm the audio player on a background thread.
-        // This runs concurrently with database/window init so LibVLC is ready when user presses play.
-        _ = Task.Run(async () =>
-        {
-            try
-            {
-                await services.GetRequiredService<IAudioPlayer>().EnsureInitializedAsync().ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                _logger?.LogWarning(ex, "Audio player warm-up failed. Will initialize on first playback.");
-            }
-        });
-
-        var dbTask = InitializeDatabaseAsync(services);
-        var windowTask = services.GetRequiredService<IWindowService>().InitializeAsync();
-
-        // Start non-EF services while database migration is still running.
-        await windowTask;
-
-        var presenceTask = services.GetRequiredService<IPresenceManager>().InitializeAsync();
-        var trayTask = services.GetRequiredService<TrayIconViewModel>().InitializeAsync();
-        var appInfoTask = services.GetRequiredService<IAppInfoService>().InitializeAsync();
-
-        // playback and settings both need EF ready. LoadSettingsAsync also reads
-        // CurrentEqualizerSettings from the playback service, so settings starts after playback.
-        // Offline scrobbling queries ListenHistory, including columns added by recent migrations,
-        // so start it only after database migration/backfill has completed.
-        await dbTask;
-        var offlineScrobbleService = services.GetRequiredService<IOfflineScrobbleService>();
-        offlineScrobbleService.Start();
-        var scrobbleTask = offlineScrobbleService.ProcessQueueAsync();
-        var playbackTask = services.GetRequiredService<IMusicPlaybackService>().InitializeAsync(restoreSession);
-        await playbackTask;
-        var settingsTask = services.GetRequiredService<SettingsViewModel>().LoadSettingsAsync();
-
-        await Task.WhenAll(presenceTask, trayTask, scrobbleTask, appInfoTask, settingsTask);
-
-        _logger?.LogInformation("Core services initialized successfully.");
-    }
-
     private static IServiceProvider ConfigureServices(MainWindow mainWindow, IConfiguration configuration)
     {
         var services = new ServiceCollection();
@@ -281,16 +234,6 @@ public partial class App : Application
 
         return services.BuildServiceProvider();
     }
-
-    private static Task InitializeDatabaseAsync(IServiceProvider services) =>
-        Task.Run(async () =>
-        {
-            var dbContextFactory = services.GetRequiredService<IDbContextFactory<MusicDbContext>>();
-            await using var dbContext = await dbContextFactory.CreateDbContextAsync().ConfigureAwait(false);
-            await dbContext.Database.MigrateAsync().ConfigureAwait(false);
-            await dbContext.BackfillSortKeysAsync().ConfigureAwait(false);
-
-        });
 
     private void InitializeWindowAndServices(IConfiguration configuration)
     {
@@ -317,25 +260,6 @@ public partial class App : Application
         }
     }
 
-    private async Task SaveApplicationStateAsync(IServiceProvider services)
-    {
-        var settingsService = services.GetRequiredService<ISettingsService>();
-        var musicPlaybackService = services.GetRequiredService<IMusicPlaybackService>();
-
-        try
-        {
-            if (await settingsService.GetRestorePlaybackStateEnabledAsync())
-                await musicPlaybackService.SavePlaybackStateAsync();
-            else
-                await settingsService.ClearPlaybackStateAsync();
-
-        }
-        catch (Exception ex)
-        {
-            _logger?.LogError(ex, "Unexpected error saving application state.");
-        }
-    }
-
     private bool _isExiting;
 
     private async void OnWindowClosed(object sender, WindowEventArgs args)
@@ -358,18 +282,7 @@ public partial class App : Application
 
             if (Services is not null)
             {
-                _logger?.LogInformation("Window is closing. Shutting down services.");
-
-                Services.GetRequiredService<PlayerViewModel>().Cleanup();
-                Services.GetRequiredService<TrayIconViewModel>().Cleanup();
-
-                var presenceTask = Services.GetRequiredService<IPresenceManager>().ShutdownAsync();
-                var saveStateTask = SaveApplicationStateAsync(Services);
-
-                await Task.WhenAll(presenceTask, saveStateTask);
-
-                // Finalize listen history before disposing the database service provider.
-                await Services.GetRequiredService<IMusicPlaybackService>().DisposeAsync();
+                await AppServices.StopAsync(Services, _logger ?? NullLogger<App>.Instance);
             }
         }
         catch (Exception ex)
