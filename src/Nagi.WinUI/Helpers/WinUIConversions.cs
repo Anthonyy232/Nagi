@@ -1,5 +1,5 @@
 using Microsoft.UI.Xaml;
-using Nagi.WinUI.Models;
+using Nagi.Presentation.Models;
 using Windows.UI;
 
 namespace Nagi.WinUI.Helpers;

@@ -6,9 +6,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Presentation.Models;
+using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.Models;
-using Nagi.WinUI.Services.Abstractions;
 using Color = Windows.UI.Color;
 
 namespace Nagi.WinUI.Services.Implementations;

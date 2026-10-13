@@ -1,10 +1,10 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
-using Nagi.WinUI.Helpers;
-using Nagi.WinUI.Navigation;
-using Nagi.WinUI.Services.Abstractions;
-using Nagi.WinUI.Services.Implementations;
+using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Navigation;
+using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services.Implementations;
 using NSubstitute;
 using Xunit;
 

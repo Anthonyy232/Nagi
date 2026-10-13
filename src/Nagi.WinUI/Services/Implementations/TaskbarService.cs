@@ -8,7 +8,9 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
-using Nagi.WinUI.Helpers;
+using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Resources;
+using Nagi.Presentation.Services.Abstractions;
 using Nagi.WinUI.Services.Abstractions;
 using Windows.Foundation;
 using Windows.UI;
@@ -373,7 +375,7 @@ public sealed class TaskbarService : ITaskbarService
                     iId = PreviousButtonId,
                     dwMask = THB.ICON | THB.TOOLTIP | THB.FLAGS,
                     hIcon = _prevIcon,
-                    szTip = Resources.Strings.Taskbar_Tooltip_Previous,
+                    szTip = Strings.Taskbar_Tooltip_Previous,
                     dwFlags = CanGoPrevious() ? THBF.ENABLED : THBF.DISABLED
                 },
                 new THUMBBUTTON
@@ -381,7 +383,7 @@ public sealed class TaskbarService : ITaskbarService
                     iId = PlayPauseButtonId,
                     dwMask = THB.ICON | THB.TOOLTIP | THB.FLAGS,
                     hIcon = _playbackService.IsPlaying ? _pauseIcon : _playIcon,
-                    szTip = _playbackService.IsPlaying ? Resources.Strings.Taskbar_Tooltip_Pause : Resources.Strings.Taskbar_Tooltip_Play,
+                    szTip = _playbackService.IsPlaying ? Strings.Taskbar_Tooltip_Pause : Strings.Taskbar_Tooltip_Play,
                     dwFlags = THBF.ENABLED
                 },
                 new THUMBBUTTON
@@ -389,7 +391,7 @@ public sealed class TaskbarService : ITaskbarService
                     iId = NextButtonId,
                     dwMask = THB.ICON | THB.TOOLTIP | THB.FLAGS,
                     hIcon = _nextIcon,
-                    szTip = Resources.Strings.Taskbar_Tooltip_Next,
+                    szTip = Strings.Taskbar_Tooltip_Next,
                     dwFlags = CanGoNext() ? THBF.ENABLED : THBF.DISABLED
                 }
             ];
@@ -412,12 +414,12 @@ public sealed class TaskbarService : ITaskbarService
             if (_playbackService.IsPlaying)
             {
                 _buttons[1].hIcon = _pauseIcon;
-                _buttons[1].szTip = Resources.Strings.Taskbar_Tooltip_Pause;
+                _buttons[1].szTip = Strings.Taskbar_Tooltip_Pause;
             }
             else
             {
                 _buttons[1].hIcon = _playIcon;
-                _buttons[1].szTip = Resources.Strings.Taskbar_Tooltip_Play;
+                _buttons[1].szTip = Strings.Taskbar_Tooltip_Play;
             }
             _buttons[1].dwFlags = THBF.ENABLED;
             _buttons[2].hIcon = _nextIcon;

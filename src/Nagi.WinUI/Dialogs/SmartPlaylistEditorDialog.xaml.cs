@@ -1,8 +1,9 @@
 using System.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Nagi.Presentation.Helpers;
+using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.ViewModels;
 
 namespace Nagi.WinUI.Dialogs;
 
@@ -57,7 +58,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
 
             args.Cancel = true;
             if (result == SmartPlaylistSaveResult.NameMissing)
-                PlaylistNameTextBox.PlaceholderText = Nagi.WinUI.Resources.Strings.SmartPlaylist_Error_NameEmptyFeedback;
+                PlaylistNameTextBox.PlaceholderText = Nagi.Presentation.Resources.Strings.SmartPlaylist_Error_NameEmptyFeedback;
             if (result is SmartPlaylistSaveResult.NameMissing or SmartPlaylistSaveResult.DuplicateName)
                 PlaylistNameTextBox.Focus(FocusState.Programmatic);
         }

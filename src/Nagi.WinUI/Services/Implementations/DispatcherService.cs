@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using CommunityToolkit.WinUI;
 using Microsoft.UI.Dispatching;
-using Nagi.WinUI.Services.Abstractions;
+using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.WinUI.Services.Implementations;
 

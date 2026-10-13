@@ -4,9 +4,9 @@ using Microsoft.Extensions.Time.Testing;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
-using Nagi.WinUI.Models;
-using Nagi.WinUI.Services.Abstractions;
-using Nagi.WinUI.ViewModels;
+using Nagi.Presentation.Models;
+using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.ViewModels;
 using NSubstitute;
 using Xunit;
 
@@ -36,7 +36,7 @@ public class SettingsViewModelTests : IDisposable
     public SettingsViewModelTests()
     {
         _settings.GetPlayerButtonSettingsAsync().Returns(new List<PlayerButtonSetting>());
-        _settings.GetNavigationItemsAsync().Returns(new List<Nagi.WinUI.Navigation.NavigationItemSetting>());
+        _settings.GetNavigationItemsAsync().Returns(new List<Nagi.Presentation.Navigation.NavigationItemSetting>());
         _settings.GetServiceProvidersAsync(Arg.Any<ServiceCategory>()).Returns(new List<ServiceProviderSetting>());
         _playback.AvailablePresets.Returns(Array.Empty<EqualizerPreset>());
         _dispatcher.HasThreadAccess.Returns(true);
@@ -510,7 +510,7 @@ public class SettingsViewModelTests : IDisposable
         await _viewModel.Appearance.ResetPlayerDesignSettingsCommand.ExecuteAsync(null);
         await AdvanceDebouncesAsync();
 
-        await _settings.Received(1).SetPlayerTintIntensityAsync(Nagi.WinUI.Services.SettingsDefaults.DefaultPlayerTintIntensity);
+        await _settings.Received(1).SetPlayerTintIntensityAsync(Nagi.Presentation.Services.SettingsDefaults.DefaultPlayerTintIntensity);
         await _settings.DidNotReceive().SetPlayerTintIntensityAsync(.75);
     }
 

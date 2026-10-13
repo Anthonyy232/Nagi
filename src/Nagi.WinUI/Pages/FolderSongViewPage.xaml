@@ -5,11 +5,12 @@
     xmlns:controls="using:ImageEx"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:local="using:Nagi.WinUI.Models"
-    xmlns:resources="using:Nagi.WinUI.Resources"
-    xmlns:vm="using:Nagi.WinUI.ViewModels"
+    xmlns:local="using:Nagi.Presentation.Models"
+    xmlns:resources="using:Nagi.Presentation.Resources"
+    xmlns:vm="using:Nagi.Presentation.ViewModels"
     xmlns:helpers="using:Nagi.Core.Helpers"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
+    xmlns:presentationHelpers="using:Nagi.Presentation.Helpers"
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
     x:Name="pageRoot"
     Background="Transparent"
@@ -105,7 +106,7 @@
                                     Stretch="UniformToFill"
                                     DecodePixelWidth="48"
                                     DecodePixelType="Logical"
-                                    Source="{x:Bind uihelpers:ImageUriHelper.GetUriWithCacheBuster(Song.AlbumArtUriFromTrack, Song.FileModifiedDate), Mode=OneTime}" />
+                                    Source="{x:Bind presentationHelpers:ImageUriHelper.GetUriWithCacheBuster(Song.AlbumArtUriFromTrack, Song.FileModifiedDate), Mode=OneTime}" />
                             </Border>
                         </Button>
                         <uicontrols:NowPlayingIndicator

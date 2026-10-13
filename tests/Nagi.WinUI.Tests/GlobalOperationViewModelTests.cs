@@ -1,5 +1,5 @@
 using FluentAssertions;
-using Nagi.WinUI.ViewModels;
+using Nagi.Presentation.ViewModels;
 using Xunit;
 
 namespace Nagi.WinUI.Tests;

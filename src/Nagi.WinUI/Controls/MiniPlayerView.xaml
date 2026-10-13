@@ -8,9 +8,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:media="using:CommunityToolkit.WinUI.Media"
     xmlns:models="using:Nagi.Core.Models"
-    xmlns:viewmodels="using:Nagi.WinUI.ViewModels"
+    xmlns:viewmodels="using:Nagi.Presentation.ViewModels"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
-    xmlns:resources="using:Nagi.WinUI.Resources"
+    xmlns:resources="using:Nagi.Presentation.Resources"
     d:DataContext="{d:DesignInstance Type=viewmodels:PlayerViewModel, IsDesignTimeCreatable=True}"
     mc:Ignorable="d">
 

@@ -3,7 +3,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
-using Nagi.WinUI.Models;
+using Nagi.Presentation.Models;
 using NSubstitute;
 using Xunit;
 

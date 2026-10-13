@@ -10,11 +10,13 @@ using Microsoft.Windows.Storage.Pickers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.Core.Models;
+using Nagi.Presentation.Resources;
+using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Dialogs;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Services.Abstractions;
-using Nagi.WinUI.ViewModels;
 using WinRT.Interop;
 
 namespace Nagi.WinUI.Services.Implementations;
@@ -47,8 +49,8 @@ public partial class UIService : IUIService
         {
             Title = title,
             Content = content,
-            PrimaryButtonText = primaryButtonText ?? Resources.Strings.Generic_OK,
-            CloseButtonText = closeButtonText ?? Resources.Strings.Generic_Cancel,
+            PrimaryButtonText = primaryButtonText ?? Strings.Generic_OK,
+            CloseButtonText = closeButtonText ?? Strings.Generic_Cancel,
             XamlRoot = xamlRoot,
             DefaultButton = defaultToCancel ? ContentDialogButton.Close : ContentDialogButton.Primary
         };
@@ -87,7 +89,7 @@ public partial class UIService : IUIService
         {
             Title = title,
             Content = message,
-            PrimaryButtonText = Resources.Strings.Generic_OK,
+            PrimaryButtonText = Strings.Generic_OK,
             XamlRoot = xamlRoot
         };
 
@@ -110,8 +112,8 @@ public partial class UIService : IUIService
         {
             Title = title,
             Content = dialogContent,
-            PrimaryButtonText = Resources.Strings.CrashReport_Button_Reset,
-            CloseButtonText = Resources.Strings.Generic_Close,
+            PrimaryButtonText = Strings.CrashReport_Button_Reset,
+            CloseButtonText = Strings.Generic_Close,
             DefaultButton = ContentDialogButton.Close,
             XamlRoot = xamlRoot
         };
@@ -185,7 +187,7 @@ public partial class UIService : IUIService
 
         var statusBlock = new TextBlock
         {
-            Text = Resources.Strings.FFmpeg_Status_NotDetected,
+            Text = Strings.FFmpeg_Status_NotDetected,
             TextWrapping = TextWrapping.Wrap,
             Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Orange)
         };
@@ -195,8 +197,8 @@ public partial class UIService : IUIService
         {
             Title = title,
             Content = contentPanel,
-            PrimaryButtonText = Resources.Strings.Generic_Recheck,
-            CloseButtonText = Resources.Strings.Generic_Cancel,
+            PrimaryButtonText = Strings.Generic_Recheck,
+            CloseButtonText = Strings.Generic_Cancel,
             XamlRoot = xamlRoot,
             DefaultButton = ContentDialogButton.Primary
         };
@@ -205,7 +207,7 @@ public partial class UIService : IUIService
         {
             var deferral = args.GetDeferral();
 
-            statusBlock.Text = Resources.Strings.FFmpeg_Status_Checking;
+            statusBlock.Text = Strings.FFmpeg_Status_Checking;
             statusBlock.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Gray);
 
             try
@@ -214,20 +216,20 @@ public partial class UIService : IUIService
 
                 if (isInstalled)
                 {
-                    statusBlock.Text = Resources.Strings.FFmpeg_Status_Detected;
+                    statusBlock.Text = Strings.FFmpeg_Status_Detected;
                     statusBlock.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Green);
                 }
                 else
                 {
                     args.Cancel = true;
-                    statusBlock.Text = Resources.Strings.FFmpeg_Status_StillNotDetected;
+                    statusBlock.Text = Strings.FFmpeg_Status_StillNotDetected;
                     statusBlock.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Orange);
                 }
             }
             catch
             {
                 args.Cancel = true;
-                statusBlock.Text = Resources.Strings.FFmpeg_Status_Error;
+                statusBlock.Text = Strings.FFmpeg_Status_Error;
                 statusBlock.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Red);
             }
             finally

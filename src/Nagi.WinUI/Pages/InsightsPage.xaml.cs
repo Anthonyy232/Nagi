@@ -6,7 +6,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Services.Abstractions;
-using Nagi.WinUI.ViewModels;
+using Nagi.Presentation.ViewModels;
 
 namespace Nagi.WinUI.Pages;
 

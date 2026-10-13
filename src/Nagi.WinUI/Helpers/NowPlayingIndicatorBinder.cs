@@ -5,8 +5,8 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
 using Nagi.Core.Models;
+using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Controls;
-using Nagi.WinUI.ViewModels;
 
 namespace Nagi.WinUI.Helpers;
 

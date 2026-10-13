@@ -6,9 +6,9 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Nagi.Core.Constants;
+using Nagi.Presentation.Models;
+using Nagi.Presentation.Resources;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.Models;
-using Nagi.WinUI.Resources;
 
 namespace Nagi.WinUI.Services.Implementations;
 

@@ -1,6 +1,6 @@
 using System.Collections.Specialized;
 using FluentAssertions;
-using Nagi.WinUI.Helpers;
+using Nagi.Presentation.Helpers;
 using Xunit;
 
 namespace Nagi.WinUI.Tests;

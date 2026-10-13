@@ -88,13 +88,7 @@
     <ItemGroup>
         <!-- Project References -->
         <ProjectReference Include="..\Nagi.Core\Nagi.Core.csproj" />
-
-        <EmbeddedResource Update="Resources\Strings.resx">
-            <StronglyTypedLanguage>C#</StronglyTypedLanguage>
-            <StronglyTypedNamespace>Nagi.WinUI.Resources</StronglyTypedNamespace>
-            <StronglyTypedClassName>Strings</StronglyTypedClassName>
-            <PublicClass>true</PublicClass>
-        </EmbeddedResource>
+        <ProjectReference Include="..\Nagi.Presentation\Nagi.Presentation.csproj" />
 
         <!-- Core SDKs and Build Tools -->
         <!-- Reference only the runtime and WinUI components, excluding unused AI/ML components. -->
@@ -111,8 +105,6 @@
         <PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
 
         <!-- Application Services (DI, Configuration) -->
-        <PackageReference Include="MessageFormat" />
-        <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
         <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
 

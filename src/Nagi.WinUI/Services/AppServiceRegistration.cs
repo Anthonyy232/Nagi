@@ -4,12 +4,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services.Implementations;
+using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Popups;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Services.Implementations;
-using Nagi.WinUI.ViewModels;
 
 namespace Nagi.WinUI.Services;
 

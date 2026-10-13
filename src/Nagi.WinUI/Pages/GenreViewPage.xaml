@@ -7,8 +7,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Nagi.Core.Models"
     xmlns:helpers="using:Nagi.Core.Helpers"
-    xmlns:resources="using:Nagi.WinUI.Resources"
+    xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
+    xmlns:presentationHelpers="using:Nagi.Presentation.Helpers"
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
     x:Name="pageRoot"
     Background="Transparent"
@@ -230,7 +231,7 @@
                                     Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <controls:ImageEx Width="42" Height="42" IsCacheEnabled="True" Stretch="UniformToFill"
                                                   DecodePixelWidth="48" DecodePixelType="Logical"
-                                                  Source="{x:Bind uihelpers:ImageUriHelper.GetUriWithCacheBuster(AlbumArtUriFromTrack, FileModifiedDate), Mode=OneTime}" />
+                                                  Source="{x:Bind presentationHelpers:ImageUriHelper.GetUriWithCacheBuster(AlbumArtUriFromTrack, FileModifiedDate), Mode=OneTime}" />
                             </Border>
                         </Button>
                         <uicontrols:NowPlayingIndicator

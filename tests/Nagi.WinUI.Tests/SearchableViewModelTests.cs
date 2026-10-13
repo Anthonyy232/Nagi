@@ -1,7 +1,7 @@
 using System.Threading.Channels;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
-using Nagi.WinUI.ViewModels;
+using Nagi.Presentation.ViewModels;
 using Xunit;
 
 namespace Nagi.WinUI.Tests;

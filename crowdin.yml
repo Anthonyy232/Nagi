@@ -15,9 +15,9 @@ files:
         zh-CN: zh-Hans
         zh-TW: zh-Hant
 
-  # Nagi.WinUI C# Resources (.resx)
-  - source: /src/Nagi.WinUI/Resources/Strings.resx
-    translation: /src/Nagi.WinUI/Resources/Strings.%locale%.resx
+  # Nagi.Presentation C# Resources (.resx)
+  - source: /src/Nagi.Presentation/Resources/Strings.resx
+    translation: /src/Nagi.Presentation/Resources/Strings.%locale%.resx
     languages_mapping:
       locale:
         ar: ar

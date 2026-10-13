@@ -7,9 +7,9 @@
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     xmlns:localControls="using:Nagi.WinUI.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:resources="using:Nagi.WinUI.Resources"
+    xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:imageEx="using:ImageEx"
-    xmlns:uiModels="using:Nagi.WinUI.Models"
+    xmlns:uiModels="using:Nagi.Presentation.Models"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     mc:Ignorable="d"
     KeyboardAcceleratorPlacementMode="Hidden">

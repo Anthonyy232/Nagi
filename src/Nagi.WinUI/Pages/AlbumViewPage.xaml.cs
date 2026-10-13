@@ -9,10 +9,11 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Models;
-using Nagi.WinUI.Navigation;
-using Nagi.WinUI.ViewModels;
+using Nagi.Presentation.Navigation;
+using Nagi.Presentation.ViewModels;
 using System.Threading.Tasks;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Presentation.Services.Abstractions;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Services.Abstractions;
 
@@ -154,7 +155,7 @@ public sealed partial class AlbumViewPage : Page
 
         _isSearchExpanded = true;
         _logger.LogDebug("Search UI expanded.");
-        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.AlbumViewPage_SearchButton_Close_ToolTip);
+        ToolTipService.SetToolTip(SearchToggleButton, Nagi.Presentation.Resources.Strings.AlbumViewPage_SearchButton_Close_ToolTip);
         VisualStateManager.GoToState(this, "SearchExpanded", false);
         SearchTextBox.Focus(FocusState.Programmatic);
     }
@@ -166,7 +167,7 @@ public sealed partial class AlbumViewPage : Page
         _isSearchExpanded = false;
 
         _logger.LogDebug("Search UI collapsed and search term cleared.");
-        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.AlbumViewPage_SearchButton_Search_ToolTip);
+        ToolTipService.SetToolTip(SearchToggleButton, Nagi.Presentation.Resources.Strings.AlbumViewPage_SearchButton_Search_ToolTip);
         VisualStateManager.GoToState(this, "SearchCollapsed", false);
         SearchToggleButton.Focus(FocusState.Programmatic);
         ViewModel.SearchTerm = string.Empty;
@@ -259,7 +260,7 @@ public sealed partial class AlbumViewPage : Page
         {
             _logger.LogDebug("Populating 'Add to playlist' submenu.");
             PlaylistMenuFlyoutHelper.Populate(addToPlaylistSubMenu, ViewModel.AvailablePlaylists,
-                ViewModel.AddSelectedSongsToPlaylistCommand, Nagi.WinUI.Resources.Strings.AlbumViewPage_PlaylistMenu_NoPlaylists);
+                ViewModel.AddSelectedSongsToPlaylistCommand, Nagi.Presentation.Resources.Strings.AlbumViewPage_PlaylistMenu_NoPlaylists);
         }
 
         if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()

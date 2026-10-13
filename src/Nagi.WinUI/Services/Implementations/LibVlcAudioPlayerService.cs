@@ -8,6 +8,8 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using System.Threading;
+using Nagi.Presentation.Resources;
+using Nagi.Presentation.Services.Abstractions;
 using Nagi.WinUI.Services.Abstractions;
 using WinMediaPlayback = Windows.Media.Playback;
 
@@ -302,7 +304,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         }
         catch (Exception ex)
         {
-            var errorMessage = string.Format(Resources.Strings.Player_Error_LoadFailed, song.Title);
+            var errorMessage = string.Format(Strings.Player_Error_LoadFailed, song.Title);
             _logger.LogError(ex, "Failed to load song '{SongTitle}' from path: {FilePath}", song.Title, song.FilePath);
             _dispatcherService.TryEnqueue(() => ErrorOccurred?.Invoke(errorMessage));
             _currentSong = null;

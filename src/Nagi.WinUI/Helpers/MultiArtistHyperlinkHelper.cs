@@ -5,7 +5,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using Nagi.Core.Models;
-using Nagi.WinUI.Navigation;
+using Nagi.Presentation.Navigation;
 
 namespace Nagi.WinUI.Helpers;
 

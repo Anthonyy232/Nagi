@@ -2,7 +2,7 @@
     x:Class="Nagi.WinUI.Controls.PaginationControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:resources="using:Nagi.WinUI.Resources"
+    xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:converters="using:Nagi.WinUI.Converters"
     xmlns:controls="using:Nagi.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"

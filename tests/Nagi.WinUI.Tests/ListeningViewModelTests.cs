@@ -3,8 +3,8 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
-using Nagi.WinUI.Models;
-using Nagi.WinUI.ViewModels;
+using Nagi.Presentation.Models;
+using Nagi.Presentation.ViewModels;
 using NSubstitute;
 using Xunit;
 
@@ -191,7 +191,7 @@ public class RecentHistoryViewModelTests
 
         viewModel.Entries.OfType<RecentListenEntry>().Should().HaveCount(102);
         viewModel.Entries.OfType<RecentListenDateHeader>().Select(header => header.Title)
-            .Should().Equal(Nagi.WinUI.Resources.Strings.Listening_Today, Nagi.WinUI.Resources.Strings.Listening_Yesterday);
+            .Should().Equal(Nagi.Presentation.Resources.Strings.Listening_Today, Nagi.Presentation.Resources.Strings.Listening_Yesterday);
         entries.HasMoreItems.Should().BeFalse();
         await library.Received(1).GetRecentListensAsync("", 100, 100, Arg.Any<CancellationToken>());
     }

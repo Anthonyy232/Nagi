@@ -5,8 +5,8 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Time.Testing;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
-using Nagi.WinUI.Services.Abstractions;
-using Nagi.WinUI.ViewModels;
+using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.ViewModels;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Xunit;
@@ -108,7 +108,7 @@ public class SmartPlaylistEditorViewModelTests : IDisposable
         var result = await _viewModel.SaveAsync();
 
         result.Should().Be(SmartPlaylistSaveResult.DuplicateName);
-        _viewModel.MatchCountText.Should().Be(Nagi.WinUI.Resources.Strings.SmartPlaylist_Error_DuplicateName);
+        _viewModel.MatchCountText.Should().Be(Nagi.Presentation.Resources.Strings.SmartPlaylist_Error_DuplicateName);
     }
 
     [Fact]
@@ -117,7 +117,7 @@ public class SmartPlaylistEditorViewModelTests : IDisposable
         _service.GetMatchingSongCountAsync(Arg.Any<SmartPlaylist>(), token: Arg.Any<CancellationToken>()).Returns(7);
         _viewModel.Initialize(new SmartPlaylist { Name = "Mix" });
         _time.Advance(TimeSpan.FromMilliseconds(300));
-        await WaitForAsync(() => _viewModel.MatchCountText != Nagi.WinUI.Resources.Strings.SmartPlaylist_Status_Calculating);
+        await WaitForAsync(() => _viewModel.MatchCountText != Nagi.Presentation.Resources.Strings.SmartPlaylist_Status_Calculating);
         _service.ClearReceivedCalls();
 
         _viewModel.AddRuleCommand.Execute(null);

@@ -1,9 +1,9 @@
 using System.Globalization;
 using FluentAssertions;
-using Nagi.WinUI.Helpers;
+using Nagi.Presentation.Helpers;
 using Xunit;
 using CoreStrings = Nagi.Core.Resources.Strings;
-using UiStrings = Nagi.WinUI.Resources.Strings;
+using UiStrings = Nagi.Presentation.Resources.Strings;
 
 namespace Nagi.WinUI.Tests;
 

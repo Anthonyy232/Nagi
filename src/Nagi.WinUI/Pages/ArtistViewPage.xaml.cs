@@ -10,11 +10,11 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
-using Nagi.Core.Models;
-using Nagi.WinUI.Navigation;
-using Nagi.WinUI.ViewModels;
-using Microsoft.Windows.Storage.Pickers;
 using Nagi.Core.Constants;
+using Nagi.Core.Models;
+using Nagi.Presentation.Navigation;
+using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Services.Abstractions;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -148,7 +148,7 @@ public sealed partial class ArtistViewPage : Page
 
         _isSearchExpanded = true;
         _logger.LogDebug("Search UI expanded.");
-        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.ArtistViewPage_SearchButton_Close_ToolTip);
+        ToolTipService.SetToolTip(SearchToggleButton, Nagi.Presentation.Resources.Strings.ArtistViewPage_SearchButton_Close_ToolTip);
         VisualStateManager.GoToState(this, "SearchExpanded", false);
         SearchTextBox.Focus(FocusState.Programmatic);
     }
@@ -160,7 +160,7 @@ public sealed partial class ArtistViewPage : Page
         _isSearchExpanded = false;
 
         _logger.LogDebug("Search UI collapsed and search term cleared.");
-        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.ArtistViewPage_SearchButton_Search_ToolTip);
+        ToolTipService.SetToolTip(SearchToggleButton, Nagi.Presentation.Resources.Strings.ArtistViewPage_SearchButton_Search_ToolTip);
         VisualStateManager.GoToState(this, "SearchCollapsed", false);
         SearchToggleButton.Focus(FocusState.Programmatic);
         ViewModel.SearchTerm = string.Empty;
@@ -255,7 +255,7 @@ public sealed partial class ArtistViewPage : Page
         {
             _logger.LogDebug("Populating 'Add to playlist' submenu.");
             PlaylistMenuFlyoutHelper.Populate(addToPlaylistSubMenu, ViewModel.AvailablePlaylists,
-                ViewModel.AddSelectedSongsToPlaylistCommand, Nagi.WinUI.Resources.Strings.ArtistViewPage_PlaylistMenu_NoPlaylists);
+                ViewModel.AddSelectedSongsToPlaylistCommand, Nagi.Presentation.Resources.Strings.ArtistViewPage_PlaylistMenu_NoPlaylists);
         }
         ListeningMenuFlyoutHelper.PopulateFavorites(menuFlyout, ViewModel);
     }

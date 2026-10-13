@@ -4,7 +4,7 @@
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:resources="using:Nagi.WinUI.Resources"
+    xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:data="using:Nagi.Core.Services.Data"
     xmlns:helpers="using:Nagi.Core.Helpers"

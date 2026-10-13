@@ -1,4 +1,4 @@
-using Nagi.WinUI.Services.Abstractions;
+using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.WinUI.Tests;
 

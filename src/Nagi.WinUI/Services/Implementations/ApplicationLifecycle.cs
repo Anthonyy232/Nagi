@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Presentation.Services.Abstractions;
 using Nagi.WinUI.Pages;
-using Nagi.WinUI.Services.Abstractions;
 using Microsoft.Windows.AppLifecycle;
 
 namespace Nagi.WinUI.Services.Implementations;

@@ -2,9 +2,9 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.ViewModels;
 
 namespace Nagi.WinUI.Pages;
 

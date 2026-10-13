@@ -8,8 +8,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
-using Nagi.WinUI.ViewModels;
 using Nagi.Core.Services.Data;
+using Nagi.Presentation.ViewModels;
 
 namespace Nagi.WinUI.Pages;
 
@@ -67,8 +67,8 @@ public sealed partial class GenrePage : Page
         _logger.LogDebug("GenrePage loaded. Setting initial visual state.");
         _isSearchExpanded = !string.IsNullOrWhiteSpace(ViewModel.SearchTerm);
         ToolTipService.SetToolTip(SearchToggleButton, _isSearchExpanded
-            ? Nagi.WinUI.Resources.Strings.GenrePage_SearchButton_Close_ToolTip
-            : Nagi.WinUI.Resources.Strings.GenrePage_SearchButton_Search_ToolTip);
+            ? Nagi.Presentation.Resources.Strings.GenrePage_SearchButton_Close_ToolTip
+            : Nagi.Presentation.Resources.Strings.GenrePage_SearchButton_Search_ToolTip);
         VisualStateManager.GoToState(this, _isSearchExpanded ? "SearchExpanded" : "SearchCollapsed", false);
         Loaded -= OnPageLoaded;
     }
@@ -97,7 +97,7 @@ public sealed partial class GenrePage : Page
 
         _isSearchExpanded = true;
         _logger.LogDebug("Search UI expanded.");
-        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.GenrePage_SearchButton_Close_ToolTip);
+        ToolTipService.SetToolTip(SearchToggleButton, Nagi.Presentation.Resources.Strings.GenrePage_SearchButton_Close_ToolTip);
         VisualStateManager.GoToState(this, "SearchExpanded", false);
         SearchTextBox.Focus(FocusState.Programmatic);
     }
@@ -108,7 +108,7 @@ public sealed partial class GenrePage : Page
 
         _isSearchExpanded = false;
         _logger.LogDebug("Search UI collapsed and search term cleared.");
-        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.GenrePage_SearchButton_Search_ToolTip);
+        ToolTipService.SetToolTip(SearchToggleButton, Nagi.Presentation.Resources.Strings.GenrePage_SearchButton_Search_ToolTip);
         VisualStateManager.GoToState(this, "SearchCollapsed", false);
         SearchToggleButton.Focus(FocusState.Programmatic);
         ViewModel.SearchTerm = string.Empty;

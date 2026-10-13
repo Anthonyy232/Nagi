@@ -1,7 +1,7 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
-using Nagi.WinUI.ViewModels;
+using Nagi.Presentation.ViewModels;
 
 namespace Nagi.WinUI.Controls;
 

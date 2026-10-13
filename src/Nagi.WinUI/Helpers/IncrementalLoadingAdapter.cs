@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Data;
-using Nagi.WinUI.Models;
+using Nagi.Presentation.Models;
 using Windows.Foundation;
 
 namespace Nagi.WinUI.Helpers;

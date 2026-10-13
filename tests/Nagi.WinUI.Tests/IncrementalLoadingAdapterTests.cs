@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using FluentAssertions;
+using Nagi.Presentation.Models;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.Models;
 using Xunit;
 
 namespace Nagi.WinUI.Tests;

@@ -8,8 +8,8 @@ using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.ViewModels;
 
 namespace Nagi.WinUI.Controls;
 

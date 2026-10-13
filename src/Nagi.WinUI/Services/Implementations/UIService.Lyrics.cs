@@ -2,9 +2,9 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Nagi.Presentation.Models;
+using Nagi.Presentation.Resources;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.Models;
-using Nagi.WinUI.Resources;
 
 namespace Nagi.WinUI.Services.Implementations;
 

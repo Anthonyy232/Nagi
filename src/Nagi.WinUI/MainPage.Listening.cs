@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Nagi.WinUI.Resources;
-using Nagi.WinUI.ViewModels;
+using Nagi.Presentation.Models;
+using Nagi.Presentation.Resources;
+using Nagi.Presentation.ViewModels;
 
 namespace Nagi.WinUI;
 
@@ -14,7 +15,7 @@ public sealed partial class MainPage
     private Visibility GetQueueDetailVisibility(bool history, bool enabled) => !history && enabled ? Visibility.Visible : Visibility.Collapsed;
     private async void HistoryEntry_DoubleTapped(object sender, DoubleTappedRoutedEventArgs args)
     {
-        if (sender is FrameworkElement { Tag: Models.RecentListenEntry entry })
+        if (sender is FrameworkElement { Tag: RecentListenEntry entry })
         {
             args.Handled = true;
             await ViewModel.PlayHistoryNowCommand.ExecuteAsync(entry);

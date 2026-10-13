@@ -1,8 +1,8 @@
 using System.Globalization;
 using FluentAssertions;
+using Nagi.Presentation.Models;
+using Nagi.Presentation.Resources;
 using Nagi.WinUI.Converters;
-using Nagi.WinUI.Models;
-using Nagi.WinUI.Resources;
 using Xunit;
 
 namespace Nagi.WinUI.Tests;

@@ -7,15 +7,16 @@ using Windows.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
+using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Models;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.Models;
 
 namespace Nagi.WinUI.Converters;
 
 public sealed class PageSizeLabelConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language) =>
-        value is 0 ? Nagi.WinUI.Resources.Strings.PaginationControl_All : value?.ToString() ?? string.Empty;
+        value is 0 ? Nagi.Presentation.Resources.Strings.PaginationControl_All : value?.ToString() ?? string.Empty;
 
     public object ConvertBack(object value, Type targetType, object parameter, string language) =>
         DependencyProperty.UnsetValue;
@@ -64,9 +65,9 @@ public class AppThemeToFriendlyStringConverter : IValueConverter
     {
         return value switch
         {
-            AppTheme.Light => Nagi.WinUI.Resources.Strings.Theme_Light,
-            AppTheme.Dark => Nagi.WinUI.Resources.Strings.Theme_Dark,
-            AppTheme.Default => Nagi.WinUI.Resources.Strings.Theme_Default,
+            AppTheme.Light => Nagi.Presentation.Resources.Strings.Theme_Light,
+            AppTheme.Dark => Nagi.Presentation.Resources.Strings.Theme_Dark,
+            AppTheme.Default => Nagi.Presentation.Resources.Strings.Theme_Default,
             _ => value?.ToString() ?? string.Empty
         };
     }
@@ -281,9 +282,9 @@ public class BackdropMaterialToStringConverter : IValueConverter
         if (value is BackdropMaterial material)
             return material switch
             {
-                BackdropMaterial.Mica => Nagi.WinUI.Resources.Strings.Backdrop_Mica,
-                BackdropMaterial.MicaAlt => Nagi.WinUI.Resources.Strings.Backdrop_MicaAlt,
-                BackdropMaterial.Acrylic => Nagi.WinUI.Resources.Strings.Backdrop_Acrylic,
+                BackdropMaterial.Mica => Nagi.Presentation.Resources.Strings.Backdrop_Mica,
+                BackdropMaterial.MicaAlt => Nagi.Presentation.Resources.Strings.Backdrop_MicaAlt,
+                BackdropMaterial.Acrylic => Nagi.Presentation.Resources.Strings.Backdrop_Acrylic,
                 _ => material.ToString()
             };
         return string.Empty;
@@ -302,8 +303,8 @@ public class PlayerBackgroundMaterialToStringConverter : IValueConverter
         if (value is PlayerBackgroundMaterial material)
             return material switch
             {
-                PlayerBackgroundMaterial.Acrylic => Nagi.WinUI.Resources.Strings.PlayerBackgroundMaterial_Acrylic,
-                PlayerBackgroundMaterial.Solid => Nagi.WinUI.Resources.Strings.PlayerBackgroundMaterial_Solid,
+                PlayerBackgroundMaterial.Acrylic => Nagi.Presentation.Resources.Strings.PlayerBackgroundMaterial_Acrylic,
+                PlayerBackgroundMaterial.Solid => Nagi.Presentation.Resources.Strings.PlayerBackgroundMaterial_Solid,
                 _ => material.ToString()
             };
         return string.Empty;

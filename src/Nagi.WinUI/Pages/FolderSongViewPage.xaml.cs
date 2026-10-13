@@ -8,12 +8,13 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-using Nagi.WinUI.Models;
-using Nagi.WinUI.Navigation;
-using Nagi.WinUI.ViewModels;
+using Nagi.Presentation.Models;
+using Nagi.Presentation.Navigation;
+using Nagi.Presentation.ViewModels;
 using System.Threading.Tasks;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Presentation.Services.Abstractions;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Services.Abstractions;
 
@@ -79,7 +80,7 @@ public sealed partial class FolderSongViewPage : Page
                 _logger.LogWarning(
                     "Received invalid navigation parameter. Expected '{ExpectedType}', got '{ActualType}'. Initializing with fallback state.",
                     nameof(FolderSongViewNavigationParameter), paramType);
-                await ViewModel.InitializeAsync(Nagi.WinUI.Resources.Strings.FolderSongViewPage_Default_Title, null);
+                await ViewModel.InitializeAsync(Nagi.Presentation.Resources.Strings.FolderSongViewPage_Default_Title, null);
             }
         }
         catch (Exception ex)
@@ -122,7 +123,7 @@ public sealed partial class FolderSongViewPage : Page
         if (_isSearchExpanded) return;
 
         _isSearchExpanded = true;
-        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.FolderSongViewPage_SearchButton_Close_ToolTip);
+        ToolTipService.SetToolTip(SearchToggleButton, Nagi.Presentation.Resources.Strings.FolderSongViewPage_SearchButton_Close_ToolTip);
         VisualStateManager.GoToState(this, "SearchExpanded", false);
         SearchTextBox.Focus(FocusState.Programmatic);
     }
@@ -138,7 +139,7 @@ public sealed partial class FolderSongViewPage : Page
         if (!_isSearchExpanded) return;
 
         _isSearchExpanded = false;
-        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.FolderSongViewPage_SearchButton_Search_ToolTip);
+        ToolTipService.SetToolTip(SearchToggleButton, Nagi.Presentation.Resources.Strings.FolderSongViewPage_SearchButton_Search_ToolTip);
         VisualStateManager.GoToState(this, "SearchCollapsed", false);
         SearchToggleButton.Focus(FocusState.Programmatic);
         ViewModel.SearchTerm = string.Empty;
@@ -246,7 +247,7 @@ public sealed partial class FolderSongViewPage : Page
         if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
                 .FirstOrDefault(item => item.Name == "FolderAddToPlaylistSubMenu") is { } addToPlaylistSubMenu)
             PlaylistMenuFlyoutHelper.Populate(addToPlaylistSubMenu, ViewModel.AvailablePlaylists,
-                ViewModel.AddSelectedSongsToPlaylistCommand, Nagi.WinUI.Resources.Strings.FolderSongViewPage_PlaylistMenu_NoPlaylists);
+                ViewModel.AddSelectedSongsToPlaylistCommand, Nagi.Presentation.Resources.Strings.FolderSongViewPage_PlaylistMenu_NoPlaylists);
     }
 
     private void SongItemMenuFlyout_Opening(object sender, object e)
@@ -262,7 +263,7 @@ public sealed partial class FolderSongViewPage : Page
         if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
                 .FirstOrDefault(item => item.Name == "AddToPlaylistSubMenu") is { } addToPlaylistSubMenu)
             PlaylistMenuFlyoutHelper.Populate(addToPlaylistSubMenu, ViewModel.AvailablePlaylists,
-                ViewModel.AddSelectedSongsToPlaylistCommand, Nagi.WinUI.Resources.Strings.FolderSongViewPage_PlaylistMenu_NoPlaylists);
+                ViewModel.AddSelectedSongsToPlaylistCommand, Nagi.Presentation.Resources.Strings.FolderSongViewPage_PlaylistMenu_NoPlaylists);
 
         if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
                 .FirstOrDefault(item => item.Name == "GoToArtistSubMenu") is { } goToArtistSubMenu

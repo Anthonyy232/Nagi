@@ -4,7 +4,7 @@ using System.Globalization;
 using Windows.ApplicationModel;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
-using Nagi.WinUI.Resources;
+using Nagi.Presentation.Resources;
 
 namespace Nagi.WinUI.Services.Implementations;
 

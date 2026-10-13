@@ -2,6 +2,7 @@ using System;
 using LibVLCSharp;
 using Microsoft.Extensions.Logging;
 using System.Threading;
+using Nagi.Presentation.Resources;
 
 namespace Nagi.WinUI.Services.Implementations;
 
@@ -64,8 +65,8 @@ public sealed partial class LibVlcAudioPlayerService
 
         var lastVlcError = ReadNative(() => _libVlc?.LastLibVLCError, null);
         var errorMessage = string.IsNullOrEmpty(lastVlcError)
-            ? Resources.Strings.Player_Error_LibVLC_Unspecified
-            : string.Format(Resources.Strings.Player_Error_LibVLC_WithDetails, lastVlcError);
+            ? Strings.Player_Error_LibVLC_Unspecified
+            : string.Format(Strings.Player_Error_LibVLC_WithDetails, lastVlcError);
         _logger.LogError("Playback error occurred. {ErrorMessage}", errorMessage);
         _dispatcherService.TryEnqueue(() =>
         {

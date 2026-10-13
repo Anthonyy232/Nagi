@@ -4,12 +4,11 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Data;
-using Nagi.WinUI.Models;
-using Nagi.WinUI.Navigation;
-using Nagi.WinUI.Services;
-using Nagi.WinUI.Services.Abstractions;
-using Nagi.WinUI.Services.Implementations;
+using Nagi.Presentation.Models;
+using Nagi.Presentation.Navigation;
+using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services.Implementations;
+using Nagi.Presentation.Services;
 using NSubstitute;
 using Xunit;
 

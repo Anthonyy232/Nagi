@@ -2,8 +2,9 @@ using System.Linq;
 using System.Windows.Input;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.Core.Models;
-using Nagi.WinUI.Resources;
-using Nagi.WinUI.ViewModels;
+using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Resources;
+using Nagi.Presentation.ViewModels;
 
 namespace Nagi.WinUI.Helpers;
 

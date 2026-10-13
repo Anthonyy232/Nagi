@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using Nagi.WinUI.Navigation;
+using Nagi.Presentation.Navigation;
+using Nagi.Presentation.Services.Abstractions;
 using Nagi.WinUI.Pages;
-using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.Services.Implementations;
 

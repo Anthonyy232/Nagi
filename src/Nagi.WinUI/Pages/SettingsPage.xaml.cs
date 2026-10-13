@@ -4,8 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using Nagi.WinUI.ViewModels;
 using Nagi.Core.Models;
+using Nagi.Presentation.ViewModels;
 
 namespace Nagi.WinUI.Pages;
 

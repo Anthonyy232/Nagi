@@ -8,9 +8,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Input;
+using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Services.Abstractions;
-using Nagi.WinUI.ViewModels;
 using WinRT.Interop;
 
 namespace Nagi.WinUI.Popups;

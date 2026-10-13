@@ -14,16 +14,17 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Constants;
+using Nagi.Core.Services.Abstractions;
+using Nagi.Presentation.Models;
+using Nagi.Presentation.Resources;
+using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Controls;
+using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Pages;
-using Nagi.WinUI.Resources;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Services.Implementations;
-using Nagi.WinUI.ViewModels;
-using Nagi.WinUI.Helpers;
-using Nagi.WinUI.Models;
 
 namespace Nagi.WinUI;
 

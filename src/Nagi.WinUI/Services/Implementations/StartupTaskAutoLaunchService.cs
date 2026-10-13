@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Nagi.WinUI.Services.Abstractions;
+using Nagi.Presentation.Services.Abstractions;
 using Windows.ApplicationModel;
 
 namespace Nagi.WinUI.Services.Implementations;

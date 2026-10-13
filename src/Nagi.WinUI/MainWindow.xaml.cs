@@ -10,13 +10,14 @@ using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
+using Nagi.Presentation.Models;
+using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Controls;
-using Nagi.WinUI.Models;
-using Nagi.WinUI.Pages;
 using Nagi.WinUI.Helpers;
+using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Services.Implementations;
-using Nagi.WinUI.ViewModels;
 using WinRT.Interop;
 
 namespace Nagi.WinUI;
@@ -404,7 +405,7 @@ public sealed class MiniPlayerWindow : Window
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(_view.TitleBarDragRegion);
 
-        _appWindow.Title = Nagi.WinUI.Resources.Strings.MiniPlayer_Title;
+        _appWindow.Title = Nagi.Presentation.Resources.Strings.MiniPlayer_Title;
         _appWindow.SetIcon(AppIconPath);
 
         // Convert logical pixels to physical pixels for AppWindow.Resize()

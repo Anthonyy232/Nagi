@@ -11,9 +11,10 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Nagi.Core.Models.Lyrics;
+using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Services.Abstractions;
-using Nagi.WinUI.ViewModels;
 
 namespace Nagi.WinUI.Pages;
 
