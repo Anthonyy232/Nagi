@@ -367,7 +367,7 @@
                                             </InfoBar.ActionButton>
                                         </InfoBar>
                                         <Grid Grid.Row="2" Visibility="{x:Bind ViewModel.IsHistoryVisible, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                                        <ListView uihelpers:ScrollEdgeFade.IsEnabled="True" x:Name="QueueListView" ItemsSource="{x:Bind ViewModel.SidebarQueue}"
+                                        <ListView uihelpers:ScrollEdgeFade.IsEnabled="True" x:Name="QueueListView" ItemsSource="{x:Bind ViewModel.SidebarQueue, Converter={StaticResource IncrementalLoadingConverter}}"
                                                   ItemContainerStyle="{StaticResource PaddedListViewItemStyle}" SelectionMode="Single"
                                                   CanDragItems="True" CanReorderItems="True" AllowDrop="True"
                                                   DragItemsStarting="QueueListView_DragItemsStarting" DragItemsCompleted="QueueListView_DragItemsCompleted"
@@ -437,7 +437,7 @@
                                             <InfoBar Grid.Row="1" IsOpen="{x:Bind ViewModel.History.HasLoadError, Mode=OneWay}" Severity="Error" IsClosable="False" Message="{x:Bind resources:Strings.Listening_HistoryLoadError}">
                                                 <InfoBar.ActionButton><Button Content="{x:Bind resources:Strings.QueuePanel_Retry}" Command="{x:Bind ViewModel.History.SearchCommand}" /></InfoBar.ActionButton>
                                             </InfoBar>
-                                            <ListView Grid.Row="2" x:Name="HistoryListView" uihelpers:ScrollEdgeFade.IsEnabled="True" SelectionMode="Single" ItemsSource="{x:Bind ViewModel.History.Entries}">
+                                            <ListView Grid.Row="2" x:Name="HistoryListView" uihelpers:ScrollEdgeFade.IsEnabled="True" SelectionMode="Single" ItemsSource="{x:Bind ViewModel.History.Entries, Converter={StaticResource IncrementalLoadingConverter}}">
                                                 <ListView.ItemContainerStyleSelector>
                                                     <uihelpers:RecentHistoryStyleSelector SongStyle="{StaticResource PaddedListViewItemStyle}">
                                                         <uihelpers:RecentHistoryStyleSelector.HeaderStyle>

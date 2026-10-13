@@ -106,6 +106,15 @@ public class ArgbColorToColorConverter : IValueConverter
         value is Color color ? color.ToArgbColor() : DependencyProperty.UnsetValue;
 }
 
+public class IncrementalLoadingConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language) =>
+        value is IIncrementalItemSource source ? new IncrementalLoadingAdapter(source) : value;
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language) =>
+        throw new NotSupportedException();
+}
+
 public class BooleanToVisibilityConverter : IValueConverter
 {
     /// <summary>

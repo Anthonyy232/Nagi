@@ -5,14 +5,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.UI.Xaml.Data;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Models;
 using Nagi.WinUI.Resources;
 using Nagi.WinUI.Services.Abstractions;
-using Windows.Foundation;
 
 namespace Nagi.WinUI.ViewModels;
 
@@ -81,7 +79,7 @@ public partial class RecentHistoryViewModel : SearchableViewModelBase, IDisposab
         if (!IsLoading) await LoadAsync(true, CancellationToken.None, preserveRows: true);
     });
 
-    private async Task<uint> LoadAsync(bool reset, CancellationToken token, bool preserveRows = false)
+    private async Task<int> LoadAsync(bool reset, CancellationToken token, bool preserveRows = false)
     {
         if (_isDisposed || !_isActive || token.IsCancellationRequested) return 0;
         if (reset) _entries.ResetLoading();
@@ -127,7 +125,7 @@ public partial class RecentHistoryViewModel : SearchableViewModelBase, IDisposab
             }
             else Entries.AppendOrReplace(rows, !reset);
             if (!preserveRows || loadedCount == 0) HasMore = listens.Count == 100;
-            return (uint)rows.Count;
+            return rows.Count;
         }
         catch (OperationCanceledException) { }
         catch (Exception ex)
@@ -157,23 +155,20 @@ public partial class RecentHistoryViewModel : SearchableViewModelBase, IDisposab
     }
 
     private sealed class HistoryEntries(RecentHistoryViewModel owner)
-        : ObservableRangeCollection<object>, ISupportIncrementalLoading
+        : ObservableRangeCollection<object>, IIncrementalItemSource
     {
-        private Task<LoadMoreItemsResult>? _loadTask;
+        private Task<int>? _loadTask;
         public bool HasMoreItems => owner._isActive && !owner._isDisposed && owner.HasMore && !owner.IsLoading && !owner.HasLoadError;
         public void RefreshLoadingState() => OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasMoreItems)));
         public void ResetLoading() => _loadTask = null;
 
-        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        public Task<int> LoadMoreItemsAsync()
         {
             if (_loadTask?.IsCompleted != false) _loadTask = LoadPageAsync();
-            return _loadTask.AsAsyncOperation();
+            return _loadTask;
         }
 
-        private async Task<LoadMoreItemsResult> LoadPageAsync()
-        {
-            if (!HasMoreItems) return new LoadMoreItemsResult();
-            return new LoadMoreItemsResult { Count = await owner.LoadAsync(false, CancellationToken.None) };
-        }
+        private Task<int> LoadPageAsync() =>
+            HasMoreItems ? owner.LoadAsync(false, CancellationToken.None) : Task.FromResult(0);
     }
 }

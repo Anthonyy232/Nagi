@@ -7,21 +7,19 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Microsoft.UI.Xaml.Data;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Resources;
-using Windows.Foundation;
 
 namespace Nagi.WinUI.Models;
 
 public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackService, ILogger logger)
-    : ObservableCollection<QueueEntry>, ISupportIncrementalLoading, IDisposable
+    : ObservableCollection<QueueEntry>, IIncrementalItemSource, IDisposable
 {
     private Guid[] _ids = [];
     private int _loadedCount;
     private CancellationTokenSource _refreshCts = new();
     private CancellationTokenSource _durationCts = new();
-    private Task<LoadMoreItemsResult>? _loadTask;
+    private Task<int>? _loadTask;
     private Task? _durationTask;
     private bool _isActive;
     private bool _showTotalDuration;
@@ -99,19 +97,18 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
         if (_showTotalDuration && durationChanged) _durationTask = UpdateDurationAsync(_durationCts.Token);
     }
 
-    public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+    public Task<int> LoadMoreItemsAsync()
     {
-        if (_isDisposed || !_isActive || HasLoadError)
-            return Task.FromResult(new LoadMoreItemsResult()).AsAsyncOperation();
+        if (_isDisposed || !_isActive || HasLoadError) return Task.FromResult(0);
         if (_loadTask is null || _loadTask.IsCompleted)
             _loadTask = LoadPageAsync(_refreshCts.Token);
-        return _loadTask.AsAsyncOperation();
+        return _loadTask;
     }
 
-    private async Task<LoadMoreItemsResult> LoadPageAsync(CancellationToken token, int pageSize = 128,
+    private async Task<int> LoadPageAsync(CancellationToken token, int pageSize = 128,
         Dictionary<Guid, QueueEntry>? cachedEntries = null)
     {
-        uint added = 0;
+        var added = 0;
         var refreshedEntries = cachedEntries is null ? null : new List<QueueEntry>();
         SetLoadState(true, false);
         try
@@ -167,7 +164,7 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
         {
             if (!token.IsCancellationRequested && !_isDisposed) SetLoadState(false, HasLoadError);
         }
-        return new LoadMoreItemsResult { Count = added };
+        return added;
     }
 
     private void SetLoadState(bool isLoading, bool hasLoadError)

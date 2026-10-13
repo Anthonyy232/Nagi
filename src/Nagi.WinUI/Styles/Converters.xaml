@@ -18,6 +18,7 @@ to avoid duplicate declarations across pages and controls.
     <converters:CollectionCountToVisibilityConverter x:Key="CollectionCountToVisibilityConverter" />
     <converters:CollectionCountToVisibilityConverter x:Key="InverseCollectionCountToVisibilityConverter" Invert="True" />
     <converters:BooleanToInverseBooleanConverter x:Key="BooleanToInverseBooleanConverter" />
+    <converters:IncrementalLoadingConverter x:Key="IncrementalLoadingConverter" />
     <converters:ObjectToVisibilityConverter x:Key="ObjectToVisibilityConverter" />
     <converters:NullOrEmptyStringToVisibilityConverter x:Key="NullOrEmptyStringToVisibilityConverter" />
     <converters:NullOrEmptyStringToVisibilityConverter x:Key="InverseNullOrEmptyStringToVisibilityConverter" Invert="True" />

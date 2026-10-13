@@ -96,7 +96,7 @@ public class PlaybackQueueCollectionTests
         using var queue = new PlaybackQueueCollection(playback, NullLogger.Instance);
 
         queue.SetActive(true);
-        var loading = queue.LoadMoreItemsAsync(128).AsTask();
+        var loading = queue.LoadMoreItemsAsync();
         queue.IsLoading.Should().BeTrue();
         queue.ShowInitialLoading.Should().BeTrue();
         queue.ShowMoreLoading.Should().BeFalse();
@@ -146,7 +146,7 @@ public class PlaybackQueueCollectionTests
             Task.FromResult<IReadOnlyDictionary<Guid, Song>>(new Dictionary<Guid, Song> { [newSong.Id] = newSong }));
         using var queue = new PlaybackQueueCollection(playback, NullLogger.Instance);
         queue.SetActive(true);
-        var oldLoad = queue.LoadMoreItemsAsync(128).AsTask();
+        var oldLoad = queue.LoadMoreItemsAsync();
 
         playback.PlaybackQueue.Returns(new[] { newSong.Id });
         queue.Refresh();
@@ -173,7 +173,7 @@ public class PlaybackQueueCollectionTests
         using var queue = new PlaybackQueueCollection(playback, NullLogger.Instance);
         queue.SetActive(true);
 
-        var loading = queue.LoadMoreItemsAsync(128).AsTask();
+        var loading = queue.LoadMoreItemsAsync();
         queue.ShowInitialLoading.Should().BeFalse();
         queue.ShowMoreLoading.Should().BeTrue();
         pending.SetException(new IOException("Unavailable"));
@@ -182,7 +182,7 @@ public class PlaybackQueueCollectionTests
         queue.HasLoadError.Should().BeTrue();
         queue.Should().HaveCount(128);
         queue.Refresh(reloadMetadata: true);
-        await queue.LoadMoreItemsAsync(128);
+        await queue.LoadMoreItemsAsync();
 
         queue.HasLoadError.Should().BeFalse();
         queue.HasMoreItems.Should().BeFalse();
