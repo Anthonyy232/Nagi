@@ -3,6 +3,8 @@ using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
+using Nagi.Presentation.Resources;
+using CoreStrings = Nagi.Core.Resources.Strings;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -10,65 +12,65 @@ public class RuleViewModel : ObservableObject
 {
     public static IReadOnlyList<FieldOption> AvailableFields { get; } = new List<FieldOption>
     {
-        new(SmartPlaylistField.Title, Nagi.Core.Resources.Strings.Label_Title),
-        new(SmartPlaylistField.Artist, Nagi.Core.Resources.Strings.Label_Artist),
-        new(SmartPlaylistField.Album, Nagi.Core.Resources.Strings.Label_Album),
-        new(SmartPlaylistField.Genre, Nagi.Core.Resources.Strings.Label_Genre),
-        new(SmartPlaylistField.Year, Nagi.Core.Resources.Strings.Label_Year),
-        new(SmartPlaylistField.Rating, Nagi.Presentation.Resources.Strings.Label_Rating),
-        new(SmartPlaylistField.Duration, Nagi.Core.Resources.Strings.Label_Duration),
-        new(SmartPlaylistField.Bpm, Nagi.Core.Resources.Strings.Label_Bpm),
-        new(SmartPlaylistField.Comment, Nagi.Presentation.Resources.Strings.Label_Comment),
-        new(SmartPlaylistField.Composer, Nagi.Presentation.Resources.Strings.Label_Composer),
-        new(SmartPlaylistField.Grouping, Nagi.Presentation.Resources.Strings.Label_Grouping),
-        new(SmartPlaylistField.PlayCount, Nagi.Core.Resources.Strings.Label_PlayCount),
-        new(SmartPlaylistField.SkipCount, Nagi.Presentation.Resources.Strings.Label_SkipCount),
-        new(SmartPlaylistField.TrackNumber, Nagi.Core.Resources.Strings.Label_TrackNumber),
-        new(SmartPlaylistField.DiscNumber, Nagi.Presentation.Resources.Strings.Label_DiscNumber),
-        new(SmartPlaylistField.Bitrate, Nagi.Presentation.Resources.Strings.Label_Bitrate),
-        new(SmartPlaylistField.SampleRate, Nagi.Presentation.Resources.Strings.Label_SampleRate),
-        new(SmartPlaylistField.IsLoved, Nagi.Presentation.Resources.Strings.Label_IsLoved),
-        new(SmartPlaylistField.HasLyrics, Nagi.Presentation.Resources.Strings.Label_HasLyrics),
-        new(SmartPlaylistField.DateAdded, Nagi.Core.Resources.Strings.Label_DateAdded),
-        new(SmartPlaylistField.LastPlayed, Nagi.Core.Resources.Strings.Label_LastPlayed),
-        new(SmartPlaylistField.FileCreatedDate, Nagi.Core.Resources.Strings.Label_DateCreated),
-        new(SmartPlaylistField.FileModifiedDate, Nagi.Core.Resources.Strings.Label_DateModified)
+        new(SmartPlaylistField.Title, CoreStrings.Label_Title),
+        new(SmartPlaylistField.Artist, CoreStrings.Label_Artist),
+        new(SmartPlaylistField.Album, CoreStrings.Label_Album),
+        new(SmartPlaylistField.Genre, CoreStrings.Label_Genre),
+        new(SmartPlaylistField.Year, CoreStrings.Label_Year),
+        new(SmartPlaylistField.Rating, Strings.Label_Rating),
+        new(SmartPlaylistField.Duration, CoreStrings.Label_Duration),
+        new(SmartPlaylistField.Bpm, CoreStrings.Label_Bpm),
+        new(SmartPlaylistField.Comment, Strings.Label_Comment),
+        new(SmartPlaylistField.Composer, Strings.Label_Composer),
+        new(SmartPlaylistField.Grouping, Strings.Label_Grouping),
+        new(SmartPlaylistField.PlayCount, CoreStrings.Label_PlayCount),
+        new(SmartPlaylistField.SkipCount, Strings.Label_SkipCount),
+        new(SmartPlaylistField.TrackNumber, CoreStrings.Label_TrackNumber),
+        new(SmartPlaylistField.DiscNumber, Strings.Label_DiscNumber),
+        new(SmartPlaylistField.Bitrate, Strings.Label_Bitrate),
+        new(SmartPlaylistField.SampleRate, Strings.Label_SampleRate),
+        new(SmartPlaylistField.IsLoved, Strings.Label_IsLoved),
+        new(SmartPlaylistField.HasLyrics, Strings.Label_HasLyrics),
+        new(SmartPlaylistField.DateAdded, CoreStrings.Label_DateAdded),
+        new(SmartPlaylistField.LastPlayed, CoreStrings.Label_LastPlayed),
+        new(SmartPlaylistField.FileCreatedDate, CoreStrings.Label_DateCreated),
+        new(SmartPlaylistField.FileModifiedDate, CoreStrings.Label_DateModified)
     };
 
     private static readonly IReadOnlyList<OperatorOption> TextOperators = new List<OperatorOption>
     {
-        new(SmartPlaylistOperator.Contains, Nagi.Presentation.Resources.Strings.Operator_Contains),
-        new(SmartPlaylistOperator.DoesNotContain, Nagi.Presentation.Resources.Strings.Operator_DoesNotContain),
-        new(SmartPlaylistOperator.Is, Nagi.Presentation.Resources.Strings.Operator_Is),
-        new(SmartPlaylistOperator.IsNot, Nagi.Presentation.Resources.Strings.Operator_IsNot),
-        new(SmartPlaylistOperator.StartsWith, Nagi.Presentation.Resources.Strings.Operator_StartsWith),
-        new(SmartPlaylistOperator.EndsWith, Nagi.Presentation.Resources.Strings.Operator_EndsWith)
+        new(SmartPlaylistOperator.Contains, Strings.Operator_Contains),
+        new(SmartPlaylistOperator.DoesNotContain, Strings.Operator_DoesNotContain),
+        new(SmartPlaylistOperator.Is, Strings.Operator_Is),
+        new(SmartPlaylistOperator.IsNot, Strings.Operator_IsNot),
+        new(SmartPlaylistOperator.StartsWith, Strings.Operator_StartsWith),
+        new(SmartPlaylistOperator.EndsWith, Strings.Operator_EndsWith)
     };
 
     private static readonly IReadOnlyList<OperatorOption> NumericOperators = new List<OperatorOption>
     {
-        new(SmartPlaylistOperator.Equals, Nagi.Presentation.Resources.Strings.Operator_Equals),
-        new(SmartPlaylistOperator.NotEquals, Nagi.Presentation.Resources.Strings.Operator_NotEquals),
-        new(SmartPlaylistOperator.GreaterThan, Nagi.Presentation.Resources.Strings.Operator_GreaterThan),
-        new(SmartPlaylistOperator.LessThan, Nagi.Presentation.Resources.Strings.Operator_LessThan),
-        new(SmartPlaylistOperator.GreaterThanOrEqual, Nagi.Presentation.Resources.Strings.Operator_GreaterThanOrEqual),
-        new(SmartPlaylistOperator.LessThanOrEqual, Nagi.Presentation.Resources.Strings.Operator_LessThanOrEqual),
-        new(SmartPlaylistOperator.IsInRange, Nagi.Presentation.Resources.Strings.Operator_IsInRange)
+        new(SmartPlaylistOperator.Equals, Strings.Operator_Equals),
+        new(SmartPlaylistOperator.NotEquals, Strings.Operator_NotEquals),
+        new(SmartPlaylistOperator.GreaterThan, Strings.Operator_GreaterThan),
+        new(SmartPlaylistOperator.LessThan, Strings.Operator_LessThan),
+        new(SmartPlaylistOperator.GreaterThanOrEqual, Strings.Operator_GreaterThanOrEqual),
+        new(SmartPlaylistOperator.LessThanOrEqual, Strings.Operator_LessThanOrEqual),
+        new(SmartPlaylistOperator.IsInRange, Strings.Operator_IsInRange)
     };
 
     private static readonly IReadOnlyList<OperatorOption> DateOperators = new List<OperatorOption>
     {
-        new(SmartPlaylistOperator.IsInTheLast, Nagi.Presentation.Resources.Strings.Operator_IsInTheLast),
-        new(SmartPlaylistOperator.IsNotInTheLast, Nagi.Presentation.Resources.Strings.Operator_IsNotInTheLast),
-        new(SmartPlaylistOperator.GreaterThan, Nagi.Presentation.Resources.Strings.Operator_IsAfter),
-        new(SmartPlaylistOperator.LessThan, Nagi.Presentation.Resources.Strings.Operator_IsBefore),
-        new(SmartPlaylistOperator.IsInRange, Nagi.Presentation.Resources.Strings.Operator_IsInRange)
+        new(SmartPlaylistOperator.IsInTheLast, Strings.Operator_IsInTheLast),
+        new(SmartPlaylistOperator.IsNotInTheLast, Strings.Operator_IsNotInTheLast),
+        new(SmartPlaylistOperator.GreaterThan, Strings.Operator_IsAfter),
+        new(SmartPlaylistOperator.LessThan, Strings.Operator_IsBefore),
+        new(SmartPlaylistOperator.IsInRange, Strings.Operator_IsInRange)
     };
 
     private static readonly IReadOnlyList<OperatorOption> BooleanOperators = new List<OperatorOption>
     {
-        new(SmartPlaylistOperator.IsTrue, Nagi.Presentation.Resources.Strings.Operator_IsTrue),
-        new(SmartPlaylistOperator.IsFalse, Nagi.Presentation.Resources.Strings.Operator_IsFalse)
+        new(SmartPlaylistOperator.IsTrue, Strings.Operator_IsTrue),
+        new(SmartPlaylistOperator.IsFalse, Strings.Operator_IsFalse)
     };
 
     public IReadOnlyList<FieldOption> AvailableFieldsList => AvailableFields;

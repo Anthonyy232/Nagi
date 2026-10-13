@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
@@ -220,9 +221,9 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         // mapped-drive vs UNC (that requires platform resolution in LibraryService), but it
         // catches case, separator, and Unicode variations so the user gets an immediate
         // "already added" message instead of a silent no-op.
-        var canonicalNew = Nagi.Core.Helpers.PathCanonicalizer.Normalize(folderPath);
+        var canonicalNew = PathCanonicalizer.Normalize(folderPath);
         if (!string.IsNullOrEmpty(canonicalNew) &&
-            Folders.Any(f => Nagi.Core.Helpers.PathCanonicalizer.Normalize(f.Path)
+            Folders.Any(f => PathCanonicalizer.Normalize(f.Path)
                 .Equals(canonicalNew, StringComparison.OrdinalIgnoreCase)))
         {
             _globalOperation.StatusMessage = Strings.Folders_AddFolder_Exists;

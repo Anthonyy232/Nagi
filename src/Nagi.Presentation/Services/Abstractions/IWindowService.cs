@@ -1,6 +1,4 @@
-﻿// Nagi.Presentation.Services.Abstractions/IWindowService.cs
-
-using System;
+﻿using System;
 using System.Threading.Tasks;
 
 namespace Nagi.Presentation.Services.Abstractions;

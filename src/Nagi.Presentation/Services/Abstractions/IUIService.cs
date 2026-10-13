@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Nagi.Core.Models;
+using Nagi.Presentation.Models;
 
 namespace Nagi.Presentation.Services.Abstractions;
 
@@ -13,7 +15,7 @@ public enum CrashReportResult
 
 public interface IUIService
 {
-    Task<Nagi.Presentation.Models.PlaybackMixOptions?> ShowPlayForDialogAsync();
+    Task<PlaybackMixOptions?> ShowPlayForDialogAsync();
     Task<(int Minutes, bool FinishTrack)?> ShowSleepTimerDialogAsync();
     /// <summary>
     ///     Shows a confirmation dialog to the user.
@@ -69,13 +71,13 @@ public interface IUIService
     ///     Shows the smart playlist editor for a new playlist, or for <paramref name="editing" /> when given.
     /// </summary>
     /// <returns>The created or updated playlist, or null if the user cancelled.</returns>
-    Task<Nagi.Core.Models.SmartPlaylist?> ShowSmartPlaylistEditorAsync(Nagi.Core.Models.SmartPlaylist? editing = null);
+    Task<SmartPlaylist?> ShowSmartPlaylistEditorAsync(SmartPlaylist? editing = null);
 
     /// <summary>
     ///     Asks for the name and optional cover image of a new playlist.
     /// </summary>
     /// <returns>The user's choices, or null if the user cancelled.</returns>
-    Task<Nagi.Presentation.Models.NewPlaylistRequest?> ShowCreatePlaylistDialogAsync();
+    Task<NewPlaylistRequest?> ShowCreatePlaylistDialogAsync();
 
     /// <summary>
     ///     Asks for a new name for the playlist called <paramref name="currentName" />.
@@ -87,7 +89,7 @@ public interface IUIService
     ///     Shows the lyrics editor with <paramref name="lyrics" />, offering removal when <paramref name="canRemove" /> is set.
     /// </summary>
     /// <returns>The user's choice, or null if the user cancelled.</returns>
-    Task<Nagi.Presentation.Models.LyricsEdit?> ShowLyricsEditorAsync(string lyrics, bool canRemove);
+    Task<LyricsEdit?> ShowLyricsEditorAsync(string lyrics, bool canRemove);
 
     /// <summary>
     ///     Shows a dialog for FFmpeg setup with a recheck button that doesn't close the dialog.

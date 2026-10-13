@@ -12,6 +12,7 @@ using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services;
+using CoreStrings = Nagi.Core.Resources.Strings;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -209,7 +210,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
         foreach (var band in EqualizerBands) band.CancelPendingGain();
         await _playbackService.ResetEqualizerAsync();
         // Resetting will result in all 0s, which matches "None".
-        SelectedEqualizerPreset = AvailableEqualizerPresets.FirstOrDefault(p => p.Name == Nagi.Core.Resources.Strings.EqPreset_None);
+        SelectedEqualizerPreset = AvailableEqualizerPresets.FirstOrDefault(p => p.Name == CoreStrings.EqPreset_None);
     }
 
     private void LoadEqualizerState()
@@ -392,7 +393,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
         var cancellationToken = scanCts.Token;
 
         _globalOperation.IsInProgress = true;
-        _globalOperation.StatusMessage = Nagi.Presentation.Resources.Strings.Settings_Status_VolumeNorm_Preparing;
+        _globalOperation.StatusMessage = Strings.Settings_Status_VolumeNorm_Preparing;
         _globalOperation.IsIndeterminate = true;
         _globalOperation.SetCancellation(scanCts.Cancel);
 
@@ -402,11 +403,11 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
         }
         catch (OperationCanceledException)
         {
-            _globalOperation.StatusMessage = Nagi.Presentation.Resources.Strings.Settings_Status_VolumeNorm_Cancelled;
+            _globalOperation.StatusMessage = Strings.Settings_Status_VolumeNorm_Cancelled;
         }
         catch (Exception ex)
         {
-            _globalOperation.StatusMessage = string.Format(Nagi.Presentation.Resources.Strings.Settings_Status_VolumeNorm_Error_Format, ex.Message);
+            _globalOperation.StatusMessage = string.Format(Strings.Settings_Status_VolumeNorm_Error_Format, ex.Message);
             _logger.LogError(ex, "Failed to scan library for ReplayGain");
         }
         finally
