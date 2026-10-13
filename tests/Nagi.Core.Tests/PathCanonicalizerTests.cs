@@ -22,4 +22,14 @@ public class PathCanonicalizerTests
     {
         PathCanonicalizer.Normalize(input).Should().Be(expected);
     }
+
+    [Theory]
+    [InlineData("/Users/me/Music/", "/Users/me/Music")]
+    [InlineData("/Users//me///Music", "/Users/me/Music")]
+    [InlineData("/", "/")]
+    [InlineData(@"/Music/AC\DC", @"/Music/AC\DC")]
+    public void Normalize_KeepsUnixPathsInUnixForm(string input, string expected)
+    {
+        PathCanonicalizer.Normalize(input, '/').Should().Be(expected);
+    }
 }
