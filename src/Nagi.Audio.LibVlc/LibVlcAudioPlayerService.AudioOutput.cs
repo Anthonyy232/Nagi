@@ -4,9 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
-using Nagi.WinUI.Helpers;
 
-namespace Nagi.WinUI.Services.Implementations;
+namespace Nagi.Audio.LibVlc;
 
 /// <summary>
 ///     Choosing and restoring the audio output device.

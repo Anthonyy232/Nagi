@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using System.Threading;
 
-namespace Nagi.WinUI.Services.Implementations;
+namespace Nagi.Audio.LibVlc;
 
 /// <summary>
 ///     Volume, mute, fades, equalizer and ReplayGain preamp.

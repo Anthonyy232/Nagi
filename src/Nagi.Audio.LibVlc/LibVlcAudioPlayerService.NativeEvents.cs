@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using System.Threading;
 using Nagi.Presentation.Resources;
 
-namespace Nagi.WinUI.Services.Implementations;
+namespace Nagi.Audio.LibVlc;
 
 /// <summary>
 ///     Handlers for LibVLC media player and log events.

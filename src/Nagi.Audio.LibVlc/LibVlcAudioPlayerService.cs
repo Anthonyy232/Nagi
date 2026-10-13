@@ -10,7 +10,7 @@ using System.Threading;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
-namespace Nagi.WinUI.Services.Implementations;
+namespace Nagi.Audio.LibVlc;
 
 /// <summary>
 ///     Implements <see cref="IAudioPlayer" /> using LibVLCSharp, and reports what is playing to the
@@ -126,7 +126,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         // LibVLC explicitly does not guarantee compatibility for constructor options.
         // Keep only the two behaviors that currently lack a suitable public LibVLC API.
         var vlcOptions = new List<string> { "--no-video", "--no-volume-save" };
-        if (useWasapiExclusive) vlcOptions.Add("--wasapi-exclusive");
+        if (useWasapiExclusive && OperatingSystem.IsWindows()) vlcOptions.Add("--wasapi-exclusive");
 
         _logger.LogDebug("Initializing LibVLC with options: {VlcOptions}", string.Join(" ", vlcOptions));
         _libVlc = new LibVLC(false, vlcOptions.ToArray());

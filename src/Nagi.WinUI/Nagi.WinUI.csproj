@@ -89,6 +89,7 @@
         <!-- Project References -->
         <ProjectReference Include="..\Nagi.Core\Nagi.Core.csproj" />
         <ProjectReference Include="..\Nagi.Presentation\Nagi.Presentation.csproj" />
+        <ProjectReference Include="..\Nagi.Audio.LibVlc\Nagi.Audio.LibVlc.csproj" />
 
         <!-- Core SDKs and Build Tools -->
         <!-- Reference only the runtime and WinUI components, excluding unused AI/ML components. -->
@@ -115,8 +116,6 @@
         <PackageReference Include="H.NotifyIcon.WinUI" />
         <PackageReference Include="ImageEx.WinUI" />
 
-        <!-- Video Playback -->
-        <PackageReference Include="LibVLCSharp" />
         <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" />
         <PackageReference Include="Serilog.Enrichers.Thread" />
         <PackageReference Include="Serilog.Extensions.Logging" />
@@ -124,6 +123,8 @@
         <PackageReference Include="Serilog.Sinks.Debug" />
         <PackageReference Include="Serilog.Sinks.File" />
         <PackageReference Include="SixLabors.ImageSharp" />
+
+        <!-- LibVLC native libraries for Windows, used by the player in Nagi.Audio.LibVlc -->
         <PackageReference Include="VideoLAN.LibVLC.Windows" />
     </ItemGroup>
 

@@ -3,7 +3,7 @@ using LibVLCSharp;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 
-namespace Nagi.WinUI.Services.Implementations;
+namespace Nagi.Audio.LibVlc;
 
 /// <summary>
 ///     Keeps the operating system's media controls in step with LibVLC and handles their play and pause buttons.
