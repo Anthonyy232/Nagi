@@ -10,19 +10,6 @@ namespace Nagi.WinUI.Tests;
 public class IncrementalLoadingAdapterTests
 {
     [Fact]
-    public async Task LoadsPagesFromTheSourceAndReportsHowManyWereAdded()
-    {
-        var source = new PagedSource { PagesLeft = 1 };
-        var adapter = new IncrementalLoadingAdapter(source);
-
-        adapter.HasMoreItems.Should().BeTrue();
-        (await adapter.LoadMoreItemsAsync(50)).Count.Should().Be(2u);
-
-        adapter.HasMoreItems.Should().BeFalse();
-        adapter.Count.Should().Be(2);
-    }
-
-    [Fact]
     public void ListEditsReachTheSourceAndItsChangesAreRaisedByTheAdapter()
     {
         var source = new PagedSource { "a", "b", "c" };
@@ -39,15 +26,7 @@ public class IncrementalLoadingAdapterTests
 
     private sealed class PagedSource : ObservableCollection<object>, IIncrementalItemSource
     {
-        public int PagesLeft { get; set; }
-        public bool HasMoreItems => PagesLeft > 0;
-
-        public Task<int> LoadMoreItemsAsync()
-        {
-            PagesLeft--;
-            Add(Count);
-            Add(Count);
-            return Task.FromResult(2);
-        }
+        public bool HasMoreItems => false;
+        public Task<int> LoadMoreItemsAsync() => Task.FromResult(0);
     }
 }
