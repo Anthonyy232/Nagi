@@ -9,36 +9,13 @@ namespace Nagi.WinUI.Helpers;
 
 internal static class ListeningMenuFlyoutHelper
 {
-    public static string GetModeName(ShuffleMode mode) => mode switch
-    {
-        ShuffleMode.MoreVariety => Strings.Listening_MoreVariety,
-        ShuffleMode.Rediscover => Strings.Listening_Rediscover,
-        ShuffleMode.Unheard => Strings.Listening_Unheard,
-        _ => Strings.Listening_Random
-    };
-
-    public static string GetModeDescription(ShuffleMode mode) => mode switch
-    {
-        ShuffleMode.MoreVariety => Strings.Listening_VarietyDescription,
-        ShuffleMode.Rediscover => Strings.Listening_RediscoverDescription,
-        ShuffleMode.Unheard => Strings.Listening_UnheardDescription,
-        _ => string.Empty
-    };
-
-    public static string GetEmptyMixDescription(ShuffleMode mode, bool timed = false)
-    {
-        var description = GetModeDescription(mode);
-        var guidance = timed ? Strings.Listening_NoTimedMixDescription : Strings.Listening_NoMixDescription;
-        return description.Length > 0 ? $"{description}\n\n{guidance}" : guidance;
-    }
-
     public static void PopulateMixes(MenuFlyout menu, ICommand command, ICommand playFor)
     {
         menu.Items.Clear();
         foreach (var mode in System.Enum.GetValues<ShuffleMode>().Where(mode => mode != ShuffleMode.Random))
         {
-            var item = new MenuFlyoutItem { Text = GetModeName(mode), Command = command, CommandParameter = mode };
-            var description = GetModeDescription(mode);
+            var item = new MenuFlyoutItem { Text = ShuffleModeText.GetName(mode), Command = command, CommandParameter = mode };
+            var description = ShuffleModeText.GetDescription(mode);
             if (description.Length > 0) ToolTipService.SetToolTip(item, description);
             menu.Items.Add(item);
         }

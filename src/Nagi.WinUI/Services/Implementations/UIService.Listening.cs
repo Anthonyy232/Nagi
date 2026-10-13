@@ -31,7 +31,7 @@ public partial class UIService
             Header = Strings.Listening_ShuffleMode,
             HorizontalAlignment = HorizontalAlignment.Stretch
         };
-        foreach (var value in Enum.GetValues<ShuffleMode>()) mode.Items.Add(ListeningMenuFlyoutHelper.GetModeName(value));
+        foreach (var value in Enum.GetValues<ShuffleMode>()) mode.Items.Add(ShuffleModeText.GetName(value));
         mode.SelectedIndex = 0;
         var avoid = new NumberBox
         {
@@ -70,7 +70,7 @@ public partial class UIService
         mode.SelectionChanged += (_, _) =>
         {
             more.Visibility = mode.SelectedIndex == (int)ShuffleMode.MoreVariety ? Visibility.Visible : Visibility.Collapsed;
-            description.Text = ListeningMenuFlyoutHelper.GetModeDescription((ShuffleMode)mode.SelectedIndex);
+            description.Text = ShuffleModeText.GetDescription((ShuffleMode)mode.SelectedIndex);
             description.Visibility = description.Text.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
             Validate();
         };

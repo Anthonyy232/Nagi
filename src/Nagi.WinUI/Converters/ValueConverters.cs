@@ -35,21 +35,7 @@ public class TimeSpanToTimeStringConverter : IValueConverter
             _ => TimeSpan.Zero
         };
 
-        return Format(timeSpan);
-    }
-
-    public static string Format(TimeSpan timeSpan)
-    {
-        // >= 100 h: drop seconds (noise at that scale), show "Xh Ym"
-        if (timeSpan.TotalHours >= 100)
-            return $"{(int)timeSpan.TotalHours}h {timeSpan.Minutes}m";
-
-        // 1 h – 99 h: h:mm:ss. Use TotalHours cast to int so durations >= 24 h display correctly.
-        // The built-in 'h' specifier only returns the hours *component* (0-23), which wraps at 24 h.
-        if (timeSpan.TotalHours >= 1)
-            return $"{(int)timeSpan.TotalHours}:{timeSpan.Minutes:D2}:{timeSpan.Seconds:D2}";
-
-        return timeSpan.ToString(@"m\:ss");
+        return DurationFormatter.Format(timeSpan);
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -354,7 +340,7 @@ public class StringToImageSourceConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, string language)
     {
-        return Helpers.ImageUriHelper.SafeGetImageSource(value as string);
+        return Helpers.BitmapImageFactory.Create(value as string);
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -380,7 +366,7 @@ public class StringToDecodedImageSourceConverter : IValueConverter
             string s when int.TryParse(s, out var n) => n,
             _ => 0,
         };
-        return Helpers.ImageUriHelper.GetDecodedBitmap(value as string, decodePixelWidth);
+        return Helpers.BitmapImageFactory.CreateDecoded(value as string, decodePixelWidth);
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)

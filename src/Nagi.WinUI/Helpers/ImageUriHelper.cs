@@ -3,8 +3,6 @@ using System.Globalization;
 using System.IO;
 using System.Web;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace Nagi.WinUI.Helpers;
 
@@ -103,52 +101,5 @@ public static class ImageUriHelper
 
         // If it's not a valid absolute URI, just append directly to the path.
         return string.Concat(path, "?v=", ticks.ToString(CultureInfo.InvariantCulture));
-    }
-
-    /// <summary>
-    ///     Safely converts a URI string to an ImageSource (BitmapImage).
-    ///     Returns null if the input is null, empty, or an invalid URI.
-    /// </summary>
-    public static ImageSource? SafeGetImageSource(string? uriString)
-    {
-        if (!Uri.TryCreate(uriString, UriKind.Absolute, out var uri))
-            return null;
-
-        try
-        {
-            return new BitmapImage(uri);
-        }
-        catch
-        {
-            return null;
-        }
-    }
-
-    /// <summary>
-    ///     Creates a BitmapImage with an explicit logical decode width. The decode hint must
-    ///     be set BEFORE the URI source so the framework decodes at the requested resolution
-    ///     instead of the source's native size — using new BitmapImage(uri) starts decoding
-    ///     immediately and ignores any subsequent DecodePixelWidth assignment.
-    ///     The framework multiplies the logical width by the active DPI scale.
-    /// </summary>
-    public static ImageSource? GetDecodedBitmap(string? uriString, int decodePixelWidth)
-    {
-        if (decodePixelWidth <= 0 || !Uri.TryCreate(uriString, UriKind.Absolute, out var uri))
-            return null;
-
-        try
-        {
-            var bitmap = new BitmapImage
-            {
-                DecodePixelType = DecodePixelType.Logical,
-                DecodePixelWidth = decodePixelWidth,
-            };
-            bitmap.UriSource = uri;
-            return bitmap;
-        }
-        catch
-        {
-            return null;
-        }
     }
 }

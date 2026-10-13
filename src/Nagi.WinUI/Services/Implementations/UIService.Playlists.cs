@@ -68,7 +68,7 @@ public partial class UIService
                 if (string.IsNullOrWhiteSpace(pickedPath)) return;
 
                 coverImagePath = pickedPath;
-                imagePreview.Source = ImageUriHelper.SafeGetImageSource(pickedPath);
+                imagePreview.Source = BitmapImageFactory.Create(pickedPath);
                 imagePlaceholder.Visibility = Visibility.Collapsed;
             }
             catch (Exception ex)

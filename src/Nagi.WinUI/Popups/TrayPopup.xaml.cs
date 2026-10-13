@@ -98,7 +98,7 @@ public sealed partial class TrayPopup : Window
         var shouldBeVisible = _isCoverArtInFlyoutEnabled && !string.IsNullOrEmpty(ViewModel.AlbumArtUri);
         CoverArtBackground.Visibility = shouldBeVisible ? Visibility.Visible : Visibility.Collapsed;
 
-        CoverArtBrush.Source = ImageUriHelper.SafeGetImageSource(ViewModel.AlbumArtUri)!;
+        CoverArtBrush.Source = BitmapImageFactory.Create(ViewModel.AlbumArtUri)!;
 
         _logger.LogTrace("Cover art visibility updated to {Visibility}", CoverArtBackground.Visibility);
     }

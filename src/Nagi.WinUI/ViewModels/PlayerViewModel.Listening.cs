@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Data;
+using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Models;
 using Nagi.WinUI.Resources;
 using Nagi.WinUI.Services.Abstractions;
@@ -182,7 +183,7 @@ public partial class PlayerViewModel
             PlaybackStopMode.AfterTrack => Strings.Listening_StopAfterTrack,
             PlaybackStopMode.EndOfQueue => Strings.Listening_StopAtQueueEnd,
             PlaybackStopMode.Timer => string.Format(Strings.Listening_TimerRemaining,
-                Converters.TimeSpanToTimeStringConverter.Format(TimeSpan.FromSeconds(Math.Max(0, Math.Ceiling((_playbackService.StopDeadline!.Value - DateTimeOffset.UtcNow).TotalSeconds))))),
+                DurationFormatter.Format(TimeSpan.FromSeconds(Math.Max(0, Math.Ceiling((_playbackService.StopDeadline!.Value - DateTimeOffset.UtcNow).TotalSeconds))))),
             _ => string.Empty
         };
     }

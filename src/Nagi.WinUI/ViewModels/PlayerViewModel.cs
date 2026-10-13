@@ -157,7 +157,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     public string PlayPauseButtonToolTip => IsPlaying ? Strings.Tooltip_Pause : Strings.Tooltip_Play;
     public string ShuffleIconGlyph => "\uE8B1";
     public string ShuffleButtonToolTip => IsShuffleEnabled
-        ? ListeningMenuFlyoutHelper.GetModeName(_playbackService.CurrentShuffleMode)
+        ? ShuffleModeText.GetName(_playbackService.CurrentShuffleMode)
         : Strings.Tooltip_ShuffleOff;
 
     public string RepeatIconGlyph => CurrentRepeatMode switch
