@@ -25,6 +25,7 @@ namespace Nagi.WinUI.ViewModels;
 public partial class SettingsViewModel : SettingsSectionViewModel
 {
     private readonly IAppInfoService _appInfoService;
+    private readonly IAutoLaunchService _autoLaunchService;
     private readonly IUISettingsService _settingsService;
     private readonly SemaphoreSlim _loadLock = new(1, 1);
 
@@ -37,6 +38,7 @@ public partial class SettingsViewModel : SettingsSectionViewModel
     public SettingsViewModel(
         IUISettingsService settingsService,
         IAppInfoService appInfoService,
+        IAutoLaunchService autoLaunchService,
         IDispatcherService dispatcherService,
         AppearanceSettingsViewModel appearance,
         AudioSettingsViewModel audio,
@@ -50,6 +52,7 @@ public partial class SettingsViewModel : SettingsSectionViewModel
     {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _appInfoService = appInfoService ?? throw new ArgumentNullException(nameof(appInfoService));
+        _autoLaunchService = autoLaunchService ?? throw new ArgumentNullException(nameof(autoLaunchService));
         Appearance = appearance ?? throw new ArgumentNullException(nameof(appearance));
         Audio = audio ?? throw new ArgumentNullException(nameof(audio));
         Library = library ?? throw new ArgumentNullException(nameof(library));
@@ -132,7 +135,7 @@ public partial class SettingsViewModel : SettingsSectionViewModel
             var playerButtonsTask = _settingsService.GetPlayerButtonSettingsAsync();
             var playerAnimationTask = _settingsService.GetPlayerAnimationEnabledAsync();
             var restorePlaybackTask = _settingsService.GetRestorePlaybackStateEnabledAsync();
-            var autoLaunchTask = _settingsService.GetAutoLaunchEnabledAsync();
+            var autoLaunchTask = _autoLaunchService.IsEnabledAsync();
             var startMinimizedTask = _settingsService.GetStartMinimizedEnabledAsync();
             var hideToTrayTask = _settingsService.GetHideToTrayEnabledAsync();
             var miniPlayerTask = _settingsService.GetMinimizeToMiniPlayerEnabledAsync();
@@ -236,7 +239,7 @@ public partial class SettingsViewModel : SettingsSectionViewModel
         IsUpdatingAutoLaunch = true;
         try
         {
-            await _settingsService.SetAutoLaunchEnabledAsync(value);
+            await _autoLaunchService.SetEnabledAsync(value);
         }
         catch (Exception ex)
         {
@@ -245,7 +248,7 @@ public partial class SettingsViewModel : SettingsSectionViewModel
 
         try
         {
-            var enabled = await _settingsService.GetAutoLaunchEnabledAsync();
+            var enabled = await _autoLaunchService.IsEnabledAsync();
             if (!_isDisposed) IsAutoLaunchEnabled = enabled;
         }
         catch (Exception ex)

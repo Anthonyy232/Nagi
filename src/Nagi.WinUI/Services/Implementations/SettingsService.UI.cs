@@ -3,7 +3,6 @@ using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Windows.ApplicationModel;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.WinUI.Models;
@@ -40,43 +39,6 @@ public partial class SettingsService
     public Task SetPlayerAnimationEnabledAsync(bool isEnabled)
     {
         return SetValueAndNotifyAsync(PlayerAnimationEnabledKey, isEnabled, SettingsDefaults.PlayerAnimationEnabled, PlayerAnimationSettingChanged);
-    }
-
-    public async Task<bool> GetAutoLaunchEnabledAsync()
-    {
-        try
-        {
-            var startupTask = await StartupTask.GetAsync(StartupTaskId).AsTask().ConfigureAwait(false);
-            return startupTask.State is StartupTaskState.Enabled or StartupTaskState.EnabledByPolicy;
-        }
-        catch (Exception ex)
-        {
-            if (ex.HResult == unchecked((int)0x80073D5B))
-            {
-                _logger.LogDebug("Auto-launch task check skipped: The package does not have a mutable directory.");
-            }
-            else
-            {
-                _logger.LogWarning(ex, "Failed to get startup task state.");
-            }
-            return false;
-        }
-    }
-
-    public async Task SetAutoLaunchEnabledAsync(bool isEnabled)
-    {
-        var startupTask = await StartupTask.GetAsync(StartupTaskId).AsTask().ConfigureAwait(false);
-        if (isEnabled)
-        {
-            var state = await startupTask.RequestEnableAsync().AsTask().ConfigureAwait(false);
-            if (state is not StartupTaskState.Enabled and not StartupTaskState.EnabledByPolicy)
-                _logger.LogWarning(
-                    "StartupTask enable request did not result in 'Enabled' state. Current state: {State}", state);
-        }
-        else
-        {
-            startupTask.Disable();
-        }
     }
 
     public Task<bool> GetStartMinimizedEnabledAsync() => Task.FromResult(GetValue(StartMinimizedEnabledKey, SettingsDefaults.StartMinimizedEnabled));

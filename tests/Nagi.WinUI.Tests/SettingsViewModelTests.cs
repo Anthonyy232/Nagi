@@ -21,6 +21,7 @@ public class SettingsViewModelTests : IDisposable
     private readonly IAppInfoService _appInfo = Substitute.For<IAppInfoService>();
     private readonly IUIService _ui = Substitute.For<IUIService>();
     private readonly IApplicationLifecycle _lifecycle = Substitute.For<IApplicationLifecycle>();
+    private readonly IAutoLaunchService _autoLaunch = Substitute.For<IAutoLaunchService>();
     private readonly IBackupRestoreService _backup = Substitute.For<IBackupRestoreService>();
     private readonly IDispatcherService _dispatcher = Substitute.For<IDispatcherService>();
     private readonly ILastFmAuthService _lastFm = Substitute.For<ILastFmAuthService>();
@@ -41,7 +42,7 @@ public class SettingsViewModelTests : IDisposable
         _dispatcher.HasThreadAccess.Returns(true);
         _dispatcher.TryEnqueue(Arg.Any<Action>()).Returns(call => { call.Arg<Action>()(); return true; });
         _dispatcher.EnqueueAsync(Arg.Any<Func<Task>>()).Returns(call => call.Arg<Func<Task>>()());
-        _viewModel = new SettingsViewModel(_settings, _appInfo, _dispatcher,
+        _viewModel = new SettingsViewModel(_settings, _appInfo, _autoLaunch, _dispatcher,
             new AppearanceSettingsViewModel(_settings, _theme, _ui, _appInfo, _lifecycle, _dispatcher,
                 NullLogger<AppearanceSettingsViewModel>.Instance, _timeProvider),
             new AudioSettingsViewModel(_playback, _audioPlayer, _settings, _ui, _ffmpeg, _replayGain, _operation, _dispatcher,
@@ -407,8 +408,8 @@ public class SettingsViewModelTests : IDisposable
     public async Task StartupToggle_ReadsActualStateEvenWhenRequestFails(bool fails)
     {
         var change = new TaskCompletionSource();
-        _settings.SetAutoLaunchEnabledAsync(true).Returns(change.Task);
-        _settings.GetAutoLaunchEnabledAsync().Returns(false);
+        _autoLaunch.SetEnabledAsync(true).Returns(change.Task);
+        _autoLaunch.IsEnabledAsync().Returns(false);
         var finished = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         _viewModel.PropertyChanged += (_, e) =>
         {
@@ -423,8 +424,8 @@ public class SettingsViewModelTests : IDisposable
         await finished.Task.WaitAsync(TimeSpan.FromSeconds(5));
 
         _viewModel.IsAutoLaunchEnabled.Should().BeFalse();
-        await _settings.Received(1).SetAutoLaunchEnabledAsync(true);
-        await _settings.DidNotReceive().SetAutoLaunchEnabledAsync(false);
+        await _autoLaunch.Received(1).SetEnabledAsync(true);
+        await _autoLaunch.DidNotReceive().SetEnabledAsync(false);
     }
 
     [Theory]
@@ -464,7 +465,7 @@ public class SettingsViewModelTests : IDisposable
     {
         var startup = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         var language = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
-        _settings.GetAutoLaunchEnabledAsync().Returns(startup.Task);
+        _autoLaunch.IsEnabledAsync().Returns(startup.Task);
         _settings.GetLanguageAsync().Returns(language.Task);
         var first = _viewModel.LoadSettingsAsync();
         var second = _viewModel.LoadSettingsAsync();
@@ -519,7 +520,7 @@ public class SettingsViewModelTests : IDisposable
     public async Task ResetDuringLoad_DoesNotEnablePersistenceForInitialization(bool playerDesign)
     {
         var startup = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-        _settings.GetAutoLaunchEnabledAsync().Returns(startup.Task);
+        _autoLaunch.IsEnabledAsync().Returns(startup.Task);
         _appInfo.GetAvailableLanguagesAsync().Returns(Array.Empty<string>());
         var loading = _viewModel.LoadSettingsAsync();
 
@@ -528,7 +529,7 @@ public class SettingsViewModelTests : IDisposable
         await loading.WaitAsync(TimeSpan.FromSeconds(5));
 
         _viewModel.IsAutoLaunchEnabled.Should().BeTrue();
-        await _settings.DidNotReceive().SetAutoLaunchEnabledAsync(Arg.Any<bool>());
+        await _autoLaunch.DidNotReceive().SetEnabledAsync(Arg.Any<bool>());
     }
 
     [Fact]

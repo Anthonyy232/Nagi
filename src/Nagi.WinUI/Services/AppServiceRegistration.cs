@@ -66,6 +66,7 @@ public static class AppServiceRegistration
         services.AddSingleton<IPathConfiguration, PathConfiguration>();
         services.AddSingleton<IFileSystemService, FileSystemService>();
         services.AddSingleton<ICredentialLockerService, CredentialLockerService>();
+        services.AddSingleton<IAutoLaunchService, StartupTaskAutoLaunchService>();
         services.AddSingleton<SettingsService>();
         services.AddSingleton<IUISettingsService>(sp => sp.GetRequiredService<SettingsService>());
         services.AddSingleton<ISettingsService>(sp => sp.GetRequiredService<SettingsService>());

@@ -61,10 +61,6 @@ public interface IUISettingsService : ISettingsService
 
     Task SetPlayerAnimationEnabledAsync(bool isEnabled);
 
-    Task<bool> GetAutoLaunchEnabledAsync();
-
-    Task SetAutoLaunchEnabledAsync(bool isEnabled);
-
     Task<bool> GetStartMinimizedEnabledAsync();
 
     Task SetStartMinimizedEnabledAsync(bool isEnabled);

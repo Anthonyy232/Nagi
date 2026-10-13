@@ -220,11 +220,23 @@ public class SettingsServiceTests
         }
     }
 
-    private static SettingsService CreateSettings(IDictionary<string, object> values, string? playbackPath = null)
+    [Fact]
+    public async Task ResetToDefaults_TurnsOffAutoLaunch()
+    {
+        var autoLaunch = Substitute.For<IAutoLaunchService>();
+        var settings = CreateSettings(new Dictionary<string, object>(), autoLaunch: autoLaunch);
+
+        await settings.ResetToDefaultsAsync();
+
+        await autoLaunch.Received(1).SetEnabledAsync(false);
+    }
+
+    private static SettingsService CreateSettings(IDictionary<string, object> values, string? playbackPath = null,
+        IAutoLaunchService? autoLaunch = null)
     {
         var paths = Substitute.For<IPathConfiguration>();
         paths.PlaybackStateFilePath.Returns(playbackPath ?? "unused.json");
-        return new SettingsService(paths, Substitute.For<ICredentialLockerService>(),
+        return new SettingsService(paths, Substitute.For<ICredentialLockerService>(), autoLaunch ?? Substitute.For<IAutoLaunchService>(),
             NullLogger<SettingsService>.Instance, values);
     }
 }

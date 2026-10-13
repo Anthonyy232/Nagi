@@ -18,7 +18,6 @@ namespace Nagi.WinUI.Services.Implementations;
 /// </summary>
 public partial class SettingsService : IUISettingsService
 {
-    private const string StartupTaskId = "NagiAutolaunchStartup";
     private const string VolumeKey = "AppVolume";
     private const string MuteStateKey = "AppMuteState";
     private const string ShuffleStateKey = "MusicShuffleState";
@@ -71,23 +70,25 @@ public partial class SettingsService : IUISettingsService
     private const string GenreSplitCharactersKey = "GenreSplitCharacters";
     private const string IgnoreLeadingArticlesOnSortKey = "IgnoreLeadingArticlesOnSort";
 
+    private readonly IAutoLaunchService _autoLaunchService;
     private readonly ICredentialLockerService _credentialLockerService;
     private readonly IDictionary<string, object> _values;
     private readonly ILogger<SettingsService> _logger;
     private readonly IPathConfiguration _pathConfig;
 
     public SettingsService(IPathConfiguration pathConfig, ICredentialLockerService credentialLockerService,
-        ILogger<SettingsService> logger)
-        : this(pathConfig, credentialLockerService, logger, ApplicationData.Current.LocalSettings.Values)
+        IAutoLaunchService autoLaunchService, ILogger<SettingsService> logger)
+        : this(pathConfig, credentialLockerService, autoLaunchService, logger, ApplicationData.Current.LocalSettings.Values)
     {
     }
 
     internal SettingsService(IPathConfiguration pathConfig, ICredentialLockerService credentialLockerService,
-        ILogger<SettingsService> logger, IDictionary<string, object> values)
+        IAutoLaunchService autoLaunchService, ILogger<SettingsService> logger, IDictionary<string, object> values)
     {
         _pathConfig = pathConfig ?? throw new ArgumentNullException(nameof(pathConfig));
         _credentialLockerService =
             credentialLockerService ?? throw new ArgumentNullException(nameof(credentialLockerService));
+        _autoLaunchService = autoLaunchService ?? throw new ArgumentNullException(nameof(autoLaunchService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         _values = values;
@@ -119,7 +120,7 @@ public partial class SettingsService : IUISettingsService
     {
         await ResetStoredValuesAsync().ConfigureAwait(false);
         await Task.WhenAll(ClearPlaybackStateAsync(),
-            SetAutoLaunchEnabledAsync(SettingsDefaults.AutoLaunchEnabled),
+            _autoLaunchService.SetEnabledAsync(SettingsDefaults.AutoLaunchEnabled),
             ClearLastFmCredentialsAsync(), ClearListenBrainzUserTokenAsync()).ConfigureAwait(false);
         _logger.LogInformation("All application settings have been reset to their default values.");
     }
