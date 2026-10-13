@@ -209,16 +209,21 @@
                     <controls:SettingsExpander.Items>
                         <controls:SettingsCard>
                             <controls:SettingsCard.Header>
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <TextBlock Text="{x:Bind resources:Strings.SettingsPage_AccentColor, Mode=OneTime}" VerticalAlignment="Center" />
+                                <Grid HorizontalAlignment="Left" ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{x:Bind resources:Strings.SettingsPage_AccentColor, Mode=OneTime}" VerticalAlignment="Center" TextWrapping="Wrap" />
                                     <HyperlinkButton
+                                        Grid.Column="1"
                                         VerticalAlignment="Center"
                                         Command="{x:Bind ViewModel.Appearance.ResetAccentColorCommand}"
                                         Style="{StaticResource AnimatedHyperlinkButtonStyle}"
                                         Content="{x:Bind resources:Strings.SettingsPage_ResetAccentColor_Content, Mode=OneTime}"
                                         FontSize="12"
                                         Padding="4,2" />
-                                </StackPanel>
+                                </Grid>
                             </controls:SettingsCard.Header>
                             <ColorPicker
                                 HorizontalAlignment="Right"
@@ -265,16 +270,21 @@
                 <controls:SettingsExpander
                     Description="{x:Bind resources:Strings.SettingsPage_PlayerStyling_Description, Mode=OneTime}">
                     <controls:SettingsExpander.Header>
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <TextBlock Text="{x:Bind resources:Strings.SettingsPage_PlayerStyling_Header, Mode=OneTime}" VerticalAlignment="Center" />
+                        <Grid HorizontalAlignment="Left" ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="{x:Bind resources:Strings.SettingsPage_PlayerStyling_Header, Mode=OneTime}" VerticalAlignment="Center" TextWrapping="Wrap" />
                             <HyperlinkButton
+                                Grid.Column="1"
                                 VerticalAlignment="Center"
                                 Command="{x:Bind ViewModel.Appearance.ResetPlayerDesignSettingsCommand}"
                                 Style="{StaticResource AnimatedHyperlinkButtonStyle}"
                                 Content="{x:Bind resources:Strings.SettingsPage_ResetAccentColor_Content, Mode=OneTime}"
                                 FontSize="12"
                                 Padding="4,2" />
-                        </StackPanel>
+                        </Grid>
                     </controls:SettingsExpander.Header>
                     <controls:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
