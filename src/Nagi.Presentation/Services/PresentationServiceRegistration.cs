@@ -23,7 +23,6 @@ public static class PresentationServiceRegistration
         services.AddSingleton<IMusicNavigationService, MusicNavigationService>();
         services.AddSingleton<IViewModelFactory, ViewModelFactory>();
 
-        // Global singletons - persist for app lifetime
         services.AddSingleton<PlayerViewModel>();
         services.AddSingleton<GlobalOperationViewModel>();
         services.AddSingleton<TrayIconViewModel>();
@@ -37,7 +36,6 @@ public static class PresentationServiceRegistration
         services.AddSingleton<GenreViewModel>();
         services.AddSingleton<InsightsViewModel>();
 
-        // Detail/Context ViewModels
         services.AddSingleton<AppearanceSettingsViewModel>();
         services.AddSingleton<AudioSettingsViewModel>();
         services.AddSingleton<LibrarySettingsViewModel>();

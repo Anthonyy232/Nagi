@@ -36,9 +36,6 @@ public interface IUIService
     /// <param name="filePath">The full path to a file within the target directory.</param>
     Task OpenFolderInExplorerAsync(string filePath);
 
-    /// <summary>
-    ///     Opens <paramref name="uri" /> in the default browser.
-    /// </summary>
     /// <returns>False if no app could open it.</returns>
     Task<bool> OpenUriAsync(Uri uri);
 

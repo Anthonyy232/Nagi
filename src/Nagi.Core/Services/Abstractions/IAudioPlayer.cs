@@ -2,9 +2,6 @@
 
 namespace Nagi.Core.Services.Abstractions;
 
-/// <summary>
-///     Defines a low-level audio player responsible for playback control.
-/// </summary>
 public interface IAudioPlayer : IDisposable
 {
     #region Events

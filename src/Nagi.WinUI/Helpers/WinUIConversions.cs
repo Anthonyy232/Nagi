@@ -4,9 +4,6 @@ using Windows.UI;
 
 namespace Nagi.WinUI.Helpers;
 
-/// <summary>
-///     Maps the app's platform-neutral theme and color types to their WinUI counterparts.
-/// </summary>
 internal static class WinUIConversions
 {
     internal static ElementTheme ToElementTheme(this AppTheme theme) => theme switch

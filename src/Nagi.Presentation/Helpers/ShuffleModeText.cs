@@ -3,9 +3,6 @@ using Nagi.Presentation.Resources;
 
 namespace Nagi.Presentation.Helpers;
 
-/// <summary>
-///     Localized names and explanations for the listening mix modes.
-/// </summary>
 public static class ShuffleModeText
 {
     public static string GetName(ShuffleMode mode) => mode switch
