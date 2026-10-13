@@ -76,7 +76,7 @@ public partial class MusicPlaybackServiceTests
     public async Task ExpiredTimer_FinishesOnlyAnActivelyPlayingTrack(bool finishTrack, bool playing)
     {
         var clock = new FakeTimeProvider();
-        await using var service = new MusicPlaybackService(_settingsService, _audioPlayer, _library.Reader, _library.Writer,
+        await using var service = new MusicPlaybackService(_settingsService, _audioPlayer, _mediaControls, _library.Reader, _library.Writer,
             _metadataService, NullLogger<MusicPlaybackService>.Instance, clock);
         await service.InitializeAsync();
         await service.PlayAsync(_testSongs);

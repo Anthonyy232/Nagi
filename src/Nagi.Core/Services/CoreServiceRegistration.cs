@@ -6,9 +6,9 @@ using Nagi.Core.Helpers;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Implementations;
 using Nagi.Core.Services.Implementations.Presence;
 using Nagi.Core.Services.Implementations.Romanization;
+using Nagi.Core.Services.Implementations;
 
 namespace Nagi.Core.Services;
 
@@ -21,7 +21,7 @@ public static class CoreServiceRegistration
     ///     Adds the library, playback, metadata, scrobbling, lyrics, and maintenance services.
     ///     The host must also register logging, HTTP clients, <c>IConfiguration</c>, and its platform services:
     ///     <see cref="IPathConfiguration" />, <see cref="IFileSystemService" />, <see cref="ISettingsService" />,
-    ///     and <see cref="IAudioPlayer" />.
+    ///     <see cref="IAudioPlayer" /> and <see cref="ISystemMediaControls" />.
     /// </summary>
     public static IServiceCollection AddNagiCore(this IServiceCollection services)
     {

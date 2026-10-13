@@ -43,7 +43,7 @@ public sealed partial class LibVlcAudioPlayerService
                 if (_isDisposed) return;
                 MediaOpened?.Invoke();
             });
-            _ = UpdateSmtcDisplayAsync();
+            ReportNowPlaying();
         }
     }
 
@@ -104,7 +104,7 @@ public sealed partial class LibVlcAudioPlayerService
                 _isPausing = false;
             }
         });
-        UpdateSmtcPlaybackStatus();
+        ReportPlaybackStatus();
     }
 
     private void OnMediaPlayerPositionChanged(object? sender, MediaPlayerPositionChangedEventArgs e)

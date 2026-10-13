@@ -22,6 +22,8 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
 
     private readonly ISettingsService _settingsService;
 
+    private readonly ISystemMediaControls _mediaControls = Substitute.For<ISystemMediaControls>();
+
     private readonly List<Song> _testSongs;
 
     public MusicPlaybackServiceTests()
@@ -45,7 +47,9 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         _service = new MusicPlaybackService(
             _settingsService,
             _audioPlayer,
-            _library.Reader, _library.Writer,            _metadataService,
+            _mediaControls,
+            _library.Reader, _library.Writer,
+            _metadataService,
             _logger);
 
         _testSongs = CreateTestSongs(5);
@@ -1310,7 +1314,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
 
         _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
         _settingsService.GetPlaybackStateAsync().Returns(savedState);
-        using var restored = new MusicPlaybackService(_settingsService, _audioPlayer, _library.Reader, _library.Writer, _metadataService, _logger);
+        using var restored = new MusicPlaybackService(_settingsService, _audioPlayer, _mediaControls, _library.Reader, _library.Writer, _metadataService, _logger);
         await restored.InitializeAsync();
         restored.PlaybackQueue.Should().BeEmpty();
         restored.CurrentTrack.Should().BeNull();
@@ -1453,28 +1457,43 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task OnAudioPlayerSmtcNextButtonPressed_ShouldCallNextAsync()
+    public async Task MediaControlsNextPressed_ShouldCallNextAsync()
     {
         await _service.InitializeAsync();
         await _service.PlayAsync(_testSongs);
 
-        _audioPlayer.SmtcNextButtonPressed += Raise.Event<Action>();
+        _mediaControls.NextPressed += Raise.Event<Action>();
 
         await _service.FlushPendingFinalizationAsync();
         _service.CurrentTrack.Should().Be(_testSongs[1]);
     }
 
     [Fact]
-    public async Task OnAudioPlayerSmtcPreviousButtonPressed_ShouldCallPreviousAsync()
+    public async Task MediaControlsPreviousPressed_ShouldCallPreviousAsync()
     {
         await _service.InitializeAsync();
         await _service.PlayAsync(_testSongs, 1);
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(1));
 
-        _audioPlayer.SmtcPreviousButtonPressed += Raise.Event<Action>();
+        _mediaControls.PreviousPressed += Raise.Event<Action>();
 
         await _service.FlushPendingFinalizationAsync();
         _service.CurrentTrack.Should().Be(_testSongs[0]);
+    }
+
+    [Theory]
+    [InlineData(0, true)]
+    [InlineData(4, false)]
+    public async Task MediaControlsNavigation_FollowsThePositionInTheQueue(int startIndex, bool canGoNext)
+    {
+        await _service.InitializeAsync();
+        _mediaControls.ClearReceivedCalls();
+
+        await _service.PlayAsync(_testSongs, startIndex);
+        _audioPlayer.MediaOpened += Raise.Event<Action>();
+
+        _mediaControls.ReceivedCalls().Last(call => call.GetMethodInfo().Name == nameof(ISystemMediaControls.SetNavigationEnabled))
+            .GetArguments().Should().Equal(canGoNext, true);
     }
 
     [Theory]

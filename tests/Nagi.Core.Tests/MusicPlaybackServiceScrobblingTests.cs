@@ -2,7 +2,6 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Implementations;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
@@ -39,7 +38,9 @@ public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
         _service = new MusicPlaybackService(
             settingsService,
             _audioPlayer,
-            _library.Reader, _library.Writer,            metadataService,
+            Substitute.For<ISystemMediaControls>(),
+            _library.Reader, _library.Writer,
+            metadataService,
             logger);
 
         _testSongs = Enumerable.Range(1, 2)

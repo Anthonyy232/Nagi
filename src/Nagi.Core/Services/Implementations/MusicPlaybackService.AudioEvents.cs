@@ -103,21 +103,21 @@ public partial class MusicPlaybackService
     private void OnAudioPlayerMediaOpened()
     {
         TrackChanged?.Invoke();
-        UpdateSmtcControls();
+        UpdateMediaControlsNavigation();
     }
 
-    private void OnAudioPlayerSmtcNextButtonPressed()
+    private void OnMediaControlsNextPressed()
     {
         FireAndForgetSafe(
             NextAsync,
-            "SMTC Next");
+            "Media controls Next");
     }
 
-    private void OnAudioPlayerSmtcPreviousButtonPressed()
+    private void OnMediaControlsPreviousPressed()
     {
         FireAndForgetSafe(
             PreviousAsync,
-            "SMTC Previous");
+            "Media controls Previous");
     }
 
     private async Task ApplyReplayGainIfEnabledAsync(bool? isEnabledOverride = null)

@@ -1,14 +1,15 @@
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
-using Nagi.Core.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
 public partial class MusicPlaybackService : IMusicPlaybackService
 {
     private readonly IAudioPlayer _audioPlayer;
+    private readonly ISystemMediaControls _mediaControls;
     private readonly ILibraryReader _libraryReader;
     private readonly ILibraryWriter _libraryWriter;
     private readonly ILogger<MusicPlaybackService> _logger;
@@ -34,6 +35,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     public MusicPlaybackService(
         ISettingsService settingsService,
         IAudioPlayer audioPlayer,
+        ISystemMediaControls mediaControls,
         ILibraryReader libraryReader,
         ILibraryWriter libraryWriter,
         IMetadataService metadataService,
@@ -41,6 +43,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     {
         _settingsService = settingsService;
         _audioPlayer = audioPlayer;
+        _mediaControls = mediaControls;
         _libraryReader = libraryReader;
         _libraryWriter = libraryWriter;
         _metadataService = metadataService;
@@ -54,8 +57,8 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         _audioPlayer.ErrorOccurred += OnAudioPlayerErrorOccurred;
         _audioPlayer.MediaOpened += OnAudioPlayerMediaOpened;
         _audioPlayer.DurationChanged += OnAudioPlayerDurationChanged;
-        _audioPlayer.SmtcNextButtonPressed += OnAudioPlayerSmtcNextButtonPressed;
-        _audioPlayer.SmtcPreviousButtonPressed += OnAudioPlayerSmtcPreviousButtonPressed;
+        _mediaControls.NextPressed += OnMediaControlsNextPressed;
+        _mediaControls.PreviousPressed += OnMediaControlsPreviousPressed;
 
         _settingsService.VolumeNormalizationEnabledChanged += OnVolumeNormalizationEnabledChanged;
         _settingsService.FadeOnPlayPauseEnabledChanged += OnFadeOnPlayPauseEnabledChanged;
@@ -199,7 +202,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
         if (_isDisposed) return;
         _isInitialized = true;
-        UpdateSmtcControls();
+        UpdateMediaControlsNavigation();
 
         VolumeStateChanged?.Invoke();
         ShuffleModeChanged?.Invoke();
@@ -254,7 +257,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         if (!IsCurrentRequest(request)) return;
         await _audioPlayer.PlayAsync();
         if (!IsCurrentRequest(request)) return;
-        UpdateSmtcControls();
+        UpdateMediaControlsNavigation();
 
         TrackChanged?.Invoke();
     }
@@ -346,7 +349,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             if (!IsCurrentRequest(request)) return;
             ClearQueuesInternal();
             QueueChanged?.Invoke();
-            UpdateSmtcControls();
+            UpdateMediaControlsNavigation();
             return;
         }
 
@@ -460,7 +463,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         _isTransitioningTrack = false;
         TrackChanged?.Invoke();
         PositionChanged?.Invoke();
-        UpdateSmtcControls();
+        UpdateMediaControlsNavigation();
     }
 
     public Task NextAsync() =>
@@ -602,7 +605,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
         await _settingsService.SaveShuffleStateAsync(IsShuffleEnabled);
         ShuffleModeChanged?.Invoke();
-        UpdateSmtcControls();
+        UpdateMediaControlsNavigation();
     }
 
     public async Task SetRepeatModeAsync(RepeatMode mode)
@@ -613,7 +616,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         _logger.LogDebug("Repeat mode set to {RepeatMode}", CurrentRepeatMode);
         await _settingsService.SaveRepeatModeAsync(CurrentRepeatMode);
         RepeatModeChanged?.Invoke();
-        UpdateSmtcControls();
+        UpdateMediaControlsNavigation();
     }
 
     public Task PlayQueueItemAsync(int originalQueueIndex) =>
@@ -758,15 +761,15 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         _audioPlayer.ErrorOccurred -= OnAudioPlayerErrorOccurred;
         _audioPlayer.MediaOpened -= OnAudioPlayerMediaOpened;
         _audioPlayer.DurationChanged -= OnAudioPlayerDurationChanged;
-        _audioPlayer.SmtcNextButtonPressed -= OnAudioPlayerSmtcNextButtonPressed;
-        _audioPlayer.SmtcPreviousButtonPressed -= OnAudioPlayerSmtcPreviousButtonPressed;
+        _mediaControls.NextPressed -= OnMediaControlsNextPressed;
+        _mediaControls.PreviousPressed -= OnMediaControlsPreviousPressed;
         _settingsService.VolumeNormalizationEnabledChanged -= OnVolumeNormalizationEnabledChanged;
         _settingsService.FadeOnPlayPauseEnabledChanged -= OnFadeOnPlayPauseEnabledChanged;
         _settingsService.FadeInDurationChanged -= OnFadeInDurationChanged;
         _settingsService.FadeOutDurationChanged -= OnFadeOutDurationChanged;
     }
 
-    private void UpdateSmtcControls()
+    private void UpdateMediaControlsNavigation()
     {
         var canGoNext = false;
         var canGoPrevious = false;
@@ -793,7 +796,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             if (CurrentTrack != null) canGoPrevious = true;
         }
 
-        _audioPlayer.UpdateSmtcButtonStates(canGoNext, canGoPrevious);
+        _mediaControls.SetNavigationEnabled(canGoNext, canGoPrevious);
     }
 
     private Task RunPlaybackRequest(Func<int, Task> action)

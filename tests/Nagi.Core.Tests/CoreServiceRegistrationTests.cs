@@ -2,9 +2,9 @@ using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nagi.Core.Helpers;
-using Nagi.Core.Services;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
+using Nagi.Core.Services;
 using NSubstitute;
 using Xunit;
 
@@ -22,6 +22,7 @@ public class CoreServiceRegistrationTests
         services.AddSingleton(Substitute.For<IFileSystemService>());
         services.AddSingleton(Substitute.For<ISettingsService>());
         services.AddSingleton(Substitute.For<IAudioPlayer>());
+        services.AddSingleton(Substitute.For<ISystemMediaControls>());
         services.AddNagiCore();
 
         return services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });

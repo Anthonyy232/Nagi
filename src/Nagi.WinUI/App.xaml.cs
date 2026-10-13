@@ -506,8 +506,7 @@ public partial class App : Application
             {
                 if (_isExiting || Services is null) return;
 
-                var audioPlayerService = Services.GetRequiredService<IAudioPlayer>();
-                audioPlayerService.InitializeSmtc();
+                Services.GetRequiredService<ISystemMediaControls>().Initialize();
             }
             catch (Exception ex)
             {

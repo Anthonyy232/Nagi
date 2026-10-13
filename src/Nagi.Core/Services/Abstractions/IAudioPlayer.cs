@@ -3,8 +3,7 @@
 namespace Nagi.Core.Services.Abstractions;
 
 /// <summary>
-///     Defines a low-level audio player responsible for playback control
-///     and integration with the System Media Transport Controls (SMTC).
+///     Defines a low-level audio player responsible for playback control.
 /// </summary>
 public interface IAudioPlayer : IDisposable
 {
@@ -27,9 +26,6 @@ public interface IAudioPlayer : IDisposable
 
     event Action? DurationChanged;
 
-    event Action? SmtcNextButtonPressed;
-
-    event Action? SmtcPreviousButtonPressed;
 
     #endregion
 
@@ -71,10 +67,6 @@ public interface IAudioPlayer : IDisposable
     /// True means the request was accepted; opening the output stream can still fail asynchronously.
     /// </summary>
     Task<bool> SetAudioOutputDeviceAsync(string deviceId);
-
-    void InitializeSmtc();
-
-    void UpdateSmtcButtonStates(bool canNext, bool canPrevious);
 
     /// <summary>
     ///     Asynchronously loads a song for playback. The returned task completes when the media is successfully opened or has

@@ -30,7 +30,7 @@ public partial class MusicPlaybackService
 
         PruneTransientTracks();
         QueueChanged?.Invoke();
-        UpdateSmtcControls();
+        UpdateMediaControlsNavigation();
 
     }
 

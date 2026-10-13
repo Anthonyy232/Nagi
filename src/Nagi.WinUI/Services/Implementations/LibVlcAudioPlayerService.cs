@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Windows.Media;
 using LibVLCSharp;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
@@ -10,14 +9,12 @@ using Nagi.Core.Services.Abstractions;
 using System.Threading;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
-using Nagi.WinUI.Services.Abstractions;
-using WinMediaPlayback = Windows.Media.Playback;
 
 namespace Nagi.WinUI.Services.Implementations;
 
 /// <summary>
-///     Implements <see cref="IAudioPlayer" /> using LibVLCSharp for robust audio playback
-///     and manual integration with the System Media Transport Controls (SMTC).
+///     Implements <see cref="IAudioPlayer" /> using LibVLCSharp, and reports what is playing to the
+///     <see cref="ISystemMediaControls" />.
 ///     Uses lazy initialization to avoid blocking app startup.
 /// </summary>
 public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable, IAsyncDisposable
@@ -26,6 +23,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
     private readonly IAppInfoService _appInfoService;
     private readonly IDispatcherService _dispatcherService;
+    private readonly ISystemMediaControls _mediaControls;
     private readonly ISettingsService _settingsService;
     private readonly ILogger<LibVlcAudioPlayerService> _logger;
     private readonly CancellationTokenSource _disposeCts = new();
@@ -40,11 +38,9 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private LibVLC? _libVlc;
     private MediaPlayer? _mediaPlayer;
     private Equalizer? _equalizer;
-    private WinMediaPlayback.MediaPlayer? _dummyMediaPlayer;
 
     private Media? _currentMedia;
     private Song? _currentSong;
-    private SystemMediaTransportControls? _smtc;
 
     private volatile bool _isDisposed;
     private bool _isExplicitStop; // Prevents false PlaybackEnded events on user/error stop
@@ -71,15 +67,19 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     /// </summary>
     public LibVlcAudioPlayerService(
         IDispatcherService dispatcherService,
+        ISystemMediaControls mediaControls,
         IAppInfoService appInfoService,
         ISettingsService settingsService,
         ILogger<LibVlcAudioPlayerService> logger)
     {
         _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
+        _mediaControls = mediaControls ?? throw new ArgumentNullException(nameof(mediaControls));
         _appInfoService = appInfoService ?? throw new ArgumentNullException(nameof(appInfoService));
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _disposeTask = new Lazy<Task>(DisposeCoreAsync);
+        _mediaControls.PlayPressed += OnMediaControlsPlayPressed;
+        _mediaControls.PausePressed += OnMediaControlsPausePressed;
     }
 
     private void EnsureInitialized()
@@ -146,8 +146,6 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
         _mediaPlayer = new MediaPlayer(_libVlc);
         ApplySavedAudioOutput(outputDeviceId);
-        _dummyMediaPlayer = new WinMediaPlayback.MediaPlayer();
-        _dummyMediaPlayer.CommandManager.IsEnabled = false;
 
         _equalizer = new Equalizer();
         _equalizer.SetPreamp(_basePreamp);
@@ -214,7 +212,6 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
     public event Action? PlaybackEnded, PositionChanged, StateChanged, VolumeChanged, MediaOpened, DurationChanged;
     public event Action<string>? ErrorOccurred;
-    public event Action? SmtcNextButtonPressed, SmtcPreviousButtonPressed;
 
     public bool IsPlaying => !_isPausing && ReadNative(() => _mediaPlayer?.State == VLCState.Playing, false);
     public TimeSpan CurrentPosition => ReadNative(() => FromVlcMicroseconds(_mediaPlayer?.Time ?? 0), TimeSpan.Zero);
@@ -475,19 +472,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             _vlcOperationLock.Release();
         }
 
-        if (_smtc is not null && !_isDisposed)
-        {
-            try
-            {
-                _smtc.DisplayUpdater.ClearAll();
-                _smtc.DisplayUpdater.Update();
-                _smtc.PlaybackStatus = MediaPlaybackStatus.Stopped;
-            }
-            catch (Exception ex) when (ex.HResult == unchecked((int)0x80000013)) // RO_E_CLOSED
-            {
-                _logger.LogDebug("SMTC already disposed during stop.");
-            }
-        }
+        if (!_isDisposed) _mediaControls.Clear();
     }
 
     private async Task StopNativePlaybackAsync(MediaPlayer player)
@@ -594,19 +579,8 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
         try
         {
-            if (_smtc is not null)
-            {
-                try
-                {
-                    _smtc.ButtonPressed -= OnSmtcButtonPressed;
-                    _smtc.IsEnabled = false;
-                }
-                catch (Exception ex) when (ex.HResult == unchecked((int)0x80000013)) // RO_E_CLOSED
-                {
-                    _logger.LogDebug("SMTC already disposed during cleanup.");
-                }
-            }
-
+            _mediaControls.PlayPressed -= OnMediaControlsPlayPressed;
+            _mediaControls.PausePressed -= OnMediaControlsPausePressed;
         }
         finally
         {
@@ -652,18 +626,6 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
                 player.Unmuted -= OnMediaPlayerMuteChanged;
             }
 
-            try
-            {
-                _dummyMediaPlayer?.Dispose();
-            }
-            catch (System.Runtime.InteropServices.COMException ex) when (ex.HResult == unchecked((int)0x80000013)) // RO_E_CLOSED
-            {
-                _logger.LogTrace("Dummy media player already closed.");
-            }
-            finally
-            {
-                _dummyMediaPlayer = null;
-            }
             player?.Stop();
         }
         finally

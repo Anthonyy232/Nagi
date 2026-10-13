@@ -45,3 +45,15 @@ public enum PlaybackContextType
 }
 
 public record PlaybackContext(PlaybackContextType Type, Guid? ContextId);
+
+/// <summary>
+///     The playback state shown by the operating system's media controls.
+/// </summary>
+public enum SystemMediaPlaybackStatus
+{
+    Closed,
+    Changing,
+    Stopped,
+    Playing,
+    Paused
+}

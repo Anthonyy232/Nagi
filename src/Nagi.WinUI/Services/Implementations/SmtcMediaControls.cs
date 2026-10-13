@@ -1,0 +1,231 @@
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Nagi.Core.Models;
+using Nagi.Core.Services.Abstractions;
+using Nagi.Presentation.Services.Abstractions;
+using Windows.Media;
+using Windows.Storage;
+using Windows.Storage.Streams;
+using WinMediaPlayback = Windows.Media.Playback;
+
+namespace Nagi.WinUI.Services.Implementations;
+
+/// <summary>
+///     Windows System Media Transport Controls: media keys, the media overlay and the now-playing display.
+///     LibVLC plays the audio, so an idle WinRT media player is kept only to own the controls.
+/// </summary>
+public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
+{
+    private const int RO_E_CLOSED = unchecked((int)0x80000013);
+
+    private readonly IDispatcherService _dispatcherService;
+    private readonly ILogger<SmtcMediaControls> _logger;
+    private readonly CancellationTokenSource _disposeCts = new();
+    private readonly object _initializeLock = new();
+    private WinMediaPlayback.MediaPlayer? _ownerPlayer;
+    private SystemMediaTransportControls? _smtc;
+    private int _displayVersion;
+    private volatile bool _isDisposed;
+
+    public SmtcMediaControls(IDispatcherService dispatcherService, ILogger<SmtcMediaControls> logger)
+    {
+        _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
+
+    public event Action? PlayPressed;
+    public event Action? PausePressed;
+    public event Action? NextPressed;
+    public event Action? PreviousPressed;
+
+    public void Initialize()
+    {
+        lock (_initializeLock)
+        {
+            if (_isDisposed || _smtc is not null) return;
+            try
+            {
+                _logger.LogDebug("Initializing System Media Transport Controls (SMTC).");
+                _ownerPlayer = new WinMediaPlayback.MediaPlayer();
+                _ownerPlayer.CommandManager.IsEnabled = false;
+                var smtc = _ownerPlayer.SystemMediaTransportControls;
+                smtc.IsPlayEnabled = true;
+                smtc.IsPauseEnabled = true;
+                smtc.IsNextEnabled = false;
+                smtc.IsPreviousEnabled = false;
+                smtc.ButtonPressed += OnButtonPressed;
+                smtc.IsEnabled = true;
+                smtc.PlaybackStatus = MediaPlaybackStatus.Stopped;
+                _smtc = smtc;
+                _logger.LogDebug("SMTC initialized successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, "Failed to initialize SMTC. System media controls will be unavailable.");
+            }
+        }
+    }
+
+    public void SetNavigationEnabled(bool canGoNext, bool canGoPrevious)
+    {
+        if (_isDisposed || _smtc is null) return;
+        try
+        {
+            _smtc.IsNextEnabled = canGoNext;
+            _smtc.IsPreviousEnabled = canGoPrevious;
+        }
+        catch (Exception ex) when (ex.HResult == RO_E_CLOSED)
+        {
+            _logger.LogDebug("SMTC already disposed, ignoring button state update.");
+        }
+    }
+
+    public void SetPlaybackStatus(SystemMediaPlaybackStatus status)
+    {
+        if (_isDisposed || _smtc is null) return;
+        var newStatus = status switch
+        {
+            SystemMediaPlaybackStatus.Playing => MediaPlaybackStatus.Playing,
+            SystemMediaPlaybackStatus.Paused => MediaPlaybackStatus.Paused,
+            SystemMediaPlaybackStatus.Stopped => MediaPlaybackStatus.Stopped,
+            SystemMediaPlaybackStatus.Changing => MediaPlaybackStatus.Changing,
+            _ => MediaPlaybackStatus.Closed
+        };
+
+        _dispatcherService.TryEnqueue(() =>
+        {
+            if (_isDisposed || _smtc is null) return;
+            try
+            {
+                if (_smtc.PlaybackStatus == newStatus) return;
+                _logger.LogDebug("Updating SMTC PlaybackStatus from {OldStatus} to {NewStatus}",
+                    _smtc.PlaybackStatus, newStatus);
+                _smtc.PlaybackStatus = newStatus;
+            }
+            catch (Exception ex) when (ex.HResult == RO_E_CLOSED)
+            {
+                _logger.LogDebug("SMTC already disposed during playback status update.");
+            }
+        });
+    }
+
+    public async Task SetNowPlayingAsync(Song song)
+    {
+        ArgumentNullException.ThrowIfNull(song);
+        if (_isDisposed || _smtc is null) return;
+        var version = Interlocked.Increment(ref _displayVersion);
+
+        try
+        {
+            _logger.LogDebug("Updating SMTC display for track '{SongTitle}'.", song.Title);
+            RandomAccessStreamReference? thumbnail = null;
+            if (!string.IsNullOrEmpty(song.AlbumArtUriFromTrack))
+                try
+                {
+                    var albumArtFile = await StorageFile.GetFileFromPathAsync(song.AlbumArtUriFromTrack)
+                        .AsTask(_disposeCts.Token).ConfigureAwait(false);
+                    thumbnail = RandomAccessStreamReference.CreateFromFile(albumArtFile);
+                }
+                catch (OperationCanceledException) when (_isDisposed) { return; }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to load and set SMTC thumbnail from {AlbumArtPath}",
+                        song.AlbumArtUriFromTrack);
+                }
+
+            if (_isDisposed || version != Volatile.Read(ref _displayVersion)) return;
+            var updater = _smtc.DisplayUpdater;
+            updater.Type = MediaPlaybackType.Music;
+            updater.MusicProperties.Title = song.Title;
+            updater.MusicProperties.Artist = song.ArtistName;
+            updater.MusicProperties.AlbumArtist = song.Album?.ArtistName ?? song.ArtistName;
+            updater.MusicProperties.AlbumTitle = song.Album?.Title ?? Album.UnknownAlbumName;
+            updater.Thumbnail = thumbnail;
+            updater.Update();
+        }
+        catch (Exception ex) when (ex.HResult == RO_E_CLOSED)
+        {
+            _logger.LogDebug("SMTC already disposed during display update.");
+        }
+    }
+
+    public void Clear()
+    {
+        if (_isDisposed || _smtc is null) return;
+        Interlocked.Increment(ref _displayVersion);
+        try
+        {
+            _smtc.DisplayUpdater.ClearAll();
+            _smtc.DisplayUpdater.Update();
+            _smtc.PlaybackStatus = MediaPlaybackStatus.Stopped;
+        }
+        catch (Exception ex) when (ex.HResult == RO_E_CLOSED)
+        {
+            _logger.LogDebug("SMTC already disposed during stop.");
+        }
+    }
+
+    public void Dispose()
+    {
+        lock (_initializeLock)
+        {
+            if (_isDisposed) return;
+            _isDisposed = true;
+        }
+
+        _disposeCts.Cancel();
+        try
+        {
+            if (_smtc is not null)
+            {
+                _smtc.ButtonPressed -= OnButtonPressed;
+                _smtc.IsEnabled = false;
+            }
+
+            _ownerPlayer?.Dispose();
+        }
+        catch (Exception ex) when (ex.HResult == RO_E_CLOSED)
+        {
+            _logger.LogDebug("SMTC already disposed during cleanup.");
+        }
+        finally
+        {
+            _smtc = null;
+            _ownerPlayer = null;
+        }
+    }
+
+    private async void OnButtonPressed(SystemMediaTransportControls sender,
+        SystemMediaTransportControlsButtonPressedEventArgs args)
+    {
+        if (_isDisposed) return;
+        _logger.LogDebug("SMTC button pressed: {Button}", args.Button);
+        try
+        {
+            await _dispatcherService.EnqueueAsync(() =>
+            {
+                if (_isDisposed) return Task.CompletedTask;
+                var handler = args.Button switch
+                {
+                    SystemMediaTransportControlsButton.Play => PlayPressed,
+                    SystemMediaTransportControlsButton.Pause => PausePressed,
+                    SystemMediaTransportControlsButton.Next => NextPressed,
+                    SystemMediaTransportControlsButton.Previous => PreviousPressed,
+                    _ => null
+                };
+                handler?.Invoke();
+                return Task.CompletedTask;
+            }).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex.HResult == RO_E_CLOSED)
+        {
+            _logger.LogDebug("SMTC button handler interrupted during disposal.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error handling SMTC button press for button {Button}.", args.Button);
+        }
+    }
+}

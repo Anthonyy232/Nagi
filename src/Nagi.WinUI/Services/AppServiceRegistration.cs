@@ -5,7 +5,6 @@ using Microsoft.UI.Xaml;
 using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Services.Abstractions;
-using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Popups;
@@ -82,6 +81,7 @@ public static class AppServiceRegistration
         services.AddSingleton<TransparencyEffectsMonitor>();
         services.AddSingleton<INavigationService>(sp => sp.GetRequiredService<NavigationService>());
         services.AddSingleton<ITrayPopupService, TrayPopupService>();
+        services.AddSingleton<ISystemMediaControls, SmtcMediaControls>();
         services.AddSingleton<IAudioPlayer, LibVlcAudioPlayerService>();
         services.AddTransient<ITaskbarService, TaskbarService>();
 
