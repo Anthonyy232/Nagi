@@ -388,7 +388,7 @@ public sealed class MiniPlayerWindow : Window
 
         if (Content is FrameworkElement root)
         {
-            root.RequestedTheme = themeService.CurrentTheme;
+            root.RequestedTheme = themeService.CurrentTheme.ToElementTheme();
         }
 
         ConfigureAppWindow();

@@ -564,15 +564,15 @@ public class SettingsViewModelTests : IDisposable
     {
         _viewModel.Appearance.IsDynamicThemingEnabled = false;
         _theme.ClearReceivedCalls();
-        _viewModel.Appearance.AccentColor = Windows.UI.Color.FromArgb(255, 200, 10, 20);
+        _viewModel.Appearance.AccentColor = ArgbColor.FromRgb(200, 10, 20);
 
         await _viewModel.Appearance.ResetAccentColorCommand.ExecuteAsync(null);
         await AdvanceDebouncesAsync();
 
         await _settings.Received(1).SetAccentColorAsync(null);
-        await _settings.DidNotReceive().SetAccentColorAsync(Arg.Is<Windows.UI.Color?>(color => color.HasValue));
+        await _settings.DidNotReceive().SetAccentColorAsync(Arg.Is<ArgbColor?>(color => color.HasValue));
         await _theme.Received(1).ApplyAccentColorAsync(null);
-        await _theme.DidNotReceive().ApplyAccentColorAsync(Arg.Is<Windows.UI.Color?>(color => color.HasValue));
+        await _theme.DidNotReceive().ApplyAccentColorAsync(Arg.Is<ArgbColor?>(color => color.HasValue));
     }
 
     [Fact]

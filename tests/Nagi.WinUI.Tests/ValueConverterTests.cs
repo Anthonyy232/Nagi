@@ -1,7 +1,7 @@
 using System.Globalization;
 using FluentAssertions;
-using Microsoft.UI.Xaml;
 using Nagi.WinUI.Converters;
+using Nagi.WinUI.Models;
 using Nagi.WinUI.Resources;
 using Xunit;
 
@@ -16,14 +16,14 @@ public class ValueConverterTests
         try
         {
             CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("en-US");
-            var converter = new ElementThemeToFriendlyStringConverter();
-            var english = (string)converter.Convert(ElementTheme.Light, typeof(string), null!, "en-US");
+            var converter = new AppThemeToFriendlyStringConverter();
+            var english = (string)converter.Convert(AppTheme.Light, typeof(string), null!, "en-US");
 
             CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("fr-FR");
             Strings.Theme_Light.Should().NotBe(english);
-            converter.Convert(ElementTheme.Light, typeof(string), null!, "fr-FR").Should().Be(Strings.Theme_Light);
-            converter.ConvertBack(Strings.Theme_Light, typeof(ElementTheme), null!, "fr-FR")
-                .Should().Be(ElementTheme.Light);
+            converter.Convert(AppTheme.Light, typeof(string), null!, "fr-FR").Should().Be(Strings.Theme_Light);
+            converter.ConvertBack(Strings.Theme_Light, typeof(AppTheme), null!, "fr-FR")
+                .Should().Be(AppTheme.Light);
         }
         finally
         {

@@ -5,9 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Microsoft.Extensions.Logging;
-using Microsoft.UI.Xaml;
 using Nagi.Core.Helpers;
-using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Models;
 using Nagi.WinUI.Navigation;
 
@@ -15,9 +13,9 @@ namespace Nagi.WinUI.Services.Implementations;
 
 public partial class SettingsService
 {
-    public Task<ElementTheme> GetThemeAsync() => Task.FromResult(GetEnumValue(ThemeKey, SettingsDefaults.Theme));
+    public Task<AppTheme> GetThemeAsync() => Task.FromResult(GetEnumValue(ThemeKey, SettingsDefaults.Theme));
 
-    public Task SetThemeAsync(ElementTheme theme)
+    public Task SetThemeAsync(AppTheme theme)
     {
         return SetValueAsync(ThemeKey, theme.ToString());
     }
@@ -111,25 +109,10 @@ public partial class SettingsService
             ShowCoverArtInTrayFlyoutSettingChanged);
     }
 
-    public Task<Windows.UI.Color?> GetAccentColorAsync()
-    {
-        var hex = GetValue<string?>(AccentColorKey, null);
-        if (string.IsNullOrEmpty(hex)) return Task.FromResult<Windows.UI.Color?>(null);
-        if (HexColorParser.TryParse(hex, out var color))
-            return Task.FromResult<Windows.UI.Color?>(color);
-        return Task.FromResult<Windows.UI.Color?>(null);
-    }
+    public Task<ArgbColor?> GetAccentColorAsync() =>
+        Task.FromResult(ArgbColor.TryParseHex(GetValue<string?>(AccentColorKey, null), out var color) ? color : (ArgbColor?)null);
 
-    public Task SetAccentColorAsync(Windows.UI.Color? color)
-    {
-        if (color == null)
-        {
-            return SetValueAsync<string?>(AccentColorKey, null);
-        }
-
-        var hex = $"#{color.Value.A:X2}{color.Value.R:X2}{color.Value.G:X2}{color.Value.B:X2}";
-        return SetValueAsync(AccentColorKey, hex);
-    }
+    public Task SetAccentColorAsync(ArgbColor? color) => SetValueAsync(AccentColorKey, color?.ToHex());
 
     public Task<List<NavigationItemSetting>> GetNavigationItemsAsync()
     {

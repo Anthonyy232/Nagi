@@ -1,8 +1,6 @@
-using Microsoft.UI.Xaml;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Data;
 using Nagi.WinUI.Models;
-using Windows.UI;
 
 namespace Nagi.WinUI.Services;
 
@@ -21,7 +19,7 @@ public static class SettingsDefaults
     public const bool FetchOnlineLyricsEnabled = false;
     public const bool LyricsRomanizationEnabled = false;
     public const bool DiscordRichPresenceEnabled = false;
-    public const ElementTheme Theme = ElementTheme.Default;
+    public const AppTheme Theme = AppTheme.Default;
     public const BackdropMaterial DefaultBackdropMaterial = BackdropMaterial.Mica;
     public const bool DynamicThemingEnabled = true;
     public const bool RestorePlaybackStateEnabled = true;
@@ -44,12 +42,12 @@ public static class SettingsDefaults
     public const int DefaultFadeInDurationMs = 200;
     public const int DefaultFadeOutDurationMs = 150;
     public const float EqualizerPreamp = EqualizerSettings.DefaultPreampDb;
-    public static readonly Color? AccentColor = null;
+    public static readonly ArgbColor? AccentColor = null;
 
     /// <summary>
     ///     Nagi's brand accent colour, derived from the app logo. Used while no custom accent is set.
     /// </summary>
-    public static Color BrandAccentColor { get; } = Color.FromArgb(255, 0x21, 0x94, 0x4B);
+    public static ArgbColor BrandAccentColor { get; } = ArgbColor.FromRgb(0x21, 0x94, 0x4B);
 
     public const PlayerBackgroundMaterial DefaultPlayerBackgroundMaterial = Models.PlayerBackgroundMaterial.Acrylic;
     public const double DefaultPlayerTintIntensity = 1.0;

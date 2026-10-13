@@ -7,6 +7,7 @@ using Windows.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
+using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Models;
 
 namespace Nagi.WinUI.Converters;
@@ -71,15 +72,15 @@ public class BooleanToInverseBooleanConverter : IValueConverter
     }
 }
 
-public class ElementThemeToFriendlyStringConverter : IValueConverter
+public class AppThemeToFriendlyStringConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
     {
         return value switch
         {
-            ElementTheme.Light => Nagi.WinUI.Resources.Strings.Theme_Light,
-            ElementTheme.Dark => Nagi.WinUI.Resources.Strings.Theme_Dark,
-            ElementTheme.Default => Nagi.WinUI.Resources.Strings.Theme_Default,
+            AppTheme.Light => Nagi.WinUI.Resources.Strings.Theme_Light,
+            AppTheme.Dark => Nagi.WinUI.Resources.Strings.Theme_Dark,
+            AppTheme.Default => Nagi.WinUI.Resources.Strings.Theme_Default,
             _ => value?.ToString() ?? string.Empty
         };
     }
@@ -88,12 +89,21 @@ public class ElementThemeToFriendlyStringConverter : IValueConverter
     {
         if (value is string strValue)
         {
-            foreach (var theme in Enum.GetValues<ElementTheme>())
+            foreach (var theme in Enum.GetValues<AppTheme>())
                 if ((string)Convert(theme, targetType, parameter, language) == strValue) return theme;
         }
 
         return DependencyProperty.UnsetValue;
     }
+}
+
+public class ArgbColorToColorConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language) =>
+        value is ArgbColor color ? color.ToWindowsColor() : DependencyProperty.UnsetValue;
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language) =>
+        value is Color color ? color.ToArgbColor() : DependencyProperty.UnsetValue;
 }
 
 public class BooleanToVisibilityConverter : IValueConverter

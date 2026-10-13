@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
-using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Helpers;
@@ -69,10 +68,10 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         });
     }
 
-    [ObservableProperty] public partial ElementTheme SelectedTheme { get; set; }
+    [ObservableProperty] public partial AppTheme SelectedTheme { get; set; }
     [ObservableProperty] public partial BackdropMaterial SelectedBackdropMaterial { get; set; }
     [ObservableProperty] public partial bool IsDynamicThemingEnabled { get; set; }
-    [ObservableProperty] public partial Windows.UI.Color AccentColor { get; set; }
+    [ObservableProperty] public partial ArgbColor AccentColor { get; set; }
     [ObservableProperty] public partial PlayerBackgroundMaterial SelectedPlayerBackgroundMaterial { get; set; }
     [ObservableProperty] public partial double PlayerTintIntensity { get; set; }
     [ObservableProperty] public partial LanguageModel? SelectedLanguage { get; set; }
@@ -80,7 +79,7 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
     [ObservableProperty] public partial bool IsRememberWindowPositionEnabled { get; set; }
     [ObservableProperty] public partial bool IsRememberPaneStateEnabled { get; set; }
 
-    public IReadOnlyList<ElementTheme> AvailableThemes { get; } = Enum.GetValues<ElementTheme>();
+    public IReadOnlyList<AppTheme> AvailableThemes { get; } = Enum.GetValues<AppTheme>();
     public IReadOnlyList<BackdropMaterial> AvailableBackdropMaterials { get; } = Enum.GetValues<BackdropMaterial>();
     public IReadOnlyList<PlayerBackgroundMaterial> AvailablePlayerBackgroundMaterials { get; } = Enum.GetValues<PlayerBackgroundMaterial>();
     public ObservableRangeCollection<LanguageModel> AvailableLanguages { get; } = new();
@@ -275,7 +274,7 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         QueueSettingsSave(_navigationItemSaveDebouncer, _ => _settingsService.SetNavigationItemsAsync(snapshot), nameof(NavigationItems));
     }
 
-    async partial void OnSelectedThemeChanged(ElementTheme value)
+    async partial void OnSelectedThemeChanged(AppTheme value)
     {
         if (_isInitializing) return;
         try
@@ -323,7 +322,7 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
     partial void OnIsRememberPaneStateEnabledChanged(bool value) =>
         _ = SaveSettingAsync(() => _settingsService.SetRememberPaneStateEnabledAsync(value));
 
-    partial void OnAccentColorChanged(Windows.UI.Color value)
+    partial void OnAccentColorChanged(ArgbColor value)
     {
         if (_isInitializing) return;
         QueueSettingsSave(_accentColorSaveDebouncer, async token =>

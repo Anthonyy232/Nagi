@@ -10,7 +10,6 @@
     xmlns:localConverters="using:Nagi.WinUI.Converters"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Nagi.WinUI.Models"
-    xmlns:mux="using:Microsoft.UI.Xaml"
     xmlns:navigation="using:Nagi.WinUI.Navigation"
     xmlns:resources="using:Nagi.WinUI.Resources"
     xmlns:viewmodels="using:Nagi.WinUI.ViewModels"
@@ -24,7 +23,8 @@
             <Setter Property="OnContent" Value="" />
             <Setter Property="OffContent" Value="" />
         </Style>
-        <localConverters:ElementThemeToFriendlyStringConverter x:Key="ThemeToStringConverter" />
+        <localConverters:AppThemeToFriendlyStringConverter x:Key="ThemeToStringConverter" />
+        <localConverters:ArgbColorToColorConverter x:Key="ArgbColorToColorConverter" />
         <localConverters:BackdropMaterialToStringConverter x:Key="BackdropMaterialToStringConverter" />
         <localConverters:FloatToDecimalStringConverter x:Key="FloatToDecimalStringConverter" />
         <localConverters:PlayerBackgroundMaterialToStringConverter x:Key="PlayerBackgroundMaterialToStringConverter" />
@@ -200,7 +200,7 @@
                         ItemsSource="{x:Bind ViewModel.Appearance.AvailableThemes}"
                         SelectedItem="{x:Bind ViewModel.Appearance.SelectedTheme, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
-                            <DataTemplate x:DataType="mux:ElementTheme">
+                            <DataTemplate x:DataType="models:AppTheme">
                                 <TextBlock Text="{x:Bind Converter={StaticResource ThemeToStringConverter}}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
@@ -222,7 +222,7 @@
                             </controls:SettingsCard.Header>
                             <ColorPicker
                                 HorizontalAlignment="Right"
-                                Color="{x:Bind ViewModel.Appearance.AccentColor, Mode=TwoWay}"
+                                Color="{x:Bind ViewModel.Appearance.AccentColor, Mode=TwoWay, Converter={StaticResource ArgbColorToColorConverter}}"
                                 IsAlphaEnabled="False"
                                 IsColorChannelTextInputVisible="False"
                                 IsColorSliderVisible="True"

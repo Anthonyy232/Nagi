@@ -1,14 +1,14 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.UI.Xaml;
+using Nagi.WinUI.Models;
 
 namespace Nagi.WinUI.Services.Abstractions;
 
 public interface IThemeService
 {
-    void ApplyTheme(ElementTheme theme);
+    void ApplyTheme(AppTheme theme);
     Task ReapplyCurrentDynamicThemeAsync();
 
-    ElementTheme CurrentTheme { get; }
+    AppTheme CurrentTheme { get; }
 
     /// <summary>
     ///     Applies a dynamic theme color based on color swatches, respecting the current app theme (Light/Dark).
@@ -20,12 +20,11 @@ public interface IThemeService
     /// <summary>
     ///     Applies the configured accent color, or the default app accent color when none is configured.
     /// </summary>
-    /// <param name="theme">The optional theme context to avoid redundant UI thread dispatches.</param>
-    Task ActivateDefaultPrimaryColorAsync(ElementTheme? theme = null);
+    Task ActivateDefaultPrimaryColorAsync();
 
     /// <summary>
     ///     Applies the specified accent color to the application's primary color.
     /// </summary>
     /// <param name="color">The accent color to apply, or null to use the app default.</param>
-    Task ApplyAccentColorAsync(Windows.UI.Color? color);
+    Task ApplyAccentColorAsync(ArgbColor? color);
 }

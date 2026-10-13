@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Helpers;
+using Nagi.WinUI.Models;
 using Nagi.WinUI.Services.Abstractions;
 using Color = Windows.UI.Color;
 
@@ -35,9 +36,9 @@ public class ThemeService : IThemeService
         _logger = logger;
     }
 
-    public ElementTheme CurrentTheme { get; private set; } = ElementTheme.Default;
+    public AppTheme CurrentTheme { get; private set; } = AppTheme.Default;
 
-    public void ApplyTheme(ElementTheme theme)
+    public void ApplyTheme(AppTheme theme)
     {
         _logger.LogDebug("Applying application theme: {Theme}", theme);
         CurrentTheme = theme;
@@ -45,7 +46,7 @@ public class ThemeService : IThemeService
         {
             if (_window.Content is not FrameworkElement rootElement) return;
 
-            rootElement.RequestedTheme = theme;
+            rootElement.RequestedTheme = theme.ToElementTheme();
             _ = ReapplyCurrentDynamicThemeAsync();
             _window.InitializeCustomTitleBar();
         });
@@ -96,14 +97,15 @@ public class ThemeService : IThemeService
         }
     }
 
-    public async Task ActivateDefaultPrimaryColorAsync(ElementTheme? theme = null)
+    public async Task ActivateDefaultPrimaryColorAsync() => await ActivateDefaultPrimaryColorAsync(await GetActualThemeAsync());
+
+    private async Task ActivateDefaultPrimaryColorAsync(ElementTheme actualTheme)
     {
         _logger.LogDebug("Activating configured primary color.");
-        var actualTheme = theme ?? await GetActualThemeAsync();
         await SetAppColorsAsync(await GetConfiguredAccentColorAsync(), actualTheme);
     }
 
-    public async Task ApplyAccentColorAsync(Color? color)
+    public async Task ApplyAccentColorAsync(ArgbColor? color)
     {
         var theme = await GetActualThemeAsync();
         if (color is not null)
@@ -111,7 +113,7 @@ public class ThemeService : IThemeService
             _logger.LogDebug("Applying manual accent color: {Color}", color);
         }
 
-        await SetAppColorsAsync(color ?? SettingsDefaults.BrandAccentColor, theme);
+        await SetAppColorsAsync((color ?? SettingsDefaults.BrandAccentColor).ToWindowsColor(), theme);
     }
 
     private async Task SetAppColorsAsync(
@@ -181,13 +183,14 @@ public class ThemeService : IThemeService
 
     private async Task<Color> GetConfiguredAccentColorAsync()
     {
-        return await _settingsService.GetAccentColorAsync() ?? SettingsDefaults.BrandAccentColor;
+        return (await _settingsService.GetAccentColorAsync() ?? SettingsDefaults.BrandAccentColor).ToWindowsColor();
     }
 
     private static bool TryParseSwatch(string? swatchId, out Color color)
     {
-        color = default;
-        return !string.IsNullOrWhiteSpace(swatchId) && HexColorParser.TryParse(swatchId, out color);
+        var parsed = ArgbColor.TryParseHex(swatchId, out var argb);
+        color = argb.ToWindowsColor();
+        return parsed;
     }
 
     private static Color GetMediaOnImageAccentColor(Color color)

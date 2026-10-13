@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.UI.Xaml;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Models;
 using Nagi.WinUI.Navigation;
@@ -42,9 +41,9 @@ public interface IUISettingsService : ISettingsService
     /// </summary>
     bool IsTransparencyEffectsEnabled();
 
-    Task<ElementTheme> GetThemeAsync();
+    Task<AppTheme> GetThemeAsync();
 
-    Task SetThemeAsync(ElementTheme theme);
+    Task SetThemeAsync(AppTheme theme);
 
     Task<BackdropMaterial> GetBackdropMaterialAsync();
 
@@ -165,14 +164,14 @@ public interface IUISettingsService : ISettingsService
     /// <summary>
     ///     Gets the user-defined accent color, if any.
     /// </summary>
-    /// <returns>The saved <see cref="Windows.UI.Color" />, or null if none has been saved.</returns>
-    Task<Windows.UI.Color?> GetAccentColorAsync();
+    /// <returns>The saved color, or null if none has been saved.</returns>
+    Task<ArgbColor?> GetAccentColorAsync();
 
     /// <summary>
     ///     Saves the user-defined accent color.
     /// </summary>
     /// <param name="color">The color to save, or null to clear the setting.</param>
-    Task SetAccentColorAsync(Windows.UI.Color? color);
+    Task SetAccentColorAsync(ArgbColor? color);
 
     Task<TEnum> GetSortOrderAsync<TEnum>(string pageKey) where TEnum : struct, Enum;
     Task SetSortOrderAsync<TEnum>(string pageKey, TEnum sortOrder) where TEnum : struct, Enum;

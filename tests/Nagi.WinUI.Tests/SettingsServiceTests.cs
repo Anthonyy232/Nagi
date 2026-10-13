@@ -25,7 +25,7 @@ public class SettingsServiceTests
     public async Task AccentColor_LoadsLegacyHexAndRoundTripsAlphaWithoutAnAppInstance(string hex, byte alpha)
     {
         using var settings = CreateSettings(new Dictionary<string, object> { ["AccentColor"] = hex });
-        var expected = Windows.UI.Color.FromArgb(alpha, 0x21, 0x94, 0x4B);
+        var expected = new ArgbColor(alpha, 0x21, 0x94, 0x4B);
 
         (await settings.GetAccentColorAsync()).Should().Be(expected);
         await settings.SetAccentColorAsync(expected);
