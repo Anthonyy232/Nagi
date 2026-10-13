@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Presentation.ViewModels;
 using Xunit;
 
-namespace Nagi.WinUI.Tests;
+namespace Nagi.Presentation.Tests;
 
 public class SearchableViewModelTests
 {

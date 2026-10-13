@@ -1,6 +1,6 @@
 using Nagi.Presentation.Services.Abstractions;
 
-namespace Nagi.WinUI.Tests;
+namespace Nagi.Presentation.Tests;
 
 /// <summary>Runs dispatched callbacks immediately for view-model tests without a XAML application.</summary>
 internal sealed class ImmediateDispatcher : IDispatcherService

@@ -22,7 +22,6 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="FluentAssertions" />
-        <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
         <PackageReference Include="NSubstitute" />
         <PackageReference Include="xunit.v3" />
         <ProjectReference Include="..\..\src\Nagi.WinUI\Nagi.WinUI.csproj"

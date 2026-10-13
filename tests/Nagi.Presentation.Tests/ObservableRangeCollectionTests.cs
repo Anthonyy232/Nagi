@@ -3,7 +3,7 @@ using FluentAssertions;
 using Nagi.Presentation.Helpers;
 using Xunit;
 
-namespace Nagi.WinUI.Tests;
+namespace Nagi.Presentation.Tests;
 
 public class ObservableRangeCollectionTests
 {

@@ -1,14 +1,13 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services.Implementations;
 using NSubstitute;
 using Xunit;
 
-namespace Nagi.WinUI.Tests;
+namespace Nagi.Presentation.Tests;
 
 public class MusicNavigationServiceTests
 {

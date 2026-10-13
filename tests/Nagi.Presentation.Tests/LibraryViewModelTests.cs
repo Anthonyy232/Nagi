@@ -9,7 +9,7 @@ using Nagi.Presentation.ViewModels;
 using NSubstitute;
 using Xunit;
 
-namespace Nagi.WinUI.Tests;
+namespace Nagi.Presentation.Tests;
 
 public class LibraryViewModelTests
 {

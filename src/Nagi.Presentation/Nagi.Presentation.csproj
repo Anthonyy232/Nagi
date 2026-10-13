@@ -12,7 +12,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="Nagi.WinUI.Tests" />
         <InternalsVisibleTo Include="Nagi.Presentation.Tests" />
         <EmbeddedResource Update="Resources\Strings.resx">
             <StronglyTypedLanguage>C#</StronglyTypedLanguage>

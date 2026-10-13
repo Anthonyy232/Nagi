@@ -4,7 +4,7 @@ using FluentAssertions;
 using Nagi.Core.Services.Implementations.Presence;
 using Xunit;
 
-namespace Nagi.WinUI.Tests;
+namespace Nagi.Core.Tests;
 
 public sealed class DiscordPipeClientTests : IDisposable
 {

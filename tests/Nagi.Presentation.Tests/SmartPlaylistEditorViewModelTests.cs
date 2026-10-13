@@ -11,7 +11,7 @@ using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Xunit;
 
-namespace Nagi.WinUI.Tests;
+namespace Nagi.Presentation.Tests;
 
 public class SmartPlaylistEditorViewModelTests : IDisposable
 {

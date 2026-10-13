@@ -5,7 +5,7 @@ using Xunit;
 using CoreStrings = Nagi.Core.Resources.Strings;
 using UiStrings = Nagi.Presentation.Resources.Strings;
 
-namespace Nagi.WinUI.Tests;
+namespace Nagi.Presentation.Tests;
 
 public class LocalizedResourceTests
 {

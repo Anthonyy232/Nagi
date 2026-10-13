@@ -4,7 +4,7 @@ using System.Globalization;
 using Nagi.Presentation.ViewModels;
 using Xunit;
 
-namespace Nagi.WinUI.Tests;
+namespace Nagi.Presentation.Tests;
 
 public class RuleViewModelTests
 {

@@ -35,7 +35,10 @@ jobs:
       - name: Run tests
         run: dotnet test --project tests/Nagi.Core.Tests/Nagi.Core.Tests.csproj -c Release --report-xunit-trx --report-xunit-trx-filename test-results.trx
 
-      - name: Run WinUI view-model tests
+      - name: Run view-model tests
+        run: dotnet test --project tests/Nagi.Presentation.Tests/Nagi.Presentation.Tests.csproj -c Release --report-xunit-trx --report-xunit-trx-filename presentation-test-results.trx
+
+      - name: Run WinUI tests
         run: dotnet test --project tests/Nagi.WinUI.Tests/Nagi.WinUI.Tests.csproj -c Release -p:Platform=x64 --report-xunit-trx --report-xunit-trx-filename winui-test-results.trx
 
       - name: Upload test results

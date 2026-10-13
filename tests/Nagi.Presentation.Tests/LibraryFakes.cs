@@ -1,7 +1,7 @@
 using Nagi.Core.Services.Abstractions;
 using NSubstitute;
 
-namespace Nagi.WinUI.Tests;
+namespace Nagi.Presentation.Tests;
 
 /// <summary>
 ///     One independent substitute per library contract, so a test only satisfies the calls
