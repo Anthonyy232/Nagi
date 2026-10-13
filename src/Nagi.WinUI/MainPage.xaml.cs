@@ -240,7 +240,9 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private void ContentRegion_SizeChanged(object sender, SizeChangedEventArgs e)
     {
         QueueSplitView.OpenPaneLength = Math.Min(332, Math.Max(0, e.NewSize.Width - 12));
-        QueueSplitView.DisplayMode = e.NewSize.Width < 760 ? SplitViewDisplayMode.Overlay : SplitViewDisplayMode.Inline;
+        var overlay = e.NewSize.Width < 760;
+        QueueSplitView.DisplayMode = overlay ? SplitViewDisplayMode.Overlay : SplitViewDisplayMode.Inline;
+        VisualStateManager.GoToState(this, overlay ? "QueuePaneOverlay" : "QueuePaneInline", false);
     }
 
     private async void Queue_Drop(object sender, DragEventArgs e)
