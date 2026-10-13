@@ -6,7 +6,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:ImageEx"
-    xmlns:helpers="using:Nagi.Core.Helpers"
     xmlns:viewmodels="using:Nagi.Presentation.ViewModels"
     xmlns:resources="using:Nagi.Presentation.Resources"
     mc:Ignorable="d"
