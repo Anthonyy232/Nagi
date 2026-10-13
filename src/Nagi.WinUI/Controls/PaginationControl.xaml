@@ -31,6 +31,7 @@
                 IsEnabled="{x:Bind ViewModel.HasPreviousPage, Mode=OneWay}"
                 Style="{ThemeResource SubtleButtonStyle}"
                 ToolTipService.ToolTip="{x:Bind resources:Strings.PaginationControl_PreviousPage_ToolTip, Mode=OneTime}"
+                AutomationProperties.Name="{x:Bind resources:Strings.PaginationControl_PreviousPage_ToolTip, Mode=OneTime}"
                 Width="32" Height="32" Padding="0">
             <FontIcon Glyph="&#xE76B;" FontSize="12" />
         </Button>
@@ -45,6 +46,7 @@
                 IsEnabled="{x:Bind ViewModel.HasNextPage, Mode=OneWay}"
                 Style="{ThemeResource SubtleButtonStyle}"
                 ToolTipService.ToolTip="{x:Bind resources:Strings.PaginationControl_NextPage_ToolTip, Mode=OneTime}"
+                AutomationProperties.Name="{x:Bind resources:Strings.PaginationControl_NextPage_ToolTip, Mode=OneTime}"
                 Width="32" Height="32" Padding="0">
             <FontIcon Glyph="&#xE76C;" FontSize="12" />
         </Button>

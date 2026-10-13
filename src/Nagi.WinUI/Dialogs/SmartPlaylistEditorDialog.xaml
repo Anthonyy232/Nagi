@@ -152,6 +152,7 @@
                                             <Button Grid.Column="3"
                                                     Click="RemoveRule_Click"
                                                     ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylist_RemoveRuleButton_ToolTip, Mode=OneTime}"
+                                                    AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylist_RemoveRuleButton_ToolTip, Mode=OneTime}"
                                                     Style="{ThemeResource SubtleButtonStyle}">
                                                 <FontIcon Glyph="&#xE738;" FontSize="14" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                                             </Button>

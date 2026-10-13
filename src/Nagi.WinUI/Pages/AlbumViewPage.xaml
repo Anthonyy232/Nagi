@@ -128,6 +128,7 @@
 
                         <Button x:Name="SearchToggleButton"
                                 ToolTipService.ToolTip="{x:Bind resources:Strings.AlbumViewPage_SearchButton_ToolTip, Mode=OneTime}"
+                                AutomationProperties.Name="{x:Bind resources:Strings.AlbumViewPage_SearchButton_ToolTip, Mode=OneTime}"
                                 Click="OnSearchToggleButtonClick"
                                 Style="{StaticResource SongListViewPageIconButton}"
                                 HorizontalAlignment="Right"
@@ -171,7 +172,7 @@
                         <FontIcon FontSize="16" Glyph="&#xE8CB;" />
                     </Button>
 
-                    <Button ToolTipService.ToolTip="{x:Bind resources:Strings.AlbumViewPage_PlayAllButton_ToolTip, Mode=OneTime}" Style="{StaticResource SongListViewPageIconButton}"
+                    <Button ToolTipService.ToolTip="{x:Bind resources:Strings.AlbumViewPage_PlayAllButton_ToolTip, Mode=OneTime}" AutomationProperties.Name="{x:Bind resources:Strings.AlbumViewPage_PlayAllButton_ToolTip, Mode=OneTime}" Style="{StaticResource SongListViewPageIconButton}"
                             Command="{x:Bind ViewModel.PlayAllSongsCommand}">
                         <FontIcon Glyph="" FontSize="16" />
                     </Button>

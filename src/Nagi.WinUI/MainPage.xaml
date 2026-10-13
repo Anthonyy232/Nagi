@@ -24,7 +24,8 @@
                     Command="{x:Bind Command}"
                     Style="{StaticResource MediaControlButtonStyle}"
                     Foreground="{StaticResource PlayerAccentBrush}"
-                    ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneWay}">
+                    ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneWay}"
+                    AutomationProperties.Name="{x:Bind DynamicToolTip, Mode=OneWay}">
                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
                               Glyph="{x:Bind DynamicIcon, Mode=OneWay}"
                               Opacity="{x:Bind IsIconActive, Mode=OneWay, Converter={StaticResource ToggleIconOpacityConverter}}" />
@@ -37,7 +38,8 @@
                     Command="{x:Bind Command}"
                     Style="{StaticResource MediaControlButtonStyle}"
                     Foreground="{StaticResource PlayerAccentBrush}"
-                    ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneWay}">
+                    ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneWay}"
+                    AutomationProperties.Name="{x:Bind DynamicToolTip, Mode=OneWay}">
                     <FontIcon
                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
                         FontSize="24"
@@ -49,6 +51,7 @@
             <DataTemplate x:Key="LyricsButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
                 <Button
                     ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneTime}"
+                    AutomationProperties.Name="{x:Bind DynamicToolTip, Mode=OneTime}"
                     Style="{StaticResource MediaControlButtonStyle}"
                     Foreground="{StaticResource PlayerAccentBrush}"
                     Click="LyricsButton_Click">
@@ -867,6 +870,8 @@
 
                         <Button Grid.Column="3"
                                 Click="OnCloseSeeAll"
+                                ToolTipService.ToolTip="{x:Bind resources:Strings.Generic_Close, Mode=OneTime}"
+                                AutomationProperties.Name="{x:Bind resources:Strings.Generic_Close, Mode=OneTime}"
                                 Style="{StaticResource SubtleButtonStyle}"
                                 Width="32" Height="32" Padding="0">
                             <FontIcon Glyph="&#xE711;" FontSize="12" />
@@ -936,12 +941,16 @@
                         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4">
                             <Button Command="{x:Bind InsightsVm.SeeAllPreviousPageCommand}"
                                     IsEnabled="{x:Bind InsightsVm.HasSeeAllPreviousPage, Mode=OneWay}"
+                                    ToolTipService.ToolTip="{x:Bind resources:Strings.PaginationControl_PreviousPage_ToolTip, Mode=OneTime}"
+                                    AutomationProperties.Name="{x:Bind resources:Strings.PaginationControl_PreviousPage_ToolTip, Mode=OneTime}"
                                     Style="{StaticResource SubtleButtonStyle}"
                                     Width="32" Height="32" Padding="0">
                                 <FontIcon Glyph="&#xE76B;" FontSize="12" />
                             </Button>
                             <Button Command="{x:Bind InsightsVm.SeeAllNextPageCommand}"
                                     IsEnabled="{x:Bind InsightsVm.HasSeeAllNextPage, Mode=OneWay}"
+                                    ToolTipService.ToolTip="{x:Bind resources:Strings.PaginationControl_NextPage_ToolTip, Mode=OneTime}"
+                                    AutomationProperties.Name="{x:Bind resources:Strings.PaginationControl_NextPage_ToolTip, Mode=OneTime}"
                                     Style="{StaticResource SubtleButtonStyle}"
                                     Width="32" Height="32" Padding="0">
                                 <FontIcon Glyph="&#xE76C;" FontSize="12" />

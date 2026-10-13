@@ -74,6 +74,7 @@
                         x:Name="BackButton"
                         Grid.Column="0"
                         ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_BackButton_ToolTip, Mode=OneTime}"
+                        AutomationProperties.Name="{x:Bind resources:Strings.MiniPlayer_BackButton_ToolTip, Mode=OneTime}"
                         Command="{x:Bind ViewModel.ShowPlayerViewCommand}"
                         Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
@@ -127,7 +128,8 @@
                     <Button
                         x:Name="RestoreButton"
                         Grid.Column="2"
-                        ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_RestoreButton_ToolTip, Mode=OneTime}">
+                        ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_RestoreButton_ToolTip, Mode=OneTime}"
+                        AutomationProperties.Name="{x:Bind resources:Strings.MiniPlayer_RestoreButton_ToolTip, Mode=OneTime}">
                         <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="20" Glyph="" />
                     </Button>
                 </Grid>
@@ -153,36 +155,43 @@
                             <StackPanel x:Name="MediaControlsPanel" HorizontalAlignment="Center" Orientation="Horizontal" Spacing="2">
 
                                 <Button Command="{x:Bind ViewModel.ToggleShuffleCommand}"
-                                        ToolTipService.ToolTip="{x:Bind ViewModel.ShuffleButtonToolTip, Mode=OneWay}">
+                                        ToolTipService.ToolTip="{x:Bind ViewModel.ShuffleButtonToolTip, Mode=OneWay}"
+                                        AutomationProperties.Name="{x:Bind ViewModel.ShuffleButtonToolTip, Mode=OneWay}">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                               Glyph="{x:Bind ViewModel.ShuffleIconGlyph}"
                                               Opacity="{x:Bind ViewModel.IsShuffleEnabled, Mode=OneWay, Converter={StaticResource ToggleIconOpacityConverter}}" />
                                 </Button>
                                 <Button Command="{x:Bind ViewModel.PreviousCommand}"
-                                        ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_PreviousButton_ToolTip, Mode=OneTime}">
+                                        ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_PreviousButton_ToolTip, Mode=OneTime}"
+                                        AutomationProperties.Name="{x:Bind resources:Strings.MiniPlayer_PreviousButton_ToolTip, Mode=OneTime}">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                                 </Button>
                                 <Button Command="{x:Bind ViewModel.PlayPauseCommand}"
-                                        ToolTipService.ToolTip="{x:Bind ViewModel.PlayPauseButtonToolTip, Mode=OneWay}">
+                                        ToolTipService.ToolTip="{x:Bind ViewModel.PlayPauseButtonToolTip, Mode=OneWay}"
+                                        AutomationProperties.Name="{x:Bind ViewModel.PlayPauseButtonToolTip, Mode=OneWay}">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="24"
                                               Glyph="{x:Bind ViewModel.PlayPauseIconGlyph, Mode=OneWay}" />
                                 </Button>
                                 <Button Command="{x:Bind ViewModel.NextCommand}"
-                                        ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_NextButton_ToolTip, Mode=OneTime}">
+                                        ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_NextButton_ToolTip, Mode=OneTime}"
+                                        AutomationProperties.Name="{x:Bind resources:Strings.MiniPlayer_NextButton_ToolTip, Mode=OneTime}">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                                 </Button>
                                 <Button Command="{x:Bind ViewModel.CycleRepeatCommand}"
-                                        ToolTipService.ToolTip="{x:Bind ViewModel.RepeatButtonToolTip, Mode=OneWay}">
+                                        ToolTipService.ToolTip="{x:Bind ViewModel.RepeatButtonToolTip, Mode=OneWay}"
+                                        AutomationProperties.Name="{x:Bind ViewModel.RepeatButtonToolTip, Mode=OneWay}">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                               Glyph="{x:Bind ViewModel.RepeatIconGlyph, Mode=OneWay}" />
                                 </Button>
                                 <Button Command="{x:Bind ViewModel.ShowQueueViewCommand}"
-                                        ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_QueueButton_ToolTip, Mode=OneTime}">
+                                        ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_QueueButton_ToolTip, Mode=OneTime}"
+                                        AutomationProperties.Name="{x:Bind resources:Strings.MiniPlayer_QueueButton_ToolTip, Mode=OneTime}">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                                 </Button>
                                 <Button Command="{x:Bind ViewModel.ToggleMuteCommand}"
                                         PointerWheelChanged="VolumeButton_PointerWheelChanged"
-                                        ToolTipService.ToolTip="{x:Bind ViewModel.VolumeButtonToolTip, Mode=OneWay}">
+                                        ToolTipService.ToolTip="{x:Bind ViewModel.VolumeButtonToolTip, Mode=OneWay}"
+                                        AutomationProperties.Name="{x:Bind ViewModel.VolumeButtonToolTip, Mode=OneWay}">
                                     <Grid Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                   FontSize="20"

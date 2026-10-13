@@ -85,7 +85,8 @@
                           MinWidth="140" />
                 <Button Command="{x:Bind ViewModel.ResetListenHistoryCommand}"
                         Style="{StaticResource SubtleButtonStyle}"
-                        ToolTipService.ToolTip="{x:Bind resources:Strings.InsightsPage_Reset_ToolTip, Mode=OneTime}">
+                        ToolTipService.ToolTip="{x:Bind resources:Strings.InsightsPage_Reset_ToolTip, Mode=OneTime}"
+                        AutomationProperties.Name="{x:Bind resources:Strings.InsightsPage_Reset_ToolTip, Mode=OneTime}">
                     <FontIcon Glyph="&#xE74D;" FontSize="14" />
                 </Button>
             </StackPanel>
@@ -243,7 +244,8 @@
                                         Style="{StaticResource SubtleButtonStyle}"
                                         Width="28" Height="28" Padding="0"
                                         VerticalAlignment="Center"
-                                        ToolTipService.ToolTip="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip, Mode=OneTime}">
+                                        ToolTipService.ToolTip="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip, Mode=OneTime}"
+                                        AutomationProperties.Name="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip, Mode=OneTime}">
                                     <FontIcon Glyph="&#xE76C;" FontSize="11" />
                                 </Button>
                             </Grid>
@@ -295,7 +297,8 @@
                                         Style="{StaticResource SubtleButtonStyle}"
                                         Width="28" Height="28" Padding="0"
                                         VerticalAlignment="Center"
-                                        ToolTipService.ToolTip="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip, Mode=OneTime}">
+                                        ToolTipService.ToolTip="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip, Mode=OneTime}"
+                                        AutomationProperties.Name="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip, Mode=OneTime}">
                                     <FontIcon Glyph="&#xE76C;" FontSize="11" />
                                 </Button>
                             </Grid>
@@ -358,7 +361,8 @@
                                         Style="{StaticResource SubtleButtonStyle}"
                                         Width="28" Height="28" Padding="0"
                                         VerticalAlignment="Center"
-                                        ToolTipService.ToolTip="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip, Mode=OneTime}">
+                                        ToolTipService.ToolTip="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip, Mode=OneTime}"
+                                        AutomationProperties.Name="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip, Mode=OneTime}">
                                     <FontIcon Glyph="&#xE76C;" FontSize="11" />
                                 </Button>
                             </Grid>
@@ -410,7 +414,8 @@
                                         Style="{StaticResource SubtleButtonStyle}"
                                         Width="28" Height="28" Padding="0"
                                         VerticalAlignment="Center"
-                                        ToolTipService.ToolTip="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip, Mode=OneTime}">
+                                        ToolTipService.ToolTip="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip, Mode=OneTime}"
+                                        AutomationProperties.Name="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip, Mode=OneTime}">
                                     <FontIcon Glyph="&#xE76C;" FontSize="11" />
                                 </Button>
                             </Grid>

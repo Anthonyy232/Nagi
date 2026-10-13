@@ -110,6 +110,7 @@
                                     Click="OnSearchToggleButtonClick"
                                     Style="{StaticResource SongListViewPageIconButton}"
                                     ToolTipService.ToolTip="{x:Bind resources:Strings.GenreViewPage_SearchButton_ToolTip, Mode=OneTime}"
+                                    AutomationProperties.Name="{x:Bind resources:Strings.GenreViewPage_SearchButton_ToolTip, Mode=OneTime}"
                                     HorizontalAlignment="Right"
                                     Margin="0,0,1,0"
                                     IsHitTestVisible="True"
@@ -159,7 +160,8 @@
 
                         <Button Command="{x:Bind ViewModel.PlayAllSongsCommand}"
                                 Style="{StaticResource SongListViewPageIconButton}"
-                                ToolTipService.ToolTip="{x:Bind resources:Strings.GenreViewPage_PlayAllButton_ToolTip, Mode=OneTime}">
+                                ToolTipService.ToolTip="{x:Bind resources:Strings.GenreViewPage_PlayAllButton_ToolTip, Mode=OneTime}"
+                                AutomationProperties.Name="{x:Bind resources:Strings.GenreViewPage_PlayAllButton_ToolTip, Mode=OneTime}">
                             <FontIcon FontSize="16" Glyph="" />
                         </Button>
                         <SplitButton Style="{StaticResource SongListViewPageShuffleButton}" Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}"

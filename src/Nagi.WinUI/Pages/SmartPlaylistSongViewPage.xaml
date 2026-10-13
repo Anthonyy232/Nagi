@@ -141,6 +141,7 @@
                                 Click="OnSearchToggleButtonClick"
                                 Style="{StaticResource SongListViewPageIconButton}"
                                 ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylistSongViewPage_SearchButton_ToolTip, Mode=OneTime}"
+                                AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylistSongViewPage_SearchButton_ToolTip, Mode=OneTime}"
                                 HorizontalAlignment="Right"
                                 Margin="0,0,1,0"
                                 IsHitTestVisible="True"
@@ -229,12 +230,14 @@
 
                     <Button Style="{StaticResource SongListViewPageIconButton}"
                             ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylistSongViewPage_EditRulesButton_ToolTip, Mode=OneTime}"
+                            AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylistSongViewPage_EditRulesButton_ToolTip, Mode=OneTime}"
                             Click="EditRulesButton_Click">
                         <FontIcon Glyph="&#xE70F;" FontSize="16" />
                     </Button>
 
                     <Button Style="{StaticResource SongListViewPageIconButton}"
                             ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylistSongViewPage_PlayAllButton_ToolTip, Mode=OneTime}"
+                            AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylistSongViewPage_PlayAllButton_ToolTip, Mode=OneTime}"
                             Command="{x:Bind ViewModel.PlayAllSongsCommand}">
                         <FontIcon Glyph="" FontSize="16" />
                     </Button>
