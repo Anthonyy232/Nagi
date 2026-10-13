@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Windows.Storage;
-using Windows.UI.ViewManagement;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
@@ -17,7 +16,7 @@ namespace Nagi.WinUI.Services.Implementations;
 /// <summary>
 ///     Manages application settings by persisting them to local storage using ApplicationData.
 /// </summary>
-public partial class SettingsService : IUISettingsService, IDisposable
+public partial class SettingsService : IUISettingsService
 {
     private const string StartupTaskId = "NagiAutolaunchStartup";
     private const string VolumeKey = "AppVolume";
@@ -76,30 +75,23 @@ public partial class SettingsService : IUISettingsService, IDisposable
     private readonly IDictionary<string, object> _values;
     private readonly ILogger<SettingsService> _logger;
     private readonly IPathConfiguration _pathConfig;
-    private readonly UISettings _uiSettings = new();
-    private readonly IDispatcherService _dispatcherService;
-    private bool _disposed;
 
     public SettingsService(IPathConfiguration pathConfig, ICredentialLockerService credentialLockerService,
-        ILogger<SettingsService> logger, IDispatcherService dispatcherService)
-        : this(pathConfig, credentialLockerService, logger, dispatcherService, ApplicationData.Current.LocalSettings.Values)
+        ILogger<SettingsService> logger)
+        : this(pathConfig, credentialLockerService, logger, ApplicationData.Current.LocalSettings.Values)
     {
     }
 
     internal SettingsService(IPathConfiguration pathConfig, ICredentialLockerService credentialLockerService,
-        ILogger<SettingsService> logger, IDispatcherService dispatcherService, IDictionary<string, object> values)
+        ILogger<SettingsService> logger, IDictionary<string, object> values)
     {
         _pathConfig = pathConfig ?? throw new ArgumentNullException(nameof(pathConfig));
         _credentialLockerService =
             credentialLockerService ?? throw new ArgumentNullException(nameof(credentialLockerService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
 
         _values = values;
-
-        _uiSettings.AdvancedEffectsEnabledChanged += OnAdvancedEffectsEnabledChanged;
     }
-
 
     public event Action<bool>? PlayerAnimationSettingChanged;
     public event Action<bool>? HideToTraySettingChanged;
@@ -115,7 +107,6 @@ public partial class SettingsService : IUISettingsService, IDisposable
     public event Action<bool>? FadeOnPlayPauseEnabledChanged;
     public event Action<int>? FadeInDurationChanged;
     public event Action<int>? FadeOutDurationChanged;
-    public event Action<bool>? TransparencyEffectsSettingChanged;
     public event Action<BackdropMaterial>? BackdropMaterialChanged;
     public event Action<bool>? FetchOnlineMetadataEnabledChanged;
     public event Action<bool>? FetchOnlineLyricsEnabledChanged;
@@ -123,11 +114,6 @@ public partial class SettingsService : IUISettingsService, IDisposable
     public event Action? PlayerDesignSettingsChanged;
     public event Action<int>? SongsPerPageChanged;
     public event Action<bool>? IgnoreLeadingArticlesOnSortEnabledChanged;
-
-    public bool IsTransparencyEffectsEnabled()
-    {
-        return _uiSettings.AdvancedEffectsEnabled;
-    }
 
     public async Task ResetToDefaultsAsync()
     {
@@ -192,14 +178,6 @@ public partial class SettingsService : IUISettingsService, IDisposable
         // Setters must see the old values so live services receive reset notifications.
         _values.Clear();
     }
-
-
-    private void OnAdvancedEffectsEnabledChanged(UISettings sender, object args)
-    {
-        _dispatcherService.TryEnqueue(() => TransparencyEffectsSettingChanged?.Invoke(_uiSettings.AdvancedEffectsEnabled));
-    }
-
-
 
     private T GetValue<T>(string key, T defaultValue)
     {
@@ -291,14 +269,5 @@ public partial class SettingsService : IUISettingsService, IDisposable
             new() { Id = "Queue", DisplayName = Resources.Strings.Settings_Button_Queue, IconGlyph = "\uE90B", IsEnabled = true },
             new() { Id = "Volume", DisplayName = Resources.Strings.Settings_Button_Volume, IconGlyph = "\uE767", IsEnabled = true }
         };
-    }
-
-    public void Dispose()
-    {
-        if (_disposed) return;
-        _disposed = true;
-
-        _uiSettings.AdvancedEffectsEnabledChanged -= OnAdvancedEffectsEnabledChanged;
-        GC.SuppressFinalize(this);
     }
 }

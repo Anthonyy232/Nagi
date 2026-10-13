@@ -27,19 +27,11 @@ public interface IUISettingsService : ISettingsService
 
     event Action<QueueDisplaySettings>? QueueDisplaySettingsChanged;
 
-    event Action<bool>? TransparencyEffectsSettingChanged;
-
     event Action<BackdropMaterial>? BackdropMaterialChanged;
 
     event Action? PlayerDesignSettingsChanged;
 
     event Action<int>? SongsPerPageChanged;
-
-    /// <summary>
-    ///     Gets whether system-wide transparency effects are currently enabled.
-    ///     This is a live value from the OS, not a stored setting.
-    /// </summary>
-    bool IsTransparencyEffectsEnabled();
 
     Task<AppTheme> GetThemeAsync();
 

@@ -78,6 +78,7 @@ public static class AppServiceRegistration
         services.AddSingleton<IApplicationLifecycle, ApplicationLifecycle>();
         services.AddSingleton<IAppInfoService, AppInfoService>();
         services.AddSingleton<NavigationService>();
+        services.AddSingleton<TransparencyEffectsMonitor>();
         services.AddSingleton<INavigationService>(sp => sp.GetRequiredService<NavigationService>());
         services.AddSingleton<IMusicNavigationService, MusicNavigationService>();
         services.AddSingleton<ITrayPopupService, TrayPopupService>();

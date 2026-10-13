@@ -298,7 +298,8 @@ public partial class App : Application
         Services = ConfigureServices(mainWindow, configuration);
 
         mainWindow.InitializeDependencies(Services.GetRequiredService<IUISettingsService>(),
-            Services.GetRequiredService<ITaskbarService>(), Services.GetRequiredService<ILogger<MainWindow>>());
+            Services.GetRequiredService<ITaskbarService>(), Services.GetRequiredService<TransparencyEffectsMonitor>(),
+            Services.GetRequiredService<ILogger<MainWindow>>());
     }
 
     private void InitializeSystemIntegration()

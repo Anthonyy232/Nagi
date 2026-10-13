@@ -122,6 +122,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     };
 
     private readonly IUISettingsService _settingsService;
+    private readonly TransparencyEffectsMonitor _transparencyEffects;
     private readonly IThemeService _themeService;
     private readonly IWin32InteropService _win32InteropService;
 
@@ -143,12 +144,13 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     public MainPage(PlayerViewModel viewModel, InsightsViewModel insightsViewModel,
         GlobalOperationViewModel globalOperation, IUISettingsService settingsService, IThemeService themeService,
         IDispatcherService dispatcherService, IWin32InteropService win32InteropService,
-        NavigationService navigationService, ILogger<MainPage> logger)
+        NavigationService navigationService, TransparencyEffectsMonitor transparencyEffects, ILogger<MainPage> logger)
     {
         ViewModel = viewModel;
         InsightsVm = insightsViewModel;
         GlobalOperation = globalOperation;
         _settingsService = settingsService;
+        _transparencyEffects = transparencyEffects;
         _themeService = themeService;
         _dispatcherService = dispatcherService;
         _win32InteropService = win32InteropService;
@@ -410,7 +412,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             CompositionAnimationHelper.AnimationsEnabledChanged += OnAnimationsEnabledChanged;
             _settingsService.PlayerAnimationSettingChanged += OnPlayerAnimationSettingChanged;
             _settingsService.NavigationSettingsChanged += OnNavigationSettingsChanged;
-            _settingsService.TransparencyEffectsSettingChanged += OnTransparencyEffectsSettingChanged;
+            _transparencyEffects.Changed += OnTransparencyEffectsChanged;
             _settingsService.PlayerDesignSettingsChanged += OnPlayerDesignSettingsChanged;
             AddHandler(PointerPressedEvent, new PointerEventHandler(OnGlobalPointerPressed), true);
             KeyDown += OnSelectionKeyDown;
@@ -454,7 +456,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         CompositionAnimationHelper.AnimationsEnabledChanged -= OnAnimationsEnabledChanged;
         _settingsService.PlayerAnimationSettingChanged -= OnPlayerAnimationSettingChanged;
         _settingsService.NavigationSettingsChanged -= OnNavigationSettingsChanged;
-        _settingsService.TransparencyEffectsSettingChanged -= OnTransparencyEffectsSettingChanged;
+        _transparencyEffects.Changed -= OnTransparencyEffectsChanged;
         _settingsService.PlayerDesignSettingsChanged -= OnPlayerDesignSettingsChanged;
 
         // Dispose the tray icon control to prevent "Exception Processing Message 0xc0000005" errors on exit.
@@ -470,7 +472,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     /// </summary>
     private async Task SetPlatformSpecificBrushAsync()
     {
-        var isAcrylicEnabled = _settingsService.IsTransparencyEffectsEnabled();
+        var isAcrylicEnabled = _transparencyEffects.IsEnabled;
         var material = await _settingsService.GetPlayerBackgroundMaterialAsync();
         if (_isUnloaded) return;
         var brushKey = !isAcrylicEnabled || material == PlayerBackgroundMaterial.Solid
@@ -488,7 +490,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         });
     }
 
-    private void OnTransparencyEffectsSettingChanged(bool isEnabled)
+    private void OnTransparencyEffectsChanged(bool isEnabled)
     {
         _ = UpdateUiAsync(SetPlatformSpecificBrushAsync);
     }

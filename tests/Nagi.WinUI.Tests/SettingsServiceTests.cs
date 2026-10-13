@@ -24,7 +24,7 @@ public class SettingsServiceTests
     [InlineData("21944b", 255)]
     public async Task AccentColor_LoadsLegacyHexAndRoundTripsAlphaWithoutAnAppInstance(string hex, byte alpha)
     {
-        using var settings = CreateSettings(new Dictionary<string, object> { ["AccentColor"] = hex });
+        var settings = CreateSettings(new Dictionary<string, object> { ["AccentColor"] = hex });
         var expected = new ArgbColor(alpha, 0x21, 0x94, 0x4B);
 
         (await settings.GetAccentColorAsync()).Should().Be(expected);
@@ -39,7 +39,7 @@ public class SettingsServiceTests
     [InlineData("#GG21944B")]
     public async Task AccentColor_InvalidSavedHexUsesDefault(string hex)
     {
-        using var settings = CreateSettings(new Dictionary<string, object> { ["AccentColor"] = hex });
+        var settings = CreateSettings(new Dictionary<string, object> { ["AccentColor"] = hex });
         (await settings.GetAccentColorAsync()).Should().BeNull();
     }
 
@@ -47,7 +47,7 @@ public class SettingsServiceTests
     public async Task ResetStoredValues_NotifiesLiveServicesBeforeRemovingSavedValues()
     {
         var values = new Dictionary<string, object> { ["ObsoleteSetting"] = true };
-        using var settings = CreateSettings(values);
+        var settings = CreateSettings(values);
         await settings.SetVolumeNormalizationEnabledAsync(!SettingsDefaults.VolumeNormalizationEnabled);
         await settings.SetHideToTrayEnabledAsync(!SettingsDefaults.HideToTrayEnabled);
         await settings.SetLanguageAsync("ja");
@@ -77,7 +77,7 @@ public class SettingsServiceTests
             new ServiceProviderSetting { Id = "Removed", IsEnabled = true, Order = -1 }
         });
         var values = new Dictionary<string, object> { ["LyricsServiceProviders"] = saved };
-        using var settings = CreateSettings(values);
+        var settings = CreateSettings(values);
 
         var providers = await settings.GetServiceProvidersAsync(ServiceCategory.Lyrics);
 
@@ -104,7 +104,7 @@ public class SettingsServiceTests
                 new NavigationItemSetting { Tag = "Library", DisplayName = "Old", IsEnabled = true }
             })
         };
-        using var settings = CreateSettings(values);
+        var settings = CreateSettings(values);
 
         var items = await settings.GetNavigationItemsAsync();
 
@@ -128,7 +128,7 @@ public class SettingsServiceTests
         };
         if (hasDivider) saved.Insert(0, new PlayerButtonSetting
         { Id = "Separator", IsEnabled = false, DisplayName = "Old", IconGlyph = "Old" });
-        using var settings = CreateSettings(new Dictionary<string, object>
+        var settings = CreateSettings(new Dictionary<string, object>
         { ["PlayerButtonSettings"] = JsonSerializer.Serialize(saved) });
 
         var buttons = await settings.GetPlayerButtonSettingsAsync();
@@ -143,7 +143,7 @@ public class SettingsServiceTests
     [Fact]
     public async Task InvalidStoredEnumAndJson_FallBackToDefaults()
     {
-        using var settings = CreateSettings(new Dictionary<string, object>
+        var settings = CreateSettings(new Dictionary<string, object>
         { ["MusicRepeatMode"] = "999", ["LyricsServiceProviders"] = "{broken" });
 
         (await settings.GetInitialRepeatModeAsync()).Should().Be(SettingsDefaults.DefaultRepeatMode);
@@ -155,7 +155,7 @@ public class SettingsServiceTests
     public async Task PaneState_ReadsLegacyStringsAndWritesNativeBooleans()
     {
         var values = new Dictionary<string, object> { ["LastPaneOpen"] = "false" };
-        using var settings = CreateSettings(values);
+        var settings = CreateSettings(values);
 
         (await settings.GetLastPaneOpenAsync()).Should().BeFalse();
         await settings.SetLastPaneOpenAsync(true);
@@ -172,7 +172,7 @@ public class SettingsServiceTests
         try
         {
             var path = Path.Combine(directory.FullName, "playback_state.json");
-            using var settings = CreateSettings(new Dictionary<string, object>(), path);
+            var settings = CreateSettings(new Dictionary<string, object>(), path);
             var songId = Guid.NewGuid();
             await settings.SavePlaybackStateAsync(new PlaybackState
             { CurrentTrackId = songId, PlaybackQueueTrackIds = [songId] });
@@ -204,7 +204,7 @@ public class SettingsServiceTests
         try
         {
             var path = Path.Combine(directory.FullName, "playback_state.json");
-            using var settings = CreateSettings(new Dictionary<string, object>(), path);
+            var settings = CreateSettings(new Dictionary<string, object>(), path);
             await settings.SavePlaybackStateAsync(new PlaybackState());
             using (File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None))
                 (await settings.GetPlaybackStateAsync()).Should().BeNull();
@@ -225,6 +225,6 @@ public class SettingsServiceTests
         var paths = Substitute.For<IPathConfiguration>();
         paths.PlaybackStateFilePath.Returns(playbackPath ?? "unused.json");
         return new SettingsService(paths, Substitute.For<ICredentialLockerService>(),
-            NullLogger<SettingsService>.Instance, Substitute.For<IDispatcherService>(), values);
+            NullLogger<SettingsService>.Instance, values);
     }
 }

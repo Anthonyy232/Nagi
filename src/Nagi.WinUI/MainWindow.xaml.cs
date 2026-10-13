@@ -15,6 +15,7 @@ using Nagi.WinUI.Models;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Services.Abstractions;
+using Nagi.WinUI.Services.Implementations;
 using Nagi.WinUI.ViewModels;
 using WinRT.Interop;
 
@@ -40,6 +41,7 @@ public sealed partial class MainWindow : Window
     private FrameworkElement? _rootElement;
     private IUISettingsService? _settingsService;
     private ITaskbarService? _taskbarService;
+    private TransparencyEffectsMonitor? _transparencyEffects;
 
     internal ITaskbarService? TaskbarService => _taskbarService;
 
@@ -53,10 +55,11 @@ public sealed partial class MainWindow : Window
     }
 
     public void InitializeDependencies(IUISettingsService settingsService, ITaskbarService taskbarService,
-        ILogger<MainWindow> logger)
+        TransparencyEffectsMonitor transparencyEffects, ILogger<MainWindow> logger)
     {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _taskbarService = taskbarService ?? throw new ArgumentNullException(nameof(taskbarService));
+        _transparencyEffects = transparencyEffects ?? throw new ArgumentNullException(nameof(transparencyEffects));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _appWindow = AppWindow;
         _lastWindowSize = _appWindow.Size;
@@ -64,7 +67,7 @@ public sealed partial class MainWindow : Window
         _appWindow.Changed += OnWindowGeometryChanged;
         Activated += OnWindowActivated;
         _settingsService.BackdropMaterialChanged += OnBackdropMaterialChanged;
-        _settingsService.TransparencyEffectsSettingChanged += OnTransparencyEffectsChanged;
+        _transparencyEffects.Changed += OnTransparencyEffectsChanged;
     }
 
     public void Cleanup()
@@ -78,8 +81,9 @@ public sealed partial class MainWindow : Window
         if (_settingsService != null)
         {
             _settingsService.BackdropMaterialChanged -= OnBackdropMaterialChanged;
-            _settingsService.TransparencyEffectsSettingChanged -= OnTransparencyEffectsChanged;
         }
+
+        if (_transparencyEffects != null) _transparencyEffects.Changed -= OnTransparencyEffectsChanged;
 
         // Restore original WndProc before window destruction to prevent crashes
         // from callbacks to a deallocated delegate.
@@ -217,13 +221,13 @@ public sealed partial class MainWindow : Window
 
     private async Task TrySetBackdropAsync(BackdropMaterial? material = null)
     {
-        if (_settingsService is null) return;
+        if (_settingsService is null || _transparencyEffects is null) return;
 
         try
         {
             // Use the high-level XAML MicaBackdrop and DesktopAcrylicBackdrop objects.
             // The framework handles the controllers and configuration automatically.
-            if (_settingsService.IsTransparencyEffectsEnabled())
+            if (_transparencyEffects.IsEnabled)
             {
                 material ??= await _settingsService.GetBackdropMaterialAsync();
 
