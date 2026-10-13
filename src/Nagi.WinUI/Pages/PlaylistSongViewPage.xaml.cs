@@ -13,9 +13,9 @@ using Nagi.Presentation.Navigation;
 using Nagi.Presentation.ViewModels;
 using System.Threading.Tasks;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.Pages;
 
@@ -77,7 +77,7 @@ public sealed partial class PlaylistSongViewPage : Page
                 _logger.LogWarning(
                     "Received invalid navigation parameter. Expected '{ExpectedType}', got '{ActualType}'. Initializing with fallback state.",
                     nameof(PlaylistSongViewNavigationParameter), paramType);
-                await ViewModel.InitializeAsync(Nagi.Presentation.Resources.Strings.PlaylistSongViewPage_UnknownPlaylist, null);
+                await ViewModel.InitializeAsync(Strings.PlaylistSongViewPage_UnknownPlaylist, null);
             }
         }
         catch (Exception ex)
@@ -124,7 +124,7 @@ public sealed partial class PlaylistSongViewPage : Page
 
         _isSearchExpanded = true;
         _logger.LogDebug("Search UI expanded.");
-        ToolTipService.SetToolTip(SearchToggleButton, Nagi.Presentation.Resources.Strings.PlaylistSongViewPage_SearchButton_Close_ToolTip);
+        ToolTipService.SetToolTip(SearchToggleButton, Strings.PlaylistSongViewPage_SearchButton_Close_ToolTip);
         VisualStateManager.GoToState(this, "SearchExpanded", false);
         SearchTextBox.Focus(FocusState.Programmatic);
     }
@@ -135,7 +135,7 @@ public sealed partial class PlaylistSongViewPage : Page
 
         _isSearchExpanded = false;
         _logger.LogDebug("Search UI collapsed and search term cleared.");
-        ToolTipService.SetToolTip(SearchToggleButton, Nagi.Presentation.Resources.Strings.PlaylistSongViewPage_SearchButton_Search_ToolTip);
+        ToolTipService.SetToolTip(SearchToggleButton, Strings.PlaylistSongViewPage_SearchButton_Search_ToolTip);
         VisualStateManager.GoToState(this, "SearchCollapsed", false);
         SearchToggleButton.Focus(FocusState.Programmatic);
         ViewModel.SearchTerm = string.Empty;

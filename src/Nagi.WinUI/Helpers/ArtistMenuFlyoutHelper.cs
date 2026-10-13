@@ -8,6 +8,7 @@ using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.Core.Models;
 using Nagi.Presentation.Navigation;
+using Nagi.Presentation.Resources;
 
 namespace Nagi.WinUI.Helpers;
 
@@ -38,7 +39,7 @@ public static class ArtistMenuFlyoutHelper
             return;
         }
 
-        var loadingItem = new MenuFlyoutItem { Text = Nagi.Presentation.Resources.Strings.Status_Loading, IsEnabled = false };
+        var loadingItem = new MenuFlyoutItem { Text = Strings.Status_Loading, IsEnabled = false };
         subMenu.Items.Add(loadingItem);
 
         _ = PopulateArtistsAsync(subMenu, song, loadingItem, goToArtistCommand, loadArtists, dispatcherQueue, logger);
@@ -79,7 +80,7 @@ public static class ArtistMenuFlyoutHelper
             logger.LogError(ex, "Failed to populate artist submenu for song {SongId}", song.Id);
             dispatcherQueue.TryEnqueue(() =>
             {
-                if (subMenu.Items.Contains(loadingItem)) loadingItem.Text = Nagi.Presentation.Resources.Strings.Error_FailedToLoadArtists;
+                if (subMenu.Items.Contains(loadingItem)) loadingItem.Text = Strings.Error_FailedToLoadArtists;
             });
         }
     }

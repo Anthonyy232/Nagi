@@ -11,6 +11,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.Presentation.ViewModels;
@@ -69,8 +70,8 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
 
     protected override string FormatTotalItemsText(int count) =>
         count == 1
-            ? ResourceFormatter.Format(Nagi.Presentation.Resources.Strings.Albums_Count_Singular, count)
-            : ResourceFormatter.Format(Nagi.Presentation.Resources.Strings.Albums_Count_Plural, count);
+            ? ResourceFormatter.Format(Strings.Albums_Count_Singular, count)
+            : ResourceFormatter.Format(Strings.Albums_Count_Plural, count);
 
     protected override Task<PagedResult<Album>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token) =>
         IsSearchActive

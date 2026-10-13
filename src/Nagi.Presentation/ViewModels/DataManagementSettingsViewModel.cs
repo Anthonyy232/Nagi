@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.Presentation.ViewModels;
@@ -38,9 +39,9 @@ public partial class DataManagementSettingsViewModel : ObservableObject
     private async Task ResetApplicationDataAsync()
     {
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
-            Nagi.Presentation.Resources.Strings.Settings_Reset_Title,
-            Nagi.Presentation.Resources.Strings.Settings_Reset_Message,
-            Nagi.Presentation.Resources.Strings.Settings_Reset_Button,
+            Strings.Settings_Reset_Title,
+            Strings.Settings_Reset_Message,
+            Strings.Settings_Reset_Button,
             null);
 
         if (!confirmed) return;
@@ -53,8 +54,8 @@ public partial class DataManagementSettingsViewModel : ObservableObject
         {
             _logger.LogCritical(ex, "Application reset failed");
             await _uiService.ShowMessageDialogAsync(
-                Nagi.Presentation.Resources.Strings.Settings_ResetError_Title,
-                string.Format(Nagi.Presentation.Resources.Strings.Settings_ResetError_Message, ex.Message));
+                Strings.Settings_ResetError_Title,
+                string.Format(Strings.Settings_ResetError_Message, ex.Message));
         }
     }
 
@@ -68,12 +69,12 @@ public partial class DataManagementSettingsViewModel : ObservableObject
 
         if (result.Success)
         {
-            await _uiService.ShowMessageDialogAsync(Nagi.Presentation.Resources.Strings.Settings_Export_Success_Title,
-                ResourceFormatter.Format(Nagi.Presentation.Resources.Strings.Settings_Export_Success_Message, result.PlaylistsExported, result.TotalSongs, folderPath));
+            await _uiService.ShowMessageDialogAsync(Strings.Settings_Export_Success_Title,
+                ResourceFormatter.Format(Strings.Settings_Export_Success_Message, result.PlaylistsExported, result.TotalSongs, folderPath));
         }
         else
         {
-            await _uiService.ShowMessageDialogAsync(Nagi.Presentation.Resources.Strings.Settings_Export_Failed_Title, result.ErrorMessage ?? Nagi.Presentation.Resources.Strings.Settings_Export_Failed_Message);
+            await _uiService.ShowMessageDialogAsync(Strings.Settings_Export_Failed_Title, result.ErrorMessage ?? Strings.Settings_Export_Failed_Message);
         }
     }
 
@@ -87,20 +88,20 @@ public partial class DataManagementSettingsViewModel : ObservableObject
 
         if (result.Success)
         {
-            var message = ResourceFormatter.Format(Nagi.Presentation.Resources.Strings.Settings_Import_Success_Message, result.PlaylistsImported, result.TotalMatchedSongs);
+            var message = ResourceFormatter.Format(Strings.Settings_Import_Success_Message, result.PlaylistsImported, result.TotalMatchedSongs);
             if (result.TotalUnmatchedSongs > 0)
             {
-                message += ResourceFormatter.Format(Nagi.Presentation.Resources.Strings.Settings_Import_Unmatched_Message, result.TotalUnmatchedSongs);
+                message += ResourceFormatter.Format(Strings.Settings_Import_Unmatched_Message, result.TotalUnmatchedSongs);
             }
             if (result.FailedFiles.Count > 0)
             {
-                message += ResourceFormatter.Format(Nagi.Presentation.Resources.Strings.Settings_Import_FailedFiles_Message, result.FailedFiles.Count);
+                message += ResourceFormatter.Format(Strings.Settings_Import_FailedFiles_Message, result.FailedFiles.Count);
             }
-            await _uiService.ShowMessageDialogAsync(Nagi.Presentation.Resources.Strings.Settings_Import_Success_Title, message);
+            await _uiService.ShowMessageDialogAsync(Strings.Settings_Import_Success_Title, message);
         }
         else
         {
-            await _uiService.ShowMessageDialogAsync(Nagi.Presentation.Resources.Strings.Settings_Import_FailedTotal_Title, Nagi.Presentation.Resources.Strings.Settings_Import_FailedTotal_Message);
+            await _uiService.ShowMessageDialogAsync(Strings.Settings_Import_FailedTotal_Title, Strings.Settings_Import_FailedTotal_Message);
         }
     }
 
@@ -115,14 +116,14 @@ public partial class DataManagementSettingsViewModel : ObservableObject
         if (result.Success)
         {
             await _uiService.ShowMessageDialogAsync(
-                Resources.Strings.Settings_Backup_Success_Title,
-                string.Format(Resources.Strings.Settings_Backup_Success_Message, result.BackupSizeMB, result.BackupFilePath));
+                Strings.Settings_Backup_Success_Title,
+                string.Format(Strings.Settings_Backup_Success_Message, result.BackupSizeMB, result.BackupFilePath));
         }
         else
         {
             await _uiService.ShowMessageDialogAsync(
-                Resources.Strings.Settings_Backup_Failed_Title,
-                result.ErrorMessage ?? Resources.Strings.Settings_Backup_Failed_Message);
+                Strings.Settings_Backup_Failed_Title,
+                result.ErrorMessage ?? Strings.Settings_Backup_Failed_Message);
         }
     }
 
@@ -136,16 +137,16 @@ public partial class DataManagementSettingsViewModel : ObservableObject
         if (!isValid)
         {
             await _uiService.ShowMessageDialogAsync(
-                Resources.Strings.Settings_Restore_Invalid_Title,
-                Resources.Strings.Settings_Restore_Invalid_Message);
+                Strings.Settings_Restore_Invalid_Title,
+                Strings.Settings_Restore_Invalid_Message);
             return;
         }
 
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
-            Resources.Strings.Settings_Restore_Confirm_Title,
-            Resources.Strings.Settings_Restore_Confirm_Message,
-            Resources.Strings.Settings_Restore_Confirm_Button,
-            Resources.Strings.Generic_Cancel);
+            Strings.Settings_Restore_Confirm_Title,
+            Strings.Settings_Restore_Confirm_Message,
+            Strings.Settings_Restore_Confirm_Button,
+            Strings.Generic_Cancel);
 
         if (!confirmed) return;
 
@@ -154,8 +155,8 @@ public partial class DataManagementSettingsViewModel : ObservableObject
         if (result.Success)
         {
             await _uiService.ShowMessageDialogAsync(
-                Resources.Strings.Settings_Restore_Success_Title,
-                Resources.Strings.Settings_Restore_Success_Message);
+                Strings.Settings_Restore_Success_Title,
+                Strings.Settings_Restore_Success_Message);
 
             if (result.RequiresRestart)
             {
@@ -165,8 +166,8 @@ public partial class DataManagementSettingsViewModel : ObservableObject
         else
         {
             await _uiService.ShowMessageDialogAsync(
-                Resources.Strings.Settings_Restore_Failed_Title,
-                result.ErrorMessage ?? Resources.Strings.Settings_Restore_Failed_Message);
+                Strings.Settings_Restore_Failed_Title,
+                result.ErrorMessage ?? Strings.Settings_Restore_Failed_Message);
         }
     }
 }

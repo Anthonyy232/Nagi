@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Models;
+using Nagi.Presentation.Resources;
 
 namespace Nagi.Presentation.Services.Implementations;
 
@@ -382,7 +383,7 @@ public partial class SettingsService
                     Category = ServiceCategory.Lyrics,
                     IsEnabled = true,
                     Order = 0,
-                    Description = Resources.Strings.Settings_Provider_LRCLIB_Desc
+                    Description = Strings.Settings_Provider_LRCLIB_Desc
                 },
                 new()
                 {
@@ -391,7 +392,7 @@ public partial class SettingsService
                     Category = ServiceCategory.Lyrics,
                     IsEnabled = true,
                     Order = 1,
-                    Description = Resources.Strings.Settings_Provider_NetEase_Desc
+                    Description = Strings.Settings_Provider_NetEase_Desc
                 }
             },
             ServiceCategory.Metadata => new List<ServiceProviderSetting>
@@ -403,7 +404,7 @@ public partial class SettingsService
                     Category = ServiceCategory.Metadata,
                     IsEnabled = true,
                     Order = 0,
-                    Description = Resources.Strings.Settings_Provider_MusicBrainz_Desc
+                    Description = Strings.Settings_Provider_MusicBrainz_Desc
                 },
                 new()
                 {
@@ -412,7 +413,7 @@ public partial class SettingsService
                     Category = ServiceCategory.Metadata,
                     IsEnabled = true,
                     Order = 1,
-                    Description = Resources.Strings.Settings_Provider_TheAudioDB_Desc
+                    Description = Strings.Settings_Provider_TheAudioDB_Desc
                 },
                 new()
                 {
@@ -421,7 +422,7 @@ public partial class SettingsService
                     Category = ServiceCategory.Metadata,
                     IsEnabled = true,
                     Order = 2,
-                    Description = Resources.Strings.Settings_Provider_FanartTv_Desc
+                    Description = Strings.Settings_Provider_FanartTv_Desc
                 },
                 new()
                 {
@@ -430,7 +431,7 @@ public partial class SettingsService
                     Category = ServiceCategory.Metadata,
                     IsEnabled = true,
                     Order = 3,
-                    Description = Resources.Strings.Settings_Provider_LastFm_Desc
+                    Description = Strings.Settings_Provider_LastFm_Desc
                 }
             },
             _ => new List<ServiceProviderSetting>()

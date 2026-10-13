@@ -10,6 +10,7 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Navigation;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.Presentation.ViewModels;
@@ -31,8 +32,8 @@ public sealed class FolderViewModelItem
     public int SongCount { get; }
 
     public string SongCountText => SongCount == 1
-        ? ResourceFormatter.Format(Nagi.Presentation.Resources.Strings.Songs_Count_Singular, SongCount)
-        : ResourceFormatter.Format(Nagi.Presentation.Resources.Strings.Songs_Count_Plural, SongCount);
+        ? ResourceFormatter.Format(Strings.Songs_Count_Singular, SongCount)
+        : ResourceFormatter.Format(Strings.Songs_Count_Plural, SongCount);
 }
 
 /// <summary>
@@ -148,7 +149,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         }
         catch (Exception ex)
         {
-            _globalOperation.StatusMessage = Nagi.Presentation.Resources.Strings.Folders_Error_Playback;
+            _globalOperation.StatusMessage = Strings.Folders_Error_Playback;
             _logger.LogCritical(ex, "Error playing folder {FolderId}", folderId);
         }
     }
@@ -168,12 +169,12 @@ public partial class FolderViewModel : ObservableObject, IDisposable
             }
             else
             {
-                _globalOperation.StatusMessage = Nagi.Presentation.Resources.Strings.Folders_Empty_NoMusicFound;
+                _globalOperation.StatusMessage = Strings.Folders_Empty_NoMusicFound;
             }
         }
         catch (Exception ex)
         {
-            _globalOperation.StatusMessage = Nagi.Presentation.Resources.Strings.Folders_Error_RandomPlayback;
+            _globalOperation.StatusMessage = Strings.Folders_Error_RandomPlayback;
             _logger.LogCritical(ex, "Error playing random folder");
         }
     }
@@ -224,13 +225,13 @@ public partial class FolderViewModel : ObservableObject, IDisposable
             Folders.Any(f => Nagi.Core.Helpers.PathCanonicalizer.Normalize(f.Path)
                 .Equals(canonicalNew, StringComparison.OrdinalIgnoreCase)))
         {
-            _globalOperation.StatusMessage = Nagi.Presentation.Resources.Strings.Folders_AddFolder_Exists;
+            _globalOperation.StatusMessage = Strings.Folders_AddFolder_Exists;
             return;
         }
 
         IsAddingFolder = true;
         _globalOperation.IsInProgress = true;
-        _globalOperation.StatusMessage = Nagi.Presentation.Resources.Strings.Folders_AddFolder_InProgress;
+        _globalOperation.StatusMessage = Strings.Folders_AddFolder_InProgress;
         _globalOperation.ProgressValue = 0;
         _globalOperation.IsIndeterminate = true;
 
@@ -239,7 +240,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
             var folder = await _libraryWriter.AddFolderAsync(folderPath);
             if (folder == null)
             {
-                _globalOperation.StatusMessage = Nagi.Presentation.Resources.Strings.Folders_AddFolder_Failed;
+                _globalOperation.StatusMessage = Strings.Folders_AddFolder_Failed;
                 return;
             }
 
@@ -254,11 +255,11 @@ public partial class FolderViewModel : ObservableObject, IDisposable
 
             await _libraryScanner.ScanFolderForMusicAsync(folder.Path, progress);
 
-            _globalOperation.StatusMessage = string.Format(Nagi.Presentation.Resources.Strings.Folders_AddFolder_Success, folder.Name);
+            _globalOperation.StatusMessage = string.Format(Strings.Folders_AddFolder_Success, folder.Name);
         }
         catch (Exception ex)
         {
-            _globalOperation.StatusMessage = string.Format(Nagi.Presentation.Resources.Strings.Folders_Error_AddFolder, ex.Message);
+            _globalOperation.StatusMessage = string.Format(Strings.Folders_Error_AddFolder, ex.Message);
             _logger.LogError(ex, "Failed to add and scan folder '{FolderPath}'", folderPath);
         }
         finally
@@ -279,15 +280,15 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         if (folderToDelete == null) return;
 
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
-            Nagi.Presentation.Resources.Strings.FolderPage_DeleteDialog_Title,
-            string.Format(Nagi.Presentation.Resources.Strings.FolderPage_DeleteDialog_Format, folderToDelete.Name),
-            Nagi.Presentation.Resources.Strings.FolderPage_DeleteDialog_PrimaryButton,
-            Nagi.Presentation.Resources.Strings.FolderPage_DeleteDialog_CloseButton);
+            Strings.FolderPage_DeleteDialog_Title,
+            string.Format(Strings.FolderPage_DeleteDialog_Format, folderToDelete.Name),
+            Strings.FolderPage_DeleteDialog_PrimaryButton,
+            Strings.FolderPage_DeleteDialog_CloseButton);
         if (!confirmed || IsAnyOperationInProgress) return;
 
         IsDeletingFolder = true;
         _globalOperation.IsInProgress = true;
-        _globalOperation.StatusMessage = string.Format(Nagi.Presentation.Resources.Strings.Folders_Delete_InProgress, folderToDelete.Name);
+        _globalOperation.StatusMessage = string.Format(Strings.Folders_Delete_InProgress, folderToDelete.Name);
         _globalOperation.IsIndeterminate = true;
 
         try
@@ -295,16 +296,16 @@ public partial class FolderViewModel : ObservableObject, IDisposable
             var success = await _libraryWriter.RemoveFolderAsync(folderId);
             if (success)
             {
-                _globalOperation.StatusMessage = string.Format(Nagi.Presentation.Resources.Strings.Folders_Delete_Success, folderToDelete.Name);
+                _globalOperation.StatusMessage = string.Format(Strings.Folders_Delete_Success, folderToDelete.Name);
             }
             else
             {
-                _globalOperation.StatusMessage = string.Format(Nagi.Presentation.Resources.Strings.Folders_Delete_Failed, folderToDelete.Name);
+                _globalOperation.StatusMessage = string.Format(Strings.Folders_Delete_Failed, folderToDelete.Name);
             }
         }
         catch (Exception ex)
         {
-            _globalOperation.StatusMessage = string.Format(Nagi.Presentation.Resources.Strings.Folders_Error_DeleteFolder, ex.Message);
+            _globalOperation.StatusMessage = string.Format(Strings.Folders_Error_DeleteFolder, ex.Message);
             _logger.LogError(ex, "Failed to delete folder {FolderId}", folderId);
         }
         finally
@@ -325,7 +326,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
 
         IsScanning = true;
         _globalOperation.IsInProgress = true;
-        _globalOperation.StatusMessage = string.Format(Nagi.Presentation.Resources.Strings.Folders_Rescan_InProgress, folderItem.Name);
+        _globalOperation.StatusMessage = string.Format(Strings.Folders_Rescan_InProgress, folderItem.Name);
         _globalOperation.IsIndeterminate = true;
         _globalOperation.SetCancellation(RescanFolderCommand.Cancel);
 
@@ -342,8 +343,8 @@ public partial class FolderViewModel : ObservableObject, IDisposable
             cancellationToken.ThrowIfCancellationRequested();
 
             _globalOperation.StatusMessage = changesDetected
-                ? string.Format(Nagi.Presentation.Resources.Strings.Folders_Rescan_Complete, folderItem.Name)
-                : string.Format(Nagi.Presentation.Resources.Strings.Folders_Rescan_NoChanges, folderItem.Name);
+                ? string.Format(Strings.Folders_Rescan_Complete, folderItem.Name)
+                : string.Format(Strings.Folders_Rescan_NoChanges, folderItem.Name);
         }
         catch (OperationCanceledException)
         {
@@ -351,7 +352,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         }
         catch (Exception ex)
         {
-            _globalOperation.StatusMessage = string.Format(Nagi.Presentation.Resources.Strings.Folders_Error_RescanFolder, ex.Message);
+            _globalOperation.StatusMessage = string.Format(Strings.Folders_Error_RescanFolder, ex.Message);
             _logger.LogError(ex, "Failed to rescan folder {FolderId}", folderId);
         }
         finally

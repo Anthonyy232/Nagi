@@ -10,6 +10,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Navigation;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.Presentation.ViewModels;
@@ -31,7 +32,7 @@ public partial class GenreViewViewModel : SongListViewModelBase
         ILogger<GenreViewViewModel> logger)
         : base(libraryReader, libraryWriter, libraryScanner, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
-        GenreName = Nagi.Presentation.Resources.Strings.GenreView_DefaultName;
+        GenreName = Strings.GenreView_DefaultName;
 
         CurrentSortOrder = SongSortOrder.TitleAsc;
     }
@@ -82,9 +83,9 @@ public partial class GenreViewViewModel : SongListViewModelBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to load details for GenreId {GenreId}", navParam.GenreId);
-            GenreName = Nagi.Presentation.Resources.Strings.GenreView_Error;
-            PageTitle = Nagi.Presentation.Resources.Strings.Generic_Error;
-            TotalItemsText = Nagi.Presentation.Resources.Strings.Generic_Error;
+            GenreName = Strings.GenreView_Error;
+            PageTitle = Strings.Generic_Error;
+            TotalItemsText = Strings.Generic_Error;
             Songs.Clear();
         }
     }

@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.Presentation.ViewModels;
@@ -101,7 +102,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to initialize playlist {PlaylistId}", _currentPlaylistId);
-            TotalItemsText = Nagi.Presentation.Resources.Strings.Playlist_ErrorLoading;
+            TotalItemsText = Strings.Playlist_ErrorLoading;
             Songs.Clear();
         }
     }
@@ -220,7 +221,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
                 await RefreshOrSortSongsAsync();
                 if (!_isDisposed && generation == _playlistGeneration)
                     await _uiService.ShowMessageDialogAsync(
-                        Resources.Strings.Generic_Error, Resources.Strings.Playlist_ErrorSavingOrder);
+                        Strings.Generic_Error, Strings.Playlist_ErrorSavingOrder);
             }
         }
         catch (Exception ex)

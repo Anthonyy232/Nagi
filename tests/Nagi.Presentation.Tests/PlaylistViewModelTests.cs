@@ -4,6 +4,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Models;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
 using NSubstitute;
@@ -244,7 +245,7 @@ public class PlaylistViewModelTests
 
         await viewModel.PlayRandomPlaylistCommand.ExecuteAsync(null);
 
-        viewModel.StatusMessage.Should().Be(Nagi.Presentation.Resources.Strings.Playlist_Status_NoPlaylists);
+        viewModel.StatusMessage.Should().Be(Strings.Playlist_Status_NoPlaylists);
     }
 
     [Theory]

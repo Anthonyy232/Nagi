@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Models;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
 
@@ -17,12 +18,12 @@ namespace Nagi.WinUI.Pages;
 public sealed partial class LibraryPage : Page
 {
     private string GetEmptyStateTitle(bool isSearchActive, bool favorites) => isSearchActive
-        ? Nagi.Presentation.Resources.Strings.LibraryPage_SearchEmpty_Title
-        : favorites ? Nagi.Presentation.Resources.Strings.Listening_FavoritesEmpty : Nagi.Presentation.Resources.Strings.LibraryPage_EmptyState_Title;
+        ? Strings.LibraryPage_SearchEmpty_Title
+        : favorites ? Strings.Listening_FavoritesEmpty : Strings.LibraryPage_EmptyState_Title;
 
     private string GetEmptyStateSubtitle(bool isSearchActive, bool favorites) => isSearchActive
-        ? Nagi.Presentation.Resources.Strings.LibraryPage_SearchEmpty_Subtitle
-        : favorites ? Nagi.Presentation.Resources.Strings.Listening_FavoritesEmptyDescription : Nagi.Presentation.Resources.Strings.LibraryPage_EmptyState_Subtitle;
+        ? Strings.LibraryPage_SearchEmpty_Subtitle
+        : favorites ? Strings.Listening_FavoritesEmptyDescription : Strings.LibraryPage_EmptyState_Subtitle;
 
     private void OnArtistColumnSizeChanged(object sender, SizeChangedEventArgs e) =>
         ((FrameworkElement)((Grid)sender).Children[0]).MaxWidth = e.NewSize.Width;
@@ -101,8 +102,8 @@ public sealed partial class LibraryPage : Page
         _logger.LogDebug("LibraryPage loaded. Setting initial visual state.");
         _isSearchExpanded = !string.IsNullOrWhiteSpace(ViewModel.SearchTerm);
         ToolTipService.SetToolTip(SearchToggleButton, _isSearchExpanded
-            ? Nagi.Presentation.Resources.Strings.LibraryPage_SearchButton_Close_ToolTip
-            : Nagi.Presentation.Resources.Strings.LibraryPage_SearchButton_Search_ToolTip);
+            ? Strings.LibraryPage_SearchButton_Close_ToolTip
+            : Strings.LibraryPage_SearchButton_Search_ToolTip);
         VisualStateManager.GoToState(this, _isSearchExpanded ? "SearchExpanded" : "SearchCollapsed", false);
         Loaded -= OnPageLoaded;
     }
@@ -131,7 +132,7 @@ public sealed partial class LibraryPage : Page
 
         _isSearchExpanded = true;
         _logger.LogDebug("Search UI expanded.");
-        ToolTipService.SetToolTip(SearchToggleButton, Nagi.Presentation.Resources.Strings.LibraryPage_SearchButton_Close_ToolTip);
+        ToolTipService.SetToolTip(SearchToggleButton, Strings.LibraryPage_SearchButton_Close_ToolTip);
         VisualStateManager.GoToState(this, "SearchExpanded", false);
         SearchTextBox.Focus(FocusState.Programmatic);
 
@@ -143,7 +144,7 @@ public sealed partial class LibraryPage : Page
 
         _isSearchExpanded = false;
         _logger.LogDebug("Search UI collapsed and search term cleared.");
-        ToolTipService.SetToolTip(SearchToggleButton, Nagi.Presentation.Resources.Strings.LibraryPage_SearchButton_Search_ToolTip);
+        ToolTipService.SetToolTip(SearchToggleButton, Strings.LibraryPage_SearchButton_Search_ToolTip);
         VisualStateManager.GoToState(this, "SearchCollapsed", false);
         SearchToggleButton.Focus(FocusState.Programmatic);
         ViewModel.SearchTerm = string.Empty;
@@ -158,7 +159,7 @@ public sealed partial class LibraryPage : Page
         {
             _logger.LogDebug("Populating 'Add to playlist' submenu.");
             PlaylistMenuFlyoutHelper.Populate(addToPlaylistSubMenu, ViewModel.AvailablePlaylists,
-                ViewModel.AddSelectedSongsToPlaylistCommand, Nagi.Presentation.Resources.Strings.LibraryPage_PlaylistMenu_NoPlaylists);
+                ViewModel.AddSelectedSongsToPlaylistCommand, Strings.LibraryPage_PlaylistMenu_NoPlaylists);
         }
 
         if (menuFlyout.Target?.DataContext is not Song rightClickedSong) return;

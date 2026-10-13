@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.Presentation.ViewModels;
@@ -68,7 +69,7 @@ public partial class RomanizationPacksSettingsViewModel : SettingsSectionViewMod
                 if (token.IsCancellationRequested || _isDisposed) return;
                 RomanizationPacks.ReplaceRange(packs.Select(p => new RomanizationPackViewModel(p)));
                 RomanizationPacksStatus = RomanizationPacks.Count == 0
-                    ? Nagi.Presentation.Resources.Strings.SettingsPage_RomanizationPacks_None
+                    ? Strings.SettingsPage_RomanizationPacks_None
                     : null;
             });
         }
@@ -81,7 +82,7 @@ public partial class RomanizationPacksSettingsViewModel : SettingsSectionViewMod
             _dispatcherService.TryEnqueue(() =>
             {
                 if (token.IsCancellationRequested || _isDisposed) return;
-                RomanizationPacksStatus = string.Format(Nagi.Presentation.Resources.Strings.SettingsPage_RomanizationPacks_LoadFailedFormat, ex.Message);
+                RomanizationPacksStatus = string.Format(Strings.SettingsPage_RomanizationPacks_LoadFailedFormat, ex.Message);
             });
         }
         finally
@@ -105,7 +106,7 @@ public partial class RomanizationPacksSettingsViewModel : SettingsSectionViewMod
             var result = await _romanizationPackManager.InstallPackAsync(pack.Id);
             if (!result.Succeeded)
             {
-                RomanizationPacksStatus = result.ErrorMessage ?? Nagi.Presentation.Resources.Strings.SettingsPage_RomanizationPacks_InstallFailed;
+                RomanizationPacksStatus = result.ErrorMessage ?? Strings.SettingsPage_RomanizationPacks_InstallFailed;
                 return;
             }
 
@@ -129,7 +130,7 @@ public partial class RomanizationPacksSettingsViewModel : SettingsSectionViewMod
             var result = await _romanizationPackManager.RemovePackAsync(pack.Id);
             if (!result.Succeeded)
             {
-                RomanizationPacksStatus = result.ErrorMessage ?? Nagi.Presentation.Resources.Strings.SettingsPage_RomanizationPacks_RemoveFailed;
+                RomanizationPacksStatus = result.ErrorMessage ?? Strings.SettingsPage_RomanizationPacks_RemoveFailed;
                 return;
             }
 

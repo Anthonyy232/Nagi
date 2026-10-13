@@ -8,6 +8,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Navigation;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.Presentation.Services.Implementations;
@@ -238,14 +239,14 @@ public partial class SettingsService : IUISettingsService
     {
         return new List<NavigationItemSetting>
         {
-            new() { DisplayName = Resources.Strings.Settings_Nav_Library, Tag = "Library", IconGlyph = "\uE8F1", IsEnabled = true },
-            new() { DisplayName = Resources.Strings.Settings_Nav_Folders, Tag = "Folders", IconGlyph = "\uE8B7", IsEnabled = true },
-            new() { DisplayName = Resources.Strings.Settings_Nav_Playlists, Tag = "Playlists", IconGlyph = "\uE90B", IsEnabled = true },
-            new() { DisplayName = Resources.Strings.Settings_Nav_Artists, Tag = "Artists", IconGlyph = "\uE77B", IsEnabled = true },
-            new() { DisplayName = Resources.Strings.Settings_Nav_Albums, Tag = "Albums", IconGlyph = "\uE93C", IsEnabled = true },
-            new() { DisplayName = Resources.Strings.Settings_Nav_Genres, Tag = "Genres", IconGlyph = "\uE8EC", IsEnabled = true },
-            new() { DisplayName = Resources.Strings.Settings_Nav_Insights, Tag = "Insights", IconGlyph = "\uE9D2", IsEnabled = false },
-            new() { DisplayName = Resources.Strings.Listening_Favorites, Tag = "Favorites", IconGlyph = "\uEB51", IsEnabled = false }
+            new() { DisplayName = Strings.Settings_Nav_Library, Tag = "Library", IconGlyph = "\uE8F1", IsEnabled = true },
+            new() { DisplayName = Strings.Settings_Nav_Folders, Tag = "Folders", IconGlyph = "\uE8B7", IsEnabled = true },
+            new() { DisplayName = Strings.Settings_Nav_Playlists, Tag = "Playlists", IconGlyph = "\uE90B", IsEnabled = true },
+            new() { DisplayName = Strings.Settings_Nav_Artists, Tag = "Artists", IconGlyph = "\uE77B", IsEnabled = true },
+            new() { DisplayName = Strings.Settings_Nav_Albums, Tag = "Albums", IconGlyph = "\uE93C", IsEnabled = true },
+            new() { DisplayName = Strings.Settings_Nav_Genres, Tag = "Genres", IconGlyph = "\uE8EC", IsEnabled = true },
+            new() { DisplayName = Strings.Settings_Nav_Insights, Tag = "Insights", IconGlyph = "\uE9D2", IsEnabled = false },
+            new() { DisplayName = Strings.Listening_Favorites, Tag = "Favorites", IconGlyph = "\uEB51", IsEnabled = false }
         };
     }
 
@@ -253,15 +254,15 @@ public partial class SettingsService : IUISettingsService
     {
         return new List<PlayerButtonSetting>
         {
-            new() { Id = "Shuffle", DisplayName = Resources.Strings.Settings_Button_Shuffle, IconGlyph = "\uE8B1", IsEnabled = true },
-            new() { Id = "Previous", DisplayName = Resources.Strings.Settings_Button_Previous, IconGlyph = "\uE892", IsEnabled = true },
-            new() { Id = "PlayPause", DisplayName = Resources.Strings.Settings_Button_PlayPause, IconGlyph = "\uE768", IsEnabled = true },
-            new() { Id = "Next", DisplayName = Resources.Strings.Settings_Button_Next, IconGlyph = "\uE893", IsEnabled = true },
-            new() { Id = "Repeat", DisplayName = Resources.Strings.Settings_Button_Repeat, IconGlyph = "\uE8EE", IsEnabled = true },
-            new() { Id = "Separator", DisplayName = Resources.Strings.Settings_Button_Divider, IconGlyph = string.Empty, IsEnabled = true },
-            new() { Id = "Lyrics", DisplayName = Resources.Strings.Settings_Button_Lyrics, IconGlyph = "\uED1E", IsEnabled = true },
-            new() { Id = "Queue", DisplayName = Resources.Strings.Settings_Button_Queue, IconGlyph = "\uE90B", IsEnabled = true },
-            new() { Id = "Volume", DisplayName = Resources.Strings.Settings_Button_Volume, IconGlyph = "\uE767", IsEnabled = true }
+            new() { Id = "Shuffle", DisplayName = Strings.Settings_Button_Shuffle, IconGlyph = "\uE8B1", IsEnabled = true },
+            new() { Id = "Previous", DisplayName = Strings.Settings_Button_Previous, IconGlyph = "\uE892", IsEnabled = true },
+            new() { Id = "PlayPause", DisplayName = Strings.Settings_Button_PlayPause, IconGlyph = "\uE768", IsEnabled = true },
+            new() { Id = "Next", DisplayName = Strings.Settings_Button_Next, IconGlyph = "\uE893", IsEnabled = true },
+            new() { Id = "Repeat", DisplayName = Strings.Settings_Button_Repeat, IconGlyph = "\uE8EE", IsEnabled = true },
+            new() { Id = "Separator", DisplayName = Strings.Settings_Button_Divider, IconGlyph = string.Empty, IsEnabled = true },
+            new() { Id = "Lyrics", DisplayName = Strings.Settings_Button_Lyrics, IconGlyph = "\uED1E", IsEnabled = true },
+            new() { Id = "Queue", DisplayName = Strings.Settings_Button_Queue, IconGlyph = "\uE90B", IsEnabled = true },
+            new() { Id = "Volume", DisplayName = Strings.Settings_Button_Volume, IconGlyph = "\uE767", IsEnabled = true }
         };
     }
 }

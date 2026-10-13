@@ -11,6 +11,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.Presentation.ViewModels;
@@ -123,7 +124,7 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
         {
             if (_isDisposed || generation != _playlistGeneration) return;
             _logger.LogError(ex, "Failed to initialize smart playlist {SmartPlaylistId}", _currentSmartPlaylistId);
-            TotalItemsText = Nagi.Presentation.Resources.Strings.SmartPlaylist_ErrorLoading;
+            TotalItemsText = Strings.SmartPlaylist_ErrorLoading;
             Songs.Clear();
         }
     }
@@ -132,16 +133,16 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
     {
         var ruleCount = smartPlaylist.Rules.Count;
         if (ruleCount == 0)
-            return Nagi.Presentation.Resources.Strings.SmartPlaylist_RuleSummary_NoRules;
+            return Strings.SmartPlaylist_RuleSummary_NoRules;
 
         var matchType = smartPlaylist.MatchAllRules
-            ? Nagi.Presentation.Resources.Strings.SmartPlaylist_MatchAll
-            : Nagi.Presentation.Resources.Strings.SmartPlaylist_MatchAny;
+            ? Strings.SmartPlaylist_MatchAll
+            : Strings.SmartPlaylist_MatchAny;
         var ruleWord = ruleCount == 1
-            ? Nagi.Presentation.Resources.Strings.SmartPlaylist_Rule_Singular
-            : Nagi.Presentation.Resources.Strings.SmartPlaylist_Rule_Plural;
+            ? Strings.SmartPlaylist_Rule_Singular
+            : Strings.SmartPlaylist_Rule_Plural;
 
-        return ResourceFormatter.Format(Nagi.Presentation.Resources.Strings.SmartPlaylist_RuleSummary_Format, matchType, ruleCount, ruleWord);
+        return ResourceFormatter.Format(Strings.SmartPlaylist_RuleSummary_Format, matchType, ruleCount, ruleWord);
     }
 
 

@@ -12,6 +12,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.Presentation.ViewModels;
@@ -74,7 +75,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         IsPlaying = _playbackService.IsPlaying;
     }
 
-    [ObservableProperty] public partial string SongTitle { get; set; } = Nagi.Presentation.Resources.Strings.Lyrics_NoSongSelected;
+    [ObservableProperty] public partial string SongTitle { get; set; } = Strings.Lyrics_NoSongSelected;
 
     /// <summary>
     ///     True when synchronized (timed) lyrics are available and being displayed.
@@ -171,8 +172,8 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to update lyrics.");
-            await _uiService.ShowMessageDialogAsync(Nagi.Presentation.Resources.Strings.LyricsPage_EditLyrics_Error_Title,
-                Nagi.Presentation.Resources.Strings.LyricsPage_EditLyrics_Error_Message);
+            await _uiService.ShowMessageDialogAsync(Strings.LyricsPage_EditLyrics_Error_Title,
+                Strings.LyricsPage_EditLyrics_Error_Message);
         }
     }
 
@@ -271,13 +272,13 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
             if (song is null)
             {
                 _logger.LogDebug("Clearing lyrics view as playback stopped");
-                SongTitle = Nagi.Presentation.Resources.Strings.Lyrics_NoSongSelected;
+                SongTitle = Strings.Lyrics_NoSongSelected;
                 IsLoading = false;
             }
             else
             {
                 SongTitle = !string.IsNullOrWhiteSpace(song.ArtistName)
-                    ? string.Format(Nagi.Presentation.Resources.Strings.Lyrics_SongTitleFormat, song.Title, song.ArtistName)
+                    ? string.Format(Strings.Lyrics_SongTitleFormat, song.Title, song.ArtistName)
                     : song.Title;
                 SongDuration = _playbackService.Duration;
                 IsLoading = true;

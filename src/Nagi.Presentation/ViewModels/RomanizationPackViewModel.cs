@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Nagi.Core.Models.Romanization;
+using Nagi.Presentation.Resources;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -23,7 +24,7 @@ public partial class RomanizationPackViewModel : ObservableObject
     public string Attribution => _packView.CatalogEntry.Attribution;
     public string LicenseText => string.IsNullOrWhiteSpace(License)
         ? string.Empty
-        : string.Format(Nagi.Presentation.Resources.Strings.SettingsPage_RomanizationPack_LicenseFormat, License);
+        : string.Format(Strings.SettingsPage_RomanizationPack_LicenseFormat, License);
     public string SizeText => FormatSize(_packView.CatalogEntry.SizeBytes);
     public string DetailsText
     {
@@ -45,9 +46,9 @@ public partial class RomanizationPackViewModel : ObservableObject
     {
         get
         {
-            if (IsUpdateAvailable) return Nagi.Presentation.Resources.Strings.SettingsPage_RomanizationPack_UpdateAvailable;
-            if (IsInstalled) return string.Format(Nagi.Presentation.Resources.Strings.SettingsPage_RomanizationPack_InstalledFormat, InstalledVersion);
-            return Nagi.Presentation.Resources.Strings.SettingsPage_RomanizationPack_NotInstalled;
+            if (IsUpdateAvailable) return Strings.SettingsPage_RomanizationPack_UpdateAvailable;
+            if (IsInstalled) return string.Format(Strings.SettingsPage_RomanizationPack_InstalledFormat, InstalledVersion);
+            return Strings.SettingsPage_RomanizationPack_NotInstalled;
         }
     }
 

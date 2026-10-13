@@ -14,6 +14,7 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Navigation;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.Presentation.ViewModels;
@@ -67,10 +68,10 @@ public partial class PlaylistViewModelItem : ObservableObject
 
     public string SongCountText => ResourceFormatter.Format((IsSmart, SongCount == 1) switch
     {
-        (true, true) => Nagi.Presentation.Resources.Strings.Playlist_Smart_Count_Singular,
-        (true, false) => Nagi.Presentation.Resources.Strings.Playlist_Smart_Count_Plural,
-        (false, true) => Nagi.Presentation.Resources.Strings.Playlist_Count_Singular,
-        _ => Nagi.Presentation.Resources.Strings.Playlist_Count_Plural
+        (true, true) => Strings.Playlist_Smart_Count_Singular,
+        (true, false) => Strings.Playlist_Smart_Count_Plural,
+        (false, true) => Strings.Playlist_Count_Singular,
+        _ => Strings.Playlist_Count_Plural
     }, SongCount);
 }
 
@@ -202,7 +203,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         if (playlist is null || IsAnyOperationInProgress || playlist.Id == Guid.Empty) return;
         var (playlistId, isSmart) = (playlist.Id, playlist.IsSmart);
 
-        StatusMessage = Nagi.Presentation.Resources.Strings.Playlist_Status_Starting;
+        StatusMessage = Strings.Playlist_Status_Starting;
         try
         {
             if (isSmart)
@@ -210,7 +211,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
                 var songIds = await _smartPlaylistService.GetMatchingSongIdsAsync(playlistId);
                 if (songIds.Count == 0)
                 {
-                    StatusMessage = Nagi.Presentation.Resources.Strings.Playlist_Status_SmartEmpty;
+                    StatusMessage = Strings.Playlist_Status_SmartEmpty;
                     _logger.LogDebug("Smart playlist {PlaylistId} has no matching songs", playlistId);
                     return;
                 }
@@ -224,7 +225,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         }
         catch (Exception ex)
         {
-            StatusMessage = Nagi.Presentation.Resources.Strings.Playlist_Status_ErrorPlayback;
+            StatusMessage = Strings.Playlist_Status_ErrorPlayback;
             _logger.LogCritical(ex, "Error playing playlist {PlaylistId}", playlistId);
         }
     }
@@ -236,7 +237,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     private async Task PlayRandomPlaylistAsync()
     {
         if (IsAnyOperationInProgress) return;
-        StatusMessage = Nagi.Presentation.Resources.Strings.Playlist_Status_PickingRandom;
+        StatusMessage = Strings.Playlist_Status_PickingRandom;
 
         try
         {
@@ -249,7 +250,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
             var totalCount = regularCount + smartCount;
             if (totalCount == 0)
             {
-                StatusMessage = Nagi.Presentation.Resources.Strings.Playlist_Status_NoPlaylists;
+                StatusMessage = Strings.Playlist_Status_NoPlaylists;
                 return;
             }
 
@@ -263,7 +264,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
                     await _musicPlaybackService.PlayPlaylistAsync(id.Value);
                     StatusMessage = string.Empty;
                 }
-                else StatusMessage = Nagi.Presentation.Resources.Strings.Playlist_Status_NoPlaylists;
+                else StatusMessage = Strings.Playlist_Status_NoPlaylists;
             }
             else
             {
@@ -278,15 +279,15 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
                     }
                     else
                     {
-                        StatusMessage = Nagi.Presentation.Resources.Strings.Playlist_Status_SmartSelectedEmpty;
+                        StatusMessage = Strings.Playlist_Status_SmartSelectedEmpty;
                     }
                 }
-                else StatusMessage = Nagi.Presentation.Resources.Strings.Playlist_Status_NoPlaylists;
+                else StatusMessage = Strings.Playlist_Status_NoPlaylists;
             }
         }
         catch (Exception ex)
         {
-            StatusMessage = Nagi.Presentation.Resources.Strings.Playlist_Status_ErrorRandom;
+            StatusMessage = Strings.Playlist_Status_ErrorRandom;
             _logger.LogCritical(ex, "Error playing random playlist");
         }
     }
@@ -311,7 +312,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         IsLoadingPlaylists = true;
         try
         {
-            StatusMessage = Nagi.Presentation.Resources.Strings.Playlist_Status_Loading;
+            StatusMessage = Strings.Playlist_Status_Loading;
             Task<PlaylistSortOrder>? sortTask = null;
             if (!_hasSortOrderLoaded)
             {
@@ -348,7 +349,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         catch (Exception ex)
         {
             if (_isDisposed || loadVersion != _loadVersion) return;
-            StatusMessage = Nagi.Presentation.Resources.Strings.Playlist_Status_ErrorLoadingPlaylists;
+            StatusMessage = Strings.Playlist_Status_ErrorLoadingPlaylists;
             _logger.LogError(ex, "Error loading playlists");
         }
         finally
@@ -373,7 +374,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
 
         IsCreatingPlaylist = true;
         Interlocked.Increment(ref _isMutating);
-        StatusMessage = Nagi.Presentation.Resources.Strings.Playlist_Status_Creating;
+        StatusMessage = Strings.Playlist_Status_Creating;
 
         try
         {
@@ -388,12 +389,12 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
             }
             else
             {
-                StatusMessage = Nagi.Presentation.Resources.Strings.Playlist_Status_CreateFailed;
+                StatusMessage = Strings.Playlist_Status_CreateFailed;
             }
         }
         catch (Exception ex)
         {
-            StatusMessage = Nagi.Presentation.Resources.Strings.Playlist_Status_CreateError;
+            StatusMessage = Strings.Playlist_Status_CreateError;
             _logger.LogError(ex, "Error creating playlist");
         }
         finally
@@ -432,8 +433,8 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         IsUpdatingCover = true;
         Interlocked.Increment(ref _isMutating);
         StatusMessage = coverImageUri is null
-            ? Nagi.Presentation.Resources.Strings.Playlist_Status_RemovingCover
-            : Nagi.Presentation.Resources.Strings.Playlist_Status_UpdatingCover;
+            ? Strings.Playlist_Status_RemovingCover
+            : Strings.Playlist_Status_UpdatingCover;
 
         try
         {
@@ -443,14 +444,14 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
 
             // PlaylistUpdated supplies the persisted cache path, not the selected source image.
             StatusMessage = success ? string.Empty : coverImageUri is null
-                ? Nagi.Presentation.Resources.Strings.Playlist_Status_RemoveCoverFailed
-                : Nagi.Presentation.Resources.Strings.Playlist_Status_UpdateCoverFailed;
+                ? Strings.Playlist_Status_RemoveCoverFailed
+                : Strings.Playlist_Status_UpdateCoverFailed;
         }
         catch (Exception ex)
         {
             StatusMessage = coverImageUri is null
-                ? Nagi.Presentation.Resources.Strings.Playlist_Status_RemoveCoverError
-                : Nagi.Presentation.Resources.Strings.Playlist_Status_UpdateCoverError;
+                ? Strings.Playlist_Status_RemoveCoverError
+                : Strings.Playlist_Status_UpdateCoverError;
             _logger.LogError(ex, "Error updating playlist cover for {PlaylistId}", playlistId);
         }
         finally
@@ -474,7 +475,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
 
         IsRenamingPlaylist = true;
         Interlocked.Increment(ref _isMutating);
-        StatusMessage = Nagi.Presentation.Resources.Strings.Playlist_Status_Renaming;
+        StatusMessage = Strings.Playlist_Status_Renaming;
 
         try
         {
@@ -497,12 +498,12 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
             }
             else
             {
-                StatusMessage = Nagi.Presentation.Resources.Strings.Playlist_Status_RenameFailed;
+                StatusMessage = Strings.Playlist_Status_RenameFailed;
             }
         }
         catch (Exception ex)
         {
-            StatusMessage = Nagi.Presentation.Resources.Strings.Playlist_Status_RenameError;
+            StatusMessage = Strings.Playlist_Status_RenameError;
             _logger.LogError(ex, "Error renaming playlist {PlaylistId}", playlistId);
         }
         finally
@@ -521,17 +522,17 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         if (playlist is null || IsAnyOperationInProgress) return;
 
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
-            Nagi.Presentation.Resources.Strings.PlaylistPage_DeleteDialog_Title,
-            string.Format(Nagi.Presentation.Resources.Strings.PlaylistPage_DeleteDialog_Content_Format, playlist.Name),
-            Nagi.Presentation.Resources.Strings.PlaylistPage_DeleteDialog_DeleteButton,
-            Nagi.Presentation.Resources.Strings.PlaylistPage_CreateDialog_CancelButton,
+            Strings.PlaylistPage_DeleteDialog_Title,
+            string.Format(Strings.PlaylistPage_DeleteDialog_Content_Format, playlist.Name),
+            Strings.PlaylistPage_DeleteDialog_DeleteButton,
+            Strings.PlaylistPage_CreateDialog_CancelButton,
             defaultToCancel: true);
         var (playlistId, isSmart) = (playlist.Id, playlist.IsSmart);
         if (!confirmed || _isDisposed || IsAnyOperationInProgress) return;
 
         IsDeletingPlaylist = true;
         Interlocked.Increment(ref _isMutating);
-        StatusMessage = Nagi.Presentation.Resources.Strings.Playlist_Status_Deleting;
+        StatusMessage = Strings.Playlist_Status_Deleting;
 
         try
         {
@@ -549,12 +550,12 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
             }
             else
             {
-                StatusMessage = Nagi.Presentation.Resources.Strings.Playlist_Status_DeleteFailed;
+                StatusMessage = Strings.Playlist_Status_DeleteFailed;
             }
         }
         catch (Exception ex)
         {
-            StatusMessage = Nagi.Presentation.Resources.Strings.Playlist_Status_DeleteError;
+            StatusMessage = Strings.Playlist_Status_DeleteError;
             _logger.LogError(ex, "Error deleting playlist {PlaylistId}", playlistId);
         }
         finally

@@ -5,6 +5,7 @@ using Nagi.Core.Models.Lyrics;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Models;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
 using NSubstitute;
@@ -247,8 +248,8 @@ public class LyricsPageViewModelTests
 
         await viewModel.EditLyricsCommand.ExecuteAsync(null);
 
-        await _ui.Received(1).ShowMessageDialogAsync(Nagi.Presentation.Resources.Strings.LyricsPage_EditLyrics_Error_Title,
-            Nagi.Presentation.Resources.Strings.LyricsPage_EditLyrics_Error_Message);
+        await _ui.Received(1).ShowMessageDialogAsync(Strings.LyricsPage_EditLyrics_Error_Title,
+            Strings.LyricsPage_EditLyrics_Error_Message);
     }
 
     private Song PlayingSongWithLyrics(string raw, bool cached)

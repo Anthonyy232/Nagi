@@ -12,6 +12,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.Presentation.ViewModels;
@@ -78,8 +79,8 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
 
     protected override string FormatTotalItemsText(int count) =>
         count == 1
-            ? ResourceFormatter.Format(Nagi.Presentation.Resources.Strings.Artists_Count_Singular, count)
-            : ResourceFormatter.Format(Nagi.Presentation.Resources.Strings.Artists_Count_Plural, count);
+            ? ResourceFormatter.Format(Strings.Artists_Count_Singular, count)
+            : ResourceFormatter.Format(Strings.Artists_Count_Plural, count);
 
     protected override Task<PagedResult<Artist>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token) =>
         IsSearchActive

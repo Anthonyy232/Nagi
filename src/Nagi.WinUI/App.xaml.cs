@@ -14,6 +14,7 @@ using Microsoft.UI.Xaml;
 using Nagi.Core.Data;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services;
 using Nagi.Presentation.ViewModels;
@@ -429,8 +430,8 @@ public partial class App : Application
             {
                 if (Services?.GetService<IUIService>() is not { } uiService) return;
                 var result = await uiService.ShowCrashReportDialogAsync(
-                    Nagi.Presentation.Resources.Strings.CrashReport_Title,
-                    Nagi.Presentation.Resources.Strings.CrashReport_Message,
+                    Strings.CrashReport_Title,
+                    Strings.CrashReport_Message,
                     fullCrashReport,
                     "https://github.com/Anthonyy232/Nagi/issues");
 

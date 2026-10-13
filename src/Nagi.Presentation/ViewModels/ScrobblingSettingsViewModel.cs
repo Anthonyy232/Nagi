@@ -186,9 +186,9 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
     private async Task LastFmDisconnectAsync()
     {
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
-            Nagi.Presentation.Resources.Strings.Settings_LastFm_Disconnect_Title,
-            Nagi.Presentation.Resources.Strings.Settings_LastFm_Disconnect_Message,
-            Nagi.Presentation.Resources.Strings.Settings_LastFm_Disconnect_Button,
+            Strings.Settings_LastFm_Disconnect_Title,
+            Strings.Settings_LastFm_Disconnect_Message,
+            Strings.Settings_LastFm_Disconnect_Button,
             null);
 
         if (!confirmed) return;
@@ -297,14 +297,14 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
                 await StampListenBrainzEnabledSinceIfNeededAsync();
                 ListenBrainzIsConnected = true;
                 ListenBrainzConnectionStatus = string.Format(
-                    Nagi.Presentation.Resources.Strings.SettingsPage_ListenBrainz_Connected,
+                    Strings.SettingsPage_ListenBrainz_Connected,
                     result.Username);
             }
             else
             {
                 ListenBrainzIsConnected = false;
                 ListenBrainzConnectionStatus = string.Format(
-                    Nagi.Presentation.Resources.Strings.SettingsPage_ListenBrainz_ConnectionFailed,
+                    Strings.SettingsPage_ListenBrainz_ConnectionFailed,
                     result.Error);
             }
         }
@@ -314,7 +314,7 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
             if (_isDisposed || version != _listenBrainzConnectionVersion) return;
             ListenBrainzIsConnected = false;
             ListenBrainzConnectionStatus = string.Format(
-                Nagi.Presentation.Resources.Strings.SettingsPage_ListenBrainz_ConnectionFailed,
+                Strings.SettingsPage_ListenBrainz_ConnectionFailed,
                 "Could not reach ListenBrainz.");
         }
     }
@@ -323,9 +323,9 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
     private async Task DisconnectListenBrainzAsync()
     {
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
-            Nagi.Presentation.Resources.Strings.SettingsPage_ListenBrainz_Disconnect_Title,
-            Nagi.Presentation.Resources.Strings.SettingsPage_ListenBrainz_Disconnect_Content,
-            Nagi.Presentation.Resources.Strings.SettingsPage_ListenBrainz_Disconnect_Button,
+            Strings.SettingsPage_ListenBrainz_Disconnect_Title,
+            Strings.SettingsPage_ListenBrainz_Disconnect_Content,
+            Strings.SettingsPage_ListenBrainz_Disconnect_Button,
             null);
 
         if (!confirmed || _isDisposed) return;

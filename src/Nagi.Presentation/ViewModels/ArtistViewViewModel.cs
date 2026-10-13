@@ -12,6 +12,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.Presentation.ViewModels;
@@ -52,8 +53,8 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         ILogger<ArtistViewViewModel> logger)
         : base(libraryReader, libraryWriter, libraryScanner, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
-        ArtistName = Nagi.Presentation.Resources.Strings.ArtistView_DefaultArtistName;
-        ArtistBio = Nagi.Presentation.Resources.Strings.Status_Loading;
+        ArtistName = Strings.ArtistView_DefaultArtistName;
+        ArtistBio = Strings.Status_Loading;
 
         CurrentSortOrder = SongSortOrder.AlbumAsc;
         Albums.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasAlbums));
@@ -152,7 +153,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         PageTitle = artist.Name;
         ArtistImageUri = ImageUriHelper.GetUriWithCacheBuster(artist.LocalImageCachePath);
         ArtistBio = string.IsNullOrWhiteSpace(artist.Biography)
-            ? Nagi.Presentation.Resources.Strings.ArtistView_NoBiography
+            ? Strings.ArtistView_NoBiography
             : artist.Biography;
 
         _logger.LogDebug("Populated details for artist '{ArtistName}' ({ArtistId})", artist.Name, artist.Id);
@@ -161,23 +162,23 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     private void HandleArtistNotFound(Guid artistId)
     {
         _logger.LogWarning("Artist with ID {ArtistId} not found", artistId);
-        ArtistName = Nagi.Presentation.Resources.Strings.ArtistView_ArtistNotFound;
-        PageTitle = Nagi.Presentation.Resources.Strings.Generic_NoItems;
+        ArtistName = Strings.ArtistView_ArtistNotFound;
+        PageTitle = Strings.Generic_NoItems;
         ArtistBio = string.Empty;
         ArtistImageUri = null;
         Albums.Clear();
         Songs.Clear();
-        TotalItemsText = ResourceFormatter.Format(Nagi.Presentation.Resources.Strings.Songs_Count_Plural, 0);
+        TotalItemsText = ResourceFormatter.Format(Strings.Songs_Count_Plural, 0);
     }
 
     private void HandleLoadError(Guid artistId, Exception ex)
     {
         _logger.LogError(ex, "Failed to load artist with ID {ArtistId}", artistId);
-        ArtistName = Nagi.Presentation.Resources.Strings.ArtistView_Error;
-        PageTitle = Nagi.Presentation.Resources.Strings.Generic_Error;
+        ArtistName = Strings.ArtistView_Error;
+        PageTitle = Strings.Generic_Error;
         ArtistBio = string.Empty;
         ArtistImageUri = null;
-        TotalItemsText = Nagi.Presentation.Resources.Strings.Generic_Error;
+        TotalItemsText = Strings.Generic_Error;
         Albums.Clear();
         Songs.Clear();
     }

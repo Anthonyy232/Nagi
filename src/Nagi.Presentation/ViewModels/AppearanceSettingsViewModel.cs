@@ -146,7 +146,7 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
             // Initialize with a minimal list immediately so the binding is valid on first render.
             // The full language list is populated asynchronously to avoid blocking startup.
             AvailableLanguages.Clear();
-            AvailableLanguages.Add(new LanguageModel(string.Empty, Nagi.Presentation.Resources.Strings.Language_Auto));
+            AvailableLanguages.Add(new LanguageModel(string.Empty, Strings.Language_Auto));
             AvailableLanguages.Add(new LanguageModel("en-US", "English"));
 
             SelectedLanguage = ResolveSelectedLanguage(currentLangCode);

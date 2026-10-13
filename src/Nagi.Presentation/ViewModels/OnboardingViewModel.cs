@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.Presentation.ViewModels;
@@ -34,7 +35,7 @@ public partial class OnboardingViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(IsAnyOperationInProgress))]
     public partial bool IsParsing { get; set; }
 
-    [ObservableProperty] public partial string StatusMessage { get; set; } = Nagi.Presentation.Resources.Strings.Onboarding_Welcome;
+    [ObservableProperty] public partial string StatusMessage { get; set; } = Strings.Onboarding_Welcome;
 
     [ObservableProperty] public partial double ProgressValue { get; set; }
 
@@ -46,7 +47,7 @@ public partial class OnboardingViewModel : ObservableObject
     private async Task AddFolder()
     {
         IsAddingFolder = true;
-        StatusMessage = Nagi.Presentation.Resources.Strings.Onboarding_WaitingForSelection;
+        StatusMessage = Strings.Onboarding_WaitingForSelection;
 
         try
         {
@@ -57,7 +58,7 @@ public partial class OnboardingViewModel : ObservableObject
                 _logger.LogDebug("User selected folder '{FolderPath}' for onboarding", folderPath);
                 IsAddingFolder = false;
                 IsParsing = true;
-                StatusMessage = Nagi.Presentation.Resources.Strings.Onboarding_BuildingLibrary;
+                StatusMessage = Strings.Onboarding_BuildingLibrary;
                 IsProgressIndeterminate = true;
 
                 var progressReporter = new Progress<ScanProgress>(progress =>
@@ -75,12 +76,12 @@ public partial class OnboardingViewModel : ObservableObject
             else
             {
                 _logger.LogDebug("User cancelled folder selection during onboarding");
-                StatusMessage = Nagi.Presentation.Resources.Strings.Onboarding_Welcome;
+                StatusMessage = Strings.Onboarding_Welcome;
             }
         }
         catch (Exception ex)
         {
-            StatusMessage = Nagi.Presentation.Resources.Strings.Onboarding_Error;
+            StatusMessage = Strings.Onboarding_Error;
             _logger.LogCritical(ex, "Critical error during onboarding AddFolder operation");
         }
         finally

@@ -12,6 +12,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.Presentation.ViewModels;
@@ -136,7 +137,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
     [ObservableProperty] public partial ObservableCollection<Playlist> AvailablePlaylists { get; set; } = new();
 
-    [ObservableProperty] public partial string PageTitle { get; set; } = Nagi.Presentation.Resources.Strings.SongList_PageTitle_Default;
+    [ObservableProperty] public partial string PageTitle { get; set; } = Strings.SongList_PageTitle_Default;
 
 
     [ObservableProperty]
@@ -295,8 +296,8 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     /// <summary>Songs use the SongList resource strings rather than per-list-type formatting.</summary>
     protected override string FormatTotalItemsText(int count) =>
         count == 1
-            ? ResourceFormatter.Format(Nagi.Presentation.Resources.Strings.SongList_TotalItems_Format_Singular, count)
-            : ResourceFormatter.Format(Nagi.Presentation.Resources.Strings.SongList_TotalItems_Format_Plural, count);
+            ? ResourceFormatter.Format(Strings.SongList_TotalItems_Format_Singular, count)
+            : ResourceFormatter.Format(Strings.SongList_TotalItems_Format_Plural, count);
 
     protected virtual Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize, SongSortOrder sortOrder, CancellationToken cancellationToken = default)
     {
@@ -589,7 +590,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     {
         var count = SelectedItemsCount;
         SelectedItemsCountText = count > 0
-            ? ResourceFormatter.Format(Nagi.Presentation.Resources.Strings.SongList_SelectedCount_Format, count)
+            ? ResourceFormatter.Format(Strings.SongList_SelectedCount_Format, count)
             : string.Empty;
         IsSingleSongSelected = count == 1;
         OnPropertyChanged(nameof(SelectedItemsCount));

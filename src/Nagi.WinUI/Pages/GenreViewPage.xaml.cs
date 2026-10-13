@@ -13,9 +13,9 @@ using Nagi.Presentation.Navigation;
 using Nagi.Presentation.ViewModels;
 using System.Threading.Tasks;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.Pages;
 
@@ -124,7 +124,7 @@ public sealed partial class GenreViewPage : Page
 
         _isSearchExpanded = true;
         _logger.LogDebug("Search UI expanded.");
-        ToolTipService.SetToolTip(SearchToggleButton, Nagi.Presentation.Resources.Strings.GenreViewPage_SearchButton_Close_ToolTip);
+        ToolTipService.SetToolTip(SearchToggleButton, Strings.GenreViewPage_SearchButton_Close_ToolTip);
         VisualStateManager.GoToState(this, "SearchExpanded", false);
         SearchTextBox.Focus(FocusState.Programmatic);
 
@@ -136,7 +136,7 @@ public sealed partial class GenreViewPage : Page
 
         _isSearchExpanded = false;
         _logger.LogDebug("Search UI collapsed and search term cleared.");
-        ToolTipService.SetToolTip(SearchToggleButton, Nagi.Presentation.Resources.Strings.GenreViewPage_SearchButton_Search_ToolTip);
+        ToolTipService.SetToolTip(SearchToggleButton, Strings.GenreViewPage_SearchButton_Search_ToolTip);
         VisualStateManager.GoToState(this, "SearchCollapsed", false);
         SearchToggleButton.Focus(FocusState.Programmatic);
         ViewModel.SearchTerm = string.Empty;
@@ -219,7 +219,7 @@ public sealed partial class GenreViewPage : Page
         {
             _logger.LogDebug("Populating 'Add to playlist' submenu.");
             PlaylistMenuFlyoutHelper.Populate(addToPlaylistSubMenu, ViewModel.AvailablePlaylists,
-                ViewModel.AddSelectedSongsToPlaylistCommand, Nagi.Presentation.Resources.Strings.GenreViewPage_PlaylistMenu_NoPlaylists);
+                ViewModel.AddSelectedSongsToPlaylistCommand, Strings.GenreViewPage_PlaylistMenu_NoPlaylists);
         }
 
         if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()

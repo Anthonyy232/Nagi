@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services;
 
@@ -180,9 +181,9 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
         if (_globalOperation.IsInProgress) return;
 
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
-            Nagi.Presentation.Resources.Strings.Settings_Dialog_Rescan_Title,
-            Nagi.Presentation.Resources.Strings.Settings_Dialog_Rescan_Content,
-            Nagi.Presentation.Resources.Strings.Settings_Dialog_Rescan_PrimaryButton,
+            Strings.Settings_Dialog_Rescan_Title,
+            Strings.Settings_Dialog_Rescan_Content,
+            Strings.Settings_Dialog_Rescan_PrimaryButton,
             null);
 
         if (!confirmed || _isDisposed || _globalOperation.IsInProgress) return;
@@ -192,7 +193,7 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
         var token = rescanCts.Token;
 
         _globalOperation.IsInProgress = true;
-        _globalOperation.StatusMessage = Nagi.Presentation.Resources.Strings.Settings_Status_Rescan_Preparing;
+        _globalOperation.StatusMessage = Strings.Settings_Status_Rescan_Preparing;
         _globalOperation.IsIndeterminate = true;
         _globalOperation.SetCancellation(rescanCts.Cancel);
 
@@ -203,7 +204,7 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
             await _libraryScanner.ForceRescanMetadataAsync(CreateGlobalOperationProgress(_globalOperation, token), token);
             token.ThrowIfCancellationRequested();
 
-            await _uiService.ShowMessageDialogAsync(Nagi.Presentation.Resources.Strings.Settings_Dialog_RescanComplete_Title, Nagi.Presentation.Resources.Strings.Settings_Dialog_RescanComplete_Content);
+            await _uiService.ShowMessageDialogAsync(Strings.Settings_Dialog_RescanComplete_Title, Strings.Settings_Dialog_RescanComplete_Content);
         }
         catch (OperationCanceledException)
         {
@@ -212,7 +213,7 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
         catch (Exception ex)
         {
             _logger.LogError(ex, "Metadata rescan failed.");
-            await _uiService.ShowMessageDialogAsync(Nagi.Presentation.Resources.Strings.Settings_Dialog_RescanFailed_Title, Nagi.Presentation.Resources.Strings.Settings_Dialog_RescanFailed_Content);
+            await _uiService.ShowMessageDialogAsync(Strings.Settings_Dialog_RescanFailed_Title, Strings.Settings_Dialog_RescanFailed_Content);
         }
         finally
         {

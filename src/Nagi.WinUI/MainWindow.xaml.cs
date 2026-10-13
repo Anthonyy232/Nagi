@@ -11,6 +11,7 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using Nagi.Presentation.Models;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Controls;
@@ -405,7 +406,7 @@ public sealed class MiniPlayerWindow : Window
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(_view.TitleBarDragRegion);
 
-        _appWindow.Title = Nagi.Presentation.Resources.Strings.MiniPlayer_Title;
+        _appWindow.Title = Strings.MiniPlayer_Title;
         _appWindow.SetIcon(AppIconPath);
 
         // Convert logical pixels to physical pixels for AppWindow.Resize()

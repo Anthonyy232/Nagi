@@ -7,6 +7,7 @@ using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.Presentation.ViewModels;
@@ -28,7 +29,7 @@ public partial class LibraryViewModel : SongListViewModelBase
         ILogger<LibraryViewModel> logger)
         : base(libraryReader, libraryWriter, libraryScanner, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
-        PageTitle = Nagi.Presentation.Resources.Strings.LibraryPage_Title;
+        PageTitle = Strings.LibraryPage_Title;
         _settingsService.IgnoreLeadingArticlesOnSortEnabledChanged += OnIgnoreLeadingArticlesOnSortChanged;
     }
 

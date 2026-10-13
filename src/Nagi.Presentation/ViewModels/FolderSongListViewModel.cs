@@ -14,6 +14,7 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.Presentation.ViewModels;
@@ -105,7 +106,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         {
             if (!IsSongContextCurrent(generation)) return;
             _logger.LogError(ex, "Failed to load directory items for {Path}", _currentDirectoryPath);
-            TotalItemsText = Nagi.Presentation.Resources.Strings.Folders_ErrorLoading;
+            TotalItemsText = Strings.Folders_ErrorLoading;
             FolderContents.Clear();
             Songs.Clear();
         }
@@ -300,7 +301,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
             {
                 if (token.IsCancellationRequested || _isDisposed) return;
                 HasLoadError = true;
-                TotalItemsText = Nagi.Presentation.Resources.Strings.Folders_ErrorLoading;
+                TotalItemsText = Strings.Folders_ErrorLoading;
             });
         }
         finally
@@ -498,14 +499,14 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         var parts = new List<string>();
         if (folderCount > 0)
             parts.Add(ResourceFormatter.Format(folderCount == 1
-                ? Nagi.Presentation.Resources.Strings.Folders_Count_Singular
-                : Nagi.Presentation.Resources.Strings.Folders_Count_Plural, folderCount));
+                ? Strings.Folders_Count_Singular
+                : Strings.Folders_Count_Plural, folderCount));
         if (songCount > 0)
             parts.Add(ResourceFormatter.Format(songCount == 1
-                ? Nagi.Presentation.Resources.Strings.Songs_Count_Singular
-                : Nagi.Presentation.Resources.Strings.Songs_Count_Plural, songCount));
+                ? Strings.Songs_Count_Singular
+                : Strings.Songs_Count_Plural, songCount));
 
-        TotalItemsText = parts.Count == 0 ? Nagi.Presentation.Resources.Strings.Generic_NoItems : string.Join(", ", parts);
+        TotalItemsText = parts.Count == 0 ? Strings.Generic_NoItems : string.Join(", ", parts);
     }
 
     protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)

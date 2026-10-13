@@ -11,6 +11,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.Presentation.ViewModels;
@@ -36,8 +37,8 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         ILogger<AlbumViewViewModel> logger)
         : base(libraryReader, libraryWriter, libraryScanner, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
-        AlbumTitle = Nagi.Presentation.Resources.Strings.AlbumView_DefaultAlbumTitle;
-        ArtistName = Nagi.Presentation.Resources.Strings.AlbumView_DefaultArtistName;
+        AlbumTitle = Strings.AlbumView_DefaultAlbumTitle;
+        ArtistName = Strings.AlbumView_DefaultArtistName;
         AlbumDetailsText = string.Empty;
 
         CurrentSortOrder = SongSortOrder.TrackNumberAsc;
@@ -122,27 +123,27 @@ public partial class AlbumViewViewModel : SongListViewModelBase
     private void HandleAlbumNotFound(Guid albumId)
     {
         _logger.LogWarning("Album with ID {AlbumId} not found", albumId);
-        AlbumTitle = Nagi.Presentation.Resources.Strings.AlbumView_AlbumNotFound;
-        PageTitle = Nagi.Presentation.Resources.Strings.Generic_NoItems;
+        AlbumTitle = Strings.AlbumView_AlbumNotFound;
+        PageTitle = Strings.Generic_NoItems;
         ArtistName = string.Empty;
         AlbumArtists = new List<AlbumArtist>();
         CoverArtUri = null;
         Songs.Clear();
         GroupedSongsFlat.Clear();
         AlbumDetailsText = string.Empty;
-        TotalItemsText = ResourceFormatter.Format(Nagi.Presentation.Resources.Strings.Songs_Count_Plural, 0);
+        TotalItemsText = ResourceFormatter.Format(Strings.Songs_Count_Plural, 0);
     }
 
     private void HandleLoadError(Guid albumId, Exception ex)
     {
         _logger.LogError(ex, "Failed to load album with ID {AlbumId}", albumId);
-        AlbumTitle = Nagi.Presentation.Resources.Strings.AlbumView_Error;
-        PageTitle = Nagi.Presentation.Resources.Strings.Generic_Error;
+        AlbumTitle = Strings.AlbumView_Error;
+        PageTitle = Strings.Generic_Error;
         ArtistName = string.Empty;
         AlbumArtists = new List<AlbumArtist>();
         CoverArtUri = null;
         AlbumDetailsText = string.Empty;
-        TotalItemsText = Nagi.Presentation.Resources.Strings.Generic_Error;
+        TotalItemsText = Strings.Generic_Error;
         Songs.Clear();
         GroupedSongsFlat.Clear();
         HasLoadError = true;
@@ -195,8 +196,8 @@ public partial class AlbumViewViewModel : SongListViewModelBase
             detailsParts.Add(_albumYear.Value.ToString());
 
         var songCountText = _totalSongCount == 1
-            ? ResourceFormatter.Format(Nagi.Presentation.Resources.Strings.AlbumView_SongCount_Singular, _totalSongCount)
-            : ResourceFormatter.Format(Nagi.Presentation.Resources.Strings.AlbumView_SongCount_Plural, _totalSongCount);
+            ? ResourceFormatter.Format(Strings.AlbumView_SongCount_Singular, _totalSongCount)
+            : ResourceFormatter.Format(Strings.AlbumView_SongCount_Plural, _totalSongCount);
         detailsParts.Add(songCountText);
 
         if (_totalDuration > TimeSpan.Zero)
@@ -279,5 +280,5 @@ public partial class AlbumViewViewModel : SongListViewModelBase
 public class DiscHeader
 {
     public int DiscNumber { get; set; }
-    public string Title => string.Format(Nagi.Presentation.Resources.Strings.AlbumView_DiscHeader, DiscNumber);
+    public string Title => string.Format(Strings.AlbumView_DiscHeader, DiscNumber);
 }
