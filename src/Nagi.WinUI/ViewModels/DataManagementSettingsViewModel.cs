@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
-using Microsoft.Windows.AppLifecycle;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Services.Abstractions;
@@ -160,7 +159,7 @@ public partial class DataManagementSettingsViewModel : ObservableObject
 
             if (result.RequiresRestart)
             {
-                AppInstance.Restart("");
+                _applicationLifecycle.Restart();
             }
         }
         else

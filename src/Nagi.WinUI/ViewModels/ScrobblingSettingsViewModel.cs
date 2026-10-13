@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Resources;
 using Nagi.WinUI.Services.Abstractions;
-using Windows.System;
 
 namespace Nagi.WinUI.ViewModels;
 
@@ -115,7 +114,7 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
             if (authData is { Token: not null, AuthUrl: not null })
             {
                 await _settingsService.SaveLastFmAuthTokenAsync(authData.Value.Token);
-                if (await Launcher.LaunchUriAsync(new Uri(authData.Value.AuthUrl))) return;
+                if (await _uiService.OpenUriAsync(new Uri(authData.Value.AuthUrl))) return;
             }
         }
         catch (Exception ex)

@@ -77,6 +77,8 @@ public partial class UIService : IUIService
         await Launcher.LaunchFolderAsync(folder);
     }
 
+    public async Task<bool> OpenUriAsync(Uri uri) => await Launcher.LaunchUriAsync(uri);
+
     public async Task ShowMessageDialogAsync(string title, string message)
     {
         if (!TryGetXamlRoot(out var xamlRoot)) return;

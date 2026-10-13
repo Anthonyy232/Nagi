@@ -20,6 +20,8 @@ public class SettingsViewModelTests : IDisposable
     private readonly IAudioPlayer _audioPlayer = Substitute.For<IAudioPlayer>();
     private readonly IAppInfoService _appInfo = Substitute.For<IAppInfoService>();
     private readonly IUIService _ui = Substitute.For<IUIService>();
+    private readonly IApplicationLifecycle _lifecycle = Substitute.For<IApplicationLifecycle>();
+    private readonly IBackupRestoreService _backup = Substitute.For<IBackupRestoreService>();
     private readonly IDispatcherService _dispatcher = Substitute.For<IDispatcherService>();
     private readonly ILastFmAuthService _lastFm = Substitute.For<ILastFmAuthService>();
     private readonly IListenBrainzScrobblerService _listenBrainz = Substitute.For<IListenBrainzScrobblerService>();
@@ -40,7 +42,7 @@ public class SettingsViewModelTests : IDisposable
         _dispatcher.TryEnqueue(Arg.Any<Action>()).Returns(call => { call.Arg<Action>()(); return true; });
         _dispatcher.EnqueueAsync(Arg.Any<Func<Task>>()).Returns(call => call.Arg<Func<Task>>()());
         _viewModel = new SettingsViewModel(_settings, _appInfo, _dispatcher,
-            new AppearanceSettingsViewModel(_settings, _theme, _ui, _appInfo, _dispatcher,
+            new AppearanceSettingsViewModel(_settings, _theme, _ui, _appInfo, _lifecycle, _dispatcher,
                 NullLogger<AppearanceSettingsViewModel>.Instance, _timeProvider),
             new AudioSettingsViewModel(_playback, _audioPlayer, _settings, _ui, _ffmpeg, _replayGain, _operation, _dispatcher,
                 NullLogger<AudioSettingsViewModel>.Instance, _timeProvider),
@@ -51,7 +53,7 @@ public class SettingsViewModelTests : IDisposable
             new RomanizationPacksSettingsViewModel(Substitute.For<IRomanizationPackManager>(), _dispatcher,
                 NullLogger<RomanizationPacksSettingsViewModel>.Instance),
             new DataManagementSettingsViewModel(_ui, Substitute.For<IPlaylistExportService>(),
-                Substitute.For<IBackupRestoreService>(), Substitute.For<IApplicationLifecycle>(),
+                _backup, _lifecycle,
                 NullLogger<DataManagementSettingsViewModel>.Instance),
             NullLogger<SettingsViewModel>.Instance, _timeProvider);
     }
@@ -209,6 +211,37 @@ public class SettingsViewModelTests : IDisposable
         _viewModel.Scrobbling.IsConnectingToLastFm.Should().BeFalse();
         await _settings.Received(1).SaveLastFmAuthTokenAsync(null);
         await _ui.Received(1).ShowMessageDialogAsync(Arg.Any<string>(), Arg.Any<string>());
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task LastFm_InitialAuthOpensTheAuthPageAndKeepsTheTokenOnlyIfItOpened(bool opened)
+    {
+        _lastFm.GetAuthenticationTokenAsync().Returns(("token", "https://www.last.fm/api/auth?token=token"));
+        _ui.OpenUriAsync(Arg.Any<Uri>()).Returns(opened);
+
+        await _viewModel.Scrobbling.LastFmInitialAuthCommand.ExecuteAsync(null);
+
+        await _ui.Received(1).OpenUriAsync(new Uri("https://www.last.fm/api/auth?token=token"));
+        _viewModel.Scrobbling.IsConnectingToLastFm.Should().Be(opened);
+        await _settings.Received(opened ? 0 : 1).SaveLastFmAuthTokenAsync(null);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task RestoreFromBackup_RestartsOnlyWhenTheRestoreRequiresIt(bool requiresRestart)
+    {
+        _ui.PickSingleFileAsync(Arg.Any<IEnumerable<string>>()).Returns("backup.zip");
+        _backup.ValidateBackupAsync("backup.zip").Returns(true);
+        _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
+            Arg.Any<bool>()).Returns(true);
+        _backup.RestoreFromBackupAsync("backup.zip").Returns(new RestoreResult(true, 1, requiresRestart));
+
+        await _viewModel.DataManagement.RestoreFromBackupCommand.ExecuteAsync(null);
+
+        _lifecycle.Received(requiresRestart ? 1 : 0).Restart();
     }
 
     [Fact]

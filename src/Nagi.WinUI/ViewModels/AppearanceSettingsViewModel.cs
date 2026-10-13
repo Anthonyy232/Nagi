@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
-using Microsoft.Windows.AppLifecycle;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Models;
@@ -32,6 +31,7 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
     private readonly IThemeService _themeService;
     private readonly IUIService _uiService;
     private readonly IAppInfoService _appInfoService;
+    private readonly IApplicationLifecycle _applicationLifecycle;
     private readonly Debouncer _navigationItemSaveDebouncer;
     private readonly Debouncer _playerTintSaveDebouncer;
     private readonly Debouncer _accentColorSaveDebouncer;
@@ -41,6 +41,7 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         IThemeService themeService,
         IUIService uiService,
         IAppInfoService appInfoService,
+        IApplicationLifecycle applicationLifecycle,
         IDispatcherService dispatcherService,
         ILogger<AppearanceSettingsViewModel> logger,
         TimeProvider? timeProvider = null)
@@ -50,6 +51,7 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         _themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
         _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
         _appInfoService = appInfoService ?? throw new ArgumentNullException(nameof(appInfoService));
+        _applicationLifecycle = applicationLifecycle ?? throw new ArgumentNullException(nameof(applicationLifecycle));
         timeProvider ??= TimeProvider.System;
         _navigationItemSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs), timeProvider);
         _playerTintSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(VisualSettingDebounceMs), timeProvider);
@@ -179,7 +181,7 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
             var message = Strings.SettingsPage_RestartRequired_Message;
 
             await _uiService.ShowMessageDialogAsync(title, message);
-            AppInstance.Restart("");
+            _applicationLifecycle.Restart();
         }
         catch (Exception ex)
         {

@@ -35,8 +35,14 @@ public interface IUIService
     Task OpenFolderInExplorerAsync(string filePath);
 
     /// <summary>
+    ///     Opens <paramref name="uri" /> in the default browser.
+    /// </summary>
+    /// <returns>False if no app could open it.</returns>
+    Task<bool> OpenUriAsync(Uri uri);
+
+    /// <summary>
     ///     Shows a simple message dialog with a single "OK" button.
-    /// <param name="message">The message to display.</param>
+    /// </summary>
     Task ShowMessageDialogAsync(string title, string message);
 
     /// <summary>

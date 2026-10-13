@@ -6,4 +6,5 @@ public interface IApplicationLifecycle
 {
     Task NavigateToMainContentAsync();
     Task ResetAndRestartAsync();
+    void Restart();
 }

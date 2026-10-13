@@ -65,6 +65,8 @@ public class ApplicationLifecycle : IApplicationLifecycle
         _window.InitializeCustomTitleBar();
     }
 
+    public void Restart() => AppInstance.Restart("");
+
     /// <summary>
     ///     Resets the application to its default state by clearing all settings, library data, and the playback queue,
     ///     then restarts the application.
@@ -84,7 +86,7 @@ public class ApplicationLifecycle : IApplicationLifecycle
             _logger.LogDebug("Playback queue has been cleared.");
 
             _logger.LogInformation("Application reset completed successfully. Restarting...");
-            AppInstance.Restart("");
+            Restart();
         }
         catch (Exception ex)
         {
