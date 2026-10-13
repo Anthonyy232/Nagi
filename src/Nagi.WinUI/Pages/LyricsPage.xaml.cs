@@ -14,7 +14,6 @@ using Nagi.Core.Models.Lyrics;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.Pages;
 

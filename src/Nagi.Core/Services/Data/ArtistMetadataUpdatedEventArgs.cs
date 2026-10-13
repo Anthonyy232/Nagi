@@ -1,5 +1,4 @@
-﻿using Nagi.Core.Services.Abstractions;
-
+﻿
 namespace Nagi.Core.Services.Data;
 
 public class ArtistMetadataUpdatedEventArgs : EventArgs

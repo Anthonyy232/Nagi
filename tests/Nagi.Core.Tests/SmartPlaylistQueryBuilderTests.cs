@@ -1,5 +1,4 @@
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Data;

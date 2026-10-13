@@ -1,4 +1,3 @@
-using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;

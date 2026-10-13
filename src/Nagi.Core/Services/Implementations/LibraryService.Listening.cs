@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Nagi.Core.Models;
 using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Services.Implementations;

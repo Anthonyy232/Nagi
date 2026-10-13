@@ -3,7 +3,6 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Data.Sqlite;
 using Nagi.Core.Helpers;
-using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Implementations;
 using NSubstitute;
