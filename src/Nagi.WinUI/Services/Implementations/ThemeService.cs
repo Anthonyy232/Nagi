@@ -98,12 +98,10 @@ public class ThemeService : IThemeService
         }
     }
 
-    public async Task ActivateDefaultPrimaryColorAsync() => await ActivateDefaultPrimaryColorAsync(await GetActualThemeAsync());
-
-    private async Task ActivateDefaultPrimaryColorAsync(ElementTheme actualTheme)
+    private async Task ActivateDefaultPrimaryColorAsync(ElementTheme? theme = null)
     {
         _logger.LogDebug("Activating configured primary color.");
-        await SetAppColorsAsync(await GetConfiguredAccentColorAsync(), actualTheme);
+        await SetAppColorsAsync(await GetConfiguredAccentColorAsync(), theme ?? await GetActualThemeAsync());
     }
 
     public async Task ApplyAccentColorAsync(ArgbColor? color)

@@ -23,7 +23,7 @@ public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
     private readonly IDispatcherService _dispatcherService;
     private readonly ILogger<SmtcMediaControls> _logger;
     private readonly CancellationTokenSource _disposeCts = new();
-    private readonly object _initializeLock = new();
+    private readonly object _lifetimeLock = new();
     private WinMediaPlayback.MediaPlayer? _ownerPlayer;
     private SystemMediaTransportControls? _smtc;
     private int _displayVersion;
@@ -42,7 +42,7 @@ public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
 
     public void Initialize()
     {
-        lock (_initializeLock)
+        lock (_lifetimeLock)
         {
             if (_isDisposed || _smtc is not null) return;
             try
@@ -173,7 +173,7 @@ public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
 
     public void Dispose()
     {
-        lock (_initializeLock)
+        lock (_lifetimeLock)
         {
             if (_isDisposed) return;
             _isDisposed = true;
@@ -201,35 +201,24 @@ public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
         }
     }
 
-    private async void OnButtonPressed(SystemMediaTransportControls sender,
+    private void OnButtonPressed(SystemMediaTransportControls sender,
         SystemMediaTransportControlsButtonPressedEventArgs args)
     {
         if (_isDisposed) return;
         _logger.LogDebug("SMTC button pressed: {Button}", args.Button);
-        try
+        var button = args.Button;
+        _dispatcherService.TryEnqueue(() =>
         {
-            await _dispatcherService.EnqueueAsync(() =>
+            if (_isDisposed) return;
+            var handler = button switch
             {
-                if (_isDisposed) return Task.CompletedTask;
-                var handler = args.Button switch
-                {
-                    SystemMediaTransportControlsButton.Play => PlayPressed,
-                    SystemMediaTransportControlsButton.Pause => PausePressed,
-                    SystemMediaTransportControlsButton.Next => NextPressed,
-                    SystemMediaTransportControlsButton.Previous => PreviousPressed,
-                    _ => null
-                };
-                handler?.Invoke();
-                return Task.CompletedTask;
-            }).ConfigureAwait(false);
-        }
-        catch (Exception ex) when (ex.HResult == RO_E_CLOSED)
-        {
-            _logger.LogDebug("SMTC button handler interrupted during disposal.");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error handling SMTC button press for button {Button}.", args.Button);
-        }
+                SystemMediaTransportControlsButton.Play => PlayPressed,
+                SystemMediaTransportControlsButton.Pause => PausePressed,
+                SystemMediaTransportControlsButton.Next => NextPressed,
+                SystemMediaTransportControlsButton.Previous => PreviousPressed,
+                _ => null
+            };
+            handler?.Invoke();
+        });
     }
 }

@@ -28,7 +28,6 @@ public class NavigationService : INavigationService, IDisposable
 
     private Frame? _frame;
     private bool _isDisposed;
-    private Type? _lastPageType;
     private object? _lastParameter;
 
     public NavigationService(ILogger<NavigationService> logger)
@@ -50,22 +49,24 @@ public class NavigationService : INavigationService, IDisposable
     {
         ArgumentNullException.ThrowIfNull(frame);
         if (_frame != null) _frame.Navigated -= OnFrameNavigated;
-        _lastPageType = null;
         _lastParameter = null;
         _frame = frame;
         _frame.Navigated += OnFrameNavigated;
     }
 
-    private void Navigate(Type pageType, INavigationParameter parameter)
+    public void NavigateTo(INavigationParameter parameter)
     {
+        ArgumentNullException.ThrowIfNull(parameter);
+        if (!DetailPages.TryGetValue(parameter.GetType(), out var pageType))
+            throw new ArgumentException($"No page accepts {parameter.GetType().Name}.", nameof(parameter));
+
         if (_frame is null)
         {
             _logger.LogError("Attempted to navigate before the root frame was initialized.");
             return;
         }
 
-        // Prevent navigating to the same page with the same parameter, which is usually redundant.
-        if (_lastPageType == pageType && Equals(_lastParameter, parameter))
+        if (Equals(_lastParameter, parameter))
         {
             _logger.LogDebug("Navigation to same page {PageName} prevented.", pageType.Name);
             return;
@@ -74,17 +75,8 @@ public class NavigationService : INavigationService, IDisposable
         _frame.Navigate(pageType, parameter);
     }
 
-    public void NavigateTo(INavigationParameter parameter)
-    {
-        ArgumentNullException.ThrowIfNull(parameter);
-        if (!DetailPages.TryGetValue(parameter.GetType(), out var pageType))
-            throw new ArgumentException($"No page accepts {parameter.GetType().Name}.", nameof(parameter));
-        Navigate(pageType, parameter);
-    }
-
     private void OnFrameNavigated(object sender, NavigationEventArgs e)
     {
-        _lastPageType = e.SourcePageType;
         _lastParameter = e.Parameter;
     }
 }
