@@ -5,7 +5,6 @@ using Microsoft.UI.Xaml;
 using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Services.Abstractions;
-using Nagi.Presentation.Services.Implementations;
 using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Pages;
@@ -16,8 +15,8 @@ using Nagi.WinUI.Services.Implementations;
 namespace Nagi.WinUI.Services;
 
 /// <summary>
-///     Registers the WinUI host's services: HTTP clients, platform implementations of Core
-///     abstractions, window and UI services, and view models.
+///     Registers the WinUI host's services: HTTP clients, the Windows implementations of the Core and
+///     Presentation abstractions, and the window and page factories.
 /// </summary>
 public static class AppServiceRegistration
 {
@@ -60,8 +59,9 @@ public static class AppServiceRegistration
     }
 
     /// <summary>
-    ///     Adds the Windows implementations of Core abstractions plus the window, theme, navigation,
-    ///     and dispatcher services. They need the window registered by <see cref="AddNagiMainWindow" />.
+    ///     Adds the Windows implementations of the Core and Presentation abstractions: storage, window,
+    ///     theme, navigation, dialogs, dispatcher, tray and audio. They need the window registered by
+    ///     <see cref="AddNagiMainWindow" />.
     /// </summary>
     public static IServiceCollection AddNagiPlatformServices(this IServiceCollection services)
     {
@@ -70,9 +70,6 @@ public static class AppServiceRegistration
         services.AddSingleton<IFileSystemService, FileSystemService>();
         services.AddSingleton<ICredentialLockerService, CredentialLockerService>();
         services.AddSingleton<IAutoLaunchService, StartupTaskAutoLaunchService>();
-        services.AddSingleton<SettingsService>();
-        services.AddSingleton<IUISettingsService>(sp => sp.GetRequiredService<SettingsService>());
-        services.AddSingleton<ISettingsService>(sp => sp.GetRequiredService<SettingsService>());
 
         services.AddSingleton<IWin32InteropService, Win32InteropService>();
         services.AddSingleton<IWindowService, WindowService>();
@@ -84,9 +81,7 @@ public static class AppServiceRegistration
         services.AddSingleton<NavigationService>();
         services.AddSingleton<TransparencyEffectsMonitor>();
         services.AddSingleton<INavigationService>(sp => sp.GetRequiredService<NavigationService>());
-        services.AddSingleton<IMusicNavigationService, MusicNavigationService>();
         services.AddSingleton<ITrayPopupService, TrayPopupService>();
-        services.AddSingleton<IViewModelFactory, ViewModelFactory>();
         services.AddSingleton<IAudioPlayer, LibVlcAudioPlayerService>();
         services.AddTransient<ITaskbarService, TaskbarService>();
 
@@ -105,35 +100,6 @@ public static class AppServiceRegistration
         services.AddSingleton<Func<MiniPlayerWindow>>(sp => () => ActivatorUtilities.CreateInstance<MiniPlayerWindow>(sp));
         services.AddSingleton<Func<ElementTheme, TrayPopup>>(sp =>
             theme => ActivatorUtilities.CreateInstance<TrayPopup>(sp, theme));
-        return services;
-    }
-
-    public static IServiceCollection AddNagiViewModels(this IServiceCollection services)
-    {
-        // Global singletons - persist for app lifetime
-        services.AddSingleton<PlayerViewModel>();
-        services.AddSingleton<GlobalOperationViewModel>();
-        services.AddSingleton<TrayIconViewModel>();
-
-        // List/Grid ViewModels - Singleton for fast navigation, refresh on data changes
-        services.AddSingleton<LibraryViewModel>();
-        services.AddSingleton<PlaylistViewModel>();
-        services.AddSingleton<FolderViewModel>();
-        services.AddSingleton<ArtistViewModel>();
-        services.AddSingleton<AlbumViewModel>();
-        services.AddSingleton<GenreViewModel>();
-        services.AddSingleton<InsightsViewModel>();
-
-        // Detail/Context ViewModels
-        services.AddSingleton<AppearanceSettingsViewModel>();
-        services.AddSingleton<AudioSettingsViewModel>();
-        services.AddSingleton<LibrarySettingsViewModel>();
-        services.AddSingleton<ScrobblingSettingsViewModel>();
-        services.AddSingleton<RomanizationPacksSettingsViewModel>();
-        services.AddSingleton<DataManagementSettingsViewModel>();
-        services.AddSingleton<SettingsViewModel>();
-        services.AddTransient<OnboardingViewModel>();
-
         return services;
     }
 }

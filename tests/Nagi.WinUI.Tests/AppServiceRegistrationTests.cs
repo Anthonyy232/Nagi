@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Nagi.Core.Services;
+using Nagi.Presentation.Services;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Popups;
 using Nagi.WinUI.Services;
@@ -25,7 +26,7 @@ public class AppServiceRegistrationTests
         services.AddNagiHttpClients();
         services.AddNagiPlatformServices();
         services.AddNagiCore();
-        services.AddNagiViewModels();
+        services.AddNagiPresentation();
         services.AddNagiShell();
 
         return services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });

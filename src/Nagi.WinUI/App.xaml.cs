@@ -15,6 +15,7 @@ using Nagi.Core.Data;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services;
 using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Services.Abstractions;
@@ -274,7 +275,7 @@ public partial class App : Application
         services.AddNagiMainWindow(mainWindow);
         services.AddNagiPlatformServices();
         services.AddNagiCore();
-        services.AddNagiViewModels();
+        services.AddNagiPresentation();
         services.AddNagiShell();
 
         return services.BuildServiceProvider();
