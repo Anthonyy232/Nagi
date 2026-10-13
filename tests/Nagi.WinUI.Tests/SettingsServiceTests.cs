@@ -236,7 +236,9 @@ public class SettingsServiceTests
     {
         var paths = Substitute.For<IPathConfiguration>();
         paths.PlaybackStateFilePath.Returns(playbackPath ?? "unused.json");
-        return new SettingsService(paths, Substitute.For<ICredentialLockerService>(), autoLaunch ?? Substitute.For<IAutoLaunchService>(),
-            NullLogger<SettingsService>.Instance, values);
+        var store = Substitute.For<ISettingsStore>();
+        store.Values.Returns(values);
+        return new SettingsService(store, paths, Substitute.For<ICredentialLockerService>(),
+            autoLaunch ?? Substitute.For<IAutoLaunchService>(), NullLogger<SettingsService>.Instance);
     }
 }

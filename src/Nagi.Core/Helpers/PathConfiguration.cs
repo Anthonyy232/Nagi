@@ -1,25 +1,15 @@
-﻿using System;
-using System.IO;
-using Windows.Storage;
-using Nagi.Core.Helpers;
+﻿using System.IO;
 
-namespace Nagi.WinUI.Helpers;
+namespace Nagi.Core.Helpers;
 
+/// <summary>
+///     Lays out the app's files under <see cref="AppDataRoot" />, which each platform chooses, and creates the folders.
+/// </summary>
 public class PathConfiguration : IPathConfiguration
 {
-    public PathConfiguration()
+    public PathConfiguration(string appDataRoot)
     {
-        try
-        {
-            AppDataRoot = ApplicationData.Current.LocalFolder.Path;
-        }
-        catch (Exception)
-        {
-            // Fallback for environments where ApplicationData is not initialized (e.g., unit tests)
-            AppDataRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "Nagi");
-        }
-
+        AppDataRoot = appDataRoot;
         SettingsFilePath = Path.Combine(AppDataRoot, "settings.json");
         PlaybackStateFilePath = Path.Combine(AppDataRoot, "playback_state.json");
         AlbumArtCachePath = Path.Combine(AppDataRoot, "AlbumArt");

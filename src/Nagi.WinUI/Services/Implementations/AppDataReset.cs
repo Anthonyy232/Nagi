@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Windows.Storage;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using Nagi.Core.Helpers;
@@ -23,7 +22,7 @@ internal static class AppDataReset
     /// </summary>
     public static async Task ResetAsync(IServiceProvider? services)
     {
-        var pathConfig = new PathConfiguration();
+        var pathConfig = PackagedAppData.CreatePathConfiguration();
 
         if (services != null)
         {
@@ -55,7 +54,7 @@ internal static class AppDataReset
             // Packaged settings live in LocalSettings; legacy state files are cleared below.
             try
             {
-                ApplicationData.Current.LocalSettings.Values.Clear();
+                new ApplicationDataSettingsStore().Values.Clear();
             }
             catch (Exception ex)
             {

@@ -61,7 +61,7 @@ public partial class App : Application
             .SetBasePath(AppContext.BaseDirectory)
             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
             .Build();
-        var tempPathConfig = new PathConfiguration();
+        var tempPathConfig = PackagedAppData.CreatePathConfiguration();
 
         _currentLogFilePath = Path.Combine(tempPathConfig.LogsDirectory, "log.txt");
 

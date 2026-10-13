@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Windows.Storage;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
@@ -14,7 +13,7 @@ using Nagi.WinUI.Services.Abstractions;
 namespace Nagi.WinUI.Services.Implementations;
 
 /// <summary>
-///     Manages application settings by persisting them to local storage using ApplicationData.
+///     Reads and writes application settings in the platform's <see cref="ISettingsStore" />.
 /// </summary>
 public partial class SettingsService : IUISettingsService
 {
@@ -76,14 +75,8 @@ public partial class SettingsService : IUISettingsService
     private readonly ILogger<SettingsService> _logger;
     private readonly IPathConfiguration _pathConfig;
 
-    public SettingsService(IPathConfiguration pathConfig, ICredentialLockerService credentialLockerService,
-        IAutoLaunchService autoLaunchService, ILogger<SettingsService> logger)
-        : this(pathConfig, credentialLockerService, autoLaunchService, logger, ApplicationData.Current.LocalSettings.Values)
-    {
-    }
-
-    internal SettingsService(IPathConfiguration pathConfig, ICredentialLockerService credentialLockerService,
-        IAutoLaunchService autoLaunchService, ILogger<SettingsService> logger, IDictionary<string, object> values)
+    public SettingsService(ISettingsStore settingsStore, IPathConfiguration pathConfig,
+        ICredentialLockerService credentialLockerService, IAutoLaunchService autoLaunchService, ILogger<SettingsService> logger)
     {
         _pathConfig = pathConfig ?? throw new ArgumentNullException(nameof(pathConfig));
         _credentialLockerService =
@@ -91,7 +84,7 @@ public partial class SettingsService : IUISettingsService
         _autoLaunchService = autoLaunchService ?? throw new ArgumentNullException(nameof(autoLaunchService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-        _values = values;
+        _values = (settingsStore ?? throw new ArgumentNullException(nameof(settingsStore))).Values;
     }
 
     public event Action<bool>? PlayerAnimationSettingChanged;

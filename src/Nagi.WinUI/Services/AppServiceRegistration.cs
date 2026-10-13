@@ -63,7 +63,8 @@ public static class AppServiceRegistration
     /// </summary>
     public static IServiceCollection AddNagiPlatformServices(this IServiceCollection services)
     {
-        services.AddSingleton<IPathConfiguration, PathConfiguration>();
+        services.AddSingleton<IPathConfiguration>(_ => PackagedAppData.CreatePathConfiguration());
+        services.AddSingleton<ISettingsStore, ApplicationDataSettingsStore>();
         services.AddSingleton<IFileSystemService, FileSystemService>();
         services.AddSingleton<ICredentialLockerService, CredentialLockerService>();
         services.AddSingleton<IAutoLaunchService, StartupTaskAutoLaunchService>();
