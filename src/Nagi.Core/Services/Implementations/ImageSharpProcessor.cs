@@ -190,7 +190,7 @@ public class ImageSharpProcessor : IImageProcessor
             }));
 
             var pixels = new uint[colorImage.Width * colorImage.Height];
-            // BGRA bytes represent MaterialColorUtilities' ARGB integers on Windows.
+            // Read as little-endian integers, BGRA bytes are MaterialColorUtilities' ARGB values.
             colorImage.CopyPixelDataTo(System.Runtime.InteropServices.MemoryMarshal.AsBytes(pixels.AsSpan()));
 
             var seedColor = ImageUtils.ColorsFromImage(pixels).FirstOrDefault();

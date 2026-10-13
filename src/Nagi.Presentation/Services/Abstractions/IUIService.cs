@@ -29,7 +29,7 @@ public interface IUIService
     Task<string?> PickSingleFolderAsync();
 
     /// <summary>
-    ///     Opens the system's file explorer to the directory containing the specified file path.
+    ///     Opens the folder containing <paramref name="filePath" /> in the system file manager.
     /// </summary>
     /// <param name="filePath">The full path to a file within the target directory.</param>
     Task OpenFolderInExplorerAsync(string filePath);

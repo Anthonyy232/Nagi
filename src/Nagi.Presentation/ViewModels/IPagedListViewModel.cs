@@ -4,8 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 namespace Nagi.Presentation.ViewModels;
 
 /// <summary>
-///     Minimal surface required by <see cref="Nagi.WinUI.Controls.PaginationControl"/>.
-///     Implement on any list view model that wants to reuse the shared pager.
+///     What a page-number pager needs from a list view model. Implement it to reuse the shared pager.
 /// </summary>
 public interface IPagedListViewModel : INotifyPropertyChanged
 {
