@@ -16,8 +16,8 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <local:FolderContentItemTemplateSelector x:Key="FolderContentItemTemplateSelector">
-            <local:FolderContentItemTemplateSelector.FolderTemplate>
+        <uihelpers:FolderContentItemTemplateSelector x:Key="FolderContentItemTemplateSelector">
+            <uihelpers:FolderContentItemTemplateSelector.FolderTemplate>
                 <DataTemplate x:DataType="local:FolderContentItem">
                     <Grid Height="54" ColumnSpacing="12" Background="Transparent">
                         <Grid.ContextFlyout>
@@ -49,9 +49,9 @@
                                    VerticalAlignment="Center" />
                     </Grid>
                 </DataTemplate>
-            </local:FolderContentItemTemplateSelector.FolderTemplate>
+            </uihelpers:FolderContentItemTemplateSelector.FolderTemplate>
 
-            <local:FolderContentItemTemplateSelector.SongTemplate>
+            <uihelpers:FolderContentItemTemplateSelector.SongTemplate>
                 <DataTemplate x:DataType="local:FolderContentItem">
                     <Grid Height="54" ColumnSpacing="12" Background="Transparent">
                         <Grid.ContextFlyout>
@@ -142,8 +142,8 @@
                                    Text="{x:Bind Song.Duration, Converter={StaticResource TimeSpanToTimeStringConverter}}" />
                     </Grid>
                 </DataTemplate>
-            </local:FolderContentItemTemplateSelector.SongTemplate>
-        </local:FolderContentItemTemplateSelector>
+            </uihelpers:FolderContentItemTemplateSelector.SongTemplate>
+        </uihelpers:FolderContentItemTemplateSelector>
     </Page.Resources>
 
     <Grid KeyboardAcceleratorPlacementMode="Hidden"

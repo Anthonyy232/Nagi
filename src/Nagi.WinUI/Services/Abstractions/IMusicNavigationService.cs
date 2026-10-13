@@ -8,7 +8,7 @@ public interface IMusicNavigationService
     ///     Navigates to an artist's page based on a variety of input parameters.
     /// </summary>
     /// <param name="parameter">Can be a <see cref="Nagi.Core.Models.Song" />, a string (artist name),
-    /// or a <see cref="Nagi.WinUI.Helpers.ArtistNavigationRequest" />.</param>
+    /// or a <see cref="Nagi.WinUI.Navigation.ArtistNavigationRequest" />.</param>
     Task NavigateToArtistAsync(object? parameter);
 
     /// <summary>

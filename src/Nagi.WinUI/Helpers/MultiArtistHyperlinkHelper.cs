@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using Nagi.Core.Models;
+using Nagi.WinUI.Navigation;
 
 namespace Nagi.WinUI.Helpers;
 
@@ -193,10 +194,4 @@ public static class MultiArtistHyperlinkHelper
         if (names.Count == 0 && !string.IsNullOrWhiteSpace(artistName)) names.Add(artistName);
         return names;
     }
-}
-
-public record ArtistNavigationRequest
-{
-    public Song? Song { get; init; }
-    public string? ArtistName { get; init; }
 }

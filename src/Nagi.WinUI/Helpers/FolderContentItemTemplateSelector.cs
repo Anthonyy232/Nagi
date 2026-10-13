@@ -1,7 +1,8 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Nagi.WinUI.Models;
 
-namespace Nagi.WinUI.Models;
+namespace Nagi.WinUI.Helpers;
 
 public class FolderContentItemTemplateSelector : DataTemplateSelector
 {
