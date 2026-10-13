@@ -2,4 +2,4 @@ using System;
 
 namespace Nagi.WinUI.Navigation;
 
-public sealed record AlbumViewNavigationParameter(Guid AlbumId);
+public sealed record AlbumViewNavigationParameter(Guid AlbumId) : INavigationParameter;

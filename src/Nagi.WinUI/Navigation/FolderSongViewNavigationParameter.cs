@@ -2,7 +2,7 @@ using System;
 
 namespace Nagi.WinUI.Navigation;
 
-public record FolderSongViewNavigationParameter
+public record FolderSongViewNavigationParameter : INavigationParameter
 {
     public string Title { get; init; } = string.Empty;
 

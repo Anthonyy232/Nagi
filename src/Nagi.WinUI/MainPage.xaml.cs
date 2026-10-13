@@ -20,6 +20,7 @@ using Nagi.WinUI.Controls;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Resources;
 using Nagi.WinUI.Services.Abstractions;
+using Nagi.WinUI.Services.Implementations;
 using Nagi.WinUI.ViewModels;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Models;
@@ -142,7 +143,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     public MainPage(PlayerViewModel viewModel, InsightsViewModel insightsViewModel,
         GlobalOperationViewModel globalOperation, IUISettingsService settingsService, IThemeService themeService,
         IDispatcherService dispatcherService, IWin32InteropService win32InteropService,
-        INavigationService navigationService, ILogger<MainPage> logger)
+        NavigationService navigationService, ILogger<MainPage> logger)
     {
         ViewModel = viewModel;
         InsightsVm = insightsViewModel;

@@ -9,6 +9,9 @@ using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.Services.Implementations;
 
+/// <summary>
+///     Opens detail pages in the frame that <see cref="MainPage" /> hands over through <see cref="Initialize" />.
+/// </summary>
 public class NavigationService : INavigationService, IDisposable
 {
     private static readonly Dictionary<Type, Type> DetailPages = new()
@@ -53,7 +56,7 @@ public class NavigationService : INavigationService, IDisposable
         _frame.Navigated += OnFrameNavigated;
     }
 
-    public void Navigate(Type pageType, object? parameter = null)
+    private void Navigate(Type pageType, INavigationParameter parameter)
     {
         if (_frame is null)
         {
@@ -71,7 +74,7 @@ public class NavigationService : INavigationService, IDisposable
         _frame.Navigate(pageType, parameter);
     }
 
-    public void NavigateTo(object parameter)
+    public void NavigateTo(INavigationParameter parameter)
     {
         ArgumentNullException.ThrowIfNull(parameter);
         if (!DetailPages.TryGetValue(parameter.GetType(), out var pageType))
