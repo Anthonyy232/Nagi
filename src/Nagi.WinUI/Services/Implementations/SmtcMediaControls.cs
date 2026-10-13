@@ -70,11 +70,12 @@ public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
 
     public void SetNavigationEnabled(bool canGoNext, bool canGoPrevious)
     {
-        if (_isDisposed || _smtc is null) return;
+        var smtc = _smtc;
+        if (_isDisposed || smtc is null) return;
         try
         {
-            _smtc.IsNextEnabled = canGoNext;
-            _smtc.IsPreviousEnabled = canGoPrevious;
+            smtc.IsNextEnabled = canGoNext;
+            smtc.IsPreviousEnabled = canGoPrevious;
         }
         catch (Exception ex) when (ex.HResult == RO_E_CLOSED)
         {
@@ -96,13 +97,14 @@ public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
 
         _dispatcherService.TryEnqueue(() =>
         {
-            if (_isDisposed || _smtc is null) return;
+            var smtc = _smtc;
+            if (_isDisposed || smtc is null) return;
             try
             {
-                if (_smtc.PlaybackStatus == newStatus) return;
+                if (smtc.PlaybackStatus == newStatus) return;
                 _logger.LogDebug("Updating SMTC PlaybackStatus from {OldStatus} to {NewStatus}",
-                    _smtc.PlaybackStatus, newStatus);
-                _smtc.PlaybackStatus = newStatus;
+                    smtc.PlaybackStatus, newStatus);
+                smtc.PlaybackStatus = newStatus;
             }
             catch (Exception ex) when (ex.HResult == RO_E_CLOSED)
             {
@@ -114,7 +116,8 @@ public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
     public async Task SetNowPlayingAsync(Song song)
     {
         ArgumentNullException.ThrowIfNull(song);
-        if (_isDisposed || _smtc is null) return;
+        var smtc = _smtc;
+        if (_isDisposed || smtc is null) return;
         var version = Interlocked.Increment(ref _displayVersion);
 
         try
@@ -136,7 +139,7 @@ public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
                 }
 
             if (_isDisposed || version != Volatile.Read(ref _displayVersion)) return;
-            var updater = _smtc.DisplayUpdater;
+            var updater = smtc.DisplayUpdater;
             updater.Type = MediaPlaybackType.Music;
             updater.MusicProperties.Title = song.Title;
             updater.MusicProperties.Artist = song.ArtistName;
@@ -153,13 +156,14 @@ public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
 
     public void Clear()
     {
-        if (_isDisposed || _smtc is null) return;
+        var smtc = _smtc;
+        if (_isDisposed || smtc is null) return;
         Interlocked.Increment(ref _displayVersion);
         try
         {
-            _smtc.DisplayUpdater.ClearAll();
-            _smtc.DisplayUpdater.Update();
-            _smtc.PlaybackStatus = MediaPlaybackStatus.Stopped;
+            smtc.DisplayUpdater.ClearAll();
+            smtc.DisplayUpdater.Update();
+            smtc.PlaybackStatus = MediaPlaybackStatus.Stopped;
         }
         catch (Exception ex) when (ex.HResult == RO_E_CLOSED)
         {
