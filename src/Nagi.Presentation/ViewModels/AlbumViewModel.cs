@@ -83,7 +83,6 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
         Albums.AppendOrReplace(result.Items.Select(a => new AlbumViewModelItem(a)), append);
     }
 
-    [RelayCommand]
     public async Task NavigateToAlbumDetailAsync(object? parameter)
     {
         if (_isNavigating) return;

@@ -113,7 +113,6 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
             _ = _libraryScanner.StartArtistMetadataBackgroundFetchAsync();
     }
 
-    [RelayCommand]
     public async Task NavigateToArtistDetailAsync(object? parameter)
     {
         if (_isNavigating) return;

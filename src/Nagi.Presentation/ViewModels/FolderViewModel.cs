@@ -127,7 +127,6 @@ public partial class FolderViewModel : ObservableObject, IDisposable
     public bool HasFolders => Folders.Any();
 
 
-    [RelayCommand]
     public void NavigateToFolderDetail(FolderViewModelItem? folder)
     {
         if (folder is null) return;

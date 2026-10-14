@@ -113,7 +113,6 @@ public partial class SettingsViewModel : SettingsSectionViewModel
         Romanization.Dispose();
     }
 
-    [RelayCommand]
     public async Task LoadSettingsAsync()
     {
         if (_isDisposed) return;

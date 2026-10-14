@@ -135,7 +135,6 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
     }
 
-    [RelayCommand]
     public async Task SeekToLineAsync(LyricLine? line)
     {
         if (_isDisposed || line is null || !LyricLines.Contains(line)) return;

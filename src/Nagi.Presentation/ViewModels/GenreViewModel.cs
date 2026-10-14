@@ -91,7 +91,6 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
 
     public bool HasGenres => Genres.Any();
 
-    [RelayCommand]
     public void NavigateToGenreDetail(GenreSummary? genre)
     {
         if (genre is null) return;

@@ -413,7 +413,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         UpdateSelectionStatus();
     }
 
-    [RelayCommand]
     public virtual void DeselectAll()
     {
         SelectionState.DeselectAll();

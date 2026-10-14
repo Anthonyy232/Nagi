@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
@@ -61,7 +60,6 @@ public partial class GenreViewViewModel : SongListViewModelBase
         return _libraryReader.GetAllSongIdsByGenreIdAsync(_genreId, sortOrder, token);
     }
 
-    [RelayCommand]
     public async Task LoadGenreDetailsAsync(GenreViewNavigationParameter? navParam)
     {
         if (_isDisposed || navParam is null) return;

@@ -355,12 +355,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         return _playbackService.ToggleMuteAsync();
     }
 
-    [RelayCommand]
-    private Task SeekAsync(double position)
-    {
-        return _playbackService.SeekAsync(TimeSpan.FromSeconds(position));
-    }
-
     [RelayCommand(CanExecute = nameof(CanNavigateToTrack))]
     public async Task GoToArtistAsync(object? parameter)
     {

@@ -159,7 +159,6 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     public bool HasPlaylists => Playlists.Count > 0;
 
 
-    [RelayCommand]
     public void NavigateToPlaylistDetail(PlaylistViewModelItem? playlist)
     {
         if (playlist is null || _isNavigating) return;

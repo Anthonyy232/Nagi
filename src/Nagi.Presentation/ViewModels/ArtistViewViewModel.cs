@@ -94,7 +94,6 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         return _libraryReader.GetAllSongIdsByArtistIdAsync(_artistId, sortOrder, token);
     }
 
-    [RelayCommand]
     public async Task LoadArtistDetailsAsync(Guid artistId)
     {
         if (_isDisposed) return;

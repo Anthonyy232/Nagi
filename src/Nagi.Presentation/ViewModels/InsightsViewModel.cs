@@ -309,7 +309,6 @@ public partial class InsightsViewModel : ObservableObject
     ///     Loads all insights data for the currently selected time range.
     ///     Called on navigation and when the time range changes.
     /// </summary>
-    [RelayCommand]
     public async Task LoadInsightsAsync()
     {
         var newCts = new CancellationTokenSource();
