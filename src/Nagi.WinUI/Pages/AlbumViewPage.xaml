@@ -18,11 +18,8 @@
     Background="Transparent"
     mc:Ignorable="d">
 
-    <Grid KeyboardAcceleratorPlacementMode="Hidden"
+    <Grid
           Padding="{StaticResource DetailPageContainerPadding}">
-        <Grid.KeyboardAccelerators>
-            <KeyboardAccelerator Key="A" Modifiers="Control" Invoked="OnSelectAllAcceleratorInvoked" />
-        </Grid.KeyboardAccelerators>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="SearchStates">
                 <VisualState x:Name="SearchCollapsed">
@@ -197,7 +194,6 @@
             ItemsSource="{x:Bind ViewModel.GroupedSongsFlat, Mode=OneWay}"
             SelectionChanged="SongsListView_SelectionChanged"
             SelectionMode="Extended"
-            ContainerContentChanging="OnSongsListViewContainerContentChanging"
             DoubleTapped="SongsListView_DoubleTapped"
             Visibility="{x:Bind ViewModel.IsGroupedByDisc, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <ListView.ItemContainerStyleSelector>
@@ -275,7 +271,6 @@
             ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
             SelectionChanged="SongsListView_SelectionChanged"
             SelectionMode="Extended"
-            ContainerContentChanging="OnSongsListViewContainerContentChanging"
             DoubleTapped="SongsListView_DoubleTapped"
             Visibility="{x:Bind ViewModel.IsGroupedByDisc, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
             <ListView.ItemTemplate>

@@ -192,21 +192,15 @@ public class FolderSongListViewModelTests
         var nextFolder = new Folder { Name = "Second", Path = @"C:\Music\Second" };
         var songId = Guid.NewGuid();
         var pending = new TaskCompletionSource<List<Guid>>(TaskCreationOptions.RunContinuationsAsynchronously);
-        library.Reader.GetAllSongIdsInDirectoryRecursiveAsync(root.Id, root.Path, Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
-            .Returns(pending.Task);
         library.Reader.GetAllSongIdsInDirectoryRecursiveAsync(root.Id, selectedFolder.Path, Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
-            .Returns(new List<Guid> { songId });
+            .Returns(pending.Task);
         using var viewModel = new SelectionFolderList(library);
         await viewModel.InitializeAsync(root.Name, root.Id);
-        viewModel.FolderContents.Add(FolderContentItem.FromFolder(selectedFolder));
-        viewModel.SelectionState.Select(selectedFolder.Id);
+        viewModel.OnSongsSelectionChanged([FolderContentItem.FromFolder(selectedFolder)]);
 
         var resolving = viewModel.ResolveSelectionAsync();
-        viewModel.FolderContents.Clear();
-        viewModel.FolderContents.Add(FolderContentItem.FromFolder(nextFolder));
-        viewModel.SelectionState.DeselectAll();
-        viewModel.SelectionState.Select(nextFolder.Id);
-        pending.SetResult([]);
+        viewModel.OnSongsSelectionChanged([FolderContentItem.FromFolder(nextFolder)]);
+        pending.SetResult([songId]);
 
         (await resolving.WaitAsync(TimeSpan.FromSeconds(10))).Should().Equal(songId);
         await library.Reader.DidNotReceive().GetAllSongIdsInDirectoryRecursiveAsync(root.Id, nextFolder.Path,
@@ -227,8 +221,7 @@ public class FolderSongListViewModelTests
             .Returns(_ => { started.SetResult(); return pending.Task; });
         using var viewModel = new SelectionFolderList(library);
         await viewModel.InitializeAsync(root.Name, root.Id);
-        viewModel.FolderContents.Add(FolderContentItem.FromFolder(selectedFolder));
-        viewModel.SelectionState.Select(selectedFolder.Id);
+        viewModel.OnSongsSelectionChanged([FolderContentItem.FromFolder(selectedFolder)]);
         var resolving = viewModel.ResolveSelectionAsync();
         await started.Task.WaitAsync(TimeSpan.FromSeconds(10));
 

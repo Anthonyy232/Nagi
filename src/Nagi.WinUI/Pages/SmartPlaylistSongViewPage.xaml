@@ -16,11 +16,8 @@
     Background="Transparent"
     x:Name="pageRoot">
 
-    <Grid KeyboardAcceleratorPlacementMode="Hidden"
+    <Grid
           Padding="{StaticResource DetailPageContainerPadding}">
-        <Grid.KeyboardAccelerators>
-            <KeyboardAccelerator Key="A" Modifiers="Control" Invoked="OnSelectAllAcceleratorInvoked" />
-        </Grid.KeyboardAccelerators>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="SearchStates">
                 <VisualState x:Name="SearchCollapsed">
@@ -263,7 +260,6 @@
                   ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
                   ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
                   SelectionChanged="SongsListView_SelectionChanged"
-                  ContainerContentChanging="OnSongsListViewContainerContentChanging"
                   CanDragItems="False"
                   CanReorderItems="False"
                   AllowDrop="False"

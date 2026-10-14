@@ -15,9 +15,9 @@ using Nagi.WinUI.Helpers;
 namespace Nagi.WinUI.Pages;
 
 /// <summary>
-///     A searchable page of songs. Keeps the list's selection in step with the view model's selection
-///     state as containers are recycled, and handles select-all, double-click to play, the song
-///     context menu and the now-playing indicator.
+///     A searchable page of songs. The selection is whatever the list has selected, including the
+///     list's own Ctrl+A. Also handles double-click to play, the song context menu and the
+///     now-playing indicator.
 /// </summary>
 public abstract class SongListPage : SearchablePage
 {
@@ -26,7 +26,6 @@ public abstract class SongListPage : SearchablePage
     private ListView[] _songLists = [];
     private bool _ownsViewModel;
     private ILogger? _logger;
-    private bool _isUpdatingSelection;
 
     /// <summary>
     ///     Call after InitializeComponent. When <paramref name="ownsViewModel" /> is true the view model
@@ -54,50 +53,17 @@ public abstract class SongListPage : SearchablePage
     /// </summary>
     protected virtual Song? GetSong(object? item) => item as Song;
 
-    /// <summary>
-    ///     The id the view model's selection state tracks for a list row.
-    /// </summary>
-    protected virtual Guid? GetSelectionId(object? item) => GetSong(item)?.Id;
-
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
         if (_ownsViewModel) _viewModel!.Dispose();
     }
 
-    internal void ClearSelection()
-    {
-        _viewModel!.DeselectAll();
-        WithoutSelectionEvents(() => ActiveSongList.SelectedItems.Clear());
-    }
+    internal void ClearSelection() => ActiveSongList.SelectedItems.Clear();
 
     protected void SongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (_isUpdatingSelection || sender is not ListViewBase listView) return;
-
-        foreach (var item in e.AddedItems)
-            if (GetSelectionId(item) is { } id) _viewModel!.SelectionState.Select(id);
-        foreach (var item in e.RemovedItems)
-            if (GetSelectionId(item) is { } id) _viewModel!.SelectionState.Deselect(id);
-
-        _viewModel!.OnSongsSelectionChanged(listView.SelectedItems.Select(GetSong).OfType<Song>());
-    }
-
-    protected void OnSongsListViewContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
-    {
-        // Recycled containers keep their old selection, so restore it from the selection state.
-        if (GetSelectionId(args.Item) is not { } id) return;
-        WithoutSelectionEvents(() => args.ItemContainer.IsSelected = _viewModel!.SelectionState.IsSelected(id));
-    }
-
-    protected void OnSelectAllAcceleratorInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
-    {
-        // Leave Ctrl+A to text inputs.
-        if (FocusManager.GetFocusedElement(XamlRoot) is TextBox or PasswordBox or RichEditBox) return;
-
-        _viewModel!.SelectAllCommand.Execute(null);
-        WithoutSelectionEvents(ActiveSongList.SelectAll);
-        args.Handled = true;
+        if (sender is ListViewBase listView) _viewModel!.OnSongsSelectionChanged(listView.SelectedItems);
     }
 
     protected void SongsListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
@@ -131,19 +97,6 @@ public abstract class SongListPage : SearchablePage
 
     protected void ListeningOptions_Opening(object sender, object e) =>
         ListeningMenuFlyoutHelper.PopulateMixes((MenuFlyout)sender, _viewModel!.PlayMixCommand, _viewModel.PlayForCommand);
-
-    private void WithoutSelectionEvents(Action update)
-    {
-        _isUpdatingSelection = true;
-        try
-        {
-            update();
-        }
-        finally
-        {
-            _isUpdatingSelection = false;
-        }
-    }
 
     // Recreated on each load so a cached page coming back gets fresh binders.
     private void AttachNowPlayingBinders(object sender, RoutedEventArgs e)

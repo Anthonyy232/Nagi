@@ -75,7 +75,6 @@ public class PlaylistSongListViewModelTests
         var notified = false;
         viewModel.RemoveSelectedSongsFromPlaylistCommand.CanExecuteChanged += (_, _) => notified = true;
 
-        viewModel.SelectionState.Select(_songs[0].Id);
         viewModel.OnSongsSelectionChanged([_songs[0]]);
 
         notified.Should().BeTrue();
@@ -212,7 +211,7 @@ public class PlaylistSongListViewModelTests
     {
         using var viewModel = CreateViewModel();
         await viewModel.InitializeAsync("Original playlist", _playlistId);
-        viewModel.SelectionState.Select(_songs[0].Id);
+        viewModel.OnSongsSelectionChanged([_songs[0]]);
         var pending = new TaskCompletionSource<List<Guid>>(TaskCreationOptions.RunContinuationsAsynchronously);
         viewModel.PendingSelection = pending.Task;
         var removing = viewModel.RemoveSelectedSongsFromPlaylistCommand.ExecuteAsync(null);
@@ -232,7 +231,7 @@ public class PlaylistSongListViewModelTests
         _playlists.RemoveSongsFromPlaylistAsync(Arg.Any<Guid>(), Arg.Any<IEnumerable<Guid>>()).Returns(save.Task);
         using var viewModel = CreateViewModel();
         await viewModel.InitializeAsync("Original playlist", _playlistId);
-        viewModel.SelectionState.Select(_songs[0].Id);
+        viewModel.OnSongsSelectionChanged([_songs[0]]);
         var removing = viewModel.RemoveSelectedSongsFromPlaylistCommand.ExecuteAsync(null);
 
         viewModel.ResetState();

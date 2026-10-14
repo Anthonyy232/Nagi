@@ -32,10 +32,8 @@ public sealed partial class FolderSongViewPage : SongListPage
 
     public FolderSongListViewModel ViewModel { get; }
 
-    // Rows are subfolders or songs; subfolders can be selected too.
+    // Rows are subfolders or songs.
     protected override Song? GetSong(object? item) => (item as FolderContentItem)?.Song;
-
-    protected override Guid? GetSelectionId(object? item) => (item as FolderContentItem)?.Id;
 
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {

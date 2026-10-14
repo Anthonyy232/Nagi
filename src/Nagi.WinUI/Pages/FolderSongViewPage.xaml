@@ -148,11 +148,8 @@
         </uihelpers:FolderContentItemTemplateSelector>
     </Page.Resources>
 
-    <Grid KeyboardAcceleratorPlacementMode="Hidden"
+    <Grid
           Padding="{StaticResource DetailPageContainerPadding}">
-        <Grid.KeyboardAccelerators>
-            <KeyboardAccelerator Key="A" Modifiers="Control" Invoked="OnSelectAllAcceleratorInvoked" />
-        </Grid.KeyboardAccelerators>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="SearchStates">
                 <VisualState x:Name="SearchCollapsed">
@@ -335,7 +332,6 @@
             ItemTemplateSelector="{StaticResource FolderContentItemTemplateSelector}"
             SelectionChanged="SongsListView_SelectionChanged"
             SelectionMode="Extended"
-            ContainerContentChanging="OnSongsListViewContainerContentChanging"
             DoubleTapped="FolderContentsListView_DoubleTapped">
         </ListView>
 
