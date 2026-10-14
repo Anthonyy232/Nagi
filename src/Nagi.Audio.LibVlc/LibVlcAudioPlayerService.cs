@@ -59,6 +59,8 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private int _fadeOutDurationMs = 150;
     private CancellationTokenSource? _fadeCts;
 
+    private float _playbackRate = 1f;
+
     // Tracks if we are currently fading out to pause, so IsPlaying can return false early
     private volatile bool _isPausing;
 
@@ -367,6 +369,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
                 // LibVLC 4 queues the start command and returns immediately.
                 _isExplicitStop = false;
+                _mediaPlayer.SetRate(_playbackRate);
                 if (_mediaPlayer.Play())
                 {
                     startFadeIn = _isFadeOnPlayPauseEnabled;

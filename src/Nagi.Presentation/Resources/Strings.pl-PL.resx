@@ -704,35 +704,17 @@ Pliki, których nie udało się zaimportować: {0}.</value>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Biografie i obrazy wykonawców (awaryjne)</value>
   </data>
-  <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zamknij wyszukiwanie</value>
-  </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Szukaj albumów</value>
-  </data>
-  <data name="AlbumViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zamknij wyszukiwanie</value>
   </data>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Szukaj w albumie</value>
   </data>
-  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Brak dostępnych playlist</value>
-  </data>
-  <data name="ArtistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zamknij wyszukiwanie</value>
-  </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Szukaj wykonawców</value>
   </data>
-  <data name="ArtistViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zamknij wyszukiwanie</value>
-  </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Szukaj u wykonawcy</value>
-  </data>
-  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Brak dostępnych playlist</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
     <value>Usuń folder</value>
@@ -749,32 +731,14 @@ Pliki, których nie udało się zaimportować: {0}.</value>
   <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
     <value>Nieznany Folder</value>
   </data>
-  <data name="FolderSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zamknij wyszukiwanie</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Szukaj w folderze</value>
-  </data>
-  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Brak dostępnych playlist</value>
-  </data>
-  <data name="GenrePage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zamknij wyszukiwanie</value>
   </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Szukaj gatunków</value>
   </data>
-  <data name="LibraryPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zamknij wyszukiwanie</value>
-  </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Szukaj w bibliotece</value>
-  </data>
-  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Brak dostępnych playlist</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zamknij wyszukiwanie</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Szukaj playlist</value>
@@ -809,26 +773,14 @@ Pliki, których nie udało się zaimportować: {0}.</value>
   <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
     <value>Usuń</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zamknij wyszukiwanie</value>
-  </data>
   <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Szukaj w playliście</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zamknij wyszukiwanie</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Szukaj w gatunku</value>
   </data>
-  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Brak dostępnych playlist</value>
-  </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
     <value>Nieznana Playlista</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zamknij wyszukiwanie</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Szukaj w inteligentnej playliście</value>
@@ -1283,9 +1235,6 @@ Czy chcesz kontynuować?</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Szukaj w folderze…</value>
-  </data>
-  <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Szukaj w folderze</value>
   </data>
   <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Odtwórz wszystko</value>
@@ -2369,5 +2318,11 @@ Czy chcesz kontynuować?</value>
   </data>
   <data name="Listening_NoTimedMixDescription" xml:space="preserve">
     <value>Żadne utwory z tej listy nie spełniają wymagań miksu i nie mieszczą się w wybranym czasie trwania. Spróbuj dłuższego czasu, innego miksu lub innej listy utworów.</value>
+  </data>
+  <data name="Generic_CloseSearch" xml:space="preserve">
+    <value>Zamknij wyszukiwanie</value>
+  </data>
+  <data name="Generic_NoPlaylists" xml:space="preserve">
+    <value>Brak dostępnych playlist</value>
   </data>
 </root>

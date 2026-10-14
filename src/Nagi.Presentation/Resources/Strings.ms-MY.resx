@@ -704,35 +704,17 @@ Fail yang tidak dapat diimport: {0}.</value>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Biografi dan imej artis (sandaran)</value>
   </data>
-  <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Tutup carian</value>
-  </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari album</value>
-  </data>
-  <data name="AlbumViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Tutup carian</value>
   </data>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari dalam album</value>
   </data>
-  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Tiada senarai main tersedia</value>
-  </data>
-  <data name="ArtistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Tutup carian</value>
-  </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari artis</value>
   </data>
-  <data name="ArtistViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Tutup carian</value>
-  </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari dalam artis</value>
-  </data>
-  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Tiada senarai main tersedia</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
     <value>Alih Keluar Folder</value>
@@ -749,32 +731,14 @@ Fail yang tidak dapat diimport: {0}.</value>
   <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
     <value>Folder Tidak Dikenali</value>
   </data>
-  <data name="FolderSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Tutup carian</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari dalam folder</value>
-  </data>
-  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Tiada senarai main tersedia</value>
-  </data>
-  <data name="GenrePage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Tutup carian</value>
   </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari genre</value>
   </data>
-  <data name="LibraryPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Tutup carian</value>
-  </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari pustaka</value>
-  </data>
-  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Tiada senarai main tersedia</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Tutup carian</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari senarai main</value>
@@ -809,26 +773,14 @@ Fail yang tidak dapat diimport: {0}.</value>
   <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
     <value>Padam</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Tutup carian</value>
-  </data>
   <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari dalam senarai main</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Tutup carian</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari dalam genre</value>
   </data>
-  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Tiada senarai main tersedia</value>
-  </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
     <value>Senarai Main Tidak Dikenali</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Tutup carian</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari dalam senarai main pintar</value>
@@ -1283,9 +1235,6 @@ Adakah anda ingin meneruskan?</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cari dalam folder…</value>
-  </data>
-  <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cari dalam folder</value>
   </data>
   <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Main semua</value>
@@ -2369,5 +2318,11 @@ Adakah anda ingin meneruskan?</value>
   </data>
   <data name="Listening_NoTimedMixDescription" xml:space="preserve">
     <value>Tiada lagu dalam senarai ini yang memenuhi keperluan campuran dan muat dalam tempoh pilihan anda. Cuba tempoh yang lebih lama, campuran lain, atau senarai lagu yang berbeza.</value>
+  </data>
+  <data name="Generic_CloseSearch" xml:space="preserve">
+    <value>Tutup carian</value>
+  </data>
+  <data name="Generic_NoPlaylists" xml:space="preserve">
+    <value>Tiada senarai main tersedia</value>
   </data>
 </root>

@@ -37,13 +37,13 @@ internal sealed class SingleInstanceManager : IDisposable
         }
     }
 
-    public async Task<bool> SendActivationAsync(string? filePath, CancellationToken cancellationToken = default)
+    public async Task<bool> SendActivationAsync(string? filePath, JumpListTask task, CancellationToken cancellationToken = default)
     {
         try
         {
             await using var pipe = new NamedPipeClientStream(".", _pipeName, PipeDirection.Out);
             await pipe.ConnectAsync(3000, cancellationToken);
-            await JsonSerializer.SerializeAsync(pipe, new ActivationMessage { FilePath = filePath },
+            await JsonSerializer.SerializeAsync(pipe, new ActivationMessage { FilePath = filePath, JumpListTask = task },
                 cancellationToken: cancellationToken);
             return true;
         }
@@ -55,14 +55,14 @@ internal sealed class SingleInstanceManager : IDisposable
     }
 
     // Start only after the App exists. Secondary instances wait in ConnectAsync until then.
-    public void StartListening(Action<string?> onActivation)
+    public void StartListening(Action<string?, JumpListTask> onActivation)
     {
         _pipeServerCts = new CancellationTokenSource();
         var token = _pipeServerCts.Token;
         _pipeServerTask = Task.Run(() => RunPipeServerAsync(onActivation, token));
     }
 
-    private async Task RunPipeServerAsync(Action<string?> onActivation, CancellationToken cancellationToken)
+    private async Task RunPipeServerAsync(Action<string?, JumpListTask> onActivation, CancellationToken cancellationToken)
     {
         try
         {
@@ -75,7 +75,7 @@ internal sealed class SingleInstanceManager : IDisposable
                     await pipe.WaitForConnectionAsync(cancellationToken);
                     var message = await JsonSerializer.DeserializeAsync<ActivationMessage>(pipe,
                         cancellationToken: cancellationToken);
-                    if (message is not null) onActivation(message.FilePath);
+                    if (message is not null) onActivation(message.FilePath, message.JumpListTask);
                 }
                 catch (Exception ex) when (ex is IOException or JsonException)
                 {
@@ -106,5 +106,6 @@ internal sealed class SingleInstanceManager : IDisposable
     private sealed class ActivationMessage
     {
         public string? FilePath { get; set; }
+        public JumpListTask JumpListTask { get; set; }
     }
 }

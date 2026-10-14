@@ -704,35 +704,17 @@ Comhaid nár fhéad a iompórtáil: {0}.</value>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Beathaisnéisí agus íomhánna ealaíontóirí (cúlú)</value>
   </data>
-  <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Dún cuardach</value>
-  </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cuardaigh albaim</value>
-  </data>
-  <data name="AlbumViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Dún cuardach</value>
   </data>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cuardaigh san albam</value>
   </data>
-  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Níl seinmliostaí ar fáil</value>
-  </data>
-  <data name="ArtistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Dún cuardach</value>
-  </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cuardaigh ealaíontóirí</value>
   </data>
-  <data name="ArtistViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Dún cuardach</value>
-  </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cuardaigh san ealaíontóir</value>
-  </data>
-  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Níl seinmliostaí ar fáil</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
     <value>Bain Fillteán</value>
@@ -749,32 +731,14 @@ Comhaid nár fhéad a iompórtáil: {0}.</value>
   <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
     <value>Fillteán Anaithnid</value>
   </data>
-  <data name="FolderSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Dún cuardach</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cuardaigh san fhillteán</value>
-  </data>
-  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Níl seinmliostaí ar fáil</value>
-  </data>
-  <data name="GenrePage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Dún cuardach</value>
   </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cuardaigh seánraí</value>
   </data>
-  <data name="LibraryPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Dún cuardach</value>
-  </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cuardaigh leabharlann</value>
-  </data>
-  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Níl seinmliostaí ar fáil</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Dún cuardach</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cuardaigh seinmliostaí</value>
@@ -809,26 +773,14 @@ Comhaid nár fhéad a iompórtáil: {0}.</value>
   <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
     <value>Scrios</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Dún cuardach</value>
-  </data>
   <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cuardaigh sa seinmliosta</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Dún cuardach</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cuardaigh sa seánra</value>
   </data>
-  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Níl seinmliostaí ar fáil</value>
-  </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
     <value>Seinmliosta Anaithnid</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Dún cuardach</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cuardaigh sa seinmliosta cliste</value>
@@ -1283,9 +1235,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cuardaigh sa fhillteán…</value>
-  </data>
-  <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cuardaigh san fhillteán</value>
   </data>
   <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Seinn uile</value>
@@ -2369,5 +2318,11 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   </data>
   <data name="Listening_NoTimedMixDescription" xml:space="preserve">
     <value>Níl aon amhrán sa liosta seo a chomhlíonann riachtanais an mheascáin agus a oireann laistigh de do ré roghnaithe. Bain triail as ré níos faide, meascán eile, nó liosta amhrán éagsúil.</value>
+  </data>
+  <data name="Generic_CloseSearch" xml:space="preserve">
+    <value>Dún cuardach</value>
+  </data>
+  <data name="Generic_NoPlaylists" xml:space="preserve">
+    <value>Níl seinmliostaí ar fáil</value>
   </data>
 </root>

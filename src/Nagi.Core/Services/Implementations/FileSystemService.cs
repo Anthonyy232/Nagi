@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
 
-namespace Nagi.WinUI.Services.Implementations;
+namespace Nagi.Core.Services.Implementations;
 
 public class FileSystemService : IFileSystemService
 {
@@ -138,7 +135,7 @@ public class FileSystemService : IFileSystemService
 
         // If this is a mapped network drive (Z:\...), resolve to its UNC backing so that the
         // same physical location produces a stable identity regardless of drive-letter remaps.
-        working = ResolveMappedDriveToUnc(working);
+        if (OperatingSystem.IsWindows()) working = ResolveMappedDriveToUnc(working);
 
         return PathCanonicalizer.Normalize(working);
     }
@@ -178,6 +175,7 @@ public class FileSystemService : IFileSystemService
         [MarshalAs(UnmanagedType.LPWStr)] public string lpUniversalName;
     }
 
+    [SupportedOSPlatform("windows")]
     private static string ResolveMappedDriveToUnc(string path)
     {
         if (path.Length < 2 || path[1] != ':') return path; // not drive-rooted

@@ -3,34 +3,27 @@ using System.Threading.Tasks;
 using CommunityToolkit.WinUI;
 using System.Linq;
 using System.Numerics;
-using Windows.System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
-using Nagi.Core.Models;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
-using Nagi.WinUI.Helpers;
 using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Media;
 
 namespace Nagi.WinUI.Pages;
 
-public sealed partial class ArtistViewPage : Page
+public sealed partial class ArtistViewPage : SongListPage
 {
     private readonly ILogger<ArtistViewPage> _logger;
-    private bool _isSearchExpanded;
-    private bool _isUpdatingSelection;
     private bool _isUpdatingAlbumsLayout;
     private bool _pendingLayoutUpdate;
     private ScrollViewer? _songsScrollViewer;
     private double _lastKnownAlbumsHeight;
-    private NowPlayingIndicatorBinder? _nowPlayingBinder;
 
     public ArtistViewPage()
     {
@@ -38,31 +31,9 @@ public sealed partial class ArtistViewPage : Page
         ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<ArtistViewViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<ArtistViewPage>>();
         DataContext = ViewModel;
-
-        Loaded += OnNowPlayingBinderAttach;
-        Unloaded += OnNowPlayingBinderDetach;
-
-        Loaded += OnPageLoaded;
-
+        InitializeSongList(ViewModel, ownsViewModel: true, SearchToggleButton, SearchTextBox,
+            Strings.ArtistViewPage_SearchButton_Search_ToolTip, SongsListView);
         SongsListView.Loaded += OnSongsListViewLoaded;
-
-        _logger.LogDebug("ArtistViewPage initialized.");
-    }
-
-    private void OnNowPlayingBinderAttach(object sender, RoutedEventArgs e)
-    {
-        if (_nowPlayingBinder is not null) return;
-        _nowPlayingBinder = new NowPlayingIndicatorBinder(
-            SongsListView,
-            ViewModel,
-            (Brush)Application.Current.Resources["AppPrimaryColorBrush"]);
-        _nowPlayingBinder.Refresh();
-    }
-
-    private void OnNowPlayingBinderDetach(object sender, RoutedEventArgs e)
-    {
-        _nowPlayingBinder?.Dispose();
-        _nowPlayingBinder = null;
     }
 
     public ArtistViewViewModel ViewModel { get; }
@@ -70,7 +41,6 @@ public sealed partial class ArtistViewPage : Page
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        _logger.LogDebug("Navigated to ArtistViewPage.");
 
         // Reset layout state for new artist
         AlbumsViewport.Height = double.NaN;
@@ -102,161 +72,18 @@ public sealed partial class ArtistViewPage : Page
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogDebug("Navigating away from ArtistViewPage. Disposing ViewModel.");
         if (_songsScrollViewer != null)
         {
             _songsScrollViewer.ViewChanged -= OnSongsScrollViewerViewChanged;
         }
-        ViewModel.Dispose();
-    }
-
-    private void OnPageLoaded(object sender, RoutedEventArgs e)
-    {
-        _logger.LogDebug("ArtistViewPage loaded. Setting initial visual state.");
-        VisualStateManager.GoToState(this, "SearchCollapsed", false);
-        Loaded -= OnPageLoaded;
-    }
-
-    private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e)
-    {
-        if (_isSearchExpanded)
-        {
-            _logger.LogDebug("Collapsing search box.");
-            CollapseSearch();
-        }
-        else
-        {
-            _logger.LogDebug("Expanding search box.");
-            ExpandSearch();
-        }
-    }
-
-    private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
-    {
-        if (e.Key == VirtualKey.Escape)
-        {
-            _logger.LogDebug("Escape key pressed in search box. Collapsing search.");
-            CollapseSearch();
-            e.Handled = true;
-        }
-    }
-
-    private void ExpandSearch()
-    {
-        if (_isSearchExpanded) return;
-
-        _isSearchExpanded = true;
-        _logger.LogDebug("Search UI expanded.");
-        ToolTipService.SetToolTip(SearchToggleButton, Strings.ArtistViewPage_SearchButton_Close_ToolTip);
-        VisualStateManager.GoToState(this, "SearchExpanded", false);
-        SearchTextBox.Focus(FocusState.Programmatic);
-    }
-
-    private void CollapseSearch()
-    {
-        if (!_isSearchExpanded) return;
-
-        _isSearchExpanded = false;
-
-        _logger.LogDebug("Search UI collapsed and search term cleared.");
-        ToolTipService.SetToolTip(SearchToggleButton, Strings.ArtistViewPage_SearchButton_Search_ToolTip);
-        VisualStateManager.GoToState(this, "SearchCollapsed", false);
-        SearchToggleButton.Focus(FocusState.Programmatic);
-        ViewModel.SearchTerm = string.Empty;
     }
 
     private void AlbumGridView_ItemClick(object sender, ItemClickEventArgs e)
     {
         if (e.ClickedItem is ArtistAlbumViewModelItem clickedAlbum)
         {
-            _logger.LogDebug("User clicked album '{AlbumTitle}' (Id: {AlbumId}). Navigating to album view.",
-                clickedAlbum.Name, clickedAlbum.Id);
             ViewModel.ViewAlbumCommand.Execute(clickedAlbum.Id);
         }
-    }
-
-    private void SongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (_isUpdatingSelection || sender is not ListView listView) return;
-
-        foreach (var song in e.AddedItems.OfType<Song>())
-            ViewModel.SelectionState.Select(song.Id);
-
-        foreach (var song in e.RemovedItems.OfType<Song>())
-            ViewModel.SelectionState.Deselect(song.Id);
-
-        ViewModel.OnSongsSelectionChanged(listView.SelectedItems);
-    }
-
-    private void OnSongsListViewContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
-    {
-        if (args.Item is not Song song) return;
-
-        // Ensure the visual selection state matches our logical state as containers are reused.
-        try
-        {
-            _isUpdatingSelection = true;
-            args.ItemContainer.IsSelected = ViewModel.SelectionState.IsSelected(song.Id);
-        }
-        finally
-        {
-            _isUpdatingSelection = false;
-        }
-    }
-
-    private void OnSelectAllAcceleratorInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
-    {
-        // Don't hijack selection if a text input control is focused.
-        var focused = FocusManager.GetFocusedElement(this.XamlRoot);
-        if (focused is TextBox or PasswordBox or RichEditBox) return;
-
-        _logger.LogDebug("Ctrl+A invoked. Selecting all songs for artist.");
-        ViewModel.SelectAllCommand.Execute(null);
-
-        try
-        {
-            _isUpdatingSelection = true;
-            SongsListView.SelectAll();
-        }
-        finally
-        {
-            _isUpdatingSelection = false;
-        }
-
-        args.Handled = true;
-    }
-
-    private void SongsListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
-    {
-        if (e.OriginalSource is FrameworkElement { DataContext: Song tappedSong })
-        {
-            _logger.LogDebug("User double-tapped song '{SongTitle}' (Id: {SongId}). Executing play command.",
-                tappedSong.Title, tappedSong.Id);
-            ViewModel.PlaySongCommand.Execute(tappedSong);
-        }
-    }
-
-    private void SongItemMenuFlyout_Opening(object sender, object e)
-    {
-        if (sender is not MenuFlyout menuFlyout) return;
-
-        // Ensure the right-clicked song is selected before showing the context menu.
-        if (menuFlyout.Target?.DataContext is Song rightClickedSong)
-        {
-            _logger.LogDebug("Context menu opening for song '{SongTitle}'.", rightClickedSong.Title);
-            if (!SongsListView.SelectedItems.Contains(rightClickedSong))
-                SongsListView.SelectedItem = rightClickedSong;
-        }
-
-        // Find and populate the "Add to Playlist" submenu.
-        if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
-                .FirstOrDefault(item => item.Name == "AddToPlaylistSubMenu") is { } addToPlaylistSubMenu)
-        {
-            _logger.LogDebug("Populating 'Add to playlist' submenu.");
-            PlaylistMenuFlyoutHelper.Populate(addToPlaylistSubMenu, ViewModel.AvailablePlaylists,
-                ViewModel.AddSelectedSongsToPlaylistCommand, Strings.ArtistViewPage_PlaylistMenu_NoPlaylists);
-        }
-        ListeningMenuFlyoutHelper.PopulateFavorites(menuFlyout, ViewModel);
     }
 
     private void ArtistImage_PointerEntered(object sender, PointerRoutedEventArgs e)
@@ -278,7 +105,6 @@ public sealed partial class ArtistViewPage : Page
     {
         try
         {
-            _logger.LogDebug("User initiated image change for artist '{ArtistName}'.", ViewModel.ArtistName);
             await ViewModel.ChangeArtistImageCommand.ExecuteAsync(null);
         }
         catch (Exception ex)
@@ -291,7 +117,6 @@ public sealed partial class ArtistViewPage : Page
     {
         try
         {
-            _logger.LogDebug("User requested removal of custom image for artist '{ArtistName}'.", ViewModel.ArtistName);
             await ViewModel.RemoveArtistImageCommand.ExecuteAsync(null);
         }
         catch (Exception ex)
@@ -375,6 +200,4 @@ public sealed partial class ArtistViewPage : Page
             _isUpdatingAlbumsLayout = false;
         }
     }
-    private void ListeningOptions_Opening(object sender, object e) =>
-        ListeningMenuFlyoutHelper.PopulateMixes((MenuFlyout)sender, ViewModel.PlayMixCommand, ViewModel.PlayForCommand);
 }

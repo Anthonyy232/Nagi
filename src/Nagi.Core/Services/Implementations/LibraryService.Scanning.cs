@@ -55,6 +55,15 @@ public partial class LibraryService
         return RescanFolderForMusicAsync(folderId, forceFullScan, allowFolderRemovalOnMissing: true, progress, cancellationToken);
     }
 
+    public async Task<bool> RefreshFolderInBackgroundAsync(Guid folderId, CancellationToken cancellationToken = default)
+    {
+        var scanned = await RescanFolderForMusicAsync(folderId, false, allowFolderRemovalOnMissing: false,
+            cancellationToken: cancellationToken, registerAsActiveScan: false).ConfigureAwait(false);
+        if (scanned && await _settingsService.GetVolumeNormalizationEnabledAsync().ConfigureAwait(false))
+            await RunReplayGainAnalysisAsync(null, cancellationToken).ConfigureAwait(false);
+        return scanned;
+    }
+
     private async Task<bool> RescanFolderForMusicAsync(Guid folderId, bool forceFullScan, bool allowFolderRemovalOnMissing,
         IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default,

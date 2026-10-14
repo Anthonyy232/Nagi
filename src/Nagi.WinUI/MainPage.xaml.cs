@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Storage;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -14,7 +13,6 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using Nagi.Core.Constants;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
@@ -108,6 +106,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private readonly IDispatcherService _dispatcherService;
     private readonly ILogger<MainPage> _logger;
+    private readonly CollapsibleSearch _seeAllSearch;
 
     private readonly Dictionary<string, Type> _pages = new()
     {
@@ -159,6 +158,9 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
         InitializeComponent();
         DataContext = ViewModel;
+        _seeAllSearch = new CollapsibleSearch(this, SeeAllSearchToggleButton, SeeAllSearchTextBox,
+            Strings.InsightsPage_SeeAll_SearchButton_ToolTip, "SeeAllSearchExpanded", "SeeAllSearchCollapsed",
+            () => InsightsVm.SearchTerm = string.Empty);
 
         navigationService.Initialize(ContentFrame);
         _hoverTimer.Tick += OnHoverTimerTick;
@@ -254,12 +256,10 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         var deferral = e.GetDeferral();
         try
         {
-            var paths = new List<string>();
             var items = await e.DataView.GetStorageItemsAsync();
-            foreach (var item in items.OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase))
-                await CollectMusicFilesAsync(item, paths);
-
-            await ViewModel.AddFilesToQueueAsync(paths);
+            await ViewModel.AddFilesToQueueAsync(items
+                .OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase)
+                .Select(item => item.Path));
         }
         catch (Exception ex)
         {
@@ -268,28 +268,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         finally
         {
             deferral.Complete();
-        }
-    }
-
-    private async Task CollectMusicFilesAsync(IStorageItem item, List<string> paths)
-    {
-        if (item is StorageFile file)
-        {
-            if (FileExtensions.MusicFileExtensions.Contains(file.FileType)) paths.Add(file.Path);
-            return;
-        }
-
-        if (item is not StorageFolder folder) return;
-
-        try
-        {
-            var children = await folder.GetItemsAsync();
-            foreach (var child in children.OrderBy(child => child.Name, StringComparer.OrdinalIgnoreCase))
-                await CollectMusicFilesAsync(child, paths);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Could not read dropped folder {FolderPath}.", folder.Path);
         }
     }
 
@@ -575,6 +553,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private void OnContentFrameNavigated(object sender, NavigationEventArgs e)
     {
+        _logger.LogDebug("Navigated to {PageName}.", e.SourcePageType.Name);
         try
         {
             var isDetailPage = _detailPageToParentTagMap.ContainsKey(e.SourcePageType);
@@ -745,13 +724,12 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         }
 
         var cleared = false;
-        if (page?.DataContext is SongListViewModelBase { HasSelectedSongs: true } viewModel &&
+        if (page is SongListPage songListPage &&
+            page.DataContext is SongListViewModelBase { HasSelectedSongs: true } &&
             !(clickedList is not null && IsWithin(clickedList, page) && (clickedItem || clickedScrollBar)))
         {
             cleared = true;
-            viewModel.DeselectAll();
-            foreach (var name in new[] { "SongsListView", "GroupedSongsListView", "FolderContentsListView" })
-                if (page.FindName(name) is ListView list) list.SelectedItems.Clear();
+            songListPage.ClearSelection();
         }
 
         if (QueueListView.SelectedItem is not null &&
@@ -770,48 +748,22 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         return false;
     }
 
-    // ── Insights "See All" overlay handlers ──
-
     private void OnCloseSeeAll(object sender, RoutedEventArgs e)
     {
-        VisualStateManager.GoToState(this, "SeeAllSearchCollapsed", false);
+        _seeAllSearch.SetExpanded(false);
         InsightsVm.CloseSeeAllCommand.Execute(null);
     }
 
     private void OnSeeAllPanelTapped(object sender, TappedRoutedEventArgs e) =>
         e.Handled = true;
 
-    private void OnSeeAllSearchToggleButtonClick(object sender, RoutedEventArgs e)
-    {
-        if (SeeAllSearchStates.CurrentState?.Name == "SeeAllSearchExpanded")
-            CollapseSeeAllSearch();
-        else
-        {
-            VisualStateManager.GoToState(this, "SeeAllSearchExpanded", false);
-            SeeAllSearchTextBox.Focus(FocusState.Programmatic);
-        }
-    }
+    private void OnSeeAllSearchToggleButtonClick(object sender, RoutedEventArgs e) => _seeAllSearch.Toggle();
 
-    private void CollapseSeeAllSearch()
-    {
-        InsightsVm.SearchTerm = string.Empty;
-        VisualStateManager.GoToState(this, "SeeAllSearchCollapsed", false);
-        SeeAllSearchToggleButton.Focus(FocusState.Programmatic);
-    }
+    private void OnSeeAllSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e) => _seeAllSearch.HandleKeyDown(e);
 
     private void OnSeeAllSortByPlayCountClick(object sender, RoutedEventArgs e) =>
         InsightsVm.SetCurrentCategoryMetric(SortMetric.PlayCount);
 
     private void OnSeeAllSortByDurationClick(object sender, RoutedEventArgs e) =>
         InsightsVm.SetCurrentCategoryMetric(SortMetric.Duration);
-
-    private void OnSeeAllSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
-    {
-        if (e.Key == VirtualKey.Escape)
-        {
-            CollapseSeeAllSearch();
-            e.Handled = true;
-        }
-    }
-
 }

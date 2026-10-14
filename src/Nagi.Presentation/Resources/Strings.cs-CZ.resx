@@ -704,35 +704,17 @@ Soubory, které se nepodařilo importovat: {0}.</value>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Biografie a obrázky interpretů (záložní)</value>
   </data>
-  <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zavřít hledání</value>
-  </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hledat alba</value>
-  </data>
-  <data name="AlbumViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zavřít hledání</value>
   </data>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hledat v albu</value>
   </data>
-  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Žádné seznamy skladeb k dispozici</value>
-  </data>
-  <data name="ArtistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zavřít hledání</value>
-  </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hledat interprety</value>
   </data>
-  <data name="ArtistViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zavřít hledání</value>
-  </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hledat u interpreta</value>
-  </data>
-  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Žádné seznamy skladeb k dispozici</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
     <value>Odebrat složku</value>
@@ -749,32 +731,14 @@ Soubory, které se nepodařilo importovat: {0}.</value>
   <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
     <value>Neznámá složka</value>
   </data>
-  <data name="FolderSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zavřít hledání</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hledat ve složce</value>
-  </data>
-  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Žádné seznamy skladeb k dispozici</value>
-  </data>
-  <data name="GenrePage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zavřít hledání</value>
   </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hledat žánry</value>
   </data>
-  <data name="LibraryPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zavřít hledání</value>
-  </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hledat v knihovně</value>
-  </data>
-  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Žádné seznamy skladeb k dispozici</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zavřít hledání</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hledat seznamy skladeb</value>
@@ -809,26 +773,14 @@ Soubory, které se nepodařilo importovat: {0}.</value>
   <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
     <value>Smazat</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zavřít hledání</value>
-  </data>
   <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hledat v seznamu skladeb</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zavřít hledání</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hledat v žánru</value>
   </data>
-  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Žádné seznamy skladeb k dispozici</value>
-  </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
     <value>Neznámý seznam skladeb</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zavřít hledání</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hledat v chytrém seznamu skladeb</value>
@@ -1283,9 +1235,6 @@ Chcete pokračovat?</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hledat ve složce…</value>
-  </data>
-  <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Hledat ve složce</value>
   </data>
   <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Přehrát vše</value>
@@ -2369,5 +2318,11 @@ Chcete pokračovat?</value>
   </data>
   <data name="Listening_NoTimedMixDescription" xml:space="preserve">
     <value>Žádné skladby v tomto seznamu nesplňují požadavky na mix a nepřizpůsobují se zvolené délce. Zkuste delší dobu, jiný mix nebo jiný seznam skladeb.</value>
+  </data>
+  <data name="Generic_CloseSearch" xml:space="preserve">
+    <value>Zavřít hledání</value>
+  </data>
+  <data name="Generic_NoPlaylists" xml:space="preserve">
+    <value>Žádné seznamy skladeb k dispozici</value>
   </data>
 </root>

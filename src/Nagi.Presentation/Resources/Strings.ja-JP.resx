@@ -704,35 +704,17 @@
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>アーティストのバイオグラフィーと画像 (フォールバック)</value>
   </data>
-  <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>検索を閉じる</value>
-  </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>アルバムを検索</value>
-  </data>
-  <data name="AlbumViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>検索を閉じる</value>
   </data>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>アルバム内を検索</value>
   </data>
-  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>利用可能なプレイリストはありません</value>
-  </data>
-  <data name="ArtistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>検索を閉じる</value>
-  </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>アーティストを検索</value>
   </data>
-  <data name="ArtistViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>検索を閉じる</value>
-  </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>アーティスト内を検索</value>
-  </data>
-  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>利用可能なプレイリストはありません</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
     <value>フォルダーを削除</value>
@@ -749,32 +731,14 @@
   <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
     <value>不明なフォルダー</value>
   </data>
-  <data name="FolderSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>検索を閉じる</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>フォルダー内を検索</value>
-  </data>
-  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>利用可能なプレイリストはありません</value>
-  </data>
-  <data name="GenrePage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>検索を閉じる</value>
   </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ジャンルを検索</value>
   </data>
-  <data name="LibraryPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>検索を閉じる</value>
-  </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ライブラリを検索</value>
-  </data>
-  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>利用可能なプレイリストはありません</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>検索を閉じる</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>プレイリストを検索</value>
@@ -809,26 +773,14 @@
   <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
     <value>削除</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>検索を閉じる</value>
-  </data>
   <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>プレイリスト内を検索</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>検索を閉じる</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ジャンル内を検索</value>
   </data>
-  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>利用可能なプレイリストはありません</value>
-  </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
     <value>不明なプレイリスト</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>検索を閉じる</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>スマートプレイリスト内を検索</value>
@@ -1283,9 +1235,6 @@
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>フォルダー内を検索…</value>
-  </data>
-  <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>フォルダー内を検索</value>
   </data>
   <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>すべて再生</value>
@@ -2369,5 +2318,11 @@
   </data>
   <data name="Listening_NoTimedMixDescription" xml:space="preserve">
     <value>このリストには、ミックスの条件を満たし、指定された時間内に収まる曲がありません。再生時間を長くするか、別のミックスまたは曲リストをお試しください。</value>
+  </data>
+  <data name="Generic_CloseSearch" xml:space="preserve">
+    <value>検索を閉じる</value>
+  </data>
+  <data name="Generic_NoPlaylists" xml:space="preserve">
+    <value>利用可能なプレイリストはありません</value>
   </data>
 </root>

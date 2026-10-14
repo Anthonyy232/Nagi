@@ -704,35 +704,17 @@ Failai, kurių nepavyko importuoti: {0}.</value>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Atlikėjų biografijos ir nuotraukos (atsarginis variantas)</value>
   </data>
-  <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Uždaryti paiešką</value>
-  </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Ieškoti albumų</value>
-  </data>
-  <data name="AlbumViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Uždaryti paiešką</value>
   </data>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Ieškoti albume</value>
   </data>
-  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Nėra galimų grojaraščių</value>
-  </data>
-  <data name="ArtistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Uždaryti paiešką</value>
-  </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Ieškoti atlikėjų</value>
   </data>
-  <data name="ArtistViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Uždaryti paiešką</value>
-  </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Ieškoti atlikėjo kūrinių</value>
-  </data>
-  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Nėra galimų grojaraščių</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
     <value>Pašalinti aplanką</value>
@@ -749,32 +731,14 @@ Failai, kurių nepavyko importuoti: {0}.</value>
   <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
     <value>Nežinomas aplankas</value>
   </data>
-  <data name="FolderSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Uždaryti paiešką</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Ieškoti aplanke</value>
-  </data>
-  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Nėra galimų grojaraščių</value>
-  </data>
-  <data name="GenrePage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Uždaryti paiešką</value>
   </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Ieškoti žanrų</value>
   </data>
-  <data name="LibraryPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Uždaryti paiešką</value>
-  </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Ieškoti bibliotekoje</value>
-  </data>
-  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Nėra galimų grojaraščių</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Uždaryti paiešką</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Ieškoti grojaraščių</value>
@@ -809,26 +773,14 @@ Failai, kurių nepavyko importuoti: {0}.</value>
   <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
     <value>Ištrinti</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Uždaryti paiešką</value>
-  </data>
   <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Ieškoti grojaraštyje</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Uždaryti paiešką</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Ieškoti žanre</value>
   </data>
-  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Nėra galimų grojaraščių</value>
-  </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
     <value>Nežinomas grojaraštis</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Uždaryti paiešką</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Ieškoti išmaniajame grojaraštyje</value>
@@ -1283,9 +1235,6 @@ Ar norite tęsti?</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Ieškoti aplanke…</value>
-  </data>
-  <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Ieškoti aplanke</value>
   </data>
   <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Groti viską</value>
@@ -2369,5 +2318,11 @@ Ar norite tęsti?</value>
   </data>
   <data name="Listening_NoTimedMixDescription" xml:space="preserve">
     <value>Jokio dainų sąrašo kūrinys neatitinka mikso reikalavimų ir netelpa į pasirinktą trukmę. Pabandykite ilgesnę trukmę, kitą miksą arba kitą kūrinių sąrašą.</value>
+  </data>
+  <data name="Generic_CloseSearch" xml:space="preserve">
+    <value>Uždaryti paiešką</value>
+  </data>
+  <data name="Generic_NoPlaylists" xml:space="preserve">
+    <value>Nėra galimų grojaraščių</value>
   </data>
 </root>

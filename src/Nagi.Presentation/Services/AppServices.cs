@@ -49,6 +49,7 @@ public static class AppServices
         await dbTask;
         var offlineScrobbleService = services.GetRequiredService<IOfflineScrobbleService>();
         offlineScrobbleService.Start();
+        services.GetRequiredService<ILibraryFolderWatcher>().Start();
         var scrobbleTask = offlineScrobbleService.ProcessQueueAsync();
         var playbackTask = services.GetRequiredService<IMusicPlaybackService>().InitializeAsync(restoreSession);
         await playbackTask;

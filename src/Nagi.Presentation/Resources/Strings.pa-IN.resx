@@ -704,35 +704,17 @@
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>ਕਲਾਕਾਰ ਦੀਆਂ ਜੀਵਨੀਆਂ ਅਤੇ ਚਿੱਤਰ (ਫਾਲਬੈਕ)</value>
   </data>
-  <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>ਖੋਜ ਬੰਦ ਕਰੋ</value>
-  </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ਐਲਬਮਾਂ ਖੋਜੋ</value>
-  </data>
-  <data name="AlbumViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>ਖੋਜ ਬੰਦ ਕਰੋ</value>
   </data>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ਐਲਬਮ ਵਿੱਚ ਖੋਜੋ</value>
   </data>
-  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>ਕੋਈ ਪਲੇਲਿਸਟ ਉਪਲਬਧ ਨਹੀਂ</value>
-  </data>
-  <data name="ArtistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>ਖੋਜ ਬੰਦ ਕਰੋ</value>
-  </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ਕਲਾਕਾਰ ਖੋਜੋ</value>
   </data>
-  <data name="ArtistViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>ਖੋਜ ਬੰਦ ਕਰੋ</value>
-  </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ਕਲਾਕਾਰ ਵਿੱਚ ਖੋਜੋ</value>
-  </data>
-  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>ਕੋਈ ਪਲੇਲਿਸਟ ਉਪਲਬਧ ਨਹੀਂ</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
     <value>ਫੋਲਡਰ ਹਟਾਓ</value>
@@ -749,32 +731,14 @@
   <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
     <value>ਅਣਜਾਣ ਫੋਲਡਰ</value>
   </data>
-  <data name="FolderSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>ਖੋਜ ਬੰਦ ਕਰੋ</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ਫੋਲਡਰ ਵਿੱਚ ਖੋਜੋ</value>
-  </data>
-  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>ਕੋਈ ਪਲੇਲਿਸਟ ਉਪਲਬਧ ਨਹੀਂ</value>
-  </data>
-  <data name="GenrePage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>ਖੋਜ ਬੰਦ ਕਰੋ</value>
   </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ਸ਼ੈਲੀਆਂ ਖੋਜੋ</value>
   </data>
-  <data name="LibraryPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>ਖੋਜ ਬੰਦ ਕਰੋ</value>
-  </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ਲਾਇਬ੍ਰੇਰੀ ਖੋਜੋ</value>
-  </data>
-  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>ਕੋਈ ਪਲੇਲਿਸਟ ਉਪਲਬਧ ਨਹੀਂ</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>ਖੋਜ ਬੰਦ ਕਰੋ</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ਪਲੇਲਿਸਟਾਂ ਖੋਜੋ</value>
@@ -809,26 +773,14 @@
   <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
     <value>ਮਿਟਾਓ</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>ਖੋਜ ਬੰਦ ਕਰੋ</value>
-  </data>
   <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ਪਲੇਲਿਸਟ ਵਿੱਚ ਖੋਜੋ</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>ਖੋਜ ਬੰਦ ਕਰੋ</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ਸ਼ੈਲੀ ਵਿੱਚ ਖੋਜੋ</value>
   </data>
-  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>ਕੋਈ ਪਲੇਲਿਸਟ ਉਪਲਬਧ ਨਹੀਂ</value>
-  </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
     <value>ਅਣਜਾਣ ਪਲੇਲਿਸਟ</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>ਖੋਜ ਬੰਦ ਕਰੋ</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ਸਮਾਰਟ ਪਲੇਲਿਸਟ ਵਿੱਚ ਖੋਜੋ</value>
@@ -1283,9 +1235,6 @@
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ਫੋਲਡਰ ਵਿੱਚ ਖੋਜੋ…</value>
-  </data>
-  <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ਫੋਲਡਰ ਵਿੱਚ ਖੋਜੋ</value>
   </data>
   <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>ਸਾਰੇ ਚਲਾਓ</value>
@@ -2369,5 +2318,11 @@
   </data>
   <data name="Listening_NoTimedMixDescription" xml:space="preserve">
     <value>ਇਸ ਸੂਚੀ ਵਿੱਚ ਕੋਈ ਵੀ ਗੀਤ ਮਿਕਸ ਸ਼ਰਤਾਂ ਨੂੰ ਪੂਰਾ ਨਹੀਂ ਕਰਦਾ ਅਤੇ ਤੁਹਾਡੀ ਚੁਣੀ ਹੋਈ ਸਮਾਂ ਸੀਮਾ ਵਿੱਚ ਫਿੱਟ ਨਹੀਂ ਬੈਠਦਾ। ਲੰਬੀ ਸਮਾਂ ਸੀਮਾ, ਕੋਈ ਹੋਰ ਮਿਕਸ, ਜਾਂ ਵੱਖਰੀ ਗੀਤ ਸੂਚੀ ਅਜ਼ਮਾਓ।</value>
+  </data>
+  <data name="Generic_CloseSearch" xml:space="preserve">
+    <value>ਖੋਜ ਬੰਦ ਕਰੋ</value>
+  </data>
+  <data name="Generic_NoPlaylists" xml:space="preserve">
+    <value>ਕੋਈ ਪਲੇਲਿਸਟ ਉਪਲਬਧ ਨਹੀਂ</value>
   </data>
 </root>

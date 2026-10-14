@@ -14,6 +14,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     private readonly ILibraryWriter _libraryWriter;
     private readonly ILogger<MusicPlaybackService> _logger;
     private readonly IMetadataService _metadataService;
+    private readonly IFileSystemService _fileSystem;
     private readonly ISettingsService _settingsService;
     private readonly object _pendingOperationsLock = new();
 
@@ -39,8 +40,10 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         ILibraryReader libraryReader,
         ILibraryWriter libraryWriter,
         IMetadataService metadataService,
+        IFileSystemService fileSystem,
         ILogger<MusicPlaybackService> logger, TimeProvider? timeProvider = null)
     {
+        _fileSystem = fileSystem;
         _settingsService = settingsService;
         _audioPlayer = audioPlayer;
         _mediaControls = mediaControls;
@@ -83,6 +86,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     public int CurrentShuffledIndex { get; private set; } = -1;
     public bool IsShuffleEnabled { get; private set; }
     public RepeatMode CurrentRepeatMode { get; private set; } = RepeatMode.Off;
+    public double PlaybackRate { get; private set; } = 1.0;
     private bool _isTransitioningTrack;
     public IReadOnlyList<(uint Index, float Frequency)> EqualizerBands { get; }
     public IReadOnlyList<EqualizerPreset> AvailablePresets { get; } = new List<EqualizerPreset>
@@ -572,6 +576,13 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             await PlayInternalAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.Genre, genreId), request);
     });
 
+    public Task ShuffleLibraryAsync() => RunPlaybackRequest(async request =>
+    {
+        var songIds = await _libraryReader.GetAllSongIdsAsync(SongSortOrder.TitleAsc);
+        if (IsCurrentRequest(request))
+            await PlayInternalAsync(songIds, 0, true, new PlaybackContext(PlaybackContextType.Library, null), request);
+    });
+
     public async Task SetVolumeAsync(double volume)
     {
         await _audioPlayer.SetVolumeAsync(volume);
@@ -583,6 +594,13 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         var newMuteState = !_audioPlayer.IsMuted;
         await _audioPlayer.SetMuteAsync(newMuteState);
         await _settingsService.SaveMuteStateAsync(newMuteState);
+    }
+
+    public async Task SetPlaybackRateAsync(double rate)
+    {
+        if (!double.IsFinite(rate) || rate <= 0) return;
+        await _audioPlayer.SetPlaybackRateAsync(rate);
+        PlaybackRate = rate;
     }
 
     public async Task SetShuffleAsync(bool enable)

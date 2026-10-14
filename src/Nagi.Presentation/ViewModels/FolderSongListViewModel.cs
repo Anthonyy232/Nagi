@@ -36,6 +36,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     private string _currentDirectoryPath = string.Empty;
     private Guid? _rootFolderId;
     private string? _rootFolderPath;
+    private readonly List<Folder> _selectedFolders = new();
 
     // Reused by page navigation until the directory is refreshed.
     private Guid? _currentParentFolderId;
@@ -460,38 +461,47 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         }
     }
 
+    public override int SelectedItemsCount => base.SelectedItemsCount + _selectedFolders.Count;
+
+    public override void OnSongsSelectionChanged(IEnumerable<object> selectedItems)
+    {
+        // Rows are subfolders or songs; selected subfolders contribute all the songs inside them.
+        var rows = selectedItems.OfType<FolderContentItem>().ToList();
+        _selectedFolders.Clear();
+        _selectedFolders.AddRange(rows.Select(row => row.Folder).OfType<Folder>());
+        base.OnSongsSelectionChanged(rows.Select(row => row.Song).OfType<Song>());
+    }
+
+    public override void DeselectAll()
+    {
+        _selectedFolders.Clear();
+        base.DeselectAll();
+    }
+
     protected override async Task<List<Guid>> GetCurrentSelectionIdsAsync()
     {
         if (_isDisposed || !_rootFolderId.HasValue) return [];
         var rootFolderId = _rootFolderId.Value;
-        var snapshot = CaptureSelectionSnapshot();
-        var selectedFolders = snapshot.Selection.IsSelectAllMode ? [] : FolderContents
-            .Where(x => x.IsFolder && snapshot.Selection.IsSelected(x.Id))
-            .Select(x => x.Folder!.Path)
-            .ToList();
-        var allSongIds = await GetFullSongIdsAsync();
-        if (!IsSongContextCurrent(snapshot.Generation)) return [];
-        var resultSet = snapshot.Selection.GetSelectedIds(allSongIds).ToHashSet();
+        var generation = CaptureSongContext();
+        var folderPaths = _selectedFolders.Select(folder => folder.Path).ToList();
+        var ids = await base.GetCurrentSelectionIdsAsync();
 
-        // For explicitly selected folders (non-select-all mode), we expand them into their song IDs.
-        // In select-all mode we do NOT subtract unselected folders: FolderContents is page-scoped,
-        // so folders on other pages would be silently ignored, producing incorrect results.
-        foreach (var folderPath in selectedFolders)
+        foreach (var folderPath in folderPaths)
         {
             try
             {
                 var folderSongs = await _libraryReader.GetAllSongIdsInDirectoryRecursiveAsync(
                     rootFolderId, folderPath, SongSortOrder.TitleAsc, CancellationToken.None);
-                resultSet.UnionWith(folderSongs);
+                ids.AddRange(folderSongs.Except(ids));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to resolve songs for selected folder {FolderPath}", folderPath);
             }
-            if (!IsSongContextCurrent(snapshot.Generation)) return [];
+            if (!IsSongContextCurrent(generation)) return [];
         }
 
-        return resultSet.ToList();
+        return ids;
     }
 
     private void UpdateTotalItemsText(int folderCount, int songCount)

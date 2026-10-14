@@ -52,7 +52,9 @@ internal static class WindowActivator
         try
         {
             win32.BringWindowToTop(windowHandle);
-            ShowWindow(windowHandle, SW_RESTORE);
+            // SW_RESTORE also un-maximizes, so only use it to bring the window back from minimized.
+            if (window.AppWindow.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Minimized })
+                ShowWindow(windowHandle, SW_RESTORE);
             window.AppWindow.Show();
             SetForegroundWindow(windowHandle);
         }

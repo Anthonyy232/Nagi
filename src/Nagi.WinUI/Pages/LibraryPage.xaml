@@ -1,4 +1,5 @@
-<Page
+<pages:SongListPage
+    xmlns:pages="using:Nagi.WinUI.Pages"
     x:Class="Nagi.WinUI.Pages.LibraryPage"
     NavigationCacheMode="Enabled"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -16,11 +17,8 @@
     Background="Transparent"
     mc:Ignorable="d">
 
-    <Grid KeyboardAcceleratorPlacementMode="Hidden"
+    <Grid
           Padding="{StaticResource PageContainerPaddingVertical}">
-        <Grid.KeyboardAccelerators>
-            <KeyboardAccelerator Key="A" Modifiers="Control" Invoked="OnSelectAllAcceleratorInvoked" />
-        </Grid.KeyboardAccelerators>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="SearchStates">
                 <VisualState x:Name="SearchCollapsed">
@@ -182,9 +180,8 @@
             IsItemClickEnabled="True"
             ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
             ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
-            SelectionChanged="OnListViewSelectionChanged"
+            SelectionChanged="SongsListView_SelectionChanged"
             SelectionMode="Extended"
-            ContainerContentChanging="OnSongsListViewContainerContentChanging"
             DoubleTapped="SongsListView_DoubleTapped">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Song">
@@ -319,4 +316,4 @@
         </StackPanel>
 
     </Grid>
-</Page>
+</pages:SongListPage>

@@ -262,7 +262,6 @@ public class LastFmMetadataServiceTests : IDisposable
         result.Data!.ImageUrl.Should().Be(expected);
     }
 
-    #region Helper Methods
     private void SetupApiKey(string key = ApiKey)
     {
         _apiKeyService.GetApiKeyAsync("lastfm", Arg.Any<CancellationToken>()).Returns(Task.FromResult<string?>(key));
@@ -298,6 +297,4 @@ public class LastFmMetadataServiceTests : IDisposable
     {
         return new { error = errorCode, message };
     }
-
-    #endregion
 }

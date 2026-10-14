@@ -17,6 +17,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     private readonly LibraryFakes _library;
     private readonly ILogger<MusicPlaybackService> _logger;
     private readonly IMetadataService _metadataService;
+    private readonly IFileSystemService _fileSystem = Substitute.For<IFileSystemService>();
 
     private readonly MusicPlaybackService _service;
 
@@ -50,6 +51,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
             _mediaControls,
             _library.Reader, _library.Writer,
             _metadataService,
+            _fileSystem,
             _logger);
 
         _testSongs = CreateTestSongs(5);
@@ -282,6 +284,23 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         await _audioPlayer.Received(1).LoadAsync(Arg.Is<Song>(song => song.FilePath == firstPath));
         await _library.Writer.DidNotReceive().StartListenSessionAsync(
             externalIds[0], Arg.Any<PlaybackContext>());
+    }
+
+    [Fact]
+    public async Task AddTransientFilesToQueueAsync_WithFolder_AddsItsAudioFilesInPathOrder()
+    {
+        const string folder = "C:\\drop";
+        _fileSystem.DirectoryExists(folder).Returns(true);
+        _fileSystem.EnumerateFiles(folder, "*", SearchOption.AllDirectories)
+            .Returns(["C:\\drop\\b.mp3", "C:\\drop\\cover.jpg", "C:\\drop\\a\\c.flac"]);
+        _metadataService.ExtractMetadataAsync(Arg.Any<string>())
+            .Returns(call => new SongFileMetadata { Title = Path.GetFileName(call.ArgAt<string>(0)) });
+        await _service.InitializeAsync();
+
+        await _service.AddTransientFilesToQueueAsync([folder]);
+
+        var tracks = await _service.GetQueueTracksAsync(_service.PlaybackQueue);
+        _service.PlaybackQueue.Select(id => tracks[id].Title).Should().Equal("c.flac", "b.mp3");
     }
 
     private class EventTracker
@@ -1314,7 +1333,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
 
         _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
         _settingsService.GetPlaybackStateAsync().Returns(savedState);
-        using var restored = new MusicPlaybackService(_settingsService, _audioPlayer, _mediaControls, _library.Reader, _library.Writer, _metadataService, _logger);
+        using var restored = new MusicPlaybackService(_settingsService, _audioPlayer, _mediaControls, _library.Reader, _library.Writer, _metadataService, _fileSystem, _logger);
         await restored.InitializeAsync();
         restored.PlaybackQueue.Should().BeEmpty();
         restored.CurrentTrack.Should().BeNull();
@@ -1785,6 +1804,18 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
 
         await _settingsService.Received(1).SaveVolumeAsync(1.0);
         await _settingsService.DidNotReceive().SaveVolumeAsync(2.0);
+    }
+
+    [Theory]
+    [InlineData(0.0)]
+    [InlineData(-1.0)]
+    [InlineData(double.NaN)]
+    public async Task SetPlaybackRateAsync_IgnoresInvalidRates(double rate)
+    {
+        await _service.SetPlaybackRateAsync(rate);
+
+        await _audioPlayer.DidNotReceive().SetPlaybackRateAsync(Arg.Any<double>());
+        _service.PlaybackRate.Should().Be(1.0);
     }
 
     [Fact]

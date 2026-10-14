@@ -1,22 +1,19 @@
 using System;
 using System.Threading.Tasks;
-using Windows.System;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.ViewModels;
 
 namespace Nagi.WinUI.Pages;
 
-public sealed partial class PlaylistPage : Page
+public sealed partial class PlaylistPage : SearchablePage
 {
     private readonly ILogger<PlaylistPage> _logger;
-    private bool _isSearchExpanded;
 
     public PlaylistPage()
     {
@@ -24,23 +21,17 @@ public sealed partial class PlaylistPage : Page
         ViewModel = App.Services!.GetRequiredService<PlaylistViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<PlaylistPage>>();
         DataContext = ViewModel;
-        _logger.LogDebug("PlaylistPage initialized.");
+        InitializeSearch(ViewModel, SearchToggleButton, SearchTextBox, Strings.PlaylistPage_SearchButton_Search_ToolTip);
     }
 
     public PlaylistViewModel ViewModel { get; }
 
-    private async void Page_Loaded(object sender, RoutedEventArgs e)
+    protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         try
         {
-            _logger.LogDebug("PlaylistPage loaded. Setting initial visual state and loading playlists...");
-            _isSearchExpanded = !string.IsNullOrWhiteSpace(ViewModel.SearchTerm);
-            ToolTipService.SetToolTip(SearchToggleButton, _isSearchExpanded
-                ? Strings.PlaylistPage_SearchButton_Close_ToolTip
-                : Strings.PlaylistPage_SearchButton_Search_ToolTip);
-            VisualStateManager.GoToState(this, _isSearchExpanded ? "SearchExpanded" : "SearchCollapsed", false);
+            base.OnNavigatedTo(e);
             await ViewModel.LoadPlaylistsCommand.ExecuteAsync(null);
-            _logger.LogDebug("Finished loading playlists.");
         }
         catch (Exception ex)
         {
@@ -51,50 +42,9 @@ public sealed partial class PlaylistPage : Page
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogDebug("Navigating away from PlaylistPage.");
         ViewModel.ResetState();
     }
 
-    private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e)
-    {
-        if (_isSearchExpanded)
-            CollapseSearch();
-        else
-            ExpandSearch();
-    }
-
-    private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
-    {
-        if (e.Key == VirtualKey.Escape)
-        {
-            _logger.LogDebug("Escape key pressed in search box. Collapsing search.");
-            CollapseSearch();
-            e.Handled = true;
-        }
-    }
-
-    private void ExpandSearch()
-    {
-        if (_isSearchExpanded) return;
-
-        _isSearchExpanded = true;
-        _logger.LogDebug("Search UI expanded.");
-        ToolTipService.SetToolTip(SearchToggleButton, Strings.PlaylistPage_SearchButton_Close_ToolTip);
-        VisualStateManager.GoToState(this, "SearchExpanded", false);
-        SearchTextBox.Focus(FocusState.Programmatic);
-    }
-
-    private void CollapseSearch()
-    {
-        if (!_isSearchExpanded) return;
-
-        _isSearchExpanded = false;
-        _logger.LogDebug("Search UI collapsed and search term cleared.");
-        ToolTipService.SetToolTip(SearchToggleButton, Strings.PlaylistPage_SearchButton_Search_ToolTip);
-        VisualStateManager.GoToState(this, "SearchCollapsed", false);
-        SearchToggleButton.Focus(FocusState.Programmatic);
-        ViewModel.SearchTerm = string.Empty;
-    }
     private static PlaylistViewModelItem? ItemOf(object sender) =>
         (sender as FrameworkElement)?.DataContext as PlaylistViewModelItem;
 
@@ -105,9 +55,6 @@ public sealed partial class PlaylistPage : Page
     {
         if (e.ClickedItem is PlaylistViewModelItem clickedPlaylist)
         {
-            _logger.LogDebug(
-                "User clicked on playlist '{PlaylistName}' (Id: {PlaylistId}). Navigating to detail view.",
-                clickedPlaylist.Name, clickedPlaylist.Id);
             ViewModel.NavigateToPlaylistDetail(clickedPlaylist);
         }
     }

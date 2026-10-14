@@ -32,9 +32,6 @@ public class Folder
     /// </summary>
     public virtual ICollection<Song> Songs { get; set; } = new List<Song>();
 
-    [NotMapped]
-    public bool IsRootFolder => ParentFolderId == null;
-
     public override string ToString()
     {
         return string.IsNullOrEmpty(Name) ? Path : Name;

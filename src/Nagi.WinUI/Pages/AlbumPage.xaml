@@ -1,4 +1,5 @@
-<Page
+<pages:SearchablePage
+    xmlns:pages="using:Nagi.WinUI.Pages"
     x:Class="Nagi.WinUI.Pages.AlbumPage"
     NavigationCacheMode="Enabled"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -259,4 +260,4 @@
             HorizontalAlignment="Right"
             Margin="0,16,24,16" />
     </Grid>
-</Page>
+</pages:SearchablePage>

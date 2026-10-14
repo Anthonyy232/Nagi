@@ -57,8 +57,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     private bool _isNavigatingToArtist;
     private bool _isNavigatingToAlbum;
 
-    public SelectionState SelectionState { get; } = new();
-
     protected SongListViewModelBase(
         ILibraryReader libraryReader,
         ILibraryWriter libraryWriter,
@@ -143,7 +141,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     [ObservableProperty]
     public partial string SelectedItemsCountText { get; set; } = string.Empty;
 
-    public virtual int SelectedItemsCount => SelectionState.GetSelectedCount(TotalItemCount);
+    public virtual int SelectedItemsCount => SelectedSongs.Count;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CurrentSortOrderText))]
@@ -399,23 +397,18 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         }
     }
 
-    public void OnSongsSelectionChanged(IEnumerable<object> selectedItems)
+    /// <summary>
+    ///     Mirrors the rows selected in the list.
+    /// </summary>
+    public virtual void OnSongsSelectionChanged(IEnumerable<object> selectedItems)
     {
         SelectedSongs.Clear();
         foreach (var item in selectedItems.OfType<Song>()) SelectedSongs.Add(item);
         UpdateSelectionStatus();
     }
 
-    [RelayCommand]
-    public virtual void SelectAll()
-    {
-        SelectionState.SelectAll();
-        UpdateSelectionStatus();
-    }
-
     public virtual void DeselectAll()
     {
-        SelectionState.DeselectAll();
         SelectedSongs.Clear();
         UpdateSelectionStatus();
     }
@@ -597,19 +590,13 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         UpdateSelectionDependentCommands();
     }
 
-    protected virtual async Task<List<Guid>> GetCurrentSelectionIdsAsync()
+    /// <summary>
+    ///     The selected songs in list order, so playing or queueing a selection keeps the order shown.
+    /// </summary>
+    protected virtual Task<List<Guid>> GetCurrentSelectionIdsAsync()
     {
-        var snapshot = CaptureSelectionSnapshot();
-        var ids = await GetFullSongIdsAsync();
-        if (!IsSongContextCurrent(snapshot.Generation)) return [];
-        return snapshot.Selection.GetSelectedIds(ids).ToList();
-    }
-
-    protected (SelectionState Selection, int Generation) CaptureSelectionSnapshot()
-    {
-        // Resolve against the selection at invocation, not a later selection after database I/O.
-        if (_isDisposed) return (new SelectionState(), -1);
-        return (SelectionState.CreateSnapshot(), CaptureSongContext());
+        var selected = SelectedSongs.Select(song => song.Id).ToHashSet();
+        return Task.FromResult(Songs.Where(song => selected.Contains(song.Id)).Select(song => song.Id).ToList());
     }
 
     protected virtual Task SaveSortOrderAsync(SongSortOrder sortOrder)

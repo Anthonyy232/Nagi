@@ -13,19 +13,20 @@ namespace Nagi.Presentation.Tests;
 public class SongListViewModelTests
 {
     [Fact]
-    public async Task ReloadWithSelectAll_UpdatesSelectionUsingTheNewTotal()
+    public async Task ResolveSelection_ReturnsSelectedSongsInListOrder()
     {
+        Song first = new(), second = new(), third = new();
         using var viewModel = new TestSongList((page, size, _) => Task.FromResult(new PagedResult<Song>
         {
-            PageNumber = page, PageSize = size, TotalCount = 1, Items = [new Song()]
+            PageNumber = page, PageSize = size, TotalCount = 3, Items = [first, second, third]
         }));
-        viewModel.SelectAll();
-
         await viewModel.LoadPageAsync(1);
 
-        viewModel.IsSingleSongSelected.Should().BeTrue();
-        viewModel.PlaySelectedSongsCommand.CanExecute(null).Should().BeTrue();
+        viewModel.OnSongsSelectionChanged([third, first]);
+
+        (await viewModel.ResolveSelectionAsync()).Should().Equal(first.Id, third.Id);
         viewModel.SelectedItemsCountText.Should().NotBeEmpty();
+        viewModel.PlaySelectedSongsCommand.CanExecute(null).Should().BeTrue();
     }
 
     [Fact]
@@ -98,29 +99,8 @@ public class SongListViewModelTests
     {
         protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
             SongSortOrder sortOrder, CancellationToken cancellationToken = default) => load(pageNumber, pageSize, cancellationToken);
-    }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task ResolveSelection_WhenSelectionChangesDuringQuery_UsesOriginalSelection(bool selectAll)
-    {
-        var ids = new[] { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
-        var pending = new TaskCompletionSource<List<Guid>>(TaskCreationOptions.RunContinuationsAsynchronously);
-        using var viewModel = new SelectionTestList(pending.Task);
-        if (selectAll)
-        {
-            viewModel.SelectionState.SelectAll();
-            viewModel.SelectionState.Deselect(ids[2]);
-        }
-        else viewModel.SelectionState.Select(ids[0]);
-
-        var resolving = viewModel.ResolveSelectionAsync();
-        viewModel.SelectionState.DeselectAll();
-        viewModel.SelectionState.Select(ids[2]);
-        pending.SetResult(ids.ToList());
-
-        (await resolving.WaitAsync(TimeSpan.FromSeconds(10))).Should().Equal(selectAll ? ids.Take(2) : ids.Take(1));
+        public Task<List<Guid>> ResolveSelectionAsync() => GetCurrentSelectionIdsAsync();
     }
 
     [Fact]
@@ -140,22 +120,6 @@ public class SongListViewModelTests
         await playback.DidNotReceive().PlayAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<int>(), Arg.Any<bool?>(), Arg.Any<PlaybackContext?>());
     }
 
-    [Fact]
-    public async Task PlaySelected_WhenViewChangesDuringQuery_DoesNotReplacePlaybackWithEmptyQueue()
-    {
-        var pending = new TaskCompletionSource<List<Guid>>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var playback = Substitute.For<IMusicPlaybackService>();
-        using var viewModel = new SelectionTestList(pending.Task, playback);
-        viewModel.SelectionState.SelectAll();
-        var playing = viewModel.PlaySelectedSongsCommand.ExecuteAsync(null);
-
-        viewModel.ResetState();
-        pending.SetResult(new List<Guid> { Guid.NewGuid() });
-        await playing.WaitAsync(TimeSpan.FromSeconds(10));
-
-        await playback.DidNotReceive().PlayAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<int>(), Arg.Any<bool?>(), Arg.Any<PlaybackContext?>());
-    }
-
     private sealed class SelectionTestList(Task<List<Guid>> ids, IMusicPlaybackService? playback = null)
         : SongListViewModelBase(Substitute.For<ILibraryReader>(), Substitute.For<ILibraryWriter>(), Substitute.For<ILibraryScanner>(), Substitute.For<IPlaylistService>(),
             playback ?? Substitute.For<IMusicPlaybackService>(),
@@ -163,26 +127,6 @@ public class SongListViewModelTests
             Substitute.For<IUIService>(), NullLogger.Instance)
     {
         protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default) => ids;
-        public Task<List<Guid>> ResolveSelectionAsync() => GetCurrentSelectionIdsAsync();
-    }
-
-    [Theory]
-    [InlineData(false, true)]
-    [InlineData(true, true)]
-    [InlineData(true, false)]
-    public async Task ResolveSelection_WhenQueryCompletesAfterLeavingView_DiscardsResult(bool dispose, bool fails)
-    {
-        var pending = new TaskCompletionSource<List<Guid>>(TaskCreationOptions.RunContinuationsAsynchronously);
-        using var viewModel = new SelectionTestList(pending.Task);
-        viewModel.SelectionState.SelectAll();
-        var resolving = viewModel.ResolveSelectionAsync();
-
-        if (dispose) viewModel.Dispose();
-        else viewModel.ResetState();
-        if (fails) pending.SetException(new IOException("The previous query failed"));
-        else pending.SetResult([Guid.NewGuid()]);
-
-        (await resolving.WaitAsync(TimeSpan.FromSeconds(10))).Should().BeEmpty();
     }
 
     [Fact]

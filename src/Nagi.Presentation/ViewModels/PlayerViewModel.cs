@@ -225,7 +225,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         _queueDisplayCts = null;
     }
 
-
     /// <summary>
     ///     Loads player button settings and splits them into main and secondary controls
     ///     based on a special "Separator" item.
@@ -301,7 +300,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
             collection.ReplaceRange(newItems);
     }
 
-
     [RelayCommand]
     private void ShowQueueView()
     {
@@ -353,6 +351,14 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     private Task ToggleMuteAsync()
     {
         return _playbackService.ToggleMuteAsync();
+    }
+
+    public double PlaybackRate => _playbackService.PlaybackRate;
+
+    [RelayCommand]
+    private Task SetPlaybackRateAsync(double rate)
+    {
+        return _playbackService.SetPlaybackRateAsync(rate);
     }
 
     [RelayCommand(CanExecute = nameof(CanNavigateToTrack))]
@@ -529,8 +535,8 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         }
     }
 
-    public Task AddFilesToQueueAsync(IEnumerable<string> filePaths) =>
-        _playbackService.AddTransientFilesToQueueAsync(filePaths);
+    public Task AddFilesToQueueAsync(IEnumerable<string> paths) =>
+        _playbackService.AddTransientFilesToQueueAsync(paths);
 
     public string VolumeIconGlyph => IsMuted || CurrentVolume == 0
         ? MuteIconGlyph
@@ -561,8 +567,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         if (_dispatcherService.HasThreadAccess) ApplyUpdate();
         else _dispatcherService.TryEnqueue(ApplyUpdate);
     }
-
-    #region Service Event Handling
 
     private void SubscribeToPlaybackServiceEvents()
     {
@@ -772,6 +776,4 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
             _logger.LogError(ex, "Failed to save queue display settings.");
         }
     }
-
-    #endregion
 }

@@ -1,4 +1,5 @@
-<Page
+<pages:SongListPage
+    xmlns:pages="using:Nagi.WinUI.Pages"
     x:Class="Nagi.WinUI.Pages.FolderSongViewPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -147,11 +148,8 @@
         </uihelpers:FolderContentItemTemplateSelector>
     </Page.Resources>
 
-    <Grid KeyboardAcceleratorPlacementMode="Hidden"
+    <Grid
           Padding="{StaticResource DetailPageContainerPadding}">
-        <Grid.KeyboardAccelerators>
-            <KeyboardAccelerator Key="A" Modifiers="Control" Invoked="OnSelectAllAcceleratorInvoked" />
-        </Grid.KeyboardAccelerators>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="SearchStates">
                 <VisualState x:Name="SearchCollapsed">
@@ -255,8 +253,8 @@
                         </TextBox>
 
                         <Button x:Name="SearchToggleButton"
-                                ToolTipService.ToolTip="{x:Bind resources:Strings.FolderSongViewPage_SearchButton_ToolTip, Mode=OneTime}"
-                                AutomationProperties.Name="{x:Bind resources:Strings.FolderSongViewPage_SearchButton_ToolTip, Mode=OneTime}"
+                                ToolTipService.ToolTip="{x:Bind resources:Strings.FolderSongViewPage_SearchButton_Search_ToolTip, Mode=OneTime}"
+                                AutomationProperties.Name="{x:Bind resources:Strings.FolderSongViewPage_SearchButton_Search_ToolTip, Mode=OneTime}"
                                 Click="OnSearchToggleButtonClick"
                                 Style="{StaticResource SongListViewPageIconButton}"
                                 HorizontalAlignment="Right"
@@ -332,9 +330,8 @@
             ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
             ItemsSource="{x:Bind ViewModel.FolderContents, Mode=OneWay}"
             ItemTemplateSelector="{StaticResource FolderContentItemTemplateSelector}"
-            SelectionChanged="FolderContentsListView_SelectionChanged"
+            SelectionChanged="SongsListView_SelectionChanged"
             SelectionMode="Extended"
-            ContainerContentChanging="OnSongsListViewContainerContentChanging"
             DoubleTapped="FolderContentsListView_DoubleTapped">
         </ListView>
 
@@ -372,4 +369,4 @@
         </StackPanel>
 
     </Grid>
-</Page>
+</pages:SongListPage>

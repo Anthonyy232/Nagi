@@ -171,15 +171,21 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     Task PlayGenreAsync(Guid genreId);
 
     /// <summary>
+    ///     Creates a shuffled queue from the whole library and starts playback.
+    /// </summary>
+    Task ShuffleLibraryAsync();
+
+    /// <summary>
     ///     Plays a single audio file directly from its path, clearing the current queue.
     ///     The file does not need to be in the library.
     /// </summary>
     Task PlayTransientFileAsync(string filePath);
 
     /// <summary>
-    ///     Adds files that are not necessarily in the library to the end of the queue.
+    ///     Adds audio files that are not necessarily in the library to the end of the queue. A folder
+    ///     adds the audio files inside it, including subfolders, in path order.
     /// </summary>
-    Task AddTransientFilesToQueueAsync(IEnumerable<string> filePaths);
+    Task AddTransientFilesToQueueAsync(IEnumerable<string> paths);
 
     /// <summary>
     ///     Resolves library and transient tracks for queue display.
@@ -196,6 +202,16 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     ///     Toggles the mute state of the player and persists the value.
     /// </summary>
     Task ToggleMuteAsync();
+
+    /// <summary>
+    ///     Gets the playback speed for this session. 1.0 is normal speed.
+    /// </summary>
+    double PlaybackRate { get; }
+
+    /// <summary>
+    ///     Sets the playback speed for this session. It is not persisted.
+    /// </summary>
+    Task SetPlaybackRateAsync(double rate);
 
     /// <summary>
     ///     Enables or disables shuffle mode and persists the setting.

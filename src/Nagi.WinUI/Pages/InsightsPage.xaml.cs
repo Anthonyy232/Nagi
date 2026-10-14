@@ -29,7 +29,6 @@ public sealed partial class InsightsPage : Page
         try
         {
             base.OnNavigatedTo(e);
-            _logger.LogDebug("Navigated to InsightsPage.");
             await ViewModel.LoadInsightsAsync();
         }
         catch (Exception ex)
@@ -41,11 +40,8 @@ public sealed partial class InsightsPage : Page
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogDebug("Navigating away from InsightsPage.");
         ViewModel.CloseSeeAllCommand.Execute(null);
     }
-
-    // ── See All: open ──
 
     private void OnSeeAllSongsClick(object sender, RoutedEventArgs e) =>
         ViewModel.OpenSeeAllSongsCommand.Execute(null);
@@ -58,8 +54,6 @@ public sealed partial class InsightsPage : Page
 
     private void OnSeeAllGenresClick(object sender, RoutedEventArgs e) =>
         ViewModel.OpenSeeAllGenresCommand.Execute(null);
-
-    // ── Sort metric toggles ──
 
     private void OnSongsSortByPlayCountClick(object sender, RoutedEventArgs e) =>
         ViewModel.SongsSortMetric = SortMetric.PlayCount;

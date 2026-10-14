@@ -451,16 +451,16 @@
                                             </InfoBar>
                                             <ListView Grid.Row="2" x:Name="HistoryListView" uihelpers:ScrollEdgeFade.IsEnabled="True" SelectionMode="Single" ItemsSource="{x:Bind ViewModel.History.Entries, Converter={StaticResource IncrementalLoadingConverter}}">
                                                 <ListView.ItemContainerStyleSelector>
-                                                    <uihelpers:RecentHistoryStyleSelector SongStyle="{StaticResource PaddedListViewItemStyle}">
-                                                        <uihelpers:RecentHistoryStyleSelector.HeaderStyle>
+                                                    <uihelpers:HeaderedListStyleSelector SongStyle="{StaticResource PaddedListViewItemStyle}">
+                                                        <uihelpers:HeaderedListStyleSelector.HeaderStyle>
                                                             <Style TargetType="ListViewItem">
                                                                 <Setter Property="MinHeight" Value="0" />
                                                                 <Setter Property="Padding" Value="12,16,12,8" />
                                                                 <Setter Property="IsHitTestVisible" Value="False" />
                                                                 <Setter Property="IsTabStop" Value="False" />
                                                             </Style>
-                                                        </uihelpers:RecentHistoryStyleSelector.HeaderStyle>
-                                                    </uihelpers:RecentHistoryStyleSelector>
+                                                        </uihelpers:HeaderedListStyleSelector.HeaderStyle>
+                                                    </uihelpers:HeaderedListStyleSelector>
                                                 </ListView.ItemContainerStyleSelector>
                                                 <ListView.Footer>
                                                     <ProgressRing Width="16" Height="16" Margin="0,8" IsHitTestVisible="False" HorizontalAlignment="Center"
@@ -468,13 +468,13 @@
                                                                   Visibility="{x:Bind ViewModel.History.ShowMoreLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                                 </ListView.Footer>
                                                 <ListView.ItemTemplateSelector>
-                                                    <uihelpers:RecentHistoryTemplateSelector>
-                                                        <uihelpers:RecentHistoryTemplateSelector.HeaderTemplate>
+                                                    <uihelpers:HeaderedListTemplateSelector>
+                                                        <uihelpers:HeaderedListTemplateSelector.HeaderTemplate>
                                                             <DataTemplate x:DataType="uiModels:RecentListenDateHeader">
                                                                 <TextBlock Text="{x:Bind Title}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                                                             </DataTemplate>
-                                                        </uihelpers:RecentHistoryTemplateSelector.HeaderTemplate>
-                                                        <uihelpers:RecentHistoryTemplateSelector.SongTemplate>
+                                                        </uihelpers:HeaderedListTemplateSelector.HeaderTemplate>
+                                                        <uihelpers:HeaderedListTemplateSelector.SongTemplate>
                                                             <DataTemplate x:DataType="uiModels:RecentListenEntry">
                                                                 <Grid Background="Transparent" Tag="{x:Bind}" DoubleTapped="HistoryEntry_DoubleTapped"
                                                                       ToolTipService.ToolTip="{x:Bind Title}">
@@ -495,8 +495,8 @@
                                                                     <TextBlock Grid.Column="1" Text="{x:Bind TimeText}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                                                                 </Grid>
                                                             </DataTemplate>
-                                                        </uihelpers:RecentHistoryTemplateSelector.SongTemplate>
-                                                    </uihelpers:RecentHistoryTemplateSelector>
+                                                        </uihelpers:HeaderedListTemplateSelector.SongTemplate>
+                                                    </uihelpers:HeaderedListTemplateSelector>
                                                 </ListView.ItemTemplateSelector>
                                             </ListView>
                                             <TextBlock Grid.Row="2" Text="{x:Bind ViewModel.History.EmptyStateText, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind ViewModel.History.ShowEmptyState, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
@@ -825,7 +825,7 @@
 
                         <Grid Grid.Column="1" Margin="0,0,8,0">
                             <TextBox x:Name="SeeAllSearchTextBox"
-                                     PlaceholderText="{x:Bind resources:Strings.FolderSongViewPage_SearchBox_Placeholder, Mode=OneTime}"
+                                     PlaceholderText="{x:Bind resources:Strings.InsightsPage_SeeAll_SearchBox_Placeholder, Mode=OneTime}"
                                      Style="{StaticResource SearchTextBoxStyle}"
                                      Width="0"
                                      Opacity="0"
@@ -841,7 +841,8 @@
                             </TextBox>
 
                             <Button x:Name="SeeAllSearchToggleButton"
-                                    ToolTipService.ToolTip="{x:Bind resources:Strings.FolderSongViewPage_SearchButton_ToolTip, Mode=OneTime}"
+                                    ToolTipService.ToolTip="{x:Bind resources:Strings.InsightsPage_SeeAll_SearchButton_ToolTip, Mode=OneTime}"
+                                    AutomationProperties.Name="{x:Bind resources:Strings.InsightsPage_SeeAll_SearchButton_ToolTip, Mode=OneTime}"
                                     Click="OnSeeAllSearchToggleButtonClick"
                                     Style="{StaticResource SongListViewPageIconButton}"
                                     HorizontalAlignment="Right"
