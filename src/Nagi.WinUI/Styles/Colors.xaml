@@ -60,7 +60,6 @@
     <Thickness x:Key="PageContentPadding">24,0,24,0</Thickness>
 
     <x:Double x:Key="SearchBoxExpandedWidth">300</x:Double>
-    <x:Double x:Key="SearchBoxExpandedWidthLarge">360</x:Double>
 
     <Thickness x:Key="SectionHeaderMargin">0,0,0,16</Thickness>
     <Thickness x:Key="CollectionCardMargin">8,16,8,16</Thickness>
