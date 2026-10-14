@@ -1236,9 +1236,6 @@ Apakah Anda ingin melanjutkan?</value>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cari dalam folder…</value>
   </data>
-  <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cari di folder</value>
-  </data>
   <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Putar semua</value>
   </data>

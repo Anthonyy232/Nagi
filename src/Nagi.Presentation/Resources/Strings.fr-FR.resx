@@ -1236,9 +1236,6 @@ Voulez-vous continuer ?</value>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Rechercher dans le dossier…</value>
   </data>
-  <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Rechercher dans le dossier</value>
-  </data>
   <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Tout lire</value>
   </data>

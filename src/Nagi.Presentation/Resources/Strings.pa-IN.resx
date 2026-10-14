@@ -1236,9 +1236,6 @@
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ਫੋਲਡਰ ਵਿੱਚ ਖੋਜੋ…</value>
   </data>
-  <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ਫੋਲਡਰ ਵਿੱਚ ਖੋਜੋ</value>
-  </data>
   <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>ਸਾਰੇ ਚਲਾਓ</value>
   </data>

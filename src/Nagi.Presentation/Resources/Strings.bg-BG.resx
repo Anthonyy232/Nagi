@@ -1236,9 +1236,6 @@
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Търсене в папката…</value>
   </data>
-  <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Търсене в папка</value>
-  </data>
   <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Пусни всички</value>
   </data>

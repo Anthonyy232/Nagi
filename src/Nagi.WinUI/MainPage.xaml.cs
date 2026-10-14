@@ -106,6 +106,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private readonly IDispatcherService _dispatcherService;
     private readonly ILogger<MainPage> _logger;
+    private readonly CollapsibleSearch _seeAllSearch;
 
     private readonly Dictionary<string, Type> _pages = new()
     {
@@ -157,6 +158,9 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
         InitializeComponent();
         DataContext = ViewModel;
+        _seeAllSearch = new CollapsibleSearch(this, SeeAllSearchToggleButton, SeeAllSearchTextBox,
+            Strings.InsightsPage_SeeAll_SearchButton_ToolTip, "SeeAllSearchExpanded", "SeeAllSearchCollapsed",
+            () => InsightsVm.SearchTerm = string.Empty);
 
         navigationService.Initialize(ContentFrame);
         _hoverTimer.Tick += OnHoverTimerTick;
@@ -748,44 +752,20 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private void OnCloseSeeAll(object sender, RoutedEventArgs e)
     {
-        VisualStateManager.GoToState(this, "SeeAllSearchCollapsed", false);
+        _seeAllSearch.SetExpanded(false);
         InsightsVm.CloseSeeAllCommand.Execute(null);
     }
 
     private void OnSeeAllPanelTapped(object sender, TappedRoutedEventArgs e) =>
         e.Handled = true;
 
-    private void OnSeeAllSearchToggleButtonClick(object sender, RoutedEventArgs e)
-    {
-        if (SeeAllSearchStates.CurrentState?.Name == "SeeAllSearchExpanded")
-            CollapseSeeAllSearch();
-        else
-        {
-            VisualStateManager.GoToState(this, "SeeAllSearchExpanded", false);
-            SeeAllSearchTextBox.Focus(FocusState.Programmatic);
-        }
-    }
+    private void OnSeeAllSearchToggleButtonClick(object sender, RoutedEventArgs e) => _seeAllSearch.Toggle();
 
-    private void CollapseSeeAllSearch()
-    {
-        InsightsVm.SearchTerm = string.Empty;
-        VisualStateManager.GoToState(this, "SeeAllSearchCollapsed", false);
-        SeeAllSearchToggleButton.Focus(FocusState.Programmatic);
-    }
+    private void OnSeeAllSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e) => _seeAllSearch.HandleKeyDown(e);
 
     private void OnSeeAllSortByPlayCountClick(object sender, RoutedEventArgs e) =>
         InsightsVm.SetCurrentCategoryMetric(SortMetric.PlayCount);
 
     private void OnSeeAllSortByDurationClick(object sender, RoutedEventArgs e) =>
         InsightsVm.SetCurrentCategoryMetric(SortMetric.Duration);
-
-    private void OnSeeAllSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
-    {
-        if (e.Key == VirtualKey.Escape)
-        {
-            CollapseSeeAllSearch();
-            e.Handled = true;
-        }
-    }
-
 }

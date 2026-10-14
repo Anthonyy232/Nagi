@@ -1236,9 +1236,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cuardaigh sa fhillteán…</value>
   </data>
-  <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cuardaigh san fhillteán</value>
-  </data>
   <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Seinn uile</value>
   </data>

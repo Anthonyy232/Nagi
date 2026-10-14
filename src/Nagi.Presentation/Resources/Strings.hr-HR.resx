@@ -1236,9 +1236,6 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Traži u mapi…</value>
   </data>
-  <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Pretraži u mapi</value>
-  </data>
   <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Reproduciraj sve</value>
   </data>

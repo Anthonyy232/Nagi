@@ -1236,9 +1236,6 @@ Chcete pokračovať?</value>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať v priečinku…</value>
   </data>
-  <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Vyhľadať v priečinku</value>
-  </data>
   <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Prehrať všetky</value>
   </data>

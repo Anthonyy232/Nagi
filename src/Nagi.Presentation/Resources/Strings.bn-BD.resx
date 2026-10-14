@@ -1236,9 +1236,6 @@
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ফোল্ডারে খুঁজুন…</value>
   </data>
-  <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ফোল্ডারে অনুসন্ধান করুন</value>
-  </data>
   <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>সব চালান</value>
   </data>

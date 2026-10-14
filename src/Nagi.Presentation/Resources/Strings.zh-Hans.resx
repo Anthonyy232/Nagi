@@ -1236,9 +1236,6 @@
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>在文件夹中搜索……</value>
   </data>
-  <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>在文件夹中搜索</value>
-  </data>
   <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>播放全部</value>
   </data>

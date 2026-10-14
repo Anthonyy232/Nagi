@@ -1236,9 +1236,6 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Buscar en la carpeta…</value>
   </data>
-  <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Buscar en carpeta</value>
-  </data>
   <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Reproducir todo</value>
   </data>

@@ -1236,9 +1236,6 @@ Bạn có muốn tiếp tục không?</value>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tìm kiếm trong thư mục…</value>
   </data>
-  <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Tìm trong thư mục</value>
-  </data>
   <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Phát tất cả</value>
   </data>
