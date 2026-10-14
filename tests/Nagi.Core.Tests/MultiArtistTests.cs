@@ -279,6 +279,7 @@ public class MultiArtistTests : IDisposable
             Substitute.For<ILibraryReader>(),
             Substitute.For<ILibraryWriter>(),
             _metadataService,
+            Substitute.For<IFileSystemService>(),
             Substitute.For<ILogger<MusicPlaybackService>>()
         );
 

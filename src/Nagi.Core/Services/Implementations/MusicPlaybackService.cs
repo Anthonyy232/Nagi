@@ -14,6 +14,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     private readonly ILibraryWriter _libraryWriter;
     private readonly ILogger<MusicPlaybackService> _logger;
     private readonly IMetadataService _metadataService;
+    private readonly IFileSystemService _fileSystem;
     private readonly ISettingsService _settingsService;
     private readonly object _pendingOperationsLock = new();
 
@@ -39,8 +40,10 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         ILibraryReader libraryReader,
         ILibraryWriter libraryWriter,
         IMetadataService metadataService,
+        IFileSystemService fileSystem,
         ILogger<MusicPlaybackService> logger, TimeProvider? timeProvider = null)
     {
+        _fileSystem = fileSystem;
         _settingsService = settingsService;
         _audioPlayer = audioPlayer;
         _mediaControls = mediaControls;

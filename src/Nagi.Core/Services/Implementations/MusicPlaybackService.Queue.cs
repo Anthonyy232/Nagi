@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Constants;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Data;
 
@@ -34,22 +35,32 @@ public partial class MusicPlaybackService
 
     }
 
-    public Task AddTransientFilesToQueueAsync(IEnumerable<string> filePaths)
+    public Task AddTransientFilesToQueueAsync(IEnumerable<string> paths)
     {
         if (_isDisposed) return Task.CompletedTask;
-        var task = AddTransientFilesInternalAsync(filePaths);
+        var task = AddTransientFilesInternalAsync(paths);
         TrackPendingOperation(task);
         return task;
     }
 
-    private async Task AddTransientFilesInternalAsync(IEnumerable<string> filePaths)
+    private List<string> ExpandToAudioFiles(IEnumerable<string> paths) => paths
+        .SelectMany(path => _fileSystem.DirectoryExists(path)
+            ? _fileSystem.EnumerateFiles(path, "*", SearchOption.AllDirectories).Order(StringComparer.OrdinalIgnoreCase)
+            : (IEnumerable<string>)[path])
+        .Where(file => FileExtensions.MusicFileExtensions.Contains(Path.GetExtension(file)))
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .ToList();
+
+    private async Task AddTransientFilesInternalAsync(IEnumerable<string> inputPaths)
     {
         var queueVersion = _queueVersion;
         var request = _playbackRequestVersion;
-        var paths = filePaths?
-            .Where(path => !string.IsNullOrWhiteSpace(path))
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToList() ?? [];
+        var requested = inputPaths?.Where(path => !string.IsNullOrWhiteSpace(path)).ToList() ?? [];
+        // Walking a folder can touch many files, so only that goes to the thread pool; plain files
+        // stay in call order with other adds.
+        var paths = requested.Any(_fileSystem.DirectoryExists)
+            ? await Task.Run(() => ExpandToAudioFiles(requested))
+            : ExpandToAudioFiles(requested);
         if (paths.Count == 0) return;
 
         var songs = new List<(Song Song, bool Transient)>(paths.Count);

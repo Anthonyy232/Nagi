@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Storage;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -14,7 +13,6 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using Nagi.Core.Constants;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
@@ -254,12 +252,10 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         var deferral = e.GetDeferral();
         try
         {
-            var paths = new List<string>();
             var items = await e.DataView.GetStorageItemsAsync();
-            foreach (var item in items.OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase))
-                await CollectMusicFilesAsync(item, paths);
-
-            await ViewModel.AddFilesToQueueAsync(paths);
+            await ViewModel.AddFilesToQueueAsync(items
+                .OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase)
+                .Select(item => item.Path));
         }
         catch (Exception ex)
         {
@@ -268,28 +264,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         finally
         {
             deferral.Complete();
-        }
-    }
-
-    private async Task CollectMusicFilesAsync(IStorageItem item, List<string> paths)
-    {
-        if (item is StorageFile file)
-        {
-            if (FileExtensions.MusicFileExtensions.Contains(file.FileType)) paths.Add(file.Path);
-            return;
-        }
-
-        if (item is not StorageFolder folder) return;
-
-        try
-        {
-            var children = await folder.GetItemsAsync();
-            foreach (var child in children.OrderBy(child => child.Name, StringComparer.OrdinalIgnoreCase))
-                await CollectMusicFilesAsync(child, paths);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Could not read dropped folder {FolderPath}.", folder.Path);
         }
     }
 

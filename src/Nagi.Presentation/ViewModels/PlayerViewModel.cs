@@ -537,8 +537,8 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         }
     }
 
-    public Task AddFilesToQueueAsync(IEnumerable<string> filePaths) =>
-        _playbackService.AddTransientFilesToQueueAsync(filePaths);
+    public Task AddFilesToQueueAsync(IEnumerable<string> paths) =>
+        _playbackService.AddTransientFilesToQueueAsync(paths);
 
     public string VolumeIconGlyph => IsMuted || CurrentVolume == 0
         ? MuteIconGlyph

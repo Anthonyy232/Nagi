@@ -182,9 +182,10 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     Task PlayTransientFileAsync(string filePath);
 
     /// <summary>
-    ///     Adds files that are not necessarily in the library to the end of the queue.
+    ///     Adds audio files that are not necessarily in the library to the end of the queue. A folder
+    ///     adds the audio files inside it, including subfolders, in path order.
     /// </summary>
-    Task AddTransientFilesToQueueAsync(IEnumerable<string> filePaths);
+    Task AddTransientFilesToQueueAsync(IEnumerable<string> paths);
 
     /// <summary>
     ///     Resolves library and transient tracks for queue display.
