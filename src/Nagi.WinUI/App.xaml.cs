@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 using Microsoft.Extensions.Configuration;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.UI.Dispatching;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services;
@@ -36,6 +38,7 @@ public partial class App : Application
     private bool _isProcessingFileQueue;
     private bool _coreServicesInitialized;
     private volatile bool _hasExternalActivation;
+    private JumpListTask _pendingJumpListTask;
     private bool _isReportingCrash;
     private ILogger<App>? _logger;
     private Window? _window;
@@ -124,6 +127,7 @@ public partial class App : Application
             _ = ProcessFileActivationQueueAsync();
 
             await HandleWindowActivationAsync(isStartupLaunch);
+            await RunPendingJumpListTaskAsync();
 
             EnqueuePostLaunchTasks();
         }
@@ -150,7 +154,10 @@ public partial class App : Application
         }
         else if (args.Kind == ActivationKind.Launch)
         {
-            filePath = Program.TryGetFilePathFromArgs(Environment.GetCommandLineArgs()[1..]);
+            var commandLineArgs = Environment.GetCommandLineArgs()[1..];
+            filePath = Program.TryGetFilePathFromArgs(commandLineArgs);
+            _pendingJumpListTask = JumpListTasks.Parse(commandLineArgs);
+            if (_pendingJumpListTask != JumpListTask.None) _hasExternalActivation = true;
         }
 
         if (!string.IsNullOrEmpty(filePath))
@@ -164,10 +171,11 @@ public partial class App : Application
     ///     Handles an activation request from an external source (e.g., a secondary instance).
     ///     This method orchestrates file queuing and window activation logic on the UI thread.
     /// </summary>
-    public void HandleExternalActivation(string? filePath)
+    internal void HandleExternalActivation(string? filePath, JumpListTask jumpListTask)
     {
         _hasExternalActivation = true;
         if (!string.IsNullOrEmpty(filePath)) _fileActivationQueue.Enqueue(filePath);
+        if (jumpListTask != JumpListTask.None) _pendingJumpListTask = jumpListTask;
         MainDispatcherQueue?.TryEnqueue(() =>
         {
             if (!_coreServicesInitialized || _isExiting) return;
@@ -178,20 +186,54 @@ public partial class App : Application
             {
                 var windowService = Services!.GetRequiredService<IWindowService>();
 
-                // If a file path is provided and we are already in the mini-player, we just
-                // play the file without disrupting the mini-player view.
-                if (!string.IsNullOrEmpty(filePath) && windowService.IsMiniPlayerActive)
-                {
-                    return;
-                }
-
-                windowService.ShowAndActivate();
+                // The mini-player task replaces the main window, and a file opened while the
+                // mini-player is up plays there without disrupting it.
+                var staysInMiniPlayer = jumpListTask == JumpListTask.MiniPlayer ||
+                                        (!string.IsNullOrEmpty(filePath) && windowService.IsMiniPlayerActive);
+                if (!staysInMiniPlayer) windowService.ShowAndActivate();
+                _ = RunPendingJumpListTaskAsync();
             }
             catch (Exception ex)
             {
                 _logger?.LogError(ex, "HandleExternalActivation: Exception during window activation");
             }
         });
+    }
+
+    private async Task RegisterJumpListAsync(bool includeMiniPlayer)
+    {
+        try
+        {
+            if (!_isExiting) await JumpListTasks.RegisterAsync(includeMiniPlayer);
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex, "Failed to register the taskbar jump list");
+        }
+    }
+
+    private async Task RunPendingJumpListTaskAsync()
+    {
+        if (!_coreServicesInitialized || _isExiting) return;
+        var task = Interlocked.Exchange(ref _pendingJumpListTask, JumpListTask.None);
+
+        try
+        {
+            switch (task)
+            {
+                case JumpListTask.MiniPlayer:
+                    // Minimizing swaps in the mini-player, the same as the window's own minimize button.
+                    if (_window?.AppWindow.Presenter is OverlappedPresenter presenter) presenter.Minimize();
+                    break;
+                case JumpListTask.ShuffleAll:
+                    await Services!.GetRequiredService<IMusicPlaybackService>().ShuffleLibraryAsync();
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex, "Failed to run jump list task {JumpListTask}", task);
+        }
     }
 
     private async Task ProcessFileActivationQueueAsync()
@@ -426,6 +468,16 @@ public partial class App : Application
             {
                 _logger?.LogError(ex, "Failed to initialize System Media Transport Controls");
             }
+        });
+
+        MainDispatcherQueue?.TryEnqueue(DispatcherQueuePriority.Low, async () =>
+        {
+            if (_isExiting || Services is null) return;
+            var uiSettings = Services.GetRequiredService<IUISettingsService>();
+            // The mini-player only exists while "Minimize to Mini-Player" is on, so the task follows it.
+            uiSettings.MinimizeToMiniPlayerSettingChanged += enabled =>
+                MainDispatcherQueue?.TryEnqueue(() => _ = RegisterJumpListAsync(enabled));
+            await RegisterJumpListAsync(await uiSettings.GetMinimizeToMiniPlayerEnabledAsync());
         });
     }
 

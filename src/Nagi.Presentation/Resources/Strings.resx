@@ -2284,6 +2284,14 @@ Do you want to continue?</value>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>Stop Playback</value>
   </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>Shuffle All Songs</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>Open Mini-Player</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
   <data name="Listening_PlaybackSpeed" xml:space="preserve">
     <value>Playback Speed</value>
   </data>

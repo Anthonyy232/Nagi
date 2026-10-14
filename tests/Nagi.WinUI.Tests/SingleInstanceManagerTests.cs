@@ -7,18 +7,18 @@ namespace Nagi.WinUI.Tests;
 public class SingleInstanceManagerTests
 {
     [Fact]
-    public async Task SecondaryActivation_WaitsForListenerAndDeliversFile()
+    public async Task SecondaryActivation_WaitsForListenerAndDeliversFileAndTask()
     {
         var instanceId = Guid.NewGuid().ToString("N");
         using var primary = new SingleInstanceManager(instanceId: instanceId);
         using var secondary = new SingleInstanceManager(instanceId: instanceId);
-        var received = new TaskCompletionSource<string?>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var send = secondary.SendActivationAsync("C:\\Music\\song.mp3");
+        var received = new TaskCompletionSource<(string?, JumpListTask)>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var send = secondary.SendActivationAsync("C:\\Music\\song.mp3", JumpListTask.MiniPlayer);
 
-        primary.StartListening(path => received.TrySetResult(path));
+        primary.StartListening((path, task) => received.TrySetResult((path, task)));
 
         (await send.WaitAsync(TimeSpan.FromSeconds(5))).Should().BeTrue();
-        (await received.Task.WaitAsync(TimeSpan.FromSeconds(5))).Should().Be("C:\\Music\\song.mp3");
+        (await received.Task.WaitAsync(TimeSpan.FromSeconds(5))).Should().Be(("C:\\Music\\song.mp3", JumpListTask.MiniPlayer));
     }
 
     [Fact]

@@ -171,6 +171,11 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     Task PlayGenreAsync(Guid genreId);
 
     /// <summary>
+    ///     Creates a shuffled queue from the whole library and starts playback.
+    /// </summary>
+    Task ShuffleLibraryAsync();
+
+    /// <summary>
     ///     Plays a single audio file directly from its path, clearing the current queue.
     ///     The file does not need to be in the library.
     /// </summary>

@@ -573,6 +573,13 @@ public partial class MusicPlaybackService : IMusicPlaybackService
             await PlayInternalAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.Genre, genreId), request);
     });
 
+    public Task ShuffleLibraryAsync() => RunPlaybackRequest(async request =>
+    {
+        var songIds = await _libraryReader.GetAllSongIdsAsync(SongSortOrder.TitleAsc);
+        if (IsCurrentRequest(request))
+            await PlayInternalAsync(songIds, 0, true, new PlaybackContext(PlaybackContextType.Library, null), request);
+    });
+
     public async Task SetVolumeAsync(double volume)
     {
         await _audioPlayer.SetVolumeAsync(volume);

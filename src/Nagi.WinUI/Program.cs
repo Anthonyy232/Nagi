@@ -22,7 +22,7 @@ public static class Program
         {
             using var activationTimeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
             singleInstanceManager
-                .SendActivationAsync(TryGetFilePathFromArgs(args), activationTimeout.Token)
+                .SendActivationAsync(TryGetFilePathFromArgs(args), JumpListTasks.Parse(args), activationTimeout.Token)
                 .GetAwaiter()
                 .GetResult();
             return 0;
