@@ -21,10 +21,9 @@ using Microsoft.UI.Xaml.Media;
 
 namespace Nagi.WinUI.Pages;
 
-public sealed partial class ArtistViewPage : Page
+public sealed partial class ArtistViewPage : SearchablePage
 {
     private readonly ILogger<ArtistViewPage> _logger;
-    private bool _isSearchExpanded;
     private bool _isUpdatingSelection;
     private bool _isUpdatingAlbumsLayout;
     private bool _pendingLayoutUpdate;
@@ -38,11 +37,11 @@ public sealed partial class ArtistViewPage : Page
         ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<ArtistViewViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<ArtistViewPage>>();
         DataContext = ViewModel;
+        InitializeSearch(ViewModel, SearchToggleButton, SearchTextBox, Strings.ArtistViewPage_SearchButton_Search_ToolTip);
 
         Loaded += OnNowPlayingBinderAttach;
         Unloaded += OnNowPlayingBinderDetach;
 
-        Loaded += OnPageLoaded;
 
         SongsListView.Loaded += OnSongsListViewLoaded;
 
@@ -108,61 +107,6 @@ public sealed partial class ArtistViewPage : Page
             _songsScrollViewer.ViewChanged -= OnSongsScrollViewerViewChanged;
         }
         ViewModel.Dispose();
-    }
-
-    private void OnPageLoaded(object sender, RoutedEventArgs e)
-    {
-        _logger.LogDebug("ArtistViewPage loaded. Setting initial visual state.");
-        VisualStateManager.GoToState(this, "SearchCollapsed", false);
-        Loaded -= OnPageLoaded;
-    }
-
-    private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e)
-    {
-        if (_isSearchExpanded)
-        {
-            _logger.LogDebug("Collapsing search box.");
-            CollapseSearch();
-        }
-        else
-        {
-            _logger.LogDebug("Expanding search box.");
-            ExpandSearch();
-        }
-    }
-
-    private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
-    {
-        if (e.Key == VirtualKey.Escape)
-        {
-            _logger.LogDebug("Escape key pressed in search box. Collapsing search.");
-            CollapseSearch();
-            e.Handled = true;
-        }
-    }
-
-    private void ExpandSearch()
-    {
-        if (_isSearchExpanded) return;
-
-        _isSearchExpanded = true;
-        _logger.LogDebug("Search UI expanded.");
-        ToolTipService.SetToolTip(SearchToggleButton, Strings.ArtistViewPage_SearchButton_Close_ToolTip);
-        VisualStateManager.GoToState(this, "SearchExpanded", false);
-        SearchTextBox.Focus(FocusState.Programmatic);
-    }
-
-    private void CollapseSearch()
-    {
-        if (!_isSearchExpanded) return;
-
-        _isSearchExpanded = false;
-
-        _logger.LogDebug("Search UI collapsed and search term cleared.");
-        ToolTipService.SetToolTip(SearchToggleButton, Strings.ArtistViewPage_SearchButton_Search_ToolTip);
-        VisualStateManager.GoToState(this, "SearchCollapsed", false);
-        SearchToggleButton.Focus(FocusState.Programmatic);
-        ViewModel.SearchTerm = string.Empty;
     }
 
     private void AlbumGridView_ItemClick(object sender, ItemClickEventArgs e)

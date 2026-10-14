@@ -704,14 +704,8 @@
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>아티스트 바이오그래피 및 이미지 (대체)</value>
   </data>
-  <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>검색 닫기</value>
-  </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>앨범 검색</value>
-  </data>
-  <data name="AlbumViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>검색 닫기</value>
   </data>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>앨범에서 검색</value>
@@ -719,14 +713,8 @@
   <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>사용 가능한 재생 목록 없음</value>
   </data>
-  <data name="ArtistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>검색 닫기</value>
-  </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>아티스트 검색</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>검색 닫기</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>아티스트에서 검색</value>
@@ -749,32 +737,20 @@
   <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
     <value>알 수 없는 폴더</value>
   </data>
-  <data name="FolderSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>검색 닫기</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>폴더에서 검색</value>
   </data>
   <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>사용 가능한 재생 목록 없음</value>
   </data>
-  <data name="GenrePage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>검색 닫기</value>
-  </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>장르 검색</value>
-  </data>
-  <data name="LibraryPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>검색 닫기</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>라이브러리 검색</value>
   </data>
   <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>사용 가능한 재생 목록 없음</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>검색 닫기</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>재생 목록 검색</value>
@@ -809,14 +785,8 @@
   <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
     <value>삭제</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>검색 닫기</value>
-  </data>
   <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>재생 목록에서 검색</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>검색 닫기</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>장르에서 검색</value>
@@ -826,9 +796,6 @@
   </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
     <value>알 수 없는 재생 목록</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>검색 닫기</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>스마트 재생 목록에서 검색</value>
@@ -2369,5 +2336,8 @@
   </data>
   <data name="Listening_NoTimedMixDescription" xml:space="preserve">
     <value>이 목록의 곡 중 믹스 요건을 충족하고 선택한 시간 내에 맞는 곡이 없습니다. 더 긴 시간을 설정하거나 다른 믹스 또는 다른 곡 목록을 시도해 보세요.</value>
+  </data>
+  <data name="Generic_CloseSearch" xml:space="preserve">
+    <value>검색 닫기</value>
   </data>
 </root>

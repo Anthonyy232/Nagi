@@ -704,14 +704,8 @@ File che non è stato possibile importare: {0}.</value>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Biografie e immagini artista (fallback)</value>
   </data>
-  <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Chiudi ricerca</value>
-  </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cerca album</value>
-  </data>
-  <data name="AlbumViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Chiudi ricerca</value>
   </data>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cerca nell'album</value>
@@ -719,14 +713,8 @@ File che non è stato possibile importare: {0}.</value>
   <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Nessuna playlist disponibile</value>
   </data>
-  <data name="ArtistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Chiudi ricerca</value>
-  </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cerca artisti</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Chiudi ricerca</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cerca nell'artista</value>
@@ -749,32 +737,20 @@ File che non è stato possibile importare: {0}.</value>
   <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
     <value>Cartella Sconosciuta</value>
   </data>
-  <data name="FolderSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Chiudi ricerca</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cerca nella cartella</value>
   </data>
   <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Nessuna playlist disponibile</value>
   </data>
-  <data name="GenrePage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Chiudi ricerca</value>
-  </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cerca generi</value>
-  </data>
-  <data name="LibraryPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Chiudi ricerca</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cerca nella libreria</value>
   </data>
   <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Nessuna playlist disponibile</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Chiudi ricerca</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cerca playlist</value>
@@ -809,14 +785,8 @@ File che non è stato possibile importare: {0}.</value>
   <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
     <value>Elimina</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Chiudi ricerca</value>
-  </data>
   <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cerca nella playlist</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Chiudi ricerca</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cerca nel genere</value>
@@ -826,9 +796,6 @@ File che non è stato possibile importare: {0}.</value>
   </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
     <value>Playlist Sconosciuta</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Chiudi ricerca</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cerca nella playlist intelligente</value>
@@ -2369,5 +2336,8 @@ Vuoi continuare?</value>
   </data>
   <data name="Listening_NoTimedMixDescription" xml:space="preserve">
     <value>Nessun brano in questo elenco soddisfa i requisiti del mix e la durata scelta. Prova con una durata maggiore, un altro mix o un altro elenco di brani.</value>
+  </data>
+  <data name="Generic_CloseSearch" xml:space="preserve">
+    <value>Chiudi ricerca</value>
   </data>
 </root>

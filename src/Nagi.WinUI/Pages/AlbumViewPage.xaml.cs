@@ -41,10 +41,9 @@ public class DiscGroupStyleSelector : StyleSelector
     }
 }
 
-public sealed partial class AlbumViewPage : Page
+public sealed partial class AlbumViewPage : SearchablePage
 {
     private readonly ILogger<AlbumViewPage> _logger;
-    private bool _isSearchExpanded;
     private bool _isUpdatingSelection;
     private readonly Microsoft.UI.Dispatching.DispatcherQueue _dispatcherQueue;
     private NowPlayingIndicatorBinder? _flatBinder;
@@ -57,11 +56,11 @@ public sealed partial class AlbumViewPage : Page
         ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<AlbumViewViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<AlbumViewPage>>();
         DataContext = ViewModel;
+        InitializeSearch(ViewModel, SearchToggleButton, SearchTextBox, Strings.AlbumViewPage_SearchButton_Search_ToolTip);
 
         Loaded += OnNowPlayingBinderAttach;
         Unloaded += OnNowPlayingBinderDetach;
 
-        Loaded += OnPageLoaded;
         _logger.LogDebug("AlbumViewPage initialized.");
     }
 
@@ -116,61 +115,6 @@ public sealed partial class AlbumViewPage : Page
         base.OnNavigatedFrom(e);
         _logger.LogDebug("Navigating away from AlbumViewPage. Disposing ViewModel.");
         ViewModel.Dispose();
-    }
-
-    private void OnPageLoaded(object sender, RoutedEventArgs e)
-    {
-        _logger.LogDebug("AlbumViewPage loaded. Setting initial visual state.");
-        VisualStateManager.GoToState(this, "SearchCollapsed", false);
-        Loaded -= OnPageLoaded;
-    }
-
-    private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e)
-    {
-        if (_isSearchExpanded)
-        {
-            _logger.LogDebug("Collapsing search box.");
-            CollapseSearch();
-        }
-        else
-        {
-            _logger.LogDebug("Expanding search box.");
-            ExpandSearch();
-        }
-    }
-
-    private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
-    {
-        if (e.Key == VirtualKey.Escape)
-        {
-            _logger.LogDebug("Escape key pressed in search box. Collapsing search.");
-            CollapseSearch();
-            e.Handled = true;
-        }
-    }
-
-    private void ExpandSearch()
-    {
-        if (_isSearchExpanded) return;
-
-        _isSearchExpanded = true;
-        _logger.LogDebug("Search UI expanded.");
-        ToolTipService.SetToolTip(SearchToggleButton, Strings.AlbumViewPage_SearchButton_Close_ToolTip);
-        VisualStateManager.GoToState(this, "SearchExpanded", false);
-        SearchTextBox.Focus(FocusState.Programmatic);
-    }
-
-    private void CollapseSearch()
-    {
-        if (!_isSearchExpanded) return;
-
-        _isSearchExpanded = false;
-
-        _logger.LogDebug("Search UI collapsed and search term cleared.");
-        ToolTipService.SetToolTip(SearchToggleButton, Strings.AlbumViewPage_SearchButton_Search_ToolTip);
-        VisualStateManager.GoToState(this, "SearchCollapsed", false);
-        SearchToggleButton.Focus(FocusState.Programmatic);
-        ViewModel.SearchTerm = string.Empty;
     }
 
     private void SongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)

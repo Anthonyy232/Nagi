@@ -704,14 +704,8 @@
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>ประวัติและรูปภาพศิลปิน (ตัวสำรอง)</value>
   </data>
-  <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>ปิดการค้นหา</value>
-  </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ค้นหาอัลบั้ม</value>
-  </data>
-  <data name="AlbumViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>ปิดการค้นหา</value>
   </data>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ค้นหาในอัลบั้ม</value>
@@ -719,14 +713,8 @@
   <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>ไม่มีเพลย์ลิสต์</value>
   </data>
-  <data name="ArtistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>ปิดการค้นหา</value>
-  </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ค้นหาศิลปิน</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>ปิดการค้นหา</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ค้นหาในศิลปิน</value>
@@ -749,32 +737,20 @@
   <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
     <value>โฟลเดอร์ไม่ทราบชื่อ</value>
   </data>
-  <data name="FolderSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>ปิดการค้นหา</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ค้นหาในโฟลเดอร์</value>
   </data>
   <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>ไม่มีเพลย์ลิสต์</value>
   </data>
-  <data name="GenrePage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>ปิดการค้นหา</value>
-  </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ค้นหาแนวเพลง</value>
-  </data>
-  <data name="LibraryPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>ปิดการค้นหา</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ค้นหาในคลังเพลง</value>
   </data>
   <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>ไม่มีเพลย์ลิสต์</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>ปิดการค้นหา</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ค้นหาเพลย์ลิสต์</value>
@@ -809,14 +785,8 @@
   <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
     <value>ลบ</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>ปิดการค้นหา</value>
-  </data>
   <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ค้นหาในเพลย์ลิสต์</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>ปิดการค้นหา</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ค้นหาในแนวเพลง</value>
@@ -826,9 +796,6 @@
   </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
     <value>เพลย์ลิสต์ไม่ทราบชื่อ</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>ปิดการค้นหา</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ค้นหาในเพลย์ลิสต์อัจฉริยะ</value>
@@ -2369,5 +2336,8 @@
   </data>
   <data name="Listening_NoTimedMixDescription" xml:space="preserve">
     <value>ไม่มีเพลงในรายการนี้ที่ตรงตามเงื่อนไขการมิกซ์และมีความยาวไม่เกินระยะเวลาที่คุณเลือก ลองเพิ่มระยะเวลา ใช้วิธีการมิกซ์อื่น หรือเลือกรายการเพลงอื่น</value>
+  </data>
+  <data name="Generic_CloseSearch" xml:space="preserve">
+    <value>ปิดการค้นหา</value>
   </data>
 </root>

@@ -17,10 +17,9 @@ using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Pages;
 
-public sealed partial class SmartPlaylistSongViewPage : Page
+public sealed partial class SmartPlaylistSongViewPage : SearchablePage
 {
     private readonly ILogger<SmartPlaylistSongViewPage> _logger;
-    private bool _isSearchExpanded;
     private bool _isUpdatingSelection;
     private readonly Microsoft.UI.Dispatching.DispatcherQueue _dispatcherQueue;
     private NowPlayingIndicatorBinder? _nowPlayingBinder;
@@ -32,11 +31,11 @@ public sealed partial class SmartPlaylistSongViewPage : Page
         ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<SmartPlaylistSongListViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<SmartPlaylistSongViewPage>>();
         DataContext = ViewModel;
+        InitializeSearch(ViewModel, SearchToggleButton, SearchTextBox, Strings.SmartPlaylistSongViewPage_SearchButton_Search_ToolTip);
 
         Loaded += OnNowPlayingBinderAttach;
         Unloaded += OnNowPlayingBinderDetach;
 
-        Loaded += OnPageLoaded;
         _logger.LogDebug("SmartPlaylistSongViewPage initialized.");
     }
 
@@ -94,13 +93,6 @@ public sealed partial class SmartPlaylistSongViewPage : Page
         ViewModel.Dispose();
     }
 
-    private void OnPageLoaded(object sender, RoutedEventArgs e)
-    {
-        _logger.LogDebug("SmartPlaylistSongViewPage loaded. Setting initial visual state.");
-        VisualStateManager.GoToState(this, "SearchCollapsed", false);
-        Loaded -= OnPageLoaded;
-    }
-
     private async void EditRulesButton_Click(object sender, RoutedEventArgs e)
     {
         try
@@ -111,48 +103,6 @@ public sealed partial class SmartPlaylistSongViewPage : Page
         {
             _logger.LogError(ex, "Error opening smart playlist editor");
         }
-    }
-
-    private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e)
-    {
-        if (_isSearchExpanded)
-            CollapseSearch();
-        else
-            ExpandSearch();
-    }
-
-    private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
-    {
-        if (e.Key == VirtualKey.Escape)
-        {
-            _logger.LogDebug("Escape key pressed in search box. Collapsing search.");
-            CollapseSearch();
-            e.Handled = true;
-        }
-    }
-
-    private void ExpandSearch()
-    {
-        if (_isSearchExpanded) return;
-
-        _isSearchExpanded = true;
-        _logger.LogDebug("Search UI expanded.");
-        ToolTipService.SetToolTip(SearchToggleButton, Strings.SmartPlaylistSongViewPage_SearchButton_Close_ToolTip);
-        VisualStateManager.GoToState(this, "SearchExpanded", false);
-        SearchTextBox.Focus(FocusState.Programmatic);
-
-    }
-
-    private void CollapseSearch()
-    {
-        if (!_isSearchExpanded) return;
-
-        _isSearchExpanded = false;
-        _logger.LogDebug("Search UI collapsed and search term cleared.");
-        ToolTipService.SetToolTip(SearchToggleButton, Strings.SmartPlaylistSongViewPage_SearchButton_Search_ToolTip);
-        VisualStateManager.GoToState(this, "SearchCollapsed", false);
-        SearchToggleButton.Focus(FocusState.Programmatic);
-        ViewModel.SearchTerm = string.Empty;
     }
 
     private void SongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)

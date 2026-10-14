@@ -704,14 +704,8 @@ Tiedostoja, joita ei voitu tuoda: {0}.</value>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Artistien elämäkerrat ja kuvat (vararatkaisu)</value>
   </data>
-  <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Sulje haku</value>
-  </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hae albumeista</value>
-  </data>
-  <data name="AlbumViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Sulje haku</value>
   </data>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hae albumista</value>
@@ -719,14 +713,8 @@ Tiedostoja, joita ei voitu tuoda: {0}.</value>
   <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Ei soittolistoja saatavilla</value>
   </data>
-  <data name="ArtistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Sulje haku</value>
-  </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hae artisteista</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Sulje haku</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hae artistista</value>
@@ -749,32 +737,20 @@ Tiedostoja, joita ei voitu tuoda: {0}.</value>
   <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
     <value>Tuntematon kansio</value>
   </data>
-  <data name="FolderSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Sulje haku</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hae kansiosta</value>
   </data>
   <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Ei soittolistoja saatavilla</value>
   </data>
-  <data name="GenrePage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Sulje haku</value>
-  </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hae genreistä</value>
-  </data>
-  <data name="LibraryPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Sulje haku</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hae kirjastosta</value>
   </data>
   <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Ei soittolistoja saatavilla</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Sulje haku</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hae soittolistoista</value>
@@ -809,14 +785,8 @@ Tiedostoja, joita ei voitu tuoda: {0}.</value>
   <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
     <value>Poista</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Sulje haku</value>
-  </data>
   <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hae soittolistasta</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Sulje haku</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Etsi genrestä</value>
@@ -826,9 +796,6 @@ Tiedostoja, joita ei voitu tuoda: {0}.</value>
   </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
     <value>Tuntematon soittolista</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Sulje haku</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hae älykkäästä soittolistasta</value>
@@ -2369,5 +2336,8 @@ Haluatko jatkaa?</value>
   </data>
   <data name="Listening_NoTimedMixDescription" xml:space="preserve">
     <value>Yksikään tämän listan kappale ei täytä miksauksen vaatimuksia ja mahdu valitsemaasi kestoon. Kokeile pidempää kestoa, toista miksausta tai eri kappalelistaa.</value>
+  </data>
+  <data name="Generic_CloseSearch" xml:space="preserve">
+    <value>Sulje haku</value>
   </data>
 </root>

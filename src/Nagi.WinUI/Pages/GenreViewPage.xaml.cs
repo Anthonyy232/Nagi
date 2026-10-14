@@ -19,10 +19,9 @@ using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Pages;
 
-public sealed partial class GenreViewPage : Page
+public sealed partial class GenreViewPage : SearchablePage
 {
     private readonly ILogger<GenreViewPage> _logger;
-    private bool _isSearchExpanded;
     private bool _isUpdatingSelection;
     private readonly Microsoft.UI.Dispatching.DispatcherQueue _dispatcherQueue;
     private NowPlayingIndicatorBinder? _nowPlayingBinder;
@@ -34,11 +33,11 @@ public sealed partial class GenreViewPage : Page
         ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<GenreViewViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<GenreViewPage>>();
         DataContext = ViewModel;
+        InitializeSearch(ViewModel, SearchToggleButton, SearchTextBox, Strings.GenreViewPage_SearchButton_Search_ToolTip);
 
         Loaded += OnNowPlayingBinderAttach;
         Unloaded += OnNowPlayingBinderDetach;
 
-        Loaded += OnPageLoaded;
         _logger.LogDebug("GenreViewPage initialized.");
     }
 
@@ -91,55 +90,6 @@ public sealed partial class GenreViewPage : Page
         base.OnNavigatedFrom(e);
         _logger.LogDebug("Navigating away from GenreViewPage. Disposing ViewModel.");
         ViewModel.Dispose();
-    }
-
-    private void OnPageLoaded(object sender, RoutedEventArgs e)
-    {
-        _logger.LogDebug("GenreViewPage loaded. Setting initial visual state.");
-        VisualStateManager.GoToState(this, "SearchCollapsed", false);
-        Loaded -= OnPageLoaded;
-    }
-
-    private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e)
-    {
-        if (_isSearchExpanded)
-            CollapseSearch();
-        else
-            ExpandSearch();
-    }
-
-    private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
-    {
-        if (e.Key == VirtualKey.Escape)
-        {
-            _logger.LogDebug("Escape key pressed in search box. Collapsing search.");
-            CollapseSearch();
-            e.Handled = true;
-        }
-    }
-
-    private void ExpandSearch()
-    {
-        if (_isSearchExpanded) return;
-
-        _isSearchExpanded = true;
-        _logger.LogDebug("Search UI expanded.");
-        ToolTipService.SetToolTip(SearchToggleButton, Strings.GenreViewPage_SearchButton_Close_ToolTip);
-        VisualStateManager.GoToState(this, "SearchExpanded", false);
-        SearchTextBox.Focus(FocusState.Programmatic);
-
-    }
-
-    private void CollapseSearch()
-    {
-        if (!_isSearchExpanded) return;
-
-        _isSearchExpanded = false;
-        _logger.LogDebug("Search UI collapsed and search term cleared.");
-        ToolTipService.SetToolTip(SearchToggleButton, Strings.GenreViewPage_SearchButton_Search_ToolTip);
-        VisualStateManager.GoToState(this, "SearchCollapsed", false);
-        SearchToggleButton.Focus(FocusState.Programmatic);
-        ViewModel.SearchTerm = string.Empty;
     }
 
     private void SongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)

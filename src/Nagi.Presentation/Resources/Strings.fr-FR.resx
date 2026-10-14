@@ -704,14 +704,8 @@ Fichiers qui n'ont pas pu être importés : {0}.</value>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Biographies et images d'artistes (solution de repli)</value>
   </data>
-  <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Fermer la recherche</value>
-  </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Rechercher des albums</value>
-  </data>
-  <data name="AlbumViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Fermer la recherche</value>
   </data>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Rechercher dans l'album</value>
@@ -719,14 +713,8 @@ Fichiers qui n'ont pas pu être importés : {0}.</value>
   <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Aucune liste de lecture disponible</value>
   </data>
-  <data name="ArtistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Fermer la recherche</value>
-  </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Rechercher des artistes</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Fermer la recherche</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Rechercher dans l'artiste</value>
@@ -749,32 +737,20 @@ Fichiers qui n'ont pas pu être importés : {0}.</value>
   <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
     <value>Dossier inconnu</value>
   </data>
-  <data name="FolderSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Fermer la recherche</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Rechercher dans le dossier</value>
   </data>
   <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Aucune liste de lecture disponible</value>
   </data>
-  <data name="GenrePage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Fermer la recherche</value>
-  </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Rechercher des genres</value>
-  </data>
-  <data name="LibraryPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Fermer la recherche</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Rechercher dans la bibliothèque</value>
   </data>
   <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Aucune liste de lecture disponible</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Fermer la recherche</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Rechercher des listes de lecture</value>
@@ -809,14 +785,8 @@ Fichiers qui n'ont pas pu être importés : {0}.</value>
   <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
     <value>Supprimer</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Fermer la recherche</value>
-  </data>
   <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Rechercher dans la liste de lecture</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Fermer la recherche</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Rechercher dans le genre</value>
@@ -826,9 +796,6 @@ Fichiers qui n'ont pas pu être importés : {0}.</value>
   </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
     <value>Liste de lecture inconnue</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Fermer la recherche</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Rechercher dans la liste de lecture intelligente</value>
@@ -2369,5 +2336,8 @@ Voulez-vous continuer ?</value>
   </data>
   <data name="Listening_NoTimedMixDescription" xml:space="preserve">
     <value>Aucun morceau de cette liste ne répond aux critères du mix tout en respectant la durée choisie. Essayez une durée plus longue, un autre mix ou une autre liste de morceaux.</value>
+  </data>
+  <data name="Generic_CloseSearch" xml:space="preserve">
+    <value>Fermer la recherche</value>
   </data>
 </root>

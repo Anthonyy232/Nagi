@@ -20,10 +20,9 @@ using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Pages;
 
-public sealed partial class FolderSongViewPage : Page
+public sealed partial class FolderSongViewPage : SearchablePage
 {
     private readonly ILogger<FolderSongViewPage> _logger;
-    private bool _isSearchExpanded;
     private bool _isUpdatingSelection;
     private readonly Microsoft.UI.Dispatching.DispatcherQueue _dispatcherQueue;
     private NowPlayingIndicatorBinder? _nowPlayingBinder;
@@ -35,11 +34,11 @@ public sealed partial class FolderSongViewPage : Page
         ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<FolderSongListViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<FolderSongViewPage>>();
         DataContext = ViewModel;
+        InitializeSearch(ViewModel, SearchToggleButton, SearchTextBox, Strings.FolderSongViewPage_SearchButton_Search_ToolTip);
 
         Loaded += OnNowPlayingBinderAttach;
         Unloaded += OnNowPlayingBinderDetach;
 
-        Loaded += OnPageLoaded;
     }
 
     private void OnNowPlayingBinderAttach(object sender, RoutedEventArgs e)
@@ -95,54 +94,10 @@ public sealed partial class FolderSongViewPage : Page
         ViewModel.Dispose();
     }
 
-    private void OnPageLoaded(object sender, RoutedEventArgs e)
-    {
-        VisualStateManager.GoToState(this, "SearchCollapsed", false);
-        Loaded -= OnPageLoaded;
-    }
-
-    private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e)
-    {
-        if (_isSearchExpanded)
-            CollapseSearch();
-        else
-            ExpandSearch();
-    }
-
-    private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
-    {
-        if (e.Key == VirtualKey.Escape)
-        {
-            CollapseSearch();
-            e.Handled = true;
-        }
-    }
-
-    private void ExpandSearch()
-    {
-        if (_isSearchExpanded) return;
-
-        _isSearchExpanded = true;
-        ToolTipService.SetToolTip(SearchToggleButton, Strings.FolderSongViewPage_SearchButton_Close_ToolTip);
-        VisualStateManager.GoToState(this, "SearchExpanded", false);
-        SearchTextBox.Focus(FocusState.Programmatic);
-    }
-
     private void OnBreadcrumbItemClicked(BreadcrumbBar sender, BreadcrumbBarItemClickedEventArgs args)
     {
         if (args.Item is BreadcrumbItem breadcrumb)
             ViewModel.NavigateToBreadcrumbCommand.Execute(breadcrumb);
-    }
-
-    private void CollapseSearch()
-    {
-        if (!_isSearchExpanded) return;
-
-        _isSearchExpanded = false;
-        ToolTipService.SetToolTip(SearchToggleButton, Strings.FolderSongViewPage_SearchButton_Search_ToolTip);
-        VisualStateManager.GoToState(this, "SearchCollapsed", false);
-        SearchToggleButton.Focus(FocusState.Programmatic);
-        ViewModel.SearchTerm = string.Empty;
     }
 
     private async void FolderContentsListView_ItemClick(object sender, ItemClickEventArgs e)

@@ -1,4 +1,5 @@
-<Page
+<pages:SearchablePage
+    xmlns:pages="using:Nagi.WinUI.Pages"
     x:Class="Nagi.WinUI.Pages.LibraryPage"
     NavigationCacheMode="Enabled"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -319,4 +320,4 @@
         </StackPanel>
 
     </Grid>
-</Page>
+</pages:SearchablePage>

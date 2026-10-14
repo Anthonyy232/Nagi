@@ -1,4 +1,5 @@
-<Page
+<pages:SearchablePage
+    xmlns:pages="using:Nagi.WinUI.Pages"
     x:Class="Nagi.WinUI.Pages.PlaylistPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
@@ -293,4 +294,4 @@
             </StackPanel>
         </Grid>
     </Grid>
-</Page>
+</pages:SearchablePage>

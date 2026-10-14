@@ -704,14 +704,8 @@ Datoteke koje nije bilo moguće uvesti: {0}.</value>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Biografije i slike izvođača (rezervno)</value>
   </data>
-  <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zatvori pretraživanje</value>
-  </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Pretraži albume</value>
-  </data>
-  <data name="AlbumViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zatvori pretraživanje</value>
   </data>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Pretraži u albumu</value>
@@ -719,14 +713,8 @@ Datoteke koje nije bilo moguće uvesti: {0}.</value>
   <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Nema dostupnih popisa pjesama</value>
   </data>
-  <data name="ArtistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zatvori pretraživanje</value>
-  </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Pretraži izvođače</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zatvori pretraživanje</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Pretraži kod izvođača</value>
@@ -749,32 +737,20 @@ Datoteke koje nije bilo moguće uvesti: {0}.</value>
   <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
     <value>Nepoznata mapa</value>
   </data>
-  <data name="FolderSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zatvori pretraživanje</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Pretraži u mapi</value>
   </data>
   <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Nema dostupnih popisa pjesama</value>
   </data>
-  <data name="GenrePage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zatvori pretraživanje</value>
-  </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Pretraži žanrove</value>
-  </data>
-  <data name="LibraryPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zatvori pretraživanje</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Pretraži knjižnicu</value>
   </data>
   <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Nema dostupnih popisa pjesama</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zatvori pretraživanje</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Pretraži popise pjesama</value>
@@ -809,14 +785,8 @@ Datoteke koje nije bilo moguće uvesti: {0}.</value>
   <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
     <value>Izbriši</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zatvori pretraživanje</value>
-  </data>
   <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Pretraži u popisu pjesama</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zatvori pretraživanje</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Traži u žanru</value>
@@ -826,9 +796,6 @@ Datoteke koje nije bilo moguće uvesti: {0}.</value>
   </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
     <value>Nepoznat popis pjesama</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Zatvori pretraživanje</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Pretraži u pametnom popisu pjesama</value>
@@ -2369,5 +2336,8 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
   </data>
   <data name="Listening_NoTimedMixDescription" xml:space="preserve">
     <value>Nijedna pjesma na ovom popisu ne ispunjava uvjete miksa i ne stane u odabrano trajanje. Pokušajte dulje trajanje, drugi miks ili drugi popis pjesama.</value>
+  </data>
+  <data name="Generic_CloseSearch" xml:space="preserve">
+    <value>Zatvori pretraživanje</value>
   </data>
 </root>

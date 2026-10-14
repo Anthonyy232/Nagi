@@ -704,14 +704,8 @@ Skedarët që nuk u mundësuan të importohen: {0}.</value>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Biografi dhe imazhe artistësh (rezervë)</value>
   </data>
-  <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Mbyll kërkimin</value>
-  </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Kërko albume</value>
-  </data>
-  <data name="AlbumViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Mbyll kërkimin</value>
   </data>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Kërko në album</value>
@@ -719,14 +713,8 @@ Skedarët që nuk u mundësuan të importohen: {0}.</value>
   <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Asnjë listë luajtjeje nuk është në dispozicion</value>
   </data>
-  <data name="ArtistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Mbyll kërkimin</value>
-  </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Kërko artistë</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Mbyll kërkimin</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Kërko në artist</value>
@@ -749,32 +737,20 @@ Skedarët që nuk u mundësuan të importohen: {0}.</value>
   <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
     <value>Dosje e Panjohur</value>
   </data>
-  <data name="FolderSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Mbyll kërkimin</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Kërko në dosje</value>
   </data>
   <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Asnjë listë luajtjeje nuk është në dispozicion</value>
   </data>
-  <data name="GenrePage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Mbyll kërkimin</value>
-  </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Kërko zhanre</value>
-  </data>
-  <data name="LibraryPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Mbyll kërkimin</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Kërko në bibliotekë</value>
   </data>
   <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
     <value>Asnjë listë luajtjeje nuk është në dispozicion</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Mbyll kërkimin</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Kërko lista luajtjeje</value>
@@ -809,14 +785,8 @@ Skedarët që nuk u mundësuan të importohen: {0}.</value>
   <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
     <value>Fshi</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Mbyll kërkimin</value>
-  </data>
   <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Kërko në listën e luajtjes</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Mbyll kërkimin</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Kërko në zhanër</value>
@@ -826,9 +796,6 @@ Skedarët që nuk u mundësuan të importohen: {0}.</value>
   </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
     <value>Listë Luajtjeje e Panjohur</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>Mbyll kërkimin</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Kërko në listën inteligjente të luajtjes</value>
@@ -2369,5 +2336,8 @@ Dëshironi të vazhdoni?</value>
   </data>
   <data name="Listening_NoTimedMixDescription" xml:space="preserve">
     <value>Asnjë këngë në këtë listë nuk plotëson kërkesat e miksimit dhe nuk përshtatet me kohëzgjatjen e zgjedhur. Provo një kohëzgjatje më të gjatë, një miksim tjetër ose një listë tjetër këngësh.</value>
+  </data>
+  <data name="Generic_CloseSearch" xml:space="preserve">
+    <value>Mbyll kërkimin</value>
   </data>
 </root>

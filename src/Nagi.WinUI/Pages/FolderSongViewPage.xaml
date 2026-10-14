@@ -1,4 +1,5 @@
-<Page
+<pages:SearchablePage
+    xmlns:pages="using:Nagi.WinUI.Pages"
     x:Class="Nagi.WinUI.Pages.FolderSongViewPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -372,4 +373,4 @@
         </StackPanel>
 
     </Grid>
-</Page>
+</pages:SearchablePage>
