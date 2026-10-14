@@ -29,7 +29,6 @@ public sealed partial class InsightsPage : Page
         try
         {
             base.OnNavigatedTo(e);
-            _logger.LogDebug("Navigated to InsightsPage.");
             await ViewModel.LoadInsightsAsync();
         }
         catch (Exception ex)
@@ -41,7 +40,6 @@ public sealed partial class InsightsPage : Page
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogDebug("Navigating away from InsightsPage.");
         ViewModel.CloseSeeAllCommand.Execute(null);
     }
 

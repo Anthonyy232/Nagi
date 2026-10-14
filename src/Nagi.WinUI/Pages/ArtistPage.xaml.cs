@@ -21,8 +21,6 @@ public sealed partial class ArtistPage : SearchablePage
         _logger = App.Services!.GetRequiredService<ILogger<ArtistPage>>();
         DataContext = ViewModel;
         InitializeSearch(ViewModel, SearchToggleButton, SearchTextBox, Strings.ArtistPage_SearchButton_Search_ToolTip);
-
-        _logger.LogDebug("ArtistPage initialized.");
     }
 
     public ArtistViewModel ViewModel { get; }
@@ -32,7 +30,6 @@ public sealed partial class ArtistPage : SearchablePage
         try
         {
             base.OnNavigatedTo(e);
-            _logger.LogDebug("Navigated to ArtistPage.");
             ViewModel.SubscribeToEvents();
 
             await ViewModel.LoadAsync(CancellationToken.None);
@@ -46,7 +43,6 @@ public sealed partial class ArtistPage : SearchablePage
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogDebug("Navigating away from ArtistPage.");
         ViewModel.UnsubscribeFromEvents();
 
         ViewModel.ResetState();
@@ -57,9 +53,6 @@ public sealed partial class ArtistPage : SearchablePage
     {
         if (e.ClickedItem is ArtistViewModelItem clickedArtist)
         {
-            _logger.LogDebug(
-                "User clicked on artist '{ArtistName}' (Id: {ArtistId}). Navigating to detail view.",
-                clickedArtist.Name, clickedArtist.Id);
             _ = ViewModel.NavigateToArtistDetailAsync(clickedArtist);
         }
     }
@@ -70,7 +63,6 @@ public sealed partial class ArtistPage : SearchablePage
 
         try
         {
-            _logger.LogDebug("User initiated image change for artist '{ArtistName}'.", artistItem.Name);
             await ViewModel.ChangeArtistImageCommand.ExecuteAsync(artistItem.Id);
         }
         catch (Exception ex)
@@ -85,7 +77,6 @@ public sealed partial class ArtistPage : SearchablePage
 
         try
         {
-            _logger.LogDebug("User requested removal of custom image for artist '{ArtistName}'.", artistItem.Name);
             await ViewModel.RemoveArtistImageCommand.ExecuteAsync(artistItem.Id);
         }
         catch (Exception ex)

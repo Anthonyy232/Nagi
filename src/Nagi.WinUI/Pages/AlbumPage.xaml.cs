@@ -21,8 +21,6 @@ public sealed partial class AlbumPage : SearchablePage
         _logger = App.Services!.GetRequiredService<ILogger<AlbumPage>>();
         DataContext = ViewModel;
         InitializeSearch(ViewModel, SearchToggleButton, SearchTextBox, Strings.AlbumPage_SearchButton_Search_ToolTip);
-
-        _logger.LogDebug("AlbumPage initialized.");
     }
 
     public AlbumViewModel ViewModel { get; }
@@ -32,7 +30,6 @@ public sealed partial class AlbumPage : SearchablePage
         try
         {
             base.OnNavigatedTo(e);
-            _logger.LogDebug("Navigated to AlbumPage.");
             await ViewModel.LoadAsync(CancellationToken.None);
         }
         catch (Exception ex)
@@ -44,7 +41,6 @@ public sealed partial class AlbumPage : SearchablePage
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogDebug("Navigating away from AlbumPage.");
         ViewModel.ResetState();
         // Note: ViewModel is Singleton, do not dispose - state persists across navigations
     }
@@ -53,9 +49,6 @@ public sealed partial class AlbumPage : SearchablePage
     {
         if (e.ClickedItem is AlbumViewModelItem clickedAlbum)
         {
-            _logger.LogDebug(
-                "User clicked on album '{AlbumTitle}' by '{ArtistName}' (Id: {AlbumId}). Navigating to detail view.",
-                clickedAlbum.Title, clickedAlbum.ArtistName, clickedAlbum.Id);
             _ = ViewModel.NavigateToAlbumDetailAsync(clickedAlbum);
         }
     }

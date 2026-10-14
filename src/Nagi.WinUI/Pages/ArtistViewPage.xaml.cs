@@ -82,8 +82,6 @@ public sealed partial class ArtistViewPage : SongListPage
     {
         if (e.ClickedItem is ArtistAlbumViewModelItem clickedAlbum)
         {
-            _logger.LogDebug("User clicked album '{AlbumTitle}' (Id: {AlbumId}). Navigating to album view.",
-                clickedAlbum.Name, clickedAlbum.Id);
             ViewModel.ViewAlbumCommand.Execute(clickedAlbum.Id);
         }
     }
@@ -107,7 +105,6 @@ public sealed partial class ArtistViewPage : SongListPage
     {
         try
         {
-            _logger.LogDebug("User initiated image change for artist '{ArtistName}'.", ViewModel.ArtistName);
             await ViewModel.ChangeArtistImageCommand.ExecuteAsync(null);
         }
         catch (Exception ex)
@@ -120,7 +117,6 @@ public sealed partial class ArtistViewPage : SongListPage
     {
         try
         {
-            _logger.LogDebug("User requested removal of custom image for artist '{ArtistName}'.", ViewModel.ArtistName);
             await ViewModel.RemoveArtistImageCommand.ExecuteAsync(null);
         }
         catch (Exception ex)

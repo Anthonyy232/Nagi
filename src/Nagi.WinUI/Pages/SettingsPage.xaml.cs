@@ -19,7 +19,6 @@ public sealed partial class SettingsPage : Page
         ViewModel = App.Services!.GetRequiredService<SettingsViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<SettingsPage>>();
         DataContext = ViewModel;
-        _logger.LogDebug("SettingsPage initialized.");
     }
 
     public SettingsViewModel ViewModel { get; }
@@ -27,12 +26,10 @@ public sealed partial class SettingsPage : Page
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        _logger.LogDebug("Navigated to SettingsPage. Loading settings...");
         try
         {
             await ViewModel.LoadSettingsAsync();
             await ViewModel.Audio.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
-            _logger.LogDebug("Settings loaded successfully.");
 
             Bindings.Update();
             _ = ViewModel.Romanization.LoadRomanizationPacksAsync();

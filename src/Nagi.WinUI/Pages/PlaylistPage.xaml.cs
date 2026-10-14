@@ -22,7 +22,6 @@ public sealed partial class PlaylistPage : SearchablePage
         _logger = App.Services!.GetRequiredService<ILogger<PlaylistPage>>();
         DataContext = ViewModel;
         InitializeSearch(ViewModel, SearchToggleButton, SearchTextBox, Strings.PlaylistPage_SearchButton_Search_ToolTip);
-        _logger.LogDebug("PlaylistPage initialized.");
     }
 
     public PlaylistViewModel ViewModel { get; }
@@ -32,7 +31,6 @@ public sealed partial class PlaylistPage : SearchablePage
         try
         {
             await ViewModel.LoadPlaylistsCommand.ExecuteAsync(null);
-            _logger.LogDebug("Finished loading playlists.");
         }
         catch (Exception ex)
         {
@@ -43,7 +41,6 @@ public sealed partial class PlaylistPage : SearchablePage
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogDebug("Navigating away from PlaylistPage.");
         ViewModel.ResetState();
     }
 
@@ -57,9 +54,6 @@ public sealed partial class PlaylistPage : SearchablePage
     {
         if (e.ClickedItem is PlaylistViewModelItem clickedPlaylist)
         {
-            _logger.LogDebug(
-                "User clicked on playlist '{PlaylistName}' (Id: {PlaylistId}). Navigating to detail view.",
-                clickedPlaylist.Name, clickedPlaylist.Id);
             ViewModel.NavigateToPlaylistDetail(clickedPlaylist);
         }
     }

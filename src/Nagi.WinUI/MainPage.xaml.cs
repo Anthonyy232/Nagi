@@ -549,6 +549,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private void OnContentFrameNavigated(object sender, NavigationEventArgs e)
     {
+        _logger.LogDebug("Navigated to {PageName}.", e.SourcePageType.Name);
         try
         {
             var isDetailPage = _detailPageToParentTagMap.ContainsKey(e.SourcePageType);

@@ -21,8 +21,6 @@ public sealed partial class GenrePage : SearchablePage
         _logger = App.Services!.GetRequiredService<ILogger<GenrePage>>();
         DataContext = ViewModel;
         InitializeSearch(ViewModel, SearchToggleButton, SearchTextBox, Strings.GenrePage_SearchButton_Search_ToolTip);
-
-        _logger.LogDebug("GenrePage initialized.");
     }
 
     public GenreViewModel ViewModel { get; }
@@ -32,7 +30,6 @@ public sealed partial class GenrePage : SearchablePage
         try
         {
             base.OnNavigatedTo(e);
-            _logger.LogDebug("Navigated to GenrePage.");
             await ViewModel.LoadGenresCommand.ExecuteAsync(null);
         }
         catch (Exception ex)
@@ -44,7 +41,6 @@ public sealed partial class GenrePage : SearchablePage
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogDebug("Navigating away from GenrePage.");
         ViewModel.ResetState();
         // Note: ViewModel is Singleton, do not dispose - state persists across navigations
     }
@@ -53,8 +49,6 @@ public sealed partial class GenrePage : SearchablePage
     {
         if (e.ClickedItem is GenreSummary clickedGenre)
         {
-            _logger.LogDebug("User clicked on genre '{GenreName}'. Navigating to detail view.",
-                clickedGenre.Name);
             ViewModel.NavigateToGenreDetail(clickedGenre);
         }
     }

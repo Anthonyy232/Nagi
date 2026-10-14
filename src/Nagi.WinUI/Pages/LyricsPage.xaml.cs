@@ -56,14 +56,12 @@ public sealed partial class LyricsPage : Page
 
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
         Unloaded += OnPageUnloaded;
-        _logger.LogDebug("LyricsPage initialized.");
     }
 
     public LyricsPageViewModel ViewModel { get; }
 
     private void OnPageLoaded(object sender, RoutedEventArgs e)
     {
-        _logger.LogDebug("LyricsPage loaded.");
         CompositionAnimationHelper.AnimationsEnabledChanged += OnAnimationsEnabledChanged;
         if (Resources["PageLoadStoryboard"] is Storyboard storyboard)
         {
@@ -102,7 +100,6 @@ public sealed partial class LyricsPage : Page
     private void OnPageUnloaded(object sender, RoutedEventArgs e)
     {
         _isUnloaded = true;
-        _logger.LogDebug("LyricsPage unloaded. Cleaning up resources.");
         CompositionAnimationHelper.AnimationsEnabledChanged -= OnAnimationsEnabledChanged;
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
         Unloaded -= OnPageUnloaded;
@@ -326,7 +323,6 @@ public sealed partial class LyricsPage : Page
     {
         if (sender is Grid grid && grid.Tag is LyricLine clickedLine)
         {
-            _logger.LogDebug("User tapped lyric line at {Timestamp}. Seeking.", clickedLine.StartTime);
             try { await ViewModel.SeekToLineAsync(clickedLine); }
             catch (Exception ex) { _logger.LogError(ex, "Failed to seek to lyric line"); }
         }
