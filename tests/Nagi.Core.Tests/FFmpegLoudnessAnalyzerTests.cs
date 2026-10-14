@@ -11,10 +11,11 @@ public sealed class FFmpegLoudnessAnalyzerTests : IDisposable
     private readonly DirectoryInfo _directory = Directory.CreateTempSubdirectory("Nagi-Loudness-");
     private readonly FFmpegLoudnessAnalyzer _analyzer = new(NullLogger<FFmpegLoudnessAnalyzer>.Instance);
 
+    // 997 Hz rather than 1 kHz: FFmpeg 9 probes a 48 kHz float WAV of an exact 1 kHz sine as MPEG-TS.
     [Theory]
-    [InlineData(44100, 1000, 0.125892541, -18)]
-    [InlineData(48000, 1000, 0.125892541, -18)]
-    [InlineData(96000, 1000, 0.125892541, -18)]
+    [InlineData(44100, 997,0.125892541, -18)]
+    [InlineData(48000, 997, 0.125892541, -18)]
+    [InlineData(96000, 997, 0.125892541, -18)]
     [InlineData(48000, 440, 1, -0.65)]
     public async Task StereoReferenceTones_MeasureExpectedLoudnessAndPeak(
         int sampleRate, int frequency, double amplitude, double expectedLufs)
@@ -92,7 +93,7 @@ public sealed class FFmpegLoudnessAnalyzerTests : IDisposable
         await wait.Should().ThrowAsync<OperationCanceledException>();
         using var exclusive = File.Open(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
 
-        var valid = await GenerateAsync("aevalsrc=0.125892541*sin(2*PI*1000*t)|0.125892541*sin(2*PI*1000*t):s=48000:d=3");
+        var valid = await GenerateAsync("aevalsrc=0.125892541*sin(2*PI*997*t)|0.125892541*sin(2*PI*997*t):s=48000:d=3");
         (await _analyzer.AnalyzeAsync(valid)).Should().NotBeNull();
     }
 
@@ -101,7 +102,7 @@ public sealed class FFmpegLoudnessAnalyzerTests : IDisposable
     {
         var quietPath = Path.Combine(_directory.FullName, "quiet.wav");
         var loudPath = Path.Combine(_directory.FullName, "loud.wav");
-        await RunFFmpegAsync("-f", "lavfi", "-i", "aevalsrc=0.125892541*sin(2*PI*1000*t)|0.125892541*sin(2*PI*1000*t):s=48000:d=3", "-c:a", "pcm_f32le", quietPath);
+        await RunFFmpegAsync("-f", "lavfi", "-i", "aevalsrc=0.125892541*sin(2*PI*997*t)|0.125892541*sin(2*PI*997*t):s=48000:d=3", "-c:a", "pcm_f32le", quietPath);
         await RunFFmpegAsync("-f", "lavfi", "-i", "aevalsrc=0.5*sin(2*PI*440*t)|0.5*sin(2*PI*440*t):s=48000:d=3", "-c:a", "pcm_f32le", loudPath);
 
         var quietTask = _analyzer.AnalyzeAsync(quietPath);
