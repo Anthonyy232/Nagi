@@ -36,6 +36,7 @@ public static class CoreServiceRegistration
         services.AddSingleton<LibraryService>();
         services.AddSingleton<ILibraryWriter>(sp => sp.GetRequiredService<LibraryService>());
         services.AddSingleton<ILibraryScanner>(sp => sp.GetRequiredService<LibraryService>());
+        services.AddSingleton<ILibraryFolderWatcher, LibraryFolderWatcher>();
 
         services.AddSingleton<IMusicPlaybackService, MusicPlaybackService>();
         services.AddSingleton<IOfflineScrobbleService, OfflineScrobbleService>();

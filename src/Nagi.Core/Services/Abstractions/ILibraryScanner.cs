@@ -18,6 +18,12 @@ public interface ILibraryScanner
     Task<bool> RefreshAllFoldersAsync(IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default);
 
+    /// <summary>
+    ///     Quietly picks up file changes in one library folder. Unlike a manual rescan it never cancels
+    ///     another scan and never removes a folder that is temporarily unreachable.
+    /// </summary>
+    Task<bool> RefreshFolderInBackgroundAsync(Guid folderId, CancellationToken cancellationToken = default);
+
     Task<bool> ForceRescanMetadataAsync(IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default);
 
