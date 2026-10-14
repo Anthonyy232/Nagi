@@ -1,35 +1,29 @@
 ﻿using System.ComponentModel;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Controls;
-using Nagi.WinUI.ViewModels;
+using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Pages;
 
-/// <summary>
-///     A page that prompts the user to add their initial music library folder.
-/// </summary>
 public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider
 {
     private readonly ILogger<OnboardingPage> _logger;
     private bool _isUnloaded;
 
-    public OnboardingPage()
+    public OnboardingPage(OnboardingViewModel viewModel, ILogger<OnboardingPage> logger)
     {
         InitializeComponent();
-        ViewModel = App.Services!.GetRequiredService<OnboardingViewModel>();
-        _logger = App.Services!.GetRequiredService<ILogger<OnboardingPage>>();
+        ViewModel = viewModel;
+        _logger = logger;
         DataContext = ViewModel;
         Loaded += OnboardingPage_Loaded;
         Unloaded += OnboardingPage_Unloaded;
         _logger.LogDebug("OnboardingPage initialized.");
     }
 
-    /// <summary>
-    ///     Gets the view model associated with this page.
-    /// </summary>
     public OnboardingViewModel ViewModel { get; }
 
     public TitleBar GetAppTitleBarElement()
@@ -37,15 +31,12 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider
         return AppTitleBar;
     }
 
-    public RowDefinition GetAppTitleBarRowElement()
-    {
-        return AppTitleBarRow;
-    }
-
     private void OnboardingPage_Loaded(object sender, RoutedEventArgs e)
     {
+        _isUnloaded = false;
         _logger.LogDebug("OnboardingPage loaded.");
-        VisualStateManager.GoToState(this, "PageLoaded", true);
+        VisualStateManager.GoToState(this, "PageLoaded", CompositionAnimationHelper.AreAnimationsEnabled);
+        if (!CompositionAnimationHelper.AreAnimationsEnabled) EntranceStates.CurrentState?.Storyboard?.SkipToFill();
         ViewModel.PropertyChanged += ViewModel_PropertyChanged;
         UpdateVisualState(ViewModel.IsAnyOperationInProgress);
     }
@@ -57,9 +48,6 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider
         ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
     }
 
-    /// <summary>
-    ///     Listens for ViewModel property changes to trigger UI state transitions.
-    /// </summary>
     private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(ViewModel.IsAnyOperationInProgress))
@@ -70,13 +58,11 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider
             });
     }
 
-    /// <summary>
-    ///     Transitions the page between the 'Idle' and 'Working' visual states.
-    /// </summary>
     private void UpdateVisualState(bool isWorking)
     {
         var stateName = isWorking ? "Working" : "Idle";
         _logger.LogDebug("Updating visual state to '{StateName}'.", stateName);
-        VisualStateManager.GoToState(this, stateName, true);
+        VisualStateManager.GoToState(this, stateName, CompositionAnimationHelper.AreAnimationsEnabled);
+        if (!CompositionAnimationHelper.AreAnimationsEnabled) ActivityStates.CurrentState?.Storyboard?.SkipToFill();
     }
 }

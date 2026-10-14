@@ -4,11 +4,7 @@ using Polly.CircuitBreaker;
 namespace Nagi.Core.Http.Pipelines;
 
 /// <summary>
-///     Convenience helpers over <see cref="IProviderPipelineProvider"/> that collapse the
-///     repeated try/catch skeleton (circuit-open, transport failure, unexpected exception)
-///     into one call. The supplied <paramref name="processResponse"/> delegate receives the
-///     <see cref="HttpResponseMessage"/> already wrapped in a using scope, so callers do not
-///     need to dispose it themselves.
+///     Runs provider calls with a fallback result and disposes their responses.
 /// </summary>
 public static class ProviderPipelineExtensions
 {

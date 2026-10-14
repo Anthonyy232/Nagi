@@ -19,7 +19,7 @@ public sealed class JapaneseRomanizationProvider : IRomanizationProvider
     {
         if (string.IsNullOrWhiteSpace(text) || !Supports(text)) return null;
 
-        var rules = await LoadRulesAsync(pack, cancellationToken).ConfigureAwait(false);
+        var rules = await RomanizationProviderHelpers.LoadRulesAsync<JapaneseRuleSet>(pack, RulesFileName, cancellationToken).ConfigureAwait(false);
         var result = Romanize(text, rules);
         return string.Equals(result, text, StringComparison.Ordinal) ? null : result;
     }
@@ -27,11 +27,6 @@ public sealed class JapaneseRomanizationProvider : IRomanizationProvider
     public Task<bool> ValidatePackAsync(InstalledRomanizationPack pack, CancellationToken cancellationToken = default)
     {
         return RomanizationProviderHelpers.ValidatePackAsync(pack, RulesFileName, RomanizeAsync, cancellationToken);
-    }
-
-    private static Task<JapaneseRuleSet> LoadRulesAsync(InstalledRomanizationPack pack, CancellationToken cancellationToken)
-    {
-        return RomanizationProviderHelpers.LoadRulesAsync(pack, RulesFileName, () => new JapaneseRuleSet(), cancellationToken);
     }
 
     private static string Romanize(string text, JapaneseRuleSet rules)

@@ -18,28 +18,36 @@ jobs:
     permissions:
       id-token: write
       contents: read
+      actions: read
     steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: refs/tags/${{ inputs.tag }}
+
+      - name: Resolve release commit
+        id: tag
+        run: echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
       - name: Download unsigned MSIX from build workflow
-        uses: dawidd6/action-download-artifact@v21
+        uses: dawidd6/action-download-artifact@v27
         with:
           workflow: build.yml
           workflow_conclusion: success
-          ref: ${{ github.event.inputs.tag }}
+          commit: ${{ steps.tag.outputs.commit }}
           event: push
-          name: Unsigned-MSIX
+          name: Unsigned-MSIX-${{ inputs.tag }}
+          search_artifacts: true
 
-      # We need the artifact-id for the SignPath action.
-      # Since we downloaded it instead of producing it in this workflow,
-      # we upload it again in this run to get a new artifact ID.
+      # SignPath needs an artifact belonging to this signing run.
       - name: Re-upload for SignPath
         id: reupload
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: Unsigned-MSIX-For-Signing
           path: Nagi.msixbundle
           if-no-files-found: error
 
-      - uses: signpath/github-action-submit-signing-request@v2.2
+      - uses: signpath/github-action-submit-signing-request@v3.0
         with:
           api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
           organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
@@ -52,7 +60,7 @@ jobs:
           output-artifact-directory: ./signed
           github-token: '${{ secrets.GITHUB_TOKEN }}'
 
-      - uses: actions/upload-artifact@v7.0.1
+      - uses: actions/upload-artifact@v7.0.2
         with:
           name: Signed-MSIX
           path: ./signed/
@@ -64,12 +72,12 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v7.0.0
+      - uses: actions/checkout@v7.0.1
         with:
-          ref: ${{ github.event.inputs.tag }}
+          ref: refs/tags/${{ inputs.tag }}
 
       - name: Download signed MSIX
-        uses: actions/download-artifact@v8.0.1
+        uses: actions/download-artifact@v8.0.2
         with:
           name: Signed-MSIX
           path: ./signed
@@ -78,39 +86,42 @@ jobs:
         id: version
         shell: pwsh
         run: |
-          $v = (Select-String -Path Directory.Build.props -Pattern '<AppxPackageVersion>([^<]+)').Matches[0].Groups[1].Value
+          $v = ([xml](Get-Content Directory.Build.props -Raw)).Project.PropertyGroup.AppxPackageVersion
           echo "value=$v" >> $env:GITHUB_OUTPUT
 
       - name: Generate .appinstaller
-        shell: bash
+        shell: pwsh
         env:
           VERSION: ${{ steps.version.outputs.value }}
           REPO: ${{ github.repository }}
           CERT_SUBJECT: ${{ vars.SIGNPATH_CERT_SUBJECT }}
         run: |
-          BASE_URL="https://github.com/${REPO}/releases/latest/download"
-          cat > signed/Nagi.appinstaller <<EOF
+          $baseUrl = "https://github.com/$env:REPO/releases/latest/download"
+          $xml = [xml]@'
           <?xml version="1.0" encoding="utf-8"?>
-          <AppInstaller Uri="${BASE_URL}/Nagi.appinstaller"
-                        Version="${VERSION}"
-                        xmlns="http://schemas.microsoft.com/appx/appinstaller/2018">
-            <MainBundle Name="48743Nagi.Nagi"
-                        Version="${VERSION}"
-                        Publisher="${CERT_SUBJECT}"
-                        Uri="${BASE_URL}/Nagi.msixbundle"/>
+          <AppInstaller xmlns="http://schemas.microsoft.com/appx/appinstaller/2018">
+            <MainBundle Name="48743Nagi.Nagi"/>
             <UpdateSettings>
               <OnLaunch HoursBetweenUpdateChecks="0"/>
             </UpdateSettings>
           </AppInstaller>
-          EOF
+          '@
+          $xml.AppInstaller.SetAttribute('Uri', "$baseUrl/Nagi.appinstaller")
+          $xml.AppInstaller.SetAttribute('Version', $env:VERSION)
+          $xml.AppInstaller.MainBundle.SetAttribute('Version', $env:VERSION)
+          $xml.AppInstaller.MainBundle.SetAttribute('Publisher', $env:CERT_SUBJECT)
+          $xml.AppInstaller.MainBundle.SetAttribute('Uri', "$baseUrl/Nagi.msixbundle")
+          $xml.Save((Join-Path $PWD 'signed/Nagi.appinstaller'))
 
       - name: Publish GitHub Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ github.event.inputs.tag }}
+          RELEASE_REPO: ${{ github.repository }}
         run: |
-          gh release create "${{ github.event.inputs.tag }}" \
-            --repo "${{ github.repository }}" \
-            --title "Version ${{ github.event.inputs.tag }}" \
+          gh release create "$RELEASE_TAG" \
+            --repo "$RELEASE_REPO" \
+            --title "Version $RELEASE_TAG" \
             --draft \
             signed/Nagi.msixbundle \
             signed/Nagi.appinstaller

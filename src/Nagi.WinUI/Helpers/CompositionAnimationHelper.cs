@@ -1,24 +1,40 @@
-﻿using Microsoft.UI.Composition;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Hosting;
 using System;
 using System.Numerics;
+using Windows.UI.ViewManagement;
 
 namespace Nagi.WinUI.Helpers;
 
 /// <summary>
-/// Provides helper methods for applying high-performance Composition-based animations.
-/// These animations run on the compositor thread, ensuring 60 FPS even when the UI thread is busy.
+/// Runs element animations on the compositor thread.
 /// </summary>
 public static class CompositionAnimationHelper
 {
+    private static UISettings SystemSettings { get; } = new();
+    public static bool AreAnimationsEnabled => SystemSettings.AnimationsEnabled;
 
-    /// <summary>
-    ///     Animates an element's opacity using GPU-accelerated Composition animations.
-    /// </summary>
+    internal static event Windows.Foundation.TypedEventHandler<UISettings, UISettingsAnimationsEnabledChangedEventArgs> AnimationsEnabledChanged
+    {
+        add
+        {
+            if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 19041))
+                SystemSettings.AnimationsEnabledChanged += value;
+        }
+        remove
+        {
+            if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 19041))
+                SystemSettings.AnimationsEnabledChanged -= value;
+        }
+    }
+
     public static void AnimateOpacity(UIElement element, float to, int durationMs, int delayMs = 0)
     {
-        if (element == null) return;
+        if (!AreAnimationsEnabled)
+        {
+            SetOpacityImmediate(element, to);
+            return;
+        }
         var visual = ElementCompositionPreview.GetElementVisual(element);
         var compositor = visual.Compositor;
 
@@ -34,55 +50,30 @@ public static class CompositionAnimationHelper
         visual.StartAnimation("Opacity", animation);
     }
 
-    /// <summary>
-    ///     Sets an element's opacity immediately without animation.
-    /// </summary>
     public static void SetOpacityImmediate(UIElement element, float opacity)
     {
-        if (element == null) return;
         var visual = ElementCompositionPreview.GetElementVisual(element);
+        visual.StopAnimation("Opacity");
         visual.Opacity = opacity;
     }
 
-    /// <summary>
-    ///     Animates an element's translation using GPU-accelerated Composition animations.
-    /// </summary>
-    public static void AnimateTranslation(UIElement element, Vector3 to, int durationMs, bool easeIn = false)
-    {
-        if (element == null) return;
-        ElementCompositionPreview.SetIsTranslationEnabled(element, true);
-        var visual = ElementCompositionPreview.GetElementVisual(element);
-        var compositor = visual.Compositor;
-
-        visual.StopAnimation("Translation");
-
-        var animation = compositor.CreateVector3KeyFrameAnimation();
-        var easing = easeIn
-            ? compositor.CreateCubicBezierEasingFunction(new Vector2(0.42f, 0f), new Vector2(1f, 1f))
-            : compositor.CreateCubicBezierEasingFunction(new Vector2(0f, 0f), new Vector2(0.58f, 1f));
-        animation.InsertKeyFrame(1.0f, to, easing);
-        animation.Duration = TimeSpan.FromMilliseconds(durationMs);
-
-        visual.StartAnimation("Translation", animation);
-    }
-
-    /// <summary>
-    ///     Animates an element's scale using GPU-accelerated Composition animations.
-    /// </summary>
     public static void AnimateScale(UIElement element, float to, int durationMs)
     {
-        if (element == null) return;
         var visual = ElementCompositionPreview.GetElementVisual(element);
         var compositor = visual.Compositor;
 
-        // Set center point based on element's actual size for proper scaling origin.
-        // Skip if ActualSize is zero (element not yet laid out) to avoid scaling from top-left.
+        // Center scale transitions on laid-out elements.
         var width = (float)element.ActualSize.X;
         var height = (float)element.ActualSize.Y;
         if (width > 0 && height > 0)
             visual.CenterPoint = new Vector3(width / 2f, height / 2f, 0f);
 
         visual.StopAnimation("Scale");
+        if (!AreAnimationsEnabled)
+        {
+            visual.Scale = new Vector3(to, to, 1f);
+            return;
+        }
 
         var animation = compositor.CreateVector3KeyFrameAnimation();
         animation.InsertKeyFrame(1.0f, new Vector3(to, to, 1.0f), compositor.CreateCubicBezierEasingFunction(
@@ -93,14 +84,4 @@ public static class CompositionAnimationHelper
         visual.StartAnimation("Scale", animation);
     }
 
-    /// <summary>
-    ///     Sets an element's translation immediately without animation.
-    /// </summary>
-    public static void SetTranslationImmediate(UIElement element, Vector3 translation)
-    {
-        if (element == null) return;
-        ElementCompositionPreview.SetIsTranslationEnabled(element, true);
-        var visual = ElementCompositionPreview.GetElementVisual(element);
-        visual.Properties.InsertVector3("Translation", translation);
-    }
 }

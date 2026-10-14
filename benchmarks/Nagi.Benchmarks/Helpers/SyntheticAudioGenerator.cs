@@ -10,7 +10,7 @@ public static class SyntheticAudioGenerator
         Directory.CreateDirectory(rootPath);
         var samplePath = Path.Combine(rootPath, "sample.mp3");
         var startInfo = new ProcessStartInfo("ffmpeg") { UseShellExecute = false, CreateNoWindow = true };
-        foreach (var argument in new[] { "-v", "error", "-f", "lavfi", "-i", "anullsrc=r=44100:cl=stereo",
+        foreach (var argument in new[] { "-v", "error", "-nostdin", "-f", "lavfi", "-i", "anullsrc=r=44100:cl=stereo",
                      "-t", "2", "-c:a", "libmp3lame", samplePath })
             startInfo.ArgumentList.Add(argument);
         using var process = Process.Start(startInfo)!;

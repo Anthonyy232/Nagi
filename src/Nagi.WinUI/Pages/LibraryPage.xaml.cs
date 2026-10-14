@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Windows.System;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,20 +9,26 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Models;
-using Nagi.Core.Services.Abstractions;
-using System.Threading.Tasks;
+using Nagi.Presentation.Resources;
+using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.ViewModels;
 
 namespace Nagi.WinUI.Pages;
 
-/// <summary>
-///     The page for displaying and interacting with the user's music library.
-/// </summary>
 public sealed partial class LibraryPage : Page
 {
+    private string GetEmptyStateTitle(bool isSearchActive, bool favorites) => isSearchActive
+        ? Strings.LibraryPage_SearchEmpty_Title
+        : favorites ? Strings.Listening_FavoritesEmpty : Strings.LibraryPage_EmptyState_Title;
+
+    private string GetEmptyStateSubtitle(bool isSearchActive, bool favorites) => isSearchActive
+        ? Strings.LibraryPage_SearchEmpty_Subtitle
+        : favorites ? Strings.Listening_FavoritesEmptyDescription : Strings.LibraryPage_EmptyState_Subtitle;
+
+    private void OnArtistColumnSizeChanged(object sender, SizeChangedEventArgs e) =>
+        ((FrameworkElement)((Grid)sender).Children[0]).MaxWidth = e.NewSize.Width;
+
     private readonly ILogger<LibraryPage> _logger;
-    private readonly ILibraryReader _libraryReader;
     private bool _isSearchExpanded;
     private readonly Microsoft.UI.Dispatching.DispatcherQueue _dispatcherQueue;
     private NowPlayingIndicatorBinder? _nowPlayingBinder;
@@ -33,7 +39,6 @@ public sealed partial class LibraryPage : Page
         _dispatcherQueue = this.DispatcherQueue;
         ViewModel = App.Services!.GetRequiredService<LibraryViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<LibraryPage>>();
-        _libraryReader = App.Services!.GetRequiredService<ILibraryReader>();
         DataContext = ViewModel;
 
         // Recreated on each Loaded so cached-page re-navigations get a fresh binder.
@@ -50,7 +55,6 @@ public sealed partial class LibraryPage : Page
         _nowPlayingBinder = new NowPlayingIndicatorBinder(
             SongsListView,
             ViewModel,
-            App.Services!.GetRequiredService<PlayerViewModel>(),
             (Brush)Application.Current.Resources["AppPrimaryColorBrush"]);
         _nowPlayingBinder.Refresh();
     }
@@ -61,14 +65,8 @@ public sealed partial class LibraryPage : Page
         _nowPlayingBinder = null;
     }
 
-    /// <summary>
-    ///     Gets the ViewModel associated with this page.
-    /// </summary>
     public LibraryViewModel ViewModel { get; }
 
-    /// <summary>
-    ///     Loads necessary data when the page is navigated to.
-    /// </summary>
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
@@ -81,6 +79,7 @@ public sealed partial class LibraryPage : Page
 
         try
         {
+            await ViewModel.SetLibraryViewAsync(e.Parameter is "Favorites");
             if (!ViewModel.HasLoadedPlaylists)
             {
                 await ViewModel.LoadAvailablePlaylistsAsync();
@@ -98,33 +97,17 @@ public sealed partial class LibraryPage : Page
         }
     }
 
-    /// <summary>
-    ///     Cleans up the search state when navigating away from the page.
-    /// </summary>
-    protected override void OnNavigatedFrom(NavigationEventArgs e)
-    {
-        base.OnNavigatedFrom(e);
-        _logger.LogDebug("Navigating away from LibraryPage.");
-        // Note: ViewModel is Singleton, do not dispose - state persists across navigations
-    }
-
-    /// <summary>
-    ///     Handles the page loaded event to set initial visual state.
-    /// </summary>
     private void OnPageLoaded(object sender, RoutedEventArgs e)
     {
         _logger.LogDebug("LibraryPage loaded. Setting initial visual state.");
         _isSearchExpanded = !string.IsNullOrWhiteSpace(ViewModel.SearchTerm);
         ToolTipService.SetToolTip(SearchToggleButton, _isSearchExpanded
-            ? Nagi.WinUI.Resources.Strings.LibraryPage_SearchButton_Close_ToolTip
-            : Nagi.WinUI.Resources.Strings.LibraryPage_SearchButton_Search_ToolTip);
+            ? Strings.LibraryPage_SearchButton_Close_ToolTip
+            : Strings.LibraryPage_SearchButton_Search_ToolTip);
         VisualStateManager.GoToState(this, _isSearchExpanded ? "SearchExpanded" : "SearchCollapsed", false);
         Loaded -= OnPageLoaded;
     }
 
-    /// <summary>
-    ///     Handles the search toggle button click to expand or collapse the search box.
-    /// </summary>
     private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e)
     {
         if (_isSearchExpanded)
@@ -133,9 +116,6 @@ public sealed partial class LibraryPage : Page
             ExpandSearch();
     }
 
-    /// <summary>
-    ///     Handles key down events in the search text box.
-    /// </summary>
     private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
     {
         if (e.Key == VirtualKey.Escape)
@@ -146,45 +126,30 @@ public sealed partial class LibraryPage : Page
         }
     }
 
-    /// <summary>
-    ///     Expands the search interface with an animation.
-    /// </summary>
     private void ExpandSearch()
     {
         if (_isSearchExpanded) return;
 
         _isSearchExpanded = true;
         _logger.LogDebug("Search UI expanded.");
-        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.LibraryPage_SearchButton_Close_ToolTip);
-        VisualStateManager.GoToState(this, "SearchExpanded", true);
+        ToolTipService.SetToolTip(SearchToggleButton, Strings.LibraryPage_SearchButton_Close_ToolTip);
+        VisualStateManager.GoToState(this, "SearchExpanded", false);
+        SearchTextBox.Focus(FocusState.Programmatic);
 
-        var timer = DispatcherQueue.CreateTimer();
-        timer.Interval = TimeSpan.FromMilliseconds(150);
-        timer.Tick += (s, args) =>
-        {
-            timer.Stop();
-            SearchTextBox.Focus(FocusState.Programmatic);
-        };
-        timer.Start();
     }
 
-    /// <summary>
-    ///     Collapses the search interface with an animation and resets the filter.
-    /// </summary>
     private void CollapseSearch()
     {
         if (!_isSearchExpanded) return;
 
         _isSearchExpanded = false;
         _logger.LogDebug("Search UI collapsed and search term cleared.");
-        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.LibraryPage_SearchButton_Search_ToolTip);
-        VisualStateManager.GoToState(this, "SearchCollapsed", true);
+        ToolTipService.SetToolTip(SearchToggleButton, Strings.LibraryPage_SearchButton_Search_ToolTip);
+        VisualStateManager.GoToState(this, "SearchCollapsed", false);
+        SearchToggleButton.Focus(FocusState.Programmatic);
         ViewModel.SearchTerm = string.Empty;
     }
 
-    /// <summary>
-    ///     Handles the opening of the context menu for a song item.
-    /// </summary>
     private void SongItemMenuFlyout_Opening(object sender, object e)
     {
         if (sender is not MenuFlyout menuFlyout) return;
@@ -193,21 +158,8 @@ public sealed partial class LibraryPage : Page
                 .FirstOrDefault(item => item.Name == "AddToPlaylistSubMenu") is { } addToPlaylistSubMenu)
         {
             _logger.LogDebug("Populating 'Add to playlist' submenu.");
-            addToPlaylistSubMenu.Items.Clear();
-            if (ViewModel.AvailablePlaylists.Any())
-                foreach (var playlist in ViewModel.AvailablePlaylists)
-                {
-                    var playlistMenuItem = new MenuFlyoutItem
-                    {
-                        Text = playlist.Name,
-                        Command = ViewModel.AddSelectedSongsToPlaylistCommand,
-                        CommandParameter = playlist
-                    };
-                    addToPlaylistSubMenu.Items.Add(playlistMenuItem);
-                }
-            else
-                addToPlaylistSubMenu.Items.Add(
-                    new MenuFlyoutItem { Text = Nagi.WinUI.Resources.Strings.LibraryPage_PlaylistMenu_NoPlaylists, IsEnabled = false });
+            PlaylistMenuFlyoutHelper.Populate(addToPlaylistSubMenu, ViewModel.AvailablePlaylists,
+                ViewModel.AddSelectedSongsToPlaylistCommand, Strings.LibraryPage_PlaylistMenu_NoPlaylists);
         }
 
         if (menuFlyout.Target?.DataContext is not Song rightClickedSong) return;
@@ -215,25 +167,22 @@ public sealed partial class LibraryPage : Page
         if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
                 .FirstOrDefault(item => item.Name == "GoToArtistSubMenu") is { } goToArtistSubMenu)
         {
-            ArtistMenuFlyoutHelper.PopulateSubMenu(goToArtistSubMenu, rightClickedSong, ViewModel.GoToArtistCommand, _libraryReader, _dispatcherQueue, _logger);
+            ArtistMenuFlyoutHelper.PopulateSubMenu(goToArtistSubMenu, rightClickedSong, ViewModel.GoToArtistCommand, ViewModel.GetArtistsForSongAsync, _dispatcherQueue, _logger);
         }
 
         _logger.LogDebug("Context menu opening for song '{SongTitle}'.", rightClickedSong.Title);
         if (!SongsListView.SelectedItems.Contains(rightClickedSong))
             SongsListView.SelectedItem = rightClickedSong;
+        ListeningMenuFlyoutHelper.PopulateFavorites(menuFlyout, ViewModel);
     }
     private bool _isUpdatingSelection;
 
-    /// <summary>
-    ///     Notifies the ViewModel when the ListView's selection has changed.
-    /// </summary>
     private void OnListViewSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (_isUpdatingSelection || sender is not ListView listView) return;
 
 
 
-        // Update logical selection state based on individual changes
         foreach (var song in e.AddedItems.OfType<Song>())
             ViewModel.SelectionState.Select(song.Id);
 
@@ -268,7 +217,6 @@ public sealed partial class LibraryPage : Page
         _logger.LogDebug("Ctrl+A invoked. Selecting all songs.");
         ViewModel.SelectAllCommand.Execute(null);
 
-        // Sync the current visible items
         try
         {
             _isUpdatingSelection = true;
@@ -282,9 +230,6 @@ public sealed partial class LibraryPage : Page
         args.Handled = true;
     }
 
-    /// <summary>
-    ///     Handles the double-tapped event on the song list to play the selected song.
-    /// </summary>
     private void SongsListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {
         if (e.OriginalSource is FrameworkElement { DataContext: Song tappedSong })
@@ -294,4 +239,6 @@ public sealed partial class LibraryPage : Page
             ViewModel.PlaySongCommand.Execute(tappedSong);
         }
     }
+    private void ListeningOptions_Opening(object sender, object e) =>
+        ListeningMenuFlyoutHelper.PopulateMixes((MenuFlyout)sender, ViewModel.PlayMixCommand, ViewModel.PlayForCommand);
 }

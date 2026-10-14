@@ -1,0 +1,2373 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NavItem_Library" xml:space="preserve">
+    <value>நூலகம்</value>
+  </data>
+  <data name="NavItem_Albums" xml:space="preserve">
+    <value>ஆல்பங்கள்</value>
+  </data>
+  <data name="NavItem_Artists" xml:space="preserve">
+    <value>கலைஞர்கள்</value>
+  </data>
+  <data name="NavItem_Genres" xml:space="preserve">
+    <value>வகைகள்</value>
+  </data>
+  <data name="NavItem_Playlists" xml:space="preserve">
+    <value>பிளேலிஸ்ட்கள்</value>
+  </data>
+  <data name="NavItem_Folders" xml:space="preserve">
+    <value>கோப்புறைகள்</value>
+  </data>
+  <data name="NavItem_Favorites" xml:space="preserve">
+    <value>விருப்பமானவை</value>
+  </data>
+  <data name="NavItem_Insights" xml:space="preserve">
+    <value>நுண்ணறிவுகள்</value>
+  </data>
+  <data name="NavItem_Settings" xml:space="preserve">
+    <value>அமைப்புகள்</value>
+  </data>
+  <data name="Status_NoTrackPlaying" xml:space="preserve">
+    <value>எந்தப் பாடலும் இயங்கவில்லை</value>
+  </data>
+  <data name="Tooltip_Play" xml:space="preserve">
+    <value>இயக்கு</value>
+  </data>
+  <data name="Tooltip_Pause" xml:space="preserve">
+    <value>இடைநிறுத்து</value>
+  </data>
+  <data name="Tooltip_ShuffleOff" xml:space="preserve">
+    <value>கலக்குதலை நிறுத்து</value>
+  </data>
+  <data name="Tooltip_RepeatOff" xml:space="preserve">
+    <value>மீண்டும் ஒலிக்க வேண்டாம்</value>
+  </data>
+  <data name="Tooltip_RepeatAll" xml:space="preserve">
+    <value>அனைத்தையும் மீண்டும் ஒலிக்கவும்</value>
+  </data>
+  <data name="Tooltip_RepeatOne" xml:space="preserve">
+    <value>ஒன்றை மீண்டும் ஒலிக்கவும்</value>
+  </data>
+  <data name="Tooltip_Repeat" xml:space="preserve">
+    <value>மீண்டும் ஒலிக்கவும்</value>
+  </data>
+  <data name="Tooltip_Unmute" xml:space="preserve">
+    <value>ஒலியை இயக்கு</value>
+  </data>
+  <data name="Tooltip_Mute" xml:space="preserve">
+    <value>ஒலியை முடக்கு</value>
+  </data>
+  <data name="Theme_Light" xml:space="preserve">
+    <value>இலகுவான</value>
+  </data>
+  <data name="Theme_Dark" xml:space="preserve">
+    <value>அடர்ந்த</value>
+  </data>
+  <data name="Theme_Default" xml:space="preserve">
+    <value>கணினி முன்னிருப்பு</value>
+  </data>
+  <data name="Backdrop_Mica" xml:space="preserve">
+    <value>மைக்கா</value>
+  </data>
+  <data name="Backdrop_MicaAlt" xml:space="preserve">
+    <value>மைக்கா ஆல்ட்</value>
+  </data>
+  <data name="Backdrop_Acrylic" xml:space="preserve">
+    <value>அக்ரிலிக்</value>
+  </data>
+  <data name="Label_Composer" xml:space="preserve">
+    <value>இசையமைப்பாளர்</value>
+  </data>
+  <data name="Label_Comment" xml:space="preserve">
+    <value>கருத்து</value>
+  </data>
+  <data name="Label_Rating" xml:space="preserve">
+    <value>மதிப்பீடு</value>
+  </data>
+  <data name="Label_Grouping" xml:space="preserve">
+    <value>குழுவாக்கம்</value>
+  </data>
+  <data name="Label_SkipCount" xml:space="preserve">
+    <value>தவிர்க்கப்பட்ட எண்ணிக்கை</value>
+  </data>
+  <data name="Label_DiscNumber" xml:space="preserve">
+    <value>வட்டு எண்</value>
+  </data>
+  <data name="Label_Bitrate" xml:space="preserve">
+    <value>பிட்ரேட்</value>
+  </data>
+  <data name="Label_SampleRate" xml:space="preserve">
+    <value>சாம்பிள் ரேட்</value>
+  </data>
+  <data name="Label_IsLoved" xml:space="preserve">
+    <value>விருப்பமானது</value>
+  </data>
+  <data name="Label_HasLyrics" xml:space="preserve">
+    <value>பாடல் வரிகள் உள்ளன</value>
+  </data>
+  <data name="Operator_IsInRange" xml:space="preserve">
+    <value>இடையில் உள்ளது (சேர்த்து)</value>
+  </data>
+  <data name="Operator_IsAfter" xml:space="preserve">
+    <value>இதற்குப் பிறகு</value>
+  </data>
+  <data name="Operator_IsBefore" xml:space="preserve">
+    <value>இதற்கு முன்</value>
+  </data>
+  <data name="SmartPlaylist_UpperBound_Placeholder" xml:space="preserve">
+    <value>அதிகபட்ச மதிப்பு</value>
+  </data>
+  <data name="Operator_Contains" xml:space="preserve">
+    <value>உள்ளடக்கியது</value>
+  </data>
+  <data name="Operator_DoesNotContain" xml:space="preserve">
+    <value>உள்ளடக்கவில்லை</value>
+  </data>
+  <data name="Operator_Is" xml:space="preserve">
+    <value>சரியாக</value>
+  </data>
+  <data name="Operator_IsNot" xml:space="preserve">
+    <value>இல்லை</value>
+  </data>
+  <data name="Operator_StartsWith" xml:space="preserve">
+    <value>இதனுடன் தொடங்கும்</value>
+  </data>
+  <data name="Operator_EndsWith" xml:space="preserve">
+    <value>இதனுடன் முடிவடையும்</value>
+  </data>
+  <data name="Operator_Equals" xml:space="preserve">
+    <value>இதற்கு சமம்</value>
+  </data>
+  <data name="Operator_NotEquals" xml:space="preserve">
+    <value>இதற்கு சமம் இல்லை</value>
+  </data>
+  <data name="Operator_GreaterThan" xml:space="preserve">
+    <value>இதை விட பெரியது</value>
+  </data>
+  <data name="Operator_LessThan" xml:space="preserve">
+    <value>இதை விட சிறியது</value>
+  </data>
+  <data name="Operator_GreaterThanOrEqual" xml:space="preserve">
+    <value>குறைந்தது</value>
+  </data>
+  <data name="Operator_LessThanOrEqual" xml:space="preserve">
+    <value>அதிகபட்சம்</value>
+  </data>
+  <data name="Operator_IsInTheLast" xml:space="preserve">
+    <value>கடந்த (நாட்களுக்குள்) உள்ளது</value>
+  </data>
+  <data name="Operator_IsNotInTheLast" xml:space="preserve">
+    <value>கடந்த (நாட்களுக்குள்) இல்லை</value>
+  </data>
+  <data name="Operator_IsTrue" xml:space="preserve">
+    <value>உண்மை</value>
+  </data>
+  <data name="Operator_IsFalse" xml:space="preserve">
+    <value>தவறு</value>
+  </data>
+  <data name="SmartPlaylist_Title_New" xml:space="preserve">
+    <value>புதிய ஸ்மார்ட் பிளேலிஸ்ட்</value>
+  </data>
+  <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
+    <value>ஸ்மார்ட் பாடல் பட்டியலைத் திருத்து: {0}</value>
+  </data>
+  <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
+    <value>பிளேலிஸ்ட் பெயரை உள்ளிடவும்</value>
+  </data>
+  <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
+    <value>பொருந்தும் பாடல்கள்: {0:N0}</value>
+  </data>
+  <data name="SmartPlaylist_Status_Error" xml:space="preserve">
+    <value>பொருந்தும் பாடல்களை எண்ண முடியவில்லை</value>
+  </data>
+  <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
+    <value>கணக்கிடப்படுகிறது…</value>
+  </data>
+  <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
+    <value>இந்தப் பெயரில் ஒரு பாடல் பட்டியல் ஏற்கனவே உள்ளது.</value>
+  </data>
+  <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
+    <value>பாடல் பட்டியலின் பெயரை உள்ளிடவும்.</value>
+  </data>
+  <data name="Status_Loading" xml:space="preserve">
+    <value>ஏற்றப்படுகிறது…</value>
+  </data>
+  <data name="Error_FailedToLoadArtists" xml:space="preserve">
+    <value>கலைஞர்களை ஏற்றத் தவறிவிட்டது</value>
+  </data>
+  <data name="CrashReport_Title" xml:space="preserve">
+    <value>முக்கியமான பிழை</value>
+  </data>
+  <data name="CrashReport_Message" xml:space="preserve">
+    <value>Nagi இல் பிழை ஏற்பட்டது, எனவே பயன்பாட்டை மூட வேண்டும்.</value>
+  </data>
+  <data name="MiniPlayer_Title" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="AlbumView_AlbumNotFound" xml:space="preserve">
+    <value>ஆல்பம் காணப்படவில்லை</value>
+  </data>
+  <data name="AlbumView_Error" xml:space="preserve">
+    <value>ஆல்பத்தை ஏற்றுவதில் பிழை</value>
+  </data>
+  <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
+    <value>ஆல்பம்</value>
+  </data>
+  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
+    <value>கலைஞர்</value>
+  </data>
+  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
+    <value>{0} பாடல்</value>
+  </data>
+  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
+    <value>{0} பாடல்கள்</value>
+  </data>
+  <data name="ArtistView_ArtistNotFound" xml:space="preserve">
+    <value>கலைஞர் காணப்படவில்லை</value>
+  </data>
+  <data name="ArtistView_Error" xml:space="preserve">
+    <value>கலைஞரை ஏற்றுவதில் பிழை</value>
+  </data>
+  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+    <value>கலைஞர்</value>
+  </data>
+  <data name="ArtistView_NoBiography" xml:space="preserve">
+    <value>இந்த கலைஞருக்கு சுயசரிதை இல்லை.</value>
+  </data>
+  <data name="Folders_ErrorLoading" xml:space="preserve">
+    <value>கோப்புறையை ஏற்றுவதில் பிழை</value>
+  </data>
+  <data name="Folders_AddFolder_Success" xml:space="preserve">
+    <value>'{0}' வெற்றிகரமாக சேர்க்கப்பட்டு ஸ்கேன் செய்யப்பட்டது.</value>
+  </data>
+  <data name="Folders_AddFolder_Failed" xml:space="preserve">
+    <value>கோப்புறையை சேர்க்கத் தவறிவிட்டது. பாதை தவறாக இருக்கலாம்.</value>
+  </data>
+  <data name="Folders_AddFolder_Exists" xml:space="preserve">
+    <value>இந்த கோப்புறை ஏற்கனவே நூலகத்தில் உள்ளது.</value>
+  </data>
+  <data name="Folders_AddFolder_InProgress" xml:space="preserve">
+    <value>கோப்புறையைத் தொகுப்பில் சேர்க்கிறது…</value>
+  </data>
+  <data name="Folders_Delete_Success" xml:space="preserve">
+    <value>உங்கள் தொகுப்பிலிருந்து &apos;{0}&apos; அகற்றப்பட்டது.</value>
+  </data>
+  <data name="Folders_Delete_Failed" xml:space="preserve">
+    <value>உங்கள் தொகுப்பிலிருந்து &apos;{0}&apos;-ஐ அகற்ற முடியவில்லை.</value>
+  </data>
+  <data name="Folders_Delete_InProgress" xml:space="preserve">
+    <value>உங்கள் தொகுப்பிலிருந்து &apos;{0}&apos; அகற்றப்படுகிறது…</value>
+  </data>
+  <data name="Folders_Rescan_Complete" xml:space="preserve">
+    <value>'{0}' மறு ஸ்கேன் முடிந்தது.</value>
+  </data>
+  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
+    <value>'{0}' க்கு எந்த மாற்றங்களும் கண்டறியப்படவில்லை.</value>
+  </data>
+  <data name="Folders_Rescan_InProgress" xml:space="preserve">
+    <value>'{0}' மீண்டும் ஸ்கேன் செய்யப்படுகிறது…</value>
+  </data>
+  <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
+    <value>இசையுடன் கூடிய கோப்புறைகள் எதுவும் காணப்படவில்லை.</value>
+  </data>
+  <data name="Folders_Error_Playback" xml:space="preserve">
+    <value>இந்த கோப்புறையில் பிளேபேக்கை தொடங்குவதில் பிழை.</value>
+  </data>
+  <data name="Folders_Error_RandomPlayback" xml:space="preserve">
+    <value>சீரற்ற கோப்புறை பிளேபேக்கை தொடங்குவதில் பிழை.</value>
+  </data>
+  <data name="Folders_Error_AddFolder" xml:space="preserve">
+    <value>கோப்புறையைச் சேர்ப்பதில் பிழை: {0}</value>
+  </data>
+  <data name="Folders_Error_DeleteFolder" xml:space="preserve">
+    <value>உங்கள் தொகுப்பிலிருந்து கோப்புறையை அகற்ற முடியவில்லை: {0}</value>
+  </data>
+  <data name="Folders_Error_RescanFolder" xml:space="preserve">
+    <value>கோப்புறையை மறு ஸ்கேன் செய்வதில் பிழை: {0}</value>
+  </data>
+  <data name="Folders_Count_Singular" xml:space="preserve">
+    <value>{0} கோப்புறை</value>
+  </data>
+  <data name="Folders_Count_Plural" xml:space="preserve">
+    <value>{0} கோப்புறைகள்</value>
+  </data>
+  <data name="Songs_Count_Singular" xml:space="preserve">
+    <value>{0} பாடல்</value>
+  </data>
+  <data name="Songs_Count_Plural" xml:space="preserve">
+    <value>{0} பாடல்கள்</value>
+  </data>
+  <data name="Albums_Count_Singular" xml:space="preserve">
+    <value>{0} ஆல்பம்</value>
+  </data>
+  <data name="Albums_Count_Plural" xml:space="preserve">
+    <value>{0} ஆல்பங்கள்</value>
+  </data>
+  <data name="Artists_Count_Singular" xml:space="preserve">
+    <value>{0} கலைஞர்</value>
+  </data>
+  <data name="Artists_Count_Plural" xml:space="preserve">
+    <value>{0} கலைஞர்கள்</value>
+  </data>
+  <data name="Generic_NoItems" xml:space="preserve">
+    <value>பொருட்கள் இல்லை</value>
+  </data>
+  <data name="Generic_Error" xml:space="preserve">
+    <value>பிழை</value>
+  </data>
+  <data name="GenreView_DefaultName" xml:space="preserve">
+    <value>வகை</value>
+  </data>
+  <data name="GenreView_Error" xml:space="preserve">
+    <value>வகையை ஏற்றுவதில் பிழை</value>
+  </data>
+  <data name="Lyrics_NoSongSelected" xml:space="preserve">
+    <value>பாடல் தேர்ந்தெடுக்கப்படவில்லை</value>
+  </data>
+  <data name="Lyrics_SongTitleFormat" xml:space="preserve">
+    <value>{1} மூலம் {0}</value>
+  </data>
+  <data name="Onboarding_Welcome" xml:space="preserve">
+    <value>தொடங்குவதற்கு உங்கள் இசை நூலகத்தை அமைப்போம்.</value>
+  </data>
+  <data name="Onboarding_WaitingForSelection" xml:space="preserve">
+    <value>நீங்கள் ஒரு கோப்புறையைத் தேர்ந்தெடுக்கும் வரை காத்திருக்கிறது…</value>
+  </data>
+  <data name="Onboarding_BuildingLibrary" xml:space="preserve">
+    <value>உங்கள் இசைத் தொகுப்பு உருவாக்கப்படுகிறது…</value>
+  </data>
+  <data name="Onboarding_Error" xml:space="preserve">
+    <value>எதிர்பாராத பிழை ஏற்பட்டது. மீண்டும் முயற்சிக்கவும்.</value>
+  </data>
+  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+    <value>ஸ்மார்ட் • {0} பாடல்</value>
+  </data>
+  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
+    <value>ஸ்மார்ட் • {0} பாடல்கள்</value>
+  </data>
+  <data name="Playlist_Count_Singular" xml:space="preserve">
+    <value>{0} பாடல்</value>
+  </data>
+  <data name="Playlist_Count_Plural" xml:space="preserve">
+    <value>{0} பாடல்கள்</value>
+  </data>
+  <data name="Playlist_ErrorLoading" xml:space="preserve">
+    <value>பிளேலிஸ்ட்டை ஏற்றுவதில் பிழை</value>
+  </data>
+  <data name="Playlist_Status_Starting" xml:space="preserve">
+    <value>பாடல் பட்டியல் தொடங்குகிறது…</value>
+  </data>
+  <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
+    <value>இந்த ஸ்மார்ட் பிளேலிஸ்ட்டின் விதிகளுடன் எந்த பாடல்களும் பொருந்தவில்லை.</value>
+  </data>
+  <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
+    <value>இந்த பிளேலிஸ்ட்டில் பிளேபேக்கை தொடங்குவதில் பிழை.</value>
+  </data>
+  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
+    <value>தற்செயலான ஒரு பாடல் பட்டியல் தேர்ந்தெடுக்கப்படுகிறது…</value>
+  </data>
+  <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
+    <value>பிளேலிஸ்ட்கள் எதுவும் காணப்படவில்லை.</value>
+  </data>
+  <data name="Playlist_Status_SmartSelectedEmpty" xml:space="preserve">
+    <value>தேர்ந்தெடுக்கப்பட்ட ஸ்மார்ட் பிளேலிஸ்ட் காலியாக உள்ளது.</value>
+  </data>
+  <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
+    <value>சீரற்ற பிளேலிஸ்ட்டை இயக்கும்போது பிழை.</value>
+  </data>
+  <data name="Playlist_Status_Loading" xml:space="preserve">
+    <value>பாடல் பட்டியல்கள் ஏற்றப்படுகின்றன…</value>
+  </data>
+  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
+    <value>பிளேலிஸ்ட்களை ஏற்றுவதில் பிழை.</value>
+  </data>
+  <data name="Playlist_Status_Creating" xml:space="preserve">
+    <value>புதிய பாடல் பட்டியல் உருவாக்கப்படுகிறது…</value>
+  </data>
+  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
+    <value>பிளேலிஸ்ட்டை உருவாக்கத் தவறிவிட்டது. அது ஏற்கனவே இருக்கலாம்.</value>
+  </data>
+  <data name="Playlist_Status_CreateError" xml:space="preserve">
+    <value>பிளேலிஸ்ட்டை உருவாக்கும்போது பிழை ஏற்பட்டது.</value>
+  </data>
+  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
+    <value>பாடல் பட்டியலின் அட்டைப் படம் புதுப்பிக்கப்படுகிறது…</value>
+  </data>
+  <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
+    <value>பிளேலிஸ்ட் கவரை புதுப்பிக்கத் தவறிவிட்டது.</value>
+  </data>
+  <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
+    <value>பிளேலிஸ்ட் கவரை புதுப்பிக்கும்போது பிழை ஏற்பட்டது.</value>
+  </data>
+  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
+    <value>பாடல் பட்டியலின் படம் அகற்றப்படுகிறது…</value>
+  </data>
+  <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
+    <value>பிளேலிஸ்ட் படத்தை நீக்கத் தவறிவிட்டது.</value>
+  </data>
+  <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
+    <value>பிளேலிஸ்ட் படத்தை நீக்கும்போது பிழை ஏற்பட்டது.</value>
+  </data>
+  <data name="Playlist_Status_Renaming" xml:space="preserve">
+    <value>பாடல் பட்டியலின் பெயர் மாற்றப்படுகிறது…</value>
+  </data>
+  <data name="Playlist_Status_RenameFailed" xml:space="preserve">
+    <value>பிளேலிஸ்ட் பெயரை மாற்றத் தவறிவிட்டது.</value>
+  </data>
+  <data name="Playlist_Status_RenameError" xml:space="preserve">
+    <value>பிளேலிஸ்ட் பெயரை மாற்றும்போது பிழை ஏற்பட்டது.</value>
+  </data>
+  <data name="Playlist_Status_Deleting" xml:space="preserve">
+    <value>பாடல் பட்டியல் நீக்கப்படுகிறது…</value>
+  </data>
+  <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
+    <value>பிளேலிஸ்ட்டை நீக்கத் தவறிவிட்டது.</value>
+  </data>
+  <data name="Playlist_Status_DeleteError" xml:space="preserve">
+    <value>பிளேலிஸ்ட்டை நீக்கும்போது பிழை ஏற்பட்டது.</value>
+  </data>
+  <data name="Settings_Reset_Title" xml:space="preserve">
+    <value>மறுஅமைப்பை உறுதிப்படுத்து</value>
+  </data>
+  <data name="Settings_Reset_Message" xml:space="preserve">
+    <value>அனைத்து பயன்பாட்டு தரவு மற்றும் அமைப்புகளையும் மீட்டமைக்க விரும்புகிறீர்களா? இந்தச் செயலை மாற்றியமைக்க முடியாது. பயன்பாடு ஆரம்ப அமைப்பிற்குத் திரும்பும்.</value>
+  </data>
+  <data name="Settings_Reset_Button" xml:space="preserve">
+    <value>மீட்டமை</value>
+  </data>
+  <data name="Settings_ResetError_Title" xml:space="preserve">
+    <value>மீட்டமைப்பு பிழை</value>
+  </data>
+  <data name="Settings_ResetError_Message" xml:space="preserve">
+    <value>பயன்பாட்டு தரவை மீட்டமைக்கும்போது ஒரு பிழை ஏற்பட்டது: {0}. தயவுசெய்து பயன்பாட்டை கைமுறையாக மறுதொடக்கம் செய்ய முயற்சிக்கவும்.</value>
+  </data>
+  <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
+    <value>பிழை</value>
+  </data>
+  <data name="Settings_LastFm_AuthError_Message" xml:space="preserve">
+    <value>Last.fm உடன் இணைக்க முடியவில்லை. தயவுசெய்து பின்னர் மீண்டும் முயற்சிக்கவும்.</value>
+  </data>
+  <data name="Settings_LastFm_FinalizeError_Title" xml:space="preserve">
+    <value>அங்கீகாரம் தோல்வியடைந்தது</value>
+  </data>
+  <data name="Settings_LastFm_FinalizeError_Message" xml:space="preserve">
+    <value>Last.fm இலிருந்து ஒரு அமர்வை பெற முடியவில்லை. தயவுசெய்து மீண்டும் இணைக்க முயற்சிக்கவும்.</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Title" xml:space="preserve">
+    <value>Last.fm துண்டிப்பு</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
+    <value>உங்கள் Last.fm கணக்கைத் துண்டிக்க விரும்புகிறீர்களா? உங்கள் ஸ்க்ரோப்ளிங் வரலாறு Last.fm இல் பாதுகாக்கப்படும், ஆனால் Nagi இனி ஸ்க்ரோப் செய்ய முடியாது.</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
+    <value>துண்டிப்பு</value>
+  </data>
+  <data name="Settings_Export_Success_Title" xml:space="preserve">
+    <value>ஏற்றுமதி வெற்றிகரமாக முடிந்தது</value>
+  </data>
+  <data name="Settings_Export_Success_Message" xml:space="preserve">
+    <value>ஏற்றுமதி செய்யப்பட்ட பாடல் பட்டியல்கள்: {0}
+பாடல்கள்: {1}
+சேமிக்கப்பட்ட இடம்: {2}</value>
+  </data>
+  <data name="Settings_Export_Failed_Title" xml:space="preserve">
+    <value>ஏற்றுமதி தோல்வியடைந்தது</value>
+  </data>
+  <data name="Settings_Import_Success_Title" xml:space="preserve">
+    <value>இறக்குமதி வெற்றிகரமாக முடிந்தது</value>
+  </data>
+  <data name="Settings_Import_Success_Message" xml:space="preserve">
+    <value>இறக்குமதி செய்யப்பட்ட பாடல் பட்டியல்கள்: {0}
+பாடல்கள்: {1}</value>
+  </data>
+  <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
+    <value>
+
+உங்கள் தொகுப்பில் காணப்படாத பாடல்கள்: {0}.</value>
+  </data>
+  <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
+    <value>
+
+இறக்குமதி செய்ய முடியாத கோப்புகள்: {0}.</value>
+  </data>
+  <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
+    <value>இறக்குமதி தோல்வியடைந்தது</value>
+  </data>
+  <data name="Settings_Import_FailedTotal_Message" xml:space="preserve">
+    <value>எந்த பிளேலிஸ்ட்களையும் இறக்குமதி செய்ய முடியவில்லை.</value>
+  </data>
+  <data name="SmartPlaylist_ErrorLoading" xml:space="preserve">
+    <value>ஸ்மார்ட் பிளேலிஸ்ட்டை ஏற்றுவதில் பிழை</value>
+  </data>
+  <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
+    <value>விதிகள் எதுவும் வரையறுக்கப்படவில்லை • அனைத்து பாடல்களும் பொருந்துகின்றன</value>
+  </data>
+  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
+    <value>{1} {2} இல் {0} பொருந்தும்</value>
+  </data>
+  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
+    <value>அனைத்து</value>
+  </data>
+  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
+    <value>ஏதாவது</value>
+  </data>
+  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
+    <value>விதி</value>
+  </data>
+  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
+    <value>விதிகள்</value>
+  </data>
+  <data name="SongList_PageTitle_Default" xml:space="preserve">
+    <value>பாடல்கள்</value>
+  </data>
+  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
+    <value>{0} பொருள்</value>
+  </data>
+  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+    <value>{0} பொருட்கள்</value>
+  </data>
+  <data name="SongList_SelectedCount_Format" xml:space="preserve">
+    <value>{0} தேர்ந்தெடுக்கப்பட்டது</value>
+  </data>
+  <data name="AlbumView_DiscHeader" xml:space="preserve">
+    <value>வட்டு {0}</value>
+  </data>
+  <data name="Generic_OK" xml:space="preserve">
+    <value>சரி</value>
+  </data>
+  <data name="Generic_Cancel" xml:space="preserve">
+    <value>ரத்துசெய்</value>
+  </data>
+  <data name="Generic_Close" xml:space="preserve">
+    <value>மூடு</value>
+  </data>
+  <data name="Generic_Recheck" xml:space="preserve">
+    <value>மீண்டும் சரிபார்க்கவும்</value>
+  </data>
+  <data name="CrashReport_Button_Reset" xml:space="preserve">
+    <value>பயன்பாடு மற்றும் தரவை மீட்டமை</value>
+  </data>
+  <data name="FFmpeg_Status_NotDetected" xml:space="preserve">
+    <value>FFmpeg கண்டறியப்படவில்லை. தயவுசெய்து FFmpeg ஐ நிறுவி 'மீண்டும் சரிபார்க்கவும்' என்பதைக் கிளிக் செய்யவும்.</value>
+  </data>
+  <data name="FFmpeg_Status_Checking" xml:space="preserve">
+    <value>FFmpeg பரிசோதிக்கப்படுகிறது…</value>
+  </data>
+  <data name="FFmpeg_Status_Detected" xml:space="preserve">
+    <value>FFmpeg கண்டறியப்பட்டது.</value>
+  </data>
+  <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
+    <value>FFmpeg இன்னும் கண்டறியப்படவில்லை. தயவுசெய்து FFmpeg ஐ நிறுவி 'மீண்டும் சரிபார்க்கவும்' என்பதைக் கிளிக் செய்யவும்.</value>
+  </data>
+  <data name="FFmpeg_Status_Error" xml:space="preserve">
+    <value>FFmpeg ஐ சரிபார்க்கும் போது பிழை ஏற்பட்டது. மீண்டும் முயற்சிக்கவும்.</value>
+  </data>
+  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
+    <value>முந்தைய</value>
+  </data>
+  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
+    <value>இயக்கு</value>
+  </data>
+  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
+    <value>இடைநிறுத்து</value>
+  </data>
+  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
+    <value>அடுத்த</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC ஒரு குறிப்பிடப்படாத பிழையை எதிர்கொண்டது.</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>LibVLC பிழை: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>'{0}' ஐ ஏற்றத் தவறிவிட்டது.</value>
+  </data>
+  <data name="Settings_Nav_Library" xml:space="preserve">
+    <value>நூலகம்</value>
+  </data>
+  <data name="Settings_Nav_Folders" xml:space="preserve">
+    <value>கோப்புறைகள்</value>
+  </data>
+  <data name="Settings_Nav_Playlists" xml:space="preserve">
+    <value>பிளேலிஸ்ட்கள்</value>
+  </data>
+  <data name="Settings_Nav_Artists" xml:space="preserve">
+    <value>கலைஞர்கள்</value>
+  </data>
+  <data name="Settings_Nav_Albums" xml:space="preserve">
+    <value>ஆல்பங்கள்</value>
+  </data>
+  <data name="Settings_Nav_Genres" xml:space="preserve">
+    <value>வகைகள்</value>
+  </data>
+  <data name="Settings_Button_Shuffle" xml:space="preserve">
+    <value>கலக்கு</value>
+  </data>
+  <data name="Settings_Button_Previous" xml:space="preserve">
+    <value>முந்தைய</value>
+  </data>
+  <data name="Settings_Button_PlayPause" xml:space="preserve">
+    <value>ப்ளே/இடைநிறுத்து</value>
+  </data>
+  <data name="Settings_Button_Next" xml:space="preserve">
+    <value>அடுத்த</value>
+  </data>
+  <data name="Settings_Button_Repeat" xml:space="preserve">
+    <value>மீண்டும் ஒலிக்கவும்</value>
+  </data>
+  <data name="Settings_Button_Divider" xml:space="preserve">
+    <value>அமைப்பு பிரிப்பான்</value>
+  </data>
+  <data name="Settings_Button_Lyrics" xml:space="preserve">
+    <value>பாடல் வரிகள்</value>
+  </data>
+  <data name="Settings_Button_Queue" xml:space="preserve">
+    <value>வரிசை</value>
+  </data>
+  <data name="Settings_Button_Volume" xml:space="preserve">
+    <value>ஒலி அளவு</value>
+  </data>
+  <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
+    <value>சமூகத்தால் தொகுக்கப்பட்ட பாடல் வரிகள் தரவுத்தளம்</value>
+  </data>
+  <data name="Settings_Provider_NetEase_Desc" xml:space="preserve">
+    <value>சீன இசை சேவை, ஆசிய இசைக்கு சிறந்தது</value>
+  </data>
+  <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
+    <value>கலைஞர் ஐடிகளைப் பெறுகிறது (TheAudioDB மற்றும் Fanart.tv க்கு தேவை)</value>
+  </data>
+  <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
+    <value>உயர்தர கலைஞர் படங்கள் மற்றும் சுயசரிதைகள் (MusicBrainz தேவை)</value>
+  </data>
+  <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
+    <value>உயர்தர கலைஞர் படங்கள் மட்டும் (MusicBrainz தேவை)</value>
+  </data>
+  <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
+    <value>கலைஞர் சுயசரிதைகள் மற்றும் படங்கள் (பின்வாங்கல்)</value>
+  </data>
+  <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>தேடலை மூடு</value>
+  </data>
+  <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>ஆல்பங்களைத் தேடு</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>தேடலை மூடு</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>ஆல்பத்தில் தேடு</value>
+  </data>
+  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>பிளேலிஸ்ட்கள் எதுவும் இல்லை</value>
+  </data>
+  <data name="ArtistPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>தேடலை மூடு</value>
+  </data>
+  <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>கலைஞர்களைத் தேடு</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>தேடலை மூடு</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>கலைஞரில் தேடு</value>
+  </data>
+  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>பிளேலிஸ்ட்கள் எதுவும் இல்லை</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
+    <value>கோப்புறையை அகற்று</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
+    <value>உங்கள் தொகுப்பிலிருந்து &apos;{0}&apos;-ஐ அகற்றவா? உங்கள் ஒலி கோப்புகள் உங்கள் கணினியிலேயே இருக்கும்.</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
+    <value>அகற்று</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
+    <value>ரத்துசெய்</value>
+  </data>
+  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
+    <value>தெரியாத கோப்புறை</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>தேடலை மூடு</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>கோப்புறையில் தேடு</value>
+  </data>
+  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>பிளேலிஸ்ட்கள் எதுவும் இல்லை</value>
+  </data>
+  <data name="GenrePage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>தேடலை மூடு</value>
+  </data>
+  <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>வகைகளைத் தேடு</value>
+  </data>
+  <data name="LibraryPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>தேடலை மூடு</value>
+  </data>
+  <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>நூலகத்தில் தேடு</value>
+  </data>
+  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>பிளேலிஸ்ட்கள் எதுவும் இல்லை</value>
+  </data>
+  <data name="PlaylistPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>தேடலை மூடு</value>
+  </data>
+  <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>பிளேலிஸ்ட்களைத் தேடு</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
+    <value>பாடல் பட்டியலின் பெயரை உள்ளிடவும்</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
+    <value>அட்டைப் படத்தைத் தேர்ந்தெடு</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
+    <value>புதிய பிளேலிஸ்ட்டை உருவாக்கு</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
+    <value>உருவாக்கு</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
+    <value>ரத்துசெய்</value>
+  </data>
+  <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
+    <value>'{0}' ஐ மறுபெயரிடு</value>
+  </data>
+  <data name="PlaylistPage_RenameDialog_RenameButton" xml:space="preserve">
+    <value>மறுபெயரிடு</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_Title" xml:space="preserve">
+    <value>பிளேலிஸ்ட்டை நீக்கு</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_Content_Format" xml:space="preserve">
+    <value>பிளேலிஸ்ட் '{0}' ஐ நீக்க விரும்புகிறீர்களா? இந்தச் செயலை மாற்றியமைக்க முடியாது.</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
+    <value>நீக்கு</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>தேடலை மூடு</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>பிளேலிஸ்ட்டில் தேடு</value>
+  </data>
+  <data name="GenreViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>தேடலை மூடு</value>
+  </data>
+  <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>வகையில் தேடு</value>
+  </data>
+  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>பிளேலிஸ்ட்கள் எதுவும் இல்லை</value>
+  </data>
+  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
+    <value>தெரியாத பிளேலிஸ்ட்</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>தேடலை மூடு</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>ஸ்மார்ட் பிளேலிஸ்ட்டில் தேடு</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
+    <value>தெரியாத ஸ்மார்ட் பிளேலிஸ்ட்</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
+    <value>மெட்டாடேட்டாவை மறு ஸ்கேன் செய்</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
+    <value>கலைஞர் பிரிப்பு போன்ற மெட்டாடேட்டா அமைப்புகளைப் பயன்படுத்த உங்கள் இசைத் தொகுப்பை மீண்டும் ஸ்கேன் செய்யவும். பெரிய தொகுப்புகளுக்கு இது சிறிது நேரம் எடுக்கலாம். தொடரவா?</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
+    <value>மறு ஸ்கேன் செய்</value>
+  </data>
+  <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
+    <value>இசைத் தொகுப்பு மறுஸ்கேன் தயார் செய்யப்படுகிறது…</value>
+  </data>
+  <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
+    <value>மறு ஸ்கேன் முடிந்தது</value>
+  </data>
+  <data name="Settings_Dialog_RescanComplete_Content" xml:space="preserve">
+    <value>நூலக மெட்டாடேட்டா புதுப்பிக்கப்பட்டுள்ளது.</value>
+  </data>
+  <data name="Settings_Dialog_RescanFailed_Title" xml:space="preserve">
+    <value>மறு ஸ்கேன் தோல்வியடைந்தது</value>
+  </data>
+  <data name="Settings_Dialog_RescanFailed_Content" xml:space="preserve">
+    <value>ஸ்கேன் செய்யும் போது பிழை ஏற்பட்டது. விவரங்களுக்கு லாகுகளை சரிபார்க்கவும்.</value>
+  </data>
+  <data name="Settings_Dialog_FFmpegNotFound_Title" xml:space="preserve">
+    <value>FFmpeg காணப்படவில்லை</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Title" xml:space="preserve">
+    <value>ஒலி அளவு இயல்பாக்கத்தை இயக்கு</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
+    <value>ஒலி அளவு இயல்பாக்கம் (ReplayGain) உங்கள் அனைத்து இசையிலும் ஒரு நிலையான ஒலி அளவை உறுதி செய்கிறது.
+
+இது உங்கள் இசை நூலகத்தை பகுப்பாய்வு செய்து ReplayGain குறிச்சொற்களை எழுதுவதன் மூலம் உங்கள் ஆடியோ கோப்புகளை நேரடியாக மாற்றியமைக்கும். ஏற்கனவே உள்ள குறிச்சொற்கள் இல்லாத கோப்புகள் மட்டுமே செயலாக்கப்படும். உங்கள் நூலக அளவைப் பொறுத்து இதற்கு சிறிது நேரம் ஆகலாம்.
+
+நீங்கள் தொடர விரும்புகிறீர்களா?</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
+    <value>இயக்கு &amp; ஸ்கேன் செய்</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
+    <value>ஒலி அளவு இயல்பாக்க ஸ்கேன் தயார் செய்யப்படுகிறது…</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
+    <value>ஒலி அளவு இயல்பாக்க ஸ்கேன் ரத்து செய்யப்பட்டது.</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
+    <value>ஸ்கேன் செய்யும் போது பிழை: {0}</value>
+  </data>
+  <data name="Settings_Export_Failed_Message" xml:space="preserve">
+    <value>ஏற்றுமதி செய்ய பிளேலிஸ்ட்கள் எதுவும் இல்லை.</value>
+  </data>
+  <data name="Language_Auto" xml:space="preserve">
+    <value>தானியங்கு</value>
+  </data>
+  <data name="TrayIcon_ShowWindow" xml:space="preserve">
+    <value>சாளரத்தைக் காட்டு</value>
+  </data>
+  <data name="TrayIcon_Exit" xml:space="preserve">
+    <value>வெளியேறு</value>
+  </data>
+  <data name="MiniPlayer_BackButton_ToolTip" xml:space="preserve">
+    <value>பிளேயருக்குத் திரும்பு</value>
+  </data>
+  <data name="MiniPlayer_UpNextHeader" xml:space="preserve">
+    <value>அடுத்து</value>
+  </data>
+  <data name="MiniPlayer_RestoreButton_ToolTip" xml:space="preserve">
+    <value>Nagiயைக் காட்டு</value>
+  </data>
+  <data name="MiniPlayer_PreviousButton_ToolTip" xml:space="preserve">
+    <value>முந்தையது</value>
+  </data>
+  <data name="MiniPlayer_NextButton_ToolTip" xml:space="preserve">
+    <value>அடுத்தது</value>
+  </data>
+  <data name="MiniPlayer_QueueButton_ToolTip" xml:space="preserve">
+    <value>அடுத்து</value>
+  </data>
+  <data name="CrashReport_ReportIssuePreLink" xml:space="preserve">
+    <value>இதைப் புகாரளிக்க, ஒரு சிக்கலை உருவாக்கவும் </value>
+  </data>
+  <data name="CrashReport_IssueLink" xml:space="preserve">
+    <value>சிக்கல்கள் பக்கம்</value>
+  </data>
+  <data name="CrashReport_ReportIssuePostLink" xml:space="preserve">
+    <value>.</value>
+  </data>
+  <data name="CrashReport_ResetAppAdvice" xml:space="preserve">
+    <value>இது தொடர்ந்தால், 'ஆப் மற்றும் தரவை மீட்டமை' என்பதை முயற்சிக்கலாம். இது உங்கள் அமைப்புகளையும் நூலகத்தையும் அழித்துவிடும், இது ஆப் ஒரு சிக்கலான நிலையிலிருந்து மீள உதவும்.</value>
+  </data>
+  <data name="CrashReport_CopyLogButton_ToolTip" xml:space="preserve">
+    <value>பதிவை கிளிப்போர்டுக்கு நகலெடு</value>
+  </data>
+  <data name="CrashReport_CopyLogLabel" xml:space="preserve">
+    <value>பதிவை நகலெடு</value>
+  </data>
+  <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
+    <value>அட்டையைத் தேர்ந்தெடு</value>
+  </data>
+  <data name="SmartPlaylist_PickCoverButton_ToolTip" xml:space="preserve">
+    <value>ஒரு அட்டைப் படத்தை தேர்ந்தெடு</value>
+  </data>
+  <data name="SmartPlaylist_PlaylistNameLabel" xml:space="preserve">
+    <value>பிளேலிஸ்ட் பெயர்</value>
+  </data>
+  <data name="SmartPlaylist_PlaylistNameTextBox_Placeholder" xml:space="preserve">
+    <value>உங்கள் ஸ்மார்ட் பிளேலிஸ்ட்டுக்கு ஒரு பெயரை உள்ளிடவும்</value>
+  </data>
+  <data name="SmartPlaylist_SortOrderLabel" xml:space="preserve">
+    <value>வரிசைப்படுத்தும் வரிசை</value>
+  </data>
+  <data name="SmartPlaylist_MatchLabel" xml:space="preserve">
+    <value>பொருத்து</value>
+  </data>
+  <data name="SmartPlaylist_MatchLogic_All_Content" xml:space="preserve">
+    <value>அனைத்தும்</value>
+  </data>
+  <data name="SmartPlaylist_MatchLogic_Any_Content" xml:space="preserve">
+    <value>ஏதேனும்</value>
+  </data>
+  <data name="SmartPlaylist_MatchSuffixLabel" xml:space="preserve">
+    <value>பின்வரும் விதிகளில்:</value>
+  </data>
+  <data name="SmartPlaylist_AddRuleButton_ToolTip" xml:space="preserve">
+    <value>புதிய விதியைச் சேர்</value>
+  </data>
+  <data name="SmartPlaylist_AddRuleLabel" xml:space="preserve">
+    <value>விதியைச் சேர்</value>
+  </data>
+  <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
+    <value>மதிப்பு</value>
+  </data>
+  <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
+    <value>இந்த விதியை நீக்கு</value>
+  </data>
+  <data name="SmartPlaylist_NoRulesTitle" xml:space="preserve">
+    <value>விதிகள் எதுவும் வரையறுக்கப்படவில்லை</value>
+  </data>
+  <data name="SmartPlaylist_NoRulesMessage" xml:space="preserve">
+    <value>உங்கள் நூலகத்தில் உள்ள அனைத்துப் பாடல்களும் இந்தப் பிளேலிஸ்ட்டில் சேர்க்கப்படும்.</value>
+  </data>
+  <data name="SmartPlaylist_AddFirstRuleButton_Content" xml:space="preserve">
+    <value>உங்கள் முதல் விதியைச் சேர்</value>
+  </data>
+  <data name="SmartPlaylist_AddFirstRuleButton_ToolTip" xml:space="preserve">
+    <value>உங்கள் முதல் விதியைச் சேர்</value>
+  </data>
+  <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
+    <value>சேமி</value>
+  </data>
+  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
+    <value>ரத்துசெய்</value>
+  </data>
+  <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
+    <value>முந்தையது</value>
+  </data>
+  <data name="TrayPopup_NextButton_ToolTip" xml:space="preserve">
+    <value>அடுத்தது</value>
+  </data>
+  <data name="TrayPopup_QueueButton_ToolTip" xml:space="preserve">
+    <value>அடுத்து</value>
+  </data>
+  <data name="TrayPopup_BackButton_ToolTip" xml:space="preserve">
+    <value>பிளேயருக்குத் திரும்பு</value>
+  </data>
+  <data name="TrayPopup_UpNextHeader" xml:space="preserve">
+    <value>அடுத்து</value>
+  </data>
+  <data name="AppName" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
+    <value>முந்தையது</value>
+  </data>
+  <data name="Player_NextButton_ToolTip" xml:space="preserve">
+    <value>அடுத்தது</value>
+  </data>
+  <data name="Player_LyricsButton_ToolTip" xml:space="preserve">
+    <value>பாடல் வரிகள்</value>
+  </data>
+  <data name="Player_QueueButton_ToolTip" xml:space="preserve">
+    <value>அடுத்து</value>
+  </data>
+  <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
+    <value>ஆல்பத்திற்குச் செல்</value>
+  </data>
+  <data name="QueueFlyout_Title" xml:space="preserve">
+    <value>அடுத்து</value>
+  </data>
+  <data name="QueueFlyout_ClearQueue" xml:space="preserve">
+    <value>வரிசையைக் காலி செய்</value>
+  </data>
+  <data name="QueuePanel_DisplayOptions" xml:space="preserve">
+    <value>வரிசைக் காட்சி விருப்பங்கள்</value>
+  </data>
+  <data name="QueuePanel_Close" xml:space="preserve">
+    <value>வரிசையை மூடு</value>
+  </data>
+  <data name="QueuePanel_ShowArtist" xml:space="preserve">
+    <value>கலைஞர்</value>
+  </data>
+  <data name="QueuePanel_ShowDuration" xml:space="preserve">
+    <value>கால அளவு</value>
+  </data>
+  <data name="QueuePanel_ShowTrackCount" xml:space="preserve">
+    <value>பாடல்களின் எண்ணிக்கை</value>
+  </data>
+  <data name="QueuePanel_TrackCount" xml:space="preserve">
+    <value>பாடல்கள்: {0:N0}</value>
+  </data>
+  <data name="QueuePanel_ShowPosition" xml:space="preserve">
+    <value>வரிசை நிலை</value>
+  </data>
+  <data name="QueuePanel_ShowGenre" xml:space="preserve">
+    <value>வகை</value>
+  </data>
+  <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
+    <value>மொத்த கால அளவு</value>
+  </data>
+  <data name="QueuePanel_Play" xml:space="preserve">
+    <value>இயக்கு</value>
+  </data>
+  <data name="QueuePanel_MoveUp" xml:space="preserve">
+    <value>மேலே நகர்த்து</value>
+  </data>
+  <data name="QueuePanel_MoveDown" xml:space="preserve">
+    <value>கீழே நகர்த்து</value>
+  </data>
+  <data name="QueuePanel_Remove" xml:space="preserve">
+    <value>வரிசையிலிருந்து அகற்று</value>
+  </data>
+  <data name="AlbumPage_Title" xml:space="preserve">
+    <value>ஆல்பங்கள்</value>
+  </data>
+  <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
+    <value>ஆல்பங்களைத் தேடு…</value>
+  </data>
+  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
+    <value>ஆல்பங்களைத் தேடு</value>
+  </data>
+  <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
+    <value>தோராயமாக ஒன்றைத் தேர்ந்தெடு</value>
+  </data>
+  <data name="AlbumPage_Menu_Play" xml:space="preserve">
+    <value>இயக்கு</value>
+  </data>
+  <data name="AlbumPage_Empty_Title" xml:space="preserve">
+    <value>ஆல்பங்கள் எதுவும் இல்லை</value>
+  </data>
+  <data name="AlbumPage_Empty_Subtitle" xml:space="preserve">
+    <value>ஆல்பங்களைச் சேர்க்க உங்கள் இசை நூலகத்தை ஸ்கேன் செய்யவும்</value>
+  </data>
+  <data name="AlbumViewPage_Header_Label" xml:space="preserve">
+    <value>ஆல்பம்</value>
+  </data>
+  <data name="AlbumViewPage_Songs_Title" xml:space="preserve">
+    <value>பாடல்கள்</value>
+  </data>
+  <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
+    <value>ஆல்பத்தில் தேடு…</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
+    <value>ஆல்பத்தில் தேடு</value>
+  </data>
+  <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
+    <value>அனைத்தையும் இயக்கு</value>
+  </data>
+  <data name="AlbumViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
+    <value>அனைத்தையும் கலக்கி இயக்கு</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_Play" xml:space="preserve">
+    <value>இயக்கு</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_PlayNext" xml:space="preserve">
+    <value>அடுத்து இயக்கு</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_AddToQueue" xml:space="preserve">
+    <value>வரிசையில் சேர்</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
+    <value>பாடல் பட்டியலில் சேர்</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
+    <value>கலைஞரிடம் செல்</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
+    <value>ஃபைல் எக்ஸ்ப்ளோரரில் காட்டு</value>
+  </data>
+  <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
+    <value>இயக்கு</value>
+  </data>
+  <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
+    <value>இந்த ஆல்பத்தில் பாடல்கள் எதுவும் இல்லை</value>
+  </data>
+  <data name="AlbumViewPage_Empty_Subtitle" xml:space="preserve">
+    <value>வேறு எதையாவது தேட முயற்சிக்கவும்</value>
+  </data>
+  <data name="ArtistPage_Title" xml:space="preserve">
+    <value>கலைஞர்கள்</value>
+  </data>
+  <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
+    <value>கலைஞர்களைத் தேடு…</value>
+  </data>
+  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
+    <value>கலைஞர்களைத் தேடு</value>
+  </data>
+  <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
+    <value>தோராயமாக ஒன்றைத் தேர்ந்தெடு</value>
+  </data>
+  <data name="ArtistPage_Menu_Play" xml:space="preserve">
+    <value>இயக்கு</value>
+  </data>
+  <data name="ArtistPage_Menu_ChangeImage" xml:space="preserve">
+    <value>படத்தை மாற்று</value>
+  </data>
+  <data name="ArtistPage_Menu_RemoveImage" xml:space="preserve">
+    <value>படத்தை நீக்கு</value>
+  </data>
+  <data name="ArtistPage_Empty_Title" xml:space="preserve">
+    <value>கலைஞர்கள் யாரும் இல்லை</value>
+  </data>
+  <data name="ArtistPage_Empty_Subtitle" xml:space="preserve">
+    <value>கலைஞர்களைச் சேர்க்க உங்கள் இசை நூலகத்தை ஸ்கேன் செய்யவும்</value>
+  </data>
+  <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
+    <value>கலைஞர் படத்தை மாற்று</value>
+  </data>
+  <data name="ArtistViewPage_ImageMenu_ChangeImage" xml:space="preserve">
+    <value>படத்தை மாற்று</value>
+  </data>
+  <data name="ArtistViewPage_ImageMenu_RemoveImage" xml:space="preserve">
+    <value>படத்தை நீக்கு</value>
+  </data>
+  <data name="ArtistViewPage_Header_Label" xml:space="preserve">
+    <value>கலைஞர்</value>
+  </data>
+  <data name="ArtistViewPage_Albums_Title" xml:space="preserve">
+    <value>சிறந்த ஆல்பங்கள்</value>
+  </data>
+  <data name="ArtistViewPage_Songs_Title" xml:space="preserve">
+    <value>பாடல்கள்</value>
+  </data>
+  <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
+    <value>கலைஞரில் தேடு…</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
+    <value>கலைஞரில் தேடு</value>
+  </data>
+  <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
+    <value>அனைத்தையும் இயக்கு</value>
+  </data>
+  <data name="ArtistViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
+    <value>அனைத்தையும் கலக்கி இயக்கு</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_Play" xml:space="preserve">
+    <value>இயக்கு</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_PlayNext" xml:space="preserve">
+    <value>அடுத்து இயக்கு</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_AddToQueue" xml:space="preserve">
+    <value>வரிசையில் சேர்</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
+    <value>பாடல் பட்டியலில் சேர்</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
+    <value>ஆல்பத்திற்குச் செல்</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
+    <value>ஃபைல் எக்ஸ்ப்ளோரரில் காட்டு</value>
+  </data>
+  <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
+    <value>இயக்கு</value>
+  </data>
+  <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
+    <value>இந்த கலைஞருக்கு பாடல்கள் எதுவும் இல்லை</value>
+  </data>
+  <data name="ArtistViewPage_Empty_Subtitle" xml:space="preserve">
+    <value>வேறு எதையாவது தேட முயற்சிக்கவும்</value>
+  </data>
+  <data name="FolderPage_Title" xml:space="preserve">
+    <value>கோப்புறைகள்</value>
+  </data>
+  <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
+    <value>தோராயமாக ஒன்றைத் தேர்ந்தெடு</value>
+  </data>
+  <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
+    <value>ஒரு இசை கோப்புறையைச் சேர்</value>
+  </data>
+  <data name="FolderPage_AddFolder_Label" xml:space="preserve">
+    <value>கோப்புறையைச் சேர்</value>
+  </data>
+  <data name="FolderPage_Menu_Play" xml:space="preserve">
+    <value>இயக்கு</value>
+  </data>
+  <data name="FolderPage_Menu_Rescan" xml:space="preserve">
+    <value>மீண்டும் ஸ்கேன் செய்</value>
+  </data>
+  <data name="FolderPage_Menu_Delete" xml:space="preserve">
+    <value>தொகுப்பிலிருந்து அகற்று</value>
+  </data>
+  <data name="FolderPage_Empty_Title" xml:space="preserve">
+    <value>கோப்புறைகள் எதுவும் இன்னும் சேர்க்கப்படவில்லை</value>
+  </data>
+  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
+    <value>தொடங்குவதற்கு இசை கோப்புறைகளைச் சேர்க்கவும்</value>
+  </data>
+  <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
+    <value>இயக்கு</value>
+  </data>
+  <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
+    <value>பாடல் பட்டியலில் சேர்</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_Play" xml:space="preserve">
+    <value>இயக்கு</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_PlayNext" xml:space="preserve">
+    <value>அடுத்து இயக்கு</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_AddToQueue" xml:space="preserve">
+    <value>வரிசையில் சேர்</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
+    <value>பாடல் பட்டியலில் சேர்</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
+    <value>ஆல்பத்திற்குச் செல்</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_GoToArtist" xml:space="preserve">
+    <value>கலைஞரிடம் செல்</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
+    <value>ஃபைல் எக்ஸ்ப்ளோரரில் காட்டு</value>
+  </data>
+  <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
+    <value>இயக்கு</value>
+  </data>
+  <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
+    <value>கோப்புறை</value>
+  </data>
+  <data name="FolderSongViewPage_Songs_Title" xml:space="preserve">
+    <value>பாடல்கள்</value>
+  </data>
+  <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
+    <value>கோப்புறையில் தேடு…</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
+    <value>கோப்புறையில் தேடு</value>
+  </data>
+  <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
+    <value>அனைத்தையும் இயக்கு</value>
+  </data>
+  <data name="FolderSongViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
+    <value>அனைத்தையும் கலக்கி இயக்கு</value>
+  </data>
+  <data name="FolderSongViewPage_Empty_Title" xml:space="preserve">
+    <value>இந்தக் கோப்புறை காலியாக உள்ளது</value>
+  </data>
+  <data name="FolderSongViewPage_Empty_Subtitle" xml:space="preserve">
+    <value>பாடல்கள் அல்லது துணை கோப்புறைகள் எதுவும் இல்லை</value>
+  </data>
+  <data name="GenrePage_Title" xml:space="preserve">
+    <value>வகைகள்</value>
+  </data>
+  <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
+    <value>வகைகளைத் தேடு…</value>
+  </data>
+  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
+    <value>வகைகளைத் தேடு</value>
+  </data>
+  <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
+    <value>தோராயமாக ஒன்றைத் தேர்ந்தெடு</value>
+  </data>
+  <data name="GenrePage_Menu_Play" xml:space="preserve">
+    <value>இயக்கு</value>
+  </data>
+  <data name="GenrePage_Empty_Title" xml:space="preserve">
+    <value>வகைகள் எதுவும் இல்லை</value>
+  </data>
+  <data name="GenrePage_Empty_Subtitle" xml:space="preserve">
+    <value>வகைகளைச் சேர்க்க உங்கள் இசை நூலகத்தை ஸ்கேன் செய்யவும்</value>
+  </data>
+  <data name="LibraryPage_Title" xml:space="preserve">
+    <value>நூலகம்</value>
+  </data>
+  <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
+    <value>தொகுப்பில் தேடு…</value>
+  </data>
+  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
+    <value>நூலகத்தில் தேடு</value>
+  </data>
+  <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
+    <value>அனைத்தையும் இயக்கு</value>
+  </data>
+  <data name="LibraryPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
+    <value>அனைத்தையும் கலக்கி இயக்கு</value>
+  </data>
+  <data name="LibraryPage_Context_Play" xml:space="preserve">
+    <value>இயக்கு</value>
+  </data>
+  <data name="LibraryPage_Context_PlayNext" xml:space="preserve">
+    <value>அடுத்து இயக்கு</value>
+  </data>
+  <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
+    <value>வரிசையில் சேர்</value>
+  </data>
+  <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
+    <value>பாடல் பட்டியலில் சேர்</value>
+  </data>
+  <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
+    <value>ஆல்பத்திற்குச் செல்</value>
+  </data>
+  <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
+    <value>கலைஞரிடம் செல்</value>
+  </data>
+  <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
+    <value>ஃபைல் எக்ஸ்ப்ளோரரில் காட்டு</value>
+  </data>
+  <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
+    <value>இயக்கு</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
+    <value>பாடல்கள் எதுவும் கிடைக்கவில்லை</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+    <value>வேறொன்றைத் தேட முயற்சிக்கவும்</value>
+  </data>
+  <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
+    <value>உங்கள் நூலகம் காலியாக உள்ளது</value>
+  </data>
+  <data name="LibraryPage_EmptyState_Subtitle" xml:space="preserve">
+    <value>அமைப்புகளில் உங்கள் நூலகத்தில் கோப்புறைகளைச் சேர்க்கவும்</value>
+  </data>
+  <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
+    <value>இந்தப் பாடலுக்கு பாடல் வரிகள் எதுவும் கிடைக்கவில்லை</value>
+  </data>
+  <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
+    <value>வேறு பாடலை முயற்சிக்கவும்</value>
+  </data>
+  <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
+    <value>வரிகளைத் திருத்தவும் அல்லது மாற்றவும்</value>
+  </data>
+  <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
+    <value>பாட வரிகளைத் திருத்து</value>
+  </data>
+  <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
+    <value>வெறுந்தரவு உரை அல்லது நேர முத்திரையிடப்பட்ட LRC வரிகளை ஒட்டவும்</value>
+  </data>
+  <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
+    <value>சேமி</value>
+  </data>
+  <data name="LyricsPage_EditLyrics_Remove" xml:space="preserve">
+    <value>சேமிக்கப்பட்ட பாடல் வரிகளை அகற்று</value>
+  </data>
+  <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
+    <value>வரிகளைப் புதுப்பிக்க முடியவில்லை</value>
+  </data>
+  <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
+    <value>Nagi-ஆல் வரிகளைச் சேமிக்க முடியவில்லை. விவரங்களுக்குப் பதிவுக்கோப்பினைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.</value>
+  </data>
+  <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
+    <value>Nagiக்கு வரவேற்கிறோம்</value>
+  </data>
+  <data name="OnboardingPage_AddFolderButton_ToolTip" xml:space="preserve">
+    <value>தொடங்குவதற்கு ஒரு இசை கோப்புறையைச் சேர்</value>
+  </data>
+  <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
+    <value>இசை கோப்புறையைச் சேர்</value>
+  </data>
+  <data name="PlaylistPage_Title" xml:space="preserve">
+    <value>பிளேலிஸ்ட்கள்</value>
+  </data>
+  <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
+    <value>பாடல் பட்டியல்களைத் தேடு…</value>
+  </data>
+  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
+    <value>பிளேலிஸ்ட்களைத் தேடு</value>
+  </data>
+  <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
+    <value>தோராயமாக ஒன்றைத் தேர்ந்தெடு</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistButton_ToolTip" xml:space="preserve">
+    <value>புதிய பிளேலிஸ்ட்டை உருவாக்கு</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistButton_Content" xml:space="preserve">
+    <value>புதிய பிளேலிஸ்ட்</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistMenu_Regular" xml:space="preserve">
+    <value>வழக்கமான பிளேலிஸ்ட்</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistMenu_Smart" xml:space="preserve">
+    <value>ஸ்மார்ட் பிளேலிஸ்ட்</value>
+  </data>
+  <data name="PlaylistPage_Context_Play" xml:space="preserve">
+    <value>இயக்கு</value>
+  </data>
+  <data name="PlaylistPage_Context_Rename" xml:space="preserve">
+    <value>மறுபெயரிடு</value>
+  </data>
+  <data name="PlaylistPage_Context_ChangeImage" xml:space="preserve">
+    <value>படத்தை மாற்று</value>
+  </data>
+  <data name="PlaylistPage_Context_RemoveImage" xml:space="preserve">
+    <value>படத்தை நீக்கு</value>
+  </data>
+  <data name="PlaylistPage_Context_Delete" xml:space="preserve">
+    <value>நீக்கு</value>
+  </data>
+  <data name="PlaylistPage_EmptyState_Title" xml:space="preserve">
+    <value>பிளேலிஸ்ட்கள் எதுவும் இல்லை</value>
+  </data>
+  <data name="PlaylistPage_EmptyState_Subtitle" xml:space="preserve">
+    <value>தொடங்குவதற்கு ஒரு பிளேலிஸ்ட்டை உருவாக்குங்கள்</value>
+  </data>
+  <data name="PlaylistSongViewPage_Header_Caption" xml:space="preserve">
+    <value>பிளேலிஸ்ட்</value>
+  </data>
+  <data name="PlaylistSongViewPage_Section_Songs" xml:space="preserve">
+    <value>பாடல்கள்</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
+    <value>பாடல் பட்டியலில் தேடு…</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
+    <value>பிளேலிஸ்ட்டில் தேடு</value>
+  </data>
+  <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
+    <value>அனைத்தையும் இயக்கு</value>
+  </data>
+  <data name="PlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
+    <value>அனைத்தையும் கலக்கி இயக்கு</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_Play" xml:space="preserve">
+    <value>இயக்கு</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
+    <value>அடுத்து இயக்கு</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_AddToQueue" xml:space="preserve">
+    <value>வரிசையில் சேர்</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
+    <value>ஆல்பத்திற்குச் செல்</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
+    <value>கலைஞரிடம் செல்</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
+    <value>ஃபைல் எக்ஸ்ப்ளோரரில் காட்டு</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
+    <value>பாடல் பட்டியலிருந்து அகற்று</value>
+  </data>
+  <data name="PlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
+    <value>இயக்கு</value>
+  </data>
+  <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
+    <value>இந்தப் பிளேலிஸ்ட் காலியாக உள்ளது</value>
+  </data>
+  <data name="PlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
+    <value>உங்கள் நூலகத்திலிருந்து பாடல்களைச் சேர்க்கவும்</value>
+  </data>
+  <data name="GenreViewPage_Header_Caption" xml:space="preserve">
+    <value>வகை</value>
+  </data>
+  <data name="GenreViewPage_Section_Songs" xml:space="preserve">
+    <value>பாடல்கள்</value>
+  </data>
+  <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
+    <value>வகையில் தேடு…</value>
+  </data>
+  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
+    <value>வகைகளில் தேடு</value>
+  </data>
+  <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
+    <value>அனைத்தையும் இயக்கு</value>
+  </data>
+  <data name="GenreViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
+    <value>அனைத்தையும் கலக்கி இயக்கு</value>
+  </data>
+  <data name="GenreViewPage_Context_Play" xml:space="preserve">
+    <value>இயக்கு</value>
+  </data>
+  <data name="GenreViewPage_Context_PlayNext" xml:space="preserve">
+    <value>அடுத்து இயக்கு</value>
+  </data>
+  <data name="GenreViewPage_Context_AddToQueue" xml:space="preserve">
+    <value>வரிசையில் சேர்</value>
+  </data>
+  <data name="GenreViewPage_Context_AddToPlaylist" xml:space="preserve">
+    <value>பாடல் பட்டியலில் சேர்</value>
+  </data>
+  <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
+    <value>ஆல்பத்திற்குச் செல்</value>
+  </data>
+  <data name="GenreViewPage_Context_GoToArtist" xml:space="preserve">
+    <value>கலைஞரிடம் செல்</value>
+  </data>
+  <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
+    <value>ஃபைல் எக்ஸ்ப்ளோரரில் காட்டு</value>
+  </data>
+  <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
+    <value>இயக்கு</value>
+  </data>
+  <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
+    <value>இந்த வகைக்கு பாடல்கள் எதுவும் இல்லை</value>
+  </data>
+  <data name="GenreViewPage_EmptyState_Subtitle" xml:space="preserve">
+    <value>வேறு எதையாவது தேட முயற்சிக்கவும்</value>
+  </data>
+  <data name="SettingsPage_Title" xml:space="preserve">
+    <value>அமைப்புகள்</value>
+  </data>
+  <data name="SettingsPage_Section_Appearance" xml:space="preserve">
+    <value>தோற்றம்</value>
+  </data>
+  <data name="SettingsPage_Theme_Header" xml:space="preserve">
+    <value>தீம்</value>
+  </data>
+  <data name="SettingsPage_Theme_Description" xml:space="preserve">
+    <value>வெளிச்சமான, இருண்ட அல்லது கணினித் தீமைத் தேர்ந்தெடுக்கவும்.</value>
+  </data>
+  <data name="SettingsPage_AccentColor" xml:space="preserve">
+    <value>உச்சரிப்பு நிறம்</value>
+  </data>
+  <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
+    <value>முன்னிருப்புக்கு மீட்டமை</value>
+  </data>
+  <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
+    <value>சாளரப் பொருள்</value>
+  </data>
+  <data name="SettingsPage_WindowMaterial_Description" xml:space="preserve">
+    <value>சாளர பின்னணிப் பொருளைத் தேர்ந்தெடுக்கவும்.</value>
+  </data>
+  <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
+    <value>டைனமிக் தீமிங்</value>
+  </data>
+  <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
+    <value>செயலி நிறங்களை தற்போதைய ஆல்பத்தின் அட்டைப்படத்துடன் பொருத்துக.</value>
+  </data>
+  <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
+    <value>சாளரத்தின் அளவை நினைவில் கொள்</value>
+  </data>
+  <data name="SettingsPage_RememberWindowSize_Description" xml:space="preserve">
+    <value>அடுத்த முறை துவக்கும்போது பிரதான சாளரத்தை அதன் முந்தைய அளவிற்கு மீட்டமைக்கவும்.</value>
+  </data>
+  <data name="SettingsPage_RememberWindowPosition_Header" xml:space="preserve">
+    <value>சாளரத்தின் நிலையை நினைவில் கொள்</value>
+  </data>
+  <data name="SettingsPage_RememberWindowPosition_Description" xml:space="preserve">
+    <value>அடுத்த முறை துவக்கும்போது பிரதான சாளரத்தை அதன் முந்தைய திரை இருப்பிடத்திற்கு மீட்டமைக்கவும்.</value>
+  </data>
+  <data name="SettingsPage_RememberNavState_Header" xml:space="preserve">
+    <value>வழிசெலுத்தல் பேனல் நிலையை நினைவில் கொள்</value>
+  </data>
+  <data name="SettingsPage_RememberNavState_Description" xml:space="preserve">
+    <value>இடது வழிசெலுத்தல் பலகத்தை நீங்கள் விட்டுச்சென்றது போல திறந்து அல்லது மூடி வைக்கவும்.</value>
+  </data>
+  <data name="SettingsPage_CustomizeNav_Header" xml:space="preserve">
+    <value>வழிசெலுத்தலைத் தனிப்பயனாக்கு</value>
+  </data>
+  <data name="SettingsPage_CustomizeNav_Description" xml:space="preserve">
+    <value>வழிசெலுத்தல் மெனுவில் பக்கங்களை மறுவரிசைப்படுத்த இழுக்கவும். ஒரு பக்கத்தைக் காட்ட அல்லது மறைக்க டோகிளைப் பயன்படுத்தவும்.</value>
+  </data>
+  <data name="SettingsPage_Section_Player" xml:space="preserve">
+    <value>பிளேயர் மேலாண்மை</value>
+  </data>
+  <data name="SettingsPage_VolumeNormalization_Header" xml:space="preserve">
+    <value>ஒலி சமன்பாடு (ReplayGain)</value>
+  </data>
+  <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
+    <value>ReplayGain பயன்படுத்தி பாடல்களுக்கு இடையேயான ஒலி அளவு வேறுபாடுகளைக் குறைக்கவும்.</value>
+  </data>
+  <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
+    <value>WASAPI பிரத்யேக முறை</value>
+  </data>
+  <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
+    <value>விண்டோஸ் ஒலிச் சாதனத்தின் மீது Nagi-க்கு பிரத்தியேகக் கட்டுப்பாட்டை வழங்கவும். பிற செயலிகள் ஒலியின்றி இருக்கலாம். இந்த அமைப்பை மாற்றிய பிறகு Nagi-ஐ மீண்டும் தொடங்கவும்.</value>
+  </data>
+  <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
+    <value>பிளே / இடைநிறுத்தத்தில் மங்கச் செய்</value>
+  </data>
+  <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
+    <value>உடனடியாக வெட்டுவதற்குப் பதிலாக, மீண்டும் தொடங்கும் போது ஒலியை மெதுவாக அதிகரித்து, இடைநிறுத்தும் போது மெதுவாகக் குறைக்கவும்.</value>
+  </data>
+  <data name="SettingsPage_Equalizer" xml:space="preserve">
+    <value>ஆடியோ ஈக்வலைசர்</value>
+  </data>
+  <data name="SettingsPage_ResetEqualizer_Content" xml:space="preserve">
+    <value>முன்னிருப்புக்கு மீட்டமை</value>
+  </data>
+  <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
+    <value>ப்ரீஆம்ப்</value>
+  </data>
+  <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
+    <value>தனிப்பயன்</value>
+  </data>
+  <data name="SettingsPage_CustomizePlayer" xml:space="preserve">
+    <value>பிளேயர் கட்டுப்பாடுகளைத் தனிப்பயனாக்கு</value>
+  </data>
+  <data name="SettingsPage_ResetPlayerButtons_Content" xml:space="preserve">
+    <value>முன்னிருப்புக்கு மீட்டமை</value>
+  </data>
+  <data name="SettingsPage_CustomizePlayer_Instructions" xml:space="preserve">
+    <value>காட்சியை மாற்றுவதற்கு வட்டமிடுங்கள். மறுவரிசைப்படுத்த இழுக்கவும். பிரிப்பான் மைய மற்றும் வலது கட்டுப்பாடுகளைப் பிரிக்கிறது.</value>
+  </data>
+  <data name="SettingsPage_CollapsablePlayer_Header" xml:space="preserve">
+    <value>சுருக்கக்கூடிய பிளேயர்</value>
+  </data>
+  <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
+    <value>பிளேயர் பட்டியின் மீது சுட்டியை வைக்கும்போது அதை விரிவாக்கு.</value>
+  </data>
+  <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
+    <value>இயக்க நிலையை மீட்டமை</value>
+  </data>
+  <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
+    <value>Nagi தொடங்கும் போது உங்கள் வரிசை மற்றும் இயக்க நிலையை மீட்டமைக்கவும்.</value>
+  </data>
+  <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
+    <value>தொடக்கத்தில் தானாக இயங்கு</value>
+  </data>
+  <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
+    <value>உங்கள் கணினியில் உள்நுழையும்போது Nagiயை தானாகவே தொடங்கவும்.</value>
+  </data>
+  <data name="SettingsPage_StartMinimized_Header" xml:space="preserve">
+    <value>சுருக்கப்பட்ட நிலையில் தொடங்கு</value>
+  </data>
+  <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
+    <value>Nagi சாளரத்தை சுருக்கப்பட்ட நிலையில் தொடங்கவும்.</value>
+  </data>
+  <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
+    <value>மினி-பிளேயருக்கு சுருக்கு</value>
+  </data>
+  <data name="SettingsPage_MinimizeToMiniPlayer_Description" xml:space="preserve">
+    <value>சிறிதாக்கப்படும்போது, சாளரத்தை மறைப்பதற்குப் பதிலாக ஒரு சிறிய மிதக்கும் பிளேயரைக் காட்டு.</value>
+  </data>
+  <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
+    <value>சிஸ்டம் டிரேக்கு மறை</value>
+  </data>
+  <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
+    <value>சாளரத்தை மூடும்போது Nagi ஐ சிஸ்டம் டிரேயில் தொடர்ந்து இயங்க வைக்கவும்.</value>
+  </data>
+  <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
+    <value>ஃப்ளைஅவுட்டில் அட்டைப்படத்தைக் காட்டு</value>
+  </data>
+  <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
+    <value>ட்ரே ஐகானைக் கிளிக் செய்யும்போது தோன்றும் சிறிய பிளேயரில் அட்டைப் படத்தைக் காண்பி.</value>
+  </data>
+  <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
+    <value>வரிசைப்படுத்தும்போது முன்னொட்டுச் சொற்களைப் புறக்கணி</value>
+  </data>
+  <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
+    <value>ஆல்பங்கள், கலைஞர்கள் மற்றும் பாடல்களை அவற்றின் முதல் குறிப்பிடத்தக்க வார்த்தையின்படி வரிசைப்படுத்தவும் (எ.கா., "தி பீட்டில்ஸ்" B இன் கீழ் வரிசைப்படுத்தப்படும்).</value>
+  </data>
+  <data name="SettingsPage_Section_Data" xml:space="preserve">
+    <value>தரவு மேலாண்மை</value>
+  </data>
+  <data name="SettingsPage_ArtistSplitting_Header" xml:space="preserve">
+    <value>கலைஞர் பிரிப்பு</value>
+  </data>
+  <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
+    <value>பல கலைஞர்களைப் பிரிக்கப் பயன்படுத்தப்படும் எழுத்துக்களை வரையறுக்கவும் (எ.கா. ';/'). முடக்க காலியாக விடவும்.</value>
+  </data>
+  <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
+    <value>வகை பிரித்தல்</value>
+  </data>
+  <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
+    <value>பல வகைகளைப் பிரிக்கப் பயன்படுத்தப்படும் எழுத்துக்களை வரையறுக்கவும் (எ.கா. ';/'). முடக்க காலியாக விடவும்.</value>
+  </data>
+  <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
+    <value>நூலகத்தை மீண்டும் ஸ்கேன் செய்</value>
+  </data>
+  <data name="SettingsPage_RescanLibrary_ToolTip" xml:space="preserve">
+    <value>பிரிப்பு மாற்றங்களைப் பயன்படுத்த நூலகத்தை மீண்டும் ஸ்கேன் செய்யவும்</value>
+  </data>
+  <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
+    <value>ஆன்லைன் மெட்டாடேட்டாவைப் பெறு</value>
+  </data>
+  <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
+    <value>ஆன்லைன் மூலங்களிலிருந்து கலைஞர் படங்கள் மற்றும் சுயசரிதைகளைப் பெறுங்கள்.</value>
+  </data>
+  <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
+    <value>ஆதாரங்கள்</value>
+  </data>
+  <data name="SettingsPage_MetadataSources_Description" xml:space="preserve">
+    <value>மெட்டாடேட்டா ஆதாரங்களை மறுவரிசைப்படுத்த இழுக்கவும். விவரங்களுக்கு ஒவ்வொரு ஆதாரத்தின் மீதும் வட்டமிடுங்கள்.</value>
+  </data>
+  <data name="SettingsPage_OnlineLyrics_Header" xml:space="preserve">
+    <value>ஆன்லைன் பாடல் வரிகளைப் பெறு</value>
+  </data>
+  <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
+    <value>ஆன்லைன் மூலங்களிலிருந்து இல்லாத பாடல் வரிகளைப் பெறுங்கள். இது மூன்றாம் தரப்பு சேவைகளுக்கு பாடல் மெட்டாடேட்டாவை அனுப்பும்.</value>
+  </data>
+  <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
+    <value>ஆதாரங்கள்</value>
+  </data>
+  <data name="SettingsPage_LyricsSources_Description" xml:space="preserve">
+    <value>பாடல் வரிகளின் ஆதாரங்களை மறுவரிசைப்படுத்த இழுக்கவும். விவரங்களுக்கு ஒவ்வொரு ஆதாரத்தின் மீதும் வட்டமிடுங்கள்.</value>
+  </data>
+  <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
+    <value>ரோமானிய வடிவப் பாடல் வரிகளைக் காட்டு</value>
+  </data>
+  <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
+    <value>நிறுவப்பட்ட தொகுப்பு ஸ்கிரிப்டுடன் பொருந்தும்போது, ஆதரிக்கப்படும் வரிகளுக்குக் கீழ் ஒரு சிறிய ரோமனியப்படுத்தப்பட்ட வரியைக் காட்டு.</value>
+  </data>
+  <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
+    <value>மொழித் தொகுப்புகள்</value>
+  </data>
+  <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
+    <value>ஆதரிக்கப்படும் பாடல் வரிகளை ரோமானிய வடிவில் மாற்ற மொழித் தொகுப்புகளை நிறுவவும். தொகுப்புகள் உள்ளூர் சாதனத்தில் சேமிக்கப்படும்.</value>
+  </data>
+  <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
+    <value>புதுப்பி</value>
+  </data>
+  <data name="SettingsPage_RomanizationPacks_Install" xml:space="preserve">
+    <value>நிறுவு</value>
+  </data>
+  <data name="SettingsPage_RomanizationPacks_Update" xml:space="preserve">
+    <value>புதுப்பி</value>
+  </data>
+  <data name="SettingsPage_RomanizationPacks_Remove" xml:space="preserve">
+    <value>நீக்கு</value>
+  </data>
+  <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
+    <value>இணக்கமான ரோமனியப்படுத்தல் தொகுப்புகள் எதுவும் இல்லை.</value>
+  </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
+    <value>ரோமனியப்படுத்தல் தொகுப்புகளை ஏற்ற முடியவில்லை: {0}</value>
+  </data>
+  <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
+    <value>தொகுப்பு நிறுவல் தோல்வியடைந்தது.</value>
+  </data>
+  <data name="SettingsPage_RomanizationPacks_RemoveFailed" xml:space="preserve">
+    <value>தொகுப்பு நீக்குதல் தோல்வியடைந்தது.</value>
+  </data>
+  <data name="SettingsPage_RomanizationPack_UpdateAvailable" xml:space="preserve">
+    <value>புதுப்பிப்பு உள்ளது</value>
+  </data>
+  <data name="SettingsPage_RomanizationPack_InstalledFormat" xml:space="preserve">
+    <value>நிறுவப்பட்டது {0}</value>
+  </data>
+  <data name="SettingsPage_RomanizationPack_NotInstalled" xml:space="preserve">
+    <value>நிறுவப்படவில்லை</value>
+  </data>
+  <data name="SettingsPage_RomanizationPack_LicenseFormat" xml:space="preserve">
+    <value>{0} உரிமம்</value>
+  </data>
+  <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
+    <value>பாடல் பட்டியல்களை இறக்குமதி &amp; ஏற்றுமதி செய்</value>
+  </data>
+  <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
+    <value>பிற பிளேயர்களில் பயன்படுத்த பிளேலிஸ்ட்களை M3U கோப்புகளாக ஏற்றுமதி செய்யவும், அல்லது M3U பிளேலிஸ்ட்களை Nagiக்குள் இறக்குமதி செய்யவும்.</value>
+  </data>
+  <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
+    <value>அனைத்தையும் ஏற்றுமதி செய்…</value>
+  </data>
+  <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
+    <value>அனைத்து பிளேலிஸ்ட்களையும் ஒரு கோப்புறையில் ஏற்றுமதி செய்</value>
+  </data>
+  <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
+    <value>இறக்குமதி செய்…</value>
+  </data>
+  <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
+    <value>ஒன்று அல்லது அதற்கு மேற்பட்ட M3U கோப்புகளை இறக்குமதி செய்</value>
+  </data>
+  <data name="SettingsPage_ResetApp_Header" xml:space="preserve">
+    <value>செயலியை மீட்டமை</value>
+  </data>
+  <data name="SettingsPage_ResetApp_Description" xml:space="preserve">
+    <value>இது அனைத்து நூலகத் தரவுகளையும், பிளேலிஸ்ட்களையும் நீக்கிவிடும், மேலும் அனைத்து அமைப்புகளையும் இயல்புநிலைக்கு மீட்டமைக்கும். பயன்பாடு மீண்டும் தொடங்கும்.</value>
+  </data>
+  <data name="SettingsPage_ResetButton_Content" xml:space="preserve">
+    <value>அனைத்து தரவுகளையும் மீட்டமை</value>
+  </data>
+  <data name="SettingsPage_Section_Integrations" xml:space="preserve">
+    <value>ஒருங்கிணைப்புகள்</value>
+  </data>
+  <data name="SettingsPage_LastFm_Header" xml:space="preserve">
+    <value>Last.fm</value>
+  </data>
+  <data name="SettingsPage_LastFm_Description" xml:space="preserve">
+    <value>Last.fm இல் பாடல்களை ஸ்க்ரோபிள் செய்யவும், தற்போது இயங்கும் பாடலைக் காட்டவும் உங்கள் Last.fm கணக்கை இணைக்கவும்.</value>
+  </data>
+  <data name="SettingsPage_LastFm_Connect_Content" xml:space="preserve">
+    <value>இணை</value>
+  </data>
+  <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
+    <value>முடிந்தது</value>
+  </data>
+  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
+    <value>ரத்துசெய்</value>
+  </data>
+  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+    <value>துண்டி</value>
+  </data>
+  <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
+    <value>Scrobbling ஐ செயல்படுத்து</value>
+  </data>
+  <data name="SettingsPage_LastFm_Scrobbling_Description" xml:space="preserve">
+    <value>Nagiயில் நீங்கள் கேட்கும் பாடல்களை தானாகவே உங்கள் Last.fm சுயவிவரத்தில் சேர்க்கவும்.</value>
+  </data>
+  <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
+    <value>தற்போது இயங்குவதைப் புதுப்பி</value>
+  </data>
+  <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
+    <value>உங்கள் Last.fm சுயவிவரத்தில் தற்போது இயங்கும் பாடலைக் காட்டவும்.</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
+    <value>ListenBrainz</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_Description" xml:space="preserve">
+    <value>உங்கள் கேட்புகளை ListenBrainz-க்குச் சமர்ப்பிக்கவும் (Last.fm-க்கு ஒரு திறந்த மாற்று).</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_TokenLabel" xml:space="preserve">
+    <value>பயனர் டோக்கன்</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_TokenPlaceholder" xml:space="preserve">
+    <value>listenbrainz.org/settings இலிருந்து உங்கள் டோக்கனை ஒட்டவும்</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_TestConnection" xml:space="preserve">
+    <value>இணைப்பைச் சோதி</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_Connected" xml:space="preserve">
+    <value>{0} ஆக இணைக்கப்பட்டுள்ளது</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_ConnectionFailed" xml:space="preserve">
+    <value>இணைப்பு தோல்வியடைந்தது: {0}</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
+    <value>கேட்டதைச் சமர்ப்பி (Scrobbling)</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
+    <value>தற்போது இயங்கும் புதுப்பிப்புகளைச் சமர்ப்பி</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
+    <value>மேம்பட்டது</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_ServerUrlLabel" xml:space="preserve">
+    <value>சேவையக URL</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_ServerUrlPlaceholder" xml:space="preserve">
+    <value>https://api.listenbrainz.org</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_Disconnect_Title" xml:space="preserve">
+    <value>ListenBrainz-லிருந்து துண்டிக்கவா?</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_Disconnect_Content" xml:space="preserve">
+    <value>இது உங்கள் சேமித்த டோக்கனை அகற்றும். நீங்கள் எந்த நேரத்திலும் மீண்டும் இணைக்கலாம்.</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_Disconnect_Button" xml:space="preserve">
+    <value>துண்டி</value>
+  </data>
+  <data name="SettingsPage_Discord_Header" xml:space="preserve">
+    <value>டிஸ்கார்ட்</value>
+  </data>
+  <data name="SettingsPage_Discord_Description" xml:space="preserve">
+    <value>டிஸ்கார்டில் உங்கள் தற்போதைய கேட்புச் செயல்பாட்டை உங்கள் நிலையாகக் காட்டுங்கள்.</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
+    <value>ஸ்மார்ட் பிளேலிஸ்ட்</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Section_Songs" xml:space="preserve">
+    <value>பாடல்கள்</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
+    <value>ஸ்மார்ட் பாடல் பட்டியலில் தேடு…</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
+    <value>ஸ்மார்ட் பிளேலிஸ்ட்டில் தேடு</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
+    <value>விதிகளைத் திருத்து</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
+    <value>அனைத்தையும் இயக்கு</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
+    <value>அனைத்தையும் கலக்கி இயக்கு</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_Play" xml:space="preserve">
+    <value>இயக்கு</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
+    <value>அடுத்து இயக்கு</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_AddToQueue" xml:space="preserve">
+    <value>வரிசையில் சேர்</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
+    <value>ஆல்பத்திற்குச் செல்</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
+    <value>கலைஞரிடம் செல்</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
+    <value>ஃபைல் எக்ஸ்ப்ளோரரில் காட்டு</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
+    <value>இயக்கு</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
+    <value>தற்போதைய விதிகளுடன் பாடல்கள் எதுவும் பொருந்தவில்லை</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
+    <value>விதிகளைத் திருத்த முயற்சிக்கவும்</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
+    <value>விதிகளைத் திருத்து</value>
+  </data>
+  <data name="SettingsPage_Section_About" xml:space="preserve">
+    <value>பற்றி</value>
+  </data>
+  <data name="SettingsPage_AboutExpander_Header" xml:space="preserve">
+    <value>Nagiயைப் பற்றி</value>
+  </data>
+  <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
+    <value>Nagi மூலம் உங்கள் உள்ளூர் இசைத் தொகுப்பை மீண்டும் கண்டறியுங்கள், இது வேகம், எளிமை மற்றும் தனியுரிமை ஆகியவற்றில் கவனம் செலுத்தும் ஒரு இசை பிளேயர்.</value>
+  </data>
+  <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
+    <value>பதிப்பு </value>
+  </data>
+  <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
+    <value>உரிமங்களைப் பார்</value>
+  </data>
+  <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
+    <value>மூலக் குறியீடு</value>
+  </data>
+  <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
+    <value>கருத்து அனுப்பவும்</value>
+  </data>
+  <data name="SettingsPage_Language_Header" xml:space="preserve">
+    <value>பயன்பாட்டு மொழி</value>
+  </data>
+  <data name="SettingsPage_Language_Description" xml:space="preserve">
+    <value>மொழி மாற்றத்தைப் பயன்படுத்த Nagi ஐ மீண்டும் தொடங்கவும்.</value>
+  </data>
+  <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
+    <value>மறுதொடக்கம் தேவை</value>
+  </data>
+  <data name="SettingsPage_RestartRequired_Message" xml:space="preserve">
+    <value>மொழி மாற்றம் முழுமையாக நடைமுறைக்கு வர, பயன்பாட்டை மறுதொடக்கம் செய்யவும்.</value>
+  </data>
+  <data name="SettingsPage_About_PrivacyPolicy_Content" xml:space="preserve">
+    <value>தனியுரிமைக் கொள்கை</value>
+  </data>
+  <data name="SettingsPage_BackupRestore_Header" xml:space="preserve">
+    <value>காப்புப்பிரதி &amp; மீட்டமை</value>
+  </data>
+  <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
+    <value>உங்கள் தொகுப்புத் தரவு மற்றும் அமைப்புகளின் காப்புப்பிரதியை உருவாக்கவும் அல்லது முந்தைய காப்புப்பிரதியை மீட்டமைக்கவும்.</value>
+  </data>
+  <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
+    <value>காப்புப்பிரதியை உருவாக்கு</value>
+  </data>
+  <data name="SettingsPage_RestoreBackup_Content" xml:space="preserve">
+    <value>காப்புப்பிரதியை மீட்டமை</value>
+  </data>
+  <data name="Settings_Backup_Success_Title" xml:space="preserve">
+    <value>காப்புப்பிரதி உருவாக்கப்பட்டது</value>
+  </data>
+  <data name="Settings_Backup_Success_Message" xml:space="preserve">
+    <value>காப்புப்பிரதி உருவாக்கப்பட்டது ({0:F2} MB): {1}</value>
+  </data>
+  <data name="Settings_Backup_Failed_Title" xml:space="preserve">
+    <value>காப்புப்பிரதி தோல்வியடைந்தது</value>
+  </data>
+  <data name="Settings_Backup_Failed_Message" xml:space="preserve">
+    <value>காப்புப்பிரதியை உருவாக்கத் தவறிவிட்டது. மீண்டும் முயற்சிக்கவும்.</value>
+  </data>
+  <data name="Settings_Restore_Invalid_Title" xml:space="preserve">
+    <value>தவறான காப்புப்பிரதி கோப்பு</value>
+  </data>
+  <data name="Settings_Restore_Invalid_Message" xml:space="preserve">
+    <value>தேர்ந்தெடுக்கப்பட்ட கோப்பு ஒரு செல்லுபடியாகும் Nagi காப்புப்பிரதி அல்ல.</value>
+  </data>
+  <data name="Settings_Restore_Confirm_Title" xml:space="preserve">
+    <value>காப்புப்பிரதியை மீட்டெடுக்கவா?</value>
+  </data>
+  <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
+    <value>காப்புப்பிரதியிலிருந்து மீட்டெடுப்பது தற்போதைய அனைத்து ஆப் தரவையும் மாற்றும். இந்தச் செயலைத் திரும்பப் பெற முடியாது. மீட்டெடுத்த பிறகு ஆப் மறுதொடக்கம் செய்யப்படும். தொடரவா?</value>
+  </data>
+  <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
+    <value>மீட்டமை</value>
+  </data>
+  <data name="Settings_Restore_Success_Title" xml:space="preserve">
+    <value>மீட்டெடுப்பு முடிந்தது</value>
+  </data>
+  <data name="Settings_Restore_Success_Message" xml:space="preserve">
+    <value>காப்புப்பிரதி மீட்டமைக்கப்பட்டது. Nagi இப்போது மீண்டும் தொடங்கும்.</value>
+  </data>
+  <data name="Settings_Restore_Failed_Title" xml:space="preserve">
+    <value>மீட்டெடுப்பு தோல்வியடைந்தது</value>
+  </data>
+  <data name="Settings_Restore_Failed_Message" xml:space="preserve">
+    <value>காப்புப்பிரதியை மீட்டமைக்க முடியவில்லை.</value>
+  </data>
+  <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
+    <value>பிளேயர் ஸ்டைலிங்</value>
+  </data>
+  <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
+    <value>அக்ரிலிக் (கண்ணாடி)</value>
+  </data>
+  <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
+    <value>திடமான (அடர்த்தி)</value>
+  </data>
+  <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
+    <value>பிளேயர் பட்டியின் தோற்றத்தைத் தனிப்பயனாக்கவும்.</value>
+  </data>
+  <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
+    <value>வண்ணச் செறிவு</value>
+  </data>
+  <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
+    <value>பிளேயர் பின்னணி நிறத்தின் அடர்த்தியைச் சரிசெய்யவும்.</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
+    <value>ஃபேட்-இன் கால அளவு</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
+    <value>மீண்டும் இயங்கத் தொடங்கும்போது ஒலி அளவு மெதுவாக உயர எவ்வளவு நேரம் ஆக வேண்டும் என்பதை அமைக்கவும்.</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
+    <value>ஃபேட்-அவுட் கால அளவு</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
+    <value>இயக்கம் இடைநிறுத்தப்படும்போது ஒலி அளவு மெதுவாகக் குறைய எவ்வளவு நேரம் ஆக வேண்டும் என்பதை அமைக்கவும்.</value>
+  </data>
+  <data name="Settings_Nav_Insights" xml:space="preserve">
+    <value>நுண்ணறிவுகள்</value>
+  </data>
+  <data name="InsightsPage_Title" xml:space="preserve">
+    <value>நுண்ணறிவுகள்</value>
+  </data>
+  <data name="InsightsPage_TotalTime" xml:space="preserve">
+    <value>மொத்தக் கேட்ட நேரம்</value>
+  </data>
+  <data name="InsightsPage_UniqueSongs" xml:space="preserve">
+    <value>வெவ்வேறான பாடல்கள்</value>
+  </data>
+  <data name="InsightsPage_PeakHour" xml:space="preserve">
+    <value>அதிகம் கேட்ட நேரம்</value>
+  </data>
+  <data name="InsightsPage_MostActiveDay" xml:space="preserve">
+    <value>மிகவும் தீவிரமான நாள்</value>
+  </data>
+  <data name="InsightsPage_TopSongs" xml:space="preserve">
+    <value>சிறந்த பாடல்கள்</value>
+  </data>
+  <data name="InsightsPage_TopArtists" xml:space="preserve">
+    <value>சிறந்த கலைஞர்கள்</value>
+  </data>
+  <data name="InsightsPage_TopAlbums" xml:space="preserve">
+    <value>சிறந்த ஆல்பங்கள்</value>
+  </data>
+  <data name="InsightsPage_TopGenres" xml:space="preserve">
+    <value>சிறந்த வகைகள்</value>
+  </data>
+  <data name="InsightsPage_Sources" xml:space="preserve">
+    <value>இசைக்கும் மூலங்கள்</value>
+  </data>
+  <data name="InsightsPage_Empty_Title" xml:space="preserve">
+    <value>இதுவரை கேட்கும் தரவு இல்லை</value>
+  </data>
+  <data name="InsightsPage_Empty_Subtitle" xml:space="preserve">
+    <value>உங்கள் நுண்ணறிவுகளை இங்கு காண இசையை இயக்கவும்</value>
+  </data>
+  <data name="InsightsPage_Plays" xml:space="preserve">
+    <value>இயக்கங்கள்: {0}</value>
+  </data>
+  <data name="InsightsPage_Source_Albums" xml:space="preserve">
+    <value>ஆல்பங்கள்</value>
+  </data>
+  <data name="InsightsPage_Source_Artists" xml:space="preserve">
+    <value>கலைஞர்கள்</value>
+  </data>
+  <data name="InsightsPage_Source_Playlists" xml:space="preserve">
+    <value>பிளேலிஸ்ட்கள்</value>
+  </data>
+  <data name="InsightsPage_Source_SmartPlaylists" xml:space="preserve">
+    <value>ஸ்மார்ட் பிளேலிஸ்ட்கள்</value>
+  </data>
+  <data name="InsightsPage_Source_Folders" xml:space="preserve">
+    <value>கோப்புறைகள்</value>
+  </data>
+  <data name="InsightsPage_Source_Genres" xml:space="preserve">
+    <value>வகைகள்</value>
+  </data>
+  <data name="InsightsPage_Source_Search" xml:space="preserve">
+    <value>தேடல்</value>
+  </data>
+  <data name="InsightsPage_Source_Library" xml:space="preserve">
+    <value>நூலகம்</value>
+  </data>
+  <data name="InsightsPage_Source_Files" xml:space="preserve">
+    <value>கோப்புகள்</value>
+  </data>
+  <data name="InsightsPage_Reset_ToolTip" xml:space="preserve">
+    <value>கேட்கும் வரலாற்றை மீட்டமை</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Title" xml:space="preserve">
+    <value>கேட்கும் வரலாற்றை மீட்டமைக்கவா?</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Message" xml:space="preserve">
+    <value>இது அனைத்து கேட்கும் வரலாறு மற்றும் புள்ளிவிவரங்களை நிரந்தரமாக நீக்கும். இதை மாற்றியமைக்க முடியாது.</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Button" xml:space="preserve">
+    <value>மீட்டமை</value>
+  </data>
+  <data name="SplashPage_AppName" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="SplashPage_Tagline" xml:space="preserve">
+    <value>உங்கள் இசை, அழகாக ஒழுங்கமைக்கப்பட்டுள்ளது</value>
+  </data>
+  <data name="SplashPage_Status" xml:space="preserve">
+    <value>Nagiயை விழிப்படையச் செய்கிறது…</value>
+  </data>
+  <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
+    <value>அனைத்தையும் காண்க</value>
+  </data>
+  <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
+    <value>விளையாடல்கள்</value>
+  </data>
+  <data name="InsightsPage_SortBy_Duration" xml:space="preserve">
+    <value>கால அளவு</value>
+  </data>
+  <data name="PaginationControl_All" xml:space="preserve">
+    <value>அனைத்தும்</value>
+  </data>
+  <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
+    <value>ஒரு பக்கத்திற்கு உருப்படிகள்:</value>
+  </data>
+  <data name="PaginationControl_PreviousPage_ToolTip" xml:space="preserve">
+    <value>முந்தைய பக்கம்</value>
+  </data>
+  <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
+    <value>அடுத்த பக்கம்</value>
+  </data>
+  <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
+    <value>எ.கா. ;/\\</value>
+  </data>
+  <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
+    <value> மி.வி</value>
+  </data>
+  <data name="SettingsPage_Unit_Decibels" xml:space="preserve">
+    <value> டெசிபல்</value>
+  </data>
+  <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
+    <value>கடந்த 1 நாள்</value>
+  </data>
+  <data name="Insights_TimeRange_Last7Days" xml:space="preserve">
+    <value>கடந்த 7 நாட்கள்</value>
+  </data>
+  <data name="Insights_TimeRange_Last30Days" xml:space="preserve">
+    <value>கடந்த 30 நாட்கள்</value>
+  </data>
+  <data name="Insights_TimeRange_Last90Days" xml:space="preserve">
+    <value>கடந்த 90 நாட்கள்</value>
+  </data>
+  <data name="Insights_TimeRange_LastYear" xml:space="preserve">
+    <value>கடந்த ஆண்டு</value>
+  </data>
+  <data name="Insights_TimeRange_AllTime" xml:space="preserve">
+    <value>எல்லாக் காலமும்</value>
+  </data>
+  <data name="Insights_Format_HoursMinutes" xml:space="preserve">
+    <value>{0}ம {1}நி</value>
+  </data>
+  <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
+    <value>{0}நி {1}வி</value>
+  </data>
+  <data name="QueuePanel_EmptyTitle" xml:space="preserve">
+    <value>உங்கள் வரிசை காலியாக உள்ளது</value>
+  </data>
+  <data name="QueuePanel_EmptyDescription" xml:space="preserve">
+    <value>உங்கள் வரிசையை உருவாக்க இசையை இயக்கவும் அல்லது ஒலி கோப்புகளை இங்கே இழுத்துப் போடவும்.</value>
+  </data>
+  <data name="QueuePanel_LoadError" xml:space="preserve">
+    <value>சில பாடல்களை ஏற்ற முடியவில்லை. வரிசையை மீண்டும் ஏற்ற 'மீண்டும் முயல்' என்பதைத் தேர்ந்தெடுக்கவும்.</value>
+  </data>
+  <data name="QueuePanel_Retry" xml:space="preserve">
+    <value>மீண்டும் முயல்</value>
+  </data>
+  <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
+    <value>புதிய பாடல் பட்டியலின் வரிசையைச் சேமிக்க முடியவில்லை. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
+    <value>ஆடியோ வெளியீட்டு சாதனம்</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Description" xml:space="preserve">
+    <value>Nagi இசையை எங்கு இயக்கும் என்பதைத் தேர்ந்தெடுக்கவும்.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Default" xml:space="preserve">
+    <value>கணினி முன்னிருப்பு</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Unavailable" xml:space="preserve">
+    <value>சேமிக்கப்பட்ட சாதனம் கிடைக்கவில்லை. கணினி முன்னிருப்பு பயன்படுத்தப்படுகிறது.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
+    <value>ஆடியோ வெளியீட்டைப் புதுப்பிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும் அல்லது வேறு சாதனத்தைத் தேர்ந்தெடுக்கவும்.</value>
+  </data>
+  <data name="Listening_Random" xml:space="preserve">
+    <value>கலைத்துப் போடு</value>
+  </data>
+  <data name="Listening_MoreVariety" xml:space="preserve">
+    <value>கூடுதல் வகைகள்</value>
+  </data>
+  <data name="Listening_Rediscover" xml:space="preserve">
+    <value>மீண்டும் கண்டறி</value>
+  </data>
+  <data name="Listening_Unheard" xml:space="preserve">
+    <value>கேட்கப்படாதவை</value>
+  </data>
+  <data name="Listening_PlayFor" xml:space="preserve">
+    <value>இயக்க வேண்டிய நேரம்…</value>
+  </data>
+  <data name="Listening_Minutes" xml:space="preserve">
+    <value>நிமிடங்கள்</value>
+  </data>
+  <data name="Listening_ShuffleMode" xml:space="preserve">
+    <value>கலவை வகை</value>
+  </data>
+  <data name="Listening_AvoidRecentDays" xml:space="preserve">
+    <value>சமீபத்திய இயக்கங்களைத் தவிர்க்கவும் (நாட்கள்)</value>
+  </data>
+  <data name="Listening_MoreOptions" xml:space="preserve">
+    <value>கூடுதல் விருப்பங்கள்</value>
+  </data>
+  <data name="Listening_PlayForDescription" xml:space="preserve">
+    <value>நீங்கள் தேர்ந்தெடுத்த கால அளவிற்கு மிகாமல் முழுமையான பாடல்களின் வரிசையை உருவாக்கவும்.</value>
+  </data>
+  <data name="Listening_NoMixTitle" xml:space="preserve">
+    <value>இந்தக் கலவைக்கு பாடல்கள் எதுவும் இல்லை</value>
+  </data>
+  <data name="Listening_NoMixDescription" xml:space="preserve">
+    <value>இந்தப் பட்டியலில் உள்ள பாடல்கள் எதுவும் இந்தத் தேவைகளைப் பூர்த்தி செய்யவில்லை. வேறு கலவை அல்லது பாடல் பட்டியலை முயற்சிக்கவும்.</value>
+  </data>
+  <data name="Listening_Favorites" xml:space="preserve">
+    <value>விருப்பமானவை</value>
+  </data>
+  <data name="Listening_AddFavorite" xml:space="preserve">
+    <value>விருப்பமானவையில் சேர்</value>
+  </data>
+  <data name="Listening_RemoveFavorite" xml:space="preserve">
+    <value>விருப்பமானவையிலிருந்து அகற்று</value>
+  </data>
+  <data name="Listening_SleepTimer" xml:space="preserve">
+    <value>ஸ்லீப் டைமர்</value>
+  </data>
+  <data name="Listening_FinishTrack" xml:space="preserve">
+    <value>டைமர் முடியும் போது தற்போதைய பாடலை முடி</value>
+  </data>
+  <data name="Listening_StopAfterTrack" xml:space="preserve">
+    <value>இந்தப் பாடலுக்குப் பின் நிறுத்து</value>
+  </data>
+  <data name="Listening_StopAtQueueEnd" xml:space="preserve">
+    <value>வரிசையின் இறுதியில் நிறுத்து</value>
+  </data>
+  <data name="Listening_StopPlayback" xml:space="preserve">
+    <value>இயக்கத்தை நிறுத்து</value>
+  </data>
+  <data name="Listening_CustomTimer" xml:space="preserve">
+    <value>தனிப்பயன் டைமர்…</value>
+  </data>
+  <data name="Listening_Timer15" xml:space="preserve">
+    <value>15 நிமிடங்களில்</value>
+  </data>
+  <data name="Listening_Timer30" xml:space="preserve">
+    <value>30 நிமிடங்களில்</value>
+  </data>
+  <data name="Listening_Timer60" xml:space="preserve">
+    <value>60 நிமிடங்களில்</value>
+  </data>
+  <data name="Listening_CancelStop" xml:space="preserve">
+    <value>திட்டமிடப்பட்ட நிறுத்தலை ரத்து செய்</value>
+  </data>
+  <data name="Listening_TimerRemaining" xml:space="preserve">
+    <value>{0}-இல் நிற்கும்</value>
+  </data>
+  <data name="Listening_PlayerOptions" xml:space="preserve">
+    <value>பிளேயர் விருப்பங்கள்</value>
+  </data>
+  <data name="Listening_RecentlyPlayed" xml:space="preserve">
+    <value>சமீபத்தில் கேட்டவை</value>
+  </data>
+  <data name="Listening_HistorySearch" xml:space="preserve">
+    <value>கேட்ட வரலாற்றில் தேடு</value>
+  </data>
+  <data name="Listening_HistoryEmpty" xml:space="preserve">
+    <value>கேட்ட வரலாறு எதுவும் இன்னும் இல்லை</value>
+  </data>
+  <data name="Listening_HistoryLoadError" xml:space="preserve">
+    <value>சமீபத்தில் கேட்டவையை ஏற்ற முடியவில்லை. மீண்டும் முயற்சிக்க 'மீண்டும் முயல்' என்பதைத் தேர்ந்தெடுக்கவும்.</value>
+  </data>
+  <data name="Listening_Today" xml:space="preserve">
+    <value>இன்று</value>
+  </data>
+  <data name="Listening_Yesterday" xml:space="preserve">
+    <value>நேற்று</value>
+  </data>
+  <data name="Listening_RediscoveryReason" xml:space="preserve">
+    <value>கடைசியாகக் கேட்டது {0:d}</value>
+  </data>
+  <data name="Listening_RediscoveryTitle" xml:space="preserve">
+    <value>மீண்டும் கேட்கத் தகுந்தது</value>
+  </data>
+  <data name="Listening_Dismiss" xml:space="preserve">
+    <value>நிராகரி</value>
+  </data>
+  <data name="Listening_ActionError" xml:space="preserve">
+    <value>இந்தச் செயலை முடிக்க முடியவில்லை. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.</value>
+  </data>
+  <data name="Listening_FavoritesEmpty" xml:space="preserve">
+    <value>விருப்பமானவை எதுவும் இன்னும் இல்லை</value>
+  </data>
+  <data name="Listening_FavoritesEmptyDescription" xml:space="preserve">
+    <value>பாடலின் மெனுவிலிருந்து அதை விருப்பமானதாகக் குறிக்கவும், அல்லது அதைத் தேர்ந்தெடுத்து Ctrl+D ஐ அழுத்தவும்.</value>
+  </data>
+  <data name="Listening_VarietyDescription" xml:space="preserve">
+    <value>'கூடுதல் வகைகள்' என்பது சமீபத்தில் இயக்கப்பட்ட பாடல்களைத் தவிர்த்து, முடிந்தவரை ஒரே கலைஞரின் பாடல்களைத் தனித்தனியாகப் பிரிக்கும்.</value>
+  </data>
+  <data name="Listening_RediscoverDescription" xml:space="preserve">
+    <value>'மீண்டும் கண்டறி' என்பது Nagi இல் பதிவு செய்யப்பட்டு, கடைசியாக 30 நாட்களுக்கு முன்பு கேட்கப்பட்ட பாடல்களைப் பயன்படுத்துகிறது.</value>
+  </data>
+  <data name="Listening_UnheardDescription" xml:space="preserve">
+    <value>'கேட்கப்படாதவை' என்பது Nagi இல் இதுவரை இயக்கப்படாத பாடல்களைப் பயன்படுத்துகிறது.</value>
+  </data>
+  <data name="Listening_HistoryNoMatches" xml:space="preserve">
+    <value>உங்கள் தேடலுக்குப் பொருந்தும் கேட்டல்கள் எதுவும் இல்லை</value>
+  </data>
+  <data name="Listening_NoTimedMixDescription" xml:space="preserve">
+    <value>இந்தப் பட்டியலில் உள்ள எந்தப் பாடலும் கலவைத் தேவைகளைப் பூர்த்தி செய்யவில்லை மற்றும் உங்கள் கால அளவிற்குள் பொருந்தவில்லை. நீண்ட கால அளவு, வேறு கலவை அல்லது வேறு பாடல் பட்டியலை முயற்சிக்கவும்.</value>
+  </data>
+</root>

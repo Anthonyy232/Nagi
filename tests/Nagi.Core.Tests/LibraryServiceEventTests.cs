@@ -1,9 +1,7 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using System.Net.Http;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Http.Pipelines;
@@ -21,90 +19,61 @@ public class LibraryServiceEventTests : IDisposable
 {
     private readonly DbContextFactoryTestHelper _dbHelper;
     private readonly IFileSystemService _fileSystem;
-    private readonly IHttpClientFactory _httpClientFactory;
-    private readonly TestHttpMessageHandler _httpMessageHandler;
     private readonly LibraryService _libraryService;
-    private readonly ILogger<LibraryService> _logger;
+    private readonly LibraryReader _libraryReader;
     private readonly IMetadataService _metadataService;
-    private readonly IPathConfiguration _pathConfig;
-    private readonly IServiceScopeFactory _serviceScopeFactory;
-    private readonly ISettingsService _settingsService;
-    private readonly IReplayGainService _replayGainService;
-    private readonly IMusicBrainzService _musicBrainzService;
-    private readonly IFanartTvService _fanartTvService;
-    private readonly ITheAudioDbService _theAudioDbService;
-    private readonly IApiKeyService _apiKeyService;
-    private readonly IImageProcessor _imageProcessor;
-    private readonly ILastFmMetadataService _lastFmService;
     private readonly ProviderPipelineProvider _pipelines;
 
     public LibraryServiceEventTests()
     {
         _fileSystem = Substitute.For<IFileSystemService>();
+        _fileSystem.NormalizePath(Arg.Any<string>()).Returns(call => PathCanonicalizer.Normalize(call.Arg<string>()));
+        _fileSystem.GetFileName(Arg.Any<string>()).Returns(call => Path.GetFileName(call.Arg<string>()));
         _metadataService = Substitute.For<IMetadataService>();
-        _lastFmService = Substitute.For<ILastFmMetadataService>();
-        _httpClientFactory = Substitute.For<IHttpClientFactory>();
-        _serviceScopeFactory = Substitute.For<IServiceScopeFactory>();
-        _pathConfig = Substitute.For<IPathConfiguration>();
-        _settingsService = Substitute.For<ISettingsService>();
-        _replayGainService = Substitute.For<IReplayGainService>();
-        _musicBrainzService = Substitute.For<IMusicBrainzService>();
-        _fanartTvService = Substitute.For<IFanartTvService>();
-        _theAudioDbService = Substitute.For<ITheAudioDbService>();
-        _apiKeyService = Substitute.For<IApiKeyService>();
-        _imageProcessor = Substitute.For<IImageProcessor>();
-        _httpMessageHandler = new TestHttpMessageHandler();
-        _logger = Substitute.For<ILogger<LibraryService>>();
 
         _dbHelper = new DbContextFactoryTestHelper();
 
-        var httpClient = new HttpClient(_httpMessageHandler);
-        _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
-
         _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
+
+        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, Substitute.For<ISettingsService>(), Substitute.For<ILogger<LibraryReader>>());
 
         _libraryService = new LibraryService(
             _dbHelper.ContextFactory,
+            _libraryReader,
             _fileSystem,
             _metadataService,
-            _lastFmService,
-            _musicBrainzService,
-            _fanartTvService,
-            _theAudioDbService,
-            _httpClientFactory,
-            _serviceScopeFactory,
-            _pathConfig,
-            _settingsService,
-            _replayGainService,
-            _apiKeyService,
-            _imageProcessor,
+            Substitute.For<ILastFmMetadataService>(),
+            Substitute.For<IMusicBrainzService>(),
+            Substitute.For<IFanartTvService>(),
+            Substitute.For<ITheAudioDbService>(),
+            Substitute.For<IHttpClientFactory>(),
+            Substitute.For<IPathConfiguration>(),
+            Substitute.For<ISettingsService>(),
+            Substitute.For<IReplayGainService>(),
+            Substitute.For<IImageProcessor>(),
             _pipelines,
-            _logger);
+            Substitute.For<ILogger<LibraryService>>());
     }
 
     public void Dispose()
     {
         _libraryService.Dispose();
+        _libraryReader.Dispose();
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _dbHelper.Dispose();
-        _httpMessageHandler.Dispose();
-        GC.SuppressFinalize(this);
     }
 
     [Fact]
     public async Task AddFolderAsync_FiresLibraryContentChanged_FolderAdded()
     {
-        // Arrange
         var folderPath = "C:\\Music\\NewFolder";
         _fileSystem.GetLastWriteTimeUtc(folderPath).Returns(DateTime.UtcNow);
 
         LibraryContentChangedEventArgs? eventArgs = null;
         _libraryService.LibraryContentChanged += (s, e) => eventArgs = e;
 
-        // Act
         await _libraryService.AddFolderAsync(folderPath);
 
-        // Assert
         eventArgs.Should().NotBeNull();
         eventArgs!.ChangeType.Should().Be(LibraryChangeType.FolderAdded);
         eventArgs.FolderId.Should().NotBeNull();
@@ -113,7 +82,6 @@ public class LibraryServiceEventTests : IDisposable
     [Fact]
     public async Task RemoveFolderAsync_FiresLibraryContentChanged_FolderRemoved()
     {
-        // Arrange
         var folder = new Folder { Path = "C:\\Music\\FolderToRemove", Name = "FolderToRemove" };
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {
@@ -124,10 +92,8 @@ public class LibraryServiceEventTests : IDisposable
         LibraryContentChangedEventArgs? eventArgs = null;
         _libraryService.LibraryContentChanged += (s, e) => eventArgs = e;
 
-        // Act
         await _libraryService.RemoveFolderAsync(folder.Id);
 
-        // Assert
         eventArgs.Should().NotBeNull();
         eventArgs!.ChangeType.Should().Be(LibraryChangeType.FolderRemoved);
         eventArgs.FolderId.Should().Be(folder.Id);
@@ -136,7 +102,6 @@ public class LibraryServiceEventTests : IDisposable
     [Fact]
     public async Task RescanFolderForMusicAsync_WithChanges_FiresLibraryContentChanged_FolderRescanned()
     {
-        // Arrange
         var folder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Music\\ScanChanges", Name = "ScanChanges" };
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {
@@ -145,7 +110,6 @@ public class LibraryServiceEventTests : IDisposable
         }
 
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
-        // Simulate a new file
         _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, Arg.Any<string>(), Arg.Any<SearchOption>())
             .Returns(new[] { ("C:\\Music\\ScanChanges\\new.mp3", DateTime.UtcNow) });
         _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
@@ -156,10 +120,8 @@ public class LibraryServiceEventTests : IDisposable
         LibraryContentChangedEventArgs? eventArgs = null;
         _libraryService.LibraryContentChanged += (s, e) => eventArgs = e;
 
-        // Act
         await _libraryService.RescanFolderForMusicAsync(folder.Id);
 
-        // Assert
         eventArgs.Should().NotBeNull();
         eventArgs!.ChangeType.Should().Be(LibraryChangeType.FolderRescanned);
         eventArgs.FolderId.Should().Be(folder.Id);
@@ -168,7 +130,6 @@ public class LibraryServiceEventTests : IDisposable
     [Fact]
     public async Task RefreshAllFoldersAsync_WithChanges_FiresLibraryContentChanged_LibraryRescanned()
     {
-        // Arrange
         var folder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Music\\ScanChanges", Name = "ScanChanges" };
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {
@@ -186,10 +147,8 @@ public class LibraryServiceEventTests : IDisposable
         LibraryContentChangedEventArgs? eventArgs = null;
         _libraryService.LibraryContentChanged += (s, e) => eventArgs = e;
 
-        // Act
         await _libraryService.RefreshAllFoldersAsync();
 
-        // Assert
         eventArgs.Should().NotBeNull();
         eventArgs!.ChangeType.Should().Be(LibraryChangeType.LibraryRescanned);
         eventArgs.FolderId.Should().BeNull();

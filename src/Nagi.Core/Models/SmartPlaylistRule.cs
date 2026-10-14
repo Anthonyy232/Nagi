@@ -1,39 +1,20 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Nagi.Core.Models;
 
-/// <summary>
-///     Represents a single rule within a smart playlist.
-///     Each rule defines a condition that songs must match to be included.
-/// </summary>
 public class SmartPlaylistRule
 {
-    /// <summary>
-    ///     The unique identifier for this rule.
-    /// </summary>
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
 
-    /// <summary>
-    ///     The foreign key for the parent smart playlist.
-    /// </summary>
     public Guid SmartPlaylistId { get; set; }
 
-    /// <summary>
-    ///     Navigation property to the parent smart playlist.
-    /// </summary>
     [ForeignKey("SmartPlaylistId")]
     public virtual SmartPlaylist SmartPlaylist { get; set; } = null!;
 
-    /// <summary>
-    ///     The song field being evaluated (e.g., Artist, Genre, PlayCount).
-    /// </summary>
     public SmartPlaylistField Field { get; set; }
 
-    /// <summary>
-    ///     The comparison operator (e.g., Is, Contains, GreaterThan).
-    /// </summary>
     public SmartPlaylistOperator Operator { get; set; }
 
     /// <summary>
@@ -49,8 +30,5 @@ public class SmartPlaylistRule
     [MaxLength(1000)]
     public string? SecondValue { get; set; }
 
-    /// <summary>
-    ///     The display order of this rule within the smart playlist.
-    /// </summary>
     public int Order { get; set; }
 }

@@ -1,14 +1,11 @@
-﻿using System;
-using System.Threading;
+using System;
 using Windows.System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation.Metadata;
 using Windows.Storage;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -17,17 +14,17 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Constants;
+using Nagi.Core.Services.Abstractions;
+using Nagi.Presentation.Models;
+using Nagi.Presentation.Resources;
+using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Controls;
-using Nagi.WinUI.Pages;
-using Nagi.WinUI.Resources;
-using Nagi.WinUI.Services.Abstractions;
-using Nagi.WinUI.ViewModels;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.Models;
-using Microsoft.UI.Xaml.Hosting;
-using System.Numerics;
+using Nagi.WinUI.Pages;
+using Nagi.WinUI.Services.Abstractions;
+using Nagi.WinUI.Services.Implementations;
 
 namespace Nagi.WinUI;
 
@@ -40,9 +37,15 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private const double VolumeChangeStep = 5.0;
     private int _queueDragVersion;
     private NowPlayingIndicatorBinder? _queuePlayingBinder;
+    private NowPlayingIndicatorBinder? _historyPlayingBinder;
 
     private void QueueListView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
     {
+        if (e.Items.OfType<QueueEntry>().Any(entry => entry.Id == ViewModel.CurrentPlayingTrack?.Id))
+        {
+            e.Cancel = true;
+            return;
+        }
         _queueDragVersion = ViewModel.SidebarQueue.Version;
         e.Data.RequestedOperation = DataPackageOperation.Move;
     }
@@ -78,6 +81,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         if (sender is FrameworkElement { Tag: QueueEntry entry }) ViewModel.SidebarQueue.Move(entry, -1);
     }
 
+    private void Queue_Retry(object sender, RoutedEventArgs e) => ViewModel.SidebarQueue.Refresh(reloadMetadata: true);
+
     private void QueueEntry_MoveDown(object sender, RoutedEventArgs e)
     {
         if (sender is FrameworkElement { Tag: QueueEntry entry }) ViewModel.SidebarQueue.Move(entry, 1);
@@ -104,10 +109,10 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private readonly IDispatcherService _dispatcherService;
     private readonly ILogger<MainPage> _logger;
 
-    // Maps navigation item tags to their corresponding page types.
     private readonly Dictionary<string, Type> _pages = new()
     {
         { "Library", typeof(LibraryPage) },
+        { "Favorites", typeof(LibraryPage) },
         { "Folders", typeof(FolderPage) },
         { "Playlists", typeof(PlaylistPage) },
         { "Settings", typeof(SettingsPage) },
@@ -118,41 +123,45 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     };
 
     private readonly IUISettingsService _settingsService;
+    private readonly TransparencyEffectsMonitor _transparencyEffects;
     private readonly IThemeService _themeService;
     private readonly IWin32InteropService _win32InteropService;
 
-    // A flag to control the player's expand/collapse animation based on user settings.
+    private SplitViewContentMotion? _queueContentMotion;
+    private SplitViewContentMotion? _navigationContentMotion;
+
     private bool _isPlayerAnimationEnabled = true;
-
-    // A flag to track if the pointer is currently over the floating player control.
     private bool _isPointerOverPlayer;
-
-    // Debounce tokens for hover expand/collapse — prevents stutter from cursor grazing the hit-zone edge.
-    private CancellationTokenSource? _expandDebounce;
-    private CancellationTokenSource? _collapseDebounce;
+    private readonly DispatcherTimer _hoverTimer = new();
+    private bool _pendingPointerOverPlayer;
 
     // A flag to prevent re-entrant navigation while the selection is being updated programmatically.
     private bool _isUpdatingNavViewSelection;
 
-    // A flag to track if the page has been unloaded, to prevent dispatcher callbacks from updating UI.
     private bool _isUnloaded;
 
     private ElementTheme _lastKnownTheme;
 
-    public MainPage()
+    public MainPage(PlayerViewModel viewModel, InsightsViewModel insightsViewModel,
+        GlobalOperationViewModel globalOperation, IUISettingsService settingsService, IThemeService themeService,
+        IDispatcherService dispatcherService, IWin32InteropService win32InteropService,
+        NavigationService navigationService, TransparencyEffectsMonitor transparencyEffects, ILogger<MainPage> logger)
     {
-        ViewModel = App.Services!.GetRequiredService<PlayerViewModel>();
-        InsightsVm = App.Services!.GetRequiredService<InsightsViewModel>();
-        _settingsService = App.Services!.GetRequiredService<IUISettingsService>();
-        _themeService = App.Services!.GetRequiredService<IThemeService>();
-        _dispatcherService = App.Services!.GetRequiredService<IDispatcherService>();
-        _win32InteropService = App.Services!.GetRequiredService<IWin32InteropService>();
-        _logger = App.Services!.GetRequiredService<ILogger<MainPage>>();
+        ViewModel = viewModel;
+        InsightsVm = insightsViewModel;
+        GlobalOperation = globalOperation;
+        _settingsService = settingsService;
+        _transparencyEffects = transparencyEffects;
+        _themeService = themeService;
+        _dispatcherService = dispatcherService;
+        _win32InteropService = win32InteropService;
+        _logger = logger;
 
         InitializeComponent();
         DataContext = ViewModel;
 
-        InitializeNavigationService();
+        navigationService.Initialize(ContentFrame);
+        _hoverTimer.Tick += OnHoverTimerTick;
 
         Loaded += OnMainPageLoaded;
         Unloaded += OnMainPageUnloaded;
@@ -160,37 +169,13 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     public PlayerViewModel ViewModel { get; }
     public InsightsViewModel InsightsVm { get; }
+    public GlobalOperationViewModel GlobalOperation { get; }
 
     public TitleBar GetAppTitleBarElement()
     {
         return AppTitleBar;
     }
 
-    public RowDefinition GetAppTitleBarRowElement()
-    {
-        return AppTitleBarRow;
-    }
-
-    // Initializes the navigation service with the content frame.
-    private void InitializeNavigationService()
-    {
-        var navigationService = App.Services!.GetRequiredService<INavigationService>();
-        navigationService.Initialize(ContentFrame);
-    }
-
-    /// <summary>
-    ///     Updates the visual state of the title bar based on window activation.
-    /// </summary>
-    /// <param name="activationState">The current activation state of the window.</param>
-    public void UpdateActivationVisualState(WindowActivationState activationState)
-    {
-        var stateName = activationState == WindowActivationState.Deactivated
-            ? "WindowIsInactive"
-            : "WindowIsActive";
-        VisualStateManager.GoToState(this, stateName, true);
-    }
-
-    // Handles navigation logic when a NavigationView item is invoked or selected.
     private void HandleNavigation(bool isSettings, object? selectedItem, NavigationTransitionInfo transitionInfo)
     {
         if (isSettings)
@@ -200,12 +185,15 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             return;
         }
 
-        if (selectedItem is NavigationViewItem { Tag: string tag } &&
-            _pages.TryGetValue(tag, out var pageType) &&
-            ContentFrame.CurrentSourcePageType != pageType) ContentFrame.Navigate(pageType, null, transitionInfo);
+        if (selectedItem is NavigationViewItem { Tag: string tag } && _pages.TryGetValue(tag, out var pageType))
+        {
+            var favorites = tag == "Favorites";
+            if (ContentFrame.CurrentSourcePageType != pageType ||
+                ContentFrame.Content is LibraryPage library && library.ViewModel.ShowFavoritesOnly != favorites)
+                ContentFrame.Navigate(pageType, favorites ? "Favorites" : null, transitionInfo);
+        }
     }
 
-    // Navigates back if possible.
     private void TryGoBack()
     {
         try
@@ -251,8 +239,10 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private void ContentRegion_SizeChanged(object sender, SizeChangedEventArgs e)
     {
-        QueuePanel.MaxWidth = Math.Max(0, e.NewSize.Width - 24);
-        Grid.SetColumnSpan(ContentFrame, e.NewSize.Width < 760 ? 2 : 1);
+        QueueSplitView.OpenPaneLength = Math.Min(332, Math.Max(0, e.NewSize.Width - 12));
+        var overlay = e.NewSize.Width < 760;
+        QueueSplitView.DisplayMode = overlay ? SplitViewDisplayMode.Overlay : SplitViewDisplayMode.Inline;
+        VisualStateManager.GoToState(this, overlay ? "QueuePaneOverlay" : "QueuePaneInline", false);
     }
 
     private async void Queue_Drop(object sender, DragEventArgs e)
@@ -303,142 +293,114 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         }
     }
 
-    // Synchronizes the NavigationView's selected item with the currently displayed page.
-    private void UpdateNavViewSelection(Type currentPageType)
+    private void UpdateNavViewSelection(Type? currentPageType, bool? favorites = null)
     {
+        var wasUpdating = _isUpdatingNavViewSelection;
         _isUpdatingNavViewSelection = true;
-
-        if (currentPageType == typeof(SettingsPage))
+        try
         {
-            NavView.SelectedItem = NavView.SettingsItem;
+            if (currentPageType == typeof(SettingsPage))
+            {
+                NavView.SelectedItem = NavView.SettingsItem;
+                return;
+            }
+
+            var tag = _pages.FirstOrDefault(p => p.Value == currentPageType).Key;
+            if (currentPageType == typeof(LibraryPage))
+                tag = (favorites ?? (ContentFrame.Content as LibraryPage)?.ViewModel.ShowFavoritesOnly) == true ? "Favorites" : "Library";
+            if (tag is null && currentPageType is not null)
+                _detailPageToParentTagMap.TryGetValue(currentPageType, out tag);
+            NavView.SelectedItem = NavView.MenuItems.OfType<NavigationViewItem>()
+                .FirstOrDefault(item => Equals(item.Tag, tag));
         }
-        else
+        finally
         {
-            var tagToSelect = _pages.FirstOrDefault(p => p.Value == currentPageType).Key;
-            if (tagToSelect is null) _detailPageToParentTagMap.TryGetValue(currentPageType, out tagToSelect);
-
-            if (tagToSelect != null)
-                NavView.SelectedItem = NavView.MenuItems
-                    .OfType<NavigationViewItem>()
-                    .FirstOrDefault(menuItem => menuItem.Tag?.ToString() == tagToSelect);
-            else
-                NavView.SelectedItem = null;
+            _isUpdatingNavViewSelection = wasUpdating;
         }
-
-        _isUpdatingNavViewSelection = false;
     }
 
-    // Applies a dynamic theme based on the currently playing track's album art.
     private Task ApplyDynamicThemeForCurrentTrackAsync()
     {
         var song = ViewModel.CurrentPlayingTrack;
         return _themeService.ApplyDynamicThemeFromSwatchesAsync(song?.LightSwatchId, song?.DarkSwatchId);
     }
 
-    // Updates the visual state of the floating player (expanded or collapsed).
+    private bool ShouldExpandPlayer =>
+        !_isPlayerAnimationEnabled || _isPointerOverPlayer || ViewModel.IsQueuePanelOpen ||
+        ViewModel.CurrentPlayingTrack != null && ViewModel.IsPlaying;
+
     private void UpdatePlayerVisualState(bool useTransitions = true)
     {
-        var isPlaying = ViewModel.CurrentPlayingTrack != null && ViewModel.IsPlaying;
-        var shouldBeExpanded = !_isPlayerAnimationEnabled || isPlaying || _isPointerOverPlayer || ViewModel.IsQueuePanelOpen;
+        var shouldBeExpanded = ShouldExpandPlayer;
         var stateName = shouldBeExpanded ? "PlayerExpanded" : "PlayerCollapsed";
 
-        // XAML handles MinHeight/MaxHeight (layout-dependent)
+        useTransitions &= CompositionAnimationHelper.AreAnimationsEnabled;
         VisualStateManager.GoToState(this, stateName, useTransitions);
+        if (!useTransitions) PlayerStateGroup.CurrentState?.Storyboard?.SkipToFill();
 
-        // Composition handles opacity (GPU-accelerated)
+        var targetOpacity = shouldBeExpanded ? 1f : 0f;
         if (useTransitions)
         {
-            var targetOpacity = shouldBeExpanded ? 1f : 0f;
             var duration = shouldBeExpanded ? 350 : 150;
             var delay = shouldBeExpanded ? 100 : 0;
 
-            AnimateOpacity(SeekBarGrid, targetOpacity, duration, delay);
-            AnimateOpacity(ArtistNameHyperlink, targetOpacity, duration, delay);
-            AnimateOpacity(SecondaryControlsContainer, targetOpacity, duration, delay);
+            CompositionAnimationHelper.AnimateOpacity(SeekBarGrid, targetOpacity, duration, delay);
+            CompositionAnimationHelper.AnimateOpacity(ArtistNameHyperlink, targetOpacity, duration, delay);
+            CompositionAnimationHelper.AnimateOpacity(SecondaryControlsContainer, targetOpacity, duration, delay);
         }
         else
         {
-            // Instant state change without animation
-            var targetOpacity = shouldBeExpanded ? 1f : 0f;
-            SetOpacityImmediate(SeekBarGrid, targetOpacity);
-            SetOpacityImmediate(ArtistNameHyperlink, targetOpacity);
-            SetOpacityImmediate(SecondaryControlsContainer, targetOpacity);
+            CompositionAnimationHelper.SetOpacityImmediate(SeekBarGrid, targetOpacity);
+            CompositionAnimationHelper.SetOpacityImmediate(ArtistNameHyperlink, targetOpacity);
+            CompositionAnimationHelper.SetOpacityImmediate(SecondaryControlsContainer, targetOpacity);
         }
     }
 
-    /// <summary>
-    ///     Animates an element's opacity using GPU-accelerated Composition animations.
-    /// </summary>
-    private static void AnimateOpacity(UIElement element, float to, int durationMs, int delayMs = 0)
-    {
-        var visual = ElementCompositionPreview.GetElementVisual(element);
-        var compositor = visual.Compositor;
-
-        // Stop any running opacity animation to prevent overlap
-        visual.StopAnimation("Opacity");
-
-        var animation = compositor.CreateScalarKeyFrameAnimation();
-        animation.InsertKeyFrame(1.0f, to, compositor.CreateCubicBezierEasingFunction(
-            new Vector2(0.25f, 0.1f),
-            new Vector2(0.25f, 1.0f)));
-        animation.Duration = TimeSpan.FromMilliseconds(durationMs);
-        animation.DelayTime = TimeSpan.FromMilliseconds(delayMs);
-
-        visual.StartAnimation("Opacity", animation);
-    }
-
-    /// <summary>
-    ///     Sets an element's opacity immediately without animation.
-    /// </summary>
-    private static void SetOpacityImmediate(UIElement element, float opacity)
-    {
-        var visual = ElementCompositionPreview.GetElementVisual(element);
-        visual.Opacity = opacity;
-    }
-
-    // Populates the NavigationView with items based on user settings.
     private async Task PopulateNavigationAsync()
     {
         var navItems = await _settingsService.GetNavigationItemsAsync();
-        NavView.MenuItems.Clear();
-
-        var addedTags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-        foreach (var item in navItems.Where(i => i.IsEnabled))
+        if (_isUnloaded) return;
+        var wasUpdating = _isUpdatingNavViewSelection;
+        _isUpdatingNavViewSelection = true;
+        try
         {
-            // Normalize the tag to match Resource keys (PascalCase) even if older settings used lowercase.
-            var tag = item.Tag;
-            if (tag.Length > 0 && char.IsLower(tag[0]))
+            NavView.MenuItems.Clear();
+            foreach (var item in navItems.Where(i => i.IsEnabled))
             {
-                tag = char.ToUpper(tag[0]) + tag.Substring(1);
+                var resourceKey = $"NavItem_{item.Tag}";
+                NavView.MenuItems.Add(new NavigationViewItem
+                {
+                    Content = Strings.ResourceManager.GetString(resourceKey) ?? resourceKey,
+                    Tag = item.Tag,
+                    Icon = new FontIcon { Glyph = item.IconGlyph }
+                });
             }
-
-            // Deduplicate to ensure no items with the same tag are added multiple times
-            if (!addedTags.Add(tag)) continue;
-
-            var navViewItem = new NavigationViewItem
-            {
-                Content = Strings.GetString($"NavItem_{tag}"),
-                Tag = tag,
-                Icon = new FontIcon { Glyph = item.IconGlyph }
-            };
-
-            if (!string.IsNullOrEmpty(item.IconFontFamily))
-                if (navViewItem.Icon is FontIcon icon)
-                    icon.FontFamily = new FontFamily(item.IconFontFamily);
-
-            NavView.MenuItems.Add(navViewItem);
+            UpdateNavViewSelection(ContentFrame.CurrentSourcePageType);
+        }
+        finally
+        {
+            _isUpdatingNavViewSelection = wasUpdating;
         }
     }
 
-    // Sets up event handlers and initial state when the page is loaded.
     private async void OnMainPageLoaded(object sender, RoutedEventArgs e)
     {
+        _isUnloaded = false;
+        _queueContentMotion ??= SplitViewContentMotion.Attach(QueueSplitView);
+        NavView.ApplyTemplate();
+        if (VisualTreeHelper.GetChildrenCount(NavView) > 0 &&
+            (VisualTreeHelper.GetChild(NavView, 0) as FrameworkElement)?.FindName("RootSplitView") is SplitView navigationSplitView)
+            _navigationContentMotion ??= SplitViewContentMotion.Attach(navigationSplitView);
         _queuePlayingBinder ??= new NowPlayingIndicatorBinder(
-            QueueListView, null, ViewModel,
+            QueueListView, ViewModel,
             (Brush)Application.Current.Resources["AppPrimaryColorBrush"],
             item => (item as QueueEntry)?.Id);
         _queuePlayingBinder.Refresh();
+        _historyPlayingBinder ??= new NowPlayingIndicatorBinder(
+            HistoryListView, ViewModel,
+            (Brush)Application.Current.Resources["AppPrimaryColorBrush"],
+            item => (item as RecentListenEntry)?.Listen.SongId);
+        _historyPlayingBinder.Refresh();
         if (NavView.SettingsItem is NavigationViewItem settingsItem)
         {
             settingsItem.Content = Strings.NavItem_Settings;
@@ -446,39 +408,35 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
         try
         {
-            // 1. Hook up event handlers first to avoid missing any updates during the async initialization phase.
             _lastKnownTheme = ActualTheme;
             ActualThemeChanged += OnActualThemeChanged;
             ContentFrame.Navigated += OnContentFrameNavigated;
             ViewModel.PropertyChanged += OnViewModelPropertyChanged;
+            CompositionAnimationHelper.AnimationsEnabledChanged += OnAnimationsEnabledChanged;
             _settingsService.PlayerAnimationSettingChanged += OnPlayerAnimationSettingChanged;
             _settingsService.NavigationSettingsChanged += OnNavigationSettingsChanged;
-            _settingsService.TransparencyEffectsSettingChanged += OnTransparencyEffectsSettingChanged;
+            _transparencyEffects.Changed += OnTransparencyEffectsChanged;
             _settingsService.PlayerDesignSettingsChanged += OnPlayerDesignSettingsChanged;
             AddHandler(PointerPressedEvent, new PointerEventHandler(OnGlobalPointerPressed), true);
             KeyDown += OnSelectionKeyDown;
 
-            // 2. Parallelize independent startup tasks to reduce total load time.
             var brushTask = SetPlatformSpecificBrushAsync();
             var navTask = PopulateNavigationAsync();
             var animTask = _settingsService.GetPlayerAnimationEnabledAsync();
             var paneTask = RestorePaneStateAsync();
 
             await Task.WhenAll(brushTask, navTask, animTask, paneTask);
+            if (_isUnloaded) return;
 
-            // 3. Post-initialization UI synchronization.
             _isPlayerAnimationEnabled = await animTask;
 
-            if (NavView.MenuItems.Any() && NavView.SelectedItem == null)
-            {
-                NavView.SelectedItem = NavView.MenuItems.First();
-            }
+            if (ContentFrame.CurrentSourcePageType is null)
+                NavView.SelectedItem = NavView.MenuItems.FirstOrDefault() ?? NavView.SettingsItem;
 
             UpdateNavViewSelection(ContentFrame.CurrentSourcePageType);
 
-            _ = ApplyDynamicThemeForCurrentTrackAsync();
             UpdatePlayerVisualState(false);
-
+            await ApplyDynamicThemeForCurrentTrackAsync();
         }
         catch (Exception ex)
         {
@@ -486,22 +444,22 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         }
     }
 
-    // Cleans up event handlers when the page is unloaded.
     private void OnMainPageUnloaded(object sender, RoutedEventArgs e)
     {
         _queuePlayingBinder?.Dispose();
         _queuePlayingBinder = null;
+        _historyPlayingBinder?.Dispose();
+        _historyPlayingBinder = null;
         _isUnloaded = true;
-        _expandDebounce?.Cancel();
-        _expandDebounce = null;
-        _collapseDebounce?.Cancel();
-        _collapseDebounce = null;
+        _hoverTimer.Stop();
+        _isPointerOverPlayer = false;
         ActualThemeChanged -= OnActualThemeChanged;
         ContentFrame.Navigated -= OnContentFrameNavigated;
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
+        CompositionAnimationHelper.AnimationsEnabledChanged -= OnAnimationsEnabledChanged;
         _settingsService.PlayerAnimationSettingChanged -= OnPlayerAnimationSettingChanged;
         _settingsService.NavigationSettingsChanged -= OnNavigationSettingsChanged;
-        _settingsService.TransparencyEffectsSettingChanged -= OnTransparencyEffectsSettingChanged;
+        _transparencyEffects.Changed -= OnTransparencyEffectsChanged;
         _settingsService.PlayerDesignSettingsChanged -= OnPlayerDesignSettingsChanged;
 
         // Dispose the tray icon control to prevent "Exception Processing Message 0xc0000005" errors on exit.
@@ -517,52 +475,41 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     /// </summary>
     private async Task SetPlatformSpecificBrushAsync()
     {
-        var isAcrylicEnabled = _settingsService.IsTransparencyEffectsEnabled();
+        var isAcrylicEnabled = _transparencyEffects.IsEnabled;
         var material = await _settingsService.GetPlayerBackgroundMaterialAsync();
-
-        if (!isAcrylicEnabled || material == PlayerBackgroundMaterial.Solid)
-        {
-            // Use solid color (respects system transparency preference or explicit user choice)
-            // We use PlayerTintColorBrush directly to ensure the background opacity is 1.0 (Solid)
-            // but the color matches the calculated tint.
-            FloatingPlayerContainer.Background = (Brush)Application.Current.Resources["PlayerBackgroundBrush"];
-        }
-        else if (_win32InteropService.IsWindows11OrNewer)
-        {
-            // We are on Windows 11 or newer - use Acrylic
-            FloatingPlayerContainer.Background = (Brush)Application.Current.Resources["Win11AcrylicBrush"];
-        }
-        else
-        {
-            // We are on Windows 10 - use Win10 Acrylic
-            FloatingPlayerContainer.Background = (Brush)Application.Current.Resources["Win10AcrylicBrush"];
-        }
+        if (_isUnloaded) return;
+        var brushKey = !isAcrylicEnabled || material == PlayerBackgroundMaterial.Solid
+            ? "PlayerBackgroundBrush"
+            : _win32InteropService.IsWindows11OrNewer ? "Win11AcrylicBrush" : "Win10AcrylicBrush";
+        FloatingPlayerContainer.Background = (Brush)Application.Current.Resources[brushKey];
     }
 
     private void OnPlayerDesignSettingsChanged()
     {
-        _dispatcherService.TryEnqueue(async () =>
+        _ = UpdateUiAsync(async () =>
         {
-            if (_isUnloaded) return;
-
-            // 1. Update the brush (Material change)
             await SetPlatformSpecificBrushAsync();
-
-            // 2. Re-calculate the tint color (Intensity change)
-            await _themeService.ReapplyCurrentDynamicThemeAsync();
+            if (!_isUnloaded) await _themeService.ReapplyCurrentDynamicThemeAsync();
         });
     }
 
-    private void OnTransparencyEffectsSettingChanged(bool isEnabled)
+    private void OnTransparencyEffectsChanged(bool isEnabled)
     {
-        _dispatcherService.TryEnqueue(async () =>
+        _ = UpdateUiAsync(SetPlatformSpecificBrushAsync);
+    }
+
+    private void OnAnimationsEnabledChanged(Windows.UI.ViewManagement.UISettings sender,
+        Windows.UI.ViewManagement.UISettingsAnimationsEnabledChangedEventArgs args)
+    {
+        _dispatcherService.TryEnqueue(() =>
         {
             if (_isUnloaded) return;
-            await SetPlatformSpecificBrushAsync();
+            UpdatePlayerVisualState(false);
+            if (!CompositionAnimationHelper.AreAnimationsEnabled)
+                PlayerVisibilityStates.CurrentState?.Storyboard?.SkipToFill();
         });
     }
 
-    // Responds to changes in the player animation setting.
     private void OnPlayerAnimationSettingChanged(bool isEnabled)
     {
         _dispatcherService.TryEnqueue(() =>
@@ -573,47 +520,41 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         });
     }
 
-    // Repopulates the navigation view when its settings change.
     private void OnNavigationSettingsChanged()
     {
-        // Use EnqueueAsync for async lambdas. Fire-and-forget is acceptable
-        // for this background UI update. The discard `_ =` signifies this intent.
-        _ = _dispatcherService.EnqueueAsync(async () =>
-        {
-            if (_isUnloaded) return;
-
-            _isUpdatingNavViewSelection = true;
-            await PopulateNavigationAsync();
-            if (ContentFrame.CurrentSourcePageType == typeof(SettingsPage)) NavView.SelectedItem = NavView.SettingsItem;
-            _isUpdatingNavViewSelection = false;
-        });
+        _ = UpdateUiAsync(PopulateNavigationAsync);
     }
 
-    // Reapplies the dynamic theme when the system or app theme changes.
     private void OnActualThemeChanged(FrameworkElement sender, object args)
     {
         if (ActualTheme == _lastKnownTheme) return;
         _lastKnownTheme = ActualTheme;
-        _ = _themeService.ReapplyCurrentDynamicThemeAsync();
+        _ = UpdateUiAsync(_themeService.ReapplyCurrentDynamicThemeAsync);
     }
 
-    // Responds to property changes in the PlayerViewModel.
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        _dispatcherService.TryEnqueue(() =>
+        if (e.PropertyName is not (nameof(PlayerViewModel.CurrentPlayingTrack) or
+            nameof(PlayerViewModel.IsPlaying) or nameof(PlayerViewModel.IsQueuePanelOpen))) return;
+
+        _ = UpdateUiAsync(async () =>
         {
-            switch (e.PropertyName)
-            {
-                case nameof(PlayerViewModel.CurrentPlayingTrack):
-                    _ = ApplyDynamicThemeForCurrentTrackAsync();
-                    UpdatePlayerVisualState();
-                    break;
-                case nameof(PlayerViewModel.IsPlaying):
-                case nameof(PlayerViewModel.IsQueuePanelOpen):
-                    UpdatePlayerVisualState();
-                    break;
-            }
+            UpdatePlayerVisualState();
+            if (e.PropertyName == nameof(PlayerViewModel.CurrentPlayingTrack))
+                await ApplyDynamicThemeForCurrentTrackAsync();
         });
+    }
+
+    private async Task UpdateUiAsync(Func<Task> update)
+    {
+        try
+        {
+            await _dispatcherService.EnqueueAsync(() => _isUnloaded ? Task.CompletedTask : update());
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to update the main page.");
+        }
     }
 
     private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
@@ -632,7 +573,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         TryGoBack();
     }
 
-    // Updates UI elements like the back button after a navigation event.
     private void OnContentFrameNavigated(object sender, NavigationEventArgs e)
     {
         try
@@ -641,17 +581,19 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             var isLyricsPage = e.SourcePageType == typeof(LyricsPage);
             ViewModel.IsLyricsPageActive = isLyricsPage;
 
-            if (AppTitleBar != null)
-            {
-                AppTitleBar.IsBackButtonVisible = (ContentFrame.CanGoBack && isDetailPage) || isLyricsPage;
-            }
+            AppTitleBar.IsBackButtonVisible = ContentFrame.CanGoBack && (isDetailPage || isLyricsPage);
 
-            UpdateNavViewSelection(e.SourcePageType);
+            UpdateNavViewSelection(e.SourcePageType, e.Parameter is "Favorites");
 
             var isSettingsPage = e.SourcePageType == typeof(SettingsPage);
-            QueuePanel.Margin = new Thickness(0, 12, 12, isSettingsPage ? 12 : 156);
+            // Keep destination bounds stable while player space changes, so WinUI can finish the outgoing fade.
+            var pageHeightAnimation = isSettingsPage ? HiddenPageHeightAnimation : VisiblePageHeightAnimation;
+            var reservedHeight = isSettingsPage ? 0 : ShouldExpandPlayer ? 132 : 80;
+            pageHeightAnimation.From = pageHeightAnimation.To = Math.Max(0, ContentRegion.ActualHeight - reservedHeight);
+            if (isSettingsPage) PlayerSpaceHideAnimation.From = PlayerContentSpace.ActualHeight;
             var stateName = isSettingsPage ? "PlayerHidden" : "PlayerVisible";
-            VisualStateManager.GoToState(this, stateName, true);
+            VisualStateManager.GoToState(this, stateName, CompositionAnimationHelper.AreAnimationsEnabled);
+            if (!CompositionAnimationHelper.AreAnimationsEnabled) PlayerVisibilityStates.CurrentState?.Storyboard?.SkipToFill();
         }
         catch (Exception ex)
         {
@@ -659,60 +601,32 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         }
     }
 
-    private async void FloatingPlayerContainer_PointerEntered(object sender, PointerRoutedEventArgs e)
-    {
-        // Cancel any pending collapse first so it doesn't fire mid-expand.
-        _collapseDebounce?.Cancel();
+    private void FloatingPlayerContainer_PointerEntered(object sender, PointerRoutedEventArgs e) =>
+        SchedulePlayerHover(true);
 
-        // Debounce the expand: cursor must settle for 80ms before animating.
-        // This prevents the transparent hit-zone gap above the collapsed player
-        // from triggering expand/collapse cycles as the cursor passes over it.
-        var cts = new CancellationTokenSource();
-        _expandDebounce = cts;
-        try
-        {
-            await Task.Delay(80, cts.Token);
-            if (_isUnloaded) return;
-            _isPointerOverPlayer = true;
-            UpdatePlayerVisualState();
-        }
-        catch (OperationCanceledException) { }
-        finally
-        {
-            cts.Dispose();
-            if (ReferenceEquals(_expandDebounce, cts))
-                _expandDebounce = null;
-        }
+    private void FloatingPlayerContainer_PointerExited(object sender, PointerRoutedEventArgs e) =>
+        SchedulePlayerHover(false);
+
+    private void SchedulePlayerHover(bool isOverPlayer)
+    {
+        _hoverTimer.Stop();
+        _pendingPointerOverPlayer = isOverPlayer;
+        // Ignore brief grazes across the transparent hit zone and rapid boundary crossings.
+        _hoverTimer.Interval = TimeSpan.FromMilliseconds(isOverPlayer ? 80 : 120);
+        _hoverTimer.Start();
     }
 
-    private async void FloatingPlayerContainer_PointerExited(object sender, PointerRoutedEventArgs e)
+    private void OnHoverTimerTick(object? sender, object e)
     {
-        // Cancel any pending expand — a graze that exits before 80ms causes zero animation.
-        _expandDebounce?.Cancel();
-
-        // Debounce the collapse: absorbs rapid boundary crossings and child-element transitions.
-        var cts = new CancellationTokenSource();
-        _collapseDebounce = cts;
-        try
-        {
-            await Task.Delay(120, cts.Token);
-            if (_isUnloaded) return;
-            _isPointerOverPlayer = false;
-            UpdatePlayerVisualState();
-        }
-        catch (OperationCanceledException) { }
-        finally
-        {
-            cts.Dispose();
-            if (ReferenceEquals(_collapseDebounce, cts))
-                _collapseDebounce = null;
-        }
+        _hoverTimer.Stop();
+        if (_isUnloaded) return;
+        _isPointerOverPlayer = _pendingPointerOverPlayer;
+        UpdatePlayerVisualState();
     }
 
     private void AppTitleBar_PaneToggleRequested(TitleBar sender, object args)
     {
         NavView.IsPaneOpen = !NavView.IsPaneOpen;
-        // Save the pane state if the setting is enabled.
         _ = SavePaneStateAsync(NavView.IsPaneOpen);
     }
 
@@ -727,11 +641,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     }
 
     private void MediaSeekerSlider_PointerReleased(object sender, PointerRoutedEventArgs e)
-    {
-        ViewModel.IsUserDraggingSlider = false;
-    }
-
-    private void MediaSeekerSlider_PointerCaptureLost(object sender, PointerRoutedEventArgs e)
     {
         ViewModel.IsUserDraggingSlider = false;
     }
@@ -752,9 +661,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         }
     }
 
-    /// <summary>
-    ///     Saves the navigation pane state if the "remember pane state" setting is enabled.
-    /// </summary>
     private async Task SavePaneStateAsync(bool isOpen)
     {
         try
@@ -764,7 +670,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         }
         catch (Exception ex)
         {
-            // Non-critical: log at trace level and continue.
             _logger.LogTrace(ex, "Failed to save navigation pane state.");
         }
     }
@@ -774,17 +679,11 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         var pointerPoint = e.GetCurrentPoint((UIElement)sender);
         var delta = pointerPoint.Properties.MouseWheelDelta;
 
-        if (delta > 0)
-            ViewModel.CurrentVolume = Math.Min(100, ViewModel.CurrentVolume + VolumeChangeStep);
-        else if (delta < 0)
-            ViewModel.CurrentVolume = Math.Max(0, ViewModel.CurrentVolume - VolumeChangeStep);
+        ViewModel.CurrentVolume = Math.Clamp(ViewModel.CurrentVolume + Math.Sign(delta) * VolumeChangeStep, 0, 100);
 
         e.Handled = true;
     }
 
-    /// <summary>
-    ///     Restores the navigation pane state if the "remember pane state" setting is enabled.
-    /// </summary>
     private async Task RestorePaneStateAsync()
     {
         try
@@ -792,7 +691,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             if (await _settingsService.GetRememberPaneStateEnabledAsync())
             {
                 var savedState = await _settingsService.GetLastPaneOpenAsync();
-                if (savedState.HasValue) NavView.IsPaneOpen = savedState.Value;
+                if (!_isUnloaded && savedState.HasValue) NavView.IsPaneOpen = savedState.Value;
             }
         }
         catch (Exception ex)
@@ -879,27 +778,25 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         InsightsVm.CloseSeeAllCommand.Execute(null);
     }
 
-    private void OnSeeAllScrimTapped(object sender, TappedRoutedEventArgs e)
-    {
-        VisualStateManager.GoToState(this, "SeeAllSearchCollapsed", false);
-        InsightsVm.CloseSeeAllCommand.Execute(null);
-    }
-
     private void OnSeeAllPanelTapped(object sender, TappedRoutedEventArgs e) =>
         e.Handled = true;
 
     private void OnSeeAllSearchToggleButtonClick(object sender, RoutedEventArgs e)
     {
-        if (SeeAllSearchTextBox.Width > 0)
-        {
-            InsightsVm.SearchTerm = string.Empty;
-            VisualStateManager.GoToState(this, "SeeAllSearchCollapsed", true);
-        }
+        if (SeeAllSearchStates.CurrentState?.Name == "SeeAllSearchExpanded")
+            CollapseSeeAllSearch();
         else
         {
-            VisualStateManager.GoToState(this, "SeeAllSearchExpanded", true);
+            VisualStateManager.GoToState(this, "SeeAllSearchExpanded", false);
             SeeAllSearchTextBox.Focus(FocusState.Programmatic);
         }
+    }
+
+    private void CollapseSeeAllSearch()
+    {
+        InsightsVm.SearchTerm = string.Empty;
+        VisualStateManager.GoToState(this, "SeeAllSearchCollapsed", false);
+        SeeAllSearchToggleButton.Focus(FocusState.Programmatic);
     }
 
     private void OnSeeAllSortByPlayCountClick(object sender, RoutedEventArgs e) =>
@@ -912,8 +809,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     {
         if (e.Key == VirtualKey.Escape)
         {
-            InsightsVm.SearchTerm = string.Empty;
-            VisualStateManager.GoToState(this, "SeeAllSearchCollapsed", true);
+            CollapseSeeAllSearch();
             e.Handled = true;
         }
     }

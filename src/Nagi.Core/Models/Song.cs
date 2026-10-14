@@ -1,14 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Nagi.Core.Helpers;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Nagi.Core.Models;
 
-/// <summary>
-///     Represents a single song track in the music library.
-/// </summary>
-public class Song
+public class Song : ObservableObject
 {
+    private bool _isLoved;
     [Key] public Guid Id { get; set; } = Guid.NewGuid();
 
     [Required][MaxLength(500)] public string Title { get; set; } = string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Title);
@@ -25,9 +24,6 @@ public class Song
 
     [ForeignKey("AlbumId")] public virtual Album? Album { get; set; }
 
-    // Simplified multi-artist relationship. ArtistId and Artist are moved to SongArtists.
-    // Migration will attempt to preserve existing data.
-
     [MaxLength(200)] public string? Composer { get; set; }
 
     [Required] public Guid FolderId { get; set; }
@@ -39,9 +35,6 @@ public class Song
     /// </summary>
     public long DurationTicks { get; set; }
 
-    /// <summary>
-    ///     The duration of the song as a TimeSpan (computed from DurationTicks).
-    /// </summary>
     [NotMapped]
     public TimeSpan Duration
     {
@@ -80,40 +73,23 @@ public class Song
     /// </summary>
     public int? Rating { get; set; }
 
-    /// <summary>
-    ///     Indicates if the user has marked this song as a favorite.
-    /// </summary>
-    public bool IsLoved { get; set; }
+    public bool IsLoved
+    {
+        get => _isLoved;
+        set => SetProperty(ref _isLoved, value);
+    }
 
-    /// <summary>
-    ///     The total number of times the song has been played.
-    /// </summary>
     public int PlayCount { get; set; }
 
-    /// <summary>
-    ///     The total number of times the song has been skipped.
-    /// </summary>
     public int SkipCount { get; set; }
 
-    /// <summary>
-    ///     The date and time the song was last played.
-    /// </summary>
     public DateTime? LastPlayedDate { get; set; }
 
-    /// <summary>
-    ///     The total cumulative time this song has been listened to, stored in ticks.
-    /// </summary>
     public long TotalListenTimeTicks { get; set; }
 
-    /// <summary>
-    ///     The lyrics of the song.
-    /// </summary>
     [MaxLength(50000)]
     public string? Lyrics { get; set; }
 
-    /// <summary>
-    ///     The file path to the synchronized .lrc lyrics file associated with this song.
-    /// </summary>
     [MaxLength(1000)]
     public string? LrcFilePath { get; set; }
 
@@ -123,9 +99,6 @@ public class Song
     /// </summary>
     public DateTime? LyricsLastCheckedUtc { get; set; }
 
-    /// <summary>
-    ///     The beats per minute of the track.
-    /// </summary>
     public double? Bpm { get; set; }
 
     /// <summary>
@@ -145,39 +118,21 @@ public class Song
     [NotMapped]
     public bool ReplayGainCheckPerformed { get; set; }
 
-    /// <summary>
-    ///     A custom grouping category for the song.
-    /// </summary>
     [MaxLength(200)]
     public string? Grouping { get; set; }
 
-    /// <summary>
-    ///     Copyright information for the track.
-    /// </summary>
     [MaxLength(1000)]
     public string? Copyright { get; set; }
 
-    /// <summary>
-    ///     A general-purpose comment field.
-    /// </summary>
     [MaxLength(1000)]
     public string? Comment { get; set; }
 
-    /// <summary>
-    ///     The conductor of the orchestra, if applicable.
-    /// </summary>
     [MaxLength(200)]
     public string? Conductor { get; set; }
 
-    /// <summary>
-    ///     The unique identifier for the track from the MusicBrainz database.
-    /// </summary>
     [MaxLength(100)]
     public string? MusicBrainzTrackId { get; set; }
 
-    /// <summary>
-    ///     The unique identifier for the release (album) from the MusicBrainz database.
-    /// </summary>
     [MaxLength(100)]
     public string? MusicBrainzReleaseId { get; set; }
 
@@ -201,7 +156,6 @@ public class Song
         }
     }
 
-    // Navigation properties
     public virtual ICollection<SongArtist> SongArtists { get; set; } = new List<SongArtist>();
     public virtual ICollection<Genre> Genres { get; set; } = new List<Genre>();
     public virtual ICollection<PlaylistSong> PlaylistSongs { get; set; } = new List<PlaylistSong>();
@@ -265,7 +219,6 @@ public class Song
         else
         {
             var displayName = Artist.GetDisplayName(artists);
-            // Truncate to MaxLength to prevent database overflow with many collaborators
             ArtistName = displayName.Length > MaxArtistNameLength
                 ? displayName[..(MaxArtistNameLength - 3)] + "..."
                 : displayName;

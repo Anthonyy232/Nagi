@@ -102,7 +102,7 @@
     <value>Uimhir Rian</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Líon Seinnte</value>
+    <value>Seinnte</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>Amhráin</value>
@@ -115,9 +115,6 @@
   </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Fillteán</value>
-  </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Fillteáin</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Ordú Láimhe</value>
@@ -148,10 +145,10 @@
     <value>{0} (Is Sine)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Ard)</value>
+    <value>{0} (Ag dul i méid)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Ísl)</value>
+    <value>{0} (Ag dul i laghad)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>An Ceann is Giorra ar dTús</value>
@@ -169,7 +166,7 @@
     <value>An chuid is mó de {0}</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
-    <value>An chuid is lú de {0}</value>
+    <value>An líon is lú {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Ag scanadh fillteán {0} de {1}: {2} - {3}</value>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Scanadh críochnaithe. Cuireadh nó nuashonraíodh {0} {1}.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Ag sábháil baisce {0}...</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Ag scanadh fillteáin...</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Scanadh críochnaithe. Tá an leabharlann cothrom le dáta.</value>
   </data>
@@ -194,16 +185,16 @@
     <value>Theip ar an scanadh. Seiceáil logaí le haghaidh sonraí.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Ag ullmhú taisce scanadh...</value>
+    <value>Scanadh na leabharlainne á ullmhú…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Ag léamh sonraí amhráin...</value>
+    <value>Mionsonraí amhrán á léamh…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Ag glanadh do leabharlainne...</value>
+    <value>Do leabharlann á glanadh…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Ag críochnú...</value>
+    <value>Á thabhairt chun críche…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Theip ar normalú toirte. Seiceáil logaí le haghaidh sonraí.</value>
@@ -216,13 +207,10 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Theip ar fhillteán a chur leis.</value>
+    <value>Níorbh fhéidir an fillteán a chur leis.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Ní féidir ainm an tseinnliosta a bheith folamh.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Caithfidh an rátáil a bheith idir 1 agus 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
@@ -248,7 +236,15 @@
     <value>Sórtáil De Réir: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg teastaíonn sé le haghaidh Normalú Toirte Ardchruinneas (anailís ReplayGain) ach níor aimsíodh ar do chóras é.\n\nLean na céimeanna seo chun é a chur ar bun:\n\n1. **Íoslódáil**: Tabhair cuairt ar https://www.gyan.dev/ffmpeg/builds/ agus íoslódáil an tógáil riachtanach 'ffmpeg-git-full.7z' (nó a leithéid).\n2. **Treoir**: Is féidir leat an treoir seo a leanúint le haghaidh treoracha mionsonraithe: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Baintear amach**: Oscail an fillteán ailtireachta agus aimsigh an eolaire 'bin' ina bhfuil `ffmpeg.exe`.\n4. **Suiteáil**: Cóipeáil `ffmpeg.exe` chuig fillteán buan (m.sh., `C:\\ffmpeg\\`) agus **cuir an fillteán sin le d'athróg timpeallachta System PATH**.\n5. **Atosaigh**: Atosaigh Nagi le do thoil tar éis na suiteála chun go dtiocfaidh athruithe i bhfeidhm.</value>
+    <value>Tá FFmpeg ag teastáil chun amhráin a anailísiú le haghaidh normalú airde fuaime, ach níorbh fhéidir le Nagi é a aimsiú.
+
+1. Íoslódáil leagan do Windows ó https://ffmpeg.org/download.html.
+2. Bain na comhaid as an gcartlann agus aimsigh ffmpeg.exe ina fhillteán bin.
+3. Cuir an fillteán ina bhfuil ffmpeg.exe le do PATH Windows.
+4. Atosaigh Nagi, ansin cumasaigh normalú airde fuaime arís.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>Cruthaíodh an liosta seinme, ach níorbh fhéidir a chuid amhrán a chur leis. Bain triail as é a iompórtáil arís.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Níor aimsíodh aon amhráin ón seinmliosta i do leabharlann.</value>
@@ -269,7 +265,7 @@
     <value>Dord Iomlán</value>
   </data>
   <data name="EqPreset_FullTreble" xml:space="preserve">
-    <value>Tréile Iomlán</value>
+    <value>Tribil Iomlán</value>
   </data>
   <data name="EqPreset_Jazz" xml:space="preserve">
     <value>Snagcheol</value>
@@ -293,12 +289,39 @@
     <value>Tá sonraí toirte ag gach amhrán cheana féin.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Ag ríomh toirte do {0} amhrán...</value>
+    <value>Airde fuaime á hanailísiú… Amhráin: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Ag ríomh normalú toirte ({0}/{1})...</value>
+    <value>Normalú airde fuaime á ríomh ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Normalú toirte críochnaithe. Próiseáladh {0} amhrán.</value>
+    <value>Normalú airde fuaime críochnaithe. Amhráin próiseáilte: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Iontráil do chomhartha úsáideora ListenBrainz.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Níorbh fhéidir an freagra ó ListenBrainz a léamh. Bain triail as arís níos déanaí.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Iontráil URL freastalaí a thosaíonn le http:// nó https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Tá an comhartha úsáideora neamhbhailí. Seiceáil é agus bain triail as arís.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>Thug ListenBrainz earráid ar ais (HTTP {0}). Bain triail as arís níos déanaí.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Níorbh fhéidir ceangal le ListenBrainz. Seiceáil do cheangal agus URL an fhreastalaí.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Níorbh fhéidir le Nagi fillteán sonraí a leabharlainne a aimsiú.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Theip ar an athchóiriú, agus níorbh fhéidir do chuid sonraí roimhe seo a athchóiriú go hiomlán. Sábháladh comhaid slánaithe ag &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Ní cúltaca bailí Nagi é an comhad roghnaithe.</value>
   </data>
 </root>

@@ -9,22 +9,17 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Models;
-using Nagi.WinUI.Navigation;
-using Nagi.WinUI.ViewModels;
-using System.Threading.Tasks;
-using Nagi.Core.Services.Abstractions;
+using Nagi.Presentation.Navigation;
+using Nagi.Presentation.Resources;
+using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.Pages;
 
-/// <summary>
-///     A page for displaying the list of songs that match a smart playlist's rules.
-/// </summary>
 public sealed partial class SmartPlaylistSongViewPage : Page
 {
     private readonly ILogger<SmartPlaylistSongViewPage> _logger;
-    private readonly ILibraryReader _libraryReader;
     private bool _isSearchExpanded;
     private bool _isUpdatingSelection;
     private readonly Microsoft.UI.Dispatching.DispatcherQueue _dispatcherQueue;
@@ -36,7 +31,6 @@ public sealed partial class SmartPlaylistSongViewPage : Page
         _dispatcherQueue = this.DispatcherQueue;
         ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<SmartPlaylistSongListViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<SmartPlaylistSongViewPage>>();
-        _libraryReader = App.Services!.GetRequiredService<ILibraryReader>();
         DataContext = ViewModel;
 
         Loaded += OnNowPlayingBinderAttach;
@@ -52,7 +46,6 @@ public sealed partial class SmartPlaylistSongViewPage : Page
         _nowPlayingBinder = new NowPlayingIndicatorBinder(
             SongsListView,
             ViewModel,
-            App.Services!.GetRequiredService<PlayerViewModel>(),
             (Brush)Application.Current.Resources["AppPrimaryColorBrush"]);
         _nowPlayingBinder.Refresh();
     }
@@ -85,7 +78,7 @@ public sealed partial class SmartPlaylistSongViewPage : Page
                 _logger.LogWarning(
                     "Received invalid navigation parameter. Expected '{ExpectedType}', got '{ActualType}'. Initializing with fallback state.",
                     nameof(SmartPlaylistSongViewNavigationParameter), paramType);
-                await ViewModel.InitializeAsync(Nagi.WinUI.Resources.Strings.SmartPlaylistSongViewPage_UnknownPlaylist, null);
+                await ViewModel.InitializeAsync(Strings.SmartPlaylistSongViewPage_UnknownPlaylist, null);
             }
         }
         catch (Exception ex)
@@ -112,42 +105,7 @@ public sealed partial class SmartPlaylistSongViewPage : Page
     {
         try
         {
-            _logger.LogDebug("Edit rules button clicked.");
-
-            var smartPlaylistId = ViewModel.GetSmartPlaylistId();
-            if (!smartPlaylistId.HasValue)
-            {
-                _logger.LogWarning("Cannot edit rules - no smart playlist ID available.");
-                return;
-            }
-
-            var smartPlaylistService = App.Services!.GetRequiredService<Core.Services.Abstractions.ISmartPlaylistService>();
-            var smartPlaylist = await smartPlaylistService.GetSmartPlaylistByIdAsync(smartPlaylistId.Value);
-
-            if (smartPlaylist == null)
-            {
-                _logger.LogWarning("Could not find smart playlist with ID {SmartPlaylistId}", smartPlaylistId);
-                return;
-            }
-
-            var dialog = new Dialogs.SmartPlaylistEditorDialog
-            {
-                XamlRoot = XamlRoot,
-                EditingPlaylist = smartPlaylist
-            };
-
-            var result = await dialog.ShowAsync();
-
-            if (result == ContentDialogResult.Primary && dialog.ResultPlaylist != null)
-            {
-                _logger.LogDebug("User edited smart playlist '{PlaylistName}'.", dialog.ResultPlaylist.Name);
-                // Refresh the song list
-                await ViewModel.InitializeAsync(dialog.ResultPlaylist.Name, smartPlaylistId);
-            }
-            else
-            {
-                _logger.LogDebug("User cancelled smart playlist edit.");
-            }
+            await ViewModel.EditRulesCommand.ExecuteAsync(null);
         }
         catch (Exception ex)
         {
@@ -179,17 +137,10 @@ public sealed partial class SmartPlaylistSongViewPage : Page
 
         _isSearchExpanded = true;
         _logger.LogDebug("Search UI expanded.");
-        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.SmartPlaylistSongViewPage_SearchButton_Close_ToolTip);
-        VisualStateManager.GoToState(this, "SearchExpanded", true);
+        ToolTipService.SetToolTip(SearchToggleButton, Strings.SmartPlaylistSongViewPage_SearchButton_Close_ToolTip);
+        VisualStateManager.GoToState(this, "SearchExpanded", false);
+        SearchTextBox.Focus(FocusState.Programmatic);
 
-        var timer = DispatcherQueue.CreateTimer();
-        timer.Interval = TimeSpan.FromMilliseconds(150);
-        timer.Tick += (s, args) =>
-        {
-            timer.Stop();
-            SearchTextBox.Focus(FocusState.Programmatic);
-        };
-        timer.Start();
     }
 
     private void CollapseSearch()
@@ -198,8 +149,9 @@ public sealed partial class SmartPlaylistSongViewPage : Page
 
         _isSearchExpanded = false;
         _logger.LogDebug("Search UI collapsed and search term cleared.");
-        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.SmartPlaylistSongViewPage_SearchButton_Search_ToolTip);
-        VisualStateManager.GoToState(this, "SearchCollapsed", true);
+        ToolTipService.SetToolTip(SearchToggleButton, Strings.SmartPlaylistSongViewPage_SearchButton_Search_ToolTip);
+        VisualStateManager.GoToState(this, "SearchCollapsed", false);
+        SearchToggleButton.Focus(FocusState.Programmatic);
         ViewModel.SearchTerm = string.Empty;
     }
 
@@ -207,7 +159,6 @@ public sealed partial class SmartPlaylistSongViewPage : Page
     {
         if (_isUpdatingSelection || sender is not ListView listView) return;
 
-        // Update logical selection state based on individual changes
         foreach (var song in e.AddedItems.OfType<Song>())
             ViewModel.SelectionState.Select(song.Id);
 
@@ -242,7 +193,6 @@ public sealed partial class SmartPlaylistSongViewPage : Page
         _logger.LogDebug("Ctrl+A invoked. Selecting all songs in smart playlist.");
         ViewModel.SelectAllCommand.Execute(null);
 
-        // Sync the current visible items
         try
         {
             _isUpdatingSelection = true;
@@ -278,7 +228,10 @@ public sealed partial class SmartPlaylistSongViewPage : Page
         if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
                 .FirstOrDefault(item => item.Name == "GoToArtistSubMenu") is { } goToArtistSubMenu)
         {
-            ArtistMenuFlyoutHelper.PopulateSubMenu(goToArtistSubMenu, rightClickedSong, ViewModel.GoToArtistCommand, _libraryReader, _dispatcherQueue, _logger);
+            ArtistMenuFlyoutHelper.PopulateSubMenu(goToArtistSubMenu, rightClickedSong, ViewModel.GoToArtistCommand, ViewModel.GetArtistsForSongAsync, _dispatcherQueue, _logger);
         }
+        ListeningMenuFlyoutHelper.PopulateFavorites(menuFlyout, ViewModel);
     }
+    private void ListeningOptions_Opening(object sender, object e) =>
+        ListeningMenuFlyoutHelper.PopulateMixes((MenuFlyout)sender, ViewModel.PlayMixCommand, ViewModel.PlayForCommand);
 }

@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>資料夾</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>資料夾</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>手動排序</value>
   </data>
@@ -148,10 +145,10 @@
     <value>{0} (最舊)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (升序)</value>
+    <value>{0} (遞增)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (降序)</value>
+    <value>{0} (遞減)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>最短優先</value>
@@ -169,7 +166,7 @@
     <value>最多 {0}</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
-    <value>最少 {0}</value>
+    <value>最少{0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>正在掃描資料夾 {0}/{1}：{2} - {3}</value>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>掃描完成。已新增或更新 {0} {1}。</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>正在儲存批次 {0}...</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>正在掃描資料夾...</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>掃描完成。媒體庫已是最新狀態。</value>
   </data>
@@ -194,16 +185,16 @@
     <value>掃描失敗。請查看日誌了解詳情。</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>正在準備掃描快取...</value>
+    <value>正在準備掃描音樂庫……</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>正在讀取歌曲詳情...</value>
+    <value>正在讀取歌曲詳細資料……</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>正在清理您的媒體庫...</value>
+    <value>正在清理您的音樂庫……</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>正在完成...</value>
+    <value>正在完成……</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>音量標準化失敗。請查看日誌了解詳情。</value>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>播放列表名稱不能為空。</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>評級必須介於 1 到 5 之間。</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
@@ -248,7 +236,15 @@
     <value>排序依據：</value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>高精度音量標準化（ReplayGain 分析）需要 FFmpeg，但您的系統上找不到。\n\n請按照以下步驟進行設定：\n\n1. **下載**：造訪 https://www.gyan.dev/ffmpeg/builds/ 並下載 'ffmpeg-git-full.7z'（或類似的）基本組建。\n2. **指南**：您可以按照此指南獲取詳細說明：https://phoenixnap.com/kb/ffmpeg-windows\n3. **解壓縮**：開啟架構資料夾並找到包含 `ffmpeg.exe` 的 'bin' 目錄。\n4. **安裝**：將 `ffmpeg.exe` 複製到永久資料夾（例如 `C:\ffmpeg\`）並**將該資料夾新增到您的系統 PATH** 環境變數中。\n5. **重新啟動**：安裝後請重新啟動 Nagi 以使變更生效。</value>
+    <value>需要 FFmpeg 來分析歌曲以進行音量標準化，但 Nagi 找不到 FFmpeg。
+
+1. 從 https://ffmpeg.org/download.html 下載 Windows 版本。
+2. 解壓縮封存檔並在其 bin 資料夾中找到 ffmpeg.exe。
+3. 將包含 ffmpeg.exe 的資料夾新增至您的 Windows PATH。
+4. 重新啟動 Nagi，然後再次啟用音量標準化。</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>已建立播放清單，但無法新增其中的歌曲。請嘗試再次匯入。</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>在您的媒體庫中找不到播放列表中的任何歌曲。</value>
@@ -293,12 +289,39 @@
     <value>所有歌曲都已包含音量資料。</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>正在計算 {0} 首歌曲的音量...</value>
+    <value>正在分析音量… 歌曲：{0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>正在計算音量標準化 ({0}/{1})...</value>
+    <value>正在計算音量標準化 ({0}/{1})……</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>音量標準化完成。已處理 {0} 首歌曲。</value>
+    <value>音量標準化完成。已處理歌曲：{0}。</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>請輸入您的 ListenBrainz 使用者權杖。</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>無法讀取來自 ListenBrainz 的回應。請稍後再試。</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>請輸入以 http:// 或 https:// 開頭的伺服器 URL。</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>使用者權杖無效。請檢查後再試一次。</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz 傳回錯誤 (HTTP {0})。請稍後再試。</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>無法連線至 ListenBrainz。請檢查您的連線與伺服器 URL。</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi 找不到其音樂庫資料資料夾。</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>還原失敗，且無法完整還原您的先前資料。復原檔案已儲存於 &apos;{0}&apos;。</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>所選檔案不是有效的 Nagi 備份。</value>
   </data>
 </root>

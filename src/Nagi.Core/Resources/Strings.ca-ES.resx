@@ -102,7 +102,7 @@
     <value>Número de pista</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Nombre de reproduccions</value>
+    <value>Reproduccions</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>Cançons</value>
@@ -115,9 +115,6 @@
   </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Carpeta</value>
-  </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Carpetes</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Ordre manual</value>
@@ -148,10 +145,10 @@
     <value>{0} (Més antic)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Asc)</value>
+    <value>{0} (ascendent)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Desc)</value>
+    <value>{0} (descendent)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>Més curtes primer</value>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Escaneig completat. S'han afegit o actualitzat {0} {1}.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Desant lot {0}...</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Escanejant carpeta...</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Escaneig completat. La biblioteca està actualitzada.</value>
   </data>
@@ -194,16 +185,16 @@
     <value>Escaneig fallit. Comproveu els registres per a més detalls.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Preparant memòria cau d'escaneig...</value>
+    <value>S'està preparant l'exploració de la biblioteca…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Llegint detalls de la cançó...</value>
+    <value>S'estan llegint els detalls de les cançons…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Netejant la vostra biblioteca...</value>
+    <value>S'està netejant la biblioteca…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Finalitzant...</value>
+    <value>S'està finalitzant…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>La normalització del volum ha fallat. Comproveu els registres per a més detalls.</value>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>El nom de la llista de reproducció no pot estar buit.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>La qualificació ha de ser entre 1 i 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
@@ -248,7 +236,15 @@
     <value>Ordenar per: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg és necessari per a la normalització d'alta precisió del volum (anàlisi ReplayGain), però no s'ha trobat al vostre sistema.\n\nSeguiu aquests passos per configurar-lo:\n\n1. **Descarregueu**: Visiteu https://www.gyan.dev/ffmpeg/builds/ i descarregueu la compilació essencial 'ffmpeg-git-full.7z' (o similar).\n2. **Guia**: Podeu seguir aquesta guia per obtenir instruccions detallades: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Extreieu**: Obriu la carpeta d'arquitectura i localitzeu el directori 'bin' que conté `ffmpeg.exe`.\n4. **Instal·leu**: Copieu `ffmpeg.exe` a una carpeta permanent (p. ex., `C:\ffmpeg\`) i **afegiu aquesta carpeta a la variable d'entorn PATH del sistema**.\n5. **Reinicieu**: Reinicieu Nagi després de la instal·lació perquè els canvis tinguin efecte.</value>
+    <value>Cal el FFmpeg per analitzar les cançons per a la normalització del volum, però Nagi no l'ha pogut trobar.
+
+1. Baixeu una versió per a Windows des de https://ffmpeg.org/download.html.
+2. Extraieu l'arxiu i cerqueu ffmpeg.exe a la carpeta bin.
+3. Afegiu la carpeta que conté ffmpeg.exe al PATH de Windows.
+4. Reinicieu Nagi i torneu a activar la normalització del volum.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>S'ha creat la llista de reproducció, però no se n'han pogut afegir les cançons. Torneu a intentar la importació.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>No s'han trobat cançons de la llista de reproducció a la vostra biblioteca.</value>
@@ -293,12 +289,39 @@
     <value>Totes les cançons ja tenen dades de volum.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Calculant el volum per a {0} cançons...</value>
+    <value>S'està analitzant el volum… Cançons: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Calculant la normalització del volum ({0}/{1})...</value>
+    <value>S'està calculant la normalització del volum ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Normalització del volum completada. S'han processat {0} cançons.</value>
+    <value>S'ha completat la normalització del volum. Cançons processades: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Introduïu el token d'usuari de ListenBrainz.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>No s'ha pogut llegir la resposta de ListenBrainz. Torneu-ho a intentar més tard.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Introduïu un URL de servidor que comenci per http:// o https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>El token d'usuari no és vàlid. Comproveu-lo i torneu-ho a intentar.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz ha retornat un error (HTTP {0}). Torneu-ho a intentar més tard.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>No s'ha pogut connectar amb ListenBrainz. Comproveu la connexió i l'URL del servidor.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi no ha trobat la carpeta de dades de la biblioteca.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>La restauració ha fallat i no s'han pogut restaurar completament les dades anteriors. S'han desat els fitxers de recuperació a &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>El fitxer seleccionat no és una còpia de seguretat vàlida de Nagi.</value>
   </data>
 </root>

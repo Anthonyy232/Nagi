@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.Linq;
 using Nagi.Core.Models;
 using Xunit;
@@ -9,104 +8,62 @@ namespace Nagi.Core.Tests;
 public class SelectionStateTests
 {
     [Fact]
-    public void Select_AddsToSelection()
+    public void ManualSelection_TracksMembershipCountAndIds_AndCanBeCleared()
     {
         var state = new SelectionState();
-        var id = Guid.NewGuid();
+        var id1 = Guid.NewGuid();
+        var id2 = Guid.NewGuid();
+        var fullList = new[] { id1, id2, Guid.NewGuid() };
 
-        state.Select(id);
+        state.Select(id1);
+        state.Select(id2);
+        state.Deselect(id2);
 
-        Assert.True(state.IsSelected(id));
-        Assert.Equal(1, state.GetSelectedCount(10));
-    }
+        Assert.True(state.IsSelected(id1));
+        Assert.False(state.IsSelected(id2));
+        Assert.Equal(1, state.GetSelectedCount(fullList.Length));
+        Assert.Equal(new[] { id1 }, state.GetSelectedIds(fullList).ToArray());
 
-    [Fact]
-    public void Deselect_RemovesFromSelection()
-    {
-        var state = new SelectionState();
-        var id = Guid.NewGuid();
-
-        state.Select(id);
-        state.Deselect(id);
-
-        Assert.False(state.IsSelected(id));
-        Assert.Equal(0, state.GetSelectedCount(10));
-    }
-
-    [Fact]
-    public void SelectAll_SetsSelectAllMode()
-    {
-        var state = new SelectionState();
-        state.SelectAll();
-
-        Assert.True(state.IsSelectAllMode);
-        Assert.True(state.IsSelected(Guid.NewGuid()));
-        Assert.Equal(10, state.GetSelectedCount(10));
-    }
-
-    [Fact]
-    public void Deselect_InSelectAllMode_AddsToExceptions()
-    {
-        var state = new SelectionState();
-        state.SelectAll();
-        var id = Guid.NewGuid();
-
-        state.Deselect(id);
-
-        Assert.False(state.IsSelected(id));
-        Assert.Equal(9, state.GetSelectedCount(10));
-        Assert.Contains(id, state.GetExplicitlySelectedIds());
-    }
-
-    [Fact]
-    public void Select_InSelectAllMode_RemovesFromExceptions()
-    {
-        var state = new SelectionState();
-        state.SelectAll();
-        var id = Guid.NewGuid();
-
-        state.Deselect(id);
-        Assert.False(state.IsSelected(id));
-
-        state.Select(id);
-        Assert.True(state.IsSelected(id));
-        Assert.Empty(state.GetExplicitlySelectedIds());
-    }
-
-    [Fact]
-    public void Clear_ResetsState()
-    {
-        var state = new SelectionState();
-        state.Select(Guid.NewGuid());
-        state.SelectAll();
-
-        state.Clear();
+        state.DeselectAll();
 
         Assert.False(state.IsSelectAllMode);
-        Assert.Equal(0, state.GetSelectedCount(10));
-        Assert.Empty(state.GetExplicitlySelectedIds());
+        Assert.Equal(0, state.GetSelectedCount(fullList.Length));
+        Assert.Empty(state.GetSelectedIds(fullList));
     }
 
     [Fact]
-    public void GetSelectedIds_WorksCorrectly()
+    public void SelectAll_TracksExceptionsAndReselection_AndCanBeCleared()
     {
         var state = new SelectionState();
         var id1 = Guid.NewGuid();
         var id2 = Guid.NewGuid();
         var id3 = Guid.NewGuid();
-        var fullList = new List<Guid> { id1, id2, id3 };
+        var fullList = new[] { id1, id2, id3 };
 
         state.Select(id1);
-        var selected = state.GetSelectedIds(fullList).ToList();
-        Assert.Single(selected);
-        Assert.Contains(id1, selected);
-
         state.SelectAll();
+
+        Assert.True(state.IsSelectAllMode);
+        Assert.True(state.IsSelected(id1));
+        Assert.Equal(fullList.Length, state.GetSelectedCount(fullList.Length));
+        Assert.Equal(fullList, state.GetSelectedIds(fullList).ToArray());
+
         state.Deselect(id2);
-        selected = state.GetSelectedIds(fullList).ToList();
-        Assert.Equal(2, selected.Count);
-        Assert.Contains(id1, selected);
-        Assert.Contains(id3, selected);
-        Assert.DoesNotContain(id2, selected);
+
+        Assert.False(state.IsSelected(id2));
+        Assert.Equal(2, state.GetSelectedCount(fullList.Length));
+        Assert.Equal(new[] { id1, id3 }, state.GetSelectedIds(fullList).ToArray());
+
+        state.Select(id2);
+
+        Assert.True(state.IsSelected(id2));
+        Assert.Equal(fullList.Length, state.GetSelectedCount(fullList.Length));
+        Assert.Equal(fullList, state.GetSelectedIds(fullList).ToArray());
+
+        state.DeselectAll();
+
+        Assert.False(state.IsSelectAllMode);
+        Assert.Equal(0, state.GetSelectedCount(fullList.Length));
+        Assert.Empty(state.GetSelectedIds(fullList));
     }
 }

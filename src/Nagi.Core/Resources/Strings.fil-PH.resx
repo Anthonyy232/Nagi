@@ -102,22 +102,19 @@
     <value>Numero ng Track</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Bilang ng Patugtog</value>
+    <value>Mga Pagpapatugtog</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>Mga Kanta</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Mga Artist</value>
+    <value>Mga Artista</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>Kanta</value>
   </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Folder</value>
-  </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Mga Folder</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Manu-manong Pagkakasunod</value>
@@ -169,7 +166,7 @@
     <value>Pinakamaraming {0}</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
-    <value>Pinakakonting {0}</value>
+    <value>Pinakakaunting {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Ini-scan ang folder {0} sa {1}: {2} - {3}</value>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Tapos na ang pag-scan. Nagdagdag o nag-update ng {0} {1}.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Sinisave ang batch {0}...</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Ini-scan ang folder...</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Tapos na ang pag-scan. Ang library ay napapanahon.</value>
   </data>
@@ -194,16 +185,16 @@
     <value>Nabigo ang pag-scan. Suriin ang mga log para sa detalye.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Inihahanda ang mga scan cache...</value>
+    <value>Inihahanda ang pag-scan sa library…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Binabasa ang mga detalye ng kanta...</value>
+    <value>Binabasa ang mga detalye ng kanta…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Nililinis ang iyong library...</value>
+    <value>Nililinis ang iyong library…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Tinutuloy...</value>
+    <value>Tinatapos…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Nabigo ang normalisasyon ng volume. Suriin ang mga log para sa detalye.</value>
@@ -216,13 +207,10 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Nabigong magdagdag ng folder.</value>
+    <value>Hindi maidagdag ang folder.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Hindi maaaring walang laman ang pangalan ng playlist.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Ang rating ay dapat nasa pagitan ng 1 at 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
@@ -248,7 +236,15 @@
     <value>Pagbukud-bukurin Ayon sa: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>Kinakailangan ang FFmpeg para sa High-Precision Volume Normalization (ReplayGain analysis) ngunit hindi ito natagpuan sa iyong system.\n\nSundin ang mga hakbang na ito para i-set up ito:\n\n1. **I-download**: Bisitahin ang https://www.gyan.dev/ffmpeg/builds/ at i-download ang 'ffmpeg-git-full.7z' (o katulad) na essentials build.\n2. **Gabay**: Maaari mong sundin ang gabay na ito para sa detalyadong instruksyon: https://phoenixnap.com/kb/ffmpeg-windows\n3. **I-extract**: Buksan ang folder ng architecture at hanapin ang 'bin' directory na naglalaman ng `ffmpeg.exe`.\n4. **I-install**: Kopyahin ang `ffmpeg.exe` sa isang permanenteng folder (hal., `C:\ffmpeg\`) at **idagdag ang folder na iyon sa iyong System PATH** environment variable.\n5. **I-restart**: Paki-restart si Nagi pagkatapos ng pag-install para magkabisa ang mga pagbabago.</value>
+    <value>Kailangan ang FFmpeg upang masuri ang mga kanta para sa normalization ng volume, ngunit hindi ito mahanap ng Nagi.
+
+1. Mag-download ng Windows build mula sa https://ffmpeg.org/download.html.
+2. I-extract ang archive at hanapin ang ffmpeg.exe sa bin folder nito.
+3. Idagdag ang folder na naglalaman ng ffmpeg.exe sa iyong Windows PATH.
+4. I-restart ang Nagi, pagkatapos ay paganahin muli ang normalization ng volume.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>Nagawa ang playlist, ngunit hindi naidagdag ang mga kanta nito. Subukang i-import muli.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Walang mga kanta mula sa playlist ang natagpuan sa iyong library.</value>
@@ -293,12 +289,39 @@
     <value>Lahat ng kanta ay mayroon nang data ng volume.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Kinakalkula ang volume para sa {0} kanta...</value>
+    <value>Sinusuri ang volume… Mga kanta: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Kinakalkula ang normalisasyon ng volume ({0}/{1})...</value>
+    <value>Kina-kalkula ang normalization ng volume ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Kumpleto na ang normalisasyon ng volume. Naproseso ang {0} kanta.</value>
+    <value>Kumpleto na ang normalization ng volume. Mga kantang naproseso: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Ipasok ang iyong ListenBrainz user token.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Hindi mabasa ang tugon mula sa ListenBrainz. Subukang muli mamaya.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Magpasok ng URL ng server na nagsisimula sa http:// o https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Hindi balido ang user token. Suriin ito at subukang muli.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>Nagbalik ng error ang ListenBrainz (HTTP {0}). Subukang muli mamaya.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Hindi makakonekta sa ListenBrainz. Suriin ang iyong koneksyon at URL ng server.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Hindi mahanap ng Nagi ang folder ng data ng library nito.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Pumalya ang pag-restore, at hindi ganap na naibalik ang iyong nakaraang data. Na-save ang mga recovery file sa &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Ang napiling file ay hindi isang balidong backup ng Nagi.</value>
   </data>
 </root>

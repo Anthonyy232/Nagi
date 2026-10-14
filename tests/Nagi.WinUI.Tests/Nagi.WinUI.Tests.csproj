@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net$(NetVersion)-windows$(WindowsSdkVersion)</TargetFramework>
+        <TargetPlatformMinVersion>$(WindowsTargetPlatformMinVersion)</TargetPlatformMinVersion>
+        <SupportedOSPlatformVersion>10.0.18362.0</SupportedOSPlatformVersion>
+        <Platforms>x64;ARM64</Platforms>
+        <Platform Condition="'$(Platform)' == '' or '$(Platform)' == 'AnyCPU'">x64</Platform>
+        <RuntimeIdentifier Condition="'$(Platform)' == 'x64'">win-x64</RuntimeIdentifier>
+        <RuntimeIdentifier Condition="'$(Platform)' == 'ARM64'">win-arm64</RuntimeIdentifier>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+        <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+        <SelfContained>true</SelfContained>
+        <NoWarn>$(NoWarn);xUnit1051</NoWarn>
+        <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+        <WindowsAppSdkBootstrapInitialize>false</WindowsAppSdkBootstrapInitialize>
+        <WindowsAppSdkDeploymentManagerInitialize>false</WindowsAppSdkDeploymentManagerInitialize>
+        <!-- The app assembly initializes WinRT for the tests. -->
+        <WindowsAppSdkUndockedRegFreeWinRTInitialize>false</WindowsAppSdkUndockedRegFreeWinRTInitialize>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="FluentAssertions" />
+        <PackageReference Include="NSubstitute" />
+        <PackageReference Include="xunit.v3" />
+        <ProjectReference Include="..\..\src\Nagi.WinUI\Nagi.WinUI.csproj"
+                          AdditionalProperties="GenerateAppxPackageOnBuild=false" />
+    </ItemGroup>
+</Project>

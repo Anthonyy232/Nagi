@@ -8,18 +8,11 @@
     mc:Ignorable="d"
     IsHitTestVisible="False">
 
-    <!--
-        A small "now playing" indicator: 3 vertical bars in the app accent color that
-        bounce like an audio equalizer when the row is the currently-playing track.
-        - IsActive controls visibility (hidden when this row isn't playing).
-        - IsPlaying controls whether the bars animate (paused = music paused).
-        Sized to overlay a small album-art tile (defaults to 24x24, scales with parent).
-    -->
     <Grid x:Name="RootGrid"
           Width="24"
           Height="24"
           Background="#80000000"
-          CornerRadius="4"
+          CornerRadius="{ThemeResource ControlCornerRadius}"
           Visibility="Collapsed">
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Center"
@@ -62,7 +55,6 @@
 
         <Grid.Resources>
             <Storyboard x:Name="EqualizerStoryboard" RepeatBehavior="Forever">
-                <!-- Bar 1: ~700ms cycle -->
                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Bar1Scale"
                                                Storyboard.TargetProperty="ScaleY">
                     <LinearDoubleKeyFrame KeyTime="0:0:0.00" Value="0.4" />
@@ -71,7 +63,6 @@
                     <LinearDoubleKeyFrame KeyTime="0:0:0.54" Value="0.85" />
                     <LinearDoubleKeyFrame KeyTime="0:0:0.70" Value="0.4" />
                 </DoubleAnimationUsingKeyFrames>
-                <!-- Bar 2: ~900ms cycle, offset start -->
                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Bar2Scale"
                                                Storyboard.TargetProperty="ScaleY">
                     <LinearDoubleKeyFrame KeyTime="0:0:0.00" Value="0.7" />
@@ -80,7 +71,6 @@
                     <LinearDoubleKeyFrame KeyTime="0:0:0.68" Value="0.5" />
                     <LinearDoubleKeyFrame KeyTime="0:0:0.90" Value="0.7" />
                 </DoubleAnimationUsingKeyFrames>
-                <!-- Bar 3: ~600ms cycle -->
                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Bar3Scale"
                                                Storyboard.TargetProperty="ScaleY">
                     <LinearDoubleKeyFrame KeyTime="0:0:0.00" Value="0.5" />

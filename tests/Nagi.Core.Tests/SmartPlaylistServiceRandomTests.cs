@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
@@ -10,8 +9,6 @@ using Nagi.Core.Services.Implementations;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
-
-#pragma warning disable NS2002
 
 namespace Nagi.Core.Tests;
 
@@ -24,7 +21,6 @@ public class SmartPlaylistServiceRandomTests : IDisposable
     {
         _dbHelper = new DbContextFactoryTestHelper();
 
-        // Mock dependencies
         var fileSystem = Substitute.For<IFileSystemService>();
         var pathConfig = Substitute.For<IPathConfiguration>();
         var imageProcessor = Substitute.For<IImageProcessor>();
@@ -64,17 +60,4 @@ public class SmartPlaylistServiceRandomTests : IDisposable
         result.Should().Be(playlist.Id);
     }
 
-    [Fact]
-    public async Task GetSmartPlaylistCountAsync_ReturnsCorrectCount()
-    {
-        using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.SmartPlaylists.Add(new SmartPlaylist { Name = "SP1" });
-            context.SmartPlaylists.Add(new SmartPlaylist { Name = "SP2" });
-            await context.SaveChangesAsync();
-        }
-
-        var count = await _smartPlaylistService.GetSmartPlaylistCountAsync();
-        count.Should().Be(2);
-    }
 }

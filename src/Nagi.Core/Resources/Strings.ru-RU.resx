@@ -102,7 +102,7 @@
     <value>Номер трека</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Количество воспроизведений</value>
+    <value>Воспроизведений</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>Песни</value>
@@ -115,9 +115,6 @@
   </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Папка</value>
-  </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Папки</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Ручной порядок</value>
@@ -169,7 +166,7 @@
     <value>Наиболее {0}</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
-    <value>Наименее {0}</value>
+    <value>Меньше всего: {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Сканирование папки {0} из {1}: {2} - {3}</value>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Сканирование завершено. Добавлено или обновлено {0} {1}.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Сохранение пакета {0}...</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Сканирование папки...</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Сканирование завершено. Библиотека обновлена.</value>
   </data>
@@ -194,16 +185,16 @@
     <value>Ошибка сканирования. Подробности в журналах.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Подготовка кэшей сканирования...</value>
+    <value>Подготовка к сканированию библиотеки…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Чтение сведений о песнях...</value>
+    <value>Чтение сведений о треках…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Очистка вашей библиотеки...</value>
+    <value>Очистка библиотеки…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Завершение...</value>
+    <value>Завершение…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Ошибка нормализации громкости. Подробности в журналах.</value>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Имя плейлиста не может быть пустым.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Рейтинг должен быть от 1 до 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
@@ -248,7 +236,15 @@
     <value>Сортировать по: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>Для высокоточной нормализации громкости (анализ ReplayGain) требуется FFmpeg, но он не был найден в вашей системе.\n\nВыполните следующие шаги для его настройки:\n\n1. **Скачать**: Посетите https://www.gyan.dev/ffmpeg/builds/ и загрузите сборку 'ffmpeg-git-full.7z' (или аналогичную).\n2. **Руководство**: Вы можете следовать этому руководству для получения подробных инструкций: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Извлечь**: Откройте папку с архитектурой и найдите каталог 'bin', содержащий `ffmpeg.exe`.\n4. **Установить**: Скопируйте `ffmpeg.exe` в постоянную папку (например, `C:\ffmpeg\`) и **добавьте эту папку в переменную среды System PATH**.\n5. **Перезапустить**: Пожалуйста, перезапустите Nagi после установки, чтобы изменения вступили в силу.</value>
+    <value>Для анализа треков и выравнивания громкости нужен FFmpeg, но Nagi не удалось его найти.
+
+1. Скачайте сборку для Windows с сайта https://ffmpeg.org/download.html.
+2. Распакуйте архив и найдите ffmpeg.exe в папке bin.
+3. Добавьте папку, содержащую ffmpeg.exe, в переменную окружения PATH Windows.
+4. Перезапустите Nagi и снова включите выравнивание громкости.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>Плейлист создан, но не удалось добавить в него треки. Попробуйте выполнить импорт еще раз.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Песни из плейлиста не найдены в вашей библиотеке.</value>
@@ -293,12 +289,39 @@
     <value>Все песни уже имеют данные о громкости.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Расчет громкости для {0} песен...</value>
+    <value>Анализ громкости… Треков: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Расчет нормализации громкости ({0}/{1})...</value>
+    <value>Расчет выравнивания громкости ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Нормализация громкости завершена. Обработано {0} песен.</value>
+    <value>Выравнивание громкости завершено. Обработано треков: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Введите ваш токен пользователя ListenBrainz.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Не удалось прочитать ответ от ListenBrainz. Повторите попытку позже.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Введите URL-адрес сервера, начинающийся с http:// или https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Недействительный токен пользователя. Проверьте его и повторите попытку.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>Служба ListenBrainz вернула ошибку (HTTP {0}). Повторите попытку позже.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Не удалось подключиться к ListenBrainz. Проверьте подключение к сети и URL-адрес сервера.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi не удалось найти папку с данными библиотеки.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Сбой восстановления, предыдущие данные не удалось восстановить полностью. Файлы восстановления сохранены в &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Выбранный файл не является действительным файлом резервной копии Nagi.</value>
   </data>
 </root>

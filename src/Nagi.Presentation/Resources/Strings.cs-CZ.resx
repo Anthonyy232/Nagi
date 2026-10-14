@@ -1,0 +1,2373 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NavItem_Library" xml:space="preserve">
+    <value>Knihovna</value>
+  </data>
+  <data name="NavItem_Albums" xml:space="preserve">
+    <value>Alba</value>
+  </data>
+  <data name="NavItem_Artists" xml:space="preserve">
+    <value>Interpreti</value>
+  </data>
+  <data name="NavItem_Genres" xml:space="preserve">
+    <value>Žánry</value>
+  </data>
+  <data name="NavItem_Playlists" xml:space="preserve">
+    <value>Seznamy skladeb</value>
+  </data>
+  <data name="NavItem_Folders" xml:space="preserve">
+    <value>Složky</value>
+  </data>
+  <data name="NavItem_Favorites" xml:space="preserve">
+    <value>Oblíbené</value>
+  </data>
+  <data name="NavItem_Insights" xml:space="preserve">
+    <value>Přehledy</value>
+  </data>
+  <data name="NavItem_Settings" xml:space="preserve">
+    <value>Nastavení</value>
+  </data>
+  <data name="Status_NoTrackPlaying" xml:space="preserve">
+    <value>Nic se nepřehrává</value>
+  </data>
+  <data name="Tooltip_Play" xml:space="preserve">
+    <value>Přehrát</value>
+  </data>
+  <data name="Tooltip_Pause" xml:space="preserve">
+    <value>Pozastavit</value>
+  </data>
+  <data name="Tooltip_ShuffleOff" xml:space="preserve">
+    <value>Náhodné přehrávání vypnuto</value>
+  </data>
+  <data name="Tooltip_RepeatOff" xml:space="preserve">
+    <value>Opakování vypnuto</value>
+  </data>
+  <data name="Tooltip_RepeatAll" xml:space="preserve">
+    <value>Opakovat vše</value>
+  </data>
+  <data name="Tooltip_RepeatOne" xml:space="preserve">
+    <value>Opakovat jednu</value>
+  </data>
+  <data name="Tooltip_Repeat" xml:space="preserve">
+    <value>Opakovat</value>
+  </data>
+  <data name="Tooltip_Unmute" xml:space="preserve">
+    <value>Zrušit ztlumení</value>
+  </data>
+  <data name="Tooltip_Mute" xml:space="preserve">
+    <value>Ztlumit</value>
+  </data>
+  <data name="Theme_Light" xml:space="preserve">
+    <value>Světlý</value>
+  </data>
+  <data name="Theme_Dark" xml:space="preserve">
+    <value>Tmavý</value>
+  </data>
+  <data name="Theme_Default" xml:space="preserve">
+    <value>Výchozí systémové</value>
+  </data>
+  <data name="Backdrop_Mica" xml:space="preserve">
+    <value>Mica</value>
+  </data>
+  <data name="Backdrop_MicaAlt" xml:space="preserve">
+    <value>Mica Alt</value>
+  </data>
+  <data name="Backdrop_Acrylic" xml:space="preserve">
+    <value>Akryl</value>
+  </data>
+  <data name="Label_Composer" xml:space="preserve">
+    <value>Skladatel</value>
+  </data>
+  <data name="Label_Comment" xml:space="preserve">
+    <value>Komentář</value>
+  </data>
+  <data name="Label_Rating" xml:space="preserve">
+    <value>Hodnocení</value>
+  </data>
+  <data name="Label_Grouping" xml:space="preserve">
+    <value>Seskupení</value>
+  </data>
+  <data name="Label_SkipCount" xml:space="preserve">
+    <value>Počet přeskočení</value>
+  </data>
+  <data name="Label_DiscNumber" xml:space="preserve">
+    <value>Číslo disku</value>
+  </data>
+  <data name="Label_Bitrate" xml:space="preserve">
+    <value>Datový tok</value>
+  </data>
+  <data name="Label_SampleRate" xml:space="preserve">
+    <value>Vzorkovací frekvence</value>
+  </data>
+  <data name="Label_IsLoved" xml:space="preserve">
+    <value>Oblíbené</value>
+  </data>
+  <data name="Label_HasLyrics" xml:space="preserve">
+    <value>Má text</value>
+  </data>
+  <data name="Operator_IsInRange" xml:space="preserve">
+    <value>Je v rozmezí (včetně)</value>
+  </data>
+  <data name="Operator_IsAfter" xml:space="preserve">
+    <value>Je po</value>
+  </data>
+  <data name="Operator_IsBefore" xml:space="preserve">
+    <value>Je před</value>
+  </data>
+  <data name="SmartPlaylist_UpperBound_Placeholder" xml:space="preserve">
+    <value>Maximální hodnota</value>
+  </data>
+  <data name="Operator_Contains" xml:space="preserve">
+    <value>Obsahuje</value>
+  </data>
+  <data name="Operator_DoesNotContain" xml:space="preserve">
+    <value>Neobsahuje</value>
+  </data>
+  <data name="Operator_Is" xml:space="preserve">
+    <value>Je přesně</value>
+  </data>
+  <data name="Operator_IsNot" xml:space="preserve">
+    <value>Není</value>
+  </data>
+  <data name="Operator_StartsWith" xml:space="preserve">
+    <value>Začíná na</value>
+  </data>
+  <data name="Operator_EndsWith" xml:space="preserve">
+    <value>Končí na</value>
+  </data>
+  <data name="Operator_Equals" xml:space="preserve">
+    <value>Rovná se</value>
+  </data>
+  <data name="Operator_NotEquals" xml:space="preserve">
+    <value>Nerovná se</value>
+  </data>
+  <data name="Operator_GreaterThan" xml:space="preserve">
+    <value>Je větší než</value>
+  </data>
+  <data name="Operator_LessThan" xml:space="preserve">
+    <value>Je menší než</value>
+  </data>
+  <data name="Operator_GreaterThanOrEqual" xml:space="preserve">
+    <value>Je alespoň</value>
+  </data>
+  <data name="Operator_LessThanOrEqual" xml:space="preserve">
+    <value>Je nanejvýš</value>
+  </data>
+  <data name="Operator_IsInTheLast" xml:space="preserve">
+    <value>Je za posledních (dní)</value>
+  </data>
+  <data name="Operator_IsNotInTheLast" xml:space="preserve">
+    <value>Není za posledních (dní)</value>
+  </data>
+  <data name="Operator_IsTrue" xml:space="preserve">
+    <value>Je pravda</value>
+  </data>
+  <data name="Operator_IsFalse" xml:space="preserve">
+    <value>Je nepravda</value>
+  </data>
+  <data name="SmartPlaylist_Title_New" xml:space="preserve">
+    <value>Nový chytrý seznam skladeb</value>
+  </data>
+  <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
+    <value>Upravit chytrý seznam skladeb: {0}</value>
+  </data>
+  <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
+    <value>Zadejte název seznamu skladeb</value>
+  </data>
+  <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
+    <value>Odpovídající skladby: {0:N0}</value>
+  </data>
+  <data name="SmartPlaylist_Status_Error" xml:space="preserve">
+    <value>Odpovídající skladby se nepodařilo spočítat</value>
+  </data>
+  <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
+    <value>Probíhá výpočet…</value>
+  </data>
+  <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
+    <value>Seznam skladeb s tímto názvem již existuje.</value>
+  </data>
+  <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
+    <value>Zadejte název seznamu skladeb.</value>
+  </data>
+  <data name="Status_Loading" xml:space="preserve">
+    <value>Načítání…</value>
+  </data>
+  <data name="Error_FailedToLoadArtists" xml:space="preserve">
+    <value>Nepodařilo se načíst interprety</value>
+  </data>
+  <data name="CrashReport_Title" xml:space="preserve">
+    <value>Kritická chyba</value>
+  </data>
+  <data name="CrashReport_Message" xml:space="preserve">
+    <value>V aplikaci Nagi došlo k chybě a musí se zavřít.</value>
+  </data>
+  <data name="MiniPlayer_Title" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="AlbumView_AlbumNotFound" xml:space="preserve">
+    <value>Album nenalezeno</value>
+  </data>
+  <data name="AlbumView_Error" xml:space="preserve">
+    <value>Chyba při načítání alba</value>
+  </data>
+  <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
+    <value>Album</value>
+  </data>
+  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
+    <value>Interpret</value>
+  </data>
+  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
+    <value>{0, plural, one{# skladba} few{# skladby} other{# skladeb}}</value>
+  </data>
+  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
+    <value>{0, plural, one{# skladba} few{# skladby} other{# skladeb}}</value>
+  </data>
+  <data name="ArtistView_ArtistNotFound" xml:space="preserve">
+    <value>Interpret nenalezen</value>
+  </data>
+  <data name="ArtistView_Error" xml:space="preserve">
+    <value>Chyba při načítání interpreta</value>
+  </data>
+  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+    <value>Interpret</value>
+  </data>
+  <data name="ArtistView_NoBiography" xml:space="preserve">
+    <value>Pro tohoto interpreta není k dispozici žádná biografie.</value>
+  </data>
+  <data name="Folders_ErrorLoading" xml:space="preserve">
+    <value>Chyba při načítání složky</value>
+  </data>
+  <data name="Folders_AddFolder_Success" xml:space="preserve">
+    <value>Složka „{0}“ byla úspěšně přidána a prohledána.</value>
+  </data>
+  <data name="Folders_AddFolder_Failed" xml:space="preserve">
+    <value>Nepodařilo se přidat složku. Cesta může být neplatná.</value>
+  </data>
+  <data name="Folders_AddFolder_Exists" xml:space="preserve">
+    <value>Tato složka je již v knihovně.</value>
+  </data>
+  <data name="Folders_AddFolder_InProgress" xml:space="preserve">
+    <value>Přidávání složky do knihovny…</value>
+  </data>
+  <data name="Folders_Delete_Success" xml:space="preserve">
+    <value>Složka &apos;{0}&apos; byla odebrána z knihovny.</value>
+  </data>
+  <data name="Folders_Delete_Failed" xml:space="preserve">
+    <value>Složku &apos;{0}&apos; se nepodařilo odebrat z knihovny.</value>
+  </data>
+  <data name="Folders_Delete_InProgress" xml:space="preserve">
+    <value>Odebírání složky &apos;{0}&apos; z knihovny…</value>
+  </data>
+  <data name="Folders_Rescan_Complete" xml:space="preserve">
+    <value>Opětovné skenování „{0}“ dokončeno.</value>
+  </data>
+  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
+    <value>Pro „{0}“ nebyly detekovány žádné změny.</value>
+  </data>
+  <data name="Folders_Rescan_InProgress" xml:space="preserve">
+    <value>Opětovné skenování '{0}'…</value>
+  </data>
+  <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
+    <value>Nebyly nalezeny žádné složky s hudbou.</value>
+  </data>
+  <data name="Folders_Error_Playback" xml:space="preserve">
+    <value>Chyba při spouštění přehrávání pro tuto složku.</value>
+  </data>
+  <data name="Folders_Error_RandomPlayback" xml:space="preserve">
+    <value>Chyba při spouštění náhodného přehrávání složky.</value>
+  </data>
+  <data name="Folders_Error_AddFolder" xml:space="preserve">
+    <value>Chyba při přidávání složky: {0}</value>
+  </data>
+  <data name="Folders_Error_DeleteFolder" xml:space="preserve">
+    <value>Složku se nepodařilo odebrat z knihovny: {0}</value>
+  </data>
+  <data name="Folders_Error_RescanFolder" xml:space="preserve">
+    <value>Chyba při opětovném skenování složky: {0}</value>
+  </data>
+  <data name="Folders_Count_Singular" xml:space="preserve">
+    <value>{0, plural, one{# složka} few{# složky} other{# složek}}</value>
+  </data>
+  <data name="Folders_Count_Plural" xml:space="preserve">
+    <value>{0, plural, one{# složka} few{# složky} other{# složek}}</value>
+  </data>
+  <data name="Songs_Count_Singular" xml:space="preserve">
+    <value>{0, plural, one{# skladba} few{# skladby} other{# skladeb}}</value>
+  </data>
+  <data name="Songs_Count_Plural" xml:space="preserve">
+    <value>{0, plural, one{# skladba} few{# skladby} other{# skladeb}}</value>
+  </data>
+  <data name="Albums_Count_Singular" xml:space="preserve">
+    <value>{0, plural, one{# album} few{# alba} other{# alb}}</value>
+  </data>
+  <data name="Albums_Count_Plural" xml:space="preserve">
+    <value>{0, plural, one{# album} few{# alba} other{# alb}}</value>
+  </data>
+  <data name="Artists_Count_Singular" xml:space="preserve">
+    <value>{0, plural, one{# interpret} few{# interpreti} other{# interpretů}}</value>
+  </data>
+  <data name="Artists_Count_Plural" xml:space="preserve">
+    <value>{0, plural, one{# interpret} few{# interpreti} other{# interpretů}}</value>
+  </data>
+  <data name="Generic_NoItems" xml:space="preserve">
+    <value>Žádné položky</value>
+  </data>
+  <data name="Generic_Error" xml:space="preserve">
+    <value>Chyba</value>
+  </data>
+  <data name="GenreView_DefaultName" xml:space="preserve">
+    <value>Žánr</value>
+  </data>
+  <data name="GenreView_Error" xml:space="preserve">
+    <value>Chyba při načítání žánru</value>
+  </data>
+  <data name="Lyrics_NoSongSelected" xml:space="preserve">
+    <value>Nebyla vybrána žádná skladba</value>
+  </data>
+  <data name="Lyrics_SongTitleFormat" xml:space="preserve">
+    <value>{0} od {1}</value>
+  </data>
+  <data name="Onboarding_Welcome" xml:space="preserve">
+    <value>Pojďme nastavit vaši hudební knihovnu, abychom mohli začít.</value>
+  </data>
+  <data name="Onboarding_WaitingForSelection" xml:space="preserve">
+    <value>Čeká se na výběr složky…</value>
+  </data>
+  <data name="Onboarding_BuildingLibrary" xml:space="preserve">
+    <value>Vytváření vaší knihovny…</value>
+  </data>
+  <data name="Onboarding_Error" xml:space="preserve">
+    <value>Došlo k neočekávané chybě. Zkuste to prosím znovu.</value>
+  </data>
+  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+    <value>Chytrý • {0, plural, one{# skladba} few{# skladby} other{# skladeb}}</value>
+  </data>
+  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
+    <value>Chytrý • {0, plural, one{# skladba} few{# skladby} other{# skladeb}}</value>
+  </data>
+  <data name="Playlist_Count_Singular" xml:space="preserve">
+    <value>{0, plural, one{# skladba} few{# skladby} other{# skladeb}}</value>
+  </data>
+  <data name="Playlist_Count_Plural" xml:space="preserve">
+    <value>{0, plural, one{# skladba} few{# skladby} other{# skladeb}}</value>
+  </data>
+  <data name="Playlist_ErrorLoading" xml:space="preserve">
+    <value>Chyba při načítání seznamu skladeb</value>
+  </data>
+  <data name="Playlist_Status_Starting" xml:space="preserve">
+    <value>Spouštění seznamu skladeb…</value>
+  </data>
+  <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
+    <value>Žádné skladby neodpovídají pravidlům tohoto chytrého seznamu skladeb.</value>
+  </data>
+  <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
+    <value>Chyba při spouštění přehrávání pro tento seznam skladeb.</value>
+  </data>
+  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
+    <value>Výběr náhodného seznamu skladeb…</value>
+  </data>
+  <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
+    <value>Nebyly nalezeny žádné seznamy skladeb.</value>
+  </data>
+  <data name="Playlist_Status_SmartSelectedEmpty" xml:space="preserve">
+    <value>Vybraný chytrý seznam skladeb je prázdný.</value>
+  </data>
+  <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
+    <value>Chyba při přehrávání náhodného seznamu skladeb.</value>
+  </data>
+  <data name="Playlist_Status_Loading" xml:space="preserve">
+    <value>Načítání seznamů skladeb…</value>
+  </data>
+  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
+    <value>Chyba při načítání seznamů skladeb.</value>
+  </data>
+  <data name="Playlist_Status_Creating" xml:space="preserve">
+    <value>Vytváření nového seznamu skladeb…</value>
+  </data>
+  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
+    <value>Nepodařilo se vytvořit seznam skladeb. Možná již existuje.</value>
+  </data>
+  <data name="Playlist_Status_CreateError" xml:space="preserve">
+    <value>Při vytváření seznamu skladeb došlo k chybě.</value>
+  </data>
+  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
+    <value>Aktualizace obalu seznamu skladeb…</value>
+  </data>
+  <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
+    <value>Nepodařilo se aktualizovat obal seznamu skladeb.</value>
+  </data>
+  <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
+    <value>Při aktualizaci obalu seznamu skladeb došlo k chybě.</value>
+  </data>
+  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
+    <value>Odebrání obrázku seznamu skladeb…</value>
+  </data>
+  <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
+    <value>Nepodařilo se odstranit obrázek seznamu skladeb.</value>
+  </data>
+  <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
+    <value>Při odstraňování obrázku seznamu skladeb došlo k chybě.</value>
+  </data>
+  <data name="Playlist_Status_Renaming" xml:space="preserve">
+    <value>Přejmenování seznamu skladeb…</value>
+  </data>
+  <data name="Playlist_Status_RenameFailed" xml:space="preserve">
+    <value>Nepodařilo se přejmenovat seznam skladeb.</value>
+  </data>
+  <data name="Playlist_Status_RenameError" xml:space="preserve">
+    <value>Při přejmenování seznamu skladeb došlo k chybě.</value>
+  </data>
+  <data name="Playlist_Status_Deleting" xml:space="preserve">
+    <value>Mazání seznamu skladeb…</value>
+  </data>
+  <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
+    <value>Nepodařilo se smazat seznam skladeb.</value>
+  </data>
+  <data name="Playlist_Status_DeleteError" xml:space="preserve">
+    <value>Při mazání seznamu skladeb došlo k chybě.</value>
+  </data>
+  <data name="Settings_Reset_Title" xml:space="preserve">
+    <value>Potvrdit resetování</value>
+  </data>
+  <data name="Settings_Reset_Message" xml:space="preserve">
+    <value>Opravdu chcete resetovat všechna data a nastavení aplikace? Tuto akci nelze vrátit zpět. Aplikace se vrátí k počátečnímu nastavení.</value>
+  </data>
+  <data name="Settings_Reset_Button" xml:space="preserve">
+    <value>Resetovat</value>
+  </data>
+  <data name="Settings_ResetError_Title" xml:space="preserve">
+    <value>Chyba resetování</value>
+  </data>
+  <data name="Settings_ResetError_Message" xml:space="preserve">
+    <value>Při resetování dat aplikace došlo k chybě: {0}. Zkuste prosím aplikaci restartovat ručně.</value>
+  </data>
+  <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
+    <value>Chyba</value>
+  </data>
+  <data name="Settings_LastFm_AuthError_Message" xml:space="preserve">
+    <value>Nepodařilo se připojit k Last.fm. Zkuste to prosím později.</value>
+  </data>
+  <data name="Settings_LastFm_FinalizeError_Title" xml:space="preserve">
+    <value>Ověření se nezdařilo</value>
+  </data>
+  <data name="Settings_LastFm_FinalizeError_Message" xml:space="preserve">
+    <value>Nepodařilo se získat relaci z Last.fm. Zkuste se prosím znovu připojit.</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Title" xml:space="preserve">
+    <value>Odpojit Last.fm</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
+    <value>Opravdu chcete odpojit svůj účet Last.fm? Vaše historie scrobblingu zůstane na Last.fm zachována, ale Nagi již nebude moci scroblovat.</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
+    <value>Odpojit</value>
+  </data>
+  <data name="Settings_Export_Success_Title" xml:space="preserve">
+    <value>Export úspěšný</value>
+  </data>
+  <data name="Settings_Export_Success_Message" xml:space="preserve">
+    <value>Exportované seznamy skladeb: {0}
+Skladby: {1}
+Uloženo do: {2}</value>
+  </data>
+  <data name="Settings_Export_Failed_Title" xml:space="preserve">
+    <value>Export se nezdařil</value>
+  </data>
+  <data name="Settings_Import_Success_Title" xml:space="preserve">
+    <value>Import úspěšný</value>
+  </data>
+  <data name="Settings_Import_Success_Message" xml:space="preserve">
+    <value>Importované seznamy skladeb: {0}
+Skladby: {1}</value>
+  </data>
+  <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
+    <value>
+
+Skladby nenalezené ve vaší knihovně: {0}.</value>
+  </data>
+  <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
+    <value>
+
+Soubory, které se nepodařilo importovat: {0}.</value>
+  </data>
+  <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
+    <value>Import se nezdařil</value>
+  </data>
+  <data name="Settings_Import_FailedTotal_Message" xml:space="preserve">
+    <value>Nebyly importovány žádné seznamy skladeb.</value>
+  </data>
+  <data name="SmartPlaylist_ErrorLoading" xml:space="preserve">
+    <value>Chyba při načítání chytrého seznamu skladeb</value>
+  </data>
+  <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
+    <value>Žádná pravidla definována • Všechny skladby odpovídají</value>
+  </data>
+  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
+    <value>Shoduje se {0} z {1} {2}</value>
+  </data>
+  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
+    <value>všechna</value>
+  </data>
+  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
+    <value>jakékoli</value>
+  </data>
+  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
+    <value>pravidlo</value>
+  </data>
+  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
+    <value>pravidla</value>
+  </data>
+  <data name="SongList_PageTitle_Default" xml:space="preserve">
+    <value>Skladby</value>
+  </data>
+  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
+    <value>{0, plural, one{# položka} few{# položky} other{# položek}}</value>
+  </data>
+  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+    <value>{0, plural, one{# položka} few{# položky} other{# položek}}</value>
+  </data>
+  <data name="SongList_SelectedCount_Format" xml:space="preserve">
+    <value>{0, plural, one{# vybrána} few{# vybrány} other{# vybráno}}</value>
+  </data>
+  <data name="AlbumView_DiscHeader" xml:space="preserve">
+    <value>Disk {0}</value>
+  </data>
+  <data name="Generic_OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Generic_Cancel" xml:space="preserve">
+    <value>Zrušit</value>
+  </data>
+  <data name="Generic_Close" xml:space="preserve">
+    <value>Zavřít</value>
+  </data>
+  <data name="Generic_Recheck" xml:space="preserve">
+    <value>Zkontrolovat znovu</value>
+  </data>
+  <data name="CrashReport_Button_Reset" xml:space="preserve">
+    <value>Resetovat aplikaci a data</value>
+  </data>
+  <data name="FFmpeg_Status_NotDetected" xml:space="preserve">
+    <value>FFmpeg nebyl detekován. Nainstalujte prosím FFmpeg a klikněte na 'Zkontrolovat znovu'.</value>
+  </data>
+  <data name="FFmpeg_Status_Checking" xml:space="preserve">
+    <value>Kontrola přítomnosti FFmpeg…</value>
+  </data>
+  <data name="FFmpeg_Status_Detected" xml:space="preserve">
+    <value>FFmpeg byl zjištěn.</value>
+  </data>
+  <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
+    <value>FFmpeg stále nebyl detekován. Nainstalujte prosím FFmpeg a klikněte na 'Zkontrolovat znovu'.</value>
+  </data>
+  <data name="FFmpeg_Status_Error" xml:space="preserve">
+    <value>Chyba při kontrole FFmpeg. Zkuste to prosím znovu.</value>
+  </data>
+  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
+    <value>Předchozí</value>
+  </data>
+  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
+    <value>Přehrát</value>
+  </data>
+  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
+    <value>Pozastavit</value>
+  </data>
+  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
+    <value>Další</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC narazil na nespecifikovanou chybu.</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>Chyba LibVLC: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>Nepodařilo se načíst „{0}“.</value>
+  </data>
+  <data name="Settings_Nav_Library" xml:space="preserve">
+    <value>Knihovna</value>
+  </data>
+  <data name="Settings_Nav_Folders" xml:space="preserve">
+    <value>Složky</value>
+  </data>
+  <data name="Settings_Nav_Playlists" xml:space="preserve">
+    <value>Seznamy skladeb</value>
+  </data>
+  <data name="Settings_Nav_Artists" xml:space="preserve">
+    <value>Interpreti</value>
+  </data>
+  <data name="Settings_Nav_Albums" xml:space="preserve">
+    <value>Alba</value>
+  </data>
+  <data name="Settings_Nav_Genres" xml:space="preserve">
+    <value>Žánry</value>
+  </data>
+  <data name="Settings_Button_Shuffle" xml:space="preserve">
+    <value>Náhodné přehrávání</value>
+  </data>
+  <data name="Settings_Button_Previous" xml:space="preserve">
+    <value>Předchozí</value>
+  </data>
+  <data name="Settings_Button_PlayPause" xml:space="preserve">
+    <value>Přehrát/Pozastavit</value>
+  </data>
+  <data name="Settings_Button_Next" xml:space="preserve">
+    <value>Další</value>
+  </data>
+  <data name="Settings_Button_Repeat" xml:space="preserve">
+    <value>Opakovat</value>
+  </data>
+  <data name="Settings_Button_Divider" xml:space="preserve">
+    <value>Oddělovač rozvržení</value>
+  </data>
+  <data name="Settings_Button_Lyrics" xml:space="preserve">
+    <value>Texty písní</value>
+  </data>
+  <data name="Settings_Button_Queue" xml:space="preserve">
+    <value>Fronta</value>
+  </data>
+  <data name="Settings_Button_Volume" xml:space="preserve">
+    <value>Hlasitost</value>
+  </data>
+  <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
+    <value>Komunitou spravovaná databáze textů písní</value>
+  </data>
+  <data name="Settings_Provider_NetEase_Desc" xml:space="preserve">
+    <value>Čínská hudební služba, skvělá pro asijskou hudbu</value>
+  </data>
+  <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
+    <value>Získává ID interpretů (vyžadováno pro TheAudioDB a Fanart.tv)</value>
+  </data>
+  <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
+    <value>Vysoce kvalitní obrázky a biografie interpretů (vyžaduje MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
+    <value>Pouze vysoce kvalitní obrázky interpretů (vyžaduje MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
+    <value>Biografie a obrázky interpretů (záložní)</value>
+  </data>
+  <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Zavřít hledání</value>
+  </data>
+  <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Hledat alba</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Zavřít hledání</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Hledat v albu</value>
+  </data>
+  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>Žádné seznamy skladeb k dispozici</value>
+  </data>
+  <data name="ArtistPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Zavřít hledání</value>
+  </data>
+  <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Hledat interprety</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Zavřít hledání</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Hledat u interpreta</value>
+  </data>
+  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>Žádné seznamy skladeb k dispozici</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
+    <value>Odebrat složku</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
+    <value>Odebrat &apos;{0}&apos; z vaší knihovny? Zvukové soubory zůstanou v počítači.</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
+    <value>Odebrat</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
+    <value>Zrušit</value>
+  </data>
+  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
+    <value>Neznámá složka</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Zavřít hledání</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Hledat ve složce</value>
+  </data>
+  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>Žádné seznamy skladeb k dispozici</value>
+  </data>
+  <data name="GenrePage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Zavřít hledání</value>
+  </data>
+  <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Hledat žánry</value>
+  </data>
+  <data name="LibraryPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Zavřít hledání</value>
+  </data>
+  <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Hledat v knihovně</value>
+  </data>
+  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>Žádné seznamy skladeb k dispozici</value>
+  </data>
+  <data name="PlaylistPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Zavřít hledání</value>
+  </data>
+  <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Hledat seznamy skladeb</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
+    <value>Zadejte název seznamu skladeb</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
+    <value>Vybrat obal</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
+    <value>Vytvořit nový seznam skladeb</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
+    <value>Vytvořit</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
+    <value>Zrušit</value>
+  </data>
+  <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
+    <value>Přejmenovat „{0}“</value>
+  </data>
+  <data name="PlaylistPage_RenameDialog_RenameButton" xml:space="preserve">
+    <value>Přejmenovat</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_Title" xml:space="preserve">
+    <value>Smazat seznam skladeb</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_Content_Format" xml:space="preserve">
+    <value>Opravdu chcete smazat seznam skladeb „{0}“? Tuto akci nelze vrátit zpět.</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
+    <value>Smazat</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Zavřít hledání</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Hledat v seznamu skladeb</value>
+  </data>
+  <data name="GenreViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Zavřít hledání</value>
+  </data>
+  <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Hledat v žánru</value>
+  </data>
+  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>Žádné seznamy skladeb k dispozici</value>
+  </data>
+  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
+    <value>Neznámý seznam skladeb</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Zavřít hledání</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Hledat v chytrém seznamu skladeb</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
+    <value>Neznámý chytrý seznam skladeb</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
+    <value>Opětovné skenování metadat</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
+    <value>Znovu naskenujte knihovnu, aby se použila nastavení metadat, např. rozdělování interpretů. U velkých knihoven to může chvíli trvat. Pokračovat?</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
+    <value>Znovu skenovat</value>
+  </data>
+  <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
+    <value>Příprava opakovaného skenování knihovny…</value>
+  </data>
+  <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
+    <value>Opětovné skenování dokončeno</value>
+  </data>
+  <data name="Settings_Dialog_RescanComplete_Content" xml:space="preserve">
+    <value>Metadata knihovny byla aktualizována.</value>
+  </data>
+  <data name="Settings_Dialog_RescanFailed_Title" xml:space="preserve">
+    <value>Opětovné skenování se nezdařilo</value>
+  </data>
+  <data name="Settings_Dialog_RescanFailed_Content" xml:space="preserve">
+    <value>Během skenování došlo k chybě. Podrobnosti naleznete v protokolech.</value>
+  </data>
+  <data name="Settings_Dialog_FFmpegNotFound_Title" xml:space="preserve">
+    <value>FFmpeg nenalezen</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Title" xml:space="preserve">
+    <value>Povolit normalizaci hlasitosti</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
+    <value>Normalizace hlasitosti (ReplayGain) zajišťuje konzistentní úroveň hlasitosti napříč veškerou vaší hudbou.
+
+To analyzuje vaši hudební knihovnu a přímo upraví vaše zvukové soubory zápisem značek ReplayGain. Zpracovány budou pouze soubory bez existujících značek. To může trvat nějakou dobu v závislosti na velikosti vaší knihovny.
+
+Chcete pokračovat?</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
+    <value>Povolit a skenovat</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
+    <value>Příprava skenování pro normalizaci hlasitosti…</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
+    <value>Skenování normalizace hlasitosti zrušeno.</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
+    <value>Chyba během skenování: {0}</value>
+  </data>
+  <data name="Settings_Export_Failed_Message" xml:space="preserve">
+    <value>Žádné seznamy skladeb k exportu.</value>
+  </data>
+  <data name="Language_Auto" xml:space="preserve">
+    <value>Automaticky</value>
+  </data>
+  <data name="TrayIcon_ShowWindow" xml:space="preserve">
+    <value>Zobrazit okno</value>
+  </data>
+  <data name="TrayIcon_Exit" xml:space="preserve">
+    <value>Ukončit</value>
+  </data>
+  <data name="MiniPlayer_BackButton_ToolTip" xml:space="preserve">
+    <value>Zpět na přehrávač</value>
+  </data>
+  <data name="MiniPlayer_UpNextHeader" xml:space="preserve">
+    <value>Další v pořadí</value>
+  </data>
+  <data name="MiniPlayer_RestoreButton_ToolTip" xml:space="preserve">
+    <value>Zobrazit Nagi</value>
+  </data>
+  <data name="MiniPlayer_PreviousButton_ToolTip" xml:space="preserve">
+    <value>Předchozí</value>
+  </data>
+  <data name="MiniPlayer_NextButton_ToolTip" xml:space="preserve">
+    <value>Další</value>
+  </data>
+  <data name="MiniPlayer_QueueButton_ToolTip" xml:space="preserve">
+    <value>Další v pořadí</value>
+  </data>
+  <data name="CrashReport_ReportIssuePreLink" xml:space="preserve">
+    <value>Zvažte prosím nahlášení vytvořením problému na stránce </value>
+  </data>
+  <data name="CrashReport_IssueLink" xml:space="preserve">
+    <value>Problémy</value>
+  </data>
+  <data name="CrashReport_ReportIssuePostLink" xml:space="preserve">
+    <value>.</value>
+  </data>
+  <data name="CrashReport_ResetAppAdvice" xml:space="preserve">
+    <value>Pokud se to stále děje, můžete zkusit 'Obnovit aplikaci a data'. Tím vymažete svá nastavení a knihovnu, což může pomoci obnovit aplikaci z poškozeného stavu.</value>
+  </data>
+  <data name="CrashReport_CopyLogButton_ToolTip" xml:space="preserve">
+    <value>Kopírovat protokol do schránky</value>
+  </data>
+  <data name="CrashReport_CopyLogLabel" xml:space="preserve">
+    <value>Kopírovat protokol</value>
+  </data>
+  <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
+    <value>Vybrat obal</value>
+  </data>
+  <data name="SmartPlaylist_PickCoverButton_ToolTip" xml:space="preserve">
+    <value>Vybrat obrázek obalu</value>
+  </data>
+  <data name="SmartPlaylist_PlaylistNameLabel" xml:space="preserve">
+    <value>Název seznamu skladeb</value>
+  </data>
+  <data name="SmartPlaylist_PlaylistNameTextBox_Placeholder" xml:space="preserve">
+    <value>Zadejte název pro váš chytrý seznam skladeb</value>
+  </data>
+  <data name="SmartPlaylist_SortOrderLabel" xml:space="preserve">
+    <value>Pořadí řazení</value>
+  </data>
+  <data name="SmartPlaylist_MatchLabel" xml:space="preserve">
+    <value>Shoda</value>
+  </data>
+  <data name="SmartPlaylist_MatchLogic_All_Content" xml:space="preserve">
+    <value>Všechny</value>
+  </data>
+  <data name="SmartPlaylist_MatchLogic_Any_Content" xml:space="preserve">
+    <value>Libovolná</value>
+  </data>
+  <data name="SmartPlaylist_MatchSuffixLabel" xml:space="preserve">
+    <value>z následujících pravidel:</value>
+  </data>
+  <data name="SmartPlaylist_AddRuleButton_ToolTip" xml:space="preserve">
+    <value>Přidat nové pravidlo</value>
+  </data>
+  <data name="SmartPlaylist_AddRuleLabel" xml:space="preserve">
+    <value>Přidat pravidlo</value>
+  </data>
+  <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
+    <value>Hodnota</value>
+  </data>
+  <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
+    <value>Odebrat toto pravidlo</value>
+  </data>
+  <data name="SmartPlaylist_NoRulesTitle" xml:space="preserve">
+    <value>Nejsou definována žádná pravidla</value>
+  </data>
+  <data name="SmartPlaylist_NoRulesMessage" xml:space="preserve">
+    <value>Všechny skladby ve vaší knihovně budou zahrnuty v tomto seznamu skladeb.</value>
+  </data>
+  <data name="SmartPlaylist_AddFirstRuleButton_Content" xml:space="preserve">
+    <value>Přidat vaše první pravidlo</value>
+  </data>
+  <data name="SmartPlaylist_AddFirstRuleButton_ToolTip" xml:space="preserve">
+    <value>Přidat vaše první pravidlo</value>
+  </data>
+  <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
+    <value>Uložit</value>
+  </data>
+  <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
+    <value>Zrušit</value>
+  </data>
+  <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
+    <value>Předchozí</value>
+  </data>
+  <data name="TrayPopup_NextButton_ToolTip" xml:space="preserve">
+    <value>Další</value>
+  </data>
+  <data name="TrayPopup_QueueButton_ToolTip" xml:space="preserve">
+    <value>Další v pořadí</value>
+  </data>
+  <data name="TrayPopup_BackButton_ToolTip" xml:space="preserve">
+    <value>Zpět na přehrávač</value>
+  </data>
+  <data name="TrayPopup_UpNextHeader" xml:space="preserve">
+    <value>Další v pořadí</value>
+  </data>
+  <data name="AppName" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
+    <value>Předchozí</value>
+  </data>
+  <data name="Player_NextButton_ToolTip" xml:space="preserve">
+    <value>Další</value>
+  </data>
+  <data name="Player_LyricsButton_ToolTip" xml:space="preserve">
+    <value>Texty</value>
+  </data>
+  <data name="Player_QueueButton_ToolTip" xml:space="preserve">
+    <value>Další v pořadí</value>
+  </data>
+  <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
+    <value>Přejít na album</value>
+  </data>
+  <data name="QueueFlyout_Title" xml:space="preserve">
+    <value>Další v pořadí</value>
+  </data>
+  <data name="QueueFlyout_ClearQueue" xml:space="preserve">
+    <value>Vyprázdnit frontu</value>
+  </data>
+  <data name="QueuePanel_DisplayOptions" xml:space="preserve">
+    <value>Možnosti zobrazení fronty</value>
+  </data>
+  <data name="QueuePanel_Close" xml:space="preserve">
+    <value>Zavřít frontu</value>
+  </data>
+  <data name="QueuePanel_ShowArtist" xml:space="preserve">
+    <value>Interpret</value>
+  </data>
+  <data name="QueuePanel_ShowDuration" xml:space="preserve">
+    <value>Doba trvání</value>
+  </data>
+  <data name="QueuePanel_ShowTrackCount" xml:space="preserve">
+    <value>Počet skladeb</value>
+  </data>
+  <data name="QueuePanel_TrackCount" xml:space="preserve">
+    <value>Skladeb: {0:N0}</value>
+  </data>
+  <data name="QueuePanel_ShowPosition" xml:space="preserve">
+    <value>Pozice ve frontě</value>
+  </data>
+  <data name="QueuePanel_ShowGenre" xml:space="preserve">
+    <value>Žánr</value>
+  </data>
+  <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
+    <value>Celková délka</value>
+  </data>
+  <data name="QueuePanel_Play" xml:space="preserve">
+    <value>Přehrát</value>
+  </data>
+  <data name="QueuePanel_MoveUp" xml:space="preserve">
+    <value>Posunout nahoru</value>
+  </data>
+  <data name="QueuePanel_MoveDown" xml:space="preserve">
+    <value>Posunout dolů</value>
+  </data>
+  <data name="QueuePanel_Remove" xml:space="preserve">
+    <value>Odebrat z fronty</value>
+  </data>
+  <data name="AlbumPage_Title" xml:space="preserve">
+    <value>Alba</value>
+  </data>
+  <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
+    <value>Hledat alba…</value>
+  </data>
+  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
+    <value>Hledat alba</value>
+  </data>
+  <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
+    <value>Vybrat náhodně</value>
+  </data>
+  <data name="AlbumPage_Menu_Play" xml:space="preserve">
+    <value>Přehrát</value>
+  </data>
+  <data name="AlbumPage_Empty_Title" xml:space="preserve">
+    <value>Nenalezena žádná alba</value>
+  </data>
+  <data name="AlbumPage_Empty_Subtitle" xml:space="preserve">
+    <value>Prohledat hudební knihovnu pro naplnění alb</value>
+  </data>
+  <data name="AlbumViewPage_Header_Label" xml:space="preserve">
+    <value>Album</value>
+  </data>
+  <data name="AlbumViewPage_Songs_Title" xml:space="preserve">
+    <value>Skladby</value>
+  </data>
+  <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
+    <value>Hledat v albu…</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
+    <value>Hledat v albu</value>
+  </data>
+  <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
+    <value>Přehrát vše</value>
+  </data>
+  <data name="AlbumViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
+    <value>Náhodně přehrát vše</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_Play" xml:space="preserve">
+    <value>Přehrát</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_PlayNext" xml:space="preserve">
+    <value>Přehrát další</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_AddToQueue" xml:space="preserve">
+    <value>Přidat do fronty</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
+    <value>Přidat do seznamu skladeb</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
+    <value>Přejít na interpreta</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
+    <value>Zobrazit v Průzkumníku souborů</value>
+  </data>
+  <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
+    <value>Přehrát</value>
+  </data>
+  <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
+    <value>V tomto albu nebyly nalezeny žádné skladby</value>
+  </data>
+  <data name="AlbumViewPage_Empty_Subtitle" xml:space="preserve">
+    <value>Zkuste vyhledat něco jiného</value>
+  </data>
+  <data name="ArtistPage_Title" xml:space="preserve">
+    <value>Interpreti</value>
+  </data>
+  <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
+    <value>Hledat interprety…</value>
+  </data>
+  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
+    <value>Hledat interprety</value>
+  </data>
+  <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
+    <value>Vybrat náhodně</value>
+  </data>
+  <data name="ArtistPage_Menu_Play" xml:space="preserve">
+    <value>Přehrát</value>
+  </data>
+  <data name="ArtistPage_Menu_ChangeImage" xml:space="preserve">
+    <value>Změnit obrázek</value>
+  </data>
+  <data name="ArtistPage_Menu_RemoveImage" xml:space="preserve">
+    <value>Odebrat obrázek</value>
+  </data>
+  <data name="ArtistPage_Empty_Title" xml:space="preserve">
+    <value>Nenalezen žádný interpret</value>
+  </data>
+  <data name="ArtistPage_Empty_Subtitle" xml:space="preserve">
+    <value>Prohledat hudební knihovnu pro naplnění interpretů</value>
+  </data>
+  <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
+    <value>Změnit obrázek interpreta</value>
+  </data>
+  <data name="ArtistViewPage_ImageMenu_ChangeImage" xml:space="preserve">
+    <value>Změnit obrázek</value>
+  </data>
+  <data name="ArtistViewPage_ImageMenu_RemoveImage" xml:space="preserve">
+    <value>Odebrat obrázek</value>
+  </data>
+  <data name="ArtistViewPage_Header_Label" xml:space="preserve">
+    <value>Interpret</value>
+  </data>
+  <data name="ArtistViewPage_Albums_Title" xml:space="preserve">
+    <value>Nejlepší alba</value>
+  </data>
+  <data name="ArtistViewPage_Songs_Title" xml:space="preserve">
+    <value>Skladby</value>
+  </data>
+  <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
+    <value>Hledat u interpreta…</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
+    <value>Hledat v interpretovi</value>
+  </data>
+  <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
+    <value>Přehrát vše</value>
+  </data>
+  <data name="ArtistViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
+    <value>Náhodně přehrát vše</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_Play" xml:space="preserve">
+    <value>Přehrát</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_PlayNext" xml:space="preserve">
+    <value>Přehrát další</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_AddToQueue" xml:space="preserve">
+    <value>Přidat do fronty</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
+    <value>Přidat do seznamu skladeb</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
+    <value>Přejít na album</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
+    <value>Zobrazit v Průzkumníku souborů</value>
+  </data>
+  <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
+    <value>Přehrát</value>
+  </data>
+  <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
+    <value>Pro tohoto interpreta nebyly nalezeny žádné skladby</value>
+  </data>
+  <data name="ArtistViewPage_Empty_Subtitle" xml:space="preserve">
+    <value>Zkuste vyhledat něco jiného</value>
+  </data>
+  <data name="FolderPage_Title" xml:space="preserve">
+    <value>Složky</value>
+  </data>
+  <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
+    <value>Vybrat náhodně</value>
+  </data>
+  <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
+    <value>Přidat hudební složku</value>
+  </data>
+  <data name="FolderPage_AddFolder_Label" xml:space="preserve">
+    <value>Přidat složku</value>
+  </data>
+  <data name="FolderPage_Menu_Play" xml:space="preserve">
+    <value>Přehrát</value>
+  </data>
+  <data name="FolderPage_Menu_Rescan" xml:space="preserve">
+    <value>Znovu prohledat</value>
+  </data>
+  <data name="FolderPage_Menu_Delete" xml:space="preserve">
+    <value>Odebrat z knihovny</value>
+  </data>
+  <data name="FolderPage_Empty_Title" xml:space="preserve">
+    <value>Zatím nebyly přidány žádné složky</value>
+  </data>
+  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
+    <value>Pro začátek přidejte hudební složky</value>
+  </data>
+  <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
+    <value>Přehrát</value>
+  </data>
+  <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
+    <value>Přidat do seznamu skladeb</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_Play" xml:space="preserve">
+    <value>Přehrát</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_PlayNext" xml:space="preserve">
+    <value>Přehrát další</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_AddToQueue" xml:space="preserve">
+    <value>Přidat do fronty</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
+    <value>Přidat do seznamu skladeb</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
+    <value>Přejít na album</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_GoToArtist" xml:space="preserve">
+    <value>Přejít na interpreta</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
+    <value>Zobrazit v Průzkumníku souborů</value>
+  </data>
+  <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
+    <value>Přehrát</value>
+  </data>
+  <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
+    <value>Složka</value>
+  </data>
+  <data name="FolderSongViewPage_Songs_Title" xml:space="preserve">
+    <value>Skladby</value>
+  </data>
+  <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
+    <value>Hledat ve složce…</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
+    <value>Hledat ve složce</value>
+  </data>
+  <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
+    <value>Přehrát vše</value>
+  </data>
+  <data name="FolderSongViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
+    <value>Náhodně přehrát vše</value>
+  </data>
+  <data name="FolderSongViewPage_Empty_Title" xml:space="preserve">
+    <value>Tato složka je prázdná</value>
+  </data>
+  <data name="FolderSongViewPage_Empty_Subtitle" xml:space="preserve">
+    <value>Nenalezeny žádné skladby ani podsložky</value>
+  </data>
+  <data name="GenrePage_Title" xml:space="preserve">
+    <value>Žánry</value>
+  </data>
+  <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
+    <value>Hledat žánry…</value>
+  </data>
+  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
+    <value>Hledat žánry</value>
+  </data>
+  <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
+    <value>Vybrat náhodně</value>
+  </data>
+  <data name="GenrePage_Menu_Play" xml:space="preserve">
+    <value>Přehrát</value>
+  </data>
+  <data name="GenrePage_Empty_Title" xml:space="preserve">
+    <value>Nenalezeny žádné žánry</value>
+  </data>
+  <data name="GenrePage_Empty_Subtitle" xml:space="preserve">
+    <value>Prohledat hudební knihovnu pro naplnění žánrů</value>
+  </data>
+  <data name="LibraryPage_Title" xml:space="preserve">
+    <value>Knihovna</value>
+  </data>
+  <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
+    <value>Hledat v knihovně…</value>
+  </data>
+  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
+    <value>Hledat v knihovně</value>
+  </data>
+  <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
+    <value>Přehrát vše</value>
+  </data>
+  <data name="LibraryPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
+    <value>Náhodně přehrát vše</value>
+  </data>
+  <data name="LibraryPage_Context_Play" xml:space="preserve">
+    <value>Přehrát</value>
+  </data>
+  <data name="LibraryPage_Context_PlayNext" xml:space="preserve">
+    <value>Přehrát další</value>
+  </data>
+  <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
+    <value>Přidat do fronty</value>
+  </data>
+  <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
+    <value>Přidat do seznamu skladeb</value>
+  </data>
+  <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
+    <value>Přejít na album</value>
+  </data>
+  <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
+    <value>Přejít na interpreta</value>
+  </data>
+  <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
+    <value>Zobrazit v Průzkumníku souborů</value>
+  </data>
+  <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
+    <value>Přehrát</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
+    <value>Nebyly nalezeny žádné skladby</value>
+  </data>
+  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+    <value>Zkuste vyhledat něco jiného</value>
+  </data>
+  <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
+    <value>Vaše knihovna je prázdná</value>
+  </data>
+  <data name="LibraryPage_EmptyState_Subtitle" xml:space="preserve">
+    <value>Přidejte složky do knihovny v Nastavení</value>
+  </data>
+  <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
+    <value>Pro tuto skladbu nebyly nalezeny žádné texty</value>
+  </data>
+  <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
+    <value>Zkuste jinou skladbu</value>
+  </data>
+  <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
+    <value>Upravit nebo nahradit texty písní</value>
+  </data>
+  <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
+    <value>Upravit text</value>
+  </data>
+  <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
+    <value>Vložte prostý text nebo text LRC s časovými značkami</value>
+  </data>
+  <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
+    <value>Uložit</value>
+  </data>
+  <data name="LyricsPage_EditLyrics_Remove" xml:space="preserve">
+    <value>Odebrat uložený text</value>
+  </data>
+  <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
+    <value>Text písně se nepodařilo aktualizovat</value>
+  </data>
+  <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
+    <value>Aplikaci Nagi se nepodařilo uložit text písně. Podrobnosti naleznete v protokolu, a zkuste to znovu.</value>
+  </data>
+  <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
+    <value>Vítejte v Nagi</value>
+  </data>
+  <data name="OnboardingPage_AddFolderButton_ToolTip" xml:space="preserve">
+    <value>Pro začátek přidejte hudební složku</value>
+  </data>
+  <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
+    <value>Přidat hudební složku</value>
+  </data>
+  <data name="PlaylistPage_Title" xml:space="preserve">
+    <value>Seznamy skladeb</value>
+  </data>
+  <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
+    <value>Hledat seznamy skladeb…</value>
+  </data>
+  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
+    <value>Hledat seznamy skladeb</value>
+  </data>
+  <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
+    <value>Vybrat náhodně</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistButton_ToolTip" xml:space="preserve">
+    <value>Vytvořit nový seznam skladeb</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistButton_Content" xml:space="preserve">
+    <value>Nový seznam skladeb</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistMenu_Regular" xml:space="preserve">
+    <value>Běžný seznam skladeb</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistMenu_Smart" xml:space="preserve">
+    <value>Chytrý seznam skladeb</value>
+  </data>
+  <data name="PlaylistPage_Context_Play" xml:space="preserve">
+    <value>Přehrát</value>
+  </data>
+  <data name="PlaylistPage_Context_Rename" xml:space="preserve">
+    <value>Přejmenovat</value>
+  </data>
+  <data name="PlaylistPage_Context_ChangeImage" xml:space="preserve">
+    <value>Změnit obrázek</value>
+  </data>
+  <data name="PlaylistPage_Context_RemoveImage" xml:space="preserve">
+    <value>Odebrat obrázek</value>
+  </data>
+  <data name="PlaylistPage_Context_Delete" xml:space="preserve">
+    <value>Smazat</value>
+  </data>
+  <data name="PlaylistPage_EmptyState_Title" xml:space="preserve">
+    <value>Zatím žádné seznamy skladeb</value>
+  </data>
+  <data name="PlaylistPage_EmptyState_Subtitle" xml:space="preserve">
+    <value>Pro začátek vytvořte seznam skladeb</value>
+  </data>
+  <data name="PlaylistSongViewPage_Header_Caption" xml:space="preserve">
+    <value>Seznam skladeb</value>
+  </data>
+  <data name="PlaylistSongViewPage_Section_Songs" xml:space="preserve">
+    <value>Skladby</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
+    <value>Hledat v seznamu skladeb…</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
+    <value>Hledat v seznamu skladeb</value>
+  </data>
+  <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
+    <value>Přehrát vše</value>
+  </data>
+  <data name="PlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
+    <value>Náhodně přehrát vše</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_Play" xml:space="preserve">
+    <value>Přehrát</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
+    <value>Přehrát další</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_AddToQueue" xml:space="preserve">
+    <value>Přidat do fronty</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
+    <value>Přejít na album</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
+    <value>Přejít na interpreta</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
+    <value>Zobrazit v Průzkumníku souborů</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
+    <value>Odebrat ze seznamu skladeb</value>
+  </data>
+  <data name="PlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
+    <value>Přehrát</value>
+  </data>
+  <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
+    <value>Tento seznam skladeb je prázdný</value>
+  </data>
+  <data name="PlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
+    <value>Přidejte skladby z vaší knihovny</value>
+  </data>
+  <data name="GenreViewPage_Header_Caption" xml:space="preserve">
+    <value>Žánr</value>
+  </data>
+  <data name="GenreViewPage_Section_Songs" xml:space="preserve">
+    <value>Skladby</value>
+  </data>
+  <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
+    <value>Hledat v žánru…</value>
+  </data>
+  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
+    <value>Hledat v žánru</value>
+  </data>
+  <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
+    <value>Přehrát vše</value>
+  </data>
+  <data name="GenreViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
+    <value>Náhodně přehrát vše</value>
+  </data>
+  <data name="GenreViewPage_Context_Play" xml:space="preserve">
+    <value>Přehrát</value>
+  </data>
+  <data name="GenreViewPage_Context_PlayNext" xml:space="preserve">
+    <value>Přehrát další</value>
+  </data>
+  <data name="GenreViewPage_Context_AddToQueue" xml:space="preserve">
+    <value>Přidat do fronty</value>
+  </data>
+  <data name="GenreViewPage_Context_AddToPlaylist" xml:space="preserve">
+    <value>Přidat do seznamu skladeb</value>
+  </data>
+  <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
+    <value>Přejít na album</value>
+  </data>
+  <data name="GenreViewPage_Context_GoToArtist" xml:space="preserve">
+    <value>Přejít na interpreta</value>
+  </data>
+  <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
+    <value>Zobrazit v Průzkumníku souborů</value>
+  </data>
+  <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
+    <value>Přehrát</value>
+  </data>
+  <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
+    <value>Pro tento žánr nebyly nalezeny žádné skladby</value>
+  </data>
+  <data name="GenreViewPage_EmptyState_Subtitle" xml:space="preserve">
+    <value>Zkuste vyhledat něco jiného</value>
+  </data>
+  <data name="SettingsPage_Title" xml:space="preserve">
+    <value>Nastavení</value>
+  </data>
+  <data name="SettingsPage_Section_Appearance" xml:space="preserve">
+    <value>Vzhled</value>
+  </data>
+  <data name="SettingsPage_Theme_Header" xml:space="preserve">
+    <value>Motiv</value>
+  </data>
+  <data name="SettingsPage_Theme_Description" xml:space="preserve">
+    <value>Vyberte světlý, tmavý nebo systémový motiv.</value>
+  </data>
+  <data name="SettingsPage_AccentColor" xml:space="preserve">
+    <value>Barva akcentu</value>
+  </data>
+  <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
+    <value>Obnovit výchozí</value>
+  </data>
+  <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
+    <value>Materiál okna</value>
+  </data>
+  <data name="SettingsPage_WindowMaterial_Description" xml:space="preserve">
+    <value>Vyberte materiál pozadí okna.</value>
+  </data>
+  <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
+    <value>Dynamické motivy</value>
+  </data>
+  <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
+    <value>Přizpůsobit barvy aplikace obalu aktuálního alba.</value>
+  </data>
+  <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
+    <value>Pamatovat si velikost okna</value>
+  </data>
+  <data name="SettingsPage_RememberWindowSize_Description" xml:space="preserve">
+    <value>Při dalším spuštění obnovit hlavní okno na předchozí velikost.</value>
+  </data>
+  <data name="SettingsPage_RememberWindowPosition_Header" xml:space="preserve">
+    <value>Pamatovat si pozici okna</value>
+  </data>
+  <data name="SettingsPage_RememberWindowPosition_Description" xml:space="preserve">
+    <value>Při dalším spuštění obnovit hlavní okno na předchozí pozici na obrazovce.</value>
+  </data>
+  <data name="SettingsPage_RememberNavState_Header" xml:space="preserve">
+    <value>Pamatovat si stav navigačního panelu</value>
+  </data>
+  <data name="SettingsPage_RememberNavState_Description" xml:space="preserve">
+    <value>Ponechat levý navigační panel otevřený nebo zavřený, jak jste jej opustili.</value>
+  </data>
+  <data name="SettingsPage_CustomizeNav_Header" xml:space="preserve">
+    <value>Přizpůsobit navigaci</value>
+  </data>
+  <data name="SettingsPage_CustomizeNav_Description" xml:space="preserve">
+    <value>Přetáhněte pro změnu pořadí stránek v navigačním menu. Použijte přepínač pro zobrazení nebo skrytí stránky.</value>
+  </data>
+  <data name="SettingsPage_Section_Player" xml:space="preserve">
+    <value>Správa přehrávače</value>
+  </data>
+  <data name="SettingsPage_VolumeNormalization_Header" xml:space="preserve">
+    <value>Normalizace hlasitosti (ReplayGain)</value>
+  </data>
+  <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
+    <value>Snížit rozdíly v hlasitosti mezi skladbami pomocí ReplayGain.</value>
+  </data>
+  <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
+    <value>Exkluzivní režim WASAPI</value>
+  </data>
+  <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
+    <value>Poskytnout aplikaci Nagi výhradní kontrolu nad zvukovým zařízením Windows. Ostatní aplikace mohou zmlknout. Po změně tohoto nastavení restartujte Nagi.</value>
+  </data>
+  <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
+    <value>Zeslabení při přehrávání / pozastavení</value>
+  </data>
+  <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
+    <value>Hladce zesilte hlasitost při obnovení a zeslabte při pozastavení namísto okamžitého ztlumení.</value>
+  </data>
+  <data name="SettingsPage_Equalizer" xml:space="preserve">
+    <value>Audio ekvalizér</value>
+  </data>
+  <data name="SettingsPage_ResetEqualizer_Content" xml:space="preserve">
+    <value>Obnovit výchozí</value>
+  </data>
+  <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
+    <value>Preamp</value>
+  </data>
+  <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
+    <value>Vlastní</value>
+  </data>
+  <data name="SettingsPage_CustomizePlayer" xml:space="preserve">
+    <value>Přizpůsobit ovládání přehrávače</value>
+  </data>
+  <data name="SettingsPage_ResetPlayerButtons_Content" xml:space="preserve">
+    <value>Obnovit výchozí</value>
+  </data>
+  <data name="SettingsPage_CustomizePlayer_Instructions" xml:space="preserve">
+    <value>Přejetím myši přepnete viditelnost. Přetáhněte pro změnu pořadí. Oddělovač odděluje středové a pravé ovládací prvky.</value>
+  </data>
+  <data name="SettingsPage_CollapsablePlayer_Header" xml:space="preserve">
+    <value>Sbalitelný přehrávač</value>
+  </data>
+  <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
+    <value>Rozbalit lištu přehrávače při najetí myší.</value>
+  </data>
+  <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
+    <value>Obnovit stav přehrávání</value>
+  </data>
+  <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
+    <value>Obnovit frontu a pozici přehrávání při spuštění Nagi.</value>
+  </data>
+  <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
+    <value>Automaticky spustit při startu</value>
+  </data>
+  <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
+    <value>Spustit Nagi automaticky po přihlášení k počítači.</value>
+  </data>
+  <data name="SettingsPage_StartMinimized_Header" xml:space="preserve">
+    <value>Spustit minimalizovaně</value>
+  </data>
+  <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
+    <value>Spustit Nagi s minimalizovaným oknem.</value>
+  </data>
+  <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
+    <value>Minimalizovat do minipřehrávače</value>
+  </data>
+  <data name="SettingsPage_MinimizeToMiniPlayer_Description" xml:space="preserve">
+    <value>Při minimalizaci zobrazit kompaktní plovoucí přehrávač namísto skrytí okna.</value>
+  </data>
+  <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
+    <value>Skrýt do oznamovací oblasti</value>
+  </data>
+  <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
+    <value>Při zavření okna ponechat Nagi běžet v oznamovací oblasti.</value>
+  </data>
+  <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
+    <value>Zobrazovat obal v rozbalovací nabídce</value>
+  </data>
+  <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
+    <value>Zobrazit obal alba v kompaktním přehrávači, který se objeví po kliknutí na ikonu v oznamovací oblasti.</value>
+  </data>
+  <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
+    <value>Při řazení ignorovat členy</value>
+  </data>
+  <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
+    <value>Seřadit alba, interprety a skladby podle jejich prvního významného slova (např. „The Beatles“ se seřadí pod B).</value>
+  </data>
+  <data name="SettingsPage_Section_Data" xml:space="preserve">
+    <value>Správa dat</value>
+  </data>
+  <data name="SettingsPage_ArtistSplitting_Header" xml:space="preserve">
+    <value>Rozdělení interpretů</value>
+  </data>
+  <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
+    <value>Definujte znaky použité pro rozdělení více interpretů (např. ';/'). Ponechejte prázdné pro zakázání.</value>
+  </data>
+  <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
+    <value>Dělení žánrů</value>
+  </data>
+  <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
+    <value>Definujte znaky používané pro dělení více žánrů (např. ';/'). Ponechte prázdné pro zakázání.</value>
+  </data>
+  <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
+    <value>Znovu prohledat knihovnu</value>
+  </data>
+  <data name="SettingsPage_RescanLibrary_ToolTip" xml:space="preserve">
+    <value>Znovu prohledat knihovnu pro použití změn rozdělení</value>
+  </data>
+  <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
+    <value>Načítat metadata z internetu</value>
+  </data>
+  <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
+    <value>Stahovat obrázky a biografie interpretů z online zdrojů.</value>
+  </data>
+  <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
+    <value>Zdroje</value>
+  </data>
+  <data name="SettingsPage_MetadataSources_Description" xml:space="preserve">
+    <value>Přetáhněte pro změnu pořadí zdrojů metadat. Pro podrobnosti najeďte myší na každý zdroj.</value>
+  </data>
+  <data name="SettingsPage_OnlineLyrics_Header" xml:space="preserve">
+    <value>Stahovat texty skladeb z internetu</value>
+  </data>
+  <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
+    <value>Stahovat chybějící texty skladeb z online zdrojů. Tím se odesílají metadata o skladbách službám třetích stran.</value>
+  </data>
+  <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
+    <value>Zdroje</value>
+  </data>
+  <data name="SettingsPage_LyricsSources_Description" xml:space="preserve">
+    <value>Přetáhněte pro změnu pořadí zdrojů textů. Pro podrobnosti najeďte myší na každý zdroj.</value>
+  </data>
+  <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
+    <value>Zobrazovat romanizované texty</value>
+  </data>
+  <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
+    <value>Zobrazit menší romanizovaný řádek pod podporovanými texty, pokud nainstalovaný balíček odpovídá skriptu.</value>
+  </data>
+  <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
+    <value>Jazykové balíčky</value>
+  </data>
+  <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
+    <value>Nainstalujte jazykové balíčky pro romanizaci podporovaných textů. Balíčky jsou uloženy lokálně.</value>
+  </data>
+  <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
+    <value>Obnovit</value>
+  </data>
+  <data name="SettingsPage_RomanizationPacks_Install" xml:space="preserve">
+    <value>Nainstalovat</value>
+  </data>
+  <data name="SettingsPage_RomanizationPacks_Update" xml:space="preserve">
+    <value>Aktualizovat</value>
+  </data>
+  <data name="SettingsPage_RomanizationPacks_Remove" xml:space="preserve">
+    <value>Odebrat</value>
+  </data>
+  <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
+    <value>Nejsou k dispozici žádné kompatibilní romanizační balíčky.</value>
+  </data>
+  <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
+    <value>Nepodařilo se načíst romanizační balíčky: {0}</value>
+  </data>
+  <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
+    <value>Instalace balíčku selhala.</value>
+  </data>
+  <data name="SettingsPage_RomanizationPacks_RemoveFailed" xml:space="preserve">
+    <value>Odstranění balíčku selhalo.</value>
+  </data>
+  <data name="SettingsPage_RomanizationPack_UpdateAvailable" xml:space="preserve">
+    <value>Aktualizace k dispozici</value>
+  </data>
+  <data name="SettingsPage_RomanizationPack_InstalledFormat" xml:space="preserve">
+    <value>Nainstalováno {0}</value>
+  </data>
+  <data name="SettingsPage_RomanizationPack_NotInstalled" xml:space="preserve">
+    <value>Nenainstalováno</value>
+  </data>
+  <data name="SettingsPage_RomanizationPack_LicenseFormat" xml:space="preserve">
+    <value>Licence {0}</value>
+  </data>
+  <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
+    <value>Import a export seznamů skladeb</value>
+  </data>
+  <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
+    <value>Exportovat seznamy skladeb do souborů M3U pro použití v jiných přehrávačích, nebo importovat seznamy skladeb M3U do Nagi.</value>
+  </data>
+  <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
+    <value>Exportovat vše…</value>
+  </data>
+  <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
+    <value>Exportovat všechny seznamy skladeb do složky</value>
+  </data>
+  <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
+    <value>Importovat…</value>
+  </data>
+  <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
+    <value>Importovat jeden nebo více souborů M3U</value>
+  </data>
+  <data name="SettingsPage_ResetApp_Header" xml:space="preserve">
+    <value>Obnovit aplikaci</value>
+  </data>
+  <data name="SettingsPage_ResetApp_Description" xml:space="preserve">
+    <value>Tímto odstraníte všechna data knihovny, seznamy skladeb a obnovíte všechna nastavení na výchozí hodnoty. Aplikace se restartuje.</value>
+  </data>
+  <data name="SettingsPage_ResetButton_Content" xml:space="preserve">
+    <value>Obnovit všechna data</value>
+  </data>
+  <data name="SettingsPage_Section_Integrations" xml:space="preserve">
+    <value>Integrace</value>
+  </data>
+  <data name="SettingsPage_LastFm_Header" xml:space="preserve">
+    <value>Last.fm</value>
+  </data>
+  <data name="SettingsPage_LastFm_Description" xml:space="preserve">
+    <value>Připojte svůj účet Last.fm pro scrobble skladeb a zobrazení aktuálně přehrávané skladby.</value>
+  </data>
+  <data name="SettingsPage_LastFm_Connect_Content" xml:space="preserve">
+    <value>Připojit</value>
+  </data>
+  <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
+    <value>Dokončit</value>
+  </data>
+  <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
+    <value>Zrušit</value>
+  </data>
+  <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
+    <value>Odpojit</value>
+  </data>
+  <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
+    <value>Povolit scrobbling</value>
+  </data>
+  <data name="SettingsPage_LastFm_Scrobbling_Description" xml:space="preserve">
+    <value>Automaticky přidávat skladby, které posloucháte v Nagi, do vašeho profilu Last.fm.</value>
+  </data>
+  <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
+    <value>Aktualizovat právě přehrávané</value>
+  </data>
+  <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
+    <value>Zobrazovat právě přehrávanou skladbu na profilu Last.fm.</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
+    <value>ListenBrainz</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_Description" xml:space="preserve">
+    <value>Odesílat vaše poslechy na ListenBrainz (otevřená alternativa k Last.fm).</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_TokenLabel" xml:space="preserve">
+    <value>Uživatelský token</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_TokenPlaceholder" xml:space="preserve">
+    <value>Vložte svůj token z listenbrainz.org/settings</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_TestConnection" xml:space="preserve">
+    <value>Testovat připojení</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_Connected" xml:space="preserve">
+    <value>Připojeno jako {0}</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_ConnectionFailed" xml:space="preserve">
+    <value>Připojení selhalo: {0}</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
+    <value>Odesílat poslechy (scrobbling)</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
+    <value>Odesílat aktualizace právě přehrávaného</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
+    <value>Pokročilé</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_ServerUrlLabel" xml:space="preserve">
+    <value>URL serveru</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_ServerUrlPlaceholder" xml:space="preserve">
+    <value>https://api.listenbrainz.org</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_Disconnect_Title" xml:space="preserve">
+    <value>Odpojit se od ListenBrainz?</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_Disconnect_Content" xml:space="preserve">
+    <value>Tímto odstraníte uložený token. Kdykoli se můžete znovu připojit.</value>
+  </data>
+  <data name="SettingsPage_ListenBrainz_Disconnect_Button" xml:space="preserve">
+    <value>Odpojit</value>
+  </data>
+  <data name="SettingsPage_Discord_Header" xml:space="preserve">
+    <value>Discord</value>
+  </data>
+  <data name="SettingsPage_Discord_Description" xml:space="preserve">
+    <value>Zobrazit vaši aktuální poslechovou aktivitu jako váš stav na Discordu.</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
+    <value>Chytrý seznam skladeb</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Section_Songs" xml:space="preserve">
+    <value>Skladby</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
+    <value>Hledat v chytrém seznamu skladeb…</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
+    <value>Hledat v chytrém seznamu skladeb</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
+    <value>Upravit pravidla</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
+    <value>Přehrát vše</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
+    <value>Náhodně přehrát vše</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_Play" xml:space="preserve">
+    <value>Přehrát</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
+    <value>Přehrát další</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_AddToQueue" xml:space="preserve">
+    <value>Přidat do fronty</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
+    <value>Přejít na album</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
+    <value>Přejít na interpreta</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
+    <value>Zobrazit v Průzkumníku souborů</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
+    <value>Přehrát</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
+    <value>Žádné skladby neodpovídají aktuálním pravidlům</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
+    <value>Zkuste upravit pravidla</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
+    <value>Upravit pravidla</value>
+  </data>
+  <data name="SettingsPage_Section_About" xml:space="preserve">
+    <value>O aplikaci</value>
+  </data>
+  <data name="SettingsPage_AboutExpander_Header" xml:space="preserve">
+    <value>O Nagi</value>
+  </data>
+  <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
+    <value>Objevte znovu svou místní hudební sbírku s Nagi, hudebním přehrávačem zaměřeným na rychlost, jednoduchost a soukromí.</value>
+  </data>
+  <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
+    <value>Verze </value>
+  </data>
+  <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
+    <value>Zobrazit licence</value>
+  </data>
+  <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
+    <value>Zdrojový kód</value>
+  </data>
+  <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
+    <value>Odeslat zpětnou vazbu</value>
+  </data>
+  <data name="SettingsPage_Language_Header" xml:space="preserve">
+    <value>Jazyk aplikace</value>
+  </data>
+  <data name="SettingsPage_Language_Description" xml:space="preserve">
+    <value>Restartujte Nagi pro použití změny jazyka.</value>
+  </data>
+  <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
+    <value>Vyžaduje se restart</value>
+  </data>
+  <data name="SettingsPage_RestartRequired_Message" xml:space="preserve">
+    <value>Pro plné projevení změny jazyka restartujte aplikaci.</value>
+  </data>
+  <data name="SettingsPage_About_PrivacyPolicy_Content" xml:space="preserve">
+    <value>Zásady ochrany osobních údajů</value>
+  </data>
+  <data name="SettingsPage_BackupRestore_Header" xml:space="preserve">
+    <value>Zálohování a obnova</value>
+  </data>
+  <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
+    <value>Vytvořte zálohu dat knihovny a nastavení nebo obnovte předchozí zálohu.</value>
+  </data>
+  <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
+    <value>Vytvořit zálohu</value>
+  </data>
+  <data name="SettingsPage_RestoreBackup_Content" xml:space="preserve">
+    <value>Obnovit zálohu</value>
+  </data>
+  <data name="Settings_Backup_Success_Title" xml:space="preserve">
+    <value>Záloha vytvořena</value>
+  </data>
+  <data name="Settings_Backup_Success_Message" xml:space="preserve">
+    <value>Záloha byla vytvořena ({0:F2} MB) v: {1}</value>
+  </data>
+  <data name="Settings_Backup_Failed_Title" xml:space="preserve">
+    <value>Zálohování selhalo</value>
+  </data>
+  <data name="Settings_Backup_Failed_Message" xml:space="preserve">
+    <value>Vytvoření zálohy se nezdařilo. Zkuste to prosím znovu.</value>
+  </data>
+  <data name="Settings_Restore_Invalid_Title" xml:space="preserve">
+    <value>Neplatný soubor zálohy</value>
+  </data>
+  <data name="Settings_Restore_Invalid_Message" xml:space="preserve">
+    <value>Vybraný soubor není platná záloha Nagi.</value>
+  </data>
+  <data name="Settings_Restore_Confirm_Title" xml:space="preserve">
+    <value>Obnovit zálohu?</value>
+  </data>
+  <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
+    <value>Obnovení ze zálohy nahradí všechna aktuální data aplikace. Tuto akci nelze vrátit zpět. Aplikace se po obnovení restartuje. Pokračovat?</value>
+  </data>
+  <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
+    <value>Obnovit</value>
+  </data>
+  <data name="Settings_Restore_Success_Title" xml:space="preserve">
+    <value>Obnova dokončena</value>
+  </data>
+  <data name="Settings_Restore_Success_Message" xml:space="preserve">
+    <value>Záloha byla obnovena. Aplikace Nagi se nyní restartuje.</value>
+  </data>
+  <data name="Settings_Restore_Failed_Title" xml:space="preserve">
+    <value>Obnova selhala</value>
+  </data>
+  <data name="Settings_Restore_Failed_Message" xml:space="preserve">
+    <value>Zálohu se nepodařilo obnovit.</value>
+  </data>
+  <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
+    <value>Styl přehrávače</value>
+  </data>
+  <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
+    <value>Akryl (sklo)</value>
+  </data>
+  <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
+    <value>Jednobarevný (neprůhledný)</value>
+  </data>
+  <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
+    <value>Přizpůsobit vzhled lišty přehrávače.</value>
+  </data>
+  <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
+    <value>Intenzita odstínu</value>
+  </data>
+  <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
+    <value>Upravit intenzitu barvy pozadí přehrávače.</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
+    <value>Doba postupného zesílení</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
+    <value>Nastavit, jak dlouho trvá postupné zesílení hlasitosti při obnovení přehrávání.</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
+    <value>Doba postupného zeslabení</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
+    <value>Nastavit, jak dlouho trvá postupné zeslabení hlasitosti při pozastavení přehrávání.</value>
+  </data>
+  <data name="Settings_Nav_Insights" xml:space="preserve">
+    <value>Přehledy</value>
+  </data>
+  <data name="InsightsPage_Title" xml:space="preserve">
+    <value>Přehledy</value>
+  </data>
+  <data name="InsightsPage_TotalTime" xml:space="preserve">
+    <value>Celková doba poslechu</value>
+  </data>
+  <data name="InsightsPage_UniqueSongs" xml:space="preserve">
+    <value>Unikátní skladby</value>
+  </data>
+  <data name="InsightsPage_PeakHour" xml:space="preserve">
+    <value>Nejaktivnější hodina</value>
+  </data>
+  <data name="InsightsPage_MostActiveDay" xml:space="preserve">
+    <value>Nejaktivnější den</value>
+  </data>
+  <data name="InsightsPage_TopSongs" xml:space="preserve">
+    <value>Nejlepší skladby</value>
+  </data>
+  <data name="InsightsPage_TopArtists" xml:space="preserve">
+    <value>Nejlepší interpreti</value>
+  </data>
+  <data name="InsightsPage_TopAlbums" xml:space="preserve">
+    <value>Nejlepší alba</value>
+  </data>
+  <data name="InsightsPage_TopGenres" xml:space="preserve">
+    <value>Nejlepší žánry</value>
+  </data>
+  <data name="InsightsPage_Sources" xml:space="preserve">
+    <value>Zdroje přehrávání</value>
+  </data>
+  <data name="InsightsPage_Empty_Title" xml:space="preserve">
+    <value>Zatím žádná data o poslechu</value>
+  </data>
+  <data name="InsightsPage_Empty_Subtitle" xml:space="preserve">
+    <value>Začněte přehrávat hudbu, abyste zde viděli své přehledy</value>
+  </data>
+  <data name="InsightsPage_Plays" xml:space="preserve">
+    <value>Přehrání: {0}</value>
+  </data>
+  <data name="InsightsPage_Source_Albums" xml:space="preserve">
+    <value>Alba</value>
+  </data>
+  <data name="InsightsPage_Source_Artists" xml:space="preserve">
+    <value>Interpreti</value>
+  </data>
+  <data name="InsightsPage_Source_Playlists" xml:space="preserve">
+    <value>Seznamy skladeb</value>
+  </data>
+  <data name="InsightsPage_Source_SmartPlaylists" xml:space="preserve">
+    <value>Chytré seznamy skladeb</value>
+  </data>
+  <data name="InsightsPage_Source_Folders" xml:space="preserve">
+    <value>Složky</value>
+  </data>
+  <data name="InsightsPage_Source_Genres" xml:space="preserve">
+    <value>Žánry</value>
+  </data>
+  <data name="InsightsPage_Source_Search" xml:space="preserve">
+    <value>Vyhledávání</value>
+  </data>
+  <data name="InsightsPage_Source_Library" xml:space="preserve">
+    <value>Knihovna</value>
+  </data>
+  <data name="InsightsPage_Source_Files" xml:space="preserve">
+    <value>Soubory</value>
+  </data>
+  <data name="InsightsPage_Reset_ToolTip" xml:space="preserve">
+    <value>Resetovat historii poslechu</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Title" xml:space="preserve">
+    <value>Resetovat historii poslechu?</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Message" xml:space="preserve">
+    <value>Tímto trvale odstraníte veškerou historii poslechu a statistiky. Tuto akci nelze vrátit zpět.</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Button" xml:space="preserve">
+    <value>Resetovat</value>
+  </data>
+  <data name="SplashPage_AppName" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="SplashPage_Tagline" xml:space="preserve">
+    <value>Vaše hudba, krásně uspořádaná</value>
+  </data>
+  <data name="SplashPage_Status" xml:space="preserve">
+    <value>Probouzím Nagi…</value>
+  </data>
+  <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
+    <value>Zobrazit vše</value>
+  </data>
+  <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
+    <value>Přehrání</value>
+  </data>
+  <data name="InsightsPage_SortBy_Duration" xml:space="preserve">
+    <value>Délka</value>
+  </data>
+  <data name="PaginationControl_All" xml:space="preserve">
+    <value>Vše</value>
+  </data>
+  <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
+    <value>Položek na stránku:</value>
+  </data>
+  <data name="PaginationControl_PreviousPage_ToolTip" xml:space="preserve">
+    <value>Předchozí stránka</value>
+  </data>
+  <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
+    <value>Další stránka</value>
+  </data>
+  <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
+    <value>např. ;/\\</value>
+  </data>
+  <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
+    <value> ms</value>
+  </data>
+  <data name="SettingsPage_Unit_Decibels" xml:space="preserve">
+    <value> dB</value>
+  </data>
+  <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
+    <value>Poslední 1 den</value>
+  </data>
+  <data name="Insights_TimeRange_Last7Days" xml:space="preserve">
+    <value>Posledních 7 dní</value>
+  </data>
+  <data name="Insights_TimeRange_Last30Days" xml:space="preserve">
+    <value>Posledních 30 dní</value>
+  </data>
+  <data name="Insights_TimeRange_Last90Days" xml:space="preserve">
+    <value>Posledních 90 dní</value>
+  </data>
+  <data name="Insights_TimeRange_LastYear" xml:space="preserve">
+    <value>Poslední rok</value>
+  </data>
+  <data name="Insights_TimeRange_AllTime" xml:space="preserve">
+    <value>Za celou dobu</value>
+  </data>
+  <data name="Insights_Format_HoursMinutes" xml:space="preserve">
+    <value>{0}h {1}m</value>
+  </data>
+  <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
+    <value>{0}m {1}s</value>
+  </data>
+  <data name="QueuePanel_EmptyTitle" xml:space="preserve">
+    <value>Vaše fronta je prázdná</value>
+  </data>
+  <data name="QueuePanel_EmptyDescription" xml:space="preserve">
+    <value>Pusťte hudbu nebo sem přetáhněte zvukové soubory a vytvořte frontu.</value>
+  </data>
+  <data name="QueuePanel_LoadError" xml:space="preserve">
+    <value>Některé skladby se nepodařilo načíst. Výběrem možnosti Opakovat načtěte frontu znovu.</value>
+  </data>
+  <data name="QueuePanel_Retry" xml:space="preserve">
+    <value>Opakovat</value>
+  </data>
+  <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
+    <value>Nové pořadí seznamu skladeb se nepodařilo uložit. Zkuste to prosím znovu.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
+    <value>Zvukové výstupní zařízení</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Description" xml:space="preserve">
+    <value>Vyberte, kde bude Nagi přehrávat hudbu.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Default" xml:space="preserve">
+    <value>Výchozí systémové</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Unavailable" xml:space="preserve">
+    <value>Uložené zařízení není k dispozici. Použije se výchozí zařízení systému.</value>
+  </data>
+  <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
+    <value>Zvukový výstup se nepodařilo aktualizovat. Zkuste to znovu nebo vyberte jiné zařízení.</value>
+  </data>
+  <data name="Listening_Random" xml:space="preserve">
+    <value>Zamíchat</value>
+  </data>
+  <data name="Listening_MoreVariety" xml:space="preserve">
+    <value>Větší pestrost</value>
+  </data>
+  <data name="Listening_Rediscover" xml:space="preserve">
+    <value>Znovu objevit</value>
+  </data>
+  <data name="Listening_Unheard" xml:space="preserve">
+    <value>Nepřehrávané</value>
+  </data>
+  <data name="Listening_PlayFor" xml:space="preserve">
+    <value>Přehrávat po dobu…</value>
+  </data>
+  <data name="Listening_Minutes" xml:space="preserve">
+    <value>Minuty</value>
+  </data>
+  <data name="Listening_ShuffleMode" xml:space="preserve">
+    <value>Typ mixu</value>
+  </data>
+  <data name="Listening_AvoidRecentDays" xml:space="preserve">
+    <value>Vyhnout se nedávno přehrávaným (dny)</value>
+  </data>
+  <data name="Listening_MoreOptions" xml:space="preserve">
+    <value>Další možnosti</value>
+  </data>
+  <data name="Listening_PlayForDescription" xml:space="preserve">
+    <value>Vytvoří frontu celých skladeb o celkové délce nepřesahující zvolenou dobu.</value>
+  </data>
+  <data name="Listening_NoMixTitle" xml:space="preserve">
+    <value>Pro tento mix nejsou žádné skladby</value>
+  </data>
+  <data name="Listening_NoMixDescription" xml:space="preserve">
+    <value>Žádné skladby v tomto seznamu nesplňují tyto požadavky. Zkuste jiný mix nebo seznam skladeb.</value>
+  </data>
+  <data name="Listening_Favorites" xml:space="preserve">
+    <value>Oblíbené</value>
+  </data>
+  <data name="Listening_AddFavorite" xml:space="preserve">
+    <value>Přidat do oblíbených</value>
+  </data>
+  <data name="Listening_RemoveFavorite" xml:space="preserve">
+    <value>Odebrat z oblíbených</value>
+  </data>
+  <data name="Listening_SleepTimer" xml:space="preserve">
+    <value>Časovač vypnutí</value>
+  </data>
+  <data name="Listening_FinishTrack" xml:space="preserve">
+    <value>Po vypršení časovače dokončit aktuální skladbu</value>
+  </data>
+  <data name="Listening_StopAfterTrack" xml:space="preserve">
+    <value>Zastavit po této skladbě</value>
+  </data>
+  <data name="Listening_StopAtQueueEnd" xml:space="preserve">
+    <value>Zastavit na konci fronty</value>
+  </data>
+  <data name="Listening_StopPlayback" xml:space="preserve">
+    <value>Zastavit přehrávání</value>
+  </data>
+  <data name="Listening_CustomTimer" xml:space="preserve">
+    <value>Vlastní časovač…</value>
+  </data>
+  <data name="Listening_Timer15" xml:space="preserve">
+    <value>Za 15 minut</value>
+  </data>
+  <data name="Listening_Timer30" xml:space="preserve">
+    <value>Za 30 minut</value>
+  </data>
+  <data name="Listening_Timer60" xml:space="preserve">
+    <value>Za 60 minut</value>
+  </data>
+  <data name="Listening_CancelStop" xml:space="preserve">
+    <value>Zrušit plánované zastavení</value>
+  </data>
+  <data name="Listening_TimerRemaining" xml:space="preserve">
+    <value>Zastaví se za {0}</value>
+  </data>
+  <data name="Listening_PlayerOptions" xml:space="preserve">
+    <value>Možnosti přehrávače</value>
+  </data>
+  <data name="Listening_RecentlyPlayed" xml:space="preserve">
+    <value>Nedávno přehráno</value>
+  </data>
+  <data name="Listening_HistorySearch" xml:space="preserve">
+    <value>Hledat v historii poslechu</value>
+  </data>
+  <data name="Listening_HistoryEmpty" xml:space="preserve">
+    <value>Zatím žádná historie poslechu</value>
+  </data>
+  <data name="Listening_HistoryLoadError" xml:space="preserve">
+    <value>Nedávno přehrávané položky se nepodařilo načíst. Výběrem možnosti Opakovat to zkuste znovu.</value>
+  </data>
+  <data name="Listening_Today" xml:space="preserve">
+    <value>Dnes</value>
+  </data>
+  <data name="Listening_Yesterday" xml:space="preserve">
+    <value>Včera</value>
+  </data>
+  <data name="Listening_RediscoveryReason" xml:space="preserve">
+    <value>Naposledy přehráno {0:d}</value>
+  </data>
+  <data name="Listening_RediscoveryTitle" xml:space="preserve">
+    <value>Stojí za opětovný poslech</value>
+  </data>
+  <data name="Listening_Dismiss" xml:space="preserve">
+    <value>Odmítnout</value>
+  </data>
+  <data name="Listening_ActionError" xml:space="preserve">
+    <value>Tuto akci se nepodařilo dokončit. Zkuste to prosím znovu.</value>
+  </data>
+  <data name="Listening_FavoritesEmpty" xml:space="preserve">
+    <value>Zatím žádné oblíbené</value>
+  </data>
+  <data name="Listening_FavoritesEmptyDescription" xml:space="preserve">
+    <value>Označte skladbu jako oblíbenou z její nabídky nebo ji vyberte a stiskněte Ctrl+D.</value>
+  </data>
+  <data name="Listening_VarietyDescription" xml:space="preserve">
+    <value>Větší pestrost se vyhýbá skladbám přehrávaným v nedávné době a pokud je to možné, odděluje skladby od stejného interpreta.</value>
+  </data>
+  <data name="Listening_RediscoverDescription" xml:space="preserve">
+    <value>Funkce Znovu objevit používá skladby se zaznamenaným přehráním v Nagi, které byly naposledy přehrány před více než 30 dny.</value>
+  </data>
+  <data name="Listening_UnheardDescription" xml:space="preserve">
+    <value>Funkce Nepřehrávané používá skladby bez zaznamenaných přehrání v Nagi.</value>
+  </data>
+  <data name="Listening_HistoryNoMatches" xml:space="preserve">
+    <value>Vašemu vyhledávání neodpovídají žádné poslechy</value>
+  </data>
+  <data name="Listening_NoTimedMixDescription" xml:space="preserve">
+    <value>Žádné skladby v tomto seznamu nesplňují požadavky na mix a nepřizpůsobují se zvolené délce. Zkuste delší dobu, jiný mix nebo jiný seznam skladeb.</value>
+  </data>
+</root>

@@ -102,7 +102,7 @@
     <value>Số bài hát</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Số lượt phát</value>
+    <value>Lượt phát</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>Bài hát</value>
@@ -114,9 +114,6 @@
     <value>Bài hát</value>
   </data>
   <data name="Label_Folder" xml:space="preserve">
-    <value>Thư mục</value>
-  </data>
-  <data name="Label_Folders" xml:space="preserve">
     <value>Thư mục</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
@@ -169,7 +166,7 @@
     <value>Nhiều {0} nhất</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
-    <value>Ít {0} nhất</value>
+    <value>{0} ít nhất</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Đang quét thư mục {0} trên {1}: {2} - {3}</value>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Quét hoàn tất. Đã thêm hoặc cập nhật {0} {1}.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Đang lưu lô {0}...</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Đang quét thư mục...</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Quét hoàn tất. Thư viện đã được cập nhật.</value>
   </data>
@@ -194,16 +185,16 @@
     <value>Quét thất bại. Kiểm tra nhật ký để biết chi tiết.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Đang chuẩn bị bộ đệm quét...</value>
+    <value>Đang chuẩn bị quét thư viện…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Đang đọc chi tiết bài hát...</value>
+    <value>Đang đọc chi tiết bài hát…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Đang dọn dẹp thư viện của bạn...</value>
+    <value>Đang dọn dẹp thư viện của bạn…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Đang hoàn tất...</value>
+    <value>Đang hoàn tất…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Chuẩn hóa âm lượng thất bại. Kiểm tra nhật ký để biết chi tiết.</value>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Tên danh sách phát không được để trống.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Đánh giá phải từ 1 đến 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
@@ -248,7 +236,15 @@
     <value>Sắp xếp theo: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg được yêu cầu để Chuẩn hóa âm lượng độ chính xác cao (phân tích ReplayGain) nhưng không tìm thấy trên hệ thống của bạn.\n\nLàm theo các bước sau để thiết lập:\n\n1. **Tải xuống**: Truy cập https://www.gyan.dev/ffmpeg/builds/ và tải xuống bản 'ffmpeg-git-full.7z' (hoặc tương tự).\n2. **Hướng dẫn**: Bạn có thể làm theo hướng dẫn này để biết chi tiết: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Giải nén**: Mở thư mục kiến trúc và tìm thư mục 'bin' chứa `ffmpeg.exe`.\n4. **Cài đặt**: Sao chép `ffmpeg.exe` vào một thư mục cố định (ví dụ: `C:\\ffmpeg\\`) và **thêm thư mục đó vào biến môi trường System PATH của bạn**.\n5. **Khởi động lại**: Vui lòng khởi động lại Nagi sau khi cài đặt để các thay đổi có hiệu lực.</value>
+    <value>Cần có FFmpeg để phân tích bài hát cho việc cân bằng âm lượng, nhưng Nagi không thể tìm thấy ứng dụng này.
+
+1. Tải bản dựng dành cho Windows từ https://ffmpeg.org/download.html.
+2. Giải nén tệp lưu trữ và tìm tệp ffmpeg.exe trong thư mục bin.
+3. Thêm thư mục chứa ffmpeg.exe vào PATH của Windows.
+4. Khởi động lại Nagi, sau đó bật lại tính năng cân bằng âm lượng.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>Danh sách phát đã được tạo, nhưng không thể thêm các bài hát. Vui lòng thử nhập lại.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Không tìm thấy bài hát nào từ danh sách phát trong thư viện của bạn.</value>
@@ -293,12 +289,39 @@
     <value>Tất cả các bài hát đã có dữ liệu âm lượng.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Đang tính toán âm lượng cho {0} bài hát...</value>
+    <value>Đang phân tích âm lượng… Bài hát: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Đang tính toán chuẩn hóa âm lượng ({0}/{1})...</value>
+    <value>Đang tính toán cân bằng âm lượng ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Chuẩn hóa âm lượng hoàn tất. Đã xử lý {0} bài hát.</value>
+    <value>Hoàn tất cân bằng âm lượng. Số bài hát đã xử lý: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Nhập mã token người dùng ListenBrainz của bạn.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Không thể đọc phản hồi từ ListenBrainz. Hãy thử lại sau.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Nhập URL máy chủ bắt đầu bằng http:// hoặc https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Mã token người dùng không hợp lệ. Hãy kiểm tra và thử lại.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz đã trả về một lỗi (HTTP {0}). Hãy thử lại sau.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Không thể kết nối tới ListenBrainz. Kiểm tra kết nối và URL máy chủ của bạn.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi không thể tìm thấy thư mục dữ liệu thư viện.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Việc khôi phục thất bại và dữ liệu trước đó của bạn không thể được phục hồi hoàn toàn. Các tệp khôi phục đã được lưu tại &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Tệp đã chọn không phải là bản sao lưu Nagi hợp lệ.</value>
   </data>
 </root>

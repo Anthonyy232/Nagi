@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>Kansio</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Kansiot</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Manuaalinen järjestys</value>
   </data>
@@ -148,10 +145,10 @@
     <value>{0} (Vanhin)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Nouseva)</value>
+    <value>{0} (nouseva)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Laskeva)</value>
+    <value>{0} (laskeva)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>Lyhin ensin</value>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Skannaus valmis. Lisättiin tai päivitettiin {0} {1}.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Tallennetaan erää {0}...</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Skannataan kansiota...</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Skannaus valmis. Kirjasto on ajan tasalla.</value>
   </data>
@@ -194,16 +185,16 @@
     <value>Skannaus epäonnistui. Tarkista lokitiedot.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Valmistellaan skannausvälimuisteja...</value>
+    <value>Valmistellaan kirjaston tarkistusta…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Luetaan kappaleen tietoja...</value>
+    <value>Luetaan kappaleen tiedot…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Siivotaan kirjastoa...</value>
+    <value>Siivotaan kirjastoa…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Viimeistellään...</value>
+    <value>Viimeistellään…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Äänenvoimakkuuden normalisointi epäonnistui. Tarkista lokitiedot.</value>
@@ -216,13 +207,10 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Kansion lisääminen epäonnistui.</value>
+    <value>Kansiota ei voitu lisätä.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Soittolistan nimi ei voi olla tyhjä.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Arvosanan on oltava välillä 1–5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
@@ -248,7 +236,15 @@
     <value>Järjestä: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg tarvitaan korkean tarkkuuden äänenvoimakkuuden normalisointiin (ReplayGain-analyysi), mutta sitä ei löytynyt järjestelmästäsi.\n\nSeuraa näitä ohjeita sen asentamiseksi:\n\n1. **Lataa**: Vieraile osoitteessa https://www.gyan.dev/ffmpeg/builds/ ja lataa 'ffmpeg-git-full.7z' (tai vastaava) essentials-koontiversio.\n2. **Opas**: Voit seurata tätä opasta saadaksesi yksityiskohtaiset ohjeet: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Pura**: Avaa arkkitehtuurikansio ja etsi 'bin'-hakemisto, joka sisältää `ffmpeg.exe`.\n4. **Asenna**: Kopioi `ffmpeg.exe` pysyvään kansioon (esim. `C:\ffmpeg\`) ja **lisää kyseinen kansio järjestelmän PATH-ympäristömuuttujaan**.\n5. **Käynnistä uudelleen**: Käynnistä Nagi uudelleen asennuksen jälkeen, jotta muutokset tulevat voimaan.</value>
+    <value>FFmpeg-ohjelmaa tarvitaan kappaleiden analysoimiseen äänenvoimakkuuden tasoitusta varten, mutta Nagi ei löytänyt sitä.
+
+1. Lataa Windows-versio osoitteesta https://ffmpeg.org/download.html.
+2. Pura arkisto ja etsi ffmpeg.exe sen bin-kansiosta.
+3. Lisää ffmpeg.exe-tiedoston sisältävä kansio Windowsin PATH-ympäristömuuttujaan.
+4. Käynnistä Nagi uudelleen ja ota äänenvoimakkuuden tasoitus uudelleen käyttöön.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>Soittolista luotiin, mutta sen kappaleita ei voitu lisätä. Yritä tuontia uudelleen.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Soittolistasta ei löytynyt kappaleita kirjastostasi.</value>
@@ -293,12 +289,39 @@
     <value>Kaikilla kappaleilla on jo äänenvoimakkuustiedot.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Lasketaan äänenvoimakkuutta {0} kappaleelle...</value>
+    <value>Analysoidaan äänenvoimakkuutta… Kappaleita: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Lasketaan äänenvoimakkuuden normalisointia ({0}/{1})...</value>
+    <value>Lasketaan äänenvoimakkuuden tasoitusta ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Äänenvoimakkuuden normalisointi valmis. Käsitelty {0} kappaletta.</value>
+    <value>Äänenvoimakkuuden tasoitus valmis. Käsitellyt kappaleet: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Syötä ListenBrainz-käyttäjätunnisteesi.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>ListenBrainz-vastauksen lukeminen epäonnistui. Yritä myöhemmin uudelleen.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Syötä palvelimen URL-osoite, joka alkaa http:// tai https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Käyttäjätunniste on virheellinen. Tarkista se ja yritä uudelleen.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz palautti virheen (HTTP {0}). Yritä myöhemmin uudelleen.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Yhteyttä palveluun ListenBrainz ei saatu. Tarkista verkkoyhteytesi ja palvelimen URL-osoite.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi ei löytänyt kirjastotietojensa kansiota.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Palautus epäonnistui, eikä aikaisempia tietojasi voitu palauttaa kokonaan. Palautustiedostot tallennettiin sijaintiin &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Valittu tiedosto ei ole kelvollinen Nagi-varmuuskopio.</value>
   </data>
 </root>

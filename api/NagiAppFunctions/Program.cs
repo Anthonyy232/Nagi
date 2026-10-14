@@ -1,4 +1,4 @@
-﻿using Microsoft.Azure.Functions.Worker;
+﻿using Microsoft.Azure.Functions.Worker.OpenTelemetry;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NagiAppFunctions;
@@ -6,14 +6,12 @@ using NagiAppFunctions;
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication(builder =>
     {
-        // Register API key authentication middleware
         builder.UseMiddleware<ApiKeyMiddleware>();
     })
     .ConfigureServices(services =>
     {
-        // Register Application Insights for telemetry
         services.AddApplicationInsightsTelemetryWorkerService();
-        services.ConfigureFunctionsApplicationInsights();
+        services.AddOpenTelemetry().UseFunctionsWorkerDefaults();
     })
     .Build();
 

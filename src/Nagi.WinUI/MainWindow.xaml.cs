@@ -1,22 +1,24 @@
-﻿using System;
+using System;
 using System.Linq;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Graphics;
 using Windows.UI;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
+using Nagi.Presentation.Models;
+using Nagi.Presentation.Resources;
+using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Controls;
-using Nagi.WinUI.Models;
-using Nagi.WinUI.Pages;
 using Nagi.WinUI.Helpers;
+using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
+using Nagi.WinUI.Services.Implementations;
 using WinRT.Interop;
 
 namespace Nagi.WinUI;
@@ -31,57 +33,59 @@ public sealed partial class MainWindow : Window
     private const int MinMainWindowWidth = 400;
     private const int MinMainWindowHeight = 300;
 
-    // Core windowing and service references.
     private AppWindow? _appWindow;
+    private SizeInt32 _lastWindowSize;
+    private PointInt32 _lastWindowPosition;
 
-    // State flags to ensure one-time initialization.
     private bool _isBackdropInitialized;
     private bool _isTitleBarInitialized;
     private ILogger<MainWindow>? _logger;
     private FrameworkElement? _rootElement;
     private IUISettingsService? _settingsService;
     private ITaskbarService? _taskbarService;
+    private TransparencyEffectsMonitor? _transparencyEffects;
 
     internal ITaskbarService? TaskbarService => _taskbarService;
 
     private bool _isTaskbarInitialized;
     private int _isCleanedUp;
 
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="MainWindow" /> class.
-    /// </summary>
     public MainWindow()
     {
         InitializeComponent();
         ExtendsContentIntoTitleBar = true;
     }
 
-    /// <summary>
-    ///     Initializes the window with required services and subscribes to necessary events.
-    /// </summary>
-    public void InitializeDependencies(IUISettingsService settingsService)
+    public void InitializeDependencies(IUISettingsService settingsService, ITaskbarService taskbarService,
+        TransparencyEffectsMonitor transparencyEffects, ILogger<MainWindow> logger)
     {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-        _logger = App.Services!.GetRequiredService<ILogger<MainWindow>>();
-        _taskbarService = App.Services!.GetRequiredService<ITaskbarService>();
+        _taskbarService = taskbarService ?? throw new ArgumentNullException(nameof(taskbarService));
+        _transparencyEffects = transparencyEffects ?? throw new ArgumentNullException(nameof(transparencyEffects));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _appWindow = AppWindow;
+        _lastWindowSize = _appWindow.Size;
+        _lastWindowPosition = _appWindow.Position;
+        _appWindow.Changed += OnWindowGeometryChanged;
         Activated += OnWindowActivated;
         _settingsService.BackdropMaterialChanged += OnBackdropMaterialChanged;
-        _settingsService.TransparencyEffectsSettingChanged += OnTransparencyEffectsChanged;
+        _transparencyEffects.Changed += OnTransparencyEffectsChanged;
     }
 
     public void Cleanup()
     {
-        // Ensure cleanup only runs once to prevent race conditions
         if (Interlocked.Exchange(ref _isCleanedUp, 1) != 0) return;
 
         Activated -= OnWindowActivated;
+        if (_appWindow != null) _appWindow.Changed -= OnWindowGeometryChanged;
 
         if (_rootElement != null) _rootElement.ActualThemeChanged -= OnActualThemeChanged;
         if (_settingsService != null)
         {
             _settingsService.BackdropMaterialChanged -= OnBackdropMaterialChanged;
-            _settingsService.TransparencyEffectsSettingChanged -= OnTransparencyEffectsChanged;
         }
+
+        if (_transparencyEffects != null) _transparencyEffects.Changed -= OnTransparencyEffectsChanged;
 
         // Restore original WndProc before window destruction to prevent crashes
         // from callbacks to a deallocated delegate.
@@ -93,15 +97,11 @@ public sealed partial class MainWindow : Window
             _wndProcDelegate = null;
         }
 
-        // Dispose the taskbar service to release COM objects and icons.
         _taskbarService?.Dispose();
 
         _appWindow = null;
     }
 
-    /// <summary>
-    ///     Notifies the window that its content has been loaded, allowing synchronization of UI themes.
-    /// </summary>
     public void NotifyContentLoaded()
     {
         if (_rootElement != null) _rootElement.ActualThemeChanged -= OnActualThemeChanged;
@@ -110,17 +110,9 @@ public sealed partial class MainWindow : Window
         UpdateTitleBarTheme();
     }
 
-    /// <summary>
-    ///     Configures the window's title bar based on the current page's content.
-    /// </summary>
     public void InitializeCustomTitleBar()
     {
-        _appWindow ??= GetAppWindowForCurrentWindow();
-        if (_appWindow == null)
-        {
-            _logger?.LogCritical("AppWindow is not available. Cannot initialize title bar");
-            return;
-        }
+        _appWindow ??= AppWindow;
 
         if (_appWindow.Presenter is not OverlappedPresenter presenter)
         {
@@ -151,7 +143,7 @@ public sealed partial class MainWindow : Window
         presenter?.SetBorderAndTitleBar(true, true);
     }
 
-    private async void OnWindowActivated(object sender, WindowActivatedEventArgs args)
+    private void OnWindowActivated(object sender, WindowActivatedEventArgs args)
     {
         if (!_isTitleBarInitialized)
         {
@@ -161,8 +153,6 @@ public sealed partial class MainWindow : Window
 
         if (!_isBackdropInitialized)
         {
-            // The async void is acceptable here as this is a top-level event handler.
-            // Any exceptions are handled within TrySetBackdropAsync.
             _ = TrySetBackdropAsync();
             _isBackdropInitialized = true;
         }
@@ -175,7 +165,6 @@ public sealed partial class MainWindow : Window
             InitializeWndProc();
         }
 
-        if (Content is MainPage mainPage) mainPage.UpdateActivationVisualState(args.WindowActivationState);
     }
 
     /// <summary>
@@ -186,51 +175,35 @@ public sealed partial class MainWindow : Window
     {
         if (_settingsService == null) return;
 
-        // Ensure _appWindow is available. It might not be set if the window was never
-        // activated (e.g., when starting minimized or hidden to tray).
-        _appWindow ??= GetAppWindowForCurrentWindow();
-        if (_appWindow == null)
-        {
-            _logger?.LogDebug("Cannot save window state: AppWindow not available");
-            return;
-        }
-
         try
         {
-            var saveSizeTask = _settingsService.GetRememberWindowSizeEnabledAsync();
-            var savePositionTask = _settingsService.GetRememberWindowPositionEnabledAsync();
-
-            await Task.WhenAll(saveSizeTask, savePositionTask);
-
-            var saveSize = saveSizeTask.Result;
-            var savePosition = savePositionTask.Result;
-
-            // Parallelize the actual save operations when both are enabled
-            var saveTasks = new List<Task>();
-
-            if (saveSize)
+            if (await _settingsService.GetRememberWindowSizeEnabledAsync())
             {
-                var size = _appWindow.Size;
-                saveTasks.Add(_settingsService.SetLastWindowSizeAsync(size.Width, size.Height));
+                var size = _lastWindowSize;
+                await _settingsService.SetLastWindowSizeAsync(size.Width, size.Height);
                 _logger?.LogDebug("Saving window size: {Width}x{Height}", size.Width, size.Height);
             }
 
-            if (savePosition)
+            if (await _settingsService.GetRememberWindowPositionEnabledAsync())
             {
-                var position = _appWindow.Position;
-                saveTasks.Add(_settingsService.SetLastWindowPositionAsync(position.X, position.Y));
+                var position = _lastWindowPosition;
+                await _settingsService.SetLastWindowPositionAsync(position.X, position.Y);
                 _logger?.LogDebug("Saving window position: ({X}, {Y})", position.X, position.Y);
             }
 
-            if (saveTasks.Count > 0)
-            {
-                await Task.WhenAll(saveTasks);
-            }
         }
         catch (Exception ex)
         {
             _logger?.LogWarning(ex, "Failed to save window state.");
         }
+    }
+
+    private void OnWindowGeometryChanged(AppWindow sender, AppWindowChangedEventArgs args)
+    {
+        if (sender.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Minimized }) return;
+
+        if (args.DidSizeChange) _lastWindowSize = sender.Size;
+        if (args.DidPositionChange) _lastWindowPosition = sender.Position;
     }
 
     private void OnBackdropMaterialChanged(BackdropMaterial material)
@@ -248,18 +221,15 @@ public sealed partial class MainWindow : Window
         UpdateTitleBarTheme();
     }
 
-    /// <summary>
-    ///     Attempts to set the system backdrop based on user settings. This method is now much simpler.
-    /// </summary>
     private async Task TrySetBackdropAsync(BackdropMaterial? material = null)
     {
-        if (_settingsService is null) return;
+        if (_settingsService is null || _transparencyEffects is null) return;
 
         try
         {
             // Use the high-level XAML MicaBackdrop and DesktopAcrylicBackdrop objects.
             // The framework handles the controllers and configuration automatically.
-            if (_settingsService.IsTransparencyEffectsEnabled())
+            if (_transparencyEffects.IsEnabled)
             {
                 material ??= await _settingsService.GetBackdropMaterialAsync();
 
@@ -325,38 +295,17 @@ public sealed partial class MainWindow : Window
     {
         if (_settingsService == null) return;
 
-        // Ensure _appWindow is available.
-        _appWindow ??= GetAppWindowForCurrentWindow();
-        if (_appWindow == null)
-        {
-            _logger?.LogDebug("Cannot restore window state: AppWindow not available");
-            return;
-        }
+        _appWindow ??= AppWindow;
 
         try
         {
-            var restoreSizeTask = _settingsService.GetRememberWindowSizeEnabledAsync();
-            var restorePositionTask = _settingsService.GetRememberWindowPositionEnabledAsync();
+            var savedSize = await _settingsService.GetRememberWindowSizeEnabledAsync()
+                ? await _settingsService.GetLastWindowSizeAsync()
+                : null;
+            var savedPosition = await _settingsService.GetRememberWindowPositionEnabledAsync()
+                ? await _settingsService.GetLastWindowPositionAsync()
+                : null;
 
-            await Task.WhenAll(restoreSizeTask, restorePositionTask);
-
-            var restoreSize = restoreSizeTask.Result;
-            var restorePosition = restorePositionTask.Result;
-
-            // Parallelize fetching saved values when both are enabled
-            var savedSizeTask = restoreSize
-                ? _settingsService.GetLastWindowSizeAsync()
-                : Task.FromResult<(int Width, int Height)?>(null);
-            var savedPositionTask = restorePosition
-                ? _settingsService.GetLastWindowPositionAsync()
-                : Task.FromResult<(int X, int Y)?>(null);
-
-            await Task.WhenAll(savedSizeTask, savedPositionTask);
-
-            var savedSize = savedSizeTask.Result;
-            var savedPosition = savedPositionTask.Result;
-
-            // Apply size and/or position using the most efficient method
             if (savedSize.HasValue && savedPosition.HasValue)
             {
                 var width = Math.Max(savedSize.Value.Width, MinMainWindowWidth);
@@ -386,22 +335,6 @@ public sealed partial class MainWindow : Window
         catch (Exception ex)
         {
             _logger?.LogWarning(ex, "Failed to restore window state.");
-        }
-    }
-
-    private AppWindow? GetAppWindowForCurrentWindow()
-    {
-        try
-        {
-            var hWnd = WindowNative.GetWindowHandle(this);
-            if (hWnd == IntPtr.Zero) return null;
-            var windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
-            return AppWindow.GetFromWindowId(windowId);
-        }
-        catch (Exception ex)
-        {
-            _logger?.LogError(ex, "Failed to retrieve AppWindow");
-            return null;
         }
     }
 
@@ -440,7 +373,6 @@ public sealed class MiniPlayerWindow : Window
     private const float BaseDpi = 96.0f;
     private static readonly string AppIconPath = System.IO.Path.Combine(AppContext.BaseDirectory, "Assets/AppLogo.ico");
 
-    // Margins to position the window away from the screen edges.
     private const int HorizontalScreenMargin = 10;
     private const int VerticalScreenMargin = 48; // Larger to account for taskbar height.
 
@@ -449,41 +381,32 @@ public sealed class MiniPlayerWindow : Window
     private readonly MiniPlayerView _view;
     private readonly IWin32InteropService _win32InteropService;
 
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="MiniPlayerWindow" /> class.
-    /// </summary>
-    public MiniPlayerWindow()
+    public MiniPlayerWindow(PlayerViewModel playerViewModel, IThemeService themeService,
+        IWin32InteropService win32InteropService, ILogger<MiniPlayerWindow> logger)
     {
-        var services = App.Services!;
-        _logger = services.GetRequiredService<ILogger<MiniPlayerWindow>>();
-        _win32InteropService = services.GetRequiredService<IWin32InteropService>();
-        _view = new MiniPlayerView(this);
+        _logger = logger;
+        _win32InteropService = win32InteropService;
+        _view = new MiniPlayerView(this, playerViewModel);
         Content = _view;
         _appWindow = AppWindow;
 
-        // Apply acrylic backdrop for a premium look
         SystemBackdrop = new DesktopAcrylicBackdrop();
 
-        // Ensure the mini player follows the application theme
-        var themeService = services.GetRequiredService<IThemeService>();
         if (Content is FrameworkElement root)
         {
-            root.RequestedTheme = themeService.CurrentTheme;
+            root.RequestedTheme = themeService.CurrentTheme.ToElementTheme();
         }
 
         ConfigureAppWindow();
         SubscribeToEvents();
     }
 
-    /// <summary>
-    ///     Configures the properties of the AppWindow for the mini-player.
-    /// </summary>
     private void ConfigureAppWindow()
     {
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(_view.TitleBarDragRegion);
 
-        _appWindow.Title = Nagi.WinUI.Resources.Strings.MiniPlayer_Title;
+        _appWindow.Title = Strings.MiniPlayer_Title;
         _appWindow.SetIcon(AppIconPath);
 
         // Convert logical pixels to physical pixels for AppWindow.Resize()
@@ -495,8 +418,8 @@ public sealed class MiniPlayerWindow : Window
         {
             presenter.IsAlwaysOnTop = true;
             presenter.IsResizable = true;
-            presenter.IsMaximizable = false; // Disable maximize button.
-            presenter.IsMinimizable = false; // Disable minimize button.
+            presenter.IsMaximizable = false;
+            presenter.IsMinimizable = false;
             presenter.SetBorderAndTitleBar(true, false); // Keep a border but hide the system title text.
         }
         else
@@ -505,14 +428,8 @@ public sealed class MiniPlayerWindow : Window
         }
     }
 
-    /// <summary>
-    ///     Positions the window in the bottom-right corner of the primary display's work area.
-    /// </summary>
-    /// <param name="appWindow">The app window to position.</param>
-    /// <param name="windowSize">The physical size of the window in pixels.</param>
     private void PositionWindowInBottomRight(AppWindow appWindow, int windowSize)
     {
-        // Get the display area for the window, falling back to the primary display.
         var displayArea = DisplayArea.GetFromWindowId(appWindow.Id, DisplayAreaFallback.Primary);
         if (displayArea == null)
         {
@@ -527,9 +444,6 @@ public sealed class MiniPlayerWindow : Window
         appWindow.Move(new PointInt32(positionX, positionY));
     }
 
-    /// <summary>
-    ///     Subscribes to necessary window and view events.
-    /// </summary>
     private void SubscribeToEvents()
     {
         _view.RestoreButtonClicked += OnRestoreButtonClicked;
@@ -539,7 +453,6 @@ public sealed class MiniPlayerWindow : Window
 
     private void OnAppWindowChanged(AppWindow sender, AppWindowChangedEventArgs args)
     {
-        // Enforce aspect ratio only when the size changes to avoid unnecessary calculations.
         if (args.DidSizeChange) MaintainSquareAspectRatio(sender);
     }
 
@@ -552,7 +465,6 @@ public sealed class MiniPlayerWindow : Window
         var currentPosition = window.Position;
         var currentSize = window.Size;
 
-        // Convert logical pixel constraints to physical pixels
         var dpiScale = GetDpiScale();
         var minSize = (int)(MinWindowSizeDips * dpiScale);
         var maxSize = (int)(MaxWindowSizeDips * dpiScale);
@@ -595,24 +507,16 @@ public sealed class MiniPlayerWindow : Window
 
     private void OnRestoreButtonClicked(object? sender, EventArgs e)
     {
-        // Simply scheduling the close via DisptacherQueue.TryEnqueue is not enough to prevent
-        // E_UNEXPECTED (0x8000FFFF) crashes in WinUI 3 when closing a window from its own UI event.
-        // We must ensure the window remains alive until the current input event cycle fully completes.
-
-        // 1. Hide the window immediately to make the UI feel responsive.
+        // Closing during the click event can crash WinUI with E_UNEXPECTED;
+        // a dispatcher enqueue alone does not avoid it, so defer closure briefly.
         _appWindow.Hide();
 
-        // 2. Schedule the closure with a delay. This yields control back to the message pump,
-        // allowing the current click event to finish bubbling and any internal XAML state to settle.
         Task.Delay(50).ContinueWith(_ =>
         {
             DispatcherQueue.TryEnqueue(() => Close());
         });
     }
 
-    /// <summary>
-    ///     Cleans up resources by unsubscribing from events when the window is closed.
-    /// </summary>
     private void OnWindowClosed(object sender, WindowEventArgs args)
     {
         _view.RestoreButtonClicked -= OnRestoreButtonClicked;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Windows.System;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,18 +9,16 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Models;
-using Nagi.WinUI.Navigation;
-using Nagi.WinUI.ViewModels;
+using Nagi.Presentation.Navigation;
+using Nagi.Presentation.ViewModels;
 using System.Threading.Tasks;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Presentation.Resources;
+using Nagi.Presentation.Services.Abstractions;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.Pages;
 
-/// <summary>
-///     Template selector for disc-grouped list (headers vs songs).
-/// </summary>
 public class DiscGroupTemplateSelector : DataTemplateSelector
 {
     public DataTemplate? HeaderTemplate { get; set; }
@@ -32,9 +30,6 @@ public class DiscGroupTemplateSelector : DataTemplateSelector
     }
 }
 
-/// <summary>
-///     Style selector for disc-grouped list items.
-/// </summary>
 public class DiscGroupStyleSelector : StyleSelector
 {
     public Style? HeaderStyle { get; set; }
@@ -46,13 +41,9 @@ public class DiscGroupStyleSelector : StyleSelector
     }
 }
 
-/// <summary>
-///     A page that displays detailed information for a specific album, including its track list.
-/// </summary>
 public sealed partial class AlbumViewPage : Page
 {
     private readonly ILogger<AlbumViewPage> _logger;
-    private readonly ILibraryReader _libraryReader;
     private bool _isSearchExpanded;
     private bool _isUpdatingSelection;
     private readonly Microsoft.UI.Dispatching.DispatcherQueue _dispatcherQueue;
@@ -65,10 +56,8 @@ public sealed partial class AlbumViewPage : Page
         _dispatcherQueue = this.DispatcherQueue;
         ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<AlbumViewViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<AlbumViewPage>>();
-        _libraryReader = App.Services!.GetRequiredService<ILibraryReader>();
         DataContext = ViewModel;
 
-        // Recreated on each Loaded so cached-page re-navigations get a fresh binder.
         Loaded += OnNowPlayingBinderAttach;
         Unloaded += OnNowPlayingBinderDetach;
 
@@ -79,10 +68,9 @@ public sealed partial class AlbumViewPage : Page
     private void OnNowPlayingBinderAttach(object sender, RoutedEventArgs e)
     {
         if (_flatBinder is not null || _groupedBinder is not null) return;
-        var playerViewModel = App.Services!.GetRequiredService<PlayerViewModel>();
         var playingBrush = (Brush)Application.Current.Resources["AppPrimaryColorBrush"];
-        _flatBinder = new NowPlayingIndicatorBinder(SongsListView, ViewModel, playerViewModel, playingBrush);
-        _groupedBinder = new NowPlayingIndicatorBinder(GroupedSongsListView, ViewModel, playerViewModel, playingBrush);
+        _flatBinder = new NowPlayingIndicatorBinder(SongsListView, ViewModel, playingBrush);
+        _groupedBinder = new NowPlayingIndicatorBinder(GroupedSongsListView, ViewModel, playingBrush);
         _flatBinder.Refresh();
         _groupedBinder.Refresh();
     }
@@ -95,14 +83,8 @@ public sealed partial class AlbumViewPage : Page
         _groupedBinder = null;
     }
 
-    /// <summary>
-    ///     Gets the view model associated with this page.
-    /// </summary>
     public AlbumViewViewModel ViewModel { get; }
 
-    /// <summary>
-    ///     Initializes the view model with navigation parameters when the page is navigated to.
-    /// </summary>
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
@@ -122,7 +104,6 @@ public sealed partial class AlbumViewPage : Page
         }
         else
         {
-            // This is a developer error, so log it as an error.
             var paramType = e.Parameter?.GetType().Name ?? "null";
             _logger.LogError(
                 "Received incorrect navigation parameter type. Expected '{ExpectedType}', but got '{ActualType}'.",
@@ -130,9 +111,6 @@ public sealed partial class AlbumViewPage : Page
         }
     }
 
-    /// <summary>
-    ///     Cleans up resources when the user navigates away from this page.
-    /// </summary>
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
@@ -140,9 +118,6 @@ public sealed partial class AlbumViewPage : Page
         ViewModel.Dispose();
     }
 
-    /// <summary>
-    ///     Handles the page loaded event to set initial visual state.
-    /// </summary>
     private void OnPageLoaded(object sender, RoutedEventArgs e)
     {
         _logger.LogDebug("AlbumViewPage loaded. Setting initial visual state.");
@@ -150,9 +125,6 @@ public sealed partial class AlbumViewPage : Page
         Loaded -= OnPageLoaded;
     }
 
-    /// <summary>
-    ///     Handles the search toggle button click to expand or collapse the search box.
-    /// </summary>
     private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e)
     {
         if (_isSearchExpanded)
@@ -167,9 +139,6 @@ public sealed partial class AlbumViewPage : Page
         }
     }
 
-    /// <summary>
-    ///     Handles key down events in the search text box.
-    /// </summary>
     private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
     {
         if (e.Key == VirtualKey.Escape)
@@ -180,61 +149,31 @@ public sealed partial class AlbumViewPage : Page
         }
     }
 
-    /// <summary>
-    ///     Expands the search interface with an animation.
-    /// </summary>
     private void ExpandSearch()
     {
         if (_isSearchExpanded) return;
 
         _isSearchExpanded = true;
         _logger.LogDebug("Search UI expanded.");
-        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.AlbumViewPage_SearchButton_Close_ToolTip);
-        VisualStateManager.GoToState(this, "SearchExpanded", true);
-
-        // Focus the search text box after the animation has started for a smooth transition.
-        var timer = DispatcherQueue.CreateTimer();
-        timer.Interval = TimeSpan.FromMilliseconds(150);
-        timer.Tick += (s, args) =>
-        {
-            timer.Stop();
-            SearchTextBox.Focus(FocusState.Programmatic);
-        };
-        timer.Start();
+        ToolTipService.SetToolTip(SearchToggleButton, Strings.AlbumViewPage_SearchButton_Close_ToolTip);
+        VisualStateManager.GoToState(this, "SearchExpanded", false);
+        SearchTextBox.Focus(FocusState.Programmatic);
     }
 
-    /// <summary>
-    ///     Collapses the search interface with an animation and resets the filter.
-    ///     The data refresh is delayed to occur after the animation completes for a smoother UX.
-    /// </summary>
     private void CollapseSearch()
     {
         if (!_isSearchExpanded) return;
 
         _isSearchExpanded = false;
 
-        // Update UI immediately and start the collapse animation.
         _logger.LogDebug("Search UI collapsed and search term cleared.");
-        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.AlbumViewPage_SearchButton_Search_ToolTip);
-        VisualStateManager.GoToState(this, "SearchCollapsed", true);
+        ToolTipService.SetToolTip(SearchToggleButton, Strings.AlbumViewPage_SearchButton_Search_ToolTip);
+        VisualStateManager.GoToState(this, "SearchCollapsed", false);
+        SearchToggleButton.Focus(FocusState.Programmatic);
         ViewModel.SearchTerm = string.Empty;
     }
 
-    /// <summary>
-    ///     Updates the view model with the current selection from the song list.
-    /// </summary>
     private void SongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (_isUpdatingSelection || sender is not ListView listView) return;
-
-        UpdateLogicalSelection(e);
-        ViewModel.OnSongsSelectionChanged(listView.SelectedItems);
-    }
-
-    /// <summary>
-    ///     Updates the view model with the current selection from the grouped song list (filters out headers).
-    /// </summary>
-    private void GroupedSongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (_isUpdatingSelection || sender is not ListView listView) return;
 
@@ -276,7 +215,6 @@ public sealed partial class AlbumViewPage : Page
         _logger.LogDebug("Ctrl+A invoked. Selecting all songs in album.");
         ViewModel.SelectAllCommand.Execute(null);
 
-        // Sync the current visible items
         try
         {
             _isUpdatingSelection = true;
@@ -293,21 +231,6 @@ public sealed partial class AlbumViewPage : Page
         args.Handled = true;
     }
 
-    /// <summary>
-    ///     Handles double-tap on grouped list (ignores headers).
-    /// </summary>
-    private void GroupedSongsListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
-    {
-        if (e.OriginalSource is FrameworkElement { DataContext: Song tappedSong })
-        {
-            _logger.LogDebug("User double-tapped song '{SongTitle}'. Executing play command.", tappedSong.Title);
-            ViewModel.PlaySongCommand.Execute(tappedSong);
-        }
-    }
-
-    /// <summary>
-    ///     Handles the double-tapped event on the song list to play the selected song.
-    /// </summary>
     private void SongsListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {
         if (e.OriginalSource is FrameworkElement { DataContext: Song tappedSong })
@@ -318,9 +241,6 @@ public sealed partial class AlbumViewPage : Page
         }
     }
 
-    /// <summary>
-    ///     Handles the opening of the context menu for a song item.
-    /// </summary>
     private void SongItemMenuFlyout_Opening(object sender, object e)
     {
         if (sender is not MenuFlyout menuFlyout) return;
@@ -329,8 +249,9 @@ public sealed partial class AlbumViewPage : Page
         if (menuFlyout.Target?.DataContext is Song rightClickedSong)
         {
             _logger.LogDebug("Context menu opening for song '{SongTitle}'.", rightClickedSong.Title);
-            if (!SongsListView.SelectedItems.Contains(rightClickedSong))
-                SongsListView.SelectedItem = rightClickedSong;
+            var listView = ViewModel.IsGroupedByDisc ? GroupedSongsListView : SongsListView;
+            if (!listView.SelectedItems.Contains(rightClickedSong))
+                listView.SelectedItem = rightClickedSong;
         }
 
         // Find and populate the "Add to Playlist" submenu (supports both grouped and regular ListViews).
@@ -338,44 +259,19 @@ public sealed partial class AlbumViewPage : Page
                 .FirstOrDefault(item => item.Name is "AddToPlaylistSubMenu" or "AddToPlaylistSubMenuGrouped") is { } addToPlaylistSubMenu)
         {
             _logger.LogDebug("Populating 'Add to playlist' submenu.");
-            PopulatePlaylistSubMenu(addToPlaylistSubMenu);
+            PlaylistMenuFlyoutHelper.Populate(addToPlaylistSubMenu, ViewModel.AvailablePlaylists,
+                ViewModel.AddSelectedSongsToPlaylistCommand, Strings.AlbumViewPage_PlaylistMenu_NoPlaylists);
         }
 
         if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
                 .FirstOrDefault(item => item.Name is "GoToArtistSubMenu" or "GoToArtistSubMenuGrouped") is { } goToArtistSubMenu
             && menuFlyout.Target?.DataContext is Song song)
         {
-            ArtistMenuFlyoutHelper.PopulateSubMenu(goToArtistSubMenu, song, ViewModel.GoToArtistCommand, _libraryReader, _dispatcherQueue, _logger);
+            ArtistMenuFlyoutHelper.PopulateSubMenu(goToArtistSubMenu, song, ViewModel.GoToArtistCommand, ViewModel.GetArtistsForSongAsync, _dispatcherQueue, _logger);
         }
+        ListeningMenuFlyoutHelper.PopulateFavorites(menuFlyout, ViewModel);
     }
 
-    /// <summary>
-    ///     Populates the "Add to playlist" submenu with available playlists from the view model.
-    /// </summary>
-    private void PopulatePlaylistSubMenu(MenuFlyoutSubItem subMenu)
-    {
-        subMenu.Items.Clear();
-
-        var availablePlaylists = ViewModel.AvailablePlaylists;
-
-        if (availablePlaylists?.Any() != true)
-        {
-            _logger.LogDebug("No playlists available to populate submenu.");
-            var disabledItem = new MenuFlyoutItem { Text = Nagi.WinUI.Resources.Strings.AlbumViewPage_PlaylistMenu_NoPlaylists, IsEnabled = false };
-            subMenu.Items.Add(disabledItem);
-            return;
-        }
-
-        _logger.LogDebug("Found {PlaylistCount} playlists to populate submenu.", availablePlaylists.Count);
-        foreach (var playlist in availablePlaylists)
-        {
-            var playlistMenuItem = new MenuFlyoutItem
-            {
-                Text = playlist.Name,
-                Command = ViewModel.AddSelectedSongsToPlaylistCommand,
-                CommandParameter = playlist
-            };
-            subMenu.Items.Add(playlistMenuItem);
-        }
-    }
+    private void ListeningOptions_Opening(object sender, object e) =>
+        ListeningMenuFlyoutHelper.PopulateMixes((MenuFlyout)sender, ViewModel.PlayMixCommand, ViewModel.PlayForCommand);
 }

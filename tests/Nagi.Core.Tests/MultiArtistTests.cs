@@ -1,6 +1,5 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Http.Pipelines;
@@ -20,18 +19,15 @@ public class MultiArtistTests : IDisposable
     private readonly IFileSystemService _fileSystem;
     private readonly IMetadataService _metadataService;
     private readonly LibraryService _libraryService;
-    private readonly ITestOutputHelper _output;
+    private readonly LibraryReader _libraryReader;
     private readonly ProviderPipelineProvider _pipelines;
-    private Exception? _capturedLoggerException;
 
-    public MultiArtistTests(ITestOutputHelper output)
+    public MultiArtistTests()
     {
-        _output = output;
         _dbHelper = new DbContextFactoryTestHelper();
         _fileSystem = Substitute.For<IFileSystemService>();
         _metadataService = Substitute.For<IMetadataService>();
 
-        // Minimal mock setup for LibraryService dependency injection
         var httpClientFactory = Substitute.For<IHttpClientFactory>();
         var settingsService = Substitute.For<ISettingsService>();
         var pathConfig = Substitute.For<IPathConfiguration>();
@@ -39,31 +35,14 @@ public class MultiArtistTests : IDisposable
         pathConfig.ArtistImageCachePath.Returns("C:\\cache\\artistimages");
         pathConfig.LrcCachePath.Returns("C:\\cache\\lrc");
 
-        var serviceScopeFactory = Substitute.For<IServiceScopeFactory>();
-
-        // Set up logger to capture exceptions
-        var logger = Substitute.For<ILogger<LibraryService>>();
-        logger.WhenForAnyArgs(x => x.Log(
-            Arg.Any<LogLevel>(),
-            Arg.Any<EventId>(),
-            Arg.Any<object>(),
-            Arg.Any<Exception?>(),
-            Arg.Any<Func<object, Exception?, string>>()))
-            .Do(callInfo =>
-            {
-                var ex = callInfo.ArgAt<Exception?>(3);
-                if (ex != null)
-                {
-                    _capturedLoggerException = ex;
-                    _output.WriteLine($"LOGGED EXCEPTION: {ex.GetType().Name}: {ex.Message}");
-                    _output.WriteLine($"Stack Trace: {ex.StackTrace}");
-                }
-            });
 
         _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
 
+        _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, settingsService, Substitute.For<ILogger<LibraryReader>>());
+
         _libraryService = new LibraryService(
             _dbHelper.ContextFactory,
+            _libraryReader,
             _fileSystem,
             _metadataService,
             Substitute.For<ILastFmMetadataService>(),
@@ -71,31 +50,29 @@ public class MultiArtistTests : IDisposable
             Substitute.For<IFanartTvService>(),
             Substitute.For<ITheAudioDbService>(),
             httpClientFactory,
-            serviceScopeFactory,
             pathConfig,
             settingsService,
             Substitute.For<IReplayGainService>(),
-            Substitute.For<IApiKeyService>(),
             Substitute.For<IImageProcessor>(),
             _pipelines,
-            logger
+            Substitute.For<ILogger<LibraryService>>()
         );
     }
 
     public void Dispose()
     {
         _libraryService.Dispose();
+        _libraryReader.Dispose();
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _dbHelper.Dispose();
     }
 
-    [Fact]
-    public async Task RescanFolderForMusicAsync_WithMultipleArtists_CorrectlyPopulatesDenormalizedFields()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task RescanFolderForMusicAsync_WithMultipleArtists_CorrectlyPopulatesDenormalizedFields(bool hasAlbumArtists)
     {
-        // Reset captured exception from any previous test
-        _capturedLoggerException = null;
 
-        // Arrange
         var folderId = Guid.NewGuid();
         var folderPath = "C:\\Music\\MultiArtist";
         var filePath = Path.Combine(folderPath, "song.mp3");
@@ -116,26 +93,17 @@ public class MultiArtistTests : IDisposable
             FilePath = filePath,
             Title = "Collaboration Song",
             Artists = new List<string> { "Primary Artist", "Featured Artist" },
-            AlbumArtists = new List<string> { "Primary Artist" },
+            AlbumArtists = hasAlbumArtists ? ["Primary Artist"] : [],
             Album = "Collab Album",
             Duration = TimeSpan.FromMinutes(3)
         };
 
         _metadataService.ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>()).Returns(metadata);
 
-        // Act
         var result = await _libraryService.RescanFolderForMusicAsync(folderId);
 
-        // If scan failed, re-throw the captured exception with context
-        if (!result && _capturedLoggerException != null)
-        {
-            throw new Exception($"Scan failed with exception: {_capturedLoggerException.Message}", _capturedLoggerException);
-        }
-
-        // Verify the scan succeeded
         result.Should().BeTrue("the scan should complete without errors");
 
-        // Assert
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {
             var song = await context.Songs
@@ -148,13 +116,11 @@ public class MultiArtistTests : IDisposable
 
             song.Should().NotBeNull();
 
-            // Check Song denormalized fields
             song!.ArtistName.Should().Be("Primary Artist & Featured Artist");
             song.PrimaryArtistName.Should().Be("Primary Artist");
 
-            // Check Album denormalized fields
             song.Album.Should().NotBeNull();
-            song.Album!.ArtistName.Should().Be("Primary Artist"); // AlbumArtists was just "Primary Artist" in setup
+            song.Album!.ArtistName.Should().Be(hasAlbumArtists ? "Primary Artist" : "Primary Artist & Featured Artist");
             song.Album.PrimaryArtistName.Should().Be("Primary Artist");
         }
     }
@@ -162,10 +128,7 @@ public class MultiArtistTests : IDisposable
     [Fact]
     public async Task RescanFolderForMusicAsync_SingleArtist_PopulatesFieldsCorrectly()
     {
-        // Reset captured exception from any previous test
-        _capturedLoggerException = null;
 
-        // Arrange
         var folderId = Guid.NewGuid();
         var folderPath = "C:\\Music\\SingleArtist";
         var filePath = Path.Combine(folderPath, "solo.mp3");
@@ -191,19 +154,10 @@ public class MultiArtistTests : IDisposable
 
         _metadataService.ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>()).Returns(metadata);
 
-        // Act
         var result = await _libraryService.RescanFolderForMusicAsync(folderId);
 
-        // If scan failed, re-throw the captured exception with context
-        if (!result && _capturedLoggerException != null)
-        {
-            throw new Exception($"Scan failed with exception: {_capturedLoggerException.Message}", _capturedLoggerException);
-        }
-
-        // Verify the scan succeeded (no exception caught)
         result.Should().BeTrue("the scan should complete without errors");
 
-        // Assert
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {
             var song = await context.Songs.FirstOrDefaultAsync(s => s.FilePath == filePath);
@@ -217,31 +171,88 @@ public class MultiArtistTests : IDisposable
     [Fact]
     public void Song_SyncDenormalizedFields_CorrectlyJoinsArtists()
     {
-        // Arrange
+
         var song = new Song { Title = "Test" };
         song.SongArtists.Add(new SongArtist { Order = 1, Artist = new Artist { Name = "Artist B" } });
         song.SongArtists.Add(new SongArtist { Order = 0, Artist = new Artist { Name = "Artist A" } });
 
-        // Act
         song.SyncDenormalizedFields();
 
-        // Assert
         song.ArtistName.Should().Be("Artist A & Artist B");
         song.PrimaryArtistName.Should().Be("Artist A");
     }
 
     [Fact]
+    public async Task AddingTrackToExistingAlbum_PreservesMetadataAndPersistsChangedAlbumArtists()
+    {
+        var folder = new Folder { Path = @"C:\Music", Name = "Music" };
+        var primary = new Artist { Name = "Primary" };
+        var album = new Album { Title = "Album", Year = 1990, CoverArtUri = @"C:\cache\original.jpg" };
+        album.AlbumArtists.Add(new AlbumArtist { Artist = primary, Order = 0 });
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Albums.Add(album);
+            await context.SaveChangesAsync();
+        }
+        var filePath = @"C:\Music\new.mp3";
+        _fileSystem.DirectoryExists(folder.Path).Returns(true);
+        _fileSystem.GetExtension(filePath).Returns(".mp3");
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
+            .Returns(new[] { (filePath, DateTime.UtcNow) });
+        _metadataService.ExtractMetadataAsync(filePath, folder.Path).Returns(new SongFileMetadata
+        {
+            FilePath = filePath, Title = "New track", Album = "Album", Year = 2024,
+            Artists = ["Primary"], AlbumArtists = ["Primary", "Guest"], CoverArtUri = @"C:\cache\new.jpg"
+        });
+
+        (await _libraryService.RescanFolderForMusicAsync(folder.Id)).Should().BeTrue();
+
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        var saved = await assertContext.Albums.Include(a => a.AlbumArtists).ThenInclude(a => a.Artist).SingleAsync();
+        saved.Id.Should().Be(album.Id);
+        saved.Year.Should().Be(1990);
+        saved.CoverArtUri.Should().Be(album.CoverArtUri);
+        saved.AlbumArtists.OrderBy(a => a.Order).Select(a => a.Artist.Name).Should().Equal("Primary", "Guest");
+        (await assertContext.Songs.SingleAsync()).AlbumId.Should().Be(album.Id);
+    }
+
+    [Fact]
+    public async Task RescanFolderForMusicAsync_SeparatesAlbumKeysContainingDelimiters()
+    {
+        var folder = new Folder { Path = @"C:\Music", Name = "Music" };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            await context.SaveChangesAsync();
+        }
+        var first = new SongFileMetadata { FilePath = @"C:\Music\one.mp3", Title = "One", Album = "A|B", Artists = ["C"] };
+        var second = new SongFileMetadata { FilePath = @"C:\Music\two.mp3", Title = "Two", Album = "A", Artists = ["B|C"] };
+        _fileSystem.DirectoryExists(folder.Path).Returns(true);
+        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
+            .Returns(new[] { (first.FilePath, DateTime.UtcNow), (second.FilePath, DateTime.UtcNow) });
+        _metadataService.ExtractMetadataAsync(first.FilePath, folder.Path).Returns(first);
+        _metadataService.ExtractMetadataAsync(second.FilePath, folder.Path).Returns(second);
+
+        (await _libraryService.RescanFolderForMusicAsync(folder.Id)).Should().BeTrue();
+
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        var songs = await assertContext.Songs.Include(s => s.Album).OrderBy(s => s.Title).ToListAsync();
+        songs.Select(s => s.Album!.Title).Should().Equal("A|B", "A");
+        songs.Select(s => s.AlbumId).Should().OnlyHaveUniqueItems();
+    }
+
+    [Fact]
     public void Album_SyncDenormalizedFields_CorrectlyJoinsArtists()
     {
-        // Arrange
+
         var album = new Album { Title = "Test Album" };
         album.AlbumArtists.Add(new AlbumArtist { Order = 0, Artist = new Artist { Name = "Main Artist" } });
         album.AlbumArtists.Add(new AlbumArtist { Order = 1, Artist = new Artist { Name = "Feature Artist" } });
 
-        // Act
         album.SyncDenormalizedFields();
 
-        // Assert
         album.ArtistName.Should().Be("Main Artist & Feature Artist");
         album.PrimaryArtistName.Should().Be("Main Artist");
     }
@@ -249,7 +260,7 @@ public class MultiArtistTests : IDisposable
     [Fact]
     public async Task PlayTransientFileAsync_PopulatesDenormalizedFields()
     {
-        // Arrange
+
         var filePath = "C:\\transient.mp3";
         var metadata = new SongFileMetadata
         {
@@ -261,18 +272,18 @@ public class MultiArtistTests : IDisposable
         };
         _metadataService.ExtractMetadataAsync(filePath).Returns(metadata);
 
-        var playbackService = new MusicPlaybackService(
+        using var playbackService = new MusicPlaybackService(
             Substitute.For<ISettingsService>(),
             Substitute.For<IAudioPlayer>(),
-            Substitute.For<ILibraryService>(),
+            Substitute.For<ISystemMediaControls>(),
+            Substitute.For<ILibraryReader>(),
+            Substitute.For<ILibraryWriter>(),
             _metadataService,
             Substitute.For<ILogger<MusicPlaybackService>>()
         );
 
-        // Act
         await playbackService.PlayTransientFileAsync(filePath);
 
-        // Assert
         playbackService.CurrentTrack.Should().NotBeNull();
         playbackService.CurrentTrack!.ArtistName.Should().Be("Artist 1 & Artist 2");
         playbackService.CurrentTrack.PrimaryArtistName.Should().Be("Artist 1");
@@ -280,42 +291,5 @@ public class MultiArtistTests : IDisposable
         playbackService.CurrentTrack.Album.Should().NotBeNull();
         playbackService.CurrentTrack.Album!.ArtistName.Should().Be("Artist 1");
         playbackService.CurrentTrack.Album.PrimaryArtistName.Should().Be("Artist 1");
-    }
-
-    [Fact]
-    public async Task AddSongWithDetailsAsync_CorrectlyPopulatesDenormalizedFields()
-    {
-        // Arrange
-        var folderId = Guid.NewGuid();
-        var metadata = new SongFileMetadata
-        {
-            FilePath = "C:\\Music\\AddSong.mp3",
-            Title = "Added Song",
-            Artists = new List<string> { "Singer A", "Singer B" },
-            Album = "Added Album",
-            Duration = TimeSpan.FromMinutes(3)
-        };
-
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Folders.Add(new Folder { Id = folderId, Path = "C:\\Music" });
-            await context.SaveChangesAsync();
-        }
-
-        // Act
-        var addedSong = await _libraryService.AddSongWithDetailsAsync(folderId, metadata);
-
-        // Assert
-        addedSong.Should().NotBeNull();
-        addedSong!.ArtistName.Should().Be("Singer A & Singer B");
-        addedSong.PrimaryArtistName.Should().Be("Singer A");
-
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            var album = await context.Albums.FirstOrDefaultAsync(a => a.Title == "Added Album");
-            album.Should().NotBeNull();
-            album!.ArtistName.Should().Be("Singer A & Singer B"); // In this method, AlbumArtists defaults to trackArtists
-            album.PrimaryArtistName.Should().Be("Singer A");
-        }
     }
 }

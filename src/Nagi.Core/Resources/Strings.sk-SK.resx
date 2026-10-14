@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>Priečinok</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Priečinky</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Manuálne poradie</value>
   </data>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Skenovanie dokončené. Pridaných alebo aktualizovaných {0} {1}.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Ukladám dávku {0}...</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Skenujem priečinok...</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Skenovanie dokončené. Knižnica je aktuálna.</value>
   </data>
@@ -194,16 +185,16 @@
     <value>Skenovanie zlyhalo. Podrobnosti nájdete v záznamoch.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Pripravujem vyrovnávacie pamäte skenovania...</value>
+    <value>Pripravuje sa skenovanie knižnice…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Čítam podrobnosti o skladbách...</value>
+    <value>Čítajú sa podrobnosti o skladbách…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Čistím vašu knižnicu...</value>
+    <value>Čistí sa vaša knižnica…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Dokončujem...</value>
+    <value>Dokončuje sa…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Normalizácia hlasitosti zlyhala. Podrobnosti nájdete v záznamoch.</value>
@@ -216,13 +207,10 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Nepodarilo sa pridať priečinok.</value>
+    <value>Priečinok sa nepodarilo pridať.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Názov zoznamu skladieb nemôže byť prázdny.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Hodnotenie musí byť medzi 1 a 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
@@ -248,7 +236,15 @@
     <value>Zoradiť podľa: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg je potrebný pre normalizáciu hlasitosti s vysokou presnosťou (analýza ReplayGain), ale nenašiel sa vo vašom systéme.\n\nNa jeho nastavenie postupujte podľa týchto krokov:\n\n1. **Stiahnuť**: Navštívte https://www.gyan.dev/ffmpeg/builds/ a stiahnite si 'ffmpeg-git-full.7z' (alebo podobnú) základnú verziu.\n2. **Príručka**: Podrobné pokyny nájdete v tejto príručke: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Extrahovať**: Otvorte priečinok s architektúrou a nájdite adresár 'bin' obsahujúci `ffmpeg.exe`.\n4. **Nainštalovať**: Skopírujte `ffmpeg.exe` do trvalého priečinka (napr. `C:\ffmpeg\`) a **pridajte tento priečinok do premennej prostredia System PATH**.\n5. **Reštartovať**: Po inštalácii reštartujte aplikáciu Nagi, aby sa zmeny prejavili.</value>
+    <value>Na analýzu skladieb na vyrovnanie hlasitosti je potrebný FFmpeg, ale aplikácia Nagi ho nemohla nájsť.
+
+1. Stiahnite si verziu pre Windows zo stránky https://ffmpeg.org/download.html.
+2. Rozbaľte archív a vyhľadajte ffmpeg.exe v jeho priečinku bin.
+3. Pridajte priečinok obsahujúci ffmpeg.exe do premennej Windows PATH.
+4. Reštartujte Nagi a znova zapnite vyrovnanie hlasitosti.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>Zoznam skladieb bol vytvorený, ale jeho skladby sa nepodarilo pridať. Skúste importovať znova.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>V knižnici sa nenašli žiadne skladby z tohto zoznamu skladieb.</value>
@@ -293,12 +289,39 @@
     <value>Všetky skladby už majú údaje o hlasitosti.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Vypočítavam hlasitosť pre {0} skladieb...</value>
+    <value>Analýza hlasitosti… Skladby: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Vypočítavam normalizáciu hlasitosti ({0}/{1})...</value>
+    <value>Výpočet vyrovnania hlasitosti ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Normalizácia hlasitosti dokončená. Spracovaných {0} skladieb.</value>
+    <value>Vyrovnanie hlasitosti je dokončené. Spracované skladby: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Zadajte svoj používateľský token pre ListenBrainz.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Odpoveď zo služby ListenBrainz sa nepodarilo prečítať. Skúste to znova neskôr.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Zadajte URL adresu servera začínajúcu sa na http:// alebo https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Používateľský token je neplatný. Skontrolujte ho a skúste to znova.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>Služba ListenBrainz vrátila chybu (HTTP {0}). Skúste to znova neskôr.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Nepodarilo sa pripojiť k službe ListenBrainz. Skontrolujte svoje pripojenie a URL adresu servera.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Aplikácia Nagi nemohla nájsť svoj priečinok s údajmi knižnice.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Obnovenie zlyhalo a vaše predchádzajúce údaje sa nepodarilo úplne obnoviť. Súbory obnovenia boli uložené do &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Vybraný súbor nie je platnou zálohou aplikácie Nagi.</value>
   </data>
 </root>

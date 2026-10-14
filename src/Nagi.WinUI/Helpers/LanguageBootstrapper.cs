@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Globalization;
 using Windows.Globalization;
-using Windows.Storage;
+using Nagi.WinUI.Services.Implementations;
 
 namespace Nagi.WinUI.Helpers;
 
-/// <summary>
-///     Helper class to bootstrap the application language settings before the main UI initializes.
-/// </summary>
 public static class LanguageBootstrapper
 {
     public static void Bootstrap()
@@ -16,7 +13,7 @@ public static class LanguageBootstrapper
         {
             string? language = null;
 
-            if (ApplicationData.Current.LocalSettings.Values.TryGetValue("AppLanguage", out var val) && val is string s)
+            if (new ApplicationDataSettingsStore().Values.TryGetValue("AppLanguage", out var val) && val is string s)
             {
                 language = s;
             }
@@ -25,7 +22,6 @@ public static class LanguageBootstrapper
             {
                 ApplicationLanguages.PrimaryLanguageOverride = language;
 
-                // Set .NET culture
                 var culture = new CultureInfo(language);
                 CultureInfo.CurrentUICulture = culture;
                 CultureInfo.CurrentCulture = culture;

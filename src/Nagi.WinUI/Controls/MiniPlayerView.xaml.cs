@@ -4,43 +4,31 @@ using System.ComponentModel;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.System;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.ViewModels;
 
 namespace Nagi.WinUI.Controls;
 
-/// <summary>
-///     A user control for the mini-player, which displays track information and provides
-///     media controls.
-/// </summary>
 public sealed partial class MiniPlayerView : UserControl
 {
     private readonly Window _parentWindow;
     private bool _isUnloaded;
 
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="MiniPlayerView" /> class.
-    /// </summary>
-    /// <param name="parentWindow">The parent window that hosts this control.</param>
-    public MiniPlayerView(Window parentWindow)
+    public MiniPlayerView(Window parentWindow, PlayerViewModel viewModel)
     {
         InitializeComponent();
         _parentWindow = parentWindow;
 
-        ViewModel = App.Services!.GetRequiredService<PlayerViewModel>();
+        ViewModel = viewModel;
         DataContext = this;
 
         SubscribeToEvents();
     }
 
-    /// <summary>
-    ///     Gets the view model that provides data and commands for the player UI.
-    /// </summary>
     public PlayerViewModel ViewModel { get; }
 
     /// <summary>
@@ -48,17 +36,12 @@ public sealed partial class MiniPlayerView : UserControl
     /// </summary>
     public UIElement TitleBarDragRegion => DragHandle;
 
-    /// <summary>
-    ///     Occurs when the user clicks the button to restore the main application window.
-    /// </summary>
     public event EventHandler? RestoreButtonClicked;
 
     private void SubscribeToEvents()
     {
         RestoreButton.Click += OnRestoreButtonClick;
-        _parentWindow.Activated += OnWindowActivated;
 
-        // Pointer events for hover effects.
         HoverDetector.PointerEntered += OnPointerEntered;
         HoverDetector.PointerExited += OnPointerExited;
         HoverDetector.PointerCanceled += OnPointerExited;
@@ -71,14 +54,16 @@ public sealed partial class MiniPlayerView : UserControl
         ArtistTextBlock.SizeChanged += OnInteractiveRegionChanged;
         SizeChanged += OnInteractiveRegionChanged;
 
-        ViewModel.PropertyChanged += OnViewModelPropertyChanged;
-
         Loaded += OnLoaded;
         Unloaded += OnUnloaded;
     }
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
+        _isUnloaded = false;
+        _parentWindow.Activated += OnWindowActivated;
+        ViewModel.PropertyChanged += OnViewModelPropertyChanged;
+
         // Initialize hover controls visual to ensure first hover works immediately.
         CompositionAnimationHelper.SetOpacityImmediate(HoverControlsContainer, 0f);
 
@@ -87,30 +72,9 @@ public sealed partial class MiniPlayerView : UserControl
 
     private void OnUnloaded(object sender, RoutedEventArgs e)
     {
-        // Ensure cleanup logic runs only once.
-        if (_isUnloaded) return;
         _isUnloaded = true;
-
-        // Unsubscribe from all events to prevent memory leaks.
-        RestoreButton.Click -= OnRestoreButtonClick;
         _parentWindow.Activated -= OnWindowActivated;
-
-        HoverDetector.PointerEntered -= OnPointerEntered;
-        HoverDetector.PointerExited -= OnPointerExited;
-        HoverDetector.PointerCanceled -= OnPointerExited;
-
-        MediaSeekerSlider.SizeChanged -= OnInteractiveRegionChanged;
-        MediaControlsPanel.SizeChanged -= OnInteractiveRegionChanged;
-        BackButton.SizeChanged -= OnInteractiveRegionChanged;
-        RestoreButton.SizeChanged -= OnInteractiveRegionChanged;
-        QueueListView.SizeChanged -= OnInteractiveRegionChanged;
-        ArtistTextBlock.SizeChanged -= OnInteractiveRegionChanged;
-        SizeChanged -= OnInteractiveRegionChanged;
-
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
-
-        Loaded -= OnLoaded;
-        Unloaded -= OnUnloaded;
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -178,7 +142,6 @@ public sealed partial class MiniPlayerView : UserControl
     {
         if (_isUnloaded) return;
 
-        // Hide hover controls when the window is no longer in the foreground.
         if (args.WindowActivationState == WindowActivationState.Deactivated)
             AnimateHoverControls(visible: false, useTransitions: false);
     }
@@ -200,9 +163,6 @@ public sealed partial class MiniPlayerView : UserControl
         AnimateHoverControls(visible: false);
     }
 
-    /// <summary>
-    ///     Animates the hover controls visibility using GPU-accelerated Composition.
-    /// </summary>
     private void AnimateHoverControls(bool visible, bool useTransitions = true)
     {
         var targetOpacity = visible ? 1f : 0f;

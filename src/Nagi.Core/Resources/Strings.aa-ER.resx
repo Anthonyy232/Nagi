@@ -60,245 +60,268 @@
   </resheader>
   <!-- Noun Labels -->
   <data name="Label_Artist" xml:space="preserve">
-    <value>Anuukule</value>
+    <value>Kantana</value>
   </data>
   <data name="Label_Album" xml:space="preserve">
-    <value>Alboom</value>
+    <value>Album</value>
   </data>
   <data name="Label_Genre" xml:space="preserve">
-    <value>Mida</value>
+    <value>Genre</value>
   </data>
   <data name="Label_Title" xml:space="preserve">
-    <value>Maqaaca</value>
+    <value>Migac</value>
   </data>
   <data name="Label_Playlist" xml:space="preserve">
-    <value>Pileyiliisti</value>
+    <value>Playlist</value>
   </data>
   <data name="Label_File" xml:space="preserve">
-    <value>Faayili</value>
+    <value>Fayli</value>
   </data>
   <data name="Label_Year" xml:space="preserve">
     <value>Sanat</value>
   </data>
   <data name="Label_DateAdded" xml:space="preserve">
-    <value>Edde Yabteh Saaku</value>
+    <value>Ossobbe Guya</value>
   </data>
   <data name="Label_DateCreated" xml:space="preserve">
-    <value>Edde Loommayteh Saaku</value>
+    <value>Ginomte Guya</value>
   </data>
   <data name="Label_DateModified" xml:space="preserve">
-    <value>Edde Calalteh Saaku</value>
+    <value>Korsimte Guya</value>
   </data>
   <data name="Label_LastPlayed" xml:space="preserve">
-    <value>Uguta Ugut Axxemme Saaku</value>
+    <value>Wadir Yaabeh</value>
   </data>
   <data name="Label_Duration" xml:space="preserve">
-    <value>Ugutte Saaku</value>
+    <value>Wakhti</value>
   </data>
   <data name="Label_Bpm" xml:space="preserve">
     <value>BPM</value>
   </data>
   <data name="Label_TrackNumber" xml:space="preserve">
-    <value>Saana Lakko</value>
+    <value>Track Lakkaw</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Ugut Lakko</value>
+    <value>Yaaba</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
-    <value>Saana</value>
+    <value>Kantitta</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Mangalleele</value>
+    <value>Kantanaasi</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
-    <value>Saana</value>
+    <value>Kanta</value>
   </data>
   <data name="Label_Folder" xml:space="preserve">
-    <value>Bolda</value>
-  </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Bolda</value>
+    <value>Galbata</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
-    <value>Adda Yabteh Gata</value>
+    <value>Gaba-massakaxxa</value>
   </data>
   <data name="Label_Random" xml:space="preserve">
-    <value>Adda-Adda</value>
+    <value>Galeeba</value>
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
-    <value>{0} Maaxinay Mali</value>
+    <value>Aaxagak male {0}</value>
   </data>
   <data name="Format_New" xml:space="preserve">
-    <value>{0} Ginnih</value>
+    <value>Qada {0}</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
-    <value>{0} Mayallinnum</value>
+    <value>{0} gee-mayyu.</value>
   </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (A-tik Z-tih)</value>
+    <value>{0} (A-k Z)</value>
   </data>
   <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (Z-tik A-tih)</value>
+    <value>{0} (Z-k A)</value>
   </data>
   <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Ginnih)</value>
+    <value>{0} (Qaduk-iytuk)</value>
   </data>
   <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (Kassa)</value>
+    <value>{0} (Dume-iytuk)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Yaggiriike)</value>
+    <value>{0} (Yowwe-raaka)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Gadda)</value>
+    <value>{0} (Obbe-raaka)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
-    <value>Yanaakabem Awwal</value>
+    <value>Xagga-xaraar Dumu</value>
   </data>
   <data name="Format_LongestFirst" xml:space="preserve">
-    <value>Wagitte Awwal</value>
+    <value>Xagga-dheere Dumu</value>
   </data>
   <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>Koo-Kooyah Awwal ({0})</value>
+    <value>Xagga-gaala Dumu ({0})</value>
   </data>
   <data name="Format_FastestFirst" xml:space="preserve">
-    <value>Dagoh Awwal ({0})</value>
+    <value>Xagga-sissik Dumu ({0})</value>
   </data>
   <data name="Format_Most" xml:space="preserve">
-    <value>{0} Yallih</value>
+    <value>Mango {0}</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
-    <value>{0} Mada</value>
+    <value>Daggada {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
-    <value>Bolda Diggirey {0} ik {1}: {2} - {3}</value>
+    <value>Galbata korissak {0} taxxix {1}: {2} - {3}</value>
   </data>
   <data name="Format_ScanCompleteResult" xml:space="preserve">
-    <value>Diggirey Direb. {0} {1} Yabteh hinnay Calalteh.</value>
-  </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Madaaba {0} Xayyareh...</value>
+    <value>Koris gabatti. Ossobbe hinnay cusubbose {0} {1}.</value>
   </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Bolda Diggirey...</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
-    <value>Diggirey Direb. Layibarari Saakuk Yak.</value>
+    <value>Koris gabatti. Kanta-lahya tagge-sissikuk taani.</value>
   </data>
   <data name="Status_ScanCancelled" xml:space="preserve">
-    <value>Diggirey Axxam.</value>
+    <value>Koris dirise.</value>
   </data>
   <data name="Status_ScanFailed" xml:space="preserve">
-    <value>Diggirey Rabak. Log-ittek Ayyuuni Diggirey.</value>
+    <value>Koris baahe-mayyu. Logite wagitta fayda-agora.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Diggirey Kasiis Xayyarey...</value>
+    <value>Kanta-lahya koris massakaxak…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Saana Kee Xakaba Diggirey...</value>
+    <value>Kanta-xaagos wagak…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Inni Layibarari Ayyuunih...</value>
+    <value>Kanta-lahya xaggsisak…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Direbey...</value>
+    <value>Gaba-kalak…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
-    <value>Baxaxxa-Fidi Sagal Madak Rabak. Log-ittek Ayyuuni Diggirey.</value>
+    <value>Volume normalization baahe-mayyu. Logite wagitta fayda-agora.</value>
   </data>
   <data name="Status_NoFoldersToRefresh" xml:space="preserve">
-    <value>Layibararih Bolda Mali Diggirey Ayyuunih.</value>
+    <value>Kanta-lahyal qadissiyya galbatitta aaxige-mayyu.</value>
   </data>
   <data name="Status_LibraryRefreshComplete" xml:space="preserve">
-    <value>Layibarari Diggirey Direb.</value>
+    <value>Kanta-lahya qadissiyya gabatti.</value>
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Bolda Diggaare Rabak.</value>
+    <value>Galbata ossa baahe-mayyu.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
-    <value>Pileyiliisti Maqaaca Mada Mali.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Fidi 1 kee 5 Fan Geytimtam Gini.</value>
+    <value>Playlist migac koo-magililay.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
-    <value>Wagitte Akak Yanih</value>
+    <value>kanta-xaagos leeh</value>
   </data>
   <data name="Label_WithCoverArt" xml:space="preserve">
-    <value>Gidda Saaku Akak Yanih</value>
+    <value>cover art leeh</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>Mangalleele-le qacnisih</value>
+    <value>kantana-sawar leeh</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>kee</value>
   </data>
   <!-- Static Strings -->
   <data name="UnknownFilename" xml:space="preserve">
-    <value>Maaxinay Mali</value>
+    <value>aaxagak male</value>
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
     <value> &amp; </value>
   </data>
   <data name="SortByPrefix" xml:space="preserve">
-    <value>Diggirey Ita:</value>
+    <value>Ginginaay: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>Baxaxxa-fidi Sagal Madak (ReplayGain diggirey) Ayyuunih FFmpeg ginni amah. Amma siinik mayallinnum.\n\nDiggaaroy Akah Teedego:\n\n1. **Deedego**: https://www.gyan.dev/ffmpeg/builds/ gitaa kee 'ffmpeg-git-full.7z' (hinnay diggirey-madak) Deedego.\n2. **Gacsa**: Akah teedego: https://phoenixnap.com/kb/ffmpeg-windows gitaa kee Diggirey.\n3. **Ayyuuni**: Madaaba Bolda-yak Ayyuuni kee 'bin' direktoori-yak `ffmpeg.exe` diggirey.\n4. **Diggaare**: `ffmpeg.exe` Wagitteh Bolda-yak (t.f. `C:\ffmpeg\`) diggaare kee **bolda System PATH** edde diggaare.\n5. **Taddiq**: Diggirey yaaba Nagi Taddiq.</value>
+    <value>FFmpeg Volume Normalization-ah kanta-xaagos korissanah Nagi-h xagga gee-mayyu.
+
+1. Windows build deeqa: https://ffmpeg.org/download.html.
+2. Archive ayyeetayi ffmpeg.exe bin galbatil gee.
+3. ffmpeg.exe le galbata Windows PATH-ah ossoba.
+4. Nagi ugusa, tefika volume normalization qadissa.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>Playlist ginte, waddike teet kantitta ossa baahe-mayyu. Import-aata keeninna.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Pileyiliisti-yak Saana Mayallinnum siinik Layibararih.</value>
+    <value>Playlist-k kantitta kanta-lahyal gee-mayyu.</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
-    <value>Pileyiliisti Mali Taddigaay.</value>
+    <value>Export aban Playlist aaxige-mayyu.</value>
   </data>
   <data name="EqPreset_None" xml:space="preserve">
-    <value>Mali</value>
+    <value>Uro</value>
   </data>
   <data name="EqPreset_Classical" xml:space="preserve">
-    <value>Klassiik</value>
+    <value>Classical</value>
   </data>
   <data name="EqPreset_Dance" xml:space="preserve">
-    <value>Rakaakay</value>
+    <value>Dance</value>
   </data>
   <data name="EqPreset_FullBass" xml:space="preserve">
-    <value>Qaxxa Bass</value>
+    <value>Full Bass</value>
   </data>
   <data name="EqPreset_FullTreble" xml:space="preserve">
-    <value>Qaxxa Tibri</value>
+    <value>Full Treble</value>
   </data>
   <data name="EqPreset_Jazz" xml:space="preserve">
-    <value>Jaas</value>
+    <value>Jazz</value>
   </data>
   <data name="EqPreset_Pop" xml:space="preserve">
     <value>Pop</value>
   </data>
   <data name="EqPreset_Rock" xml:space="preserve">
-    <value>Rook</value>
+    <value>Rock</value>
   </data>
   <data name="EqPreset_Soft" xml:space="preserve">
-    <value>Qaddo</value>
+    <value>Soft</value>
   </data>
   <data name="EqPreset_Techno" xml:space="preserve">
-    <value>Tekno</value>
+    <value>Techno</value>
   </data>
   <data name="EqPreset_Vocal" xml:space="preserve">
-    <value>Saggaf</value>
+    <value>Vocal</value>
   </data>
   <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
-    <value>Saana-nim Diggirey Sagal Fidi Mali.</value>
+    <value>Ummaan kantitta volume data leeh yani.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Sagal Fidi Diggirey {0} Saana-yak...</value>
+    <value>Volume korissak… Kantitta: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Baxaxxa-Fidi Sagal Diggirey ({0}/{1})...</value>
+    <value>Volume normalization massakaxak ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Baxaxxa-Fidi Sagal Diggirey Direb. {0} Saana Diggirey.</value>
+    <value>Volume normalization gabatti. Kantitta massakaxe: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>ListenBrainz user token ossoba.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>ListenBrainz response wagga baahe-mayyu. Wadir-soolo keeninna.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>http:// hinnay https:// xaqal gano server URL ossoba.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>User token baxsa-malle. Wagitta, wadir-soolo keeninna.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz error baahe (HTTP {0}). Wadir-soolo keeninna.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>ListenBrainz xaga baahe-mayyu. Connection kee server URL wagitta.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi kanta-lahya data galbata gee-mayyu.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Restore baahe-mayyu, taxxix duma data gabatak restore abta baahe-mayyu. Recovery faylit &apos;{0}&apos; leedah gaabise.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Doorimte fayli baxsa-le Nagi backup hinna.</value>
   </data>
 </root>

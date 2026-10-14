@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using Nagi.WinUI.Controls;
+using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Pages;
 
@@ -13,6 +14,12 @@ public sealed partial class SplashPage : Page, ICustomTitleBarProvider
             LogoEntrance.Begin();
             TitleEntrance.Begin();
             StatusEntrance.Begin();
+            if (!CompositionAnimationHelper.AreAnimationsEnabled)
+            {
+                LogoEntrance.SkipToFill();
+                TitleEntrance.SkipToFill();
+                StatusEntrance.SkipToFill();
+            }
         };
     }
 
@@ -21,8 +28,4 @@ public sealed partial class SplashPage : Page, ICustomTitleBarProvider
         return AppTitleBar;
     }
 
-    public RowDefinition GetAppTitleBarRowElement()
-    {
-        return AppTitleBarRow;
-    }
 }

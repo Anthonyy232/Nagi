@@ -1,0 +1,31 @@
+﻿using Nagi.Core.Models;
+
+namespace Nagi.Core.Services.Abstractions;
+
+/// <summary>
+///     The operating system's media overlay and media keys, such as the System Media Transport Controls on
+///     Windows. Button events are raised on the UI thread.
+/// </summary>
+public interface ISystemMediaControls
+{
+    event Action? PlayPressed;
+    event Action? PausePressed;
+    event Action? NextPressed;
+    event Action? PreviousPressed;
+
+    void Initialize();
+
+    void SetNavigationEnabled(bool canGoNext, bool canGoPrevious);
+
+    void SetPlaybackStatus(SystemMediaPlaybackStatus status);
+
+    /// <summary>
+    ///     Shows <paramref name="song" /> as now playing. A later call wins over one still loading its artwork.
+    /// </summary>
+    Task SetNowPlayingAsync(Song song);
+
+    /// <summary>
+    ///     Clears the now-playing display and shows playback as stopped.
+    /// </summary>
+    void Clear();
+}

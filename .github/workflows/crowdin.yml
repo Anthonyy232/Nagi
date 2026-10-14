@@ -3,7 +3,18 @@ name: Crowdin Sync
 on:
   push:
     branches: [ master ]
+    paths:
+      - src/Nagi.Core/Resources/Strings.resx
+      - src/Nagi.Presentation/Resources/Strings.resx
+      - src/Nagi.WinUI/Strings/en-US/Resources.resw
+      - crowdin.yml
+      - .github/workflows/crowdin.yml
+  schedule:
+    - cron: '0 8 * * 1'
   workflow_dispatch:
+
+concurrency:
+  group: crowdin-sync
 
 permissions:
   contents: write
@@ -14,10 +25,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
 
       - name: Crowdin Action
-        uses: crowdin/github-action@v2.16.3
+        uses: crowdin/github-action@v3.3.0
         with:
           upload_sources: true
           upload_translations: false

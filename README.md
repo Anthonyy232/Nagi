@@ -10,7 +10,7 @@
     <a href="https://github.com/Anthonyy232/Nagi/releases"><img src="https://img.shields.io/github/downloads/Anthonyy232/Nagi/total?style=flat-square&color=52c65f" alt="Total Downloads"></a>
     <a href="https://github.com/Anthonyy232/Nagi/releases/latest"><img src="https://img.shields.io/github/v/release/Anthonyy232/Nagi?style=flat-square" alt="Latest Release"></a>
     <a href="https://github.com/Anthonyy232/Nagi/blob/master/LICENSE"><img src="https://img.shields.io/github/license/Anthonyy232/Nagi?style=flat-square" alt="License"></a>
-    <a href="https://github.com/Anthonyy232/Nagi/actions/workflows/build.yml"><img src="https://github.com/Anthonyy232/Nagi/actions/workflows/build.yml/badge.svg" alt="Nagi CI/CD with Velopack"></a>
+    <a href="https://github.com/Anthonyy232/Nagi/actions/workflows/build.yml"><img src="https://github.com/Anthonyy232/Nagi/actions/workflows/build.yml/badge.svg" alt="Nagi CI/CD"></a>
     <img src="https://img.shields.io/badge/Platform-Windows-0078D6?style=flat-square&logo=windows" alt="Platform">
     <img src="https://img.shields.io/badge/WinUI_3-59278F?style=flat-square&logo=windows&logoColor=white" alt="WinUI 3">
 </div>
@@ -32,14 +32,19 @@
 
 - **Fluent & Modern UI**: A beautiful, responsive interface built with WinUI 3, featuring customizable backdrops (Mica, Mica Alt, Acrylic) and smooth animations.
 - **Dynamic Theming**: The app's color scheme adapts in real-time to the artwork of the currently playing song for a truly immersive experience.
-- **Synced Lyrics**: Display synced lyrics from embedded tags or external `.lrc` files. Tap any line to jump directly to that moment in the song.
+- **Lyrics**: Display lyrics from embedded tags, external `.lrc` files, or optional online providers, with plain-text fallback when synced lyrics are unavailable. Tap a synced line to jump to that moment in the song.
 - **Resizable Mini-Player**: A sleek, always-on-top mini-player with playback controls, album art, and an efficiency mode for low resource usage.
 - **Folder-Based Library**: Add your music folders and Nagi automatically scans, organizes, and keeps your collection up to date.
 - **Playlists & Smart Playlists**: Create custom playlists or powerful rule-based smart playlists that automatically update as your library grows.
-- **Queue Management**: Drop files or folders onto the bottom player to add them to the queue, without importing them into your library. Use Up Next to view the queue, with full shuffle and repeat controls.
+- **Queue Management**: Drop files or folders onto the bottom player to queue them without importing them into your library. Use Up Next to view and reorder tracks in an inline side pane, with shuffle and repeat controls.
+- **Listening Mixes**: Use the shuffle dropdown for More variety (avoids the past day's tracks and spaces out artists), Rediscover (played tracks not heard in over 30 days), or Unheard. These modes use your local library and listening history.
+- **Play for…**: Build a queue of whole songs within a chosen duration from the current song list. More variety offers an optional recent-play exclusion window. Timed mixes turn repeat off and stop at the end of the queue.
+- **Favorites & Rediscovery**: Favorite songs from their menus or with Ctrl+D. Enable the optional Favorites page in Settings → Customize Navigation. A dismissible library suggestion surfaces an often-played song not heard in over 90 days. Favorites stay in Nagi's database without changing audio files.
+- **Listening History**: Use the history button in the Up Next header to search recent listens or replay a track while preserving the queue. Earlier listens load automatically as you scroll.
+- **Sleep Timer**: Use the options menu beside the player's song title to stop after a track, at queue end, or after a preset/custom duration. Choose whether a custom timer finishes the current song; the active timer appears in the player and continues while minimized.
 - **10-Band Equalizer**: Fine-tune your sound with a fully customizable 10-band equalizer and pregain control.
 - **Volume Normalization**: ReplayGain support ensures consistent volume levels across your entire library.
-- **Last.fm & Discord Integration**: Scrobble your tracks to Last.fm, fetch artist metadata, and show off your listening activity with Discord Rich Presence.
+- **Last.fm, ListenBrainz & Discord Integration**: Scrobble your tracks to Last.fm or ListenBrainz, fetch artist metadata, and show your listening activity with Discord Rich Presence.
 - **System Tray & Media Controls**: Control playback from the system tray popup or use Windows media keys and transport controls.
 - **Wide Format Support**: Play virtually any audio format including MP3, FLAC, AAC, OGG, WAV, AIFF, APE, DSD, M4A, WMA, WavPack, and more.
 
@@ -80,11 +85,12 @@ Localization support for Nagi is powered by Crowdin. Contributions to add new la
 - **[C#](https://docs.microsoft.com/en-us/dotnet/csharp/)** & **[.NET 10](https://dotnet.microsoft.com/)**: The core programming language and framework for building robust Windows applications.
 - **[WinUI 3](https://docs.microsoft.com/en-us/windows/apps/winui/winui3/)** in **[Windows App SDK](https://github.com/microsoft/WindowsAppSDK)**: The native UI platform for crafting modern, fluent interfaces on Windows.
 - **[LibVLCSharp](https://github.com/videolan/libvlcsharp)**: A cross-platform .NET binding for LibVLC, enabling robust and wide-ranging audio format support.
+- **[libebur128](https://github.com/jiixyj/libebur128)**: Native loudness measurement for ReplayGain, with FFmpeg providing audio decoding. Native binary provenance and rebuild instructions are in [Native/libebur128](src/Nagi.Core/Native/libebur128/README.md).
 - **[Community Toolkit for WinUI](https://github.com/CommunityToolkit/WindowsCommunityToolkit)**: A collection of controls, helpers, and services to simplify app development (e.g., ColorPicker, SettingsControls).
 - **[Community Toolkit MVVM](https://docs.microsoft.com/en-us/dotnet/communitytoolkit/mvvm/)**: A modern, fast, and platform-agnostic MVVM library.
 - **[Entity Framework Core (SQLite)](https://docs.microsoft.com/en-us/ef/core/)**: A modern object-relational mapper for .NET, used for local database storage.
 - **[ATL (Audio Tools Library)](https://github.com/Zeugma440/atldotnet)**: A versatile library for reading and writing metadata in audio files.
-- **[LrcParser](https://github.com/OpportunityLiu/LrcParser)**: For parsing LRC lyrics files.
+- **[ModernLrc](https://github.com/Anthonyy232/ModernLrcParser)**: For parsing LRC lyrics files.
 - **[SixLabors.ImageSharp](https://github.com/SixLabors/ImageSharp)**: A cross-platform library for image processing.
 - **[MaterialColorUtilities](https://github.com/material-foundation/material-color-utilities)**: For generating dynamic color schemes from artwork.
 - **[H.NotifyIcon.WinUI](https://github.com/HavenDV/H.NotifyIcon)**: For creating and managing the Windows tray icon.
@@ -101,9 +107,9 @@ This project is built using C# and the Windows App SDK.
 
 ### Prerequisites
 
-- Visual Studio 2022 or later
+- Visual Studio 2026 (18.0) or later, as required for [targeting .NET 10](https://learn.microsoft.com/en-us/dotnet/core/porting/versioning-sdk-msbuild-vs)
 - The **".NET Desktop Development"** and **"Universal Windows Platform development"** workloads installed (includes Windows App SDK).
-- .NET 10 SDK
+- .NET 10 SDK 10.0.401 or later, matching `global.json`
 
 ### Steps
 
@@ -129,6 +135,17 @@ This project is built using C# and the Windows App SDK.
    GitHub releases use the production SignPath signing workflow. Microsoft Store uploads use the Store publisher identity and remain unsigned locally.
 
 ### Development
+
+Run the core tests and the Windows view-model tests with:
+
+```powershell
+dotnet test --project tests/Nagi.Core.Tests/Nagi.Core.Tests.csproj -c Release
+dotnet test --project tests/Nagi.WinUI.Tests/Nagi.WinUI.Tests.csproj -c Release -p:Platform=x64
+```
+
+The test projects use Microsoft.Testing.Platform with xUnit's native runner, including Visual Studio 2026 Test Explorer. VSTest adapters are not required.
+
+The Windows tests run against the app assembly without launching a XAML application. They cover paging, queue loading, cancellation, load recovery, and artwork URIs. The core audio analysis tests require `ffmpeg` on `PATH`. Both suites run on pull requests to `master`.
 
   To perform a database migration:
 

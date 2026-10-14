@@ -102,7 +102,7 @@
     <value>Spornummer</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Antall avspillinger</value>
+    <value>Avspillinger</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>Sanger</value>
@@ -115,9 +115,6 @@
   </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Mappe</value>
-  </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Mapper</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Manuell rekkefølge</value>
@@ -148,10 +145,10 @@
     <value>{0} (Eldste)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Stigende)</value>
+    <value>{0} (stigende)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Synkende)</value>
+    <value>{0} (synkende)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>Kortest først</value>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Skanning fullført. La til eller oppdaterte {0} {1}.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Lagrer gruppe {0}...</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Skanner mappe...</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Skanning fullført. Biblioteket er oppdatert.</value>
   </data>
@@ -194,16 +185,16 @@
     <value>Skanning mislyktes. Sjekk logger for detaljer.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Forbereder skannebuffer...</value>
+    <value>Klargjør skanning av bibliotek…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Leser sangdetaljer...</value>
+    <value>Leser sangdetaljer…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Rydder opp i biblioteket ditt...</value>
+    <value>Rydder opp i biblioteket…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Fullfører...</value>
+    <value>Fullfører…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Volumnormalisering mislyktes. Sjekk logger for detaljer.</value>
@@ -216,13 +207,10 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Kunne ikke legge til mappe.</value>
+    <value>Kunne ikke legge til mappen.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Spillelistenavnet kan ikke være tomt.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Vurderingen må være mellom 1 og 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
@@ -248,15 +236,15 @@
     <value>Sorter etter: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg er nødvendig for høypresisjons volumnormalisering (ReplayGain-analyse), men ble ikke funnet på systemet ditt.
+    <value>FFmpeg er nødvendig for å analysere sanger for volumutjevning, men Nagi fant det ikke.
 
-Følg disse trinnene for å konfigurere det:
-
-1. **Last ned**: Besøk https://www.gyan.dev/ffmpeg/builds/ og last ned "ffmpeg-git-full.7z" (eller lignende) essentials-bygget.
-2. **Veiledning**: Du kan følge denne veiledningen for detaljerte instruksjoner: https://phoenixnap.com/kb/ffmpeg-windows
-3. **Pakk ut**: Åpne arkitekturmappen og finn "bin"-katalogen som inneholder `ffmpeg.exe`.
-4. **Installer**: Kopier `ffmpeg.exe` til en permanent mappe (f.eks. `C:\ffmpeg\`) og **legg til den mappen i systemets PATH**-miljøvariabel.
-5. **Start på nytt**: Vennligst start Nagi på nytt etter installasjonen for at endringene skal tre i kraft.</value>
+1. Last ned en Windows-versjon fra https://ffmpeg.org/download.html.
+2. Pakk ut arkivet og finn ffmpeg.exe i bin-mappen.
+3. Legg til mappen som inneholder ffmpeg.exe i din Windows PATH.
+4. Start Nagi på nytt, og aktiver deretter volumutjevning igjen.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>Spillelisten ble opprettet, men sangene kunne ikke legges til. Prøv å importere på nytt.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Ingen sanger fra spillelisten ble funnet i biblioteket ditt.</value>
@@ -301,12 +289,39 @@ Følg disse trinnene for å konfigurere det:
     <value>Alle sanger har allerede volumdata.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Beregner volum for {0} sanger...</value>
+    <value>Analyserer volum… Sanger: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Beregner volumnormalisering ({0}/{1})...</value>
+    <value>Beregner volumutjevning ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Volumnormalisering fullført. Behandlet {0} sanger.</value>
+    <value>Volumutjevning fullført. Behandlede sanger: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Skriv inn din ListenBrainz-brukertoken.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Kunne ikke lese svaret fra ListenBrainz. Prøv igjen senere.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Skriv inn en server-URL som begynner med http:// eller https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Brukertokenen er ugyldig. Sjekk den og prøv igjen.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz returnerte en feil (HTTP {0}). Prøv igjen senere.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Kunne ikke koble til ListenBrainz. Sjekk tilkoblingen og server-URL-en.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi fant ikke datamappen for biblioteket sitt.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Gjenopprettingen mislyktes, og de forrige dataene dine kunne ikke gjenopprettes fullstendig. Gjenopprettingsfiler ble lagret i &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Den valgte filen er ikke en gyldig Nagi-sikkerhetskopi.</value>
   </data>
 </root>

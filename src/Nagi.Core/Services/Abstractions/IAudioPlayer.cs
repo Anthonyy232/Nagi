@@ -2,10 +2,6 @@
 
 namespace Nagi.Core.Services.Abstractions;
 
-/// <summary>
-///     Defines a low-level audio player responsible for playback control
-///     and integration with the System Media Transport Controls (SMTC).
-/// </summary>
 public interface IAudioPlayer : IDisposable
 {
     #region Events
@@ -15,65 +11,27 @@ public interface IAudioPlayer : IDisposable
     /// </summary>
     event Action? PlaybackEnded;
 
-    /// <summary>
-    ///     Occurs frequently as the playback position changes.
-    /// </summary>
     event Action? PositionChanged;
 
-    /// <summary>
-    ///     Occurs when the player's state (e.g., Playing, Paused, Stopped) changes.
-    /// </summary>
     event Action? StateChanged;
 
-    /// <summary>
-    ///     Occurs when the volume or mute state is changed.
-    /// </summary>
     event Action? VolumeChanged;
 
-    /// <summary>
-    ///     Occurs when a media playback error is encountered. The string parameter contains the error message.
-    /// </summary>
     event Action<string>? ErrorOccurred;
 
-    /// <summary>
-    ///     Occurs when new media has been successfully opened and is ready for playback.
-    /// </summary>
     event Action? MediaOpened;
 
-    /// <summary>
-    ///     Occurs when the duration of the currently loaded media becomes known.
-    /// </summary>
     event Action? DurationChanged;
 
-    /// <summary>
-    ///     Occurs when the SMTC 'Next' button is pressed by the user.
-    ///     This allows the high-level playback service to manage the queue.
-    /// </summary>
-    event Action? SmtcNextButtonPressed;
-
-    /// <summary>
-    ///     Occurs when the SMTC 'Previous' button is pressed by the user.
-    ///     This allows the high-level playback service to manage the queue.
-    /// </summary>
-    event Action? SmtcPreviousButtonPressed;
 
     #endregion
 
     #region Properties
 
-    /// <summary>
-    ///     Gets a value indicating whether media is currently playing.
-    /// </summary>
     bool IsPlaying { get; }
 
-    /// <summary>
-    ///     Gets the current playback position.
-    /// </summary>
     TimeSpan CurrentPosition { get; }
 
-    /// <summary>
-    ///     Gets the duration of the currently loaded media.
-    /// </summary>
     TimeSpan Duration { get; }
 
     /// <summary>
@@ -81,58 +39,40 @@ public interface IAudioPlayer : IDisposable
     /// </summary>
     double Volume { get; }
 
-    /// <summary>
-    ///     Gets a value indicating whether the player is currently muted.
-    /// </summary>
     bool IsMuted { get; }
+
+    /// <summary>The current output ID, or an empty string for system default routing.</summary>
+    string AudioOutputDeviceId { get; }
 
     #endregion
 
     #region Methods
 
     /// <summary>
-    ///     Ensures the audio player is initialized and ready for playback.
-    ///     This synchronous version is for use by sync callers. For async contexts,
-    ///     prefer <see cref="EnsureInitializedAsync"/> to avoid blocking.
-    /// </summary>
-    void EnsureInitialized();
-
-    /// <summary>
     ///     Asynchronously ensures the audio player is initialized and ready for playback.
     ///     This can be called from a background thread to pre-warm the audio engine
-    ///     without blocking the UI thread during app startup. Multiple concurrent calls
-    ///     will await the same initialization task.
+    ///     without blocking the UI thread during app startup. Concurrent calls are serialized.
     /// </summary>
     /// <returns>A task that completes when initialization is done.</returns>
     Task EnsureInitializedAsync();
 
-    /// <summary>
-    ///     Initializes the System Media Transport Controls for integration with the OS.
-    /// </summary>
-    void InitializeSmtc();
+    /// <summary>Enumerates named outputs; system default is represented separately by an empty ID.</summary>
+    Task<IReadOnlyList<AudioOutputDeviceInfo>> GetAudioOutputDevicesAsync();
 
     /// <summary>
-    ///     Updates the enabled state of the SMTC 'Next' and 'Previous' buttons.
+    /// Requests an output change. An empty ID selects the system default.
+    /// True means the request was accepted; opening the output stream can still fail asynchronously.
     /// </summary>
-    /// <param name="canNext">A value indicating whether the 'Next' button should be enabled.</param>
-    /// <param name="canPrevious">A value indicating whether the 'Previous' button should be enabled.</param>
-    void UpdateSmtcButtonStates(bool canNext, bool canPrevious);
+    Task<bool> SetAudioOutputDeviceAsync(string deviceId);
 
     /// <summary>
     ///     Asynchronously loads a song for playback. The returned task completes when the media is successfully opened or has
     ///     failed to load.
-    /// </summary>
     /// <param name="song">The song to load.</param>
     Task LoadAsync(Song song);
 
-    /// <summary>
-    ///     Starts or resumes playback of the loaded media.
-    /// </summary>
     Task PlayAsync();
 
-    /// <summary>
-    ///     Pauses playback of the current media.
-    /// </summary>
     Task PauseAsync();
 
     /// <summary>
@@ -140,10 +80,6 @@ public interface IAudioPlayer : IDisposable
     /// </summary>
     Task StopAsync();
 
-    /// <summary>
-    ///     Seeks to a specific position in the current media.
-    /// </summary>
-    /// <param name="position">The position to seek to.</param>
     Task SeekAsync(TimeSpan position);
 
     /// <summary>
@@ -152,23 +88,10 @@ public interface IAudioPlayer : IDisposable
     /// <param name="volume">The volume level, clamped between 0.0 and 1.0.</param>
     Task SetVolumeAsync(double volume);
 
-    /// <summary>
-    ///     Sets the player's mute state.
-    /// </summary>
-    /// <param name="isMuted">True to mute the player, false to unmute.</param>
     Task SetMuteAsync(bool isMuted);
 
-    /// <summary>
-    ///     Applies equalizer settings to the media player.
-    /// </summary>
-    /// <param name="settings">The equalizer settings to apply.</param>
-    /// <returns>True if the equalizer was set successfully; otherwise, false.</returns>
     bool ApplyEqualizerSettings(EqualizerSettings settings);
 
-    /// <summary>
-    ///     Gets the descriptive information for each available equalizer band.
-    /// </summary>
-    /// <returns>A read-only list of band indices and their corresponding frequencies.</returns>
     IReadOnlyList<(uint Index, float Frequency)> GetEqualizerBands();
 
     /// <summary>
@@ -183,14 +106,8 @@ public interface IAudioPlayer : IDisposable
     /// </summary>
     void SetFadeOnPlayPauseEnabled(bool isEnabled);
 
-    /// <summary>
-    ///     Sets the duration of the fade-in effect when playing.
-    /// </summary>
     void SetFadeInDuration(int durationMs);
 
-    /// <summary>
-    ///     Sets the duration of the fade-out effect when pausing.
-    /// </summary>
     void SetFadeOutDuration(int durationMs);
 
     #endregion

@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>Mapa</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Mape</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Ručni redoslijed</value>
   </data>
@@ -148,10 +145,10 @@
     <value>{0} (Najstarije)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Uzl.)</value>
+    <value>{0} (uzlazno)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Sil.)</value>
+    <value>{0} (silazno)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>Prvo najkraće</value>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Skeniranje završeno. Dodano ili ažurirano {0} {1}.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Spremanje serije {0}...</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Skeniranje mape...</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Skeniranje završeno. Knjižnica je ažurna.</value>
   </data>
@@ -194,16 +185,16 @@
     <value>Skeniranje nije uspjelo. Provjerite zapisnike za detalje.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Priprema predmemorija za skeniranje...</value>
+    <value>Priprema skeniranja biblioteke…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Čitanje detalja pjesme...</value>
+    <value>Čitanje detalja o pjesmama…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Čišćenje vaše knjižnice...</value>
+    <value>Čišćenje biblioteke…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Završavanje...</value>
+    <value>Dovršavanje…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Normalizacija glasnoće nije uspjela. Provjerite zapisnike za detalje.</value>
@@ -216,13 +207,10 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Dodavanje mape nije uspjelo.</value>
+    <value>Nije moguće dodati mapu.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Naziv popisa pjesama ne može biti prazan.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Ocjena mora biti između 1 i 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
@@ -248,15 +236,15 @@
     <value>Sortiraj po: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg je potreban za normalizaciju glasnoće visoke preciznosti (ReplayGain analiza), ali nije pronađen na vašem sustavu.
+    <value>FFmpeg je potreban za analizu pjesama radi izjednačavanja glasnoće, ali ga Nagi nije mogao pronaći.
 
-Slijedite ove korake za postavljanje:
-
-1. **Preuzmite**: Posjetite https://www.gyan.dev/ffmpeg/builds/ i preuzmite "ffmpeg-git-full.7z" (ili sličnu) esencijalnu verziju.
-2. **Vodič**: Možete slijediti ovaj vodič za detaljne upute: https://phoenixnap.com/kb/ffmpeg-windows
-3. **Raspakirajte**: Otvorite mapu arhitekture i pronađite "bin" direktorij koji sadrži `ffmpeg.exe`.
-4. **Instalirajte**: Kopirajte `ffmpeg.exe` u trajnu mapu (npr. `C:\ffmpeg\`) i **dodajte tu mapu u varijablu okruženja System PATH**.
-5. **Ponovo pokrenite**: Molimo ponovo pokrenite Nagi nakon instalacije da bi promjene stupile na snagu.</value>
+1. Preuzmite verziju za Windows s https://ffmpeg.org/download.html.
+2. Raspakirajte arhivu i pronađite ffmpeg.exe u njezinoj mapi bin.
+3. Dodajte mapu koja sadrži ffmpeg.exe u svoj Windows PATH.
+4. Ponovno pokrenite Nagi, a zatim ponovno omogućite izjednačavanje glasnoće.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>Popis izvođenja je stvoren, ali njegove pjesme nisu mogle biti dodane. Pokušajte ponovno uvesti.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Nijedna pjesma s popisa pjesama nije pronađena u vašoj knjižnici.</value>
@@ -301,12 +289,39 @@ Slijedite ove korake za postavljanje:
     <value>Sve pjesme već imaju podatke o glasnoći.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Izračunavanje glasnoće za {0} pjesama...</value>
+    <value>Analiza glasnoće… Pjesme: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Izračunavanje normalizacije glasnoće ({0}/{1})...</value>
+    <value>Izračunavanje izjednačavanja glasnoće ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Normalizacija glasnoće završena. Obrađeno {0} pjesama.</value>
+    <value>Izjednačavanje glasnoće je dovršeno. Obrađene pjesme: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Unesite svoj korisnički token za ListenBrainz.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Nije moguće pročitati odgovor s ListenBrainz-a. Pokušajte ponovno kasnije.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Unesite URL poslužitelja koji počinje s http:// ili https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Korisnički token nije valjan. Provjerite ga i pokušajte ponovno.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz je vratio pogrešku (HTTP {0}). Pokušajte ponovno kasnije.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Nije se moguće povezati s ListenBrainz-om. Provjerite vezu i URL poslužitelja.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi nije mogao pronaći svoju mapu s podacima biblioteke.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Obnova nije uspjela i vaši prethodni podaci nisu se mogli potpuno obnoviti. Datoteke za oporavak spremljene su u &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Odabrana datoteka nije valjana sigurnosna kopija za Nagi.</value>
   </data>
 </root>

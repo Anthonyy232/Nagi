@@ -11,18 +11,10 @@
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <ResourceDictionary Source="ms-appx:///Styles/Converters.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/Colors.xaml" />
-                <ResourceDictionary Source="ms-appx:///Styles/NavigationViewColors.xaml" />
+                <ResourceDictionary Source="ms-appx:///Styles/Icons.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/MediaControlPlayerColors.xaml" />
-                <ResourceDictionary Source="ms-appx:///Styles/LibraryPageColors.xaml" />
-                <ResourceDictionary Source="ms-appx:///Styles/PlaylistPageColors.xaml" />
-                <ResourceDictionary Source="ms-appx:///Styles/FolderPageColors.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/SettingsPageColors.xaml" />
-                <ResourceDictionary Source="ms-appx:///Styles/ArtistPageColors.xaml" />
-                <ResourceDictionary Source="ms-appx:///Styles/ArtistViewPageColors.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/SongListViewPageColors.xaml" />
-                <ResourceDictionary Source="ms-appx:///Styles/AlbumPageColors.xaml" />
-                <ResourceDictionary Source="ms-appx:///Styles/OnboardingPageColors.xaml" />
-                <ResourceDictionary Source="ms-appx:///Styles/GenrePageColors.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/InsightsPageColors.xaml" />
                 <styles:InsightsTemplates />
                 <ResourceDictionary Source="ms-appx:///Styles/LyricsPageColors.xaml" />

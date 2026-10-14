@@ -1,8 +1,5 @@
 ﻿namespace Nagi.Core.Services.Abstractions;
 
-/// <summary>
-///     Provides an abstraction over the file system to enable testability and platform-specific implementations.
-/// </summary>
 public interface IFileSystemService
 {
     bool DirectoryExists(string path);
@@ -18,7 +15,6 @@ public interface IFileSystemService
 
     bool FileExists(string path);
     void DeleteFile(string path);
-    void CopyFile(string sourceFileName, string destFileName, bool overwrite);
     void MoveFile(string sourceFileName, string destFileName, bool overwrite);
     DateTime GetLastWriteTimeUtc(string path);
     FileInfo GetFileInfo(string path);

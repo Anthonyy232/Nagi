@@ -1,7 +1,0 @@
-<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-
-    <!-- Defines the visual appearance and interactive states for artist items in a GridView. -->
-    <Style x:Key="ArtistPageGridViewItemStyle" TargetType="GridViewItem" BasedOn="{StaticResource AnimatedGridViewItemStyle}" />
-</ResourceDictionary>

@@ -102,7 +102,7 @@
     <value>Numéro de piste</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Nombre de lectures</value>
+    <value>Lectures</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>Chansons</value>
@@ -115,9 +115,6 @@
   </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Dossier</value>
-  </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Dossiers</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Ordre manuel</value>
@@ -148,10 +145,10 @@
     <value>{0} (Plus ancien)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Asc.)</value>
+    <value>{0} (croissant)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Desc.)</value>
+    <value>{0} (décroissant)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>Plus court d'abord</value>
@@ -169,7 +166,7 @@
     <value>Le plus {0}</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
-    <value>Le moins {0}</value>
+    <value>Moins de {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Analyse du dossier {0} sur {1} : {2} - {3}</value>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Analyse terminée. {0} {1} ajouté(e)s ou mis(es) à jour.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Enregistrement du lot {0}...</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Analyse du dossier...</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Analyse terminée. La bibliothèque est à jour.</value>
   </data>
@@ -194,16 +185,16 @@
     <value>Échec de l'analyse. Consultez les journaux pour plus de détails.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Préparation des caches d'analyse...</value>
+    <value>Préparation de l'analyse de la bibliothèque…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Lecture des détails des chansons...</value>
+    <value>Lecture des détails des morceaux…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Nettoyage de votre bibliothèque...</value>
+    <value>Nettoyage de votre bibliothèque…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Finalisation...</value>
+    <value>Finalisation…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Échec de la normalisation du volume. Consultez les journaux pour plus de détails.</value>
@@ -216,13 +207,10 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Échec de l'ajout du dossier.</value>
+    <value>Impossible d'ajouter le dossier.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Le nom de la liste de lecture ne peut pas être vide.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>La note doit être comprise entre 1 et 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
@@ -248,7 +236,15 @@
     <value>Trier par : </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg est requis pour la normalisation du volume de haute précision (analyse ReplayGain) mais n'a pas été trouvé sur votre système.\n\nSuivez ces étapes pour le configurer :\n\n1. **Télécharger** : Visitez https://www.gyan.dev/ffmpeg/builds/ et téléchargez la version essentielle 'ffmpeg-git-full.7z' (ou similaire).\n2. **Guide** : Vous pouvez suivre ce guide pour des instructions détaillées : https://phoenixnap.com/kb/ffmpeg-windows\n3. **Extraire** : Ouvrez le dossier d'architecture et localisez le répertoire 'bin' contenant `ffmpeg.exe`.\n4. **Installer** : Copiez `ffmpeg.exe` dans un dossier permanent (par exemple, `C:\\ffmpeg\\`) et **ajoutez ce dossier à la variable d'environnement PATH de votre système**.\n5. **Redémarrer** : Veuillez redémarrer Nagi après l'installation pour que les modifications prennent effet.</value>
+    <value>FFmpeg est nécessaire pour analyser les morceaux en vue de la normalisation du volume, mais Nagi ne l'a pas trouvé.
+
+1. Téléchargez une version pour Windows depuis https://ffmpeg.org/download.html.
+2. Extrayez l'archive et localisez ffmpeg.exe dans son dossier bin.
+3. Ajoutez le dossier contenant ffmpeg.exe à votre PATH Windows.
+4. Redémarrez Nagi, puis réactivez la normalisation du volume.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>La liste de lecture a été créée, mais ses morceaux n'ont pas pu être ajoutés. Veuillez réessayer l'importation.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Aucune chanson de la liste de lecture n'a été trouvée dans votre bibliothèque.</value>
@@ -293,12 +289,39 @@
     <value>Toutes les chansons ont déjà des données de volume.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Calcul du volume pour {0} chansons...</value>
+    <value>Analyse du volume… Morceaux : {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Calcul de la normalisation du volume ({0}/{1})...</value>
+    <value>Calcul de la normalisation du volume ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Normalisation du volume terminée. {0} chansons traitées.</value>
+    <value>Normalisation du volume terminée. Morceaux traités : {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Saisissez votre jeton d'utilisateur ListenBrainz.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Impossible de lire la réponse de ListenBrainz. Réessayez plus tard.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Saisissez une URL de serveur commençant par http:// ou https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Le jeton d'utilisateur est invalide. Vérifiez-le et réessayez.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz a retourné une erreur (HTTP {0}). Réessayez plus tard.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Impossible de se connecter à ListenBrainz. Vérifiez votre connexion et l'URL du serveur.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi n'a pas pu trouver son dossier de données de bibliothèque.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>La restauration a échoué et vos données précédentes n'ont pas pu être entièrement restaurées. Les fichiers de récupération ont été enregistrés dans &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Le fichier sélectionné n'est pas une sauvegarde Nagi valide.</value>
   </data>
 </root>

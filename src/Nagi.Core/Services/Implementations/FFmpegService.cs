@@ -1,37 +1,20 @@
 ﻿using System.Diagnostics;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.Core.Services.Implementations;
 
 public class FFmpegService : IFFmpegService
 {
-    private readonly ILogger<FFmpegService> _logger;
     private readonly SemaphoreSlim _lock = new(1, 1);
     private bool? _isInstalled;
 
-    public FFmpegService(ILogger<FFmpegService> logger)
-    {
-        _logger = logger;
-    }
-
     public async Task<bool> IsFFmpegInstalledAsync(bool forceRecheck = false)
     {
-        if (!forceRecheck && _isInstalled.HasValue)
-        {
-            return _isInstalled.Value;
-        }
-
         await _lock.WaitAsync().ConfigureAwait(false);
         try
         {
-            // Clear cache if forcing recheck
-            if (forceRecheck)
-            {
-                _isInstalled = null;
-            }
-            else if (_isInstalled.HasValue)
+            if (!forceRecheck && _isInstalled.HasValue)
             {
                 return _isInstalled.Value;
             }
@@ -53,6 +36,8 @@ public class FFmpegService : IFFmpegService
                 return false;
             }
 
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
             await process.WaitForExitAsync().ConfigureAwait(false);
             _isInstalled = process.ExitCode == 0;
             return _isInstalled.Value;

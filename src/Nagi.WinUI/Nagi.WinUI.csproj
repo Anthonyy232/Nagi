@@ -23,6 +23,10 @@
         <ProjectGuid>57ABC68F-E3A9-42BD-ABDF-CE1B7E2ACE95</ProjectGuid>
     </PropertyGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="Nagi.WinUI.Tests" />
+    </ItemGroup>
+
     <!-- =============================================================== -->
     <!-- == Packaged (MSIX) Configuration                               == -->
     <!-- =============================================================== -->
@@ -84,6 +88,8 @@
     <ItemGroup>
         <!-- Project References -->
         <ProjectReference Include="..\Nagi.Core\Nagi.Core.csproj" />
+        <ProjectReference Include="..\Nagi.Presentation\Nagi.Presentation.csproj" />
+        <ProjectReference Include="..\Nagi.Audio.LibVlc\Nagi.Audio.LibVlc.csproj" />
 
         <!-- Core SDKs and Build Tools -->
         <!-- Reference only the runtime and WinUI components, excluding unused AI/ML components. -->
@@ -93,10 +99,13 @@
         <PackageReference Include="Microsoft.WindowsAppSDK.WinUI">
             <TreatAsUsed>true</TreatAsUsed>
         </PackageReference>
+        <!-- WinUI 2.3.9 requests an unpublished InteractiveExperiences 2.1.8 package. -->
+        <PackageReference Include="Microsoft.WindowsAppSDK.InteractiveExperiences">
+            <TreatAsUsed>true</TreatAsUsed>
+        </PackageReference>
         <PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
 
         <!-- Application Services (DI, Configuration) -->
-        <PackageReference Include="MessageFormat" />
         <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
 
@@ -107,8 +116,6 @@
         <PackageReference Include="H.NotifyIcon.WinUI" />
         <PackageReference Include="ImageEx.WinUI" />
 
-        <!-- Video Playback -->
-        <PackageReference Include="LibVLCSharp" />
         <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" />
         <PackageReference Include="Serilog.Enrichers.Thread" />
         <PackageReference Include="Serilog.Extensions.Logging" />
@@ -116,6 +123,8 @@
         <PackageReference Include="Serilog.Sinks.Debug" />
         <PackageReference Include="Serilog.Sinks.File" />
         <PackageReference Include="SixLabors.ImageSharp" />
+
+        <!-- LibVLC native libraries for Windows, used by the player in Nagi.Audio.LibVlc -->
         <PackageReference Include="VideoLAN.LibVLC.Windows" />
     </ItemGroup>
 
@@ -133,7 +142,6 @@
     <ItemGroup>
         <!-- MSIX Assets -->
         <Content Include="Assets\SplashScreen.scale-200.png" />
-        <Content Include="Assets\LockScreenLogo.scale-200.png" />
         <Content Include="Assets\Square150x150Logo.scale-200.png" />
         <Content Include="Assets\Square44x44Logo.scale-200.png" />
         <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-24.png" />
@@ -143,6 +151,12 @@
 
     <ItemGroup>
         <!-- Application Content -->
+        <Content Include="Assets\ScrollEdgeNoise.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Assets\FluentSystemIcons.LICENSE.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
         <Content Include="Assets\AppLogo.ico">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
@@ -154,4 +168,8 @@
         </None>
     </ItemGroup>
 
+    <!-- XAML's temporary assembly needs resource accessors before the normal resource build step. -->
+    <Target Name="GenerateResourceAccessorsBeforeXaml"
+            BeforeTargets="MarkupCompilePass1"
+            DependsOnTargets="PrepareResourceNames;ResGen" />
 </Project>

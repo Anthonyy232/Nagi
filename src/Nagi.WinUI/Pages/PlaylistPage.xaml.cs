@@ -1,25 +1,18 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
-using Microsoft.Windows.Storage.Pickers;
 using Windows.System;
-using ImageEx;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
-using Nagi.Core.Constants;
-using Nagi.WinUI.Helpers;
-using Nagi.WinUI.ViewModels;
+using Nagi.Presentation.Resources;
+using Nagi.Presentation.ViewModels;
 
 namespace Nagi.WinUI.Pages;
 
-/// <summary>
-///     A page that displays a grid of playlists and allows creating, renaming, and deleting them.
-/// </summary>
 public sealed partial class PlaylistPage : Page
 {
     private readonly ILogger<PlaylistPage> _logger;
@@ -43,8 +36,8 @@ public sealed partial class PlaylistPage : Page
             _logger.LogDebug("PlaylistPage loaded. Setting initial visual state and loading playlists...");
             _isSearchExpanded = !string.IsNullOrWhiteSpace(ViewModel.SearchTerm);
             ToolTipService.SetToolTip(SearchToggleButton, _isSearchExpanded
-                ? Nagi.WinUI.Resources.Strings.PlaylistPage_SearchButton_Close_ToolTip
-                : Nagi.WinUI.Resources.Strings.PlaylistPage_SearchButton_Search_ToolTip);
+                ? Strings.PlaylistPage_SearchButton_Close_ToolTip
+                : Strings.PlaylistPage_SearchButton_Search_ToolTip);
             VisualStateManager.GoToState(this, _isSearchExpanded ? "SearchExpanded" : "SearchCollapsed", false);
             await ViewModel.LoadPlaylistsCommand.ExecuteAsync(null);
             _logger.LogDebug("Finished loading playlists.");
@@ -59,12 +52,9 @@ public sealed partial class PlaylistPage : Page
     {
         base.OnNavigatedFrom(e);
         _logger.LogDebug("Navigating away from PlaylistPage.");
-        // Note: ViewModel is Singleton, do not dispose - state persists across navigations
+        ViewModel.ResetState();
     }
 
-    /// <summary>
-    ///     Handles the search toggle button click to expand or collapse the search box.
-    /// </summary>
     private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e)
     {
         if (_isSearchExpanded)
@@ -73,9 +63,6 @@ public sealed partial class PlaylistPage : Page
             ExpandSearch();
     }
 
-    /// <summary>
-    ///     Handles key down events in the search text box.
-    /// </summary>
     private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
     {
         if (e.Key == VirtualKey.Escape)
@@ -86,57 +73,33 @@ public sealed partial class PlaylistPage : Page
         }
     }
 
-    /// <summary>
-    ///     Expands the search interface with an animation.
-    /// </summary>
     private void ExpandSearch()
     {
         if (_isSearchExpanded) return;
 
         _isSearchExpanded = true;
         _logger.LogDebug("Search UI expanded.");
-        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.PlaylistPage_SearchButton_Close_ToolTip);
-        VisualStateManager.GoToState(this, "SearchExpanded", true);
-
-        var timer = DispatcherQueue.CreateTimer();
-        timer.Interval = TimeSpan.FromMilliseconds(150);
-        timer.Tick += (s, args) =>
-        {
-            timer.Stop();
-            SearchTextBox.Focus(FocusState.Programmatic);
-        };
-        timer.Start();
+        ToolTipService.SetToolTip(SearchToggleButton, Strings.PlaylistPage_SearchButton_Close_ToolTip);
+        VisualStateManager.GoToState(this, "SearchExpanded", false);
+        SearchTextBox.Focus(FocusState.Programmatic);
     }
 
-    /// <summary>
-    ///     Collapses the search interface with an animation and resets the filter.
-    /// </summary>
     private void CollapseSearch()
     {
         if (!_isSearchExpanded) return;
 
         _isSearchExpanded = false;
         _logger.LogDebug("Search UI collapsed and search term cleared.");
-        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.PlaylistPage_SearchButton_Search_ToolTip);
-        VisualStateManager.GoToState(this, "SearchCollapsed", true);
+        ToolTipService.SetToolTip(SearchToggleButton, Strings.PlaylistPage_SearchButton_Search_ToolTip);
+        VisualStateManager.GoToState(this, "SearchCollapsed", false);
+        SearchToggleButton.Focus(FocusState.Programmatic);
         ViewModel.SearchTerm = string.Empty;
     }
-    private async void PlayPlaylist_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is not FrameworkElement { DataContext: PlaylistViewModelItem playlistItem } ||
-            ViewModel.IsAnyOperationInProgress) return;
+    private static PlaylistViewModelItem? ItemOf(object sender) =>
+        (sender as FrameworkElement)?.DataContext as PlaylistViewModelItem;
 
-        try
-        {
-            _logger.LogDebug("User initiated playback of playlist '{PlaylistName}' (Id: {PlaylistId}).",
-                playlistItem.Name, playlistItem.Id);
-            await ViewModel.PlayPlaylistCommand.ExecuteAsync(new Tuple<Guid, bool>(playlistItem.Id, playlistItem.IsSmart));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error starting playback of playlist {PlaylistName}", playlistItem.Name);
-        }
-    }
+    private async void PlayPlaylist_Click(object sender, RoutedEventArgs e) =>
+        await RunCommandAsync(ViewModel.PlayPlaylistCommand, ItemOf(sender), "playing playlist");
 
     private void PlaylistsGridView_ItemClick(object sender, ItemClickEventArgs e)
     {
@@ -149,275 +112,33 @@ public sealed partial class PlaylistPage : Page
         }
     }
 
-    private async void CreateNewPlaylistButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (ViewModel.IsAnyOperationInProgress)
-        {
-            _logger.LogDebug("Create playlist button clicked, but an operation is already in progress. Ignoring.");
-            return;
-        }
+    private async void CreateNewPlaylistButton_Click(object sender, RoutedEventArgs e) =>
+        await RunCommandAsync(ViewModel.CreatePlaylistCommand, null, "creating playlist");
 
+    private async void CreateSmartPlaylistButton_Click(object sender, RoutedEventArgs e) =>
+        await RunCommandAsync(ViewModel.CreateSmartPlaylistCommand, null, "creating smart playlist");
+
+    private async void RenamePlaylist_Click(object sender, RoutedEventArgs e) =>
+        await RunCommandAsync(ViewModel.RenamePlaylistCommand, ItemOf(sender), "renaming playlist");
+
+    private async void DeletePlaylist_Click(object sender, RoutedEventArgs e) =>
+        await RunCommandAsync(ViewModel.DeletePlaylistCommand, ItemOf(sender), "deleting playlist");
+
+    private async void ChangeCover_Click(object sender, RoutedEventArgs e) =>
+        await RunCommandAsync(ViewModel.ChangePlaylistCoverCommand, ItemOf(sender), "changing playlist cover");
+
+    private async void RemoveImage_Click(object sender, RoutedEventArgs e) =>
+        await RunCommandAsync(ViewModel.RemovePlaylistCoverCommand, ItemOf(sender), "removing playlist cover");
+
+    private async Task RunCommandAsync(IAsyncRelayCommand command, object? parameter, string action)
+    {
         try
         {
-            _logger.LogDebug("Showing 'Create New Playlist' dialog.");
-            string? selectedCoverImageUriForDialog = null;
-
-            var inputTextBox = new TextBox { PlaceholderText = Nagi.WinUI.Resources.Strings.PlaylistPage_CreateDialog_Placeholder };
-            var imagePreview = new ImageEx.ImageEx
-            {
-                Stretch = Stretch.UniformToFill,
-                IsCacheEnabled = true,
-                DecodePixelWidth = 80,
-                DecodePixelType = DecodePixelType.Logical
-            };
-            var imagePlaceholder = new FontIcon { Glyph = "\uE91B", FontSize = 48 };
-            var imageGrid = new Grid
-            {
-                Width = 80,
-                Height = 80,
-                Margin = new Thickness(0, 0, 0, 12),
-                HorizontalAlignment = HorizontalAlignment.Center
-            };
-            imageGrid.Children.Add(imagePlaceholder);
-            imageGrid.Children.Add(imagePreview);
-            var pickImageButton = new Button
-            {
-                Content = Nagi.WinUI.Resources.Strings.PlaylistPage_CreateDialog_PickImage,
-                Margin = new Thickness(0, 12, 0, 0),
-                HorizontalAlignment = HorizontalAlignment.Stretch
-            };
-            var dialogContent = new StackPanel();
-            dialogContent.Children.Add(imageGrid);
-            dialogContent.Children.Add(inputTextBox);
-            dialogContent.Children.Add(pickImageButton);
-
-            var dialog = new ContentDialog
-            {
-                Title = Nagi.WinUI.Resources.Strings.PlaylistPage_CreateDialog_Title,
-                Content = dialogContent,
-                PrimaryButtonText = Nagi.WinUI.Resources.Strings.PlaylistPage_CreateDialog_CreateButton,
-                CloseButtonText = Nagi.WinUI.Resources.Strings.PlaylistPage_CreateDialog_CancelButton,
-                DefaultButton = ContentDialogButton.Primary,
-                XamlRoot = XamlRoot
-            };
-
-            pickImageButton.Click += async (s, args) =>
-            {
-                try
-                {
-                    var pickedUri = await PickCoverImageAsync();
-                    if (!string.IsNullOrWhiteSpace(pickedUri))
-                    {
-                        selectedCoverImageUriForDialog = pickedUri;
-                        imagePreview.Source = Helpers.ImageUriHelper.SafeGetImageSource(pickedUri);
-                        imagePlaceholder.Visibility = Visibility.Collapsed;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error picking cover image for new playlist");
-                }
-            };
-            inputTextBox.TextChanged += (s, args) =>
-                dialog.IsPrimaryButtonEnabled = !string.IsNullOrWhiteSpace(inputTextBox.Text);
-            dialog.IsPrimaryButtonEnabled = false;
-
-            Helpers.DialogThemeHelper.ApplyThemeOverrides(dialog);
-            var result = await dialog.ShowAsync();
-
-            if (result == ContentDialogResult.Primary)
-            {
-                _logger.LogDebug("User confirmed creation of new playlist '{PlaylistName}'.", inputTextBox.Text);
-                var argsTuple = new Tuple<string, string?>(inputTextBox.Text, selectedCoverImageUriForDialog);
-                await ViewModel.CreatePlaylistCommand.ExecuteAsync(argsTuple);
-            }
-            else
-            {
-                _logger.LogDebug("User cancelled 'Create New Playlist' dialog.");
-            }
+            await command.ExecuteAsync(parameter);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in create new playlist dialog flow");
-        }
-    }
-
-    private async void CreateSmartPlaylistButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (ViewModel.IsAnyOperationInProgress)
-        {
-            _logger.LogDebug("Create smart playlist button clicked, but an operation is already in progress. Ignoring.");
-            return;
-        }
-
-        try
-        {
-            _logger.LogDebug("Smart playlist creation requested. Opening editor dialog.");
-
-            var dialog = new Dialogs.SmartPlaylistEditorDialog
-            {
-                XamlRoot = XamlRoot
-            };
-
-            var result = await dialog.ShowAsync();
-
-            if (result == ContentDialogResult.Primary && dialog.ResultPlaylist != null)
-            {
-                _logger.LogDebug("User created smart playlist '{PlaylistName}' (Id: {PlaylistId}).",
-                    dialog.ResultPlaylist.Name, dialog.ResultPlaylist.Id);
-                await ViewModel.LoadPlaylistsCommand.ExecuteAsync(null);
-            }
-            else
-            {
-                _logger.LogDebug("User cancelled smart playlist creation.");
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error in create smart playlist dialog flow");
-        }
-    }
-
-    private async void RenamePlaylist_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is not FrameworkElement { DataContext: PlaylistViewModelItem playlistItem } ||
-            ViewModel.IsAnyOperationInProgress) return;
-
-        try
-        {
-            _logger.LogDebug("Showing 'Rename Playlist' dialog for '{PlaylistName}'.", playlistItem.Name);
-            var inputTextBox = new TextBox { Text = playlistItem.Name };
-            var dialog = new ContentDialog
-            {
-                Title = string.Format(Nagi.WinUI.Resources.Strings.PlaylistPage_RenameDialog_Title_Format, playlistItem.Name),
-                Content = inputTextBox,
-                PrimaryButtonText = Nagi.WinUI.Resources.Strings.PlaylistPage_RenameDialog_RenameButton,
-                CloseButtonText = Nagi.WinUI.Resources.Strings.PlaylistPage_CreateDialog_CancelButton,
-                DefaultButton = ContentDialogButton.Primary,
-                XamlRoot = XamlRoot
-            };
-
-            inputTextBox.TextChanged += (s, args) =>
-                dialog.IsPrimaryButtonEnabled = !string.IsNullOrWhiteSpace(inputTextBox.Text) &&
-                                                inputTextBox.Text.Trim() != playlistItem.Name;
-            dialog.IsPrimaryButtonEnabled = false;
-
-            Helpers.DialogThemeHelper.ApplyThemeOverrides(dialog);
-            var result = await dialog.ShowAsync();
-
-            if (result == ContentDialogResult.Primary)
-            {
-                _logger.LogDebug("User confirmed rename of playlist '{OldName}' to '{NewName}'.", playlistItem.Name,
-                    inputTextBox.Text);
-                var argsTuple = new Tuple<Guid, string, bool>(playlistItem.Id, inputTextBox.Text, playlistItem.IsSmart);
-                await ViewModel.RenamePlaylistCommand.ExecuteAsync(argsTuple);
-            }
-            else
-            {
-                _logger.LogDebug("User cancelled rename of playlist '{PlaylistName}'.", playlistItem.Name);
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error renaming playlist {PlaylistName}", playlistItem.Name);
-        }
-    }
-
-    private async void DeletePlaylist_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is not FrameworkElement { DataContext: PlaylistViewModelItem playlistItem } ||
-            ViewModel.IsAnyOperationInProgress) return;
-
-        try
-        {
-            _logger.LogDebug("Showing 'Delete Playlist' confirmation for '{PlaylistName}'.", playlistItem.Name);
-            var dialog = new ContentDialog
-            {
-                Title = Nagi.WinUI.Resources.Strings.PlaylistPage_DeleteDialog_Title,
-                Content = string.Format(Nagi.WinUI.Resources.Strings.PlaylistPage_DeleteDialog_Content_Format, playlistItem.Name),
-                PrimaryButtonText = Nagi.WinUI.Resources.Strings.PlaylistPage_DeleteDialog_DeleteButton,
-                CloseButtonText = Nagi.WinUI.Resources.Strings.PlaylistPage_CreateDialog_CancelButton,
-                DefaultButton = ContentDialogButton.Close,
-                XamlRoot = XamlRoot
-            };
-
-            DialogThemeHelper.ApplyThemeOverrides(dialog);
-            var result = await dialog.ShowAsync();
-            if (result == ContentDialogResult.Primary)
-            {
-                _logger.LogDebug("User confirmed deletion of playlist '{PlaylistName}' (Id: {PlaylistId}).",
-                    playlistItem.Name, playlistItem.Id);
-                await ViewModel.DeletePlaylistCommand.ExecuteAsync(new Tuple<Guid, bool>(playlistItem.Id, playlistItem.IsSmart));
-            }
-            else
-            {
-                _logger.LogDebug("User cancelled deletion of playlist '{PlaylistName}'.", playlistItem.Name);
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error deleting playlist {PlaylistName}", playlistItem.Name);
-        }
-    }
-
-    private async void ChangeCover_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is not FrameworkElement { DataContext: PlaylistViewModelItem playlistItem } ||
-            ViewModel.IsAnyOperationInProgress) return;
-
-        try
-        {
-            _logger.LogDebug("User initiated cover image change for playlist '{PlaylistName}'.", playlistItem.Name);
-            var newCoverImageUri = await PickCoverImageAsync();
-
-            if (!string.IsNullOrWhiteSpace(newCoverImageUri))
-            {
-                _logger.LogDebug("User selected new cover image for playlist '{PlaylistName}'. Updating.",
-                    playlistItem.Name);
-                var argsTuple = new Tuple<Guid, string, bool>(playlistItem.Id, newCoverImageUri, playlistItem.IsSmart);
-                await ViewModel.UpdatePlaylistCoverCommand.ExecuteAsync(argsTuple);
-            }
-            else
-            {
-                _logger.LogDebug("User cancelled cover image selection.");
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error changing cover image for playlist {PlaylistName}", playlistItem.Name);
-        }
-    }
-
-    private async Task<string?> PickCoverImageAsync()
-    {
-        _logger.LogDebug("Opening file picker for cover image.");
-        var picker = new FileOpenPicker(App.RootWindow!.AppWindow.Id);
-        foreach (var ext in FileExtensions.ImageFileExtensions)
-            picker.FileTypeFilter.Add(ext);
-
-        var file = await picker.PickSingleFileAsync();
-        if (file != null)
-        {
-            _logger.LogDebug("User picked image file: {FilePath}", file.Path);
-            return file.Path;
-        }
-
-        _logger.LogDebug("User did not pick an image file.");
-        return null;
-    }
-
-    private async void RemoveImage_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is not FrameworkElement { DataContext: PlaylistViewModelItem playlistItem }) return;
-
-        try
-        {
-            _logger.LogDebug("User requested removal of custom image for playlist '{PlaylistName}'.", playlistItem.Name);
-            await ViewModel.RemovePlaylistCoverCommand.ExecuteAsync(new Tuple<Guid, bool>(playlistItem.Id, playlistItem.IsSmart));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error removing cover image for playlist {PlaylistName}", playlistItem.Name);
+            _logger.LogError(ex, "Error {Action}", action);
         }
     }
 }

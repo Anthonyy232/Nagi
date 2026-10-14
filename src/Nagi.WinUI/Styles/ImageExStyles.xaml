@@ -4,14 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:ImageEx">
 
-    <!--
-        Default ImageEx template binds the inner Image's HorizontalAlignment and
-        VerticalAlignment to the control's own alignment, which causes wide or tall
-        sources to be anchored to the left/top edge instead of being center-cropped.
-        This restyle hard-codes Center alignment on the inner Image so UniformToFill
-        crops symmetrically around the middle of the source — matching where most
-        album/song cover art has its focal point.
-    -->
     <Style TargetType="controls:ImageEx">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{ThemeResource ApplicationForegroundThemeBrush}" />
@@ -27,59 +19,56 @@
                         CornerRadius="{TemplateBinding CornerRadius}">
                         <Image
                             Name="PlaceholderImage"
+                            Width="{TemplateBinding Width}"
+                            Height="{TemplateBinding Height}"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Opacity="1.0"
                             Source="{TemplateBinding PlaceholderSource}"
-                            Stretch="{TemplateBinding PlaceholderStretch}" />
+                            Stretch="{TemplateBinding PlaceholderStretch}">
+                            <Image.OpacityTransition>
+                                <ScalarTransition Duration="0:0:0.2" />
+                            </Image.OpacityTransition>
+                        </Image>
                         <Image
                             Name="Image"
+                            Width="{TemplateBinding Width}"
+                            Height="{TemplateBinding Height}"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             NineGrid="{TemplateBinding NineGrid}"
                             Opacity="0.0"
-                            Stretch="{TemplateBinding Stretch}" />
+                            Stretch="{TemplateBinding Stretch}">
+                            <Image.OpacityTransition>
+                                <ScalarTransition Duration="0:0:0.2" />
+                            </Image.OpacityTransition>
+                        </Image>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Failed">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Image" Storyboard.TargetProperty="Opacity">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="0" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderImage" Storyboard.TargetProperty="Opacity">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="1" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
+                                    <VisualState.Setters>
+                                        <Setter Target="Image.Opacity" Value="0" />
+                                        <Setter Target="PlaceholderImage.Opacity" Value="1" />
+                                    </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="Loading">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Image" Storyboard.TargetProperty="Opacity">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="0" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderImage" Storyboard.TargetProperty="Opacity">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="1" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
+                                    <VisualState.Setters>
+                                        <Setter Target="Image.Opacity" Value="0" />
+                                        <Setter Target="PlaceholderImage.Opacity" Value="1" />
+                                    </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="Loaded">
-                                    <Storyboard>
-                                        <DoubleAnimation
-                                            AutoReverse="False"
-                                            BeginTime="0"
-                                            Storyboard.TargetName="Image"
-                                            Storyboard.TargetProperty="Opacity"
-                                            From="0"
-                                            To="1" />
-                                        <DoubleAnimation
-                                            AutoReverse="False"
-                                            BeginTime="0"
-                                            Storyboard.TargetName="PlaceholderImage"
-                                            Storyboard.TargetProperty="Opacity"
-                                            From="1"
-                                            To="0" />
-                                    </Storyboard>
+                                    <VisualState.Setters>
+                                        <Setter Target="Image.Opacity" Value="1" />
+                                        <Setter Target="PlaceholderImage.Opacity" Value="0" />
+                                    </VisualState.Setters>
                                 </VisualState>
-                                <VisualState x:Name="Unloaded" />
+                                <VisualState x:Name="Unloaded">
+                                    <VisualState.Setters>
+                                        <Setter Target="Image.Opacity" Value="0" />
+                                        <Setter Target="PlaceholderImage.Opacity" Value="1" />
+                                    </VisualState.Setters>
+                                </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                     </Grid>

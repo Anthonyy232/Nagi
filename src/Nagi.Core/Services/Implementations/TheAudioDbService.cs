@@ -11,7 +11,6 @@ using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Services.Implementations;
 
-// File-local DTOs for deserializing TheAudioDB API response.
 file class TheAudioDbResponse
 {
     [JsonPropertyName("artists")]
@@ -24,7 +23,7 @@ file class TheAudioDbArtist
     public string? BiographyEN { get; set; }
 
     [JsonExtensionData]
-    public Dictionary<string, JsonElement>? ExtensionData { get; set; }
+    public Dictionary<string, JsonElement> ExtensionData { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
     [JsonPropertyName("strArtistThumb")]
     public string? ArtistThumb { get; set; }
@@ -60,8 +59,6 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
     private readonly IApiKeyService _apiKeyService;
     private readonly ILogger<TheAudioDbService> _logger;
 
-    private bool _isDisposed;
-
     public TheAudioDbService(
         IHttpClientFactory httpClientFactory,
         IProviderPipelineProvider pipelines,
@@ -74,15 +71,8 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
         _logger = logger;
     }
 
-    public void Dispose()
-    {
-        if (_isDisposed) return;
-        _httpClient.Dispose();
-        _isDisposed = true;
-        GC.SuppressFinalize(this);
-    }
+    public void Dispose() => _httpClient.Dispose();
 
-    /// <inheritdoc />
     public async Task<ServiceResult<TheAudioDbArtistInfo>> GetArtistMetadataAsync(
         string musicBrainzId,
         string? languageCode = null,
@@ -92,13 +82,13 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
             return ServiceResult<TheAudioDbArtistInfo>.FromSuccessNotFound();
 
         if (_pipelines.IsCircuitOpen(ServiceProviderIds.TheAudioDb))
-            return ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError("Provider is temporarily unavailable.");
+            return ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError();
 
         var apiKey = await _apiKeyService.GetApiKeyAsync(ApiKeyName, cancellationToken).ConfigureAwait(false);
         if (string.IsNullOrEmpty(apiKey))
         {
             _logger.LogWarning("TheAudioDB API key not available.");
-            return ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError("API key not available.");
+            return ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError();
         }
 
         var url = $"{BaseUrl}/{apiKey}/artist-mb.php?i={musicBrainzId}";
@@ -124,7 +114,7 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
                 {
                     _logger.LogWarning("TheAudioDB request failed with status {StatusCode} for MBID: {MBID}",
                         response.StatusCode, musicBrainzId);
-                    return ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError($"HTTP {response.StatusCode}");
+                    return ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError();
                 }
 
                 var apiResult = await response.Content.ReadFromJsonAsync<TheAudioDbResponse>(cancellationToken: ct)
@@ -137,18 +127,18 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
                     return ServiceResult<TheAudioDbArtistInfo>.FromSuccessNotFound();
                 }
 
-                var fanartUrl = GetFirstNonEmpty(artist.ArtistFanart, artist.ArtistFanart2, artist.ArtistFanart3);
-
                 var bio = GetLocalizedBiography(artist.ExtensionData, languageCode);
                 var isLocalizedBio = !string.IsNullOrEmpty(bio);
                 bio ??= artist.BiographyEN;
 
                 var info = new TheAudioDbArtistInfo(
-                    Biography: SanitizeBiography(bio),
-                    ThumbUrl: NullIfEmpty(artist.ArtistThumb),
-                    FanartUrl: fanartUrl,
-                    WideThumbUrl: NullIfEmpty(artist.ArtistWideThumb),
-                    LogoUrl: NullIfEmpty(artist.ArtistLogo)
+                    Biography: ArtistNameHelper.NormalizeStringCore(bio),
+                    ThumbUrl: ArtistNameHelper.NormalizeStringCore(artist.ArtistThumb),
+                    FanartUrl: ArtistNameHelper.NormalizeStringCore(artist.ArtistFanart)
+                               ?? ArtistNameHelper.NormalizeStringCore(artist.ArtistFanart2)
+                               ?? ArtistNameHelper.NormalizeStringCore(artist.ArtistFanart3),
+                    WideThumbUrl: ArtistNameHelper.NormalizeStringCore(artist.ArtistWideThumb),
+                    LogoUrl: ArtistNameHelper.NormalizeStringCore(artist.ArtistLogo)
                 );
 
                 if (info.Biography is null && info.ThumbUrl is null && info.FanartUrl is null &&
@@ -164,63 +154,22 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
                     !string.IsNullOrEmpty(info.WideThumbUrl), !string.IsNullOrEmpty(info.LogoUrl));
                 return ServiceResult<TheAudioDbArtistInfo>.FromSuccess(info);
             },
-            fallback: ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError("Provider is temporarily unavailable."),
+            fallback: ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError(),
             _logger,
             $"fetch metadata for MBID {musicBrainzId}",
             cancellationToken).ConfigureAwait(false);
     }
 
-    /// <summary>
-    ///     Cleans the biography text by trimming and returning null for empty/whitespace strings.
-    /// </summary>
-    private static string? SanitizeBiography(string? bio)
+    private static string? GetLocalizedBiography(Dictionary<string, JsonElement> extensionData, string? languageCode)
     {
-        if (string.IsNullOrWhiteSpace(bio)) return null;
-        return ArtistNameHelper.NormalizeStringCore(bio);
-    }
-
-    /// <summary>
-    ///     Returns the first non-null, non-empty string from the provided values.
-    /// </summary>
-    private static string? GetFirstNonEmpty(params string?[] values)
-    {
-        foreach (var value in values)
-        {
-            if (!string.IsNullOrWhiteSpace(value))
-                return value;
-        }
-        return null;
-    }
-
-    /// <summary>
-    ///     Returns null if the string is null or whitespace, otherwise returns the trimmed string.
-    /// </summary>
-    private static string? NullIfEmpty(string? value)
-    {
-        return ArtistNameHelper.NormalizeStringCore(value);
-    }
-
-    private static string? GetLocalizedBiography(Dictionary<string, JsonElement>? extensionData, string? languageCode)
-    {
-        if (string.IsNullOrWhiteSpace(languageCode) || extensionData is null)
+        if (string.IsNullOrWhiteSpace(languageCode))
             return null;
 
-        // Ensure we only use the 2-letter ISO 639-1 code (e.g. "de-DE" -> "DE")
         var isoCode = languageCode.Length > 2 ? languageCode[..2] : languageCode;
 
-        // API checks: strBiographyDE, strBiographyFR, etc.
-        var targetKey = $"strBiography{isoCode.ToUpperInvariant()}";
-
-        // Use case-insensitive lookup
-        var entry = extensionData.FirstOrDefault(x => x.Key.Equals(targetKey, StringComparison.OrdinalIgnoreCase));
-
-        if (!string.IsNullOrEmpty(entry.Key) && entry.Value.ValueKind == JsonValueKind.String)
-        {
-            var bio = entry.Value.GetString();
-            if (!string.IsNullOrWhiteSpace(bio))
-                return bio;
-        }
-
-        return null;
+        return extensionData.TryGetValue($"strBiography{isoCode}", out var biography) &&
+               biography.ValueKind == JsonValueKind.String
+            ? ArtistNameHelper.NormalizeStringCore(biography.GetString())
+            : null;
     }
 }

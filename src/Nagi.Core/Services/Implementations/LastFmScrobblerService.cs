@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Net;
+using System.Globalization;
+using System.Xml.Linq;
 using Nagi.Core.Data;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
@@ -15,8 +18,6 @@ namespace Nagi.Core.Services.Implementations;
 public class LastFmScrobblerService : ILastFmScrobblerService, IListenSubmitter
 {
     private const string LastFmApiBaseUrl = "https://ws.audioscrobbler.com/2.0/";
-    private const string ApiKeyName = ServiceProviderIds.LastFm;
-    private const string ApiSecretName = ServiceProviderIds.LastFmSecret;
 
     private readonly IApiKeyService _apiKeyService;
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
@@ -63,7 +64,7 @@ public class LastFmScrobblerService : ILastFmScrobblerService, IListenSubmitter
         };
 
         if (song.Album != null) parameters.Add("album", song.Album.Title);
-        if (song.Duration > TimeSpan.Zero) parameters.Add("duration", ((int)song.Duration.TotalSeconds).ToString());
+        if (song.Duration > TimeSpan.Zero) parameters.Add("duration", ((long)song.Duration.TotalSeconds).ToString(CultureInfo.InvariantCulture));
 
         var success = await PostToLastFmAsync(parameters, apiSecret, CancellationToken.None).ConfigureAwait(false)
             == SubmissionOutcome.Success;
@@ -75,12 +76,16 @@ public class LastFmScrobblerService : ILastFmScrobblerService, IListenSubmitter
     public async Task<bool> ScrobbleAsync(Song song, DateTime playStartTime) =>
         await ScrobbleCoreAsync(song, playStartTime).ConfigureAwait(false) == SubmissionOutcome.Success;
 
-    private async Task<SubmissionOutcome> ScrobbleCoreAsync(Song song, DateTime playStartTime)
+    private async Task<SubmissionOutcome> ScrobbleCoreAsync(Song song, DateTime playStartTime,
+        CancellationToken cancellationToken = default)
     {
-        var (apiKey, apiSecret, sessionKey) = await GetApiCredentialsAsync().ConfigureAwait(false);
+        var (apiKey, apiSecret, sessionKey) = await GetApiCredentialsAsync(cancellationToken).ConfigureAwait(false);
         if (apiKey is null || apiSecret is null || sessionKey is null) return SubmissionOutcome.TransientFailure;
 
-        var timestamp = new DateTimeOffset(playStartTime).ToUnixTimeSeconds().ToString();
+        // SQLite preserves UTC ticks but does not retain DateTime.Kind.
+        var utc = playStartTime.Kind == DateTimeKind.Unspecified
+            ? DateTime.SpecifyKind(playStartTime, DateTimeKind.Utc) : playStartTime.ToUniversalTime();
+        var timestamp = new DateTimeOffset(utc).ToUnixTimeSeconds().ToString(CultureInfo.InvariantCulture);
 
         var parameters = new Dictionary<string, string>
         {
@@ -94,16 +99,13 @@ public class LastFmScrobblerService : ILastFmScrobblerService, IListenSubmitter
 
         if (song.Album != null) parameters.Add("album", song.Album.Title);
 
-        return await PostToLastFmAsync(parameters, apiSecret, CancellationToken.None).ConfigureAwait(false);
+        return await PostToLastFmAsync(parameters, apiSecret, cancellationToken).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public string Id => ServiceProviderIds.LastFm;
 
-    /// <inheritdoc />
     public Task<bool> IsEnabledAsync() => _settingsService.GetLastFmScrobblingEnabledAsync();
 
-    /// <inheritdoc />
     public async Task ProcessPendingListensAsync(CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested) return;
@@ -114,24 +116,21 @@ public class LastFmScrobblerService : ILastFmScrobblerService, IListenSubmitter
         var pending = await ctx.ListenHistory
             .AsTracking()
             .Where(lh => lh.IsEligibleForScrobbling && !lh.IsScrobbled)
-            .Include(lh => lh.Song).ThenInclude(s => s!.Album)
+            .Include(lh => lh.Song).ThenInclude(s => s.Album)
             .OrderBy(lh => lh.ListenTimestampUtc)
             .ToListAsync(cancellationToken).ConfigureAwait(false);
 
-        if (pending.Count == 0) return;
-
-        var changedCount = 0;
         foreach (var entry in pending)
         {
             if (cancellationToken.IsCancellationRequested) break;
-            if (entry.Song is null) continue;
 
             SubmissionOutcome outcome;
             try
             {
-                outcome = await ScrobbleCoreAsync(entry.Song, entry.ListenTimestampUtc).ConfigureAwait(false);
+                outcome = await ScrobbleCoreAsync(entry.Song, entry.ListenTimestampUtc, cancellationToken)
+                    .ConfigureAwait(false);
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not OperationCanceledException)
             {
                 _logger.LogWarning(ex,
                     "Last.fm queue submission raised. Will retry later. Song '{Title}'.", entry.Song.Title);
@@ -150,11 +149,9 @@ public class LastFmScrobblerService : ILastFmScrobblerService, IListenSubmitter
                     entry.Song.Title);
 
             entry.IsScrobbled = true;
-            changedCount++;
+            // Persist the acknowledgement even if shutdown cancels further submissions.
+            await ctx.SaveChangesAsync(CancellationToken.None).ConfigureAwait(false);
         }
-
-        if (changedCount > 0)
-            await ctx.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -167,7 +164,7 @@ public class LastFmScrobblerService : ILastFmScrobblerService, IListenSubmitter
         string apiSecret,
         CancellationToken cancellationToken = default)
     {
-        parameters["api_sig"] = CreateSignature(parameters, apiSecret);
+        parameters["api_sig"] = Helpers.LastFmApiHelper.CreateSignature(parameters, apiSecret);
         var method = parameters["method"];
 
         return await _pipelines.ExecuteWithFallbackAsync(
@@ -180,19 +177,41 @@ public class LastFmScrobblerService : ILastFmScrobblerService, IListenSubmitter
             },
             async (response, ct) =>
             {
-                if (response.IsSuccessStatusCode)
-                    return SubmissionOutcome.Success;
+                var content = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+                var document = XElement.Parse(content);
+                var status = (string?)document.Attribute("status");
+                if (response.IsSuccessStatusCode && document.Name == "lfm" && status == "ok")
+                {
+                    var result = method == "track.scrobble"
+                        ? document.Element("scrobbles")?.Element("scrobble")
+                        : document.Element("nowplaying");
+                    // An "ok" envelope can still reject a listen. Future timestamps and
+                    // daily limits can recover; missing/unknown acknowledgements stay queued.
+                    return (int?)result?.Element("ignoredMessage")?.Attribute("code") switch
+                    {
+                        0 => SubmissionOutcome.Success,
+                        1 or 2 or 3 => SubmissionOutcome.PermanentFailure,
+                        _ => SubmissionOutcome.TransientFailure
+                    };
+                }
 
-                var errorContent = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
                 _logger.LogWarning(
                     "Last.fm API call for method '{Method}' failed. Status: {StatusCode}, Response: {ResponseContent}.",
-                    method, response.StatusCode, errorContent);
+                    method, response.StatusCode, content);
 
-                // 5xx/408/429 = pipeline retries exhausted on a transient status; let the caller
-                // hold the queue rather than dropping the entry. Other 4xx codes are permanent.
-                return HttpStatusClassification.IsTransient(response.StatusCode)
-                    ? SubmissionOutcome.TransientFailure
-                    : SubmissionOutcome.PermanentFailure;
+                // Authentication can be repaired without changing the listen; keep it queued.
+                if (response.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden
+                    || HttpStatusClassification.IsTransient(response.StatusCode))
+                    return SubmissionOutcome.TransientFailure;
+
+                if (document.Name != "lfm" || status != "failed")
+                    return SubmissionOutcome.TransientFailure;
+
+                return (int?)document.Element("error")?.Attribute("code") switch
+                {
+                    6 or 7 => SubmissionOutcome.PermanentFailure,
+                    _ => SubmissionOutcome.TransientFailure
+                };
             },
             fallback: SubmissionOutcome.TransientFailure,
             _logger,
@@ -200,13 +219,11 @@ public class LastFmScrobblerService : ILastFmScrobblerService, IListenSubmitter
             cancellationToken).ConfigureAwait(false);
     }
 
-    /// <summary>
-    ///     Retrieves all necessary API keys and session tokens for an authenticated request.
-    /// </summary>
-    private async Task<(string? ApiKey, string? ApiSecret, string? SessionKey)> GetApiCredentialsAsync()
+    private async Task<(string? ApiKey, string? ApiSecret, string? SessionKey)> GetApiCredentialsAsync(
+        CancellationToken cancellationToken = default)
     {
-        var apiKeyTask = _apiKeyService.GetApiKeyAsync(ApiKeyName);
-        var apiSecretTask = _apiKeyService.GetApiKeyAsync(ApiSecretName);
+        var apiKeyTask = _apiKeyService.GetApiKeyAsync(ServiceProviderIds.LastFm, cancellationToken);
+        var apiSecretTask = _apiKeyService.GetApiKeyAsync(ServiceProviderIds.LastFmSecret, cancellationToken);
         var credentialsTask = _settingsService.GetLastFmCredentialsAsync();
 
         await Task.WhenAll(apiKeyTask, apiSecretTask, credentialsTask).ConfigureAwait(false);
@@ -223,13 +240,5 @@ public class LastFmScrobblerService : ILastFmScrobblerService, IListenSubmitter
         }
 
         return (apiKey, apiSecret, credentials.Value.SessionKey);
-    }
-
-    /// <summary>
-    ///     Creates the required MD5 signature for an authenticated Last.fm API call.
-    /// </summary>
-    private static string CreateSignature(IDictionary<string, string> parameters, string secret)
-    {
-        return Helpers.LastFmApiHelper.CreateSignature(parameters, secret);
     }
 }

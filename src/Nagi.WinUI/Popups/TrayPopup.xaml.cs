@@ -4,46 +4,38 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.Foundation;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
+using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Services.Abstractions;
-using Nagi.WinUI.ViewModels;
 using WinRT.Interop;
 
 namespace Nagi.WinUI.Popups;
 
-/// <summary>
-///     Represents the custom window used as a popup for the system tray icon.
-/// </summary>
 public sealed partial class TrayPopup : Window
 {
     private readonly ILogger<TrayPopup> _logger;
     private readonly IUISettingsService _settingsService;
+    private readonly IWin32InteropService _win32InteropService;
     private bool _isClosed;
     private bool _isCoverArtInFlyoutEnabled;
 
-    public TrayPopup(ElementTheme initialTheme)
+    public TrayPopup(ElementTheme initialTheme, PlayerViewModel viewModel, IUISettingsService settingsService,
+        IWin32InteropService win32InteropService, ILogger<TrayPopup> logger)
     {
         InitializeComponent();
 
-        ViewModel = App.Services!.GetRequiredService<PlayerViewModel>();
-        _settingsService = App.Services!.GetRequiredService<IUISettingsService>();
-        _logger = App.Services!.GetRequiredService<ILogger<TrayPopup>>();
+        ViewModel = viewModel;
+        _settingsService = settingsService;
+        _win32InteropService = win32InteropService;
+        _logger = logger;
 
-        if (Content is Border rootBorder)
-        {
-            rootBorder.RequestedTheme = initialTheme;
-            rootBorder.DataContext = ViewModel;
-            rootBorder.Background = new SolidColorBrush(Colors.Transparent);
-            rootBorder.UpdateLayout();
-        }
+        OuterBorder.RequestedTheme = initialTheme;
+        OuterBorder.DataContext = ViewModel;
 
         ConfigureWindowAppearance();
         _ = InitializeSettingsAsync();
@@ -56,19 +48,10 @@ public sealed partial class TrayPopup : Window
         _logger.LogDebug("TrayPopup initialized.");
     }
 
-    /// <summary>
-    ///     Gets the PlayerViewModel to bind UI elements to playback state.
-    /// </summary>
     public PlayerViewModel ViewModel { get; }
 
-    /// <summary>
-    ///     Occurs when the popup window loses focus and should be hidden.
-    /// </summary>
     public event EventHandler? Deactivated;
 
-    /// <summary>
-    ///     Sets the opacity of the layered window.
-    /// </summary>
     public void SetWindowOpacity(byte alpha)
     {
         _logger.LogTrace("Setting window opacity to {Alpha}", alpha);
@@ -76,18 +59,22 @@ public sealed partial class TrayPopup : Window
         SetLayeredWindowAttributes(hwnd, 0, alpha, LWA_ALPHA);
     }
 
-    /// <summary>
-    ///     Calculates the desired height of the popup's content for a given width.
-    /// </summary>
-    public double GetContentDesiredHeight(double targetWidthDips)
+    public async Task<double> ShowAndMeasureAsync(double targetWidthDips)
     {
-        if (Content is FrameworkElement rootElement)
+        SetWindowOpacity(0);
+        if (!OuterBorder.IsLoaded)
         {
-            rootElement.Measure(new Size(targetWidthDips, double.PositiveInfinity));
-            return rootElement.DesiredSize.Height;
+            var loaded = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            void OnLoaded(object sender, RoutedEventArgs args) => loaded.SetResult();
+
+            OuterBorder.Loaded += OnLoaded;
+            AppWindow.Show();
+            await loaded.Task;
+            OuterBorder.Loaded -= OnLoaded;
         }
 
-        return 0;
+        OuterBorder.Measure(new Size(targetWidthDips, double.PositiveInfinity));
+        return OuterBorder.DesiredSize.Height;
     }
 
     private async Task InitializeSettingsAsync()
@@ -96,6 +83,7 @@ public sealed partial class TrayPopup : Window
         try
         {
             _isCoverArtInFlyoutEnabled = await _settingsService.GetShowCoverArtInTrayFlyoutAsync();
+            if (_isClosed) return;
             UpdateCoverArtVisibility();
             _logger.LogDebug("Successfully initialized settings. ShowCoverArtInTrayFlyout is {IsEnabled}.",
                 _isCoverArtInFlyoutEnabled);
@@ -111,8 +99,7 @@ public sealed partial class TrayPopup : Window
         var shouldBeVisible = _isCoverArtInFlyoutEnabled && !string.IsNullOrEmpty(ViewModel.AlbumArtUri);
         CoverArtBackground.Visibility = shouldBeVisible ? Visibility.Visible : Visibility.Collapsed;
 
-        // Update the brush source safely - SafeGetImageSource handles null/empty strings
-        CoverArtBrush.Source = ImageUriHelper.SafeGetImageSource(ViewModel.AlbumArtUri)!;
+        CoverArtBrush.Source = BitmapImageFactory.Create(ViewModel.AlbumArtUri)!;
 
         _logger.LogTrace("Cover art visibility updated to {Visibility}", CoverArtBackground.Visibility);
     }
@@ -136,8 +123,7 @@ public sealed partial class TrayPopup : Window
         exStyle |= WS_EX_LAYERED;
         SetWindowLongPtr(windowHandle, GWL_EXSTYLE, (IntPtr)exStyle);
 
-        var win32Service = App.Services!.GetRequiredService<IWin32InteropService>();
-        if (win32Service.IsWindows11OrNewer)
+        if (_win32InteropService.IsWindows11OrNewer)
         {
             var preference = DWMWCP_ROUND; // DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_ROUND
             DwmSetWindowAttribute(windowHandle, DWMWA_WINDOW_CORNER_PREFERENCE, ref preference, sizeof(uint));

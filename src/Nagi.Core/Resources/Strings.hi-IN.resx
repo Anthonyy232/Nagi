@@ -102,10 +102,10 @@
     <value>ट्रैक संख्या</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>चलाने की संख्या</value>
+    <value>प्ले</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
-    <value>गीत</value>
+    <value>गाने</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
     <value>कलाकार</value>
@@ -114,9 +114,6 @@
     <value>गीत</value>
   </data>
   <data name="Label_Folder" xml:space="preserve">
-    <value>फ़ोल्डर</value>
-  </data>
-  <data name="Label_Folders" xml:space="preserve">
     <value>फ़ोल्डर</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>स्कैन पूरा हुआ। {0} {1} जोड़े या अपडेट किए गए।</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>बैच {0} सहेजा जा रहा है...</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>फ़ोल्डर स्कैन कर रहा है...</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>स्कैन पूरा हुआ। लाइब्रेरी अपडेटेड है।</value>
   </data>
@@ -194,16 +185,16 @@
     <value>स्कैन विफल। विवरण के लिए लॉग्स देखें।</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>स्कैन कैश तैयार कर रहा है...</value>
+    <value>लाइब्रेरी स्कैन की तैयारी की जा रही है…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>गीत विवरण पढ़ रहा है...</value>
+    <value>गाने के विवरण पढ़े जा रहे हैं…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>आपकी लाइब्रेरी को साफ कर रहा है...</value>
+    <value>आपकी लाइब्रेरी साफ़ की जा रही है…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>अंतिम रूप दे रहा है...</value>
+    <value>अंतिम रूप दिया जा रहा है…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>वॉल्यूम सामान्यीकरण विफल। विवरण के लिए लॉग्स देखें।</value>
@@ -216,13 +207,10 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>फ़ोल्डर जोड़ने में विफल।</value>
+    <value>फ़ोल्डर जोड़ा नहीं जा सका।</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>प्लेलिस्ट का नाम खाली नहीं हो सकता।</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>रेटिंग 1 से 5 के बीच होनी चाहिए।</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
@@ -248,7 +236,15 @@
     <value>क्रमबद्ध करें: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>हाई-प्रिसिजन वॉल्यूम नॉर्मलाइज़ेशन (रिप्लेगेन विश्लेषण) के लिए FFmpeg आवश्यक है, लेकिन आपके सिस्टम पर नहीं मिला।\n\nइसे सेट अप करने के लिए इन चरणों का पालन करें:\n\n1. **डाउनलोड करें**: https://www.gyan.dev/ffmpeg/builds/ पर जाएँ और 'ffmpeg-git-full.7z' (या समान) एसेंशियल्स बिल्ड डाउनलोड करें।\n2. **गाइड**: विस्तृत निर्देशों के लिए आप इस गाइड का पालन कर सकते हैं: https://phoenixnap.com/kb/ffmpeg-windows\n3. **निकालें**: आर्किटेक्चर फ़ोल्डर खोलें और `ffmpeg.exe` वाले 'बिन' डायरेक्टरी का पता लगाएँ।\n4. **इंस्टॉल करें**: `ffmpeg.exe` को एक स्थायी फ़ोल्डर (जैसे, `C:\ffmpeg\`) में कॉपी करें और **उस फ़ोल्डर को अपने सिस्टम PATH** एनवायरनमेंट वेरिएबल में जोड़ें।\n5. **पुनः प्रारंभ करें**: परिवर्तनों के प्रभावी होने के लिए कृपया इंस्टॉलेशन के बाद Nagi को पुनः प्रारंभ करें।</value>
+    <value>वॉल्यूम नॉर्मलाइज़ेशन के लिए गानों का विश्लेषण करने हेतु FFmpeg की आवश्यकता है, लेकिन Nagi को यह नहीं मिला।
+
+1. https://ffmpeg.org/download.html से Windows बिल्ड डाउनलोड करें।
+2. आर्काइव को एक्सट्रैक्ट करें और इसके bin फ़ोल्डर में ffmpeg.exe खोजें।
+3. ffmpeg.exe वाले फ़ोल्डर को अपने Windows PATH में जोड़ें।
+4. Nagi को पुनरारंभ करें, फिर वॉल्यूम नॉर्मलाइज़ेशन को पुनः सक्षम करें।</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>प्लेलिस्ट बना दी गई थी, लेकिन इसके गाने जोड़े नहीं जा सके। कृपया पुनः इंपोर्ट करने का प्रयास करें।</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>आपकी लाइब्रेरी में प्लेलिस्ट से कोई गीत नहीं मिला।</value>
@@ -293,12 +289,39 @@
     <value>सभी गानों में पहले से ही वॉल्यूम डेटा है।</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>{0} गानों के लिए वॉल्यूम की गणना की जा रही है...</value>
+    <value>वॉल्यूम का विश्लेषण किया जा रहा है… गाने: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>वॉल्यूम सामान्यीकरण की गणना की जा रही है ({0}/{1})...</value>
+    <value>वॉल्यूम नॉर्मलाइज़ेशन की गणना की जा रही है ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>वॉल्यूम सामान्यीकरण पूरा हुआ। {0} गानों को संसाधित किया गया।</value>
+    <value>वॉल्यूम नॉर्मलाइज़ेशन पूर्ण। प्रोसेस किए गए गाने: {0}।</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>अपना ListenBrainz यूज़र टोकन दर्ज करें।</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>ListenBrainz से प्रतिक्रिया नहीं पढ़ी जा सकी। बाद में पुनः प्रयास करें।</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>ऐसा सर्वर URL दर्ज करें जो http:// या https:// से शुरू होता हो।</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>यूज़र टोकन अमान्य है। इसे जांचें और पुनः प्रयास करें।</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz ने एक त्रुटि दी (HTTP {0})। बाद में पुनः प्रयास करें।</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>ListenBrainz से कनेक्ट नहीं किया जा सका। अपने कनेक्शन और सर्वर URL की जांच करें।</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi को अपना लाइब्रेरी डेटा फ़ोल्डर नहीं मिला।</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>रीस्टोर विफल रहा, और आपका पिछला डेटा पूरी तरह से रीस्टोर नहीं किया जा सका। रिकवरी फ़ाइलें &apos;{0}&apos; पर सहेजी गईं।</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>चुनी गई फ़ाइल मान्य Nagi बैकअप नहीं है।</value>
   </data>
 </root>

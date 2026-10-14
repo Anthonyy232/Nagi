@@ -1,5 +1,6 @@
 using System.IO.Compression;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text.Json;
@@ -68,26 +69,25 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
 
     public Task<IReadOnlyList<InstalledRomanizationPack>> GetInstalledPacksAsync(CancellationToken cancellationToken = default)
     {
-        EnsurePackRoot();
+        Directory.CreateDirectory(PackRoot);
         var packs = new List<InstalledRomanizationPack>();
 
         foreach (var directory in Directory.EnumerateDirectories(PackRoot))
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var directoryInfo = new DirectoryInfo(directory);
-            if (directoryInfo.Name.EndsWith(".tmp", StringComparison.OrdinalIgnoreCase)) continue;
+            var directoryName = Path.GetFileName(directory);
+            if (directoryName.EndsWith(".tmp", StringComparison.OrdinalIgnoreCase)) continue;
 
             var manifestPath = Path.Combine(directory, "manifest.json");
             if (!File.Exists(manifestPath)) continue;
 
             try
             {
-                var manifest = JsonSerializer.Deserialize<RomanizationPackManifest>(
-                    File.ReadAllText(manifestPath),
-                    RomanizationJson.Options);
+                using var stream = File.OpenRead(manifestPath);
+                var manifest = JsonSerializer.Deserialize<RomanizationPackManifest>(stream, RomanizationJson.Options);
 
                 if (manifest is null || string.IsNullOrWhiteSpace(manifest.Id)) continue;
-                if (!string.Equals(directoryInfo.Name, SanitizePackId(manifest.Id), StringComparison.OrdinalIgnoreCase)) continue;
+                if (!string.Equals(directoryName, SanitizePackId(manifest.Id), StringComparison.OrdinalIgnoreCase)) continue;
 
                 packs.Add(new InstalledRomanizationPack { Manifest = manifest, DirectoryPath = directory });
             }
@@ -109,29 +109,37 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
                 ?.CatalogEntry;
 
             if (pack is null) return RomanizationPackOperationResult.Failure("Pack is not available for this app version.");
-            if (!_providers.TryGetValue(pack.EngineId, out var provider)) return RomanizationPackOperationResult.Failure("Pack engine is not supported.");
+            var provider = _providers[pack.EngineId];
             if (!Uri.TryCreate(pack.DownloadUrl, UriKind.Absolute, out var downloadUri) || downloadUri.Scheme != Uri.UriSchemeHttps)
                 return RomanizationPackOperationResult.Failure("Pack download URL must use HTTPS.");
 
-            EnsurePackRoot();
             var tempArchivePath = Path.Combine(PackRoot, $"{Guid.NewGuid():N}.nagipack");
             var tempExtractPath = Path.Combine(PackRoot, $"{Guid.NewGuid():N}.tmp");
 
             try
             {
-                var bytes = await _httpClient.GetByteArrayAsync(downloadUri, cancellationToken).ConfigureAwait(false);
-                if (!MatchesSha256(bytes, pack.Sha256))
-                    return RomanizationPackOperationResult.Failure("Downloaded pack hash did not match the signed catalog.");
-
-                await File.WriteAllBytesAsync(tempArchivePath, bytes, cancellationToken).ConfigureAwait(false);
+                // GetStreamAsync's HTTP timeout ends at the headers; cover the body transfer too.
+                using var downloadCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                downloadCts.CancelAfter(_httpClient.Timeout);
+                var downloadToken = downloadCts.Token;
+                await using (var download = await _httpClient.GetStreamAsync(downloadUri, downloadToken).ConfigureAwait(false))
+                await using (var archive = File.Create(tempArchivePath))
+                {
+                    await download.CopyToAsync(archive, downloadToken).ConfigureAwait(false);
+                    archive.Position = 0;
+                    var hash = await SHA256.HashDataAsync(archive, downloadToken).ConfigureAwait(false);
+                    if (!string.Equals(Convert.ToHexString(hash), pack.Sha256?.Replace("-", string.Empty), StringComparison.OrdinalIgnoreCase))
+                        return RomanizationPackOperationResult.Failure("Downloaded pack hash did not match the signed catalog.");
+                }
                 ExtractZipSafely(tempArchivePath, tempExtractPath);
 
                 var manifestPath = Path.Combine(tempExtractPath, "manifest.json");
                 if (!File.Exists(manifestPath)) return RomanizationPackOperationResult.Failure("Pack does not contain a manifest.");
 
-                var manifest = JsonSerializer.Deserialize<RomanizationPackManifest>(
-                    await File.ReadAllTextAsync(manifestPath, cancellationToken).ConfigureAwait(false),
-                    RomanizationJson.Options);
+                RomanizationPackManifest? manifest;
+                await using (var stream = File.OpenRead(manifestPath))
+                    manifest = await JsonSerializer.DeserializeAsync<RomanizationPackManifest>(
+                        stream, RomanizationJson.Options, cancellationToken).ConfigureAwait(false);
 
                 if (manifest is null) return RomanizationPackOperationResult.Failure("Pack manifest could not be read.");
                 if (!MatchesCatalogEntry(pack, manifest)) return RomanizationPackOperationResult.Failure("Pack manifest does not match the signed catalog.");
@@ -140,9 +148,8 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
                 if (!await provider.ValidatePackAsync(installedPack, cancellationToken).ConfigureAwait(false))
                     return RomanizationPackOperationResult.Failure("Pack self-test failed.");
 
-                var finalPath = GetPackDirectory(pack.Id);
-                if (Directory.Exists(finalPath)) Directory.Delete(finalPath, true);
-                Directory.Move(tempExtractPath, finalPath);
+                cancellationToken.ThrowIfCancellationRequested();
+                ReplacePackDirectory(tempExtractPath, GetPackDirectory(pack.Id));
                 PacksChanged?.Invoke();
                 return RomanizationPackOperationResult.Success();
             }
@@ -188,8 +195,8 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
     {
         if (!forceRefresh && _cachedCatalog is not null) return _cachedCatalog;
 
-        var json = await _httpClient.GetStringAsync(DefaultCatalogUrl, cancellationToken).ConfigureAwait(false);
-        var envelope = JsonSerializer.Deserialize<RomanizationCatalogEnvelope>(json, RomanizationJson.Options)
+        var envelope = await _httpClient.GetFromJsonAsync<RomanizationCatalogEnvelope>(
+                           DefaultCatalogUrl, RomanizationJson.Options, cancellationToken).ConfigureAwait(false)
                        ?? throw new InvalidOperationException("Catalog response was empty.");
 
         if (!_catalogVerifier.Verify(envelope))
@@ -201,19 +208,9 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
 
     private string PackRoot => _pathConfig.RomanizationPacksPath;
 
-    private void EnsurePackRoot()
-    {
-        Directory.CreateDirectory(PackRoot);
-    }
-
     private string GetPackDirectory(string packId)
     {
-        var packRoot = Path.GetFullPath(PackRoot);
-        var packPath = Path.GetFullPath(Path.Combine(packRoot, SanitizePackId(packId)));
-        if (!IsPathInsideDirectory(packRoot, packPath))
-            throw new ArgumentException("Pack ID resolves outside the pack directory.", nameof(packId));
-
-        return packPath;
+        return Path.GetFullPath(Path.Combine(PackRoot, SanitizePackId(packId)));
     }
 
     private static string SanitizePackId(string packId)
@@ -221,8 +218,7 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
         if (string.IsNullOrWhiteSpace(packId)) throw new ArgumentException("Pack ID is required.", nameof(packId));
 
         packId = packId.Trim();
-        if (packId is "." or ".."
-            || packId.StartsWith(".", StringComparison.Ordinal)
+        if (packId.StartsWith(".", StringComparison.Ordinal)
             || packId.EndsWith(".", StringComparison.Ordinal)
             || packId.Contains("..", StringComparison.Ordinal))
             throw new ArgumentException("Pack ID is invalid.", nameof(packId));
@@ -231,15 +227,6 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
             throw new ArgumentException("Pack ID contains invalid characters.", nameof(packId));
 
         return packId;
-    }
-
-    private static bool IsPathInsideDirectory(string directoryPath, string candidatePath)
-    {
-        var normalizedDirectory = directoryPath.EndsWith(Path.DirectorySeparatorChar)
-            ? directoryPath
-            : directoryPath + Path.DirectorySeparatorChar;
-
-        return candidatePath.StartsWith(normalizedDirectory, StringComparison.OrdinalIgnoreCase);
     }
 
     private static bool IsCompatibleWithAppVersion(string minAppVersion, Version appVersion)
@@ -254,39 +241,35 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
                && string.Equals(entry.Version, manifest.Version, StringComparison.OrdinalIgnoreCase);
     }
 
-    private static bool MatchesSha256(byte[] bytes, string expectedHex)
+    private static void ReplacePackDirectory(string stagedPath, string installedPath)
     {
-        if (string.IsNullOrWhiteSpace(expectedHex)) return false;
-        var actualBytes = SHA256.HashData(bytes);
-        var actualHex = Convert.ToHexString(actualBytes);
-        return string.Equals(actualHex, expectedHex.Replace("-", string.Empty), StringComparison.OrdinalIgnoreCase);
+        if (!Directory.Exists(installedPath))
+        {
+            Directory.Move(stagedPath, installedPath);
+            return;
+        }
+
+        var backupPath = installedPath + $".{Guid.NewGuid():N}.tmp";
+        Directory.Move(installedPath, backupPath);
+        try
+        {
+            Directory.Move(stagedPath, installedPath);
+        }
+        catch
+        {
+            Directory.Move(backupPath, installedPath);
+            throw;
+        }
+
+        TryDeleteDirectory(backupPath);
     }
 
     private static void ExtractZipSafely(string archivePath, string destinationPath)
     {
-        Directory.CreateDirectory(destinationPath);
-        var destinationRoot = Path.GetFullPath(destinationPath);
-        if (!destinationRoot.EndsWith(Path.DirectorySeparatorChar))
-            destinationRoot += Path.DirectorySeparatorChar;
-
         using var archive = ZipFile.OpenRead(archivePath);
         foreach (var entry in archive.Entries)
-        {
             EnsureDataOnlyEntry(entry);
-
-            var targetPath = Path.GetFullPath(Path.Combine(destinationRoot, entry.FullName));
-            if (!targetPath.StartsWith(destinationRoot, StringComparison.OrdinalIgnoreCase))
-                throw new InvalidOperationException("Pack contains a path outside the extraction directory.");
-
-            if (string.IsNullOrEmpty(entry.Name))
-            {
-                Directory.CreateDirectory(targetPath);
-                continue;
-            }
-
-            Directory.CreateDirectory(Path.GetDirectoryName(targetPath)!);
-            entry.ExtractToFile(targetPath, true);
-        }
+        archive.ExtractToDirectory(destinationPath, overwriteFiles: true);
     }
 
     private static void EnsureDataOnlyEntry(ZipArchiveEntry entry)
@@ -310,7 +293,7 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
     {
         try
         {
-            if (File.Exists(path)) File.Delete(path);
+            File.Delete(path);
         }
         catch
         {

@@ -102,7 +102,7 @@
     <value>Број нумере</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Број пуштања</value>
+    <value>Пуштања</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>Песме</value>
@@ -115,9 +115,6 @@
   </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Фасцикла</value>
-  </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Фасцикле</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Ручни редослед</value>
@@ -148,10 +145,10 @@
     <value>{0} (Најстарије)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Растуће)</value>
+    <value>{0} (растуће)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Опадајуће)</value>
+    <value>{0} (опадајуће)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>Најкраће прво</value>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Скенирање завршено. Додато или ажурирано {0} {1}.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Чувам групу {0}...</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Скенирам фасциклу...</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Скенирање завршено. Библиотека је ажурна.</value>
   </data>
@@ -194,16 +185,16 @@
     <value>Скенирање није успело. Проверите дневнике за детаље.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Припремам кеш меморију за скенирање...</value>
+    <value>Припрема скенирања библиотеке…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Читам детаље песме...</value>
+    <value>Читање детаља о песмама…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Чистим вашу библиотеку...</value>
+    <value>Чишћење библиотеке…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Завршавам...</value>
+    <value>Завршавање…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Нормализација јачине звука није успела. Проверите дневнике за детаље.</value>
@@ -216,13 +207,10 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Додавање фасцикле није успело.</value>
+    <value>Није могуће додати фасциклу.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Назив плејлисте не може бити празан.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Оцена мора бити између 1 и 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
@@ -248,7 +236,15 @@
     <value>Сортирај по: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg је потребан за високопрецизну нормализацију јачине звука (анализу ReplayGain-а), али није пронађен на вашем систему. Пратите ове кораке да бисте га подесили: 1. **Преузмите**: Посетите https://www.gyan.dev/ffmpeg/builds/ и преузмите 'ffmpeg-git-full.7z' (или сличну) основну верзију. 2. **Водич**: Можете пратити овај водич за детаљна упутства: https://phoenixnap.com/kb/ffmpeg-windows 3. **Извуците**: Отворите фасциклу архитектуре и пронађите директоријум 'bin' који садржи `ffmpeg.exe`. 4. **Инсталирајте**: Копирајте `ffmpeg.exe` у сталну фасциклу (нпр. `C:\ffmpeg\`) и **додајте ту фасциклу у системску променљиву PATH**. 5. **Поново покрените**: Молимо поново покрените Nagi након инсталације да би промене ступиле на снагу.</value>
+    <value>FFmpeg је потребан за анализу песама ради нормализације гласноће, али Nagi га није пронашао.
+
+1. Преузмите верзију за Windows са странице https://ffmpeg.org/download.html.
+2. Распакујте архиву и пронађите ffmpeg.exe у њеној фасцикли bin.
+3. Додајте фасциклу која садржи ffmpeg.exe у ваш Windows PATH.
+4. Поново покрените Nagi, а затим омогућите нормализацију гласноће.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>Листа песама је направљена, али песме нису могле бити додате. Покушајте поново са увозом.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Ниједна песма из плејлисте није пронађена у вашој библиотеци.</value>
@@ -293,12 +289,39 @@
     <value>Све песме већ имају податке о јачини звука.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Израчунавам јачину звука за {0} песама...</value>
+    <value>Анализирање гласноће… Песме: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Израчунавам нормализацију јачине звука ({0}/{1})...</value>
+    <value>Израчунавање нормализације гласноће ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Нормализација јачине звука завршена. Обрађено је {0} песама.</value>
+    <value>Нормализација гласноће је завршена. Обрађене песме: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Унесите свој кориснички токен за ListenBrainz.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Није било могуће прочитати одговор са услуге ListenBrainz. Покушајте поново касније.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Унесите URL сервера који почиње са http:// или https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Кориснички токен није важећи. Проверите га и покушајте поново.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz је вратио грешку (HTTP {0}). Покушајте поново касније.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Повезивање са услугом ListenBrainz није успело. Проверите своју везу и URL сервера.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi није могао да пронађе своју фасциклу са подацима библиотеке.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Враћање није успело и ваши претходни подаци нису могли бити у потпуности враћени. Датотеке за опоравак су сачуване на &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Изабрана датотека није важећа Nagi резервна копија.</value>
   </data>
 </root>

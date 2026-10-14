@@ -1,14 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 
 namespace Nagi.Core.Data.Interceptors;
 
 /// <summary>
-///     An EF Core interceptor that automatically synchronizes denormalized artist fields
-///     (ArtistName and PrimaryArtistName) on Song and Album entities, and the sort key
-///     (SortName / SortTitle / PrimaryArtistSortName) on Artist, Album, and Song entities,
-///     before they are saved to the database.
+///     Keeps artist display names and article-stripped sort keys in sync before saving.
 /// </summary>
 public class DenormalizationInterceptor : SaveChangesInterceptor
 {
@@ -31,135 +29,87 @@ public class DenormalizationInterceptor : SaveChangesInterceptor
         var songsToSync = new HashSet<Song>();
         var albumsToSync = new HashSet<Album>();
 
-        // 1. Process Song changes — single pass to build ID→Entity map AND collect Added songs,
-        //    avoiding redundant context.Entry() lookups in later filters.
-        var trackedSongsById = new Dictionary<Guid, (Song Entity, EntityState State)>();
-        foreach (var entry in context.ChangeTracker.Entries<Song>())
+        var trackedSongsById = context.ChangeTracker.Entries<Song>().ToDictionary(e => e.Entity.Id);
+        foreach (var entry in trackedSongsById.Values)
         {
-            trackedSongsById[entry.Entity.Id] = (entry.Entity, entry.State);
             if (entry.State == EntityState.Added)
                 songsToSync.Add(entry.Entity);
+            else if (entry.State == EntityState.Modified && entry.Property(s => s.Title).IsModified)
+                entry.Property(s => s.SortTitle).CurrentValue = SortKeyHelper.Normalize(entry.Entity.Title);
         }
 
         var songArtistEntries = context.ChangeTracker.Entries<SongArtist>()
-            .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified || e.State == EntityState.Deleted);
-        foreach (var sae in songArtistEntries)
+            .Where(e => e.State is EntityState.Added or EntityState.Modified or EntityState.Deleted);
+        foreach (var entry in songArtistEntries)
         {
-            if (trackedSongsById.TryGetValue(sae.Entity.SongId, out var info))
-                songsToSync.Add(info.Entity);
+            if (trackedSongsById.TryGetValue(entry.Entity.SongId, out var songEntry))
+                songsToSync.Add(songEntry.Entity);
         }
 
-        // 2. Process Album changes — same single-pass pattern.
-        var trackedAlbumsById = new Dictionary<Guid, (Album Entity, EntityState State)>();
-        foreach (var entry in context.ChangeTracker.Entries<Album>())
+        var trackedAlbumsById = context.ChangeTracker.Entries<Album>().ToDictionary(e => e.Entity.Id);
+        foreach (var entry in trackedAlbumsById.Values)
         {
-            trackedAlbumsById[entry.Entity.Id] = (entry.Entity, entry.State);
             if (entry.State == EntityState.Added)
                 albumsToSync.Add(entry.Entity);
+            else if (entry.State == EntityState.Modified && entry.Property(a => a.Title).IsModified)
+                entry.Property(a => a.SortTitle).CurrentValue = SortKeyHelper.Normalize(entry.Entity.Title);
         }
 
         var albumArtistEntries = context.ChangeTracker.Entries<AlbumArtist>()
-            .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified || e.State == EntityState.Deleted);
-        foreach (var aae in albumArtistEntries)
+            .Where(e => e.State is EntityState.Added or EntityState.Modified or EntityState.Deleted);
+        foreach (var entry in albumArtistEntries)
         {
-            if (trackedAlbumsById.TryGetValue(aae.Entity.AlbumId, out var info))
-                albumsToSync.Add(info.Entity);
+            if (trackedAlbumsById.TryGetValue(entry.Entity.AlbumId, out var albumEntry))
+                albumsToSync.Add(albumEntry.Entity);
         }
 
-        // 3. Batch-load relationships for all affected entities (fixes N+1 query problem)
-        // Use cached state to avoid redundant context.Entry() calls in the filter.
         const int chunkSize = 500;
 
-        // Batch-load SongArtists for all non-Added songs (Added songs already have artists in memory)
+        // Added entities already have their relationships in memory.
         var nonAddedSongIds = songsToSync
-            .Where(s => trackedSongsById.TryGetValue(s.Id, out var info) && info.State != EntityState.Added)
-            .Select(s => s.Id)
-            .ToList();
+            .Where(s => trackedSongsById[s.Id].State != EntityState.Added)
+            .Select(s => s.Id);
 
         foreach (var chunk in nonAddedSongIds.Chunk(chunkSize))
         {
-            var chunkList = chunk.ToList();
             context.Set<SongArtist>()
                 .Include(sa => sa.Artist)
-                .Where(sa => chunkList.Contains(sa.SongId))
+                .Where(sa => chunk.Contains(sa.SongId))
                 .Load();
         }
 
         foreach (var song in songsToSync)
         {
-            var prevSortTitle = song.SortTitle;
-            var prevPrimaryArtistSortName = song.PrimaryArtistSortName;
-            var prevArtistName = song.ArtistName;
-            var prevPrimaryArtistName = song.PrimaryArtistName;
             song.SyncDenormalizedFields();
-
-            var songEntry = context.Entry(song);
-            if (songEntry.State == EntityState.Unchanged)
-            {
-                if (song.ArtistName != prevArtistName || song.PrimaryArtistName != prevPrimaryArtistName)
-                {
-                    songEntry.Property(s => s.ArtistName).IsModified = true;
-                    songEntry.Property(s => s.PrimaryArtistName).IsModified = true;
-                }
-                if (song.SortTitle != prevSortTitle)
-                    songEntry.Property(s => s.SortTitle).IsModified = true;
-                if (song.PrimaryArtistSortName != prevPrimaryArtistSortName)
-                    songEntry.Property(s => s.PrimaryArtistSortName).IsModified = true;
-            }
+            // Bulk scans disable automatic change detection.
+            trackedSongsById[song.Id].DetectChanges();
         }
 
-        // Same pattern for albums
         var nonAddedAlbumIds = albumsToSync
-            .Where(a => trackedAlbumsById.TryGetValue(a.Id, out var info) && info.State != EntityState.Added)
-            .Select(a => a.Id)
-            .ToList();
+            .Where(a => trackedAlbumsById[a.Id].State != EntityState.Added)
+            .Select(a => a.Id);
 
         foreach (var chunk in nonAddedAlbumIds.Chunk(chunkSize))
         {
-            var chunkList = chunk.ToList();
             context.Set<AlbumArtist>()
                 .Include(aa => aa.Artist)
-                .Where(aa => chunkList.Contains(aa.AlbumId))
+                .Where(aa => chunk.Contains(aa.AlbumId))
                 .Load();
         }
 
         foreach (var album in albumsToSync)
         {
-            var prevArtistName = album.ArtistName;
-            var prevPrimaryArtistName = album.PrimaryArtistName;
-            var prevSortTitle = album.SortTitle;
-            var prevPrimaryArtistSortName = album.PrimaryArtistSortName;
             album.SyncDenormalizedFields();
-
-            // AutoDetectChangesEnabled=false: scalar changes on Unchanged albums are not auto-detected.
-            // Only mark properties that SyncDenormalizedFields touches, and only when they changed.
-            var albumEntry = context.Entry(album);
-            if (albumEntry.State == EntityState.Unchanged)
-            {
-                if (album.ArtistName != prevArtistName || album.PrimaryArtistName != prevPrimaryArtistName)
-                {
-                    albumEntry.Property(a => a.ArtistName).IsModified = true;
-                    albumEntry.Property(a => a.PrimaryArtistName).IsModified = true;
-                }
-                if (album.SortTitle != prevSortTitle)
-                    albumEntry.Property(a => a.SortTitle).IsModified = true;
-                if (album.PrimaryArtistSortName != prevPrimaryArtistSortName)
-                    albumEntry.Property(a => a.PrimaryArtistSortName).IsModified = true;
-            }
+            trackedAlbumsById[album.Id].DetectChanges();
         }
 
-        // Sync Artist.SortName on Added artists and on Modified artists whose Name changed.
-        // Legacy rows with empty SortName are backfilled once by App.BackfillSortKeysAsync.
         foreach (var entry in context.ChangeTracker.Entries<Artist>()
-                     .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified))
+                     .Where(e => e.State is EntityState.Added or EntityState.Modified))
         {
             if (entry.State == EntityState.Modified && !entry.Property(a => a.Name).IsModified)
                 continue;
 
-            var prev = entry.Entity.SortName;
-            entry.Entity.SyncSortName();
-            if (entry.State == EntityState.Modified && entry.Entity.SortName != prev)
-                entry.Property(a => a.SortName).IsModified = true;
+            entry.Property(a => a.SortName).CurrentValue = SortKeyHelper.Normalize(entry.Entity.Name);
         }
     }
 }

@@ -1,20 +1,23 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using Windows.Foundation;
 using Windows.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
-using Nagi.WinUI.Models;
+using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Models;
+using Nagi.Presentation.Resources;
+using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Converters;
 
 public sealed class PageSizeLabelConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language) =>
-        value is 0 ? Nagi.WinUI.Resources.Strings.PaginationControl_All : value?.ToString() ?? string.Empty;
+        value is 0 ? Strings.PaginationControl_All : value?.ToString() ?? string.Empty;
 
     public object ConvertBack(object value, Type targetType, object parameter, string language) =>
         DependencyProperty.UnsetValue;
@@ -34,16 +37,7 @@ public class TimeSpanToTimeStringConverter : IValueConverter
             _ => TimeSpan.Zero
         };
 
-        // >= 100 h: drop seconds (noise at that scale), show "Xh Ym"
-        if (timeSpan.TotalHours >= 100)
-            return $"{(int)timeSpan.TotalHours}h {timeSpan.Minutes}m";
-
-        // 1 h – 99 h: h:mm:ss. Use TotalHours cast to int so durations >= 24 h display correctly.
-        // The built-in 'h' specifier only returns the hours *component* (0-23), which wraps at 24 h.
-        if (timeSpan.TotalHours >= 1)
-            return $"{(int)timeSpan.TotalHours}:{timeSpan.Minutes:D2}:{timeSpan.Seconds:D2}";
-
-        return timeSpan.ToString(@"m\:ss");
+        return DurationFormatter.Format(timeSpan);
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -52,9 +46,6 @@ public class TimeSpanToTimeStringConverter : IValueConverter
     }
 }
 
-/// <summary>
-///     Converts a boolean value to its inverse.
-/// </summary>
 public class BooleanToInverseBooleanConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
@@ -65,44 +56,53 @@ public class BooleanToInverseBooleanConverter : IValueConverter
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
-        if (value is bool b) return !b;
-        return value;
+        return Convert(value, targetType, parameter, language);
     }
 }
 
-/// <summary>
-///     Converts an ElementTheme enum to a user-friendly string for display.
-/// </summary>
-public class ElementThemeToFriendlyStringConverter : IValueConverter
+public class AppThemeToFriendlyStringConverter : IValueConverter
 {
-    private static readonly Dictionary<ElementTheme, string> FriendlyNames = new()
-    {
-        { ElementTheme.Light, Nagi.WinUI.Resources.Strings.Theme_Light },
-        { ElementTheme.Dark, Nagi.WinUI.Resources.Strings.Theme_Dark },
-        { ElementTheme.Default, Nagi.WinUI.Resources.Strings.Theme_Default }
-    };
-
     public object Convert(object value, Type targetType, object parameter, string language)
     {
-        if (value is ElementTheme theme && FriendlyNames.TryGetValue(theme, out var name)) return name;
-        return value?.ToString() ?? string.Empty;
+        return value switch
+        {
+            AppTheme.Light => Strings.Theme_Light,
+            AppTheme.Dark => Strings.Theme_Dark,
+            AppTheme.Default => Strings.Theme_Default,
+            _ => value?.ToString() ?? string.Empty
+        };
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
         if (value is string strValue)
         {
-            var pair = FriendlyNames.FirstOrDefault(kvp => kvp.Value == strValue);
-            if (pair.Value != null) return pair.Key;
+            foreach (var theme in Enum.GetValues<AppTheme>())
+                if ((string)Convert(theme, targetType, parameter, language) == strValue) return theme;
         }
 
         return DependencyProperty.UnsetValue;
     }
 }
 
-/// <summary>
-///     Converts a boolean value to a Visibility value.
-/// </summary>
+public class ArgbColorToColorConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language) =>
+        value is ArgbColor color ? color.ToWindowsColor() : DependencyProperty.UnsetValue;
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language) =>
+        value is Color color ? color.ToArgbColor() : DependencyProperty.UnsetValue;
+}
+
+public class IncrementalLoadingConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language) =>
+        value is IIncrementalItemSource source ? new IncrementalLoadingAdapter(source) : value;
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language) =>
+        throw new NotSupportedException();
+}
+
 public class BooleanToVisibilityConverter : IValueConverter
 {
     /// <summary>
@@ -130,9 +130,6 @@ public class BooleanToVisibilityConverter : IValueConverter
 /// </summary>
 public class StringToVisibilityConverter : IValueConverter
 {
-    /// <summary>
-    ///     Gets or sets a value indicating whether the conversion should be inverted.
-    /// </summary>
     public bool Invert { get; set; }
 
     public object Convert(object value, Type targetType, object parameter, string language)
@@ -140,24 +137,6 @@ public class StringToVisibilityConverter : IValueConverter
         var isVisible = !string.IsNullOrWhiteSpace(value as string);
         if (Invert) isVisible = !isVisible;
         return isVisible ? Visibility.Visible : Visibility.Collapsed;
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-/// <summary>
-///     Converts a collection to Visibility. Visible if the collection is not null and not empty.
-/// </summary>
-public class CollectionToVisibilityConverter : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        if (value is IEnumerable collection)
-            return collection.Cast<object>().Any() ? Visibility.Visible : Visibility.Collapsed;
-        return Visibility.Collapsed;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -196,9 +175,6 @@ public class CollectionCountToVisibilityConverter : IValueConverter
 /// </summary>
 public class NullOrEmptyStringToVisibilityConverter : IValueConverter
 {
-    /// <summary>
-    ///     Gets or sets a value indicating whether the conversion should be inverted.
-    /// </summary>
     public bool Invert { get; set; }
 
     public object Convert(object value, Type targetType, object parameter, string language)
@@ -214,9 +190,6 @@ public class NullOrEmptyStringToVisibilityConverter : IValueConverter
     }
 }
 
-/// <summary>
-///     Converts an object to Visibility. Visible if the object is not null.
-/// </summary>
 public class ObjectToVisibilityConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
@@ -235,23 +208,7 @@ public class ObjectToVisibilityConverter : IValueConverter
 }
 
 /// <summary>
-///     Converts an object to a boolean. Returns true if the object is not null.
-/// </summary>
-public class ObjectToBooleanConverter : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        return value != null;
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-/// <summary>
-///     Converts a string value into a unique, deterministic LinearGradientBrush from a curated palette.
+///     Converts a string value into a deterministic LinearGradientBrush from a curated palette.
 /// </summary>
 public class GenreToGradientConverter : IValueConverter
 {
@@ -287,8 +244,8 @@ public class GenreToGradientConverter : IValueConverter
     {
         if (value is not string genreName || string.IsNullOrEmpty(genreName)) return GetDefaultGradient();
 
-        var seed = genreName.GetHashCode();
-        var index = Math.Abs(seed) % Palettes.Count;
+        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(genreName));
+        var index = (int)(BitConverter.ToUInt32(hash, 0) % (uint)Palettes.Count);
         var (startColor, endColor) = Palettes[index];
 
         return CreateGradient(startColor, endColor);
@@ -319,30 +276,6 @@ public class GenreToGradientConverter : IValueConverter
     }
 }
 
-/// <summary>
-///     Converts a string font family name into a FontFamily object.
-/// </summary>
-public class StringToFontFamilyConverter : IValueConverter
-{
-    private static readonly FontFamily DefaultSymbolFont = new("Segoe MDL2 Assets");
-
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        if (value is string fontFamilyName && !string.IsNullOrEmpty(fontFamilyName))
-            return new FontFamily(fontFamilyName);
-
-        return DefaultSymbolFont;
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-/// <summary>
-///     Converts a BackdropMaterial enum value to a user-friendly string for display in the UI.
-/// </summary>
 public class BackdropMaterialToStringConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
@@ -350,9 +283,9 @@ public class BackdropMaterialToStringConverter : IValueConverter
         if (value is BackdropMaterial material)
             return material switch
             {
-                BackdropMaterial.Mica => Nagi.WinUI.Resources.Strings.Backdrop_Mica,
-                BackdropMaterial.MicaAlt => Nagi.WinUI.Resources.Strings.Backdrop_MicaAlt,
-                BackdropMaterial.Acrylic => Nagi.WinUI.Resources.Strings.Backdrop_Acrylic,
+                BackdropMaterial.Mica => Strings.Backdrop_Mica,
+                BackdropMaterial.MicaAlt => Strings.Backdrop_MicaAlt,
+                BackdropMaterial.Acrylic => Strings.Backdrop_Acrylic,
                 _ => material.ToString()
             };
         return string.Empty;
@@ -364,9 +297,6 @@ public class BackdropMaterialToStringConverter : IValueConverter
     }
 }
 
-/// <summary>
-///     Converts a PlayerBackgroundMaterial enum value to a user-friendly string for display in the UI.
-/// </summary>
 public class PlayerBackgroundMaterialToStringConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
@@ -374,8 +304,8 @@ public class PlayerBackgroundMaterialToStringConverter : IValueConverter
         if (value is PlayerBackgroundMaterial material)
             return material switch
             {
-                PlayerBackgroundMaterial.Acrylic => Nagi.WinUI.Resources.Strings.PlayerBackgroundMaterial_Acrylic,
-                PlayerBackgroundMaterial.Solid => Nagi.WinUI.Resources.Strings.PlayerBackgroundMaterial_Solid,
+                PlayerBackgroundMaterial.Acrylic => Strings.PlayerBackgroundMaterial_Acrylic,
+                PlayerBackgroundMaterial.Solid => Strings.PlayerBackgroundMaterial_Solid,
                 _ => material.ToString()
             };
         return string.Empty;
@@ -387,9 +317,6 @@ public class PlayerBackgroundMaterialToStringConverter : IValueConverter
     }
 }
 
-/// <summary>
-///     Converts a boolean value to a double value for opacity.
-/// </summary>
 public class BooleanToOpacityConverter : IValueConverter
 {
     public double TrueValue { get; set; } = 1.0;
@@ -397,7 +324,7 @@ public class BooleanToOpacityConverter : IValueConverter
 
     public object Convert(object value, Type targetType, object parameter, string language)
     {
-        return value is bool b && b ? TrueValue : FalseValue;
+        return value is true ? TrueValue : FalseValue;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -415,7 +342,7 @@ public class StringToImageSourceConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, string language)
     {
-        return Helpers.ImageUriHelper.SafeGetImageSource(value as string);
+        return Helpers.BitmapImageFactory.Create(value as string);
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -441,7 +368,7 @@ public class StringToDecodedImageSourceConverter : IValueConverter
             string s when int.TryParse(s, out var n) => n,
             _ => 0,
         };
-        return Helpers.ImageUriHelper.GetDecodedBitmap(value as string, decodePixelWidth);
+        return Helpers.BitmapImageFactory.CreateDecoded(value as string, decodePixelWidth);
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -496,9 +423,7 @@ public class SortOrderEqualsConverter : IValueConverter
 }
 
 /// <summary>
-///     Ensures a slider's Maximum value is always at least 1 to prevent E_INVALIDARG errors.
-///     When Maximum equals Minimum (both 0), the Slider's internal calculations can produce
-///     invalid values which cause XAML rendering errors.
+///     Supplies a positive maximum for sliders whose minimum is zero, avoiding invalid XAML ranges.
 /// </summary>
 public class SliderMaximumConverter : IValueConverter
 {
@@ -512,7 +437,6 @@ public class SliderMaximumConverter : IValueConverter
             _ => 0.0
         };
 
-        // Ensure maximum is at least 1 to avoid division by zero in slider calculations
         return maximum > 0 ? maximum : 1.0;
     }
 
@@ -529,24 +453,17 @@ public class DoubleToPercentageConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
     {
-        if (value is double d)
+        return value switch
         {
-            return $"{(int)Math.Round(d * 100)}%";
-        }
-        if (value is float f)
-        {
-            return $"{(int)Math.Round(f * 100)}%";
-        }
-        return "0%";
+            double d => d.ToString("P0"),
+            float f => f.ToString("P0"),
+            _ => 0d.ToString("P0")
+        };
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
-        if (value is string s && s.EndsWith("%") && double.TryParse(s.TrimEnd('%'), out var d))
-        {
-            return d / 100.0;
-        }
-        return 0.0;
+        throw new NotSupportedException();
     }
 }
 

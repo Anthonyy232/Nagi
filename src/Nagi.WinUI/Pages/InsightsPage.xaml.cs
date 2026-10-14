@@ -6,13 +6,10 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Services.Abstractions;
-using Nagi.WinUI.ViewModels;
+using Nagi.Presentation.ViewModels;
 
 namespace Nagi.WinUI.Pages;
 
-/// <summary>
-///     A dashboard page that displays listening insights and statistics.
-/// </summary>
 public sealed partial class InsightsPage : Page
 {
     private readonly ILogger<InsightsPage> _logger;

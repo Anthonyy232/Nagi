@@ -2,101 +2,39 @@
     x:Class="Nagi.WinUI.Pages.ArtistPage"
     NavigationCacheMode="Enabled"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:ImageEx"
-    xmlns:converters="using:Nagi.WinUI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vm="using:Nagi.WinUI.ViewModels"
+    xmlns:vm="using:Nagi.Presentation.ViewModels"
     xmlns:helpers="using:Nagi.Core.Helpers"
-    xmlns:resources="using:Nagi.WinUI.Resources"
+    xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
     x:Name="ArtistPageRoot"
     Background="Transparent"
     mc:Ignorable="d">
 
-
-
-    <Grid Padding="{StaticResource PageContainerPaddingVertical}"
-          Margin="{StaticResource SongListViewMargin}">
+    <Grid Padding="{StaticResource PageContainerPaddingVertical}">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="SearchStates">
                 <VisualState x:Name="SearchCollapsed">
-                    <Storyboard>
-                        <DoubleAnimation
-                            Storyboard.TargetName="SearchTextBox"
-                            Storyboard.TargetProperty="Width"
-                            To="0"
-                            Duration="0:0:0.3"
-                            EnableDependentAnimation="True">
-                            <DoubleAnimation.EasingFunction>
-                                <CubicEase EasingMode="EaseInOut" />
-                            </DoubleAnimation.EasingFunction>
-                        </DoubleAnimation>
-                        <DoubleAnimation
-                            Storyboard.TargetName="SearchTextBox"
-                            Storyboard.TargetProperty="Opacity"
-                            To="0"
-                            Duration="0:0:0.15" />
-                        <ObjectAnimationUsingKeyFrames
-                            Storyboard.TargetName="SearchTextBox"
-                            Storyboard.TargetProperty="IsHitTestVisible">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="False" />
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames
-                            Storyboard.TargetName="SearchIcon"
-                            Storyboard.TargetProperty="Glyph">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE721;" />
-                            <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="&#xE721;" />
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
+                    <VisualState.Setters>
+                        <Setter Target="SearchTextBox.Width" Value="0" />
+                        <Setter Target="SearchTextBox.Opacity" Value="0" />
+                        <Setter Target="SearchTextBox.IsHitTestVisible" Value="False" />
+                        <Setter Target="SearchTextBox.IsTabStop" Value="False" />
+                        <Setter Target="SearchIcon.Glyph" Value="&#xE721;" />
+                    </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="SearchExpanded">
-                    <Storyboard>
-                        <DoubleAnimation
-                            Storyboard.TargetName="SearchTextBox"
-                            Storyboard.TargetProperty="Width"
-                            To="{StaticResource SearchBoxExpandedWidth}"
-                            Duration="0:0:0.3"
-                            EnableDependentAnimation="True">
-                            <DoubleAnimation.EasingFunction>
-                                <CubicEase EasingMode="EaseInOut" />
-                            </DoubleAnimation.EasingFunction>
-                        </DoubleAnimation>
-                        <DoubleAnimation
-                            Storyboard.TargetName="SearchTextBox"
-                            Storyboard.TargetProperty="Opacity"
-                            To="1"
-                            BeginTime="0:0:0.15"
-                            Duration="0:0:0.15" />
-                        <ObjectAnimationUsingKeyFrames
-                            Storyboard.TargetName="SearchTextBox"
-                            Storyboard.TargetProperty="IsHitTestVisible">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="True" />
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames
-                            Storyboard.TargetName="SearchIcon"
-                            Storyboard.TargetProperty="Glyph">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE711;" />
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-            </VisualStateGroup>
-            <VisualStateGroup x:Name="WindowSizeStates">
-                <!-- Large displays (1600px+) -->
-                <VisualState x:Name="WideLayout">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="1600" />
-                    </VisualState.StateTriggers>
-                    <!-- Future: Scale up artist cards for better space utilization -->
-                </VisualState>
-
-                <!-- Normal/Small displays -->
-                <VisualState x:Name="NormalLayout">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="0" />
-                    </VisualState.StateTriggers>
-                    <!-- Default sizing from resources -->
+                    <VisualState.Setters>
+                        <Setter Target="SearchTextBox.Width" Value="{StaticResource SearchBoxExpandedWidth}" />
+                        <Setter Target="SearchTextBox.Opacity" Value="1" />
+                        <Setter Target="SearchTextBox.IsHitTestVisible" Value="True" />
+                        <Setter Target="SearchTextBox.IsTabStop" Value="True" />
+                        <Setter Target="SearchIcon.Glyph" Value="&#xE711;" />
+                    </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
@@ -109,7 +47,7 @@
 
         <!-- Page Header -->
         <Grid Grid.Row="0"
-              Margin="{StaticResource PageHeaderMarginIndented}">
+              Margin="{StaticResource CollectionPageHeaderMargin}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -134,13 +72,18 @@
                              Width="0"
                              Opacity="0"
                              IsHitTestVisible="False"
+                             IsTabStop="False"
                              HorizontalAlignment="Right"
                              KeyDown="OnSearchTextBoxKeyDown"
                              Text="{x:Bind ViewModel.SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              Canvas.ZIndex="0">
-                        </TextBox>
+                        <TextBox.OpacityTransition>
+                            <ScalarTransition Duration="0:0:0.15" />
+                        </TextBox.OpacityTransition>
+                    </TextBox>
                     <Button x:Name="SearchToggleButton"
                             ToolTipService.ToolTip="{x:Bind resources:Strings.ArtistPage_SearchButton_ToolTip, Mode=OneTime}"
+                            AutomationProperties.Name="{x:Bind resources:Strings.ArtistPage_SearchButton_ToolTip, Mode=OneTime}"
                             Click="OnSearchToggleButtonClick"
                             Style="{StaticResource SongListViewPageIconButton}"
                             HorizontalAlignment="Right"
@@ -149,14 +92,6 @@
                         <FontIcon x:Name="SearchIcon" FontSize="16" Glyph="&#xE721;" />
                     </Button>
                 </Grid>
-
-                <Button x:Name="RandomArtistButton"
-                        ToolTipService.ToolTip="{x:Bind resources:Strings.ArtistPage_RandomButton_ToolTip, Mode=OneTime}"
-                        Style="{StaticResource SongListViewPageIconButton}"
-                        Command="{x:Bind ViewModel.PlayRandomArtistCommand}"
-                        Margin="0,0,1,0">
-                    <ContentControl Style="{StaticResource DiceIconStyle}" />
-                </Button>
 
                 <Button Style="{StaticResource SongListViewPageIconButton}"
                         ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
@@ -178,31 +113,40 @@
                     </Button.Flyout>
                     <FontIcon FontSize="16" Glyph="&#xE8CB;" />
                 </Button>
+
+                <Button x:Name="RandomArtistButton"
+                        ToolTipService.ToolTip="{x:Bind resources:Strings.ArtistPage_RandomButton_ToolTip, Mode=OneTime}"
+                        AutomationProperties.Name="{x:Bind resources:Strings.ArtistPage_RandomButton_ToolTip, Mode=OneTime}"
+                        Style="{StaticResource SongListViewPageIconButton}"
+                        Command="{x:Bind ViewModel.PlayRandomArtistCommand}"
+                        Margin="0,0,1,0"
+                        ContentTemplate="{StaticResource RandomPlayIconTemplate}" />
+
             </StackPanel>
         </Grid>
 
         <Grid Grid.Row="1">
             <!-- Displays the collection of artists -->
-            <GridView
+            <GridView uihelpers:ScrollEdgeFade.IsEnabled="True"
                 x:Name="ArtistsGridView"
                 IsItemClickEnabled="True"
                 ItemClick="ArtistsGridView_ItemClick"
-                Padding="{StaticResource SongListViewPadding}"
-                ItemContainerStyle="{StaticResource ArtistPageGridViewItemStyle}"
+                Padding="{StaticResource PageContentPadding}"
+                ItemContainerStyle="{StaticResource AnimatedGridViewItemStyle}"
                 ItemsSource="{x:Bind ViewModel.Artists, Mode=OneWay}"
                 SelectionMode="None"
                 Visibility="{x:Bind ViewModel.HasArtists, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                 <GridView.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <ItemsWrapGrid ItemWidth="200" Orientation="Horizontal" />
+                        <ItemsWrapGrid ItemWidth="{StaticResource CollectionGridItemWidth}" Orientation="Horizontal" />
                     </ItemsPanelTemplate>
                 </GridView.ItemsPanel>
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="vm:ArtistViewModelItem">
                         <Grid
-                            Width="{StaticResource ArtistGridCardWidth}"
-                            Height="{StaticResource ArtistGridCardHeight}"
-                            Margin="8,16,8,16"
+                            Width="{StaticResource CollectionCardWidth}"
+                            Height="{StaticResource CollectionCardHeight}"
+                            Margin="{StaticResource CollectionCardMargin}"
                             Background="Transparent">
                             <Grid.ContextFlyout>
                                 <MenuFlyout>
@@ -222,19 +166,19 @@
                                 </MenuFlyout>
                             </Grid.ContextFlyout>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
                             <!-- Artist Image or Placeholder -->
-                            <Grid Grid.Row="0" Width="{StaticResource ArtistGridCardImageSize}" Height="{StaticResource ArtistGridCardImageSize}" HorizontalAlignment="Center">
+                            <Grid Grid.Row="0" Width="{StaticResource CollectionCardImageSize}" Height="{StaticResource CollectionCardImageSize}" HorizontalAlignment="Center">
                                 <Border
                                     CornerRadius="80"
                                     Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                                    <controls:ImageEx
+                                    <controls:ImageEx Width="{StaticResource CollectionCardImageSize}" Height="{StaticResource CollectionCardImageSize}"
                                         IsCacheEnabled="True"
                                         Source="{x:Bind LocalImageCachePath, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
-                                        DecodePixelWidth="{StaticResource ArtistGridCardImageSize}"
+                                        DecodePixelWidth="{StaticResource CollectionCardImageSize}"
                                         DecodePixelType="Logical"
                                         Stretch="UniformToFill" />
                                 </Border>

@@ -1,8 +1,5 @@
 ﻿namespace Nagi.Core.Models;
 
-/// <summary>
-///     A data transfer object representing metadata extracted from a single audio file.
-/// </summary>
 public class SongFileMetadata
 {
     public string FilePath { get; set; } = string.Empty;

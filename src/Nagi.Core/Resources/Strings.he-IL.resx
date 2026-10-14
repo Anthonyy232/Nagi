@@ -102,7 +102,7 @@
     <value>מספר רצועה</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>ספירת השמעות</value>
+    <value>השמעות</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>שירים</value>
@@ -115,9 +115,6 @@
   </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>תיקייה</value>
-  </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>תיקיות</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>סדר ידני</value>
@@ -148,10 +145,10 @@
     <value>{0} (ישן ביותר)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (עולה)</value>
+    <value>{0} (בסדר עולה)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (יורד)</value>
+    <value>{0} (בסדר יורד)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>הקצר ביותר תחילה</value>
@@ -169,7 +166,7 @@
     <value>הכי הרבה {0}</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
-    <value>הכי פחות {0}</value>
+    <value>הכי מעט {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>סורק תיקייה {0} מתוך {1}: {2} - {3}</value>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>הסריקה הושלמה. נוספו או עודכנו {0} {1}.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>שומר אצווה {0}...</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>סורק תיקייה...</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>הסריקה הושלמה. הספרייה מעודכנת.</value>
   </data>
@@ -194,16 +185,16 @@
     <value>הסריקה נכשלה. בדוק את יומני הרישום לפרטים.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>מכין מטמוני סריקה...</value>
+    <value>מכין סריקת ספרייה…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>קורא פרטי שירים...</value>
+    <value>קורא פרטי שירים…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>מנקה את הספרייה שלך...</value>
+    <value>מנקה את הספרייה שלך…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>מסיים...</value>
+    <value>מסיים…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>נורמליזציית עוצמת הקול נכשלה. בדוק את יומני הרישום לפרטים.</value>
@@ -216,13 +207,10 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>הוספת תיקייה נכשלה.</value>
+    <value>לא הייתה אפשרות להוסיף את התיקייה.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>שם הפלייליסט אינו יכול להיות ריק.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>הדירוג חייב להיות בין 1 ל-5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
@@ -248,7 +236,15 @@
     <value>מיין לפי: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg נדרש לנורמליזציית עוצמת קול ברמת דיוק גבוהה (ניתוח ReplayGain) אך לא נמצא במערכת שלך.\n\nבצע את השלבים הבאים כדי להגדיר אותו:\n\n1. **הורדה**: בקר ב- https://www.gyan.dev/ffmpeg/builds/ והורד את בניית ה- 'ffmpeg-git-full.7z' (או דומה) החיונית.\n2. **מדריך**: תוכל לעקוב אחר מדריך זה לקבלת הוראות מפורטות: https://phoenixnap.com/kb/ffmpeg-windows\n3. **חילוץ**: פתח את תיקיית הארכיטקטורה ואתר את ספריית ה-'bin' המכילה את `ffmpeg.exe`.\n4. **התקנה**: העתק את `ffmpeg.exe` לתיקייה קבועה (לדוגמה, `C:\ffmpeg\`) ו**הוסף תיקייה זו למשתנה סביבת ה-System PATH שלך**.\n5. **הפעלה מחדש**: אנא הפעל מחדש את Nagi לאחר ההתקנה כדי שהשינויים ייכנסו לתוקף.</value>
+    <value>דרוש FFmpeg כדי לנתח שירים לצורך נרמול עוצמת קול, אך Nagi לא הצליח למצוא אותו.
+
+1. הורד גרסת Windows מ-https://ffmpeg.org/download.html.
+2. חלץ את הארכיון ואתר את ffmpeg.exe בתיקיית bin שלו.
+3. הוסף את התיקייה שמכילה את ffmpeg.exe ל-PATH של Windows.
+4. הפעל מחדש את Nagi, ואז הפעל מחדש את נרמול עוצמת הקול.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>רשימת ההשמעה נוצרה, אך לא הייתה אפשרות להוסיף את השירים שלה. נסה לייבא שוב.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>לא נמצאו שירים מהפלייליסט בספרייה שלך.</value>
@@ -293,12 +289,39 @@
     <value>לכל השירים כבר יש נתוני עוצמת קול.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>מחשב עוצמת קול עבור {0} שירים...</value>
+    <value>מנתח עוצמת קול… שירים: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>מחשב נורמליזציית עוצמת קול ({0}/{1})...</value>
+    <value>מחשב נרמול עוצמת קול ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>נורמליזציית עוצמת הקול הושלמה. עובדו {0} שירים.</value>
+    <value>נרמול עוצמת הקול הושלם. שירים שעובדו: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>הזן את אסימון המשתמש שלך ב-ListenBrainz.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>לא הייתה אפשרות לקרוא את התגובה מ-ListenBrainz. נסה שוב מאוחר יותר.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>הזן כתובת URL של שרת המתחילה ב-http:// או ב-https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>אסימון המשתמש אינו תקין. בדוק אותו ונסה שוב.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz החזיר שגיאה (HTTP {0}). נסה שוב מאוחר יותר.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>לא הייתה אפשרות להתחבר ל-ListenBrainz. בדוק את החיבור ואת כתובת ה-URL של השרת.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi לא הצליח למצוא את תיקיית נתוני הספרייה שלו.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>השחזור נכשל, ולא הייתה אפשרות לשחזר במלואם את הנתונים הקודמים שלך. קובצי התאוששות נשמרו ב-&apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>הקובץ שנבחר אינו גיבוי תקין של Nagi.</value>
   </data>
 </root>

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Windows.Graphics;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
+using Nagi.Presentation.Services.Abstractions;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Popups;
 using Nagi.WinUI.Services.Abstractions;
@@ -10,26 +11,29 @@ using WinRT.Interop;
 
 namespace Nagi.WinUI.Services.Implementations;
 
-/// <summary>
-///     Manages the lifecycle and positioning of the tray popup window.
-/// </summary>
 public class TrayPopupService : ITrayPopupService, IDisposable
 {
     private const int VERTICAL_OFFSET = 24;
-    private const uint DEACTIVATION_DEBOUNCE_MS = 200;
+    private const int DEACTIVATION_DEBOUNCE_MS = 200;
     private const int POPUP_WIDTH_DIPS = 384;
     private const float BASE_DPI = 96.0f;
     private readonly IDispatcherService _dispatcherService;
     private readonly ILogger<TrayPopupService> _logger;
+    private readonly MainWindow _mainWindow;
+    private readonly Func<ElementTheme, TrayPopup> _createPopup;
 
     private readonly IWin32InteropService _win32;
     private bool _isAnimating;
     private bool _isDisposed;
-    private uint _lastDeactivatedTime;
+    private long _lastDeactivatedTime;
     private TrayPopup? _popupWindow;
 
-    public TrayPopupService(IWin32InteropService win32InteropService, IDispatcherService dispatcherService, ILogger<TrayPopupService> logger)
+    public TrayPopupService(MainWindow mainWindow, Func<ElementTheme, TrayPopup> createPopup,
+        IWin32InteropService win32InteropService,
+        IDispatcherService dispatcherService, ILogger<TrayPopupService> logger)
     {
+        _mainWindow = mainWindow;
+        _createPopup = createPopup;
         _win32 = win32InteropService;
         _dispatcherService = dispatcherService;
         _logger = logger;
@@ -62,7 +66,7 @@ public class TrayPopupService : ITrayPopupService, IDisposable
         GC.SuppressFinalize(this);
     }
 
-    public void ShowOrHidePopup(RectInt32? targetRect = null)
+    public void ShowOrHidePopup()
     {
         if (_isDisposed)
         {
@@ -70,10 +74,10 @@ public class TrayPopupService : ITrayPopupService, IDisposable
             return;
         }
 
-        if (_isAnimating || _win32.GetTickCount() - _lastDeactivatedTime < DEACTIVATION_DEBOUNCE_MS)
+        if (_isAnimating || Environment.TickCount64 - _lastDeactivatedTime < DEACTIVATION_DEBOUNCE_MS)
         {
             _logger.LogDebug("Popup toggle debounced (Animating: {IsAnimating}, Time since deactivation: {Time}ms)",
-                _isAnimating, _win32.GetTickCount() - _lastDeactivatedTime);
+                _isAnimating, Environment.TickCount64 - _lastDeactivatedTime);
             return;
         }
 
@@ -82,7 +86,7 @@ public class TrayPopupService : ITrayPopupService, IDisposable
         if (_popupWindow!.AppWindow.IsVisible)
             _ = HidePopup();
         else
-            _ = ShowPopup(targetRect);
+            _ = ShowPopup();
     }
 
     public async Task HidePopup()
@@ -104,52 +108,54 @@ public class TrayPopupService : ITrayPopupService, IDisposable
         _isAnimating = false;
     }
 
-    private async Task ShowPopup(RectInt32? targetRect = null)
+    private async Task ShowPopup()
     {
         _logger.LogDebug("Showing tray popup.");
         _isAnimating = true;
-        _popupWindow!.ViewModel.ShowPlayerViewCommand.Execute(null);
+        var popup = _popupWindow!;
+        popup.ViewModel.ShowPlayerViewCommand.Execute(null);
 
-        var windowHandle = WindowNative.GetWindowHandle(_popupWindow!);
+        var windowHandle = WindowNative.GetWindowHandle(popup);
         var scale = _win32.GetDpiForWindow(windowHandle) / BASE_DPI;
 
-        var finalWidth = (int)(POPUP_WIDTH_DIPS * scale);
-        var finalHeight = (int)(_popupWindow!.GetContentDesiredHeight(POPUP_WIDTH_DIPS) * scale);
+        var contentHeight = await popup.ShowAndMeasureAsync(POPUP_WIDTH_DIPS);
+        if (_popupWindow != popup) return;
+
+        popup.AppWindow.ResizeClient(new SizeInt32(
+            (int)Math.Ceiling(POPUP_WIDTH_DIPS * scale),
+            (int)Math.Ceiling(contentHeight * scale)));
+        var finalWidth = popup.AppWindow.Size.Width;
+        var finalHeight = popup.AppWindow.Size.Height;
 
         var cursorPosition = _win32.GetCursorPos();
         var workArea = _win32.GetWorkAreaForPoint(cursorPosition);
 
-        // If a target rect (the icon's bounds) is provided, center on it.
-        // Otherwise, center on the cursor position.
-        var centerX = targetRect?.X + targetRect?.Width / 2 ?? cursorPosition.X;
-        var centerY = targetRect?.Y + targetRect?.Height / 2 ?? cursorPosition.Y;
-
-        var finalX = centerX - finalWidth / 2;
+        var finalX = cursorPosition.X - finalWidth / 2;
         finalX = (int)Math.Max(workArea.Left, Math.Min(workArea.Right - finalWidth, finalX));
 
-        var finalY = centerY - finalHeight - VERTICAL_OFFSET;
-        if (finalY < workArea.Top) finalY = centerY + VERTICAL_OFFSET;
+        var finalY = cursorPosition.Y - finalHeight - VERTICAL_OFFSET;
+        if (finalY < workArea.Top) finalY = cursorPosition.Y + VERTICAL_OFFSET;
 
         var finalRect = new RectInt32(finalX, finalY, finalWidth, finalHeight);
         _logger.LogDebug("Calculated popup position: {PopupRect}", finalRect);
 
-        await PopupAnimation.AnimateIn(_popupWindow, finalRect, targetRect);
+        await PopupAnimation.AnimateIn(popup, finalRect);
         _isAnimating = false;
     }
 
     private void CreateWindow()
     {
-        var mainContent = App.RootWindow?.Content as FrameworkElement;
+        var mainContent = _mainWindow.Content as FrameworkElement;
         var currentTheme = mainContent?.ActualTheme ?? ElementTheme.Default;
         _logger.LogDebug("Creating new tray popup window with theme {Theme}.", currentTheme);
-        _popupWindow = new TrayPopup(currentTheme);
+        _popupWindow = _createPopup(currentTheme);
         _popupWindow.Deactivated += OnPopupDeactivated;
         _popupWindow.Closed += OnPopupWindowClosed;
     }
 
     private void OnPopupDeactivated(object? sender, EventArgs e)
     {
-        _lastDeactivatedTime = _win32.GetTickCount();
+        _lastDeactivatedTime = Environment.TickCount64;
         _logger.LogDebug("Popup deactivated. Hiding.");
         _ = HidePopup();
     }

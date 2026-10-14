@@ -102,7 +102,7 @@
     <value>Número de pista</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Recuento de reproducciones</value>
+    <value>Reproducciones</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>Canciones</value>
@@ -115,9 +115,6 @@
   </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Carpeta</value>
-  </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Carpetas</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Orden manual</value>
@@ -148,10 +145,10 @@
     <value>{0} (Más antiguo)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Asc.)</value>
+    <value>{0} (ascendente)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Desc.)</value>
+    <value>{0} (descendente)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>Más corto primero</value>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Escaneo completado. Se han añadido o actualizado {0} {1}.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Guardando lote {0}...</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Escaneando carpeta...</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Escaneo completado. La biblioteca está actualizada.</value>
   </data>
@@ -194,16 +185,16 @@
     <value>Escaneo fallido. Consulte los registros para obtener detalles.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Preparando cachés de escaneo...</value>
+    <value>Preparando el escaneo de la biblioteca…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Leyendo detalles de canciones...</value>
+    <value>Leyendo detalles de las canciones…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Limpiando su biblioteca...</value>
+    <value>Limpiando la biblioteca…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Finalizando...</value>
+    <value>Finalizando…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>La normalización de volumen falló. Consulte los registros para obtener detalles.</value>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>El nombre de la lista de reproducción no puede estar vacío.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>La calificación debe estar entre 1 y 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
@@ -248,7 +236,15 @@
     <value>Ordenar por: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg es necesario para la Normalización de Volumen de Alta Precisión (análisis ReplayGain) pero no se encontró en su sistema.\n\nSiga estos pasos para configurarlo:\n\n1. **Descargar**: Visite https://www.gyan.dev/ffmpeg/builds/ y descargue la compilación esencial 'ffmpeg-git-full.7z' (o similar).\n2. **Guía**: Puede seguir esta guía para obtener instrucciones detalladas: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Extraer**: Abra la carpeta de arquitectura y localice el directorio 'bin' que contiene `ffmpeg.exe`.\n4. **Instalar**: Copie `ffmpeg.exe` a una carpeta permanente (ej. `C:\ffmpeg\`) y **añada esa carpeta a su variable de entorno PATH del sistema**.\n5. **Reiniciar**: Por favor, reinicie Nagi después de la instalación para que los cambios surtan efecto.</value>
+    <value>Se necesita FFmpeg para analizar las canciones para la normalización de volumen, pero Nagi no lo ha encontrado.
+
+1. Descarga una versión para Windows desde https://ffmpeg.org/download.html.
+2. Extrae el archivo comprimido y localiza ffmpeg.exe en su carpeta bin.
+3. Añade la carpeta que contiene ffmpeg.exe a la variable PATH de Windows.
+4. Reinicia Nagi y vuelve a activar la normalización de volumen.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>Se ha creado la lista de reproducción, pero no se han podido añadir sus canciones. Intenta importarla de nuevo.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>No se encontraron canciones de la lista de reproducción en su biblioteca.</value>
@@ -293,12 +289,39 @@
     <value>Todas las canciones ya tienen datos de volumen.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Calculando volumen para {0} canciones...</value>
+    <value>Analizando volumen… Canciones: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Calculando normalización de volumen ({0}/{1})...</value>
+    <value>Calculando la normalización de volumen ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Normalización de volumen completada. Se procesaron {0} canciones.</value>
+    <value>Normalización de volumen completada. Canciones procesadas: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Introduce tu token de usuario de ListenBrainz.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>No se pudo leer la respuesta de ListenBrainz. Inténtalo de nuevo más tarde.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Introduce una URL de servidor que empiece por http:// o https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>El token de usuario no es válido. Compruébalo e inténtalo de nuevo.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz devolvió un error (HTTP {0}). Inténtalo de nuevo más tarde.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>No se pudo conectar con ListenBrainz. Comprueba tu conexión y la URL del servidor.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi no pudo encontrar la carpeta de datos de su biblioteca.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>La restauración falló y tus datos anteriores no se pudieron restaurar por completo. Los archivos de recuperación se guardaron en &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>El archivo seleccionado no es una copia de seguridad válida de Nagi.</value>
   </data>
 </root>

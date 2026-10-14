@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <!--
+      Platform-neutral presentation layer: view models, app services such as settings and navigation,
+      the abstractions each UI head implements, and the localized UI strings. It must not reference
+      any UI framework, so every platform head (Nagi.WinUI today) can share it.
+    -->
+    <PropertyGroup>
+        <TargetFramework>net$(NetVersion)</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="Nagi.Presentation.Tests" />
+        <EmbeddedResource Update="Resources\Strings.resx">
+            <StronglyTypedLanguage>C#</StronglyTypedLanguage>
+            <StronglyTypedNamespace>Nagi.Presentation.Resources</StronglyTypedNamespace>
+            <StronglyTypedClassName>Strings</StronglyTypedClassName>
+            <PublicClass>true</PublicClass>
+        </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Nagi.Core\Nagi.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="CommunityToolkit.Mvvm" />
+        <PackageReference Include="MessageFormat" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
+    </ItemGroup>
+</Project>

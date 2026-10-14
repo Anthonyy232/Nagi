@@ -10,9 +10,6 @@ using Microsoft.OpenApi.Models;
 
 namespace NagiAppFunctions;
 
-/// <summary>
-///     A DTO for the JSON response containing a configuration value.
-/// </summary>
 file class KeyResponse
 {
     public string Value { get; set; } = string.Empty;
@@ -43,7 +40,7 @@ public class KeyProviderFunctions
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "lastfm-key")]
         HttpRequest req)
     {
-        return CreateKeyResponse(req, "LastFm:ApiKey", "Last.fm API Key");
+        return CreateKeyResponse("LastFm:ApiKey", "Last.fm API Key");
     }
 
     [Function("GetLastFmSecretKey")]
@@ -57,7 +54,7 @@ public class KeyProviderFunctions
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "lastfm-secret-key")]
         HttpRequest req)
     {
-        return CreateKeyResponse(req, "LastFm:SharedSecret", "Last.fm Shared Secret");
+        return CreateKeyResponse("LastFm:SharedSecret", "Last.fm Shared Secret");
     }
 
     [Function("GetFanartTvKey")]
@@ -71,7 +68,7 @@ public class KeyProviderFunctions
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "fanarttv-key")]
         HttpRequest req)
     {
-        return CreateKeyResponse(req, "FanartTv:ApiKey", "Fanart.tv API Key");
+        return CreateKeyResponse("FanartTv:ApiKey", "Fanart.tv API Key");
     }
 
     [Function("GetTheAudioDbKey")]
@@ -85,13 +82,10 @@ public class KeyProviderFunctions
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "theaudiodb-key")]
         HttpRequest req)
     {
-        return CreateKeyResponse(req, "TheAudioDb:ApiKey", "TheAudioDB API Key");
+        return CreateKeyResponse("TheAudioDb:ApiKey", "TheAudioDB API Key");
     }
 
-    /// <summary>
-    ///     A generic helper to retrieve a configuration value and create an appropriate HTTP response.
-    /// </summary>
-    private IActionResult CreateKeyResponse(HttpRequest req, string configPath, string keyName)
+    private IActionResult CreateKeyResponse(string configPath, string keyName)
     {
         var keyValue = _config[configPath];
 

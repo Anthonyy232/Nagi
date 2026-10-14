@@ -9,9 +9,6 @@ using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Services.Implementations;
 
-/// <summary>
-///     Service for fetching high-quality artist imagery from Fanart.tv.
-/// </summary>
 public class FanartTvService : IFanartTvService
 {
     private const string BaseUrl = "https://webservice.fanart.tv/v3/music";
@@ -34,7 +31,6 @@ public class FanartTvService : IFanartTvService
         _logger = logger;
     }
 
-    /// <inheritdoc />
     public async Task<ServiceResult<FanartTvArtistImages>> GetArtistImagesAsync(
         string musicBrainzId, CancellationToken cancellationToken = default)
     {
@@ -42,13 +38,13 @@ public class FanartTvService : IFanartTvService
             return ServiceResult<FanartTvArtistImages>.FromSuccessNotFound();
 
         if (_pipelines.IsCircuitOpen(ServiceProviderIds.FanartTv))
-            return ServiceResult<FanartTvArtistImages>.FromTemporaryError("Provider is temporarily unavailable.");
+            return ServiceResult<FanartTvArtistImages>.FromTemporaryError();
 
         var apiKey = await _apiKeyService.GetApiKeyAsync(ApiKeyName, cancellationToken).ConfigureAwait(false);
         if (string.IsNullOrEmpty(apiKey))
         {
             _logger.LogWarning("Fanart.tv API key not available.");
-            return ServiceResult<FanartTvArtistImages>.FromTemporaryError("API key not available.");
+            return ServiceResult<FanartTvArtistImages>.FromTemporaryError();
         }
 
         var url = $"{BaseUrl}/{musicBrainzId}?api_key={apiKey}";
@@ -72,7 +68,7 @@ public class FanartTvService : IFanartTvService
                 {
                     _logger.LogWarning("Fanart.tv request failed with status {StatusCode} for MBID: {MBID}",
                         response.StatusCode, musicBrainzId);
-                    return ServiceResult<FanartTvArtistImages>.FromTemporaryError($"HTTP {response.StatusCode}");
+                    return ServiceResult<FanartTvArtistImages>.FromTemporaryError();
                 }
 
                 var apiResult = await response.Content.ReadFromJsonAsync<FanartTvResponse>(cancellationToken: ct)
@@ -98,13 +94,12 @@ public class FanartTvService : IFanartTvService
                 _logger.LogInformation("Found Fanart.tv images for MBID: {MBID}", musicBrainzId);
                 return ServiceResult<FanartTvArtistImages>.FromSuccess(images);
             },
-            fallback: ServiceResult<FanartTvArtistImages>.FromTemporaryError("Provider is temporarily unavailable."),
+            fallback: ServiceResult<FanartTvArtistImages>.FromTemporaryError(),
             _logger,
             $"fetch images for MBID {musicBrainzId}",
             cancellationToken).ConfigureAwait(false);
     }
 
-    // DTOs for JSON deserialization
     private sealed class FanartTvResponse
     {
         [JsonPropertyName("artistbackground")]
@@ -128,7 +123,5 @@ public class FanartTvService : IFanartTvService
         [JsonPropertyName("url")]
         public string? Url { get; set; }
 
-        [JsonPropertyName("likes")]
-        public string? Likes { get; set; }
     }
 }

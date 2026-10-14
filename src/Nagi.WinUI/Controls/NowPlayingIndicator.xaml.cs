@@ -1,6 +1,8 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
+using Nagi.WinUI.Helpers;
+using Windows.UI.ViewManagement;
 
 namespace Nagi.WinUI.Controls;
 
@@ -15,13 +17,13 @@ public sealed partial class NowPlayingIndicator : UserControl
         nameof(IsActive),
         typeof(bool),
         typeof(NowPlayingIndicator),
-        new PropertyMetadata(false, OnIsActiveChanged));
+        new PropertyMetadata(false, OnPlaybackStateChanged));
 
     public static readonly DependencyProperty IsPlayingProperty = DependencyProperty.Register(
         nameof(IsPlaying),
         typeof(bool),
         typeof(NowPlayingIndicator),
-        new PropertyMetadata(true, OnIsPlayingChanged));
+        new PropertyMetadata(true, OnPlaybackStateChanged));
 
     /// <summary>
     ///     When true, the indicator is visible. When false, it is collapsed and the
@@ -46,70 +48,56 @@ public sealed partial class NowPlayingIndicator : UserControl
     public NowPlayingIndicator()
     {
         InitializeComponent();
-        // The Storyboard is defined in XAML resources; ensure the initial state matches
-        // the current property values once the control is loaded.
-        Loaded += (_, _) => ApplyState();
-        Unloaded += (_, _) => StopAnimation();
+        Loaded += OnLoaded;
+        Unloaded += OnUnloaded;
     }
 
-    private static void OnIsActiveChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        ((NowPlayingIndicator)d).ApplyState();
+        CompositionAnimationHelper.AnimationsEnabledChanged += OnAnimationsEnabledChanged;
+        ApplyState();
     }
 
-    private static void OnIsPlayingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    private void OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        CompositionAnimationHelper.AnimationsEnabledChanged -= OnAnimationsEnabledChanged;
+        EqualizerStoryboard.Stop();
+    }
+
+    private void OnAnimationsEnabledChanged(UISettings sender, UISettingsAnimationsEnabledChangedEventArgs args) =>
+        DispatcherQueue.TryEnqueue(ApplyState);
+
+    private static void OnPlaybackStateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         ((NowPlayingIndicator)d).ApplyState();
     }
 
     private void ApplyState()
     {
-        if (RootGrid is null) return;
+        if (!IsLoaded) return;
 
         if (!IsActive)
         {
             RootGrid.Visibility = Visibility.Collapsed;
-            StopAnimation();
+            EqualizerStoryboard.Stop();
             return;
         }
 
         RootGrid.Visibility = Visibility.Visible;
-        if (IsPlaying)
+        if (!CompositionAnimationHelper.AreAnimationsEnabled)
         {
-            StartOrResumeAnimation();
+            EqualizerStoryboard.Stop();
+        }
+        else if (IsPlaying)
+        {
+            if (EqualizerStoryboard.GetCurrentState() == ClockState.Stopped)
+                EqualizerStoryboard.Begin();
+            else
+                EqualizerStoryboard.Resume();
         }
         else
         {
-            PauseAnimation();
+            EqualizerStoryboard.Pause();
         }
-    }
-
-    private void StartOrResumeAnimation()
-    {
-        var sb = EqualizerStoryboard;
-        if (sb is null) return;
-
-        // Storyboard.GetCurrentState reports Stopped/Paused/Active. From Stopped we Begin;
-        // from Paused we Resume. Calling Begin while Active is a no-op restart that we
-        // want to avoid (otherwise the bars hitch every time IsPlaying flips back on).
-        var state = sb.GetCurrentState();
-        if (state == ClockState.Stopped)
-        {
-            sb.Begin();
-        }
-        else
-        {
-            sb.Resume();
-        }
-    }
-
-    private void PauseAnimation()
-    {
-        EqualizerStoryboard?.Pause();
-    }
-
-    private void StopAnimation()
-    {
-        EqualizerStoryboard?.Stop();
     }
 }

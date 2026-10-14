@@ -1,4 +1,4 @@
-using System.Text.Json;
+using System.Net.Http.Json;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Http.Pipelines;
@@ -8,9 +8,6 @@ using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Services.Implementations;
 
-/// <summary>
-///     A service for fetching artist information from the Last.fm API.
-/// </summary>
 public class LastFmMetadataService : ILastFmMetadataService
 {
     private const string LastFmApiBaseUrl = "https://ws.audioscrobbler.com/2.0/";
@@ -21,8 +18,6 @@ public class LastFmMetadataService : ILastFmMetadataService
     ///     The hash component of Last.fm's placeholder star image URL, returned for artists without images.
     /// </summary>
     private const string PlaceholderImageHash = "2a96cbd8b46e442fc41c2b86b821562f";
-
-    private static readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     private readonly IApiKeyService _apiKeyService;
     private readonly HttpClient _httpClient;
@@ -41,7 +36,6 @@ public class LastFmMetadataService : ILastFmMetadataService
         _logger = logger;
     }
 
-    /// <inheritdoc />
     public async Task<ServiceResult<ArtistInfo>> GetArtistInfoAsync(string artistName,
         string? languageCode = null,
         CancellationToken cancellationToken = default)
@@ -50,13 +44,13 @@ public class LastFmMetadataService : ILastFmMetadataService
             return ServiceResult<ArtistInfo>.FromSuccessNotFound();
 
         if (_pipelines.IsCircuitOpen(ServiceProviderIds.LastFm))
-            return ServiceResult<ArtistInfo>.FromTemporaryError("Provider is temporarily unavailable.");
+            return ServiceResult<ArtistInfo>.FromTemporaryError();
 
         var apiKey = await _apiKeyService.GetApiKeyAsync(ApiKeyName, cancellationToken).ConfigureAwait(false);
         if (string.IsNullOrEmpty(apiKey))
         {
             _logger.LogError("Cannot fetch Last.fm metadata; API key '{ApiKeyName}' is unavailable.", ApiKeyName);
-            return ServiceResult<ArtistInfo>.FromPermanentError($"API key '{ApiKeyName}' is unavailable.");
+            return ServiceResult<ArtistInfo>.FromTemporaryError();
         }
 
         var (result, errorCode) = await TryFetchAsync(artistName, apiKey, languageCode, cancellationToken)
@@ -72,22 +66,17 @@ public class LastFmMetadataService : ILastFmMetadataService
             if (string.IsNullOrEmpty(apiKey))
             {
                 _logger.LogError("Failed to refresh Last.fm API key. Aborting fetch for '{ArtistName}'.", artistName);
-                return ServiceResult<ArtistInfo>.FromPermanentError("API key refresh failed.");
+                return ServiceResult<ArtistInfo>.FromTemporaryError();
             }
 
             var (retryResult, _) = await TryFetchAsync(artistName, apiKey, languageCode, cancellationToken)
                 .ConfigureAwait(false);
-            return retryResult ?? ServiceResult<ArtistInfo>.FromTemporaryError("Failed after key refresh.");
+            return retryResult ?? ServiceResult<ArtistInfo>.FromTemporaryError();
         }
 
-        return ServiceResult<ArtistInfo>.FromTemporaryError("Last.fm request failed.");
+        return ServiceResult<ArtistInfo>.FromTemporaryError();
     }
 
-    /// <summary>
-    ///     One pipeline call. Returns a final result if one can be produced (success, not-found,
-    ///     auth-disabled, or deserialization failure); otherwise returns the API error code so
-    ///     the caller can decide whether to refresh credentials and retry.
-    /// </summary>
     private async Task<(ServiceResult<ArtistInfo>? Result, int? ErrorCode)> TryFetchAsync(
         string artistName, string apiKey, string? languageCode, CancellationToken cancellationToken)
     {
@@ -104,54 +93,33 @@ public class LastFmMetadataService : ILastFmMetadataService
             },
             async (response, ct) =>
             {
-                var content = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+                var lastFmResponse = await response.Content
+                    .ReadFromJsonAsync<LastFmArtistResponse>(cancellationToken: ct).ConfigureAwait(false);
 
-                if (response.IsSuccessStatusCode)
+                if (!response.IsSuccessStatusCode || lastFmResponse?.ErrorCode is not null)
                 {
-                    try
-                    {
-                        var lastFmResponse = JsonSerializer.Deserialize<LastFmArtistResponse>(content, _jsonOptions);
-                        var artistInfo = lastFmResponse?.Artist != null ? ToArtistInfo(lastFmResponse.Artist) : null;
-
-                        if (artistInfo != null)
-                        {
-                            _logger.LogInformation(
-                                "Found Last.fm metadata for {ArtistName} (Requested Language: {LanguageCode}): Bio={HasBio}, Image={HasImage}",
-                                artistName, isoCode, !string.IsNullOrEmpty(artistInfo.Biography),
-                                !string.IsNullOrEmpty(artistInfo.ImageUrl));
-                            return (ServiceResult<ArtistInfo>.FromSuccess(artistInfo), null);
-                        }
-
-                        return (ServiceResult<ArtistInfo>.FromSuccessNotFound(), null);
-                    }
-                    catch (JsonException ex)
-                    {
-                        _logger.LogError(ex, "Failed to deserialize Last.fm response for '{ArtistName}'.", artistName);
-                        return (ServiceResult<ArtistInfo>.FromPermanentError(
-                            $"Failed to deserialize Last.fm response for '{artistName}'."), null);
-                    }
+                    _logger.LogWarning(
+                        "Error fetching Last.fm metadata for '{ArtistName}'. Status: {StatusCode}, Error: {ErrorMessage}",
+                        artistName, response.StatusCode, lastFmResponse?.Message ?? "Unknown");
+                    return ((ServiceResult<ArtistInfo>?)null, lastFmResponse?.ErrorCode);
                 }
 
-                LastFmErrorResponse? errorResponse = null;
-                if (!string.IsNullOrEmpty(content))
-                {
-                    try { errorResponse = JsonSerializer.Deserialize<LastFmErrorResponse>(content, _jsonOptions); }
-                    catch (JsonException) { /* non-JSON error body — ignore */ }
-                }
+                var artistInfo = lastFmResponse?.Artist != null ? ToArtistInfo(lastFmResponse.Artist) : null;
+                if (artistInfo is null)
+                    return (ServiceResult<ArtistInfo>.FromSuccessNotFound(), null);
 
-                var errorMessage = $"API call for '{artistName}' failed. Status: {response.StatusCode}, Error: {errorResponse?.Message ?? "Unknown"}";
-                _logger.LogWarning("Error fetching Last.fm metadata: {ErrorMessage}", errorMessage);
-                return ((ServiceResult<ArtistInfo>?)null, errorResponse?.ErrorCode);
+                _logger.LogInformation(
+                    "Found Last.fm metadata for {ArtistName} (Requested Language: {LanguageCode}): Bio={HasBio}, Image={HasImage}",
+                    artistName, isoCode, !string.IsNullOrEmpty(artistInfo.Biography),
+                    !string.IsNullOrEmpty(artistInfo.ImageUrl));
+                return (ServiceResult<ArtistInfo>.FromSuccess(artistInfo), null);
             },
-            fallback: (ServiceResult<ArtistInfo>.FromTemporaryError("Provider is temporarily unavailable."), null),
+            fallback: (ServiceResult<ArtistInfo>.FromTemporaryError(), null),
             _logger,
             $"metadata fetch for {artistName}",
             cancellationToken).ConfigureAwait(false);
     }
 
-    /// <summary>
-    ///     Constructs the full request URL for the Last.fm artist.getinfo method.
-    /// </summary>
     private static string BuildRequestUrl(string artistName, string apiKey, string? languageCode)
     {
         var url = $"{LastFmApiBaseUrl}?method=artist.getinfo&artist={Uri.EscapeDataString(artistName)}&api_key={apiKey}&format=json&autocorrect=1";
@@ -164,15 +132,11 @@ public class LastFmMetadataService : ILastFmMetadataService
         return url;
     }
 
-    /// <summary>
-    ///     Maps the Last.fm API response to the application's ArtistInfo DTO.
-    /// </summary>
     private static ArtistInfo? ToArtistInfo(Data.LastFmArtist artist)
     {
         var bio = SanitizeBiography(artist.Bio?.Summary);
         var imageUrl = SelectBestImageUrl(artist.Image);
 
-        // Only return an object if there is at least some information to display.
         if (bio is null && imageUrl is null) return null;
 
         return new ArtistInfo
@@ -189,7 +153,7 @@ public class LastFmMetadataService : ILastFmMetadataService
     {
         if (string.IsNullOrWhiteSpace(rawBio)) return null;
         var linkIndex = rawBio.IndexOf("<a href=\"https://www.last.fm", StringComparison.Ordinal);
-        return linkIndex > 0 ? ArtistNameHelper.NormalizeStringCore(rawBio[..linkIndex]) : ArtistNameHelper.NormalizeStringCore(rawBio);
+        return ArtistNameHelper.NormalizeStringCore(linkIndex >= 0 ? rawBio[..linkIndex] : rawBio);
     }
 
     /// <summary>
@@ -200,18 +164,12 @@ public class LastFmMetadataService : ILastFmMetadataService
         if (images is null) return null;
 
         var imageList = images
-            .Where(i => !string.IsNullOrEmpty(i.Url) && !IsPlaceholderImage(i.Url))
+            .Where(i => !string.IsNullOrWhiteSpace(i.Url) && !i.Url.Contains(PlaceholderImageHash, StringComparison.OrdinalIgnoreCase))
             .ToList();
 
-        // Prefer larger images, but fall back to any available image.
         return imageList.FirstOrDefault(i => i.Size == "extralarge")?.Url
                ?? imageList.FirstOrDefault(i => i.Size == "large")?.Url
                ?? imageList.LastOrDefault()?.Url;
     }
 
-    /// <summary>
-    ///     Checks if the given URL points to Last.fm's placeholder star image.
-    /// </summary>
-    private static bool IsPlaceholderImage(string url)
-        => url.Contains(PlaceholderImageHash, StringComparison.OrdinalIgnoreCase);
 }

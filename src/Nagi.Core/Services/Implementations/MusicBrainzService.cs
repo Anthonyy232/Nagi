@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -33,23 +34,23 @@ public class MusicBrainzService : IMusicBrainzService
         _logger = logger;
     }
 
-    /// <inheritdoc />
-    public async Task<string?> SearchArtistAsync(string artistName, CancellationToken cancellationToken = default)
+    public async Task<ServiceResult<string>> SearchArtistAsync(string artistName, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(artistName))
-            return null;
+            return ServiceResult<string>.FromSuccessNotFound();
 
         if (_pipelines.IsCircuitOpen(ServiceProviderIds.MusicBrainz))
         {
             _logger.LogDebug("MusicBrainz circuit is open; skipping lookup for {ArtistName}.", artistName);
-            return null;
+            return ServiceResult<string>.FromTemporaryError();
         }
 
-        // Quote the artist name for multi-word names (Lucene syntax)
-        var encodedName = Uri.EscapeDataString($"\"{artistName}\"");
+        // Escape Lucene's quoted-phrase syntax before URL encoding.
+        var escapedName = artistName.Replace("\\", "\\\\").Replace("\"", "\\\"");
+        var encodedName = Uri.EscapeDataString($"\"{escapedName}\"");
         var url = $"{BaseUrl}/artist?query=artist:{encodedName}&limit=1&fmt=json";
 
-        return await _pipelines.ExecuteWithFallbackAsync<string?>(
+        return await _pipelines.ExecuteWithFallbackAsync(
             ServiceProviderIds.MusicBrainz,
             async ct =>
             {
@@ -62,7 +63,7 @@ public class MusicBrainzService : IMusicBrainzService
                 {
                     _logger.LogWarning("MusicBrainz search failed with status {StatusCode} for artist: {ArtistName}",
                         response.StatusCode, artistName);
-                    return null;
+                    return ServiceResult<string>.FromTemporaryError();
                 }
 
                 var result = await response.Content.ReadFromJsonAsync<MusicBrainzSearchResult>(cancellationToken: ct)
@@ -72,27 +73,25 @@ public class MusicBrainzService : IMusicBrainzService
                 if (artist is null)
                 {
                     _logger.LogDebug("No MusicBrainz match found for artist: {ArtistName}", artistName);
-                    return null;
+                    return ServiceResult<string>.FromSuccessNotFound();
                 }
 
-                // Verify the match is reasonably close (score > 80).
                 if (artist.Score < 80)
                 {
                     _logger.LogDebug("MusicBrainz match score too low ({Score}) for artist: {ArtistName}",
                         artist.Score, artistName);
-                    return null;
+                    return ServiceResult<string>.FromSuccessNotFound();
                 }
 
                 _logger.LogInformation("Found MusicBrainz ID {MBID} for artist: {ArtistName}", artist.Id, artistName);
-                return artist.Id;
+                return ServiceResult<string>.FromSuccess(artist.Id);
             },
-            fallback: null,
+            fallback: ServiceResult<string>.FromTemporaryError(),
             _logger,
             $"search for {artistName}",
             cancellationToken).ConfigureAwait(false);
     }
 
-    // DTOs for JSON deserialization
     private sealed class MusicBrainzSearchResult
     {
         [JsonPropertyName("artists")]
@@ -106,8 +105,5 @@ public class MusicBrainzService : IMusicBrainzService
 
         [JsonPropertyName("score")]
         public int Score { get; set; }
-
-        [JsonPropertyName("name")]
-        public string? Name { get; set; }
     }
 }

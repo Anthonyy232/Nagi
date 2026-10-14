@@ -23,12 +23,8 @@ public class ApiKeyMiddleware : IFunctionsWorkerMiddleware
         _serverApiKey = config[ApiKeyConfigPath];
     }
 
-    /// <summary>
-    ///     Intercepts the function invocation to perform an API key check.
-    /// </summary>
     public async Task Invoke(FunctionContext context, FunctionExecutionDelegate next)
     {
-        // Get the native ASP.NET Core HttpContext
         var httpContext = context.GetHttpContext();
         if (httpContext == null)
         {
@@ -46,7 +42,6 @@ public class ApiKeyMiddleware : IFunctionsWorkerMiddleware
             return;
         }
 
-        // Critical configuration check: The server must have an API key defined.
         if (string.IsNullOrEmpty(_serverApiKey))
         {
             _logger.LogCritical("Server is misconfigured. The API key at '{ApiKeyConfigPath}' is missing.",
@@ -56,7 +51,6 @@ public class ApiKeyMiddleware : IFunctionsWorkerMiddleware
             return;
         }
 
-        // Validate the API key provided in the request header.
         if (!request.Headers.TryGetValue(ApiKeyHeaderName, out var values) ||
             !_serverApiKey.Equals(values.FirstOrDefault()))
         {
@@ -66,13 +60,9 @@ public class ApiKeyMiddleware : IFunctionsWorkerMiddleware
             return;
         }
 
-        // If the key is valid, proceed to the next function in the pipeline.
         await next(context);
     }
 
-    /// <summary>
-    ///     Creates a standardized error response using the HttpContext.
-    /// </summary>
     private static async Task CreateErrorResponse(HttpContext context, HttpStatusCode statusCode, string message)
     {
         context.Response.StatusCode = (int)statusCode;

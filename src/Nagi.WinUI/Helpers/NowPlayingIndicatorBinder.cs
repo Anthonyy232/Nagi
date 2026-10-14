@@ -5,8 +5,8 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
 using Nagi.Core.Models;
+using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Controls;
-using Nagi.WinUI.ViewModels;
 
 namespace Nagi.WinUI.Helpers;
 
@@ -19,12 +19,9 @@ public sealed class NowPlayingIndicatorBinder : IDisposable
     private const string TitleElementName = "SongTitle";
 
     private readonly ListView _listView;
-    private readonly SongListViewModelBase? _viewModel;
-    private readonly PlayerViewModel _playerViewModel;
+    private readonly INowPlayingSource _source;
     private readonly Brush _playingTitleBrush;
     private readonly Func<object?, Guid?> _songIdExtractor;
-
-    private bool _disposed;
 
     /// <param name="songIdExtractor">
     /// Maps a row item (whatever the ListView's ItemsSource yields) to the Song's Id.
@@ -34,29 +31,23 @@ public sealed class NowPlayingIndicatorBinder : IDisposable
     /// </param>
     public NowPlayingIndicatorBinder(
         ListView listView,
-        SongListViewModelBase? viewModel,
-        PlayerViewModel playerViewModel,
+        INowPlayingSource source,
         Brush playingTitleBrush,
         Func<object?, Guid?>? songIdExtractor = null)
     {
         _listView = listView ?? throw new ArgumentNullException(nameof(listView));
-        _viewModel = viewModel;
-        _playerViewModel = playerViewModel ?? throw new ArgumentNullException(nameof(playerViewModel));
+        _source = source ?? throw new ArgumentNullException(nameof(source));
         _playingTitleBrush = playingTitleBrush ?? throw new ArgumentNullException(nameof(playingTitleBrush));
         _songIdExtractor = songIdExtractor ?? (item => (item as Song)?.Id);
 
         _listView.ContainerContentChanging += OnContainerContentChanging;
-        if (_viewModel is not null) _viewModel.PropertyChanged += OnViewModelPropertyChanged;
-        _playerViewModel.PropertyChanged += OnPlayerViewModelPropertyChanged;
+        _source.PropertyChanged += OnSourcePropertyChanged;
     }
 
     public void Dispose()
     {
-        if (_disposed) return;
-        _disposed = true;
         _listView.ContainerContentChanging -= OnContainerContentChanging;
-        if (_viewModel is not null) _viewModel.PropertyChanged -= OnViewModelPropertyChanged;
-        _playerViewModel.PropertyChanged -= OnPlayerViewModelPropertyChanged;
+        _source.PropertyChanged -= OnSourcePropertyChanged;
     }
 
     /// <summary>
@@ -76,16 +67,9 @@ public sealed class NowPlayingIndicatorBinder : IDisposable
         UpdateContainer(args.ItemContainer, args.Item);
     }
 
-    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    private void OnSourcePropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName != nameof(SongListViewModelBase.CurrentPlayingSongId)) return;
-        RefreshAllRealizedContainers();
-    }
-
-    private void OnPlayerViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName != nameof(PlayerViewModel.IsPlaying) &&
-            !(_viewModel is null && e.PropertyName == nameof(PlayerViewModel.CurrentPlayingTrack))) return;
+        if (e.PropertyName is not (nameof(INowPlayingSource.CurrentPlayingSongId) or nameof(INowPlayingSource.IsPlaying))) return;
         RefreshAllRealizedContainers();
     }
 
@@ -104,13 +88,12 @@ public sealed class NowPlayingIndicatorBinder : IDisposable
         if (container?.ContentTemplateRoot is not FrameworkElement root) return;
 
         var rowSongId = _songIdExtractor(item);
-        var currentSongId = _viewModel is not null ? _viewModel.CurrentPlayingSongId : _playerViewModel.CurrentPlayingTrack?.Id;
-        var isThisRowPlaying = rowSongId is not null && currentSongId == rowSongId;
+        var isThisRowPlaying = rowSongId is not null && _source.CurrentPlayingSongId == rowSongId;
 
         if (root.FindName(IndicatorElementName) is NowPlayingIndicator indicator)
         {
             indicator.IsActive = isThisRowPlaying;
-            indicator.IsPlaying = _playerViewModel.IsPlaying;
+            indicator.IsPlaying = _source.IsPlaying;
         }
 
         if (root.FindName(TitleElementName) is TextBlock title)

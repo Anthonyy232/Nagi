@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Data;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
@@ -14,19 +14,13 @@ public class StatisticsService : IStatisticsService
         _contextFactory = contextFactory;
     }
 
-    /// <inheritdoc />
     public async Task<IEnumerable<SongStats>> GetTopSongsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.PlayCount, int offset = 0, string? searchTerm = null, CancellationToken ct = default)
     {
         if (!string.IsNullOrWhiteSpace(searchTerm))
             return (await GetTopSongsSearchPageAsync(range, limit, metric, offset, searchTerm, ct, includeTotalCount: false).ConfigureAwait(false)).Items;
 
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
-
-        if (range.StartUtc.HasValue)
-            query = query.Where(lh => lh.ListenTimestampUtc >= range.StartUtc.Value);
-        if (range.EndUtc.HasValue)
-            query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
+        var query = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
 
         // Aggregate WITHOUT search filter so global ranks are based on the full dataset.
         var statsQuery = query.GroupBy(lh => lh.SongId)
@@ -60,52 +54,23 @@ public class StatisticsService : IStatisticsService
             .Select(x => new SongStats(songs[x.SongId], x.TotalPlays, TimeSpan.FromTicks(x.TotalDurationTicks), x.Skips, x.GlobalRank));
     }
 
-    /// <inheritdoc />
     public async Task<StatisticsPage<SongStats>> GetTopSongsPageAsync(TimeRange range, int limit, SortMetric metric, int offset, string? searchTerm, CancellationToken ct = default)
     {
         if (!string.IsNullOrWhiteSpace(searchTerm))
             return await GetTopSongsSearchPageAsync(range, limit, metric, offset, searchTerm, ct).ConfigureAwait(false);
 
-        var totalCount = await GetTopSongsCountAsync(range, null, ct).ConfigureAwait(false);
+        var totalCount = await GetUniqueSongsPlayedAsync(range, ct).ConfigureAwait(false);
         var items = (await GetTopSongsAsync(range, limit, metric, offset, null, ct).ConfigureAwait(false)).ToList();
         return new StatisticsPage<SongStats>(items, totalCount);
     }
 
-    /// <inheritdoc />
-    public async Task<int> GetTopSongsCountAsync(TimeRange range, string? searchTerm = null, CancellationToken ct = default)
-    {
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-            return (await GetTopSongsSearchPageAsync(range, 0, SortMetric.PlayCount, 0, searchTerm, ct).ConfigureAwait(false)).TotalCount;
-
-        await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
-
-        if (range.StartUtc.HasValue)
-            query = query.Where(lh => lh.ListenTimestampUtc >= range.StartUtc.Value);
-        if (range.EndUtc.HasValue)
-            query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
-
-        var statsQuery = query
-            .GroupBy(lh => lh.SongId)
-            .Select(g => new { SongId = g.Key, TotalPlays = g.Sum(lh => lh.IsEligibleForScrobbling || lh.EndReason == PlaybackEndReason.Finished ? 1 : 0) })
-            .Where(s => s.TotalPlays > 0);
-
-        return await statsQuery.CountAsync(ct).ConfigureAwait(false);
-    }
-
-    /// <inheritdoc />
     public async Task<IEnumerable<ArtistStats>> GetTopArtistsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.Duration, int offset = 0, string? searchTerm = null, CancellationToken ct = default)
     {
         if (!string.IsNullOrWhiteSpace(searchTerm))
             return (await GetTopArtistsSearchPageAsync(range, limit, metric, offset, searchTerm, ct, includeTotalCount: false).ConfigureAwait(false)).Items;
 
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
-
-        if (range.StartUtc.HasValue)
-            query = query.Where(lh => lh.ListenTimestampUtc >= range.StartUtc.Value);
-        if (range.EndUtc.HasValue)
-            query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
+        var query = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
 
         // Aggregate WITHOUT search filter so global ranks are based on the full dataset.
         var statsQuery = query
@@ -141,54 +106,36 @@ public class StatisticsService : IStatisticsService
             .Select(x => new ArtistStats(artists[x.ArtistId], x.TotalPlays, TimeSpan.FromTicks(x.TotalDurationTicks), x.GlobalRank));
     }
 
-    /// <inheritdoc />
     public async Task<StatisticsPage<ArtistStats>> GetTopArtistsPageAsync(TimeRange range, int limit, SortMetric metric, int offset, string? searchTerm, CancellationToken ct = default)
     {
         if (!string.IsNullOrWhiteSpace(searchTerm))
             return await GetTopArtistsSearchPageAsync(range, limit, metric, offset, searchTerm, ct).ConfigureAwait(false);
 
-        var totalCount = await GetTopArtistsCountAsync(range, null, ct).ConfigureAwait(false);
+        var totalCount = await GetTopArtistsCountAsync(range, ct).ConfigureAwait(false);
         var items = (await GetTopArtistsAsync(range, limit, metric, offset, null, ct).ConfigureAwait(false)).ToList();
         return new StatisticsPage<ArtistStats>(items, totalCount);
     }
 
-    /// <inheritdoc />
-    public async Task<int> GetTopArtistsCountAsync(TimeRange range, string? searchTerm = null, CancellationToken ct = default)
+    private async Task<int> GetTopArtistsCountAsync(TimeRange range, CancellationToken ct)
     {
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-            return (await GetTopArtistsSearchPageAsync(range, 0, SortMetric.PlayCount, 0, searchTerm, ct).ConfigureAwait(false)).TotalCount;
-
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
+        var query = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
 
-        if (range.StartUtc.HasValue)
-            query = query.Where(lh => lh.ListenTimestampUtc >= range.StartUtc.Value);
-        if (range.EndUtc.HasValue)
-            query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
-
-        var statsQuery = query
-            .Join(dbContext.Songs, lh => lh.SongId, s => s.Id, (lh, s) => new { lh, s })
-            .SelectMany(x => x.s.SongArtists, (x, sa) => new { x.lh, sa.ArtistId })
-            .GroupBy(x => x.ArtistId)
-            .Select(g => new { ArtistId = g.Key, TotalPlays = g.Sum(x => x.lh.IsEligibleForScrobbling || x.lh.EndReason == PlaybackEndReason.Finished ? 1 : 0) })
-            .Where(s => s.TotalPlays > 0);
-
-        return await statsQuery.CountAsync(ct).ConfigureAwait(false);
+        return await query
+            .Where(history => history.IsEligibleForScrobbling || history.EndReason == PlaybackEndReason.Finished)
+            .SelectMany(history => history.Song.SongArtists)
+            .Select(artist => artist.ArtistId)
+            .Distinct()
+            .CountAsync(ct).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<IEnumerable<AlbumStats>> GetTopAlbumsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.PlayCount, int offset = 0, string? searchTerm = null, CancellationToken ct = default)
     {
         if (!string.IsNullOrWhiteSpace(searchTerm))
             return (await GetTopAlbumsSearchPageAsync(range, limit, metric, offset, searchTerm, ct, includeTotalCount: false).ConfigureAwait(false)).Items;
 
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
-
-        if (range.StartUtc.HasValue)
-            query = query.Where(lh => lh.ListenTimestampUtc >= range.StartUtc.Value);
-        if (range.EndUtc.HasValue)
-            query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
+        var query = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
 
         // Aggregate WITHOUT search filter so global ranks are based on the full dataset.
         var statsQuery = query
@@ -212,7 +159,6 @@ public class StatisticsService : IStatisticsService
         var topItems = await statsQuery.Skip(offset).Take(limit).ToListAsync(ct).ConfigureAwait(false);
         var page = topItems
             .Select((s, i) => (GlobalRank: offset + i + 1, s.AlbumId, s.TotalPlays, s.TotalDurationTicks))
-            .Where(x => x.AlbumId.HasValue)
             .Select(x => (x.GlobalRank, AlbumId: x.AlbumId!.Value, x.TotalPlays, x.TotalDurationTicks))
             .ToList();
 
@@ -226,53 +172,36 @@ public class StatisticsService : IStatisticsService
             .Select(x => new AlbumStats(albums[x.AlbumId], x.TotalPlays, TimeSpan.FromTicks(x.TotalDurationTicks), x.GlobalRank));
     }
 
-    /// <inheritdoc />
     public async Task<StatisticsPage<AlbumStats>> GetTopAlbumsPageAsync(TimeRange range, int limit, SortMetric metric, int offset, string? searchTerm, CancellationToken ct = default)
     {
         if (!string.IsNullOrWhiteSpace(searchTerm))
             return await GetTopAlbumsSearchPageAsync(range, limit, metric, offset, searchTerm, ct).ConfigureAwait(false);
 
-        var totalCount = await GetTopAlbumsCountAsync(range, null, ct).ConfigureAwait(false);
+        var totalCount = await GetTopAlbumsCountAsync(range, ct).ConfigureAwait(false);
         var items = (await GetTopAlbumsAsync(range, limit, metric, offset, null, ct).ConfigureAwait(false)).ToList();
         return new StatisticsPage<AlbumStats>(items, totalCount);
     }
 
-    /// <inheritdoc />
-    public async Task<int> GetTopAlbumsCountAsync(TimeRange range, string? searchTerm = null, CancellationToken ct = default)
+    private async Task<int> GetTopAlbumsCountAsync(TimeRange range, CancellationToken ct)
     {
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-            return (await GetTopAlbumsSearchPageAsync(range, 0, SortMetric.PlayCount, 0, searchTerm, ct).ConfigureAwait(false)).TotalCount;
-
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
+        var query = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
 
-        if (range.StartUtc.HasValue)
-            query = query.Where(lh => lh.ListenTimestampUtc >= range.StartUtc.Value);
-        if (range.EndUtc.HasValue)
-            query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
-
-        var statsQuery = query
-            .Join(dbContext.Songs, lh => lh.SongId, s => s.Id, (lh, s) => new { lh, s })
-            .GroupBy(x => x.s.AlbumId)
-            .Select(g => new { AlbumId = g.Key, TotalPlays = g.Sum(x => x.lh.IsEligibleForScrobbling || x.lh.EndReason == PlaybackEndReason.Finished ? 1 : 0) })
-            .Where(s => s.TotalPlays > 0 && s.AlbumId != null);
-
-        return await statsQuery.CountAsync(ct).ConfigureAwait(false);
+        return await query
+            .Where(history => history.IsEligibleForScrobbling || history.EndReason == PlaybackEndReason.Finished)
+            .Select(history => history.Song.AlbumId)
+            .Where(albumId => albumId != null)
+            .Distinct()
+            .CountAsync(ct).ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
     public async Task<IEnumerable<GenreStats>> GetTopGenresAsync(TimeRange range, int limit = 10, SortMetric metric = SortMetric.PlayCount, int offset = 0, string? searchTerm = null, CancellationToken ct = default)
     {
         if (!string.IsNullOrWhiteSpace(searchTerm))
             return (await GetTopGenresSearchPageAsync(range, limit, metric, offset, searchTerm, ct, includeTotalCount: false).ConfigureAwait(false)).Items;
 
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
-
-        if (range.StartUtc.HasValue)
-            query = query.Where(lh => lh.ListenTimestampUtc >= range.StartUtc.Value);
-        if (range.EndUtc.HasValue)
-            query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
+        var query = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
 
         // Aggregate WITHOUT search filter so global ranks are based on the full dataset.
         var statsQuery = query
@@ -308,39 +237,27 @@ public class StatisticsService : IStatisticsService
             .Select(x => new GenreStats(genres[x.GenreId], x.TotalPlays, TimeSpan.FromTicks(x.TotalDurationTicks), x.GlobalRank));
     }
 
-    /// <inheritdoc />
     public async Task<StatisticsPage<GenreStats>> GetTopGenresPageAsync(TimeRange range, int limit, SortMetric metric, int offset, string? searchTerm, CancellationToken ct = default)
     {
         if (!string.IsNullOrWhiteSpace(searchTerm))
             return await GetTopGenresSearchPageAsync(range, limit, metric, offset, searchTerm, ct).ConfigureAwait(false);
 
-        var totalCount = await GetTopGenresCountAsync(range, null, ct).ConfigureAwait(false);
+        var totalCount = await GetTopGenresCountAsync(range, ct).ConfigureAwait(false);
         var items = (await GetTopGenresAsync(range, limit, metric, offset, null, ct).ConfigureAwait(false)).ToList();
         return new StatisticsPage<GenreStats>(items, totalCount);
     }
 
-    /// <inheritdoc />
-    public async Task<int> GetTopGenresCountAsync(TimeRange range, string? searchTerm = null, CancellationToken ct = default)
+    private async Task<int> GetTopGenresCountAsync(TimeRange range, CancellationToken ct)
     {
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-            return (await GetTopGenresSearchPageAsync(range, 0, SortMetric.PlayCount, 0, searchTerm, ct).ConfigureAwait(false)).TotalCount;
-
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
+        var query = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
 
-        if (range.StartUtc.HasValue)
-            query = query.Where(lh => lh.ListenTimestampUtc >= range.StartUtc.Value);
-        if (range.EndUtc.HasValue)
-            query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
-
-        var statsQuery = query
-            .Join(dbContext.Songs, lh => lh.SongId, s => s.Id, (lh, s) => new { lh, s })
-            .SelectMany(x => x.s.Genres, (x, g) => new { x.lh, g.Id })
-            .GroupBy(x => x.Id)
-            .Select(g => new { GenreId = g.Key, TotalPlays = g.Sum(x => x.lh.IsEligibleForScrobbling || x.lh.EndReason == PlaybackEndReason.Finished ? 1 : 0) })
-            .Where(s => s.TotalPlays > 0);
-
-        return await statsQuery.CountAsync(ct).ConfigureAwait(false);
+        return await query
+            .Where(history => history.IsEligibleForScrobbling || history.EndReason == PlaybackEndReason.Finished)
+            .SelectMany(history => history.Song.Genres)
+            .Select(genre => genre.Id)
+            .Distinct()
+            .CountAsync(ct).ConfigureAwait(false);
     }
 
     private async Task<StatisticsPage<SongStats>> GetTopSongsSearchPageAsync(
@@ -523,8 +440,8 @@ public class StatisticsService : IStatisticsService
             globalRank++;
             if (!row.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) continue;
 
-            if (totalCount >= safeOffset && pageRows.Count < safeLimit && row.AlbumId.HasValue)
-                pageRows.Add((globalRank, row.AlbumId.Value, row.TotalPlays, row.TotalDurationTicks));
+            if (totalCount >= safeOffset && pageRows.Count < safeLimit)
+                pageRows.Add((globalRank, row.AlbumId!.Value, row.TotalPlays, row.TotalDurationTicks));
             totalCount++;
             if (!includeTotalCount && pageRows.Count >= safeLimit) break;
         }
@@ -619,31 +536,19 @@ public class StatisticsService : IStatisticsService
         return query;
     }
 
-    /// <inheritdoc />
     public async Task<TimeSpan> GetTotalListenTimeAsync(TimeRange range, CancellationToken ct = default)
     {
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
-
-        if (range.StartUtc.HasValue)
-            query = query.Where(lh => lh.ListenTimestampUtc >= range.StartUtc.Value);
-        if (range.EndUtc.HasValue)
-            query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
+        var query = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
 
         var totalTicks = await query.SumAsync(lh => lh.ListenDurationTicks, ct).ConfigureAwait(false);
         return TimeSpan.FromTicks(totalTicks);
     }
 
-    /// <inheritdoc />
     public async Task<int> GetUniqueSongsPlayedAsync(TimeRange range, CancellationToken ct = default)
     {
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
-
-        if (range.StartUtc.HasValue)
-            query = query.Where(lh => lh.ListenTimestampUtc >= range.StartUtc.Value);
-        if (range.EndUtc.HasValue)
-            query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
+        var query = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
 
         return await query
             .Where(lh => lh.IsEligibleForScrobbling || lh.EndReason == PlaybackEndReason.Finished)
@@ -653,128 +558,35 @@ public class StatisticsService : IStatisticsService
             .ConfigureAwait(false);
     }
 
-    /// <inheritdoc />
-    public async Task<IEnumerable<ActivityDataPoint>> GetListeningActivityTimelineAsync(TimeRange range, ActivityInterval interval, CancellationToken ct = default)
-    {
-        if (!Enum.IsDefined(interval))
-            throw new ArgumentOutOfRangeException(nameof(interval), interval, "Unknown activity interval.");
-
-        await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var query = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range)
-            .Select(history => new
-            {
-                history.ListenTimestampUtc,
-                history.ListenDurationTicks,
-                history.IsEligibleForScrobbling,
-                history.EndReason
-            });
-        var buckets = new Dictionary<DateTime, (int Plays, long DurationTicks)>();
-
-        await foreach (var history in query.AsAsyncEnumerable().WithCancellation(ct).ConfigureAwait(false))
-        {
-            var bucket = GetActivityBucket(history.ListenTimestampUtc.ToLocalTime(), interval);
-            var current = buckets.GetValueOrDefault(bucket);
-            var qualifyingPlay = history.IsEligibleForScrobbling || history.EndReason == PlaybackEndReason.Finished
-                ? 1
-                : 0;
-            buckets[bucket] = (
-                current.Plays + qualifyingPlay,
-                current.DurationTicks + history.ListenDurationTicks);
-        }
-
-        return buckets
-            .OrderBy(entry => entry.Key)
-            .Select(entry => new ActivityDataPoint(
-                entry.Key,
-                entry.Value.Plays,
-                TimeSpan.FromTicks(entry.Value.DurationTicks)))
-            .ToList();
-    }
-
-    private static DateTime GetActivityBucket(DateTime localTimestamp, ActivityInterval interval)
-    {
-        return interval switch
-        {
-            ActivityInterval.Hour => new DateTime(
-                localTimestamp.Year,
-                localTimestamp.Month,
-                localTimestamp.Day,
-                localTimestamp.Hour,
-                0,
-                0,
-                localTimestamp.Kind),
-            ActivityInterval.Day => localTimestamp.Date,
-            ActivityInterval.Week => localTimestamp.Date.AddDays(-(((int)localTimestamp.DayOfWeek + 6) % 7)),
-            ActivityInterval.Month => new DateTime(
-                localTimestamp.Year,
-                localTimestamp.Month,
-                1,
-                0,
-                0,
-                0,
-                localTimestamp.Kind),
-            _ => throw new ArgumentOutOfRangeException(nameof(interval), interval, "Unknown activity interval.")
-        };
-    }
-
-    /// <inheritdoc />
     public async Task<ListeningPatternStats> GetListeningPatternsAsync(TimeRange range, CancellationToken ct = default)
     {
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
+        var query = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
 
-        if (range.StartUtc.HasValue)
-            query = query.Where(lh => lh.ListenTimestampUtc >= range.StartUtc.Value);
-        if (range.EndUtc.HasValue)
-            query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
-
-        // Group client-side because SQLite strftime is not translatable via LINQ.
-        // For very large tables a raw-SQL approach would be faster, but this avoids
-        // parameterised-NULL pitfalls with FormattableString and keeps the code testable.
-        var timestamps = await query
+        // Convert locally so history uses the same time-zone rules as the rest of the app.
+        var counts = await query
             .Select(lh => lh.ListenTimestampUtc)
-            .ToListAsync(ct)
-            .ConfigureAwait(false);
+            .AsAsyncEnumerable()
+            .Select(timestamp => timestamp.ToLocalTime())
+            .CountBy(timestamp => (timestamp.DayOfWeek, timestamp.Hour))
+            .ToListAsync(ct).ConfigureAwait(false);
 
-        if (timestamps.Count == 0) return new ListeningPatternStats(DayOfWeek.Monday, 12);
+        if (counts.Count == 0) return new ListeningPatternStats(DayOfWeek.Monday, 12);
 
-        var dayCounts = new Dictionary<DayOfWeek, int>();
-        var hourCounts = new Dictionary<int, int>();
-        foreach (var timestamp in timestamps)
-        {
-            var localTimestamp = timestamp.ToLocalTime();
-            dayCounts[localTimestamp.DayOfWeek] = dayCounts.GetValueOrDefault(localTimestamp.DayOfWeek) + 1;
-            hourCounts[localTimestamp.Hour] = hourCounts.GetValueOrDefault(localTimestamp.Hour) + 1;
-        }
-
-        var mostActiveDay = dayCounts.MaxBy(entry => entry.Value).Key;
-        var peakHour = hourCounts.MaxBy(entry => entry.Value).Key;
+        var mostActiveDay = counts
+            .AggregateBy(entry => entry.Key.DayOfWeek, 0, (total, entry) => total + entry.Value)
+            .MaxBy(entry => entry.Value).Key;
+        var peakHour = counts
+            .AggregateBy(entry => entry.Key.Hour, 0, (total, entry) => total + entry.Value)
+            .MaxBy(entry => entry.Value).Key;
 
         return new ListeningPatternStats(mostActiveDay, peakHour);
     }
 
-    /// <inheritdoc />
-    public async Task<DayOfWeek> GetMostActiveDayOfWeekAsync(TimeRange range, CancellationToken ct = default)
-    {
-        return (await GetListeningPatternsAsync(range, ct).ConfigureAwait(false)).MostActiveDay;
-    }
-
-    /// <inheritdoc />
-    public async Task<int> GetPeakListeningHourAsync(TimeRange range, CancellationToken ct = default)
-    {
-        return (await GetListeningPatternsAsync(range, ct).ConfigureAwait(false)).PeakHour;
-    }
-
-    /// <inheritdoc />
     public async Task<IEnumerable<ContextStats>> GetPlaybackSourceDistributionAsync(TimeRange range, CancellationToken ct = default)
     {
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
-
-        if (range.StartUtc.HasValue)
-            query = query.Where(lh => lh.ListenTimestampUtc >= range.StartUtc.Value);
-        if (range.EndUtc.HasValue)
-            query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
+        var query = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range);
 
         var stats = await query.GroupBy(lh => lh.ContextType)
             .Select(g => new

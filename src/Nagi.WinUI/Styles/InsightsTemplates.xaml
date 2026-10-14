@@ -2,7 +2,7 @@
     x:Class="Nagi.WinUI.Styles.InsightsTemplates"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:vm="using:Nagi.WinUI.ViewModels"
+    xmlns:vm="using:Nagi.Presentation.ViewModels"
     xmlns:controls="using:ImageEx">
 
     <ResourceDictionary.MergedDictionaries>
@@ -27,13 +27,13 @@
                        HorizontalAlignment="Center" Foreground="{ThemeResource AppPrimaryColorBrush}"
                        FontWeight="Bold" FontSize="14" />
             <Grid Grid.Column="1" Width="40" Height="40" HorizontalAlignment="Center">
-                <Border CornerRadius="4" Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                    <controls:ImageEx IsCacheEnabled="True"
-                        Source="{x:Bind ArtworkUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
+                <Border CornerRadius="{StaticResource ArtworkCornerRadius}" Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <controls:ImageEx Width="40" Height="40" IsCacheEnabled="True"
+                        Source="{x:Bind ArtworkUri, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
                         DecodePixelWidth="40" DecodePixelType="Logical" Stretch="UniformToFill" />
                 </Border>
-                <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="4"
-                      Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
+                <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="{StaticResource ArtworkCornerRadius}"
+                      Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                     <FontIcon Glyph="&#xE8D6;" FontSize="16" Foreground="{ThemeResource TextFillColorTertiaryBrush}"
                               HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Grid>
@@ -61,19 +61,19 @@
                        HorizontalAlignment="Center" Foreground="{ThemeResource AppPrimaryColorBrush}"
                        FontWeight="Bold" FontSize="14" />
             <Grid Grid.Column="1" Width="40" Height="40" HorizontalAlignment="Center">
-                <Border CornerRadius="20" Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                    <controls:ImageEx IsCacheEnabled="True"
-                        Source="{x:Bind ImageUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
+                <Border CornerRadius="20" Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <controls:ImageEx Width="40" Height="40" IsCacheEnabled="True"
+                        Source="{x:Bind ImageUri, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
                         DecodePixelWidth="40" DecodePixelType="Logical" Stretch="UniformToFill" />
                 </Border>
                 <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="20"
-                      Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
+                      Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                     <FontIcon Glyph="&#xE77B;" FontSize="16" Foreground="{ThemeResource TextFillColorTertiaryBrush}"
                               HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Grid>
             </Grid>
             <HyperlinkButton Grid.Column="2" Content="{x:Bind Name}"
-                             Command="{x:Bind Command, Mode=OneWay}"
+                             Command="{x:Bind Command}"
                              CommandParameter="{x:Bind}"
                              Style="{StaticResource InsightsHyperlinkButtonStyle}"
                              FontSize="13" FontWeight="SemiBold" />
@@ -95,20 +95,20 @@
                        HorizontalAlignment="Center" Foreground="{ThemeResource AppPrimaryColorBrush}"
                        FontWeight="Bold" FontSize="14" />
             <Grid Grid.Column="1" Width="40" Height="40" HorizontalAlignment="Center">
-                <Border CornerRadius="4" Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                    <controls:ImageEx IsCacheEnabled="True"
-                        Source="{x:Bind ArtworkUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
+                <Border CornerRadius="{StaticResource ArtworkCornerRadius}" Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <controls:ImageEx Width="40" Height="40" IsCacheEnabled="True"
+                        Source="{x:Bind ArtworkUri, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
                         DecodePixelWidth="40" DecodePixelType="Logical" Stretch="UniformToFill" />
                 </Border>
-                <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="4"
-                      Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
+                <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="{StaticResource ArtworkCornerRadius}"
+                      Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                     <FontIcon Glyph="&#xE93C;" FontSize="16" Foreground="{ThemeResource TextFillColorTertiaryBrush}"
                               HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Grid>
             </Grid>
             <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="1">
                 <HyperlinkButton Content="{x:Bind Title}"
-                                 Command="{x:Bind Command, Mode=OneWay}"
+                                 Command="{x:Bind Command}"
                                  CommandParameter="{x:Bind}"
                                  Style="{StaticResource InsightsHyperlinkButtonStyle}"
                                  FontSize="13" FontWeight="SemiBold" />
@@ -132,7 +132,7 @@
                        HorizontalAlignment="Center" Foreground="{ThemeResource AppPrimaryColorBrush}"
                        FontWeight="Bold" FontSize="14" />
             <HyperlinkButton Grid.Column="1" Content="{x:Bind Name}"
-                             Command="{x:Bind Command, Mode=OneWay}"
+                             Command="{x:Bind Command}"
                              CommandParameter="{x:Bind}"
                              Style="{StaticResource InsightsHyperlinkButtonStyle}"
                              FontSize="13" FontWeight="SemiBold" />

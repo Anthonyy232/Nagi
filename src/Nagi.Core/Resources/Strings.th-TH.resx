@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>โฟลเดอร์</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>โฟลเดอร์</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>ลำดับเอง</value>
   </data>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>สแกนเสร็จสมบูรณ์ เพิ่มหรืออัปเดต {0} {1}</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>กำลังบันทึกชุดที่ {0}...</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>กำลังสแกนโฟลเดอร์...</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>สแกนเสร็จสมบูรณ์ ไลบรารีเป็นปัจจุบันแล้ว</value>
   </data>
@@ -194,16 +185,16 @@
     <value>สแกนล้มเหลว โปรดตรวจสอบบันทึกสำหรับรายละเอียด</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>กำลังเตรียมแคชการสแกน...</value>
+    <value>กำลังเตรียมการสแกนคลังเพลง…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>กำลังอ่านรายละเอียดเพลง...</value>
+    <value>กำลังอ่านรายละเอียดเพลง…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>กำลังล้างข้อมูลในไลบรารีของคุณ...</value>
+    <value>กำลังล้างข้อมูลคลังเพลงของคุณ…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>กำลังดำเนินการขั้นสุดท้าย...</value>
+    <value>กำลังดำเนินการขั้นสุดท้าย…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>การปรับระดับเสียงล้มเหลว โปรดตรวจสอบบันทึกสำหรับรายละเอียด</value>
@@ -216,13 +207,10 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>เพิ่มโฟลเดอร์ไม่สำเร็จ</value>
+    <value>ไม่สามารถเพิ่มโฟลเดอร์ได้</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>ชื่อเพลย์ลิสต์ต้องไม่ว่างเปล่า</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>คะแนนต้องอยู่ระหว่าง 1 ถึง 5</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
@@ -248,7 +236,15 @@
     <value>จัดเรียงตาม: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg จำเป็นสำหรับการปรับระดับเสียงความแม่นยำสูง (การวิเคราะห์ ReplayGain) แต่ไม่พบในระบบของคุณ.\n\nทำตามขั้นตอนเหล่านี้เพื่อตั้งค่า:\n\n1. **ดาวน์โหลด**: ไปที่ https://www.gyan.dev/ffmpeg/builds/ และดาวน์โหลด 'ffmpeg-git-full.7z' (หรือไฟล์ที่คล้ายกัน) รุ่น essentials\n2. **คู่มือ**: คุณสามารถทำตามคู่มือนี้สำหรับคำแนะนำโดยละเอียด: https://phoenixnap.com/kb/ffmpeg-windows\n3. **แตกไฟล์**: เปิดโฟลเดอร์สถาปัตยกรรมและค้นหาไดเรกทอรี 'bin' ที่มี `ffmpeg.exe`\n4. **ติดตั้ง**: คัดลอก `ffmpeg.exe` ไปยังโฟลเดอร์ถาวร (เช่น `C:\ffmpeg\`) และ **เพิ่มโฟลเดอร์นั้นไปยังตัวแปรสภาพแวดล้อม System PATH** ของคุณ\n5. **รีสตาร์ท**: โปรดรีสตาร์ท Nagi หลังจากการติดตั้งเพื่อให้การเปลี่ยนแปลงมีผล</value>
+    <value>จำเป็นต้องใช้ FFmpeg เพื่อวิเคราะห์เพลงสำหรับการปรับระดับความดัง แต่ Nagi ไม่พบโปรแกรมนี้
+
+1. ดาวน์โหลดเวอร์ชัน Windows จาก https://ffmpeg.org/download.html
+2. แตกไฟล์และหา ffmpeg.exe ในโฟลเดอร์ bin
+3. เพิ่มโฟลเดอร์ที่มี ffmpeg.exe ไปยัง Windows PATH ของคุณ
+4. รีสตาร์ท Nagi แล้วเปิดใช้งานการปรับระดับความดังอีกครั้ง</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>สร้างเพลย์ลิสต์แล้ว แต่ไม่สามารถเพิ่มเพลงได้ โปรดลองนำเข้าใหม่อีกครั้ง</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>ไม่พบเพลงจากเพลย์ลิสต์ในไลบรารีของคุณ</value>
@@ -293,12 +289,39 @@
     <value>เพลงทั้งหมดมีข้อมูลระดับเสียงแล้ว</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>กำลังคำนวณระดับเสียงสำหรับ {0} เพลง...</value>
+    <value>กำลังวิเคราะห์ระดับความดัง… เพลง: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>กำลังคำนวณการปรับระดับเสียง ({0}/{1})...</value>
+    <value>กำลังคำนวณการปรับระดับความดัง ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>การปรับระดับเสียงเสร็จสมบูรณ์ ประมวลผล {0} เพลง</value>
+    <value>การปรับระดับความดังเสร็จสมบูรณ์ ประมวลผลเพลงแล้ว: {0}</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>ป้อนโทเค็นผู้ใช้ ListenBrainz ของคุณ</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>ไม่สามารถอ่านการตอบกลับจาก ListenBrainz ได้ โปรดลองอีกครั้งในภายหลัง</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>ป้อน URL เซิร์ฟเวอร์ที่เริ่มต้นด้วย http:// หรือ https://</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>โทเค็นผู้ใช้ไม่ถูกต้อง โปรดตรวจสอบและลองอีกครั้ง</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz ส่งคืนข้อผิดพลาด (HTTP {0}) โปรดลองอีกครั้งในภายหลัง</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>ไม่สามารถเชื่อมต่อกับ ListenBrainz ได้ โปรดตรวจสอบการเชื่อมต่อและ URL เซิร์ฟเวอร์</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi ไม่พบโฟลเดอร์ข้อมูลคลังเพลง</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>การกู้คืนล้มเหลว และไม่สามารถกู้คืนข้อมูลก่อนหน้าของคุณได้อย่างสมบูรณ์ บันทึกไฟล์กู้คืนไว้ที่ &apos;{0}&apos;</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>ไฟล์ที่เลือกไม่ใช่ไฟล์สำรองข้อมูล Nagi ที่ถูกต้อง</value>
   </data>
 </root>

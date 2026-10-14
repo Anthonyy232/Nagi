@@ -12,10 +12,11 @@ public class SortKeyHelperTests
     [InlineData("THE BEATLES", "beatles")]
     [InlineData("A Day in the Life", "day in the life")]
     [InlineData("An Evening", "evening")]
-    [InlineData("Theater", "theater")]          // "The" without trailing space is not an article.
-    [InlineData("  The  Wall  ", "wall")]       // Whitespace around and after the article.
-    [InlineData("The", "the")]                  // Article alone is not stripped (nothing would remain).
+    [InlineData("Theater", "theater")]
+    [InlineData("  The  Wall  ", "wall")]
+    [InlineData("The", "the")]
     [InlineData("Carpenters", "carpenters")]
+    [InlineData("A The Hobbit", "the hobbit")]
     public void Normalize_StripsLeadingArticlesAndLowercases(string input, string expected)
     {
         SortKeyHelper.Normalize(input).Should().Be(expected);
@@ -30,10 +31,4 @@ public class SortKeyHelperTests
         SortKeyHelper.Normalize(input).Should().Be(string.Empty);
     }
 
-    [Fact]
-    public void Normalize_OnlyStripsFirstArticle()
-    {
-        // "A The Hobbit" → drop leading "a ", leave "The Hobbit" alone (only one pass).
-        SortKeyHelper.Normalize("A The Hobbit").Should().Be("the hobbit");
-    }
 }

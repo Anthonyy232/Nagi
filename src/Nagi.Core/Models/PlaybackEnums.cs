@@ -1,13 +1,7 @@
 ﻿namespace Nagi.Core.Models;
 
-/// <summary>
-///     Specifies the reason why a track finished playing.
-/// </summary>
 public enum PlaybackEndReason
 {
-    /// <summary>
-    ///     The track played naturally to its end.
-    /// </summary>
     Finished = 0,
 
     /// <summary>
@@ -20,50 +14,23 @@ public enum PlaybackEndReason
     /// </summary>
     PausedAndAbandoned = 2,
 
-    /// <summary>
-    ///     Playback was interrupted by a technical error.
-    /// </summary>
     Error = 3
 }
 
-/// <summary>
-///     Specifies the UI context from which a song was played.
-/// </summary>
 public enum PlaybackContextType
 {
-    /// <summary>
-    ///     Played from an album view.
-    /// </summary>
     Album = 0,
 
-    /// <summary>
-    ///     Played from an artist's track list.
-    /// </summary>
     Artist = 1,
 
-    /// <summary>
-    ///     Played from a manual user playlist.
-    /// </summary>
     Playlist = 2,
 
-    /// <summary>
-    ///     Played from a rule-based smart playlist.
-    /// </summary>
     SmartPlaylist = 3,
 
-    /// <summary>
-    ///     Played from a folder navigation view.
-    /// </summary>
     Folder = 4,
 
-    /// <summary>
-    ///     Played from a genre list.
-    /// </summary>
     Genre = 5,
 
-    /// <summary>
-    ///     Played from search results.
-    /// </summary>
     Search = 6,
 
     /// <summary>
@@ -77,7 +44,16 @@ public enum PlaybackContextType
     Transient = 8
 }
 
-/// <summary>
-///     Represents the metadata context for a listen event.
-/// </summary>
 public record PlaybackContext(PlaybackContextType Type, Guid? ContextId);
+
+/// <summary>
+///     The playback state shown by the operating system's media controls.
+/// </summary>
+public enum SystemMediaPlaybackStatus
+{
+    Closed,
+    Changing,
+    Stopped,
+    Playing,
+    Paused
+}

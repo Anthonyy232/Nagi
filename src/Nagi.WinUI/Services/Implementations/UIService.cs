@@ -1,38 +1,47 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.System;
+using Microsoft.Extensions.Logging;
 using Microsoft.Windows.Storage.Pickers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Nagi.Core.Models;
+using Nagi.Presentation.Resources;
+using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Controls;
+using Nagi.WinUI.Dialogs;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Services.Abstractions;
 using WinRT.Interop;
 
 namespace Nagi.WinUI.Services.Implementations;
 
-/// <summary>
-///     An implementation of the IUIService that uses WinUI 3 controls.
-/// </summary>
-public class UIService : IUIService
+public partial class UIService : IUIService
 {
-    // Win32 MessageBox constants
     private const uint MB_OK = 0x00000000;
     private const uint MB_ICONERROR = 0x00000010;
 
     private readonly IWin32InteropService _win32InteropService;
+    private readonly IViewModelFactory _viewModelFactory;
+    private readonly ILogger<UIService> _logger;
+    private readonly MainWindow _window;
 
-    public UIService(IWin32InteropService win32InteropService)
+    public UIService(MainWindow window, IWin32InteropService win32InteropService, IViewModelFactory viewModelFactory,
+        ILogger<UIService> logger)
     {
+        _window = window;
         _win32InteropService = win32InteropService;
+        _viewModelFactory = viewModelFactory;
+        _logger = logger;
     }
 
     public async Task<bool> ShowConfirmationDialogAsync(string title, string content, string? primaryButtonText,
-        string? closeButtonText)
+        string? closeButtonText, bool defaultToCancel)
     {
         if (!TryGetXamlRoot(out var xamlRoot)) return false;
 
@@ -40,10 +49,10 @@ public class UIService : IUIService
         {
             Title = title,
             Content = content,
-            PrimaryButtonText = primaryButtonText ?? Resources.Strings.Generic_OK,
-            CloseButtonText = closeButtonText ?? Resources.Strings.Generic_Cancel,
+            PrimaryButtonText = primaryButtonText ?? Strings.Generic_OK,
+            CloseButtonText = closeButtonText ?? Strings.Generic_Cancel,
             XamlRoot = xamlRoot,
-            DefaultButton = ContentDialogButton.Primary
+            DefaultButton = defaultToCancel ? ContentDialogButton.Close : ContentDialogButton.Primary
         };
 
         DialogThemeHelper.ApplyThemeOverrides(dialog);
@@ -53,9 +62,7 @@ public class UIService : IUIService
 
     public async Task<string?> PickSingleFolderAsync()
     {
-        if (App.RootWindow is null) return null;
-
-        var folderPicker = new FolderPicker(App.RootWindow.AppWindow.Id);
+        var folderPicker = new FolderPicker(_window.AppWindow.Id);
 
         var selectedFolder = await folderPicker.PickSingleFolderAsync();
         return selectedFolder?.Path;
@@ -72,34 +79,7 @@ public class UIService : IUIService
         await Launcher.LaunchFolderAsync(folder);
     }
 
-    public async Task<UpdateDialogResult> ShowUpdateDialogAsync(string title, string content, string primaryButtonText,
-        string secondaryButtonText, string closeButtonText)
-    {
-        if (!TryGetXamlRoot(out var xamlRoot))
-            return UpdateDialogResult.RemindLater;
-
-        var dialog = new ContentDialog
-        {
-            Title = title,
-            Content = content,
-            PrimaryButtonText = primaryButtonText,
-            SecondaryButtonText = secondaryButtonText,
-            CloseButtonText = closeButtonText,
-            XamlRoot = xamlRoot,
-            DefaultButton = ContentDialogButton.Primary
-        };
-
-        DialogThemeHelper.ApplyThemeOverrides(dialog);
-        var result = await dialog.ShowAsync();
-
-        return result switch
-        {
-            ContentDialogResult.Primary => UpdateDialogResult.Install,
-            ContentDialogResult.Secondary => UpdateDialogResult.RemindLater,
-            _ => UpdateDialogResult.Skip
-        };
-    }
-
+    public async Task<bool> OpenUriAsync(Uri uri) => await Launcher.LaunchUriAsync(uri);
 
     public async Task ShowMessageDialogAsync(string title, string message)
     {
@@ -109,7 +89,7 @@ public class UIService : IUIService
         {
             Title = title,
             Content = message,
-            PrimaryButtonText = Resources.Strings.Generic_OK,
+            PrimaryButtonText = Strings.Generic_OK,
             XamlRoot = xamlRoot
         };
 
@@ -132,8 +112,8 @@ public class UIService : IUIService
         {
             Title = title,
             Content = dialogContent,
-            PrimaryButtonText = Resources.Strings.CrashReport_Button_Reset,
-            CloseButtonText = Resources.Strings.Generic_Close,
+            PrimaryButtonText = Strings.CrashReport_Button_Reset,
+            CloseButtonText = Strings.Generic_Close,
             DefaultButton = ContentDialogButton.Close,
             XamlRoot = xamlRoot
         };
@@ -148,7 +128,7 @@ public class UIService : IUIService
         catch (Exception)
         {
             // Fallback to Win32 MessageBox if ContentDialog fails (e.g. another dialog is open)
-            var hwnd = App.RootWindow != null ? WindowNative.GetWindowHandle(App.RootWindow) : IntPtr.Zero;
+            var hwnd = WindowNative.GetWindowHandle(_window);
             var message = $"{introduction}\n\n{logContent}";
             _win32InteropService.ShowMessageBox(hwnd, message, title, MB_ICONERROR | MB_OK);
             return CrashReportResult.Close;
@@ -157,9 +137,7 @@ public class UIService : IUIService
 
     public async Task<string?> PickSingleFileAsync(IEnumerable<string> fileTypes)
     {
-        if (App.RootWindow is null) return null;
-
-        var filePicker = new FileOpenPicker(App.RootWindow.AppWindow.Id);
+        var filePicker = new FileOpenPicker(_window.AppWindow.Id);
 
         foreach (var ext in fileTypes)
         {
@@ -172,9 +150,7 @@ public class UIService : IUIService
 
     public async Task<IReadOnlyList<string>> PickOpenMultipleFilesAsync(IEnumerable<string> fileTypes)
     {
-        if (App.RootWindow is null) return [];
-
-        var filePicker = new FileOpenPicker(App.RootWindow.AppWindow.Id);
+        var filePicker = new FileOpenPicker(_window.AppWindow.Id);
 
         foreach (var ext in fileTypes)
         {
@@ -183,6 +159,17 @@ public class UIService : IUIService
 
         var files = await filePicker.PickMultipleFilesAsync();
         return files.Select(f => f.Path).ToList();
+    }
+
+    public async Task<SmartPlaylist?> ShowSmartPlaylistEditorAsync(SmartPlaylist? editing = null)
+    {
+        if (!TryGetXamlRoot(out var xamlRoot)) return null;
+
+        using var viewModel = _viewModelFactory.Create<SmartPlaylistEditorViewModel>();
+        viewModel.Initialize(editing);
+        var dialog = new SmartPlaylistEditorDialog(viewModel) { XamlRoot = xamlRoot };
+        var result = await dialog.ShowAsync();
+        return result == ContentDialogResult.Primary ? viewModel.ResultPlaylist : null;
     }
 
     public async Task<bool> ShowFFmpegSetupDialogAsync(string title, string instructions, Func<Task<bool>> checkAction)
@@ -200,7 +187,7 @@ public class UIService : IUIService
 
         var statusBlock = new TextBlock
         {
-            Text = Resources.Strings.FFmpeg_Status_NotDetected,
+            Text = Strings.FFmpeg_Status_NotDetected,
             TextWrapping = TextWrapping.Wrap,
             Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Orange)
         };
@@ -210,20 +197,17 @@ public class UIService : IUIService
         {
             Title = title,
             Content = contentPanel,
-            PrimaryButtonText = Resources.Strings.Generic_Recheck,
-            CloseButtonText = Resources.Strings.Generic_Cancel,
+            PrimaryButtonText = Strings.Generic_Recheck,
+            CloseButtonText = Strings.Generic_Cancel,
             XamlRoot = xamlRoot,
             DefaultButton = ContentDialogButton.Primary
         };
 
-        // Handle the primary button click to recheck without closing
         dialog.PrimaryButtonClick += async (sender, args) =>
         {
-            // Get a deferral to prevent the dialog from closing
             var deferral = args.GetDeferral();
 
-            // Update status to show we're checking
-            statusBlock.Text = Resources.Strings.FFmpeg_Status_Checking;
+            statusBlock.Text = Strings.FFmpeg_Status_Checking;
             statusBlock.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Gray);
 
             try
@@ -232,23 +216,20 @@ public class UIService : IUIService
 
                 if (isInstalled)
                 {
-                    // FFmpeg found - update status and allow dialog to close
-                    statusBlock.Text = Resources.Strings.FFmpeg_Status_Detected;
+                    statusBlock.Text = Strings.FFmpeg_Status_Detected;
                     statusBlock.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Green);
                 }
                 else
                 {
-                    // Still not found - prevent dialog from closing
                     args.Cancel = true;
-                    statusBlock.Text = Resources.Strings.FFmpeg_Status_StillNotDetected;
+                    statusBlock.Text = Strings.FFmpeg_Status_StillNotDetected;
                     statusBlock.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Orange);
                 }
             }
             catch
             {
-                // On error, prevent closing and show error state
                 args.Cancel = true;
-                statusBlock.Text = Resources.Strings.FFmpeg_Status_Error;
+                statusBlock.Text = Strings.FFmpeg_Status_Error;
                 statusBlock.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Red);
             }
             finally
@@ -264,7 +245,7 @@ public class UIService : IUIService
 
     private bool TryGetXamlRoot(out XamlRoot? xamlRoot)
     {
-        xamlRoot = App.RootWindow?.Content?.XamlRoot;
+        xamlRoot = _window.Content?.XamlRoot;
         return xamlRoot is not null;
     }
 }

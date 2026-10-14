@@ -35,6 +35,7 @@ public class ImageSharpProcessor : IImageProcessor
     private const int ColorExtractionDimension = 112;
 
     private const int MaxImageSharpActiveAllocationMegabytes = 128;
+    private static readonly SemaphoreSlim DecodeGate = new(1, 1);
 
     private readonly string _albumArtStoragePath;
     private readonly IFileSystemService _fileSystem;
@@ -47,17 +48,10 @@ public class ImageSharpProcessor : IImageProcessor
     /// </summary>
     private readonly ConcurrentDictionary<string, Lazy<Task<string>>> _inFlightSaves = new();
 
-    /// <summary>
-    ///     Static constructor to configure ImageSharp memory settings globally.
-    ///     This helps reduce Large Object Heap fragmentation during high-volume image processing.
-    /// </summary>
     static ImageSharpProcessor()
     {
-        // Configure ImageSharp to use a more memory-efficient allocator
-        // This helps reduce LOH fragmentation during batch processing
         Configuration.Default.MemoryAllocator = MemoryAllocator.Create(new MemoryAllocatorOptions
         {
-            // Limit maximum pool size to prevent excessive memory retention
             MaximumPoolSizeMegabytes = 32,
             AccumulativeAllocationLimitMegabytes = MaxImageSharpActiveAllocationMegabytes
         });
@@ -66,21 +60,11 @@ public class ImageSharpProcessor : IImageProcessor
     public ImageSharpProcessor(IPathConfiguration pathConfig, IFileSystemService fileSystem,
         ILogger<ImageSharpProcessor> logger)
     {
-        _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
+        _fileSystem = fileSystem;
         _logger = logger;
         _albumArtStoragePath = pathConfig.AlbumArtCachePath;
-
-        try
-        {
-            _fileSystem.CreateDirectory(_albumArtStoragePath);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogCritical(ex, "Failed to create Album Art directory at '{AlbumArtPath}'.", _albumArtStoragePath);
-        }
     }
 
-    /// <inheritdoc />
     /// <remarks>
     /// This method uses a filename-based color cache. The filename pattern is:
     /// <c>{hash}.{lightHex}.{darkHex}.fetched.jpg</c>
@@ -95,10 +79,8 @@ public class ImageSharpProcessor : IImageProcessor
 
         try
         {
-            // Generate a content-based hash for deduplication
-            var contentHash = GenerateContentHash(pictureData);
+            var contentHash = Convert.ToHexStringLower(SHA256.HashData(pictureData));
 
-            // Fast path: check if a file with this hash already exists (includes colors in filename)
             var existingFile = FindCachedFileByHash(contentHash);
             if (existingFile != null)
             {
@@ -106,7 +88,6 @@ public class ImageSharpProcessor : IImageProcessor
                 return (existingFile, lightHex, darkHex);
             }
 
-            // Slow path: load image once, save and extract colors
             return await ProcessAndSaveNewImageAsync(contentHash, pictureData).ConfigureAwait(false);
         }
         catch (Exception ex)
@@ -116,15 +97,10 @@ public class ImageSharpProcessor : IImageProcessor
         }
     }
 
-    /// <summary>
-    ///     Finds an existing cached file by content hash prefix.
-    ///     Returns the full path if found, null otherwise.
-    /// </summary>
     private string? FindCachedFileByHash(string contentHash)
     {
         try
         {
-            // Look for files matching the hash prefix pattern
             var searchPattern = $"{contentHash}.*.fetched.jpg";
             var matches = _fileSystem.GetFiles(_albumArtStoragePath, searchPattern);
             return matches.FirstOrDefault();
@@ -142,33 +118,14 @@ public class ImageSharpProcessor : IImageProcessor
     /// </summary>
     private static (string? lightHex, string? darkHex) ParseColorsFromFilename(string filePath)
     {
-        try
-        {
-            var filename = Path.GetFileNameWithoutExtension(filePath); // removes .jpg
-            if (filename.EndsWith(".fetched", StringComparison.OrdinalIgnoreCase))
-                filename = filename[..^8]; // remove .fetched suffix
-
-            var parts = filename.Split('.');
-            // Expected: [hash, lightHex, darkHex]
-            if (parts.Length >= 3)
-            {
-                return (parts[^2], parts[^1]); // second-to-last and last
-            }
-        }
-        catch
-        {
-            // Parsing failed, return nulls
-        }
-        return (null, null);
+        var filename = Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(filePath));
+        var parts = filename.Split('.');
+        return parts.Length >= 3 ? (parts[^2], parts[^1]) : (null, null);
     }
 
-    /// <summary>
-    ///     Processes a new image: loads it once, extracts colors, resizes, saves with colors in filename.
-    /// </summary>
     private async Task<(string? uri, string? lightSwatchId, string? darkSwatchId)> ProcessAndSaveNewImageAsync(
         string contentHash, byte[] pictureData)
     {
-        // Use Lazy<Task> pattern for concurrent deduplication
         var lazyTask = _inFlightSaves.GetOrAdd(contentHash,
             _ => new Lazy<Task<string>>(() => ProcessAndSaveNewImageCoreAsync(contentHash, pictureData)));
 
@@ -180,13 +137,10 @@ public class ImageSharpProcessor : IImageProcessor
         }
         finally
         {
-            _inFlightSaves.TryRemove(contentHash, out _);
+            _inFlightSaves.TryRemove(new KeyValuePair<string, Lazy<Task<string>>>(contentHash, lazyTask));
         }
     }
 
-    /// <summary>
-    ///     Core implementation: loads image once, extracts colors, saves with colors embedded in filename.
-    /// </summary>
     private async Task<string> ProcessAndSaveNewImageCoreAsync(string contentHash, byte[] pictureData)
     {
         // Double-check: another thread may have created the file while we were waiting
@@ -196,18 +150,14 @@ public class ImageSharpProcessor : IImageProcessor
 
         // Decode directly toward the cached size. ImageSharp v4 can apply this during decode for
         // supported formats, avoiding large transient buffers for oversized embedded art.
-        using var image = LoadImage(pictureData, CachedImageMaxDimension);
+        using var image = await LoadImageAsync(pictureData, CachedImageMaxDimension).ConfigureAwait(false);
 
-        // Extract colors from the loaded image (resize to small size for speed)
         var (lightHex, darkHex) = ExtractColorsFromLoadedImage(image);
 
-        // Build filename with embedded colors
         var safeLight = lightHex ?? "000000";
         var safeDark = darkHex ?? "000000";
-        var filename = $"{contentHash}.{safeLight}.{safeDark}.fetched.jpg";
-        var fullPath = _fileSystem.Combine(_albumArtStoragePath, filename);
+        var baseFileName = $"{contentHash}.{safeLight}.{safeDark}";
 
-        // Resize for caching if needed (mutates in-place)
         if (image.Width > CachedImageMaxDimension || image.Height > CachedImageMaxDimension)
         {
             image.Mutate(x => x.Resize(new ResizeOptions
@@ -219,37 +169,20 @@ public class ImageSharpProcessor : IImageProcessor
             _logger.LogTrace("Resized album art to {Width}x{Height} for caching.", image.Width, image.Height);
         }
 
-        // Save to disk atomically
         using var memoryStream = new MemoryStream();
         await image.SaveAsJpegAsync(memoryStream).ConfigureAwait(false);
-        var imageBytes = memoryStream.ToArray();
-
-        var tempPath = fullPath + ".tmp";
-        await _fileSystem.WriteAllBytesAsync(tempPath, imageBytes).ConfigureAwait(false);
-
-        try
-        {
-            _fileSystem.MoveFile(tempPath, fullPath, overwrite: false);
-        }
-        catch (IOException)
-        {
-            // Another thread won the race, clean up our temp file
-            try { _fileSystem.DeleteFile(tempPath); }
-            catch (Exception ex) { _logger.LogDebug(ex, "Failed to clean up temp file {TempPath}", tempPath); }
-        }
-
-        return fullPath;
+        return (await ImageStorageHelper.SaveImageBytesAsync(_fileSystem, _albumArtStoragePath,
+            baseFileName, ".fetched", memoryStream.ToArray()).ConfigureAwait(false))!;
     }
 
     /// <summary>
     ///     Extracts colors from an already-loaded image by cloning and resizing to a small dimension.
     ///     This avoids decoding the image twice.
     /// </summary>
-    private (string? lightHex, string? darkHex) ExtractColorsFromLoadedImage(Image<Rgba32> originalImage)
+    private (string? lightHex, string? darkHex) ExtractColorsFromLoadedImage(Image<Bgra32> originalImage)
     {
         try
         {
-            // Clone and resize to small dimension for fast color extraction
             using var colorImage = originalImage.Clone(x => x.Resize(new ResizeOptions
             {
                 Size = new Size(ColorExtractionDimension, ColorExtractionDimension),
@@ -257,12 +190,8 @@ public class ImageSharpProcessor : IImageProcessor
             }));
 
             var pixels = new uint[colorImage.Width * colorImage.Height];
+            // Read as little-endian integers, BGRA bytes are MaterialColorUtilities' ARGB values.
             colorImage.CopyPixelDataTo(System.Runtime.InteropServices.MemoryMarshal.AsBytes(pixels.AsSpan()));
-
-            // Convert ImageSharp's RGBA format to MaterialColorUtilities' ARGB format
-            for (var i = 0; i < pixels.Length; i++)
-                pixels[i] = (pixels[i] & 0xFF00FF00) | ((pixels[i] & 0x00FF0000) >> 16) |
-                            ((pixels[i] & 0x000000FF) << 16);
 
             var seedColor = ImageUtils.ColorsFromImage(pixels).FirstOrDefault();
             if (seedColor == default)
@@ -287,18 +216,6 @@ public class ImageSharpProcessor : IImageProcessor
         }
     }
 
-    /// <summary>
-    ///     Generates a content-based hash from the image data. This ensures that identical
-    ///     images (e.g., same embedded art across all songs in an album) share a single
-    ///     cached file, dramatically reducing disk usage.
-    /// </summary>
-    private static string GenerateContentHash(byte[] pictureData)
-    {
-        var hashBytes = SHA256.HashData(pictureData);
-        return Convert.ToHexString(hashBytes).ToLowerInvariant();
-    }
-
-    /// <inheritdoc />
     public async Task<byte[]> ProcessImageBytesAsync(byte[] imageData, int maxDimension = 600)
     {
         if (imageData.Length == 0 || maxDimension <= 0) return imageData;
@@ -309,9 +226,7 @@ public class ImageSharpProcessor : IImageProcessor
             if (imageInfo.Width <= maxDimension && imageInfo.Height <= maxDimension)
                 return imageData;
 
-            using var image = LoadImage(imageData, maxDimension);
-            var originalWidth = imageInfo.Width;
-            var originalHeight = imageInfo.Height;
+            using var image = await LoadImageAsync(imageData, maxDimension).ConfigureAwait(false);
 
             // TargetSize is a decode hint. Keep this guard for formats that still decode full-size.
             if (image.Width > maxDimension || image.Height > maxDimension)
@@ -319,14 +234,14 @@ public class ImageSharpProcessor : IImageProcessor
                 image.Mutate(x => x.Resize(new ResizeOptions
                 {
                     Size = new Size(maxDimension, maxDimension),
-                    Mode = ResizeMode.Max // Preserves aspect ratio, fits within bounds
+                    Mode = ResizeMode.Max
                 }));
             }
 
             _logger.LogDebug("Resized image from {OrigWidth}x{OrigHeight} to {Width}x{Height}",
-                originalWidth, originalHeight, image.Width, image.Height);
+                imageInfo.Width, imageInfo.Height, image.Width, image.Height);
 
-            using var memoryStream = new MemoryStream(imageData.Length);
+            using var memoryStream = new MemoryStream();
             await image.SaveAsJpegAsync(memoryStream).ConfigureAwait(false);
             return memoryStream.ToArray();
         }
@@ -337,9 +252,18 @@ public class ImageSharpProcessor : IImageProcessor
         }
     }
 
-    private static Image<Rgba32> LoadImage(byte[] imageData, int maxDimension)
+    private static async Task<Image<Bgra32>> LoadImageAsync(byte[] imageData, int maxDimension)
     {
-        return Image.Load<Rgba32>(CreateDecoderOptions(maxDimension), imageData);
+        // PNG decoding can allocate a full-size frame before resizing within the shared memory limit.
+        await DecodeGate.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            return Image.Load<Bgra32>(CreateDecoderOptions(maxDimension), imageData);
+        }
+        finally
+        {
+            DecodeGate.Release();
+        }
     }
 
     private static DecoderOptions CreateDecoderOptions(int? maxDimension = null)

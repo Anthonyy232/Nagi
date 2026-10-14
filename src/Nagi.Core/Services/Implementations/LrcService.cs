@@ -1,8 +1,7 @@
-﻿using System.Linq;
+using System.Linq;
 using Microsoft.Extensions.Logging;
 using ModernLrc;
 using ModernLrc.Model;
-using Nagi.Core.Data;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Models.Lyrics;
@@ -10,10 +9,6 @@ using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.Core.Services.Implementations;
 
-/// <summary>
-///     Service for loading, parsing, and interacting with .lrc lyric files,
-///     optimized for high-performance playback synchronization.
-/// </summary>
 public class LrcService : ILrcService, IDisposable
 {
     private readonly IFileSystemService _fileSystemService;
@@ -47,7 +42,6 @@ public class LrcService : ILrcService, IDisposable
         _settingsService.FetchOnlineLyricsEnabledChanged += OnFetchOnlineLyricsEnabledChanged;
     }
 
-    /// <inheritdoc />
     public async Task<ParsedLrc?> GetLyricsAsync(Song song, CancellationToken cancellationToken = default)
     {
         var forceOnlineRefresh = false;
@@ -84,97 +78,88 @@ public class LrcService : ILrcService, IDisposable
         using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, settingsToken);
         var token = linkedCts.Token;
 
-        // Check for cancellation before making any online calls
         if (token.IsCancellationRequested)
             return null;
 
-        var anyProviderSuccess = false;
         var enabledProviders = await _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Lyrics).ConfigureAwait(false);
+        if (enabledProviders.Count == 0) return null;
+        var allProvidersSucceeded = true;
 
-        if (enabledProviders.Count > 0)
+        var tasks = new List<Task<string?>>(enabledProviders.Count);
+        foreach (var provider in enabledProviders)
         {
-            // Start all enabled provider tasks in parallel for speed
-            var tasks = new Dictionary<string, Task<string?>>();
-            foreach (var provider in enabledProviders)
+            try
             {
-                try
+                tasks.Add(provider.Id switch
                 {
-                    tasks[provider.Id] = provider.Id switch
-                    {
-                        ServiceProviderIds.LrcLib => _onlineLyricsService.GetLyricsAsync(
-                            song.Title, song.PrimaryArtistName, song.Album?.Title, song.Duration, token),
-                        ServiceProviderIds.NetEase => _netEaseLyricsService.SearchLyricsAsync(
-                            song.Title, song.PrimaryArtistName, token),
-                        _ => LogUnknownProviderAndReturnNull(provider.Id)
-                    };
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Failed to initiate lyrics fetch for provider {Provider}", provider.DisplayName);
-                }
+                    ServiceProviderIds.LrcLib => _onlineLyricsService.GetLyricsAsync(
+                        song.Title, song.PrimaryArtistName, song.Album?.Title, song.Duration, token),
+                    ServiceProviderIds.NetEase => _netEaseLyricsService.SearchLyricsAsync(
+                        song.Title, song.PrimaryArtistName, token),
+                    _ => throw new NotSupportedException($"Unknown lyrics provider: {provider.Id}")
+                });
             }
-
-            // Evaluate results in priority order (but all tasks already running in parallel)
-            string? lrcContent = null;
-            foreach (var provider in enabledProviders)
+            catch (Exception ex)
             {
-                if (!tasks.TryGetValue(provider.Id, out var task)) continue;
-
-                try
-                {
-                    var result = await task.ConfigureAwait(false);
-                    anyProviderSuccess = true;
-                    if (!string.IsNullOrWhiteSpace(result))
-                    {
-                        lrcContent = result;
-                        break;
-                    }
-                }
-                catch (OperationCanceledException)
-                {
-                    // Expected when token is cancelled
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogDebug(ex, "Lyrics provider {Provider} failed for '{Title}'.", provider.DisplayName, song.Title);
-                }
-            }
-
-            // Fire-and-forget pattern: Observe remaining tasks to prevent UnobservedTaskException.
-            // We use ContinueWith with a static lambda to avoid closure allocations. The logger is
-            // passed via state parameter. NotOnRanToCompletion ensures we only handle faults/cancellations.
-            foreach (var kvp in tasks)
-            {
-                if (kvp.Value.IsCompleted) continue;
-                _ = kvp.Value.ContinueWith(
-                    static (t, state) =>
-                    {
-                        if (t.IsFaulted)
-                        {
-                            var logger = (ILogger<LrcService>)state!;
-                            logger.LogDebug(t.Exception?.InnerException, "Lyrics task faulted (ignored, already resolved)");
-                        }
-                    },
-                    _logger,
-                    TaskContinuationOptions.NotOnRanToCompletion);
-            }
-
-            if (!string.IsNullOrWhiteSpace(lrcContent))
-            {
-                // Cache the lyrics for future use
-                await CacheLyricsAsync(song, lrcContent).ConfigureAwait(false);
-
-                // Parse the downloaded lyrics string
-                return ParseLyrics(lrcContent);
+                allProvidersSucceeded = false;
+                _logger.LogError(ex, "Failed to initiate lyrics fetch for provider {Provider}", provider.DisplayName);
             }
         }
 
-        // Only mark as checked if providers were attempted AND operation wasn't cancelled.
-        // This allows retry if providers are enabled later or if the fetch was cancelled.
-        if (enabledProviders.Count > 0 && !token.IsCancellationRequested && anyProviderSuccess)
+        // Provider order breaks ties; plain text must not hide another provider's timed lyrics.
+        ParsedLrc? selectedLyrics = null;
+        foreach (var task in tasks)
         {
-            // A provider completed successfully but returned no lyrics. Remove the invalid local
+            try
+            {
+                var result = await task.WaitAsync(token).ConfigureAwait(false);
+                if (string.IsNullOrWhiteSpace(result)) continue;
+                var parsed = ParseLyrics(result);
+                if (!parsed.IsEmpty)
+                {
+                    selectedLyrics = parsed;
+                    break;
+                }
+                selectedLyrics ??= parsed;
+            }
+            catch (OperationCanceledException)
+            {
+                allProvidersSucceeded = false;
+                // A provider timeout must not prevent a lower-priority provider from succeeding.
+                if (token.IsCancellationRequested) break;
+            }
+            catch (Exception ex)
+            {
+                allProvidersSucceeded = false;
+                _logger.LogDebug(ex, "Lyrics provider failed for '{Title}'.", song.Title);
+            }
+        }
+
+        // Observe failures from providers we stopped awaiting after finding lyrics.
+        foreach (var task in tasks)
+        {
+            _ = task.ContinueWith(
+                static (t, state) => ((ILogger<LrcService>)state!).LogDebug(
+                    t.Exception!.InnerException, "Lyrics task faulted (ignored, already resolved)"),
+                _logger,
+                CancellationToken.None,
+                TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously,
+                TaskScheduler.Default);
+        }
+
+        if (token.IsCancellationRequested) return null;
+
+        if (selectedLyrics is not null)
+        {
+            await CacheLyricsAsync(song, selectedLyrics.RawLyrics!).ConfigureAwait(false);
+            return selectedLyrics;
+        }
+
+        // A negative result is conclusive only when every enabled provider completed.
+        // Failed requests remain retryable on the next playback.
+        if (allProvidersSucceeded)
+        {
+            // All providers completed successfully but returned no lyrics. Remove the invalid local
             // reference now; successful lyric results already replace it in CacheLyricsAsync.
             if (forceOnlineRefresh && !string.IsNullOrWhiteSpace(song.LrcFilePath))
             {
@@ -189,7 +174,6 @@ public class LrcService : ILrcService, IDisposable
         return null;
     }
 
-    /// <inheritdoc />
     public async Task<ParsedLrc?> GetLyricsAsync(string lrcFilePath)
     {
         if (string.IsNullOrWhiteSpace(lrcFilePath) || !_fileSystemService.FileExists(lrcFilePath)) return null;
@@ -206,7 +190,6 @@ public class LrcService : ILrcService, IDisposable
         }
     }
 
-    /// <inheritdoc />
     public Task SaveLyricsAsync(Song song, string lrcContent)
     {
         ArgumentNullException.ThrowIfNull(song);
@@ -214,14 +197,13 @@ public class LrcService : ILrcService, IDisposable
         return WriteLyricsCacheAsync(song, lrcContent, true);
     }
 
-    /// <inheritdoc />
     public async Task<bool> RemoveCachedLyricsAsync(Song song)
     {
         ArgumentNullException.ThrowIfNull(song);
         if (!HasCachedLyrics(song)) return false;
 
         var cachedPath = song.LrcFilePath!;
-        var sidecarPath = FindExternalLyricsPath(song.FilePath);
+        var sidecarPath = LyricsStorageHelper.FindSidecar(_fileSystemService, song.FilePath, _logger);
         if (_fileSystemService.FileExists(cachedPath)) _fileSystemService.DeleteFile(cachedPath);
 
         song.LrcFilePath = sidecarPath;
@@ -231,7 +213,6 @@ public class LrcService : ILrcService, IDisposable
         return true;
     }
 
-    /// <inheritdoc />
     public bool HasCachedLyrics(Song song)
     {
         ArgumentNullException.ThrowIfNull(song);
@@ -260,7 +241,7 @@ public class LrcService : ILrcService, IDisposable
         var cachedLrcPath = _fileSystemService.Combine(_pathConfig.LrcCachePath, cacheFileName);
         var previousPath = song.LrcFilePath;
 
-        await _fileSystemService.WriteAllTextAsync(cachedLrcPath, lrcContent).ConfigureAwait(false);
+        await LyricsStorageHelper.SaveAsync(_fileSystemService, cachedLrcPath, lrcContent).ConfigureAwait(false);
         _logger.LogDebug("Cached lyrics for song {SongId} to {Path}", song.Id, cachedLrcPath);
 
         if (previousPath == cachedLrcPath) return;
@@ -273,14 +254,10 @@ public class LrcService : ILrcService, IDisposable
 
     private bool IsLegacyCachePath(Song song)
     {
-        if (string.IsNullOrWhiteSpace(song.LrcFilePath)
-            || string.IsNullOrWhiteSpace(_pathConfig.LrcCachePath))
-            return false;
-
         if (!IsCachePath(song.LrcFilePath)) return false;
 
         var cacheIdentity = string.IsNullOrWhiteSpace(song.FilePath) ? song.Id.ToString("N") : song.FilePath;
-        var candidate = PathCanonicalizer.Normalize(song.LrcFilePath);
+        var candidate = Path.GetFullPath(song.LrcFilePath!);
         return !FileNameHelper.MatchesLrcCacheIdentity(candidate, cacheIdentity);
     }
 
@@ -288,39 +265,9 @@ public class LrcService : ILrcService, IDisposable
     {
         if (string.IsNullOrWhiteSpace(path) || string.IsNullOrWhiteSpace(_pathConfig.LrcCachePath)) return false;
 
-        var cacheRoot = PathCanonicalizer.Normalize(_pathConfig.LrcCachePath).TrimEnd('\\') + "\\";
-        var candidate = PathCanonicalizer.Normalize(path);
+        var cacheRoot = Path.TrimEndingDirectorySeparator(Path.GetFullPath(_pathConfig.LrcCachePath)) + Path.DirectorySeparatorChar;
+        var candidate = Path.GetFullPath(path);
         return candidate.StartsWith(cacheRoot, StringComparison.OrdinalIgnoreCase);
-    }
-
-    private string? FindExternalLyricsPath(string audioFilePath)
-    {
-        if (string.IsNullOrWhiteSpace(audioFilePath)) return null;
-
-        try
-        {
-            var directory = _fileSystemService.GetDirectoryName(audioFilePath);
-            if (string.IsNullOrWhiteSpace(directory)) return null;
-
-            var audioName = _fileSystemService.GetFileNameWithoutExtension(audioFilePath);
-            return _fileSystemService.GetFiles(directory, "*.lrc")
-                       .FirstOrDefault(path => _fileSystemService.GetFileNameWithoutExtension(path)
-                           .Equals(audioName, StringComparison.OrdinalIgnoreCase))
-                   ?? _fileSystemService.GetFiles(directory, "*.txt")
-                       .FirstOrDefault(path => _fileSystemService.GetFileNameWithoutExtension(path)
-                           .Equals(audioName, StringComparison.OrdinalIgnoreCase));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to find external lyrics for {AudioFilePath}.", audioFilePath);
-            return null;
-        }
-    }
-
-    private Task<string?> LogUnknownProviderAndReturnNull(string providerId)
-    {
-        _logger.LogWarning("Unknown lyrics provider ID: {ProviderId}. This provider will be skipped.", providerId);
-        return Task.FromResult<string?>(null);
     }
 
     public ParsedLrc ParseLyrics(string? content)
@@ -340,24 +287,13 @@ public class LrcService : ILrcService, IDisposable
         }
     }
 
-    /// <inheritdoc />
-    public LyricLine? GetCurrentLine(ParsedLrc parsedLrc, TimeSpan currentTime)
-    {
-        if (parsedLrc is null || parsedLrc.IsEmpty) return null;
-
-        var index = FindBestMatchIndex(parsedLrc.Lines, currentTime);
-        return index != -1 ? parsedLrc.Lines[index] : null;
-    }
-
-    /// <inheritdoc />
     public LyricLine? GetCurrentLine(ParsedLrc parsedLrc, TimeSpan currentTime, ref int searchStartIndex)
     {
-        if (parsedLrc is null || parsedLrc.IsEmpty) return null;
+        if (parsedLrc.IsEmpty) return null;
 
         var lines = parsedLrc.Lines;
         var lineCount = lines.Count;
 
-        // Check if the current or next line is the correct one, which is the most common case during playback.
         if (searchStartIndex >= 0 && searchStartIndex < lineCount)
         {
             var currentLine = lines[searchStartIndex];
@@ -375,10 +311,8 @@ public class LrcService : ILrcService, IDisposable
         return bestMatchIndex != -1 ? lines[bestMatchIndex] : null;
     }
 
-    /// <summary>
-    ///     Performs a binary search to find the index of the lyric line that should be active at the given time.
-    /// </summary>
-    private int FindBestMatchIndex(IReadOnlyList<LyricLine> lines, TimeSpan currentTime)
+    // An upper bound selects the last line when several lines share a timestamp.
+    private static int FindBestMatchIndex(IReadOnlyList<LyricLine> lines, TimeSpan currentTime)
     {
         var low = 0;
         var high = lines.Count - 1;
@@ -410,47 +344,25 @@ public class LrcService : ILrcService, IDisposable
             if (!isEnabled)
             {
                 _logger.LogInformation("Fetch online lyrics disabled. Cancelling ongoing fetches.");
-                if (!_settingsCts.IsCancellationRequested)
-                {
-                    _settingsCts.Cancel();
-                }
-            }
-            else
-            {
-                if (_settingsCts.IsCancellationRequested)
-                {
-                    var old = _settingsCts;
-                    _settingsCts = new CancellationTokenSource();
-                    old.Dispose();
-                }
-            }
-        }
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (_disposed) return;
-
-        if (disposing)
-        {
-            _settingsService.FetchOnlineLyricsEnabledChanged -= OnFetchOnlineLyricsEnabledChanged;
-
-            lock (_ctsLock)
-            {
                 _settingsCts.Cancel();
-                _settingsCts.Dispose();
-                _disposed = true;
             }
-        }
-        else
-        {
-            _disposed = true;
+            else if (_settingsCts.IsCancellationRequested)
+            {
+                _settingsCts.Dispose();
+                _settingsCts = new CancellationTokenSource();
+            }
         }
     }
 
     public void Dispose()
     {
-        Dispose(true);
-        GC.SuppressFinalize(this);
+        lock (_ctsLock)
+        {
+            if (_disposed) return;
+            _disposed = true;
+            _settingsService.FetchOnlineLyricsEnabledChanged -= OnFetchOnlineLyricsEnabledChanged;
+            _settingsCts.Cancel();
+            _settingsCts.Dispose();
+        }
     }
 }

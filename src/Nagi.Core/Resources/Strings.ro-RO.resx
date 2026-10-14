@@ -102,7 +102,7 @@
     <value>Număr piesă</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Număr redări</value>
+    <value>Redări</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>Melodii</value>
@@ -115,9 +115,6 @@
   </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Dosar</value>
-  </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Dosare</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Ordine manuală</value>
@@ -148,10 +145,10 @@
     <value>{0} (Cel mai vechi)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Asc)</value>
+    <value>{0} (Crescător)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Desc)</value>
+    <value>{0} (Descrescător)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>Cel mai scurt, primul</value>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Scanare finalizată. S-au adăugat sau actualizat {0} {1}.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Salvare lot {0}...</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Scanare dosar...</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Scanare finalizată. Biblioteca este la zi.</value>
   </data>
@@ -194,16 +185,16 @@
     <value>Scanare eșuată. Verificați jurnalele pentru detalii.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Se pregătesc cache-urile de scanare...</value>
+    <value>Se pregătește scanarea bibliotecii…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Se citesc detaliile melodiilor...</value>
+    <value>Se citesc detaliile melodiilor…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Se curăță biblioteca...</value>
+    <value>Se curăță biblioteca…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Finalizare...</value>
+    <value>Se finalizează…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Normalizarea volumului a eșuat. Verificați jurnalele pentru detalii.</value>
@@ -216,13 +207,10 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Adăugarea dosarului a eșuat.</value>
+    <value>Nu s-a putut adăuga folderul.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Numele listei de redare nu poate fi gol.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Evaluarea trebuie să fie între 1 și 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
@@ -248,7 +236,15 @@
     <value>Sortare după: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg este necesar pentru Normalizarea Volumului de Înaltă Precizie (analiza ReplayGain) dar nu a fost găsit pe sistemul dvs.\n\nUrmați acești pași pentru a-l configura:\n\n1. **Descărcați**: Vizitați https://www.gyan.dev/ffmpeg/builds/ și descărcați versiunea esențială 'ffmpeg-git-full.7z' (sau similar).\n2. **Ghid**: Puteți urma acest ghid pentru instrucțiuni detaliate: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Extrageți**: Deschideți folderul de arhitectură și localizați directorul 'bin' care conține `ffmpeg.exe`.\n4. **Instalați**: Copiați `ffmpeg.exe` într-un folder permanent (ex: `C:\ffmpeg\`) și **adăugați acel folder la variabila de mediu System PATH**.\n5. **Reporniți**: Vă rugăm să reporniți Nagi după instalare pentru ca modificările să intre în vigoare.</value>
+    <value>FFmpeg este necesar pentru a analiza melodiile pentru normalizarea volumului, dar Nagi nu l-a putut găsi.
+
+1. Descărcați o versiune de Windows de la https://ffmpeg.org/download.html.
+2. Extrageți arhiva și localizați ffmpeg.exe în folderul bin al acesteia.
+3. Adăugați folderul care conține ffmpeg.exe în variabila PATH din Windows.
+4. Reporniți Nagi, apoi activați din nou normalizarea volumului.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>Lista de redare a fost creată, dar melodiile acesteia nu au putut fi adăugate. Încercați să importați din nou.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Niciun cântec din lista de redare nu a fost găsit în biblioteca dvs.</value>
@@ -293,12 +289,39 @@
     <value>Toate melodiile au deja date de volum.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Se calculează volumul pentru {0} melodii...</value>
+    <value>Se analizează volumul… Melodii: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Se calculează normalizarea volumului ({0}/{1})...</value>
+    <value>Se calculează normalizarea volumului ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Normalizarea volumului finalizată. S-au procesat {0} melodii.</value>
+    <value>Normalizarea volumului este finalizată. Melodii procesate: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Introduceți tokenul de utilizator ListenBrainz.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Nu s-a putut citi răspunsul de la ListenBrainz. Încercați din nou mai târziu.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Introduceți un URL de server care începe cu http:// sau https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Tokenul de utilizator nu este valid. Verificați-l și încercați din nou.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz a returnat o eroare (HTTP {0}). Încercați din nou mai târziu.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Nu s-a putut conecta la ListenBrainz. Verificați conexiunea și URL-ul serverului.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi nu a putut găsi folderul de date al bibliotecii.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Restaurarea a eșuat, iar datele anterioare nu au putut fi restaurate complet. Fișierele de recuperare au fost salvate la &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Fișierul selectat nu este o copie de rezervă Nagi validă.</value>
   </data>
 </root>

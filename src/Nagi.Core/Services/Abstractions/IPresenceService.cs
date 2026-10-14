@@ -5,7 +5,6 @@ namespace Nagi.Core.Services.Abstractions;
 /// <summary>
 ///     Defines a standard interface for services that report the application's
 ///     current playback status to external platforms, such as Discord or Last.fm.
-///     This interface supports asynchronous disposal of resources.
 /// </summary>
 public interface IPresenceService : IAsyncDisposable
 {
@@ -23,7 +22,6 @@ public interface IPresenceService : IAsyncDisposable
     /// <summary>
     ///     Handles the event when the currently playing track changes or playback begins.
     /// </summary>
-    /// <param name="song">The new song that is playing.</param>
     /// <param name="listenHistoryId">The unique ID for this specific listening session from the database.</param>
     Task OnTrackChangedAsync(Song song, long listenHistoryId);
 
@@ -41,8 +39,6 @@ public interface IPresenceService : IAsyncDisposable
     /// <summary>
     ///     Handles periodic updates on the progress of the current track.
     /// </summary>
-    /// <param name="progress">The current position in the track.</param>
-    /// <param name="duration">The total duration of the track.</param>
     Task OnTrackProgressAsync(TimeSpan progress, TimeSpan duration);
 
     /// <summary>
@@ -52,8 +48,6 @@ public interface IPresenceService : IAsyncDisposable
     ///     submission here rather than re-implementing the threshold check in
     ///     <see cref="OnTrackProgressAsync" />.
     /// </summary>
-    /// <param name="song">The song that is now eligible.</param>
-    /// <param name="listenHistoryId">The listen session ID to associate with the submission.</param>
     /// <param name="listenStartedUtc">The immutable UTC start time for this listening session.</param>
     Task OnTrackEligibleForScrobblingAsync(Song song, long listenHistoryId, DateTime listenStartedUtc);
 }

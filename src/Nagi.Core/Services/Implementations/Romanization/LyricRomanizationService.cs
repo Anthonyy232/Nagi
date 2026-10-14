@@ -36,8 +36,8 @@ public sealed class LyricRomanizationService : ILyricRomanizationService
 
         var installedPacks = await _packManager.GetInstalledPacksAsync(cancellationToken).ConfigureAwait(false);
         var packsByEngine = installedPacks
-            .GroupBy(pack => pack.Manifest.EngineId, StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(group => group.Key, group => group.First(), StringComparer.OrdinalIgnoreCase);
+            .DistinctBy(pack => pack.Manifest.EngineId, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(pack => pack.Manifest.EngineId, StringComparer.OrdinalIgnoreCase);
 
         var cache = new Dictionary<string, string?>(StringComparer.Ordinal);
 
@@ -68,7 +68,6 @@ public sealed class LyricRomanizationService : ILyricRomanizationService
         CancellationToken cancellationToken)
     {
         var romanized = text;
-        var changed = false;
 
         foreach (var provider in _providers)
         {
@@ -83,9 +82,8 @@ public sealed class LyricRomanizationService : ILyricRomanizationService
             }
 
             romanized = providerResult;
-            changed = true;
         }
 
-        return changed ? romanized : null;
+        return string.Equals(romanized, text, StringComparison.Ordinal) ? null : romanized;
     }
 }

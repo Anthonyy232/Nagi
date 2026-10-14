@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Data;
+using Nagi.Core.Models;
 
 namespace Nagi.Core.Tests.Utils;
 
@@ -22,7 +23,7 @@ public class DbContextFactoryTestHelper : IDisposable
         {
             _databasePath = Path.Combine(Path.GetTempPath(), $"nagi-tests-{Guid.NewGuid():N}.db");
             options = new DbContextOptionsBuilder<MusicDbContext>()
-                .UseSqlite($"Data Source={_databasePath};Pooling=False")
+                .UseSqlite(new SqliteConnectionStringBuilder { DataSource = _databasePath, Pooling = false }.ToString())
                 .Options;
         }
         else
@@ -34,7 +35,6 @@ public class DbContextFactoryTestHelper : IDisposable
                 .Options;
         }
 
-        // Ensure the database schema is created
         using (var context = new MusicDbContext(options))
         {
             context.Database.EnsureCreated();
@@ -43,14 +43,26 @@ public class DbContextFactoryTestHelper : IDisposable
         ContextFactory = new TestDbContextFactory(options);
     }
 
-    /// <summary>
-    ///     Gets the configured <see cref="IDbContextFactory{MusicDbContext}" /> for the in-memory database.
-    /// </summary>
     public IDbContextFactory<MusicDbContext> ContextFactory { get; }
 
     /// <summary>
-    ///     Disposes the underlying database connection, effectively deleting the in-memory database.
+    ///     Seeds one playlist whose songs carry the given <see cref="PlaylistSong.Order" /> values, in order.
     /// </summary>
+    public async Task<(Playlist Playlist, Song[] Songs)> SeedPlaylistAsync(params double[] orders)
+    {
+        var folder = new Folder { Name = "Music", Path = @"C:\Music" };
+        var songs = orders.Select((_, i) => new Song
+        {
+            Title = $"Song {i}", FilePath = $@"C:\Music\{i}.mp3", DirectoryPath = folder.Path,
+            Folder = folder, TrackNumber = orders.Length - i, Lyrics = "Heavy lyrics", Grouping = "Group"
+        }).ToArray();
+        var playlist = new Playlist { Name = "Test", DateModified = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc) };
+        await using var context = ContextFactory.CreateDbContext();
+        context.PlaylistSongs.AddRange(songs.Select((song, i) => new PlaylistSong { Playlist = playlist, Song = song, Order = orders[i] }));
+        await context.SaveChangesAsync();
+        return (playlist, songs);
+    }
+
     public void Dispose()
     {
         _connection?.Dispose();
@@ -60,24 +72,10 @@ public class DbContextFactoryTestHelper : IDisposable
             File.Delete($"{_databasePath}-wal");
             File.Delete($"{_databasePath}-shm");
         }
-        GC.SuppressFinalize(this);
     }
 
-    /// <summary>
-    ///     A simple implementation of IDbContextFactory for testing.
-    /// </summary>
-    private class TestDbContextFactory : IDbContextFactory<MusicDbContext>
+    private sealed class TestDbContextFactory(DbContextOptions<MusicDbContext> options) : IDbContextFactory<MusicDbContext>
     {
-        private readonly DbContextOptions<MusicDbContext> _options;
-
-        public TestDbContextFactory(DbContextOptions<MusicDbContext> options)
-        {
-            _options = options;
-        }
-
-        public MusicDbContext CreateDbContext()
-        {
-            return new MusicDbContext(_options);
-        }
+        public MusicDbContext CreateDbContext() => new(options);
     }
 }

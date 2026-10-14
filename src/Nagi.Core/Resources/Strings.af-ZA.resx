@@ -102,7 +102,7 @@
     <value>Snitnommer</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Speeltelling</value>
+    <value>Keer gespeel</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>Liedjies</value>
@@ -115,9 +115,6 @@
   </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Vouer</value>
-  </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Vouers</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Handmatige Volgorde</value>
@@ -151,7 +148,7 @@
     <value>{0} (Oplopend)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (Dalend)</value>
+    <value>{0} (Aflopend)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>Kortste Eerste</value>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Skandering voltooi. {0} {1} bygevoeg of opgedateer.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Stoor bondel {0}...</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Skandeer vouer...</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Skandering voltooi. Biblioteek is op datum.</value>
   </data>
@@ -194,16 +185,16 @@
     <value>Skandering het misluk. Gaan logs na vir besonderhede.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Berei skanderingskasgeheue voor...</value>
+    <value>Berei tans biblioteekskandering voor…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Lees liedjiebesonderhede...</value>
+    <value>Lees tans liedjiebesonderhede…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Maak jou biblioteek skoon...</value>
+    <value>Ruim tans jou biblioteek op…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Finaliseer...</value>
+    <value>Rond tans af…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Volume-normalisering het misluk. Gaan logs na vir besonderhede.</value>
@@ -216,13 +207,10 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Kon nie vouer byvoeg nie.</value>
+    <value>Kon nie die vouer byvoeg nie.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Snitlysnaam kan nie leeg wees nie.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Gradering moet tussen 1 en 5 wees.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
@@ -248,7 +236,15 @@
     <value>Sorteer Volgens: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg word benodig vir Hoë-presisie Volume Normalisering (ReplayGain-analise), maar is nie op u stelsel gevind nie.\n\nVolg hierdie stappe om dit op te stel:\n\n1. **Laai af**: Besoek https://www.gyan.dev/ffmpeg/builds/ en laai die 'ffmpeg-git-full.7z' (of soortgelyke) 'essentials build' af.\n2. **Gids**: U kan hierdie gids volg vir gedetailleerde instruksies: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Onttrek**: Maak die argitektuurvouer oop en vind die 'bin'-gids wat `ffmpeg.exe` bevat.\n4. **Installeer**: Kopieer `ffmpeg.exe` na 'n permanente vouer (bv. `C:\\ffmpeg\\`) en **voeg daardie vouer by u Stelsel-PATH**-omgewingsveranderlike.\n5. **Herbegin**: Herbegin Nagi asseblief na die installasie sodat die veranderinge kan plaasvind.</value>
+    <value>FFmpeg is benodig om liedjies vir volumenormalisering te ontleed, maar Nagi kon dit nie vind nie.
+
+1. Laai 'n Windows-weergawe af vanaf https://ffmpeg.org/download.html.
+2. Pak die argief uit en spoor ffmpeg.exe in die bin-vouer daarvan op.
+3. Voeg die vouer wat ffmpeg.exe bevat by jou Windows PATH.
+4. Herbegin Nagi en aktiveer dan weer volumenormalisering.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>Die snitlys is geskep, maar die liedjies daarvan kon nie bygevoeg word nie. Probeer asseblief weer invoer.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Geen liedjies van die snitlys is in u biblioteek gevind nie.</value>
@@ -293,12 +289,39 @@
     <value>Alle liedjies het reeds volumedata.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Bereken volume vir {0} liedjies...</value>
+    <value>Ontleed tans volume… Liedjies: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Bereken volume-normalisering ({0}/{1})...</value>
+    <value>Bereken tans volumenormalisering ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Volume-normalisering voltooi. {0} liedjies verwerk.</value>
+    <value>Volumenormalisering voltooi. Liedjies verwerk: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Voer jou ListenBrainz-gebruikersteken in.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Kon nie die reaksie van ListenBrainz lees nie. Probeer later weer.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Voer 'n bediener-URL in wat met http:// of https:// begin.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Die gebruikersteken is ongeldig. Kontroleer dit en probeer weer.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz het 'n fout teruggestuur (HTTP {0}). Probeer later weer.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Kon nie met ListenBrainz verbind nie. Kontroleer jou verbinding en bediener-URL.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi kon nie sy biblioteekdatavouer vind nie.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Die terugplasing het misluk en jou vorige data kon nie volledig herstel word nie. Herstellêers is gestoor by &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Die gekose lêer is nie 'n geldige Nagi-rugsteun nie.</value>
   </data>
 </root>

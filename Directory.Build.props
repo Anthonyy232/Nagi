@@ -5,9 +5,6 @@
           NuGet package versions are managed centrally in Directory.Packages.props.
         -->
 
-        <!-- General Project Properties -->
-        <LangVersion>preview</LangVersion>
-
         <!-- Target Framework Versions -->
         <NetVersion>10.0</NetVersion>
         <WindowsSdkVersion>10.0.26100</WindowsSdkVersion>

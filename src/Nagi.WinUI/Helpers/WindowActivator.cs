@@ -2,18 +2,15 @@
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Nagi.WinUI.Services.Abstractions;
 using WinRT.Interop;
 
 namespace Nagi.WinUI.Helpers;
 
-/// <summary>
-///     Provides utility methods for managing window activation and state using Win32 APIs.
-/// </summary>
 internal static class WindowActivator
 {
-    private const int SW_SHOWMINIMIZED = 2;
     private const int SW_RESTORE = 9;
 
     private static ILogger? _logger;
@@ -35,8 +32,6 @@ internal static class WindowActivator
     ///     This method handles the Win32 logic required to steal focus from another application
     ///     by temporarily attaching the input threads of the foreground and target windows.
     /// </remarks>
-    /// <param name="window">The window to show and activate.</param>
-    /// <param name="win32">A service providing Win32 interoperability functions.</param>
     public static void ShowAndActivate(Window window, IWin32InteropService win32)
     {
         var windowHandle = WindowNative.GetWindowHandle(window);
@@ -52,35 +47,21 @@ internal static class WindowActivator
         var currentThreadId = win32.GetCurrentThreadId();
         var foregroundThreadId = win32.GetWindowThreadProcessId(foregroundWindowHandle, IntPtr.Zero);
 
-        // Attach our thread's input to the foreground window's thread, which allows us to bypass focus restrictions.
-        if (foregroundThreadId != currentThreadId)
+        var attached = foregroundThreadId != 0 && foregroundThreadId != currentThreadId &&
+                       win32.AttachThreadInput(foregroundThreadId, currentThreadId, true);
+        try
         {
-            Logger.LogDebug(
-                "Attaching thread input from foreground thread {ForegroundThreadId} to current thread {CurrentThreadId}.",
-                foregroundThreadId, currentThreadId);
-            win32.AttachThreadInput(foregroundThreadId, currentThreadId, true);
+            win32.BringWindowToTop(windowHandle);
+            ShowWindow(windowHandle, SW_RESTORE);
+            window.AppWindow.Show();
+            SetForegroundWindow(windowHandle);
         }
-
-        win32.BringWindowToTop(windowHandle);
-        // Restore the window if it was minimized and ensure it's visible.
-        ShowWindow(windowHandle, SW_RESTORE);
-        window.AppWindow.Show();
-        SetForegroundWindow(windowHandle);
-
-        // Detach the threads to restore normal input processing.
-        if (foregroundThreadId != currentThreadId)
+        finally
         {
-            Logger.LogDebug(
-                "Detaching thread input from foreground thread {ForegroundThreadId} to current thread {CurrentThreadId}.",
-                foregroundThreadId, currentThreadId);
-            win32.AttachThreadInput(foregroundThreadId, currentThreadId, false);
+            if (attached) win32.AttachThreadInput(foregroundThreadId, currentThreadId, false);
         }
     }
 
-    /// <summary>
-    ///     Activates a popup window, bringing it to the foreground.
-    /// </summary>
-    /// <param name="window">The window to show and activate.</param>
     public static void ActivatePopupWindow(Window window)
     {
         var windowHandle = WindowNative.GetWindowHandle(window);
@@ -95,20 +76,11 @@ internal static class WindowActivator
         SetForegroundWindow(windowHandle);
     }
 
-    /// <summary>
-    ///     Shows a window in a minimized state on the taskbar.
-    /// </summary>
-    /// <param name="window">The window to minimize.</param>
     public static void ShowMinimized(Window window)
     {
-        var windowHandle = WindowNative.GetWindowHandle(window);
-        if (windowHandle == IntPtr.Zero)
-        {
-            Logger.LogWarning("Could not get window handle for ShowMinimized.");
-            return;
-        }
-
-        Logger.LogDebug("Showing window with handle {WindowHandle} as minimized.", windowHandle);
-        ShowWindow(windowHandle, SW_SHOWMINIMIZED);
+        Logger.LogDebug("Showing window as minimized.");
+        window.AppWindow.Show(false);
+        ((FrameworkElement)window.Content).UpdateLayout();
+        ((OverlappedPresenter)window.AppWindow.Presenter).Minimize(false);
     }
 }

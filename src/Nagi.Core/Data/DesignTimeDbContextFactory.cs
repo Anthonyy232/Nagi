@@ -1,13 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Data.Sqlite;
 
 namespace Nagi.Core.Data;
 
-/// <summary>
-///     This factory is used by the Entity Framework Core tools (e.g., for creating migrations)
-///     at design time. It provides a way to create a DbContext instance without relying on the
-///     main application's dependency injection container.
-/// </summary>
 public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<MusicDbContext>
 {
     public MusicDbContext CreateDbContext(string[] args)
@@ -17,7 +13,7 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<MusicDbCon
         var databasePath = Path.Combine(appDataRoot, "nagi.db");
         Directory.CreateDirectory(appDataRoot);
         var optionsBuilder = new DbContextOptionsBuilder<MusicDbContext>();
-        optionsBuilder.UseSqlite($"Data Source={databasePath}");
+        optionsBuilder.UseSqlite(new SqliteConnectionStringBuilder { DataSource = databasePath }.ToString());
         return new MusicDbContext(optionsBuilder.Options);
     }
 }

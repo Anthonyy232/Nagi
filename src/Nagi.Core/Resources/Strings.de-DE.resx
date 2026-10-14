@@ -102,10 +102,10 @@
     <value>Titelnummer</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Wiedergabezahl</value>
+    <value>Wiedergaben</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
-    <value>Lieder</value>
+    <value>Titel</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
     <value>Künstler</value>
@@ -114,9 +114,6 @@
     <value>Lied</value>
   </data>
   <data name="Label_Folder" xml:space="preserve">
-    <value>Ordner</value>
-  </data>
-  <data name="Label_Folders" xml:space="preserve">
     <value>Ordner</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Scan abgeschlossen. {0} {1} hinzugefügt oder aktualisiert.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Speichere Stapel {0}...</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Ordner wird gescannt...</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Scan abgeschlossen. Bibliothek ist aktuell.</value>
   </data>
@@ -194,16 +185,16 @@
     <value>Scan fehlgeschlagen. Überprüfen Sie die Protokolle für Details.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Scan-Caches werden vorbereitet...</value>
+    <value>Bibliotheksscan wird vorbereitet…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Lieddetails werden gelesen...</value>
+    <value>Titeldetails werden gelesen…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Ihre Bibliothek wird bereinigt...</value>
+    <value>Bibliothek wird aufgeräumt…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Wird abgeschlossen...</value>
+    <value>Wird abgeschlossen…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Lautstärkenormalisierung fehlgeschlagen. Überprüfen Sie die Protokolle für Details.</value>
@@ -216,13 +207,10 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Ordner konnte nicht hinzugefügt werden.</value>
+    <value>Der Ordner konnte nicht hinzugefügt werden.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Der Wiedergabelistenname darf nicht leer sein.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Bewertung muss zwischen 1 und 5 liegen.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
@@ -248,15 +236,15 @@
     <value>Sortieren nach: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg ist für die hochpräzise Lautstärkenormalisierung (ReplayGain-Analyse) erforderlich, wurde aber auf Ihrem System nicht gefunden.
+    <value>FFmpeg wird benötigt, um Titel für die Lautstärkenormalisierung zu analysieren, aber Nagi konnte es nicht finden.
 
-Befolgen Sie diese Schritte zur Einrichtung:
-
-1. **Herunterladen**: Besuchen Sie https://www.gyan.dev/ffmpeg/builds/ und laden Sie den 'ffmpeg-git-full.7z' (oder ähnlichen) Essentials-Build herunter.
-2. **Anleitung**: Eine detaillierte Anleitung finden Sie hier: https://phoenixnap.com/kb/ffmpeg-windows
-3. **Extrahieren**: Öffnen Sie den Architekturordner und suchen Sie das 'bin'-Verzeichnis mit der `ffmpeg.exe`.
-4. **Installieren**: Kopieren Sie `ffmpeg.exe` in einen permanenten Ordner (z.B. `C:\ffmpeg\`) und **fügen Sie diesen Ordner zu Ihrer System-PATH-Umgebungsvariable hinzu**.
-5. **Neustart**: Bitte starten Sie Nagi nach der Installation neu, damit die Änderungen wirksam werden.</value>
+1. Laden Sie ein Windows-Build von https://ffmpeg.org/download.html herunter.
+2. Entpacken Sie das Archiv und suchen Sie ffmpeg.exe in dessen bin-Ordner.
+3. Fügen Sie den Ordner mit ffmpeg.exe zu Ihrer Windows-PATH-Variablen hinzu.
+4. Starten Sie Nagi neu und aktivieren Sie die Lautstärkenormalisierung erneut.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>Die Wiedergabeliste wurde erstellt, aber ihre Titel konnten nicht hinzugefügt werden. Bitte versuchen Sie den Import erneut.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Es wurden keine Lieder aus der Wiedergabeliste in Ihrer Bibliothek gefunden.</value>
@@ -301,12 +289,39 @@ Befolgen Sie diese Schritte zur Einrichtung:
     <value>Alle Lieder verfügen bereits über Lautstärkedaten.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Lautstärke für {0} Lieder wird berechnet...</value>
+    <value>Lautstärke wird analysiert… Titel: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Lautstärkenormalisierung wird berechnet ({0}/{1})...</value>
+    <value>Lautstärkenormalisierung wird berechnet ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Lautstärkenormalisierung abgeschlossen. {0} Lieder verarbeitet.</value>
+    <value>Lautstärkenormalisierung abgeschlossen. Verarbeitete Titel: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Geben Sie Ihren ListenBrainz-Benutzertoken ein.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Die Antwort von ListenBrainz konnte nicht gelesen werden. Versuchen Sie es später erneut.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Geben Sie eine Server-URL ein, die mit http:// oder https:// beginnt.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Der Benutzertoken ist ungültig. Überprüfen Sie ihn und versuchen Sie es erneut.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz hat einen Fehler zurückgegeben (HTTP {0}). Versuchen Sie es später erneut.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Verbindung zu ListenBrainz konnte nicht hergestellt werden. Überprüfen Sie Ihre Verbindung und Server-URL.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi konnte seinen Bibliotheksdatenordner nicht finden.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Die Wiederherstellung ist fehlgeschlagen und Ihre vorherigen Daten konnten nicht vollständig wiederhergestellt werden. Wiederherstellungsdateien wurden unter &apos;{0}&apos; gespeichert.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Die ausgewählte Datei ist kein gültiges Nagi-Backup.</value>
   </data>
 </root>

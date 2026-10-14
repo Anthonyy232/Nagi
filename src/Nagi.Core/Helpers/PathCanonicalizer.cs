@@ -1,10 +1,11 @@
-﻿using System.Text;
+using System.Text;
 
 namespace Nagi.Core.Helpers;
 
 /// <summary>
 ///     Normalizes filesystem paths so that semantically identical paths compare equal as strings.
-///     Handles separator direction, trailing separators, Unicode normalization, and drive-letter casing.
+///     Handles separators (Windows paths use '\', Unix paths keep '/'), trailing separators, Unicode
+///     normalization, and drive-letter casing.
 ///     Does NOT resolve mapped drives to UNC (platform-specific, handled by IFileSystemService).
 /// </summary>
 public static class PathCanonicalizer
@@ -13,31 +14,26 @@ public static class PathCanonicalizer
     ///     Applies deterministic textual normalization. Network/UNC resolution must happen
     ///     in the platform-specific <see cref="Services.Abstractions.IFileSystemService"/> first.
     /// </summary>
-    public static string Normalize(string path)
+    public static string Normalize(string path) => Normalize(path, Path.DirectorySeparatorChar);
+
+    internal static string Normalize(string path, char directorySeparator)
     {
         if (string.IsNullOrWhiteSpace(path)) return string.Empty;
 
         // Unicode NFC — collapses multi-byte variants (e.g., é as NFD vs NFC).
         // NOCASE collation handles ASCII case but not Unicode equivalence.
         var normalized = path.Normalize(NormalizationForm.FormC);
+        if (directorySeparator == '/') return NormalizeUnixPath(normalized);
 
         // Collapse alt separators to canonical ones. Preserve UNC prefix "\\" by checking first.
-        var isUnc = normalized.StartsWith(@"\\") || normalized.StartsWith("//");
+        var isUnc = IsUncPath(normalized);
         normalized = normalized.Replace('/', '\\');
 
-        if (isUnc)
-        {
-            // Keep the "\\" prefix; only collapse duplicate separators in the remainder.
-            var rest = normalized.Substring(2);
-            while (rest.Contains(@"\\"))
-                rest = rest.Replace(@"\\", @"\");
-            normalized = @"\\" + rest;
-        }
-        else
-        {
-            while (normalized.Contains(@"\\"))
-                normalized = normalized.Replace(@"\\", @"\");
-        }
+        // Keep the "\\" prefix; only collapse duplicate separators in the remainder.
+        var rest = isUnc ? normalized[2..] : normalized;
+        while (rest.Contains(@"\\"))
+            rest = rest.Replace(@"\\", @"\");
+        normalized = isUnc ? @"\\" + rest : rest;
 
         // A drive-relative path such as "C:" has different Windows semantics from the
         // drive root "C:\\". Preserve the separator for drive roots while continuing to
@@ -60,7 +56,24 @@ public static class PathCanonicalizer
     }
 
     /// <summary>
-    ///     Returns true if the path is a UNC path (starts with "\\" after normalization).
+    ///     Unix paths only use '/', and '\' is an ordinary file-name character there.
+    /// </summary>
+    private static string NormalizeUnixPath(string path)
+    {
+        while (path.Contains("//"))
+            path = path.Replace("//", "/");
+        return path.Length > 1 ? path.TrimEnd('/') : path;
+    }
+
+    /// <summary>
+    ///     Unifies directory separators and trims a trailing separator. Lighter than
+    ///     <see cref="Normalize(string)"/>: it is meant for comparing directory paths already stored in the database.
+    /// </summary>
+    public static string NormalizeDirectoryPath(string path) =>
+        Path.TrimEndingDirectorySeparator(path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar));
+
+    /// <summary>
+    ///     Recognizes either slash form of a UNC prefix.
     /// </summary>
     public static bool IsUncPath(string path)
     {

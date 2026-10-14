@@ -7,9 +7,6 @@ using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Services.Implementations;
 
-/// <summary>
-///     Implementation of <see cref="IPlaylistExportService" /> for M3U/M3U8 playlist format.
-/// </summary>
 public class M3uPlaylistExportService : IPlaylistExportService
 {
     private readonly ILibraryReader _libraryReader;
@@ -26,30 +23,6 @@ public class M3uPlaylistExportService : IPlaylistExportService
         _logger = logger;
     }
 
-    /// <inheritdoc />
-    public async Task<PlaylistExportResult> ExportPlaylistAsync(Guid playlistId, string filePath)
-    {
-        try
-        {
-            var playlist = await _libraryReader.GetPlaylistByIdAsync(playlistId).ConfigureAwait(false);
-            if (playlist is null)
-            {
-                _logger.LogWarning("Playlist not found for export: {PlaylistId}", playlistId);
-                return new PlaylistExportResult(false, 0, string.Format(Resources.Strings.Format_NotFound, Resources.Strings.Label_Playlist));
-            }
-
-            var songs = await _libraryReader.GetSongsInPlaylistOrderedAsync(playlistId).ConfigureAwait(false);
-            var songList = songs.ToList();
-            return await ExportLoadedPlaylistAsync(playlist, songList, filePath).ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to export playlist {PlaylistId} to {FilePath}", playlistId, filePath);
-            return new PlaylistExportResult(false, 0, ex.Message);
-        }
-    }
-
-    /// <inheritdoc />
     public async Task<PlaylistImportResult> ImportPlaylistAsync(string filePath, string playlistName)
     {
         try
@@ -60,47 +33,27 @@ public class M3uPlaylistExportService : IPlaylistExportService
                 return new PlaylistImportResult(false, null, 0, 0, [], string.Format(Resources.Strings.Format_NotFound, Resources.Strings.Label_File));
             }
 
-            var m3uDirectory = Path.GetDirectoryName(filePath) ?? string.Empty;
-
-            // Read with UTF-8 encoding by default, but handle potential BOM detection
-            // Most modern M3U8 files use UTF-8, .m3u files may use system default encoding
-            string[] lines;
-            var extension = Path.GetExtension(filePath)?.ToLowerInvariant();
-            if (extension == ".m3u8")
-            {
-                lines = await File.ReadAllLinesAsync(filePath, Encoding.UTF8).ConfigureAwait(false);
-            }
-            else
-            {
-                // For .m3u files, try default encoding which handles ANSI/local codepages
-                lines = await File.ReadAllLinesAsync(filePath).ConfigureAwait(false);
-            }
+            var m3uDirectory = Path.GetDirectoryName(Path.GetFullPath(filePath))!;
 
             var matchedSongIds = new List<Guid>();
             var unmatchedPaths = new List<string>();
 
-            foreach (var line in lines)
+            await foreach (var line in File.ReadLinesAsync(filePath, Encoding.UTF8).ConfigureAwait(false))
             {
                 var trimmedLine = line.Trim();
 
-                // Skip empty lines and M3U directives
                 if (string.IsNullOrEmpty(trimmedLine) ||
                     trimmedLine.StartsWith('#'))
                 {
                     continue;
                 }
 
-                // This line should be a file path
-                var songPath = trimmedLine;
-
-                // Resolve relative paths against the M3U file's directory
-                if (!Path.IsPathRooted(songPath))
+                var songPath = ResolveSongPath(trimmedLine, m3uDirectory);
+                if (songPath is null)
                 {
-                    songPath = Path.GetFullPath(Path.Combine(m3uDirectory, songPath));
+                    unmatchedPaths.Add(trimmedLine);
+                    continue;
                 }
-
-                // Normalize the path for matching
-                songPath = Path.GetFullPath(songPath);
 
                 var song = await _libraryReader.GetSongByFilePathAsync(songPath).ConfigureAwait(false);
                 if (song is not null)
@@ -114,6 +67,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
                 }
             }
 
+            matchedSongIds = matchedSongIds.Distinct().ToList();
             if (matchedSongIds.Count == 0)
             {
                 _logger.LogWarning("No songs matched during import of {FilePath}", filePath);
@@ -121,7 +75,6 @@ public class M3uPlaylistExportService : IPlaylistExportService
                     Resources.Strings.Error_M3uImportNoSongsMatched);
             }
 
-            // Create the playlist with matched songs
             var playlist = await _playlistService.CreatePlaylistAsync(playlistName).ConfigureAwait(false);
             if (playlist is null)
             {
@@ -130,7 +83,22 @@ public class M3uPlaylistExportService : IPlaylistExportService
                     unmatchedPaths, string.Format(Resources.Strings.Format_NotFound, Resources.Strings.Label_Playlist));
             }
 
-            await _playlistService.AddSongsToPlaylistAsync(playlist.Id, matchedSongIds).ConfigureAwait(false);
+            var songsAdded = false;
+            try
+            {
+                songsAdded = await _playlistService.AddSongsToPlaylistAsync(playlist.Id, matchedSongIds).ConfigureAwait(false);
+            }
+            finally
+            {
+                if (!songsAdded) await _playlistService.DeletePlaylistAsync(playlist.Id).ConfigureAwait(false);
+            }
+
+            if (!songsAdded)
+            {
+                _logger.LogWarning("Failed to add imported songs to playlist {PlaylistId}", playlist.Id);
+                return new PlaylistImportResult(false, null, matchedSongIds.Count, unmatchedPaths.Count,
+                    unmatchedPaths, Resources.Strings.Error_M3uImportAddSongsFailed);
+            }
 
             _logger.LogInformation(
                 "Imported playlist '{PlaylistName}' from {FilePath}: {Matched} matched, {Unmatched} unmatched",
@@ -146,15 +114,35 @@ public class M3uPlaylistExportService : IPlaylistExportService
         }
     }
 
-    /// <inheritdoc />
+    private string? ResolveSongPath(string entry, string playlistDirectory)
+    {
+        try
+        {
+            // Decode only explicit URIs. Literal file paths may contain '%' or '#'.
+            if (!Path.IsPathRooted(entry) && entry.Contains(':'))
+            {
+                if (!Uri.TryCreate(entry, UriKind.Absolute, out var uri) || !uri.IsFile)
+                    return null;
+
+                entry = uri.LocalPath;
+                if (!Path.IsPathFullyQualified(entry) || string.IsNullOrEmpty(Path.GetFileName(entry)))
+                    return null;
+            }
+
+            return Path.GetFullPath(entry, playlistDirectory);
+        }
+        catch (Exception ex) when (ex is ArgumentException or NotSupportedException or PathTooLongException)
+        {
+            _logger.LogDebug(ex, "Skipping invalid playlist entry {Path}", entry);
+            return null;
+        }
+    }
+
     public async Task<BatchExportResult> ExportAllPlaylistsAsync(string directoryPath)
     {
         try
         {
-            if (!Directory.Exists(directoryPath))
-            {
-                Directory.CreateDirectory(directoryPath);
-            }
+            Directory.CreateDirectory(directoryPath);
 
             var playlists = await _libraryReader.GetAllPlaylistsAsync().ConfigureAwait(false);
             var playlistList = playlists.ToList();
@@ -170,11 +158,9 @@ public class M3uPlaylistExportService : IPlaylistExportService
 
             foreach (var playlist in playlistList)
             {
-                // Load once for both the empty check and the export body.
                 var songs = (await _libraryReader.GetSongsInPlaylistOrderedAsync(playlist.Id).ConfigureAwait(false))
                     .ToList();
 
-                // Skip empty playlists
                 if (songs.Count == 0)
                 {
                     _logger.LogDebug("Skipping empty playlist '{PlaylistName}'", playlist.Name);
@@ -183,11 +169,10 @@ public class M3uPlaylistExportService : IPlaylistExportService
 
                 var filePath = GetUniqueBatchExportPath(directoryPath, playlist.Name, reservedFileNames);
 
-                var result = await ExportLoadedPlaylistAsync(playlist, songs, filePath).ConfigureAwait(false);
-                if (result.Success)
+                if (await ExportLoadedPlaylistAsync(playlist, songs, filePath).ConfigureAwait(false))
                 {
                     exportedCount++;
-                    totalSongs += result.SongCount;
+                    totalSongs += songs.Count;
                 }
             }
 
@@ -203,34 +188,34 @@ public class M3uPlaylistExportService : IPlaylistExportService
         }
     }
 
-    private async Task<PlaylistExportResult> ExportLoadedPlaylistAsync(
+    private async Task<bool> ExportLoadedPlaylistAsync(
         Playlist playlist,
         IReadOnlyList<Song> songs,
         string filePath)
     {
         try
         {
-            var sb = new StringBuilder();
-            sb.AppendLine("#EXTM3U");
-            sb.AppendLine($"#PLAYLIST:{playlist.Name}");
-
-            foreach (var song in songs)
-            {
-                var durationSeconds = (int)song.Duration.TotalSeconds;
-                sb.AppendLine($"#EXTINF:{durationSeconds},{song.ArtistName} - {song.Title}");
-                sb.AppendLine(song.FilePath);
-            }
-
-            await File.WriteAllTextAsync(filePath, sb.ToString(), Encoding.UTF8).ConfigureAwait(false);
+            await File.WriteAllLinesAsync(filePath, GetPlaylistLines(playlist, songs), Encoding.UTF8).ConfigureAwait(false);
 
             _logger.LogInformation("Exported playlist '{PlaylistName}' with {SongCount} songs to {FilePath}",
                 playlist.Name, songs.Count, filePath);
-            return new PlaylistExportResult(true, songs.Count);
+            return true;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to export playlist {PlaylistId} to {FilePath}", playlist.Id, filePath);
-            return new PlaylistExportResult(false, 0, ex.Message);
+            return false;
+        }
+    }
+
+    private static IEnumerable<string> GetPlaylistLines(Playlist playlist, IEnumerable<Song> songs)
+    {
+        yield return "#EXTM3U";
+        yield return $"#PLAYLIST:{playlist.Name.ReplaceLineEndings(" ")}";
+        foreach (var song in songs)
+        {
+            yield return $"#EXTINF:{(int)song.Duration.TotalSeconds},{song.ArtistName.ReplaceLineEndings(" ")} - {song.Title.ReplaceLineEndings(" ")}";
+            yield return song.FilePath;
         }
     }
 
@@ -247,31 +232,22 @@ public class M3uPlaylistExportService : IPlaylistExportService
         }
 
         var fileName = $"{safeName}.m3u8";
-        if (reservedFileNames.Add(fileName))
-        {
-            return Path.Combine(directoryPath, fileName);
-        }
-
-        for (var suffix = 2; ; suffix++)
+        for (var suffix = 2; !reservedFileNames.Add(fileName); suffix++)
         {
             fileName = $"{safeName} ({suffix}).m3u8";
-            if (reservedFileNames.Add(fileName))
-            {
-                return Path.Combine(directoryPath, fileName);
-            }
         }
+
+        return Path.Combine(directoryPath, fileName);
     }
 
-    /// <inheritdoc />
     public async Task<BatchImportResult> ImportMultiplePlaylistsAsync(IEnumerable<string> filePaths)
     {
-        var pathList = filePaths.ToList();
         var importedCount = 0;
         var totalMatched = 0;
         var totalUnmatched = 0;
         var failedFiles = new List<string>();
 
-        foreach (var filePath in pathList)
+        foreach (var filePath in filePaths)
         {
             var playlistName = Path.GetFileNameWithoutExtension(filePath);
             var result = await ImportPlaylistAsync(filePath, playlistName).ConfigureAwait(false);

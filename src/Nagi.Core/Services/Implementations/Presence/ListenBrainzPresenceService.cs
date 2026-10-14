@@ -9,9 +9,8 @@ namespace Nagi.Core.Services.Implementations.Presence;
 ///     submission. Scrobble eligibility is determined centrally by <see cref="MusicPlaybackService" />
 ///     which raises <c>ScrobbleEligibilityReached</c>; this service is only responsible for
 ///     submitting the listen to ListenBrainz and marking the session as submitted in the database.
-///     Mirrors the shape of <see cref="LastFmPresenceService" />.
 /// </summary>
-public class ListenBrainzPresenceService : IPresenceService, IAsyncDisposable
+public class ListenBrainzPresenceService : IPresenceService
 {
     private readonly ILibraryWriter _libraryWriter;
     private readonly ILogger<ListenBrainzPresenceService> _logger;
@@ -34,24 +33,6 @@ public class ListenBrainzPresenceService : IPresenceService, IAsyncDisposable
     }
 
     public string Name => "ListenBrainz";
-
-    /// <summary>
-    ///     Executes an async action with proper error handling for event handlers.
-    /// </summary>
-    private void FireAndForgetSafe(Func<Task> asyncAction, string operationName)
-    {
-        _ = Task.Run(async () =>
-        {
-            try
-            {
-                await asyncAction().ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in fire-and-forget operation: {Operation}", operationName);
-            }
-        });
-    }
 
     public async Task InitializeAsync()
     {
@@ -123,11 +104,16 @@ public class ListenBrainzPresenceService : IPresenceService, IAsyncDisposable
         return ValueTask.CompletedTask;
     }
 
-    private void OnSettingsChanged()
+    private async void OnSettingsChanged()
     {
-        FireAndForgetSafe(
-            async () => await UpdateLocalSettingsAsync().ConfigureAwait(false),
-            "ListenBrainz settings update");
+        try
+        {
+            await UpdateLocalSettingsAsync().ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to update ListenBrainz presence settings.");
+        }
     }
 
     private async Task UpdateLocalSettingsAsync()

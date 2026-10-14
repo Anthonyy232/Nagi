@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
+using CommunityToolkit.WinUI;
 using System.Linq;
 using System.Numerics;
 using Windows.System;
@@ -10,21 +11,16 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Models;
-using Nagi.WinUI.Navigation;
-using Nagi.WinUI.ViewModels;
-using Microsoft.Windows.Storage.Pickers;
-using Nagi.Core.Constants;
+using Nagi.Presentation.Navigation;
+using Nagi.Presentation.Resources;
+using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.Services.Abstractions;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Animation;
 
 namespace Nagi.WinUI.Pages;
 
-/// <summary>
-///     A page that displays detailed information for a specific artist, including their albums and songs.
-/// </summary>
 public sealed partial class ArtistViewPage : Page
 {
     private readonly ILogger<ArtistViewPage> _logger;
@@ -43,13 +39,11 @@ public sealed partial class ArtistViewPage : Page
         _logger = App.Services!.GetRequiredService<ILogger<ArtistViewPage>>();
         DataContext = ViewModel;
 
-        // Recreated on each Loaded so cached-page re-navigations get a fresh binder.
         Loaded += OnNowPlayingBinderAttach;
         Unloaded += OnNowPlayingBinderDetach;
 
         Loaded += OnPageLoaded;
 
-        // Ensure we hook up the scroll viewer once the list is loaded
         SongsListView.Loaded += OnSongsListViewLoaded;
 
         _logger.LogDebug("ArtistViewPage initialized.");
@@ -61,7 +55,6 @@ public sealed partial class ArtistViewPage : Page
         _nowPlayingBinder = new NowPlayingIndicatorBinder(
             SongsListView,
             ViewModel,
-            App.Services!.GetRequiredService<PlayerViewModel>(),
             (Brush)Application.Current.Resources["AppPrimaryColorBrush"]);
         _nowPlayingBinder.Refresh();
     }
@@ -72,26 +65,17 @@ public sealed partial class ArtistViewPage : Page
         _nowPlayingBinder = null;
     }
 
-    /// <summary>
-    ///     Gets the view model associated with this page.
-    /// </summary>
     public ArtistViewViewModel ViewModel { get; }
 
-    /// <summary>
-    ///     Initializes the view model with navigation parameters when the page is navigated to.
-    /// </summary>
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
         _logger.LogDebug("Navigated to ArtistViewPage.");
 
         // Reset layout state for new artist
-        if (AlbumsViewport != null)
-        {
-            AlbumsViewport.Height = double.NaN;
-            AlbumsViewport.Opacity = 1;
-            if (AlbumsContent != null) AlbumsContent.Translation = Vector3.Zero;
-        }
+        AlbumsViewport.Height = double.NaN;
+        AlbumsViewport.Opacity = 1;
+        AlbumsContent.Translation = Vector3.Zero;
         _lastKnownAlbumsHeight = 0;
 
         if (e.Parameter is ArtistViewNavigationParameter navParam)
@@ -108,7 +92,6 @@ public sealed partial class ArtistViewPage : Page
         }
         else
         {
-            // This is a developer error, so log it as an error.
             var paramType = e.Parameter?.GetType().Name ?? "null";
             _logger.LogError(
                 "Received incorrect navigation parameter type. Expected '{ExpectedType}', but got '{ActualType}'.",
@@ -116,9 +99,6 @@ public sealed partial class ArtistViewPage : Page
         }
     }
 
-    /// <summary>
-    ///     Cleans up resources when the user navigates away from this page.
-    /// </summary>
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
@@ -130,9 +110,6 @@ public sealed partial class ArtistViewPage : Page
         ViewModel.Dispose();
     }
 
-    /// <summary>
-    ///     Handles the page loaded event to set initial visual state.
-    /// </summary>
     private void OnPageLoaded(object sender, RoutedEventArgs e)
     {
         _logger.LogDebug("ArtistViewPage loaded. Setting initial visual state.");
@@ -140,9 +117,6 @@ public sealed partial class ArtistViewPage : Page
         Loaded -= OnPageLoaded;
     }
 
-    /// <summary>
-    ///     Handles the search toggle button click to expand or collapse the search box.
-    /// </summary>
     private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e)
     {
         if (_isSearchExpanded)
@@ -157,9 +131,6 @@ public sealed partial class ArtistViewPage : Page
         }
     }
 
-    /// <summary>
-    ///     Handles key down events in the search text box.
-    /// </summary>
     private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
     {
         if (e.Key == VirtualKey.Escape)
@@ -170,49 +141,30 @@ public sealed partial class ArtistViewPage : Page
         }
     }
 
-    /// <summary>
-    ///     Expands the search interface with an animation.
-    /// </summary>
     private void ExpandSearch()
     {
         if (_isSearchExpanded) return;
 
         _isSearchExpanded = true;
         _logger.LogDebug("Search UI expanded.");
-        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.ArtistViewPage_SearchButton_Close_ToolTip);
-        VisualStateManager.GoToState(this, "SearchExpanded", true);
-
-        // Focus the search text box after the animation has started for a smooth transition.
-        var timer = DispatcherQueue.CreateTimer();
-        timer.Interval = TimeSpan.FromMilliseconds(150);
-        timer.Tick += (s, args) =>
-        {
-            timer.Stop();
-            SearchTextBox.Focus(FocusState.Programmatic);
-        };
-        timer.Start();
+        ToolTipService.SetToolTip(SearchToggleButton, Strings.ArtistViewPage_SearchButton_Close_ToolTip);
+        VisualStateManager.GoToState(this, "SearchExpanded", false);
+        SearchTextBox.Focus(FocusState.Programmatic);
     }
 
-    /// <summary>
-    ///     Collapses the search interface with an animation and resets the filter.
-    ///     The data refresh is delayed to occur after the animation completes for a smoother UX.
-    /// </summary>
     private void CollapseSearch()
     {
         if (!_isSearchExpanded) return;
 
         _isSearchExpanded = false;
 
-        // Update UI immediately and start the collapse animation.
         _logger.LogDebug("Search UI collapsed and search term cleared.");
-        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.ArtistViewPage_SearchButton_Search_ToolTip);
-        VisualStateManager.GoToState(this, "SearchCollapsed", true);
+        ToolTipService.SetToolTip(SearchToggleButton, Strings.ArtistViewPage_SearchButton_Search_ToolTip);
+        VisualStateManager.GoToState(this, "SearchCollapsed", false);
+        SearchToggleButton.Focus(FocusState.Programmatic);
         ViewModel.SearchTerm = string.Empty;
     }
 
-    /// <summary>
-    ///     Handles clicks on the album grid, navigating to the selected album's page.
-    /// </summary>
     private void AlbumGridView_ItemClick(object sender, ItemClickEventArgs e)
     {
         if (e.ClickedItem is ArtistAlbumViewModelItem clickedAlbum)
@@ -223,14 +175,10 @@ public sealed partial class ArtistViewPage : Page
         }
     }
 
-    /// <summary>
-    ///     Updates the view model with the current selection from the song list.
-    /// </summary>
     private void SongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (_isUpdatingSelection || sender is not ListView listView) return;
 
-        // Update logical selection state based on individual changes
         foreach (var song in e.AddedItems.OfType<Song>())
             ViewModel.SelectionState.Select(song.Id);
 
@@ -265,7 +213,6 @@ public sealed partial class ArtistViewPage : Page
         _logger.LogDebug("Ctrl+A invoked. Selecting all songs for artist.");
         ViewModel.SelectAllCommand.Execute(null);
 
-        // Sync the current visible items
         try
         {
             _isUpdatingSelection = true;
@@ -279,9 +226,6 @@ public sealed partial class ArtistViewPage : Page
         args.Handled = true;
     }
 
-    /// <summary>
-    ///     Handles the double-tapped event on the song list to play the selected song.
-    /// </summary>
     private void SongsListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {
         if (e.OriginalSource is FrameworkElement { DataContext: Song tappedSong })
@@ -292,9 +236,6 @@ public sealed partial class ArtistViewPage : Page
         }
     }
 
-    /// <summary>
-    ///     Handles the opening of the context menu for a song item.
-    /// </summary>
     private void SongItemMenuFlyout_Opening(object sender, object e)
     {
         if (sender is not MenuFlyout menuFlyout) return;
@@ -312,38 +253,10 @@ public sealed partial class ArtistViewPage : Page
                 .FirstOrDefault(item => item.Name == "AddToPlaylistSubMenu") is { } addToPlaylistSubMenu)
         {
             _logger.LogDebug("Populating 'Add to playlist' submenu.");
-            PopulatePlaylistSubMenu(addToPlaylistSubMenu);
+            PlaylistMenuFlyoutHelper.Populate(addToPlaylistSubMenu, ViewModel.AvailablePlaylists,
+                ViewModel.AddSelectedSongsToPlaylistCommand, Strings.ArtistViewPage_PlaylistMenu_NoPlaylists);
         }
-    }
-
-    /// <summary>
-    ///     Populates the "Add to playlist" submenu with available playlists from the view model.
-    /// </summary>
-    private void PopulatePlaylistSubMenu(MenuFlyoutSubItem subMenu)
-    {
-        subMenu.Items.Clear();
-
-        var availablePlaylists = ViewModel.AvailablePlaylists;
-
-        if (availablePlaylists?.Any() != true)
-        {
-            _logger.LogDebug("No playlists available to populate submenu.");
-            var disabledItem = new MenuFlyoutItem { Text = Nagi.WinUI.Resources.Strings.ArtistViewPage_PlaylistMenu_NoPlaylists, IsEnabled = false };
-            subMenu.Items.Add(disabledItem);
-            return;
-        }
-
-        _logger.LogDebug("Found {PlaylistCount} playlists to populate submenu.", availablePlaylists.Count);
-        foreach (var playlist in availablePlaylists)
-        {
-            var playlistMenuItem = new MenuFlyoutItem
-            {
-                Text = playlist.Name,
-                Command = ViewModel.AddSelectedSongsToPlaylistCommand,
-                CommandParameter = playlist
-            };
-            subMenu.Items.Add(playlistMenuItem);
-        }
+        ListeningMenuFlyoutHelper.PopulateFavorites(menuFlyout, ViewModel);
     }
 
     private void ArtistImage_PointerEntered(object sender, PointerRoutedEventArgs e)
@@ -366,13 +279,7 @@ public sealed partial class ArtistViewPage : Page
         try
         {
             _logger.LogDebug("User initiated image change for artist '{ArtistName}'.", ViewModel.ArtistName);
-            var newImagePath = await PickImageAsync();
-
-            if (!string.IsNullOrWhiteSpace(newImagePath))
-            {
-                _logger.LogDebug("User selected new image for artist '{ArtistName}'. Updating.", ViewModel.ArtistName);
-                await ViewModel.UpdateArtistImageCommand.ExecuteAsync(newImagePath);
-            }
+            await ViewModel.ChangeArtistImageCommand.ExecuteAsync(null);
         }
         catch (Exception ex)
         {
@@ -393,58 +300,19 @@ public sealed partial class ArtistViewPage : Page
         }
     }
 
-    private async Task<string?> PickImageAsync()
-    {
-        _logger.LogDebug("Opening file picker for artist image.");
-        var picker = new FileOpenPicker(App.RootWindow!.AppWindow.Id);
-
-        foreach (var ext in FileExtensions.ImageFileExtensions)
-            picker.FileTypeFilter.Add(ext);
-
-        var file = await picker.PickSingleFileAsync();
-        if (file != null)
-        {
-            _logger.LogDebug("User picked image file: {FilePath}", file.Path);
-            return file.Path;
-        }
-
-        _logger.LogDebug("User did not pick an image file.");
-        return null;
-    }
-
     private void OnSongsListViewLoaded(object sender, RoutedEventArgs e)
     {
         if (_songsScrollViewer != null) return;
 
-        _songsScrollViewer = FindScrollViewer(SongsListView);
+        _songsScrollViewer = SongsListView.FindDescendant<ScrollViewer>();
         if (_songsScrollViewer != null)
         {
             _songsScrollViewer.ViewChanged += OnSongsScrollViewerViewChanged;
         }
     }
 
-    private static ScrollViewer? FindScrollViewer(DependencyObject root)
-    {
-        var queue = new System.Collections.Generic.Queue<DependencyObject>();
-        queue.Enqueue(root);
-
-        while (queue.Count > 0)
-        {
-            var current = queue.Dequeue();
-            if (current is ScrollViewer sv) return sv;
-
-            int count = VisualTreeHelper.GetChildrenCount(current);
-            for (int i = 0; i < count; i++)
-            {
-                queue.Enqueue(VisualTreeHelper.GetChild(current, i));
-            }
-        }
-        return null;
-    }
-
     private void OnAlbumsContentSizeChanged(object sender, SizeChangedEventArgs e)
     {
-        // Only update if the height actually changed
         if (Math.Abs(e.NewSize.Height - _lastKnownAlbumsHeight) < 0.5) return;
 
         _lastKnownAlbumsHeight = e.NewSize.Height;
@@ -456,14 +324,10 @@ public sealed partial class ArtistViewPage : Page
         ScheduleAlbumsLayoutUpdate();
     }
 
-    /// <summary>
-    ///     Schedules a layout update for the albums section on the next dispatcher tick.
-    ///     This prevents layout cycles by ensuring we don't modify layout properties
-    ///     during an active measure/arrange pass. Multiple rapid calls are coalesced.
-    /// </summary>
     private void ScheduleAlbumsLayoutUpdate()
     {
-        // Coalesce multiple rapid requests - only schedule if not already pending
+        // Defer changes until after measure/arrange and coalesce repeated scroll/size events.
+
         if (_pendingLayoutUpdate) return;
         _pendingLayoutUpdate = true;
 
@@ -482,7 +346,6 @@ public sealed partial class ArtistViewPage : Page
         {
             _isUpdatingAlbumsLayout = true;
 
-            // Calculate new height: Max - ScrollOffset, clamped to 0
             var scrollOffset = _songsScrollViewer.VerticalOffset;
             var newHeight = Math.Max(0, _lastKnownAlbumsHeight - scrollOffset);
 
@@ -495,10 +358,7 @@ public sealed partial class ArtistViewPage : Page
             // Translate the content up to mimic scrolling naturally
             // We clamp the translation so it doesn't float away if we scroll way past
             var translationY = (float)-Math.Min(scrollOffset, _lastKnownAlbumsHeight);
-            if (AlbumsContent != null)
-            {
-                AlbumsContent.Translation = new Vector3(0, translationY, 0);
-            }
+            AlbumsContent.Translation = new Vector3(0, translationY, 0);
 
             if (_lastKnownAlbumsHeight > 0)
             {
@@ -515,4 +375,6 @@ public sealed partial class ArtistViewPage : Page
             _isUpdatingAlbumsLayout = false;
         }
     }
+    private void ListeningOptions_Opening(object sender, object e) =>
+        ListeningMenuFlyoutHelper.PopulateMixes((MenuFlyout)sender, ViewModel.PlayMixCommand, ViewModel.PlayForCommand);
 }

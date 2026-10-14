@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Reflection;
 using Windows.ApplicationModel;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Presentation.Resources;
 
 namespace Nagi.WinUI.Services.Implementations;
 
@@ -47,7 +47,7 @@ public class AppInfoService : IAppInfoService
             // ManifestLanguages only reflects WinRT (.resw) resources; this app uses .resx satellite
             // assemblies. StorageFolder is used instead of Directory.EnumerateFiles because MSIX's VFS
             // blocks Win32 filesystem enumeration inside WindowsApps install directories.
-            var satelliteName = Assembly.GetEntryAssembly()?.GetName().Name + ".resources.dll";
+            var satelliteName = typeof(Strings).Assembly.GetName().Name + ".resources.dll";
             var installFolder = Package.Current.InstalledLocation;
             _logger.LogDebug("Language scan: installFolder={Path}, satellite={Satellite}", installFolder.Path, satelliteName);
 
@@ -81,9 +81,5 @@ public class AppInfoService : IAppInfoService
             _languageCacheLock.Release();
         }
     }
-    public async System.Threading.Tasks.Task InitializeAsync()
-    {
-        // Pre-cache languages
-        await GetAvailableLanguagesAsync();
-    }
+    public System.Threading.Tasks.Task InitializeAsync() => GetAvailableLanguagesAsync();
 }

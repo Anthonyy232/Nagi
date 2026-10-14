@@ -23,17 +23,16 @@ public class CredentialLockerService : ICredentialLockerService
         _logger = logger;
     }
 
-    /// <inheritdoc />
     public void SaveCredential(string resource, string userName, string password)
     {
         try
         {
-            // To ensure a clean save and prevent errors if a credential already exists,
-            // remove any existing credential for the resource before adding the new one.
-            RemoveCredential(resource);
-
             var credential = new PasswordCredential(resource, userName, password);
             _vault.Add(credential);
+
+            // Keep the previous credential until the replacement has been saved successfully.
+            foreach (var previous in _vault.FindAllByResource(resource))
+                if (previous.UserName != userName) _vault.Remove(previous);
 
             _logger.LogDebug("Saved credential for resource {Resource}", resource);
         }
@@ -43,12 +42,11 @@ public class CredentialLockerService : ICredentialLockerService
         }
     }
 
-    /// <inheritdoc />
     public (string? UserName, string? Password)? RetrieveCredential(string resource)
     {
         try
         {
-            var credential = _vault.RetrieveAll().FirstOrDefault(c => c.Resource == resource);
+            var credential = _vault.FindAllByResource(resource).FirstOrDefault();
 
             if (credential != null)
             {
@@ -62,8 +60,6 @@ public class CredentialLockerService : ICredentialLockerService
         }
         catch (Exception ex) when (ex.HResult == ELEMENT_NOT_FOUND_HRESULT)
         {
-            // This is an expected condition when the credential does not exist.
-            // We catch it and return null without logging an error.
             _logger.LogDebug("No credential found for resource {Resource} (HResult match)", resource);
             return null;
         }
@@ -74,13 +70,11 @@ public class CredentialLockerService : ICredentialLockerService
         }
     }
 
-    /// <inheritdoc />
     public void RemoveCredential(string resource)
     {
         try
         {
-            var credentials = _vault.RetrieveAll().Where(c => c.Resource == resource).ToList();
-            if (credentials.Count == 0) return;
+            var credentials = _vault.FindAllByResource(resource);
 
             foreach (var credential in credentials) _vault.Remove(credential);
             _logger.LogDebug("Removed {Count} credential(s) for resource {Resource}", credentials.Count, resource);
@@ -91,7 +85,6 @@ public class CredentialLockerService : ICredentialLockerService
         }
         catch (Exception ex)
         {
-            // A warning is appropriate here as it's not a critical failure, but it is unexpected.
             _logger.LogWarning(ex, "An issue occurred during removal of credential for resource {Resource}", resource);
         }
     }

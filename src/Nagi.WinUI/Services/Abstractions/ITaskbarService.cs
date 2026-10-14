@@ -21,9 +21,6 @@ public interface ITaskbarService : IDisposable
     ///     Processes Windows messages related to taskbar button interactions.
     ///     This should be called from the window's message handler (WndProc).
     /// </summary>
-    /// <param name="msg">The message identifier.</param>
-    /// <param name="wParam">Additional message information.</param>
-    /// <param name="lParam">Additional message information.</param>
     void HandleWindowMessage(int msg, nint wParam, nint lParam);
 
     /// <summary>
@@ -31,6 +28,5 @@ public interface ITaskbarService : IDisposable
     ///     This should be called when the theme changes to ensure icons match the current theme.
     ///     The operation is debounced to handle rapid theme changes efficiently.
     /// </summary>
-    /// <returns>A task representing the asynchronous operation.</returns>
     Task RefreshIconsAsync();
 }

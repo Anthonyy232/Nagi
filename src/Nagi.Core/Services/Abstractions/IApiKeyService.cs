@@ -1,8 +1,5 @@
 ﻿namespace Nagi.Core.Services.Abstractions;
 
-/// <summary>
-///     Defines a contract for a service that retrieves and caches API keys from a secure source.
-/// </summary>
 public interface IApiKeyService
 {
     /// <summary>
@@ -10,7 +7,6 @@ public interface IApiKeyService
     ///     The key is fetched from the source on the first request and cached for subsequent calls.
     /// </summary>
     /// <param name="keyName">The unique name of the key to retrieve (e.g., "lastfm").</param>
-    /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
     /// <returns>
     ///     A task that represents the asynchronous operation. The task result contains the API key string,
     ///     or null if it could not be retrieved.
@@ -21,7 +17,6 @@ public interface IApiKeyService
     ///     Asynchronously forces a refresh of a specific cached API key by re-fetching it from the source.
     /// </summary>
     /// <param name="keyName">The unique name of the key to refresh.</param>
-    /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
     /// <returns>
     ///     A task that represents the asynchronous operation. The task result contains the newly fetched API key string,
     ///     or null if it could not be retrieved.

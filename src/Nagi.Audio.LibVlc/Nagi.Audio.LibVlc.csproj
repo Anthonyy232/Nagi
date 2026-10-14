@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <!--
+      The LibVLC implementation of IAudioPlayer. It is platform-neutral: each UI head adds the LibVLC
+      native libraries for its platform (Nagi.WinUI uses VideoLAN.LibVLC.Windows) and its own
+      ISystemMediaControls.
+    -->
+    <PropertyGroup>
+        <TargetFramework>net$(NetVersion)</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Nagi.Core\Nagi.Core.csproj" />
+        <ProjectReference Include="..\Nagi.Presentation\Nagi.Presentation.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="LibVLCSharp" />
+    </ItemGroup>
+</Project>

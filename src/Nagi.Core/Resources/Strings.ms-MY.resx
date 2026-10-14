@@ -102,7 +102,7 @@
     <value>Nombor Trek</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>Kiraan Main</value>
+    <value>Dimainkan</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>Lagu</value>
@@ -114,9 +114,6 @@
     <value>Lagu</value>
   </data>
   <data name="Label_Folder" xml:space="preserve">
-    <value>Folder</value>
-  </data>
-  <data name="Label_Folders" xml:space="preserve">
     <value>Folder</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
@@ -148,7 +145,7 @@
     <value>{0} (Terdahulu)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (Meningkat)</value>
+    <value>{0} (Menaik)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
     <value>{0} (Menurun)</value>
@@ -169,7 +166,7 @@
     <value>{0} Terbanyak</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
-    <value>{0} Tersedikit</value>
+    <value>{0} Paling Sedikit</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Mengimbas folder {0} daripada {1}: {2} - {3}</value>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Imbasan selesai. {0} {1} ditambahkan atau dikemas kini.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Menyimpan kelompok {0}...</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Mengimbas folder...</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Imbasan selesai. Pustaka dikemas kini.</value>
   </data>
@@ -194,16 +185,16 @@
     <value>Imbasan gagal. Semak log untuk butiran.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Menyediakan cache imbasan...</value>
+    <value>Menyediakan imbasan pustaka…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Membaca butiran lagu...</value>
+    <value>Membaca butiran lagu…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Membersihkan pustaka anda...</value>
+    <value>Membersihkan pustaka anda…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Memuktamadkan...</value>
+    <value>Menyelesaikan…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>Normalisasi volum gagal. Semak log untuk butiran.</value>
@@ -216,13 +207,10 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Gagal menambah folder.</value>
+    <value>Tidak dapat menambah folder.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Nama senarai main tidak boleh kosong.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Penilaian mesti antara 1 dan 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
@@ -248,7 +236,15 @@
     <value>Susun Mengikut: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg diperlukan untuk Normalisasi Volum Ketepatan Tinggi (analisis ReplayGain) tetapi tidak ditemui pada sistem anda.\n\nIkuti langkah-langkah ini untuk menyediakannya:\n\n1. **Muat Turun**: Lawati https://www.gyan.dev/ffmpeg/builds/ dan muat turun binaan penting 'ffmpeg-git-full.7z' (atau yang serupa).\n2. **Panduan**: Anda boleh mengikuti panduan ini untuk arahan terperinci: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Ekstrak**: Buka folder seni bina dan cari direktori 'bin' yang mengandungi `ffmpeg.exe`.\n4. **Pasang**: Salin `ffmpeg.exe` ke folder kekal (cth., `C:\ffmpeg\`) dan **tambahkan folder tersebut ke pemboleh ubah persekitaran PATH Sistem anda**.\n5. **Mulakan Semula**: Sila mulakan semula Nagi selepas pemasangan agar perubahan berkuat kuasa.</value>
+    <value>FFmpeg diperlukan untuk menganalisis lagu bagi penormalan kelantangan, tetapi Nagi tidak dapat menemuinya.
+
+1. Muat turun binaan Windows dari https://ffmpeg.org/download.html.
+2. Ekstrak arkib dan cari ffmpeg.exe dalam folder binnya.
+3. Tambah folder yang mengandungi ffmpeg.exe ke PATH Windows anda.
+4. Mulakan semula Nagi, kemudian dayakan penormalan kelantangan semula.</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>Senarai main telah dicipta, tetapi lagunya tidak dapat ditambah. Sila cuba mengimport lagi.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Tiada lagu daripada senarai main ditemui dalam pustaka anda.</value>
@@ -293,12 +289,39 @@
     <value>Semua lagu sudah mempunyai data volum.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Mengira volum untuk {0} lagu...</value>
+    <value>Menganalisis kelantangan… Lagu: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Mengira normalisasi volum ({0}/{1})...</value>
+    <value>Menghitung penormalan kelantangan ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Normalisasi volum selesai. {0} lagu diproses.</value>
+    <value>Penormalan kelantangan selesai. Lagu diproses: {0}.</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>Masukkan token pengguna ListenBrainz anda.</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>Tidak dapat membaca respons daripada ListenBrainz. Cuba lagi kemudian.</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>Masukkan URL pelayan yang bermula dengan http:// atau https://.</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>Token pengguna tidak sah. Semak token dan cuba lagi.</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz mengembalikan ralat (HTTP {0}). Cuba lagi kemudian.</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>Tidak dapat menyambung ke ListenBrainz. Semak sambungan dan URL pelayan anda.</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi tidak dapat menemukan folder data pustakanya.</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>Pemulihan gagal, dan data sebelumnya tidak dapat dipulihkan sepenuhnya. Fail pemulihan telah disimpan di &apos;{0}&apos;.</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>Fail yang dipilih bukan sandaran Nagi yang sah.</value>
   </data>
 </root>

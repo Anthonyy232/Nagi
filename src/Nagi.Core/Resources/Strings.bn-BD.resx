@@ -105,7 +105,7 @@
     <value>প্লে সংখ্যা</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
-    <value>গানসমূহ</value>
+    <value>গান</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
     <value>শিল্পী</value>
@@ -115,9 +115,6 @@
   </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>ফোল্ডার</value>
-  </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>ফোল্ডারসমূহ</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>ম্যানুয়াল ক্রম</value>
@@ -148,10 +145,10 @@
     <value>{0} (সবচেয়ে পুরানো)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
-    <value>{0} (আরোহী)</value>
+    <value>{0} (ঊর্ধ্বক্রম)</value>
   </data>
   <data name="Format_DirectionalDesc" xml:space="preserve">
-    <value>{0} (অবোহী)</value>
+    <value>{0} (অধোক্রম)</value>
   </data>
   <data name="Format_ShortestFirst" xml:space="preserve">
     <value>সবচেয়ে ছোট প্রথমে</value>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>স্ক্যান সম্পূর্ণ। {0} {1} যোগ করা হয়েছে বা আপডেট করা হয়েছে।</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>ব্যাচ {0} সংরক্ষণ করা হচ্ছে...</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>ফোল্ডার স্ক্যান করা হচ্ছে...</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>স্ক্যান সম্পূর্ণ। লাইব্রেরি আপ টু ডেট আছে।</value>
   </data>
@@ -194,16 +185,16 @@
     <value>স্ক্যান ব্যর্থ হয়েছে। বিস্তারিত জানতে লগ পরীক্ষা করুন।</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>স্ক্যান ক্যাশে প্রস্তুত করা হচ্ছে...</value>
+    <value>লাইব্রেরি স্ক্যান প্রস্তুত করা হচ্ছে…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>গানের বিবরণ পড়া হচ্ছে...</value>
+    <value>গানের বিবরণ পড়া হচ্ছে…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>আপনার লাইব্রেরি পরিষ্কার করা হচ্ছে...</value>
+    <value>আপনার লাইব্রেরি পরিচ্ছন্ন করা হচ্ছে…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>চূড়ান্ত করা হচ্ছে...</value>
+    <value>চূড়ান্ত করা হচ্ছে…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>ভলিউম নরমালাইজেশন ব্যর্থ হয়েছে। বিস্তারিত জানতে লগ পরীক্ষা করুন।</value>
@@ -216,13 +207,10 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>ফোল্ডার যোগ করতে ব্যর্থ।</value>
+    <value>ফোল্ডারটি যোগ করা সম্ভব হয়নি।</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>প্লেলিস্টের নাম খালি থাকতে পারবে না।</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>রেটিং ১ থেকে ৫ এর মধ্যে হতে হবে।</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
@@ -245,10 +233,18 @@
     <value> ও </value>
   </data>
   <data name="SortByPrefix" xml:space="preserve">
-    <value>সাজান অনুসারে: </value>
+    <value>সাজান: </value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>হাই-প্রিসিশন ভলিউম নরমালাইজেশন (রিপ্লেগেইন বিশ্লেষণ) এর জন্য FFmpeg প্রয়োজন কিন্তু আপনার সিস্টেমে এটি পাওয়া যায়নি।\n\nএটি সেট আপ করতে এই ধাপগুলি অনুসরণ করুন:\n\n1. **ডাউনলোড**: https://www.gyan.dev/ffmpeg/builds/ ভিজিট করুন এবং 'ffmpeg-git-full.7z' (বা অনুরূপ) এসেনশিয়ালস বিল্ড ডাউনলোড করুন।\n2. **গাইড**: বিস্তারিত নির্দেশাবলীর জন্য আপনি এই গাইডটি অনুসরণ করতে পারেন: https://phoenixnap.com/kb/ffmpeg-windows\n3. **এক্সট্রাক্ট করুন**: আর্কিটেকচার ফোল্ডারটি খুলুন এবং `ffmpeg.exe` ধারণকারী 'bin' ডিরেক্টরি খুঁজুন।\n4. **ইনস্টল করুন**: `ffmpeg.exe` একটি স্থায়ী ফোল্ডারে (যেমন, `C:\ffmpeg\`) কপি করুন এবং **সেই ফোল্ডারটি আপনার সিস্টেম পাথ** এনভায়রনমেন্ট ভেরিয়েবলে যোগ করুন।\n5. **পুনরায় চালু করুন**: পরিবর্তনগুলি কার্যকর হওয়ার জন্য ইনস্টলেশনের পরে Nagi পুনরায় চালু করুন।</value>
+    <value>ভলিউম নরম্যালাইজেশনের জন্য গান বিশ্লেষণ করতে FFmpeg প্রয়োজন, কিন্তু Nagi এটি খুঁজে পায়নি।
+
+1. https://ffmpeg.org/download.html থেকে একটি Windows বিল্ড ডাউনলোড করুন।
+2. আর্কাইভটি এক্সট্র্যাক্ট করুন এবং এর bin ফোল্ডারে ffmpeg.exe ফাইলটি খুঁজুন।
+3. ffmpeg.exe ধারণকারী ফোল্ডারটি আপনার Windows PATH-এ যোগ করুন।
+4. Nagi রিস্টার্ট করুন, তারপর পুনরায় ভলিউম নরম্যালাইজেশন সক্ষম করুন।</value>
+  </data>
+  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
+    <value>প্লেলিস্টটি তৈরি করা হয়েছে, কিন্তু এর গানগুলো যোগ করা সম্ভব হয়নি। অনুগ্রহ করে পুনরায় ইমপোর্ট করার চেষ্টা করুন।</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>আপনার লাইব্রেরিতে প্লেলিস্টের কোনো গান পাওয়া যায়নি।</value>
@@ -293,12 +289,39 @@
     <value>সব গানের ভলিউম ডেটা আগে থেকেই আছে।</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>{0}টি গানের জন্য ভলিউম গণনা করা হচ্ছে...</value>
+    <value>ভলিউম বিশ্লেষণ করা হচ্ছে… গান: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>ভলিউম নরমালাইজেশন গণনা করা হচ্ছে ({0}/{1})...</value>
+    <value>ভলিউম নরম্যালাইজেশন গণনা করা হচ্ছে ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>ভলিউম নরমালাইজেশন সম্পূর্ণ। {0}টি গান প্রক্রিয়া করা হয়েছে।</value>
+    <value>ভলিউম নরম্যালাইজেশন সম্পন্ন হয়েছে। প্রক্রিয়াজাত গান: {0}।</value>
+  </data>
+  <data name="ListenBrainz_EmptyToken" xml:space="preserve">
+    <value>আপনার ListenBrainz ইউজার টোকেন লিখুন।</value>
+  </data>
+  <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
+    <value>ListenBrainz থেকে পাওয়া উত্তর পড়া সম্ভব হয়নি। পরে আবার চেষ্টা করুন।</value>
+  </data>
+  <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
+    <value>এমন একটি সার্ভার URL লিখুন যা http:// বা https:// দিয়ে শুরু হয়।</value>
+  </data>
+  <data name="ListenBrainz_InvalidToken" xml:space="preserve">
+    <value>ইউজার টোকেনটি অকার্যকর। এটি পরীক্ষা করে আবার চেষ্টা করুন।</value>
+  </data>
+  <data name="ListenBrainz_ServerError" xml:space="preserve">
+    <value>ListenBrainz একটি ত্রুটি দেখিয়েছে (HTTP {0})। পরে আবার চেষ্টা করুন।</value>
+  </data>
+  <data name="ListenBrainz_Unreachable" xml:space="preserve">
+    <value>ListenBrainz-এর সাথে সংযোগ স্থাপন করা সম্ভব হয়নি। আপনার সংযোগ এবং সার্ভার URL পরীক্ষা করুন।</value>
+  </data>
+  <data name="Backup_DataFolderMissing" xml:space="preserve">
+    <value>Nagi তার লাইব্রেরি ডেটা ফোল্ডার খুঁজে পায়নি।</value>
+  </data>
+  <data name="Backup_IncompleteRestore" xml:space="preserve">
+    <value>রিস্টোর ব্যর্থ হয়েছে এবং আপনার পূর্ববর্তী ডেটা সম্পূর্ণরূপে পুনরুদ্ধার করা সম্ভব হয়নি। রিকভারি ফাইলগুলো &apos;{0}&apos;-এ সংরক্ষণ করা হয়েছে।</value>
+  </data>
+  <data name="Backup_InvalidFile" xml:space="preserve">
+    <value>নির্বাচিত ফাইলটি একটি বৈধ Nagi ব্যাকআপ নয়।</value>
   </data>
 </root>

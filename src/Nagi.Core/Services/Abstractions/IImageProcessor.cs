@@ -1,8 +1,5 @@
 ﻿namespace Nagi.Core.Services.Abstractions;
 
-/// <summary>
-///     Defines a contract for image processing tasks, such as saving cover art and extracting theme colors.
-/// </summary>
 public interface IImageProcessor
 {
     /// <summary>
@@ -22,7 +19,6 @@ public interface IImageProcessor
     ///     Processes image bytes: resizes if larger than max dimension, converts to JPEG.
     ///     Preserves aspect ratio using ResizeMode.Max (fits within bounds without distortion).
     /// </summary>
-    /// <param name="imageData">Raw image bytes to process.</param>
     /// <param name="maxDimension">Maximum width or height. Default is 600px.</param>
     /// <returns>Processed image bytes as JPEG, or original bytes if no resizing needed.</returns>
     Task<byte[]> ProcessImageBytesAsync(byte[] imageData, int maxDimension = 600);

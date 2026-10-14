@@ -1,18 +1,19 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using MaterialColorUtilities.ColorAppearance;
-using Microsoft.Extensions.DependencyInjection;
+using MaterialColorUtilities.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 using Nagi.Core.Services.Abstractions;
-using Nagi.WinUI.Services.Abstractions;
+using Nagi.Presentation.Models;
+using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services;
+using Nagi.WinUI.Helpers;
 using Color = Windows.UI.Color;
 
 namespace Nagi.WinUI.Services.Implementations;
 
-/// <summary>
-///     A service that manages the application's visual theme, including static and dynamic theming.
-/// </summary>
 public class ThemeService : IThemeService
 {
     // Roughly 4.5:1 contrast against the dark media overlay surface (#303030).
@@ -20,39 +21,42 @@ public class ThemeService : IThemeService
     private const byte OpaqueAlpha = byte.MaxValue;
     private static readonly Color White = Color.FromArgb(OpaqueAlpha, byte.MaxValue, byte.MaxValue, byte.MaxValue);
 
-    private readonly App _app;
+    private readonly MainWindow _window;
     private readonly ILogger<ThemeService> _logger;
-    private readonly Lazy<IMusicPlaybackService> _playbackService;
-    private readonly IServiceProvider _serviceProvider;
-    private readonly Lazy<IUISettingsService> _settingsService;
-    private readonly Lazy<IDispatcherService> _dispatcherService;
+    private readonly IMusicPlaybackService _playbackService;
+    private readonly IUISettingsService _settingsService;
+    private readonly IDispatcherService _dispatcherService;
 
-    public ThemeService(App app, IServiceProvider serviceProvider, ILogger<ThemeService> logger)
+    public ThemeService(MainWindow window, IUISettingsService settingsService, IMusicPlaybackService playbackService,
+        IDispatcherService dispatcherService, ILogger<ThemeService> logger)
     {
-        _app = app ?? throw new ArgumentNullException(nameof(app));
-        _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+        _window = window ?? throw new ArgumentNullException(nameof(window));
+        _settingsService = settingsService;
+        _playbackService = playbackService;
+        _dispatcherService = dispatcherService;
         _logger = logger;
-        _settingsService =
-            new Lazy<IUISettingsService>(() => _serviceProvider.GetRequiredService<IUISettingsService>());
-        _playbackService =
-            new Lazy<IMusicPlaybackService>(() => _serviceProvider.GetRequiredService<IMusicPlaybackService>());
-        _dispatcherService =
-            new Lazy<IDispatcherService>(() => _serviceProvider.GetRequiredService<IDispatcherService>());
     }
 
-    public ElementTheme CurrentTheme { get; private set; } = ElementTheme.Default;
+    public AppTheme CurrentTheme { get; private set; } = AppTheme.Default;
 
-    public void ApplyTheme(ElementTheme theme)
+    public void ApplyTheme(AppTheme theme)
     {
         _logger.LogDebug("Applying application theme: {Theme}", theme);
         CurrentTheme = theme;
-        _app.ApplyThemeInternal(theme);
+        RunOnUIThread(() =>
+        {
+            if (_window.Content is not FrameworkElement rootElement) return;
+
+            rootElement.RequestedTheme = theme.ToElementTheme();
+            _ = ReapplyCurrentDynamicThemeAsync();
+            _window.InitializeCustomTitleBar();
+        });
     }
 
     public async Task ReapplyCurrentDynamicThemeAsync()
     {
         _logger.LogDebug("Reapplying current dynamic theme.");
-        var currentTrack = _playbackService.Value.CurrentTrack;
+        var currentTrack = _playbackService.CurrentTrack;
         if (currentTrack is not null)
         {
             await ApplyDynamicThemeFromSwatchesAsync(currentTrack.LightSwatchId, currentTrack.DarkSwatchId);
@@ -66,7 +70,7 @@ public class ThemeService : IThemeService
 
     public async Task ApplyDynamicThemeFromSwatchesAsync(string? lightSwatchId, string? darkSwatchId)
     {
-        if (!await _settingsService.Value.GetDynamicThemingAsync())
+        if (!await _settingsService.GetDynamicThemingAsync())
         {
             _logger.LogDebug("Dynamic theming is disabled. Activating default primary color.");
             await ActivateDefaultPrimaryColorAsync();
@@ -94,14 +98,13 @@ public class ThemeService : IThemeService
         }
     }
 
-    public async Task ActivateDefaultPrimaryColorAsync(ElementTheme? theme = null)
+    private async Task ActivateDefaultPrimaryColorAsync(ElementTheme? theme = null)
     {
         _logger.LogDebug("Activating configured primary color.");
-        var actualTheme = theme ?? await GetActualThemeAsync();
-        await SetAppColorsAsync(await GetConfiguredAccentColorAsync(), actualTheme);
+        await SetAppColorsAsync(await GetConfiguredAccentColorAsync(), theme ?? await GetActualThemeAsync());
     }
 
-    public async Task ApplyAccentColorAsync(Color? color)
+    public async Task ApplyAccentColorAsync(ArgbColor? color)
     {
         var theme = await GetActualThemeAsync();
         if (color is not null)
@@ -109,7 +112,7 @@ public class ThemeService : IThemeService
             _logger.LogDebug("Applying manual accent color: {Color}", color);
         }
 
-        await SetAppColorsAsync(color ?? App.DefaultAccentColor, theme);
+        await SetAppColorsAsync((color ?? SettingsDefaults.BrandAccentColor).ToWindowsColor(), theme);
     }
 
     private async Task SetAppColorsAsync(
@@ -117,12 +120,12 @@ public class ThemeService : IThemeService
         ElementTheme theme,
         Color? mediaOnImageSourceColor = null)
     {
-        _app.SetAppPrimaryColorBrushColor(primaryColor);
+        SetBrushColor("AppPrimaryColorBrush", primaryColor, refreshTaskbarIcons: true);
 
         var mediaOnImageAccentColor = GetMediaOnImageAccentColor(mediaOnImageSourceColor ?? primaryColor);
-        _app.SetMediaOnImageAccentBrushColor(mediaOnImageAccentColor);
+        SetBrushColor("MediaOnImageAccentBrush", mediaOnImageAccentColor);
 
-        var intensity = await _settingsService.Value.GetPlayerTintIntensityAsync();
+        var intensity = await _settingsService.GetPlayerTintIntensityAsync();
         var baseChannel = theme == ElementTheme.Light ? byte.MaxValue : byte.MinValue;
         var playerTintColor = Color.FromArgb(
             OpaqueAlpha,
@@ -132,12 +135,43 @@ public class ThemeService : IThemeService
         var isLight = theme == ElementTheme.Light;
         var playerBackgroundColor = ClampTone(playerTintColor, isLight ? 85 : 0, isLight ? 100 : 35);
         var playerAccentColor = ClampTone(primaryColor, isLight ? 0 : 80, isLight ? 40 : 100);
-        _app.SetPlayerColors(playerTintColor, playerBackgroundColor, playerAccentColor);
+        SetBrushColor("PlayerTintColorBrush", playerTintColor);
+        SetBrushColor("PlayerBackgroundBrush", playerBackgroundColor);
+        SetBrushColor("PlayerAccentBrush", playerAccentColor);
+    }
+
+    /// <summary>
+    ///     Updates the color of the app-level <see cref="SolidColorBrush" /> resource
+    ///     <paramref name="resourceKey" />, which every bound element picks up.
+    /// </summary>
+    private void SetBrushColor(string resourceKey, Color newColor, bool refreshTaskbarIcons = false)
+    {
+        RunOnUIThread(() =>
+        {
+            if (Application.Current.Resources.TryGetValue(resourceKey, out var brushObject) &&
+                brushObject is SolidColorBrush brush)
+            {
+                if (brush.Color == newColor) return;
+
+                brush.Color = newColor;
+                if (refreshTaskbarIcons) _ = _window.TaskbarService?.RefreshIconsAsync();
+            }
+            else
+            {
+                _logger.LogCritical("{ResourceKey} resource not found", resourceKey);
+            }
+        });
+    }
+
+    private void RunOnUIThread(Action action)
+    {
+        if (_dispatcherService.HasThreadAccess) action();
+        else _dispatcherService.TryEnqueue(action);
     }
 
     private static Color ClampTone(Color color, double minimum, double maximum)
     {
-        var hct = Hct.FromInt(0xFF000000u | (uint)color.R << 16 | (uint)color.G << 8 | color.B);
+        var hct = Hct.FromInt(ColorUtils.ArgbFromRgb(color.R, color.G, color.B));
         var tone = Math.Clamp(hct.Tone, minimum, maximum);
         if (tone == hct.Tone) return color;
 
@@ -148,13 +182,14 @@ public class ThemeService : IThemeService
 
     private async Task<Color> GetConfiguredAccentColorAsync()
     {
-        return await _settingsService.Value.GetAccentColorAsync() ?? App.DefaultAccentColor;
+        return (await _settingsService.GetAccentColorAsync() ?? SettingsDefaults.BrandAccentColor).ToWindowsColor();
     }
 
-    private bool TryParseSwatch(string? swatchId, out Color color)
+    private static bool TryParseSwatch(string? swatchId, out Color color)
     {
-        color = default;
-        return !string.IsNullOrWhiteSpace(swatchId) && _app.TryParseHexColor(swatchId, out color);
+        var parsed = ArgbColor.TryParseHex(swatchId, out var argb);
+        color = argb.ToWindowsColor();
+        return parsed;
     }
 
     private static Color GetMediaOnImageAccentColor(Color color)
@@ -202,23 +237,13 @@ public class ThemeService : IThemeService
 
     private static double GetRelativeLuminance(Color color)
     {
-        return (0.2126 * GetLinearChannelValue(color.R)) +
-               (0.7152 * GetLinearChannelValue(color.G)) +
-               (0.0722 * GetLinearChannelValue(color.B));
-    }
-
-    private static double GetLinearChannelValue(byte value)
-    {
-        var channel = value / 255d;
-        return channel <= 0.04045
-            ? channel / 12.92
-            : Math.Pow((channel + 0.055) / 1.055, 2.4);
+        return ColorUtils.XyzFromArgb(ColorUtils.ArgbFromRgb(color.R, color.G, color.B))[1] / 100;
     }
 
     private async Task<ElementTheme> GetActualThemeAsync()
     {
-        var theme = await _dispatcherService.Value.EnqueueAsync<ElementTheme?>(() =>
-            App.RootWindow?.Content is FrameworkElement root ? root.ActualTheme : (ElementTheme?)null);
+        var theme = await _dispatcherService.EnqueueAsync<ElementTheme?>(() =>
+            _window.Content is FrameworkElement root ? root.ActualTheme : (ElementTheme?)null);
 
         return theme ?? ElementTheme.Default;
     }

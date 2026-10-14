@@ -1,11 +1,11 @@
 using System.Net.Http.Json;
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
+using ModernLrc;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
+using Polly.CircuitBreaker;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -13,7 +13,7 @@ namespace Nagi.Core.Services.Implementations;
 ///     Service for fetching synchronized lyrics from NetEase Cloud Music.
 ///     Uses unofficial API endpoints commonly used by open-source music players.
 /// </summary>
-public partial class NetEaseLyricsService : INetEaseLyricsService
+public class NetEaseLyricsService : INetEaseLyricsService
 {
     private const string SearchUrl = "https://music.163.com/api/search/get";
     private const string LyricsUrl = "https://music.163.com/api/song/lyric";
@@ -35,7 +35,6 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
         _logger = logger;
     }
 
-    /// <inheritdoc />
     public async Task<string?> SearchLyricsAsync(string trackName, string? artistName,
         CancellationToken cancellationToken = default)
     {
@@ -45,19 +44,20 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
         if (_pipelines.IsCircuitOpen(ServiceProviderIds.NetEase))
         {
             _logger.LogDebug("NetEase circuit is open; skipping search.");
-            return null;
+            throw new BrokenCircuitException("NetEase is temporarily unavailable.");
         }
 
         try
         {
-            var normalizedTrack = ArtistNameHelper.NormalizeStringCore(trackName) ?? trackName;
-            var normalizedArtist = ArtistNameHelper.NormalizeStringCore(artistName) ?? artistName;
+            var normalizedTrack = ArtistNameHelper.NormalizeStringCore(trackName)!;
+            var normalizedArtist = ArtistNameHelper.NormalizeStringCore(artistName);
+            if (string.Equals(normalizedArtist, Artist.UnknownArtistName, StringComparison.OrdinalIgnoreCase)) normalizedArtist = null;
 
-            var query = string.IsNullOrWhiteSpace(normalizedArtist)
+            var query = normalizedArtist is null
                 ? normalizedTrack
                 : $"{normalizedTrack} {normalizedArtist}";
 
-            var songId = await SearchSongAsync(query, trackName, artistName, cancellationToken).ConfigureAwait(false);
+            var songId = await SearchSongAsync(query, normalizedTrack, normalizedArtist, cancellationToken).ConfigureAwait(false);
             if (songId is null)
             {
                 _logger.LogDebug("No NetEase match found for: {Query}", query);
@@ -77,16 +77,13 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
             _logger.LogError(ex, "Error fetching NetEase lyrics for: {TrackName}", trackName);
-            return null;
+            throw;
         }
     }
 
     private async Task<long?> SearchSongAsync(string query, string trackName, string? artistName, CancellationToken cancellationToken)
     {
-        var normalizedTrack = ArtistNameHelper.NormalizeStringCore(trackName) ?? trackName;
-        var normalizedArtist = ArtistNameHelper.NormalizeStringCore(artistName) ?? artistName;
-
-        return await _pipelines.ExecuteWithFallbackAsync<long?>(
+        using var response = await _pipelines.ExecuteAsync(
             ServiceProviderIds.NetEase,
             async ct =>
             {
@@ -100,137 +97,103 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
                 _logger.LogDebug("Searching NetEase for: {Query}", query);
                 return await _httpClient.PostAsync(SearchUrl, content, ct).ConfigureAwait(false);
             },
-            async (response, ct) =>
-            {
-                if (!response.IsSuccessStatusCode)
-                {
-                    _logger.LogWarning("NetEase search failed with status {Status}.", response.StatusCode);
-                    return null;
-                }
-
-                var result = await response.Content.ReadFromJsonAsync<NetEaseSearchResult>(cancellationToken: ct)
-                    .ConfigureAwait(false);
-
-                var songs = result?.Result?.Songs;
-                if (songs is null || songs.Count == 0)
-                    return null;
-
-                // Score breakdown: TrackExact=4, TrackContains=2, ArtistMatch=1
-                var bestMatch = songs
-                    .Select(s =>
-                    {
-                        var normalizedSongName = ArtistNameHelper.NormalizeStringCore(s.Name) ?? s.Name;
-                        var trackExact = normalizedSongName != null && normalizedSongName.Equals(normalizedTrack, StringComparison.OrdinalIgnoreCase);
-                        var trackContains = normalizedSongName != null && normalizedSongName.Contains(normalizedTrack, StringComparison.OrdinalIgnoreCase);
-                        var artistMatch = !string.IsNullOrWhiteSpace(normalizedArtist) &&
-                                          s.Artists?.Any(a =>
-                                          {
-                                              var n = ArtistNameHelper.NormalizeStringCore(a.Name) ?? a.Name;
-                                              return n != null && n.Contains(normalizedArtist, StringComparison.OrdinalIgnoreCase);
-                                          }) == true;
-
-                        if (!trackExact && !trackContains)
-                            return (Song: (NetEaseSong?)null, Score: -1);
-
-                        var score = (trackExact ? 4 : 0) + (trackContains ? 2 : 0) + (artistMatch ? 1 : 0);
-                        return (Song: (NetEaseSong?)s, Score: score);
-                    })
-                    .Where(x => x.Song != null)
-                    .OrderByDescending(x => x.Score)
-                    .FirstOrDefault();
-
-                return bestMatch.Song?.Id;
-            },
-            fallback: null,
-            _logger,
-            $"search for {query}",
             cancellationToken).ConfigureAwait(false);
+
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<NetEaseSearchResult>(cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        var songs = result?.Result?.Songs;
+        if (songs is null || songs.Count == 0)
+            return null;
+
+        // Score breakdown: TrackExact=4, TrackContains=2, ArtistMatch=1
+        var bestMatch = songs
+            .Select(s =>
+            {
+                var normalizedSongName = ArtistNameHelper.NormalizeStringCore(s.Name);
+                var trackScore = string.Equals(normalizedSongName, trackName, StringComparison.OrdinalIgnoreCase) ? 4
+                    : normalizedSongName?.Contains(trackName, StringComparison.OrdinalIgnoreCase) == true ? 2 : 0;
+                var artistMatch = artistName is not null &&
+                                  s.Artists?.Any(a =>
+                                  {
+                                      var name = ArtistNameHelper.NormalizeStringCore(a.Name);
+                                      return name?.Contains(artistName, StringComparison.OrdinalIgnoreCase) == true;
+                                  }) == true;
+
+                return (Song: s, Score: trackScore == 0 ? 0 : trackScore + (artistMatch ? 1 : 0));
+            })
+            .Where(x => x.Score > 0)
+            .OrderByDescending(x => x.Score)
+            .FirstOrDefault();
+
+        return bestMatch.Song?.Id;
     }
 
     private async Task<string?> GetLyricsAsync(long songId, CancellationToken cancellationToken)
     {
         var url = $"{LyricsUrl}?id={songId}&lv=1";
 
-        return await _pipelines.ExecuteWithFallbackAsync<string?>(
+        using var response = await _pipelines.ExecuteAsync(
             ServiceProviderIds.NetEase,
             async ct =>
             {
                 _logger.LogDebug("Fetching NetEase lyrics for song ID: {SongId}", songId);
                 return await _httpClient.GetAsync(url, ct).ConfigureAwait(false);
             },
-            async (response, ct) =>
-            {
-                if (!response.IsSuccessStatusCode)
-                {
-                    _logger.LogWarning("NetEase lyrics fetch failed with status {Status}.", response.StatusCode);
-                    return null;
-                }
-
-                var result = await response.Content.ReadFromJsonAsync<NetEaseLyricsResult>(cancellationToken: ct)
-                    .ConfigureAwait(false);
-
-                var lrcContent = result?.Lrc?.Lyric;
-                if (string.IsNullOrWhiteSpace(lrcContent))
-                    return null;
-
-                // Validate that it's actually LRC format (has timestamps).
-                if (!LrcTimestampRegex().IsMatch(lrcContent))
-                    return null;
-
-                return lrcContent;
-            },
-            fallback: null,
-            _logger,
-            $"lyrics fetch for song ID {songId}",
             cancellationToken).ConfigureAwait(false);
+
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<NetEaseLyricsResult>(cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        var lrcContent = result?.Lrc?.Lyric;
+        if (string.IsNullOrWhiteSpace(lrcContent))
+            return null;
+
+        if (LrcParser.Parse(lrcContent).Document.Lines.Count == 0)
+            return null;
+
+        return lrcContent;
     }
 
-    [GeneratedRegex(@"\[\d{2}:\d{2}")]
-    private static partial Regex LrcTimestampRegex();
-
-    // DTOs for JSON deserialization
     private sealed class NetEaseSearchResult
     {
-        [JsonPropertyName("result")]
+
         public NetEaseSearchResultData? Result { get; set; }
     }
 
     private sealed class NetEaseSearchResultData
     {
-        [JsonPropertyName("songs")]
+
         public List<NetEaseSong>? Songs { get; set; }
     }
 
     private sealed class NetEaseSong
     {
-        [JsonPropertyName("id")]
+
         public long Id { get; set; }
 
-        [JsonPropertyName("name")]
         public string? Name { get; set; }
 
-        [JsonPropertyName("artists")]
         public List<NetEaseArtist>? Artists { get; set; }
     }
 
     private sealed class NetEaseArtist
     {
-        [JsonPropertyName("id")]
-        public long Id { get; set; }
 
-        [JsonPropertyName("name")]
         public string? Name { get; set; }
     }
 
     private sealed class NetEaseLyricsResult
     {
-        [JsonPropertyName("lrc")]
+
         public NetEaseLyric? Lrc { get; set; }
     }
 
     private sealed class NetEaseLyric
     {
-        [JsonPropertyName("lyric")]
+
         public string? Lyric { get; set; }
     }
 }

@@ -1,13 +1,11 @@
 using System.IO.Compression;
 using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
 using Nagi.Core.Models.Romanization;
 
 var jsonOptions = new JsonSerializerOptions
 {
-    PropertyNameCaseInsensitive = true,
-    WriteIndented = false
+    PropertyNameCaseInsensitive = true
 };
 
 if (args.Length > 0 && args[0].Equals("generate-key", StringComparison.OrdinalIgnoreCase))
@@ -18,6 +16,10 @@ if (args.Length > 0 && args[0].Equals("generate-key", StringComparison.OrdinalIg
 }
 
 var options = PackToolOptions.Parse(args);
+var privateKeyPem = Environment.GetEnvironmentVariable("NAGI_ROMANIZATION_CATALOG_PRIVATE_KEY_PEM");
+if (string.IsNullOrWhiteSpace(privateKeyPem) && File.Exists(Path.Combine(options.OutputDirectory, "catalog.json")))
+    throw new InvalidOperationException("The output contains a signed catalog. Set NAGI_ROMANIZATION_CATALOG_PRIVATE_KEY_PEM or choose a different --output directory before rebuilding its packs.");
+
 Directory.CreateDirectory(options.OutputDirectory);
 
 var entries = new List<RomanizationPackCatalogEntry>();
@@ -26,17 +28,18 @@ foreach (var packDirectory in Directory.EnumerateDirectories(options.SourceDirec
     var manifestPath = Path.Combine(packDirectory, "manifest.json");
     if (!File.Exists(manifestPath)) continue;
 
-    var manifest = JsonSerializer.Deserialize<RomanizationPackManifest>(
-        await File.ReadAllTextAsync(manifestPath),
+    await using var manifestStream = File.OpenRead(manifestPath);
+    var manifest = await JsonSerializer.DeserializeAsync<RomanizationPackManifest>(
+        manifestStream,
         jsonOptions) ?? throw new InvalidOperationException($"Invalid manifest: {manifestPath}");
 
     var metadata = await ReadMetadataAsync(packDirectory, jsonOptions);
     var archiveName = $"{manifest.Id}-{manifest.Version}.nagipack";
     var archivePath = Path.Combine(options.OutputDirectory, archiveName);
-    if (File.Exists(archivePath)) File.Delete(archivePath);
 
     CreatePackArchive(packDirectory, archivePath);
-    var archiveBytes = await File.ReadAllBytesAsync(archivePath);
+    await using var archiveStream = File.OpenRead(archivePath);
+    var archiveHash = await SHA256.HashDataAsync(archiveStream);
 
     entries.Add(new RomanizationPackCatalogEntry
     {
@@ -50,9 +53,9 @@ foreach (var packDirectory in Directory.EnumerateDirectories(options.SourceDirec
         Description = metadata.Description,
         License = manifest.License,
         Attribution = manifest.Attribution,
-        SizeBytes = archiveBytes.Length,
-        Sha256 = Convert.ToHexString(SHA256.HashData(archiveBytes)),
-        DownloadUrl = CombineUrl(options.BaseDownloadUrl, archiveName)
+        SizeBytes = archiveStream.Length,
+        Sha256 = Convert.ToHexString(archiveHash),
+        DownloadUrl = $"{options.BaseDownloadUrl.TrimEnd('/')}/{Uri.EscapeDataString(archiveName)}"
     });
 
     Console.WriteLine($"Packed {manifest.Id} -> {archivePath}");
@@ -75,7 +78,6 @@ var unsignedPath = Path.Combine(options.OutputDirectory, "catalog.unsigned.json"
 await File.WriteAllTextAsync(unsignedPath, JsonSerializer.Serialize(unsignedEnvelope, jsonOptions));
 Console.WriteLine($"Wrote unsigned catalog -> {unsignedPath}");
 
-var privateKeyPem = Environment.GetEnvironmentVariable("NAGI_ROMANIZATION_CATALOG_PRIVATE_KEY_PEM");
 if (!string.IsNullOrWhiteSpace(privateKeyPem))
 {
     privateKeyPem = privateKeyPem.Replace("\\n", Environment.NewLine, StringComparison.Ordinal);
@@ -99,8 +101,9 @@ static async Task<CatalogEntryMetadata> ReadMetadataAsync(string packDirectory, 
     var metadataPath = Path.Combine(packDirectory, "catalog-entry.json");
     if (!File.Exists(metadataPath)) return new CatalogEntryMetadata();
 
-    return JsonSerializer.Deserialize<CatalogEntryMetadata>(
-        await File.ReadAllTextAsync(metadataPath),
+    await using var stream = File.OpenRead(metadataPath);
+    return await JsonSerializer.DeserializeAsync<CatalogEntryMetadata>(
+        stream,
         jsonOptions) ?? new CatalogEntryMetadata();
 }
 
@@ -119,14 +122,9 @@ static void CreatePackArchive(string sourceDirectory, string archivePath)
     }
 }
 
-static string CombineUrl(string baseUrl, string fileName)
-{
-    return $"{baseUrl.TrimEnd('/')}/{Uri.EscapeDataString(fileName)}";
-}
-
 static string SignCatalog(RomanizationPackCatalog catalog, string privateKeyPem, JsonSerializerOptions jsonOptions)
 {
-    var payload = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(catalog, jsonOptions));
+    var payload = JsonSerializer.SerializeToUtf8Bytes(catalog, jsonOptions);
     using var ecdsa = ECDsa.Create();
     ecdsa.ImportFromPem(privateKeyPem);
     return Convert.ToBase64String(ecdsa.SignData(payload, HashAlgorithmName.SHA256, DSASignatureFormat.Rfc3279DerSequence));
@@ -153,7 +151,7 @@ internal sealed class CatalogEntryMetadata
     public string MinAppVersion { get; set; } = "0.0.0.0";
 }
 
-internal sealed class PackToolOptions
+internal sealed record PackToolOptions
 {
     public string SourceDirectory { get; private init; } = Path.Combine("tools", "romanization-packs", "src");
     public string OutputDirectory { get; private init; } = Path.Combine("tools", "romanization-packs", "dist");
@@ -168,15 +166,15 @@ internal sealed class PackToolOptions
             switch (args[i])
             {
                 case "--source" when next is not null:
-                    options = options.WithSource(next);
+                    options = options with { SourceDirectory = next };
                     i++;
                     break;
                 case "--output" when next is not null:
-                    options = options.WithOutput(next);
+                    options = options with { OutputDirectory = next };
                     i++;
                     break;
                 case "--base-url" when next is not null:
-                    options = options.WithBaseUrl(next);
+                    options = options with { BaseDownloadUrl = next };
                     i++;
                     break;
                 default:
@@ -186,25 +184,4 @@ internal sealed class PackToolOptions
 
         return options;
     }
-
-    private PackToolOptions WithSource(string value) => new()
-    {
-        SourceDirectory = value,
-        OutputDirectory = OutputDirectory,
-        BaseDownloadUrl = BaseDownloadUrl
-    };
-
-    private PackToolOptions WithOutput(string value) => new()
-    {
-        SourceDirectory = SourceDirectory,
-        OutputDirectory = value,
-        BaseDownloadUrl = BaseDownloadUrl
-    };
-
-    private PackToolOptions WithBaseUrl(string value) => new()
-    {
-        SourceDirectory = SourceDirectory,
-        OutputDirectory = OutputDirectory,
-        BaseDownloadUrl = value
-    };
 }
