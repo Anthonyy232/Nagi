@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using Nagi.Presentation.ViewModels;
 
 namespace Nagi.WinUI.Pages;
@@ -22,10 +23,11 @@ public sealed partial class FolderPage : Page
 
     public FolderViewModel ViewModel { get; }
 
-    private async void Page_Loaded(object sender, RoutedEventArgs e)
+    protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         try
         {
+            base.OnNavigatedTo(e);
             await ViewModel.LoadFoldersCommand.ExecuteAsync(null);
         }
         catch (Exception ex)

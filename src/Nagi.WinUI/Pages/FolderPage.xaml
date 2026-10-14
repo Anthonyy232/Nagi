@@ -9,7 +9,6 @@
     xmlns:vm="using:Nagi.Presentation.ViewModels"
     x:Name="FolderPageRoot"
     Background="Transparent"
-    Loaded="Page_Loaded"
     mc:Ignorable="d">
 
     <Grid Padding="{StaticResource PageContainerPaddingVertical}">

@@ -26,10 +26,11 @@ public sealed partial class PlaylistPage : SearchablePage
 
     public PlaylistViewModel ViewModel { get; }
 
-    private async void Page_Loaded(object sender, RoutedEventArgs e)
+    protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         try
         {
+            base.OnNavigatedTo(e);
             await ViewModel.LoadPlaylistsCommand.ExecuteAsync(null);
         }
         catch (Exception ex)

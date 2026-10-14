@@ -12,7 +12,6 @@
     xmlns:controls="using:ImageEx"
     x:Name="PlaylistPageRoot"
     Background="Transparent"
-    Loaded="Page_Loaded"
     mc:Ignorable="d">
 
     <Grid Padding="{StaticResource PageContainerPaddingVertical}">
