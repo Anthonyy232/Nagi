@@ -198,6 +198,16 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     Task ToggleMuteAsync();
 
     /// <summary>
+    ///     Gets the playback speed for this session. 1.0 is normal speed.
+    /// </summary>
+    double PlaybackRate { get; }
+
+    /// <summary>
+    ///     Sets the playback speed for this session. It is not persisted.
+    /// </summary>
+    Task SetPlaybackRateAsync(double rate);
+
+    /// <summary>
     ///     Enables or disables shuffle mode and persists the setting.
     /// </summary>
     Task SetShuffleAsync(bool enable);

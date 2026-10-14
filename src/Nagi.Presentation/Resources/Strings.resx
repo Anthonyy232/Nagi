@@ -2284,6 +2284,16 @@ Do you want to continue?</value>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>Stop Playback</value>
   </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>Playback Speed</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0}×</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
+  </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>Custom Timer…</value>
   </data>

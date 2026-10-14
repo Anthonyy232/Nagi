@@ -120,6 +120,24 @@ public sealed partial class LibVlcAudioPlayerService
         }
     }
 
+    public async Task SetPlaybackRateAsync(double rate)
+    {
+        if (_isDisposed) return;
+        await EnsureInitializedAsync().ConfigureAwait(false);
+        await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            if (_isDisposed || _mediaPlayer is null) return;
+            // LibVLC's default audio time-stretch filter keeps the pitch unchanged.
+            _playbackRate = (float)rate;
+            _mediaPlayer.SetRate(_playbackRate);
+        }
+        finally
+        {
+            _vlcOperationLock.Release();
+        }
+    }
+
     public IReadOnlyList<(uint Index, float Frequency)> GetEqualizerBands()
     {
         if (_isDisposed) return Array.Empty<(uint, float)>();

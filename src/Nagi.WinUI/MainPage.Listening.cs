@@ -30,7 +30,22 @@ public sealed partial class MainPage
         var stops = new MenuFlyoutSubItem { Text = Strings.Listening_StopPlayback };
         PopulateStopOptions(stops.Items);
         menu.Items.Add(stops);
+        var speeds = new MenuFlyoutSubItem { Text = Strings.Listening_PlaybackSpeed };
+        foreach (var rate in PlaybackRates)
+        {
+            speeds.Items.Add(new RadioMenuFlyoutItem
+            {
+                Text = rate == 1.0 ? Strings.Listening_PlaybackSpeedNormal : string.Format(Strings.Listening_PlaybackSpeedFormat, rate),
+                GroupName = "PlaybackSpeed",
+                IsChecked = ViewModel.PlaybackRate == rate,
+                Command = ViewModel.SetPlaybackRateCommand,
+                CommandParameter = rate
+            });
+        }
+        menu.Items.Add(speeds);
     }
+
+    private static readonly double[] PlaybackRates = [0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
 
     private void TimerOptions_Opening(object sender, object e)
     {

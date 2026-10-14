@@ -355,6 +355,14 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         return _playbackService.ToggleMuteAsync();
     }
 
+    public double PlaybackRate => _playbackService.PlaybackRate;
+
+    [RelayCommand]
+    private Task SetPlaybackRateAsync(double rate)
+    {
+        return _playbackService.SetPlaybackRateAsync(rate);
+    }
+
     [RelayCommand(CanExecute = nameof(CanNavigateToTrack))]
     public async Task GoToArtistAsync(object? parameter)
     {

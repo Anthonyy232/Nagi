@@ -83,6 +83,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     public int CurrentShuffledIndex { get; private set; } = -1;
     public bool IsShuffleEnabled { get; private set; }
     public RepeatMode CurrentRepeatMode { get; private set; } = RepeatMode.Off;
+    public double PlaybackRate { get; private set; } = 1.0;
     private bool _isTransitioningTrack;
     public IReadOnlyList<(uint Index, float Frequency)> EqualizerBands { get; }
     public IReadOnlyList<EqualizerPreset> AvailablePresets { get; } = new List<EqualizerPreset>
@@ -583,6 +584,13 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         var newMuteState = !_audioPlayer.IsMuted;
         await _audioPlayer.SetMuteAsync(newMuteState);
         await _settingsService.SaveMuteStateAsync(newMuteState);
+    }
+
+    public async Task SetPlaybackRateAsync(double rate)
+    {
+        if (!double.IsFinite(rate) || rate <= 0) return;
+        await _audioPlayer.SetPlaybackRateAsync(rate);
+        PlaybackRate = rate;
     }
 
     public async Task SetShuffleAsync(bool enable)

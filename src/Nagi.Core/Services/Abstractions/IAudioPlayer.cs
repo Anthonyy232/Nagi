@@ -90,6 +90,11 @@ public interface IAudioPlayer : IDisposable
 
     Task SetMuteAsync(bool isMuted);
 
+    /// <summary>
+    ///     Sets the playback speed while keeping the pitch. 1.0 is normal speed.
+    /// </summary>
+    Task SetPlaybackRateAsync(double rate);
+
     bool ApplyEqualizerSettings(EqualizerSettings settings);
 
     IReadOnlyList<(uint Index, float Frequency)> GetEqualizerBands();

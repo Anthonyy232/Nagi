@@ -1787,6 +1787,18 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         await _settingsService.DidNotReceive().SaveVolumeAsync(2.0);
     }
 
+    [Theory]
+    [InlineData(0.0)]
+    [InlineData(-1.0)]
+    [InlineData(double.NaN)]
+    public async Task SetPlaybackRateAsync_IgnoresInvalidRates(double rate)
+    {
+        await _service.SetPlaybackRateAsync(rate);
+
+        await _audioPlayer.DidNotReceive().SetPlaybackRateAsync(Arg.Any<double>());
+        _service.PlaybackRate.Should().Be(1.0);
+    }
+
     [Fact]
     public async Task NextAsync_AfterPlayingTransientFile_StopsPlayback()
     {
