@@ -745,13 +745,12 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         }
 
         var cleared = false;
-        if (page?.DataContext is SongListViewModelBase { HasSelectedSongs: true } viewModel &&
+        if (page is SongListPage songListPage &&
+            page.DataContext is SongListViewModelBase { HasSelectedSongs: true } &&
             !(clickedList is not null && IsWithin(clickedList, page) && (clickedItem || clickedScrollBar)))
         {
             cleared = true;
-            viewModel.DeselectAll();
-            foreach (var name in new[] { "SongsListView", "GroupedSongsListView", "FolderContentsListView" })
-                if (page.FindName(name) is ListView list) list.SelectedItems.Clear();
+            songListPage.ClearSelection();
         }
 
         if (QueueListView.SelectedItem is not null &&

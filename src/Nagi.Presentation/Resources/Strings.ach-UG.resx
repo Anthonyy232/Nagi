@@ -710,17 +710,11 @@ Puk ma pe otwero tero i iye: {0, plural, one {#} other {#}}.</value>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Reny i iye me album</value>
   </data>
-  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Pe tye chen wer mo</value>
-  </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Reny luwer</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Reny i iye me luwer</value>
-  </data>
-  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Pe tye chen wer mo</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
     <value>Kwany Puk</value>
@@ -740,17 +734,11 @@ Puk ma pe otwero tero i iye: {0, plural, one {#} other {#}}.</value>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Reny i puk</value>
   </data>
-  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Pe tye chen wer mo</value>
-  </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Reny kit wer</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Reny gwokwer</value>
-  </data>
-  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Pe tye chen wer mo</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Reny chen wer</value>
@@ -790,9 +778,6 @@ Puk ma pe otwero tero i iye: {0, plural, one {#} other {#}}.</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Reny i kit wer</value>
-  </data>
-  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Pe tye chen wer mo</value>
   </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
     <value>Chen Wer Pe Onge</value>
@@ -2339,5 +2324,8 @@ Imide?</value>
   </data>
   <data name="Generic_CloseSearch" xml:space="preserve">
     <value>Ceng yenyo</value>
+  </data>
+  <data name="Generic_NoPlaylists" xml:space="preserve">
+    <value>Pe tye chen wer mo</value>
   </data>
 </root>

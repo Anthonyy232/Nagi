@@ -1,4 +1,4 @@
-<pages:SearchablePage
+<pages:SongListPage
     xmlns:pages="using:Nagi.WinUI.Pages"
     x:Class="Nagi.WinUI.Pages.GenreViewPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -300,4 +300,4 @@
         </StackPanel>
 
     </Grid>
-</pages:SearchablePage>
+</pages:SongListPage>

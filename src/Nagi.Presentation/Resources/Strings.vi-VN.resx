@@ -710,17 +710,11 @@ Các tệp không thể nhập: {0}.</value>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tìm kiếm trong album</value>
   </data>
-  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Không có danh sách phát nào khả dụng</value>
-  </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tìm kiếm nghệ sĩ</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tìm kiếm trong nghệ sĩ</value>
-  </data>
-  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Không có danh sách phát nào khả dụng</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
     <value>Xóa thư mục</value>
@@ -740,17 +734,11 @@ Các tệp không thể nhập: {0}.</value>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tìm kiếm trong thư mục</value>
   </data>
-  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Không có danh sách phát nào khả dụng</value>
-  </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tìm kiếm thể loại</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tìm kiếm thư viện</value>
-  </data>
-  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Không có danh sách phát nào khả dụng</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tìm kiếm danh sách phát</value>
@@ -790,9 +778,6 @@ Các tệp không thể nhập: {0}.</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tìm kiếm trong thể loại</value>
-  </data>
-  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Không có danh sách phát nào khả dụng</value>
   </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
     <value>Danh sách phát không xác định</value>
@@ -2339,5 +2324,8 @@ Bạn có muốn tiếp tục không?</value>
   </data>
   <data name="Generic_CloseSearch" xml:space="preserve">
     <value>Đóng tìm kiếm</value>
+  </data>
+  <data name="Generic_NoPlaylists" xml:space="preserve">
+    <value>Không có danh sách phát nào khả dụng</value>
   </data>
 </root>

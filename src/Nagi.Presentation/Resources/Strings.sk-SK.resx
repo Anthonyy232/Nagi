@@ -710,17 +710,11 @@ Súbory, ktoré sa nepodarilo importovať: {0}.</value>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hľadať v albume</value>
   </data>
-  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Žiadne dostupné zoznamy skladieb</value>
-  </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hľadať interpretov</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hľadať v interpretovi</value>
-  </data>
-  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Žiadne dostupné zoznamy skladieb</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
     <value>Odstrániť priečinok</value>
@@ -740,17 +734,11 @@ Súbory, ktoré sa nepodarilo importovať: {0}.</value>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hľadať v priečinku</value>
   </data>
-  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Žiadne dostupné zoznamy skladieb</value>
-  </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hľadať žánre</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hľadať v knižnici</value>
-  </data>
-  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Žiadne dostupné zoznamy skladieb</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hľadať zoznamy skladieb</value>
@@ -790,9 +778,6 @@ Súbory, ktoré sa nepodarilo importovať: {0}.</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hľadať v žánri</value>
-  </data>
-  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Žiadne dostupné zoznamy skladieb</value>
   </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
     <value>Neznámy zoznam skladieb</value>
@@ -2339,5 +2324,8 @@ Chcete pokračovať?</value>
   </data>
   <data name="Generic_CloseSearch" xml:space="preserve">
     <value>Zavrieť hľadanie</value>
+  </data>
+  <data name="Generic_NoPlaylists" xml:space="preserve">
+    <value>Žiadne dostupné zoznamy skladieb</value>
   </data>
 </root>

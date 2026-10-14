@@ -710,17 +710,11 @@ Tiedostoja, joita ei voitu tuoda: {0}.</value>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hae albumista</value>
   </data>
-  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Ei soittolistoja saatavilla</value>
-  </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hae artisteista</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hae artistista</value>
-  </data>
-  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Ei soittolistoja saatavilla</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
     <value>Poista kansio</value>
@@ -740,17 +734,11 @@ Tiedostoja, joita ei voitu tuoda: {0}.</value>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hae kansiosta</value>
   </data>
-  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Ei soittolistoja saatavilla</value>
-  </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hae genreistä</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hae kirjastosta</value>
-  </data>
-  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Ei soittolistoja saatavilla</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hae soittolistoista</value>
@@ -790,9 +778,6 @@ Tiedostoja, joita ei voitu tuoda: {0}.</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Etsi genrestä</value>
-  </data>
-  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Ei soittolistoja saatavilla</value>
   </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
     <value>Tuntematon soittolista</value>
@@ -2339,5 +2324,8 @@ Haluatko jatkaa?</value>
   </data>
   <data name="Generic_CloseSearch" xml:space="preserve">
     <value>Sulje haku</value>
+  </data>
+  <data name="Generic_NoPlaylists" xml:space="preserve">
+    <value>Ei soittolistoja saatavilla</value>
   </data>
 </root>

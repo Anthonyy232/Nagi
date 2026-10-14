@@ -710,17 +710,11 @@
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>在專輯中搜尋</value>
   </data>
-  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>無可用播放清單</value>
-  </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>搜尋演出者</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>在演出者中搜尋</value>
-  </data>
-  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>無可用播放清單</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
     <value>移除資料夾</value>
@@ -740,17 +734,11 @@
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>在資料夾中搜尋</value>
   </data>
-  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>無可用播放清單</value>
-  </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>搜尋類型</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>搜尋媒體庫</value>
-  </data>
-  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>無可用播放清單</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>搜尋播放清單</value>
@@ -790,9 +778,6 @@
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>在曲風中搜尋</value>
-  </data>
-  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>無可用播放清單</value>
   </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
     <value>未知播放清單</value>
@@ -2339,5 +2324,8 @@
   </data>
   <data name="Generic_CloseSearch" xml:space="preserve">
     <value>關閉搜尋</value>
+  </data>
+  <data name="Generic_NoPlaylists" xml:space="preserve">
+    <value>無可用播放清單</value>
   </data>
 </root>

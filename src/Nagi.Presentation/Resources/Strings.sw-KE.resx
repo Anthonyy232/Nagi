@@ -710,17 +710,11 @@ Faili ambazo hazikuweza kuingizwa: {0}.</value>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tafuta ndani ya albamu</value>
   </data>
-  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Hakuna orodha za kucheza zinazopatikana</value>
-  </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tafuta wasanii</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tafuta ndani ya msanii</value>
-  </data>
-  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Hakuna orodha za kucheza zinazopatikana</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
     <value>Ondoa Folda</value>
@@ -740,17 +734,11 @@ Faili ambazo hazikuweza kuingizwa: {0}.</value>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tafuta ndani ya folda</value>
   </data>
-  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Hakuna orodha za kucheza zinazopatikana</value>
-  </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tafuta aina</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tafuta maktaba</value>
-  </data>
-  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Hakuna orodha za kucheza zinazopatikana</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tafuta orodha za kucheza</value>
@@ -790,9 +778,6 @@ Faili ambazo hazikuweza kuingizwa: {0}.</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tafuta katika aina ya muziki</value>
-  </data>
-  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Hakuna orodha za kucheza zinazopatikana</value>
   </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
     <value>Orodha ya Kucheza Isiyojulikana</value>
@@ -2339,5 +2324,8 @@ Je, unataka kuendelea?</value>
   </data>
   <data name="Generic_CloseSearch" xml:space="preserve">
     <value>Funga utafutaji</value>
+  </data>
+  <data name="Generic_NoPlaylists" xml:space="preserve">
+    <value>Hakuna orodha za kucheza zinazopatikana</value>
   </data>
 </root>

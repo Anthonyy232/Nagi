@@ -710,17 +710,11 @@
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>অ্যালবামে অনুসন্ধান করুন</value>
   </data>
-  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>কোনো প্লেলিস্ট উপলব্ধ নেই</value>
-  </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>শিল্পী অনুসন্ধান করুন</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>শিল্পীর মধ্যে অনুসন্ধান করুন</value>
-  </data>
-  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>কোনো প্লেলিস্ট উপলব্ধ নেই</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
     <value>ফোল্ডার সরান</value>
@@ -740,17 +734,11 @@
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ফোল্ডারে অনুসন্ধান করুন</value>
   </data>
-  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>কোনো প্লেলিস্ট উপলব্ধ নেই</value>
-  </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ঘরানা অনুসন্ধান করুন</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>লাইব্রেরি অনুসন্ধান করুন</value>
-  </data>
-  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>কোনো প্লেলিস্ট উপলব্ধ নেই</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>প্লেলিস্ট অনুসন্ধান করুন</value>
@@ -790,9 +778,6 @@
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>জেনার থেকে খুঁজুন</value>
-  </data>
-  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>কোনো প্লেলিস্ট উপলব্ধ নেই</value>
   </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
     <value>অজানা প্লেলিস্ট</value>
@@ -2339,5 +2324,8 @@
   </data>
   <data name="Generic_CloseSearch" xml:space="preserve">
     <value>অনুসন্ধান বন্ধ করুন</value>
+  </data>
+  <data name="Generic_NoPlaylists" xml:space="preserve">
+    <value>কোনো প্লেলিস্ট উপলব্ধ নেই</value>
   </data>
 </root>

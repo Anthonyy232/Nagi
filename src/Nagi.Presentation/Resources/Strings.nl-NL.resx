@@ -710,17 +710,11 @@ Bestanden die niet konden worden geïmporteerd: {0}.</value>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Zoeken in album</value>
   </data>
-  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Geen afspeellijsten beschikbaar</value>
-  </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Zoek artiesten</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Zoeken in artiest</value>
-  </data>
-  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Geen afspeellijsten beschikbaar</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
     <value>Map verwijderen</value>
@@ -740,17 +734,11 @@ Bestanden die niet konden worden geïmporteerd: {0}.</value>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Zoeken in map</value>
   </data>
-  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Geen afspeellijsten beschikbaar</value>
-  </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Zoek genres</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Zoek bibliotheek</value>
-  </data>
-  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Geen afspeellijsten beschikbaar</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Zoek afspeellijsten</value>
@@ -790,9 +778,6 @@ Bestanden die niet konden worden geïmporteerd: {0}.</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Zoeken in genre</value>
-  </data>
-  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Geen afspeellijsten beschikbaar</value>
   </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
     <value>Onbekende afspeellijst</value>
@@ -2339,5 +2324,8 @@ Wilt u doorgaan?</value>
   </data>
   <data name="Generic_CloseSearch" xml:space="preserve">
     <value>Zoeken sluiten</value>
+  </data>
+  <data name="Generic_NoPlaylists" xml:space="preserve">
+    <value>Geen afspeellijsten beschikbaar</value>
   </data>
 </root>

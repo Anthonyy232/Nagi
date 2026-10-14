@@ -710,17 +710,11 @@
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>在专辑中搜索</value>
   </data>
-  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>无可用播放列表</value>
-  </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>搜索艺术家</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>在艺术家中搜索</value>
-  </data>
-  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>无可用播放列表</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
     <value>移除文件夹</value>
@@ -740,17 +734,11 @@
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>在文件夹中搜索</value>
   </data>
-  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>无可用播放列表</value>
-  </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>搜索流派</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>搜索库</value>
-  </data>
-  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>无可用播放列表</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>搜索播放列表</value>
@@ -790,9 +778,6 @@
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>在流派中搜索</value>
-  </data>
-  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>无可用播放列表</value>
   </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
     <value>未知播放列表</value>
@@ -2339,5 +2324,8 @@
   </data>
   <data name="Generic_CloseSearch" xml:space="preserve">
     <value>关闭搜索</value>
+  </data>
+  <data name="Generic_NoPlaylists" xml:space="preserve">
+    <value>无可用播放列表</value>
   </data>
 </root>

@@ -710,17 +710,11 @@ Datoteke koje nije bilo moguće uvesti: {0}.</value>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Pretraži u albumu</value>
   </data>
-  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Nema dostupnih popisa pjesama</value>
-  </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Pretraži izvođače</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Pretraži kod izvođača</value>
-  </data>
-  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Nema dostupnih popisa pjesama</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
     <value>Ukloni mapu</value>
@@ -740,17 +734,11 @@ Datoteke koje nije bilo moguće uvesti: {0}.</value>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Pretraži u mapi</value>
   </data>
-  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Nema dostupnih popisa pjesama</value>
-  </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Pretraži žanrove</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Pretraži knjižnicu</value>
-  </data>
-  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Nema dostupnih popisa pjesama</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Pretraži popise pjesama</value>
@@ -790,9 +778,6 @@ Datoteke koje nije bilo moguće uvesti: {0}.</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Traži u žanru</value>
-  </data>
-  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Nema dostupnih popisa pjesama</value>
   </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
     <value>Nepoznat popis pjesama</value>
@@ -2339,5 +2324,8 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
   </data>
   <data name="Generic_CloseSearch" xml:space="preserve">
     <value>Zatvori pretraživanje</value>
+  </data>
+  <data name="Generic_NoPlaylists" xml:space="preserve">
+    <value>Nema dostupnih popisa pjesama</value>
   </data>
 </root>

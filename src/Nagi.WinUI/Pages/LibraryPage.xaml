@@ -1,4 +1,4 @@
-<pages:SearchablePage
+<pages:SongListPage
     xmlns:pages="using:Nagi.WinUI.Pages"
     x:Class="Nagi.WinUI.Pages.LibraryPage"
     NavigationCacheMode="Enabled"
@@ -183,7 +183,7 @@
             IsItemClickEnabled="True"
             ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
             ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
-            SelectionChanged="OnListViewSelectionChanged"
+            SelectionChanged="SongsListView_SelectionChanged"
             SelectionMode="Extended"
             ContainerContentChanging="OnSongsListViewContainerContentChanging"
             DoubleTapped="SongsListView_DoubleTapped">
@@ -320,4 +320,4 @@
         </StackPanel>
 
     </Grid>
-</pages:SearchablePage>
+</pages:SongListPage>

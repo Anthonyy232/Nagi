@@ -710,17 +710,11 @@ Fail yang tidak dapat diimport: {0}.</value>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari dalam album</value>
   </data>
-  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Tiada senarai main tersedia</value>
-  </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari artis</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari dalam artis</value>
-  </data>
-  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Tiada senarai main tersedia</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
     <value>Alih Keluar Folder</value>
@@ -740,17 +734,11 @@ Fail yang tidak dapat diimport: {0}.</value>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari dalam folder</value>
   </data>
-  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Tiada senarai main tersedia</value>
-  </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari genre</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari pustaka</value>
-  </data>
-  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Tiada senarai main tersedia</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari senarai main</value>
@@ -790,9 +778,6 @@ Fail yang tidak dapat diimport: {0}.</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari dalam genre</value>
-  </data>
-  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Tiada senarai main tersedia</value>
   </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
     <value>Senarai Main Tidak Dikenali</value>
@@ -2339,5 +2324,8 @@ Adakah anda ingin meneruskan?</value>
   </data>
   <data name="Generic_CloseSearch" xml:space="preserve">
     <value>Tutup carian</value>
+  </data>
+  <data name="Generic_NoPlaylists" xml:space="preserve">
+    <value>Tiada senarai main tersedia</value>
   </data>
 </root>

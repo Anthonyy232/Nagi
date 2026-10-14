@@ -710,17 +710,11 @@ Lêers wat nie ingevoer kon word nie: {0}.</value>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Soek in album</value>
   </data>
-  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Geen snitlyste beskikbaar nie</value>
-  </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Soek kunstenaars</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Soek in kunstenaar</value>
-  </data>
-  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Geen snitlyste beskikbaar nie</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
     <value>Verwyder vouer</value>
@@ -740,17 +734,11 @@ Lêers wat nie ingevoer kon word nie: {0}.</value>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Soek in vouer</value>
   </data>
-  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Geen snitlyste beskikbaar nie</value>
-  </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Soek genres</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Soek biblioteek</value>
-  </data>
-  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Geen snitlyste beskikbaar nie</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Soek snitlyste</value>
@@ -790,9 +778,6 @@ Lêers wat nie ingevoer kon word nie: {0}.</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Soek in genre</value>
-  </data>
-  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>Geen snitlyste beskikbaar nie</value>
   </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
     <value>Onbekende Snitlys</value>
@@ -2339,5 +2324,8 @@ Wil jy voortgaan?</value>
   </data>
   <data name="Generic_CloseSearch" xml:space="preserve">
     <value>Maak soektog toe</value>
+  </data>
+  <data name="Generic_NoPlaylists" xml:space="preserve">
+    <value>Geen snitlyste beskikbaar nie</value>
   </data>
 </root>
