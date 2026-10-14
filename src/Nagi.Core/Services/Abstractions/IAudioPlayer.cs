@@ -4,8 +4,6 @@ namespace Nagi.Core.Services.Abstractions;
 
 public interface IAudioPlayer : IDisposable
 {
-    #region Events
-
     /// <summary>
     ///     Occurs when the current media item has finished playing naturally.
     /// </summary>
@@ -23,11 +21,6 @@ public interface IAudioPlayer : IDisposable
 
     event Action? DurationChanged;
 
-
-    #endregion
-
-    #region Properties
-
     bool IsPlaying { get; }
 
     TimeSpan CurrentPosition { get; }
@@ -43,10 +36,6 @@ public interface IAudioPlayer : IDisposable
 
     /// <summary>The current output ID, or an empty string for system default routing.</summary>
     string AudioOutputDeviceId { get; }
-
-    #endregion
-
-    #region Methods
 
     /// <summary>
     ///     Asynchronously ensures the audio player is initialized and ready for playback.
@@ -114,6 +103,4 @@ public interface IAudioPlayer : IDisposable
     void SetFadeInDuration(int durationMs);
 
     void SetFadeOutDuration(int durationMs);
-
-    #endregion
 }

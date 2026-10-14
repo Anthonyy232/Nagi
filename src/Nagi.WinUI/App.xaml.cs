@@ -97,7 +97,6 @@ public partial class App : Application
 
             InitializeSystemIntegration();
 
-            // Set a Splash/Skeleton page immediately and restore layout
             if (_window is MainWindow mainWindow)
             {
                 mainWindow.Content = new Pages.SplashPage();

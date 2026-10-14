@@ -43,8 +43,6 @@ public sealed partial class InsightsPage : Page
         ViewModel.CloseSeeAllCommand.Execute(null);
     }
 
-    // ── See All: open ──
-
     private void OnSeeAllSongsClick(object sender, RoutedEventArgs e) =>
         ViewModel.OpenSeeAllSongsCommand.Execute(null);
 
@@ -56,8 +54,6 @@ public sealed partial class InsightsPage : Page
 
     private void OnSeeAllGenresClick(object sender, RoutedEventArgs e) =>
         ViewModel.OpenSeeAllGenresCommand.Execute(null);
-
-    // ── Sort metric toggles ──
 
     private void OnSongsSortByPlayCountClick(object sender, RoutedEventArgs e) =>
         ViewModel.SongsSortMetric = SortMetric.PlayCount;

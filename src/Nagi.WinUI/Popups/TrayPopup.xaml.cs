@@ -210,8 +210,6 @@ public sealed partial class TrayPopup : Window
         }
     }
 
-    #region Win32 Interop
-
     private const int GWL_EXSTYLE = -20;
     private const int WS_EX_LAYERED = 0x00080000;
     private const uint LWA_ALPHA = 0x00000002;
@@ -230,6 +228,4 @@ public sealed partial class TrayPopup : Window
     [DllImport("dwmapi.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
     private static extern void DwmSetWindowAttribute(IntPtr hwnd, uint attribute, ref uint pvAttribute,
         uint cbAttribute);
-
-    #endregion
 }

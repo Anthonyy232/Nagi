@@ -225,7 +225,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         _queueDisplayCts = null;
     }
 
-
     /// <summary>
     ///     Loads player button settings and splits them into main and secondary controls
     ///     based on a special "Separator" item.
@@ -300,7 +299,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         if (!collection.Select(button => button.Id).SequenceEqual(newItems.Select(button => button.Id)))
             collection.ReplaceRange(newItems);
     }
-
 
     [RelayCommand]
     private void ShowQueueView()
@@ -570,8 +568,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         else _dispatcherService.TryEnqueue(ApplyUpdate);
     }
 
-    #region Service Event Handling
-
     private void SubscribeToPlaybackServiceEvents()
     {
         _playbackService.PlaybackStateChanged += OnPlaybackService_PlaybackStateChanged;
@@ -780,6 +776,4 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
             _logger.LogError(ex, "Failed to save queue display settings.");
         }
     }
-
-    #endregion
 }

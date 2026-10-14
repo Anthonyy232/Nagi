@@ -748,8 +748,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         return false;
     }
 
-    // ── Insights "See All" overlay handlers ──
-
     private void OnCloseSeeAll(object sender, RoutedEventArgs e)
     {
         _seeAllSearch.SetExpanded(false);

@@ -164,7 +164,6 @@ public sealed partial class MainWindow : Window
             _taskbarService.Initialize(windowHandle);
             InitializeWndProc();
         }
-
     }
 
     /// <summary>
@@ -190,7 +189,6 @@ public sealed partial class MainWindow : Window
                 await _settingsService.SetLastWindowPositionAsync(position.X, position.Y);
                 _logger?.LogDebug("Saving window position: ({X}, {Y})", position.X, position.Y);
             }
-
         }
         catch (Exception ex)
         {
@@ -338,8 +336,6 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    #region WndProc
-
     private TaskbarNativeMethods.WindowProc? _wndProcDelegate;
     private nint _oldWndProc;
 
@@ -356,8 +352,6 @@ public sealed partial class MainWindow : Window
         _taskbarService?.HandleWindowMessage(msg, wParam, lParam);
         return TaskbarNativeMethods.CallWindowProc(_oldWndProc, hWnd, msg, wParam, lParam);
     }
-
-    #endregion
 }
 
 /// <summary>

@@ -18,7 +18,6 @@ namespace Nagi.Core.Services.Implementations;
 /// </summary>
 public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposable
 {
-
     private readonly ConcurrentDictionary<Guid, Lazy<Task<string?>>> _artistImageProcessingTasks = new();
 
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
@@ -109,8 +108,6 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
 
     public event EventHandler<LibraryContentChangedEventArgs>? LibraryContentChanged;
 
-    #region Data Reset
-
     public async Task ClearListenHistoryAsync()
     {
         _logger.LogInformation("Clearing all listen history.");
@@ -186,10 +183,6 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
             _metadataFetchSemaphore.Release();
         }
     }
-
-    #endregion
-
-    #region Folder Management
 
     public async Task<Folder?> AddFolderAsync(string path, string? name = null)
     {
@@ -318,10 +311,6 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
         return true;
     }
 
-    #endregion
-
-    #region Song Metadata Updates
-
     public Task<bool> UpdateSongLrcPathAsync(Guid songId, string? lrcPath)
     {
         return UpdateSongPropertyAsync(songId, s => s.LrcFilePath = lrcPath);
@@ -331,10 +320,6 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
     {
         return UpdateSongPropertyAsync(songId, s => s.LyricsLastCheckedUtc = DateTime.UtcNow);
     }
-
-    #endregion
-
-    #region Listen History
 
     public async Task<long?> StartListenSessionAsync(Guid songId, PlaybackContext context)
     {
@@ -430,10 +415,6 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
             .ExecuteUpdateAsync(setters => setters.SetProperty(history => history.IsSubmittedToListenBrainz, true))
             .ConfigureAwait(false) > 0;
     }
-
-    #endregion
-
-    #region Private Helpers
 
     private bool IsPathInLrcCache(string? filePath) => IsExistingCacheFile(filePath, _pathConfig.LrcCachePath);
 
@@ -558,8 +539,6 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
             }
         }
     }
-
-    #endregion
 
     public void Dispose()
     {

@@ -104,8 +104,6 @@ public partial class InsightsViewModel : ObservableObject
         _logger = logger;
     }
 
-    // ── Time range ──────────────────────────────────────────────
-
     public IReadOnlyList<string> TimeRangeLabels { get; } =
         new[]
         {
@@ -126,8 +124,6 @@ public partial class InsightsViewModel : ObservableObject
         await LoadInsightsAsync();
     }
 
-    // ── Loading state ───────────────────────────────────────────
-
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowEmptyState))]
     public partial bool IsLoading { get; set; }
@@ -138,14 +134,10 @@ public partial class InsightsViewModel : ObservableObject
 
     public bool ShowEmptyState => !IsLoading && !HasData;
 
-    // ── Hero stats ──────────────────────────────────────────────
-
     [ObservableProperty] public partial string TotalListenTimeText { get; set; } = "—";
     [ObservableProperty] public partial int UniqueSongsPlayed { get; set; }
     [ObservableProperty] public partial string PeakHourText { get; set; } = "—";
     [ObservableProperty] public partial string MostActiveDayText { get; set; } = "—";
-
-    // ── Sort metrics ─────────────────────────────────────────────
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsSongsByPlayCount), nameof(IsSongsByDuration), nameof(SongsSortLabel), nameof(SeeAllSortLabel), nameof(IsSeeAllByPlayCount), nameof(IsSeeAllByDuration))]
@@ -235,8 +227,6 @@ public partial class InsightsViewModel : ObservableObject
         await ReloadTopGenresAsync();
     }
 
-    // ── Top lists ───────────────────────────────────────────────
-
     public ObservableRangeCollection<TopSongItem> TopSongs { get; } = new();
 
     public ObservableRangeCollection<TopArtistItem> TopArtists { get; } = new();
@@ -245,12 +235,8 @@ public partial class InsightsViewModel : ObservableObject
 
     public ObservableRangeCollection<TopGenreItem> TopGenres { get; } = new();
 
-    // ── Playback source distribution ────────────────────────────
-
     [ObservableProperty]
     public partial ObservableRangeCollection<SourceSegment> SourceSegments { get; set; } = new();
-
-    // ── "See All" overlay ────────────────────────────────────────
 
     private const int SeeAllPageSize = 25;
 
@@ -302,8 +288,6 @@ public partial class InsightsViewModel : ObservableObject
     public ObservableRangeCollection<TopArtistItem> SeeAllArtists { get; } = new();
     public ObservableRangeCollection<TopAlbumItem> SeeAllAlbums { get; } = new();
     public ObservableRangeCollection<TopGenreItem> SeeAllGenres { get; } = new();
-
-    // ── Public API ──────────────────────────────────────────────
 
     /// <summary>
     ///     Loads all insights data for the currently selected time range.
@@ -395,8 +379,6 @@ public partial class InsightsViewModel : ObservableObject
         }
     }
 
-    // ── Reset ────────────────────────────────────────────────────
-
     [RelayCommand]
     private async Task ResetListenHistoryAsync()
     {
@@ -419,8 +401,6 @@ public partial class InsightsViewModel : ObservableObject
             _logger.LogError(ex, "Failed to reset listen history.");
         }
     }
-
-    // ── See All ──────────────────────────────────────────────────
 
     [RelayCommand] private Task OpenSeeAllSongsAsync() => OpenSeeAllAsync(SeeAllCategory.Songs);
     [RelayCommand] private Task OpenSeeAllArtistsAsync() => OpenSeeAllAsync(SeeAllCategory.Artists);
@@ -614,8 +594,6 @@ public partial class InsightsViewModel : ObservableObject
         ? OpenSeeAllAsync(CurrentSeeAllCategory, SeeAllCurrentPage - 1, refreshTotalCount: false)
         : Task.CompletedTask;
 
-    // ── Navigation ──────────────────────────────────────────────
-
     [RelayCommand]
     private void GoToArtist(TopArtistItem item) =>
         _navigationService.NavigateTo(new ArtistViewNavigationParameter(item.ArtistId));
@@ -631,8 +609,6 @@ public partial class InsightsViewModel : ObservableObject
             GenreId = item.GenreId,
             GenreName = item.Name
         });
-
-    // ── Per-card sort reloads ────────────────────────────────────
 
     private async Task ReloadTopSongsAsync()
     {
@@ -725,8 +701,6 @@ public partial class InsightsViewModel : ObservableObject
         catch (OperationCanceledException) { }
         catch (Exception ex) { _logger.LogError(ex, "Failed to reload top genres"); }
     }
-
-    // ── Helpers ─────────────────────────────────────────────────
 
     private TopSongItem CreateSongItem(SongStats s) => new()
     {
