@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Pausa</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>Reproducció aleatòria activada</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>Reproducció aleatòria desactivada</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>Cançons coincidents: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Escriu un nom de llista de reproducció per veure les cançons coincidents</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>No s'han pogut comptar les cançons coincidents</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>Nagi ha trobat un error i s'ha de tancar.</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>S'està executant com a administrador</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi s'està executant actualment com a administrador. Això pot evitar que algunes funcions (com afegir carpetes de música) funcionin correctament.
-
-Per a la millor experiència, reinicia Nagi sense privilegis d'administrador.</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>Reiniciar normalment</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>Continuar de totes maneres</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@ Per a la millor experiència, reinicia Nagi sense privilegis d'administrador.</v
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>No hi ha biografia disponible per a aquest artista.</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>No s'han pogut carregar els detalls de l'artista.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Error en carregar la carpeta</value>
@@ -604,12 +578,6 @@ Fitxers que no s'han pogut importar: {0}.</value>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>Cançons</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0 elements</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>Error en carregar elements</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} element</value>
   </data>
@@ -663,42 +631,6 @@ Fitxers que no s'han pogut importar: {0}.</value>
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Següent</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>Actualització disponible</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>Hi ha una nova versió ({0}) disponible. Vols descarregar-la i instal·lar-la ara?</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>Instal·lar ara</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>Més tard</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>Ometre aquesta versió</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>Actualitzat</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>Estàs executant la darrera versió de Nagi.</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>Error d'actualització</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>S'ha produït un error en comprovar les actualitzacions: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>S'ha produït un error en instal·lar l'actualització: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>S'està descarregant l'actualització</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>S'està descarregant la versió {0}. L'aplicació es reiniciarà automàticament quan estigui a punt.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLC ha trobat un error no especificat.</value>
@@ -769,17 +701,8 @@ Fitxers que no s'han pogut importar: {0}.</value>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>Només imatges d'artista d'alta qualitat (requereix MusicBrainz)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>Només imatges d'artista</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Biografies i imatges d'artista (alternativa)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>N/D</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>Tancar cerca</value>
@@ -962,11 +885,6 @@ Vols continuar?</value>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Error durant l'escaneig: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>No s'han pogut recuperar els registres de la memòria. L'intent de reserva de llegir el fitxer de registre ha fallat.
-Ruta esperada: '{0}'
-Error: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>No hi ha llistes de reproducció per exportar.</value>
   </data>
@@ -1090,21 +1008,6 @@ Error: {1}</value>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>Torna a descobrir la teva col·lecció de música local amb Nagi, un reproductor de música centrat en la velocitat, la simplicitat i la privacitat.</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Reproductor de música Nagi</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>Obrir amb el reproductor de música Nagi</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Inici de Nagi</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Anterior</value>
   </data>
@@ -1119,9 +1022,6 @@ Error: {1}</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Vés a l'àlbum</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Arrossegueu fitxers o carpetes al reproductor per afegir-los a la cua.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Següent</value>
@@ -1639,9 +1539,6 @@ Error: {1}</value>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Mostra a l'Explorador de fitxers</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>No hi ha llistes de reproducció disponibles</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Reprodueix</value>
   </data>
@@ -2050,9 +1947,6 @@ Error: {1}</value>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>Editar regles</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>Editar regles</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>Quant a</value>
   </data>
@@ -2071,17 +1965,8 @@ Error: {1}</value>
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>Codi font</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>Cercar actualitzacions</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>Enviar comentaris</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Cerca actualitzacions en arrencar</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>Comprova automàticament si hi ha noves versions quan s'inicia l'aplicació.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>Idioma de l'aplicació</value>
@@ -2289,9 +2174,6 @@ Error: {1}</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Pàgina següent</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Copia el contingut del registre</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>p. ex. ;/\\</value>

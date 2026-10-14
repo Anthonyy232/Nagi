@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>Aplankas</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Aplankai</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Rankinė tvarka</value>
   </data>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Nuskaitymas baigtas. Pridėta arba atnaujinta {0} {1}.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Saugomas paketas {0}…</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Nuskaitomas aplankas…</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Nuskaitymas baigtas. Biblioteka atnaujinta.</value>
   </data>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Grojaraščio pavadinimas negali būti tuščias.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Įvertinimas turi būti nuo 1 iki 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">

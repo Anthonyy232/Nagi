@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>مجلد</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>المجلدات</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>ترتيب يدوي</value>
   </data>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>اكتمل الفحص. تمت إضافة أو تحديث {0} {1}.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>جاري حفظ الدفعة {0}…</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>جاري فحص المجلد…</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>اكتمل الفحص. المكتبة محدثة.</value>
   </data>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>لا يمكن أن يكون اسم قائمة التشغيل فارغاً.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>يجب أن يكون التقييم بين 1 و 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">

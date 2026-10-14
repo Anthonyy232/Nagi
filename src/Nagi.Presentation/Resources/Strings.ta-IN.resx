@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>இடைநிறுத்து</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>கலக்கி ஒலிக்கவும்</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>கலக்குதலை நிறுத்து</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>பொருந்தும் பாடல்கள்: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>பொருந்தும் பாடல்களைக் காண பாடல் பட்டியலின் பெயரை உள்ளிடவும்</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>பொருந்தும் பாடல்களை எண்ண முடியவில்லை</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>Nagi இல் பிழை ஏற்பட்டது, எனவே பயன்பாட்டை மூட வேண்டும்.</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>நிர்வாகியாக இயங்குகிறது</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi தற்போது நிர்வாகியாக இயங்குகிறது. இது சில அம்சங்கள் (இசை கோப்புறைகளைச் சேர்ப்பது போன்றவை) சரியாக வேலை செய்வதைத் தடுக்கலாம்.
-
-சிறந்த அனுபவத்திற்கு, Nagi-யை நிர்வாகி சலுகைகள் இல்லாமல் மீண்டும் தொடங்கவும்.</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>சாதாரணமாக மறுதொடக்கம் செய்</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>எப்படியும் தொடரவும்</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>இந்த கலைஞருக்கு சுயசரிதை இல்லை.</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>கலைஞரின் விவரங்களை ஏற்ற முடியவில்லை.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>கோப்புறையை ஏற்றுவதில் பிழை</value>
@@ -604,12 +578,6 @@
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>பாடல்கள்</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0 பொருட்கள்</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>பொருட்களை ஏற்றுவதில் பிழை</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} பொருள்</value>
   </data>
@@ -663,42 +631,6 @@
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>அடுத்த</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>புதுப்பிப்பு உள்ளது</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>புதிய பதிப்பு ({0}) கிடைக்கிறது. இப்போதே பதிவிறக்கி நிறுவ விரும்புகிறீர்களா?</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>இப்போதே நிறுவு</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>பின்னர்</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>இந்த பதிப்பைத் தவிர்கவும்</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>புதுப்பிக்கப்பட்டது</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>நீங்கள் Nagi-யின் சமீபத்திய பதிப்பை இயக்குகிறீர்கள்.</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>புதுப்பிப்பு பிழை</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>புதுப்பிப்புகளை சரிபார்க்கும்போது பிழை ஏற்பட்டது: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>புதுப்பிப்பை நிறுவும்போது பிழை ஏற்பட்டது: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>புதுப்பிப்பு பதிவிறக்கப்படுகிறது</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>பதிப்பு {0} பதிவிறக்கப்படுகிறது. தயாரானதும் பயன்பாடு தானாகவே மறுதொடக்கம் செய்யப்படும்.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLC ஒரு குறிப்பிடப்படாத பிழையை எதிர்கொண்டது.</value>
@@ -769,17 +701,8 @@
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>உயர்தர கலைஞர் படங்கள் மட்டும் (MusicBrainz தேவை)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>கலைஞர் படங்கள் மட்டும்</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>கலைஞர் சுயசரிதைகள் மற்றும் படங்கள் (பின்வாங்கல்)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>பொருத்தமில்லை</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>தேடலை மூடு</value>
@@ -962,11 +885,6 @@
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>ஸ்கேன் செய்யும் போது பிழை: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>நினைவகத்திலிருந்து லாகுகளைப் பெற முடியவில்லை. லாக் கோப்பை படிக்க பின்வாங்கல் முயற்சி தோல்வியடைந்தது.
-எதிர்பார்க்கப்பட்ட பாதை: '{0}'
-பிழை: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>ஏற்றுமதி செய்ய பிளேலிஸ்ட்கள் எதுவும் இல்லை.</value>
   </data>
@@ -1090,21 +1008,6 @@
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>வேகம், எளிமை மற்றும் தனியுரிமை ஆகியவற்றில் கவனம் செலுத்தும் ஒரு இசை பிளேயரான Nagi மூலம் உங்கள் உள்ளூர் இசைத் தொகுப்பை மீண்டும் கண்டறியுங்கள்.</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Nagi இசை பிளேயர்</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>Nagi இசை பிளேயருடன் திற</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Nagi தொடக்கம்</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>முந்தையது</value>
   </data>
@@ -1119,9 +1022,6 @@
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>ஆல்பத்திற்குச் செல்</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>வரிசையில் சேர்க்க, கோப்புகள் அல்லது கோப்புறைகளை பிளேயரின் மீது விடவும்.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>அடுத்து</value>
@@ -1639,9 +1539,6 @@
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>ஃபைல் எக்ஸ்ப்ளோரரில் காட்டு</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>பிளேலிஸ்ட்கள் எதுவும் இல்லை</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>இயக்கு</value>
   </data>
@@ -2050,9 +1947,6 @@
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>விதிகளைத் திருத்து</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>விதிகளைத் திருத்து</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>பற்றி</value>
   </data>
@@ -2071,17 +1965,8 @@
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>மூலக் குறியீடு</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>புதுப்பிப்புகளைச் சரிபார்க்கவும்</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>கருத்து அனுப்பவும்</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>தொடக்கத்தின் போது புதுப்பிப்புகளைச் சரிபார்</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>பயன்பாடு தொடங்கும் போது புதிய பதிப்புகளை தானாகவே சரிபார்க்கவும்.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>பயன்பாட்டு மொழி</value>
@@ -2289,9 +2174,6 @@
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>அடுத்த பக்கம்</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>பதிவு உள்ளடக்கத்தை நகலெடு</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>எ.கா. ;/\\</value>

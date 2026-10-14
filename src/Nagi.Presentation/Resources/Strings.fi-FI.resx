@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Keskeytä</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>Satunnaistoisto päällä</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>Satunnaistoisto pois päältä</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>Täsmäävät kappaleet: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Syötä soittolistan nimi nähdäksesi täsmäävät kappaleet</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>Täsmäävien kappaleiden määrää ei voitu laskea</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>Nagi kohtasi virheen ja se on suljettava.</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>Suoritetaan järjestelmänvalvojana</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagiä suoritetaan tällä hetkellä järjestelmänvalvojana. Tämä saattaa estää joitakin ominaisuuksia (kuten musiikkikansioiden lisäämisen) toimimasta oikein.
-
-Parhaan käyttökokemuksen saamiseksi käynnistä Nagi uudelleen ilman järjestelmänvalvojan oikeuksia.</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>Käynnistä normaalisti uudelleen</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>Jatka silti</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@ Parhaan käyttökokemuksen saamiseksi käynnistä Nagi uudelleen ilman järjeste
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>Tälle artistille ei ole saatavilla elämäkertaa.</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>Artistin tietoja ei voitu ladata.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Kansion latausvirhe</value>
@@ -604,12 +578,6 @@ Tiedostoja, joita ei voitu tuoda: {0}.</value>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>Kappaleet</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0 kohdetta</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>Kohteiden latausvirhe</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} kohde</value>
   </data>
@@ -663,42 +631,6 @@ Tiedostoja, joita ei voitu tuoda: {0}.</value>
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Seuraava</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>Päivitys saatavilla</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>Uusi versio ({0}) on saatavilla. Haluatko ladata ja asentaa sen nyt?</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>Asenna nyt</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>Myöhemmin</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>Ohita tämä versio</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>Ajantasalla</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>Käytät Nagi-sovelluksen uusinta versiota.</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>Päivitysvirhe</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>Virhe päivitysten tarkistuksessa: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>Virhe päivityksen asennuksessa: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>Ladataan päivitystä</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>Versiota {0} ladataan. Sovellus käynnistyy automaattisesti uudelleen, kun se on valmis.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLC kohtasi määrittelemättömän virheen.</value>
@@ -769,17 +701,8 @@ Tiedostoja, joita ei voitu tuoda: {0}.</value>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>Vain laadukkaat artistikuvat (vaatii MusicBrainz:in)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>Vain artistikuvat</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Artistien elämäkerrat ja kuvat (vararatkaisu)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>Ei saatavilla</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>Sulje haku</value>
@@ -962,11 +885,6 @@ Haluatko jatkaa?</value>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Virhe skannauksen aikana: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Lokitietoja ei saatu muistista. Varasuunnitelma lokitiedoston lukemiseksi epäonnistui.
-Odotettu polku: '{0}'
-Virhe: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Ei vietäviä soittolistoja.</value>
   </data>
@@ -1090,21 +1008,6 @@ Virhe: {1}</value>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>Löydä paikallinen musiikkikokoelmasi uudelleen Nagilla – musiikkisoittimella, joka keskittyy nopeuteen, yksinkertaisuuteen ja yksityisyyteen.</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Nagi-musiikkisoitin</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>Avaa Nagi-musiikkisoittimella</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Nagin käynnistys</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Edellinen</value>
   </data>
@@ -1119,9 +1022,6 @@ Virhe: {1}</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Siirry albumiin</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Pudota tiedostoja tai kansioita soittimelle lisätäksesi ne jonoon.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Seuraavat</value>
@@ -1639,9 +1539,6 @@ Virhe: {1}</value>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Näytä Resurssienhallinnassa</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>Ei soittolistoja saatavilla</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Toista</value>
   </data>
@@ -2050,9 +1947,6 @@ Virhe: {1}</value>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>Muokkaa sääntöjä</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>Muokkaa sääntöjä</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>Tietoja</value>
   </data>
@@ -2071,17 +1965,8 @@ Virhe: {1}</value>
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>Lähdekoodi</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>Tarkista päivitykset</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>Lähetä palautetta</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Tarkista päivitykset käynnistyksen yhteydessä</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>Tarkista automaattisesti uudet versiot sovelluksen käynnistyessä.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>Sovelluksen kieli</value>
@@ -2289,9 +2174,6 @@ Virhe: {1}</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Seuraava sivu</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Kopioi lokin sisältö</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>esim. ;/\</value>

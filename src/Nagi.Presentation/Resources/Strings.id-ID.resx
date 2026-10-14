@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Jeda</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>Acak Aktif</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>Acak Nonaktif</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>Lagu yang cocok: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Masukkan nama daftar putar untuk melihat lagu yang cocok</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>Gagal menghitung lagu yang cocok</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>Nagi mengalami masalah dan harus ditutup.</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>Berjalan sebagai Administrator</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi saat ini berjalan sebagai Administrator. Hal ini dapat mencegah beberapa fitur (seperti menambahkan folder musik) berfungsi dengan benar.
-
-Untuk pengalaman terbaik, harap mulai ulang Nagi tanpa hak istimewa administrator.</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>Mulai Ulang Normal</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>Lanjutkan Saja</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@ Untuk pengalaman terbaik, harap mulai ulang Nagi tanpa hak istimewa administrato
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>Tidak ada biografi tersedia untuk artis ini.</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>Tidak dapat memuat detail artis.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Kesalahan memuat folder</value>
@@ -604,12 +578,6 @@ Berkas yang tidak dapat diimpor: {0}.</value>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>Lagu</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0 item</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>Kesalahan memuat item</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} item</value>
   </data>
@@ -663,42 +631,6 @@ Berkas yang tidak dapat diimpor: {0}.</value>
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Berikutnya</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>Pembaruan Tersedia</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>Versi baru ({0}) tersedia. Apakah Anda ingin mengunduh dan menginstalnya sekarang?</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>Instal Sekarang</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>Nanti</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>Lewati Versi Ini</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>Terbaru</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>Anda menjalankan Nagi versi terbaru.</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>Kesalahan Pembaruan</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>Terjadi kesalahan saat memeriksa pembaruan: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>Terjadi kesalahan saat menginstal pembaruan: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>Mengunduh Pembaruan</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>Versi {0} sedang diunduh. Aplikasi akan memulai ulang secara otomatis saat siap.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLC mengalami kesalahan yang tidak ditentukan.</value>
@@ -769,17 +701,8 @@ Berkas yang tidak dapat diimpor: {0}.</value>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>Hanya gambar artis berkualitas tinggi (membutuhkan MusicBrainz)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>Hanya gambar artis</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Biografi dan gambar artis (cadangan)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>T/A</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>Tutup pencarian</value>
@@ -962,11 +885,6 @@ Apakah Anda ingin melanjutkan?</value>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Kesalahan selama pemindaian: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Tidak dapat mengambil log dari memori. Upaya fallback untuk membaca berkas log gagal.
-Jalur yang diharapkan: '{0}'
-Kesalahan: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Tidak ada daftar putar untuk diekspor.</value>
   </data>
@@ -1090,21 +1008,6 @@ Kesalahan: {1}</value>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>Temukan kembali koleksi musik lokal Anda dengan Nagi, pemutar musik yang berfokus pada kecepatan, kesederhanaan, dan privasi.</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Pemutar Musik Nagi</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>Buka dengan Pemutar Musik Nagi</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Startup Nagi</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Sebelumnya</value>
   </data>
@@ -1119,9 +1022,6 @@ Kesalahan: {1}</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Buka Album</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Letakkan file atau folder ke pemutar untuk menambahkannya ke antrean.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Berikutnya</value>
@@ -1639,9 +1539,6 @@ Kesalahan: {1}</value>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Tampilkan di File Explorer</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>Tidak ada daftar putar tersedia</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Putar</value>
   </data>
@@ -2050,9 +1947,6 @@ Kesalahan: {1}</value>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>Edit Aturan</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>Edit aturan</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>Tentang</value>
   </data>
@@ -2071,17 +1965,8 @@ Kesalahan: {1}</value>
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>Kode Sumber</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>Periksa Pembaruan</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>Kirim Umpan Balik</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Periksa Pembaruan saat Startup</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>Secara otomatis memeriksa versi baru saat aplikasi dimulai.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>Bahasa Aplikasi</value>
@@ -2289,9 +2174,6 @@ Kesalahan: {1}</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Halaman Berikutnya</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Salin konten log</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>mis. ;/\</value>

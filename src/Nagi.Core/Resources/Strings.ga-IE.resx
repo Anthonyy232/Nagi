@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>Fillteán</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Fillteáin</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Ordú Láimhe</value>
   </data>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Scanadh críochnaithe. Cuireadh nó nuashonraíodh {0} {1}.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Baisc {0} á sábháil…</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Fillteán á scanadh…</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Scanadh críochnaithe. Tá an leabharlann cothrom le dáta.</value>
   </data>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Ní féidir ainm an tseinnliosta a bheith folamh.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Caithfidh an rátáil a bheith idir 1 agus 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">

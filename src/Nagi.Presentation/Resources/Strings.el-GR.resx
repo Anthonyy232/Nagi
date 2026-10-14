@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Παύση</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>Τυχαία σειρά Ενεργή</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>Τυχαία σειρά Ανενεργή</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>Τραγούδια που αντιστοιχούν: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Εισαγάγετε ένα όνομα λίστας αναπαραγωγής για να δείτε τα τραγούδια που αντιστοιχούν</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>Δεν ήταν δυνατή η καταμέτρηση των τραγουδιών που αντιστοιχούν</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>Το Nagi συνάντησε ένα σφάλμα και πρέπει να κλείσει.</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>Εκτελείται ως Διαχειριστής</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Το Nagi εκτελείται αυτή τη στιγμή ως Διαχειριστής. Αυτό ενδέχεται να εμποδίσει ορισμένες λειτουργίες (όπως η προσθήκη φακέλων μουσικής) να λειτουργούν σωστά.
-
-Για την καλύτερη εμπειρία, παρακαλούμε επανεκκινήστε το Nagi χωρίς δικαιώματα διαχειριστή.</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>Επανεκκίνηση κανονικά</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>Συνέχεια ούτως ή άλλως</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>Δεν υπάρχει διαθέσιμη βιογραφία για αυτόν τον καλλιτέχνη.</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>Αδυναμία φόρτωσης λεπτομερειών καλλιτέχνη.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Σφάλμα φόρτωσης φακέλου</value>
@@ -604,12 +578,6 @@
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>Τραγούδια</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0 αντικείμενα</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>Σφάλμα φόρτωσης αντικειμένων</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} αντικείμενο</value>
   </data>
@@ -663,42 +631,6 @@
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Επόμενο</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>Διαθέσιμη ενημέρωση</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>Μια νέα έκδοση ({0}) είναι διαθέσιμη. Θα θέλατε να την κατεβάσετε και να την εγκαταστήσετε τώρα;</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>Εγκατάσταση τώρα</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>Αργότερα</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>Παράλειψη αυτής της έκδοσης</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>Ενημερωμένο</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>Εκτελείτε την τελευταία έκδοση του Nagi.</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>Σφάλμα Ενημέρωσης</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>Παρουσιάστηκε σφάλμα κατά τον έλεγχο για ενημερώσεις: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>Παρουσιάστηκε σφάλμα κατά την εγκατάσταση της ενημέρωσης: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>Λήψη Ενημέρωσης</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>Η έκδοση {0} κατεβαίνει. Η εφαρμογή θα επανεκκινήσει αυτόματα όταν είναι έτοιμη.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>Το LibVLC αντιμετώπισε ένα μη καθορισμένο σφάλμα.</value>
@@ -769,17 +701,8 @@
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>Μόνο εικόνες καλλιτεχνών υψηλής ποιότητας (απαιτεί MusicBrainz)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>Μόνο εικόνες καλλιτεχνών</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Βιογραφίες και εικόνες καλλιτεχνών (εφεδρική)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>Μη διαθέσιμο</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>Κλείσιμο αναζήτησης</value>
@@ -962,11 +885,6 @@
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Σφάλμα κατά τη σάρωση: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Αδυναμία ανάκτησης αρχείων καταγραφής από τη μνήμη. Η εφεδρική προσπάθεια ανάγνωσης του αρχείου καταγραφής απέτυχε.
-Αναμενόμενη Διαδρομή: '{0}'
-Σφάλμα: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Δεν υπάρχουν λίστες αναπαραγωγής για εξαγωγή.</value>
   </data>
@@ -1090,21 +1008,6 @@
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>Ανακαλύψτε ξανά την τοπική μουσική σας συλλογή με το Nagi, ένα πρόγραμμα αναπαραγωγής μουσικής εστιασμένο στην ταχύτητα, την απλότητα και την ιδιωτικότητα.</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Nagi Αναπαραγωγέας Μουσικής</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>Άνοιγμα με Nagi Αναπαραγωγέα Μουσικής</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Εκκίνηση Nagi</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Προηγούμενο</value>
   </data>
@@ -1119,9 +1022,6 @@
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Μετάβαση στο άλμπουμ</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Αποθέστε αρχεία ή φακέλους στο πρόγραμμα αναπαραγωγής για να τα προσθέσετε στην ουρά.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Επόμενο</value>
@@ -1639,9 +1539,6 @@
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Εμφάνιση στην Εξερεύνηση αρχείων</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>Δεν υπάρχουν διαθέσιμες λίστες αναπαραγωγής</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Αναπαραγωγή</value>
   </data>
@@ -2050,9 +1947,6 @@
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>Επεξεργασία κανόνων</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>Επεξεργασία κανόνων</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>Σχετικά</value>
   </data>
@@ -2071,17 +1965,8 @@
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>Πηγαίος κώδικας</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>Έλεγχος για ενημερώσεις</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>Αποστολή σχολίων</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Έλεγχος για ενημερώσεις κατά την εκκίνηση</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>Αυτόματος έλεγχος για νέες εκδόσεις όταν ξεκινά η εφαρμογή.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>Γλώσσα εφαρμογής</value>
@@ -2289,9 +2174,6 @@
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Επόμενη Σελίδα</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Αντιγραφή περιεχομένου αρχείου καταγραφής</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>π.χ. ;/\</value>

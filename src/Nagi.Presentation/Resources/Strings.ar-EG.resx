@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>إيقاف مؤقت</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>خلط عشوائي تشغيل</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>خلط عشوائي إيقاف</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>الأغاني المطابقة: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>أدخل اسم قائمة تشغيل لرؤية الأغاني المطابقة</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>تعذر إحصاء الأغاني المطابقة</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>واجه Nagi خطأً ويجب إغلاقه.</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>التشغيل كمسؤول</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi يعمل حاليًا كمسؤول. قد يمنع هذا بعض الميزات (مثل إضافة مجلدات الموسيقى) من العمل بشكل صحيح.
-
-للحصول على أفضل تجربة، يرجى إعادة تشغيل Nagi بدون امتيازات المسؤول.</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>إعادة التشغيل بشكل طبيعي</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>متابعة على أي حال</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>لا توجد سيرة ذاتية متاحة لهذا الفنان.</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>تعذر تحميل تفاصيل الفنان.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>خطأ في تحميل المجلد</value>
@@ -604,12 +578,6 @@
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>الأغاني</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0 عناصر</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>خطأ في تحميل العناصر</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} عنصر</value>
   </data>
@@ -663,42 +631,6 @@
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>التالي</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>تحديث متوفر</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>يتوفر إصدار جديد ({0}). هل ترغب في تنزيله وتثبيته الآن؟</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>تثبيت الآن</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>لاحقًا</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>تخطي هذا الإصدار</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>محدث</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>أنت تستخدم أحدث إصدار من Nagi.</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>خطأ في التحديث</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>حدث خطأ أثناء التحقق من التحديثات: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>حدث خطأ أثناء تثبيت التحديث: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>جاري تنزيل التحديث</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>يتم تنزيل الإصدار {0}. سيعاد تشغيل التطبيق تلقائيًا عندما يكون جاهزًا.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>واجه LibVLC خطأً غير محدد.</value>
@@ -769,17 +701,8 @@
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>صور فنانين عالية الجودة فقط (تتطلب MusicBrainz)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>صور الفنانين فقط</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>سير وصور الفنانين (بديل)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>غير متوفر</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>إغلاق البحث</value>
@@ -962,11 +885,6 @@
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>خطأ أثناء الفحص: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>تعذر استرداد السجلات من الذاكرة. فشلت محاولة الاسترجاع لقراءة ملف السجل.
-المسار المتوقع: '{0}'
-الخطأ: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>لا توجد قوائم تشغيل للتصدير.</value>
   </data>
@@ -1090,21 +1008,6 @@
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>أعد اكتشاف مجموعتك الموسيقية المحلية مع Nagi، مشغل الموسيقى المتركز على السرعة والبساطة والخصوصية.</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>مشغل موسيقى Nagi</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>فتح باستخدام مشغل موسيقى Nagi</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>بدء تشغيل Nagi</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>السابق</value>
   </data>
@@ -1119,9 +1022,6 @@
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>الانتقال إلى الألبوم</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>قم بإفلات الملفات أو المجلدات على المشغل لإضافتها إلى قائمة الانتظار.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>التالي</value>
@@ -1639,9 +1539,6 @@
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>العرض في مستكشف الملفات</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>لا توجد قوائم تشغيل متاحة</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>تشغيل</value>
   </data>
@@ -2050,9 +1947,6 @@
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>تعديل القواعد</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>تعديل القواعد</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>عَنَّا</value>
   </data>
@@ -2071,17 +1965,8 @@
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>التعليمات البرمجية المصدر</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>التحقق من التحديثات</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>إرسال ملاحظات</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>التحقق من وجود تحديثات عند بدء التشغيل</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>التحقق تلقائيًا من وجود إصدارات جديدة عند بدء تشغيل التطبيق.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>لغة التطبيق</value>
@@ -2289,9 +2174,6 @@
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>الصفحة التالية</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>نسخ محتوى السجل</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>مثال: ;/\</value>

@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Pozastaviť</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>Náhodné prehrávanie zapnuté</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>Náhodné prehrávanie vypnuté</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>Zodpovedajúce skladby: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Zadajte názov zoznamu skladieb na zobrazenie zodpovedajúcich skladieb</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>Nepodarilo sa spočítať zodpovedajúce skladby</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>Aplikácia Nagi zaznamenala chybu a musí sa zatvoriť.</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>Spustené ako administrátor</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi je momentálne spustený ako administrátor. To môže brániť niektorým funkciám (napríklad pridávaniu hudobných priečinkov) v správnom fungovaní.
-
-Pre najlepší zážitok reštartujte Nagi bez oprávnení administrátora.</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>Reštartovať normálne</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>Pokračovať aj tak</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@ Pre najlepší zážitok reštartujte Nagi bez oprávnení administrátora.</val
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>Pre tohto interpreta nie je k dispozícii žiadna biografia.</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>Nepodarilo sa načítať podrobnosti o interpretovi.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Chyba pri načítaní priečinka</value>
@@ -604,12 +578,6 @@ Súbory, ktoré sa nepodarilo importovať: {0}.</value>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>Skladby</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0 položiek</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>Chyba pri načítaní položiek</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} položka</value>
   </data>
@@ -663,42 +631,6 @@ Súbory, ktoré sa nepodarilo importovať: {0}.</value>
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Ďalšie</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>Aktualizácia k dispozícii</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>K dispozícii je nová verzia ({0}). Chcete ju stiahnuť a nainštalovať teraz?</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>Nainštalovať teraz</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>Neskôr</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>Preskočiť túto verziu</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>Aktuálne</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>Používate najnovšiu verziu Nagi.</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>Chyba aktualizácie</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>Počas kontroly aktualizácií došlo k chybe: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>Počas inštalácie aktualizácie došlo k chybe: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>Sťahujem aktualizáciu</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>Verzia {0} sa sťahuje. Aplikácia sa automaticky reštartuje, keď bude pripravená.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLC narazil na nešpecifikovanú chybu.</value>
@@ -769,17 +701,8 @@ Súbory, ktoré sa nepodarilo importovať: {0}.</value>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>Iba vysokokvalitné obrázky interpretov (vyžaduje MusicBrainz)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>Iba obrázky interpretov</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Biografie a obrázky interpretov (záložné)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>N/A</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>Zavrieť hľadanie</value>
@@ -962,11 +885,6 @@ Chcete pokračovať?</value>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Chyba počas skenovania: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Nepodarilo sa načítať protokoly z pamäte. Záložný pokus o prečítanie súboru protokolu zlyhal.
-Očakávaná cesta: '{0}'
-Chyba: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Žiadne zoznamy skladieb na export.</value>
   </data>
@@ -1090,21 +1008,6 @@ Chyba: {1}</value>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>Objavte znova svoju lokálnu hudobnú zbierku s aplikáciou Nagi, hudobným prehrávačom zameraným na rýchlosť, jednoduchosť a súkromie.</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Hudobný prehrávač Nagi</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>Otvoriť s hudobným prehrávačom Nagi</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Spustenie Nagi</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Predchádzajúce</value>
   </data>
@@ -1119,9 +1022,6 @@ Chyba: {1}</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Prejsť na album</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Presuňte súbory alebo priečinky do prehrávača, čím ich pridáte do zoznamu skladieb na prehrávanie.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Ďalej na rade</value>
@@ -1639,9 +1539,6 @@ Chyba: {1}</value>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Zobraziť v Prieskumníkovi</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>Žiadne dostupné playlisty</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Prehrať</value>
   </data>
@@ -2050,9 +1947,6 @@ Chyba: {1}</value>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>Upraviť pravidlá</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>Upraviť pravidlá</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>O aplikácii</value>
   </data>
@@ -2071,17 +1965,8 @@ Chyba: {1}</value>
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>Zdrojový kód</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>Skontrolovať aktualizácie</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>Odoslať spätnú väzbu</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Kontrolovať aktualizácie pri spustení</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>Automaticky kontrolovať nové verzie pri spustení aplikácie.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>Jazyk aplikácie</value>
@@ -2289,9 +2174,6 @@ Chyba: {1}</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Ďalšia strana</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Kopírovať obsah denníka</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>napr. ;/\\</value>

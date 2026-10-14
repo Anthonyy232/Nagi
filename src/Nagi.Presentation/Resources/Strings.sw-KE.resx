@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Sitisha</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>Cheza Changanyiko Imewashwa</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>Cheza Changanyiko Imezimwa</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>Nyimbo zinazolingana: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Ingiza jina la orodha ya nyimbo ili kuona nyimbo zinazolingana</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>Haikuweza kuhesabu nyimbo zinazolingana</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>Nagi imekumbana na hitilafu na inahitaji kufungwa.</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>Inaendeshwa kama Msimamizi</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi inaendeshwa kama Msimamizi. Hii inaweza kuzuia baadhi ya vipengele (kama vile kuongeza folda za muziki) kufanya kazi ipasavyo.
-
-Kwa matumizi bora, tafadhali anzisha upya Nagi bila ruhusa za msimamizi.</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>Anzisha Upya Kawaida</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>Endelea Hata Hivyo</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@ Kwa matumizi bora, tafadhali anzisha upya Nagi bila ruhusa za msimamizi.</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>Hakuna wasifu unaopatikana kwa msanii huyu.</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>Imeshindwa kupakia maelezo ya msanii.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Hitilafu wakati wa kupakia folda</value>
@@ -604,12 +578,6 @@ Faili ambazo hazikuweza kuingizwa: {0}.</value>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>Nyimbo</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>vitu 0</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>Hitilafu wakati wa kupakia vitu</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>kitu {0}</value>
   </data>
@@ -663,42 +631,6 @@ Faili ambazo hazikuweza kuingizwa: {0}.</value>
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Inayofuata</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>Sasisho Linapatikana</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>Toleo jipya ({0}) linapatikana. Je, ungependa kulipakua na kuliweka sasa?</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>Sakinisha Sasa</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>Baadaye</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>Ruka Toleo Hili</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>Imesasishwa</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>Unatumia toleo la hivi karibuni la Nagi.</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>Hitilafu ya Sasisho</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>Hitilafu imetokea wakati wa kuangalia sasisho: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>Hitilafu imetokea wakati wa kusakinisha sasisho: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>Inapakua Sasisho</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>Toleo {0} linapakuliwa. Programu itaanza upya kiotomatiki itakapokuwa tayari.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLC imekumbana na hitilafu isiyojulikana.</value>
@@ -769,17 +701,8 @@ Faili ambazo hazikuweza kuingizwa: {0}.</value>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>Picha za wasanii za hali ya juu tu (inahitaji MusicBrainz)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>Picha za wasanii tu</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Wasifu na picha za wasanii (mbadala)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>Haipatikani</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>Funga utafutaji</value>
@@ -962,11 +885,6 @@ Je, unataka kuendelea?</value>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Hitilafu wakati wa kuchanganua: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Imeshindwa kupata kumbukumbu kutoka kwenye kumbukumbu. Jaribio la mbadala la kusoma faili ya kumbukumbu limeshindwa.
-Njia Inayotarajiwa: '{0}'
-Hitilafu: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Hakuna orodha za kucheza za kusafirisha.</value>
   </data>
@@ -1090,21 +1008,6 @@ Hitilafu: {1}</value>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>Gundua tena mkusanyiko wako wa muziki wa ndani kwa Nagi, kicheza muziki kinachozingatia kasi, urahisi, na faragha.</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Kichezaji Muziki cha Nagi</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>Fungua na Kichezaji Muziki cha Nagi</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Mwanzo wa Nagi</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Iliyotangulia</value>
   </data>
@@ -1119,9 +1022,6 @@ Hitilafu: {1}</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Nenda kwenye Albamu</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Weka faili au folda kwenye kicheza muziki ili kuziongeza kwenye foleni.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Inayofuata</value>
@@ -1639,9 +1539,6 @@ Hitilafu: {1}</value>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Onyesha katika Kichunguzi cha Faili</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>Hakuna orodha za nyimbo zinazopatikana</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Cheza</value>
   </data>
@@ -2050,9 +1947,6 @@ Hitilafu: {1}</value>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>Hariri Sheria</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>Hariri sheria</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>Kuhusu</value>
   </data>
@@ -2071,17 +1965,8 @@ Hitilafu: {1}</value>
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>Msimbo Chanzo</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>Angalia Sasisho</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>Tuma Maoni</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Kagua Sasisho Wakati wa Kuanza</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>Angalia kiotomatiki matoleo mapya programu inapoanza.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>Lugha ya Programu</value>
@@ -2289,9 +2174,6 @@ Hitilafu: {1}</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Ukurasa Ujao</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Nakili maudhui ya logi</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>k.m. ;/\\</value>

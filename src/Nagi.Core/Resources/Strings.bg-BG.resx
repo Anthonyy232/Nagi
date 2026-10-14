@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>Папка</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Папки</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Ръчен ред</value>
   </data>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Сканирането завърши. Добавени или актуализирани {0} {1}.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Запазване на партида {0}…</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Сканиране на папка…</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Сканирането завърши. Библиотеката е актуална.</value>
   </data>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Името на плейлиста не може да бъде празно.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Оценката трябва да е между 1 и 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">

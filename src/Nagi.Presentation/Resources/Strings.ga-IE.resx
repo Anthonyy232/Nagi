@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Sos</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>Suaitheadh Ar Siúl</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>Suaitheadh As</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>Amhráin a mheaitseálann: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Iontráil ainm liosta seinm chun amhráin chomhfhreagracha a fheiceáil</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>Níorbh fhéidir amhráin chomhfhreagracha a áireamh</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>Tharla earráid i Nagi agus caithfidh sé dúnadh.</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>Ag rith mar Riarthóir</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Tá Nagi ag rith mar Riarthóir faoi láthair. D'fhéadfadh sé seo cosc a chur ar roinnt gnéithe (cosúil le fillteáin ceoil a chur leis) ó bheith ag obair i gceart.
-
-Chun an taithí is fearr a fháil, déan Nagi a atosú gan pribhléidí riarthóra.</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>Atosaigh go Gnáth</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>Lean Ar Aghaidh Pé Scéal É</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@ Chun an taithí is fearr a fháil, déan Nagi a atosú gan pribhléidí riarthó
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>Níl beathaisnéis ar fáil don ealaíontóir seo.</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>Níorbh fhéidir sonraí an ealaíontóra a luchtú.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Earráid ag luchtú fillteáin</value>
@@ -604,12 +578,6 @@ Comhaid nár fhéad a iompórtáil: {0}.</value>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>Amhráin</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0 mír</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>Earráid ag luchtú míreanna</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} mír</value>
   </data>
@@ -663,42 +631,6 @@ Comhaid nár fhéad a iompórtáil: {0}.</value>
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Ar Aghaidh</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>Nuashonrú Ar Fáil</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>Tá leagan nua ({0}) ar fáil. Ar mhaith leat é a íoslódáil agus a shuiteáil anois?</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>Suiteáil Anois</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>Níos déanaí</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>Scip an Leagan Seo</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>Cothrom le Dáta</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>Tá an leagan is déanaí de Nagi á rith agat.</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>Earráid Nuashonraithe</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>Tharla earráid agus nuashonruithe á seiceáil: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>Tharla earráid agus an nuashonrú á shuiteáil: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>Ag Íoslódáil Nuashonraithe</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>Tá leagan {0} á íoslódáil. Atosóidh an feidhmchlár go huathoibríoch nuair a bheidh sé réidh.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>Tharla earráid neamhshonraithe le LibVLC.</value>
@@ -769,17 +701,8 @@ Comhaid nár fhéad a iompórtáil: {0}.</value>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>Íomhánna ardcháilíochta ealaíontóirí amháin (éilíonn MusicBrainz)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>Íomhánna ealaíontóirí amháin</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Beathaisnéisí agus íomhánna ealaíontóirí (cúlú)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>N/A</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>Dún cuardach</value>
@@ -962,11 +885,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Earráid le linn scanadh: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Níorbh fhéidir logaí a aisghabháil ón gcuimhne. Theip ar an iarracht cúlú chun an comhad loga a léamh.
-Cosán a bhfuil súil leis: '{0}'
-Earráid: '{1}'</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Níl aon seinmliostaí le heaspórtáil.</value>
   </data>
@@ -1090,21 +1008,6 @@ Earráid: '{1}'</value>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>Aisaimsigh do bhailiúchán ceoil áitiúil le Nagi, seinnteoir ceoil a dhíríonn ar luas, simplíocht, agus príobháideachas.</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Seinnteoir Ceoil Nagi</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>Oscail le Seinnteoir Ceoil Nagi</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Tús Nagi</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Roimhe Seo</value>
   </data>
@@ -1119,9 +1022,6 @@ Earráid: '{1}'</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Gabh go dtí an tAlbam</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Scaoil comhaid nó fillteáin ar an imreoir chun iad a chur leis an scuaine.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>An Chéad Eile</value>
@@ -1639,9 +1539,6 @@ Earráid: '{1}'</value>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Taispeáin sa Taiscéalaí Comhad</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>Níl seinmliostaí ar fáil</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Seinn</value>
   </data>
@@ -2050,9 +1947,6 @@ Earráid: '{1}'</value>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>Cuir Rialacha in Eagar</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>Cuir rialacha in eagar</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>Maidir Leis</value>
   </data>
@@ -2071,17 +1965,8 @@ Earráid: '{1}'</value>
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>Cód Foinseach</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>Seiceáil le haghaidh Nuashonruithe</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>Seol Aiseolas</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Seiceáil le haghaidh Nuashonruithe ag Tosú</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>Seiceáil go huathoibríoch le haghaidh leaganacha nua nuair a thosaíonn an feidhmchlár.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>Teanga an Fheidhmchláir</value>
@@ -2289,9 +2174,6 @@ Earráid: '{1}'</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>An Leathanach Eile</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Cóipeáil ábhar loga</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>m.sh. ;/\\</value>

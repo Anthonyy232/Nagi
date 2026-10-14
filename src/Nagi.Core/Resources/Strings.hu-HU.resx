@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>Mappa</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Mappák</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Kézi sorrend</value>
   </data>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Beolvasás kész. Hozzáadva vagy frissítve {0} {1}.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>{0}. köteg mentése…</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Mappa beolvasása…</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Beolvasás kész. A könyvtár naprakész.</value>
   </data>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>A lejátszási lista neve nem lehet üres.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Az értékelésnek 1 és 5 között kell lennie.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">

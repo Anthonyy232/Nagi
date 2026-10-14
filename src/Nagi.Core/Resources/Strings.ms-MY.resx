@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>Folder</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Folder</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Susunan Manual</value>
   </data>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Imbasan selesai. {0} {1} ditambahkan atau dikemas kini.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Menyimpan kelompok {0}…</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Mengimbas folder…</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Imbasan selesai. Pustaka dikemas kini.</value>
   </data>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Nama senarai main tidak boleh kosong.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Penilaian mesti antara 1 dan 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">

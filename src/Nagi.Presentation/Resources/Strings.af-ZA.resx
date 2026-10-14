@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Onderbreek</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>Skuifel Aan</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>Skuifel Af</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>Passende liedjies: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Voer 'n snitlysnaam in om passende liedjies te sien</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>Kon nie passende liedjies tel nie</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>Nagi het 'n fout ondervind en moet sluit.</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>Loop as Administrateur</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi loop tans as Administrateur. Dit mag verhoed dat sommige funksies (soos die byvoeging van musiekvouers) korrek werk.
-
-Vir die beste ervaring, herbegin asseblief Nagi sonder administrateurvoorregte.</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>Herbegin Normaal</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>Gaan Nogtans Voort</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@ Vir die beste ervaring, herbegin asseblief Nagi sonder administrateurvoorregte.<
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>Geen biografie vir hierdie kunstenaar beskikbaar nie.</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>Kon nie kunstenaarinligting laai nie.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Fout met laai van vouer</value>
@@ -604,12 +578,6 @@ Lêers wat nie ingevoer kon word nie: {0}.</value>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>Liedjies</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0 items</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>Fout met laai van items</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} item</value>
   </data>
@@ -663,42 +631,6 @@ Lêers wat nie ingevoer kon word nie: {0}.</value>
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Volgende</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>Opdatering Beskikbaar</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>'n Nuwe weergawe ({0}) is beskikbaar. Wil jy dit nou aflaai en installeer?</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>Installeer Nou</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>Later</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>Slaan Hierdie Weergawe Oor</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>Op Datum</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>Jy gebruik die nuutste weergawe van Nagi.</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>Opdateringsfout</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>'n Fout het voorgekom terwyl vir opdaterings gesoek is: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>'n Fout het voorgekom terwyl die opdatering geïnstalleer is: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>Laai Opdatering Af</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>Weergawe {0} word afgelaai. Die toepassing sal outomaties herbegin wanneer dit gereed is.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLC het 'n ongespesifiseerde fout teëgekom.</value>
@@ -769,17 +701,8 @@ Lêers wat nie ingevoer kon word nie: {0}.</value>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>Slegs hoëgehalte kunstenaarprente (vereis MusicBrainz)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>Slegs kunstenaarprente</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Kunstenaarbiografieë en -prente (terugval)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>N.v.t.</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>Maak soektog toe</value>
@@ -962,11 +885,6 @@ Wil jy voortgaan?</value>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Fout tydens skandering: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Kon nie logs uit geheue herwin nie. Die terugvalpoging om die loglêer te lees het misluk.
-Verwagte Pad: '{0}'
-Fout: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Geen snitlyste om uit te voer nie.</value>
   </data>
@@ -1090,21 +1008,6 @@ Fout: {1}</value>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>Herontdek jou plaaslike musiekversameling met Nagi, 'n musiekspeler wat fokus op spoed, eenvoud en privaatheid.</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Nagi Musiekspeler</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>Maak oop met Nagi Musiekspeler</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Nagi Opstart</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Vorige</value>
   </data>
@@ -1119,9 +1022,6 @@ Fout: {1}</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Gaan na album</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Los lêers of vouers op die speler om dit by die tou te voeg.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Volgende</value>
@@ -1639,9 +1539,6 @@ Fout: {1}</value>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Wys in Lêerkenner</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>Geen snitlyste beskikbaar nie</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Speel</value>
   </data>
@@ -2050,9 +1947,6 @@ Fout: {1}</value>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>Wysig Reëls</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>Wysig reëls</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>Oor</value>
   </data>
@@ -2071,17 +1965,8 @@ Fout: {1}</value>
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>Bronkode</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>Kontroleer vir Opdaterings</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>Stuur Terugvoer</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Kyk vir opdaterings by opstart</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>Kontroleer outomaties vir nuwe weergawes wanneer die toepassing begin.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>Toepassingstaal</value>
@@ -2289,9 +2174,6 @@ Fout: {1}</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Volgende bladsy</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Kopieer logboek-inhoud</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>bv. ;/\</value>

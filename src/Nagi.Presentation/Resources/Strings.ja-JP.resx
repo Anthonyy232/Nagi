@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>一時停止</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>シャッフルオン</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>シャッフルオフ</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>一致する曲: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>一致する曲を表示するにはプレイリスト名を入力してください</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>一致する曲の数を計算できませんでした</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>Nagi でエラーが発生したため、終了する必要があります。</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>管理者として実行中</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagiは現在、管理者として実行されています。これにより、一部の機能（音楽フォルダーの追加など）が正しく動作しない可能性があります。
-
-最適なエクスペリエンスを得るには、管理者権限なしでNagiを再起動してください。</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>通常起動</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>とにかく続行</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>このアーティストのバイオグラフィーはありません。</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>アーティストの詳細を読み込めませんでした。</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>フォルダーの読み込みエラー</value>
@@ -604,12 +578,6 @@
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>曲</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0アイテム</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>アイテムの読み込みエラー</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0}アイテム</value>
   </data>
@@ -663,42 +631,6 @@
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>次へ</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>更新が利用可能です</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>新しいバージョン（{0}）が利用可能です。今すぐダウンロードしてインストールしますか？</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>今すぐインストール</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>後で</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>このバージョンをスキップ</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>最新</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>Nagiは最新バージョンです。</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>更新エラー</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>更新の確認中にエラーが発生しました: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>更新のインストール中にエラーが発生しました: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>更新をダウンロード中</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>バージョン{0}をダウンロード中です。準備が完了するとアプリケーションが自動的に再起動します。</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLCで不明なエラーが発生しました。</value>
@@ -769,17 +701,8 @@
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>高品質のアーティスト画像のみ (MusicBrainzが必要)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>アーティスト画像のみ</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>アーティストのバイオグラフィーと画像 (フォールバック)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>N/A</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>検索を閉じる</value>
@@ -962,11 +885,6 @@
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>スキャン中にエラーが発生しました: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>メモリからログを取得できませんでした。ログファイルの読み取りのフォールバック試行が失敗しました。
-予期されるパス: '{0}'
-エラー: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>エクスポートするプレイリストがありません。</value>
   </data>
@@ -1090,21 +1008,6 @@
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>スピード、シンプルさ、プライバシーに特化した音楽プレーヤー Nagi で、ローカルの音楽コレクションを再発見しましょう。</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Nagi ミュージックプレイヤー</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>Nagi ミュージックプレイヤーで開く</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Nagi 起動</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>前へ</value>
   </data>
@@ -1119,9 +1022,6 @@
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>アルバムへ移動</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>ファイルやフォルダーをプレイヤーにドロップしてキューに追加します。</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>次に再生</value>
@@ -1639,9 +1539,6 @@
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>エクスプローラーで表示</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>利用可能なプレイリストがありません</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>再生</value>
   </data>
@@ -2050,9 +1947,6 @@
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>ルールを編集</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>ルールを編集</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>概要</value>
   </data>
@@ -2071,17 +1965,8 @@
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>ソースコード</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>更新を確認</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>フィードバックを送信</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>起動時に更新を確認</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>アプリケーション起動時に新しいバージョンを自動的に確認します。</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>アプリケーションの言語</value>
@@ -2289,9 +2174,6 @@
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>次のページ</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>ログの内容をコピー</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>例: ;/\\</value>

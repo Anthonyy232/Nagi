@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Szünet</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>Keverés be</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>Keverés ki</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>Egyező dalok: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Adja meg a lejátszási lista nevét az egyező dalok megtekintéséhez</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>Nem sikerült megszámlálni az egyező dalokat</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>A Nagi hibába ütközött, ezért be kell záródnia.</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>Futtatás rendszergazdaként</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>A Nagi jelenleg rendszergazdaként fut. Ez megakadályozhatja egyes funkciók (például zenemappák hozzáadása) helyes működését.
-
-A legjobb élmény érdekében indítsa újra a Nagit rendszergazdai jogosultságok nélkül.</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>Normál újraindítás</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>Folytatás így is</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@ A legjobb élmény érdekében indítsa újra a Nagit rendszergazdai jogosultsá
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>Nem elérhető életrajz ehhez az előadóhoz.</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>Nem sikerült betölteni az előadó adatait.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Hiba a mappa betöltésekor</value>
@@ -604,12 +578,6 @@ Nem importálható fájlok: {0}.</value>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>Dalok</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0 elem</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>Hiba az elemek betöltésekor</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} elem</value>
   </data>
@@ -663,42 +631,6 @@ Nem importálható fájlok: {0}.</value>
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Következő</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>Frissítés elérhető</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>Új verzió ({0}) érhető el. Szeretné letölteni és telepíteni most?</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>Telepítés most</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>Később</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>Verzió kihagyása</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>Naprakész</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>A Nagi legújabb verzióját futtatja.</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>Frissítési hiba</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>Hiba történt a frissítések ellenőrzésekor: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>Hiba történt a frissítés telepítésekor: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>Frissítés letöltése</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>A(z) {0} verzió letöltése folyamatban van. Az alkalmazás automatikusan újraindul, ha elkészült.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>A LibVLC ismeretlen hibába ütközött.</value>
@@ -769,17 +701,8 @@ Nem importálható fájlok: {0}.</value>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>Csak kiváló minőségű előadóképek (MusicBrainz szükséges)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>Csak előadóképek</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Előadó életrajzok és képek (tartalék)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>N/A</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>Keresés bezárása</value>
@@ -962,11 +885,6 @@ Szeretné folytatni?</value>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Hiba a beolvasás során: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Nem sikerült lekérni a naplókat a memóriából. A naplófájl olvasására tett tartalék kísérlet sikertelen volt.
-Várható elérési út: „{0}”
-Hiba: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Nincsenek exportálandó lejátszási listák.</value>
   </data>
@@ -1090,21 +1008,6 @@ Hiba: {1}</value>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>Fedezze fel újra helyi zenei gyűjteményét a Nagi segítségével, amely a sebességre, az egyszerűségre és az adatvédelemre összpontosító zenelejátszó.</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Nagi Zenelejátszó</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>Megnyitás Nagi Zenelejátszóval</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Nagi indítás</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Előző</value>
   </data>
@@ -1119,9 +1022,6 @@ Hiba: {1}</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Ugrás az albumhoz</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Húzzon fájlokat vagy mappákat a lejátszóra a várólistához adásukhoz.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Következő</value>
@@ -1639,9 +1539,6 @@ Hiba: {1}</value>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Megjelenítés a Fájlkezelőben</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>Nincsenek elérhető lejátszási listák</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Lejátszás</value>
   </data>
@@ -2050,9 +1947,6 @@ Hiba: {1}</value>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>Szabályok szerkesztése</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>Szabályok szerkesztése</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>Névjegy</value>
   </data>
@@ -2071,17 +1965,8 @@ Hiba: {1}</value>
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>Forráskód</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>Frissítések keresése</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>Visszajelzés küldése</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Frissítések keresése indításkor</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>Az alkalmazás indításakor automatikusan ellenőrzi az új verziókat.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>Alkalmazás nyelve</value>
@@ -2289,9 +2174,6 @@ Hiba: {1}</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Következő oldal</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Napló tartalmának másolása</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>pl. ;/\</value>

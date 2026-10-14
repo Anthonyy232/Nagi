@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Pauzë</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>Përzierje aktiv</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>Përzierje joaktiv</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>Këngët që përputhen: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Shkruani një emër liste dëgjimi për të parë këngët që përputhen</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>Nuk u mundësua numërimi i këngëve që përputhen</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>Nagi ndeshi një gabim dhe duhet të mbyllët.</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>Po funksionon si administrator</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi po funksionon aktualisht si administrator. Kjo mund të parandalojë funksionimin korrekt të disa veçorive (si shtimi i dosjeve të muzikës).
-
-Për një përvojë më të mirë, ju lutemi rindizni Nagi-n pa privilegje administratori.</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>Rindizni normalisht</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>Vazhdo gjithsesi</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@ Për një përvojë më të mirë, ju lutemi rindizni Nagi-n pa privilegje admin
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>Asnjë biografi nuk është në dispozicion për këtë artist.</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>Nuk mund të ngarkoheshin detajet e artistit.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Gabim në ngarkimin e dosjes</value>
@@ -604,12 +578,6 @@ Skedarët që nuk u mundësuan të importohen: {0}.</value>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>Këngët</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0 artikuj</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>Gabim në ngarkimin e artikujve</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} artikull</value>
   </data>
@@ -663,42 +631,6 @@ Skedarët që nuk u mundësuan të importohen: {0}.</value>
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Tjetra</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>Përditësim i disponueshëm</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>Një version i ri ({0}) është i disponueshëm. Dëshironi ta shkarkoni dhe instaloni tani?</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>Instalo tani</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>Më vonë</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>Anashkalo këtë version</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>I përditësuar</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>Ju po përdorni versionin më të fundit të Nagi.</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>Gabim përditësimi</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>Ndodhi një gabim gjatë kontrollit për përditësime: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>Ndodhi një gabim gjatë instalimit të përditësimit: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>Duke shkarkuar përditësimin</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>Versioni {0} po shkarkohet. Aplikacioni do të rindizet automatikisht kur të jetë gati.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLC ndeshi një gabim të papërcaktuar.</value>
@@ -769,17 +701,8 @@ Skedarët që nuk u mundësuan të importohen: {0}.</value>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>Vetëm imazhe artistësh me cilësi të lartë (kërkon MusicBrainz)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>Vetëm imazhe artistësh</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Biografi dhe imazhe artistësh (rezervë)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>N/A</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>Mbyll kërkimin</value>
@@ -962,11 +885,6 @@ Dëshironi të vazhdoni?</value>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Gabim gjatë skanimit: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Nuk mund të merreshin regjistrat nga memoria. Tentativa rezervë për të lexuar skedarin e regjistrit dështoi.
-Shtegu i pritshëm: '{0}'
-Gabim: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Asnjë listë luajtjeje për të eksportuar.</value>
   </data>
@@ -1090,21 +1008,6 @@ Gabim: {1}</value>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>Rizbuloni koleksionin tuaj lokal të muzikës me Nagi, një luajtës muzike i përqendruar në shpejtësi, thjeshtësi dhe privatësi.</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Nagi Luajtës Muzike</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>Hap me Nagi Luajtës Muzike</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Nisja e Nagi</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>E mëparshmja</value>
   </data>
@@ -1119,9 +1022,6 @@ Gabim: {1}</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Shko te albumi</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Lëshoni skedarë ose dosje në player për t'i shtuar në radhë.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Në vazhdim</value>
@@ -1639,9 +1539,6 @@ Gabim: {1}</value>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Shfaq në File Explorer</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>Asnjë listë luajtjeje nuk është e disponueshme</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Luaj</value>
   </data>
@@ -2050,9 +1947,6 @@ Gabim: {1}</value>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>Ndrysho rregullat</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>Ndrysho rregullat</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>Rreth</value>
   </data>
@@ -2071,17 +1965,8 @@ Gabim: {1}</value>
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>Kodi Burimor</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>Kontrollo për përditësime</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>Dërgo Feedback</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Kontrollo për azhornime gjatë nisjes</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>Kontrollo automatikisht për versione të reja kur nis aplikacioni.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>Gjuha e aplikacionit</value>
@@ -2289,9 +2174,6 @@ Gabim: {1}</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Faqja tjetër</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Kopjo përmbajtjen e log-ut</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>p.sh. ;/\\</value>

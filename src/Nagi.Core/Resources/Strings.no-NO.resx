@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>Mappe</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Mapper</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Manuell rekkefølge</value>
   </data>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Skanning fullført. La til eller oppdaterte {0} {1}.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Lagrer pulje {0}…</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Skanner mappe…</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Skanning fullført. Biblioteket er oppdatert.</value>
   </data>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Spillelistenavnet kan ikke være tomt.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Vurderingen må være mellom 1 og 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">

@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>Jalada</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Folda</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Mpangilio wa Mwongozo</value>
   </data>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Uchanganuzi umekamilika. Imeongeza au kusasisha {0} {1}.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Inahifadhi kundi {0}…</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Inachanganua folda…</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Uchanganuzi umekamilika. Maktaba imesasishwa.</value>
   </data>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Jina la orodha ya kucheza haliwezi kuwa tupu.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Ukadiriaji lazima uwe kati ya 1 na 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">

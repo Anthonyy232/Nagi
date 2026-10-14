@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Пауза</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>Перемішування увімкнено</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>Перемішування вимкнено</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>Відповідних пісень: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Введіть назву плейлиста, щоб побачити відповідні пісні</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>Не вдалося порахувати відповідні пісні</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>Сталася помилка, Nagi необхідно закрити.</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>Запущено від імені адміністратора</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi зараз працює від імені адміністратора. Це може перешкоджати коректній роботі деяких функцій (наприклад, додавання музичних папок).
-
-Для кращого досвіду, будь ласка, перезапустіть Nagi без прав адміністратора.</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>Перезапустити нормально</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>Продовжити</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>Біографії для цього виконавця немає.</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>Не вдалося завантажити деталі виконавця.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Помилка завантаження папки</value>
@@ -604,12 +578,6 @@
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>Пісні</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0 елементів</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>Помилка завантаження елементів</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} елемент</value>
   </data>
@@ -663,42 +631,6 @@
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Наступний</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>Доступне оновлення</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>Доступна нова версія ({0}). Бажаєте завантажити та встановити її зараз?</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>Встановити зараз</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>Пізніше</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>Пропустити цю версію</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>Актуально</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>Ви використовуєте останню версію Nagi.</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>Помилка оновлення</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>Виникла помилка під час перевірки оновлень: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>Виникла помилка під час встановлення оновлення: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>Завантаження оновлення</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>Версія {0} завантажується. Програма автоматично перезапуститься, коли буде готова.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLC зіткнувся з невизначеною помилкою.</value>
@@ -769,17 +701,8 @@
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>Тільки високоякісні зображення виконавців (потрібно MusicBrainz)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>Тільки зображення виконавців</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Біографії та зображення виконавців (резервний варіант)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>Н/Д</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>Закрити пошук</value>
@@ -962,11 +885,6 @@
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Помилка під час сканування: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Не вдалося отримати журнали з пам'яті. Резервна спроба прочитати файл журналу не вдалася.
-Очікуваний шлях: '{0}'
-Помилка: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Немає списків відтворення для експорту.</value>
   </data>
@@ -1090,21 +1008,6 @@
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>Відкрийте заново свою локальну музичну колекцію з Nagi — музичним програвачем, створеним з акцентом на швидкість, простоту та приватність.</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Nagi Музичний Програвач</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>Відкрити за допомогою Nagi Музичного Програвача</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Запуск Nagi</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Попередня</value>
   </data>
@@ -1119,9 +1022,6 @@
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Перейти до альбому</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Перетягніть файли або папки у програвач, щоб додати їх до черги.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Далі грає</value>
@@ -1639,9 +1539,6 @@
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Показати у Провіднику</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>Списки відтворення відсутні</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Відтворити</value>
   </data>
@@ -2050,9 +1947,6 @@
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>Редагувати правила</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>Редагувати правила</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>Про</value>
   </data>
@@ -2071,17 +1965,8 @@
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>Вихідний код</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>Перевірити оновлення</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>Надіслати відгук</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Перевіряти наявність оновлень під час запуску</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>Автоматично перевіряти наявність нових версій при запуску програми.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>Мова програми</value>
@@ -2289,9 +2174,6 @@
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Наступна сторінка</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Копіювати вміст журналу</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>напр. ;/\\</value>

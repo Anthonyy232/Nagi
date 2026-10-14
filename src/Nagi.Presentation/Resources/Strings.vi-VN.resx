@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Tạm dừng</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>Phát ngẫu nhiên bật</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>Phát ngẫu nhiên tắt</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>Bài hát phù hợp: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Nhập tên danh sách phát để xem các bài hát phù hợp</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>Không thể đếm số bài hát phù hợp</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>Nagi đã gặp sự cố và cần phải đóng.</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>Đang chạy với quyền Quản trị viên</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi hiện đang chạy với quyền Quản trị viên. Điều này có thể ngăn một số tính năng (như thêm thư mục nhạc) hoạt động chính xác.
-
-Để có trải nghiệm tốt nhất, vui lòng khởi động lại Nagi mà không có quyền quản trị viên.</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>Khởi động lại bình thường</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>Tiếp tục dù sao</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>Không có tiểu sử nào cho nghệ sĩ này.</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>Không thể tải chi tiết nghệ sĩ.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Lỗi khi tải thư mục</value>
@@ -604,12 +578,6 @@ Các tệp không thể nhập: {0}.</value>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>Bài hát</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0 mục</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>Lỗi khi tải mục</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} mục</value>
   </data>
@@ -663,42 +631,6 @@ Các tệp không thể nhập: {0}.</value>
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Tiếp theo</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>Có bản cập nhật</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>Có phiên bản mới ({0}). Bạn có muốn tải xuống và cài đặt ngay không?</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>Cài đặt ngay</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>Sau</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>Bỏ qua phiên bản này</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>Đã cập nhật</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>Bạn đang chạy phiên bản mới nhất của Nagi.</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>Lỗi cập nhật</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>Đã xảy ra lỗi khi kiểm tra cập nhật: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>Đã xảy ra lỗi khi cài đặt bản cập nhật: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>Đang tải bản cập nhật</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>Phiên bản {0} đang được tải xuống. Ứng dụng sẽ tự động khởi động lại khi sẵn sàng.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLC đã gặp một lỗi không xác định.</value>
@@ -769,17 +701,8 @@ Các tệp không thể nhập: {0}.</value>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>Chỉ hình ảnh nghệ sĩ chất lượng cao (yêu cầu MusicBrainz)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>Chỉ hình ảnh nghệ sĩ</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Tiểu sử và hình ảnh nghệ sĩ (dự phòng)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>Không áp dụng</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>Đóng tìm kiếm</value>
@@ -962,11 +885,6 @@ Bạn có muốn tiếp tục không?</value>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Lỗi trong quá trình quét: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Không thể truy xuất nhật ký từ bộ nhớ. Nỗ lực dự phòng để đọc tệp nhật ký đã thất bại.
-Đường dẫn dự kiến: '{0}'
-Lỗi: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Không có danh sách phát nào để xuất.</value>
   </data>
@@ -1090,21 +1008,6 @@ Lỗi: {1}</value>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>Khám phá lại bộ sưu tập nhạc cục bộ của bạn với Nagi, trình phát nhạc chú trọng vào tốc độ, sự đơn giản và quyền riêng tư.</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Trình phát nhạc Nagi</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>Mở bằng Trình phát nhạc Nagi</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Khởi động Nagi</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Trước</value>
   </data>
@@ -1119,9 +1022,6 @@ Lỗi: {1}</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Đi tới album</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Thả tệp hoặc thư mục vào trình phát để thêm vào hàng đợi.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Tiếp theo</value>
@@ -1639,9 +1539,6 @@ Lỗi: {1}</value>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Hiển thị trong File Explorer</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>Không có danh sách phát nào</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Phát</value>
   </data>
@@ -2050,9 +1947,6 @@ Lỗi: {1}</value>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>Sửa quy tắc</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>Sửa quy tắc</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>Về ứng dụng</value>
   </data>
@@ -2071,17 +1965,8 @@ Lỗi: {1}</value>
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>Mã nguồn</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>Kiểm tra cập nhật</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>Gửi phản hồi</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Kiểm tra bản cập nhật khi khởi động</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>Tự động kiểm tra phiên bản mới khi ứng dụng khởi động.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>Ngôn ngữ ứng dụng</value>
@@ -2289,9 +2174,6 @@ Lỗi: {1}</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Trang tiếp theo</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Sao chép nội dung nhật ký</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>ví dụ: ;/\\</value>

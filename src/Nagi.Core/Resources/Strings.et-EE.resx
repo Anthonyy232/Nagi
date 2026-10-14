@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>Kaust</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Kaustad</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Käsitsi järjestus</value>
   </data>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Skaneerimine lõpetatud. Lisatud või uuendatud {0} {1}.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Paketi {0} salvestamine…</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Kausta skannimine…</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Skaneerimine lõpetatud. Teek on ajakohane.</value>
   </data>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Esitusloendi nimi ei tohi olla tühi.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Hinnang peab olema vahemikus 1 kuni 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">

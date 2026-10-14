@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>Ordner</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Ordner</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Manuelle Reihenfolge</value>
   </data>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Scan abgeschlossen. {0} {1} hinzugefügt oder aktualisiert.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Stapel {0} wird gespeichert…</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Ordner wird durchsucht…</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Scan abgeschlossen. Bibliothek ist aktuell.</value>
   </data>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Der Wiedergabelistenname darf nicht leer sein.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Bewertung muss zwischen 1 und 5 liegen.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">

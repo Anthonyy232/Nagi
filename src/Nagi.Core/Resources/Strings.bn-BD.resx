@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>ফোল্ডার</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>ফোল্ডার</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>ম্যানুয়াল ক্রম</value>
   </data>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>স্ক্যান সম্পূর্ণ। {0} {1} যোগ করা হয়েছে বা আপডেট করা হয়েছে।</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>ব্যাচ {0} সংরক্ষণ করা হচ্ছে…</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>ফোল্ডার স্ক্যান করা হচ্ছে…</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>স্ক্যান সম্পূর্ণ। লাইব্রেরি আপ টু ডেট আছে।</value>
   </data>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>প্লেলিস্টের নাম খালি থাকতে পারবে না।</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>রেটিং ১ থেকে ৫ এর মধ্যে হতে হবে।</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">

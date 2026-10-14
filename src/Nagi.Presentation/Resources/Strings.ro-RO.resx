@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Pauză</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>Amestecare activată</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>Amestecare dezactivată</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>Piese potrivite: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Introduceți un nume de listă de redare pentru a vedea piesele potrivite</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>Nu s-au putut număra piesele potrivite</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>Nagi a întâmpinat o eroare și trebuie să se închidă.</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>Se execută ca administrator</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi se execută în prezent ca Administrator. Acest lucru poate împiedica funcționarea corectă a unor caracteristici (cum ar fi adăugarea de foldere de muzică).
-
-Pentru cea mai bună experiență, vă rugăm să reporniți Nagi fără privilegii de administrator.</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>Reporniți normal</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>Continuați oricum</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@ Pentru cea mai bună experiență, vă rugăm să reporniți Nagi fără privile
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>Nicio biografie disponibilă pentru acest artist.</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>Nu s-au putut încărca detaliile artistului.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Eroare la încărcarea dosarului</value>
@@ -604,12 +578,6 @@ Fișiere care nu au putut fi importate: {0}.</value>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>Melodii</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0 elemente</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>Eroare la încărcarea elementelor</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} element</value>
   </data>
@@ -663,42 +631,6 @@ Fișiere care nu au putut fi importate: {0}.</value>
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Următor</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>Actualizare disponibilă</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>O nouă versiune ({0}) este disponibilă. Doriți să o descărcați și să o instalați acum?</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>Instalați acum</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>Mai târziu</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>Omiteți această versiune</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>La zi</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>Utilizați cea mai recentă versiune a Nagi.</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>Eroare de actualizare</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>A apărut o eroare la verificarea actualizărilor: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>A apărut o eroare la instalarea actualizării: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>Se descarcă actualizarea</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>Versiunea {0} se descarcă. Aplicația va reporni automat când este gata.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLC a întâmpinat o eroare nespecificată.</value>
@@ -769,17 +701,8 @@ Fișiere care nu au putut fi importate: {0}.</value>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>Doar imagini de înaltă calitate ale artiștilor (necesită MusicBrainz)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>Doar imagini ale artiștilor</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Biografii și imagini ale artiștilor (alternativă)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>N/A</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>Închide căutarea</value>
@@ -962,11 +885,6 @@ Doriți să continuați?</value>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Eroare în timpul scanării: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Nu s-au putut recupera jurnalele din memorie. Încercarea de rezervă de a citi fișierul jurnal a eșuat.
-Cale așteptată: „{0}”
-Eroare: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Nicio listă de redare de exportat.</value>
   </data>
@@ -1090,21 +1008,6 @@ Eroare: {1}</value>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>Redescoperiți colecția locală de muzică cu Nagi, un player muzical axat pe viteză, simplitate și confidențialitate.</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Nagi Player de Muzică</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>Deschide cu Nagi Player de Muzică</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Pornire Nagi</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Anterior</value>
   </data>
@@ -1119,9 +1022,6 @@ Eroare: {1}</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Merg la album</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Glisează fișiere sau foldere în player pentru a le adăuga în coadă.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Urmează</value>
@@ -1639,9 +1539,6 @@ Eroare: {1}</value>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Afișează în File Explorer</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>Nu sunt disponibile playlisturi</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Redă</value>
   </data>
@@ -2050,9 +1947,6 @@ Eroare: {1}</value>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>Editează Regulile</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>Editează regulile</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>Despre</value>
   </data>
@@ -2071,17 +1965,8 @@ Eroare: {1}</value>
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>Cod Sursă</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>Verifică Actualizări</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>Trimite feedback</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Verifică actualizările la pornire</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>Verifică automat noi versiuni la pornirea aplicației.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>Limba aplicației</value>
@@ -2289,9 +2174,6 @@ Eroare: {1}</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Pagina următoare</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Copiază conținutul jurnalului</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>ex. ;/\</value>

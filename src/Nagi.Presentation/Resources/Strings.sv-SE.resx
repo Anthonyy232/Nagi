@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Paus</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>Blanda på</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>Blanda av</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>Matchande låtar: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Ange ett namn på spellistan för att se matchande låtar</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>Kunde inte räkna matchande låtar</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>Nagi stötte på ett fel och måste stängas.</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>Kör som administratör</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi körs för närvarande som administratör. Detta kan förhindra att vissa funktioner (som att lägga till musikmappar) fungerar korrekt.
-
-För bästa upplevelse, vänligen starta om Nagi utan administratörsbehörighet.</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>Starta om normalt</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>Fortsätt ändå</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@ För bästa upplevelse, vänligen starta om Nagi utan administratörsbehörighet
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>Ingen biografi tillgänglig för denna artist.</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>Kunde inte ladda artistdetaljer.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Fel vid laddning av mapp</value>
@@ -604,12 +578,6 @@ Filer som inte kunde importeras: {0}.</value>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>Låtar</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0 objekt</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>Fel vid laddning av objekt</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} objekt</value>
   </data>
@@ -663,42 +631,6 @@ Filer som inte kunde importeras: {0}.</value>
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Nästa</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>Uppdatering tillgänglig</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>En ny version ({0}) är tillgänglig. Vill du ladda ner och installera den nu?</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>Installera nu</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>Senare</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>Hoppa över denna version</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>Uppdaterad</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>Du kör den senaste versionen av Nagi.</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>Uppdateringsfel</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>Ett fel uppstod vid sökning efter uppdateringar: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>Ett fel uppstod vid installation av uppdateringen: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>Laddar ner uppdatering</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>Version {0} laddas ner. Programmet kommer att starta om automatiskt när det är klart.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLC stötte på ett ospecificerat fel.</value>
@@ -769,17 +701,8 @@ Filer som inte kunde importeras: {0}.</value>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>Endast högkvalitativa artistbilder (kräver MusicBrainz)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>Endast artistbilder</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Artistbiografier och bilder (återgång)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>N/A</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>Stäng sökning</value>
@@ -962,11 +885,6 @@ Vill du fortsätta?</value>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Fel under skanning: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Kunde inte hämta loggar från minnet. Återställningsförsöket att läsa loggfilen misslyckades.
-Förväntad sökväg: '{0}'
-Fel: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Inga spellistor att exportera.</value>
   </data>
@@ -1090,21 +1008,6 @@ Fel: {1}</value>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>Återupptäck din lokala musiksamling med Nagi, en musikspelare med fokus på snabbhet, enkelhet och integritet.</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Nagi Musikspelare</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>Öppna med Nagi Musikspelare</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Nagi Start</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Föregående</value>
   </data>
@@ -1119,9 +1022,6 @@ Fel: {1}</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Gå till album</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Släpp filer eller mappar på spelaren för att lägga till dem i kön.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Nästa i kö</value>
@@ -1639,9 +1539,6 @@ Fel: {1}</value>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Visa i Utforskaren</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>Inga spellistor tillgängliga</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Spela</value>
   </data>
@@ -2050,9 +1947,6 @@ Fel: {1}</value>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>Redigera regler</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>Redigera regler</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>Om</value>
   </data>
@@ -2071,17 +1965,8 @@ Fel: {1}</value>
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>Källkod</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>Sök efter uppdateringar</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>Skicka feedback</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Sök efter uppdateringar vid start</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>Kontrollera automatiskt efter nya versioner när applikationen startar.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>Applikationsspråk</value>
@@ -2289,9 +2174,6 @@ Fel: {1}</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Nästa sida</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Kopiera logginnehåll</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>t.ex. ;/\</value>

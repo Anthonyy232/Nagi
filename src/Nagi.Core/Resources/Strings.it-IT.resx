@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>Cartella</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Cartelle</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Ordine manuale</value>
   </data>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Scansione completata. Aggiunti o aggiornati {0} {1}.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Salvataggio lotto {0}…</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Scansione cartella…</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Scansione completata. La libreria è aggiornata.</value>
   </data>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Il nome della playlist non può essere vuoto.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>La valutazione deve essere compresa tra 1 e 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">

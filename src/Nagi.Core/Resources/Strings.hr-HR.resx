@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>Mapa</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Mape</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Ručni redoslijed</value>
   </data>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Skeniranje završeno. Dodano ili ažurirano {0} {1}.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Spremanje grupe {0}…</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Skeniranje mape…</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Skeniranje završeno. Knjižnica je ažurna.</value>
   </data>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Naziv popisa pjesama ne može biti prazan.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Ocjena mora biti između 1 i 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">

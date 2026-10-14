@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>השהה</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>ערבוב מופעל</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>ערבוב כבוי</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>שירים תואמים: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>הזן שם רשימת השמעה כדי לראות שירים תואמים</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>לא ניתן היה לספור שירים תואמים</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>Nagi נתקל בשגיאה ועליו להיסגר.</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>פועל כמנהל מערכת</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi פועלת כעת כמנהל מערכת. הדבר עלול למנוע מתכונות מסוימות (כמו הוספת תיקיות מוזיקה) לפעול כראוי.
-
-לחוויה הטובה ביותר, אנא הפעל מחדש את Nagi ללא הרשאות מנהל מערכת.</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>הפעל מחדש כרגיל</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>המשך בכל מקרה</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>אין ביוגרפיה זמינה לאמן זה.</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>לא ניתן היה לטעון פרטי אמן.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>שגיאה בטעינת תיקיה</value>
@@ -604,12 +578,6 @@
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>שירים</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0 פריטים</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>שגיאה בטעינת פריטים</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} פריט</value>
   </data>
@@ -663,42 +631,6 @@
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>הבא</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>עדכון זמין</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>גרסה חדשה ({0}) זמינה. האם תרצה להוריד ולהתקין אותה כעת?</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>התקן כעת</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>מאוחר יותר</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>דלג על גרסה זו</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>מעודכן</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>אתה משתמש בגרסה האחרונה של Nagi.</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>שגיאת עדכון</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>אירעה שגיאה בעת בדיקת עדכונים: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>אירעה שגיאה בעת התקנת העדכון: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>מוריד עדכון</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>גרסה {0} יורדת. היישום יופעל מחדש אוטומטית כשהיא מוכנה.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLC נתקלה בשגיאה לא מוגדרת.</value>
@@ -769,17 +701,8 @@
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>תמונות אמנים באיכות גבוהה בלבד (דורש MusicBrainz)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>תמונות אמנים בלבד</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>ביוגרפיות ותמונות אמנים (חלופי)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>לא זמין</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>סגור חיפוש</value>
@@ -962,11 +885,6 @@
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>שגיאה במהלך הסריקה: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>לא ניתן לאחזר יומנים מהזיכרון. ניסיון הגיבוי לקריאת קובץ היומן נכשל.
-נתיב צפוי: '{0}'
-שגיאה: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>אין רשימות השמעה לייצוא.</value>
   </data>
@@ -1090,21 +1008,6 @@
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>גלה מחדש את אוסף המוזיקה המקומי שלך עם Nagi, נגן מוזיקה המתמקד במהירות, בפשטות ובפרטיות.</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>נגן המוזיקה Nagi</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>פתח באמצעות נגן המוזיקה Nagi</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>הפעלת Nagi</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>קודם</value>
   </data>
@@ -1119,9 +1022,6 @@
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>עבור לאלבום</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>גרור קבצים או תיקיות אל הנגן כדי להוסיף אותם לתור.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>הבא בתור</value>
@@ -1639,9 +1539,6 @@
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>הצג בסייר הקבצים</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>אין רשימות השמעה זמינות</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>נגן</value>
   </data>
@@ -2050,9 +1947,6 @@
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>ערוך כללים</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>ערוך כללים</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>אודות</value>
   </data>
@@ -2071,17 +1965,8 @@
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>קוד מקור</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>בדוק עדכונים</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>שלח משוב</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>בדוק אם קיימים עדכונים בעת ההפעלה</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>בדוק אוטומטית גרסאות חדשות כשהיישום מופעל.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>שפת יישום</value>
@@ -2289,9 +2174,6 @@
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>עמוד הבא</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>העתק תוכן יומן</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>לדוגמה ;/\</value>

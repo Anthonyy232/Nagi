@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Cung</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>Ruc Wer Tye On</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>Ruc Wer Tye Off</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>Wer ma rom: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Coy nying chen wer me neno wer ma rom</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>Pe otwero kwano wer ma rom</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>Nagi onwanggo bal ento opor me cengge.</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>Tiyo macalo Administrator</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi tye ka tic macalo Administrator. Man twero genggo gin mo (calocwalo meddo pukuluk me wer) me tic maber.
-
-Me nwanggo tic maber, cak Nagi odoco pe ki twor me administrator.</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>Cak Odoco Kakare</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>Mede Atyer</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@ Me nwanggo tic maber, cak Nagi odoco pe ki twor me administrator.</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>Pe tye lok me kwena me luwer man.</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>Pe otwero keto lok me iye me luwer.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Bal i keto puk</value>
@@ -604,12 +578,6 @@ Puk ma pe otwero tero i iye: {0, plural, one {#} other {#}}.</value>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>Wer-gi</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>Jami 0</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>Bal i keto jami</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0, plural, one {# gin} other {# gin}}</value>
   </data>
@@ -663,42 +631,6 @@ Puk ma pe otwero tero i iye: {0, plural, one {#} other {#}}.</value>
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Luwyo</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>Yub Nyen Tye</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>Yub nyen ({0}) tye. Imit me gamo ki keto kombeddi?</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>Ket Kombeddi</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>Lanyen</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>Kalo Yub Man</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>Tye me Kombeddi</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>Itye ka tiyo ki yub me agikki me Nagi.</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>Bal i Yubbo Nyen</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>Bal mo otimre i kare me ngiyo me yub nyen: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>Bal mo otimre i kare me keto yub nyen: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>Gamo Yub Nyen</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>Yub {0} tye ka gama. Purugiram bicakge kene i kare ma oyubbe.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLC onwanggo bal pe ongenne.</value>
@@ -769,17 +701,8 @@ Puk ma pe otwero tero i iye: {0, plural, one {#} other {#}}.</value>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>Cal me lugero ma kite ber keken (mito MusicBrainz)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>Cal me luwer keken</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Lok me kwo ki cal me luwer (lalub kor)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>N/A</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>Ceng yenyo</value>
@@ -962,11 +885,6 @@ Imide?</value>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Bal i kare me cano: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Pe otwero nwanggo lok me tic ki i wi-kompiuta.
-Yo ma ongenne: '{0}'
-Bal: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Pe tye chen wer mo me cwal.</value>
   </data>
@@ -1090,21 +1008,6 @@ Bal: {1}</value>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>Nwang odoco wer meryi ki Nagi, ma tye me dwir, yot ki gwok me mungu.</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Tuk Wer me Nagi</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>Yab ki Tuk Wer me Nagi</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Cako Nagi</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Mukato</value>
   </data>
@@ -1119,9 +1022,6 @@ Bal: {1}</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Cit i Album</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Bol poc ma giko onyo purupuru i kom gitug wer me medogi i ryek me wer.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Luwyo me Tuk</value>
@@ -1639,9 +1539,6 @@ Bal: {1}</value>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Nyutu i File Explorer</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>Pe tye chen wer mo</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Tuk</value>
   </data>
@@ -2050,9 +1947,6 @@ Bal: {1}</value>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>Yub Cik-i</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>Yub cik-i</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>Lok i Kom-e</value>
   </data>
@@ -2071,17 +1965,8 @@ Bal: {1}</value>
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>Coy me Acaki</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>Ngiy Yub Nyen</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>Cwal Lok me Cing</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Ngiy Yub Nyen i Cako Purugiram</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>Ngiy yub nyen kene i kare ma purugiram ocakke.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>Leb me Purugiram</value>
@@ -2289,9 +2174,6 @@ Bal: {1}</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Paji Luwyo</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Gwany lok me tic</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>e.g. ;/\</value>

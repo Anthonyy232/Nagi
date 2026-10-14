@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>Galbata</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Galbatitta</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Gaba-massakaxxa</value>
   </data>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Koris gabatti. Ossobbe hinnay cusubbose {0} {1}.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Fayya-massat {0} gaabisak…</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Galbata korissak…</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Koris gabatti. Kanta-lahya tagge-sissikuk taani.</value>
   </data>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Playlist migac koo-magililay.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Rating 1 kee 5 fanah yanay.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">

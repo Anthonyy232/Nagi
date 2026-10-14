@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Duraklat</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>Karıştırma Açık</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>Karıştırma Kapalı</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>Eşleşen şarkılar: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Eşleşen şarkıları görmek için bir çalma listesi adı girin</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>Eşleşen şarkılar sayılamadı</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>Nagi bir hatayla karşılaştı ve kapatılması gerekiyor.</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>Yönetici olarak çalışıyor</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi şu anda Yönetici olarak çalışıyor. Bu durum, bazı özelliklerin (müzik klasörleri ekleme gibi) doğru çalışmasını engelleyebilir.
-
-En iyi deneyim için lütfen Nagi'yi yönetici ayrıcalıkları olmadan yeniden başlatın.</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>Normal Başlat</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>Yine de Devam Et</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@ En iyi deneyim için lütfen Nagi'yi yönetici ayrıcalıkları olmadan yeniden 
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>Bu sanatçı için biyografi bulunmuyor.</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>Sanatçı ayrıntıları yüklenemedi.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Klasör yüklenirken hata oluştu</value>
@@ -604,12 +578,6 @@ Kitaplığınızda bulunamayan şarkılar: {0}.</value>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>Şarkılar</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0 öğe</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>Öğeler yüklenirken hata oluştu</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} öğe</value>
   </data>
@@ -663,42 +631,6 @@ Kitaplığınızda bulunamayan şarkılar: {0}.</value>
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Sonraki</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>Güncelleme Mevcut</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>Yeni bir sürüm ({0}) mevcut. Şimdi indirmek ve yüklemek ister misiniz?</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>Şimdi Yükle</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>Daha Sonra</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>Bu Sürümü Atla</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>Güncel</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>Nagi'nin en son sürümünü kullanıyorsunuz.</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>Güncelleme Hatası</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>Güncellemeler kontrol edilirken bir hata oluştu: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>Güncelleme yüklenirken bir hata oluştu: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>Güncelleme İndiriliyor</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>Sürüm {0} indiriliyor. Hazır olduğunda uygulama otomatik olarak yeniden başlayacaktır.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLC belirtilmemiş bir hatayla karşılaştı.</value>
@@ -769,17 +701,8 @@ Kitaplığınızda bulunamayan şarkılar: {0}.</value>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>Yalnızca yüksek kaliteli sanatçı görselleri (MusicBrainz gerektirir)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>Yalnızca sanatçı görselleri</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Sanatçı biyografileri ve görselleri (yedek)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>Yok</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>Aramayı kapat</value>
@@ -962,11 +885,6 @@ Devam etmek ister misiniz?</value>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Tarama sırasında hata: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Bellekten günlükler alınamadı. Günlük dosyasını okuma yedek girişimi başarısız oldu.
-Beklenen Yol: '{0}'
-Hata: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Dışa aktarılacak çalma listesi yok.</value>
   </data>
@@ -1090,21 +1008,6 @@ Hata: {1}</value>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>Hız, sadelik ve gizliliğe odaklanan müzik çalar Nagi ile yerel müzik koleksiyonunuzu yeniden keşfedin.</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Nagi Müzik Çalar</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>Nagi Müzik Çalar ile Aç</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Nagi Başlangıç</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Önceki</value>
   </data>
@@ -1119,9 +1022,6 @@ Hata: {1}</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Albümüne Git</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Kuyruğa eklemek için dosyaları veya klasörleri oynatıcıya bırakın.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Sıradaki</value>
@@ -1639,9 +1539,6 @@ Hata: {1}</value>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Dosya Gezgini'nde Göster</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>Çalma listesi mevcut değil</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Oynat</value>
   </data>
@@ -2050,9 +1947,6 @@ Hata: {1}</value>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>Kuralları Düzenle</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>Kuralları düzenle</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>Hakkında</value>
   </data>
@@ -2071,17 +1965,8 @@ Hata: {1}</value>
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>Kaynak Kodu</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>Güncellemeleri Kontrol Et</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>Geri Bildirim Gönder</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Başlangıçta Güncellemeleri Kontrol Et</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>Uygulama başladığında yeni sürümleri otomatik olarak kontrol edin.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>Uygulama Dili</value>
@@ -2289,9 +2174,6 @@ Hata: {1}</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Sonraki Sayfa</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Günlük içeriğini kopyala</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>örn. ;/\\</value>

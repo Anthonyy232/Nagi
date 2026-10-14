@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>Φάκελος</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Φάκελοι</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Χειροκίνητη σειρά</value>
   </data>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Ολοκληρώθηκε η σάρωση. Προστέθηκαν ή ενημερώθηκαν {0} {1}.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Αποθήκευση δέσμης {0}…</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Σάρωση φακέλου…</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Ολοκληρώθηκε η σάρωση. Η βιβλιοθήκη είναι ενημερωμένη.</value>
   </data>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Το όνομα της λίστας αναπαραγωγής δεν μπορεί να είναι κενό.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Η βαθμολογία πρέπει να είναι μεταξύ 1 και 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">

@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Паузирај</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>Насумична репродукција укључена</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>Насумична репродукција искључена</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>Песме које одговарају: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Унесите назив плејлисте да бисте видели одговарајуће песме</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>Бројање одговарајућих песама није успело</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>Апликација Nagi је наишла на грешку и мора да се затвори.</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>Покренут као администратор</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi тренутно ради као администратор. Ово може спречити правилно функционисање неких функција (попут додавања музичких фасцикли).
-
-За најбоље искуство, поново покрените Nagi без администраторских привилегија.</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>Поново покрени нормално</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>Настави ипак</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>Биографија за овог извођача није доступна.</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>Није могуће учитати детаље извођача.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Грешка при учитавању фасцикле</value>
@@ -604,12 +578,6 @@
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>Песме</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0 ставки</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>Грешка при учитавању ставки</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} ставка</value>
   </data>
@@ -663,42 +631,6 @@
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Следећа</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>Доступно ажурирање</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>Доступна је нова верзија ({0}). Желите ли да је преузмете и инсталирате сада?</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>Инсталирај сада</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>Касније</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>Прескочи ову верзију</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>Ажурно</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>Користите најновију верзију Nagiја.</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>Грешка ажурирања</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>Дошло је до грешке при провери ажурирања: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>Дошло је до грешке при инсталирању ажурирања: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>Преузимам ажурирање</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>Верзија {0} се преузима. Апликација ће се аутоматски поново покренути када буде спремна.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLC је наишао на неодређену грешку.</value>
@@ -769,17 +701,8 @@
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>Само квалитетне слике извођача (захтева MusicBrainz)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>Само слике извођача</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Биографије и слике извођача (алтернатива)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>Н/Д</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>Затвори претрагу</value>
@@ -962,11 +885,6 @@
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Грешка током скенирања: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Није могуће преузети дневнике из меморије. Резервни покушај читања датотеке дневника није успео.
-Очекивана путања: '{0}'
-Грешка: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Нема плејлиста за извоз.</value>
   </data>
@@ -1090,21 +1008,6 @@
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>Поново откријте своју локалну музичку колекцију уз Nagi, музички плејер фокусиран на брзину, једноставност и приватност.</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Nagi музички плејер</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>Отвори помоћу Nagi музичког плејера</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Покретање Nagiја</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Претходна</value>
   </data>
@@ -1119,9 +1022,6 @@
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Иди на албум</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Превуците датотеке или фасцикле на плејер да бисте их додали у ред чекања.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Следеће</value>
@@ -1639,9 +1539,6 @@
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Прикажи у Истраживачу датотека</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>Нема доступних плејлиста</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Пусти</value>
   </data>
@@ -2050,9 +1947,6 @@
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>Измени правила</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>Измени правила</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>О програму</value>
   </data>
@@ -2071,17 +1965,8 @@
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>Изворни код</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>Провери ажурирања</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>Пошаљи повратне информације</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Провери ажурирања при покретању</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>Аутоматски проверава нове верзије када се апликација покрене.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>Језик апликације</value>
@@ -2289,9 +2174,6 @@
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Следећа страница</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Копирај садржај евиденције</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>нпр. ;/\</value>

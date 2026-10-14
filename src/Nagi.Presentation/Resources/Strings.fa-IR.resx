@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>مکث</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>پخش تصادفی روشن</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>پخش تصادفی خاموش</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>آهنگ‌های منطبق: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>برای مشاهده آهنگ‌های منطبق، نام فهرست پخش را وارد کنید</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>شمارش آهنگ‌های منطبق امکان‌پذیر نبود</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>برنامه Nagi با خطایی مواجه شد و باید بسته شود.</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>در حال اجرا به عنوان مدیر</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi در حال حاضر به عنوان مدیر در حال اجرا است. این ممکن است از کارکرد صحیح برخی ویژگی‌ها (مانند افزودن پوشه‌های موسیقی) جلوگیری کند.
-
-برای بهترین تجربه، لطفاً Nagi را بدون امتیازات مدیرانه مجدداً راه‌اندازی کنید.</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>راه‌اندازی مجدد عادی</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>به هر حال ادامه بده</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>بیوگرافی برای این هنرمند موجود نیست.</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>جزئیات هنرمند بارگذاری نشد.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>خطا در بارگذاری پوشه</value>
@@ -604,12 +578,6 @@
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>آهنگ‌ها</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>۰ مورد</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>خطا در بارگذاری موارد</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} مورد</value>
   </data>
@@ -663,42 +631,6 @@
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>بعدی</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>به‌روزرسانی موجود است</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>نسخه جدید ({0}) موجود است. آیا مایلید آن را هم‌اکنون دانلود و نصب کنید؟</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>اکنون نصب کن</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>بعداً</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>رد کردن این نسخه</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>به‌روز</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>شما از آخرین نسخه Nagi استفاده می‌کنید.</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>خطای به‌روزرسانی</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>هنگام بررسی به‌روزرسانی‌ها خطایی رخ داد: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>هنگام نصب به‌روزرسانی خطایی رخ داد: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>در حال دانلود به‌روزرسانی</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>نسخه {0} در حال دانلود است. برنامه پس از آماده شدن به صورت خودکار مجدداً راه‌اندازی خواهد شد.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLC با خطای نامشخصی مواجه شد.</value>
@@ -769,17 +701,8 @@
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>فقط تصاویر هنرمندان با کیفیت بالا (نیاز به MusicBrainz دارد)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>فقط تصاویر هنرمندان</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>بیوگرافی و تصاویر هنرمندان (جایگزین)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>غیرقابل دسترس</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>بستن جستجو</value>
@@ -962,11 +885,6 @@
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>خطا در حین اسکن: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>امکان بازیابی گزارش‌ها از حافظه وجود نداشت. تلاش جایگزین برای خواندن فایل گزارش ناموفق بود.
-مسیر مورد انتظار: '{0}'
-خطا: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>هیچ لیست پخشی برای برون‌بری وجود ندارد.</value>
   </data>
@@ -1090,21 +1008,6 @@
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>مجموعه موسیقی محلی خود را با Nagi دوباره کشف کنید؛ پخش‌کننده موسیقی با تمرکز بر سرعت، سادگی و حریم خصوصی.</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>پخش‌کننده موسیقی Nagi</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>باز کردن با پخش‌کننده موسیقی Nagi</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>راه‌اندازی Nagi</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>قبلی</value>
   </data>
@@ -1119,9 +1022,6 @@
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>رفتن به آلبوم</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>فایل‌ها یا پوشه‌ها را روی پخش‌کننده رها کنید تا به صف اضافه شوند.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>بعدی</value>
@@ -1639,9 +1539,6 @@
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>نمایش در فایل اکسپلورر</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>هیچ لیست پخشی موجود نیست</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>پخش</value>
   </data>
@@ -2050,9 +1947,6 @@
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>ویرایش قوانین</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>ویرایش قوانین</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>درباره</value>
   </data>
@@ -2071,17 +1965,8 @@
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>کد منبع</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>بررسی به‌روزرسانی‌ها</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>ارسال بازخورد</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>بررسی به‌روزرسانی‌ها هنگام استارت‌آپ</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>به طور خودکار هنگام شروع برنامه، نسخه‌های جدید را بررسی کنید.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>زبان برنامه</value>
@@ -2289,9 +2174,6 @@
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>صفحه بعدی</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>کپی محتوای گزارش</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>e.g. ;/\\</value>

@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>フォルダー</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>フォルダー</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>手動順</value>
   </data>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>スキャンが完了しました。{0} {1}を追加または更新しました。</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>バッチ {0} を保存中…</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>フォルダーをスキャン中…</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>スキャンが完了しました。ライブラリは最新です。</value>
   </data>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>プレイリスト名を空にすることはできません。</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>評価は1から5の間でなければなりません。</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">

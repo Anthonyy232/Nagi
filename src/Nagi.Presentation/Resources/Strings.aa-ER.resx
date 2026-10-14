@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Pause</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>Shuffle On</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>Shuffle Off</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>Inki-Middat heelol: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Inki-Middat heelol abbalat playlist migaq culees</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>Inki-Middat heelol yaaqune waam</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>Nagi agali geytek algimak kipi.</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>Administratoriyat gitaa yaabak yan</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi taagah Administratoriyat yaabak yan. Ah goli maxbax buko esseres xaanol yaabaguk kani (music folders ossoyna-leek).
-
-Meqem geyat, Nagi Administratoriyat hinnaamuk uqyun.</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>Sida-Kinaayut Uqyun</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>Gita-Caglah Siges</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@ Meqem geyat, Nagi Administratoriyat hinnaamuk uqyun.</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>Ta artistih haytoo kee biography aneewa.</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>Artist addat yan baaxo yaagureen waam.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Folder cuuro agali</value>
@@ -604,12 +578,6 @@ Import abaguk mawagginna files: {0}.</value>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>Heelol</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0 aynat</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>Aynat cuuril agali</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} aynat</value>
   </data>
@@ -663,42 +631,6 @@ Import abaguk mawagginna files: {0}.</value>
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Lakalay</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>Qusba Version Yan</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>Qusba version ({0}) yan. Kaa cugubteiy xisaaguk kok maay le?</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>Xis Qunxixiyil</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>Wadiru</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>Ah Version Kal</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>Gaba-Kalte Qusba</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>Nagi-h gaba-kalte qusba version yaabak ito.</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>Update Agali</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>Updates geral agaliiyil raden: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>Update xisal agaliiyil raden: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>Update Cugubaak</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>Version {0} cugubaak yan. App tayyar ikkal isi-gitan uqyulat le.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLC baxsat aneewa agaliiyil raden.</value>
@@ -769,17 +701,8 @@ Import abaguk mawagginna files: {0}.</value>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>Meqe artist suura caglah (MusicBrainz essera)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>Artist suura caglah</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Artist biography kee suura (fallback)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>N/A</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>Gurrus alga</value>
@@ -962,11 +885,6 @@ Sigaaguk kok maay le?</value>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Scan addat agali: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Memory-k logs geyaaguk mawagginna. Log file yakriyeenoteyil raden.
-Expected Path: '{0}'
-Error: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Export aban playlists aneewa.</value>
   </data>
@@ -1090,21 +1008,6 @@ Error: {1}</value>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>Isih le local music library Nagi-fana qusba-gital gey, speed kee privacy addat xisiya-hayte music player.</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Nagi Music Player</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>Nagi Music Player-fana Fak</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Nagi Startup</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Tagalay</value>
   </data>
@@ -1119,9 +1022,6 @@ Error: {1}</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Album-fanah Gac</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Queue-laddal teyna haytamah fayyllitte hinnay foldaritte player-laddal feyyaama.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Up Next</value>
@@ -1639,9 +1539,6 @@ Error: {1}</value>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>File Explorer-l Yasay</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>Playlists aneewa</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Play</value>
   </data>
@@ -2050,9 +1947,6 @@ Error: {1}</value>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>Qadaatit Koris</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>Qadaatit koris</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>About</value>
   </data>
@@ -2071,17 +1965,8 @@ Error: {1}</value>
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>Source Code</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>Updates Gera</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>Feedback Ruuba</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Startup-l Updates Gera</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>App qimbiytal qusba version auto-gital gera.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>Application Language</value>
@@ -2289,9 +2174,6 @@ Error: {1}</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Lakalay Page</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Log content kopis aba</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>e.g. ;/\\</value>

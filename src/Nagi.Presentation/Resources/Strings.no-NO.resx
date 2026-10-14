@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Pause</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>Tilfeldig avspilling på</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>Tilfeldig avspilling av</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>Matchende sanger: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Skriv inn et spillelistenavn for å se matchende sanger</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>Kunne ikke telle matchende sanger</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>Nagi støtte på en feil og må lukkes.</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>Kjører som administrator</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi kjører for øyeblikket som administrator. Dette kan forhindre at enkelte funksjoner (som å legge til musikkmapper) fungerer korrekt.
-
-For den beste opplevelsen, vennligst start Nagi på nytt uten administratorrettigheter.</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>Start på nytt normalt</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>Fortsett likevel</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@ For den beste opplevelsen, vennligst start Nagi på nytt uten administratorretti
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>Ingen biografi tilgjengelig for denne artisten.</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>Kunne ikke laste inn artistdetaljer.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Feil ved lasting av mappe</value>
@@ -604,12 +578,6 @@ Filer som ikke kunne importeres: {0}.</value>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>Sanger</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0 elementer</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>Feil ved lasting av elementer</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} element</value>
   </data>
@@ -663,42 +631,6 @@ Filer som ikke kunne importeres: {0}.</value>
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Neste</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>Oppdatering tilgjengelig</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>En ny versjon ({0}) er tilgjengelig. Vil du laste ned og installere den nå?</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>Installer nå</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>Senere</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>Hopp over denne versjonen</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>Oppdatert</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>Du kjører den nyeste versjonen av Nagi.</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>Oppdateringsfeil</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>Det oppsto en feil under søk etter oppdateringer: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>Det oppsto en feil under installasjon av oppdateringen: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>Laster ned oppdatering</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>Versjon {0} lastes ned. Applikasjonen vil starte på nytt automatisk når den er klar.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLC støtte på en uspesifisert feil.</value>
@@ -769,17 +701,8 @@ Filer som ikke kunne importeres: {0}.</value>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>Kun høykvalitets artistbilder (krever MusicBrainz)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>Kun artistbilder</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Artistbiografier og bilder (reserve)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>Ikke tilgjengelig</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>Lukk søk</value>
@@ -962,11 +885,6 @@ Vil du fortsette?</value>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Feil under skanning: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Kunne ikke hente logger fra minnet. Forsøket på å lese loggfilen mislyktes.
-Forventet bane: '{0}'
-Feil: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Ingen spillelister å eksportere.</value>
   </data>
@@ -1090,21 +1008,6 @@ Feil: {1}</value>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>Gjenoppdag din lokale musikksamling med Nagi, en musikkspiller med fokus på hastighet, enkelhet og personvern.</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Nagi Musikkspiller</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>Åpne med Nagi Musikkspiller</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Nagi Oppstart</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Forrige</value>
   </data>
@@ -1119,9 +1022,6 @@ Feil: {1}</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Gå til album</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Slipp filer eller mapper på spilleren for å legge dem til i køen.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Neste i kø</value>
@@ -1639,9 +1539,6 @@ Feil: {1}</value>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Vis i Filutforsker</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>Ingen spillelister tilgjengelige</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Spill av</value>
   </data>
@@ -2050,9 +1947,6 @@ Feil: {1}</value>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>Rediger regler</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>Rediger regler</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>Om</value>
   </data>
@@ -2071,17 +1965,8 @@ Feil: {1}</value>
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>Kildekode</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>Se etter oppdateringer</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>Send tilbakemelding</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Sjekk etter oppdateringer ved oppstart</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>Se automatisk etter nye versjoner når applikasjonen starter.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>Applikasjonsspråk</value>
@@ -2289,9 +2174,6 @@ Feil: {1}</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Neste side</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Kopier logginnhold</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>f.eks. ;/\\</value>

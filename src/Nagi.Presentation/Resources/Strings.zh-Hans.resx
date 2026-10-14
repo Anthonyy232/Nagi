@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>暂停</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>随机播放开启</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>随机播放关闭</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>匹配的歌曲：{0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>输入播放列表名称以查看匹配的歌曲</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>无法计算匹配的歌曲数量</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>Nagi 遇到错误，需要关闭。</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>以管理员身份运行</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi 当前以管理员身份运行。这可能会导致某些功能（如添加音乐文件夹）无法正常工作。
-
-为获得最佳体验，请以非管理员权限重新启动 Nagi。</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>正常重启</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>仍然继续</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>此艺术家没有可用传记。</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>无法加载艺术家详情。</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>加载文件夹出错</value>
@@ -604,12 +578,6 @@
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>歌曲</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0 个项目</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>加载项目出错</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} 个项目</value>
   </data>
@@ -663,42 +631,6 @@
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>下一首</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>有可用更新</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>新版本（{0}）可用。您想现在下载并安装吗？</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>立即安装</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>稍后</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>跳过此版本</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>已是最新版本</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>您正在运行最新版本的 Nagi。</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>更新错误</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>检查更新时发生错误：{0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>安装更新时发生错误：{0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>正在下载更新</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>正在下载版本 {0}。准备就绪后，应用程序将自动重启。</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLC 遇到未指定错误。</value>
@@ -769,17 +701,8 @@
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>仅高质量艺术家图片（需要 MusicBrainz）</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>仅艺术家图片</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>艺术家传记和图片（备用）</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>不适用</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>关闭搜索</value>
@@ -962,11 +885,6 @@
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>扫描期间出错：{0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>无法从内存中检索日志。读取日志文件的备用尝试失败。
-预期路径：'{0}'
-错误：{1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>没有可导出的播放列表。</value>
   </data>
@@ -1090,21 +1008,6 @@
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>通过专为速度、简洁与隐私打造的音乐播放器 Nagi，重新探索你的本地音乐收藏。</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Nagi 音乐播放器</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>使用 Nagi 音乐播放器打开</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Nagi 启动</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>上一首</value>
   </data>
@@ -1119,9 +1022,6 @@
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>转到专辑</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>将文件或文件夹拖放到播放器中即可将其添加到队列。</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>下一首</value>
@@ -1639,9 +1539,6 @@
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>在文件资源管理器中显示</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>无可用播放列表</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>播放</value>
   </data>
@@ -2050,9 +1947,6 @@
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>编辑规则</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>编辑规则</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>关于</value>
   </data>
@@ -2071,17 +1965,8 @@
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>源代码</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>检查更新</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>发送反馈</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>启动时检查更新</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>应用程序启动时自动检查新版本。</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>应用程序语言</value>
@@ -2289,9 +2174,6 @@
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>下一页</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>复制日志内容</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>例如：;/\\</value>

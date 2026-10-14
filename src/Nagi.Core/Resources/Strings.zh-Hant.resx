@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>資料夾</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>資料夾</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>手動排序</value>
   </data>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>掃描完成。已新增或更新 {0} {1}。</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>正在儲存批次 {0}……</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>正在掃描資料夾……</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>掃描完成。媒體庫已是最新狀態。</value>
   </data>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>播放列表名稱不能為空。</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>評級必須介於 1 到 5 之間。</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">

@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Pauza</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>Losowe Odtwarzanie Włączone</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>Losowe Odtwarzanie Wyłączone</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>Pasujące utwory: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Wprowadź nazwę listy odtwarzania, aby zobaczyć pasujące utwory</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>Nie można obliczyć liczby pasujących utworów</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>Aplikacja Nagi napotkała błąd i musi zostać zamknięta.</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>Uruchomiono jako Administrator</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi jest obecnie uruchomiony jako Administrator. Może to uniemożliwić poprawne działanie niektórych funkcji (takich jak dodawanie folderów z muzyką).
-
-Aby uzyskać najlepsze doświadczenie, uruchom ponownie Nagi bez uprawnień administratora.</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>Uruchom Ponownie Normalnie</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>Kontynuuj Mimo Wszystko</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@ Aby uzyskać najlepsze doświadczenie, uruchom ponownie Nagi bez uprawnień admi
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>Brak dostępnej biografii dla tego wykonawcy.</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>Nie można załadować szczegółów wykonawcy.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Błąd ładowania folderu</value>
@@ -604,12 +578,6 @@ Pliki, których nie udało się zaimportować: {0}.</value>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>Utwory</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0 elementów</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>Błąd ładowania elementów</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0, plural, one {1 element} few {{0} elementy} many {{0} elementów} other {{0} elementów}}</value>
   </data>
@@ -663,42 +631,6 @@ Pliki, których nie udało się zaimportować: {0}.</value>
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Następny</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>Dostępna Aktualizacja</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>Dostępna jest nowa wersja ({0}). Czy chcesz ją teraz pobrać i zainstalować?</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>Zainstaluj Teraz</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>Później</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>Pomiń Tę Wersję</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>Aktualne</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>Używasz najnowszej wersji Nagi.</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>Błąd Aktualizacji</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>Wystąpił błąd podczas sprawdzania aktualizacji: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>Wystąpił błąd podczas instalowania aktualizacji: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>Pobieranie Aktualizacji</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>Wersja {0} jest pobierana. Aplikacja zostanie automatycznie ponownie uruchomiona, gdy będzie gotowa.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLC napotkało nieokreślony błąd.</value>
@@ -769,17 +701,8 @@ Pliki, których nie udało się zaimportować: {0}.</value>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>Tylko wysokiej jakości obrazy wykonawców (wymaga MusicBrainz)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>Tylko obrazy wykonawców</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Biografie i obrazy wykonawców (awaryjne)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>N/D</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>Zamknij wyszukiwanie</value>
@@ -962,11 +885,6 @@ Czy chcesz kontynuować?</value>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Błąd podczas skanowania: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Nie można pobrać logów z pamięci. Próba awaryjnego odczytu pliku logu nie powiodła się.
-Oczekiwana ścieżka: '{0}'
-Błąd: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Brak playlist do wyeksportowania.</value>
   </data>
@@ -1090,21 +1008,6 @@ Błąd: {1}</value>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>Odkryj na nowo swoją lokalną kolekcję muzyki z Nagi — odtwarzaczem muzycznym stworzonym z myślą o szybkości, prostocie i prywatności.</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Odtwarzacz muzyki Nagi</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>Otwórz za pomocą odtwarzacza muzyki Nagi</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Uruchamianie Nagi</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Poprzedni</value>
   </data>
@@ -1119,9 +1022,6 @@ Błąd: {1}</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Przejdź do albumu</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Upuść pliki lub foldery na odtwarzacz, aby dodać je do kolejki.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Następne w kolejce</value>
@@ -1639,9 +1539,6 @@ Błąd: {1}</value>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Pokaż w Eksploratorze plików</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>Brak dostępnych playlist</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Odtwórz</value>
   </data>
@@ -2050,9 +1947,6 @@ Błąd: {1}</value>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>Edytuj reguły</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>Edytuj reguły</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>O programie</value>
   </data>
@@ -2071,17 +1965,8 @@ Błąd: {1}</value>
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>Kod źródłowy</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>Sprawdź aktualizacje</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>Wyślij opinię</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Sprawdzaj aktualizacje przy uruchomieniu</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>Automatycznie sprawdzaj nowe wersje po uruchomieniu aplikacji.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>Język aplikacji</value>
@@ -2289,9 +2174,6 @@ Błąd: {1}</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Następna strona</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Kopiuj zawartość dziennika</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>np. ;/\</value>

@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>கோப்புறை</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>கோப்புறைகள்</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>கைமுறை வரிசை</value>
   </data>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>ஸ்கேன் முடிந்தது. {0} {1} சேர்க்கப்பட்டது அல்லது புதுப்பிக்கப்பட்டது.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>தொகுதி {0} சேமிக்கப்படுகிறது…</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>கோப்புறையைச் ஸ்கேன் செய்கிறது…</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>ஸ்கேன் முடிந்தது. நூலகம் புதுப்பித்த நிலையில் உள்ளது.</value>
   </data>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>பிளேலிஸ்ட் பெயர் காலியாக இருக்க முடியாது.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>மதிப்பீடு 1 முதல் 5 வரை இருக்க வேண்டும்.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">

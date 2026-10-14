@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Pauziraj</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>Nasumična reprodukcija uključena</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>Nasumična reprodukcija isključena</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>Odgovarajuće pjesme: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Unesite naziv popisa pjesama za prikaz odgovarajućih pjesama</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>Prebrojavanje odgovarajućih pjesama nije uspjelo</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>Nagi je naišao na pogrešku i mora se zatvoriti.</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>Pokrenuto kao administrator</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi se trenutno izvodi kao administrator. To može spriječiti ispravno funkcioniranje nekih značajki (poput dodavanja glazbenih mapa).
-
-Za najbolje iskustvo, molimo ponovno pokrenite Nagi bez administratorskih ovlasti.</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>Ponovno pokreni normalno</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>Nastavi svejedno</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@ Za najbolje iskustvo, molimo ponovno pokrenite Nagi bez administratorskih ovlast
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>Biografija nije dostupna za ovog izvođača.</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>Nije moguće učitati detalje izvođača.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Pogreška pri učitavanju mape</value>
@@ -604,12 +578,6 @@ Datoteke koje nije bilo moguće uvesti: {0}.</value>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>Pjesme</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0 stavki</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>Pogreška pri učitavanju stavki</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} stavka</value>
   </data>
@@ -663,42 +631,6 @@ Datoteke koje nije bilo moguće uvesti: {0}.</value>
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Sljedeća</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>Dostupno ažuriranje</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>Dostupna je nova verzija ({0}). Želite li je preuzeti i instalirati sada?</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>Instaliraj sada</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>Kasnije</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>Preskoči ovu verziju</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>Ažurno</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>Koristite najnoviju verziju Nagija.</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>Pogreška pri ažuriranju</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>Došlo je do pogreške prilikom provjere ažuriranja: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>Došlo je do pogreške prilikom instalacije ažuriranja: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>Preuzimam ažuriranje</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>Preuzima se verzija {0}. Aplikacija će se automatski ponovo pokrenuti kada bude spremna.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLC je naišao na nespecificiranu pogrešku.</value>
@@ -769,17 +701,8 @@ Datoteke koje nije bilo moguće uvesti: {0}.</value>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>Samo visokokvalitetne slike izvođača (zahtijeva MusicBrainz)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>Samo slike izvođača</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Biografije i slike izvođača (rezervno)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>N/A</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>Zatvori pretraživanje</value>
@@ -962,11 +885,6 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Pogreška tijekom skeniranja: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Nije moguće dohvatiti zapisnike iz memorije. Pokušaj čitanja datoteke zapisnika nije uspio.
-Očekivana putanja: '{0}'
-Pogreška: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Nema popisa pjesama za izvoz.</value>
   </data>
@@ -1090,21 +1008,6 @@ Pogreška: {1}</value>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>Ponovno otkrijte svoju lokalnu glazbenu zbirku uz Nagi, glazbeni reproduktor usmjeren na brzinu, jednostavnost i privatnost.</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Nagi glazbeni reproduktor</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>Otvori s Nagi glazbenim reproduktorom</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Pokretanje Nagija</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Prethodno</value>
   </data>
@@ -1119,9 +1022,6 @@ Pogreška: {1}</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Idi na album</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Povucite datoteke ili mape na svirač kako biste ih dodali u red čekanja.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Sljedeće na redu</value>
@@ -1639,9 +1539,6 @@ Pogreška: {1}</value>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Prikaži u File Exploreru</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>Nema dostupnih popisa za reprodukciju</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Reproduciraj</value>
   </data>
@@ -2050,9 +1947,6 @@ Pogreška: {1}</value>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>Uredi pravila</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>Uredi pravila</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>O programu</value>
   </data>
@@ -2071,17 +1965,8 @@ Pogreška: {1}</value>
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>Izvorni kod</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>Provjeri ažuriranja</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>Pošalji povratne informacije</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Provjeri ažuriranja pri pokretanju</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>Automatski provjeri nove verzije kada se aplikacija pokrene.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>Jezik aplikacije</value>
@@ -2289,9 +2174,6 @@ Pogreška: {1}</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Sljedeća stranica</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Kopiraj sadržaj dnevnika</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>npr. ;/\</value>

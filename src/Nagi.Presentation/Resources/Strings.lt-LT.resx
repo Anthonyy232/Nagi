@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>Pristabdyti</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>Maišymas įjungtas</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>Maišymas išjungtas</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>Atitinkantys kūriniai: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>Įveskite grojaraščio pavadinimą, kad pamatytumėte atitinkančius kūrinius</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>Nepavyko suskaičiuoti atitinkančių kūrinių</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>Nagi susidūrė su klaida ir turi užsidaryti.</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>Vykdoma kaip administratorius</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>"Nagi" šiuo metu veikia kaip administratorius. Tai gali trukdyti kai kurioms funkcijoms (pvz., muzikos aplankų pridėjimui) veikti tinkamai.
-
-Norėdami geriausios patirties, paleiskite "Nagi" iš naujo be administratoriaus privilegijų.</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>Paleisti iš naujo įprastai</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>Vis tiek tęsti</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@ Norėdami geriausios patirties, paleiskite "Nagi" iš naujo be administratoriaus
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>Šiam atlikėjui biografijos nėra.</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>Nepavyko įkelti atlikėjo detalių.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Klaida įkeliant aplanką</value>
@@ -604,12 +578,6 @@ Failai, kurių nepavyko importuoti: {0}.</value>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>Dainos</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0 elementų</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>Klaida įkeliant elementus</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} elementas</value>
   </data>
@@ -663,42 +631,6 @@ Failai, kurių nepavyko importuoti: {0}.</value>
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Kitas</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>Galimas naujinys</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>Galima nauja versija ({0}). Ar norėtumėte atsisiųsti ir įdiegti ją dabar?</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>Įdiegti dabar</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>Vėliau</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>Praleisti šią versiją</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>Atnaujinta</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>Naudojate naujausią "Nagi" versiją.</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>Naujinimo klaida</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>Įvyko klaida tikrinant naujinius: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>Įvyko klaida diegiant naujinimą: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>Atsisiunčiamas naujinimas</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>Atsisiunčiama versija {0}. Programa automatiškai pasileis iš naujo, kai ji bus paruošta.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLC susidūrė su nepatikslinta klaida.</value>
@@ -769,17 +701,8 @@ Failai, kurių nepavyko importuoti: {0}.</value>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>Tik aukštos kokybės atlikėjų nuotraukos (reikalingas MusicBrainz)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>Tik atlikėjų nuotraukos</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Atlikėjų biografijos ir nuotraukos (atsarginis variantas)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>N/D</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>Uždaryti paiešką</value>
@@ -962,11 +885,6 @@ Ar norite tęsti?</value>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Klaida skenavimo metu: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>Nepavyko gauti žurnalų iš atminties. Atsarginis bandymas perskaityti žurnalo failą nepavyko.
-Numatomas kelias: "{0}"
-Klaida: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Nėra grojaraščių eksportuoti.</value>
   </data>
@@ -1090,21 +1008,6 @@ Klaida: {1}</value>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>Atraskite savo vietinę muzikos kolekciją iš naujo su Nagi – muzikos grotuvu, kuriam svarbiausia greitis, paprastumas ir privatumas.</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Nagi muzikos grotuvas</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>Atidaryti su Nagi muzikos grotuvu</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Nagi paleistis</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Ankstesnis</value>
   </data>
@@ -1119,9 +1022,6 @@ Klaida: {1}</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Eiti į albumą</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>Nuvilkite failus arba aplankus į grotuvą, kad įtrauktumėte juos į eilę.</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Kitas eilėje</value>
@@ -1639,9 +1539,6 @@ Klaida: {1}</value>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Rodyti failų naršyklėje</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>Nėra grojaraščių</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Groti</value>
   </data>
@@ -2050,9 +1947,6 @@ Klaida: {1}</value>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>Redaguoti taisykles</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>Redaguoti taisykles</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>Apie</value>
   </data>
@@ -2071,17 +1965,8 @@ Klaida: {1}</value>
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>Šaltinio kodas</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>Patikrinti atnaujinimus</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>Siųsti atsiliepimą</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Tikrinti atnaujinimus paleidžiant</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>Automatiškai tikrinti, ar yra naujų versijų, kai programa paleidžiama.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>Programos kalba</value>
@@ -2289,9 +2174,6 @@ Klaida: {1}</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Kitas puslapis</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Kopijuoti žurnalo turinį</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>pvz., ;/\\</value>

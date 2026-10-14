@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>Klasör</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Klasörler</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Manuel Sıra</value>
   </data>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Tarama tamamlandı. {0} {1} eklendi veya güncellendi.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>{0}. grup kaydediliyor…</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Klasör taranıyor…</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Tarama tamamlandı. Kütüphane güncel.</value>
   </data>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Çalma listesi adı boş olamaz.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Derecelendirme 1 ile 5 arasında olmalıdır.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">

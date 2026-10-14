@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>Dossier</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Dossiers</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Ordre manuel</value>
   </data>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Analyse terminée. {0} {1} ajouté(e)s ou mis(es) à jour.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Enregistrement du lot {0}…</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Analyse du dossier…</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Analyse terminée. La bibliothèque est à jour.</value>
   </data>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Le nom de la liste de lecture ne peut pas être vide.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>La note doit être comprise entre 1 et 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">

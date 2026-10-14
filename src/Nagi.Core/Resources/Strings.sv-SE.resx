@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>Mapp</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>Mappar</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Manuell ordning</value>
   </data>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Skanning klar. Lade till eller uppdaterade {0} {1}.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>Sparar batch {0}…</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>Skannar mapp…</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Skanning klar. Biblioteket är uppdaterat.</value>
   </data>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Spellistans namn får inte vara tomt.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>Betyget måste vara mellan 1 och 5.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">

@@ -116,9 +116,6 @@
   <data name="Label_Folder" xml:space="preserve">
     <value>폴더</value>
   </data>
-  <data name="Label_Folders" xml:space="preserve">
-    <value>폴더</value>
-  </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>수동 정렬</value>
   </data>
@@ -177,13 +174,7 @@
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>스캔 완료. {0}개의 {1}을(를) 추가하거나 업데이트했습니다.</value>
   </data>
-  <data name="Format_SavingBatch" xml:space="preserve">
-    <value>배치 {0} 저장 중…</value>
-  </data>
   <!-- Status & Success Messages -->
-  <data name="Status_ScanningFolder" xml:space="preserve">
-    <value>폴더 스캔 중…</value>
-  </data>
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>스캔 완료. 라이브러리가 최신 상태입니다.</value>
   </data>
@@ -220,9 +211,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>재생 목록 이름은 비워둘 수 없습니다.</value>
-  </data>
-  <data name="Error_RatingRange" xml:space="preserve">
-    <value>평점은 1에서 5 사이여야 합니다.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">

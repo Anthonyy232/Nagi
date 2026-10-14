@@ -94,9 +94,6 @@
   <data name="Tooltip_Pause" xml:space="preserve">
     <value>रोकें</value>
   </data>
-  <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>शफ़ल चालू</value>
-  </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
     <value>शफ़ल बंद</value>
   </data>
@@ -238,9 +235,6 @@
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
     <value>मिलते-जुलते गाने: {0:N0}</value>
   </data>
-  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>मिलते-जुलते गाने देखने के लिए प्लेलिस्ट का नाम दर्ज करें</value>
-  </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
     <value>मिलते-जुलते गानों की गिनती नहीं की जा सकी</value>
   </data>
@@ -265,24 +259,7 @@
   <data name="CrashReport_Message" xml:space="preserve">
     <value>Nagi में कोई त्रुटि आई और इसे बंद करने की आवश्यकता है।</value>
   </data>
-  <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>एडमिनिस्ट्रेटर के रूप में चल रहा है</value>
-  </data>
-  <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi वर्तमान में एडमिनिस्ट्रेटर के रूप में चल रहा है। यह कुछ सुविधाओं (जैसे संगीत फ़ोल्डर जोड़ना) को सही ढंग से काम करने से रोक सकता है।
-
-सर्वोत्तम अनुभव के लिए, कृपया एडमिनिस्ट्रेटर विशेषाधिकारों के बिना Nagi को पुनरारंभ करें।</value>
-  </data>
-  <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>सामान्य रूप से पुनरारंभ करें</value>
-  </data>
-  <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>वैसे भी जारी रखें</value>
-  </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
@@ -314,9 +291,6 @@
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
     <value>इस कलाकार के लिए कोई जीवनी उपलब्ध नहीं है।</value>
-  </data>
-  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>कलाकार विवरण लोड नहीं कर सका।</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>फ़ोल्डर लोड करने में त्रुटि</value>
@@ -604,12 +578,6 @@
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>गाने</value>
   </data>
-  <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0 आइटम</value>
-  </data>
-  <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>आइटम लोड करने में त्रुटि</value>
-  </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} आइटम</value>
   </data>
@@ -663,42 +631,6 @@
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>अगला</value>
-  </data>
-  <data name="Update_Available_Title" xml:space="preserve">
-    <value>अपडेट उपलब्ध है</value>
-  </data>
-  <data name="Update_Available_Message" xml:space="preserve">
-    <value>एक नया संस्करण ({0}) उपलब्ध है। क्या आप इसे अभी डाउनलोड और इंस्टॉल करना चाहेंगे?</value>
-  </data>
-  <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>अभी इंस्टॉल करें</value>
-  </data>
-  <data name="Update_Button_Later" xml:space="preserve">
-    <value>बाद में</value>
-  </data>
-  <data name="Update_Button_Skip" xml:space="preserve">
-    <value>इस संस्करण को छोड़ें</value>
-  </data>
-  <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>अप-टू-डेट</value>
-  </data>
-  <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>आप Nagi का नवीनतम संस्करण चला रहे हैं।</value>
-  </data>
-  <data name="Update_Error_Title" xml:space="preserve">
-    <value>अपडेट त्रुटि</value>
-  </data>
-  <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>अपडेट की जाँच करते समय एक त्रुटि हुई: {0}</value>
-  </data>
-  <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>अपडेट इंस्टॉल करते समय एक त्रुटि हुई: {0}</value>
-  </data>
-  <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>अपडेट डाउनलोड हो रहा है</value>
-  </data>
-  <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>संस्करण {0} डाउनलोड किया जा रहा है। तैयार होने पर एप्लिकेशन अपने आप पुनरारंभ हो जाएगा।</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLC को एक अनिर्दिष्ट त्रुटि का सामना करना पड़ा।</value>
@@ -769,17 +701,8 @@
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
     <value>केवल उच्च-गुणवत्ता वाली कलाकार छवियाँ (MusicBrainz आवश्यक है)</value>
   </data>
-  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>केवल कलाकार छवियाँ</value>
-  </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>कलाकार की जीवनियाँ और छवियाँ (फ़ॉलबैक)</value>
-  </data>
-  <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="App_Version_Unknown" xml:space="preserve">
-    <value>उपलब्ध नहीं</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
     <value>खोज बंद करें</value>
@@ -962,11 +885,6 @@
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>स्कैन के दौरान त्रुटि: {0}</value>
   </data>
-  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>मेमोरी से लॉग पुनर्प्राप्त नहीं कर सका। लॉग फ़ाइल पढ़ने का फॉलबैक प्रयास विफल रहा।
-अपेक्षित पथ: '{0}'
-त्रुटि: {1}</value>
-  </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>निर्यात करने के लिए कोई प्लेलिस्ट नहीं।</value>
   </data>
@@ -1090,21 +1008,6 @@
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
-  <data name="AppDescription" xml:space="preserve">
-    <value>Nagi के साथ अपने स्थानीय संगीत संग्रह को फिर से खोजें, जो गति, सरलता और गोपनीयता पर केंद्रित एक संगीत प्लेयर है।</value>
-  </data>
-  <data name="AppShortName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Nagi म्यूज़िक प्लेयर</value>
-  </data>
-  <data name="AppInfoTip" xml:space="preserve">
-    <value>Nagi म्यूज़िक प्लेयर के साथ खोलें</value>
-  </data>
-  <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Nagi स्टार्टअप</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>पिछला</value>
   </data>
@@ -1119,9 +1022,6 @@
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>एल्बम पर जाएँ</value>
-  </data>
-  <data name="QueueFlyout_DropHint" xml:space="preserve">
-    <value>कतार में जोड़ने के लिए प्लेयर पर फ़ाइलें या फ़ोल्डर ड्रॉप करें।</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>आगे क्या</value>
@@ -1639,9 +1539,6 @@
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
     <value>फ़ाइल एक्सप्लोरर में दिखाएँ</value>
   </data>
-  <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>कोई प्लेलिस्ट उपलब्ध नहीं है</value>
-  </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>चलाएँ</value>
   </data>
@@ -2050,9 +1947,6 @@
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
     <value>नियम संपादित करें</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>नियम संपादित करें</value>
-  </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
     <value>के बारे में</value>
   </data>
@@ -2071,17 +1965,8 @@
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
     <value>स्रोत कोड</value>
   </data>
-  <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>अपडेट के लिए जाँच करें</value>
-  </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
     <value>प्रतिक्रिया भेजें</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>स्टार्टअप पर अपडेट की जाँच करें</value>
-  </data>
-  <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>एप्लिकेशन शुरू होने पर स्वचालित रूप से नए संस्करणों के लिए जाँच करें।</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
     <value>एप्लिकेशन भाषा</value>
@@ -2289,9 +2174,6 @@
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>अगला पृष्ठ</value>
-  </data>
-  <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>लॉग सामग्री कॉपी करें</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>उदा. ;/\\</value>
