@@ -59,70 +59,70 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NavItem_Library" xml:space="preserve">
-    <value>Bibliotheek</value>
+    <value>Library</value>
   </data>
   <data name="NavItem_Albums" xml:space="preserve">
     <value>Albums</value>
   </data>
   <data name="NavItem_Artists" xml:space="preserve">
-    <value>Artiesten</value>
+    <value>Artists</value>
   </data>
   <data name="NavItem_Genres" xml:space="preserve">
     <value>Genres</value>
   </data>
   <data name="NavItem_Playlists" xml:space="preserve">
-    <value>Afspeellijsten</value>
+    <value>Playlists</value>
   </data>
   <data name="NavItem_Folders" xml:space="preserve">
-    <value>Mappen</value>
+    <value>Folders</value>
   </data>
   <data name="NavItem_Favorites" xml:space="preserve">
-    <value>Favorieten</value>
+    <value>Favorites</value>
   </data>
   <data name="NavItem_Insights" xml:space="preserve">
-    <value>Inzichten</value>
+    <value>Insights</value>
   </data>
   <data name="NavItem_Settings" xml:space="preserve">
-    <value>Instellingen</value>
+    <value>Settings</value>
   </data>
   <data name="Status_NoTrackPlaying" xml:space="preserve">
-    <value>Er speelt geen nummer</value>
+    <value>No song playing</value>
   </data>
   <data name="Tooltip_Play" xml:space="preserve">
-    <value>Afspelen</value>
+    <value>Play</value>
   </data>
   <data name="Tooltip_Pause" xml:space="preserve">
-    <value>Pauze</value>
+    <value>Pause</value>
   </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
-    <value>Willekeurig uit</value>
+    <value>Shuffle Off</value>
   </data>
   <data name="Tooltip_RepeatOff" xml:space="preserve">
-    <value>Herhalen uit</value>
+    <value>Repeat Off</value>
   </data>
   <data name="Tooltip_RepeatAll" xml:space="preserve">
-    <value>Alles herhalen</value>
+    <value>Repeat All</value>
   </data>
   <data name="Tooltip_RepeatOne" xml:space="preserve">
-    <value>Eén herhalen</value>
+    <value>Repeat One</value>
   </data>
   <data name="Tooltip_Repeat" xml:space="preserve">
-    <value>Herhalen</value>
+    <value>Repeat</value>
   </data>
   <data name="Tooltip_Unmute" xml:space="preserve">
-    <value>Geluid aan</value>
+    <value>Unmute</value>
   </data>
   <data name="Tooltip_Mute" xml:space="preserve">
-    <value>Geluid uit</value>
+    <value>Mute</value>
   </data>
   <data name="Theme_Light" xml:space="preserve">
-    <value>Licht</value>
+    <value>Light</value>
   </data>
   <data name="Theme_Dark" xml:space="preserve">
-    <value>Donker</value>
+    <value>Dark</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">
-    <value>Systeemstandaard</value>
+    <value>System Default</value>
   </data>
   <data name="Backdrop_Mica" xml:space="preserve">
     <value>Mica</value>
@@ -131,229 +131,229 @@
     <value>Mica Alt</value>
   </data>
   <data name="Backdrop_Acrylic" xml:space="preserve">
-    <value>Acryl</value>
+    <value>Acrylic</value>
   </data>
   <data name="Label_Composer" xml:space="preserve">
-    <value>Componist</value>
+    <value>Composer</value>
   </data>
   <data name="Label_Comment" xml:space="preserve">
-    <value>Opmerking</value>
+    <value>Comment</value>
   </data>
   <data name="Label_Rating" xml:space="preserve">
-    <value>Beoordeling</value>
+    <value>Rating</value>
   </data>
   <data name="Label_Grouping" xml:space="preserve">
-    <value>Groepering</value>
+    <value>Grouping</value>
   </data>
   <data name="Label_SkipCount" xml:space="preserve">
-    <value>Aantal keer overgeslagen</value>
+    <value>Skip Count</value>
   </data>
   <data name="Label_DiscNumber" xml:space="preserve">
-    <value>Discnummer</value>
+    <value>Disc Number</value>
   </data>
   <data name="Label_Bitrate" xml:space="preserve">
-    <value>Bitsnelheid</value>
+    <value>Bitrate</value>
   </data>
   <data name="Label_SampleRate" xml:space="preserve">
-    <value>Samplerate</value>
+    <value>Sample Rate</value>
   </data>
   <data name="Label_IsLoved" xml:space="preserve">
-    <value>Favoriet</value>
+    <value>Favorite</value>
   </data>
   <data name="Label_HasLyrics" xml:space="preserve">
-    <value>Heeft songtekst</value>
+    <value>Has Lyrics</value>
   </data>
   <data name="Operator_IsInRange" xml:space="preserve">
-    <value>Ligt tussen (inclusief)</value>
+    <value>Is between (inclusive)</value>
   </data>
   <data name="Operator_IsAfter" xml:space="preserve">
-    <value>Is na</value>
+    <value>Is after</value>
   </data>
   <data name="Operator_IsBefore" xml:space="preserve">
-    <value>Is voor</value>
+    <value>Is before</value>
   </data>
   <data name="SmartPlaylist_UpperBound_Placeholder" xml:space="preserve">
-    <value>Maximale waarde</value>
+    <value>Maximum value</value>
   </data>
   <data name="Operator_Contains" xml:space="preserve">
-    <value>Bevat</value>
+    <value>Contains</value>
   </data>
   <data name="Operator_DoesNotContain" xml:space="preserve">
-    <value>Bevat niet</value>
+    <value>Does not contain</value>
   </data>
   <data name="Operator_Is" xml:space="preserve">
-    <value>Is precies</value>
+    <value>Is exactly</value>
   </data>
   <data name="Operator_IsNot" xml:space="preserve">
-    <value>Is niet</value>
+    <value>Is not</value>
   </data>
   <data name="Operator_StartsWith" xml:space="preserve">
-    <value>Begint met</value>
+    <value>Starts with</value>
   </data>
   <data name="Operator_EndsWith" xml:space="preserve">
-    <value>Eindigt met</value>
+    <value>Ends with</value>
   </data>
   <data name="Operator_Equals" xml:space="preserve">
-    <value>Is gelijk aan</value>
+    <value>Is equal to</value>
   </data>
   <data name="Operator_NotEquals" xml:space="preserve">
-    <value>Is niet gelijk aan</value>
+    <value>Is not equal to</value>
   </data>
   <data name="Operator_GreaterThan" xml:space="preserve">
-    <value>Is groter dan</value>
+    <value>Is greater than</value>
   </data>
   <data name="Operator_LessThan" xml:space="preserve">
-    <value>Is kleiner dan</value>
+    <value>Is less than</value>
   </data>
   <data name="Operator_GreaterThanOrEqual" xml:space="preserve">
-    <value>Is minimaal</value>
+    <value>Is at least</value>
   </data>
   <data name="Operator_LessThanOrEqual" xml:space="preserve">
-    <value>Is maximaal</value>
+    <value>Is at most</value>
   </data>
   <data name="Operator_IsInTheLast" xml:space="preserve">
-    <value>Is binnen de afgelopen (dagen)</value>
+    <value>Is within the last (days)</value>
   </data>
   <data name="Operator_IsNotInTheLast" xml:space="preserve">
-    <value>Is niet binnen de afgelopen (dagen)</value>
+    <value>Is not within the last (days)</value>
   </data>
   <data name="Operator_IsTrue" xml:space="preserve">
-    <value>Is waar</value>
+    <value>Is true</value>
   </data>
   <data name="Operator_IsFalse" xml:space="preserve">
-    <value>Is onwaar</value>
+    <value>Is false</value>
   </data>
   <data name="SmartPlaylist_Title_New" xml:space="preserve">
-    <value>Nieuwe slimme afspeellijst</value>
+    <value>New Smart Playlist</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>Slimme afspeellijst bewerken: {0}</value>
+    <value>Edit Smart Playlist: {0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
-    <value>Voer een afspeellijstnaam in</value>
+    <value>Enter a playlist name</value>
   </data>
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
-    <value>Overeenkomende nummers: {0:N0}</value>
+    <value>Matching songs: {0:N0}</value>
   </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
-    <value>Kon aantal overeenkomende nummers niet tellen</value>
+    <value>Could not count matching songs</value>
   </data>
   <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
-    <value>Berekenen…</value>
+    <value>Calculating…</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>Er bestaat al een afspeellijst met deze naam.</value>
+    <value>A playlist with this name already exists.</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>Voer een afspeellijstnaam in.</value>
+    <value>Enter a playlist name.</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
-    <value>Laden…</value>
+    <value>Loading…</value>
   </data>
   <data name="Error_FailedToLoadArtists" xml:space="preserve">
-    <value>Artiesten laden mislukt</value>
+    <value>Failed to load artists</value>
   </data>
   <data name="CrashReport_Title" xml:space="preserve">
-    <value>Kritieke fout</value>
+    <value>Critical Error</value>
   </data>
   <data name="CrashReport_Message" xml:space="preserve">
-    <value>Er is een fout opgetreden in Nagi. Het programma moet worden gesloten.</value>
+    <value>Nagi encountered an error and needs to close.</value>
   </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
-    <value>Album niet gevonden</value>
+    <value>Album Not Found</value>
   </data>
   <data name="AlbumView_Error" xml:space="preserve">
-    <value>Fout bij laden album</value>
+    <value>Error Loading Album</value>
   </data>
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
     <value>Album</value>
   </data>
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>Artiest</value>
+    <value>Artist</value>
   </data>
   <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} nummer</value>
+    <value>{0} song</value>
   </data>
   <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} nummers</value>
+    <value>{0} songs</value>
   </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
-    <value>Artiest niet gevonden</value>
+    <value>Artist Not Found</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
-    <value>Fout bij laden artiest</value>
+    <value>Error Loading Artist</value>
   </data>
   <data name="ArtistView_DefaultArtistName" xml:space="preserve">
-    <value>Artiest</value>
+    <value>Artist</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
-    <value>Geen biografie beschikbaar voor deze artiest.</value>
+    <value>No biography available for this artist.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
-    <value>Fout bij laden map</value>
+    <value>Error loading folder</value>
   </data>
   <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>'{0}' is succesvol toegevoegd en gescand.</value>
+    <value>Successfully added and scanned '{0}'.</value>
   </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
-    <value>Map toevoegen mislukt. Het pad is mogelijk ongeldig.</value>
+    <value>Failed to add folder. The path may be invalid.</value>
   </data>
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
-    <value>Deze map bevindt zich al in de bibliotheek.</value>
+    <value>This folder is already in the library.</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
-    <value>Map toevoegen aan bibliotheek…</value>
+    <value>Adding folder to library…</value>
   </data>
   <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>&apos;{0}&apos; verwijderd uit je bibliotheek.</value>
+    <value>Removed &apos;{0}&apos; from your library.</value>
   </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
-    <value>Kon &apos;{0}&apos; niet verwijderen uit je bibliotheek.</value>
+    <value>Could not remove &apos;{0}&apos; from your library.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
-    <value>&apos;{0}&apos; verwijderen uit je bibliotheek…</value>
+    <value>Removing &apos;{0}&apos; from your library…</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Herscan van '{0}' voltooid.</value>
+    <value>Rescan of '{0}' complete.</value>
   </data>
   <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Geen wijzigingen gedetecteerd voor '{0}'.</value>
+    <value>No changes detected for '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
-    <value>'{0}' opnieuw scannen…</value>
+    <value>Rescanning '{0}'…</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
-    <value>Geen mappen met muziek gevonden.</value>
+    <value>No folders with music found.</value>
   </data>
   <data name="Folders_Error_Playback" xml:space="preserve">
-    <value>Fout bij starten afspelen voor deze map.</value>
+    <value>Error starting playback for this folder.</value>
   </data>
   <data name="Folders_Error_RandomPlayback" xml:space="preserve">
-    <value>Fout bij starten willekeurige mapafspeling.</value>
+    <value>Error starting random folder playback.</value>
   </data>
   <data name="Folders_Error_AddFolder" xml:space="preserve">
-    <value>Fout bij toevoegen map: {0}</value>
+    <value>Error adding folder: {0}</value>
   </data>
   <data name="Folders_Error_DeleteFolder" xml:space="preserve">
-    <value>Kon map niet verwijderen uit je bibliotheek: {0}</value>
+    <value>Could not remove folder from your library: {0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
-    <value>Fout bij opnieuw scannen map: {0}</value>
+    <value>Error rescanning folder: {0}</value>
   </data>
   <data name="Folders_Count_Singular" xml:space="preserve">
-    <value>{0} map</value>
+    <value>{0} folder</value>
   </data>
   <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} mappen</value>
+    <value>{0} folders</value>
   </data>
   <data name="Songs_Count_Singular" xml:space="preserve">
-    <value>{0} nummer</value>
+    <value>{0} song</value>
   </data>
   <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} nummers</value>
+    <value>{0} songs</value>
   </data>
   <data name="Albums_Count_Singular" xml:space="preserve">
     <value>{0} album</value>
@@ -362,221 +362,221 @@
     <value>{0} albums</value>
   </data>
   <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} artiest</value>
+    <value>{0} artist</value>
   </data>
   <data name="Artists_Count_Plural" xml:space="preserve">
-    <value>{0} artiesten</value>
+    <value>{0} artists</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
-    <value>Geen items</value>
+    <value>No items</value>
   </data>
   <data name="Generic_Error" xml:space="preserve">
-    <value>Fout</value>
+    <value>Error</value>
   </data>
   <data name="GenreView_DefaultName" xml:space="preserve">
     <value>Genre</value>
   </data>
   <data name="GenreView_Error" xml:space="preserve">
-    <value>Fout bij laden genre</value>
+    <value>Error Loading Genre</value>
   </data>
   <data name="Lyrics_NoSongSelected" xml:space="preserve">
-    <value>Geen nummer geselecteerd</value>
+    <value>No song selected</value>
   </data>
   <data name="Lyrics_SongTitleFormat" xml:space="preserve">
-    <value>{0} van {1}</value>
+    <value>{0} by {1}</value>
   </data>
   <data name="Onboarding_Welcome" xml:space="preserve">
-    <value>Laten we uw muziekbibliotheek instellen om te beginnen.</value>
+    <value>Let's set up your music library to get started.</value>
   </data>
   <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>Wachten op het selecteren van een map…</value>
+    <value>Waiting for you to select a folder…</value>
   </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
-    <value>Je bibliotheek opbouwen…</value>
+    <value>Building your library…</value>
   </data>
   <data name="Onboarding_Error" xml:space="preserve">
-    <value>Er is een onverwachte fout opgetreden. Probeer het opnieuw.</value>
+    <value>An unexpected error occurred. Please try again.</value>
   </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
-    <value>Slimme afspeellijst • {0} nummer</value>
+    <value>Smart • {0} song</value>
   </data>
   <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Slimme afspeellijst • {0} nummers</value>
+    <value>Smart • {0} songs</value>
   </data>
   <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} nummer</value>
+    <value>{0} song</value>
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} nummers</value>
+    <value>{0} songs</value>
   </data>
   <data name="Playlist_ErrorLoading" xml:space="preserve">
-    <value>Fout bij laden afspeellijst</value>
+    <value>Error loading playlist</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Afspeellijst starten…</value>
+    <value>Starting playlist…</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
-    <value>Geen nummers voldoen aan de regels van deze slimme afspeellijst.</value>
+    <value>No songs match this smart playlist's rules.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
-    <value>Fout bij starten afspelen voor deze afspeellijst.</value>
+    <value>Error starting playback for this playlist.</value>
   </data>
   <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Willekeurige afspeellijst kiezen…</value>
+    <value>Picking a random playlist…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
-    <value>Geen afspeellijsten gevonden.</value>
+    <value>No playlists found.</value>
   </data>
   <data name="Playlist_Status_SmartSelectedEmpty" xml:space="preserve">
-    <value>Geselecteerde slimme afspeellijst is leeg.</value>
+    <value>Selected smart playlist is empty.</value>
   </data>
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
-    <value>Fout bij afspelen willekeurige afspeellijst.</value>
+    <value>Error playing random playlist.</value>
   </data>
   <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Afspeellijsten laden…</value>
+    <value>Loading playlists…</value>
   </data>
   <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>Fout bij laden afspeellijsten.</value>
+    <value>Error loading playlists.</value>
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Nieuwe afspeellijst maken…</value>
+    <value>Creating new playlist…</value>
   </data>
   <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Aanmaken afspeellijst mislukt. Deze bestaat mogelijk al.</value>
+    <value>Failed to create playlist. It may already exist.</value>
   </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
-    <value>Er is een fout opgetreden bij het aanmaken van de afspeellijst.</value>
+    <value>An error occurred while creating the playlist.</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Afspeellijsthoes bijwerken…</value>
+    <value>Updating playlist cover…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
-    <value>Bijwerken afspeellijsthoes mislukt.</value>
+    <value>Failed to update playlist cover.</value>
   </data>
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
-    <value>Er is een fout opgetreden bij het bijwerken van de afspeellijsthoes.</value>
+    <value>An error occurred while updating the playlist cover.</value>
   </data>
   <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Afspeellijstafbeelding verwijderen…</value>
+    <value>Removing playlist image…</value>
   </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
-    <value>Verwijderen afspeellijstafbeelding mislukt.</value>
+    <value>Failed to remove playlist image.</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
-    <value>Er is een fout opgetreden bij het verwijderen van de afspeellijstafbeelding.</value>
+    <value>An error occurred while removing the playlist image.</value>
   </data>
   <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Naam van afspeellijst wijzigen…</value>
+    <value>Renaming playlist…</value>
   </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
-    <value>Hernoemen afspeellijst mislukt.</value>
+    <value>Failed to rename playlist.</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
-    <value>Er is een fout opgetreden bij het hernoemen van de afspeellijst.</value>
+    <value>An error occurred while renaming the playlist.</value>
   </data>
   <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Afspeellijst verwijderen…</value>
+    <value>Deleting playlist…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
-    <value>Verwijderen afspeellijst mislukt.</value>
+    <value>Failed to delete playlist.</value>
   </data>
   <data name="Playlist_Status_DeleteError" xml:space="preserve">
-    <value>Er is een fout opgetreden bij het verwijderen van de afspeellijst.</value>
+    <value>An error occurred while deleting the playlist.</value>
   </data>
   <data name="Settings_Reset_Title" xml:space="preserve">
-    <value>Reset bevestigen</value>
+    <value>Confirm Reset</value>
   </data>
   <data name="Settings_Reset_Message" xml:space="preserve">
-    <value>Weet u zeker dat u alle applicatiegegevens en instellingen wilt resetten? Deze actie kan niet ongedaan worden gemaakt. De applicatie keert terug naar de initiële configuratie.</value>
+    <value>Are you sure you want to reset all application data and settings? This action cannot be undone. The application will return to the initial setup.</value>
   </data>
   <data name="Settings_Reset_Button" xml:space="preserve">
-    <value>Resetten</value>
+    <value>Reset</value>
   </data>
   <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>Resetfout</value>
+    <value>Reset Error</value>
   </data>
   <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>Er is een fout opgetreden bij het resetten van applicatiegegevens: {0}. Probeer de app handmatig opnieuw te starten.</value>
+    <value>An error occurred while resetting application data: {0}. Please try restarting the app manually.</value>
   </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
-    <value>Fout</value>
+    <value>Error</value>
   </data>
   <data name="Settings_LastFm_AuthError_Message" xml:space="preserve">
-    <value>Kon geen verbinding maken met Last.fm. Probeer het later opnieuw.</value>
+    <value>Could not connect to Last.fm. Please try again later.</value>
   </data>
   <data name="Settings_LastFm_FinalizeError_Title" xml:space="preserve">
-    <value>Authenticatie mislukt</value>
+    <value>Authentication Failed</value>
   </data>
   <data name="Settings_LastFm_FinalizeError_Message" xml:space="preserve">
-    <value>Kon geen sessie krijgen van Last.fm. Probeer opnieuw verbinding te maken.</value>
+    <value>Could not get a session from Last.fm. Please try connecting again.</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Title" xml:space="preserve">
-    <value>Last.fm ontkoppelen</value>
+    <value>Disconnect Last.fm</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
-    <value>Weet u zeker dat u uw Last.fm-account wilt ontkoppelen? Uw scrobble-geschiedenis blijft behouden op Last.fm, maar Nagi kan niet langer scrobblen.</value>
+    <value>Are you sure you want to disconnect your Last.fm account? Your scrobbling history will be preserved on Last.fm, but Nagi will no longer be able to scrobble.</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>Ontkoppelen</value>
+    <value>Disconnect</value>
   </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
-    <value>Export geslaagd</value>
+    <value>Export Successful</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>Geëxporteerde afspeellijsten: {0}
-Nummers: {1}
-Opgeslagen in: {2}</value>
+    <value>Playlists exported: {0}
+Songs: {1}
+Saved to: {2}</value>
   </data>
   <data name="Settings_Export_Failed_Title" xml:space="preserve">
-    <value>Export mislukt</value>
+    <value>Export Failed</value>
   </data>
   <data name="Settings_Import_Success_Title" xml:space="preserve">
-    <value>Import geslaagd</value>
+    <value>Import Successful</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>Geïmporteerde afspeellijsten: {0}
-Nummers: {1}</value>
+    <value>Playlists imported: {0}
+Songs: {1}</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
     <value>
 
-Nummers niet gevonden in je bibliotheek: {0}.</value>
+Songs not found in your library: {0}.</value>
   </data>
   <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
     <value>
 
-Bestanden die niet konden worden geïmporteerd: {0}.</value>
+Files that could not be imported: {0}.</value>
   </data>
   <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
-    <value>Import mislukt</value>
+    <value>Import Failed</value>
   </data>
   <data name="Settings_Import_FailedTotal_Message" xml:space="preserve">
-    <value>Geen afspeellijsten konden worden geïmporteerd.</value>
+    <value>No playlists could be imported.</value>
   </data>
   <data name="SmartPlaylist_ErrorLoading" xml:space="preserve">
-    <value>Fout bij laden slimme afspeellijst</value>
+    <value>Error loading smart playlist</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
-    <value>Geen regels gedefinieerd • Alle nummers komen overeen</value>
+    <value>No rules defined • All songs match</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Voldoet aan {0} van {1} {2}</value>
+    <value>Match {0} of {1} {2}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>alle</value>
+    <value>all</value>
   </data>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>minstens één</value>
+    <value>any</value>
   </data>
   <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>regel</value>
+    <value>rule</value>
   </data>
   <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>regels</value>
+    <value>rules</value>
   </data>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
-    <value>Nummers</value>
+    <value>Songs</value>
   </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} item</value>
@@ -585,7 +585,7 @@ Bestanden die niet konden worden geïmporteerd: {0}.</value>
     <value>{0} items</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
-    <value>{0} geselecteerd</value>
+    <value>{0} selected</value>
   </data>
   <data name="AlbumView_DiscHeader" xml:space="preserve">
     <value>Disc {0}</value>
@@ -594,64 +594,64 @@ Bestanden die niet konden worden geïmporteerd: {0}.</value>
     <value>OK</value>
   </data>
   <data name="Generic_Cancel" xml:space="preserve">
-    <value>Annuleren</value>
+    <value>Cancel</value>
   </data>
   <data name="Generic_Close" xml:space="preserve">
-    <value>Sluiten</value>
+    <value>Close</value>
   </data>
   <data name="Generic_Recheck" xml:space="preserve">
-    <value>Opnieuw controleren</value>
+    <value>Recheck</value>
   </data>
   <data name="CrashReport_Button_Reset" xml:space="preserve">
-    <value>App en gegevens resetten</value>
+    <value>Reset App &amp; Data</value>
   </data>
   <data name="FFmpeg_Status_NotDetected" xml:space="preserve">
-    <value>FFmpeg niet gedetecteerd. Installeer FFmpeg en klik op 'Opnieuw controleren'.</value>
+    <value>FFmpeg not detected. Please install FFmpeg and click 'Recheck'.</value>
   </data>
   <data name="FFmpeg_Status_Checking" xml:space="preserve">
-    <value>Controleren op FFmpeg…</value>
+    <value>Checking for FFmpeg…</value>
   </data>
   <data name="FFmpeg_Status_Detected" xml:space="preserve">
-    <value>FFmpeg gedetecteerd.</value>
+    <value>FFmpeg detected.</value>
   </data>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
-    <value>FFmpeg nog steeds niet gedetecteerd. Installeer FFmpeg en klik op 'Opnieuw controleren'.</value>
+    <value>FFmpeg still not detected. Please install FFmpeg and click 'Recheck'.</value>
   </data>
   <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Fout bij controleren op FFmpeg. Probeer het opnieuw.</value>
+    <value>Error checking for FFmpeg. Please try again.</value>
   </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>Vorige</value>
+    <value>Previous</value>
   </data>
   <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>Afspelen</value>
+    <value>Play</value>
   </data>
   <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>Pauze</value>
+    <value>Pause</value>
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>Volgende</value>
+    <value>Next</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC heeft een ongespecificeerde fout ondervonden.</value>
+    <value>LibVLC encountered an unspecified error.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC Fout: {0}</value>
+    <value>LibVLC Error: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Laden van '{0}' mislukt.</value>
+    <value>Failed to load '{0}'.</value>
   </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
-    <value>Bibliotheek</value>
+    <value>Library</value>
   </data>
   <data name="Settings_Nav_Folders" xml:space="preserve">
-    <value>Mappen</value>
+    <value>Folders</value>
   </data>
   <data name="Settings_Nav_Playlists" xml:space="preserve">
-    <value>Afspeellijsten</value>
+    <value>Playlists</value>
   </data>
   <data name="Settings_Nav_Artists" xml:space="preserve">
-    <value>Artiesten</value>
+    <value>Artists</value>
   </data>
   <data name="Settings_Nav_Albums" xml:space="preserve">
     <value>Albums</value>
@@ -660,1472 +660,1478 @@ Bestanden die niet konden worden geïmporteerd: {0}.</value>
     <value>Genres</value>
   </data>
   <data name="Settings_Button_Shuffle" xml:space="preserve">
-    <value>Willekeurig</value>
+    <value>Shuffle</value>
   </data>
   <data name="Settings_Button_Previous" xml:space="preserve">
-    <value>Vorige</value>
+    <value>Previous</value>
   </data>
   <data name="Settings_Button_PlayPause" xml:space="preserve">
-    <value>Afspelen/Pauze</value>
+    <value>Play/Pause</value>
   </data>
   <data name="Settings_Button_Next" xml:space="preserve">
-    <value>Volgende</value>
+    <value>Next</value>
   </data>
   <data name="Settings_Button_Repeat" xml:space="preserve">
-    <value>Herhalen</value>
+    <value>Repeat</value>
   </data>
   <data name="Settings_Button_Divider" xml:space="preserve">
-    <value>Lay-out scheidingslijn</value>
+    <value>Layout Divider</value>
   </data>
   <data name="Settings_Button_Lyrics" xml:space="preserve">
-    <value>Teksten</value>
+    <value>Lyrics</value>
   </data>
   <data name="Settings_Button_Queue" xml:space="preserve">
-    <value>Wachtrij</value>
+    <value>Queue</value>
   </data>
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>Volume</value>
   </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
-    <value>Door de community beheerde songtekstendatabase</value>
+    <value>Community-curated lyrics database</value>
   </data>
   <data name="Settings_Provider_NetEase_Desc" xml:space="preserve">
-    <value>Chinese muziekdienst, ideaal voor Aziatische muziek</value>
+    <value>Chinese music service, great for Asian music</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Haalt artiest-ID's op (vereist voor TheAudioDB en Fanart.tv)</value>
+    <value>Fetches artist IDs (required for TheAudioDB and Fanart.tv)</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>Hoogwaardige artiestafbeeldingen en biografieën (vereist MusicBrainz)</value>
+    <value>High-quality artist images and biographies (requires MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>Alleen hoogwaardige artiestafbeeldingen (vereist MusicBrainz)</value>
+    <value>High-quality artist images only (requires MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Artiestbiografieën en -afbeeldingen (terugval)</value>
+    <value>Artist biographies and images (fallback)</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Zoek albums</value>
+    <value>Search albums</value>
   </data>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Zoeken in album</value>
+    <value>Search in album</value>
   </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Zoek artiesten</value>
+    <value>Search artists</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Zoeken in artiest</value>
+    <value>Search in artist</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
-    <value>Map verwijderen</value>
+    <value>Remove Folder</value>
   </data>
   <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
-    <value>&apos;{0}&apos; verwijderen uit je bibliotheek? Je audiobestanden blijven op je computer staan.</value>
+    <value>Remove &apos;{0}&apos; from your library? Your audio files will stay on your computer.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
-    <value>Verwijderen</value>
+    <value>Remove</value>
   </data>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>Annuleren</value>
+    <value>Cancel</value>
   </data>
   <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Onbekende map</value>
+    <value>Unknown Folder</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Zoeken in map</value>
+    <value>Search in folder</value>
   </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Zoek genres</value>
+    <value>Search genres</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Zoek bibliotheek</value>
+    <value>Search library</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Zoek afspeellijsten</value>
+    <value>Search playlists</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>Voer een afspeellijstnaam in</value>
+    <value>Enter a playlist name</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
-    <value>Hoes kiezen</value>
+    <value>Choose Cover</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
-    <value>Nieuwe afspeellijst maken</value>
+    <value>Create New Playlist</value>
   </data>
   <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
-    <value>Maken</value>
+    <value>Create</value>
   </data>
   <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>Annuleren</value>
+    <value>Cancel</value>
   </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
-    <value>Hernoem '{0}'</value>
+    <value>Rename '{0}'</value>
   </data>
   <data name="PlaylistPage_RenameDialog_RenameButton" xml:space="preserve">
-    <value>Hernoemen</value>
+    <value>Rename</value>
   </data>
   <data name="PlaylistPage_DeleteDialog_Title" xml:space="preserve">
-    <value>Afspeellijst verwijderen</value>
+    <value>Delete Playlist</value>
   </data>
   <data name="PlaylistPage_DeleteDialog_Content_Format" xml:space="preserve">
-    <value>Weet u zeker dat u de afspeellijst '{0}' wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.</value>
+    <value>Are you sure you want to delete the playlist '{0}'? This action cannot be undone.</value>
   </data>
   <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
-    <value>Verwijderen</value>
+    <value>Delete</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Zoeken in afspeellijst</value>
+    <value>Search in playlist</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Zoeken in genre</value>
+    <value>Search in genre</value>
   </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Onbekende afspeellijst</value>
+    <value>Unknown Playlist</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Zoeken in slimme afspeellijst</value>
+    <value>Search in smart playlist</value>
   </data>
   <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Onbekende slimme afspeellijst</value>
+    <value>Unknown Smart Playlist</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
-    <value>Metagegevens opnieuw scannen</value>
+    <value>Rescan Metadata</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>Scan je bibliotheek opnieuw om metadatainstellingen toe te passen, zoals het splitsen van artiesten. Dit kan even duren bij grote bibliotheken. Doorgaan?</value>
+    <value>Rescan your library to apply metadata settings, such as artist splitting. This may take a while for large libraries. Continue?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
-    <value>Opnieuw scannen</value>
+    <value>Rescan</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
-    <value>Opnieuw scannen van bibliotheek voorbereiden…</value>
+    <value>Preparing library rescan…</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
-    <value>Herscan voltooid</value>
+    <value>Rescan Complete</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Content" xml:space="preserve">
-    <value>Metagegevens van bibliotheek zijn bijgewerkt.</value>
+    <value>Library metadata has been updated.</value>
   </data>
   <data name="Settings_Dialog_RescanFailed_Title" xml:space="preserve">
-    <value>Herscan mislukt</value>
+    <value>Rescan Failed</value>
   </data>
   <data name="Settings_Dialog_RescanFailed_Content" xml:space="preserve">
-    <value>Er is een fout opgetreden tijdens het scannen. Controleer logboeken voor details.</value>
+    <value>An error occurred while scanning. Check logs for details.</value>
   </data>
   <data name="Settings_Dialog_FFmpegNotFound_Title" xml:space="preserve">
-    <value>FFmpeg niet gevonden</value>
+    <value>FFmpeg Not Found</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Title" xml:space="preserve">
-    <value>Volumennormalisatie inschakelen</value>
+    <value>Enable Volume Normalization</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
-    <value>Volumennormalisatie (ReplayGain) zorgt voor een consistent volumeniveau in al uw muziek.
+    <value>Volume Normalization (ReplayGain) ensures a consistent volume level across all your music.
 
-Dit analyseert uw muziekbibliotheek en wijzigt uw audiobestanden direct door ReplayGain-tags te schrijven. Alleen bestanden zonder bestaande tags worden verwerkt. Dit kan enige tijd duren, afhankelijk van de grootte van uw bibliotheek.
+This will analyze your music library and directly modify your audio files by writing ReplayGain tags. Only files without existing tags will be processed. This may take some time depending on your library size.
 
-Wilt u doorgaan?</value>
+Do you want to continue?</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
-    <value>Inschakelen &amp; scannen</value>
+    <value>Enable &amp; Scan</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>Scan voor volumenormalisatie voorbereiden…</value>
+    <value>Preparing volume normalization scan…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Scannen volumennormalisatie geannuleerd.</value>
+    <value>Volume normalization scan cancelled.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
-    <value>Fout tijdens scan: {0}</value>
+    <value>Error during scan: {0}</value>
   </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
-    <value>Geen afspeellijsten om te exporteren.</value>
+    <value>No playlists to export.</value>
   </data>
   <data name="Language_Auto" xml:space="preserve">
-    <value>Automatisch</value>
+    <value>Auto</value>
   </data>
   <data name="TrayIcon_ShowWindow" xml:space="preserve">
-    <value>Venster weergeven</value>
+    <value>Show Window</value>
   </data>
   <data name="TrayIcon_Exit" xml:space="preserve">
-    <value>Afsluiten</value>
+    <value>Exit</value>
   </data>
   <data name="MiniPlayer_BackButton_ToolTip" xml:space="preserve">
-    <value>Terug naar speler</value>
+    <value>Back to Player</value>
   </data>
   <data name="MiniPlayer_UpNextHeader" xml:space="preserve">
-    <value>Volgende</value>
+    <value>Up Next</value>
   </data>
   <data name="MiniPlayer_RestoreButton_ToolTip" xml:space="preserve">
-    <value>Nagi weergeven</value>
+    <value>Show Nagi</value>
   </data>
   <data name="MiniPlayer_PreviousButton_ToolTip" xml:space="preserve">
-    <value>Vorige</value>
+    <value>Previous</value>
   </data>
   <data name="MiniPlayer_NextButton_ToolTip" xml:space="preserve">
-    <value>Volgende</value>
+    <value>Next</value>
   </data>
   <data name="MiniPlayer_QueueButton_ToolTip" xml:space="preserve">
-    <value>Volgende</value>
+    <value>Up Next</value>
   </data>
   <data name="CrashReport_ReportIssuePreLink" xml:space="preserve">
-    <value>Overweeg dit te rapporteren door een probleem aan te maken op de </value>
+    <value>Please consider reporting this by creating an issue on the </value>
   </data>
   <data name="CrashReport_IssueLink" xml:space="preserve">
-    <value>Problemenpagina</value>
+    <value>Issues page</value>
   </data>
   <data name="CrashReport_ReportIssuePostLink" xml:space="preserve">
     <value>.</value>
   </data>
   <data name="CrashReport_ResetAppAdvice" xml:space="preserve">
-    <value>Als dit blijft gebeuren, kunt u 'App &amp; gegevens opnieuw instellen' proberen. Hiermee worden uw instellingen en bibliotheek gewist, wat kan helpen de app te herstellen van een defecte staat.</value>
+    <value>If this keeps happening, you can try 'Reset App &amp; Data'. This will wipe your settings and library, which can help recover the app from a broken state.</value>
   </data>
   <data name="CrashReport_CopyLogButton_ToolTip" xml:space="preserve">
-    <value>Logboek kopiëren naar klembord</value>
+    <value>Copy log to clipboard</value>
   </data>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
-    <value>Logboek kopiëren</value>
+    <value>Copy Log</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
-    <value>Omslag kiezen</value>
+    <value>Choose Cover</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_ToolTip" xml:space="preserve">
-    <value>Kies een omslagafbeelding</value>
+    <value>Choose a cover image</value>
   </data>
   <data name="SmartPlaylist_PlaylistNameLabel" xml:space="preserve">
-    <value>Afspeellijstnaam</value>
+    <value>Playlist Name</value>
   </data>
   <data name="SmartPlaylist_PlaylistNameTextBox_Placeholder" xml:space="preserve">
-    <value>Voer een naam in voor uw slimme afspeellijst</value>
+    <value>Enter a name for your smart playlist</value>
   </data>
   <data name="SmartPlaylist_SortOrderLabel" xml:space="preserve">
-    <value>Sorteervolgorde</value>
+    <value>Sort Order</value>
   </data>
   <data name="SmartPlaylist_MatchLabel" xml:space="preserve">
-    <value>Voldoen aan</value>
+    <value>Match</value>
   </data>
   <data name="SmartPlaylist_MatchLogic_All_Content" xml:space="preserve">
-    <value>Alle</value>
+    <value>All</value>
   </data>
   <data name="SmartPlaylist_MatchLogic_Any_Content" xml:space="preserve">
-    <value>Minstens één</value>
+    <value>Any</value>
   </data>
   <data name="SmartPlaylist_MatchSuffixLabel" xml:space="preserve">
-    <value>van de volgende regels:</value>
+    <value>of the following rules:</value>
   </data>
   <data name="SmartPlaylist_AddRuleButton_ToolTip" xml:space="preserve">
-    <value>Een nieuwe regel toevoegen</value>
+    <value>Add a new rule</value>
   </data>
   <data name="SmartPlaylist_AddRuleLabel" xml:space="preserve">
-    <value>Regel toevoegen</value>
+    <value>Add Rule</value>
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
-    <value>Waarde</value>
+    <value>Value</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
-    <value>Deze regel verwijderen</value>
+    <value>Remove this rule</value>
   </data>
   <data name="SmartPlaylist_NoRulesTitle" xml:space="preserve">
-    <value>Geen regels gedefinieerd</value>
+    <value>No rules defined</value>
   </data>
   <data name="SmartPlaylist_NoRulesMessage" xml:space="preserve">
-    <value>Alle nummers in uw bibliotheek worden opgenomen in deze afspeellijst.</value>
+    <value>All songs in your library will be included in this playlist.</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_Content" xml:space="preserve">
-    <value>Uw eerste regel toevoegen</value>
+    <value>Add Your First Rule</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_ToolTip" xml:space="preserve">
-    <value>Voeg uw eerste regel toe</value>
+    <value>Add your first rule</value>
   </data>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
-    <value>Opslaan</value>
+    <value>Save</value>
   </data>
   <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Annuleren</value>
+    <value>Cancel</value>
   </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
-    <value>Vorige</value>
+    <value>Previous</value>
   </data>
   <data name="TrayPopup_NextButton_ToolTip" xml:space="preserve">
-    <value>Volgende</value>
+    <value>Next</value>
   </data>
   <data name="TrayPopup_QueueButton_ToolTip" xml:space="preserve">
-    <value>Volgende</value>
+    <value>Up Next</value>
   </data>
   <data name="TrayPopup_BackButton_ToolTip" xml:space="preserve">
-    <value>Terug naar speler</value>
+    <value>Back to Player</value>
   </data>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
-    <value>Volgende</value>
+    <value>Up Next</value>
   </data>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
-    <value>Vorige</value>
+    <value>Previous</value>
   </data>
   <data name="Player_NextButton_ToolTip" xml:space="preserve">
-    <value>Volgende</value>
+    <value>Next</value>
   </data>
   <data name="Player_LyricsButton_ToolTip" xml:space="preserve">
-    <value>Teksten</value>
+    <value>Lyrics</value>
   </data>
   <data name="Player_QueueButton_ToolTip" xml:space="preserve">
-    <value>Volgende</value>
+    <value>Up Next</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
-    <value>Naar album</value>
+    <value>Go to Album</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>Volgende</value>
+    <value>Up Next</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
-    <value>Wachtrij wissen</value>
+    <value>Clear Queue</value>
   </data>
   <data name="QueuePanel_DisplayOptions" xml:space="preserve">
-    <value>Weergave-opties voor wachtrij</value>
+    <value>Queue Display Options</value>
   </data>
   <data name="QueuePanel_Close" xml:space="preserve">
-    <value>Wachtrij sluiten</value>
+    <value>Close Queue</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
-    <value>Artiest</value>
+    <value>Artist</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
-    <value>Duur</value>
+    <value>Duration</value>
   </data>
   <data name="QueuePanel_ShowTrackCount" xml:space="preserve">
-    <value>Aantal nummers</value>
+    <value>Track Count</value>
   </data>
   <data name="QueuePanel_TrackCount" xml:space="preserve">
-    <value>Nummers: {0:N0}</value>
+    <value>Tracks: {0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
-    <value>Wachtrijpositie</value>
+    <value>Queue Position</value>
   </data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve">
     <value>Genre</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
-    <value>Totale duur</value>
+    <value>Total Duration</value>
   </data>
   <data name="QueuePanel_Play" xml:space="preserve">
-    <value>Afspelen</value>
+    <value>Play</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
-    <value>Omhoog verplaatsen</value>
+    <value>Move Up</value>
   </data>
   <data name="QueuePanel_MoveDown" xml:space="preserve">
-    <value>Omlaag verplaatsen</value>
+    <value>Move Down</value>
   </data>
   <data name="QueuePanel_Remove" xml:space="preserve">
-    <value>Verwijderen uit wachtrij</value>
+    <value>Remove from Queue</value>
   </data>
   <data name="AlbumPage_Title" xml:space="preserve">
     <value>Albums</value>
   </data>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Albums zoeken…</value>
+    <value>Search albums…</value>
   </data>
   <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Zoek albums</value>
+    <value>Search albums</value>
   </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Kies er willekeurig een</value>
+    <value>Pick one at random</value>
   </data>
   <data name="AlbumPage_Menu_Play" xml:space="preserve">
-    <value>Afspelen</value>
+    <value>Play</value>
   </data>
   <data name="AlbumPage_Empty_Title" xml:space="preserve">
-    <value>Geen albums gevonden</value>
+    <value>No albums found</value>
   </data>
   <data name="AlbumPage_Empty_Subtitle" xml:space="preserve">
-    <value>Scan uw muziekbibliotheek om albums te vullen</value>
+    <value>Scan your music library to populate albums</value>
   </data>
   <data name="AlbumViewPage_Header_Label" xml:space="preserve">
     <value>Album</value>
   </data>
   <data name="AlbumViewPage_Songs_Title" xml:space="preserve">
-    <value>Nummers</value>
+    <value>Songs</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Zoeken in album…</value>
+    <value>Search in album…</value>
   </data>
   <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Zoek in album</value>
+    <value>Search in album</value>
   </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Alles afspelen</value>
+    <value>Play all</value>
   </data>
   <data name="AlbumViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Alles willekeurig afspelen</value>
+    <value>Shuffle and play all</value>
   </data>
   <data name="AlbumViewPage_SongMenu_Play" xml:space="preserve">
-    <value>Afspelen</value>
+    <value>Play</value>
   </data>
   <data name="AlbumViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>Volgende afspelen</value>
+    <value>Play Next</value>
   </data>
   <data name="AlbumViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>Toevoegen aan wachtrij</value>
+    <value>Add to Queue</value>
   </data>
   <data name="AlbumViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Toevoegen aan afspeellijst</value>
+    <value>Add to Playlist</value>
   </data>
   <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Naar artiest</value>
+    <value>Go to Artist</value>
   </data>
   <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Weergeven in Verkenner</value>
+    <value>Show in File Explorer</value>
   </data>
   <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>Afspelen</value>
+    <value>Play</value>
   </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
-    <value>Geen nummers gevonden in dit album</value>
+    <value>No songs found in this album</value>
   </data>
   <data name="AlbumViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Probeer iets anders te zoeken</value>
+    <value>Try searching for something else</value>
   </data>
   <data name="ArtistPage_Title" xml:space="preserve">
-    <value>Artiesten</value>
+    <value>Artists</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Artiesten zoeken…</value>
+    <value>Search artists…</value>
   </data>
   <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Zoek artiesten</value>
+    <value>Search artists</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Kies er willekeurig een</value>
+    <value>Pick one at random</value>
   </data>
   <data name="ArtistPage_Menu_Play" xml:space="preserve">
-    <value>Afspelen</value>
+    <value>Play</value>
   </data>
   <data name="ArtistPage_Menu_ChangeImage" xml:space="preserve">
-    <value>Afbeelding wijzigen</value>
+    <value>Change Image</value>
   </data>
   <data name="ArtistPage_Menu_RemoveImage" xml:space="preserve">
-    <value>Afbeelding verwijderen</value>
+    <value>Remove Image</value>
   </data>
   <data name="ArtistPage_Empty_Title" xml:space="preserve">
-    <value>Geen artiesten gevonden</value>
+    <value>No artists found</value>
   </data>
   <data name="ArtistPage_Empty_Subtitle" xml:space="preserve">
-    <value>Scan uw muziekbibliotheek om artiesten te vullen</value>
+    <value>Scan your music library to populate artists</value>
   </data>
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
-    <value>Artiestafbeelding wijzigen</value>
+    <value>Change artist image</value>
   </data>
   <data name="ArtistViewPage_ImageMenu_ChangeImage" xml:space="preserve">
-    <value>Afbeelding wijzigen</value>
+    <value>Change Image</value>
   </data>
   <data name="ArtistViewPage_ImageMenu_RemoveImage" xml:space="preserve">
-    <value>Afbeelding verwijderen</value>
+    <value>Remove Image</value>
   </data>
   <data name="ArtistViewPage_Header_Label" xml:space="preserve">
-    <value>Artiest</value>
+    <value>Artist</value>
   </data>
   <data name="ArtistViewPage_Albums_Title" xml:space="preserve">
-    <value>Topalbums</value>
+    <value>Top Albums</value>
   </data>
   <data name="ArtistViewPage_Songs_Title" xml:space="preserve">
-    <value>Nummers</value>
+    <value>Songs</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Zoeken in artiest…</value>
+    <value>Search in artist…</value>
   </data>
   <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Zoek in artiest</value>
+    <value>Search in artist</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Alles afspelen</value>
+    <value>Play all</value>
   </data>
   <data name="ArtistViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Alles willekeurig afspelen</value>
+    <value>Shuffle and play all</value>
   </data>
   <data name="ArtistViewPage_SongMenu_Play" xml:space="preserve">
-    <value>Afspelen</value>
+    <value>Play</value>
   </data>
   <data name="ArtistViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>Volgende afspelen</value>
+    <value>Play Next</value>
   </data>
   <data name="ArtistViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>Toevoegen aan wachtrij</value>
+    <value>Add to Queue</value>
   </data>
   <data name="ArtistViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Toevoegen aan afspeellijst</value>
+    <value>Add to Playlist</value>
   </data>
   <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Naar album</value>
+    <value>Go to Album</value>
   </data>
   <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Weergeven in Verkenner</value>
+    <value>Show in File Explorer</value>
   </data>
   <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>Afspelen</value>
+    <value>Play</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
-    <value>Geen nummers gevonden voor deze artiest</value>
+    <value>No songs found for this artist</value>
   </data>
   <data name="ArtistViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Probeer iets anders te zoeken</value>
+    <value>Try searching for something else</value>
   </data>
   <data name="FolderPage_Title" xml:space="preserve">
-    <value>Mappen</value>
+    <value>Folders</value>
   </data>
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Kies er willekeurig een</value>
+    <value>Pick one at random</value>
   </data>
   <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Een muziekmap toevoegen</value>
+    <value>Add a music folder</value>
   </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
-    <value>Map toevoegen</value>
+    <value>Add Folder</value>
   </data>
   <data name="FolderPage_Menu_Play" xml:space="preserve">
-    <value>Afspelen</value>
+    <value>Play</value>
   </data>
   <data name="FolderPage_Menu_Rescan" xml:space="preserve">
-    <value>Opnieuw scannen</value>
+    <value>Rescan</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>Verwijderen uit bibliotheek</value>
+    <value>Remove from Library</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
-    <value>Nog geen mappen toegevoegd</value>
+    <value>No folders added yet</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Voeg muziekmappen toe om te beginnen</value>
+    <value>Add music folders to get started</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
-    <value>Afspelen</value>
+    <value>Play</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>Toevoegen aan afspeellijst</value>
+    <value>Add to Playlist</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_Play" xml:space="preserve">
-    <value>Afspelen</value>
+    <value>Play</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>Volgende afspelen</value>
+    <value>Play Next</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>Toevoegen aan wachtrij</value>
+    <value>Add to Queue</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Toevoegen aan afspeellijst</value>
+    <value>Add to Playlist</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Naar album</value>
+    <value>Go to Album</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Naar artiest</value>
+    <value>Go to Artist</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Weergeven in Verkenner</value>
+    <value>Show in File Explorer</value>
   </data>
   <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>Afspelen</value>
+    <value>Play</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
-    <value>Map</value>
+    <value>Folder</value>
   </data>
   <data name="FolderSongViewPage_Songs_Title" xml:space="preserve">
-    <value>Nummers</value>
+    <value>Songs</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Zoeken in map…</value>
+    <value>Search in folder…</value>
   </data>
   <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Alles afspelen</value>
+    <value>Play all</value>
   </data>
   <data name="FolderSongViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Alles willekeurig afspelen</value>
+    <value>Shuffle and play all</value>
   </data>
   <data name="FolderSongViewPage_Empty_Title" xml:space="preserve">
-    <value>Deze map is leeg</value>
+    <value>This folder is empty</value>
   </data>
   <data name="FolderSongViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Geen nummers of submappen gevonden</value>
+    <value>No songs or subfolders found</value>
   </data>
   <data name="GenrePage_Title" xml:space="preserve">
     <value>Genres</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Genres zoeken…</value>
+    <value>Search genres…</value>
   </data>
   <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Zoek genres</value>
+    <value>Search genres</value>
   </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Kies er willekeurig een</value>
+    <value>Pick one at random</value>
   </data>
   <data name="GenrePage_Menu_Play" xml:space="preserve">
-    <value>Afspelen</value>
+    <value>Play</value>
   </data>
   <data name="GenrePage_Empty_Title" xml:space="preserve">
-    <value>Geen genres gevonden</value>
+    <value>No genres found</value>
   </data>
   <data name="GenrePage_Empty_Subtitle" xml:space="preserve">
-    <value>Scan uw muziekbibliotheek om genres te vullen</value>
+    <value>Scan your music library to populate genres</value>
   </data>
   <data name="LibraryPage_Title" xml:space="preserve">
-    <value>Bibliotheek</value>
+    <value>Library</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Bibliotheek zoeken…</value>
+    <value>Search library…</value>
   </data>
   <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Zoek in bibliotheek</value>
+    <value>Search library</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Alles afspelen</value>
+    <value>Play all</value>
   </data>
   <data name="LibraryPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Alles willekeurig afspelen</value>
+    <value>Shuffle and play all</value>
   </data>
   <data name="LibraryPage_Context_Play" xml:space="preserve">
-    <value>Afspelen</value>
+    <value>Play</value>
   </data>
   <data name="LibraryPage_Context_PlayNext" xml:space="preserve">
-    <value>Volgende afspelen</value>
+    <value>Play Next</value>
   </data>
   <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
-    <value>Toevoegen aan wachtrij</value>
+    <value>Add to Queue</value>
   </data>
   <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Toevoegen aan afspeellijst</value>
+    <value>Add to Playlist</value>
   </data>
   <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Naar album</value>
+    <value>Go to Album</value>
   </data>
   <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
-    <value>Naar artiest</value>
+    <value>Go to Artist</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Weergeven in Verkenner</value>
+    <value>Show in File Explorer</value>
   </data>
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Afspelen</value>
+    <value>Play</value>
   </data>
   <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
-    <value>Geen nummers gevonden</value>
+    <value>No songs found</value>
   </data>
   <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
-    <value>Probeer te zoeken naar iets anders</value>
+    <value>Try searching for something else</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
-    <value>Uw bibliotheek is leeg</value>
+    <value>Your library is empty</value>
   </data>
   <data name="LibraryPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Voeg mappen toe aan uw bibliotheek in Instellingen</value>
+    <value>Add folders to your library in Settings</value>
   </data>
   <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
-    <value>Geen songtekst gevonden voor dit nummer</value>
+    <value>No lyrics found for this song</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
-    <value>Probeer een ander nummer</value>
+    <value>Try another song</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
-    <value>Songtekst bewerken of vervangen</value>
+    <value>Edit or replace lyrics</value>
   </data>
   <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
-    <value>Songtekst bewerken</value>
+    <value>Edit Lyrics</value>
   </data>
   <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
-    <value>Plak platte tekst of LRC-songtekst met tijdstempels</value>
+    <value>Paste plain text or timestamped LRC lyrics</value>
   </data>
   <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
-    <value>Opslaan</value>
+    <value>Save</value>
   </data>
   <data name="LyricsPage_EditLyrics_Remove" xml:space="preserve">
-    <value>Opgeslagen songtekst verwijderen</value>
+    <value>Remove Saved Lyrics</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
-    <value>Songtekst kan niet worden bijgewerkt</value>
+    <value>Lyrics could not be updated</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Nagi kan de songtekst niet opslaan. Controleer het logboek voor details en probeer het opnieuw.</value>
+    <value>Nagi could not save the lyrics. Check the log for details and try again.</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
-    <value>Welkom bij Nagi</value>
+    <value>Welcome to Nagi</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Voeg een muziekmap toe om te beginnen</value>
+    <value>Add a music folder to get started</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
-    <value>Muziekmap toevoegen</value>
+    <value>Add Music Folder</value>
   </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
-    <value>Afspeellijsten</value>
+    <value>Playlists</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Afspeellijsten zoeken…</value>
+    <value>Search playlists…</value>
   </data>
   <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Zoek afspeellijsten</value>
+    <value>Search playlists</value>
   </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Kies er willekeurig een</value>
+    <value>Pick one at random</value>
   </data>
   <data name="PlaylistPage_NewPlaylistButton_ToolTip" xml:space="preserve">
-    <value>Een nieuwe afspeellijst aanmaken</value>
+    <value>Create a new playlist</value>
   </data>
   <data name="PlaylistPage_NewPlaylistButton_Content" xml:space="preserve">
-    <value>Nieuwe afspeellijst</value>
+    <value>New Playlist</value>
   </data>
   <data name="PlaylistPage_NewPlaylistMenu_Regular" xml:space="preserve">
-    <value>Standaard afspeellijst</value>
+    <value>Regular Playlist</value>
   </data>
   <data name="PlaylistPage_NewPlaylistMenu_Smart" xml:space="preserve">
-    <value>Slimme afspeellijst</value>
+    <value>Smart Playlist</value>
   </data>
   <data name="PlaylistPage_Context_Play" xml:space="preserve">
-    <value>Afspelen</value>
+    <value>Play</value>
   </data>
   <data name="PlaylistPage_Context_Rename" xml:space="preserve">
-    <value>Naam wijzigen</value>
+    <value>Rename</value>
   </data>
   <data name="PlaylistPage_Context_ChangeImage" xml:space="preserve">
-    <value>Afbeelding wijzigen</value>
+    <value>Change Image</value>
   </data>
   <data name="PlaylistPage_Context_RemoveImage" xml:space="preserve">
-    <value>Afbeelding verwijderen</value>
+    <value>Remove Image</value>
   </data>
   <data name="PlaylistPage_Context_Delete" xml:space="preserve">
-    <value>Verwijderen</value>
+    <value>Delete</value>
   </data>
   <data name="PlaylistPage_EmptyState_Title" xml:space="preserve">
-    <value>Nog geen afspeellijsten</value>
+    <value>No playlists yet</value>
   </data>
   <data name="PlaylistPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Maak een afspeellijst aan om te beginnen</value>
+    <value>Create a playlist to get started</value>
   </data>
   <data name="PlaylistSongViewPage_Header_Caption" xml:space="preserve">
-    <value>Afspeellijst</value>
+    <value>Playlist</value>
   </data>
   <data name="PlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Nummers</value>
+    <value>Songs</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Zoeken in afspeellijst…</value>
+    <value>Search in playlist…</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Zoek in afspeellijst</value>
+    <value>Search in playlist</value>
   </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Alles afspelen</value>
+    <value>Play all</value>
   </data>
   <data name="PlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Alles willekeurig afspelen</value>
+    <value>Shuffle and play all</value>
   </data>
   <data name="PlaylistSongViewPage_Context_Play" xml:space="preserve">
-    <value>Afspelen</value>
+    <value>Play</value>
   </data>
   <data name="PlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
-    <value>Volgende afspelen</value>
+    <value>Play Next</value>
   </data>
   <data name="PlaylistSongViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>Toevoegen aan wachtrij</value>
+    <value>Add to Queue</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Naar album</value>
+    <value>Go to Album</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Naar artiest</value>
+    <value>Go to Artist</value>
   </data>
   <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Weergeven in Verkenner</value>
+    <value>Show in File Explorer</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
-    <value>Verwijderen uit afspeellijst</value>
+    <value>Remove from Playlist</value>
   </data>
   <data name="PlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Afspelen</value>
+    <value>Play</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
-    <value>Deze afspeellijst is leeg</value>
+    <value>This playlist is empty</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Voeg nummers toe uit uw bibliotheek</value>
+    <value>Add songs from your library</value>
   </data>
   <data name="GenreViewPage_Header_Caption" xml:space="preserve">
     <value>Genre</value>
   </data>
   <data name="GenreViewPage_Section_Songs" xml:space="preserve">
-    <value>Nummers</value>
+    <value>Songs</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Zoeken in genre…</value>
+    <value>Search in genre…</value>
   </data>
   <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Zoek in genre</value>
+    <value>Search in genre</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Alles afspelen</value>
+    <value>Play all</value>
   </data>
   <data name="GenreViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Alles willekeurig afspelen</value>
+    <value>Shuffle and play all</value>
   </data>
   <data name="GenreViewPage_Context_Play" xml:space="preserve">
-    <value>Afspelen</value>
+    <value>Play</value>
   </data>
   <data name="GenreViewPage_Context_PlayNext" xml:space="preserve">
-    <value>Volgende afspelen</value>
+    <value>Play Next</value>
   </data>
   <data name="GenreViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>Toevoegen aan wachtrij</value>
+    <value>Add to Queue</value>
   </data>
   <data name="GenreViewPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Toevoegen aan afspeellijst</value>
+    <value>Add to Playlist</value>
   </data>
   <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Naar album</value>
+    <value>Go to Album</value>
   </data>
   <data name="GenreViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Naar artiest</value>
+    <value>Go to Artist</value>
   </data>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Weergeven in Verkenner</value>
+    <value>Show in File Explorer</value>
   </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Afspelen</value>
+    <value>Play</value>
   </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
-    <value>Geen nummers gevonden voor dit genre</value>
+    <value>No songs found for this genre</value>
   </data>
   <data name="GenreViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Probeer iets anders te zoeken</value>
+    <value>Try searching for something else</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
-    <value>Instellingen</value>
+    <value>Settings</value>
   </data>
   <data name="SettingsPage_Section_Appearance" xml:space="preserve">
-    <value>Uiterlijk</value>
+    <value>Appearance</value>
   </data>
   <data name="SettingsPage_Theme_Header" xml:space="preserve">
-    <value>Thema</value>
+    <value>Theme</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>Kies een licht, donker of systeemthema.</value>
+    <value>Choose a light, dark, or system theme.</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
-    <value>Accentkleur</value>
+    <value>Accent Color</value>
   </data>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
-    <value>Standaardwaarden herstellen</value>
+    <value>Reset to Default</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
-    <value>Venstermateriaal</value>
+    <value>Window Material</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Description" xml:space="preserve">
-    <value>Kies het achtergrondmateriaal van het venster.</value>
+    <value>Choose the window background material.</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
-    <value>Dynamische thema's</value>
+    <value>Dynamic Theming</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>Pas de app-kleuren aan op de hoes van het huidige album.</value>
+    <value>Match the app colors to the current album artwork.</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
-    <value>Venstergrootte onthouden</value>
+    <value>Remember Window Size</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Description" xml:space="preserve">
-    <value>Herstel het hoofdvenster naar de vorige grootte bij de volgende start.</value>
+    <value>Restore the main window to its previous size on next launch.</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Header" xml:space="preserve">
-    <value>Vensterpositie onthouden</value>
+    <value>Remember Window Position</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Description" xml:space="preserve">
-    <value>Herstel het hoofdvenster naar de vorige schermlocatie bij de volgende start.</value>
+    <value>Restore the main window to its previous screen location on next launch.</value>
   </data>
   <data name="SettingsPage_RememberNavState_Header" xml:space="preserve">
-    <value>Status navigatiepaneel onthouden</value>
+    <value>Remember Navigation Panel State</value>
   </data>
   <data name="SettingsPage_RememberNavState_Description" xml:space="preserve">
-    <value>Houd het linker navigatiepaneel open of gesloten zoals u het hebt achtergelaten.</value>
+    <value>Keep the left navigation panel open or closed as you left it.</value>
   </data>
   <data name="SettingsPage_CustomizeNav_Header" xml:space="preserve">
-    <value>Navigatie aanpassen</value>
+    <value>Customize Navigation</value>
   </data>
   <data name="SettingsPage_CustomizeNav_Description" xml:space="preserve">
-    <value>Sleep om pagina's in het navigatiemenu te herschikken. Gebruik de schakelaar om een pagina weer te geven of te verbergen.</value>
+    <value>Drag to reorder pages in the navigation menu. Use the toggle to show or hide a page.</value>
   </data>
   <data name="SettingsPage_Section_Player" xml:space="preserve">
-    <value>Spelerbeheer</value>
+    <value>Player Management</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Header" xml:space="preserve">
-    <value>Volumenormalisatie (ReplayGain)</value>
+    <value>Volume Normalization (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Verminder volumeverschillen tussen nummers met ReplayGain.</value>
+    <value>Reduce volume differences between songs using ReplayGain.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
-    <value>Exclusieve WASAPI-modus</value>
+    <value>WASAPI Exclusive Mode</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Geef Nagi exclusieve controle over het Windows-audioapparaat. Andere apps zijn mogelijk stil. Start Nagi opnieuw op nadat u deze instelling hebt gewijzigd.</value>
+    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
-    <value>Faden bij Afspelen / Pauzeren</value>
+    <value>Fade on Play / Pause</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Laat het volume geleidelijk in- en uitfaden bij respectievelijk hervatten en pauzeren, in plaats van abrupt te stoppen.</value>
+    <value>Smoothly fade the volume in when resuming and out when pausing instead of cutting instantly.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
-    <value>Audio-equalizer</value>
+    <value>Audio Equalizer</value>
   </data>
   <data name="SettingsPage_ResetEqualizer_Content" xml:space="preserve">
-    <value>Standaardwaarden herstellen</value>
+    <value>Reset to Default</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
-    <value>Voorversterker</value>
+    <value>Preamp</value>
   </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
-    <value>Aangepast</value>
+    <value>Custom</value>
   </data>
   <data name="SettingsPage_CustomizePlayer" xml:space="preserve">
-    <value>Spelerbediening aanpassen</value>
+    <value>Customize Player Controls</value>
   </data>
   <data name="SettingsPage_ResetPlayerButtons_Content" xml:space="preserve">
-    <value>Standaardwaarden herstellen</value>
+    <value>Reset to Default</value>
   </data>
   <data name="SettingsPage_CustomizePlayer_Instructions" xml:space="preserve">
-    <value>Beweeg de muis om de zichtbaarheid te schakelen. Sleep om te herschikken. De scheidingslijn scheidt de midden- en rechterbediening.</value>
+    <value>Hover to toggle visibility. Drag to reorder. The divider separates center and right controls.</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Header" xml:space="preserve">
-    <value>Inklapbare speler</value>
+    <value>Collapsible Player</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>Vouw de spelersbalk uit wanneer je erover zweeft.</value>
+    <value>Expand the player bar when you hover over it.</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
-    <value>Afspeelstatus herstellen</value>
+    <value>Restore Playback State</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>Herstel je wachtrij en afspeelpositie wanneer Nagi start.</value>
+    <value>Restore your queue and playback position when Nagi starts.</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
-    <value>Automatisch starten bij opstarten</value>
+    <value>Auto Launch on Startup</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
-    <value>Start Nagi automatisch wanneer u inlogt op uw computer.</value>
+    <value>Start Nagi automatically when you log into your computer.</value>
   </data>
   <data name="SettingsPage_StartMinimized_Header" xml:space="preserve">
-    <value>Geminimaliseerd starten</value>
+    <value>Start Minimized</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>Start Nagi met een geminimaliseerd venster.</value>
+    <value>Start Nagi with its window minimized.</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
-    <value>Minimaliseren naar mini-speler</value>
+    <value>Minimize to Mini-Player</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Description" xml:space="preserve">
-    <value>Wanneer geminimaliseerd, toon een compacte zwevende speler in plaats van het venster te verbergen.</value>
+    <value>When minimized, show a compact floating player instead of hiding the window.</value>
   </data>
   <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
-    <value>Verbergen in systeemvak</value>
+    <value>Hide to System Tray</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>Laat Nagi op de achtergrond actief blijven in het systeemvak wanneer je het venster sluit.</value>
+    <value>Keep Nagi running in the system tray when you close its window.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
-    <value>Albumhoes tonen in pop-up</value>
+    <value>Show Cover Art in Flyout</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
-    <value>Geef de omslagafbeelding weer in de compacte speler die verschijnt wanneer u op het pictogram in het systeemvak klikt.</value>
+    <value>Display the cover art in the compact player that appears when clicking the tray icon.</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
-    <value>Lidwoorden negeren bij sorteren</value>
+    <value>Ignore Articles When Sorting</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Sorteer albums, artiesten en nummers op hun eerste belangrijke woord (bijv. "The Beatles" wordt gesorteerd onder B).</value>
+    <value>Sort albums, artists, and songs by their first significant word (e.g. "The Beatles" sorts under B).</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
-    <value>Gegevensbeheer</value>
+    <value>Data Management</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Header" xml:space="preserve">
-    <value>Artiestsplitsing</value>
+    <value>Artist Splitting</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Definieer tekens die worden gebruikt om meerdere artiesten te splitsen (bijv. ';/'). Laat leeg om uit te schakelen.</value>
+    <value>Define characters used to split multiple artists (e.g. ';/'). Leave empty to disable.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
-    <value>Genresplitsing</value>
+    <value>Genre Splitting</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Definieer tekens die worden gebruikt om meerdere genres te splitsen (bijv. ';/'). Leeg laten om uit te schakelen.</value>
+    <value>Define characters used to split multiple genres (e.g. ';/'). Leave empty to disable.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
-    <value>Bibliotheek opnieuw scannen</value>
+    <value>Rescan Library</value>
   </data>
   <data name="SettingsPage_RescanLibrary_ToolTip" xml:space="preserve">
-    <value>Bibliotheek opnieuw scannen om splitsingswijzigingen toe te passen</value>
+    <value>Rescan library to apply splitting changes</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
-    <value>Online metadata ophalen</value>
+    <value>Retrieve Online Metadata</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Haal artiestenafbeeldingen en biografieën op uit online bronnen.</value>
+    <value>Fetch artist images and biographies from online sources.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
-    <value>Bronnen</value>
+    <value>Sources</value>
   </data>
   <data name="SettingsPage_MetadataSources_Description" xml:space="preserve">
-    <value>Sleep om metadatabronnen te herschikken. Beweeg de muis over elke bron voor details.</value>
+    <value>Drag to reorder metadata sources. Hover over each source for details.</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Header" xml:space="preserve">
-    <value>Online songteksten ophalen</value>
+    <value>Fetch Online Lyrics</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>Haal ontbrekende songteksten op van online bronnen. Hiermee worden nummermetadata naar externe diensten verzonden.</value>
+    <value>Fetch missing lyrics from online sources. This sends song metadata to third-party services.</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
-    <value>Bronnen</value>
+    <value>Sources</value>
   </data>
   <data name="SettingsPage_LyricsSources_Description" xml:space="preserve">
-    <value>Sleep om songtekstbronnen te herschikken. Beweeg de muis over elke bron voor details.</value>
+    <value>Drag to reorder lyrics sources. Hover over each source for details.</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
-    <value>Gefonetiseerde songteksten tonen</value>
+    <value>Show Romanized Lyrics</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
-    <value>Toon een kleinere geromaniseerde regel onder ondersteunde songteksten wanneer een geïnstalleerd pakket overeenkomt met het script.</value>
+    <value>Show a smaller romanized line under supported lyrics when an installed pack matches the script.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
-    <value>Taalpakketten</value>
+    <value>Language Packs</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>Installeer taalpakketten om ondersteunde songteksten te romaniseren. Pakketten worden lokaal opgeslagen.</value>
+    <value>Install language packs to romanize supported lyrics. Packs are stored locally.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
-    <value>Vernieuwen</value>
+    <value>Refresh</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Install" xml:space="preserve">
-    <value>Installeren</value>
+    <value>Install</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Update" xml:space="preserve">
-    <value>Bijwerken</value>
+    <value>Update</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Remove" xml:space="preserve">
-    <value>Verwijderen</value>
+    <value>Remove</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
-    <value>Geen compatibele romanisatiepakketten beschikbaar.</value>
+    <value>No compatible romanization packs are available.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Kon romanisatiepakketten niet laden: {0}</value>
+    <value>Could not load romanization packs: {0}</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
-    <value>Installatie van pakket mislukt.</value>
+    <value>Pack install failed.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_RemoveFailed" xml:space="preserve">
-    <value>Verwijdering van pakket mislukt.</value>
+    <value>Pack removal failed.</value>
   </data>
   <data name="SettingsPage_RomanizationPack_UpdateAvailable" xml:space="preserve">
-    <value>Update beschikbaar</value>
+    <value>Update available</value>
   </data>
   <data name="SettingsPage_RomanizationPack_InstalledFormat" xml:space="preserve">
-    <value>Geïnstalleerd {0}</value>
+    <value>Installed {0}</value>
   </data>
   <data name="SettingsPage_RomanizationPack_NotInstalled" xml:space="preserve">
-    <value>Niet geïnstalleerd</value>
+    <value>Not installed</value>
   </data>
   <data name="SettingsPage_RomanizationPack_LicenseFormat" xml:space="preserve">
-    <value>{0} licentie</value>
+    <value>{0} license</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>Afspeellijsten importeren en exporteren</value>
+    <value>Import &amp; Export Playlists</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
-    <value>Exporteer afspeellijsten naar M3U-bestanden voor gebruik in andere spelers, of importeer M3U-afspeellijsten in Nagi.</value>
+    <value>Export playlists to M3U files for use in other players, or import M3U playlists into Nagi.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
-    <value>Alles exporteren…</value>
+    <value>Export All…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
-    <value>Exporteer alle afspeellijsten naar een map</value>
+    <value>Export all playlists to a folder</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
-    <value>Importeren…</value>
+    <value>Import…</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
-    <value>Eén of meer M3U-bestanden importeren</value>
+    <value>Import one or more M3U files</value>
   </data>
   <data name="SettingsPage_ResetApp_Header" xml:space="preserve">
-    <value>App herstellen</value>
+    <value>Reset Application</value>
   </data>
   <data name="SettingsPage_ResetApp_Description" xml:space="preserve">
-    <value>Hiermee worden alle bibliotheekgegevens en afspeellijsten verwijderd en alle instellingen teruggezet naar de standaardwaarden. De applicatie zal opnieuw opstarten.</value>
+    <value>This will delete all library data, playlists, and reset all settings to their defaults. The application will restart.</value>
   </data>
   <data name="SettingsPage_ResetButton_Content" xml:space="preserve">
-    <value>Alle gegevens opnieuw instellen</value>
+    <value>Reset All Data</value>
   </data>
   <data name="SettingsPage_Section_Integrations" xml:space="preserve">
-    <value>Integraties</value>
+    <value>Integrations</value>
   </data>
   <data name="SettingsPage_LastFm_Header" xml:space="preserve">
     <value>Last.fm</value>
   </data>
   <data name="SettingsPage_LastFm_Description" xml:space="preserve">
-    <value>Verbind uw Last.fm-account om nummers te scrobbelen en uw huidig afgespeelde nummer weer te geven.</value>
+    <value>Connect your Last.fm account to scrobble tracks and show your currently playing song.</value>
   </data>
   <data name="SettingsPage_LastFm_Connect_Content" xml:space="preserve">
-    <value>Verbinden</value>
+    <value>Connect</value>
   </data>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
-    <value>Voltooien</value>
+    <value>Complete</value>
   </data>
   <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Annuleren</value>
+    <value>Cancel</value>
   </data>
   <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
-    <value>Verbreken</value>
+    <value>Disconnect</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
-    <value>Scrobbelen inschakelen</value>
+    <value>Enable Scrobbling</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Description" xml:space="preserve">
-    <value>Voeg de nummers die u op Nagi beluistert automatisch toe aan uw Last.fm-profiel.</value>
+    <value>Automatically add the tracks you listen to on Nagi to your Last.fm profile.</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
-    <value>'Nu afgespeeld' bijwerken</value>
+    <value>Update Now Playing</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>Toon het nummer dat momenteel speelt op je Last.fm-profiel.</value>
+    <value>Show the song currently playing on your Last.fm profile.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
     <value>ListenBrainz</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Description" xml:space="preserve">
-    <value>Verzend uw beluisterde nummers naar ListenBrainz (een open alternatief voor Last.fm).</value>
+    <value>Submit your listens to ListenBrainz (an open alternative to Last.fm).</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenLabel" xml:space="preserve">
-    <value>Gebruikerstoken</value>
+    <value>User Token</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenPlaceholder" xml:space="preserve">
-    <value>Plak uw token van listenbrainz.org/settings</value>
+    <value>Paste your token from listenbrainz.org/settings</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TestConnection" xml:space="preserve">
-    <value>Verbinding testen</value>
+    <value>Test Connection</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Connected" xml:space="preserve">
-    <value>Verbonden als {0}</value>
+    <value>Connected as {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ConnectionFailed" xml:space="preserve">
-    <value>Verbinding mislukt: {0}</value>
+    <value>Connection failed: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>Luisterbeurten verzenden (scrobbelen)</value>
+    <value>Submit Listens (Scrobbling)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>Updates voor 'Nu afgespeeld' verzenden</value>
+    <value>Submit Now Playing Updates</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
-    <value>Geavanceerd</value>
+    <value>Advanced</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ServerUrlLabel" xml:space="preserve">
-    <value>Server-URL</value>
+    <value>Server URL</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ServerUrlPlaceholder" xml:space="preserve">
     <value>https://api.listenbrainz.org</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Title" xml:space="preserve">
-    <value>Verbinding met ListenBrainz verbreken?</value>
+    <value>Disconnect from ListenBrainz?</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Content" xml:space="preserve">
-    <value>Hiermee wordt uw opgeslagen token verwijderd. U kunt op elk moment opnieuw verbinding maken.</value>
+    <value>This will remove your saved token. You can reconnect at any time.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Button" xml:space="preserve">
-    <value>Verbinding verbreken</value>
+    <value>Disconnect</value>
   </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
     <value>Discord</value>
   </data>
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
-    <value>Toon uw huidige luisteractiviteit als uw status op Discord.</value>
+    <value>Show your current listening activity as your status on Discord.</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
-    <value>Slimme afspeellijst</value>
+    <value>Smart Playlist</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Nummers</value>
+    <value>Songs</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Zoeken in slimme afspeellijst…</value>
+    <value>Search in smart playlist…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Zoek in slimme afspeellijst</value>
+    <value>Search in smart playlist</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
-    <value>Regels bewerken</value>
+    <value>Edit rules</value>
   </data>
   <data name="SmartPlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Alles afspelen</value>
+    <value>Play all</value>
   </data>
   <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Alles willekeurig afspelen</value>
+    <value>Shuffle and play all</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_Play" xml:space="preserve">
-    <value>Afspelen</value>
+    <value>Play</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
-    <value>Volgende afspelen</value>
+    <value>Play Next</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>Toevoegen aan wachtrij</value>
+    <value>Add to Queue</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Naar album</value>
+    <value>Go to Album</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Naar artiest</value>
+    <value>Go to Artist</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Weergeven in Verkenner</value>
+    <value>Show in File Explorer</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Afspelen</value>
+    <value>Play</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
-    <value>Geen nummers komen overeen met de huidige regels</value>
+    <value>No songs match the current rules</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Probeer de regels te bewerken</value>
+    <value>Try editing the rules</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
-    <value>Regels bewerken</value>
+    <value>Edit Rules</value>
   </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
-    <value>Over</value>
+    <value>About</value>
   </data>
   <data name="SettingsPage_AboutExpander_Header" xml:space="preserve">
-    <value>Over Nagi</value>
+    <value>About Nagi</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
-    <value>Herontdek uw lokale muziekcollectie met Nagi, een muziekspeler gericht op snelheid, eenvoud en privacy.</value>
+    <value>Rediscover your local music collection with Nagi, a music player focused on speed, simplicity, and privacy.</value>
   </data>
   <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
-    <value>Versie </value>
+    <value>Version </value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
-    <value>Licenties bekijken</value>
+    <value>View Licenses</value>
   </data>
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
-    <value>Broncode</value>
+    <value>Source Code</value>
   </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
-    <value>Feedback verzenden</value>
+    <value>Send Feedback</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
-    <value>Applicatietaal</value>
+    <value>Application Language</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>Herstart Nagi om de taalwijziging toe te passen.</value>
+    <value>Restart Nagi to apply a language change.</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
-    <value>Herstart vereist</value>
+    <value>Restart Required</value>
   </data>
   <data name="SettingsPage_RestartRequired_Message" xml:space="preserve">
-    <value>Herstart de applicatie om de taalwijziging volledig van kracht te laten worden.</value>
+    <value>Please restart the application for the language change to fully take effect.</value>
   </data>
   <data name="SettingsPage_About_PrivacyPolicy_Content" xml:space="preserve">
-    <value>Privacybeleid</value>
+    <value>Privacy Policy</value>
   </data>
   <data name="SettingsPage_BackupRestore_Header" xml:space="preserve">
-    <value>Back-up &amp; Herstel</value>
+    <value>Backup &amp; Restore</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Maak een back-up van je bibliotheekgegevens en instellingen, of herstel een eerdere back-up.</value>
+    <value>Create a backup of your library data and settings, or restore a previous backup.</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
-    <value>Back-up maken</value>
+    <value>Create Backup</value>
   </data>
   <data name="SettingsPage_RestoreBackup_Content" xml:space="preserve">
-    <value>Back-up herstellen</value>
+    <value>Restore Backup</value>
   </data>
   <data name="Settings_Backup_Success_Title" xml:space="preserve">
-    <value>Back-up gemaakt</value>
+    <value>Backup Created</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Back-up ({0:F2} MB) gemaakt op: {1}</value>
+    <value>Created a backup ({0:F2} MB) at: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
-    <value>Back-up mislukt</value>
+    <value>Backup Failed</value>
   </data>
   <data name="Settings_Backup_Failed_Message" xml:space="preserve">
-    <value>Maken van back-up mislukt. Probeer het opnieuw.</value>
+    <value>Failed to create backup. Please try again.</value>
   </data>
   <data name="Settings_Restore_Invalid_Title" xml:space="preserve">
-    <value>Ongeldig back-upbestand</value>
+    <value>Invalid Backup File</value>
   </data>
   <data name="Settings_Restore_Invalid_Message" xml:space="preserve">
-    <value>Het geselecteerde bestand is geen geldige Nagi-back-up.</value>
+    <value>The selected file is not a valid Nagi backup.</value>
   </data>
   <data name="Settings_Restore_Confirm_Title" xml:space="preserve">
-    <value>Back-up herstellen?</value>
+    <value>Restore Backup?</value>
   </data>
   <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
-    <value>Herstellen vanaf back-up zal alle huidige app-gegevens vervangen. Deze actie kan niet ongedaan worden gemaakt. De app zal opnieuw starten na het herstel. Doorgaan?</value>
+    <value>Restoring from backup will replace all current app data. This action cannot be undone. The app will restart after restore. Continue?</value>
   </data>
   <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
-    <value>Herstellen</value>
+    <value>Restore</value>
   </data>
   <data name="Settings_Restore_Success_Title" xml:space="preserve">
-    <value>Herstel voltooid</value>
+    <value>Restore Complete</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Back-up hersteld. Nagi wordt nu opnieuw opgestart.</value>
+    <value>Backup restored. Nagi will now restart.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
-    <value>Herstel mislukt</value>
+    <value>Restore Failed</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Kon de back-up niet herstellen.</value>
+    <value>Could not restore the backup.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
-    <value>Spelerstijl</value>
+    <value>Player Styling</value>
   </data>
   <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
-    <value>Acryl (Glas)</value>
+    <value>Acrylic (Glass)</value>
   </data>
   <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
-    <value>Effen (Ondoorzichtig)</value>
+    <value>Solid (Opaque)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Pas het uiterlijk van de spelersbalk aan.</value>
+    <value>Customize the appearance of the player bar.</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
-    <value>Tintintensiteit</value>
+    <value>Tint Intensity</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Pas de intensiteit van de achtergrondkleur van de speler aan.</value>
+    <value>Adjust the intensity of the player background color.</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
-    <value>Fade-in-duur</value>
+    <value>Fade-In Duration</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
-    <value>Stel in hoelang het duurt voordat het volume infaadt wanneer het afspelen hervat.</value>
+    <value>Set how long the volume takes to fade in when playback resumes.</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
-    <value>Fade-out-duur</value>
+    <value>Fade-Out Duration</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
-    <value>Stel in hoelang het duurt voordat het volume uitfaadt wanneer het afspelen pauzeert.</value>
+    <value>Set how long the volume takes to fade out when playback pauses.</value>
   </data>
   <data name="Settings_Nav_Insights" xml:space="preserve">
-    <value>Inzichten</value>
+    <value>Insights</value>
   </data>
   <data name="InsightsPage_Title" xml:space="preserve">
-    <value>Inzichten</value>
+    <value>Insights</value>
   </data>
   <data name="InsightsPage_TotalTime" xml:space="preserve">
-    <value>Totale luistertijd</value>
+    <value>Total Listen Time</value>
   </data>
   <data name="InsightsPage_UniqueSongs" xml:space="preserve">
-    <value>Unieke nummers</value>
+    <value>Unique Songs</value>
   </data>
   <data name="InsightsPage_PeakHour" xml:space="preserve">
-    <value>Piekuur</value>
+    <value>Peak Hour</value>
   </data>
   <data name="InsightsPage_MostActiveDay" xml:space="preserve">
-    <value>Meest actieve dag</value>
+    <value>Most Active Day</value>
   </data>
   <data name="InsightsPage_TopSongs" xml:space="preserve">
-    <value>Topnummers</value>
+    <value>Top Songs</value>
   </data>
   <data name="InsightsPage_TopArtists" xml:space="preserve">
-    <value>Topartiesten</value>
+    <value>Top Artists</value>
   </data>
   <data name="InsightsPage_TopAlbums" xml:space="preserve">
-    <value>Topalbums</value>
+    <value>Top Albums</value>
   </data>
   <data name="InsightsPage_TopGenres" xml:space="preserve">
-    <value>Topgenres</value>
+    <value>Top Genres</value>
   </data>
   <data name="InsightsPage_Sources" xml:space="preserve">
-    <value>Afspeelbronnen</value>
+    <value>Playback Sources</value>
   </data>
   <data name="InsightsPage_Empty_Title" xml:space="preserve">
-    <value>Nog geen luistergegevens</value>
+    <value>No listening data yet</value>
   </data>
   <data name="InsightsPage_Empty_Subtitle" xml:space="preserve">
-    <value>Begin met het afspelen van muziek om hier uw inzichten te zien</value>
+    <value>Start playing music to see your insights here</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
-    <value>Afgespeeld: {0}</value>
+    <value>Plays: {0}</value>
   </data>
   <data name="InsightsPage_Source_Albums" xml:space="preserve">
     <value>Albums</value>
   </data>
   <data name="InsightsPage_Source_Artists" xml:space="preserve">
-    <value>Artiesten</value>
+    <value>Artists</value>
   </data>
   <data name="InsightsPage_Source_Playlists" xml:space="preserve">
-    <value>Afspeellijsten</value>
+    <value>Playlists</value>
   </data>
   <data name="InsightsPage_Source_SmartPlaylists" xml:space="preserve">
-    <value>Slimme afspeellijsten</value>
+    <value>Smart Playlists</value>
   </data>
   <data name="InsightsPage_Source_Folders" xml:space="preserve">
-    <value>Mappen</value>
+    <value>Folders</value>
   </data>
   <data name="InsightsPage_Source_Genres" xml:space="preserve">
     <value>Genres</value>
   </data>
   <data name="InsightsPage_Source_Search" xml:space="preserve">
-    <value>Zoeken</value>
+    <value>Search</value>
   </data>
   <data name="InsightsPage_Source_Library" xml:space="preserve">
-    <value>Bibliotheek</value>
+    <value>Library</value>
   </data>
   <data name="InsightsPage_Source_Files" xml:space="preserve">
-    <value>Bestanden</value>
+    <value>Files</value>
   </data>
   <data name="InsightsPage_Reset_ToolTip" xml:space="preserve">
-    <value>Luistergeschiedenis resetten</value>
+    <value>Reset listening history</value>
   </data>
   <data name="InsightsPage_Reset_Confirm_Title" xml:space="preserve">
-    <value>Luistergeschiedenis resetten?</value>
+    <value>Reset listening history?</value>
   </data>
   <data name="InsightsPage_Reset_Confirm_Message" xml:space="preserve">
-    <value>Dit verwijdert permanent alle luistergeschiedenis en statistieken. Dit kan niet ongedaan worden gemaakt.</value>
+    <value>This will permanently delete all listening history and statistics. This cannot be undone.</value>
   </data>
   <data name="InsightsPage_Reset_Confirm_Button" xml:space="preserve">
-    <value>Resetten</value>
+    <value>Reset</value>
   </data>
   <data name="SplashPage_AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="SplashPage_Tagline" xml:space="preserve">
-    <value>Jouw muziek, prachtig georganiseerd</value>
+    <value>Your music, beautifully organized</value>
   </data>
   <data name="SplashPage_Status" xml:space="preserve">
-    <value>Nagi wordt wakker…</value>
+    <value>Waking up Nagi…</value>
   </data>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
-    <value>Alles weergeven</value>
+    <value>See all</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>Search…</value>
   </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
-    <value>Afspelingen</value>
+    <value>Plays</value>
   </data>
   <data name="InsightsPage_SortBy_Duration" xml:space="preserve">
-    <value>Duur</value>
+    <value>Time</value>
   </data>
   <data name="PaginationControl_All" xml:space="preserve">
-    <value>Alles</value>
+    <value>All</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
-    <value>Items per pagina:</value>
+    <value>Items per page:</value>
   </data>
   <data name="PaginationControl_PreviousPage_ToolTip" xml:space="preserve">
-    <value>Vorige pagina</value>
+    <value>Previous Page</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
-    <value>Volgende pagina</value>
+    <value>Next Page</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
-    <value>bijv. ;/\\</value>
+    <value>e.g. ;/\\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
     <value> ms</value>
@@ -2134,195 +2140,213 @@ Wilt u doorgaan?</value>
     <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
-    <value>Afgelopen 1 dag</value>
+    <value>Last 1 Day</value>
   </data>
   <data name="Insights_TimeRange_Last7Days" xml:space="preserve">
-    <value>Afgelopen 7 dagen</value>
+    <value>Last 7 Days</value>
   </data>
   <data name="Insights_TimeRange_Last30Days" xml:space="preserve">
-    <value>Afgelopen 30 dagen</value>
+    <value>Last 30 Days</value>
   </data>
   <data name="Insights_TimeRange_Last90Days" xml:space="preserve">
-    <value>Afgelopen 90 dagen</value>
+    <value>Last 90 Days</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>Afgelopen jaar</value>
+    <value>Last Year</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
-    <value>Altijd</value>
+    <value>All Time</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
-    <value>{0}u {1}m</value>
+    <value>{0}h {1}m</value>
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
     <value>{0}m {1}s</value>
   </data>
   <data name="QueuePanel_EmptyTitle" xml:space="preserve">
-    <value>Je wachtrij is leeg</value>
+    <value>Your queue is empty</value>
   </data>
   <data name="QueuePanel_EmptyDescription" xml:space="preserve">
-    <value>Speel muziek af of sleep audiobestanden hiernaartoe om je wachtrij op te bouwen.</value>
+    <value>Play music or drop audio files here to build your queue.</value>
   </data>
   <data name="QueuePanel_LoadError" xml:space="preserve">
-    <value>Sommige nummers konden niet worden geladen. Selecteer Opnieuw proberen om de wachtrij opnieuw te laden.</value>
+    <value>Some songs could not be loaded. Select Retry to load the queue again.</value>
   </data>
   <data name="QueuePanel_Retry" xml:space="preserve">
-    <value>Opnieuw proberen</value>
+    <value>Retry</value>
   </data>
   <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
-    <value>De nieuwe volgorde van de afspeellijst kon niet worden opgeslagen. Probeer het opnieuw.</value>
+    <value>The new playlist order couldn't be saved. Please try again.</value>
   </data>
   <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
-    <value>Audio-uitvoerapparaat</value>
+    <value>Audio Output Device</value>
   </data>
   <data name="SettingsPage_AudioOutput_Description" xml:space="preserve">
-    <value>Kies waar Nagi muziek afspeelt.</value>
+    <value>Choose where Nagi plays music.</value>
   </data>
   <data name="SettingsPage_AudioOutput_Default" xml:space="preserve">
-    <value>Systeemstandaard</value>
+    <value>System Default</value>
   </data>
   <data name="SettingsPage_AudioOutput_Unavailable" xml:space="preserve">
-    <value>Het opgeslagen apparaat is niet beschikbaar. De systeemstandaard wordt gebruikt.</value>
+    <value>The saved device is unavailable. Using the system default.</value>
   </data>
   <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
-    <value>Kon de audio-uitvoer niet bijwerken. Probeer het opnieuw of kies een ander apparaat.</value>
+    <value>Couldn't update the audio output. Try again or choose another device.</value>
   </data>
   <data name="Listening_Random" xml:space="preserve">
-    <value>Willekeurig</value>
+    <value>Shuffle</value>
   </data>
   <data name="Listening_MoreVariety" xml:space="preserve">
-    <value>Meer variatie</value>
+    <value>More Variety</value>
   </data>
   <data name="Listening_Rediscover" xml:space="preserve">
-    <value>Herontdekken</value>
+    <value>Rediscover</value>
   </data>
   <data name="Listening_Unheard" xml:space="preserve">
-    <value>Ongehoord</value>
+    <value>Unheard</value>
   </data>
   <data name="Listening_PlayFor" xml:space="preserve">
-    <value>Afspelen gedurende…</value>
+    <value>Play for…</value>
   </data>
   <data name="Listening_Minutes" xml:space="preserve">
-    <value>Minuten</value>
+    <value>Minutes</value>
   </data>
   <data name="Listening_ShuffleMode" xml:space="preserve">
-    <value>Mix-type</value>
+    <value>Mix Type</value>
   </data>
   <data name="Listening_AvoidRecentDays" xml:space="preserve">
-    <value>Recent afgespeeld vermijden (dagen)</value>
+    <value>Avoid Recent Plays (Days)</value>
   </data>
   <data name="Listening_MoreOptions" xml:space="preserve">
-    <value>Meer opties</value>
+    <value>More Options</value>
   </data>
   <data name="Listening_PlayForDescription" xml:space="preserve">
-    <value>Bouw een wachtrij op van volledige nummers die samen niet langer duren dan de gekozen tijdsduur.</value>
+    <value>Build a queue of whole songs totaling no more than your chosen duration.</value>
   </data>
   <data name="Listening_NoMixTitle" xml:space="preserve">
-    <value>Geen nummers voor deze mix</value>
+    <value>No songs for this mix</value>
   </data>
   <data name="Listening_NoMixDescription" xml:space="preserve">
-    <value>Geen enkel nummer in deze lijst voldoet aan deze vereisten. Probeer een andere mix of nummerlijst.</value>
+    <value>No songs in this list meet these requirements. Try another mix or song list.</value>
   </data>
   <data name="Listening_Favorites" xml:space="preserve">
-    <value>Favorieten</value>
+    <value>Favorites</value>
   </data>
   <data name="Listening_AddFavorite" xml:space="preserve">
-    <value>Toevoegen aan favorieten</value>
+    <value>Add to Favorites</value>
   </data>
   <data name="Listening_RemoveFavorite" xml:space="preserve">
-    <value>Verwijderen uit favorieten</value>
+    <value>Remove from Favorites</value>
   </data>
   <data name="Listening_SleepTimer" xml:space="preserve">
-    <value>Slaaptimer</value>
+    <value>Sleep Timer</value>
   </data>
   <data name="Listening_FinishTrack" xml:space="preserve">
-    <value>Huidige nummer afmaken als de timer afloopt</value>
+    <value>Finish the current song when the timer expires</value>
   </data>
   <data name="Listening_StopAfterTrack" xml:space="preserve">
-    <value>Stoppen na dit nummer</value>
+    <value>Stop After This Song</value>
   </data>
   <data name="Listening_StopAtQueueEnd" xml:space="preserve">
-    <value>Stoppen aan einde van wachtrij</value>
+    <value>Stop at Queue End</value>
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
-    <value>Afspelen stoppen</value>
+    <value>Stop Playback</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>Shuffle All Songs</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>Open Mini-Player</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>Playback Speed</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0}×</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
-    <value>Aangepaste timer…</value>
+    <value>Custom Timer…</value>
   </data>
   <data name="Listening_Timer15" xml:space="preserve">
-    <value>Over 15 minuten</value>
+    <value>In 15 Minutes</value>
   </data>
   <data name="Listening_Timer30" xml:space="preserve">
-    <value>Over 30 minuten</value>
+    <value>In 30 Minutes</value>
   </data>
   <data name="Listening_Timer60" xml:space="preserve">
-    <value>Over 60 minuten</value>
+    <value>In 60 Minutes</value>
   </data>
   <data name="Listening_CancelStop" xml:space="preserve">
-    <value>Geplande stop annuleren</value>
+    <value>Cancel Scheduled Stop</value>
   </data>
   <data name="Listening_TimerRemaining" xml:space="preserve">
-    <value>Stopt over {0}</value>
+    <value>Stops in {0}</value>
   </data>
   <data name="Listening_PlayerOptions" xml:space="preserve">
-    <value>Speleropties</value>
+    <value>Player Options</value>
   </data>
   <data name="Listening_RecentlyPlayed" xml:space="preserve">
-    <value>Onlangs afgespeeld</value>
+    <value>Recently Played</value>
   </data>
   <data name="Listening_HistorySearch" xml:space="preserve">
-    <value>Luistergeschiedenis zoeken</value>
+    <value>Search listening history</value>
   </data>
   <data name="Listening_HistoryEmpty" xml:space="preserve">
-    <value>Nog geen luistergeschiedenis</value>
+    <value>No listening history yet</value>
   </data>
   <data name="Listening_HistoryLoadError" xml:space="preserve">
-    <value>'Onlangs afgespeeld' kon niet worden geladen. Selecteer Opnieuw proberen om het opnieuw te proberen.</value>
+    <value>Recently Played could not be loaded. Select Retry to try again.</value>
   </data>
   <data name="Listening_Today" xml:space="preserve">
-    <value>Vandaag</value>
+    <value>Today</value>
   </data>
   <data name="Listening_Yesterday" xml:space="preserve">
-    <value>Gisteren</value>
+    <value>Yesterday</value>
   </data>
   <data name="Listening_RediscoveryReason" xml:space="preserve">
-    <value>Laatst afgespeeld op {0:d}</value>
+    <value>Last played {0:d}</value>
   </data>
   <data name="Listening_RediscoveryTitle" xml:space="preserve">
-    <value>Het beluisteren waard</value>
+    <value>Worth another listen</value>
   </data>
   <data name="Listening_Dismiss" xml:space="preserve">
-    <value>Negeren</value>
+    <value>Dismiss</value>
   </data>
   <data name="Listening_ActionError" xml:space="preserve">
-    <value>Kon deze actie niet voltooien. Probeer het opnieuw.</value>
+    <value>Could not complete this action. Please try again.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">
-    <value>Nog geen favorieten</value>
+    <value>No favorites yet</value>
   </data>
   <data name="Listening_FavoritesEmptyDescription" xml:space="preserve">
-    <value>Voeg een nummer toe aan je favorieten vanuit het menu, of selecteer het en druk op Ctrl+D.</value>
+    <value>Favorite a song from its menu, or select it and press Ctrl+D.</value>
   </data>
   <data name="Listening_VarietyDescription" xml:space="preserve">
-    <value>'Meer variatie' vermijdt nummers die recent zijn afgespeeld en scheidt nummers van dezelfde artiest waar mogelijk.</value>
+    <value>More Variety avoids songs played within the recent-play window and separates songs by the same artist where possible.</value>
   </data>
   <data name="Listening_RediscoverDescription" xml:space="preserve">
-    <value>'Herontdekken' gebruikt nummers met geregistreerde afspeelbeurten in Nagi die meer dan 30 dagen geleden voor het laatst zijn afgespeeld.</value>
+    <value>Rediscover uses songs with recorded plays in Nagi that were last played more than 30 days ago.</value>
   </data>
   <data name="Listening_UnheardDescription" xml:space="preserve">
-    <value>'Ongehoord' gebruikt nummers zonder geregistreerde afspeelbeurten in Nagi.</value>
+    <value>Unheard uses songs with no recorded plays in Nagi.</value>
   </data>
   <data name="Listening_HistoryNoMatches" xml:space="preserve">
-    <value>Geen afspeelbeurten komen overeen met je zoekopdracht</value>
+    <value>No listens match your search</value>
   </data>
   <data name="Listening_NoTimedMixDescription" xml:space="preserve">
-    <value>Geen nummers in deze lijst voldoen aan de mixvereisten en passen binnen de gekozen tijdsduur. Probeer een langere tijdsduur, een andere mix of een andere nummerlijst.</value>
+    <value>No songs in this list meet the mix requirements and fit within your chosen duration. Try a longer duration, another mix, or a different song list.</value>
   </data>
   <data name="Generic_CloseSearch" xml:space="preserve">
-    <value>Zoeken sluiten</value>
+    <value>Close search</value>
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
-    <value>Geen afspeellijsten beschikbaar</value>
+    <value>No playlists available</value>
   </data>
 </root>

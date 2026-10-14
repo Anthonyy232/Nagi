@@ -59,2070 +59,2076 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NavItem_Library" xml:space="preserve">
-    <value>کتابخانه</value>
+    <value>Library</value>
   </data>
   <data name="NavItem_Albums" xml:space="preserve">
-    <value>آلبوم‌ها</value>
+    <value>Albums</value>
   </data>
   <data name="NavItem_Artists" xml:space="preserve">
-    <value>هنرمندان</value>
+    <value>Artists</value>
   </data>
   <data name="NavItem_Genres" xml:space="preserve">
-    <value>ژانرها</value>
+    <value>Genres</value>
   </data>
   <data name="NavItem_Playlists" xml:space="preserve">
-    <value>لیست‌های پخش</value>
+    <value>Playlists</value>
   </data>
   <data name="NavItem_Folders" xml:space="preserve">
-    <value>پوشه‌ها</value>
+    <value>Folders</value>
   </data>
   <data name="NavItem_Favorites" xml:space="preserve">
-    <value>علاقه‌مندی‌ها</value>
+    <value>Favorites</value>
   </data>
   <data name="NavItem_Insights" xml:space="preserve">
-    <value>بینش‌ها</value>
+    <value>Insights</value>
   </data>
   <data name="NavItem_Settings" xml:space="preserve">
-    <value>تنظیمات</value>
+    <value>Settings</value>
   </data>
   <data name="Status_NoTrackPlaying" xml:space="preserve">
-    <value>هیچ آهنگی در حال پخش نیست</value>
+    <value>No song playing</value>
   </data>
   <data name="Tooltip_Play" xml:space="preserve">
-    <value>پخش</value>
+    <value>Play</value>
   </data>
   <data name="Tooltip_Pause" xml:space="preserve">
-    <value>مکث</value>
+    <value>Pause</value>
   </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
-    <value>پخش تصادفی خاموش</value>
+    <value>Shuffle Off</value>
   </data>
   <data name="Tooltip_RepeatOff" xml:space="preserve">
-    <value>تکرار خاموش</value>
+    <value>Repeat Off</value>
   </data>
   <data name="Tooltip_RepeatAll" xml:space="preserve">
-    <value>تکرار همه</value>
+    <value>Repeat All</value>
   </data>
   <data name="Tooltip_RepeatOne" xml:space="preserve">
-    <value>تکرار یک آهنگ</value>
+    <value>Repeat One</value>
   </data>
   <data name="Tooltip_Repeat" xml:space="preserve">
-    <value>تکرار</value>
+    <value>Repeat</value>
   </data>
   <data name="Tooltip_Unmute" xml:space="preserve">
-    <value>لغو بی‌صدا</value>
+    <value>Unmute</value>
   </data>
   <data name="Tooltip_Mute" xml:space="preserve">
-    <value>بی‌صدا</value>
+    <value>Mute</value>
   </data>
   <data name="Theme_Light" xml:space="preserve">
-    <value>روشن</value>
+    <value>Light</value>
   </data>
   <data name="Theme_Dark" xml:space="preserve">
-    <value>تیره</value>
+    <value>Dark</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">
-    <value>پیش‌فرض سیستم</value>
+    <value>System Default</value>
   </data>
   <data name="Backdrop_Mica" xml:space="preserve">
-    <value>میکا</value>
+    <value>Mica</value>
   </data>
   <data name="Backdrop_MicaAlt" xml:space="preserve">
-    <value>میکا جایگزین</value>
+    <value>Mica Alt</value>
   </data>
   <data name="Backdrop_Acrylic" xml:space="preserve">
-    <value>اکریلیک</value>
+    <value>Acrylic</value>
   </data>
   <data name="Label_Composer" xml:space="preserve">
-    <value>آهنگساز</value>
+    <value>Composer</value>
   </data>
   <data name="Label_Comment" xml:space="preserve">
-    <value>نظر</value>
+    <value>Comment</value>
   </data>
   <data name="Label_Rating" xml:space="preserve">
-    <value>امتیاز</value>
+    <value>Rating</value>
   </data>
   <data name="Label_Grouping" xml:space="preserve">
-    <value>گروه‌بندی</value>
+    <value>Grouping</value>
   </data>
   <data name="Label_SkipCount" xml:space="preserve">
-    <value>تعداد رد کردن</value>
+    <value>Skip Count</value>
   </data>
   <data name="Label_DiscNumber" xml:space="preserve">
-    <value>شماره دیسک</value>
+    <value>Disc Number</value>
   </data>
   <data name="Label_Bitrate" xml:space="preserve">
-    <value>نرخ بیت</value>
+    <value>Bitrate</value>
   </data>
   <data name="Label_SampleRate" xml:space="preserve">
-    <value>نرخ نمونه‌برداری</value>
+    <value>Sample Rate</value>
   </data>
   <data name="Label_IsLoved" xml:space="preserve">
-    <value>علاقه‌مندی</value>
+    <value>Favorite</value>
   </data>
   <data name="Label_HasLyrics" xml:space="preserve">
-    <value>دارای متن ترانه</value>
+    <value>Has Lyrics</value>
   </data>
   <data name="Operator_IsInRange" xml:space="preserve">
-    <value>بین این مقادیر است (شامل خودشان)</value>
+    <value>Is between (inclusive)</value>
   </data>
   <data name="Operator_IsAfter" xml:space="preserve">
-    <value>بعد از این است</value>
+    <value>Is after</value>
   </data>
   <data name="Operator_IsBefore" xml:space="preserve">
-    <value>قبل از این است</value>
+    <value>Is before</value>
   </data>
   <data name="SmartPlaylist_UpperBound_Placeholder" xml:space="preserve">
-    <value>حداکثر مقدار</value>
+    <value>Maximum value</value>
   </data>
   <data name="Operator_Contains" xml:space="preserve">
-    <value>شامل می‌شود</value>
+    <value>Contains</value>
   </data>
   <data name="Operator_DoesNotContain" xml:space="preserve">
-    <value>شامل نمی‌شود</value>
+    <value>Does not contain</value>
   </data>
   <data name="Operator_Is" xml:space="preserve">
-    <value>دقیقاً برابر است با</value>
+    <value>Is exactly</value>
   </data>
   <data name="Operator_IsNot" xml:space="preserve">
-    <value>برابر نیست با</value>
+    <value>Is not</value>
   </data>
   <data name="Operator_StartsWith" xml:space="preserve">
-    <value>شروع می‌شود با</value>
+    <value>Starts with</value>
   </data>
   <data name="Operator_EndsWith" xml:space="preserve">
-    <value>پایان می‌یابد با</value>
+    <value>Ends with</value>
   </data>
   <data name="Operator_Equals" xml:space="preserve">
-    <value>برابر است با</value>
+    <value>Is equal to</value>
   </data>
   <data name="Operator_NotEquals" xml:space="preserve">
-    <value>برابر نیست با</value>
+    <value>Is not equal to</value>
   </data>
   <data name="Operator_GreaterThan" xml:space="preserve">
-    <value>بزرگتر از</value>
+    <value>Is greater than</value>
   </data>
   <data name="Operator_LessThan" xml:space="preserve">
-    <value>کوچکتر از</value>
+    <value>Is less than</value>
   </data>
   <data name="Operator_GreaterThanOrEqual" xml:space="preserve">
-    <value>حداقل</value>
+    <value>Is at least</value>
   </data>
   <data name="Operator_LessThanOrEqual" xml:space="preserve">
-    <value>حداکثر</value>
+    <value>Is at most</value>
   </data>
   <data name="Operator_IsInTheLast" xml:space="preserve">
-    <value>در این چند روز اخیر است (روز)</value>
+    <value>Is within the last (days)</value>
   </data>
   <data name="Operator_IsNotInTheLast" xml:space="preserve">
-    <value>در این چند روز اخیر نیست (روز)</value>
+    <value>Is not within the last (days)</value>
   </data>
   <data name="Operator_IsTrue" xml:space="preserve">
-    <value>صحیح است</value>
+    <value>Is true</value>
   </data>
   <data name="Operator_IsFalse" xml:space="preserve">
-    <value>غلط است</value>
+    <value>Is false</value>
   </data>
   <data name="SmartPlaylist_Title_New" xml:space="preserve">
-    <value>لیست پخش هوشمند جدید</value>
+    <value>New Smart Playlist</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>ویرایش فهرست پخش هوشمند: {0}</value>
+    <value>Edit Smart Playlist: {0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
-    <value>نام لیست پخش را وارد کنید</value>
+    <value>Enter a playlist name</value>
   </data>
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
-    <value>آهنگ‌های منطبق: {0:N0}</value>
+    <value>Matching songs: {0:N0}</value>
   </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
-    <value>شمارش آهنگ‌های منطبق امکان‌پذیر نبود</value>
+    <value>Could not count matching songs</value>
   </data>
   <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
-    <value>در حال محاسبه…</value>
+    <value>Calculating…</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>فهرست پخشی با این نام از قبل وجود دارد.</value>
+    <value>A playlist with this name already exists.</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>نام فهرست پخش را وارد کنید.</value>
+    <value>Enter a playlist name.</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
-    <value>در حال بارگیری…</value>
+    <value>Loading…</value>
   </data>
   <data name="Error_FailedToLoadArtists" xml:space="preserve">
-    <value>بارگذاری هنرمندان ناموفق بود</value>
+    <value>Failed to load artists</value>
   </data>
   <data name="CrashReport_Title" xml:space="preserve">
-    <value>خطای بحرانی</value>
+    <value>Critical Error</value>
   </data>
   <data name="CrashReport_Message" xml:space="preserve">
-    <value>برنامه Nagi با خطایی مواجه شد و باید بسته شود.</value>
+    <value>Nagi encountered an error and needs to close.</value>
   </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
-    <value>آلبوم یافت نشد</value>
+    <value>Album Not Found</value>
   </data>
   <data name="AlbumView_Error" xml:space="preserve">
-    <value>خطا در بارگذاری آلبوم</value>
+    <value>Error Loading Album</value>
   </data>
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
-    <value>آلبوم</value>
+    <value>Album</value>
   </data>
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>هنرمند</value>
+    <value>Artist</value>
   </data>
   <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} آهنگ</value>
+    <value>{0} song</value>
   </data>
   <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} آهنگ</value>
+    <value>{0} songs</value>
   </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
-    <value>هنرمند یافت نشد</value>
+    <value>Artist Not Found</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
-    <value>خطا در بارگذاری هنرمند</value>
+    <value>Error Loading Artist</value>
   </data>
   <data name="ArtistView_DefaultArtistName" xml:space="preserve">
-    <value>هنرمند</value>
+    <value>Artist</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
-    <value>بیوگرافی برای این هنرمند موجود نیست.</value>
+    <value>No biography available for this artist.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
-    <value>خطا در بارگذاری پوشه</value>
+    <value>Error loading folder</value>
   </data>
   <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>'{0}' با موفقیت اضافه و اسکن شد.</value>
+    <value>Successfully added and scanned '{0}'.</value>
   </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
-    <value>افزودن پوشه ناموفق بود. مسیر ممکن است نامعتبر باشد.</value>
+    <value>Failed to add folder. The path may be invalid.</value>
   </data>
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
-    <value>این پوشه از قبل در کتابخانه موجود است.</value>
+    <value>This folder is already in the library.</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
-    <value>در حال افزودن پوشه به کتابخانه…</value>
+    <value>Adding folder to library…</value>
   </data>
   <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>&apos;{0}&apos; از کتابخانه شما حذف شد.</value>
+    <value>Removed &apos;{0}&apos; from your library.</value>
   </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
-    <value>حذف &apos;{0}&apos; از کتابخانه شما امکان‌پذیر نبود.</value>
+    <value>Could not remove &apos;{0}&apos; from your library.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
-    <value>در حال حذف &apos;{0}&apos; از کتابخانه شما…</value>
+    <value>Removing &apos;{0}&apos; from your library…</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>اسکن مجدد '{0}' کامل شد.</value>
+    <value>Rescan of '{0}' complete.</value>
   </data>
   <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>هیچ تغییری برای '{0}' شناسایی نشد.</value>
+    <value>No changes detected for '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
-    <value>در حال اسکن مجدد '{0}'…</value>
+    <value>Rescanning '{0}'…</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
-    <value>هیچ پوشه حاوی موسیقی یافت نشد.</value>
+    <value>No folders with music found.</value>
   </data>
   <data name="Folders_Error_Playback" xml:space="preserve">
-    <value>خطا در شروع پخش برای این پوشه.</value>
+    <value>Error starting playback for this folder.</value>
   </data>
   <data name="Folders_Error_RandomPlayback" xml:space="preserve">
-    <value>خطا در شروع پخش تصادفی پوشه.</value>
+    <value>Error starting random folder playback.</value>
   </data>
   <data name="Folders_Error_AddFolder" xml:space="preserve">
-    <value>خطا در افزودن پوشه: {0}</value>
+    <value>Error adding folder: {0}</value>
   </data>
   <data name="Folders_Error_DeleteFolder" xml:space="preserve">
-    <value>حذف پوشه از کتابخانه شما امکان‌پذیر نبود: {0}</value>
+    <value>Could not remove folder from your library: {0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
-    <value>خطا در اسکن مجدد پوشه: {0}</value>
+    <value>Error rescanning folder: {0}</value>
   </data>
   <data name="Folders_Count_Singular" xml:space="preserve">
-    <value>{0} پوشه</value>
+    <value>{0} folder</value>
   </data>
   <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} پوشه</value>
+    <value>{0} folders</value>
   </data>
   <data name="Songs_Count_Singular" xml:space="preserve">
-    <value>{0} آهنگ</value>
+    <value>{0} song</value>
   </data>
   <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} آهنگ</value>
+    <value>{0} songs</value>
   </data>
   <data name="Albums_Count_Singular" xml:space="preserve">
-    <value>{0} آلبوم</value>
+    <value>{0} album</value>
   </data>
   <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} آلبوم</value>
+    <value>{0} albums</value>
   </data>
   <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} هنرمند</value>
+    <value>{0} artist</value>
   </data>
   <data name="Artists_Count_Plural" xml:space="preserve">
-    <value>{0} هنرمند</value>
+    <value>{0} artists</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
-    <value>هیچ موردی</value>
+    <value>No items</value>
   </data>
   <data name="Generic_Error" xml:space="preserve">
-    <value>خطا</value>
+    <value>Error</value>
   </data>
   <data name="GenreView_DefaultName" xml:space="preserve">
-    <value>ژانر</value>
+    <value>Genre</value>
   </data>
   <data name="GenreView_Error" xml:space="preserve">
-    <value>خطا در بارگذاری ژانر</value>
+    <value>Error Loading Genre</value>
   </data>
   <data name="Lyrics_NoSongSelected" xml:space="preserve">
-    <value>هیچ آهنگی انتخاب نشده است</value>
+    <value>No song selected</value>
   </data>
   <data name="Lyrics_SongTitleFormat" xml:space="preserve">
-    <value>{0} از {1}</value>
+    <value>{0} by {1}</value>
   </data>
   <data name="Onboarding_Welcome" xml:space="preserve">
-    <value>بیایید برای شروع، کتابخانه موسیقی شما را تنظیم کنیم.</value>
+    <value>Let's set up your music library to get started.</value>
   </data>
   <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>در انتظار انتخاب پوشه توسط شما…</value>
+    <value>Waiting for you to select a folder…</value>
   </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
-    <value>در حال ساخت کتابخانه شما…</value>
+    <value>Building your library…</value>
   </data>
   <data name="Onboarding_Error" xml:space="preserve">
-    <value>خطای غیرمنتظره‌ای رخ داد. لطفاً دوباره تلاش کنید.</value>
+    <value>An unexpected error occurred. Please try again.</value>
   </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
-    <value>هوشمند • {0} آهنگ</value>
+    <value>Smart • {0} song</value>
   </data>
   <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>هوشمند • {0} آهنگ</value>
+    <value>Smart • {0} songs</value>
   </data>
   <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} آهنگ</value>
+    <value>{0} song</value>
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} آهنگ</value>
+    <value>{0} songs</value>
   </data>
   <data name="Playlist_ErrorLoading" xml:space="preserve">
-    <value>خطا در بارگذاری لیست پخش</value>
+    <value>Error loading playlist</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>در حال شروع فهرست پخش…</value>
+    <value>Starting playlist…</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
-    <value>هیچ آهنگی با قوانین این لیست پخش هوشمند مطابقت ندارد.</value>
+    <value>No songs match this smart playlist's rules.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
-    <value>خطا در شروع پخش برای این لیست پخش.</value>
+    <value>Error starting playback for this playlist.</value>
   </data>
   <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>در حال انتخاب یک فهرست پخش تصادفی…</value>
+    <value>Picking a random playlist…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
-    <value>هیچ لیست پخشی یافت نشد.</value>
+    <value>No playlists found.</value>
   </data>
   <data name="Playlist_Status_SmartSelectedEmpty" xml:space="preserve">
-    <value>لیست پخش هوشمند انتخاب شده خالی است.</value>
+    <value>Selected smart playlist is empty.</value>
   </data>
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
-    <value>خطا در پخش لیست پخش تصادفی.</value>
+    <value>Error playing random playlist.</value>
   </data>
   <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>در حال بارگیری فهرست‌های پخش…</value>
+    <value>Loading playlists…</value>
   </data>
   <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>خطا در بارگذاری لیست‌های پخش.</value>
+    <value>Error loading playlists.</value>
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>در حال ایجاد فهرست پخش جدید…</value>
+    <value>Creating new playlist…</value>
   </data>
   <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>ایجاد لیست پخش ناموفق بود. ممکن است از قبل موجود باشد.</value>
+    <value>Failed to create playlist. It may already exist.</value>
   </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
-    <value>هنگام ایجاد لیست پخش خطایی رخ داد.</value>
+    <value>An error occurred while creating the playlist.</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>در حال به‌روزرسانی کاور فهرست پخش…</value>
+    <value>Updating playlist cover…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
-    <value>به‌روزرسانی کاور لیست پخش ناموفق بود.</value>
+    <value>Failed to update playlist cover.</value>
   </data>
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
-    <value>هنگام به‌روزرسانی کاور لیست پخش خطایی رخ داد.</value>
+    <value>An error occurred while updating the playlist cover.</value>
   </data>
   <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>در حال حذف تصویر فهرست پخش…</value>
+    <value>Removing playlist image…</value>
   </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
-    <value>حذف تصویر لیست پخش ناموفق بود.</value>
+    <value>Failed to remove playlist image.</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
-    <value>هنگام حذف تصویر لیست پخش خطایی رخ داد.</value>
+    <value>An error occurred while removing the playlist image.</value>
   </data>
   <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>در حال تغییر نام فهرست پخش…</value>
+    <value>Renaming playlist…</value>
   </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
-    <value>تغییر نام لیست پخش ناموفق بود.</value>
+    <value>Failed to rename playlist.</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
-    <value>هنگام تغییر نام لیست پخش خطایی رخ داد.</value>
+    <value>An error occurred while renaming the playlist.</value>
   </data>
   <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>در حال حذف فهرست پخش…</value>
+    <value>Deleting playlist…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
-    <value>حذف لیست پخش ناموفق بود.</value>
+    <value>Failed to delete playlist.</value>
   </data>
   <data name="Playlist_Status_DeleteError" xml:space="preserve">
-    <value>هنگام حذف لیست پخش خطایی رخ داد.</value>
+    <value>An error occurred while deleting the playlist.</value>
   </data>
   <data name="Settings_Reset_Title" xml:space="preserve">
-    <value>تأیید بازنشانی</value>
+    <value>Confirm Reset</value>
   </data>
   <data name="Settings_Reset_Message" xml:space="preserve">
-    <value>آیا مطمئن هستید که می‌خواهید تمام داده‌ها و تنظیمات برنامه را بازنشانی کنید؟ این عمل قابل بازگرداندن نیست. برنامه به تنظیمات اولیه بازخواهد گشت.</value>
+    <value>Are you sure you want to reset all application data and settings? This action cannot be undone. The application will return to the initial setup.</value>
   </data>
   <data name="Settings_Reset_Button" xml:space="preserve">
-    <value>بازنشانی</value>
+    <value>Reset</value>
   </data>
   <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>خطای بازنشانی</value>
+    <value>Reset Error</value>
   </data>
   <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>هنگام بازنشانی داده‌های برنامه خطایی رخ داد: {0}. لطفاً برنامه را به صورت دستی مجدداً راه‌اندازی کنید.</value>
+    <value>An error occurred while resetting application data: {0}. Please try restarting the app manually.</value>
   </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
-    <value>خطا</value>
+    <value>Error</value>
   </data>
   <data name="Settings_LastFm_AuthError_Message" xml:space="preserve">
-    <value>امکان اتصال به Last.fm وجود نداشت. لطفاً بعداً دوباره تلاش کنید.</value>
+    <value>Could not connect to Last.fm. Please try again later.</value>
   </data>
   <data name="Settings_LastFm_FinalizeError_Title" xml:space="preserve">
-    <value>احراز هویت ناموفق بود</value>
+    <value>Authentication Failed</value>
   </data>
   <data name="Settings_LastFm_FinalizeError_Message" xml:space="preserve">
-    <value>امکان دریافت جلسه از Last.fm وجود نداشت. لطفاً دوباره تلاش کنید.</value>
+    <value>Could not get a session from Last.fm. Please try connecting again.</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Title" xml:space="preserve">
-    <value>قطع اتصال Last.fm</value>
+    <value>Disconnect Last.fm</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
-    <value>آیا مطمئن هستید که می‌خواهید حساب Last.fm خود را قطع کنید؟ تاریخچه scrobbling شما در Last.fm حفظ خواهد شد، اما Nagi دیگر قادر به scrobble نخواهد بود.</value>
+    <value>Are you sure you want to disconnect your Last.fm account? Your scrobbling history will be preserved on Last.fm, but Nagi will no longer be able to scrobble.</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>قطع اتصال</value>
+    <value>Disconnect</value>
   </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
-    <value>برون‌بری موفق</value>
+    <value>Export Successful</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>فهرست‌های پخش صادرشده: {0}
-آهنگ‌ها: {1}
-ذخیره‌شده در: {2}</value>
+    <value>Playlists exported: {0}
+Songs: {1}
+Saved to: {2}</value>
   </data>
   <data name="Settings_Export_Failed_Title" xml:space="preserve">
-    <value>برون‌بری ناموفق</value>
+    <value>Export Failed</value>
   </data>
   <data name="Settings_Import_Success_Title" xml:space="preserve">
-    <value>درون‌ریزی موفق</value>
+    <value>Import Successful</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>فهرست‌های پخش واردشده: {0}
-آهنگ‌ها: {1}</value>
+    <value>Playlists imported: {0}
+Songs: {1}</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
     <value>
 
-آهنگ‌های یافت‌نشده در کتابخانه شما: {0}.</value>
+Songs not found in your library: {0}.</value>
   </data>
   <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
     <value>
 
-فایل‌هایی که وارد نشدند: {0}.</value>
+Files that could not be imported: {0}.</value>
   </data>
   <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
-    <value>درون‌ریزی ناموفق</value>
+    <value>Import Failed</value>
   </data>
   <data name="Settings_Import_FailedTotal_Message" xml:space="preserve">
-    <value>هیچ لیست پخشی قابل درون‌ریزی نبود.</value>
+    <value>No playlists could be imported.</value>
   </data>
   <data name="SmartPlaylist_ErrorLoading" xml:space="preserve">
-    <value>خطا در بارگذاری لیست پخش هوشمند</value>
+    <value>Error loading smart playlist</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
-    <value>هیچ قاعده‌ای تعریف نشده است • همه آهنگ‌ها مطابقت دارند</value>
+    <value>No rules defined • All songs match</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>مطابقت {0} از {1} {2}</value>
+    <value>Match {0} of {1} {2}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>همه</value>
+    <value>all</value>
   </data>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>هر کدام</value>
+    <value>any</value>
   </data>
   <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>قاعده</value>
+    <value>rule</value>
   </data>
   <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>قواعد</value>
+    <value>rules</value>
   </data>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
-    <value>آهنگ‌ها</value>
+    <value>Songs</value>
   </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} مورد</value>
+    <value>{0} item</value>
   </data>
   <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
-    <value>{0} مورد</value>
+    <value>{0} items</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
-    <value>{0} انتخاب شده</value>
+    <value>{0} selected</value>
   </data>
   <data name="AlbumView_DiscHeader" xml:space="preserve">
-    <value>دیسک {0}</value>
+    <value>Disc {0}</value>
   </data>
   <data name="Generic_OK" xml:space="preserve">
-    <value>تأیید</value>
+    <value>OK</value>
   </data>
   <data name="Generic_Cancel" xml:space="preserve">
-    <value>لغو</value>
+    <value>Cancel</value>
   </data>
   <data name="Generic_Close" xml:space="preserve">
-    <value>بستن</value>
+    <value>Close</value>
   </data>
   <data name="Generic_Recheck" xml:space="preserve">
-    <value>بررسی مجدد</value>
+    <value>Recheck</value>
   </data>
   <data name="CrashReport_Button_Reset" xml:space="preserve">
-    <value>بازنشانی برنامه و داده‌ها</value>
+    <value>Reset App &amp; Data</value>
   </data>
   <data name="FFmpeg_Status_NotDetected" xml:space="preserve">
-    <value>FFmpeg شناسایی نشد. لطفاً FFmpeg را نصب کرده و روی 'بررسی مجدد' کلیک کنید.</value>
+    <value>FFmpeg not detected. Please install FFmpeg and click 'Recheck'.</value>
   </data>
   <data name="FFmpeg_Status_Checking" xml:space="preserve">
-    <value>در حال بررسی FFmpeg…</value>
+    <value>Checking for FFmpeg…</value>
   </data>
   <data name="FFmpeg_Status_Detected" xml:space="preserve">
-    <value>FFmpeg شناسایی شد.</value>
+    <value>FFmpeg detected.</value>
   </data>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
-    <value>FFmpeg همچنان شناسایی نشد. لطفاً FFmpeg را نصب کرده و روی 'بررسی مجدد' کلیک کنید.</value>
+    <value>FFmpeg still not detected. Please install FFmpeg and click 'Recheck'.</value>
   </data>
   <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>خطا در بررسی FFmpeg. لطفاً دوباره تلاش کنید.</value>
+    <value>Error checking for FFmpeg. Please try again.</value>
   </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>قبلی</value>
+    <value>Previous</value>
   </data>
   <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>پخش</value>
+    <value>Play</value>
   </data>
   <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>مکث</value>
+    <value>Pause</value>
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>بعدی</value>
+    <value>Next</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC با خطای نامشخصی مواجه شد.</value>
+    <value>LibVLC encountered an unspecified error.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>خطای LibVLC: {0}</value>
+    <value>LibVLC Error: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>بارگذاری '{0}' ناموفق بود.</value>
+    <value>Failed to load '{0}'.</value>
   </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
-    <value>کتابخانه</value>
+    <value>Library</value>
   </data>
   <data name="Settings_Nav_Folders" xml:space="preserve">
-    <value>پوشه‌ها</value>
+    <value>Folders</value>
   </data>
   <data name="Settings_Nav_Playlists" xml:space="preserve">
-    <value>لیست‌های پخش</value>
+    <value>Playlists</value>
   </data>
   <data name="Settings_Nav_Artists" xml:space="preserve">
-    <value>هنرمندان</value>
+    <value>Artists</value>
   </data>
   <data name="Settings_Nav_Albums" xml:space="preserve">
-    <value>آلبوم‌ها</value>
+    <value>Albums</value>
   </data>
   <data name="Settings_Nav_Genres" xml:space="preserve">
-    <value>ژانرها</value>
+    <value>Genres</value>
   </data>
   <data name="Settings_Button_Shuffle" xml:space="preserve">
-    <value>تصادفی</value>
+    <value>Shuffle</value>
   </data>
   <data name="Settings_Button_Previous" xml:space="preserve">
-    <value>قبلی</value>
+    <value>Previous</value>
   </data>
   <data name="Settings_Button_PlayPause" xml:space="preserve">
-    <value>پخش/مکث</value>
+    <value>Play/Pause</value>
   </data>
   <data name="Settings_Button_Next" xml:space="preserve">
-    <value>بعدی</value>
+    <value>Next</value>
   </data>
   <data name="Settings_Button_Repeat" xml:space="preserve">
-    <value>تکرار</value>
+    <value>Repeat</value>
   </data>
   <data name="Settings_Button_Divider" xml:space="preserve">
-    <value>جداکننده چیدمان</value>
+    <value>Layout Divider</value>
   </data>
   <data name="Settings_Button_Lyrics" xml:space="preserve">
-    <value>متن آهنگ</value>
+    <value>Lyrics</value>
   </data>
   <data name="Settings_Button_Queue" xml:space="preserve">
-    <value>صف</value>
+    <value>Queue</value>
   </data>
   <data name="Settings_Button_Volume" xml:space="preserve">
-    <value>صدا</value>
+    <value>Volume</value>
   </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
-    <value>پایگاه داده متن آهنگ با گردآوری جامعه</value>
+    <value>Community-curated lyrics database</value>
   </data>
   <data name="Settings_Provider_NetEase_Desc" xml:space="preserve">
-    <value>سرویس موسیقی چینی، عالی برای موسیقی آسیایی</value>
+    <value>Chinese music service, great for Asian music</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>شناسه‌های هنرمندان را واکشی می‌کند (برای TheAudioDB و Fanart.tv الزامی است)</value>
+    <value>Fetches artist IDs (required for TheAudioDB and Fanart.tv)</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>تصاویر و بیوگرافی‌های هنرمندان با کیفیت بالا (نیاز به MusicBrainz دارد)</value>
+    <value>High-quality artist images and biographies (requires MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>فقط تصاویر هنرمندان با کیفیت بالا (نیاز به MusicBrainz دارد)</value>
+    <value>High-quality artist images only (requires MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>بیوگرافی و تصاویر هنرمندان (جایگزین)</value>
+    <value>Artist biographies and images (fallback)</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>جستجوی آلبوم‌ها</value>
+    <value>Search albums</value>
   </data>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>جستجو در آلبوم</value>
+    <value>Search in album</value>
   </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>جستجوی هنرمندان</value>
+    <value>Search artists</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>جستجو در هنرمند</value>
+    <value>Search in artist</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
-    <value>حذف پوشه</value>
+    <value>Remove Folder</value>
   </data>
   <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
-    <value>آیا &apos;{0}&apos; از کتابخانه شما حذف شود؟ فایل‌های صوتی شما روی رایانه باقی خواهند ماند.</value>
+    <value>Remove &apos;{0}&apos; from your library? Your audio files will stay on your computer.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
-    <value>حذف</value>
+    <value>Remove</value>
   </data>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>لغو</value>
+    <value>Cancel</value>
   </data>
   <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>پوشه ناشناس</value>
+    <value>Unknown Folder</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>جستجو در پوشه</value>
+    <value>Search in folder</value>
   </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>جستجوی ژانرها</value>
+    <value>Search genres</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>جستجو در کتابخانه</value>
+    <value>Search library</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>جستجوی لیست‌های پخش</value>
+    <value>Search playlists</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>نام فهرست پخش را وارد کنید</value>
+    <value>Enter a playlist name</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
-    <value>انتخاب کاور</value>
+    <value>Choose Cover</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
-    <value>ایجاد لیست پخش جدید</value>
+    <value>Create New Playlist</value>
   </data>
   <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
-    <value>ایجاد</value>
+    <value>Create</value>
   </data>
   <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>لغو</value>
+    <value>Cancel</value>
   </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
-    <value>تغییر نام '{0}'</value>
+    <value>Rename '{0}'</value>
   </data>
   <data name="PlaylistPage_RenameDialog_RenameButton" xml:space="preserve">
-    <value>تغییر نام</value>
+    <value>Rename</value>
   </data>
   <data name="PlaylistPage_DeleteDialog_Title" xml:space="preserve">
-    <value>حذف لیست پخش</value>
+    <value>Delete Playlist</value>
   </data>
   <data name="PlaylistPage_DeleteDialog_Content_Format" xml:space="preserve">
-    <value>آیا مطمئن هستید که می‌خواهید لیست پخش '{0}' را حذف کنید؟ این عمل قابل بازگرداندن نیست.</value>
+    <value>Are you sure you want to delete the playlist '{0}'? This action cannot be undone.</value>
   </data>
   <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
-    <value>حذف</value>
+    <value>Delete</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>جستجو در لیست پخش</value>
+    <value>Search in playlist</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>جستجو در سبک</value>
+    <value>Search in genre</value>
   </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>لیست پخش ناشناس</value>
+    <value>Unknown Playlist</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>جستجو در لیست پخش هوشمند</value>
+    <value>Search in smart playlist</value>
   </data>
   <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>لیست پخش هوشمند ناشناس</value>
+    <value>Unknown Smart Playlist</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
-    <value>اسکن مجدد فراداده</value>
+    <value>Rescan Metadata</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>برای اعمال تنظیمات متاداده، مانند تفکیک هنرمندان، کتابخانه خود را دوباره اسکن کنید. این کار ممکن است برای کتابخانه‌های بزرگ زمان ببرد. ادامه می‌دهید؟</value>
+    <value>Rescan your library to apply metadata settings, such as artist splitting. This may take a while for large libraries. Continue?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
-    <value>اسکن مجدد</value>
+    <value>Rescan</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
-    <value>در حال آماده‌سازی اسکن مجدد کتابخانه…</value>
+    <value>Preparing library rescan…</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
-    <value>اسکن مجدد کامل شد</value>
+    <value>Rescan Complete</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Content" xml:space="preserve">
-    <value>فراداده کتابخانه به‌روزرسانی شد.</value>
+    <value>Library metadata has been updated.</value>
   </data>
   <data name="Settings_Dialog_RescanFailed_Title" xml:space="preserve">
-    <value>اسکن مجدد ناموفق</value>
+    <value>Rescan Failed</value>
   </data>
   <data name="Settings_Dialog_RescanFailed_Content" xml:space="preserve">
-    <value>هنگام اسکن خطایی رخ داد. جزئیات را در گزارش‌ها بررسی کنید.</value>
+    <value>An error occurred while scanning. Check logs for details.</value>
   </data>
   <data name="Settings_Dialog_FFmpegNotFound_Title" xml:space="preserve">
-    <value>FFmpeg یافت نشد</value>
+    <value>FFmpeg Not Found</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Title" xml:space="preserve">
-    <value>فعال‌سازی نرمال‌سازی صدا</value>
+    <value>Enable Volume Normalization</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
-    <value>نرمال‌سازی صدا (ReplayGain) سطح صدای ثابتی را در تمام موسیقی شما تضمین می‌کند.
+    <value>Volume Normalization (ReplayGain) ensures a consistent volume level across all your music.
 
-این کار کتابخانه موسیقی شما را تحلیل کرده و با نوشتن تگ‌های ReplayGain مستقیماً فایل‌های صوتی شما را تغییر خواهد داد. فقط فایل‌های بدون تگ موجود پردازش خواهند شد. این ممکن است بسته به اندازه کتابخانه شما کمی طول بکشد.
+This will analyze your music library and directly modify your audio files by writing ReplayGain tags. Only files without existing tags will be processed. This may take some time depending on your library size.
 
-آیا می‌خواهید ادامه دهید؟</value>
+Do you want to continue?</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
-    <value>فعال‌سازی و اسکن</value>
+    <value>Enable &amp; Scan</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>در حال آماده‌سازی اسکن هم‌سنگ‌سازی صدا…</value>
+    <value>Preparing volume normalization scan…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>اسکن نرمال‌سازی صدا لغو شد.</value>
+    <value>Volume normalization scan cancelled.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
-    <value>خطا در حین اسکن: {0}</value>
+    <value>Error during scan: {0}</value>
   </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
-    <value>هیچ لیست پخشی برای برون‌بری وجود ندارد.</value>
+    <value>No playlists to export.</value>
   </data>
   <data name="Language_Auto" xml:space="preserve">
-    <value>خودکار</value>
+    <value>Auto</value>
   </data>
   <data name="TrayIcon_ShowWindow" xml:space="preserve">
-    <value>نمایش پنجره</value>
+    <value>Show Window</value>
   </data>
   <data name="TrayIcon_Exit" xml:space="preserve">
-    <value>خروج</value>
+    <value>Exit</value>
   </data>
   <data name="MiniPlayer_BackButton_ToolTip" xml:space="preserve">
-    <value>بازگشت به پخش‌کننده</value>
+    <value>Back to Player</value>
   </data>
   <data name="MiniPlayer_UpNextHeader" xml:space="preserve">
-    <value>بعدی</value>
+    <value>Up Next</value>
   </data>
   <data name="MiniPlayer_RestoreButton_ToolTip" xml:space="preserve">
-    <value>نمایش Nagi</value>
+    <value>Show Nagi</value>
   </data>
   <data name="MiniPlayer_PreviousButton_ToolTip" xml:space="preserve">
-    <value>قبلی</value>
+    <value>Previous</value>
   </data>
   <data name="MiniPlayer_NextButton_ToolTip" xml:space="preserve">
-    <value>بعدی</value>
+    <value>Next</value>
   </data>
   <data name="MiniPlayer_QueueButton_ToolTip" xml:space="preserve">
-    <value>بعدی</value>
+    <value>Up Next</value>
   </data>
   <data name="CrashReport_ReportIssuePreLink" xml:space="preserve">
-    <value>لطفاً با ایجاد یک مسئله در</value>
+    <value>Please consider reporting this by creating an issue on the </value>
   </data>
   <data name="CrashReport_IssueLink" xml:space="preserve">
-    <value>صفحه مشکلات</value>
+    <value>Issues page</value>
   </data>
   <data name="CrashReport_ReportIssuePostLink" xml:space="preserve">
     <value>.</value>
   </data>
   <data name="CrashReport_ResetAppAdvice" xml:space="preserve">
-    <value>اگر این مشکل ادامه داشت، می‌توانید 'بازنشانی برنامه و داده‌ها' را امتحان کنید. این کار تنظیمات و کتابخانه شما را پاک می‌کند که می‌تواند به بازیابی برنامه از وضعیت خراب کمک کند.</value>
+    <value>If this keeps happening, you can try 'Reset App &amp; Data'. This will wipe your settings and library, which can help recover the app from a broken state.</value>
   </data>
   <data name="CrashReport_CopyLogButton_ToolTip" xml:space="preserve">
-    <value>کپی گزارش به کلیپ‌بورد</value>
+    <value>Copy log to clipboard</value>
   </data>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
-    <value>کپی گزارش</value>
+    <value>Copy Log</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
-    <value>انتخاب کاور</value>
+    <value>Choose Cover</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_ToolTip" xml:space="preserve">
-    <value>یک تصویر کاور انتخاب کنید</value>
+    <value>Choose a cover image</value>
   </data>
   <data name="SmartPlaylist_PlaylistNameLabel" xml:space="preserve">
-    <value>نام لیست پخش</value>
+    <value>Playlist Name</value>
   </data>
   <data name="SmartPlaylist_PlaylistNameTextBox_Placeholder" xml:space="preserve">
-    <value>نامی برای لیست پخش هوشمند خود وارد کنید</value>
+    <value>Enter a name for your smart playlist</value>
   </data>
   <data name="SmartPlaylist_SortOrderLabel" xml:space="preserve">
-    <value>ترتیب مرتب‌سازی</value>
+    <value>Sort Order</value>
   </data>
   <data name="SmartPlaylist_MatchLabel" xml:space="preserve">
-    <value>مطابقت</value>
+    <value>Match</value>
   </data>
   <data name="SmartPlaylist_MatchLogic_All_Content" xml:space="preserve">
-    <value>همه</value>
+    <value>All</value>
   </data>
   <data name="SmartPlaylist_MatchLogic_Any_Content" xml:space="preserve">
-    <value>هر کدام</value>
+    <value>Any</value>
   </data>
   <data name="SmartPlaylist_MatchSuffixLabel" xml:space="preserve">
-    <value>از قوانین زیر:</value>
+    <value>of the following rules:</value>
   </data>
   <data name="SmartPlaylist_AddRuleButton_ToolTip" xml:space="preserve">
-    <value>افزودن قانون جدید</value>
+    <value>Add a new rule</value>
   </data>
   <data name="SmartPlaylist_AddRuleLabel" xml:space="preserve">
-    <value>افزودن قانون</value>
+    <value>Add Rule</value>
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
-    <value>مقدار</value>
+    <value>Value</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
-    <value>حذف این قانون</value>
+    <value>Remove this rule</value>
   </data>
   <data name="SmartPlaylist_NoRulesTitle" xml:space="preserve">
-    <value>قانون تعریف نشده است</value>
+    <value>No rules defined</value>
   </data>
   <data name="SmartPlaylist_NoRulesMessage" xml:space="preserve">
-    <value>همه آهنگ‌های موجود در کتابخانه شما در این لیست پخش گنجانده خواهند شد.</value>
+    <value>All songs in your library will be included in this playlist.</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_Content" xml:space="preserve">
-    <value>اولین قانون خود را اضافه کنید</value>
+    <value>Add Your First Rule</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_ToolTip" xml:space="preserve">
-    <value>اولین قانون خود را اضافه کنید</value>
+    <value>Add your first rule</value>
   </data>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
-    <value>ذخیره</value>
+    <value>Save</value>
   </data>
   <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>لغو</value>
+    <value>Cancel</value>
   </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
-    <value>قبلی</value>
+    <value>Previous</value>
   </data>
   <data name="TrayPopup_NextButton_ToolTip" xml:space="preserve">
-    <value>بعدی</value>
+    <value>Next</value>
   </data>
   <data name="TrayPopup_QueueButton_ToolTip" xml:space="preserve">
-    <value>بعدی</value>
+    <value>Up Next</value>
   </data>
   <data name="TrayPopup_BackButton_ToolTip" xml:space="preserve">
-    <value>بازگشت به پخش‌کننده</value>
+    <value>Back to Player</value>
   </data>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
-    <value>بعدی</value>
+    <value>Up Next</value>
   </data>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
-    <value>قبلی</value>
+    <value>Previous</value>
   </data>
   <data name="Player_NextButton_ToolTip" xml:space="preserve">
-    <value>بعدی</value>
+    <value>Next</value>
   </data>
   <data name="Player_LyricsButton_ToolTip" xml:space="preserve">
-    <value>متن آهنگ</value>
+    <value>Lyrics</value>
   </data>
   <data name="Player_QueueButton_ToolTip" xml:space="preserve">
-    <value>بعدی</value>
+    <value>Up Next</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
-    <value>رفتن به آلبوم</value>
+    <value>Go to Album</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>بعدی</value>
+    <value>Up Next</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
-    <value>پاک‌کردن صف</value>
+    <value>Clear Queue</value>
   </data>
   <data name="QueuePanel_DisplayOptions" xml:space="preserve">
-    <value>گزینه‌های نمایش صف</value>
+    <value>Queue Display Options</value>
   </data>
   <data name="QueuePanel_Close" xml:space="preserve">
-    <value>بستن صف</value>
+    <value>Close Queue</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
-    <value>هنرمند</value>
+    <value>Artist</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
-    <value>مدت زمان</value>
+    <value>Duration</value>
   </data>
   <data name="QueuePanel_ShowTrackCount" xml:space="preserve">
-    <value>تعداد آهنگ‌ها</value>
+    <value>Track Count</value>
   </data>
   <data name="QueuePanel_TrackCount" xml:space="preserve">
-    <value>قطعه‌ها: {0:N0}</value>
+    <value>Tracks: {0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
-    <value>موقعیت در صف</value>
+    <value>Queue Position</value>
   </data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve">
-    <value>سبک</value>
+    <value>Genre</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
-    <value>مدت‌زمان کل</value>
+    <value>Total Duration</value>
   </data>
   <data name="QueuePanel_Play" xml:space="preserve">
-    <value>پخش</value>
+    <value>Play</value>
   </data>
   <data name="QueuePanel_MoveUp" xml:space="preserve">
-    <value>انتقال به بالا</value>
+    <value>Move Up</value>
   </data>
   <data name="QueuePanel_MoveDown" xml:space="preserve">
-    <value>انتقال به پایین</value>
+    <value>Move Down</value>
   </data>
   <data name="QueuePanel_Remove" xml:space="preserve">
-    <value>حذف از صف</value>
+    <value>Remove from Queue</value>
   </data>
   <data name="AlbumPage_Title" xml:space="preserve">
-    <value>آلبوم‌ها</value>
+    <value>Albums</value>
   </data>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>جستجوی آلبوم‌ها…</value>
+    <value>Search albums…</value>
   </data>
   <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>جستجوی آلبوم‌ها</value>
+    <value>Search albums</value>
   </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>یکی را به صورت تصادفی انتخاب کنید</value>
+    <value>Pick one at random</value>
   </data>
   <data name="AlbumPage_Menu_Play" xml:space="preserve">
-    <value>پخش</value>
+    <value>Play</value>
   </data>
   <data name="AlbumPage_Empty_Title" xml:space="preserve">
-    <value>هیچ آلبومی یافت نشد</value>
+    <value>No albums found</value>
   </data>
   <data name="AlbumPage_Empty_Subtitle" xml:space="preserve">
-    <value>کتابخانه موسیقی خود را برای پر کردن آلبوم‌ها اسکن کنید</value>
+    <value>Scan your music library to populate albums</value>
   </data>
   <data name="AlbumViewPage_Header_Label" xml:space="preserve">
-    <value>آلبوم</value>
+    <value>Album</value>
   </data>
   <data name="AlbumViewPage_Songs_Title" xml:space="preserve">
-    <value>آهنگ‌ها</value>
+    <value>Songs</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>جستجو در آلبوم…</value>
+    <value>Search in album…</value>
   </data>
   <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>جستجو در آلبوم</value>
+    <value>Search in album</value>
   </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>پخش همه</value>
+    <value>Play all</value>
   </data>
   <data name="AlbumViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>پخش تصادفی همه</value>
+    <value>Shuffle and play all</value>
   </data>
   <data name="AlbumViewPage_SongMenu_Play" xml:space="preserve">
-    <value>پخش</value>
+    <value>Play</value>
   </data>
   <data name="AlbumViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>پخش بعدی</value>
+    <value>Play Next</value>
   </data>
   <data name="AlbumViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>افزودن به صف پخش</value>
+    <value>Add to Queue</value>
   </data>
   <data name="AlbumViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>افزودن به فهرست پخش</value>
+    <value>Add to Playlist</value>
   </data>
   <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>رفتن به هنرمند</value>
+    <value>Go to Artist</value>
   </data>
   <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>نمایش در فایل اکسپلورر</value>
+    <value>Show in File Explorer</value>
   </data>
   <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>پخش</value>
+    <value>Play</value>
   </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
-    <value>هیچ آهنگی در این آلبوم یافت نشد</value>
+    <value>No songs found in this album</value>
   </data>
   <data name="AlbumViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>سعی کنید چیز دیگری را جستجو کنید</value>
+    <value>Try searching for something else</value>
   </data>
   <data name="ArtistPage_Title" xml:space="preserve">
-    <value>هنرمندان</value>
+    <value>Artists</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>جستجوی هنرمندان…</value>
+    <value>Search artists…</value>
   </data>
   <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>جستجوی هنرمندان</value>
+    <value>Search artists</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>یکی را به صورت تصادفی انتخاب کنید</value>
+    <value>Pick one at random</value>
   </data>
   <data name="ArtistPage_Menu_Play" xml:space="preserve">
-    <value>پخش</value>
+    <value>Play</value>
   </data>
   <data name="ArtistPage_Menu_ChangeImage" xml:space="preserve">
-    <value>تغییر تصویر</value>
+    <value>Change Image</value>
   </data>
   <data name="ArtistPage_Menu_RemoveImage" xml:space="preserve">
-    <value>حذف تصویر</value>
+    <value>Remove Image</value>
   </data>
   <data name="ArtistPage_Empty_Title" xml:space="preserve">
-    <value>هیچ هنرمندی یافت نشد</value>
+    <value>No artists found</value>
   </data>
   <data name="ArtistPage_Empty_Subtitle" xml:space="preserve">
-    <value>کتابخانه موسیقی خود را برای پر کردن هنرمندان اسکن کنید</value>
+    <value>Scan your music library to populate artists</value>
   </data>
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
-    <value>تغییر تصویر هنرمند</value>
+    <value>Change artist image</value>
   </data>
   <data name="ArtistViewPage_ImageMenu_ChangeImage" xml:space="preserve">
-    <value>تغییر تصویر</value>
+    <value>Change Image</value>
   </data>
   <data name="ArtistViewPage_ImageMenu_RemoveImage" xml:space="preserve">
-    <value>حذف تصویر</value>
+    <value>Remove Image</value>
   </data>
   <data name="ArtistViewPage_Header_Label" xml:space="preserve">
-    <value>هنرمند</value>
+    <value>Artist</value>
   </data>
   <data name="ArtistViewPage_Albums_Title" xml:space="preserve">
-    <value>آلبوم‌های برتر</value>
+    <value>Top Albums</value>
   </data>
   <data name="ArtistViewPage_Songs_Title" xml:space="preserve">
-    <value>آهنگ‌ها</value>
+    <value>Songs</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>جستجو در هنرمند…</value>
+    <value>Search in artist…</value>
   </data>
   <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>جستجو در هنرمند</value>
+    <value>Search in artist</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>پخش همه</value>
+    <value>Play all</value>
   </data>
   <data name="ArtistViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>پخش تصادفی همه</value>
+    <value>Shuffle and play all</value>
   </data>
   <data name="ArtistViewPage_SongMenu_Play" xml:space="preserve">
-    <value>پخش</value>
+    <value>Play</value>
   </data>
   <data name="ArtistViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>پخش بعدی</value>
+    <value>Play Next</value>
   </data>
   <data name="ArtistViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>افزودن به صف پخش</value>
+    <value>Add to Queue</value>
   </data>
   <data name="ArtistViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>افزودن به فهرست پخش</value>
+    <value>Add to Playlist</value>
   </data>
   <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>رفتن به آلبوم</value>
+    <value>Go to Album</value>
   </data>
   <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>نمایش در فایل اکسپلورر</value>
+    <value>Show in File Explorer</value>
   </data>
   <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>پخش</value>
+    <value>Play</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
-    <value>هیچ آهنگی برای این هنرمند یافت نشد</value>
+    <value>No songs found for this artist</value>
   </data>
   <data name="ArtistViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>سعی کنید چیز دیگری را جستجو کنید</value>
+    <value>Try searching for something else</value>
   </data>
   <data name="FolderPage_Title" xml:space="preserve">
-    <value>پوشه‌ها</value>
+    <value>Folders</value>
   </data>
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>یکی را به صورت تصادفی انتخاب کنید</value>
+    <value>Pick one at random</value>
   </data>
   <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>افزودن یک پوشه موسیقی</value>
+    <value>Add a music folder</value>
   </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
-    <value>افزودن پوشه</value>
+    <value>Add Folder</value>
   </data>
   <data name="FolderPage_Menu_Play" xml:space="preserve">
-    <value>پخش</value>
+    <value>Play</value>
   </data>
   <data name="FolderPage_Menu_Rescan" xml:space="preserve">
-    <value>اسکن مجدد</value>
+    <value>Rescan</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>حذف از کتابخانه</value>
+    <value>Remove from Library</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
-    <value>هنوز پوشه‌ای اضافه نشده است</value>
+    <value>No folders added yet</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>برای شروع پوشه‌های موسیقی اضافه کنید</value>
+    <value>Add music folders to get started</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
-    <value>پخش</value>
+    <value>Play</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>افزودن به فهرست پخش</value>
+    <value>Add to Playlist</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_Play" xml:space="preserve">
-    <value>پخش</value>
+    <value>Play</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>پخش بعدی</value>
+    <value>Play Next</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>افزودن به صف پخش</value>
+    <value>Add to Queue</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>افزودن به فهرست پخش</value>
+    <value>Add to Playlist</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>رفتن به آلبوم</value>
+    <value>Go to Album</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>رفتن به هنرمند</value>
+    <value>Go to Artist</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>نمایش در فایل اکسپلورر</value>
+    <value>Show in File Explorer</value>
   </data>
   <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>پخش</value>
+    <value>Play</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
-    <value>پوشه</value>
+    <value>Folder</value>
   </data>
   <data name="FolderSongViewPage_Songs_Title" xml:space="preserve">
-    <value>آهنگ‌ها</value>
+    <value>Songs</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>جستجو در پوشه…</value>
+    <value>Search in folder…</value>
   </data>
   <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>پخش همه</value>
+    <value>Play all</value>
   </data>
   <data name="FolderSongViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>پخش تصادفی همه</value>
+    <value>Shuffle and play all</value>
   </data>
   <data name="FolderSongViewPage_Empty_Title" xml:space="preserve">
-    <value>این پوشه خالی است</value>
+    <value>This folder is empty</value>
   </data>
   <data name="FolderSongViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>هیچ آهنگ یا زیرپوشه‌ای یافت نشد</value>
+    <value>No songs or subfolders found</value>
   </data>
   <data name="GenrePage_Title" xml:space="preserve">
-    <value>ژانرها</value>
+    <value>Genres</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>جستجوی سبک‌ها…</value>
+    <value>Search genres…</value>
   </data>
   <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>جستجوی ژانرها</value>
+    <value>Search genres</value>
   </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
-    <value>یکی را به صورت تصادفی انتخاب کنید</value>
+    <value>Pick one at random</value>
   </data>
   <data name="GenrePage_Menu_Play" xml:space="preserve">
-    <value>پخش</value>
+    <value>Play</value>
   </data>
   <data name="GenrePage_Empty_Title" xml:space="preserve">
-    <value>هیچ ژانری یافت نشد</value>
+    <value>No genres found</value>
   </data>
   <data name="GenrePage_Empty_Subtitle" xml:space="preserve">
-    <value>کتابخانه موسیقی خود را برای پر کردن ژانرها اسکن کنید</value>
+    <value>Scan your music library to populate genres</value>
   </data>
   <data name="LibraryPage_Title" xml:space="preserve">
-    <value>کتابخانه</value>
+    <value>Library</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>جستجوی کتابخانه…</value>
+    <value>Search library…</value>
   </data>
   <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>جستجو در کتابخانه</value>
+    <value>Search library</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>پخش همه</value>
+    <value>Play all</value>
   </data>
   <data name="LibraryPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>پخش تصادفی همه</value>
+    <value>Shuffle and play all</value>
   </data>
   <data name="LibraryPage_Context_Play" xml:space="preserve">
-    <value>پخش</value>
+    <value>Play</value>
   </data>
   <data name="LibraryPage_Context_PlayNext" xml:space="preserve">
-    <value>پخش بعدی</value>
+    <value>Play Next</value>
   </data>
   <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
-    <value>افزودن به صف پخش</value>
+    <value>Add to Queue</value>
   </data>
   <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>افزودن به فهرست پخش</value>
+    <value>Add to Playlist</value>
   </data>
   <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
-    <value>رفتن به آلبوم</value>
+    <value>Go to Album</value>
   </data>
   <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
-    <value>رفتن به هنرمند</value>
+    <value>Go to Artist</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>نمایش در فایل اکسپلورر</value>
+    <value>Show in File Explorer</value>
   </data>
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>پخش</value>
+    <value>Play</value>
   </data>
   <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
-    <value>هیچ آهنگی یافت نشد</value>
+    <value>No songs found</value>
   </data>
   <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
-    <value>جستجوی چیز دیگری را امتحان کنید</value>
+    <value>Try searching for something else</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
-    <value>کتابخانه شما خالی است</value>
+    <value>Your library is empty</value>
   </data>
   <data name="LibraryPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>پوشه‌ها را در تنظیمات به کتابخانه خود اضافه کنید</value>
+    <value>Add folders to your library in Settings</value>
   </data>
   <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
-    <value>هیچ متن ترانه‌ای برای این آهنگ یافت نشد</value>
+    <value>No lyrics found for this song</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
-    <value>آهنگ دیگری را امتحان کنید</value>
+    <value>Try another song</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
-    <value>ویرایش یا جایگزینی متن ترانه</value>
+    <value>Edit or replace lyrics</value>
   </data>
   <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
-    <value>ویرایش متن ترانه</value>
+    <value>Edit Lyrics</value>
   </data>
   <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
-    <value>متن ساده یا متن LRC زمان‌بندی‌شده را بچسبانید</value>
+    <value>Paste plain text or timestamped LRC lyrics</value>
   </data>
   <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
-    <value>ذخیره</value>
+    <value>Save</value>
   </data>
   <data name="LyricsPage_EditLyrics_Remove" xml:space="preserve">
-    <value>حذف متن ترانه ذخیره‌شده</value>
+    <value>Remove Saved Lyrics</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
-    <value>متن ترانه به‌روزرسانی نشد</value>
+    <value>Lyrics could not be updated</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Nagi نتوانست متن ترانه را ذخیره کند. برای جزئیات، گزارش را بررسی کرده و دوباره تلاش کنید.</value>
+    <value>Nagi could not save the lyrics. Check the log for details and try again.</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
-    <value>به Nagi خوش آمدید</value>
+    <value>Welcome to Nagi</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>برای شروع یک پوشه موسیقی اضافه کنید</value>
+    <value>Add a music folder to get started</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
-    <value>افزودن پوشه موسیقی</value>
+    <value>Add Music Folder</value>
   </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
-    <value>لیست‌های پخش</value>
+    <value>Playlists</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>جستجوی فهرست‌های پخش…</value>
+    <value>Search playlists…</value>
   </data>
   <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>جستجوی لیست‌های پخش</value>
+    <value>Search playlists</value>
   </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>یکی را به صورت تصادفی انتخاب کنید</value>
+    <value>Pick one at random</value>
   </data>
   <data name="PlaylistPage_NewPlaylistButton_ToolTip" xml:space="preserve">
-    <value>ایجاد لیست پخش جدید</value>
+    <value>Create a new playlist</value>
   </data>
   <data name="PlaylistPage_NewPlaylistButton_Content" xml:space="preserve">
-    <value>لیست پخش جدید</value>
+    <value>New Playlist</value>
   </data>
   <data name="PlaylistPage_NewPlaylistMenu_Regular" xml:space="preserve">
-    <value>لیست پخش عادی</value>
+    <value>Regular Playlist</value>
   </data>
   <data name="PlaylistPage_NewPlaylistMenu_Smart" xml:space="preserve">
-    <value>لیست پخش هوشمند</value>
+    <value>Smart Playlist</value>
   </data>
   <data name="PlaylistPage_Context_Play" xml:space="preserve">
-    <value>پخش</value>
+    <value>Play</value>
   </data>
   <data name="PlaylistPage_Context_Rename" xml:space="preserve">
-    <value>تغییر نام</value>
+    <value>Rename</value>
   </data>
   <data name="PlaylistPage_Context_ChangeImage" xml:space="preserve">
-    <value>تغییر تصویر</value>
+    <value>Change Image</value>
   </data>
   <data name="PlaylistPage_Context_RemoveImage" xml:space="preserve">
-    <value>حذف تصویر</value>
+    <value>Remove Image</value>
   </data>
   <data name="PlaylistPage_Context_Delete" xml:space="preserve">
-    <value>حذف</value>
+    <value>Delete</value>
   </data>
   <data name="PlaylistPage_EmptyState_Title" xml:space="preserve">
-    <value>هنوز لیست پخشی وجود ندارد</value>
+    <value>No playlists yet</value>
   </data>
   <data name="PlaylistPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>برای شروع یک لیست پخش ایجاد کنید</value>
+    <value>Create a playlist to get started</value>
   </data>
   <data name="PlaylistSongViewPage_Header_Caption" xml:space="preserve">
-    <value>لیست پخش</value>
+    <value>Playlist</value>
   </data>
   <data name="PlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>آهنگ‌ها</value>
+    <value>Songs</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>جستجو در فهرست پخش…</value>
+    <value>Search in playlist…</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>جستجو در لیست پخش</value>
+    <value>Search in playlist</value>
   </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>پخش همه</value>
+    <value>Play all</value>
   </data>
   <data name="PlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>پخش تصادفی همه</value>
+    <value>Shuffle and play all</value>
   </data>
   <data name="PlaylistSongViewPage_Context_Play" xml:space="preserve">
-    <value>پخش</value>
+    <value>Play</value>
   </data>
   <data name="PlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
-    <value>پخش بعدی</value>
+    <value>Play Next</value>
   </data>
   <data name="PlaylistSongViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>افزودن به صف پخش</value>
+    <value>Add to Queue</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>رفتن به آلبوم</value>
+    <value>Go to Album</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>رفتن به هنرمند</value>
+    <value>Go to Artist</value>
   </data>
   <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>نمایش در فایل اکسپلورر</value>
+    <value>Show in File Explorer</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
-    <value>حذف از فهرست پخش</value>
+    <value>Remove from Playlist</value>
   </data>
   <data name="PlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>پخش</value>
+    <value>Play</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
-    <value>این لیست پخش خالی است</value>
+    <value>This playlist is empty</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>آهنگ‌هایی را از کتابخانه خود اضافه کنید</value>
+    <value>Add songs from your library</value>
   </data>
   <data name="GenreViewPage_Header_Caption" xml:space="preserve">
-    <value>ژانر</value>
+    <value>Genre</value>
   </data>
   <data name="GenreViewPage_Section_Songs" xml:space="preserve">
-    <value>آهنگ‌ها</value>
+    <value>Songs</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>جستجو در سبک…</value>
+    <value>Search in genre…</value>
   </data>
   <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>جستجو در ژانر</value>
+    <value>Search in genre</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>پخش همه</value>
+    <value>Play all</value>
   </data>
   <data name="GenreViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>پخش تصادفی همه</value>
+    <value>Shuffle and play all</value>
   </data>
   <data name="GenreViewPage_Context_Play" xml:space="preserve">
-    <value>پخش</value>
+    <value>Play</value>
   </data>
   <data name="GenreViewPage_Context_PlayNext" xml:space="preserve">
-    <value>پخش بعدی</value>
+    <value>Play Next</value>
   </data>
   <data name="GenreViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>افزودن به صف پخش</value>
+    <value>Add to Queue</value>
   </data>
   <data name="GenreViewPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>افزودن به فهرست پخش</value>
+    <value>Add to Playlist</value>
   </data>
   <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>رفتن به آلبوم</value>
+    <value>Go to Album</value>
   </data>
   <data name="GenreViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>رفتن به هنرمند</value>
+    <value>Go to Artist</value>
   </data>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>نمایش در فایل اکسپلورر</value>
+    <value>Show in File Explorer</value>
   </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>پخش</value>
+    <value>Play</value>
   </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
-    <value>هیچ آهنگی برای این ژانر یافت نشد</value>
+    <value>No songs found for this genre</value>
   </data>
   <data name="GenreViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>سعی کنید چیز دیگری را جستجو کنید</value>
+    <value>Try searching for something else</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
-    <value>تنظیمات</value>
+    <value>Settings</value>
   </data>
   <data name="SettingsPage_Section_Appearance" xml:space="preserve">
-    <value>ظاهر</value>
+    <value>Appearance</value>
   </data>
   <data name="SettingsPage_Theme_Header" xml:space="preserve">
-    <value>تم</value>
+    <value>Theme</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>تم روشن، تاریک یا سیستم را انتخاب کنید.</value>
+    <value>Choose a light, dark, or system theme.</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
-    <value>رنگ برجسته</value>
+    <value>Accent Color</value>
   </data>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
-    <value>بازنشانی به پیش‌فرض</value>
+    <value>Reset to Default</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
-    <value>جنس پنجره</value>
+    <value>Window Material</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Description" xml:space="preserve">
-    <value>جنس پس‌زمینه پنجره را انتخاب کنید.</value>
+    <value>Choose the window background material.</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
-    <value>تم‌بندی پویا</value>
+    <value>Dynamic Theming</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>تطبیق رنگ‌های برنامه با تصویر آلبوم در حال پخش.</value>
+    <value>Match the app colors to the current album artwork.</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
-    <value>به‌خاطرسپاری اندازه پنجره</value>
+    <value>Remember Window Size</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Description" xml:space="preserve">
-    <value>پنجره اصلی را در راه‌اندازی بعدی به اندازه قبلی خود بازگردانید.</value>
+    <value>Restore the main window to its previous size on next launch.</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Header" xml:space="preserve">
-    <value>به‌خاطرسپاری موقعیت پنجره</value>
+    <value>Remember Window Position</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Description" xml:space="preserve">
-    <value>پنجره اصلی را در راه‌اندازی بعدی به مکان قبلی خود در صفحه بازگردانید.</value>
+    <value>Restore the main window to its previous screen location on next launch.</value>
   </data>
   <data name="SettingsPage_RememberNavState_Header" xml:space="preserve">
-    <value>به‌خاطرسپاری وضعیت پنل ناوبری</value>
+    <value>Remember Navigation Panel State</value>
   </data>
   <data name="SettingsPage_RememberNavState_Description" xml:space="preserve">
-    <value>پنل ناوبری سمت چپ را همانطور که رها کردید، باز یا بسته نگه دارید.</value>
+    <value>Keep the left navigation panel open or closed as you left it.</value>
   </data>
   <data name="SettingsPage_CustomizeNav_Header" xml:space="preserve">
-    <value>سفارشی‌سازی ناوبری</value>
+    <value>Customize Navigation</value>
   </data>
   <data name="SettingsPage_CustomizeNav_Description" xml:space="preserve">
-    <value>برای تغییر ترتیب صفحات در منوی ناوبری بکشید. از سوئیچ برای نمایش یا پنهان کردن یک صفحه استفاده کنید.</value>
+    <value>Drag to reorder pages in the navigation menu. Use the toggle to show or hide a page.</value>
   </data>
   <data name="SettingsPage_Section_Player" xml:space="preserve">
-    <value>مدیریت پخش‌کننده</value>
+    <value>Player Management</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Header" xml:space="preserve">
-    <value>استانداردسازی صدا (ReplayGain)</value>
+    <value>Volume Normalization (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>کاهش اختلاف بلندی صدای آهنگ‌ها با استفاده از ReplayGain.</value>
+    <value>Reduce volume differences between songs using ReplayGain.</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
-    <value>حالت اختصاصی WASAPI</value>
+    <value>WASAPI Exclusive Mode</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>کنترل انحصاری دستگاه صوتی ویندوز را به Nagi بدهید. ممکن است سایر برنامه‌ها بی‌صدا شوند. پس از تغییر این تنظیم، Nagi را مجدداً راه‌اندازی کنید.</value>
+    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
-    <value>محوشدگی در پخش / مکث</value>
+    <value>Fade on Play / Pause</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>به جای قطع ناگهانی، هنگام ازسرگیری پخش به آرامی صدا را افزایش داده و هنگام مکث به آرامی کاهش دهید.</value>
+    <value>Smoothly fade the volume in when resuming and out when pausing instead of cutting instantly.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
-    <value>اکولایزر صدا</value>
+    <value>Audio Equalizer</value>
   </data>
   <data name="SettingsPage_ResetEqualizer_Content" xml:space="preserve">
-    <value>بازنشانی به پیش‌فرض</value>
+    <value>Reset to Default</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Preamp</value>
   </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
-    <value>سفارشی</value>
+    <value>Custom</value>
   </data>
   <data name="SettingsPage_CustomizePlayer" xml:space="preserve">
-    <value>سفارشی‌سازی کنترل‌های پخش‌کننده</value>
+    <value>Customize Player Controls</value>
   </data>
   <data name="SettingsPage_ResetPlayerButtons_Content" xml:space="preserve">
-    <value>بازنشانی به پیش‌فرض</value>
+    <value>Reset to Default</value>
   </data>
   <data name="SettingsPage_CustomizePlayer_Instructions" xml:space="preserve">
-    <value>برای تغییر نمایشگر اشاره کنید. برای تغییر ترتیب بکشید. جداکننده کنترل‌های میانی و راست را جدا می‌کند.</value>
+    <value>Hover to toggle visibility. Drag to reorder. The divider separates center and right controls.</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Header" xml:space="preserve">
-    <value>پخش‌کننده جمع‌شونده</value>
+    <value>Collapsible Player</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>گسترش نوار پخش‌کننده هنگام نگه‌داشتن نشانگر روی آن.</value>
+    <value>Expand the player bar when you hover over it.</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
-    <value>بازیابی وضعیت پخش</value>
+    <value>Restore Playback State</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>بازیابی صف پخش و موقعیت پخش هنگام شروع Nagi.</value>
+    <value>Restore your queue and playback position when Nagi starts.</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
-    <value>اجرای خودکار هنگام استارت‌آپ</value>
+    <value>Auto Launch on Startup</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
-    <value>Nagi را به طور خودکار هنگام ورود به کامپیوتر خود راه‌اندازی کنید.</value>
+    <value>Start Nagi automatically when you log into your computer.</value>
   </data>
   <data name="SettingsPage_StartMinimized_Header" xml:space="preserve">
-    <value>شروع به‌صورت کمینه‌شده</value>
+    <value>Start Minimized</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>شروع Nagi با پنجره کمینه‌شده.</value>
+    <value>Start Nagi with its window minimized.</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
-    <value>کمینه‌کردن به پخش‌کننده کوچک</value>
+    <value>Minimize to Mini-Player</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Description" xml:space="preserve">
-    <value>هنگام کوچک شدن، به جای پنهان کردن پنجره، یک پخش‌کننده کوچک شناور را نمایش دهید.</value>
+    <value>When minimized, show a compact floating player instead of hiding the window.</value>
   </data>
   <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
-    <value>پنهان‌کردن در سینی سیستم</value>
+    <value>Hide to System Tray</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>ادامه اجرای Nagi در سینی سیستم هنگام بستن پنجره آن.</value>
+    <value>Keep Nagi running in the system tray when you close its window.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
-    <value>نمایش تصویر کاور در پنجره شناور</value>
+    <value>Show Cover Art in Flyout</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
-    <value>کاور آرت را در پخش‌کننده کوچک که با کلیک روی نماد سینی ظاهر می‌شود، نمایش دهید.</value>
+    <value>Display the cover art in the compact player that appears when clicking the tray icon.</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
-    <value>نادیده‌گرفتن حروف تعریف هنگام مرتب‌سازی</value>
+    <value>Ignore Articles When Sorting</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>آلبوم‌ها، هنرمندان و آهنگ‌ها را بر اساس اولین کلمه مهمشان مرتب کنید (مثلاً "The Beatles" زیر حرف B مرتب می‌شود).</value>
+    <value>Sort albums, artists, and songs by their first significant word (e.g. "The Beatles" sorts under B).</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
-    <value>مدیریت داده</value>
+    <value>Data Management</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Header" xml:space="preserve">
-    <value>تفکیک هنرمند</value>
+    <value>Artist Splitting</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>کاراکترهای مورد استفاده برای تفکیک هنرمندان متعدد را تعریف کنید (مثلاً ';/'). برای غیرفعال کردن خالی بگذارید.</value>
+    <value>Define characters used to split multiple artists (e.g. ';/'). Leave empty to disable.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
-    <value>تفکیک ژانر</value>
+    <value>Genre Splitting</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>کاراکترهای مورد استفاده برای تفکیک ژانرهای متعدد را تعریف کنید (مثلاً «;/»). برای غیرفعال کردن خالی بگذارید.</value>
+    <value>Define characters used to split multiple genres (e.g. ';/'). Leave empty to disable.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
-    <value>اسکن مجدد کتابخانه</value>
+    <value>Rescan Library</value>
   </data>
   <data name="SettingsPage_RescanLibrary_ToolTip" xml:space="preserve">
-    <value>برای اعمال تغییرات تفکیک، کتابخانه را اسکن مجدد کنید</value>
+    <value>Rescan library to apply splitting changes</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
-    <value>دریافت متاداده آنلاین</value>
+    <value>Retrieve Online Metadata</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>دریافت تصاویر و زندگی‌نامه هنرمندان از منابع آنلاین.</value>
+    <value>Fetch artist images and biographies from online sources.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
-    <value>منابع</value>
+    <value>Sources</value>
   </data>
   <data name="SettingsPage_MetadataSources_Description" xml:space="preserve">
-    <value>برای تغییر ترتیب منابع فراداده بکشید. برای جزئیات بیشتر، روی هر منبع نگه دارید.</value>
+    <value>Drag to reorder metadata sources. Hover over each source for details.</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Header" xml:space="preserve">
-    <value>دریافت آنلاین متن ترانه‌ها</value>
+    <value>Fetch Online Lyrics</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>دریافت متن ترانه‌های مفقود از منابع آنلاین. این کار متاداده آهنگ‌ها را به سرویس‌های ثالث ارسال می‌کند.</value>
+    <value>Fetch missing lyrics from online sources. This sends song metadata to third-party services.</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
-    <value>منابع</value>
+    <value>Sources</value>
   </data>
   <data name="SettingsPage_LyricsSources_Description" xml:space="preserve">
-    <value>برای تغییر ترتیب منابع متن آهنگ بکشید. برای جزئیات بیشتر، روی هر منبع نگه دارید.</value>
+    <value>Drag to reorder lyrics sources. Hover over each source for details.</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
-    <value>نمایش متن ترانه رومی‌سازی‌شده</value>
+    <value>Show Romanized Lyrics</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
-    <value>نمایش یک خط رومی‌سازی شده کوچکتر زیر متن ترانه‌های پشتیبانی شده، زمانی که یک بسته نصب شده با اسکریپت مطابقت دارد.</value>
+    <value>Show a smaller romanized line under supported lyrics when an installed pack matches the script.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
-    <value>بسته‌های زبانی</value>
+    <value>Language Packs</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>برای لاتین‌نویسی متن ترانه‌های پشتیبانی‌شده، بسته‌های زبانی را نصب کنید. بسته‌ها به‌صورت محلی ذخیره می‌شوند.</value>
+    <value>Install language packs to romanize supported lyrics. Packs are stored locally.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
-    <value>تازه‌سازی</value>
+    <value>Refresh</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Install" xml:space="preserve">
-    <value>نصب</value>
+    <value>Install</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Update" xml:space="preserve">
-    <value>به‌روزرسانی</value>
+    <value>Update</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Remove" xml:space="preserve">
-    <value>حذف</value>
+    <value>Remove</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
-    <value>هیچ بسته رومی‌سازی سازگاری در دسترس نیست.</value>
+    <value>No compatible romanization packs are available.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>امکان بارگذاری بسته‌های رومی‌سازی وجود نداشت: {0}</value>
+    <value>Could not load romanization packs: {0}</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
-    <value>نصب بسته ناموفق بود.</value>
+    <value>Pack install failed.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_RemoveFailed" xml:space="preserve">
-    <value>حذف بسته ناموفق بود.</value>
+    <value>Pack removal failed.</value>
   </data>
   <data name="SettingsPage_RomanizationPack_UpdateAvailable" xml:space="preserve">
-    <value>به‌روزرسانی موجود است</value>
+    <value>Update available</value>
   </data>
   <data name="SettingsPage_RomanizationPack_InstalledFormat" xml:space="preserve">
-    <value>نصب شد {0}</value>
+    <value>Installed {0}</value>
   </data>
   <data name="SettingsPage_RomanizationPack_NotInstalled" xml:space="preserve">
-    <value>نصب نشده</value>
+    <value>Not installed</value>
   </data>
   <data name="SettingsPage_RomanizationPack_LicenseFormat" xml:space="preserve">
-    <value>مجوز {0}</value>
+    <value>{0} license</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>وارد و صادر کردن فهرست‌های پخش</value>
+    <value>Import &amp; Export Playlists</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
-    <value>لیست‌های پخش را به فایل‌های M3U برای استفاده در پخش‌کننده‌های دیگر صادر کنید، یا لیست‌های پخش M3U را به Nagi وارد کنید.</value>
+    <value>Export playlists to M3U files for use in other players, or import M3U playlists into Nagi.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
-    <value>صدور همه…</value>
+    <value>Export All…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
-    <value>صادر کردن همه لیست‌های پخش به یک پوشه</value>
+    <value>Export all playlists to a folder</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
-    <value>ورود…</value>
+    <value>Import…</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
-    <value>وارد کردن یک یا چند فایل M3U</value>
+    <value>Import one or more M3U files</value>
   </data>
   <data name="SettingsPage_ResetApp_Header" xml:space="preserve">
-    <value>بازنشانی برنامه</value>
+    <value>Reset Application</value>
   </data>
   <data name="SettingsPage_ResetApp_Description" xml:space="preserve">
-    <value>این کار همه داده‌های کتابخانه، لیست‌های پخش را حذف می‌کند و همه تنظیمات را به حالت پیش‌فرض بازنشانی می‌کند. برنامه دوباره راه‌اندازی خواهد شد.</value>
+    <value>This will delete all library data, playlists, and reset all settings to their defaults. The application will restart.</value>
   </data>
   <data name="SettingsPage_ResetButton_Content" xml:space="preserve">
-    <value>بازنشانی همه داده‌ها</value>
+    <value>Reset All Data</value>
   </data>
   <data name="SettingsPage_Section_Integrations" xml:space="preserve">
-    <value>ادغام‌ها</value>
+    <value>Integrations</value>
   </data>
   <data name="SettingsPage_LastFm_Header" xml:space="preserve">
     <value>Last.fm</value>
   </data>
   <data name="SettingsPage_LastFm_Description" xml:space="preserve">
-    <value>حساب Last.fm خود را متصل کنید تا آهنگ‌ها را اسکرابل کرده و آهنگ در حال پخش شما را نمایش دهد.</value>
+    <value>Connect your Last.fm account to scrobble tracks and show your currently playing song.</value>
   </data>
   <data name="SettingsPage_LastFm_Connect_Content" xml:space="preserve">
-    <value>اتصال</value>
+    <value>Connect</value>
   </data>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
-    <value>تکمیل</value>
+    <value>Complete</value>
   </data>
   <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>لغو</value>
+    <value>Cancel</value>
   </data>
   <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
-    <value>قطع اتصال</value>
+    <value>Disconnect</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
-    <value>فعال‌سازی ثبت پخش</value>
+    <value>Enable Scrobbling</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Description" xml:space="preserve">
-    <value>آهنگ‌هایی را که در Nagi گوش می‌دهید، به طور خودکار به پروفایل Last.fm خود اضافه کنید.</value>
+    <value>Automatically add the tracks you listen to on Nagi to your Last.fm profile.</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
-    <value>به‌روزرسانی در حال پخش</value>
+    <value>Update Now Playing</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>نمایش آهنگ در حال پخش در پروفایل Last.fm شما.</value>
+    <value>Show the song currently playing on your Last.fm profile.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
     <value>ListenBrainz</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Description" xml:space="preserve">
-    <value>شنیده‌های خود را به ListenBrainz ارسال کنید (یک جایگزین باز برای Last.fm).</value>
+    <value>Submit your listens to ListenBrainz (an open alternative to Last.fm).</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenLabel" xml:space="preserve">
-    <value>توکن کاربر</value>
+    <value>User Token</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenPlaceholder" xml:space="preserve">
-    <value>توکن خود را از listenbrainz.org/settings اینجا بچسبانید</value>
+    <value>Paste your token from listenbrainz.org/settings</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TestConnection" xml:space="preserve">
-    <value>آزمایش اتصال</value>
+    <value>Test Connection</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Connected" xml:space="preserve">
-    <value>به عنوان {0} متصل شد</value>
+    <value>Connected as {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ConnectionFailed" xml:space="preserve">
-    <value>اتصال ناموفق بود: {0}</value>
+    <value>Connection failed: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>ارسال تاریخچه پخش (Scrobbling)</value>
+    <value>Submit Listens (Scrobbling)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>ارسال به‌روزرسانی‌های در حال پخش</value>
+    <value>Submit Now Playing Updates</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
-    <value>پیشرفته</value>
+    <value>Advanced</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ServerUrlLabel" xml:space="preserve">
-    <value>نشانی اینترنتی سرور</value>
+    <value>Server URL</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ServerUrlPlaceholder" xml:space="preserve">
     <value>https://api.listenbrainz.org</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Title" xml:space="preserve">
-    <value>قطع ارتباط از ListenBrainz؟</value>
+    <value>Disconnect from ListenBrainz?</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Content" xml:space="preserve">
-    <value>این کار توکن ذخیره‌شده شما را حذف خواهد کرد. می‌توانید هر زمان دوباره متصل شوید.</value>
+    <value>This will remove your saved token. You can reconnect at any time.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Button" xml:space="preserve">
-    <value>قطع ارتباط</value>
+    <value>Disconnect</value>
   </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
     <value>Discord</value>
   </data>
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
-    <value>فعالیت گوش دادن فعلی خود را به عنوان وضعیت شما در Discord نمایش دهید.</value>
+    <value>Show your current listening activity as your status on Discord.</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
-    <value>لیست پخش هوشمند</value>
+    <value>Smart Playlist</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>آهنگ‌ها</value>
+    <value>Songs</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>جستجو در فهرست پخش هوشمند…</value>
+    <value>Search in smart playlist…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>جستجو در لیست پخش هوشمند</value>
+    <value>Search in smart playlist</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
-    <value>ویرایش قوانین</value>
+    <value>Edit rules</value>
   </data>
   <data name="SmartPlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>پخش همه</value>
+    <value>Play all</value>
   </data>
   <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>پخش تصادفی همه</value>
+    <value>Shuffle and play all</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_Play" xml:space="preserve">
-    <value>پخش</value>
+    <value>Play</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
-    <value>پخش بعدی</value>
+    <value>Play Next</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>افزودن به صف پخش</value>
+    <value>Add to Queue</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>رفتن به آلبوم</value>
+    <value>Go to Album</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>رفتن به هنرمند</value>
+    <value>Go to Artist</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>نمایش در فایل اکسپلورر</value>
+    <value>Show in File Explorer</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>پخش</value>
+    <value>Play</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
-    <value>هیچ آهنگی با قوانین فعلی مطابقت ندارد</value>
+    <value>No songs match the current rules</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>ویرایش قوانین را امتحان کنید</value>
+    <value>Try editing the rules</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
-    <value>ویرایش قوانین</value>
+    <value>Edit Rules</value>
   </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
-    <value>درباره</value>
+    <value>About</value>
   </data>
   <data name="SettingsPage_AboutExpander_Header" xml:space="preserve">
-    <value>درباره Nagi</value>
+    <value>About Nagi</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
-    <value>مجموعه موسیقی محلی خود را با Nagi، یک پخش‌کننده موسیقی که بر سرعت، سادگی و حریم خصوصی تمرکز دارد، دوباره کشف کنید.</value>
+    <value>Rediscover your local music collection with Nagi, a music player focused on speed, simplicity, and privacy.</value>
   </data>
   <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
-    <value>نسخه </value>
+    <value>Version </value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
-    <value>مشاهده مجوزها</value>
+    <value>View Licenses</value>
   </data>
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
-    <value>کد منبع</value>
+    <value>Source Code</value>
   </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
-    <value>ارسال بازخورد</value>
+    <value>Send Feedback</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
-    <value>زبان برنامه</value>
+    <value>Application Language</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>برای اعمال تغییر زبان، Nagi را دوباره راه‌اندازی کنید.</value>
+    <value>Restart Nagi to apply a language change.</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
-    <value>نیاز به راه‌اندازی مجدد</value>
+    <value>Restart Required</value>
   </data>
   <data name="SettingsPage_RestartRequired_Message" xml:space="preserve">
-    <value>لطفاً برنامه را برای اعمال کامل تغییر زبان، مجدداً راه‌اندازی کنید.</value>
+    <value>Please restart the application for the language change to fully take effect.</value>
   </data>
   <data name="SettingsPage_About_PrivacyPolicy_Content" xml:space="preserve">
-    <value>سیاست حفظ حریم خصوصی</value>
+    <value>Privacy Policy</value>
   </data>
   <data name="SettingsPage_BackupRestore_Header" xml:space="preserve">
-    <value>پشتیبان‌گیری و بازیابی</value>
+    <value>Backup &amp; Restore</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>ایجاد نسخه پشتیبان از داده‌ها و تنظیمات کتابخانه، یا بازیابی پشتیبان قبلی.</value>
+    <value>Create a backup of your library data and settings, or restore a previous backup.</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
-    <value>ایجاد پشتیبان</value>
+    <value>Create Backup</value>
   </data>
   <data name="SettingsPage_RestoreBackup_Content" xml:space="preserve">
-    <value>بازیابی پشتیبان</value>
+    <value>Restore Backup</value>
   </data>
   <data name="Settings_Backup_Success_Title" xml:space="preserve">
-    <value>پشتیبان ایجاد شد</value>
+    <value>Backup Created</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>نسخه پشتیبان ({0:F2} مگابایت) در این مسیر ساخته شد: {1}</value>
+    <value>Created a backup ({0:F2} MB) at: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
-    <value>پشتیبان‌گیری ناموفق بود</value>
+    <value>Backup Failed</value>
   </data>
   <data name="Settings_Backup_Failed_Message" xml:space="preserve">
-    <value>ایجاد پشتیبان ناموفق بود. لطفاً دوباره تلاش کنید.</value>
+    <value>Failed to create backup. Please try again.</value>
   </data>
   <data name="Settings_Restore_Invalid_Title" xml:space="preserve">
-    <value>فایل پشتیبان نامعتبر</value>
+    <value>Invalid Backup File</value>
   </data>
   <data name="Settings_Restore_Invalid_Message" xml:space="preserve">
-    <value>فایل انتخاب شده یک پشتیبان معتبر Nagi نیست.</value>
+    <value>The selected file is not a valid Nagi backup.</value>
   </data>
   <data name="Settings_Restore_Confirm_Title" xml:space="preserve">
-    <value>بازیابی پشتیبان؟</value>
+    <value>Restore Backup?</value>
   </data>
   <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
-    <value>بازیابی از پشتیبان، تمام داده‌های فعلی برنامه را جایگزین می‌کند. این عمل قابل بازگرداندن نیست. برنامه پس از بازیابی مجدداً راه‌اندازی خواهد شد. ادامه می‌دهید؟</value>
+    <value>Restoring from backup will replace all current app data. This action cannot be undone. The app will restart after restore. Continue?</value>
   </data>
   <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
-    <value>بازیابی</value>
+    <value>Restore</value>
   </data>
   <data name="Settings_Restore_Success_Title" xml:space="preserve">
-    <value>بازیابی کامل شد</value>
+    <value>Restore Complete</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>نسخه پشتیبان بازیابی شد. Nagi اکنون دوباره راه‌اندازی می‌شود.</value>
+    <value>Backup restored. Nagi will now restart.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
-    <value>بازیابی ناموفق بود</value>
+    <value>Restore Failed</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>بازیابی نسخه پشتیبان امکان‌پذیر نبود.</value>
+    <value>Could not restore the backup.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
-    <value>طراحی پخش‌کننده</value>
+    <value>Player Styling</value>
   </data>
   <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
-    <value>اکریلیک (شیشه)</value>
+    <value>Acrylic (Glass)</value>
   </data>
   <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
-    <value>جامد (مات)</value>
+    <value>Solid (Opaque)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>سفارشی‌سازی ظاهر نوار پخش‌کننده.</value>
+    <value>Customize the appearance of the player bar.</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
-    <value>شدت رنگ</value>
+    <value>Tint Intensity</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>تنظیم شدت رنگ پس‌زمینه پخش‌کننده.</value>
+    <value>Adjust the intensity of the player background color.</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
-    <value>مدت‌زمان ظاهر شدن تدریجی صدا</value>
+    <value>Fade-In Duration</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
-    <value>تنظیم مدت‌زمان افزایش تدریجی صدا هنگام ادامه پخش.</value>
+    <value>Set how long the volume takes to fade in when playback resumes.</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
-    <value>مدت‌زمان محو شدن تدریجی صدا</value>
+    <value>Fade-Out Duration</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
-    <value>تنظیم مدت‌زمان کاهش تدریجی صدا هنگام توقف موقت پخش.</value>
+    <value>Set how long the volume takes to fade out when playback pauses.</value>
   </data>
   <data name="Settings_Nav_Insights" xml:space="preserve">
-    <value>بینش‌ها</value>
+    <value>Insights</value>
   </data>
   <data name="InsightsPage_Title" xml:space="preserve">
-    <value>بینش‌ها</value>
+    <value>Insights</value>
   </data>
   <data name="InsightsPage_TotalTime" xml:space="preserve">
-    <value>کل زمان گوش دادن</value>
+    <value>Total Listen Time</value>
   </data>
   <data name="InsightsPage_UniqueSongs" xml:space="preserve">
-    <value>آهنگ‌های منحصربه‌فرد</value>
+    <value>Unique Songs</value>
   </data>
   <data name="InsightsPage_PeakHour" xml:space="preserve">
-    <value>ساعت اوج مصرف</value>
+    <value>Peak Hour</value>
   </data>
   <data name="InsightsPage_MostActiveDay" xml:space="preserve">
-    <value>فعال‌ترین روز</value>
+    <value>Most Active Day</value>
   </data>
   <data name="InsightsPage_TopSongs" xml:space="preserve">
-    <value>آهنگ‌های برتر</value>
+    <value>Top Songs</value>
   </data>
   <data name="InsightsPage_TopArtists" xml:space="preserve">
-    <value>هنرمندان برتر</value>
+    <value>Top Artists</value>
   </data>
   <data name="InsightsPage_TopAlbums" xml:space="preserve">
-    <value>آلبوم‌های برتر</value>
+    <value>Top Albums</value>
   </data>
   <data name="InsightsPage_TopGenres" xml:space="preserve">
-    <value>ژانرهای برتر</value>
+    <value>Top Genres</value>
   </data>
   <data name="InsightsPage_Sources" xml:space="preserve">
-    <value>منابع پخش</value>
+    <value>Playback Sources</value>
   </data>
   <data name="InsightsPage_Empty_Title" xml:space="preserve">
-    <value>هنوز داده‌ای از گوش دادن وجود ندارد</value>
+    <value>No listening data yet</value>
   </data>
   <data name="InsightsPage_Empty_Subtitle" xml:space="preserve">
-    <value>برای مشاهده بینش‌های خود اینجا، شروع به پخش موسیقی کنید</value>
+    <value>Start playing music to see your insights here</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
-    <value>تعداد پخش: {0}</value>
+    <value>Plays: {0}</value>
   </data>
   <data name="InsightsPage_Source_Albums" xml:space="preserve">
-    <value>آلبوم‌ها</value>
+    <value>Albums</value>
   </data>
   <data name="InsightsPage_Source_Artists" xml:space="preserve">
-    <value>هنرمندان</value>
+    <value>Artists</value>
   </data>
   <data name="InsightsPage_Source_Playlists" xml:space="preserve">
-    <value>لیست‌های پخش</value>
+    <value>Playlists</value>
   </data>
   <data name="InsightsPage_Source_SmartPlaylists" xml:space="preserve">
-    <value>لیست‌های پخش هوشمند</value>
+    <value>Smart Playlists</value>
   </data>
   <data name="InsightsPage_Source_Folders" xml:space="preserve">
-    <value>پوشه‌ها</value>
+    <value>Folders</value>
   </data>
   <data name="InsightsPage_Source_Genres" xml:space="preserve">
-    <value>ژانرها</value>
+    <value>Genres</value>
   </data>
   <data name="InsightsPage_Source_Search" xml:space="preserve">
-    <value>جستجو</value>
+    <value>Search</value>
   </data>
   <data name="InsightsPage_Source_Library" xml:space="preserve">
-    <value>کتابخانه</value>
+    <value>Library</value>
   </data>
   <data name="InsightsPage_Source_Files" xml:space="preserve">
-    <value>فایل‌ها</value>
+    <value>Files</value>
   </data>
   <data name="InsightsPage_Reset_ToolTip" xml:space="preserve">
-    <value>بازنشانی سابقه گوش دادن</value>
+    <value>Reset listening history</value>
   </data>
   <data name="InsightsPage_Reset_Confirm_Title" xml:space="preserve">
-    <value>بازنشانی سابقه گوش دادن؟</value>
+    <value>Reset listening history?</value>
   </data>
   <data name="InsightsPage_Reset_Confirm_Message" xml:space="preserve">
-    <value>این کار تمام سابقه گوش دادن و آمار را برای همیشه حذف خواهد کرد. این عمل قابل بازگرداندن نیست.</value>
+    <value>This will permanently delete all listening history and statistics. This cannot be undone.</value>
   </data>
   <data name="InsightsPage_Reset_Confirm_Button" xml:space="preserve">
-    <value>بازنشانی</value>
+    <value>Reset</value>
   </data>
   <data name="SplashPage_AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="SplashPage_Tagline" xml:space="preserve">
-    <value>موسیقی شما، به زیبایی سازماندهی شده</value>
+    <value>Your music, beautifully organized</value>
   </data>
   <data name="SplashPage_Status" xml:space="preserve">
-    <value>در حال راه‌اندازی Nagi…</value>
+    <value>Waking up Nagi…</value>
   </data>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
-    <value>مشاهده همه</value>
+    <value>See all</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>Search…</value>
   </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
-    <value>پخش</value>
+    <value>Plays</value>
   </data>
   <data name="InsightsPage_SortBy_Duration" xml:space="preserve">
-    <value>زمان</value>
+    <value>Time</value>
   </data>
   <data name="PaginationControl_All" xml:space="preserve">
-    <value>همه</value>
+    <value>All</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
-    <value>تعداد آیتم‌ها در هر صفحه:</value>
+    <value>Items per page:</value>
   </data>
   <data name="PaginationControl_PreviousPage_ToolTip" xml:space="preserve">
-    <value>صفحه قبلی</value>
+    <value>Previous Page</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
-    <value>صفحه بعدی</value>
+    <value>Next Page</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>e.g. ;/\\</value>
@@ -2134,195 +2140,213 @@
     <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
-    <value>۱ روز گذشته</value>
+    <value>Last 1 Day</value>
   </data>
   <data name="Insights_TimeRange_Last7Days" xml:space="preserve">
-    <value>۷ روز گذشته</value>
+    <value>Last 7 Days</value>
   </data>
   <data name="Insights_TimeRange_Last30Days" xml:space="preserve">
-    <value>۳۰ روز گذشته</value>
+    <value>Last 30 Days</value>
   </data>
   <data name="Insights_TimeRange_Last90Days" xml:space="preserve">
-    <value>۹۰ روز گذشته</value>
+    <value>Last 90 Days</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>سال گذشته</value>
+    <value>Last Year</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
-    <value>کل زمان‌ها</value>
+    <value>All Time</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
-    <value>{0} ساعت {1} دقیقه</value>
+    <value>{0}h {1}m</value>
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
-    <value>{0} دقیقه {1} ثانیه</value>
+    <value>{0}m {1}s</value>
   </data>
   <data name="QueuePanel_EmptyTitle" xml:space="preserve">
-    <value>صف پخش شما خالی است</value>
+    <value>Your queue is empty</value>
   </data>
   <data name="QueuePanel_EmptyDescription" xml:space="preserve">
-    <value>برای ساخت صف پخش خود، موسیقی پخش کنید یا فایل‌های صوتی را اینجا رها کنید.</value>
+    <value>Play music or drop audio files here to build your queue.</value>
   </data>
   <data name="QueuePanel_LoadError" xml:space="preserve">
-    <value>بارگیری برخی از آهنگ‌ها امکان‌پذیر نبود. برای بارگیری مجدد صف، «تلاش مجدد» را انتخاب کنید.</value>
+    <value>Some songs could not be loaded. Select Retry to load the queue again.</value>
   </data>
   <data name="QueuePanel_Retry" xml:space="preserve">
-    <value>تلاش مجدد</value>
+    <value>Retry</value>
   </data>
   <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
-    <value>ذخیره ترتیب جدید فهرست پخش امکان‌پذیر نبود. لطفاً دوباره امتحان کنید.</value>
+    <value>The new playlist order couldn't be saved. Please try again.</value>
   </data>
   <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
-    <value>دستگاه خروجی صدا</value>
+    <value>Audio Output Device</value>
   </data>
   <data name="SettingsPage_AudioOutput_Description" xml:space="preserve">
-    <value>انتخاب کنید Nagi موسیقی را از کجا پخش کند.</value>
+    <value>Choose where Nagi plays music.</value>
   </data>
   <data name="SettingsPage_AudioOutput_Default" xml:space="preserve">
-    <value>پیش‌فرض سیستم</value>
+    <value>System Default</value>
   </data>
   <data name="SettingsPage_AudioOutput_Unavailable" xml:space="preserve">
-    <value>دستگاه ذخیره‌شده در دسترس نیست. استفاده از پیش‌فرض سیستم.</value>
+    <value>The saved device is unavailable. Using the system default.</value>
   </data>
   <data name="SettingsPage_AudioOutput_Error" xml:space="preserve">
-    <value>به‌روزرسانی خروجی صدا امکان‌پذیر نبود. دوباره امتحان کنید یا دستگاه دیگری را انتخاب نمایید.</value>
+    <value>Couldn't update the audio output. Try again or choose another device.</value>
   </data>
   <data name="Listening_Random" xml:space="preserve">
-    <value>ترکیب تصادفی</value>
+    <value>Shuffle</value>
   </data>
   <data name="Listening_MoreVariety" xml:space="preserve">
-    <value>تنوع بیشتر</value>
+    <value>More Variety</value>
   </data>
   <data name="Listening_Rediscover" xml:space="preserve">
-    <value>کشف مجدد</value>
+    <value>Rediscover</value>
   </data>
   <data name="Listening_Unheard" xml:space="preserve">
-    <value>شنیده‌نشده</value>
+    <value>Unheard</value>
   </data>
   <data name="Listening_PlayFor" xml:space="preserve">
-    <value>پخش به مدت…</value>
+    <value>Play for…</value>
   </data>
   <data name="Listening_Minutes" xml:space="preserve">
-    <value>دقیقه</value>
+    <value>Minutes</value>
   </data>
   <data name="Listening_ShuffleMode" xml:space="preserve">
-    <value>نوع ترکیب</value>
+    <value>Mix Type</value>
   </data>
   <data name="Listening_AvoidRecentDays" xml:space="preserve">
-    <value>اجتناب از پخش‌های اخیر (روز)</value>
+    <value>Avoid Recent Plays (Days)</value>
   </data>
   <data name="Listening_MoreOptions" xml:space="preserve">
-    <value>گزینه‌های بیشتر</value>
+    <value>More Options</value>
   </data>
   <data name="Listening_PlayForDescription" xml:space="preserve">
-    <value>ساخت صف پخشی از آهنگ‌های کامل که مجموع زمان آن‌ها از مدت‌زمان انتخابی شما بیشتر نشود.</value>
+    <value>Build a queue of whole songs totaling no more than your chosen duration.</value>
   </data>
   <data name="Listening_NoMixTitle" xml:space="preserve">
-    <value>هیچ آهنگی برای این ترکیب وجود ندارد</value>
+    <value>No songs for this mix</value>
   </data>
   <data name="Listening_NoMixDescription" xml:space="preserve">
-    <value>هیچ آهنگی در این فهرست شرایط لازم را ندارد. ترکیب یا فهرست آهنگ دیگری را امتحان کنید.</value>
+    <value>No songs in this list meet these requirements. Try another mix or song list.</value>
   </data>
   <data name="Listening_Favorites" xml:space="preserve">
-    <value>علاقه‌مندی‌ها</value>
+    <value>Favorites</value>
   </data>
   <data name="Listening_AddFavorite" xml:space="preserve">
-    <value>افزودن به علاقه‌مندی‌ها</value>
+    <value>Add to Favorites</value>
   </data>
   <data name="Listening_RemoveFavorite" xml:space="preserve">
-    <value>حذف از علاقه‌مندی‌ها</value>
+    <value>Remove from Favorites</value>
   </data>
   <data name="Listening_SleepTimer" xml:space="preserve">
-    <value>تایمر خواب</value>
+    <value>Sleep Timer</value>
   </data>
   <data name="Listening_FinishTrack" xml:space="preserve">
-    <value>پایان دادن به آهنگ فعلی پس از اتمام تایمر</value>
+    <value>Finish the current song when the timer expires</value>
   </data>
   <data name="Listening_StopAfterTrack" xml:space="preserve">
-    <value>توقف بعد از این آهنگ</value>
+    <value>Stop After This Song</value>
   </data>
   <data name="Listening_StopAtQueueEnd" xml:space="preserve">
-    <value>توقف در پایان صف</value>
+    <value>Stop at Queue End</value>
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
-    <value>توقف پخش</value>
+    <value>Stop Playback</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>Shuffle All Songs</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>Open Mini-Player</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>Playback Speed</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0}×</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
-    <value>تایمر سفارشی…</value>
+    <value>Custom Timer…</value>
   </data>
   <data name="Listening_Timer15" xml:space="preserve">
-    <value>۱۵ دقیقه دیگر</value>
+    <value>In 15 Minutes</value>
   </data>
   <data name="Listening_Timer30" xml:space="preserve">
-    <value>۳۰ دقیقه دیگر</value>
+    <value>In 30 Minutes</value>
   </data>
   <data name="Listening_Timer60" xml:space="preserve">
-    <value>۶۰ دقیقه دیگر</value>
+    <value>In 60 Minutes</value>
   </data>
   <data name="Listening_CancelStop" xml:space="preserve">
-    <value>لغو توقف زمان‌بندی‌شده</value>
+    <value>Cancel Scheduled Stop</value>
   </data>
   <data name="Listening_TimerRemaining" xml:space="preserve">
-    <value>توقف در {0}</value>
+    <value>Stops in {0}</value>
   </data>
   <data name="Listening_PlayerOptions" xml:space="preserve">
-    <value>گزینه‌های پخش‌کننده</value>
+    <value>Player Options</value>
   </data>
   <data name="Listening_RecentlyPlayed" xml:space="preserve">
-    <value>اخیراً پخش‌شده</value>
+    <value>Recently Played</value>
   </data>
   <data name="Listening_HistorySearch" xml:space="preserve">
-    <value>جستجوی تاریخچه شنیداری</value>
+    <value>Search listening history</value>
   </data>
   <data name="Listening_HistoryEmpty" xml:space="preserve">
-    <value>هنوز هیچ تاریخچه شنیداری وجود ندارد</value>
+    <value>No listening history yet</value>
   </data>
   <data name="Listening_HistoryLoadError" xml:space="preserve">
-    <value>بارگیری اخیراً پخش‌شده امکان‌پذیر نبود. برای امتحان مجدد «تلاش مجدد» را انتخاب کنید.</value>
+    <value>Recently Played could not be loaded. Select Retry to try again.</value>
   </data>
   <data name="Listening_Today" xml:space="preserve">
-    <value>امروز</value>
+    <value>Today</value>
   </data>
   <data name="Listening_Yesterday" xml:space="preserve">
-    <value>دیروز</value>
+    <value>Yesterday</value>
   </data>
   <data name="Listening_RediscoveryReason" xml:space="preserve">
-    <value>آخرین بار پخش‌شده در {0:d}</value>
+    <value>Last played {0:d}</value>
   </data>
   <data name="Listening_RediscoveryTitle" xml:space="preserve">
-    <value>ارزش دوباره گوش دادن دارد</value>
+    <value>Worth another listen</value>
   </data>
   <data name="Listening_Dismiss" xml:space="preserve">
-    <value>رد کردن</value>
+    <value>Dismiss</value>
   </data>
   <data name="Listening_ActionError" xml:space="preserve">
-    <value>انجام این اقدام امکان‌پذیر نبود. لطفاً دوباره امتحان کنید.</value>
+    <value>Could not complete this action. Please try again.</value>
   </data>
   <data name="Listening_FavoritesEmpty" xml:space="preserve">
-    <value>هنوز هیچ علاقه‌مندی وجود ندارد</value>
+    <value>No favorites yet</value>
   </data>
   <data name="Listening_FavoritesEmptyDescription" xml:space="preserve">
-    <value>آهنگی را از منوی آن به علاقه‌مندی‌ها بیفزایید، یا آن را انتخاب کرده و کلیدهای Ctrl+D را فشار دهید.</value>
+    <value>Favorite a song from its menu, or select it and press Ctrl+D.</value>
   </data>
   <data name="Listening_VarietyDescription" xml:space="preserve">
-    <value>تنوع بیشتر از پخش آهنگ‌هایی که اخیراً پخش شده‌اند خودداری می‌کند و تا حد امکان آهنگ‌های یک هنرمند را تفکیک می‌نماید.</value>
+    <value>More Variety avoids songs played within the recent-play window and separates songs by the same artist where possible.</value>
   </data>
   <data name="Listening_RediscoverDescription" xml:space="preserve">
-    <value>کشف مجدد از آهنگ‌هایی استفاده می‌کند که پخش ثبت‌شده در Nagi دارند و آخرین بار بیش از ۳۰ روز پیش پخش شده‌اند.</value>
+    <value>Rediscover uses songs with recorded plays in Nagi that were last played more than 30 days ago.</value>
   </data>
   <data name="Listening_UnheardDescription" xml:space="preserve">
-    <value>شنیده‌نشده از آهنگ‌هایی استفاده می‌کند که هیچ پخش ثبت‌شده‌ای در Nagi ندارند.</value>
+    <value>Unheard uses songs with no recorded plays in Nagi.</value>
   </data>
   <data name="Listening_HistoryNoMatches" xml:space="preserve">
-    <value>هیچ موردی مطابق با جستجوی شما یافت نشد</value>
+    <value>No listens match your search</value>
   </data>
   <data name="Listening_NoTimedMixDescription" xml:space="preserve">
-    <value>هیچ آهنگی در این فهرست واجد شرایط ترکیب و مدت‌زمان انتخابی شما نیست. مدت‌زمان طولانی‌تر، ترکیب دیگری یا فهرست آهنگ متفاوتی را امتحان کنید.</value>
+    <value>No songs in this list meet the mix requirements and fit within your chosen duration. Try a longer duration, another mix, or a different song list.</value>
   </data>
   <data name="Generic_CloseSearch" xml:space="preserve">
-    <value>بستن جستجو</value>
+    <value>Close search</value>
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
-    <value>لیست پخش موجود نیست</value>
+    <value>No playlists available</value>
   </data>
 </root>
