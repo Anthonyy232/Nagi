@@ -27,6 +27,10 @@ to avoid duplicate declarations across pages and controls.
     <converters:GenreToGradientConverter x:Key="GenreToGradientConverter" />
     <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
 
+    <!-- Settings value converters -->
+    <converters:AppThemeToFriendlyStringConverter x:Key="ThemeToStringConverter" />
+    <converters:BackdropMaterialToStringConverter x:Key="BackdropMaterialToStringConverter" />
+
     <!-- Sort order comparison converter -->
     <converters:SortOrderEqualsConverter x:Key="SortOrderEqualsConverter" />
 
