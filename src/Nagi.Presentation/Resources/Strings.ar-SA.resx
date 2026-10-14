@@ -385,12 +385,6 @@
   <data name="Lyrics_SongTitleFormat" xml:space="preserve">
     <value>{0} بواسطة {1}</value>
   </data>
-  <data name="Onboarding_Welcome" xml:space="preserve">
-    <value>لنقم بإعداد مكتبة الموسيقى الخاصة بك للبدء.</value>
-  </data>
-  <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>في انتظار تحديد مجلد…</value>
-  </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
     <value>جاري بناء مكتبتك…</value>
   </data>
@@ -1349,9 +1343,6 @@
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>مرحباً بك في Nagi</value>
-  </data>
-  <data name="OnboardingPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>أضف مجلد موسيقى للبدء</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>إضافة مجلد موسيقى</value>

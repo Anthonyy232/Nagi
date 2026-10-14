@@ -385,12 +385,6 @@
   <data name="Lyrics_SongTitleFormat" xml:space="preserve">
     <value>{1} மூலம் {0}</value>
   </data>
-  <data name="Onboarding_Welcome" xml:space="preserve">
-    <value>தொடங்குவதற்கு உங்கள் இசை நூலகத்தை அமைப்போம்.</value>
-  </data>
-  <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>நீங்கள் ஒரு கோப்புறையைத் தேர்ந்தெடுக்கும் வரை காத்திருக்கிறது…</value>
-  </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
     <value>உங்கள் இசைத் தொகுப்பு உருவாக்கப்படுகிறது…</value>
   </data>
@@ -1349,9 +1343,6 @@
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Nagiக்கு வரவேற்கிறோம்</value>
-  </data>
-  <data name="OnboardingPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>தொடங்குவதற்கு ஒரு இசை கோப்புறையைச் சேர்</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>இசை கோப்புறையைச் சேர்</value>

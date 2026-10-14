@@ -385,12 +385,6 @@
   <data name="Lyrics_SongTitleFormat" xml:space="preserve">
     <value>{0} ni {1}</value>
   </data>
-  <data name="Onboarding_Welcome" xml:space="preserve">
-    <value>I-set up natin ang iyong music library upang makapagsimula.</value>
-  </data>
-  <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>Naghihintay na pumili ka ng folder…</value>
-  </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
     <value>Binubuo ang iyong library…</value>
   </data>
@@ -1349,9 +1343,6 @@ Gusto mo bang magpatuloy?</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Maligayang Pagdating sa Nagi</value>
-  </data>
-  <data name="OnboardingPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Magdagdag ng music folder upang makapagsimula</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Magdagdag ng Music Folder</value>

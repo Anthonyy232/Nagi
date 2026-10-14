@@ -207,7 +207,8 @@ public sealed class WindowService : IWindowService, IDisposable
             switch (presenter.State)
             {
                 case OverlappedPresenterState.Minimized:
-                    if (_isMiniPlayerEnabled)
+                    // Nothing can be playing during onboarding, so minimizing it stays an ordinary minimize.
+                    if (_isMiniPlayerEnabled && !IsShowingOnboarding)
                     {
                         _appWindow.IsShownInSwitchers = false;
                         ShowMiniPlayer();

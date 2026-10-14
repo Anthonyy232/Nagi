@@ -385,12 +385,6 @@
   <data name="Lyrics_SongTitleFormat" xml:space="preserve">
     <value>{0} โดย {1}</value>
   </data>
-  <data name="Onboarding_Welcome" xml:space="preserve">
-    <value>มาตั้งค่าคลังเพลงของคุณเพื่อเริ่มต้นกัน</value>
-  </data>
-  <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>กำลังรอให้คุณเลือกโฟลเดอร์…</value>
-  </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
     <value>กำลังสร้างคลังเพลงของคุณ…</value>
   </data>
@@ -1349,9 +1343,6 @@
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>ยินดีต้อนรับสู่ Nagi</value>
-  </data>
-  <data name="OnboardingPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>เพิ่มโฟลเดอร์เพลงเพื่อเริ่มต้น</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>เพิ่มโฟลเดอร์เพลง</value>

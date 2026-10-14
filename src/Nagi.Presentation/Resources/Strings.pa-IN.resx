@@ -385,12 +385,6 @@
   <data name="Lyrics_SongTitleFormat" xml:space="preserve">
     <value>{1} ਦੁਆਰਾ {0}</value>
   </data>
-  <data name="Onboarding_Welcome" xml:space="preserve">
-    <value>ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਆਓ ਤੁਹਾਡੀ ਸੰਗੀਤ ਲਾਇਬ੍ਰੇਰੀ ਸੈਟ ਅਪ ਕਰੀਏ।</value>
-  </data>
-  <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>ਤੁਹਾਡੇ ਵਲੋਂ ਫੋਲਡਰ ਚੁਣਨ ਦੀ ਉਡੀਕ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ…</value>
-  </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
     <value>ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਬਣਾਈ ਜਾ ਰਹੀ ਹੈ…</value>
   </data>
@@ -1349,9 +1343,6 @@
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Nagi ਵਿੱਚ ਤੁਹਾਡਾ ਸੁਆਗਤ ਹੈ</value>
-  </data>
-  <data name="OnboardingPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਇੱਕ ਸੰਗੀਤ ਫੋਲਡਰ ਜੋੜੋ</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>ਸੰਗੀਤ ਫੋਲਡਰ ਜੋੜੋ</value>
