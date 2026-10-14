@@ -201,23 +201,23 @@
             DoubleTapped="SongsListView_DoubleTapped"
             Visibility="{x:Bind ViewModel.IsGroupedByDisc, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <ListView.ItemContainerStyleSelector>
-                <local:DiscGroupStyleSelector>
-                    <local:DiscGroupStyleSelector.HeaderStyle>
+                <uihelpers:HeaderedListStyleSelector>
+                    <uihelpers:HeaderedListStyleSelector.HeaderStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="MinHeight" Value="0" />
                             <Setter Property="Padding" Value="0,16,0,8" />
                             <Setter Property="IsHitTestVisible" Value="False" />
                             <Setter Property="IsTabStop" Value="False" />
                         </Style>
-                    </local:DiscGroupStyleSelector.HeaderStyle>
-                    <local:DiscGroupStyleSelector.SongStyle>
+                    </uihelpers:HeaderedListStyleSelector.HeaderStyle>
+                    <uihelpers:HeaderedListStyleSelector.SongStyle>
                         <Style TargetType="ListViewItem" BasedOn="{StaticResource SongListViewPageListViewItemStyle}" />
-                    </local:DiscGroupStyleSelector.SongStyle>
-                </local:DiscGroupStyleSelector>
+                    </uihelpers:HeaderedListStyleSelector.SongStyle>
+                </uihelpers:HeaderedListStyleSelector>
             </ListView.ItemContainerStyleSelector>
             <ListView.ItemTemplateSelector>
-                <local:DiscGroupTemplateSelector>
-                    <local:DiscGroupTemplateSelector.HeaderTemplate>
+                <uihelpers:HeaderedListTemplateSelector>
+                    <uihelpers:HeaderedListTemplateSelector.HeaderTemplate>
                         <DataTemplate x:DataType="viewmodels:DiscHeader">
                             <TextBlock
                                 Text="{x:Bind Title}"
@@ -226,8 +226,8 @@
                                 FontSize="13"
                                 Margin="0,0,0,0" />
                         </DataTemplate>
-                    </local:DiscGroupTemplateSelector.HeaderTemplate>
-                    <local:DiscGroupTemplateSelector.SongTemplate>
+                    </uihelpers:HeaderedListTemplateSelector.HeaderTemplate>
+                    <uihelpers:HeaderedListTemplateSelector.SongTemplate>
                         <DataTemplate x:DataType="models:Song">
                             <Grid Height="54" ColumnSpacing="12" Background="Transparent">
                                 <Grid.ContextFlyout>
@@ -260,8 +260,8 @@
                                 <TextBlock Grid.Column="3" Margin="0,0,12,0" HorizontalAlignment="Right" Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}" Text="{x:Bind Duration, Converter={StaticResource TimeSpanToTimeStringConverter}}" />
                             </Grid>
                         </DataTemplate>
-                    </local:DiscGroupTemplateSelector.SongTemplate>
-                </local:DiscGroupTemplateSelector>
+                    </uihelpers:HeaderedListTemplateSelector.SongTemplate>
+                </uihelpers:HeaderedListTemplateSelector>
             </ListView.ItemTemplateSelector>
         </ListView>
 

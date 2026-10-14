@@ -1,7 +1,6 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Presentation.Navigation;
@@ -10,28 +9,6 @@ using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
 
 namespace Nagi.WinUI.Pages;
-
-public class DiscGroupTemplateSelector : DataTemplateSelector
-{
-    public DataTemplate? HeaderTemplate { get; set; }
-    public DataTemplate? SongTemplate { get; set; }
-
-    protected override DataTemplate? SelectTemplateCore(object item)
-    {
-        return item is DiscHeader ? HeaderTemplate : SongTemplate;
-    }
-}
-
-public class DiscGroupStyleSelector : StyleSelector
-{
-    public Style? HeaderStyle { get; set; }
-    public Style? SongStyle { get; set; }
-
-    protected override Style? SelectStyleCore(object item, DependencyObject container)
-    {
-        return item is DiscHeader ? HeaderStyle : SongStyle;
-    }
-}
 
 public sealed partial class AlbumViewPage : SongListPage
 {

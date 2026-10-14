@@ -10,6 +10,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
@@ -275,7 +276,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
     }
 }
 
-public class DiscHeader
+public class DiscHeader : IListHeader
 {
     public int DiscNumber { get; set; }
     public string Title => string.Format(Strings.AlbumView_DiscHeader, DiscNumber);

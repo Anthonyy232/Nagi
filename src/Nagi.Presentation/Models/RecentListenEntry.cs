@@ -11,7 +11,7 @@ public sealed record RecentListenEntry(RecentListen Listen, Song? Song = null)
     public override string ToString() => $"{Title} — {ArtistName}";
 }
 
-public sealed record RecentListenDateHeader(DateTime Date, string Title)
+public sealed record RecentListenDateHeader(DateTime Date, string Title) : IListHeader
 {
     public override string ToString() => Title;
 }
