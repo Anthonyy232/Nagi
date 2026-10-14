@@ -20,8 +20,8 @@ public static class CoreServiceRegistration
     /// <summary>
     ///     Adds the library, playback, metadata, scrobbling, lyrics, and maintenance services.
     ///     The host must also register logging, HTTP clients, <c>IConfiguration</c>, and its platform services:
-    ///     <see cref="IPathConfiguration" />, <see cref="IFileSystemService" />, <see cref="ISettingsService" />,
-    ///     <see cref="IAudioPlayer" /> and <see cref="ISystemMediaControls" />.
+    ///     <see cref="IPathConfiguration" />, <see cref="ISettingsService" />, <see cref="IAudioPlayer" />
+    ///     and <see cref="ISystemMediaControls" />.
     /// </summary>
     public static IServiceCollection AddNagiCore(this IServiceCollection services)
     {
@@ -31,6 +31,7 @@ public static class CoreServiceRegistration
             options.UseSqlite(new SqliteConnectionStringBuilder { DataSource = pathConfig.DatabasePath }.ToString());
         });
 
+        services.AddSingleton<IFileSystemService, FileSystemService>();
         services.AddSingleton<ILibraryReader, LibraryReader>();
         services.AddSingleton<IPlaylistService, PlaylistService>();
         services.AddSingleton<LibraryService>();

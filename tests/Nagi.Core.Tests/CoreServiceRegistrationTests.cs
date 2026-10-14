@@ -19,7 +19,6 @@ public class CoreServiceRegistrationTests
         services.AddHttpClient();
         services.AddSingleton(Substitute.For<IConfiguration>());
         services.AddSingleton(Substitute.For<IPathConfiguration>());
-        services.AddSingleton(Substitute.For<IFileSystemService>());
         services.AddSingleton(Substitute.For<ISettingsService>());
         services.AddSingleton(Substitute.For<IAudioPlayer>());
         services.AddSingleton(Substitute.For<ISystemMediaControls>());
