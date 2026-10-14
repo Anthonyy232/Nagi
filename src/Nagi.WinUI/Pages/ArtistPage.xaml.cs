@@ -13,7 +13,6 @@ namespace Nagi.WinUI.Pages;
 public sealed partial class ArtistPage : SearchablePage
 {
     private readonly ILogger<ArtistPage> _logger;
-    private CancellationTokenSource? _cancellationTokenSource;
 
     public ArtistPage()
     {
@@ -34,11 +33,9 @@ public sealed partial class ArtistPage : SearchablePage
         {
             base.OnNavigatedTo(e);
             _logger.LogDebug("Navigated to ArtistPage.");
-            var cts = new CancellationTokenSource();
-            _cancellationTokenSource = cts;
             ViewModel.SubscribeToEvents();
 
-            await ViewModel.LoadAsync(cts.Token);
+            await ViewModel.LoadAsync(CancellationToken.None);
         }
         catch (Exception ex)
         {
@@ -53,10 +50,6 @@ public sealed partial class ArtistPage : SearchablePage
         ViewModel.UnsubscribeFromEvents();
 
         ViewModel.ResetState();
-        _cancellationTokenSource?.Cancel();
-
-        _cancellationTokenSource?.Dispose();
-        _cancellationTokenSource = null;
         // Note: ViewModel is Singleton, do not dispose - state persists across navigations
     }
 

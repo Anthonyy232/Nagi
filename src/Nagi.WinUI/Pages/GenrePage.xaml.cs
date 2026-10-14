@@ -1,5 +1,4 @@
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -14,7 +13,6 @@ namespace Nagi.WinUI.Pages;
 public sealed partial class GenrePage : SearchablePage
 {
     private readonly ILogger<GenrePage> _logger;
-    private CancellationTokenSource? _cancellationTokenSource;
 
     public GenrePage()
     {
@@ -35,10 +33,7 @@ public sealed partial class GenrePage : SearchablePage
         {
             base.OnNavigatedTo(e);
             _logger.LogDebug("Navigated to GenrePage.");
-            var cts = new CancellationTokenSource();
-            _cancellationTokenSource = cts;
-
-            await ViewModel.LoadGenresAsync(cts.Token);
+            await ViewModel.LoadGenresCommand.ExecuteAsync(null);
         }
         catch (Exception ex)
         {
@@ -50,12 +45,7 @@ public sealed partial class GenrePage : SearchablePage
     {
         base.OnNavigatedFrom(e);
         _logger.LogDebug("Navigating away from GenrePage.");
-
         ViewModel.ResetState();
-        _cancellationTokenSource?.Cancel();
-
-        _cancellationTokenSource?.Dispose();
-        _cancellationTokenSource = null;
         // Note: ViewModel is Singleton, do not dispose - state persists across navigations
     }
 
