@@ -385,12 +385,6 @@
   <data name="Lyrics_SongTitleFormat" xml:space="preserve">
     <value>{0} від {1}</value>
   </data>
-  <data name="Onboarding_Welcome" xml:space="preserve">
-    <value>Давайте налаштуємо вашу музичну бібліотеку, щоб почати.</value>
-  </data>
-  <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>Очікування вибору папки…</value>
-  </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
     <value>Створення вашої бібліотеки…</value>
   </data>
@@ -1349,9 +1343,6 @@
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Ласкаво просимо до Nagi</value>
-  </data>
-  <data name="OnboardingPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Щоб почати, додайте музичну папку</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Додати музичну папку</value>

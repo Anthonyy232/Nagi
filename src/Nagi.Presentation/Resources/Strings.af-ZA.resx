@@ -385,12 +385,6 @@
   <data name="Lyrics_SongTitleFormat" xml:space="preserve">
     <value>{0} deur {1}</value>
   </data>
-  <data name="Onboarding_Welcome" xml:space="preserve">
-    <value>Kom ons stel jou musiekbiblioteek op om te begin.</value>
-  </data>
-  <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>Wag vir jou om 'n vouer te kies…</value>
-  </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
     <value>Bou tans jou biblioteek…</value>
   </data>
@@ -1349,9 +1343,6 @@ Wil jy voortgaan?</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Welkom by Nagi</value>
-  </data>
-  <data name="OnboardingPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Voeg 'n musiekgids by om te begin</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Voeg Musiekgids by</value>

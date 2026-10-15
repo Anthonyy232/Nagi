@@ -385,12 +385,6 @@
   <data name="Lyrics_SongTitleFormat" xml:space="preserve">
     <value>{0} av {1}</value>
   </data>
-  <data name="Onboarding_Welcome" xml:space="preserve">
-    <value>La oss sette opp musikkbiblioteket ditt for å komme i gang.</value>
-  </data>
-  <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>Venter på at du skal velge en mappe…</value>
-  </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
     <value>Bygger biblioteket ditt…</value>
   </data>
@@ -1349,9 +1343,6 @@ Vil du fortsette?</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Velkommen til Nagi</value>
-  </data>
-  <data name="OnboardingPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Legg til en musikkmappe for å komme i gang</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Legg til musikkmappe</value>

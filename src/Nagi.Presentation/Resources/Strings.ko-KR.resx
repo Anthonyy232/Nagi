@@ -385,12 +385,6 @@
   <data name="Lyrics_SongTitleFormat" xml:space="preserve">
     <value>{1}의 {0}</value>
   </data>
-  <data name="Onboarding_Welcome" xml:space="preserve">
-    <value>시작하려면 음악 라이브러리를 설정하세요.</value>
-  </data>
-  <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>폴더를 선택할 때까지 기다리는 중…</value>
-  </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
     <value>라이브러리 생성 중…</value>
   </data>
@@ -1349,9 +1343,6 @@
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Nagi에 오신 것을 환영합니다</value>
-  </data>
-  <data name="OnboardingPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>시작하려면 음악 폴더를 추가하세요</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>음악 폴더 추가</value>

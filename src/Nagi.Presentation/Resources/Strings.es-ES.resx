@@ -385,12 +385,6 @@
   <data name="Lyrics_SongTitleFormat" xml:space="preserve">
     <value>{0} de {1}</value>
   </data>
-  <data name="Onboarding_Welcome" xml:space="preserve">
-    <value>Vamos a configurar tu biblioteca de música para empezar.</value>
-  </data>
-  <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>Esperando a que selecciones una carpeta…</value>
-  </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
     <value>Creando la biblioteca…</value>
   </data>
@@ -1349,9 +1343,6 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Bienvenido a Nagi</value>
-  </data>
-  <data name="OnboardingPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Añada una carpeta de música para empezar</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Añadir carpeta de música</value>

@@ -385,12 +385,6 @@
   <data name="Lyrics_SongTitleFormat" xml:space="preserve">
     <value>{1} 的 {0}</value>
   </data>
-  <data name="Onboarding_Welcome" xml:space="preserve">
-    <value>讓我們設定您的音樂媒體庫以開始使用。</value>
-  </data>
-  <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>等待您選擇資料夾……</value>
-  </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
     <value>正在建立您的媒體庫……</value>
   </data>
@@ -1349,9 +1343,6 @@
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>歡迎使用 Nagi</value>
-  </data>
-  <data name="OnboardingPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>新增音樂資料夾以開始</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>新增音樂資料夾</value>

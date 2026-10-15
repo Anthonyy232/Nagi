@@ -385,12 +385,6 @@
   <data name="Lyrics_SongTitleFormat" xml:space="preserve">
     <value>{0} autorstwa {1}</value>
   </data>
-  <data name="Onboarding_Welcome" xml:space="preserve">
-    <value>Skonfigurujmy Twoją bibliotekę muzyki, aby rozpocząć.</value>
-  </data>
-  <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>Oczekiwanie na wybór folderu…</value>
-  </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
     <value>Budowanie biblioteki…</value>
   </data>
@@ -1349,9 +1343,6 @@ Czy chcesz kontynuować?</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Witaj w Nagi</value>
-  </data>
-  <data name="OnboardingPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Dodaj folder muzyki, aby rozpocząć</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Dodaj folder muzyki</value>

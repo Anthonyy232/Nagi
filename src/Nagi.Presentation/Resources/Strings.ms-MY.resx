@@ -385,12 +385,6 @@
   <data name="Lyrics_SongTitleFormat" xml:space="preserve">
     <value>{0} oleh {1}</value>
   </data>
-  <data name="Onboarding_Welcome" xml:space="preserve">
-    <value>Mari sediakan pustaka muzik anda untuk bermula.</value>
-  </data>
-  <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>Menunggu anda memilih folder…</value>
-  </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
     <value>Membina pustaka anda…</value>
   </data>
@@ -1349,9 +1343,6 @@ Adakah anda ingin meneruskan?</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Selamat datang ke Nagi</value>
-  </data>
-  <data name="OnboardingPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Tambah folder muzik untuk bermula</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Tambah Folder Muzik</value>

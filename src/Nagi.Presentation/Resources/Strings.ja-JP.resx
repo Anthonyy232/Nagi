@@ -385,12 +385,6 @@
   <data name="Lyrics_SongTitleFormat" xml:space="preserve">
     <value>{1}の{0}</value>
   </data>
-  <data name="Onboarding_Welcome" xml:space="preserve">
-    <value>まず、音楽ライブラリを設定しましょう。</value>
-  </data>
-  <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>フォルダーの選択を待っています…</value>
-  </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
     <value>ライブラリを構築中…</value>
   </data>
@@ -1349,9 +1343,6 @@
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Nagiへようこそ</value>
-  </data>
-  <data name="OnboardingPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>開始するには音楽フォルダーを追加してください</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>音楽フォルダーを追加</value>

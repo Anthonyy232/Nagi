@@ -385,12 +385,6 @@
   <data name="Lyrics_SongTitleFormat" xml:space="preserve">
     <value>{0} ki {1}</value>
   </data>
-  <data name="Onboarding_Welcome" xml:space="preserve">
-    <value>Bin wayub gwokwer meryi me cako.</value>
-  </data>
-  <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>Kuru ni iyer puk…</value>
-  </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
     <value>Yubbo gwokwer meryi…</value>
   </data>
@@ -1349,9 +1343,6 @@ Imide?</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Wollyo i Nagi</value>
-  </data>
-  <data name="OnboardingPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Med puk wer me cako</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Med Puk Wer</value>

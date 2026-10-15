@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
+using CommunityToolkit.WinUI;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -726,7 +727,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         var cleared = false;
         if (page is SongListPage songListPage &&
             page.DataContext is SongListViewModelBase { HasSelectedSongs: true } &&
-            !(clickedList is not null && IsWithin(clickedList, page) && (clickedItem || clickedScrollBar)))
+            !(clickedList?.FindAscendant<FrameworkElement>(ancestor => ancestor == page) is not null &&
+              (clickedItem || clickedScrollBar)))
         {
             cleared = true;
             songListPage.ClearSelection();
@@ -739,13 +741,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             cleared = true;
         }
         return cleared;
-    }
-
-    private static bool IsWithin(DependencyObject element, DependencyObject parent)
-    {
-        for (DependencyObject? current = element; current is not null; current = VisualTreeHelper.GetParent(current))
-            if (current == parent) return true;
-        return false;
     }
 
     private void OnCloseSeeAll(object sender, RoutedEventArgs e)
