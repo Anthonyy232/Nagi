@@ -33,7 +33,6 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
     private readonly IMetadataService _metadataService;
     private readonly IPathConfiguration _pathConfig;
     private readonly SemaphoreSlim _scanSemaphore = new(1, 1);
-    private readonly SemaphoreSlim _replayGainSemaphore = new(1, 1);
     private readonly ISettingsService _settingsService;
     private readonly IReplayGainService _replayGainService;
     private readonly IImageProcessor _imageProcessor;
