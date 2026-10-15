@@ -391,6 +391,9 @@
   <data name="Onboarding_Error" xml:space="preserve">
     <value>خطای غیرمنتظره‌ای رخ داد. لطفاً دوباره تلاش کنید.</value>
   </data>
+  <data name="Onboarding_LibraryReady" xml:space="preserve">
+    <value>کتابخانه شما آماده است.</value>
+  </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>هوشمند • {0} آهنگ</value>
   </data>
@@ -1347,6 +1350,69 @@
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>افزودن پوشه موسیقی</value>
   </data>
+  <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
+    <value>یک خانه آرام و با اولویت محلی برای موسیقی شما. راه‌اندازی حدود یک دقیقه طول می‌کشد.</value>
+  </data>
+  <data name="OnboardingPage_GetStarted" xml:space="preserve">
+    <value>شروع کنید</value>
+  </data>
+  <data name="OnboardingPage_Library_Title" xml:space="preserve">
+    <value>موسیقی شما کجاست؟</value>
+  </data>
+  <data name="OnboardingPage_Library_Description" xml:space="preserve">
+    <value>پوشه‌ای را که موسیقی خود را در آن نگهداری می‌کنید انتخاب کنید. Nagi در حالی که راه‌اندازی را تمام می‌کنید، کتابخانه شما را می‌سازد و می‌توانید بعداً پوشه‌های بیشتری اضافه کنید.</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
+    <value>آن را سفارشی کنید</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
+    <value>ظاهر Nagi را انتخاب کنید. تغییرات بلافاصله اعمال می‌شوند.</value>
+  </data>
+  <data name="OnboardingPage_Listening_Title" xml:space="preserve">
+    <value>نحوه پخش صدا را تنظیم کنید</value>
+  </data>
+  <data name="OnboardingPage_Listening_Description" xml:space="preserve">
+    <value>نحوه پخش موسیقی خود را شکل دهید.</value>
+  </data>
+  <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
+    <value>از یک پیش‌فرض شروع کنید. می‌توانید هر باند را در تنظیمات تغییر دهید.</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
+    <value>به کتابخانه خود روح ببخشید</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
+    <value>Nagi کاملاً آفلاین کار می‌کند. این گزینه‌ها را فعال کنید تا عکس‌های هنرمندان، زندگی‌نامه‌ها و متن ترانه‌هایی که فایل‌های شما ندارند کامل شوند.</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
+    <value>هماهنگی کامل با دسکتاپ شما</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
+    <value>نحوه شروع Nagi و اتفاقی که هنگام بستن یا کوچک کردن آن می‌افتد را انتخاب کنید.</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
+    <value>آنچه را گوش می‌دهید به اشتراک بگذارید</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
+    <value>پخش‌های خود را در Last.fm اسکرابل کنید و آنچه را گوش می‌دهید به دوستانتان در Discord نشان دهید. ListenBrainz در تنظیمات در دسترس است.</value>
+  </data>
+  <data name="OnboardingPage_Finish_Title" xml:space="preserve">
+    <value>همه چیز آماده است</value>
+  </data>
+  <data name="OnboardingPage_Finish_Description" xml:space="preserve">
+    <value>می‌توانید هر یک از این موارد را در هر زمان در تنظیمات تغییر دهید.</value>
+  </data>
+  <data name="OnboardingPage_SkipSetup" xml:space="preserve">
+    <value>رد کردن راه‌اندازی</value>
+  </data>
+  <data name="OnboardingPage_Back" xml:space="preserve">
+    <value>بازگشت</value>
+  </data>
+  <data name="OnboardingPage_Continue" xml:space="preserve">
+    <value>ادامه</value>
+  </data>
+  <data name="OnboardingPage_StartListening" xml:space="preserve">
+    <value>شروع به گوش دادن</value>
+  </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
     <value>لیست‌های پخش</value>
   </data>
@@ -2097,6 +2163,12 @@
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>مشاهده همه</value>
   </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>جستجو</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>جستجو…</value>
+  </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
     <value>پخش</value>
   </data>
@@ -2237,6 +2309,24 @@
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>توقف پخش</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>پخش تصادفی همه آهنگ‌ها</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>باز کردن پخش‌کننده کوچک</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>سرعت پخش</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>عادی</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>×{0}</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>تایمر سفارشی…</value>

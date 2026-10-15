@@ -391,6 +391,9 @@
   <data name="Onboarding_Error" xml:space="preserve">
     <value>אירעה שגיאה בלתי צפויה. אנא נסה שוב.</value>
   </data>
+  <data name="Onboarding_LibraryReady" xml:space="preserve">
+    <value>הספרייה שלך מוכנה.</value>
+  </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>חכם • {0} שיר</value>
   </data>
@@ -1347,6 +1350,69 @@
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>הוסף תיקיית מוזיקה</value>
   </data>
+  <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
+    <value>בית רגוע הממוקד במקומי עבור המוזיקה שלך. ההגדרה אורכת כדקה.</value>
+  </data>
+  <data name="OnboardingPage_GetStarted" xml:space="preserve">
+    <value>להתחיל</value>
+  </data>
+  <data name="OnboardingPage_Library_Title" xml:space="preserve">
+    <value>איפה נמצאת המוזיקה שלך?</value>
+  </data>
+  <data name="OnboardingPage_Library_Description" xml:space="preserve">
+    <value>יש לבחור את התיקייה שבה שמורה המוזיקה שלך. Nagi תבנה את הספרייה שלך בזמן השלמת ההגדרה, וניתן להוסיף תיקיות נוספות מאוחר יותר.</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
+    <value>התאמה אישית</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
+    <value>יש לבחור כיצד Nagi תיראה. השינויים יוחלו מיד.</value>
+  </data>
+  <data name="OnboardingPage_Listening_Title" xml:space="preserve">
+    <value>כיוון הצליל</value>
+  </data>
+  <data name="OnboardingPage_Listening_Description" xml:space="preserve">
+    <value>עיצוב אופן השמעת המוזיקה שלך.</value>
+  </data>
+  <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
+    <value>ניתן להתחיל מהגדרה מוגדרת מראש. ניתן לכוונן כל תדר בהגדרות.</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
+    <value>להפיח חיים בספרייה שלך</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
+    <value>Nagi פועלת לחלוטין ללא חיבור לרשת. יש להפעיל אפשרויות אלו כדי להשלים תמונות אמנים, ביוגרפיות ומילים שאינן כלולות בקבצים שלך.</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
+    <value>השתלבות בשולחן העבודה</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
+    <value>יש לבחור כיצד Nagi תופעל ומה יקרה בעת סגירתה או מזעורה.</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
+    <value>שיתוף מה שמושמע כעת</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
+    <value>דיווח השמעות ל-Last.fm והצגת מה שמושמע לחברים ב-Discord. ListenBrainz זמין בהגדרות.</value>
+  </data>
+  <data name="OnboardingPage_Finish_Title" xml:space="preserve">
+    <value>הכול מוכן</value>
+  </data>
+  <data name="OnboardingPage_Finish_Description" xml:space="preserve">
+    <value>ניתן לשנות כל אחת מהאפשרויות הללו בכל עת בהגדרות.</value>
+  </data>
+  <data name="OnboardingPage_SkipSetup" xml:space="preserve">
+    <value>דילוג על ההגדרה</value>
+  </data>
+  <data name="OnboardingPage_Back" xml:space="preserve">
+    <value>חזרה</value>
+  </data>
+  <data name="OnboardingPage_Continue" xml:space="preserve">
+    <value>המשך</value>
+  </data>
+  <data name="OnboardingPage_StartListening" xml:space="preserve">
+    <value>להתחיל להאזין</value>
+  </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
     <value>רשימות השמעה</value>
   </data>
@@ -2097,6 +2163,12 @@
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>הצג הכל</value>
   </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>חיפוש</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>חיפוש…</value>
+  </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
     <value>השמעות</value>
   </data>
@@ -2237,6 +2309,24 @@
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>עצור השמעה</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>השמעה אקראית של כל השירים</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>פתיחת נגן ממוזער</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>מהירות השמעה</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>רגילה</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0}×</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>טיימר מותאם אישית…</value>

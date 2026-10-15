@@ -391,6 +391,9 @@
   <data name="Onboarding_Error" xml:space="preserve">
     <value>發生意外錯誤。請再試一次。</value>
   </data>
+  <data name="Onboarding_LibraryReady" xml:space="preserve">
+    <value>您的音樂庫已準備就緒。</value>
+  </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>智慧 • {0} 首歌曲</value>
   </data>
@@ -1347,6 +1350,69 @@
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>新增音樂資料夾</value>
   </data>
+  <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
+    <value>為您的音樂提供一個寧靜、本機優先的家。設定過程只需約一分鐘。</value>
+  </data>
+  <data name="OnboardingPage_GetStarted" xml:space="preserve">
+    <value>開始使用</value>
+  </data>
+  <data name="OnboardingPage_Library_Title" xml:space="preserve">
+    <value>您的音樂存放在哪裡？</value>
+  </data>
+  <data name="OnboardingPage_Library_Description" xml:space="preserve">
+    <value>選擇存放音樂的資料夾。Nagi 會在您完成設定的同時建立音樂庫，您也可以在日後新增更多資料夾。</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
+    <value>打造專屬風格</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
+    <value>選擇 Nagi 的外觀。變更將立即生效。</value>
+  </data>
+  <data name="OnboardingPage_Listening_Title" xml:space="preserve">
+    <value>調校音訊效果</value>
+  </data>
+  <data name="OnboardingPage_Listening_Description" xml:space="preserve">
+    <value>自訂您的音樂播放方式。</value>
+  </data>
+  <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
+    <value>從預設檔開始。您可以在「設定」中調整各個頻段。</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
+    <value>讓您的音樂庫更加生動</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
+    <value>Nagi 可完全離線運作。開啟這些功能以補齊檔案中未包含的演出者相片、簡介與歌詞。</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
+    <value>完美融入您的桌面</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
+    <value>選擇 Nagi 的啟動方式，以及關閉或最小化時的行為。</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
+    <value>分享您正在播放的音樂</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
+    <value>將您的播放紀錄 Scrobble 至 Last.fm，並在 Discord 上向朋友展示您正在聆聽的音樂。ListenBrainz 可在「設定」中啟用。</value>
+  </data>
+  <data name="OnboardingPage_Finish_Title" xml:space="preserve">
+    <value>一切準備就緒</value>
+  </data>
+  <data name="OnboardingPage_Finish_Description" xml:space="preserve">
+    <value>您隨時可以在「設定」中變更這些選項。</value>
+  </data>
+  <data name="OnboardingPage_SkipSetup" xml:space="preserve">
+    <value>略過設定</value>
+  </data>
+  <data name="OnboardingPage_Back" xml:space="preserve">
+    <value>返回</value>
+  </data>
+  <data name="OnboardingPage_Continue" xml:space="preserve">
+    <value>繼續</value>
+  </data>
+  <data name="OnboardingPage_StartListening" xml:space="preserve">
+    <value>開始聆聽</value>
+  </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
     <value>播放清單</value>
   </data>
@@ -2097,6 +2163,12 @@
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>查看全部</value>
   </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>搜尋</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>搜尋……</value>
+  </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
     <value>播放次數</value>
   </data>
@@ -2237,6 +2309,24 @@
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>停止播放</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>隨機播放所有歌曲</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>開啟迷你播放器</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>播放速度</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>正常</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0} 倍</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>自訂計時器……</value>

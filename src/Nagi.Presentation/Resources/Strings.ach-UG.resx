@@ -391,6 +391,9 @@
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Bal pe okurre otimre. Tim ber item odoco.</value>
   </data>
+  <data name="Onboarding_LibraryReady" xml:space="preserve">
+    <value>Kan weri meri tye atera.</value>
+  </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>Me Ryeko • {0, plural, one {# wer} other {# wer}}</value>
   </data>
@@ -1347,6 +1350,69 @@ Imide?</value>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Med Puk Wer</value>
   </data>
+  <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
+    <value>Paco ma kuc pi weri. Yuboke kwanyo dakiika acel keken.</value>
+  </data>
+  <data name="OnboardingPage_GetStarted" xml:space="preserve">
+    <value>Cak</value>
+  </data>
+  <data name="OnboardingPage_Library_Title" xml:space="preserve">
+    <value>Weri tye kwene?</value>
+  </data>
+  <data name="OnboardingPage_Library_Description" xml:space="preserve">
+    <value>Yer folder ma igwoko iye weri. Nagi yubu kan weri meri marom ki i tyeko yuboke, dok itwero medyo folder mukene lacen.</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
+    <value>Ket obed meri</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
+    <value>Yer kit ma Nagi nen kwede. Aloklok tic oyotoyot.</value>
+  </data>
+  <data name="OnboardingPage_Listening_Title" xml:space="preserve">
+    <value>Yub kit ma winyere kwede</value>
+  </data>
+  <data name="OnboardingPage_Listening_Description" xml:space="preserve">
+    <value>Yub kit ma weri tuk kwede.</value>
+  </data>
+  <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
+    <value>Cak ki yub me acel. Itwero yubo bar weng i Yuboke.</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
+    <value>Kel kwo i kan weri meri</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
+    <value>Nagi tiyo labongo intanet. Cwiny magi wek opong cal pa luwer, lok ikom kwo gi ki tyeng wer ma fayil meri pe kwede.</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
+    <value>Lony atir i wi kompiuta</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
+    <value>Yer kit ma Nagi cako kwede ki gin ma time ka iloro onyo iketo piny.</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
+    <value>Nyam gin ma ituko</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
+    <value>Cwal wer ma ituko i Last.fm dok nyuth laremmi gin ma iwinyo i Discord. ListenBrainz tye i Yuboke.</value>
+  </data>
+  <data name="OnboardingPage_Finish_Title" xml:space="preserve">
+    <value>Ityeko woko ducu</value>
+  </data>
+  <data name="OnboardingPage_Finish_Description" xml:space="preserve">
+    <value>Itwero lokyo mo keken i magi i kare mo keken i Yuboke.</value>
+  </data>
+  <data name="OnboardingPage_SkipSetup" xml:space="preserve">
+    <value>Kal yuboke</value>
+  </data>
+  <data name="OnboardingPage_Back" xml:space="preserve">
+    <value>Dok cen</value>
+  </data>
+  <data name="OnboardingPage_Continue" xml:space="preserve">
+    <value>Mede</value>
+  </data>
+  <data name="OnboardingPage_StartListening" xml:space="preserve">
+    <value>Cak winyo</value>
+  </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
     <value>Chen Wer</value>
   </data>
@@ -2097,6 +2163,12 @@ Imide?</value>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>Nen weng</value>
   </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>Yeny</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>Yeny…</value>
+  </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
     <value>Tuk</value>
   </data>
@@ -2237,6 +2309,24 @@ Imide?</value>
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>Geng tug wer</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>Rii wer ducu</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>Yab lagweny wer matidi</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>Dwiro pa tuko</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>Ma kare ducu</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0}×</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>Pire me cawa ma iyuboo…</value>

@@ -391,6 +391,9 @@
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Der opstod en uventet fejl. Prøv venligst igen.</value>
   </data>
+  <data name="Onboarding_LibraryReady" xml:space="preserve">
+    <value>Dit bibliotek er klar.</value>
+  </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>Smart • {0} sang</value>
   </data>
@@ -1347,6 +1350,69 @@ Vil du fortsætte?</value>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Tilføj musikmappe</value>
   </data>
+  <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
+    <value>Et roligt, lokalfokuseret hjem til din musik. Opsætningen tager cirka et minut.</value>
+  </data>
+  <data name="OnboardingPage_GetStarted" xml:space="preserve">
+    <value>Kom i gang</value>
+  </data>
+  <data name="OnboardingPage_Library_Title" xml:space="preserve">
+    <value>Hvor er din musik?</value>
+  </data>
+  <data name="OnboardingPage_Library_Description" xml:space="preserve">
+    <value>Vælg mappen, hvor du har din musik. Nagi opbygger dit bibliotek, mens du gør opsætningen færdig, og du kan tilføje flere mapper senere.</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
+    <value>Gør den til din egen</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
+    <value>Vælg, hvordan Nagi ser ud. Ændringer træder i kraft med det samme.</value>
+  </data>
+  <data name="OnboardingPage_Listening_Title" xml:space="preserve">
+    <value>Tilpas lyden</value>
+  </data>
+  <data name="OnboardingPage_Listening_Description" xml:space="preserve">
+    <value>Form hvordan din musik afspilles.</value>
+  </data>
+  <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
+    <value>Start fra en forudindstilling. Du kan justere hvert frekvensbånd i Indstillinger.</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
+    <value>Gør dit bibliotek levende</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
+    <value>Nagi fungerer helt offline. Slå disse til for at udfylde kunstnerfotos, biografier og sangtekster, som dine filer ikke indeholder.</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
+    <value>Passer perfekt ind på dit skrivebord</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
+    <value>Vælg, hvordan Nagi starter, og hvad der sker, når du lukker eller minimerer det.</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
+    <value>Del hvad du lytter til</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
+    <value>Scrobbl dine afspilninger til Last.fm, og vis venner, hvad du lytter til på Discord. ListenBrainz er tilgængelig i Indstillinger.</value>
+  </data>
+  <data name="OnboardingPage_Finish_Title" xml:space="preserve">
+    <value>Du er helt klar</value>
+  </data>
+  <data name="OnboardingPage_Finish_Description" xml:space="preserve">
+    <value>Du kan til enhver tid ændre alt dette i Indstillinger.</value>
+  </data>
+  <data name="OnboardingPage_SkipSetup" xml:space="preserve">
+    <value>Spring opsætning over</value>
+  </data>
+  <data name="OnboardingPage_Back" xml:space="preserve">
+    <value>Tilbage</value>
+  </data>
+  <data name="OnboardingPage_Continue" xml:space="preserve">
+    <value>Fortsæt</value>
+  </data>
+  <data name="OnboardingPage_StartListening" xml:space="preserve">
+    <value>Begynd at lytte</value>
+  </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
     <value>Afspilningslister</value>
   </data>
@@ -2097,6 +2163,12 @@ Vil du fortsætte?</value>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>Se alle</value>
   </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>Søg</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>Søg…</value>
+  </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
     <value>Afspilninger</value>
   </data>
@@ -2237,6 +2309,24 @@ Vil du fortsætte?</value>
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>Stop afspilning</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>Bland alle sange</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>Åbn miniafspiller</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>Afspilningshastighed</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0}×</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>Tilpasset timer…</value>

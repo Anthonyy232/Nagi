@@ -391,6 +391,9 @@
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Tharla earráid gan choinne. Bain triail eile as.</value>
   </data>
+  <data name="Onboarding_LibraryReady" xml:space="preserve">
+    <value>Tá do leabharlann réidh.</value>
+  </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>Cliste • {0} amhrán</value>
   </data>
@@ -1347,6 +1350,69 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Cuir Fillteán Ceoil Leis</value>
   </data>
+  <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
+    <value>Áit shuaimhneach, áitiúil ar dtús do do chuid ceoil. Tógann an socrú tuairim is nóiméad.</value>
+  </data>
+  <data name="OnboardingPage_GetStarted" xml:space="preserve">
+    <value>Tosaigh</value>
+  </data>
+  <data name="OnboardingPage_Library_Title" xml:space="preserve">
+    <value>Cá bhfuil do chuid ceoil?</value>
+  </data>
+  <data name="OnboardingPage_Library_Description" xml:space="preserve">
+    <value>Roghnaigh an fillteán ina gcoinníonn tú do chuid ceoil. Tógann Nagi do leabharlann agus tú ag críochnú an tsocraithe, agus is féidir leat níos mó fillteán a chur leis níos déanaí.</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
+    <value>Déan do chuid féin de</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
+    <value>Roghnaigh an chuma atá ar Nagi. Cuirtear athruithe i bhfeidhm láithreach.</value>
+  </data>
+  <data name="OnboardingPage_Listening_Title" xml:space="preserve">
+    <value>Coigeartaigh an fhuaim</value>
+  </data>
+  <data name="OnboardingPage_Listening_Description" xml:space="preserve">
+    <value>Múnlaigh an chaoi a seinneann do cheol.</value>
+  </data>
+  <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
+    <value>Tosaigh ó réamhshocrú. Is féidir leat gach banna a choigeartú sna Socruithe.</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
+    <value>Tabhair beatha do do leabharlann</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
+    <value>Oibríonn Nagi go hiomlán as líne. Cas orthu seo chun grianghraif ealaíontóirí, beathaisnéisí agus liricí nach bhfuil i do chomhaid a líonadh isteach.</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
+    <value>Imeasc i do dheasc</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
+    <value>Roghnaigh an chaoi a dtosaíonn Nagi agus cad a tharlaíonn nuair a dhúnann tú nó nuair a íoslaghdaíonn tú é.</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
+    <value>Roinn a bhfuil á sheinm agat</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
+    <value>Scrobhláil do chuid seinnte ar Last.fm agus taispeáin do do chairde ar Discord cad atá á chloisteáil agat. Tá ListenBrainz ar fáil sna Socruithe.</value>
+  </data>
+  <data name="OnboardingPage_Finish_Title" xml:space="preserve">
+    <value>Tá gach rud réidh</value>
+  </data>
+  <data name="OnboardingPage_Finish_Description" xml:space="preserve">
+    <value>Is féidir leat aon cheann acu seo a athrú am ar bith sna Socruithe.</value>
+  </data>
+  <data name="OnboardingPage_SkipSetup" xml:space="preserve">
+    <value>Scipeáil an socrú</value>
+  </data>
+  <data name="OnboardingPage_Back" xml:space="preserve">
+    <value>Ar ais</value>
+  </data>
+  <data name="OnboardingPage_Continue" xml:space="preserve">
+    <value>Ar aghaidh</value>
+  </data>
+  <data name="OnboardingPage_StartListening" xml:space="preserve">
+    <value>Tosaigh ag Éisteacht</value>
+  </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
     <value>Seinmliostaí</value>
   </data>
@@ -2097,6 +2163,12 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>Féach ar fad</value>
   </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>Cuardaigh</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>Cuardaigh…</value>
+  </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
     <value>Seinnte</value>
   </data>
@@ -2237,6 +2309,24 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>Stad an Seinm</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>Crandáil Gach Amhrán</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>Oscail an Mionseinnteoir</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>Luas Seinnte</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>Gnáth</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0}×</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>Uaineadóir Saincheaptha…</value>

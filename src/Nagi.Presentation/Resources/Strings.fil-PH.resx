@@ -391,6 +391,9 @@
   <data name="Onboarding_Error" xml:space="preserve">
     <value>May hindi inaasahang error na naganap. Pakisubukan muli.</value>
   </data>
+  <data name="Onboarding_LibraryReady" xml:space="preserve">
+    <value>Handa na ang iyong library.</value>
+  </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>Smart • {0} kanta</value>
   </data>
@@ -1347,6 +1350,69 @@ Gusto mo bang magpatuloy?</value>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Magdagdag ng Music Folder</value>
   </data>
+  <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
+    <value>Isang payapa at local-first na tahanan para sa iyong musika. Aabutin lang ng humigit-kumulang isang minuto ang pag-set up.</value>
+  </data>
+  <data name="OnboardingPage_GetStarted" xml:space="preserve">
+    <value>Magsimula</value>
+  </data>
+  <data name="OnboardingPage_Library_Title" xml:space="preserve">
+    <value>Nasaan ang iyong musika?</value>
+  </data>
+  <data name="OnboardingPage_Library_Description" xml:space="preserve">
+    <value>Piliin ang folder kung saan mo itinatabi ang iyong musika. Bubuo ang Nagi ng iyong library habang tinatapos mo ang pag-set up, at maaari kang magdagdag ng higit pang mga folder mamaya.</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
+    <value>Ibagay sa iyong kagustuhan</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
+    <value>Piliin kung ano ang hitsura ng Nagi. Mag-aapply agad ang mga pagbabago.</value>
+  </data>
+  <data name="OnboardingPage_Listening_Title" xml:space="preserve">
+    <value>Ibagay ang tunog nito</value>
+  </data>
+  <data name="OnboardingPage_Listening_Description" xml:space="preserve">
+    <value>Ayusin kung paano tutugtog ang iyong musika.</value>
+  </data>
+  <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
+    <value>Magsimula sa isang preset. Maaari mong iakma ang bawat band sa Mga Setting.</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
+    <value>Buhayin ang iyong library</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
+    <value>Ganap na gumagana offline ang Nagi. I-on ang mga ito upang idagdag ang mga larawan ng artist, biyograpiya, at mga liriko na wala sa iyong mga file.</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
+    <value>Babagay mismo sa iyong desktop</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
+    <value>Piliin kung paano magsisimula ang Nagi at kung ano ang mangyayari kapag isinara o iniminimize mo ito.</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
+    <value>Ibahagi ang iyong pinatutugtog</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
+    <value>I-scrobble ang iyong mga pinatugtog sa Last.fm at ipakita sa mga kaibigan kung ano ang pinakikinggan mo sa Discord. Magagamit ang ListenBrainz sa Mga Setting.</value>
+  </data>
+  <data name="OnboardingPage_Finish_Title" xml:space="preserve">
+    <value>Handa ka na</value>
+  </data>
+  <data name="OnboardingPage_Finish_Description" xml:space="preserve">
+    <value>Maaari mong baguhin ang alinman sa mga ito anumang oras sa Mga Setting.</value>
+  </data>
+  <data name="OnboardingPage_SkipSetup" xml:space="preserve">
+    <value>Laktawan ang Setup</value>
+  </data>
+  <data name="OnboardingPage_Back" xml:space="preserve">
+    <value>Bumalik</value>
+  </data>
+  <data name="OnboardingPage_Continue" xml:space="preserve">
+    <value>Magpatuloy</value>
+  </data>
+  <data name="OnboardingPage_StartListening" xml:space="preserve">
+    <value>Magsimulang Makinig</value>
+  </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
     <value>Mga Playlist</value>
   </data>
@@ -2097,6 +2163,12 @@ Gusto mo bang magpatuloy?</value>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>Tingnan lahat</value>
   </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>Maghanap</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>Maghanap…</value>
+  </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
     <value>Mga Pagpapatugtog</value>
   </data>
@@ -2237,6 +2309,24 @@ Gusto mo bang magpatuloy?</value>
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>Itigil ang Pagpapatugtog</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>I-shuffle ang Lahat ng Kanta</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>Buksan ang Mini-Player</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>Bilis ng Pagpapatugtog</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>Karaniwan</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0}×</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>Custom na Timer…</value>

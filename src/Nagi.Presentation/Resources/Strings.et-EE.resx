@@ -391,6 +391,9 @@
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Ilmnes ootamatu viga. Palun proovige uuesti.</value>
   </data>
+  <data name="Onboarding_LibraryReady" xml:space="preserve">
+    <value>Sinu muusikakogu on valmis.</value>
+  </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>Nutikas • {0} laul</value>
   </data>
@@ -1347,6 +1350,69 @@ Kas soovite jätkata?</value>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Lisa muusikakaust</value>
   </data>
+  <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
+    <value>Rahulik ja eelkõige kohalik kodu sinu muusikale. Seadistamiseks kulub umbes minut.</value>
+  </data>
+  <data name="OnboardingPage_GetStarted" xml:space="preserve">
+    <value>Alusta</value>
+  </data>
+  <data name="OnboardingPage_Library_Title" xml:space="preserve">
+    <value>Kus asub sinu muusika?</value>
+  </data>
+  <data name="OnboardingPage_Library_Description" xml:space="preserve">
+    <value>Vali kaust, kus oma muusikat hoiad. Nagi loob sinu muusikakogu seadistamise lõpuleviimise ajal ning saad hiljem kaustu juurde lisada.</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
+    <value>Kohanda enda järgi</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
+    <value>Vali, milline Nagi välja näeb. Muudatused rakenduvad kohe.</value>
+  </data>
+  <data name="OnboardingPage_Listening_Title" xml:space="preserve">
+    <value>Häälesta heli</value>
+  </data>
+  <data name="OnboardingPage_Listening_Description" xml:space="preserve">
+    <value>Kujunda oma muusika esitamist.</value>
+  </data>
+  <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
+    <value>Alusta eelseadistusest. Saad iga sagedusriba seadetes kohandada.</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
+    <value>Ärata oma muusikakogu ellu</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
+    <value>Nagi töötab täielikult võrguühenduseta. Lülita need sisse, et lisada esitajate fotosid, biograafiaid ja laulusõnu, mida sinu failides pole.</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
+    <value>Sobita oma töölauaga</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
+    <value>Vali, kuidas Nagi käivitub ja mis juhtub rakenduse sulgemisel või minimeerimisel.</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
+    <value>Jaga, mida kuulad</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
+    <value>Salvesta oma kuulamised teenusesse Last.fm ja näita sõpradele Discordis, mida kuulad. ListenBrainz on saadaval seadetes.</value>
+  </data>
+  <data name="OnboardingPage_Finish_Title" xml:space="preserve">
+    <value>Kõik on valmis</value>
+  </data>
+  <data name="OnboardingPage_Finish_Description" xml:space="preserve">
+    <value>Saad kõiki neid seadeid igal ajal muuta.</value>
+  </data>
+  <data name="OnboardingPage_SkipSetup" xml:space="preserve">
+    <value>Jäta seadistamine vahele</value>
+  </data>
+  <data name="OnboardingPage_Back" xml:space="preserve">
+    <value>Tagasi</value>
+  </data>
+  <data name="OnboardingPage_Continue" xml:space="preserve">
+    <value>Jätka</value>
+  </data>
+  <data name="OnboardingPage_StartListening" xml:space="preserve">
+    <value>Alusta kuulamist</value>
+  </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
     <value>Esitusloendid</value>
   </data>
@@ -2097,6 +2163,12 @@ Kas soovite jätkata?</value>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>Vaata kõiki</value>
   </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>Otsi</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>Otsi…</value>
+  </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
     <value>Esituskordi</value>
   </data>
@@ -2237,6 +2309,24 @@ Kas soovite jätkata?</value>
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>Peata esitus</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>Esita kõik juhujärjekorras</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>Ava minimängija</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>Esituskiirus</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>Tavaline</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0}×</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>Kohandatud taimer…</value>

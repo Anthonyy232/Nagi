@@ -391,6 +391,9 @@
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Ralat tidak dijangka berlaku. Sila cuba lagi.</value>
   </data>
+  <data name="Onboarding_LibraryReady" xml:space="preserve">
+    <value>Pustaka anda telah sedia.</value>
+  </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>Pintar • {0} lagu</value>
   </data>
@@ -1347,6 +1350,69 @@ Adakah anda ingin meneruskan?</value>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Tambah Folder Muzik</value>
   </data>
+  <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
+    <value>Pusat muzik anda yang tenang dan diutamakan secara tempatan. Persediaan mengambil masa kira-kira seminit.</value>
+  </data>
+  <data name="OnboardingPage_GetStarted" xml:space="preserve">
+    <value>Mulakan</value>
+  </data>
+  <data name="OnboardingPage_Library_Title" xml:space="preserve">
+    <value>Di manakah muzik anda?</value>
+  </data>
+  <data name="OnboardingPage_Library_Description" xml:space="preserve">
+    <value>Pilih folder tempat anda menyimpan muzik anda. Nagi membina pustaka anda sementara anda menyelesaikan persediaan, dan anda boleh menambah lebih banyak folder kemudian.</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
+    <value>Jadikannya milik anda</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
+    <value>Pilih cara Nagi kelihatan. Perubahan digunakan serta-merta.</value>
+  </data>
+  <data name="OnboardingPage_Listening_Title" xml:space="preserve">
+    <value>Laraskan bunyinya</value>
+  </data>
+  <data name="OnboardingPage_Listening_Description" xml:space="preserve">
+    <value>Bentuk cara muzik anda dimainkan.</value>
+  </data>
+  <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
+    <value>Mula daripada praset. Anda boleh melaraskan setiap jalur dalam Tetapan.</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
+    <value>Hidupkan pustaka anda</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
+    <value>Nagi berfungsi sepenuhnya secara luar talian. Hidupkan ini untuk mengisikan foto artis, biografi dan lirik yang tidak disertakan dalam fail anda.</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
+    <value>Sesuai terus pada desktop anda</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
+    <value>Pilih cara Nagi bermula dan perkara yang berlaku apabila anda menutup atau meminimumkannya.</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
+    <value>Kongsi apa yang anda mainkan</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
+    <value>Lakukan scrobble terhadap mainan anda ke Last.fm dan tunjukkan kepada rakan perkara yang anda dengar di Discord. ListenBrainz tersedia dalam Tetapan.</value>
+  </data>
+  <data name="OnboardingPage_Finish_Title" xml:space="preserve">
+    <value>Anda telah sedia</value>
+  </data>
+  <data name="OnboardingPage_Finish_Description" xml:space="preserve">
+    <value>Anda boleh mengubah mana-mana daripada ini pada bila-bila masa dalam Tetapan.</value>
+  </data>
+  <data name="OnboardingPage_SkipSetup" xml:space="preserve">
+    <value>Langkah Persediaan</value>
+  </data>
+  <data name="OnboardingPage_Back" xml:space="preserve">
+    <value>Kembali</value>
+  </data>
+  <data name="OnboardingPage_Continue" xml:space="preserve">
+    <value>Teruskan</value>
+  </data>
+  <data name="OnboardingPage_StartListening" xml:space="preserve">
+    <value>Mula Mendengar</value>
+  </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
     <value>Senarai Main</value>
   </data>
@@ -2097,6 +2163,12 @@ Adakah anda ingin meneruskan?</value>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>Lihat semua</value>
   </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>Cari</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>Cari…</value>
+  </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
     <value>Putaran</value>
   </data>
@@ -2237,6 +2309,24 @@ Adakah anda ingin meneruskan?</value>
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>Hentikan Main Balik</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>Main Rawak Semua Lagu</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>Buka Pemain Mini</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>Kelajuan Main Semula</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>Biasa</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0}×</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>Pemasa Tersuai…</value>

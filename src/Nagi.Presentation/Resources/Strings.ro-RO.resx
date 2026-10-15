@@ -391,6 +391,9 @@
   <data name="Onboarding_Error" xml:space="preserve">
     <value>A apărut o eroare neașteptată. Vă rugăm să încercați din nou.</value>
   </data>
+  <data name="Onboarding_LibraryReady" xml:space="preserve">
+    <value>Biblioteca ta este gata.</value>
+  </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>Inteligent • {0} piesă</value>
   </data>
@@ -1347,6 +1350,69 @@ Doriți să continuați?</value>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Adaugă Dosar Muzică</value>
   </data>
+  <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
+    <value>Un spațiu liniștit, axat pe fișiere locale, pentru muzica ta. Configurarea durează aproximativ un minut.</value>
+  </data>
+  <data name="OnboardingPage_GetStarted" xml:space="preserve">
+    <value>Să începem</value>
+  </data>
+  <data name="OnboardingPage_Library_Title" xml:space="preserve">
+    <value>Unde se află muzica ta?</value>
+  </data>
+  <data name="OnboardingPage_Library_Description" xml:space="preserve">
+    <value>Alege folderul în care îți păstrezi muzica. Nagi îți creează biblioteca în timp ce finalizezi configurarea, iar ulterior poți adăuga mai multe foldere.</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
+    <value>Personalizează aplicația</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
+    <value>Alege cum arată Nagi. Modificările se aplică imediat.</value>
+  </data>
+  <data name="OnboardingPage_Listening_Title" xml:space="preserve">
+    <value>Ajustează sunetul</value>
+  </data>
+  <data name="OnboardingPage_Listening_Description" xml:space="preserve">
+    <value>Personalizează modul în care este redată muzica.</value>
+  </data>
+  <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
+    <value>Pornește de la o presetare. Poți ajusta fiecare bandă în Setări.</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
+    <value>Adu-ți biblioteca la viață</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
+    <value>Nagi funcționează complet offline. Activează aceste opțiuni pentru a completa pozele artiștilor, biographies și versurile care lipsesc din fișierele tale.</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
+    <value>Integrare perfectă pe desktop</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
+    <value>Alege cum pornește Nagi și ce se întâmplă când îl închizi sau îl minimizezi.</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
+    <value>Partajează ce asculți</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
+    <value>Trimite prin scrobble ce asculți pe Last.fm și arată-le prietenilor ce asculți pe Discord. ListenBrainz este disponibil în Setări.</value>
+  </data>
+  <data name="OnboardingPage_Finish_Title" xml:space="preserve">
+    <value>Totul este pregătit</value>
+  </data>
+  <data name="OnboardingPage_Finish_Description" xml:space="preserve">
+    <value>Poți schimba oricare dintre aceste opțiuni oricând din Setări.</value>
+  </data>
+  <data name="OnboardingPage_SkipSetup" xml:space="preserve">
+    <value>Omite configurarea</value>
+  </data>
+  <data name="OnboardingPage_Back" xml:space="preserve">
+    <value>Înapoi</value>
+  </data>
+  <data name="OnboardingPage_Continue" xml:space="preserve">
+    <value>Continuă</value>
+  </data>
+  <data name="OnboardingPage_StartListening" xml:space="preserve">
+    <value>Începe să asculți</value>
+  </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
     <value>Playlisturi</value>
   </data>
@@ -2097,6 +2163,12 @@ Doriți să continuați?</value>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>Vezi tot</value>
   </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>Căutare</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>Caută…</value>
+  </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
     <value>Redări</value>
   </data>
@@ -2237,6 +2309,24 @@ Doriți să continuați?</value>
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>Oprește redarea</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>Amestecă toate piesele</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>Deschide mini-playerul</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>Viteză de redare</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>Normală</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0}×</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>Temporizator personalizat…</value>
