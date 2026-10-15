@@ -24,7 +24,6 @@
         <PackageReference Include="FluentAssertions" />
         <PackageReference Include="NSubstitute" />
         <PackageReference Include="xunit.v3" />
-        <ProjectReference Include="..\..\src\Nagi.WinUI\Nagi.WinUI.csproj"
-                          AdditionalProperties="GenerateAppxPackageOnBuild=false" />
+        <ProjectReference Include="..\..\src\Nagi.WinUI\Nagi.WinUI.csproj" />
     </ItemGroup>
 </Project>
