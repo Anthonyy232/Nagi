@@ -391,6 +391,9 @@
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Ndodhi një gabim i papritur. Ju lutemi provoni përsëri.</value>
   </data>
+  <data name="Onboarding_LibraryReady" xml:space="preserve">
+    <value>Biblioteka jote është gati.</value>
+  </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>Inteligjente • {0} këngë</value>
   </data>
@@ -1347,6 +1350,69 @@ Dëshironi të vazhdoni?</value>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Shto Dosje Muzike</value>
   </data>
+  <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
+    <value>Një shtëpi e qetë, së pari lokale, për muzikën tënde. Konfigurimi merr rreth një minutë.</value>
+  </data>
+  <data name="OnboardingPage_GetStarted" xml:space="preserve">
+    <value>Fillo</value>
+  </data>
+  <data name="OnboardingPage_Library_Title" xml:space="preserve">
+    <value>Ku është muzika jote?</value>
+  </data>
+  <data name="OnboardingPage_Library_Description" xml:space="preserve">
+    <value>Zgjidh dosjen ku mban muzikën tënde. Nagi ndërton bibliotekën tënde ndërsa përfundon konfigurimin, dhe mund të shtosh më shumë dosje më vonë.</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
+    <value>Përshtate sipas dëshirës</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
+    <value>Zgjidh se si duket Nagi. Ndryshimet zbatohen menjëherë.</value>
+  </data>
+  <data name="OnboardingPage_Listening_Title" xml:space="preserve">
+    <value>Përshtat se si tingëllon</value>
+  </data>
+  <data name="OnboardingPage_Listening_Description" xml:space="preserve">
+    <value>Jepi formë mënyrës se si luhet muzika jote.</value>
+  </data>
+  <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
+    <value>Fillo nga një paracaktim. Mund të rregullosh çdo brez te Cilësimet.</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
+    <value>Jepi jetë bibliotekës tënde</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
+    <value>Nagi funksionon plotësisht pa internet. Aktivizoji këto për të plotësuar fotot e artistëve, biografiat dhe tekstet që skedarët tuaj nuk i përmbajnë.</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
+    <value>Përshtatu plotësisht në desktopin tënd</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
+    <value>Zgjidh se si nis Nagi dhe çfarë ndodh kur e mbyll ose e minimizon.</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
+    <value>Shpërndaj atë që po dëgjon</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
+    <value>Regjistro dëgjimet e tua në Last.fm dhe tregoju miqve se çfarë po dëgjon në Discord. ListenBrainz është i disponueshëm te Cilësimet.</value>
+  </data>
+  <data name="OnboardingPage_Finish_Title" xml:space="preserve">
+    <value>Çdo gjë është gati</value>
+  </data>
+  <data name="OnboardingPage_Finish_Description" xml:space="preserve">
+    <value>Mund të ndryshosh cilëndo nga këto në çdo kohë te Cilësimet.</value>
+  </data>
+  <data name="OnboardingPage_SkipSetup" xml:space="preserve">
+    <value>Kalo konfigurimin</value>
+  </data>
+  <data name="OnboardingPage_Back" xml:space="preserve">
+    <value>Prapa</value>
+  </data>
+  <data name="OnboardingPage_Continue" xml:space="preserve">
+    <value>Vazhdo</value>
+  </data>
+  <data name="OnboardingPage_StartListening" xml:space="preserve">
+    <value>Fillo dëgjimin</value>
+  </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
     <value>Listat e luajtjes</value>
   </data>
@@ -2097,6 +2163,12 @@ Dëshironi të vazhdoni?</value>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>Shiko të gjitha</value>
   </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>Kërko</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>Kërko…</value>
+  </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
     <value>Luajtje</value>
   </data>
@@ -2237,6 +2309,24 @@ Dëshironi të vazhdoni?</value>
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>Ndalo dëgjimin</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>Përzieji të gjitha këngët</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>Hap mini-luajtësin</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>Shpejtësia e riprodhimit</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>Normale</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0}×</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>Kohëmatës i personalizuar…</value>

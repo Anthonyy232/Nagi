@@ -391,6 +391,9 @@
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Une erreur inattendue est survenue. Veuillez réessayer.</value>
   </data>
+  <data name="Onboarding_LibraryReady" xml:space="preserve">
+    <value>Votre bibliothèque est prête.</value>
+  </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>Intelligente • {0} morceau</value>
   </data>
@@ -1347,6 +1350,69 @@ Voulez-vous continuer ?</value>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Ajouter un dossier de musique</value>
   </data>
+  <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
+    <value>Un espace paisible et axé sur le stockage local pour votre musique. La configuration prend environ une minute.</value>
+  </data>
+  <data name="OnboardingPage_GetStarted" xml:space="preserve">
+    <value>Commencer</value>
+  </data>
+  <data name="OnboardingPage_Library_Title" xml:space="preserve">
+    <value>Où se trouve votre musique ?</value>
+  </data>
+  <data name="OnboardingPage_Library_Description" xml:space="preserve">
+    <value>Choisissez le dossier dans lequel vous conservez votre musique. Nagi crée votre bibliothèque pendant que vous terminez la configuration, et vous pourrez ajouter d'autres dossiers plus tard.</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
+    <value>À votre image</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
+    <value>Choisissez l'apparence de Nagi. Les modifications s'appliquent immédiatement.</value>
+  </data>
+  <data name="OnboardingPage_Listening_Title" xml:space="preserve">
+    <value>Ajustez le son</value>
+  </data>
+  <data name="OnboardingPage_Listening_Description" xml:space="preserve">
+    <value>Ajustez la lecture de votre musique.</value>
+  </data>
+  <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
+    <value>Commencez par un préréglage. Vous pourrez ajuster chaque bande dans les Paramètres.</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
+    <value>Donnez vie à votre bibliothèque</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
+    <value>Nagi fonctionne entièrement hors ligne. Activez ces options pour compléter les photos d'artistes, les biographies et les paroles absentes de vos fichiers.</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
+    <value>S'intègre parfaitement à votre bureau</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
+    <value>Choisissez comment Nagi démarre et ce qu'il se passe lorsque vous le fermez ou le réduisez.</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
+    <value>Partagez ce que vous écoutez</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
+    <value>Scrobblez vos écoutes sur Last.fm et montrez à vos amis ce que vous écoutez sur Discord. ListenBrainz est disponible dans les Paramètres.</value>
+  </data>
+  <data name="OnboardingPage_Finish_Title" xml:space="preserve">
+    <value>Tout est prêt</value>
+  </data>
+  <data name="OnboardingPage_Finish_Description" xml:space="preserve">
+    <value>Vous pouvez modifier n'importe lequel de ces paramètres à tout moment dans les Paramètres.</value>
+  </data>
+  <data name="OnboardingPage_SkipSetup" xml:space="preserve">
+    <value>Ignorer la configuration</value>
+  </data>
+  <data name="OnboardingPage_Back" xml:space="preserve">
+    <value>Retour</value>
+  </data>
+  <data name="OnboardingPage_Continue" xml:space="preserve">
+    <value>Continuer</value>
+  </data>
+  <data name="OnboardingPage_StartListening" xml:space="preserve">
+    <value>Commencer l'écoute</value>
+  </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
     <value>Listes de lecture</value>
   </data>
@@ -2097,6 +2163,12 @@ Voulez-vous continuer ?</value>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>Voir tout</value>
   </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>Rechercher</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>Rechercher…</value>
+  </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
     <value>Lectures</value>
   </data>
@@ -2237,6 +2309,24 @@ Voulez-vous continuer ?</value>
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>Arrêter la lecture</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>Mélanger tous les morceaux</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>Ouvrir le mini-lecteur</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>Vitesse de lecture</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>Normale</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0}×</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>Minuteur personnalisé…</value>

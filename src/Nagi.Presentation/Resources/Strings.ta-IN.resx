@@ -391,6 +391,9 @@
   <data name="Onboarding_Error" xml:space="preserve">
     <value>எதிர்பாராத பிழை ஏற்பட்டது. மீண்டும் முயற்சிக்கவும்.</value>
   </data>
+  <data name="Onboarding_LibraryReady" xml:space="preserve">
+    <value>உங்கள் லைப்ரரி தயாராக உள்ளது.</value>
+  </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>ஸ்மார்ட் • {0} பாடல்</value>
   </data>
@@ -1347,6 +1350,69 @@
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>இசை கோப்புறையைச் சேர்</value>
   </data>
+  <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
+    <value>உங்கள் இசைக்கான அமைதியான, சாதனத்திலேயே இயங்கும் முகப்பு. அமைவு செய்ய ஒரு நிமிடம் ஆகும்.</value>
+  </data>
+  <data name="OnboardingPage_GetStarted" xml:space="preserve">
+    <value>தொடங்கவும்</value>
+  </data>
+  <data name="OnboardingPage_Library_Title" xml:space="preserve">
+    <value>உங்கள் இசை எங்கே உள்ளது?</value>
+  </data>
+  <data name="OnboardingPage_Library_Description" xml:space="preserve">
+    <value>உங்கள் இசையை வைத்திருக்கும் கோப்புறையைத் தேர்ந்தெடுக்கவும். நீங்கள் அமைவை முடிக்கும் நேரத்தில் Nagi உங்கள் லைப்ரரியை உருவாக்கும், மேலும் கோப்புறைகளை நீங்கள் பின்னர் சேர்க்கலாம்.</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
+    <value>உங்கள் விருப்பப்படி மாற்றவும்</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
+    <value>Nagi எவ்வாறு தோற்றமளிக்க வேண்டும் என்பதைத் தேர்ந்தெடுக்கவும். மாற்றங்கள் உடனடியாகச் செயல்படும்.</value>
+  </data>
+  <data name="OnboardingPage_Listening_Title" xml:space="preserve">
+    <value>ஒலித் தன்மையைச் சரிசெய்யவும்</value>
+  </data>
+  <data name="OnboardingPage_Listening_Description" xml:space="preserve">
+    <value>உங்கள் இசை எவ்வாறு இயங்க வேண்டும் என்பதைத் தீர்மானிக்கவும்.</value>
+  </data>
+  <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
+    <value>முன்னமைவிலிருந்து தொடங்கவும். அமைப்புகளில் ஒவ்வொரு பட்டையையும் நீங்கள் சரிசெய்யலாம்.</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
+    <value>உங்கள் லைப்ரரியை உயிரோட்டமாக்குங்கள்</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
+    <value>Nagi முழுமையாக ஆஃப்லைனில் இயங்கும். உங்கள் கோப்புகளில் இல்லாத கலைஞர் புகைப்படங்கள், சுயசரிதைகள் மற்றும் பாடல் வரிகளைப் பெற இவற்றை இயக்கவும்.</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
+    <value>உங்கள் டெஸ்க்டாப்பிற்கு ஏற்றவாறு அமைக்கவும்</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
+    <value>Nagi எவ்வாறு தொடங்க வேண்டும் மற்றும் அதை நீங்கள் மூட அல்லது சிறிதாக்க செய்யும்போது என்ன நடக்க வேண்டும் என்பதைத் தேர்ந்தெடுக்கவும்.</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
+    <value>நீங்கள் கேட்பதைப் பகிரவும்</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
+    <value>நீங்கள் கேட்பதை Last.fm-இல் Scrobble செய்யவும், Discord-இல் நீங்கள் கேட்பதை நண்பர்களுக்குக் காட்டவும். ListenBrainz அமைப்புகளில் கிடைக்கிறது.</value>
+  </data>
+  <data name="OnboardingPage_Finish_Title" xml:space="preserve">
+    <value>அனைத்தும் தயார்</value>
+  </data>
+  <data name="OnboardingPage_Finish_Description" xml:space="preserve">
+    <value>இவற்றில் எதையும் அமைப்புகளில் எப்போது வேண்டுமானாலும் மாற்றலாம்.</value>
+  </data>
+  <data name="OnboardingPage_SkipSetup" xml:space="preserve">
+    <value>அமைப்பைத் தவிர்க்கவும்</value>
+  </data>
+  <data name="OnboardingPage_Back" xml:space="preserve">
+    <value>பின்</value>
+  </data>
+  <data name="OnboardingPage_Continue" xml:space="preserve">
+    <value>தொடரவும்</value>
+  </data>
+  <data name="OnboardingPage_StartListening" xml:space="preserve">
+    <value>கேட்கத் தொடங்கவும்</value>
+  </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
     <value>பிளேலிஸ்ட்கள்</value>
   </data>
@@ -2097,6 +2163,12 @@
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>அனைத்தையும் காண்க</value>
   </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>தேடுக</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>தேடுக…</value>
+  </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
     <value>விளையாடல்கள்</value>
   </data>
@@ -2237,6 +2309,24 @@
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>இயக்கத்தை நிறுத்து</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>அனைத்துப் பாடல்களையும் கலக்கு</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>மினி-பிளேயரைத் திற</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>இயக்க வேகம்</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>இயல்பு</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0}×</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>தனிப்பயன் டைமர்…</value>

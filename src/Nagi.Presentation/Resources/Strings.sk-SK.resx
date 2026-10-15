@@ -391,6 +391,9 @@
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Vyskytla sa neočakávaná chyba. Skúste to znova.</value>
   </data>
+  <data name="Onboarding_LibraryReady" xml:space="preserve">
+    <value>Vaša knižnica je pripravená.</value>
+  </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>Inteligentné • {0} skladba</value>
   </data>
@@ -1347,6 +1350,69 @@ Chcete pokračovať?</value>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Pridať hudobný priečinok</value>
   </data>
+  <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
+    <value>Pokojný domov pre vašu hudbu s dôrazom na lokálne súbory. Nastavenie trvá približne minútu.</value>
+  </data>
+  <data name="OnboardingPage_GetStarted" xml:space="preserve">
+    <value>Začať</value>
+  </data>
+  <data name="OnboardingPage_Library_Title" xml:space="preserve">
+    <value>Kde sa nachádza vaša hudba?</value>
+  </data>
+  <data name="OnboardingPage_Library_Description" xml:space="preserve">
+    <value>Vyberte priečinok, v ktorom máte uloženú hudbu. Nagi vytvorí vašu knižnicu, kým dokončíte nastavenie. Ďalšie priečinky môžete pridať neskôr.</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
+    <value>Prispôsobte si vzhľad</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
+    <value>Vyberte si, ako má Nagi vyzerať. Zmeny sa prejavia okamžite.</value>
+  </data>
+  <data name="OnboardingPage_Listening_Title" xml:space="preserve">
+    <value>Vyllaďte si zvuk</value>
+  </data>
+  <data name="OnboardingPage_Listening_Description" xml:space="preserve">
+    <value>Upravte spôsob prehrávania hudby.</value>
+  </data>
+  <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
+    <value>Začnite s predvoľbou. Jednotlivé pásma môžete upraviť v Nastaveniach.</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
+    <value>Oživte svoju knižnicu</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
+    <value>Nagi funguje plne offline. Zapnutím týchto funkcií doplníte fotky interpretov, biografie a texty piesní, ktoré vaše súbory neobsahujú.</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
+    <value>Dokonalé zapadnutie do plochy</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
+    <value>Vyberte, ako sa Nagi spúšťa a čo sa stane pri zatvorení alebo minimalizovaní.</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
+    <value>Zdieľajte, čo počúvate</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
+    <value>Odosielajte históriu prehrávania na Last.fm a ukážte priateľom na Discorde, čo práve počúvate. Služba ListenBrainz je k dispozícii v Nastaveniach.</value>
+  </data>
+  <data name="OnboardingPage_Finish_Title" xml:space="preserve">
+    <value>Všetko je pripravené</value>
+  </data>
+  <data name="OnboardingPage_Finish_Description" xml:space="preserve">
+    <value>Ktorékoľvek z týchto nastavení môžete kedykoľvek zmeniť v Nastaveniach.</value>
+  </data>
+  <data name="OnboardingPage_SkipSetup" xml:space="preserve">
+    <value>Preskočiť nastavenie</value>
+  </data>
+  <data name="OnboardingPage_Back" xml:space="preserve">
+    <value>Späť</value>
+  </data>
+  <data name="OnboardingPage_Continue" xml:space="preserve">
+    <value>Pokračovať</value>
+  </data>
+  <data name="OnboardingPage_StartListening" xml:space="preserve">
+    <value>Začať počúvať</value>
+  </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
     <value>Playlisty</value>
   </data>
@@ -2097,6 +2163,12 @@ Chcete pokračovať?</value>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>Zobraziť všetko</value>
   </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>Hľadať</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>Hľadať…</value>
+  </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
     <value>Prehratia</value>
   </data>
@@ -2237,6 +2309,24 @@ Chcete pokračovať?</value>
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>Zastaviť prehrávanie</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>Zamiešať všetky skladby</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>Otvoriť mini prehrávač</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>Rýchlosť prehrávania</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>Normálna</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0}×</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>Vlastný časovač…</value>

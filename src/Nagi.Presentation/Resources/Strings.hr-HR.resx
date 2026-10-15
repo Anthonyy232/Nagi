@@ -391,6 +391,9 @@
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Dogodila se neočekivana pogreška. Molimo pokušajte ponovo.</value>
   </data>
+  <data name="Onboarding_LibraryReady" xml:space="preserve">
+    <value>Vaša biblioteka je spremna.</value>
+  </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>Pametno • {0} pjesma</value>
   </data>
@@ -1347,6 +1350,69 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Dodaj glazbenu mapu</value>
   </data>
+  <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
+    <value>Miran dom usmjeren na lokalnu pohranu za vašu glazbu. Postavljanje traje oko minute.</value>
+  </data>
+  <data name="OnboardingPage_GetStarted" xml:space="preserve">
+    <value>Započnite</value>
+  </data>
+  <data name="OnboardingPage_Library_Title" xml:space="preserve">
+    <value>Gdje se nalazi vaša glazba?</value>
+  </data>
+  <data name="OnboardingPage_Library_Description" xml:space="preserve">
+    <value>Odaberite mapu u kojoj čuvate svoju glazbu. Nagi gradi vašu biblioteku dok završavate postavljanje, a kasnije možete dodati još mapa.</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
+    <value>Prilagodite po svom ukusu</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
+    <value>Odaberite kako Nagi izgleda. Promjene se primjenjuju odmah.</value>
+  </data>
+  <data name="OnboardingPage_Listening_Title" xml:space="preserve">
+    <value>Podesite zvuk</value>
+  </data>
+  <data name="OnboardingPage_Listening_Description" xml:space="preserve">
+    <value>Oblikujte način reprodukcije svoje glazbe.</value>
+  </data>
+  <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
+    <value>Započnite s predloškom. Svaki pojas možete prilagoditi u Postavkama.</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
+    <value>Oživite svoju biblioteku</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
+    <value>Nagi radi potpuno izvan mreže. Uključite ove opcije kako biste dodali fotografije izvođača, biografije i tekstove pjesama koje vaše datoteke ne sadrže.</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
+    <value>Uklopite u svoju radnu površinu</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
+    <value>Odaberite kako se Nagi pokreće i što se događa kada ga zatvorite ili smanjite.</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
+    <value>Podijelite što slušate</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
+    <value>Bilježite svoje reprodukcije na Last.fm-u i pokažite prijateljima što slušate na Discordu. ListenBrainz je dostupan u Postavkama.</value>
+  </data>
+  <data name="OnboardingPage_Finish_Title" xml:space="preserve">
+    <value>Sve je spremno</value>
+  </data>
+  <data name="OnboardingPage_Finish_Description" xml:space="preserve">
+    <value>Bilo što od ovoga možete promijeniti u bilo kojem trenutku u Postavkama.</value>
+  </data>
+  <data name="OnboardingPage_SkipSetup" xml:space="preserve">
+    <value>Preskoči postavljanje</value>
+  </data>
+  <data name="OnboardingPage_Back" xml:space="preserve">
+    <value>Natrag</value>
+  </data>
+  <data name="OnboardingPage_Continue" xml:space="preserve">
+    <value>Nastavi</value>
+  </data>
+  <data name="OnboardingPage_StartListening" xml:space="preserve">
+    <value>Započni slušanje</value>
+  </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
     <value>Popisi za reprodukciju</value>
   </data>
@@ -2097,6 +2163,12 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>Vidi sve</value>
   </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>Pretraži</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>Pretraži…</value>
+  </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
     <value>Reprodukcije</value>
   </data>
@@ -2237,6 +2309,24 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>Zaustavi reprodukciju</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>Nasumično reproduciraj sve pjesme</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>Otvori mini-reproduktor</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>Brzina reprodukcije</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>Normalno</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0}×</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>Prilagođeni mjerač vremena…</value>
