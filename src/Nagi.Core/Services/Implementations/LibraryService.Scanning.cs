@@ -354,18 +354,11 @@ public partial class LibraryService
 
     private async Task RunReplayGainAnalysisAsync(IProgress<ScanProgress>? progress, CancellationToken cancellationToken)
     {
-        if (!await _replayGainSemaphore.WaitAsync(0, cancellationToken).ConfigureAwait(false))
-        {
-            _logger.LogDebug("ReplayGain analysis is already running. Skipping trigger.");
-            return;
-        }
-
         _logger.LogInformation("Volume normalization is enabled. Starting ReplayGain analysis.");
 
         try
         {
             await _replayGainService.ScanLibraryAsync(progress, cancellationToken).ConfigureAwait(false);
-            _logger.LogInformation("ReplayGain analysis completed.");
         }
         catch (OperationCanceledException)
         {
@@ -376,10 +369,6 @@ public partial class LibraryService
         {
             _logger.LogError(ex, "ReplayGain analysis failed.");
             progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_NormalizationFailed, Percentage = 100 });
-        }
-        finally
-        {
-            _replayGainSemaphore.Release();
         }
     }
 

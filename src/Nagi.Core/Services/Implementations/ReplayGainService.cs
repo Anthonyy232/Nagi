@@ -14,6 +14,9 @@ public class ReplayGainService : IReplayGainService
     private readonly ILogger<ReplayGainService> _logger;
     private readonly ILoudnessAnalyzer _loudnessAnalyzer;
     private readonly SemaphoreSlim _dbLock = new(1, 1);
+    private readonly object _passLock = new();
+    private bool _isPassRunning;
+    private bool _isAnotherRoundRequested;
     private bool _disposed;
 
     public ReplayGainService(
@@ -48,6 +51,51 @@ public class ReplayGainService : IReplayGainService
     }
 
     public async Task ScanLibraryAsync(IProgress<ScanProgress>? progress = null, CancellationToken cancellationToken = default)
+    {
+        // Passes write tags into the audio files, so two must never run at once. A caller arriving during a pass
+        // returns at once and has that pass run one more round, which only picks up songs still missing gain.
+        lock (_passLock)
+        {
+            if (_isPassRunning)
+            {
+                _logger.LogDebug("ReplayGain scan already running. Queuing one more round.");
+                _isAnotherRoundRequested = true;
+                return;
+            }
+
+            _isPassRunning = true;
+        }
+
+        try
+        {
+            do await ScanSongsWithoutReplayGainAsync(progress, cancellationToken).ConfigureAwait(false);
+            while (TakeAnotherRoundRequest());
+        }
+        catch
+        {
+            // A cancelled or failed pass drops queued rounds; the next library scan picks those songs up.
+            lock (_passLock) _isPassRunning = _isAnotherRoundRequested = false;
+            throw;
+        }
+    }
+
+    // Ends the pass in the same lock that callers check, so a request cannot slip in between.
+    private bool TakeAnotherRoundRequest()
+    {
+        lock (_passLock)
+        {
+            if (_isAnotherRoundRequested)
+            {
+                _isAnotherRoundRequested = false;
+                return true;
+            }
+
+            _isPassRunning = false;
+            return false;
+        }
+    }
+
+    private async Task ScanSongsWithoutReplayGainAsync(IProgress<ScanProgress>? progress, CancellationToken cancellationToken)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
 
