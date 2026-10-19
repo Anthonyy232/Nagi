@@ -391,6 +391,9 @@
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Qoora mayan hoqola tekkim. Ceelallo qaduubat ab.</value>
   </data>
+  <data name="Onboarding_LibraryReady" xml:space="preserve">
+    <value>Ku kitaabaylu massowteh taniya.</value>
+  </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>Smart • {0} heela</value>
   </data>
@@ -1347,6 +1350,69 @@ Sigaaguk kok maay le?</value>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Music Folder Ossoos</value>
   </data>
+  <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
+    <value>Ku muusikaqah xabbicino kee addah buxa. Massos giidaayuk dakika giya beyta.</value>
+  </data>
+  <data name="OnboardingPage_GetStarted" xml:space="preserve">
+    <value>Ugut</value>
+  </data>
+  <data name="OnboardingPage_Library_Title" xml:space="preserve">
+    <value>Ku muusika annal yan?</value>
+  </data>
+  <data name="OnboardingPage_Library_Description" xml:space="preserve">
+    <value>Ku muusika caggitta foldar door. Atu massos gaba kaltaamaal Nagi ku kitaabaylu xisa, sarra akkuk liyo folditte osissam xicta.</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
+    <value>Kuk ab</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
+    <value>Nagi ceele gure door. Bayiisitte keenik teyna ellecabih tamaha.</value>
+  </data>
+  <data name="OnboardingPage_Listening_Title" xml:space="preserve">
+    <value>Oytih gurra massos</value>
+  </data>
+  <data name="OnboardingPage_Listening_Description" xml:space="preserve">
+    <value>Ku muusika ankacisumu massos.</value>
+  </data>
+  <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
+    <value>Preset yakteyk ugut. Settings addat ummaan band massosum xicta.</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
+    <value>Ku kitaabaylu rooci ceynis</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
+    <value>Nagi intarnet maleh tamaha. Tu-artist xibir, bayoogiraafi kee kalami ku faylik aneewak taniixee fill abuh tonnaah faatisi.</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
+    <value>Ku deskitoph addat massow</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
+    <value>Nagi ugutta gurra kee atu cugapta Hinnay kaxxa-hayteekik tamah door.</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
+    <value>Atu ankacissaam kataysah yoxoy</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
+    <value>Ku plays Last.fm fan scrobble ab kee Discord addal atu ankacissaam kataysah oobis. ListenBrainz Settings addat geytimta.</value>
+  </data>
+  <data name="OnboardingPage_Finish_Title" xml:space="preserve">
+    <value>Massowteh tan</value>
+  </data>
+  <data name="OnboardingPage_Finish_Description" xml:space="preserve">
+    <value>Settings addat wohixey korosu xicta.</value>
+  </data>
+  <data name="OnboardingPage_SkipSetup" xml:space="preserve">
+    <value>Setup dacis</value>
+  </data>
+  <data name="OnboardingPage_Back" xml:space="preserve">
+    <value>Gaca</value>
+  </data>
+  <data name="OnboardingPage_Continue" xml:space="preserve">
+    <value>Sitte</value>
+  </data>
+  <data name="OnboardingPage_StartListening" xml:space="preserve">
+    <value>Ankacis ugut</value>
+  </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
     <value>Playlists</value>
   </data>
@@ -2097,6 +2163,12 @@ Sigaaguk kok maay le?</value>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>Inkih abba</value>
   </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>Gur</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>Gur…</value>
+  </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
     <value>Plays</value>
   </data>
@@ -2237,6 +2309,24 @@ Sigaaguk kok maay le?</value>
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>Koorisaa Solasay</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>Ummaan muusika mix ab</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>Mini-Player fak</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>Maysuk Sasa</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>Caadi</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0}×</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>Xismem Timer…</value>

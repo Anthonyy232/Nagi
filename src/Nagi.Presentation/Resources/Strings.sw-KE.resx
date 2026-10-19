@@ -391,6 +391,9 @@
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Hitilafu isiyotarajiwa imetokea. Tafadhali jaribu tena.</value>
   </data>
+  <data name="Onboarding_LibraryReady" xml:space="preserve">
+    <value>Maktaba yako iko tayari.</value>
+  </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>Nadhifu • wimbo {0}</value>
   </data>
@@ -1347,6 +1350,69 @@ Je, unataka kuendelea?</value>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Ongeza Folda ya Muziki</value>
   </data>
+  <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
+    <value>Makazi tulivu ya kienyeji kwa ajili ya muziki wako. Kuweka mipangilio huchukua takriban dakika moja.</value>
+  </data>
+  <data name="OnboardingPage_GetStarted" xml:space="preserve">
+    <value>Anza</value>
+  </data>
+  <data name="OnboardingPage_Library_Title" xml:space="preserve">
+    <value>Muziki wako uko wapi?</value>
+  </data>
+  <data name="OnboardingPage_Library_Description" xml:space="preserve">
+    <value>Chagua folda unapohifadhi muziki wako. Nagi inatengeneza maktaba yako unapomalizia kuweka mipangilio, na unaweza kuongeza folda zaidi baadaye.</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
+    <value>Ibinafsishe</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
+    <value>Chagua jinsi Nagi inavyoonekana. Mabadiliko yanatumika mara moja.</value>
+  </data>
+  <data name="OnboardingPage_Listening_Title" xml:space="preserve">
+    <value>Rekebisha jinsi inavyosikika</value>
+  </data>
+  <data name="OnboardingPage_Listening_Description" xml:space="preserve">
+    <value>Rekebisha jinsi muziki wako unavyocheza.</value>
+  </data>
+  <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
+    <value>Anzia kwenye mpangilio wa awali. Unaweza kurekebisha kila bendi kwenye Mipangilio.</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
+    <value>Leta uhai kwenye maktaba yako</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
+    <value>Nagi inafanya kazi kikamilifu bila mtandao. Washa hizi ili kujaza picha za wasanii, wasifu na mashairi ambayo faili zako hazina.</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
+    <value>Kaa vyema kwenye eneokazi lako</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
+    <value>Chagua jinsi Nagi inavyoanza na kinachotokea unapoifunga au kuipunguza.</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
+    <value>Shiriki unachocheza</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
+    <value>Scrobble nyimbo unazocheza kwenye Last.fm na uonyeshe marafiki unachomsikiliza kwenye Discord. ListenBrainz inapatikana kwenye Mipangilio.</value>
+  </data>
+  <data name="OnboardingPage_Finish_Title" xml:space="preserve">
+    <value>Uko tayari</value>
+  </data>
+  <data name="OnboardingPage_Finish_Description" xml:space="preserve">
+    <value>Unaweza kubadilisha yoyote kati ya haya wakati wowote kwenye Mipangilio.</value>
+  </data>
+  <data name="OnboardingPage_SkipSetup" xml:space="preserve">
+    <value>Ruka Mipangilio</value>
+  </data>
+  <data name="OnboardingPage_Back" xml:space="preserve">
+    <value>Nyuma</value>
+  </data>
+  <data name="OnboardingPage_Continue" xml:space="preserve">
+    <value>Endelea</value>
+  </data>
+  <data name="OnboardingPage_StartListening" xml:space="preserve">
+    <value>Anza Kusikiliza</value>
+  </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
     <value>Orodha za Nyimbo</value>
   </data>
@@ -2097,6 +2163,12 @@ Je, unataka kuendelea?</value>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>Angalia zote</value>
   </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>Tafuta</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>Tafuta…</value>
+  </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
     <value>Uchezaji</value>
   </data>
@@ -2237,6 +2309,24 @@ Je, unataka kuendelea?</value>
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>Acha Kucheza</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>Changanya Nyimbo Zote</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>Fungua Kicheza Kidogo</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>Kasi ya Uchezaji</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>Kawaida</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0}×</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>Kipima Muda Kilichobinafsishwa…</value>

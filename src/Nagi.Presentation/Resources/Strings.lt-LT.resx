@@ -391,6 +391,9 @@
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Įvyko netikėta klaida. Bandykite dar kartą.</value>
   </data>
+  <data name="Onboarding_LibraryReady" xml:space="preserve">
+    <value>Jūsų biblioteka paruošta.</value>
+  </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>Išmanusis • {0} kūrinys</value>
   </data>
@@ -1347,6 +1350,69 @@ Ar norite tęsti?</value>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Pridėti muzikos aplanką</value>
   </data>
+  <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
+    <value>Rami, vietiniams failams skirta erdvė jūsų muzikai. Sąranka užtrunka apie minutę.</value>
+  </data>
+  <data name="OnboardingPage_GetStarted" xml:space="preserve">
+    <value>Pradėti</value>
+  </data>
+  <data name="OnboardingPage_Library_Title" xml:space="preserve">
+    <value>Kur yra jūsų muzika?</value>
+  </data>
+  <data name="OnboardingPage_Library_Description" xml:space="preserve">
+    <value>Pasirinkite aplanką, kuriame laikote savo muziką. Nagi kurs jūsų biblioteką, kol baigsite sąranką, o vėliau galėsite pridėti daugiau aplankų.</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
+    <value>Pritaikykite sau</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
+    <value>Pasirinkite, kaip atrodo Nagi. Pakeitimai pritaikomi iškart.</value>
+  </data>
+  <data name="OnboardingPage_Listening_Title" xml:space="preserve">
+    <value>Suderinkite skambesį</value>
+  </data>
+  <data name="OnboardingPage_Listening_Description" xml:space="preserve">
+    <value>Pritaikykite muzikos atkūrimą.</value>
+  </data>
+  <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
+    <value>Pradėkite nuo išankstinės nuostatos. Kiekvieną juostą galite reguliuoti Nustatymuose.</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
+    <value>Atgaivinkite savo biblioteką</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
+    <value>Nagi veikia visiškai be interneto ryšio. Įjunkite šias funkcijas, kad papildytumėte atlikėjų nuotraukas, biografijas ir dainų tekstus, kurių nėra jūsų failuose.</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
+    <value>Puikiai prisitaiko prie jūsų darbalaukio</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
+    <value>Pasirinkite, kaip Nagi paleidžiama ir kas nutinka ją uždarius ar sumažinus.</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
+    <value>Dalykitės tuo, ko klausotės</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
+    <value>Siųskite perklausas į Last.fm ir rodykite draugams Discord, ko klausotės. ListenBrainz galima rasti Nustatymuose.</value>
+  </data>
+  <data name="OnboardingPage_Finish_Title" xml:space="preserve">
+    <value>Viskas paruošta</value>
+  </data>
+  <data name="OnboardingPage_Finish_Description" xml:space="preserve">
+    <value>Bet kurį iš šių nustatymų galite bet kada pakeisti Nustatymuose.</value>
+  </data>
+  <data name="OnboardingPage_SkipSetup" xml:space="preserve">
+    <value>Praleisti sąranką</value>
+  </data>
+  <data name="OnboardingPage_Back" xml:space="preserve">
+    <value>Atgal</value>
+  </data>
+  <data name="OnboardingPage_Continue" xml:space="preserve">
+    <value>Tęsti</value>
+  </data>
+  <data name="OnboardingPage_StartListening" xml:space="preserve">
+    <value>Pradėti klausytis</value>
+  </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
     <value>Grojaraščiai</value>
   </data>
@@ -2097,6 +2163,12 @@ Ar norite tęsti?</value>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>Rodyti visus</value>
   </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>Ieškoti</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>Ieškoti…</value>
+  </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
     <value>Klausymai</value>
   </data>
@@ -2237,6 +2309,24 @@ Ar norite tęsti?</value>
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>Sustabdyti grojimą</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>Maišyti visas dainas</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>Atverti mini grotuvą</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>Atkūrimo greitis</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>Normalus</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0}×</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>Pasirinktinis laikmatis…</value>

@@ -391,6 +391,9 @@
   <data name="Onboarding_Error" xml:space="preserve">
     <value>予期せぬエラーが発生しました。もう一度お試しください。</value>
   </data>
+  <data name="Onboarding_LibraryReady" xml:space="preserve">
+    <value>ライブラリの準備が完了しました。</value>
+  </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>スマート • {0}曲</value>
   </data>
@@ -1347,6 +1350,69 @@
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>音楽フォルダーを追加</value>
   </data>
+  <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
+    <value>音楽のための静かでローカルファーストな拠点です。セットアップはおよそ一分で完了します。</value>
+  </data>
+  <data name="OnboardingPage_GetStarted" xml:space="preserve">
+    <value>始める</value>
+  </data>
+  <data name="OnboardingPage_Library_Title" xml:space="preserve">
+    <value>音楽の保存場所はどこですか？</value>
+  </data>
+  <data name="OnboardingPage_Library_Description" xml:space="preserve">
+    <value>音楽を保存しているフォルダを選択してください。セットアップの完了中に Nagi がライブラリを構築します。フォルダは後から追加することもできます。</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
+    <value>自分好みにカスタマイズ</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
+    <value>Nagi の外観を選択します。変更はすぐに適用されます。</value>
+  </data>
+  <data name="OnboardingPage_Listening_Title" xml:space="preserve">
+    <value>サウンドを調整</value>
+  </data>
+  <data name="OnboardingPage_Listening_Description" xml:space="preserve">
+    <value>音楽の再生方法をカスタマイズします。</value>
+  </data>
+  <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
+    <value>プリセットから始めましょう。設定で各バンドを調整できます。</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
+    <value>ライブラリをより豊かに</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
+    <value>Nagi は完全にオフラインで動作します。これらをオンにすると、ファイルに含まれていないアーティストの写真、バイオグラフィ、歌詞を補完できます。</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
+    <value>デスクトップにフィット</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
+    <value>Nagi の起動方法や、閉じたとき・最小化したときの動作を選択します。</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
+    <value>再生中の曲を共有</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
+    <value>再生記録を Last.fm にスクロブルし、Discord で友だちに聴いている曲を表示します。ListenBrainz は設定で利用できます。</value>
+  </data>
+  <data name="OnboardingPage_Finish_Title" xml:space="preserve">
+    <value>準備が完了しました</value>
+  </data>
+  <data name="OnboardingPage_Finish_Description" xml:space="preserve">
+    <value>これらの設定は、いつでも設定画面から変更できます。</value>
+  </data>
+  <data name="OnboardingPage_SkipSetup" xml:space="preserve">
+    <value>セットアップをスキップ</value>
+  </data>
+  <data name="OnboardingPage_Back" xml:space="preserve">
+    <value>戻る</value>
+  </data>
+  <data name="OnboardingPage_Continue" xml:space="preserve">
+    <value>続行</value>
+  </data>
+  <data name="OnboardingPage_StartListening" xml:space="preserve">
+    <value>再生を開始</value>
+  </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
     <value>プレイリスト</value>
   </data>
@@ -2097,6 +2163,12 @@
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>すべて表示</value>
   </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>検索</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>検索…</value>
+  </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
     <value>再生回数</value>
   </data>
@@ -2237,6 +2309,24 @@
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>再生を停止</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>すべての曲をシャッフル</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>ミニプレーヤーを開く</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>再生速度</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>標準</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0}倍</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>カスタム タイマー…</value>

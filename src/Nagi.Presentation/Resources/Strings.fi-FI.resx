@@ -391,6 +391,9 @@
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Odottamaton virhe tapahtui. Yritä uudelleen.</value>
   </data>
+  <data name="Onboarding_LibraryReady" xml:space="preserve">
+    <value>Kirjastosi on valmis.</value>
+  </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>Älykäs • {0} kappale</value>
   </data>
@@ -1347,6 +1350,69 @@ Haluatko jatkaa?</value>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Lisää musiikkikansio</value>
   </data>
+  <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
+    <value>Rauhallinen, paikallisesti toimiva koti musiikillesi. Käyttöönotto kestää noin minuutin.</value>
+  </data>
+  <data name="OnboardingPage_GetStarted" xml:space="preserve">
+    <value>Aloita</value>
+  </data>
+  <data name="OnboardingPage_Library_Title" xml:space="preserve">
+    <value>Missä musiikkisi on?</value>
+  </data>
+  <data name="OnboardingPage_Library_Description" xml:space="preserve">
+    <value>Valitse kansio, jossa säilytät musiikkiasi. Nagi rakentaa kirjastoasi sillä aikaa kun viimeistelet käyttöönottoa, ja voit lisätä kansioita myöhemmin.</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
+    <value>Tee siitä omannäköisesi</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
+    <value>Valitse, miltä Nagi näyttää. Muutokset tulevat voimaan heti.</value>
+  </data>
+  <data name="OnboardingPage_Listening_Title" xml:space="preserve">
+    <value>Hienosäädä miltä se kuulostaa</value>
+  </data>
+  <data name="OnboardingPage_Listening_Description" xml:space="preserve">
+    <value>Muokkaa tapaa, jolla musiikkisi soi.</value>
+  </data>
+  <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
+    <value>Aloita esiasetuksesta. Voit säätää kutakin taajuuskaistaa asetuksissa.</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
+    <value>Herätä kirjastosi henkiin</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
+    <value>Nagi toimii täysin ilman verkkoyhteyttä. Ota nämä käyttöön hakeaksesi esittäjien kuvia, elämäkertoja ja sanoituksia, joita tiedostosi eivät sisällä.</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
+    <value>Sovi saumattomasti työpöydällesi</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
+    <value>Valitse, miten Nagi käynnistyy ja mitä tapahtuu, kun suljet tai pienennät sen.</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
+    <value>Jaa mitä kuuntelet</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
+    <value>Scrobblaa kuuntelusi Last.fm-palveluun ja näytä ystävillesi Discordissa, mitä kuuntelet. ListenBrainz on saatavilla asetuksissa.</value>
+  </data>
+  <data name="OnboardingPage_Finish_Title" xml:space="preserve">
+    <value>Kaikki on valmista</value>
+  </data>
+  <data name="OnboardingPage_Finish_Description" xml:space="preserve">
+    <value>Voit muuttaa näitä milloin tahansa asetuksissa.</value>
+  </data>
+  <data name="OnboardingPage_SkipSetup" xml:space="preserve">
+    <value>Ohita käyttöönotto</value>
+  </data>
+  <data name="OnboardingPage_Back" xml:space="preserve">
+    <value>Takaisin</value>
+  </data>
+  <data name="OnboardingPage_Continue" xml:space="preserve">
+    <value>Jatkat</value>
+  </data>
+  <data name="OnboardingPage_StartListening" xml:space="preserve">
+    <value>Aloita kuuntelu</value>
+  </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
     <value>Soittolistat</value>
   </data>
@@ -2097,6 +2163,12 @@ Haluatko jatkaa?</value>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>Näytä kaikki</value>
   </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>Hae</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>Hae…</value>
+  </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
     <value>Toistot</value>
   </data>
@@ -2237,6 +2309,24 @@ Haluatko jatkaa?</value>
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>Pysäytä toisto</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>Sekoita kaikki kappaleet</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>Avaa pienoissoitin</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>Toistonopeus</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>Normaali</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0}×</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>Mukautettu ajastin…</value>

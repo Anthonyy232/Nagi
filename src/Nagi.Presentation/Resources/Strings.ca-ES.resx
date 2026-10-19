@@ -391,6 +391,9 @@
   <data name="Onboarding_Error" xml:space="preserve">
     <value>S'ha produït un error inesperat. Torna-ho a provar.</value>
   </data>
+  <data name="Onboarding_LibraryReady" xml:space="preserve">
+    <value>La biblioteca està a punt.</value>
+  </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>Intel·ligent • {0} cançó</value>
   </data>
@@ -1347,6 +1350,69 @@ Vols continuar?</value>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Afegir carpeta de música</value>
   </data>
+  <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
+    <value>Un espai tranquil i centrat en el contingut local per a la teva música. La configuració només triga un minut.</value>
+  </data>
+  <data name="OnboardingPage_GetStarted" xml:space="preserve">
+    <value>Comença</value>
+  </data>
+  <data name="OnboardingPage_Library_Title" xml:space="preserve">
+    <value>On és la teva música?</value>
+  </data>
+  <data name="OnboardingPage_Library_Description" xml:space="preserve">
+    <value>Tria la carpeta on guardes la música. Nagi crearà la biblioteca mentre acabes de configurar-ho, i podràs afegir més carpetes més endavant.</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
+    <value>Personalitza'l</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
+    <value>Tria l'aspecte de Nagi. Els canvis s'aplicaran immediatament.</value>
+  </data>
+  <data name="OnboardingPage_Listening_Title" xml:space="preserve">
+    <value>Ajusta com sona</value>
+  </data>
+  <data name="OnboardingPage_Listening_Description" xml:space="preserve">
+    <value>Modifica com es reprodueix la música.</value>
+  </data>
+  <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
+    <value>Comença des d'un perfil predefinit. Pots ajustar cada banda a la configuració.</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
+    <value>Dona vida a la biblioteca</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
+    <value>Nagi funciona completament sense connexió. Activa aquestes opcions per afegir fotos dels artistes, biografies i lletres que no estiguin incloses als teus fitxers.</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
+    <value>Integra'l perfectament a l'escriptori</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
+    <value>Tria com s'inicia Nagi i què passa quan el tanques o el minimitzes.</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
+    <value>Comparteix el que estàs escoltant</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
+    <value>Envia les teves reproduccions a Last.fm i mostra als teus amics què escoltes a Discord. ListenBrainz està disponible a la configuració.</value>
+  </data>
+  <data name="OnboardingPage_Finish_Title" xml:space="preserve">
+    <value>Tot a punt</value>
+  </data>
+  <data name="OnboardingPage_Finish_Description" xml:space="preserve">
+    <value>Pots canviar qualsevol d'aquestes opcions en qualsevol moment a la configuració.</value>
+  </data>
+  <data name="OnboardingPage_SkipSetup" xml:space="preserve">
+    <value>Omet la configuració</value>
+  </data>
+  <data name="OnboardingPage_Back" xml:space="preserve">
+    <value>Enrere</value>
+  </data>
+  <data name="OnboardingPage_Continue" xml:space="preserve">
+    <value>Continua</value>
+  </data>
+  <data name="OnboardingPage_StartListening" xml:space="preserve">
+    <value>Comença a escoltar</value>
+  </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
     <value>Llistes de reproducció</value>
   </data>
@@ -2097,6 +2163,12 @@ Vols continuar?</value>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>Veure-ho tot</value>
   </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>Cerca</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>Cerca…</value>
+  </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
     <value>Reproduccions</value>
   </data>
@@ -2237,6 +2309,24 @@ Vols continuar?</value>
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>Atura la reproducció</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>Reprodueix totes les cançons en ordre aleatori</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>Obre el minireproductor</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>Velocitat de reproducció</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0}×</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>Temporitzador personalitzat…</value>

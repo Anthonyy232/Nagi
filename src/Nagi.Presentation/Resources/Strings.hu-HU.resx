@@ -391,6 +391,9 @@
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Váratlan hiba történt. Kérjük, próbálja újra.</value>
   </data>
+  <data name="Onboarding_LibraryReady" xml:space="preserve">
+    <value>A zenetárad készen áll.</value>
+  </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>Intelligens • {0} dal</value>
   </data>
@@ -1347,6 +1350,69 @@ Szeretné folytatni?</value>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Zenei mappa hozzáadása</value>
   </data>
+  <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
+    <value>Békés, helyi alapú otthon a zenéidnek. A beállítás körülbelül egy percet vesz igénybe.</value>
+  </data>
+  <data name="OnboardingPage_GetStarted" xml:space="preserve">
+    <value>Kezdés</value>
+  </data>
+  <data name="OnboardingPage_Library_Title" xml:space="preserve">
+    <value>Hol van a zenéd?</value>
+  </data>
+  <data name="OnboardingPage_Library_Description" xml:space="preserve">
+    <value>Válaszd ki a mappát, ahol a zenéidet tárolod. A Nagi felépíti a zenetáradat, miközben befejezed a beállítást, és később további mappákat is hozzáadhatsz.</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
+    <value>Tedd egyedivé</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
+    <value>Válaszd ki, hogyan nézzen ki a Nagi. A módosítások azonnal érvénybe lépnek.</value>
+  </data>
+  <data name="OnboardingPage_Listening_Title" xml:space="preserve">
+    <value>Hangold be a hangzást</value>
+  </data>
+  <data name="OnboardingPage_Listening_Description" xml:space="preserve">
+    <value>Alakítsd a zenelejátszás módját.</value>
+  </data>
+  <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
+    <value>Kezdd egy előbeállítással. Az egyes sávokat a Beállításokban módosíthatod.</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
+    <value>Keltsd életre a zenetáradat</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
+    <value>A Nagi teljesen offline működik. Kapcsold be ezeket az előadói fotók, életrajzok és dalszövegek letöltéséhez, amelyeket a fájljaid nem tartalmaznak.</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
+    <value>Illeszkedjen az asztalodhoz</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
+    <value>Válaszd ki, hogyan induljon a Nagi, és mi történjen a bezárásakor vagy kis méretűre kicsinyítésekor.</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
+    <value>Oszd meg, mit hallgatsz</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
+    <value>Küldd el a lejátszásaidat a Last.fm-re, és mutasd meg az ismerőseidnek a Discordon, mit hallgatsz. A ListenBrainz a Beállításokban érhető el.</value>
+  </data>
+  <data name="OnboardingPage_Finish_Title" xml:space="preserve">
+    <value>Minden készen áll</value>
+  </data>
+  <data name="OnboardingPage_Finish_Description" xml:space="preserve">
+    <value>Ezeket bármikor megváltoztathatod a Beállításokban.</value>
+  </data>
+  <data name="OnboardingPage_SkipSetup" xml:space="preserve">
+    <value>Beállítás kihagyása</value>
+  </data>
+  <data name="OnboardingPage_Back" xml:space="preserve">
+    <value>Vissza</value>
+  </data>
+  <data name="OnboardingPage_Continue" xml:space="preserve">
+    <value>Folytatás</value>
+  </data>
+  <data name="OnboardingPage_StartListening" xml:space="preserve">
+    <value>Zenehallgatás indítása</value>
+  </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
     <value>Lejátszási listák</value>
   </data>
@@ -2097,6 +2163,12 @@ Szeretné folytatni?</value>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>Összes megtekintése</value>
   </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>Keresés</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>Keresés…</value>
+  </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
     <value>Lejátszások</value>
   </data>
@@ -2237,6 +2309,24 @@ Szeretné folytatni?</value>
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>Lejátszás leállítása</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>Összes dal keverése</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>Minilejátszó megnyitása</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>Lejátszási sebesség</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>Normál</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0}×</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>Egyéni időzítő…</value>

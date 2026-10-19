@@ -391,6 +391,9 @@
   <data name="Onboarding_Error" xml:space="preserve">
     <value>حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.</value>
   </data>
+  <data name="Onboarding_LibraryReady" xml:space="preserve">
+    <value>مكتبتك جاهزة.</value>
+  </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>ذكي • {0} أغنية</value>
   </data>
@@ -1347,6 +1350,69 @@
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>إضافة مجلد موسيقى</value>
   </data>
+  <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
+    <value>موطن هادئ ومحلي لموسيقاك. يستغرق الإعداد دقيقة واحدة تقريبًا.</value>
+  </data>
+  <data name="OnboardingPage_GetStarted" xml:space="preserve">
+    <value>البدء</value>
+  </data>
+  <data name="OnboardingPage_Library_Title" xml:space="preserve">
+    <value>أين موسيقاك؟</value>
+  </data>
+  <data name="OnboardingPage_Library_Description" xml:space="preserve">
+    <value>اختر المجلد الذي تحفظ فيه موسيقاك. يبني Nagi مكتبتك أثناء إكمال الإعداد، ويمكنك إضافة المزيد من المجلدات لاحقًا.</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
+    <value>خصصه كما تحب</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
+    <value>اختر مظهر Nagi. تُطبق التغييرات على الفور.</value>
+  </data>
+  <data name="OnboardingPage_Listening_Title" xml:space="preserve">
+    <value>ضبط الصوت</value>
+  </data>
+  <data name="OnboardingPage_Listening_Description" xml:space="preserve">
+    <value>شكّل طريقة تشغيل موسيقاك.</value>
+  </data>
+  <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
+    <value>ابدأ من إعداد مسبق. يمكنك ضبط كل نطاق في الإعدادات.</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
+    <value>أضِف الحياة إلى مكتبتك</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
+    <value>يعمل Nagi بالكامل دون اتصال بالإنترنت. فعّل هذه الخيارات لإكمال صور الفنانين والسير الذاتية وكلمات الأغاني التي لا تتضمنها ملفاتك.</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
+    <value>انسجام تام مع سطح المكتب</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
+    <value>اختر كيفية بدء Nagi وما يحدث عند إغلاقه أو تصغيره.</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
+    <value>شارك ما تستمع إليه</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
+    <value>سجّل استماعاتك على Last.fm وأظهر لأصدقائك ما تستمع إليه على Discord. يتوفر ListenBrainz في الإعدادات.</value>
+  </data>
+  <data name="OnboardingPage_Finish_Title" xml:space="preserve">
+    <value>أنت جاهز تمامًا</value>
+  </data>
+  <data name="OnboardingPage_Finish_Description" xml:space="preserve">
+    <value>يمكنك تغيير أي من هذه الخيارات في أي وقت من الإعدادات.</value>
+  </data>
+  <data name="OnboardingPage_SkipSetup" xml:space="preserve">
+    <value>تخطي الإعداد</value>
+  </data>
+  <data name="OnboardingPage_Back" xml:space="preserve">
+    <value>الرجوع</value>
+  </data>
+  <data name="OnboardingPage_Continue" xml:space="preserve">
+    <value>متابعة</value>
+  </data>
+  <data name="OnboardingPage_StartListening" xml:space="preserve">
+    <value>ابدأ الاستماع</value>
+  </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
     <value>قوائم التشغيل</value>
   </data>
@@ -2097,6 +2163,12 @@
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>عرض الكل</value>
   </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>بحث</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>بحث…</value>
+  </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
     <value>مرات التشغيل</value>
   </data>
@@ -2237,6 +2309,24 @@
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>إيقاف التشغيل</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>تشغيل عشوائي لجميع الأغاني</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>فتح المشغل المصغر</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>سرعة التشغيل</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>عادي</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>×{0}</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>مؤقت مخصص…</value>

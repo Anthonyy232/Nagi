@@ -391,6 +391,9 @@
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Виникла несподівана помилка. Будь ласка, спробуйте ще раз.</value>
   </data>
+  <data name="Onboarding_LibraryReady" xml:space="preserve">
+    <value>Ваша медіатека готова.</value>
+  </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>Розумний • {0} пісня</value>
   </data>
@@ -1347,6 +1350,69 @@
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Додати музичну папку</value>
   </data>
+  <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
+    <value>Спокійний простір для вашої музики з акцентом на локальні файли. Налаштування триває близько хвилини.</value>
+  </data>
+  <data name="OnboardingPage_GetStarted" xml:space="preserve">
+    <value>Розпочати</value>
+  </data>
+  <data name="OnboardingPage_Library_Title" xml:space="preserve">
+    <value>Де зберігається ваша музика?</value>
+  </data>
+  <data name="OnboardingPage_Library_Description" xml:space="preserve">
+    <value>Виберіть папку, у якій зберігається ваша музика. Nagi створить медіатеку, поки ви завершуєте налаштування. Ви зможете додати більше папок пізніше.</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
+    <value>Налаштуйте під себе</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
+    <value>Виберіть вигляд Nagi. Зміни застосовуються одразу.</value>
+  </data>
+  <data name="OnboardingPage_Listening_Title" xml:space="preserve">
+    <value>Налаштуйте звучання</value>
+  </data>
+  <data name="OnboardingPage_Listening_Description" xml:space="preserve">
+    <value>Керуйте тим, як відтворюється ваша музика.</value>
+  </data>
+  <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
+    <value>Почніть із пресету. Ви зможете налаштувати кожну смугу в Налаштуваннях.</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
+    <value>Оживіть свою медіатеку</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
+    <value>Nagi працює повністю офлайн. Увімкніть ці функції, щоб доповнити медіатеку фотографіями виконавців, біографіями та текстами пісень, яких немає у ваших файлах.</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
+    <value>Інтеграція з робочим столом</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
+    <value>Виберіть, як Nagi запускається та що відбувається під час закриття або згортання програми.</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
+    <value>Діліться тим, що слухаєте</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
+    <value>Скробліть свої прослуховування на Last.fm і показуйте друзям у Discord, що ви слухаєте. ListenBrainz можна увімкнути в Налаштуваннях.</value>
+  </data>
+  <data name="OnboardingPage_Finish_Title" xml:space="preserve">
+    <value>Усе готово</value>
+  </data>
+  <data name="OnboardingPage_Finish_Description" xml:space="preserve">
+    <value>Ви можете змінити будь-які з цих параметрів у будь-який момент у Налаштуваннях.</value>
+  </data>
+  <data name="OnboardingPage_SkipSetup" xml:space="preserve">
+    <value>Пропустити налаштування</value>
+  </data>
+  <data name="OnboardingPage_Back" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="OnboardingPage_Continue" xml:space="preserve">
+    <value>Продовжити</value>
+  </data>
+  <data name="OnboardingPage_StartListening" xml:space="preserve">
+    <value>Почати прослуховування</value>
+  </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
     <value>Списки відтворення</value>
   </data>
@@ -2097,6 +2163,12 @@
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>Переглянути все</value>
   </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>Пошук</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>Пошук…</value>
+  </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
     <value>Відтворення</value>
   </data>
@@ -2237,6 +2309,24 @@
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>Зупинити відтворення</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>Перемішати всі пісні</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>Відкрити мініплеєр</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>Швидкість відтворення</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>Звичайна</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0}×</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>Власний таймер…</value>
