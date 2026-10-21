@@ -170,5 +170,63 @@ public class MusicBrainzServiceTests : IDisposable
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() => request);
     }
 
+    [Fact]
+    public async Task SearchReleaseGroupAsync_PrefersOriginalAlbumOverFanMadeRemix()
+    {
+        const string response = """
+                                {
+                                  "release-groups": [
+                                    { "id": "fanmade", "score": 100, "title": "Hybrid Theory", "primary-type": "Album",
+                                      "secondary-types": ["Remix"], "first-release-date": "2023-07-21" },
+                                    { "id": "official", "score": 100, "title": "Hybrid Theory", "primary-type": "Album",
+                                      "first-release-date": "2000-05-07" }
+                                  ]
+                                }
+                                """;
+        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new StringContent(response)
+        });
 
+        var result = await _service.SearchReleaseGroupAsync("Hybrid Theory", "Linkin Park");
+
+        result.Data.Should().Be("official");
+    }
+
+    [Fact]
+    public async Task SearchReleaseGroupAsync_QuotesAlbumAndArtistInQuery()
+    {
+        string? capturedUrl = null;
+        _httpHandler.SendAsyncFunc = (request, _) =>
+        {
+            capturedUrl = request.RequestUri?.ToString();
+            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent("{\"release-groups\": []}")
+            });
+        };
+
+        await _service.SearchReleaseGroupAsync("Hybrid \"Theory\"", "Linkin Park");
+
+        HttpUtility.ParseQueryString(new Uri(capturedUrl!).Query)["query"].Should()
+            .Be("releasegroup:\"Hybrid \\\"Theory\\\"\" AND artist:\"Linkin Park\"");
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public async Task SearchReleaseGroupAsync_EmptyAlbum_DoesNotSendRequest(string albumTitle)
+    {
+        var calls = 0;
+        _httpHandler.SendAsyncFunc = (_, _) =>
+        {
+            calls++;
+            throw new InvalidOperationException("No request expected");
+        };
+
+        var result = await _service.SearchReleaseGroupAsync(albumTitle, "Linkin Park");
+
+        result.Status.Should().Be(ServiceResultStatus.SuccessNotFound);
+        calls.Should().Be(0);
+    }
 }

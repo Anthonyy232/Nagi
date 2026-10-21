@@ -10,10 +10,16 @@ namespace Nagi.Core.Services.Implementations.Presence;
 
 public class DiscordPresenceService : IPresenceService, IAsyncDisposable
 {
+    private const int MaxPresenceTextLength = 128;
+    private const string LogoAssetKey = "logo";
+
+    private readonly IAlbumArtUrlResolver _albumArtwork;
     private readonly string? _discordAppId;
     private readonly ILogger<DiscordPresenceService> _logger;
     private readonly Func<string, DiscordRpcClient> _createClient;
     private readonly object _clientLock = new();
+    private int _artworkVersion;
+    private string? _artworkUrl;
     private DiscordRpcClient? _client;
     private TimeSpan _currentProgress;
     private Song? _currentSong;
@@ -23,17 +29,19 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
 
     private Timer? _debounceTimer;
 
-    public DiscordPresenceService(IConfiguration configuration, ILogger<DiscordPresenceService> logger)
-        : this(configuration, logger, appId => new DiscordRpcClient(appId, pipe: -1,
+    public DiscordPresenceService(IConfiguration configuration, ILogger<DiscordPresenceService> logger,
+        IAlbumArtUrlResolver albumArtwork)
+        : this(configuration, logger, albumArtwork, appId => new DiscordRpcClient(appId, pipe: -1,
             logger: new DiscordLoggerAdapter(logger), autoEvents: true,
             client: new SandboxAwareDiscordPipeClient { Logger = new DiscordLoggerAdapter(logger) }))
     {
     }
 
     internal DiscordPresenceService(IConfiguration configuration, ILogger<DiscordPresenceService> logger,
-        Func<string, DiscordRpcClient> createClient)
+        IAlbumArtUrlResolver albumArtwork, Func<string, DiscordRpcClient> createClient)
     {
         _logger = logger;
+        _albumArtwork = albumArtwork;
         _createClient = createClient;
         _discordAppId = configuration["Discord:AppId"];
 
@@ -96,7 +104,8 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
     {
         _currentSong = song;
         _currentProgress = TimeSpan.Zero;
-        _timestamps = new Timestamps { Start = DateTime.UtcNow };
+        _timestamps = BuildTimestamps(TimeSpan.Zero);
+        StartArtworkLookup(song);
         RequestUpdate();
         return Task.CompletedTask;
     }
@@ -105,10 +114,7 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
     {
         _isPlaying = isPlaying;
 
-        if (isPlaying)
-            _timestamps = new Timestamps { Start = DateTime.UtcNow - _currentProgress };
-        else
-            _timestamps = null;
+        _timestamps = isPlaying ? BuildTimestamps(_currentProgress) : null;
 
         RequestUpdate();
         return Task.CompletedTask;
@@ -122,6 +128,33 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
         _timestamps = null;
         RequestUpdate();
         return Task.CompletedTask;
+    }
+
+    private void StartArtworkLookup(Song song)
+    {
+        var version = Interlocked.Increment(ref _artworkVersion);
+        _artworkUrl = null;
+        _ = LookupArtworkAsync(song, version);
+    }
+
+    private async Task LookupArtworkAsync(Song song, int version)
+    {
+        try
+        {
+            var url = await _albumArtwork.GetArtworkUrlAsync(song).ConfigureAwait(false);
+
+            // The track may have changed while the lookup was in flight.
+            if (version != Volatile.Read(ref _artworkVersion)) return;
+
+            _artworkUrl = url;
+
+            // The text was already published with the fallback logo; add the artwork when it arrives.
+            if (url is not null) RequestUpdate();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to look up Discord artwork for '{TrackTitle}'.", song.Title);
+        }
     }
 
     private void RequestUpdate()
@@ -143,30 +176,7 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
             var client = _client;
             if (client == null || !client.IsInitialized || !_isReady) return;
 
-            if (_currentSong == null)
-            {
-                client.SetPresence(new RichPresence { Details = "Browsing Music Library", State = "Idling" });
-                return;
-            }
-
-            string stateText = _isPlaying
-                ? (string.IsNullOrWhiteSpace(_currentSong.ArtistName) ? "Unknown Artist" : $"by {_currentSong.ArtistName}")
-                : $"Paused | {FormatTimeSpan(_currentProgress)} / {FormatTimeSpan(_currentSong.Duration)}";
-
-            var presence = new RichPresence
-            {
-                Details = (_currentSong.Title ?? "Unknown").Truncate(128),
-                State = stateText.Truncate(128),
-                StatusDisplay = StatusDisplayType.Details,
-                Timestamps = _timestamps,
-                Assets = new Assets
-                {
-                    LargeImageKey = "logo",
-                    LargeImageText = (_currentSong.Album?.Title ?? "Nagi Music Player").Truncate(128),
-                    SmallImageKey = _isPlaying ? "play_icon" : "pause_icon",
-                    SmallImageText = (_isPlaying ? "Playing" : "Paused")
-                }
-            };
+            var presence = BuildPresence(_currentSong, _isPlaying, _currentProgress, _timestamps, _artworkUrl);
 
             _logger.LogDebug("Sending Discord Presence Update: {Details}", presence.Details);
             client.SetPresence(presence);
@@ -179,6 +189,55 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
         {
             _logger.LogError(ex, "Error building presence update.");
         }
+    }
+
+    internal static RichPresence BuildPresence(Song? song, bool isPlaying, TimeSpan progress,
+        Timestamps? timestamps, string? artworkUrl)
+    {
+        if (song is null)
+        {
+            return new RichPresence
+            {
+                Type = ActivityType.Listening,
+                StatusDisplay = StatusDisplayType.Name,
+                Details = "Browsing Music Library",
+                State = "Idling"
+            };
+        }
+
+        var stateText = isPlaying
+            ? (string.IsNullOrWhiteSpace(song.ArtistName) ? "Unknown Artist" : $"by {song.ArtistName}")
+            : $"Paused | {FormatTimeSpan(progress)} / {FormatTimeSpan(song.Duration)}";
+
+        return new RichPresence
+        {
+            Type = ActivityType.Listening,
+            StatusDisplay = StatusDisplayType.Name,
+            Details = (song.Title ?? "Unknown").Truncate(MaxPresenceTextLength),
+            State = stateText.Truncate(MaxPresenceTextLength),
+            Timestamps = timestamps,
+            Assets = new Assets
+            {
+                // Discord positions the small image over the corner of the artwork, which gives us
+                // the Nagi badge on the cover. Both slots always carry a key: DiscordRPC merges the
+                // activity response into the local presence and throws on a missing image slot.
+                LargeImageKey = artworkUrl ?? LogoAssetKey,
+                LargeImageText = (song.Album?.Title ?? "Nagi Music Player").Truncate(MaxPresenceTextLength),
+                SmallImageKey = LogoAssetKey,
+                SmallImageText = "Nagi"
+            }
+        };
+    }
+
+    private Timestamps? BuildTimestamps(TimeSpan progress)
+    {
+        var start = DateTime.UtcNow - progress;
+        var duration = _currentSong?.Duration ?? TimeSpan.Zero;
+
+        // Discord shows elapsed and remaining time together when both ends are known.
+        return duration > TimeSpan.Zero
+            ? new Timestamps { Start = start, End = start + duration }
+            : new Timestamps { Start = start };
     }
 
     private static string FormatTimeSpan(TimeSpan ts)
