@@ -20,6 +20,7 @@ The solution is layered so that everything except the Windows shell is platform-
 - **View models don't choose platform assets.** They expose neutral values such as `AppIcon`, and each UI head maps them to its own icons (WinUI: `AppIconGlyphs`).
 - **Services are interfaces registered in DI**, one registration entry point per layer (`AddNagiCore`, `AddNagiPresentation`, and the WinUI `AddNagi*` methods). Code that a test or another platform needs to replace goes behind an interface; other code doesn't need one.
 - **MVVM with the CommunityToolkit** (`[ObservableProperty]`, `[RelayCommand]`). Pages hold view-only code; workflows and decisions live in view models.
+- **View models own their errors.** Commands and methods that views call log and handle their own failures, so pages bind or call them without try/catch. `IUIService` never throws: a dialog or picker the platform can't show returns what a cancel would.
 - **Pages share behaviour through base classes and helpers** (`SearchablePage`, `SongListPage`, `CollapsibleSearch`, the menu flyout helpers). Similar pages should look and behave the same; when you change one, check its siblings.
 - **Prefer what the platform gives you.** Built-in control behaviour (for example list selection and Ctrl+A), toolkit features and existing helpers come before custom code.
 
