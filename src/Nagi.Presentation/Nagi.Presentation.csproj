@@ -29,5 +29,9 @@
         <PackageReference Include="CommunityToolkit.Mvvm" />
         <PackageReference Include="MessageFormat" />
         <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
+        <PackageReference Include="Serilog.Enrichers.Thread" />
+        <PackageReference Include="Serilog.Extensions.Logging" />
+        <PackageReference Include="Serilog.Sinks.Debug" />
+        <PackageReference Include="Serilog.Sinks.File" />
     </ItemGroup>
 </Project>

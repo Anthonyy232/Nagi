@@ -15,6 +15,7 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services;
+using Nagi.Presentation.Logging;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services;
@@ -23,7 +24,6 @@ using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Services.Implementations;
 using Nagi.WinUI.Services;
 using Serilog;
-using Serilog.Events;
 using WinRT;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
@@ -65,29 +65,7 @@ public partial class App : Application
             .SetBasePath(AppContext.BaseDirectory)
             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
             .Build();
-        var tempPathConfig = PackagedAppData.CreatePathConfiguration();
-
-        _currentLogFilePath = Path.Combine(tempPathConfig.LogsDirectory, "log.txt");
-
-        Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Debug()
-            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-            .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
-            .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
-            .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Migrations", LogEventLevel.Error)
-            .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", LogEventLevel.Error)
-            .Enrich.FromLogContext()
-            .Enrich.WithThreadId()
-            .WriteTo.Debug()
-            .WriteTo.File(_currentLogFilePath,
-                rollingInterval: RollingInterval.Day,
-                retainedFileCountLimit: 7,
-                fileSizeLimitBytes: 10 * 1024 * 1024,
-                rollOnFileSizeLimit: true,
-                outputTemplate:
-                "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] [{ThreadId}] {Message:lj}{NewLine}{Exception}")
-            .WriteTo.Sink(MemoryLog.Instance)
-            .CreateLogger();
+        _currentLogFilePath = AppLogging.Configure(PackagedAppData.CreatePathConfiguration().LogsDirectory);
 
         try
         {
@@ -376,7 +354,7 @@ public partial class App : Application
         {
             Log.Fatal(ex, "A critical error occurred. Application will now terminate. Log path: {LogPath}",
                 _currentLogFilePath);
-            var fullCrashReport = $"{MemoryLog.Instance.GetContent()}\n\n--- EXCEPTION DETAILS ---\n{ex}";
+            var fullCrashReport = AppLogging.BuildCrashReport(ex);
             if (MainDispatcherQueue is not { } dispatcher) return;
 
             var dispatcherService = Services?.GetService<IDispatcherService>() ?? new DispatcherService(dispatcher);

@@ -117,11 +117,6 @@
         <PackageReference Include="ImageEx.WinUI" />
 
         <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" />
-        <PackageReference Include="Serilog.Enrichers.Thread" />
-        <PackageReference Include="Serilog.Extensions.Logging" />
-        <PackageReference Include="Serilog.Settings.Configuration" />
-        <PackageReference Include="Serilog.Sinks.Debug" />
-        <PackageReference Include="Serilog.Sinks.File" />
         <PackageReference Include="SixLabors.ImageSharp" />
 
         <!-- LibVLC native libraries for Windows, used by the player in Nagi.Audio.LibVlc -->
