@@ -391,6 +391,9 @@
   <data name="Onboarding_Error" xml:space="preserve">
     <value>Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.</value>
   </data>
+  <data name="Onboarding_LibraryReady" xml:space="preserve">
+    <value>Thư viện của bạn đã sẵn sàng.</value>
+  </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>Thông minh • {0} bài hát</value>
   </data>
@@ -1347,6 +1350,69 @@ Bạn có muốn tiếp tục không?</value>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Thêm thư mục nhạc</value>
   </data>
+  <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
+    <value>Không gian nghe nhạc nhẹ nhàng, ưu tiên lưu trữ cục bộ. Việc thiết lập chỉ mất khoảng một phút.</value>
+  </data>
+  <data name="OnboardingPage_GetStarted" xml:space="preserve">
+    <value>Bắt đầu</value>
+  </data>
+  <data name="OnboardingPage_Library_Title" xml:space="preserve">
+    <value>Nhạc của bạn ở đâu?</value>
+  </data>
+  <data name="OnboardingPage_Library_Description" xml:space="preserve">
+    <value>Chọn thư mục chứa nhạc của bạn. Nagi sẽ xây dựng thư viện trong khi bạn hoàn tất thiết lập, và bạn có thể thêm các thư mục khác sau.</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
+    <value>Tùy biến theo ý bạn</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
+    <value>Chọn giao diện cho Nagi. Các thay đổi sẽ được áp dụng ngay lập tức.</value>
+  </data>
+  <data name="OnboardingPage_Listening_Title" xml:space="preserve">
+    <value>Tinh chỉnh âm thanh</value>
+  </data>
+  <data name="OnboardingPage_Listening_Description" xml:space="preserve">
+    <value>Tùy chỉnh cách phát nhạc của bạn.</value>
+  </data>
+  <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
+    <value>Bắt đầu từ một cấu hình có sẵn. Bạn có thể điều chỉnh từng dải tần trong Cài đặt.</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
+    <value>Làm phong phú thư viện của bạn</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
+    <value>Nagi hoạt động hoàn toàn ngoại tuyến. Bật các tính năng này để bổ sung ảnh nghệ sĩ, tiểu sử và lời bài hát còn thiếu trong các tệp của bạn.</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
+    <value>Hòa hợp với máy tính của bạn</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
+    <value>Chọn cách Nagi khởi động và điều gì sẽ xảy ra khi bạn đóng hoặc thu nhỏ ứng dụng.</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
+    <value>Chia sẻ bản nhạc đang nghe</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
+    <value>Scrobble nhật ký nghe nhạc lên Last.fm và cho bạn bè thấy những gì bạn đang nghe trên Discord. ListenBrainz có sẵn trong Cài đặt.</value>
+  </data>
+  <data name="OnboardingPage_Finish_Title" xml:space="preserve">
+    <value>Mọi thứ đã sẵn sàng</value>
+  </data>
+  <data name="OnboardingPage_Finish_Description" xml:space="preserve">
+    <value>Bạn có thể thay đổi bất kỳ tùy chọn nào trong số này bất kỳ lúc nào trong Cài đặt.</value>
+  </data>
+  <data name="OnboardingPage_SkipSetup" xml:space="preserve">
+    <value>Bỏ qua thiết lập</value>
+  </data>
+  <data name="OnboardingPage_Back" xml:space="preserve">
+    <value>Quay lại</value>
+  </data>
+  <data name="OnboardingPage_Continue" xml:space="preserve">
+    <value>Tiếp tục</value>
+  </data>
+  <data name="OnboardingPage_StartListening" xml:space="preserve">
+    <value>Bắt đầu nghe</value>
+  </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
     <value>Danh sách phát</value>
   </data>
@@ -2097,6 +2163,12 @@ Bạn có muốn tiếp tục không?</value>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>Xem tất cả</value>
   </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>Tìm kiếm</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>Tìm kiếm…</value>
+  </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
     <value>Lượt phát</value>
   </data>
@@ -2237,6 +2309,24 @@ Bạn có muốn tiếp tục không?</value>
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>Dừng phát</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>Phát ngẫu nhiên tất cả bài hát</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>Mở trình phát thu nhỏ</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>Tốc độ phát</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>Bình thường</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0}×</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>Bộ hẹn giờ tùy chỉnh…</value>

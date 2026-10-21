@@ -391,6 +391,9 @@
   <data name="Onboarding_Error" xml:space="preserve">
     <value>'n Onverwagte fout het voorgekom. Probeer asseblief weer.</value>
   </data>
+  <data name="Onboarding_LibraryReady" xml:space="preserve">
+    <value>Jou biblioteek is gereed.</value>
+  </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>Slim • {0} liedjie</value>
   </data>
@@ -1347,6 +1350,69 @@ Wil jy voortgaan?</value>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
     <value>Voeg Musiekgids by</value>
   </data>
+  <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
+    <value>'n Rustige, plaaslik-eerste tuiste vir jou musiek. Opstelling neem ongeveer 'n minuut.</value>
+  </data>
+  <data name="OnboardingPage_GetStarted" xml:space="preserve">
+    <value>Begin</value>
+  </data>
+  <data name="OnboardingPage_Library_Title" xml:space="preserve">
+    <value>Waar is jou musiek?</value>
+  </data>
+  <data name="OnboardingPage_Library_Description" xml:space="preserve">
+    <value>Kies die gids waar jy jou musiek stoor. Nagi bou jou biblioteek terwyl jy die opstelling voltooi, en jy kan later nog gidse byvoeg.</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
+    <value>Maak dit joune</value>
+  </data>
+  <data name="OnboardingPage_Appearance_Description" xml:space="preserve">
+    <value>Kies hoe Nagi lyk. Veranderinge word dadelik toegepas.</value>
+  </data>
+  <data name="OnboardingPage_Listening_Title" xml:space="preserve">
+    <value>Pas aan hoe dit klink</value>
+  </data>
+  <data name="OnboardingPage_Listening_Description" xml:space="preserve">
+    <value>Vorm hoe jou musiek speel.</value>
+  </data>
+  <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
+    <value>Begin vanaf 'n voorinstelling. Jy kan elke band in Instellings aanpas.</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
+    <value>Bring jou biblioteek tot lewe</value>
+  </data>
+  <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
+    <value>Nagi werk heeltemal vanlyn. Skakel dit in om kunstenaarsfoto's, biografieë en lirieke aan te vul wat jou lêers nie insluit nie.</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
+    <value>Pas in op jou werkskerm</value>
+  </data>
+  <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
+    <value>Kies hoe Nagi begin en wat gebeur wanneer jy dit toemaak of minimeer.</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Title" xml:space="preserve">
+    <value>Deel wat jy speel</value>
+  </data>
+  <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
+    <value>Scrobble jou snitte na Last.fm en wys vir vriende waarna jy luister op Discord. ListenBrainz is beskikbaar in Instellings.</value>
+  </data>
+  <data name="OnboardingPage_Finish_Title" xml:space="preserve">
+    <value>Jy is gereed</value>
+  </data>
+  <data name="OnboardingPage_Finish_Description" xml:space="preserve">
+    <value>Jy kan enige hiervan te eniger tyd in Instellings verander.</value>
+  </data>
+  <data name="OnboardingPage_SkipSetup" xml:space="preserve">
+    <value>Slaan opstelling oor</value>
+  </data>
+  <data name="OnboardingPage_Back" xml:space="preserve">
+    <value>Terug</value>
+  </data>
+  <data name="OnboardingPage_Continue" xml:space="preserve">
+    <value>Gaan voort</value>
+  </data>
+  <data name="OnboardingPage_StartListening" xml:space="preserve">
+    <value>Begin luister</value>
+  </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
     <value>Snitlyste</value>
   </data>
@@ -2097,6 +2163,12 @@ Wil jy voortgaan?</value>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>Sien alles</value>
   </data>
+  <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
+    <value>Soek</value>
+  </data>
+  <data name="InsightsPage_SeeAll_SearchBox_Placeholder" xml:space="preserve">
+    <value>Soek…</value>
+  </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
     <value>Afspeel</value>
   </data>
@@ -2237,6 +2309,24 @@ Wil jy voortgaan?</value>
   </data>
   <data name="Listening_StopPlayback" xml:space="preserve">
     <value>Stop afspeel</value>
+  </data>
+  <data name="JumpList_ShuffleAll" xml:space="preserve">
+    <value>Meng alle liedjies</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="JumpList_MiniPlayer" xml:space="preserve">
+    <value>Maak mini-speler oop</value>
+    <comment>Task in the taskbar icon's right-click menu.</comment>
+  </data>
+  <data name="Listening_PlaybackSpeed" xml:space="preserve">
+    <value>Afspeelspoed</value>
+  </data>
+  <data name="Listening_PlaybackSpeedNormal" xml:space="preserve">
+    <value>Normaal</value>
+  </data>
+  <data name="Listening_PlaybackSpeedFormat" xml:space="preserve">
+    <value>{0}×</value>
+    <comment>Playback speed multiplier, e.g. 1.5×. {0} is the speed.</comment>
   </data>
   <data name="Listening_CustomTimer" xml:space="preserve">
     <value>Pasmaaktydhouer…</value>
