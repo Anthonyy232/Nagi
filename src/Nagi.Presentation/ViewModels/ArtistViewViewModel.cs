@@ -32,6 +32,8 @@ public sealed class ArtistAlbumViewModelItem
     public string? CoverArtUri { get; }
     public string YearText { get; }
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverArtUri);
+
+    public override string ToString() => Name;
 }
 
 public partial class ArtistViewViewModel : SongListViewModelBase
@@ -261,21 +263,27 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     ///     Lets the user pick an image file and stores it as this artist's custom image.
     /// </summary>
     [RelayCommand]
-    public async Task ChangeArtistImageAsync()
+    private async Task ChangeArtistImageAsync()
     {
-        var localPath = await _uiService.PickSingleFileAsync(FileExtensions.ImageFileExtensions);
-        if (string.IsNullOrWhiteSpace(localPath)) return;
+        try
+        {
+            var localPath = await _uiService.PickSingleFileAsync(FileExtensions.ImageFileExtensions);
+            if (string.IsNullOrWhiteSpace(localPath)) return;
 
-        _logger.LogInformation("Updating custom image for current artist ({ArtistName}) from {Path}", ArtistName, localPath);
-
-        await _libraryWriter.UpdateArtistImageAsync(_artistId, localPath);
+            _logger.LogInformation("Updating custom image for current artist ({ArtistName}) from {Path}", ArtistName, localPath);
+            await _libraryWriter.UpdateArtistImageAsync(_artistId, localPath);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to change the image of artist {ArtistName}", ArtistName);
+        }
     }
 
     [RelayCommand]
-    public Task RemoveArtistImageAsync()
+    private async Task RemoveArtistImageAsync()
     {
         _logger.LogInformation("Removing custom image for current artist ({ArtistName})", ArtistName);
-
-        return _libraryWriter.RemoveArtistImageAsync(_artistId);
+        try { await _libraryWriter.RemoveArtistImageAsync(_artistId); }
+        catch (Exception ex) { _logger.LogError(ex, "Failed to remove the image of artist {ArtistName}", ArtistName); }
     }
 }

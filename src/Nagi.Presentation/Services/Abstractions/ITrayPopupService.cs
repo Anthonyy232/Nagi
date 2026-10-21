@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿namespace Nagi.Presentation.Services.Abstractions;
 
-namespace Nagi.Presentation.Services.Abstractions;
-
+/// <summary>
+///     The small player that opens from the tray (or menu bar) icon.
+/// </summary>
 public interface ITrayPopupService
 {
-    void ShowOrHidePopup();
+    void TogglePopup();
 
-    Task HidePopup();
+    void HidePopup();
 }

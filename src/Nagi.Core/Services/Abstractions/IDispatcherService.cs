@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Nagi.Presentation.Services.Abstractions;
+namespace Nagi.Core.Services.Abstractions;
 
 public interface IDispatcherService
 {

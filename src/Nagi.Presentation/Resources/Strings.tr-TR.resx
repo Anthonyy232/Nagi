@@ -629,15 +629,6 @@ Kitaplığınızda bulunamayan şarkılar: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Sonraki</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC belirtilmemiş bir hatayla karşılaştı.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC Hatası: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>'{0}' yüklenemedi.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Arşiv</value>
   </data>
@@ -725,9 +716,6 @@ Kitaplığınızda bulunamayan şarkılar: {0}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>İptal</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Bilinmeyen Klasör</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Klasörde ara</value>
   </data>
@@ -776,14 +764,8 @@ Kitaplığınızda bulunamayan şarkılar: {0}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tür içinde ara</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Bilinmeyen Çalma Listesi</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Akıllı çalma listesinde ara</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Bilinmeyen Akıllı Çalma Listesi</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Meta Verileri Yeniden Tara</value>
@@ -2405,5 +2387,13 @@ Devam etmek ister misiniz?</value>
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Çalma listesi yok</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>Şarkıları ses düzeyi normalleştirmesi için analiz etmek üzere FFmpeg gerekiyor, ancak Nagi onu bulamadı.
+
+1. https://ffmpeg.org/download.html adresinden bir Windows sürümü indirin.
+2. Arşivi çıkarın ve bin klasöründeki ffmpeg.exe dosyasını bulun.
+3. ffmpeg.exe dosyasını içeren klasörü Windows PATH değişkeninize ekleyin.
+4. Nagi'yi yeniden başlatın, ardından ses düzeyi normalleştirmesini tekrar etkinleştirin.</value>
   </data>
 </root>

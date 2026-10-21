@@ -60,19 +60,13 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         if (sender is FrameworkElement { Tag: QueueEntry entry })
         {
             e.Handled = true;
-            await PlayQueueEntryAsync(entry);
+            await ViewModel.SidebarQueue.PlayAsync(entry);
         }
     }
 
     private async void QueueEntry_Play(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { Tag: QueueEntry entry }) await PlayQueueEntryAsync(entry);
-    }
-
-    private async Task PlayQueueEntryAsync(QueueEntry entry)
-    {
-        try { await ViewModel.SidebarQueue.PlayAsync(entry); }
-        catch (Exception ex) { _logger.LogError(ex, "Failed to play queue entry."); }
+        if (sender is FrameworkElement { Tag: QueueEntry entry }) await ViewModel.SidebarQueue.PlayAsync(entry);
     }
 
     private void QueueEntry_MoveUp(object sender, RoutedEventArgs e)
@@ -90,8 +84,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private async void QueueEntry_Remove(object sender, RoutedEventArgs e)
     {
         if (sender is not FrameworkElement { Tag: QueueEntry entry }) return;
-        try { await ViewModel.SidebarQueue.RemoveAsync(entry); }
-        catch (Exception ex) { _logger.LogError(ex, "Failed to remove queue entry."); }
+        await ViewModel.SidebarQueue.RemoveAsync(entry);
     }
 
     // Maps detail pages back to their parent navigation item for selection synchronization.
@@ -264,7 +257,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to add dropped files to the playback queue.");
+            _logger.LogError(ex, "Failed to read the dropped files.");
         }
         finally
         {
@@ -351,7 +344,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
                 {
                     Content = Strings.ResourceManager.GetString(resourceKey) ?? resourceKey,
                     Tag = item.Tag,
-                    Icon = new FontIcon { Glyph = item.IconGlyph }
+                    Icon = new FontIcon { Glyph = AppIconGlyphs.ToGlyph(item.Icon) }
                 });
             }
             UpdateNavViewSelection(ContentFrame.CurrentSourcePageType);

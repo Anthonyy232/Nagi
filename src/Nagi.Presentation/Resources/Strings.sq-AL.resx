@@ -629,15 +629,6 @@ Skedarët që nuk u mundësuan të importohen: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Tjetra</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC ndeshi një gabim të papërcaktuar.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Gabim LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Dështoi ngarkimi i '{0}'.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Biblioteka</value>
   </data>
@@ -725,9 +716,6 @@ Skedarët që nuk u mundësuan të importohen: {0}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Anulo</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Dosje e Panjohur</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Kërko në dosje</value>
   </data>
@@ -776,14 +764,8 @@ Skedarët që nuk u mundësuan të importohen: {0}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Kërko në zhanër</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Listë Luajtjeje e Panjohur</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Kërko në listën inteligjente të luajtjes</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Listë Inteligjente Luajtjeje e Panjohur</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Skano përsëri metadatat</value>
@@ -2405,5 +2387,13 @@ Dëshironi të vazhdoni?</value>
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Asnjë listë luajtjeje nuk është në dispozicion</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg nevojitet për të analizuar këngët për normalizimin e volumit, por Nagi nuk mund ta gjente.
+
+1. Shkarkoni një version për Windows nga https://ffmpeg.org/download.html.
+2. Nxjerrni arkivin dhe gjeni ffmpeg.exe në dosjen e tij bin.
+3. Shtoni dosjen që përmban ffmpeg.exe në PATH-in tuaj të Windows.
+4. Rinisni Nagi, pastaj aktivizoni përsëri normalizimin e volumit.</value>
   </data>
 </root>

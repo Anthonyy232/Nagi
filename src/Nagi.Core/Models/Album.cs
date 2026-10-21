@@ -96,6 +96,6 @@ public class Album
 
     public override string ToString()
     {
-        return $"{Title} by {PrimaryArtistName}";
+        return $"{Title} — {PrimaryArtistName}";
     }
 }

@@ -106,6 +106,24 @@ public class LibraryReaderTests : IDisposable
     }
 
     [Fact]
+    public async Task RecursiveDirectoryQuery_ExcludesSiblingsThatShareANamePrefix()
+    {
+        var folder = new Folder { Name = "Music", Path = @"C:\Music" };
+        var rock = new Song { Folder = folder, Title = "1", FilePath = @"C:\Music\Rock\a.mp3", DirectoryPath = @"C:\Music\Rock" };
+        var nested = new Song { Folder = folder, Title = "2", FilePath = @"C:\Music\Rock\Live\b.mp3", DirectoryPath = @"C:\Music\Rock\Live" };
+        var sibling = new Song { Folder = folder, Title = "3", FilePath = @"C:\Music\Rockabilly\c.mp3", DirectoryPath = @"C:\Music\Rockabilly" };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Songs.AddRange(rock, nested, sibling);
+            await context.SaveChangesAsync();
+        }
+
+        var ids = await _libraryReader.GetAllSongIdsInDirectoryRecursiveAsync(folder.Id, @"C:\Music\Rock\", SongSortOrder.TitleAsc);
+
+        ids.Should().Equal(rock.Id, nested.Id);
+    }
+
+    [Fact]
     public async Task GetAllSongsPagedAsync_RequestsSecondPage_ReturnsCorrectSubsetOfSongs()
     {
         var artist = new Artist { Name = "Artist" };

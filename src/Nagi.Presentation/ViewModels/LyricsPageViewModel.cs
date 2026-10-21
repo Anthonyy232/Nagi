@@ -147,7 +147,8 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         _optimisticSetTimestamp = Stopwatch.GetTimestamp();
         UpdateCurrentLineFromPosition(targetTime);
 
-        await _playbackService.SeekAsync(targetTime);
+        try { await _playbackService.SeekAsync(targetTime); }
+        catch (Exception ex) { _logger.LogError(ex, "Failed to seek to lyric line"); }
     }
 
     /// <summary>

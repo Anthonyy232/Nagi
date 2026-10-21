@@ -79,7 +79,7 @@
                                                    Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 <MenuFlyoutItem
                                     Text="{x:Bind resources:Strings.FolderSongViewPage_SongMenu_ShowInExplorer, Mode=OneTime}"
-                                    Command="{Binding DataContext.ShowInFileExplorerCommand, ElementName=pageRoot}"
+                                    Command="{Binding DataContext.ShowInFolderCommand, ElementName=pageRoot}"
                                     CommandParameter="{x:Bind Song}"
                                     Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                             </MenuFlyout>
@@ -97,6 +97,7 @@
                         <Button
                             Grid.Column="0"
                             ToolTipService.ToolTip="{x:Bind resources:Strings.FolderSongViewPage_SongPlayButton_ToolTip, Mode=OneTime}"
+                            AutomationProperties.Name="{x:Bind resources:Strings.FolderSongViewPage_SongPlayButton_ToolTip, Mode=OneTime}"
                             Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}"
                             CommandParameter="{x:Bind Song}"
                             Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
@@ -266,7 +267,8 @@
                     </Grid>
 
                     <Button Style="{StaticResource SongListViewPageIconButton}"
-                            ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
+                            ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}"
+                            AutomationProperties.Name="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
                         <Button.Flyout>
                             <MenuFlyout Placement="Bottom">
                                 <RadioMenuFlyoutItem GroupName="FolderSongSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
@@ -312,7 +314,8 @@
                     </Button>
 
                     <SplitButton Style="{StaticResource SongListViewPageShuffleButton}" Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}"
-                            ToolTipService.ToolTip="{x:Bind resources:Strings.FolderSongViewPage_ShufflePlayButton_ToolTip, Mode=OneTime}">
+                            ToolTipService.ToolTip="{x:Bind resources:Strings.FolderSongViewPage_ShufflePlayButton_ToolTip, Mode=OneTime}"
+                            AutomationProperties.Name="{x:Bind resources:Strings.FolderSongViewPage_ShufflePlayButton_ToolTip, Mode=OneTime}">
                         <SplitButton.Flyout><MenuFlyout Opening="ListeningOptions_Opening" /></SplitButton.Flyout>
                         <FontIcon FontSize="16" Glyph="" />
                     </SplitButton>

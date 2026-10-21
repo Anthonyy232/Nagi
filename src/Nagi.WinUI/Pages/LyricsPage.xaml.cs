@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Numerics;
 using Windows.UI.ViewManagement;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;
@@ -24,7 +23,6 @@ public sealed partial class LyricsPage : Page
     private const float ActiveScale = 1.03f;
     private const float InactiveScale = 1.0f;
     private static readonly SolidColorBrush _transparentBrush = new(Microsoft.UI.Colors.Transparent);
-    private readonly ILogger<LyricsPage> _logger;
     private readonly Storyboard _progressBarStoryboard = new();
     private readonly DoubleAnimation _progressBarAnimation = new() { To = 100, EnableDependentAnimation = true };
     private bool _isUnloaded;
@@ -48,7 +46,6 @@ public sealed partial class LyricsPage : Page
     public LyricsPage()
     {
         ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<LyricsPageViewModel>();
-        _logger = App.Services!.GetRequiredService<ILogger<LyricsPage>>();
         InitializeComponent();
         Storyboard.SetTarget(_progressBarAnimation, LyricsProgressBar);
         Storyboard.SetTargetProperty(_progressBarAnimation, nameof(ProgressBar.Value));
@@ -82,18 +79,6 @@ public sealed partial class LyricsPage : Page
                 ApplyAllLineVisuals();
                 ScrollToCurrentLine(disableAnimation: true);
             });
-        }
-    }
-
-    private async void EditLyricsButton_Click(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            await ViewModel.EditLyricsCommand.ExecuteAsync(null);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to edit lyrics.");
         }
     }
 
@@ -200,13 +185,7 @@ public sealed partial class LyricsPage : Page
         if (lineIndex < 0) return;
 
         var element = LyricsRepeater.TryGetElement(lineIndex);
-        if (element == null)
-        {
-            _logger.LogDebug("Lyric element at index {Index} has not been realized yet.", lineIndex);
-            return;
-        }
-
-        _logger.LogTrace("Scrolling to lyric line index {LineIndex}.", lineIndex);
+        if (element == null) return;
 
         // TopSpacer is a sibling, so the repeater-relative Y offset already places the line
         // at ScrollIntoViewRatio without subtracting the spacer again.
@@ -323,8 +302,7 @@ public sealed partial class LyricsPage : Page
     {
         if (sender is Grid grid && grid.Tag is LyricLine clickedLine)
         {
-            try { await ViewModel.SeekToLineAsync(clickedLine); }
-            catch (Exception ex) { _logger.LogError(ex, "Failed to seek to lyric line"); }
+            await ViewModel.SeekToLineAsync(clickedLine);
         }
     }
 
@@ -338,8 +316,6 @@ public sealed partial class LyricsPage : Page
             LyricsProgressBar.Value = 0;
             return;
         }
-
-        _logger.LogTrace("Updating progress bar for line: {LyricText}", currentLine.Text);
 
         var currentIndex = ViewModel.LyricLines.IndexOf(currentLine);
         var nextLineStartTime = currentIndex >= 0 && currentIndex < ViewModel.LyricLines.Count - 1

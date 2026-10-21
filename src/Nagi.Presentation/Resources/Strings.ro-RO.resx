@@ -629,15 +629,6 @@ Fișiere care nu au putut fi importate: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Următor</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC a întâmpinat o eroare nespecificată.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Eroare LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Încărcarea „{0}” a eșuat.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Bibliotecă</value>
   </data>
@@ -725,9 +716,6 @@ Fișiere care nu au putut fi importate: {0}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Anulează</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Dosar necunoscut</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Căutați în dosar</value>
   </data>
@@ -776,14 +764,8 @@ Fișiere care nu au putut fi importate: {0}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Căutare în gen</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Listă de redare necunoscută</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Căutați în lista de redare inteligentă</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Listă de redare inteligentă necunoscută</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Re-scanați metadatele</value>
@@ -2405,5 +2387,13 @@ Doriți să continuați?</value>
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Nicio listă de redare disponibilă</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg este necesar pentru a analiza melodiile pentru normalizarea volumului, dar Nagi nu l-a putut găsi.
+
+1. Descărcați o versiune de Windows de la https://ffmpeg.org/download.html.
+2. Extrageți arhiva și localizați ffmpeg.exe în folderul bin al acesteia.
+3. Adăugați folderul care conține ffmpeg.exe în variabila PATH din Windows.
+4. Reporniți Nagi, apoi activați din nou normalizarea volumului.</value>
   </data>
 </root>

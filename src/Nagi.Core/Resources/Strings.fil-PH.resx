@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Pagbukud-bukurin Ayon sa: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>Kailangan ang FFmpeg upang masuri ang mga kanta para sa normalization ng volume, ngunit hindi ito mahanap ng Nagi.
-
-1. Mag-download ng Windows build mula sa https://ffmpeg.org/download.html.
-2. I-extract ang archive at hanapin ang ffmpeg.exe sa bin folder nito.
-3. Idagdag ang folder na naglalaman ng ffmpeg.exe sa iyong Windows PATH.
-4. I-restart ang Nagi, pagkatapos ay paganahin muli ang normalization ng volume.</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>Nagawa ang playlist, ngunit hindi naidagdag ang mga kanta nito. Subukang i-import muli.</value>
   </data>
@@ -323,5 +315,14 @@
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>Ang napiling file ay hindi isang balidong backup ng Nagi.</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>Nakaranas ang LibVLC ng hindi tinukoy na error.</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>LibVLC Error: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>Nabigo ang pag-load ng '{0}'.</value>
   </data>
 </root>

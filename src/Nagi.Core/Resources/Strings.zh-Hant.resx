@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>排序依據：</value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>需要 FFmpeg 來分析歌曲以進行音量標準化，但 Nagi 找不到 FFmpeg。
-
-1. 從 https://ffmpeg.org/download.html 下載 Windows 版本。
-2. 解壓縮封存檔並在其 bin 資料夾中找到 ffmpeg.exe。
-3. 將包含 ffmpeg.exe 的資料夾新增至您的 Windows PATH。
-4. 重新啟動 Nagi，然後再次啟用音量標準化。</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>已建立播放清單，但無法新增其中的歌曲。請嘗試再次匯入。</value>
   </data>
@@ -323,5 +315,14 @@
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>所選檔案不是有效的 Nagi 備份。</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC 遇到未指定的錯誤。</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>LibVLC 錯誤：{0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>載入 '{0}' 失敗。</value>
   </data>
 </root>

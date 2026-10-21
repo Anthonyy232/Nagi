@@ -16,4 +16,6 @@ public sealed class FolderContentItem
 
     public static FolderContentItem FromFolder(Folder folder) => new(folder);
     public static FolderContentItem FromSong(Song song) => new(song);
+
+    public override string ToString() => DisplayName;
 }

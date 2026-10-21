@@ -10,7 +10,7 @@ public partial class PlayerButtonSetting : ObservableObject
 
     public required string Id { get; set; }
     public required string DisplayName { get; set; }
-    public required string IconGlyph { get; set; }
+    public AppIcon Icon { get; set; }
 
     [JsonIgnore]
     public bool IsSeparator => Id == "Separator";
@@ -30,9 +30,11 @@ public partial class PlayerButtonSetting : ObservableObject
 
     [ObservableProperty]
     [property: JsonIgnore]
-    public partial string? DynamicIcon { get; set; }
+    public partial AppIcon DynamicIcon { get; set; }
 
     [ObservableProperty]
     [property: JsonIgnore]
     public partial string? DynamicToolTip { get; set; }
+
+    public override string ToString() => DisplayName;
 }

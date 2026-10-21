@@ -1,10 +1,10 @@
 using FluentAssertions;
-using Nagi.WinUI.Services.Implementations;
+using Nagi.Presentation.Logging;
 using Serilog.Events;
 using Serilog.Parsing;
 using Xunit;
 
-namespace Nagi.WinUI.Tests;
+namespace Nagi.Presentation.Tests;
 
 public class MemoryLogTests
 {

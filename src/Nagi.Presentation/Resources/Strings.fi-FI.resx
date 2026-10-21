@@ -629,15 +629,6 @@ Tiedostoja, joita ei voitu tuoda: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Seuraava</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC kohtasi määrittelemättömän virheen.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC virhe: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>'{0}' lataaminen epäonnistui.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Kirjasto</value>
   </data>
@@ -725,9 +716,6 @@ Tiedostoja, joita ei voitu tuoda: {0}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Peruuta</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Tuntematon kansio</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hae kansiosta</value>
   </data>
@@ -776,14 +764,8 @@ Tiedostoja, joita ei voitu tuoda: {0}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Etsi genrestä</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Tuntematon soittolista</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hae älykkäästä soittolistasta</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Tuntematon älykäs soittolista</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Skannaa metatiedot uudelleen</value>
@@ -2405,5 +2387,13 @@ Haluatko jatkaa?</value>
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Ei soittolistoja saatavilla</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg-ohjelmaa tarvitaan kappaleiden analysoimiseen äänenvoimakkuuden tasoitusta varten, mutta Nagi ei löytänyt sitä.
+
+1. Lataa Windows-versio osoitteesta https://ffmpeg.org/download.html.
+2. Pura arkisto ja etsi ffmpeg.exe sen bin-kansiosta.
+3. Lisää ffmpeg.exe-tiedoston sisältävä kansio Windowsin PATH-ympäristömuuttujaan.
+4. Käynnistä Nagi uudelleen ja ota äänenvoimakkuuden tasoitus uudelleen käyttöön.</value>
   </data>
 </root>

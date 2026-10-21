@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Сортирај по: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg је потребан за анализу песама ради нормализације гласноће, али Nagi га није пронашао.
-
-1. Преузмите верзију за Windows са странице https://ffmpeg.org/download.html.
-2. Распакујте архиву и пронађите ffmpeg.exe у њеној фасцикли bin.
-3. Додајте фасциклу која садржи ffmpeg.exe у ваш Windows PATH.
-4. Поново покрените Nagi, а затим омогућите нормализацију гласноће.</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>Листа песама је направљена, али песме нису могле бити додате. Покушајте поново са увозом.</value>
   </data>
@@ -323,5 +315,14 @@
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>Изабрана датотека није важећа Nagi резервна копија.</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC је наишао на неодређену грешку.</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>LibVLC Грешка: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>Није успело учитавање '{0}'.</value>
   </data>
 </root>

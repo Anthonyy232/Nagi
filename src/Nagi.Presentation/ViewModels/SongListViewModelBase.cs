@@ -70,11 +70,11 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         ILogger logger)
         : base(libraryReader, libraryScanner, settingsService, dispatcherService, logger)
     {
-        _libraryWriter = libraryWriter ?? throw new ArgumentNullException(nameof(libraryWriter));
-        _playlistService = playlistService ?? throw new ArgumentNullException(nameof(playlistService));
-        _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
-        _musicNavigationService = musicNavigationService ?? throw new ArgumentNullException(nameof(musicNavigationService));
-        _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
+        _libraryWriter = libraryWriter;
+        _playlistService = playlistService;
+        _playbackService = playbackService;
+        _musicNavigationService = musicNavigationService;
+        _uiService = uiService;
 
         Songs.CollectionChanged += OnSongsCollectionChanged;
         _playlistService.PlaylistsChanged += OnPlaylistsChanged;
@@ -162,7 +162,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     public bool ShowEmptyState => !IsLoading && Songs.Count == 0;
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(ShowInFileExplorerCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ShowInFolderCommand))]
     [NotifyCanExecuteChangedFor(nameof(GoToAlbumCommand))]
     [NotifyCanExecuteChangedFor(nameof(GoToArtistCommand))]
     public partial bool IsSingleSongSelected { get; set; }
@@ -492,18 +492,11 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteSingleSongCommands))]
-    private async Task ShowInFileExplorerAsync(Song? song)
+    private async Task ShowInFolderAsync(Song? song)
     {
         var targetSong = song ?? SelectedSongs.FirstOrDefault();
         if (targetSong?.FilePath is null) return;
-        try
-        {
-            await _uiService.OpenFolderInExplorerAsync(targetSong.FilePath);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to show file in explorer for path {FilePath}", targetSong.FilePath);
-        }
+        await _uiService.ShowInFolderAsync(targetSong.FilePath);
     }
 
     [RelayCommand]

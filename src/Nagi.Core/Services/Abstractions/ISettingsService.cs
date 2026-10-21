@@ -190,6 +190,19 @@ public interface ISettingsService
 
     Task ResetToDefaultsAsync();
 
+    /// <summary>
+    ///     Captures every stored setting, for a backup. Account credentials live in the operating system's
+    ///     credential store and are not included.
+    /// </summary>
+    Task<string> ExportAsync();
+
+    /// <summary>
+    ///     Replaces every stored setting with a snapshot from <see cref="ExportAsync" />. Takes full effect after a
+    ///     restart. Throws <see cref="System.Text.Json.JsonException" /> without changing anything if the snapshot
+    ///     isn't valid.
+    /// </summary>
+    Task ImportAsync(string snapshot);
+
 
     /// <summary>
     ///     Gets the configured service providers for a specific category.

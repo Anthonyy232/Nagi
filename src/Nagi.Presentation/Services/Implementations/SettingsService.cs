@@ -79,13 +79,13 @@ public partial class SettingsService : IUISettingsService
     public SettingsService(ISettingsStore settingsStore, IPathConfiguration pathConfig,
         ICredentialLockerService credentialLockerService, IAutoLaunchService autoLaunchService, ILogger<SettingsService> logger)
     {
-        _pathConfig = pathConfig ?? throw new ArgumentNullException(nameof(pathConfig));
+        _pathConfig = pathConfig;
         _credentialLockerService =
-            credentialLockerService ?? throw new ArgumentNullException(nameof(credentialLockerService));
-        _autoLaunchService = autoLaunchService ?? throw new ArgumentNullException(nameof(autoLaunchService));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            credentialLockerService;
+        _autoLaunchService = autoLaunchService;
+        _logger = logger;
 
-        _values = (settingsStore ?? throw new ArgumentNullException(nameof(settingsStore))).Values;
+        _values = (settingsStore).Values;
     }
 
     public event Action<bool>? PlayerAnimationSettingChanged;
@@ -118,6 +118,48 @@ public partial class SettingsService : IUISettingsService
             ClearLastFmCredentialsAsync(), ClearListenBrainzUserTokenAsync()).ConfigureAwait(false);
         _logger.LogInformation("All application settings have been reset to their default values.");
     }
+
+    public Task<string> ExportAsync()
+    {
+        // The Last.fm auth token is only valid during one sign-in.
+        var snapshot = _values.Where(entry => entry.Key != LastFmAuthTokenKey).ToDictionary(
+            entry => entry.Key,
+            entry => new StoredSetting(entry.Value.GetType().Name, JsonSerializer.SerializeToElement(entry.Value)));
+        return Task.FromResult(JsonSerializer.Serialize(snapshot));
+    }
+
+    public Task ImportAsync(string snapshot)
+    {
+        Dictionary<string, object> values;
+        try
+        {
+            var entries = JsonSerializer.Deserialize<Dictionary<string, StoredSetting>>(snapshot)
+                          ?? throw new JsonException("The settings snapshot is empty.");
+            values = entries.ToDictionary(entry => entry.Key, entry => ToStoredValue(entry.Value));
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or FormatException)
+        {
+            throw new JsonException("The settings snapshot has a value of the wrong type.", ex);
+        }
+
+        _values.Clear();
+        foreach (var (key, value) in values) _values[key] = value;
+        _logger.LogInformation("Imported {Count} settings.", values.Count);
+        return Task.CompletedTask;
+    }
+
+    // Getters check the stored type, so the snapshot records it rather than relying on JSON number kinds.
+    private static object ToStoredValue(StoredSetting setting) => setting.Type switch
+    {
+        nameof(Boolean) => setting.Value.GetBoolean(),
+        nameof(Int32) => setting.Value.GetInt32(),
+        nameof(Int64) => setting.Value.GetInt64(),
+        nameof(Double) => setting.Value.GetDouble(),
+        nameof(String) => setting.Value.GetString()!,
+        _ => throw new JsonException($"Unsupported setting type '{setting.Type}'.")
+    };
+
+    private sealed record StoredSetting(string Type, JsonElement Value);
 
     internal async Task ResetStoredValuesAsync()
     {
@@ -239,14 +281,14 @@ public partial class SettingsService : IUISettingsService
     {
         return new List<NavigationItemSetting>
         {
-            new() { DisplayName = Strings.Settings_Nav_Library, Tag = "Library", IconGlyph = "\uE8F1", IsEnabled = true },
-            new() { DisplayName = Strings.Settings_Nav_Folders, Tag = "Folders", IconGlyph = "\uE8B7", IsEnabled = true },
-            new() { DisplayName = Strings.Settings_Nav_Playlists, Tag = "Playlists", IconGlyph = "\uE90B", IsEnabled = true },
-            new() { DisplayName = Strings.Settings_Nav_Artists, Tag = "Artists", IconGlyph = "\uE77B", IsEnabled = true },
-            new() { DisplayName = Strings.Settings_Nav_Albums, Tag = "Albums", IconGlyph = "\uE93C", IsEnabled = true },
-            new() { DisplayName = Strings.Settings_Nav_Genres, Tag = "Genres", IconGlyph = "\uE8EC", IsEnabled = true },
-            new() { DisplayName = Strings.Settings_Nav_Insights, Tag = "Insights", IconGlyph = "\uE9D2", IsEnabled = false },
-            new() { DisplayName = Strings.Listening_Favorites, Tag = "Favorites", IconGlyph = "\uEB51", IsEnabled = false }
+            new() { DisplayName = Strings.Settings_Nav_Library, Tag = "Library", Icon = AppIcon.Library, IsEnabled = true },
+            new() { DisplayName = Strings.Settings_Nav_Folders, Tag = "Folders", Icon = AppIcon.Folders, IsEnabled = true },
+            new() { DisplayName = Strings.Settings_Nav_Playlists, Tag = "Playlists", Icon = AppIcon.Playlists, IsEnabled = true },
+            new() { DisplayName = Strings.Settings_Nav_Artists, Tag = "Artists", Icon = AppIcon.Artists, IsEnabled = true },
+            new() { DisplayName = Strings.Settings_Nav_Albums, Tag = "Albums", Icon = AppIcon.Albums, IsEnabled = true },
+            new() { DisplayName = Strings.Settings_Nav_Genres, Tag = "Genres", Icon = AppIcon.Genres, IsEnabled = true },
+            new() { DisplayName = Strings.Settings_Nav_Insights, Tag = "Insights", Icon = AppIcon.Insights, IsEnabled = false },
+            new() { DisplayName = Strings.Listening_Favorites, Tag = "Favorites", Icon = AppIcon.Favorites, IsEnabled = false }
         };
     }
 
@@ -254,15 +296,15 @@ public partial class SettingsService : IUISettingsService
     {
         return new List<PlayerButtonSetting>
         {
-            new() { Id = "Shuffle", DisplayName = Strings.Settings_Button_Shuffle, IconGlyph = "\uE8B1", IsEnabled = true },
-            new() { Id = "Previous", DisplayName = Strings.Settings_Button_Previous, IconGlyph = "\uE892", IsEnabled = true },
-            new() { Id = "PlayPause", DisplayName = Strings.Settings_Button_PlayPause, IconGlyph = "\uE768", IsEnabled = true },
-            new() { Id = "Next", DisplayName = Strings.Settings_Button_Next, IconGlyph = "\uE893", IsEnabled = true },
-            new() { Id = "Repeat", DisplayName = Strings.Settings_Button_Repeat, IconGlyph = "\uE8EE", IsEnabled = true },
-            new() { Id = "Separator", DisplayName = Strings.Settings_Button_Divider, IconGlyph = string.Empty, IsEnabled = true },
-            new() { Id = "Lyrics", DisplayName = Strings.Settings_Button_Lyrics, IconGlyph = "\uED1E", IsEnabled = true },
-            new() { Id = "Queue", DisplayName = Strings.Settings_Button_Queue, IconGlyph = "\uE90B", IsEnabled = true },
-            new() { Id = "Volume", DisplayName = Strings.Settings_Button_Volume, IconGlyph = "\uE767", IsEnabled = true }
+            new() { Id = "Shuffle", DisplayName = Strings.Settings_Button_Shuffle, Icon = AppIcon.Shuffle, IsEnabled = true },
+            new() { Id = "Previous", DisplayName = Strings.Settings_Button_Previous, Icon = AppIcon.Previous, IsEnabled = true },
+            new() { Id = "PlayPause", DisplayName = Strings.Settings_Button_PlayPause, Icon = AppIcon.Play, IsEnabled = true },
+            new() { Id = "Next", DisplayName = Strings.Settings_Button_Next, Icon = AppIcon.Next, IsEnabled = true },
+            new() { Id = "Repeat", DisplayName = Strings.Settings_Button_Repeat, Icon = AppIcon.RepeatAll, IsEnabled = true },
+            new() { Id = "Separator", DisplayName = Strings.Settings_Button_Divider, IsEnabled = true },
+            new() { Id = "Lyrics", DisplayName = Strings.Settings_Button_Lyrics, Icon = AppIcon.Lyrics, IsEnabled = true },
+            new() { Id = "Queue", DisplayName = Strings.Settings_Button_Queue, Icon = AppIcon.Queue, IsEnabled = true },
+            new() { Id = "Volume", DisplayName = Strings.Settings_Button_Volume, Icon = AppIcon.VolumeHigh, IsEnabled = true }
         };
     }
 }

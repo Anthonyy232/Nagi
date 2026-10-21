@@ -629,15 +629,6 @@ Comhaid nár fhéad a iompórtáil: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Ar Aghaidh</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>Tharla earráid neamhshonraithe le LibVLC.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Earráid LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Theip ar '{0}' a luchtú.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Leabharlann</value>
   </data>
@@ -725,9 +716,6 @@ Comhaid nár fhéad a iompórtáil: {0}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Cealaigh</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Fillteán Anaithnid</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cuardaigh san fhillteán</value>
   </data>
@@ -776,14 +764,8 @@ Comhaid nár fhéad a iompórtáil: {0}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cuardaigh sa seánra</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Seinmliosta Anaithnid</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cuardaigh sa seinmliosta cliste</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Seinmliosta Cliste Anaithnid</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Athscan Meiteashonraí</value>
@@ -2405,5 +2387,13 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Níl seinmliostaí ar fáil</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>Tá FFmpeg ag teastáil chun amhráin a anailísiú le haghaidh normalú airde fuaime, ach níorbh fhéidir le Nagi é a aimsiú.
+
+1. Íoslódáil leagan do Windows ó https://ffmpeg.org/download.html.
+2. Bain na comhaid as an gcartlann agus aimsigh ffmpeg.exe ina fhillteán bin.
+3. Cuir an fillteán ina bhfuil ffmpeg.exe le do PATH Windows.
+4. Atosaigh Nagi, ansin cumasaigh normalú airde fuaime arís.</value>
   </data>
 </root>

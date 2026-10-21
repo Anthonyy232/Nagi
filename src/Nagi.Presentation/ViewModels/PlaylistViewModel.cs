@@ -73,6 +73,8 @@ public partial class PlaylistViewModelItem : ObservableObject
         (false, true) => Strings.Playlist_Count_Singular,
         _ => Strings.Playlist_Count_Plural
     }, SongCount);
+
+    public override string ToString() => Name;
 }
 
 public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
@@ -299,8 +301,15 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     {
         if (_isDisposed || IsAnyOperationInProgress) return;
 
-        var created = await _uiService.ShowSmartPlaylistEditorAsync();
-        if (created is not null && !_isDisposed) await LoadPlaylistsAsync();
+        try
+        {
+            var created = await _uiService.ShowSmartPlaylistEditorAsync();
+            if (created is not null && !_isDisposed) await LoadPlaylistsAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create a smart playlist");
+        }
     }
 
     [RelayCommand]

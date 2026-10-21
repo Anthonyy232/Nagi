@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>क्रमबद्ध करें: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>वॉल्यूम नॉर्मलाइज़ेशन के लिए गानों का विश्लेषण करने हेतु FFmpeg की आवश्यकता है, लेकिन Nagi को यह नहीं मिला।
-
-1. https://ffmpeg.org/download.html से Windows बिल्ड डाउनलोड करें।
-2. आर्काइव को एक्सट्रैक्ट करें और इसके bin फ़ोल्डर में ffmpeg.exe खोजें।
-3. ffmpeg.exe वाले फ़ोल्डर को अपने Windows PATH में जोड़ें।
-4. Nagi को पुनरारंभ करें, फिर वॉल्यूम नॉर्मलाइज़ेशन को पुनः सक्षम करें।</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>प्लेलिस्ट बना दी गई थी, लेकिन इसके गाने जोड़े नहीं जा सके। कृपया पुनः इंपोर्ट करने का प्रयास करें।</value>
   </data>
@@ -323,5 +315,14 @@
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>चुनी गई फ़ाइल मान्य Nagi बैकअप नहीं है।</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC को एक अनिर्दिष्ट त्रुटि का सामना करना पड़ा।</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>LibVLC त्रुटि: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>'{0}' लोड करने में विफल।</value>
   </data>
 </root>

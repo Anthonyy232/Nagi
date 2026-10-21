@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Sortér efter: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg er nødvendig for at analysere sange til lydstyrkenormalisering, men Nagi kunne ikke finde det.
-
-1. Download en Windows-version fra https://ffmpeg.org/download.html.
-2. Udpak arkivet, og find ffmpeg.exe i dets bin-mappe.
-3. Tilføj mappen, der indeholder ffmpeg.exe, til din Windows PATH.
-4. Genstart Nagi, og slå lydstyrkenormalisering til igen.</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>Spillelisten blev oprettet, men dens sange kunne ikke tilføjes. Prøv at importere igen.</value>
   </data>
@@ -323,5 +315,14 @@
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>Den valgte fil er ikke en gyldig Nagi-sikkerhedskopi.</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC stødte på en uspecificeret fejl.</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>LibVLC-fejl: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>Kunne ikke indlæse '{0}'.</value>
   </data>
 </root>

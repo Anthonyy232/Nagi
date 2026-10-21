@@ -47,11 +47,11 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         TimeProvider? timeProvider = null)
         : base(dispatcherService, logger)
     {
-        _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-        _themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
-        _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
-        _appInfoService = appInfoService ?? throw new ArgumentNullException(nameof(appInfoService));
-        _applicationLifecycle = applicationLifecycle ?? throw new ArgumentNullException(nameof(applicationLifecycle));
+        _settingsService = settingsService;
+        _themeService = themeService;
+        _uiService = uiService;
+        _appInfoService = appInfoService;
+        _applicationLifecycle = applicationLifecycle;
         timeProvider ??= TimeProvider.System;
         _navigationItemSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs), timeProvider);
         _playerTintSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(VisualSettingDebounceMs), timeProvider);

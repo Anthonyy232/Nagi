@@ -35,9 +35,9 @@ public sealed class NowPlayingIndicatorBinder : IDisposable
         Brush playingTitleBrush,
         Func<object?, Guid?>? songIdExtractor = null)
     {
-        _listView = listView ?? throw new ArgumentNullException(nameof(listView));
-        _source = source ?? throw new ArgumentNullException(nameof(source));
-        _playingTitleBrush = playingTitleBrush ?? throw new ArgumentNullException(nameof(playingTitleBrush));
+        _listView = listView;
+        _source = source;
+        _playingTitleBrush = playingTitleBrush;
         _songIdExtractor = songIdExtractor ?? (item => (item as Song)?.Id);
 
         _listView.ContainerContentChanging += OnContainerContentChanging;

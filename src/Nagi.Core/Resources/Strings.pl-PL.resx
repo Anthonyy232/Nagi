@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Sortuj według: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>Program FFmpeg jest potrzebny do analizy utworów pod kątem wyrównywania głośności, ale aplikacja Nagi nie mogła go odnaleźć.
-
-1. Pobierz wersję dla systemu Windows ze strony https://ffmpeg.org/download.html.
-2. Rozpakuj archiwum i zlokalizuj plik ffmpeg.exe w folderze bin.
-3. Dodaj folder zawierający plik ffmpeg.exe do zmiennej PATH w systemie Windows.
-4. Uruchom ponownie aplikację Nagi, a następnie ponownie włącz wyrównywanie głośności.</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>Playlista została utworzona, ale nie można było dodać do niej utworów. Spróbuj zaimportować ponownie.</value>
   </data>
@@ -323,5 +315,14 @@
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>Wybrany plik nie jest prawidłową kopią zapasową aplikacji Nagi.</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC napotkało nieokreślony błąd.</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>Błąd LibVLC: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>Nie udało się załadować '{0}'.</value>
   </data>
 </root>

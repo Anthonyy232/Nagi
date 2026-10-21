@@ -629,15 +629,6 @@ Súbory, ktoré sa nepodarilo importovať: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Ďalšie</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC narazil na nešpecifikovanú chybu.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Chyba LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Nepodarilo sa načítať '{0}'.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Knižnica</value>
   </data>
@@ -725,9 +716,6 @@ Súbory, ktoré sa nepodarilo importovať: {0}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Zrušiť</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Neznámy priečinok</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hľadať v priečinku</value>
   </data>
@@ -776,14 +764,8 @@ Súbory, ktoré sa nepodarilo importovať: {0}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hľadať v žánri</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Neznámy zoznam skladieb</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hľadať v inteligentnom zozname skladieb</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Neznámy inteligentný zoznam skladieb</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Prehľadať metadáta</value>
@@ -2405,5 +2387,13 @@ Chcete pokračovať?</value>
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Žiadne dostupné zoznamy skladieb</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>Na analýzu skladieb na vyrovnanie hlasitosti je potrebný FFmpeg, ale aplikácia Nagi ho nemohla nájsť.
+
+1. Stiahnite si verziu pre Windows zo stránky https://ffmpeg.org/download.html.
+2. Rozbaľte archív a vyhľadajte ffmpeg.exe v jeho priečinku bin.
+3. Pridajte priečinok obsahujúci ffmpeg.exe do premennej Windows PATH.
+4. Reštartujte Nagi a znova zapnite vyrovnanie hlasitosti.</value>
   </data>
 </root>

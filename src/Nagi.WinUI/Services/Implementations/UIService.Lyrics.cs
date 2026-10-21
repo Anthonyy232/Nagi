@@ -41,9 +41,7 @@ public partial class UIService
 
         editor.TextChanged += (_, _) => UpdateSaveButton();
         UpdateSaveButton();
-        DialogThemeHelper.ApplyThemeOverrides(dialog);
-
-        return await dialog.ShowAsync() switch
+        return await ShowDialogAsync(dialog) switch
         {
             ContentDialogResult.Primary => new LyricsEdit(LyricsEditAction.Save, editor.Text),
             ContentDialogResult.Secondary => new LyricsEdit(LyricsEditAction.Remove),

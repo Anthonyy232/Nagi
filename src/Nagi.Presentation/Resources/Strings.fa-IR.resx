@@ -629,15 +629,6 @@
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>بعدی</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC با خطای نامشخصی مواجه شد.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>خطای LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>بارگذاری '{0}' ناموفق بود.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>کتابخانه</value>
   </data>
@@ -725,9 +716,6 @@
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>لغو</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>پوشه ناشناس</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>جستجو در پوشه</value>
   </data>
@@ -776,14 +764,8 @@
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>جستجو در سبک</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>لیست پخش ناشناس</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>جستجو در لیست پخش هوشمند</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>لیست پخش هوشمند ناشناس</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>اسکن مجدد فراداده</value>
@@ -2405,5 +2387,13 @@
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>لیست پخش موجود نیست</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>برای تحلیل آهنگ‌ها جهت نرمال‌سازی صدا به FFmpeg نیاز است، اما Nagi نتوانست آن را پیدا کند.
+
+1. یک نسخه ویندوز را از https://ffmpeg.org/download.html دانلود کنید.
+2. فایل آرشیو را استخراج کرده و ffmpeg.exe را در پوشه bin آن پیدا کنید.
+3. پوشه حاوی ffmpeg.exe را به PATH ویندوز خود اضافه کنید.
+4. Nagi را دوباره اجرا کرده و سپس نرمال‌سازی صدا را مجدداً فعال کنید.</value>
   </data>
 </root>

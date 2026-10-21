@@ -629,15 +629,6 @@
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>পরবর্তী</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC একটি অনির্দিষ্ট ত্রুটির সম্মুখীন হয়েছে।</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC ত্রুটি: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>'{0}' লোড করতে ব্যর্থ হয়েছে।</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>লাইব্রেরি</value>
   </data>
@@ -725,9 +716,6 @@
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>বাতিল করুন</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>অজানা ফোল্ডার</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ফোল্ডারে অনুসন্ধান করুন</value>
   </data>
@@ -776,14 +764,8 @@
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>জেনার থেকে খুঁজুন</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>অজানা প্লেলিস্ট</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>স্মার্ট প্লেলিস্টে অনুসন্ধান করুন</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>অজানা স্মার্ট প্লেলিস্ট</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>মেটাডেটা পুনরায় স্ক্যান করুন</value>
@@ -2405,5 +2387,13 @@
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>কোনো প্লেলিস্ট উপলব্ধ নেই</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>ভলিউম নরম্যালাইজেশনের জন্য গান বিশ্লেষণ করতে FFmpeg প্রয়োজন, কিন্তু Nagi এটি খুঁজে পায়নি।
+
+1. https://ffmpeg.org/download.html থেকে একটি Windows বিল্ড ডাউনলোড করুন।
+2. আর্কাইভটি এক্সট্র্যাক্ট করুন এবং এর bin ফোল্ডারে ffmpeg.exe ফাইলটি খুঁজুন।
+3. ffmpeg.exe ধারণকারী ফোল্ডারটি আপনার Windows PATH-এ যোগ করুন।
+4. Nagi রিস্টার্ট করুন, তারপর পুনরায় ভলিউম নরম্যালাইজেশন সক্ষম করুন।</value>
   </data>
 </root>

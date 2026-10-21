@@ -2,6 +2,9 @@
 
 namespace Nagi.Core.Services.Abstractions;
 
+/// <summary>
+///     Plays audio files. Events are raised on the UI thread, which the playback service relies on.
+/// </summary>
 public interface IAudioPlayer : IDisposable
 {
     /// <summary>

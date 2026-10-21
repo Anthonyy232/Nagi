@@ -13,7 +13,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Nagi.Core\Nagi.Core.csproj" />
-        <ProjectReference Include="..\Nagi.Presentation\Nagi.Presentation.csproj" />
     </ItemGroup>
 
     <ItemGroup>

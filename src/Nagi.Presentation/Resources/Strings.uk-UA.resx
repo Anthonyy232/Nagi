@@ -629,15 +629,6 @@
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Наступний</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC зіткнувся з невизначеною помилкою.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Помилка LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Не вдалося завантажити '{0}'.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Бібліотека</value>
   </data>
@@ -725,9 +716,6 @@
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Скасувати</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Невідома папка</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Пошук у папці</value>
   </data>
@@ -776,14 +764,8 @@
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Шукати в жанрі</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Невідомий список відтворення</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Пошук у розумному списку відтворення</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Невідомий розумний список відтворення</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Повторно сканувати метадані</value>
@@ -2405,5 +2387,13 @@
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Немає доступних списків відтворення</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg потрібен для аналізу пісень для нормалізації гучності, але Nagi не вдалося його знайти.
+
+1. Завантажте збірку для Windows із https://ffmpeg.org/download.html.
+2. Розархівуйте архів і знайдіть ffmpeg.exe у його папці bin.
+3. Додайте папку з ffmpeg.exe до змінної PATH у Windows.
+4. Перезапустіть Nagi, а потім знову увімкніть нормалізацію гучності.</value>
   </data>
 </root>

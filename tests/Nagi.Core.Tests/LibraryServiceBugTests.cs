@@ -97,7 +97,6 @@ public class LibraryServiceBugTests : IDisposable
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
         _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
             .Returns(songFiles);
-        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
         _metadataService.ExtractMetadataAsync(Arg.Any<string>(), folder.Path)
             .Returns(call => new SongFileMetadata
             {
@@ -138,7 +137,6 @@ public class LibraryServiceBugTests : IDisposable
             .ToList();
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
         _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories).Returns(files);
-        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
 
         var releaseSlowExtraction = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         _metadataService.ExtractMetadataAsync(Arg.Any<string>(), folder.Path)
@@ -197,7 +195,6 @@ public class LibraryServiceBugTests : IDisposable
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
         _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
             .Returns(new[] { (filePath, DateTime.UtcNow) });
-        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
 
         var extractionStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var allowExtractionToFinish = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -244,7 +241,6 @@ public class LibraryServiceBugTests : IDisposable
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
         _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
             .Returns(new[] { (filePath, DateTime.UtcNow) });
-        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
 
         var extractionStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var allowExtractionToFinish = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -319,7 +315,6 @@ public class LibraryServiceBugTests : IDisposable
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
         _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
             .Returns(new[] { ("C:\\Music\\Scan\\song.mp3", DateTime.UtcNow) });
-        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
 
         var collaboratorName = "Collaborator";
         _metadataService.ExtractMetadataAsync("C:\\Music\\Scan\\song.mp3", Arg.Any<string?>())
@@ -405,7 +400,6 @@ public class LibraryServiceBugTests : IDisposable
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
         _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
             .Returns(new[] { (filePath, modified) });
-        _fileSystem.GetExtension(filePath).Returns(".mp3");
         _metadataService.ExtractMetadataAsync(filePath, folder.Path, false)
             .Returns(new SongFileMetadata
             {
@@ -463,7 +457,6 @@ public class LibraryServiceBugTests : IDisposable
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
         _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
             .Returns(new[] { ("C:\\Music\\TrimTest\\song1.mp3", DateTime.UtcNow), ("C:\\Music\\TrimTest\\song2.mp3", DateTime.UtcNow) });
-        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
 
         _metadataService.ExtractMetadataAsync("C:\\Music\\TrimTest\\song1.mp3", Arg.Any<string?>())
             .Returns(new SongFileMetadata

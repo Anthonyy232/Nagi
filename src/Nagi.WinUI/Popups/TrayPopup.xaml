@@ -70,6 +70,7 @@
                     </StackPanel>
 
                     <Slider x:Name="MediaSeekerSlider"
+                            AutomationProperties.Name="{x:Bind resources:Strings.Player_SeekSlider_Name, Mode=OneTime}"
                             Grid.Row="1"
                             Maximum="{Binding TotalDuration, Converter={StaticResource SliderMaximumConverter}}" Value="{Binding CurrentPosition, Mode=TwoWay}"
                             ThumbToolTipValueConverter="{StaticResource TimeSpanToTimeStringConverter}"
@@ -87,7 +88,7 @@
                                 ToolTipService.ToolTip="{Binding ShuffleButtonToolTip}"
                                 AutomationProperties.Name="{Binding ShuffleButtonToolTip}">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                      Glyph="{Binding ShuffleIconGlyph}"
+                                      Glyph="{Binding ShuffleIcon, Converter={StaticResource AppIconToGlyphConverter}}"
                                       Opacity="{Binding IsShuffleEnabled, Converter={StaticResource ToggleIconOpacityConverter}}" />
                         </Button>
                         <Button Command="{Binding PreviousCommand}" Style="{StaticResource MediaControlButtonStyle}"
@@ -99,7 +100,7 @@
                                 ToolTipService.ToolTip="{Binding PlayPauseButtonToolTip}"
                                 AutomationProperties.Name="{Binding PlayPauseButtonToolTip}">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="24"
-                                      Glyph="{Binding PlayPauseIconGlyph}" />
+                                      Glyph="{Binding PlayPauseIcon, Converter={StaticResource AppIconToGlyphConverter}}" />
                         </Button>
                         <Button Command="{Binding NextCommand}" Style="{StaticResource MediaControlButtonStyle}"
                                 ToolTipService.ToolTip="{x:Bind resources:Strings.TrayPopup_NextButton_ToolTip, Mode=OneTime}"
@@ -110,7 +111,7 @@
                                 ToolTipService.ToolTip="{Binding RepeatButtonToolTip}"
                                 AutomationProperties.Name="{Binding RepeatButtonToolTip}">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                      Glyph="{Binding RepeatIconGlyph}" />
+                                      Glyph="{Binding RepeatIcon, Converter={StaticResource AppIconToGlyphConverter}}" />
                         </Button>
                         <Button Command="{Binding ShowQueueViewCommand}" Style="{StaticResource MediaControlButtonStyle}"
                                 ToolTipService.ToolTip="{x:Bind resources:Strings.TrayPopup_QueueButton_ToolTip, Mode=OneTime}"
@@ -125,12 +126,12 @@
                                 <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                           FontSize="20"
                                           Foreground="{ThemeResource TextFillColorDisabledBrush}"
-                                          Glyph="{Binding VolumeIconGlyph}" />
+                                          Glyph="{Binding VolumeIcon, Converter={StaticResource AppIconToGlyphConverter}}" />
                                 <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                           FontSize="20"
                                           Foreground="{StaticResource AppPrimaryColorBrush}"
                                           Clip="{Binding CurrentVolume, Converter={StaticResource VolumeToClipRectConverter}, ConverterParameter='20'}"
-                                          Glyph="{Binding VolumeIconGlyph}" />
+                                          Glyph="{Binding VolumeIcon, Converter={StaticResource AppIconToGlyphConverter}}" />
                             </Grid>
                         </Button>
                     </StackPanel>

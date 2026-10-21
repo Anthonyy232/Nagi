@@ -7,8 +7,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using System.Threading;
-using Nagi.Presentation.Resources;
-using Nagi.Presentation.Services.Abstractions;
+using Nagi.Core.Resources;
 
 namespace Nagi.Audio.LibVlc;
 
@@ -74,11 +73,11 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         ISettingsService settingsService,
         ILogger<LibVlcAudioPlayerService> logger)
     {
-        _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
-        _mediaControls = mediaControls ?? throw new ArgumentNullException(nameof(mediaControls));
-        _appInfoService = appInfoService ?? throw new ArgumentNullException(nameof(appInfoService));
-        _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _dispatcherService = dispatcherService;
+        _mediaControls = mediaControls;
+        _appInfoService = appInfoService;
+        _settingsService = settingsService;
+        _logger = logger;
         _disposeTask = new Lazy<Task>(DisposeCoreAsync);
         _mediaControls.PlayPressed += OnMediaControlsPlayPressed;
         _mediaControls.PausePressed += OnMediaControlsPausePressed;

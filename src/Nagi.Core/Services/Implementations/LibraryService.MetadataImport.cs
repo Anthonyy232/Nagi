@@ -188,7 +188,7 @@ public partial class LibraryService
                 {
                     foreach (var metadata in batch)
                     {
-                        var dir = _fileSystem.GetDirectoryName(metadata.FilePath);
+                        var dir = Path.GetDirectoryName(metadata.FilePath);
                         if (dir != null) discoveredDirectories.Add(dir);
                     }
                     batchNumber++;
@@ -541,7 +541,7 @@ public partial class LibraryService
             .Select(name => genreLookup[name!])
             .ToList();
 
-        var directoryPath = _fileSystem.GetDirectoryName(metadata.FilePath) ?? string.Empty;
+        var directoryPath = Path.GetDirectoryName(metadata.FilePath) ?? string.Empty;
 
         var song = existingSong ?? new Song();
 

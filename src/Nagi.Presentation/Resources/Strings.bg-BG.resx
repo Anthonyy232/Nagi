@@ -629,15 +629,6 @@
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Следваща</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC срещна неуточнена грешка.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Грешка на LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Неуспешно зареждане на '{0}'.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Библиотека</value>
   </data>
@@ -725,9 +716,6 @@
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Отказ</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Неизвестна папка</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Търсене в папка</value>
   </data>
@@ -776,14 +764,8 @@
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Търсене в жанра</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Неизвестен плейлист</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Търсене в интелигентен плейлист</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Неизвестен интелигентен плейлист</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Повторно сканиране на метаданни</value>
@@ -2405,5 +2387,13 @@
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Няма налични плейлисти</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg е необходим за анализиране на песните за нормализиране на силата на звука, но Nagi не можа да го намери.
+
+1. Изтеглете версия за Windows от https://ffmpeg.org/download.html.
+2. Разархивирайте архива и намерете ffmpeg.exe в неговата папка bin.
+3. Добавете папката, съдържаща ffmpeg.exe, към вашия Windows PATH.
+4. Рестартирайте Nagi и активирайте отново нормализирането на силата на звука.</value>
   </data>
 </root>

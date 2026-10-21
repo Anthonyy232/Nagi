@@ -629,15 +629,6 @@
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>அடுத்த</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC ஒரு குறிப்பிடப்படாத பிழையை எதிர்கொண்டது.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC பிழை: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>'{0}' ஐ ஏற்றத் தவறிவிட்டது.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>நூலகம்</value>
   </data>
@@ -725,9 +716,6 @@
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>ரத்துசெய்</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>தெரியாத கோப்புறை</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>கோப்புறையில் தேடு</value>
   </data>
@@ -776,14 +764,8 @@
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>வகையில் தேடு</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>தெரியாத பிளேலிஸ்ட்</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ஸ்மார்ட் பிளேலிஸ்ட்டில் தேடு</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>தெரியாத ஸ்மார்ட் பிளேலிஸ்ட்</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>மெட்டாடேட்டாவை மறு ஸ்கேன் செய்</value>
@@ -2405,5 +2387,13 @@
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>பிளேலிஸ்ட்கள் எதுவும் இல்லை</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>ஒலிளவைச் சீராக்கப் பாடல்களைப் பகுப்பாய்வு செய்ய FFmpeg தேவை, ஆனால் Nagi செயலால் அதைக் கண்டறிய முடியவில்லை.
+
+1. https://ffmpeg.org/download.html இலிருந்து Windows பதிப்பைப் பதிவிறக்கவும்.
+2. காப்பகத்தைப் பிரித்தெடுத்து, அதன் bin கோப்புறையில் ffmpeg.exe-ஐக் கண்டறியவும்.
+3. ffmpeg.exe இருக்கும் கோப்புறையை உங்கள் Windows PATH-இல் சேர்க்கவும்.
+4. Nagi-ஐ மீண்டும் தொடங்கி, ஒலிளவு சீரமைப்பை மீண்டும் இயலுமைப்படுத்தவும்.</value>
   </data>
 </root>

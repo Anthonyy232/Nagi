@@ -79,8 +79,7 @@ public partial class UIService
         inputTextBox.TextChanged += (_, _) =>
             dialog.IsPrimaryButtonEnabled = !string.IsNullOrWhiteSpace(inputTextBox.Text);
 
-        DialogThemeHelper.ApplyThemeOverrides(dialog);
-        var result = await dialog.ShowAsync();
+        var result = await ShowDialogAsync(dialog);
         return result == ContentDialogResult.Primary ? new NewPlaylistRequest(inputTextBox.Text, coverImagePath) : null;
     }
 
@@ -104,8 +103,7 @@ public partial class UIService
             dialog.IsPrimaryButtonEnabled = !string.IsNullOrWhiteSpace(inputTextBox.Text) &&
                                             inputTextBox.Text.Trim() != currentName;
 
-        DialogThemeHelper.ApplyThemeOverrides(dialog);
-        var result = await dialog.ShowAsync();
+        var result = await ShowDialogAsync(dialog);
         return result == ContentDialogResult.Primary ? inputTextBox.Text : null;
     }
 }

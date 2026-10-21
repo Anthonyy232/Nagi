@@ -28,7 +28,6 @@ public class LibraryServiceEventTests : IDisposable
     {
         _fileSystem = Substitute.For<IFileSystemService>();
         _fileSystem.NormalizePath(Arg.Any<string>()).Returns(call => PathCanonicalizer.Normalize(call.Arg<string>()));
-        _fileSystem.GetFileName(Arg.Any<string>()).Returns(call => Path.GetFileName(call.Arg<string>()));
         _metadataService = Substitute.For<IMetadataService>();
 
         _dbHelper = new DbContextFactoryTestHelper();
@@ -112,7 +111,6 @@ public class LibraryServiceEventTests : IDisposable
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
         _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, Arg.Any<string>(), Arg.Any<SearchOption>())
             .Returns(new[] { ("C:\\Music\\ScanChanges\\new.mp3", DateTime.UtcNow) });
-        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
 
         _metadataService.ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>())
             .Returns(new SongFileMetadata { FilePath = "C:\\Music\\ScanChanges\\new.mp3", Title = "New Song" });
@@ -140,7 +138,6 @@ public class LibraryServiceEventTests : IDisposable
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
         _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, Arg.Any<string>(), Arg.Any<SearchOption>())
             .Returns(new[] { ("C:\\Music\\ScanChanges\\new.mp3", DateTime.UtcNow) });
-        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
         _metadataService.ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>())
             .Returns(new SongFileMetadata { FilePath = "C:\\Music\\ScanChanges\\new.mp3", Title = "New Song" });
 
@@ -172,7 +169,6 @@ public class LibraryServiceEventTests : IDisposable
             .Returns(new[] { (firstFile, DateTime.UtcNow) });
         _fileSystem.EnumerateFilesWithLastWriteTime(finalFolder.Path, "*.*", SearchOption.AllDirectories)
             .Returns(new[] { (finalFile, DateTime.UtcNow) });
-        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
 
         using var cts = new CancellationTokenSource();
         _metadataService.ExtractMetadataAsync(firstFile, firstFolder.Path)

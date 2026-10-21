@@ -82,7 +82,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         RemoveSelectedSongsFromPlaylistCommand.NotifyCanExecuteChanged();
     }
 
-    public async Task InitializeAsync(string title, Guid? playlistId, string? coverImageUri = null)
+    public async Task InitializeAsync(string title, Guid playlistId, string? coverImageUri = null)
     {
         if (_isDisposed) return;
         ResetState();
@@ -93,7 +93,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         {
             PageTitle = title;
             _currentPlaylistId = playlistId;
-            IsCurrentViewAPlaylist = playlistId.HasValue;
+            IsCurrentViewAPlaylist = true;
             CoverImageUri = coverImageUri;
 
             await RefreshOrSortSongsCommand.ExecuteAsync(null);

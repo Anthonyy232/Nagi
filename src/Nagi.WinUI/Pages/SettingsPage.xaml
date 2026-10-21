@@ -267,6 +267,7 @@
 
                 <!-- Player Styling Settings -->
                 <controls:SettingsExpander
+                    AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_PlayerStyling_Header, Mode=OneTime}"
                     Description="{x:Bind resources:Strings.SettingsPage_PlayerStyling_Description, Mode=OneTime}">
                     <controls:SettingsExpander.Header>
                         <Grid HorizontalAlignment="Left" ColumnSpacing="8">
@@ -293,6 +294,7 @@
                         MinWidth="300"
                         HorizontalAlignment="Right"
                         ItemsSource="{x:Bind ViewModel.Appearance.AvailablePlayerBackgroundMaterials}"
+                        AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_PlayerStyling_Header, Mode=OneTime}"
                         SelectedItem="{x:Bind ViewModel.Appearance.SelectedPlayerBackgroundMaterial, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="models:PlayerBackgroundMaterial">
@@ -315,6 +317,7 @@
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
                                 <Slider
                                     Width="300"
+                                    AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_TintIntensity_Header, Mode=OneTime}"
                                     VerticalAlignment="Center"
                                     Maximum="1.0"
                                     Minimum="0.0"
@@ -427,7 +430,7 @@
                                         VerticalAlignment="Center"
                                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                         Foreground="{ThemeResource AppPrimaryColorBrush}"
-                                        Glyph="{x:Bind IconGlyph}" />
+                                        Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(Icon)}" />
 
                                     <TextBlock
                                         Grid.Column="2"
@@ -439,6 +442,7 @@
                                     <ToggleSwitch
                                         Grid.Column="3"
                                         VerticalAlignment="Center"
+                                        AutomationProperties.Name="{x:Bind DisplayName}"
                                         IsOn="{x:Bind IsEnabled, Mode=TwoWay}" />
                                 </Grid>
                             </DataTemplate>
@@ -512,6 +516,7 @@
                                     VerticalAlignment="Center"
                                     Maximum="1000"
                                     Minimum="0"
+                                    AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_FadeInDuration_Header, Mode=OneTime}"
                                     StepFrequency="50"
                                     Style="{StaticResource DefaultSliderStyle}"
                                     Value="{x:Bind ViewModel.Audio.FadeInDurationMs, Mode=TwoWay}" />
@@ -532,6 +537,7 @@
                                     VerticalAlignment="Center"
                                     Maximum="1000"
                                     Minimum="0"
+                                    AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_FadeOutDuration_Header, Mode=OneTime}"
                                     StepFrequency="50"
                                     Style="{StaticResource DefaultSliderStyle}"
                                     Value="{x:Bind ViewModel.Audio.FadeOutDurationMs, Mode=TwoWay}" />
@@ -568,6 +574,7 @@
                         <StackPanel Spacing="6" Width="320">
                             <TextBlock FontWeight="SemiBold" Text="{x:Bind resources:Strings.SettingsPage_Equalizer_Preamp, Mode=OneTime}" HorizontalAlignment="Center" />
                             <Slider
+                                AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_Equalizer_Preamp, Mode=OneTime}"
                                 Maximum="20"
                                 Minimum="-20"
                                 StepFrequency="0.1"
@@ -600,6 +607,7 @@
                                                 Opacity="0.5" />
                                             <!-- Vertical slider -->
                                             <Slider
+                                                AutomationProperties.Name="{x:Bind AccessibleName}"
                                                 HorizontalAlignment="Center"
                                                 Maximum="20"
                                                 Minimum="-20"
@@ -622,6 +630,7 @@
                             HorizontalAlignment="Center"
                             MinWidth="160"
                             ItemsSource="{x:Bind ViewModel.Audio.AvailableEqualizerPresets}"
+                            AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_EqualizerPreset_Name, Mode=OneTime}"
                             PlaceholderText="{x:Bind resources:Strings.SettingsPage_Equalizer_Preset_Custom_Placeholder, Mode=OneTime}"
                             SelectedItem="{x:Bind ViewModel.Audio.SelectedEqualizerPreset, Mode=TwoWay}">
                             <ComboBox.ItemTemplate>
@@ -755,6 +764,7 @@
                                                     Width="36"
                                                     Height="36"
                                                     HorizontalAlignment="Center"
+                                                    AutomationProperties.AccessibilityView="Raw"
                                                     IsHitTestVisible="False"
                                                     Opacity="{x:Bind IsEnabled, Converter={StaticResource BooleanToOpacityConverter}, Mode=OneWay}"
                                                     Style="{StaticResource MediaControlButtonStyle}">
@@ -762,7 +772,7 @@
                                                         <FontIcon
                                                             FontFamily="{StaticResource SymbolThemeFontFamily}"
                                                             FontSize="14"
-                                                            Glyph="{x:Bind IconGlyph}"
+                                                            Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(Icon)}"
                                                             Visibility="{x:Bind IsNotSeparator, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                                         <Rectangle Width="1" Height="20"
                                                                    Fill="{ThemeResource TextFillColorSecondaryBrush}"
@@ -772,6 +782,7 @@
 
                                                 <ToggleSwitch
                                                     x:Name="EnableDisableToggle"
+                                                    AutomationProperties.Name="{x:Bind DisplayName}"
                                                     Width="40"
                                                     Margin="0"
                                                     HorizontalAlignment="Center"

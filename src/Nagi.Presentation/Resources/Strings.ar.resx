@@ -626,15 +626,6 @@
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>التالي</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>واجه LibVLC خطأ غير محدد.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>خطأ LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>فشل تحميل '{0}'.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>المكتبة</value>
   </data>
@@ -722,9 +713,6 @@
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>إلغاء</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>مجلد غير معروف</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>البحث في المجلد</value>
   </data>
@@ -773,14 +761,8 @@
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>البحث في النوع</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>قائمة تشغيل غير معروفة</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>البحث في قائمة التشغيل الذكية</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>قائمة تشغيل ذكية غير معروفة</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>إعادة فحص البيانات الوصفية</value>
@@ -2315,5 +2297,13 @@
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>لا توجد قوائم تشغيل متاحة</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>يلزم وجود FFmpeg لتحليل الأغاني لمعايرة مستوى الصوت، لكن تعذر على Nagi العثور عليه.
+
+1. نزّل نسخة Windows من https://ffmpeg.org/download.html.
+2. استخرج الأرشيف وابحث عن ffmpeg.exe في مجلد bin الخاص به.
+3. أضف المجلد الذي يحتوي على ffmpeg.exe إلى PATH في Windows.
+4. أعد تشغيل Nagi، ثم فعّل معايرة مستوى الصوت مجددًا.</value>
   </data>
 </root>

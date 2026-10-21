@@ -13,17 +13,14 @@ public class ApplicationLifecycle : IApplicationLifecycle
     private readonly MainWindow _window;
     private readonly IWindowService _windowService;
     private readonly ILibraryReader _libraryReader;
-    private readonly ILibraryWriter _libraryWriter;
     private readonly IUISettingsService _settingsService;
     private readonly IThemeService _themeService;
-    private readonly IMusicPlaybackService _playbackService;
     private readonly Func<MainPage> _createMainPage;
     private readonly Func<OnboardingPage> _createOnboardingPage;
     private readonly ILogger<ApplicationLifecycle> _logger;
 
     public ApplicationLifecycle(MainWindow window, IWindowService windowService, ILibraryReader libraryReader,
-        ILibraryWriter libraryWriter, IUISettingsService settingsService, IThemeService themeService,
-        IMusicPlaybackService playbackService, Func<MainPage> createMainPage,
+        IUISettingsService settingsService, IThemeService themeService, Func<MainPage> createMainPage,
         Func<OnboardingPage> createOnboardingPage, ILogger<ApplicationLifecycle> logger)
     {
         _createMainPage = createMainPage;
@@ -31,10 +28,8 @@ public class ApplicationLifecycle : IApplicationLifecycle
         _window = window;
         _windowService = windowService;
         _libraryReader = libraryReader;
-        _libraryWriter = libraryWriter;
         _settingsService = settingsService;
         _themeService = themeService;
-        _playbackService = playbackService;
         _logger = logger;
     }
 
@@ -66,32 +61,4 @@ public class ApplicationLifecycle : IApplicationLifecycle
     }
 
     public void Restart() => AppInstance.Restart("");
-
-    /// <summary>
-    ///     Resets the application to its default state by clearing all settings, library data, and the playback queue,
-    ///     then restarts the application.
-    /// </summary>
-    public async Task ResetAndRestartAsync()
-    {
-        _logger.LogInformation("Starting application reset process.");
-        try
-        {
-            await _settingsService.ResetToDefaultsAsync();
-            _logger.LogDebug("UI settings have been reset.");
-
-            await _libraryWriter.ClearAllLibraryDataAsync();
-            _logger.LogDebug("Library data has been cleared.");
-
-            await _playbackService.ClearQueueAsync();
-            _logger.LogDebug("Playback queue has been cleared.");
-
-            _logger.LogInformation("Application reset completed successfully. Restarting...");
-            Restart();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogCritical(ex, "A critical failure occurred during the application reset process.");
-            throw;
-        }
-    }
 }

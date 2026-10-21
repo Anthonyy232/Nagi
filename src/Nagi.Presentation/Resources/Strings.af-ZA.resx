@@ -629,15 +629,6 @@ Lêers wat nie ingevoer kon word nie: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Volgende</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC het 'n ongespesifiseerde fout teëgekom.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC Fout: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Kon nie '{0}' laai nie.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Biblioteek</value>
   </data>
@@ -725,9 +716,6 @@ Lêers wat nie ingevoer kon word nie: {0}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Kanselleer</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Onbekende Vouer</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Soek in vouer</value>
   </data>
@@ -776,14 +764,8 @@ Lêers wat nie ingevoer kon word nie: {0}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Soek in genre</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Onbekende Snitlys</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Soek in slim snitlys</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Onbekende Slim Snitlys</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Herskandeer Metadata</value>
@@ -2405,5 +2387,13 @@ Wil jy voortgaan?</value>
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Geen snitlyste beskikbaar nie</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg is benodig om liedjies vir volumenormalisering te ontleed, maar Nagi kon dit nie vind nie.
+
+1. Laai 'n Windows-weergawe af vanaf https://ffmpeg.org/download.html.
+2. Pak die argief uit en spoor ffmpeg.exe in die bin-vouer daarvan op.
+3. Voeg die vouer wat ffmpeg.exe bevat by jou Windows PATH.
+4. Herbegin Nagi en aktiveer dan weer volumenormalisering.</value>
   </data>
 </root>

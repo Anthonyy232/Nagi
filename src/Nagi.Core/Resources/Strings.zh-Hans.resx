@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>排序方式：</value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>需要使用 FFmpeg 分析歌曲以进行音量平准化，但 Nagi 无法找到该程序。
-
-1. 从 https://ffmpeg.org/download.html 下载 Windows 版本。
-2. 解压压缩包并在其 bin 文件夹中找到 ffmpeg.exe。
-3. 将包含 ffmpeg.exe 的文件夹添加到 Windows 的 PATH 环境变量中。
-4. 重新启动 Nagi，然后再次启用音量平准化。</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>播放列表已创建，但无法添加其中的歌曲。请尝试重新导入。</value>
   </data>
@@ -323,5 +315,14 @@
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>选中的文件不是有效的 Nagi 备份。</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC 遇到未指定错误。</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>LibVLC 错误：{0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>加载“{0}”失败。</value>
   </data>
 </root>

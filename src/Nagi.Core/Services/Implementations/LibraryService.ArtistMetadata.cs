@@ -261,8 +261,8 @@ public partial class LibraryService
         try
         {
             return _fileSystem.GetFiles(directory, "*.*").FirstOrDefault(filePath =>
-                FileExtensions.ImageFileExtensions.Contains(_fileSystem.GetExtension(filePath)) &&
-                _fileSystem.GetFileNameWithoutExtension(filePath)
+                FileExtensions.ImageFileExtensions.Contains(Path.GetExtension(filePath)) &&
+                Path.GetFileNameWithoutExtension(filePath)
                     .Equals(FileExtensions.ArtistImageFileName, StringComparison.OrdinalIgnoreCase));
         }
         catch (Exception ex)
@@ -302,8 +302,8 @@ public partial class LibraryService
     {
         var directories = songDirectories.OfType<string>().Where(dir => dir.Length > 0)
             .Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
-        var parents = directories.Select(_fileSystem.GetDirectoryName).OfType<string>()
-            .Where(parent => parent.Length > 0 && !string.IsNullOrEmpty(_fileSystem.GetDirectoryName(parent)));
+        var parents = directories.Select(Path.GetDirectoryName).OfType<string>()
+            .Where(parent => parent.Length > 0 && !string.IsNullOrEmpty(Path.GetDirectoryName(parent)));
         return ScanDirectoriesForArtistImageAsync(parents.Concat(directories).Distinct(StringComparer.OrdinalIgnoreCase),
             artistName, ct, directoryCache);
     }
@@ -677,7 +677,7 @@ public partial class LibraryService
 
     private async Task<string?> DownloadAndWriteImageInternalAsync(Guid artistId, Uri imageUrl, CancellationToken cancellationToken)
     {
-        var localPath = _fileSystem.Combine(_pathConfig.ArtistImageCachePath, $"{artistId}.fetched.jpg");
+        var localPath = Path.Combine(_pathConfig.ArtistImageCachePath, $"{artistId}.fetched.jpg");
         if (_fileSystem.FileExists(localPath)) return localPath;
 
         using var httpClient = _httpClientFactory.CreateClient("ImageDownloader");

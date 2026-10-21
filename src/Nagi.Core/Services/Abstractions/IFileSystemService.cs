@@ -1,5 +1,9 @@
 ﻿namespace Nagi.Core.Services.Abstractions;
 
+/// <summary>
+///     File system access, behind an interface so that tests can fake the disk. Pure path manipulation uses
+///     <see cref="Path" /> directly.
+/// </summary>
 public interface IFileSystemService
 {
     bool DirectoryExists(string path);
@@ -19,11 +23,6 @@ public interface IFileSystemService
     DateTime GetLastWriteTimeUtc(string path);
     FileInfo GetFileInfo(string path);
     bool IsHiddenOrSystemFile(string path);
-    string GetFileNameWithoutExtension(string path);
-    string GetFileName(string path);
-    string? GetDirectoryName(string path);
-    string GetExtension(string path);
-    string Combine(params string[] paths);
 
     /// <summary>
     ///     Canonicalizes a folder/file path. Resolves mapped network drives to their UNC backing

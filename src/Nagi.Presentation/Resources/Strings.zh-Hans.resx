@@ -629,15 +629,6 @@
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>下一首</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC 遇到未指定错误。</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC 错误：{0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>加载“{0}”失败。</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>库</value>
   </data>
@@ -725,9 +716,6 @@
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>取消</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>未知文件夹</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>在文件夹中搜索</value>
   </data>
@@ -776,14 +764,8 @@
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>在流派中搜索</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>未知播放列表</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>在智能播放列表中搜索</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>未知智能播放列表</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>重新扫描元数据</value>
@@ -2405,5 +2387,13 @@
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>无可用播放列表</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>需要使用 FFmpeg 分析歌曲以进行音量平准化，但 Nagi 无法找到该程序。
+
+1. 从 https://ffmpeg.org/download.html 下载 Windows 版本。
+2. 解压压缩包并在其 bin 文件夹中找到 ffmpeg.exe。
+3. 将包含 ffmpeg.exe 的文件夹添加到 Windows 的 PATH 环境变量中。
+4. 重新启动 Nagi，然后再次启用音量平准化。</value>
   </data>
 </root>

@@ -629,15 +629,6 @@ Puk ma pe otwero tero i iye: {0, plural, one {#} other {#}}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Luwyo</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC onwanggo bal pe ongenne.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Bal me LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Pe otwero keto '{0}'.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Gwokwer</value>
   </data>
@@ -725,9 +716,6 @@ Puk ma pe otwero tero i iye: {0, plural, one {#} other {#}}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Juk</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Puk Pe Onge</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Reny i puk</value>
   </data>
@@ -776,14 +764,8 @@ Puk ma pe otwero tero i iye: {0, plural, one {#} other {#}}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Reny i kit wer</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Chen Wer Pe Onge</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Reny i chen wer me ryeko</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Chen Wer Me Ryeko Pe Onge</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Ngiy Odoco Lok me Iye</value>
@@ -2405,5 +2387,13 @@ Imide?</value>
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Pe tye chen wer mo</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>Mito FFmpeg me kwano wer me yub me dwong me dwan, ento Nagi pe otwero nwangone.
+
+1. Gam Windows build ki i https://ffmpeg.org/download.html.
+2. Yab archive dok inwang ffmpeg.exe i folder ne me bin.
+3. Med folder ma tye ki ffmpeg.exe i Windows PATH ni.
+4. Cak Nagi odoco, ka icak yub me dwong me dwan odoco.</value>
   </data>
 </root>

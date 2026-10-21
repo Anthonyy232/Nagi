@@ -30,10 +30,10 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
         ILogger<ScrobblingSettingsViewModel> logger)
         : base(dispatcherService, logger)
     {
-        _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-        _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
-        _lastFmAuthService = lastFmAuthService ?? throw new ArgumentNullException(nameof(lastFmAuthService));
-        _listenBrainzScrobblerService = listenBrainzScrobblerService ?? throw new ArgumentNullException(nameof(listenBrainzScrobblerService));
+        _settingsService = settingsService;
+        _uiService = uiService;
+        _lastFmAuthService = lastFmAuthService;
+        _listenBrainzScrobblerService = listenBrainzScrobblerService;
     }
 
     [ObservableProperty]

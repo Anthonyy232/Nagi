@@ -629,15 +629,6 @@ Filer, der ikke kunne importeres: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Næste</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC stødte på en uspecificeret fejl.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC-fejl: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Kunne ikke indlæse '{0}'.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Bibliotek</value>
   </data>
@@ -725,9 +716,6 @@ Filer, der ikke kunne importeres: {0}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Annuller</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Ukendt mappe</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Søg i mappe</value>
   </data>
@@ -776,14 +764,8 @@ Filer, der ikke kunne importeres: {0}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Søg i genre</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Ukendt afspilningsliste</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Søg i smart afspilningsliste</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Ukendt smart afspilningsliste</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Genskan metadata</value>
@@ -2405,5 +2387,13 @@ Vil du fortsætte?</value>
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Ingen afspilningslister tilgængelige</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg er nødvendig for at analysere sange til lydstyrkenormalisering, men Nagi kunne ikke finde det.
+
+1. Download en Windows-version fra https://ffmpeg.org/download.html.
+2. Udpak arkivet, og find ffmpeg.exe i dets bin-mappe.
+3. Tilføj mappen, der indeholder ffmpeg.exe, til din Windows PATH.
+4. Genstart Nagi, og slå lydstyrkenormalisering til igen.</value>
   </data>
 </root>

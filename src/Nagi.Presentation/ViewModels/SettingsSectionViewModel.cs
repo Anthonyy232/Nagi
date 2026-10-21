@@ -4,9 +4,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
-using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -23,7 +23,7 @@ public abstract class SettingsSectionViewModel : ObservableObject, IDisposable
 
     protected SettingsSectionViewModel(IDispatcherService dispatcherService, ILogger logger)
     {
-        _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
+        _dispatcherService = dispatcherService;
         _logger = logger;
     }
 

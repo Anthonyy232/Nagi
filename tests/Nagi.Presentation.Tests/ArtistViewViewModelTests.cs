@@ -49,8 +49,8 @@ public class ArtistViewViewModelTests
         using var viewModel = CreateViewModel(library, scanner, ui);
         await viewModel.LoadArtistDetailsAsync(artistId);
 
-        await viewModel.ChangeArtistImageAsync();
-        await viewModel.RemoveArtistImageAsync();
+        await viewModel.ChangeArtistImageCommand.ExecuteAsync(null);
+        await viewModel.RemoveArtistImageCommand.ExecuteAsync(null);
 
         await library.Writer.Received(1).UpdateArtistImageAsync(artistId, "portrait.png");
         await library.Writer.Received(1).RemoveArtistImageAsync(artistId);
@@ -64,10 +64,11 @@ public class ArtistViewViewModelTests
         ui.PickSingleFileAsync(Arg.Any<IEnumerable<string>>()).Returns((string?)null);
         using var viewModel = CreateViewModel(library, Substitute.For<ILibraryScanner>(), ui);
 
-        await viewModel.ChangeArtistImageAsync();
+        await viewModel.ChangeArtistImageCommand.ExecuteAsync(null);
 
         await library.Writer.DidNotReceiveWithAnyArgs().UpdateArtistImageAsync(default, default!);
     }
+
 
     private static ArtistViewViewModel CreateViewModel(LibraryFakes library, ILibraryScanner scanner, IUIService? ui = null)
     {

@@ -629,15 +629,6 @@ Filer som ikke kunne importeres: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Neste</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC støtte på en uspesifisert feil.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC-feil: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Klarte ikke å laste '{0}'.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Bibliotek</value>
   </data>
@@ -725,9 +716,6 @@ Filer som ikke kunne importeres: {0}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Avbryt</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Ukjent mappe</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Søk i mappe</value>
   </data>
@@ -776,14 +764,8 @@ Filer som ikke kunne importeres: {0}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Søk i sjanger</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Ukjent spilleliste</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Søk i smart spilleliste</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Ukjent smart spilleliste</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Skann metadata på nytt</value>
@@ -2405,5 +2387,13 @@ Vil du fortsette?</value>
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Ingen spillelister tilgjengelig</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg er nødvendig for å analysere sanger for volumutjevning, men Nagi fant det ikke.
+
+1. Last ned en Windows-versjon fra https://ffmpeg.org/download.html.
+2. Pakk ut arkivet og finn ffmpeg.exe i bin-mappen.
+3. Legg til mappen som inneholder ffmpeg.exe i din Windows PATH.
+4. Start Nagi på nytt, og aktiver deretter volumutjevning igjen.</value>
   </data>
 </root>

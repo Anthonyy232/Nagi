@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Sortera efter: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg behövs för att analysera låtar för volymnormalisering, men Nagi kunde inte hitta det.
-
-1. Ladda ned en Windows-version från https://ffmpeg.org/download.html.
-2. Packa upp arkivet och leta reda på ffmpeg.exe i mappen bin.
-3. Lägg till mappen som innehåller ffmpeg.exe i din Windows PATH.
-4. Starta om Nagi och aktivera volymnormalisering igen.</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>Spellistan skapades, men dess låtar kunde inte läggas till. Försök importera igen.</value>
   </data>
@@ -323,5 +315,14 @@
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>Den valda filen är inte en giltig Nagi-säkerhetskopia.</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC stötte på ett ospecificerat fel.</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>LibVLC-fel: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>Kunde inte ladda '{0}'.</value>
   </data>
 </root>

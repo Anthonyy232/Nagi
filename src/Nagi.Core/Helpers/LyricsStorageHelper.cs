@@ -11,15 +11,15 @@ internal static class LyricsStorageHelper
 
         try
         {
-            var directory = fileSystem.GetDirectoryName(audioFilePath);
+            var directory = Path.GetDirectoryName(audioFilePath);
             if (string.IsNullOrEmpty(directory)) return null;
 
-            var audioName = fileSystem.GetFileNameWithoutExtension(audioFilePath);
+            var audioName = Path.GetFileNameWithoutExtension(audioFilePath);
             return fileSystem.GetFiles(directory, "*.lrc")
-                       .FirstOrDefault(path => fileSystem.GetFileNameWithoutExtension(path)
+                       .FirstOrDefault(path => Path.GetFileNameWithoutExtension(path)
                            .Equals(audioName, StringComparison.OrdinalIgnoreCase))
                    ?? fileSystem.GetFiles(directory, "*.txt")
-                       .FirstOrDefault(path => fileSystem.GetFileNameWithoutExtension(path)
+                       .FirstOrDefault(path => Path.GetFileNameWithoutExtension(path)
                            .Equals(audioName, StringComparison.OrdinalIgnoreCase));
         }
         catch (Exception ex)

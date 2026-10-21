@@ -629,15 +629,6 @@ Faili ambazo hazikuweza kuingizwa: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Inayofuata</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC imekumbana na hitilafu isiyojulikana.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Hitilafu ya LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Imeshindwa kupakia '{0}'.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Maktaba</value>
   </data>
@@ -725,9 +716,6 @@ Faili ambazo hazikuweza kuingizwa: {0}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Ghairi</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Folda Isiyojulikana</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tafuta ndani ya folda</value>
   </data>
@@ -776,14 +764,8 @@ Faili ambazo hazikuweza kuingizwa: {0}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tafuta katika aina ya muziki</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Orodha ya Kucheza Isiyojulikana</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tafuta ndani ya orodha ya kucheza nadhifu</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Orodha ya Kucheza Nadhifu Isiyojulikana</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Changanua Upya Metadata</value>
@@ -2405,5 +2387,13 @@ Je, unataka kuendelea?</value>
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Hakuna orodha za kucheza zinazopatikana</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg inahitajika ili kuchanganua nyimbo kwa ajili ya kurekebisha sauti, lakini Nagi haikuweza kuipata.
+
+1. Pakua toleo la Windows kutoka https://ffmpeg.org/download.html.
+2. Fungua kumbukumbu hiyo na utafute ffmpeg.exe kwenye folda yake ya bin.
+3. Ongeza folda yenye ffmpeg.exe kwenye PATH yako ya Windows.
+4. Anzisha tena Nagi, kisha uwezeshe kurekebisha sauti tena.</value>
   </data>
 </root>

@@ -492,7 +492,7 @@ public partial class LibraryService
                    !currentPath.Equals(normalizedRootPath, StringComparison.OrdinalIgnoreCase))
             {
                 paths.Add(currentPath);
-                var parent = _fileSystem.GetDirectoryName(currentPath);
+                var parent = Path.GetDirectoryName(currentPath);
                 if (string.IsNullOrEmpty(parent)) break;
                 currentPath = PathCanonicalizer.NormalizeDirectoryPath(parent);
             }
@@ -501,7 +501,7 @@ public partial class LibraryService
         // Parents are shorter than their descendants and must be inserted first.
         foreach (var path in paths.OrderBy(p => p.Length))
         {
-            var parentPath = _fileSystem.GetDirectoryName(path);
+            var parentPath = Path.GetDirectoryName(path);
             var parentId = !string.IsNullOrEmpty(parentPath) &&
                            foldersByPath.TryGetValue(PathCanonicalizer.NormalizeDirectoryPath(parentPath), out var parent)
                 ? parent.Id
@@ -537,7 +537,7 @@ public partial class LibraryService
             .ToListAsync(cancellationToken).ConfigureAwait(false);
 
         var diskFileMap = _fileSystem.EnumerateFilesWithLastWriteTime(folderPath, "*.*", SearchOption.AllDirectories)
-            .Where(x => FileExtensions.MusicFileExtensions.Contains(_fileSystem.GetExtension(x.Path)))
+            .Where(x => FileExtensions.MusicFileExtensions.Contains(Path.GetExtension(x.Path)))
             .ToDictionary(x => x.Path, x => x.LastWriteTimeUtc, StringComparer.OrdinalIgnoreCase);
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -594,10 +594,10 @@ public partial class LibraryService
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var directory = _fileSystem.GetDirectoryName(song.FilePath);
+            var directory = Path.GetDirectoryName(song.FilePath);
             if (string.IsNullOrEmpty(directory)) continue;
 
-            var nameWithoutExt = _fileSystem.GetFileNameWithoutExtension(song.FilePath);
+            var nameWithoutExt = Path.GetFileNameWithoutExtension(song.FilePath);
 
             if (!lrcFilesByDir.TryGetValue(directory, out var lrcByName))
             {
@@ -605,7 +605,7 @@ public partial class LibraryService
                 try
                 {
                     foreach (var p in _fileSystem.GetFiles(directory, "*.lrc"))
-                        lrcByName.TryAdd(_fileSystem.GetFileNameWithoutExtension(p), p);
+                        lrcByName.TryAdd(Path.GetFileNameWithoutExtension(p), p);
                 }
                 catch (Exception ex)
                 {
@@ -627,7 +627,7 @@ public partial class LibraryService
                 try
                 {
                     foreach (var p in _fileSystem.GetFiles(directory, "*.txt"))
-                        txtByName.TryAdd(_fileSystem.GetFileNameWithoutExtension(p), p);
+                        txtByName.TryAdd(Path.GetFileNameWithoutExtension(p), p);
                 }
                 catch (Exception ex)
                 {
@@ -706,7 +706,7 @@ public partial class LibraryService
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var songDirectory = _fileSystem.GetDirectoryName(song.FilePath) ?? string.Empty;
+            var songDirectory = Path.GetDirectoryName(song.FilePath) ?? string.Empty;
 
             if (directoryCache.TryGetValue(songDirectory, out var cachedResult))
             {
@@ -790,7 +790,7 @@ public partial class LibraryService
     {
         try
         {
-            var currentDirectory = _fileSystem.GetDirectoryName(songFilePath);
+            var currentDirectory = Path.GetDirectoryName(songFilePath);
             if (string.IsNullOrEmpty(currentDirectory)) return null;
 
             var normalizedBasePath = baseFolderPath?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
@@ -812,7 +812,7 @@ public partial class LibraryService
                     break;
                 }
 
-                currentDirectory = _fileSystem.GetDirectoryName(currentDirectory);
+                currentDirectory = Path.GetDirectoryName(currentDirectory);
             }
 
             return null;

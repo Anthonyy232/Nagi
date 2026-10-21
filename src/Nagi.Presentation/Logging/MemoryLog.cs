@@ -5,13 +5,12 @@ using System.Threading;
 using Serilog.Core;
 using Serilog.Events;
 
-namespace Nagi.WinUI.Services.Implementations;
+namespace Nagi.Presentation.Logging;
 
 /// <summary>
-///     A thread-safe Serilog sink that stores recent log events in memory.
-///     This is useful for capturing logs for a crash report dialog.
+///     Keeps the most recent log events, oldest dropped first, so they can be attached to a crash report.
 /// </summary>
-public class MemoryLog : ILogEventSink
+internal sealed class MemoryLog : ILogEventSink
 {
     private const int MaxEntries = 200;
 
@@ -24,10 +23,6 @@ public class MemoryLog : ILogEventSink
 
     public static MemoryLog Instance { get; } = new();
 
-    /// <summary>
-    ///     Emits a log event to the in-memory queue.
-    ///     If the queue exceeds its maximum size, the oldest event is removed.
-    /// </summary>
     public void Emit(LogEvent logEvent)
     {
         lock (_gate)
@@ -37,9 +32,6 @@ public class MemoryLog : ILogEventSink
         }
     }
 
-    /// <summary>
-    ///     Retrieves all stored log events as a single formatted string.
-    /// </summary>
     public string GetContent()
     {
         LogEvent[] events;

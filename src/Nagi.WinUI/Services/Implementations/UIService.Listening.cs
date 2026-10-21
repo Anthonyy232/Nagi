@@ -77,8 +77,7 @@ public partial class UIService
         };
         minutes.ValueChanged += (_, _) => Validate();
         avoid.ValueChanged += (_, _) => Validate();
-        DialogThemeHelper.ApplyThemeOverrides(dialog);
-        return await dialog.ShowAsync() == ContentDialogResult.Primary
+        return await ShowDialogAsync(dialog) == ContentDialogResult.Primary
             ? new PlaybackMixOptions((int)minutes.Value, (ShuffleMode)mode.SelectedIndex,
                 mode.SelectedIndex == (int)ShuffleMode.MoreVariety ? (int)avoid.Value : 1) : null;
     }
@@ -101,7 +100,6 @@ public partial class UIService
             XamlRoot = root
         };
         minutes.ValueChanged += (_, _) => dialog.IsPrimaryButtonEnabled = IsValidMinutes(minutes.Value);
-        DialogThemeHelper.ApplyThemeOverrides(dialog);
-        return await dialog.ShowAsync() == ContentDialogResult.Primary ? ((int)minutes.Value, finish.IsChecked == true) : null;
+        return await ShowDialogAsync(dialog) == ContentDialogResult.Primary ? ((int)minutes.Value, finish.IsChecked == true) : null;
     }
 }

@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>ਦੁਆਰਾ ਕ੍ਰਮਬੱਧ ਕਰੋ: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>ਆਵਾਜ਼ ਦੇ ਸਧਾਰਨੀਕਰਨ ਲਈ ਗਾਣਿਆਂ ਦੀ ਜਾਂਚ ਕਰਨ ਵਾਸਤੇ FFmpeg ਦੀ ਲੋੜ ਹੈ, ਪਰ Nagi ਨੂੰ ਇਹ ਨਹੀਂ ਮਿਲਿਆ।
-
-1. https://ffmpeg.org/download.html ਤੋਂ Windows ਬਿਲਡ ਡਾਊਨਲੋਡ ਕਰੋ।
-2. ਆਰਕਾਈਵ ਨੂੰ ਐਕਸਟ੍ਰੈਕਟ ਕਰੋ ਅਤੇ ਇਸਦੇ bin ਫ਼ੋਲਡਰ ਵਿੱਚ ffmpeg.exe ਲੱਭੋ।
-3. ffmpeg.exe ਵਾਲੇ ਫ਼ੋਲਡਰ ਨੂੰ ਆਪਣੇ Windows PATH ਵਿੱਚ ਜੋੜੋ।
-4. Nagi ਨੂੰ ਮੁੜ ਚਾਲੂ ਕਰੋ, ਅਤੇ ਫਿਰ ਆਵਾਜ਼ ਸਧਾਰਨੀਕਰਨ ਨੂੰ ਮੁੜ ਚਾਲੂ ਕਰੋ।</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>ਪਲੇਅਲਿਸਟ ਬਣਾ ਦਿੱਤੀ ਗਈ ਸੀ, ਪਰ ਇਸਦੇ ਗਾਣੇ ਜੋੜੇ ਨਹੀਂ ਜਾ ਸਕੇ। ਕਿਰਪਾ ਕਰਕੇ ਮੁੜ ਇੰਪੋਰਟ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</value>
   </data>
@@ -323,5 +315,14 @@
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>ਚੁਣੀ ਗਈ ਫ਼ਾਈਲ ਇੱਕ ਵੈਧ Nagi ਬੈਕਅੱਪ ਨਹੀਂ ਹੈ।</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC ਨੂੰ ਇੱਕ ਅਨਜਾਣੀ ਗਲਤੀ ਆਈ।</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>LibVLC ਗਲਤੀ: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>'{0}' ਲੋਡ ਕਰਨ ਵਿੱਚ ਅਸਫਲ।</value>
   </data>
 </root>

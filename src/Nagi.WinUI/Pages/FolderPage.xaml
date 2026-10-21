@@ -35,8 +35,9 @@
                         ContentTemplate="{StaticResource RandomPlayIconTemplate}" />
 
                 <Button
-                    Click="AddFolderButton_Click"
+                    Command="{x:Bind ViewModel.AddFolderCommand}"
                     ToolTipService.ToolTip="{x:Bind resources:Strings.FolderPage_AddFolderButton_ToolTip, Mode=OneTime}"
+                    AutomationProperties.Name="{x:Bind resources:Strings.FolderPage_AddFolderButton_ToolTip, Mode=OneTime}"
                     IsEnabled="{x:Bind ViewModel.IsAnyOperationInProgress, Converter={StaticResource BooleanToInverseBooleanConverter}, Mode=OneWay}"
                     Style="{StaticResource AnimatedAccentButtonStyle}">
                     <StackPanel Orientation="Horizontal" Spacing="8">
@@ -80,7 +81,7 @@
                                     Command="{Binding DataContext.RescanFolderCommand, ElementName=FolderPageRoot}"
                                     CommandParameter="{x:Bind Id}"
                                     IsEnabled="{Binding DataContext.IsAnyOperationInProgress, ElementName=FolderPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
-                                <MenuFlyoutItem Text="{x:Bind resources:Strings.FolderPage_Menu_Delete, Mode=OneTime}" Click="DeleteFolder_Click" />
+                                <MenuFlyoutItem Text="{x:Bind resources:Strings.FolderPage_Menu_Delete, Mode=OneTime}" Command="{Binding DataContext.DeleteFolderCommand, ElementName=FolderPageRoot}" CommandParameter="{x:Bind Id}" />
                             </MenuFlyout>
                         </Grid.ContextFlyout>
                         <Grid.RowDefinitions>

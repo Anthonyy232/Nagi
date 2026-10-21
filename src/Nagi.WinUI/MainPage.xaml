@@ -27,7 +27,7 @@
                     ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneWay}"
                     AutomationProperties.Name="{x:Bind DynamicToolTip, Mode=OneWay}">
                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                              Glyph="{x:Bind DynamicIcon, Mode=OneWay}"
+                              Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(DynamicIcon), Mode=OneWay}"
                               Opacity="{x:Bind IsIconActive, Mode=OneWay, Converter={StaticResource ToggleIconOpacityConverter}}" />
                 </Button>
             </DataTemplate>
@@ -43,7 +43,7 @@
                     <FontIcon
                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
                         FontSize="24"
-                        Glyph="{x:Bind DynamicIcon, Mode=OneWay}" />
+                        Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(DynamicIcon), Mode=OneWay}" />
                 </Button>
             </DataTemplate>
 
@@ -64,7 +64,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                            Glyph="{x:Bind DynamicIcon, Mode=OneWay}" />
+                            Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(DynamicIcon), Mode=OneWay}" />
                     </Grid>
                 </Button>
             </DataTemplate>
@@ -83,7 +83,7 @@
                         <Border Background="{ThemeResource ControlFillColorSecondaryBrush}"
                                 CornerRadius="{ThemeResource ControlCornerRadius}"
                                 Visibility="{Binding DataContext.IsQueuePanelOpen, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{x:Bind DynamicIcon, Mode=OneWay}" />
+                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(DynamicIcon), Mode=OneWay}" />
                     </Grid>
                 </Button>
             </DataTemplate>
@@ -560,6 +560,7 @@
                                     </Grid.ColumnDefinitions>
                                     <Button
                                         ToolTipService.ToolTip="{x:Bind resources:Strings.Player_GoToAlbumButton_ToolTip, Mode=OneTime}"
+                                        AutomationProperties.Name="{x:Bind resources:Strings.Player_GoToAlbumButton_ToolTip, Mode=OneTime}"
                                         Grid.Column="0"
                                         Padding="0"
                                         Margin="0,0,12,0"
@@ -671,6 +672,7 @@
                                             Grid.Column="1"
                                             VerticalAlignment="Center"
                                             Style="{StaticResource VolumeSliderStyle}"
+                                            AutomationProperties.Name="{x:Bind resources:Strings.Settings_Button_Volume, Mode=OneTime}"
                                             Foreground="{StaticResource PlayerAccentBrush}"
                                             Value="{x:Bind ViewModel.CurrentVolume, Mode=TwoWay}"
                                             Visibility="{x:Bind ViewModel.IsVolumeControlVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
@@ -697,6 +699,7 @@
                                 </Grid.RowDefinitions>
                                 <Slider
                                     x:Name="MediaSeekerSlider"
+                                    AutomationProperties.Name="{x:Bind resources:Strings.Player_SeekSlider_Name, Mode=OneTime}"
                                     Grid.Row="0"
                                     Margin="0,8,0,-4"
                                     VerticalAlignment="Center"

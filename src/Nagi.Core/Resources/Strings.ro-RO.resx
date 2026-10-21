@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Sortare după: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg este necesar pentru a analiza melodiile pentru normalizarea volumului, dar Nagi nu l-a putut găsi.
-
-1. Descărcați o versiune de Windows de la https://ffmpeg.org/download.html.
-2. Extrageți arhiva și localizați ffmpeg.exe în folderul bin al acesteia.
-3. Adăugați folderul care conține ffmpeg.exe în variabila PATH din Windows.
-4. Reporniți Nagi, apoi activați din nou normalizarea volumului.</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>Lista de redare a fost creată, dar melodiile acesteia nu au putut fi adăugate. Încercați să importați din nou.</value>
   </data>
@@ -323,5 +315,14 @@
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>Fișierul selectat nu este o copie de rezervă Nagi validă.</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC a întâmpinat o eroare nespecificată.</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>Eroare LibVLC: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>Încărcarea „{0}” a eșuat.</value>
   </data>
 </root>

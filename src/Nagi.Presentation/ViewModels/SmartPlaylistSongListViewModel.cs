@@ -61,15 +61,22 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
     {
         if (_currentSmartPlaylistId is not { } smartPlaylistId) return;
 
-        var smartPlaylist = await _smartPlaylistService.GetSmartPlaylistByIdAsync(smartPlaylistId);
-        if (smartPlaylist is null)
+        try
         {
-            _logger.LogWarning("Could not find smart playlist with ID {SmartPlaylistId}", smartPlaylistId);
-            return;
-        }
+            var smartPlaylist = await _smartPlaylistService.GetSmartPlaylistByIdAsync(smartPlaylistId);
+            if (smartPlaylist is null)
+            {
+                _logger.LogWarning("Could not find smart playlist with ID {SmartPlaylistId}", smartPlaylistId);
+                return;
+            }
 
-        var edited = await _uiService.ShowSmartPlaylistEditorAsync(smartPlaylist);
-        if (edited is not null) await InitializeAsync(edited.Name, smartPlaylistId, edited.CoverImageUri);
+            var edited = await _uiService.ShowSmartPlaylistEditorAsync(smartPlaylist);
+            if (edited is not null) await InitializeAsync(edited.Name, smartPlaylistId, edited.CoverImageUri);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to edit the rules of smart playlist {SmartPlaylistId}", smartPlaylistId);
+        }
     }
 
     [ObservableProperty]
@@ -83,7 +90,7 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
 
 
 
-    public async Task InitializeAsync(string title, Guid? smartPlaylistId, string? coverImageUri = null)
+    public async Task InitializeAsync(string title, Guid smartPlaylistId, string? coverImageUri = null)
     {
         if (_isDisposed) return;
         ResetState();
@@ -101,21 +108,18 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
             _currentSmartPlaylistId = smartPlaylistId;
             CoverImageUri = coverImageUri;
 
-            if (smartPlaylistId.HasValue)
+            var smartPlaylist = await _smartPlaylistService.GetSmartPlaylistByIdAsync(smartPlaylistId);
+            if (_isDisposed || generation != _playlistGeneration) return;
+            if (smartPlaylist != null)
             {
-                var smartPlaylist = await _smartPlaylistService.GetSmartPlaylistByIdAsync(smartPlaylistId.Value);
-                if (_isDisposed || generation != _playlistGeneration) return;
-                if (smartPlaylist != null)
-                {
-                    PageTitle = smartPlaylist.Name;
-                    CoverImageUri = ImageUriHelper.GetUriWithCacheBuster(smartPlaylist.CoverImageUri, smartPlaylist.DateModified);
-                    RuleSummary = BuildRuleSummary(smartPlaylist);
-                    CurrentSortOrder = SortOrderHelper.MapToSongSortOrder(smartPlaylist.SortOrder);
-                }
-                else
-                {
-                    _currentSmartPlaylistId = null;
-                }
+                PageTitle = smartPlaylist.Name;
+                CoverImageUri = ImageUriHelper.GetUriWithCacheBuster(smartPlaylist.CoverImageUri, smartPlaylist.DateModified);
+                RuleSummary = BuildRuleSummary(smartPlaylist);
+                CurrentSortOrder = SortOrderHelper.MapToSongSortOrder(smartPlaylist.SortOrder);
+            }
+            else
+            {
+                _currentSmartPlaylistId = null;
             }
 
             await RefreshOrSortSongsCommand.ExecuteAsync(null);

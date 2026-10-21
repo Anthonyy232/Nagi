@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>ترتيب حسب: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>يتطلب تحليل الأغاني لتوحيد مستوى الصوت وجود FFmpeg، ولكن تعذر على Nagi العثور عليه.
-
-1. قم بتنزيل نسخة Windows من https://ffmpeg.org/download.html.
-2. استخرج الأرشيف وحدد موقع ffmpeg.exe في مجلد bin التابع له.
-3. أضف المجلد الذي يحتوي على ffmpeg.exe إلى مسار PATH في Windows.
-4. أعد تشغيل Nagi، ثم قم بتمكين توحيد مستوى الصوت مرة أخرى.</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>تم إنشاء قائمة التشغيل، ولكن تعذر إضافة أغانيها. يُرجى محاولة الاستيراد مرة أخرى.</value>
   </data>
@@ -323,5 +315,14 @@
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>الملف المحدد ليس نسخة احتياطية صالحة لـ Nagi.</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>واجه LibVLC خطأً غير محدد.</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>خطأ LibVLC: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>فشل في تحميل '{0}'.</value>
   </data>
 </root>

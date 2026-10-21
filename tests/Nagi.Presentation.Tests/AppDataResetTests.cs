@@ -1,9 +1,9 @@
 using FluentAssertions;
 using Microsoft.Data.Sqlite;
-using Nagi.WinUI.Services.Implementations;
+using Nagi.Presentation.Services;
 using Xunit;
 
-namespace Nagi.WinUI.Tests;
+namespace Nagi.Presentation.Tests;
 
 public class AppDataResetTests
 {

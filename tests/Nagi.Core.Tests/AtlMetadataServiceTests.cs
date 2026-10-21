@@ -38,15 +38,6 @@ public class AtlMetadataServiceTests : IDisposable
 
         pathConfig.LrcCachePath.Returns(LrcCachePath);
 
-        _fileSystem.GetFileNameWithoutExtension(Arg.Any<string>())
-            .Returns(callInfo => Path.GetFileNameWithoutExtension(callInfo.ArgAt<string>(0)));
-        _fileSystem.GetDirectoryName(Arg.Any<string>())
-            .Returns(callInfo => Path.GetDirectoryName(callInfo.ArgAt<string>(0)));
-        _fileSystem.Combine(Arg.Any<string[]>())
-            .Returns(callInfo => Path.Combine(callInfo.ArgAt<string[]>(0)));
-        _fileSystem.GetExtension(Arg.Any<string>())
-            .Returns(callInfo => Path.GetExtension(callInfo.ArgAt<string>(0)));
-
         _settingsService.GetArtistSplitCharactersAsync().Returns(Task.FromResult(string.Empty));
         _settingsService.GetGenreSplitCharactersAsync().Returns(Task.FromResult(string.Empty));
 
@@ -304,8 +295,6 @@ public class AtlMetadataServiceTests : IDisposable
         var coverArtBytes = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A }; // PNG header
 
         _fileSystem.GetFiles(_tempDirectory, "*.*").Returns(new[] { coverArtPath });
-        _fileSystem.GetExtension(coverArtPath).Returns(".jpg");
-        _fileSystem.GetFileNameWithoutExtension(coverArtPath).Returns("cover");
         _fileSystem.ReadAllBytesAsync(coverArtPath).Returns(Task.FromResult(coverArtBytes));
 
         _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>())
@@ -330,8 +319,6 @@ public class AtlMetadataServiceTests : IDisposable
         var coverJpgPath = Path.Combine(_tempDirectory, "cover.jpg");
         var directoryArtBytes = new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 }; // JPEG SOI header (distinct from embedded)
         _fileSystem.GetFiles(_tempDirectory, "*.*").Returns(new[] { coverJpgPath });
-        _fileSystem.GetExtension(coverJpgPath).Returns(".jpg");
-        _fileSystem.GetFileNameWithoutExtension(coverJpgPath).Returns("cover");
         _fileSystem.ReadAllBytesAsync(coverJpgPath).Returns(Task.FromResult(directoryArtBytes));
 
         _imageProcessor.SaveCoverArtAndExtractColorsAsync(directoryArtBytes)

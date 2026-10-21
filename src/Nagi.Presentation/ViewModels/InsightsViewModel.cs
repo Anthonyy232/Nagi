@@ -26,6 +26,8 @@ public sealed class SourceSegment
     public double Percentage { get; init; }
     public string PercentageText { get; init; } = string.Empty;
     public PlaybackContextType ContextType { get; init; }
+
+    public override string ToString() => Label;
 }
 
 public sealed class TopSongItem
@@ -36,6 +38,8 @@ public sealed class TopSongItem
     public string? ArtworkUri { get; init; }
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(ArtworkUri);
     public string StatText { get; init; } = string.Empty;
+
+    public override string ToString() => $"{Title} — {Artist}";
 }
 
 public sealed class TopArtistItem
@@ -47,6 +51,8 @@ public sealed class TopArtistItem
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(ImageUri);
     public string StatText { get; init; } = string.Empty;
     public IRelayCommand<TopArtistItem>? Command { get; init; }
+
+    public override string ToString() => Name;
 }
 
 public sealed class TopAlbumItem
@@ -59,6 +65,8 @@ public sealed class TopAlbumItem
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(ArtworkUri);
     public string StatText { get; init; } = string.Empty;
     public IRelayCommand<TopAlbumItem>? Command { get; init; }
+
+    public override string ToString() => $"{Title} — {ArtistName}";
 }
 
 public sealed class TopGenreItem
@@ -68,6 +76,8 @@ public sealed class TopGenreItem
     public string Name { get; init; } = string.Empty;
     public string StatText { get; init; } = string.Empty;
     public IRelayCommand<TopGenreItem>? Command { get; init; }
+
+    public override string ToString() => Name;
 }
 
 public enum SeeAllCategory { None, Songs, Artists, Albums, Genres }

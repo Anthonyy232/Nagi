@@ -118,7 +118,6 @@ public class PlaylistServiceTests : IDisposable
         var changed = false;
         _playlistService.PlaylistsChanged += (_, _) => changed = true;
         _fileSystem.DirectoryExists(_pathConfig.PlaylistImageCachePath).Returns(true);
-        _fileSystem.Combine(Arg.Any<string[]>()).Returns(call => Path.Combine(call.Arg<string[]>()));
         _fileSystem.FileExists(Arg.Any<string>()).Returns(true);
         _fileSystem.When(fs => fs.DeleteFile(Arg.Any<string>())).Do(_ => throw new IOException("File is locked"));
 
@@ -140,7 +139,6 @@ public class PlaylistServiceTests : IDisposable
         var expectedImagePath = Path.Combine(cachePath, $"{playlist!.Id}.custom.jpg");
         _fileSystem.DirectoryExists(cachePath).Returns(true);
         _fileSystem.FileExists(expectedImagePath).Returns(true);
-        _fileSystem.Combine(Arg.Any<string[]>()).Returns(callInfo => Path.Combine(callInfo.ArgAt<string[]>(0)));
 
         var result = await _playlistService.DeletePlaylistAsync(playlist.Id);
 

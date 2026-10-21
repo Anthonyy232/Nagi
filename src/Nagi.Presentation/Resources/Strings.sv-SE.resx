@@ -629,15 +629,6 @@ Filer som inte kunde importeras: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Nästa</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC stötte på ett ospecificerat fel.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC-fel: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Kunde inte ladda '{0}'.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Bibliotek</value>
   </data>
@@ -725,9 +716,6 @@ Filer som inte kunde importeras: {0}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Avbryt</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Okänd mapp</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Sök i mapp</value>
   </data>
@@ -776,14 +764,8 @@ Filer som inte kunde importeras: {0}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Sök i genre</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Okänd spellista</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Sök i smart spellista</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Okänd smart spellista</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Sök om metadata</value>
@@ -2405,5 +2387,13 @@ Vill du fortsätta?</value>
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Inga spellistor tillgängliga</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg behövs för att analysera låtar för volymnormalisering, men Nagi kunde inte hitta det.
+
+1. Ladda ned en Windows-version från https://ffmpeg.org/download.html.
+2. Packa upp arkivet och leta reda på ffmpeg.exe i mappen bin.
+3. Lägg till mappen som innehåller ffmpeg.exe i din Windows PATH.
+4. Starta om Nagi och aktivera volymnormalisering igen.</value>
   </data>
 </root>

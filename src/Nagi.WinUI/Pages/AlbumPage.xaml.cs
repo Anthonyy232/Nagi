@@ -2,7 +2,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Presentation.Resources;
@@ -12,13 +11,10 @@ namespace Nagi.WinUI.Pages;
 
 public sealed partial class AlbumPage : SearchablePage
 {
-    private readonly ILogger<AlbumPage> _logger;
-
     public AlbumPage()
     {
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<AlbumViewModel>();
-        _logger = App.Services!.GetRequiredService<ILogger<AlbumPage>>();
         DataContext = ViewModel;
         InitializeSearch(ViewModel, SearchToggleButton, SearchTextBox, Strings.AlbumPage_SearchButton_Search_ToolTip);
     }
@@ -27,15 +23,8 @@ public sealed partial class AlbumPage : SearchablePage
 
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
-        try
-        {
-            base.OnNavigatedTo(e);
-            await ViewModel.LoadAsync(CancellationToken.None);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to navigate to AlbumPage correctly.");
-        }
+        base.OnNavigatedTo(e);
+        await ViewModel.LoadAsync(CancellationToken.None);
     }
 
     protected override void OnNavigatedFrom(NavigationEventArgs e)

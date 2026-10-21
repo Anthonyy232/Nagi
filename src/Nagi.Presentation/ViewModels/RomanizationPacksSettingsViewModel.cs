@@ -8,7 +8,6 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -26,7 +25,7 @@ public partial class RomanizationPacksSettingsViewModel : SettingsSectionViewMod
         ILogger<RomanizationPacksSettingsViewModel> logger)
         : base(dispatcherService, logger)
     {
-        _romanizationPackManager = romanizationPackManager ?? throw new ArgumentNullException(nameof(romanizationPackManager));
+        _romanizationPackManager = romanizationPackManager;
     }
 
     [ObservableProperty] public partial bool IsLoadingRomanizationPacks { get; set; }

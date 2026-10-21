@@ -629,15 +629,6 @@ Fichiers qui n'ont pas pu être importés : {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Suivant</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC a rencontré une erreur non spécifiée.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Erreur LibVLC : {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Échec du chargement de '{0}'.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Bibliothèque</value>
   </data>
@@ -725,9 +716,6 @@ Fichiers qui n'ont pas pu être importés : {0}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Annuler</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Dossier inconnu</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Rechercher dans le dossier</value>
   </data>
@@ -776,14 +764,8 @@ Fichiers qui n'ont pas pu être importés : {0}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Rechercher dans le genre</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Liste de lecture inconnue</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Rechercher dans la liste de lecture intelligente</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Liste de lecture intelligente inconnue</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Réanalyser les métadonnées</value>
@@ -2405,5 +2387,13 @@ Voulez-vous continuer ?</value>
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Aucune liste de lecture disponible</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg est nécessaire pour analyser les morceaux en vue de la normalisation du volume, mais Nagi ne l'a pas trouvé.
+
+1. Téléchargez une version pour Windows depuis https://ffmpeg.org/download.html.
+2. Extrayez l'archive et localisez ffmpeg.exe dans son dossier bin.
+3. Ajoutez le dossier contenant ffmpeg.exe à votre PATH Windows.
+4. Redémarrez Nagi, puis réactivez la normalisation du volume.</value>
   </data>
 </root>

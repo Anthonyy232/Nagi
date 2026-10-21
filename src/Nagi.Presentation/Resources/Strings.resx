@@ -629,15 +629,6 @@ Files that could not be imported: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Next</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC encountered an unspecified error.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC Error: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Failed to load '{0}'.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Library</value>
   </data>
@@ -725,9 +716,6 @@ Files that could not be imported: {0}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Cancel</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Unknown Folder</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Search in folder</value>
   </data>
@@ -776,14 +764,8 @@ Files that could not be imported: {0}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Search in genre</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Unknown Playlist</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Search in smart playlist</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Unknown Smart Playlist</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Rescan Metadata</value>
@@ -882,6 +864,9 @@ Do you want to continue?</value>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>Copy Log</value>
   </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>Crash log</value>
+  </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>Choose Cover</value>
   </data>
@@ -917,6 +902,12 @@ Do you want to continue?</value>
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>Value</value>
+  </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>Field</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>Condition</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>Remove this rule</value>
@@ -971,6 +962,9 @@ Do you want to continue?</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Go to Album</value>
+  </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>Seek</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Up Next</value>
@@ -1624,6 +1618,12 @@ Do you want to continue?</value>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Preamp</value>
   </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>Equalizer preset</value>
+  </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>Custom</value>
   </data>
@@ -2200,6 +2200,9 @@ Do you want to continue?</value>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>All Time</value>
   </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>Time range</value>
+  </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}h {1}m</value>
   </data>
@@ -2391,5 +2394,13 @@ Do you want to continue?</value>
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>No playlists available</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg is needed to analyze songs for volume normalization, but Nagi could not find it.
+
+1. Download a Windows build from https://ffmpeg.org/download.html.
+2. Extract the archive and locate ffmpeg.exe in its bin folder.
+3. Add the folder containing ffmpeg.exe to your Windows PATH.
+4. Restart Nagi, then enable volume normalization again.</value>
   </data>
 </root>

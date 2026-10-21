@@ -1,6 +1,5 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
@@ -11,13 +10,10 @@ namespace Nagi.WinUI.Pages;
 
 public sealed partial class LibraryPage : SongListPage
 {
-    private readonly ILogger<LibraryPage> _logger;
-
     public LibraryPage()
     {
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<LibraryViewModel>();
-        _logger = App.Services!.GetRequiredService<ILogger<LibraryPage>>();
         DataContext = ViewModel;
         // The library view model is shared and the page is cached, so it outlives each visit.
         InitializeSongList(ViewModel, ownsViewModel: false, SearchToggleButton, SearchTextBox,
@@ -42,23 +38,16 @@ public sealed partial class LibraryPage : SongListPage
         base.OnNavigatedTo(e);
         ClearSelection();
 
-        try
+        await ViewModel.SetLibraryViewAsync(e.Parameter is "Favorites");
+        if (!ViewModel.HasLoadedPlaylists)
         {
-            await ViewModel.SetLibraryViewAsync(e.Parameter is "Favorites");
-            if (!ViewModel.HasLoadedPlaylists)
-            {
-                await ViewModel.LoadAvailablePlaylistsAsync();
-            }
-
-            if (!ViewModel.HasInitialized)
-            {
-                // Loads songs and triggers the initial background rescan (once per session).
-                await ViewModel.InitializeAsync();
-            }
+            await ViewModel.LoadAvailablePlaylistsAsync();
         }
-        catch (Exception ex)
+
+        if (!ViewModel.HasInitialized)
         {
-            _logger.LogError(ex, "Failed to initialize LibraryPage.");
+            // Loads songs and triggers the initial background rescan (once per session).
+            await ViewModel.InitializeAsync();
         }
     }
 }

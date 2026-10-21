@@ -15,7 +15,7 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services;
-using Nagi.Presentation.Resources;
+using Nagi.Presentation.Logging;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services;
 using Nagi.WinUI.Helpers;
@@ -23,7 +23,6 @@ using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Services.Implementations;
 using Nagi.WinUI.Services;
 using Serilog;
-using Serilog.Events;
 using WinRT;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
@@ -65,29 +64,7 @@ public partial class App : Application
             .SetBasePath(AppContext.BaseDirectory)
             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
             .Build();
-        var tempPathConfig = PackagedAppData.CreatePathConfiguration();
-
-        _currentLogFilePath = Path.Combine(tempPathConfig.LogsDirectory, "log.txt");
-
-        Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Debug()
-            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-            .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
-            .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
-            .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Migrations", LogEventLevel.Error)
-            .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", LogEventLevel.Error)
-            .Enrich.FromLogContext()
-            .Enrich.WithThreadId()
-            .WriteTo.Debug()
-            .WriteTo.File(_currentLogFilePath,
-                rollingInterval: RollingInterval.Day,
-                retainedFileCountLimit: 7,
-                fileSizeLimitBytes: 10 * 1024 * 1024,
-                rollOnFileSizeLimit: true,
-                outputTemplate:
-                "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] [{ThreadId}] {Message:lj}{NewLine}{Exception}")
-            .WriteTo.Sink(MemoryLog.Instance)
-            .CreateLogger();
+        _currentLogFilePath = AppLogging.Configure(PackagedAppData.CreatePathConfiguration().LogsDirectory);
 
         try
         {
@@ -309,8 +286,6 @@ public partial class App : Application
         args.Handled = true;
         if (_isExiting) return;
         _isExiting = true;
-        // Stops ApplicationLifecycle from replacing the content of a window that is closing.
-        if (Services?.GetService<IWindowService>() is { } windowService) windowService.IsExiting = true;
 
         try
         {
@@ -376,18 +351,14 @@ public partial class App : Application
         {
             Log.Fatal(ex, "A critical error occurred. Application will now terminate. Log path: {LogPath}",
                 _currentLogFilePath);
-            var fullCrashReport = $"{MemoryLog.Instance.GetContent()}\n\n--- EXCEPTION DETAILS ---\n{ex}";
+            var fullCrashReport = AppLogging.BuildCrashReport(ex);
             if (MainDispatcherQueue is not { } dispatcher) return;
 
             var dispatcherService = Services?.GetService<IDispatcherService>() ?? new DispatcherService(dispatcher);
             await dispatcherService.EnqueueAsync(async () =>
             {
                 if (Services?.GetService<IUIService>() is not { } uiService) return;
-                var result = await uiService.ShowCrashReportDialogAsync(
-                    Strings.CrashReport_Title,
-                    Strings.CrashReport_Message,
-                    fullCrashReport,
-                    "https://github.com/Anthonyy232/Nagi/issues");
+                var result = await uiService.ShowCrashReportDialogAsync(fullCrashReport);
 
                 if (result == CrashReportResult.Reset) await ResetApplicationDataAsync();
             });
@@ -407,7 +378,8 @@ public partial class App : Application
         try
         {
             Log.Information("User requested a full application data reset from the crash dialog.");
-            await AppDataReset.ResetAsync(Services);
+            await AppDataReset.ResetAsync(Services, PackagedAppData.CreatePathConfiguration(),
+                new ApplicationDataSettingsStore());
 
             Log.Information("Reset complete. Restarting application.");
             await Log.CloseAndFlushAsync();

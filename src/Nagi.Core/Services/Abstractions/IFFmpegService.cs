@@ -9,6 +9,4 @@ public interface IFFmpegService
     /// </summary>
     /// <param name="forceRecheck">If true, bypasses any cached result and checks again.</param>
     Task<bool> IsFFmpegInstalledAsync(bool forceRecheck = false);
-
-    string GetFFmpegSetupInstructions();
 }

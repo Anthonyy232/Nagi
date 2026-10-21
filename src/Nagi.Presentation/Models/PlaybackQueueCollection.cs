@@ -218,14 +218,22 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
         playbackService.MoveQueueItem(entry.Id, beforeIndex < _ids.Length ? _ids[beforeIndex] : null);
     }
 
-    public Task RemoveAsync(QueueEntry entry) => playbackService.RemoveFromQueueAsync(entry.Id);
+    public async Task RemoveAsync(QueueEntry entry)
+    {
+        try { await playbackService.RemoveFromQueueAsync(entry.Id); }
+        catch (Exception ex) { logger.LogError(ex, "Failed to remove queue entry."); }
+    }
 
-    public Task PlayAsync(QueueEntry entry)
+    public async Task PlayAsync(QueueEntry entry)
     {
         var queue = playbackService.PlaybackQueue;
         for (var i = 0; i < queue.Count; i++)
-            if (queue[i] == entry.Id) return playbackService.PlayQueueItemAsync(i);
-        return Task.CompletedTask;
+        {
+            if (queue[i] != entry.Id) continue;
+            try { await playbackService.PlayQueueItemAsync(i); }
+            catch (Exception ex) { logger.LogError(ex, "Failed to play queue entry."); }
+            return;
+        }
     }
 
     public void Dispose()

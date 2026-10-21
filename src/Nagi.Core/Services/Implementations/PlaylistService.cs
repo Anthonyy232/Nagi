@@ -27,11 +27,11 @@ public class PlaylistService : IPlaylistService
         IPathConfiguration pathConfig,
         ILogger<PlaylistService> logger)
     {
-        _contextFactory = contextFactory ?? throw new ArgumentNullException(nameof(contextFactory));
-        _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
-        _imageProcessor = imageProcessor ?? throw new ArgumentNullException(nameof(imageProcessor));
-        _pathConfig = pathConfig ?? throw new ArgumentNullException(nameof(pathConfig));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _contextFactory = contextFactory;
+        _fileSystem = fileSystem;
+        _imageProcessor = imageProcessor;
+        _pathConfig = pathConfig;
+        _logger = logger;
     }
 
     public event EventHandler<PlaylistUpdatedEventArgs>? PlaylistUpdated;

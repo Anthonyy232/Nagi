@@ -5,6 +5,7 @@ using H.NotifyIcon.EfficiencyMode;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Services.Abstractions;
@@ -33,11 +34,11 @@ public sealed class WindowService : IWindowService, IDisposable
         IDispatcherService dispatcherService, ILogger<WindowService> logger)
     {
         _createMiniPlayerWindow = createMiniPlayerWindow;
-        _mainWindow = mainWindow ?? throw new ArgumentNullException(nameof(mainWindow));
-        _win32InteropService = win32InteropService ?? throw new ArgumentNullException(nameof(win32InteropService));
-        _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-        _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _mainWindow = mainWindow;
+        _win32InteropService = win32InteropService;
+        _settingsService = settingsService;
+        _dispatcherService = dispatcherService;
+        _logger = logger;
     }
 
     public void Dispose()
@@ -52,6 +53,7 @@ public sealed class WindowService : IWindowService, IDisposable
         if (_appWindow is not null)
         {
             _appWindow.Closing -= OnAppWindowClosing;
+            if (_window is not null) _window.Closed -= OnWindowClosed;
             _appWindow.Changed -= OnAppWindowChanged;
             _appWindow.IsShownInSwitchers = true;
         }
@@ -87,8 +89,6 @@ public sealed class WindowService : IWindowService, IDisposable
 
     public event Action<WindowClosingEventArgs>? Closing;
 
-    public event Action? VisibilityChanged;
-
     public event Action? UIStateChanged;
 
     public bool IsVisible => _appWindow?.IsVisible ?? false;
@@ -100,7 +100,7 @@ public sealed class WindowService : IWindowService, IDisposable
         State: OverlappedPresenterState.Minimized
     };
 
-    public bool IsExiting { get; set; }
+    public bool IsExiting { get; private set; }
 
     public bool IsShowingOnboarding => _mainWindow.Content is Pages.OnboardingPage;
 
@@ -110,6 +110,7 @@ public sealed class WindowService : IWindowService, IDisposable
         _appWindow = _window.AppWindow;
 
         _appWindow.Closing += OnAppWindowClosing;
+        _window.Closed += OnWindowClosed;
         _appWindow.Changed += OnAppWindowChanged;
         _settingsService.MinimizeToMiniPlayerSettingChanged += OnMinimizeToMiniPlayerSettingChanged;
 
@@ -143,8 +144,9 @@ public sealed class WindowService : IWindowService, IDisposable
         WindowActivator.ShowAndActivate(_window, _win32InteropService);
     }
 
-    public void Close()
+    public void Exit()
     {
+        IsExiting = true;
         _dispatcherService.TryEnqueue(() => _window?.Close());
     }
 
@@ -195,13 +197,15 @@ public sealed class WindowService : IWindowService, IDisposable
         var closing = new WindowClosingEventArgs();
         Closing?.Invoke(closing);
         if (closing.Cancel) args.Cancel = true;
+        else IsExiting = true;
     }
+
+    // Also covers closes that skip Closing, so that nothing replaces the content of a closing window.
+    private void OnWindowClosed(object sender, WindowEventArgs args) => IsExiting = true;
 
     private void OnAppWindowChanged(AppWindow sender, AppWindowChangedEventArgs args)
     {
         var didPresenterChange = args.DidPresenterChange;
-
-        if (args.DidVisibilityChange) VisibilityChanged?.Invoke();
 
         if (didPresenterChange && _appWindow?.Presenter is OverlappedPresenter presenter)
             switch (presenter.State)

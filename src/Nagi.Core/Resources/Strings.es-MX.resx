@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Ordenar por: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>Se necesita FFmpeg para analizar el volumen de las canciones, pero Nagi no pudo encontrarlo.
-
-1. Descarga una versión para Windows desde https://ffmpeg.org/download.html.
-2. Extrae el archivo comprimido y ubica ffmpeg.exe en su carpeta bin.
-3. Agrega la carpeta que contiene ffmpeg.exe a tu PATH de Windows.
-4. Reinicia Nagi y vuelve a activar la normalización de volumen.</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>Se creó la lista de reproducción, pero no se pudieron agregar sus canciones. Intenta importarla de nuevo.</value>
   </data>
@@ -323,5 +315,14 @@
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>El archivo seleccionado no es una copia de seguridad válida de Nagi.</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC encontró un error no especificado.</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>Error de LibVLC: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>Error al cargar '{0}'.</value>
   </data>
 </root>

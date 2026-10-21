@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Sórtáil De Réir: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>Tá FFmpeg ag teastáil chun amhráin a anailísiú le haghaidh normalú airde fuaime, ach níorbh fhéidir le Nagi é a aimsiú.
-
-1. Íoslódáil leagan do Windows ó https://ffmpeg.org/download.html.
-2. Bain na comhaid as an gcartlann agus aimsigh ffmpeg.exe ina fhillteán bin.
-3. Cuir an fillteán ina bhfuil ffmpeg.exe le do PATH Windows.
-4. Atosaigh Nagi, ansin cumasaigh normalú airde fuaime arís.</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>Cruthaíodh an liosta seinme, ach níorbh fhéidir a chuid amhrán a chur leis. Bain triail as é a iompórtáil arís.</value>
   </data>
@@ -323,5 +315,14 @@
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>Ní cúltaca bailí Nagi é an comhad roghnaithe.</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>Tharla earráid neamhshonraithe le LibVLC.</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>Earráid LibVLC: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>Theip ar '{0}' a luchtú.</value>
   </data>
 </root>

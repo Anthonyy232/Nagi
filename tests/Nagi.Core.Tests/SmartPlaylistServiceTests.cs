@@ -31,8 +31,6 @@ public class SmartPlaylistServiceTests : IDisposable
         _imageProcessor = Substitute.For<IImageProcessor>();
 
         _pathConfig.PlaylistImageCachePath.Returns("C:\\cache\\playlists");
-        _fileSystem.Combine(Arg.Any<string>(), Arg.Any<string>())
-            .Returns(callInfo => Path.Combine(callInfo.ArgAt<string[]>(0)));
 
         _service = new SmartPlaylistService(_dbHelper.ContextFactory, _fileSystem, _pathConfig, _imageProcessor, _logger);
 
@@ -260,7 +258,6 @@ public class SmartPlaylistServiceTests : IDisposable
         _imageProcessor.ProcessImageBytesAsync(Arg.Any<byte[]>()).Returns(new byte[] { 4, 5, 6 });
         _fileSystem.FileExists(localPath).Returns(true);
         _fileSystem.DirectoryExists(Arg.Any<string>()).Returns(true);
-        _fileSystem.GetExtension(localPath).Returns(".jpg");
 
         var expectedPath = Path.Combine("C:\\cache\\playlists", $"{playlist!.Id}.custom.jpg");
         _fileSystem.FileExists(expectedPath).Returns(true);

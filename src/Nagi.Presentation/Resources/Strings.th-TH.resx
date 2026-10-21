@@ -629,15 +629,6 @@
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>ถัดไป</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC พบข้อผิดพลาดที่ไม่ระบุ</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>ข้อผิดพลาด LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>ไม่สามารถโหลด '{0}' ได้</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>คลังเพลง</value>
   </data>
@@ -725,9 +716,6 @@
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>ยกเลิก</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>โฟลเดอร์ไม่ทราบชื่อ</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ค้นหาในโฟลเดอร์</value>
   </data>
@@ -776,14 +764,8 @@
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ค้นหาในแนวเพลง</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>เพลย์ลิสต์ไม่ทราบชื่อ</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ค้นหาในเพลย์ลิสต์อัจฉริยะ</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>เพลย์ลิสต์อัจฉริยะไม่ทราบชื่อ</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>สแกนเมทาดาตาซ้ำ</value>
@@ -2405,5 +2387,13 @@
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>ไม่มีเพลย์ลิสต์</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>จำเป็นต้องใช้ FFmpeg เพื่อวิเคราะห์เพลงสำหรับการปรับระดับความดัง แต่ Nagi ไม่พบโปรแกรมนี้
+
+1. ดาวน์โหลดเวอร์ชัน Windows จาก https://ffmpeg.org/download.html
+2. แตกไฟล์และหา ffmpeg.exe ในโฟลเดอร์ bin
+3. เพิ่มโฟลเดอร์ที่มี ffmpeg.exe ไปยัง Windows PATH ของคุณ
+4. รีสตาร์ท Nagi แล้วเปิดใช้งานการปรับระดับความดังอีกครั้ง</value>
   </data>
 </root>

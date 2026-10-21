@@ -629,15 +629,6 @@ Failai, kurių nepavyko importuoti: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Kitas</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC susidūrė su nepatikslinta klaida.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC klaida: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Nepavyko įkelti "{0}".</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Biblioteka</value>
   </data>
@@ -725,9 +716,6 @@ Failai, kurių nepavyko importuoti: {0}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Atšaukti</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Nežinomas aplankas</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Ieškoti aplanke</value>
   </data>
@@ -776,14 +764,8 @@ Failai, kurių nepavyko importuoti: {0}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Ieškoti žanre</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Nežinomas grojaraštis</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Ieškoti išmaniajame grojaraštyje</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Nežinomas išmanusis grojaraštis</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Nuskaityti metaduomenis iš naujo</value>
@@ -2405,5 +2387,13 @@ Ar norite tęsti?</value>
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Nėra galimų grojaraščių</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>Norint analizuoti dainas garsumo normalizavimui, reikalingas FFmpeg, bet Nagi jo nerado.
+
+1. Atsisiųskite „Windows“ versiją iš https://ffmpeg.org/download.html.
+2. Išpakuokite archyvą ir jo aplanke „bin“ suraskite ffmpeg.exe.
+3. Pridėkite aplanką, kuriame yra ffmpeg.exe, į Windows PATH.
+4. Paleiskite Nagi iš naujo, tada vėl įjunkite garsumo normalizavimą.</value>
   </data>
 </root>

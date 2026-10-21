@@ -629,15 +629,6 @@ Archivos que no se pudieron importar: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Siguiente</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC encontró un error no especificado.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Error de LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Error al cargar '{0}'.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Biblioteca</value>
   </data>
@@ -725,9 +716,6 @@ Archivos que no se pudieron importar: {0}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Cancelar</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Carpeta desconocida</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Buscar en carpeta</value>
   </data>
@@ -776,14 +764,8 @@ Archivos que no se pudieron importar: {0}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Buscar en el género</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Lista de reproducción desconocida</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Buscar en lista de reproducción inteligente</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Lista de reproducción inteligente desconocida</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Volver a escanear metadatos</value>
@@ -2405,5 +2387,13 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>No hay listas de reproducción disponibles</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>Se necesita FFmpeg para analizar las canciones para la normalización de volumen, pero Nagi no lo ha encontrado.
+
+1. Descarga una versión para Windows desde https://ffmpeg.org/download.html.
+2. Extrae el archivo comprimido y localiza ffmpeg.exe en su carpeta bin.
+3. Añade la carpeta que contiene ffmpeg.exe a la variable PATH de Windows.
+4. Reinicia Nagi y vuelve a activar la normalización de volumen.</value>
   </data>
 </root>

@@ -85,8 +85,6 @@ public class MultiArtistTests : IDisposable
 
         _fileSystem.DirectoryExists(folderPath).Returns(true);
         _fileSystem.EnumerateFilesWithLastWriteTime(folderPath, "*.*", SearchOption.AllDirectories).Returns(new[] { (filePath, DateTime.UtcNow) });
-        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
-        _fileSystem.GetFileNameWithoutExtension(filePath).Returns("song");
 
         var metadata = new SongFileMetadata
         {
@@ -141,7 +139,6 @@ public class MultiArtistTests : IDisposable
 
         _fileSystem.DirectoryExists(folderPath).Returns(true);
         _fileSystem.EnumerateFilesWithLastWriteTime(folderPath, "*.*", SearchOption.AllDirectories).Returns(new[] { (filePath, DateTime.UtcNow) });
-        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
 
         var metadata = new SongFileMetadata
         {
@@ -197,7 +194,6 @@ public class MultiArtistTests : IDisposable
         }
         var filePath = @"C:\Music\new.mp3";
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
-        _fileSystem.GetExtension(filePath).Returns(".mp3");
         _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
             .Returns(new[] { (filePath, DateTime.UtcNow) });
         _metadataService.ExtractMetadataAsync(filePath, folder.Path).Returns(new SongFileMetadata
@@ -229,7 +225,6 @@ public class MultiArtistTests : IDisposable
         var first = new SongFileMetadata { FilePath = @"C:\Music\one.mp3", Title = "One", Album = "A|B", Artists = ["C"] };
         var second = new SongFileMetadata { FilePath = @"C:\Music\two.mp3", Title = "Two", Album = "A", Artists = ["B|C"] };
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
-        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
         _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
             .Returns(new[] { (first.FilePath, DateTime.UtcNow), (second.FilePath, DateTime.UtcNow) });
         _metadataService.ExtractMetadataAsync(first.FilePath, folder.Path).Returns(first);

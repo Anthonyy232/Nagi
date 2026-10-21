@@ -39,7 +39,6 @@
     <!-- Serilog -->
     <PackageVersion Include="Serilog.Enrichers.Thread" Version="4.0.0" />
     <PackageVersion Include="Serilog.Extensions.Logging" Version="10.0.0" />
-    <PackageVersion Include="Serilog.Settings.Configuration" Version="10.0.1" />
     <PackageVersion Include="Serilog.Sinks.Debug" Version="3.0.0" />
     <PackageVersion Include="Serilog.Sinks.File" Version="8.0.0-nblumhardt-02322" />
     <!-- Audio & Metadata -->

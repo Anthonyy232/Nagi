@@ -10,7 +10,6 @@ public class PathConfiguration : IPathConfiguration
     public PathConfiguration(string appDataRoot)
     {
         AppDataRoot = appDataRoot;
-        SettingsFilePath = Path.Combine(AppDataRoot, "settings.json");
         PlaybackStateFilePath = Path.Combine(AppDataRoot, "playback_state.json");
         AlbumArtCachePath = Path.Combine(AppDataRoot, "AlbumArt");
         ArtistImageCachePath = Path.Combine(AppDataRoot, "ArtistImages");
@@ -30,8 +29,6 @@ public class PathConfiguration : IPathConfiguration
     }
 
     public string AppDataRoot { get; }
-
-    public string SettingsFilePath { get; }
 
     public string PlaybackStateFilePath { get; }
 

@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Helpers;
-using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -20,8 +20,8 @@ public abstract partial class SearchableViewModelBase : ObservableObject
 
     protected SearchableViewModelBase(IDispatcherService dispatcherService, ILogger logger)
     {
-        _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _dispatcherService = dispatcherService;
+        _logger = logger;
     }
 
     [ObservableProperty]

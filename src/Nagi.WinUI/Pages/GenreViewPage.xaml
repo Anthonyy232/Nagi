@@ -118,7 +118,8 @@
                         </Grid>
 
                         <Button Style="{StaticResource SongListViewPageIconButton}"
-                                ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
+                                ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}"
+                                AutomationProperties.Name="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
                             <Button.Flyout>
                                 <MenuFlyout Placement="Bottom">
                                     <RadioMenuFlyoutItem GroupName="GenreViewSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
@@ -163,7 +164,8 @@
                             <FontIcon FontSize="16" Glyph="" />
                         </Button>
                         <SplitButton Style="{StaticResource SongListViewPageShuffleButton}" Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}"
-                                ToolTipService.ToolTip="{x:Bind resources:Strings.GenreViewPage_ShufflePlayAllButton_ToolTip, Mode=OneTime}">
+                                ToolTipService.ToolTip="{x:Bind resources:Strings.GenreViewPage_ShufflePlayAllButton_ToolTip, Mode=OneTime}"
+                                AutomationProperties.Name="{x:Bind resources:Strings.GenreViewPage_ShufflePlayAllButton_ToolTip, Mode=OneTime}">
                             <SplitButton.Flyout><MenuFlyout Opening="ListeningOptions_Opening" /></SplitButton.Flyout>
                             <FontIcon FontSize="16" Glyph="" />
                         </SplitButton>
@@ -208,7 +210,7 @@
                                                    Text="{x:Bind resources:Strings.GenreViewPage_Context_GoToArtist, Mode=OneTime}"
                                                    Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 <MenuFlyoutItem
-                                    Command="{Binding DataContext.ShowInFileExplorerCommand, ElementName=pageRoot}"
+                                    Command="{Binding DataContext.ShowInFolderCommand, ElementName=pageRoot}"
                                     CommandParameter="{x:Bind}"
                                     Text="{x:Bind resources:Strings.GenreViewPage_Context_ShowInExplorer, Mode=OneTime}"
                                     Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
@@ -225,7 +227,8 @@
                         <Button Grid.Column="0" Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}"
                                 CommandParameter="{x:Bind}"
                                 Style="{StaticResource SongListViewPageSongPlayButtonStyle}"
-                                ToolTipService.ToolTip="{x:Bind resources:Strings.GenreViewPage_SongElement_PlayButton_ToolTip, Mode=OneTime}">
+                                ToolTipService.ToolTip="{x:Bind resources:Strings.GenreViewPage_SongElement_PlayButton_ToolTip, Mode=OneTime}"
+                                AutomationProperties.Name="{x:Bind resources:Strings.GenreViewPage_SongElement_PlayButton_ToolTip, Mode=OneTime}">
                             <Border Width="42" Height="42" CornerRadius="{StaticResource ArtworkCornerRadius}"
                                     Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <controls:ImageEx Width="42" Height="42" IsCacheEnabled="True" Stretch="UniformToFill"

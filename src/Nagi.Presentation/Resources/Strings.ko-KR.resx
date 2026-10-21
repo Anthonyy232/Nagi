@@ -629,15 +629,6 @@
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>다음</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC에서 알 수 없는 오류가 발생했습니다.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC 오류: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>'{0}' 로드 실패.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>라이브러리</value>
   </data>
@@ -725,9 +716,6 @@
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>취소</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>알 수 없는 폴더</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>폴더에서 검색</value>
   </data>
@@ -776,14 +764,8 @@
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>장르에서 검색</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>알 수 없는 재생 목록</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>스마트 재생 목록에서 검색</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>알 수 없는 스마트 재생 목록</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>메타데이터 재스캔</value>
@@ -2405,5 +2387,13 @@
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>사용 가능한 재생 목록 없음</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>음량 정규화를 위해 곡을 분석하려면 FFmpeg이 필요하지만 Nagi에서 찾을 수 없습니다.
+
+1. https://ffmpeg.org/download.html에서 Windows용 빌드를 다운로드합니다.
+2. 압축을 해제하고 bin 폴더에서 ffmpeg.exe를 찾습니다.
+3. ffmpeg.exe가 포함된 폴더를 Windows PATH에 추가합니다.
+4. Nagi를 다시 시작한 후 음량 정규화를 다시 활성화합니다.</value>
   </data>
 </root>

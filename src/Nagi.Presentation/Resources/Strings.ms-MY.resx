@@ -629,15 +629,6 @@ Fail yang tidak dapat diimport: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Seterusnya</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC menghadapi ralat tidak ditentukan.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Ralat LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Gagal memuatkan '{0}'.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Pustaka</value>
   </data>
@@ -725,9 +716,6 @@ Fail yang tidak dapat diimport: {0}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Batal</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Folder Tidak Dikenali</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari dalam folder</value>
   </data>
@@ -776,14 +764,8 @@ Fail yang tidak dapat diimport: {0}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari dalam genre</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Senarai Main Tidak Dikenali</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari dalam senarai main pintar</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Senarai Main Pintar Tidak Dikenali</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Imbas Semula Metadata</value>
@@ -2405,5 +2387,13 @@ Adakah anda ingin meneruskan?</value>
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Tiada senarai main tersedia</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg diperlukan untuk menganalisis lagu bagi penormalan kelantangan, tetapi Nagi tidak dapat menemuinya.
+
+1. Muat turun binaan Windows dari https://ffmpeg.org/download.html.
+2. Ekstrak arkib dan cari ffmpeg.exe dalam folder binnya.
+3. Tambah folder yang mengandungi ffmpeg.exe ke PATH Windows anda.
+4. Mulakan semula Nagi, kemudian dayakan penormalan kelantangan semula.</value>
   </data>
 </root>

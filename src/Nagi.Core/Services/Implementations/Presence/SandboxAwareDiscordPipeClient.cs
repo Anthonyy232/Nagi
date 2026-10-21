@@ -6,7 +6,7 @@ using DiscordRPC.Logging;
 namespace Nagi.Core.Services.Implementations.Presence;
 
 /// <summary>
-///     A custom <see cref="INamedPipeClient" /> that handles MSIX sandbox pipe virtualization
+///     A custom <see cref="INamedPipeClient" /> that finds Discord's pipe inside the MSIX sandbox and on Unix,
 ///     and safely implements non-blocking reads to prevent DiscordRPC deadlocks.
 /// </summary>
 public sealed class SandboxAwareDiscordPipeClient : INamedPipeClient
@@ -112,11 +112,25 @@ public sealed class SandboxAwareDiscordPipeClient : INamedPipeClient
 
     private bool TryConnect(int pipe)
     {
+        foreach (var pipeName in GetPipeNames(pipe))
+        {
+            if (TryConnectToPipe(pipeName, pipe)) return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    ///     On Windows, the sandbox name comes first because MSIX virtualizes the plain one. On Unix, Discord's
+    ///     pipe is a socket in one of several temp folders (including Flatpak and Snap ones); only existing
+    ///     sockets are tried, so that missing ones don't each wait for the connect timeout.
+    /// </summary>
+    private static IEnumerable<string> GetPipeNames(int pipe)
+    {
         var pipeName = PipeNamePrefix + pipe;
+        if (OperatingSystem.IsWindows()) return [SandboxPrefix + pipeName, pipeName];
 
-        if (TryConnectToPipe(SandboxPrefix + pipeName, pipe)) return true;
-
-        return TryConnectToPipe(pipeName, pipe);
+        return PipeLocation.GetPipes(pipe).Where(path => Path.GetFileName(path) == pipeName && File.Exists(path));
     }
 
     private bool TryConnectToPipe(string pipeName, int pipeNumber)

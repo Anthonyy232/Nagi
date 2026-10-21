@@ -59,21 +59,21 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
         IProviderPipelineProvider pipelines,
         ILogger<LibraryService> logger)
     {
-        _contextFactory = contextFactory ?? throw new ArgumentNullException(nameof(contextFactory));
-        _libraryReader = libraryReader ?? throw new ArgumentNullException(nameof(libraryReader));
-        _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
-        _metadataService = metadataService ?? throw new ArgumentNullException(nameof(metadataService));
-        _lastFmService = lastFmService ?? throw new ArgumentNullException(nameof(lastFmService));
-        _musicBrainzService = musicBrainzService ?? throw new ArgumentNullException(nameof(musicBrainzService));
-        _fanartTvService = fanartTvService ?? throw new ArgumentNullException(nameof(fanartTvService));
-        _theAudioDbService = theAudioDbService ?? throw new ArgumentNullException(nameof(theAudioDbService));
-        _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
-        _pathConfig = pathConfig ?? throw new ArgumentNullException(nameof(pathConfig));
-        _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-        _replayGainService = replayGainService ?? throw new ArgumentNullException(nameof(replayGainService));
-        _imageProcessor = imageProcessor ?? throw new ArgumentNullException(nameof(imageProcessor));
-        _pipelines = pipelines ?? throw new ArgumentNullException(nameof(pipelines));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _contextFactory = contextFactory;
+        _libraryReader = libraryReader;
+        _fileSystem = fileSystem;
+        _metadataService = metadataService;
+        _lastFmService = lastFmService;
+        _musicBrainzService = musicBrainzService;
+        _fanartTvService = fanartTvService;
+        _theAudioDbService = theAudioDbService;
+        _httpClientFactory = httpClientFactory;
+        _pathConfig = pathConfig;
+        _settingsService = settingsService;
+        _replayGainService = replayGainService;
+        _imageProcessor = imageProcessor;
+        _pipelines = pipelines;
+        _logger = logger;
         _settingsService.FetchOnlineMetadataEnabledChanged += OnFetchOnlineMetadataEnabledChanged;
     }
 
@@ -199,7 +199,7 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
         if (existingFolder is not null)
             return existingFolder;
 
-        var folderName = _fileSystem.GetFileName(normalizedPath);
+        var folderName = Path.GetFileName(normalizedPath);
         var folder = new Folder
         {
             Path = normalizedPath,

@@ -629,15 +629,6 @@ Nem importálható fájlok: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Következő</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>A LibVLC ismeretlen hibába ütközött.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC hiba: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Nem sikerült betölteni: „{0}”.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Könyvtár</value>
   </data>
@@ -725,9 +716,6 @@ Nem importálható fájlok: {0}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Mégse</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Ismeretlen mappa</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Keresés mappában</value>
   </data>
@@ -776,14 +764,8 @@ Nem importálható fájlok: {0}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Keresés a műfajban</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Ismeretlen lejátszási lista</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Keresés intelligens lejátszási listában</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Ismeretlen intelligens lejátszási lista</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Metaadatok újraolvasása</value>
@@ -2405,5 +2387,13 @@ Szeretné folytatni?</value>
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Nincs elérhető lejátszási lista</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>Az FFmpeg szükséges a dalok hangerő-normalizáláshoz történő elemzéséhez, de a Nagi nem találta.
+
+1. Töltsön le egy Windows-verziót a https://ffmpeg.org/download.html oldalról.
+2. Csomagolja ki az archívumot, és keresse meg az ffmpeg.exe fájlt annak bin mappájában.
+3. Adja hozzá az ffmpeg.exe fájlt tartalmazó mappát a Windows PATH környezeti változójához.
+4. Indítsa újra a Nagi alkalmazást, majd engedélyezze újra a hangerő-normalizálást.</value>
   </data>
 </root>

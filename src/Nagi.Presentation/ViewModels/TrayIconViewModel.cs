@@ -45,7 +45,7 @@ public partial class TrayIconViewModel : ObservableObject
     {
         _logger.LogDebug("Cleaning up TrayIconViewModel resources");
         _windowService.Closing -= OnAppWindowClosing;
-        _windowService.VisibilityChanged -= OnAppWindowVisibilityChanged;
+        _windowService.UIStateChanged -= OnWindowStateChanged;
         _settingsService.HideToTraySettingChanged -= OnHideToTraySettingChanged;
     }
 
@@ -53,7 +53,7 @@ public partial class TrayIconViewModel : ObservableObject
     public async Task InitializeAsync()
     {
         _windowService.Closing += OnAppWindowClosing;
-        _windowService.VisibilityChanged += OnAppWindowVisibilityChanged;
+        _windowService.UIStateChanged += OnWindowStateChanged;
 
         _isHideToTrayEnabled = await _settingsService.GetHideToTrayEnabledAsync();
         UpdateTrayIconVisibility();
@@ -67,35 +67,21 @@ public partial class TrayIconViewModel : ObservableObject
         IsTrayIconVisible = _isHideToTrayEnabled && !_windowService.IsVisible;
     }
 
-    private void OnAppWindowVisibilityChanged()
+    private void OnWindowStateChanged()
     {
         _dispatcherService.TryEnqueue(UpdateTrayIconVisibility);
     }
 
     private void OnAppWindowClosing(WindowClosingEventArgs args)
     {
-        // If the application is exiting intentionally, do not intercept the close.
         if (_windowService.IsExiting) return;
 
-        if (_windowService.IsShowingOnboarding)
+        // Closing during onboarding exits, since there is nothing to keep running in the tray.
+        if (_isHideToTrayEnabled && !_windowService.IsShowingOnboarding)
         {
-            _windowService.IsExiting = true;
-            _logger.LogDebug("OnboardingPage is active. Allowing application to exit");
-            return;
-        }
-
-        if (_isHideToTrayEnabled)
-        {
-            // Cancel the default close operation and hide the window to the tray instead.
             args.Cancel = true;
             _logger.LogDebug("'Hide to Tray' is enabled. Intercepting close and hiding window");
             _dispatcherService.TryEnqueue(_windowService.Hide);
-        }
-        else
-        {
-            // If not hiding to tray, closing the window means exiting the application.
-            _windowService.IsExiting = true;
-            _logger.LogDebug("'Hide to Tray' is disabled. Allowing application to exit");
         }
     }
 
@@ -125,7 +111,7 @@ public partial class TrayIconViewModel : ObservableObject
             return;
         }
 
-        _trayPopupService.ShowOrHidePopup();
+        _trayPopupService.TogglePopup();
     }
 
     /// <summary>
@@ -141,9 +127,5 @@ public partial class TrayIconViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void ExitApplication()
-    {
-        _windowService.IsExiting = true;
-        _windowService.Close();
-    }
+    private void ExitApplication() => _windowService.Exit();
 }

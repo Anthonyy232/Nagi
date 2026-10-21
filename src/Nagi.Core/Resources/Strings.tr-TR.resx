@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Sırala: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>Şarkıları ses düzeyi normalleştirmesi için analiz etmek üzere FFmpeg gerekiyor, ancak Nagi onu bulamadı.
-
-1. https://ffmpeg.org/download.html adresinden bir Windows sürümü indirin.
-2. Arşivi çıkarın ve bin klasöründeki ffmpeg.exe dosyasını bulun.
-3. ffmpeg.exe dosyasını içeren klasörü Windows PATH değişkeninize ekleyin.
-4. Nagi'yi yeniden başlatın, ardından ses düzeyi normalleştirmesini tekrar etkinleştirin.</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>Çalma listesi oluşturuldu, ancak şarkıları eklenemedi. Lütfen tekrar içe aktarmayı deneyin.</value>
   </data>
@@ -323,5 +315,14 @@
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>Seçilen dosya geçerli bir Nagi yedeği değil.</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC belirtilmemiş bir hatayla karşılaştı.</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>LibVLC Hatası: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>'{0}' yüklenemedi.</value>
   </data>
 </root>

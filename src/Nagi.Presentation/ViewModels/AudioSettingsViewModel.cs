@@ -52,13 +52,13 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
         TimeProvider? timeProvider = null)
         : base(dispatcherService, logger)
     {
-        _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
-        _audioPlayer = audioPlayer ?? throw new ArgumentNullException(nameof(audioPlayer));
-        _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-        _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
-        _ffmpegService = ffmpegService ?? throw new ArgumentNullException(nameof(ffmpegService));
-        _replayGainService = replayGainService ?? throw new ArgumentNullException(nameof(replayGainService));
-        _globalOperation = globalOperation ?? throw new ArgumentNullException(nameof(globalOperation));
+        _playbackService = playbackService;
+        _audioPlayer = audioPlayer;
+        _settingsService = settingsService;
+        _uiService = uiService;
+        _ffmpegService = ffmpegService;
+        _replayGainService = replayGainService;
+        _globalOperation = globalOperation;
         _timeProvider = timeProvider ?? TimeProvider.System;
         _preampDebouncer = new Debouncer(TimeSpan.FromMilliseconds(EqualizerDebounceDelayMilliseconds), _timeProvider);
 
@@ -339,8 +339,6 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
             if (!ffmpegInstalled)
             {
                 ffmpegInstalled = await _uiService.ShowFFmpegSetupDialogAsync(
-                    Strings.Settings_Dialog_FFmpegNotFound_Title,
-                    _ffmpegService.GetFFmpegSetupInstructions(),
                     () => _ffmpegService.IsFFmpegInstalledAsync(forceRecheck: true));
                 if (!IsCurrent()) return;
                 if (!ffmpegInstalled)

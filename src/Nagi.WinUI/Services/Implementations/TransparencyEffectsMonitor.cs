@@ -1,6 +1,6 @@
 using System;
-using Nagi.Presentation.Services.Abstractions;
 using Windows.UI.ViewManagement;
+using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.WinUI.Services.Implementations;
 
@@ -14,7 +14,7 @@ public sealed class TransparencyEffectsMonitor : IDisposable
 
     public TransparencyEffectsMonitor(IDispatcherService dispatcherService)
     {
-        _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
+        _dispatcherService = dispatcherService;
         _uiSettings.AdvancedEffectsEnabledChanged += OnAdvancedEffectsEnabledChanged;
     }
 

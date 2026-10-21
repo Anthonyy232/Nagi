@@ -149,7 +149,8 @@
                     </Grid>
 
                     <Button Style="{StaticResource SongListViewPageIconButton}"
-                            ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
+                            ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}"
+                            AutomationProperties.Name="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
                         <Button.Flyout>
                             <MenuFlyout Placement="Bottom">
                                 <RadioMenuFlyoutItem GroupName="SmartPlaylistSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
@@ -229,7 +230,7 @@
                     <Button Style="{StaticResource SongListViewPageIconButton}"
                             ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylistSongViewPage_EditRulesButton_ToolTip, Mode=OneTime}"
                             AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylistSongViewPage_EditRulesButton_ToolTip, Mode=OneTime}"
-                            Click="EditRulesButton_Click">
+                            Command="{x:Bind ViewModel.EditRulesCommand}">
                         <FontIcon Glyph="&#xE70F;" FontSize="16" />
                     </Button>
 
@@ -242,6 +243,7 @@
 
                     <SplitButton Style="{StaticResource SongListViewPageShuffleButton}"
                             ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip, Mode=OneTime}"
+                            AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip, Mode=OneTime}"
                             Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}">
                         <SplitButton.Flyout><MenuFlyout Opening="ListeningOptions_Opening" /></SplitButton.Flyout>
                         <FontIcon Glyph="&#xE8B1;" FontSize="16" />
@@ -285,7 +287,7 @@
                                                    Text="{x:Bind resources:Strings.SmartPlaylistSongViewPage_Context_GoToArtist, Mode=OneTime}"
                                                    Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 <MenuFlyoutItem Text="{x:Bind resources:Strings.SmartPlaylistSongViewPage_Context_ShowInExplorer, Mode=OneTime}"
-                                                Command="{Binding DataContext.ShowInFileExplorerCommand, ElementName=pageRoot}"
+                                                Command="{Binding DataContext.ShowInFolderCommand, ElementName=pageRoot}"
                                                 CommandParameter="{x:Bind}"
                                                 Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                             </MenuFlyout>
@@ -303,7 +305,8 @@
                         <Button Grid.Column="0" Style="{StaticResource SongListViewPageSongPlayButtonStyle}"
                                 Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}"
                                 CommandParameter="{x:Bind}"
-                                ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip, Mode=OneTime}">
+                                ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip, Mode=OneTime}"
+                                AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip, Mode=OneTime}">
                             <Border Width="42" Height="42" CornerRadius="{StaticResource ArtworkCornerRadius}"
                                     Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <controls:ImageEx Width="42" Height="42"
@@ -387,7 +390,7 @@
             <Button
                 Style="{StaticResource AnimatedAccentButtonStyle}"
                 Content="{x:Bind resources:Strings.SmartPlaylistSongViewPage_EmptyState_Button_Content, Mode=OneTime}"
-                Click="EditRulesButton_Click"
+                Command="{x:Bind ViewModel.EditRulesCommand}"
                 HorizontalAlignment="Center" />
         </StackPanel>
 

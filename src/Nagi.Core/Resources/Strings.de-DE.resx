@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Sortieren nach: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg wird benötigt, um Titel für die Lautstärkenormalisierung zu analysieren, aber Nagi konnte es nicht finden.
-
-1. Laden Sie ein Windows-Build von https://ffmpeg.org/download.html herunter.
-2. Entpacken Sie das Archiv und suchen Sie ffmpeg.exe in dessen bin-Ordner.
-3. Fügen Sie den Ordner mit ffmpeg.exe zu Ihrer Windows-PATH-Variablen hinzu.
-4. Starten Sie Nagi neu und aktivieren Sie die Lautstärkenormalisierung erneut.</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>Die Wiedergabeliste wurde erstellt, aber ihre Titel konnten nicht hinzugefügt werden. Bitte versuchen Sie den Import erneut.</value>
   </data>
@@ -323,5 +315,14 @@
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>Die ausgewählte Datei ist kein gültiges Nagi-Backup.</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC ist auf einen nicht spezifizierten Fehler gestoßen.</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>LibVLC Fehler: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>„{0}“ konnte nicht geladen werden.</value>
   </data>
 </root>

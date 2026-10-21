@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Sorteren op: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg is nodig om nummers te analyseren voor volumenormalisatie, maar Nagi kon het niet vinden.
-
-1. Download een Windows-versie van https://ffmpeg.org/download.html.
-2. Pak het archief uit en zoek ffmpeg.exe in de map bin.
-3. Voeg de map met ffmpeg.exe toe aan je Windows PATH.
-4. Herstart Nagi en schakel volumenormalisatie weer in.</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>De afspeellijst is aangemaakt, maar de nummers konden niet worden toegevoegd. Probeer opnieuw te importeren.</value>
   </data>
@@ -323,5 +315,14 @@
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>Het geselecteerde bestand is geen geldige Nagi-back-up.</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC heeft een ongespecificeerde fout ondervonden.</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>LibVLC Fout: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>Laden van '{0}' mislukt.</value>
   </data>
 </root>

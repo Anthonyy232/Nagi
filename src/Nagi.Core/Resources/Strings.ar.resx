@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>الترتيب حسب: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>يلزم وجود FFmpeg لتحليل الأغاني لمعايرة مستوى الصوت، لكن تعذر على Nagi العثور عليه.
-
-1. نزّل نسخة Windows من https://ffmpeg.org/download.html.
-2. استخرج الأرشيف وابحث عن ffmpeg.exe في مجلد bin الخاص به.
-3. أضف المجلد الذي يحتوي على ffmpeg.exe إلى PATH في Windows.
-4. أعد تشغيل Nagi، ثم فعّل معايرة مستوى الصوت مجددًا.</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>تم إنشاء قائمة التشغيل، ولكن تعذرت إضافة أغانيها. يُرجى محاولة الاستيراد مجددًا.</value>
   </data>
@@ -323,5 +315,14 @@
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>الملف المحدد ليس ملف نسخ احتياطي صالحًا لـ Nagi.</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>واجه LibVLC خطأ غير محدد.</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>خطأ LibVLC: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>فشل تحميل '{0}'.</value>
   </data>
 </root>

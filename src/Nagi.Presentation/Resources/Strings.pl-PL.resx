@@ -629,15 +629,6 @@ Pliki, których nie udało się zaimportować: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Następny</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC napotkało nieokreślony błąd.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Błąd LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Nie udało się załadować '{0}'.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Biblioteka</value>
   </data>
@@ -725,9 +716,6 @@ Pliki, których nie udało się zaimportować: {0}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Anuluj</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Nieznany Folder</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Szukaj w folderze</value>
   </data>
@@ -776,14 +764,8 @@ Pliki, których nie udało się zaimportować: {0}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Szukaj w gatunku</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Nieznana Playlista</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Szukaj w inteligentnej playliście</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Nieznana Inteligentna Playlista</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Ponowne Skanowanie Metadanych</value>
@@ -2405,5 +2387,13 @@ Czy chcesz kontynuować?</value>
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Brak dostępnych playlist</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>Program FFmpeg jest potrzebny do analizy utworów pod kątem wyrównywania głośności, ale aplikacja Nagi nie mogła go odnaleźć.
+
+1. Pobierz wersję dla systemu Windows ze strony https://ffmpeg.org/download.html.
+2. Rozpakuj archiwum i zlokalizuj plik ffmpeg.exe w folderze bin.
+3. Dodaj folder zawierający plik ffmpeg.exe do zmiennej PATH w systemie Windows.
+4. Uruchom ponownie aplikację Nagi, a następnie ponownie włącz wyrównywanie głośności.</value>
   </data>
 </root>

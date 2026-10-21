@@ -50,15 +50,15 @@ public partial class SettingsViewModel : SettingsSectionViewModel
         TimeProvider? timeProvider = null)
         : base(dispatcherService, logger)
     {
-        _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-        _appInfoService = appInfoService ?? throw new ArgumentNullException(nameof(appInfoService));
-        _autoLaunchService = autoLaunchService ?? throw new ArgumentNullException(nameof(autoLaunchService));
-        Appearance = appearance ?? throw new ArgumentNullException(nameof(appearance));
-        Audio = audio ?? throw new ArgumentNullException(nameof(audio));
-        Library = library ?? throw new ArgumentNullException(nameof(library));
-        Scrobbling = scrobbling ?? throw new ArgumentNullException(nameof(scrobbling));
-        Romanization = romanizationPacks ?? throw new ArgumentNullException(nameof(romanizationPacks));
-        DataManagement = dataManagement ?? throw new ArgumentNullException(nameof(dataManagement));
+        _settingsService = settingsService;
+        _appInfoService = appInfoService;
+        _autoLaunchService = autoLaunchService;
+        Appearance = appearance;
+        Audio = audio;
+        Library = library;
+        Scrobbling = scrobbling;
+        Romanization = romanizationPacks;
+        DataManagement = dataManagement;
         _timeProvider = timeProvider ?? TimeProvider.System;
         _playerButtonSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs), _timeProvider);
 
@@ -167,6 +167,10 @@ public partial class SettingsViewModel : SettingsSectionViewModel
             IsShowCoverArtInTrayFlyoutEnabled = trayFlyoutTask.Result;
             IsDiscordRichPresenceEnabled = discordRpcTask.Result;
             _isLoaded = true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to load settings.");
         }
         finally
         {

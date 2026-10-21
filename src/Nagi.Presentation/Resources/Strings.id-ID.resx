@@ -629,15 +629,6 @@ Berkas yang tidak dapat diimpor: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Berikutnya</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC mengalami kesalahan yang tidak ditentukan.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Kesalahan LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Gagal memuat '{0}'.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Pustaka</value>
   </data>
@@ -725,9 +716,6 @@ Berkas yang tidak dapat diimpor: {0}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Batal</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Folder Tidak Dikenal</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari di folder</value>
   </data>
@@ -776,14 +764,8 @@ Berkas yang tidak dapat diimpor: {0}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari dalam genre</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Daftar Putar Tidak Dikenal</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari di daftar putar cerdas</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Daftar Putar Cerdas Tidak Dikenal</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Pindai Ulang Metadata</value>
@@ -2405,5 +2387,13 @@ Apakah Anda ingin melanjutkan?</value>
   </data>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Tidak ada daftar putar tersedia</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg diperlukan untuk menganalisis lagu demi normalisasi volume, tetapi Nagi tidak dapat menemukannya.
+
+1. Unduh versi Windows dari https://ffmpeg.org/download.html.
+2. Ekstrak arsip lalu temukan ffmpeg.exe di folder bin miliknya.
+3. Tambahkan folder yang berisi ffmpeg.exe ke PATH Windows Anda.
+4. Mulai ulang Nagi, lalu aktifkan kembali normalisasi volume.</value>
   </data>
 </root>

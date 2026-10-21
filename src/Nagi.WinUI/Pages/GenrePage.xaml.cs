@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Services.Data;
@@ -12,13 +11,10 @@ namespace Nagi.WinUI.Pages;
 
 public sealed partial class GenrePage : SearchablePage
 {
-    private readonly ILogger<GenrePage> _logger;
-
     public GenrePage()
     {
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<GenreViewModel>();
-        _logger = App.Services!.GetRequiredService<ILogger<GenrePage>>();
         DataContext = ViewModel;
         InitializeSearch(ViewModel, SearchToggleButton, SearchTextBox, Strings.GenrePage_SearchButton_Search_ToolTip);
     }
@@ -27,15 +23,8 @@ public sealed partial class GenrePage : SearchablePage
 
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
-        try
-        {
-            base.OnNavigatedTo(e);
-            await ViewModel.LoadGenresCommand.ExecuteAsync(null);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to navigate to GenrePage correctly.");
-        }
+        base.OnNavigatedTo(e);
+        await ViewModel.LoadGenresCommand.ExecuteAsync(null);
     }
 
     protected override void OnNavigatedFrom(NavigationEventArgs e)
