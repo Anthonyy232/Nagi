@@ -50,33 +50,22 @@ public static class AppDataReset
     {
         try
         {
-            // Settings live in the platform store; settings.json is only left over from older versions.
-            try
-            {
-                settingsStore.Values.Clear();
-            }
-            catch (Exception ex)
-            {
-                Log.Warning(ex, "Failed to clear the settings store.");
-            }
-
-            SafelyDeleteFile(pathConfig.SettingsFilePath);
-            SafelyDeleteFile(pathConfig.PlaybackStateFilePath);
-
-            DeleteDatabaseFiles(pathConfig.DatabasePath);
-
-            SafelyDeleteDir(pathConfig.AlbumArtCachePath);
-            SafelyDeleteDir(pathConfig.ArtistImageCachePath);
-            SafelyDeleteDir(pathConfig.PlaylistImageCachePath);
-            SafelyDeleteDir(pathConfig.LrcCachePath);
-            SafelyDeleteDir(pathConfig.RomanizationPacksPath);
-
-            Log.Information("Manual file reset completed.");
+            settingsStore.Values.Clear();
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Critical failure during manual file reset.");
+            Log.Warning(ex, "Failed to clear the settings store.");
         }
+
+        SafelyDeleteFile(pathConfig.PlaybackStateFilePath);
+        DeleteDatabaseFiles(pathConfig.DatabasePath);
+        SafelyDeleteDir(pathConfig.AlbumArtCachePath);
+        SafelyDeleteDir(pathConfig.ArtistImageCachePath);
+        SafelyDeleteDir(pathConfig.PlaylistImageCachePath);
+        SafelyDeleteDir(pathConfig.LrcCachePath);
+        SafelyDeleteDir(pathConfig.RomanizationPacksPath);
+
+        Log.Information("Manual file reset completed.");
     }
 
     internal static void DeleteDatabaseFiles(string databasePath)

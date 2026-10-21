@@ -4,8 +4,6 @@ public interface IPathConfiguration
 {
     string AppDataRoot { get; }
 
-    string SettingsFilePath { get; }
-
     string PlaybackStateFilePath { get; }
 
     string AlbumArtCachePath { get; }
