@@ -716,9 +716,6 @@ Import abaguk mawagginna files: {0}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Bada</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Aamaneewa Folder</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Folder addat gurrus</value>
   </data>
@@ -767,14 +764,8 @@ Import abaguk mawagginna files: {0}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Genre addat gurrus</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Aamaneewa Playlist</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Smart playlist addat gurrus</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Aamaneewa Smart Playlist</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Metadata Rescan</value>

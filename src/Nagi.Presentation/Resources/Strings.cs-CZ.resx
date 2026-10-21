@@ -716,9 +716,6 @@ Soubory, které se nepodařilo importovat: {0}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Zrušit</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Neznámá složka</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hledat ve složce</value>
   </data>
@@ -767,14 +764,8 @@ Soubory, které se nepodařilo importovat: {0}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hledat v žánru</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Neznámý seznam skladeb</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hledat v chytrém seznamu skladeb</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Neznámý chytrý seznam skladeb</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Opětovné skenování metadat</value>

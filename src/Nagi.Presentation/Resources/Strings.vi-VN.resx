@@ -716,9 +716,6 @@ Các tệp không thể nhập: {0}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Hủy</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Thư mục không xác định</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tìm kiếm trong thư mục</value>
   </data>
@@ -767,14 +764,8 @@ Các tệp không thể nhập: {0}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tìm kiếm trong thể loại</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Danh sách phát không xác định</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tìm kiếm trong danh sách phát thông minh</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Danh sách phát thông minh không xác định</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Quét lại siêu dữ liệu</value>

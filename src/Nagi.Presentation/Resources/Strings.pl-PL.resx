@@ -716,9 +716,6 @@ Pliki, których nie udało się zaimportować: {0}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Anuluj</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Nieznany Folder</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Szukaj w folderze</value>
   </data>
@@ -767,14 +764,8 @@ Pliki, których nie udało się zaimportować: {0}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Szukaj w gatunku</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Nieznana Playlista</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Szukaj w inteligentnej playliście</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Nieznana Inteligentna Playlista</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Ponowne Skanowanie Metadanych</value>

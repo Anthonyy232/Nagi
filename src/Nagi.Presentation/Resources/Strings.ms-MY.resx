@@ -716,9 +716,6 @@ Fail yang tidak dapat diimport: {0}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Batal</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Folder Tidak Dikenali</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari dalam folder</value>
   </data>
@@ -767,14 +764,8 @@ Fail yang tidak dapat diimport: {0}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari dalam genre</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Senarai Main Tidak Dikenali</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari dalam senarai main pintar</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Senarai Main Pintar Tidak Dikenali</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Imbas Semula Metadata</value>

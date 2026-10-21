@@ -4,7 +4,6 @@ using CommunityToolkit.WinUI;
 using System.Linq;
 using System.Numerics;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -19,7 +18,6 @@ namespace Nagi.WinUI.Pages;
 
 public sealed partial class ArtistViewPage : SongListPage
 {
-    private readonly ILogger<ArtistViewPage> _logger;
     private bool _isUpdatingAlbumsLayout;
     private bool _pendingLayoutUpdate;
     private ScrollViewer? _songsScrollViewer;
@@ -29,7 +27,6 @@ public sealed partial class ArtistViewPage : SongListPage
     {
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<ArtistViewViewModel>();
-        _logger = App.Services!.GetRequiredService<ILogger<ArtistViewPage>>();
         DataContext = ViewModel;
         InitializeSongList(ViewModel, ownsViewModel: true, SearchToggleButton, SearchTextBox,
             Strings.ArtistViewPage_SearchButton_Search_ToolTip, SongsListView);
@@ -48,18 +45,9 @@ public sealed partial class ArtistViewPage : SongListPage
         AlbumsContent.Translation = Vector3.Zero;
         _lastKnownAlbumsHeight = 0;
 
-        if (e.Parameter is ArtistViewNavigationParameter navParam)
-        {
-            await ViewModel.LoadArtistDetailsAsync(navParam.ArtistId);
-            await ViewModel.LoadAvailablePlaylistsAsync();
-        }
-        else
-        {
-            var paramType = e.Parameter?.GetType().Name ?? "null";
-            _logger.LogError(
-                "Received incorrect navigation parameter type. Expected '{ExpectedType}', but got '{ActualType}'.",
-                nameof(ArtistViewNavigationParameter), paramType);
-        }
+        var navParam = (ArtistViewNavigationParameter)e.Parameter;
+        await ViewModel.LoadArtistDetailsAsync(navParam.ArtistId);
+        await ViewModel.LoadAvailablePlaylistsAsync();
     }
 
     protected override void OnNavigatedFrom(NavigationEventArgs e)

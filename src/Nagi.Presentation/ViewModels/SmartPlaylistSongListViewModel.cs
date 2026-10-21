@@ -90,7 +90,7 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
 
 
 
-    public async Task InitializeAsync(string title, Guid? smartPlaylistId, string? coverImageUri = null)
+    public async Task InitializeAsync(string title, Guid smartPlaylistId, string? coverImageUri = null)
     {
         if (_isDisposed) return;
         ResetState();
@@ -108,21 +108,18 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
             _currentSmartPlaylistId = smartPlaylistId;
             CoverImageUri = coverImageUri;
 
-            if (smartPlaylistId.HasValue)
+            var smartPlaylist = await _smartPlaylistService.GetSmartPlaylistByIdAsync(smartPlaylistId);
+            if (_isDisposed || generation != _playlistGeneration) return;
+            if (smartPlaylist != null)
             {
-                var smartPlaylist = await _smartPlaylistService.GetSmartPlaylistByIdAsync(smartPlaylistId.Value);
-                if (_isDisposed || generation != _playlistGeneration) return;
-                if (smartPlaylist != null)
-                {
-                    PageTitle = smartPlaylist.Name;
-                    CoverImageUri = ImageUriHelper.GetUriWithCacheBuster(smartPlaylist.CoverImageUri, smartPlaylist.DateModified);
-                    RuleSummary = BuildRuleSummary(smartPlaylist);
-                    CurrentSortOrder = SortOrderHelper.MapToSongSortOrder(smartPlaylist.SortOrder);
-                }
-                else
-                {
-                    _currentSmartPlaylistId = null;
-                }
+                PageTitle = smartPlaylist.Name;
+                CoverImageUri = ImageUriHelper.GetUriWithCacheBuster(smartPlaylist.CoverImageUri, smartPlaylist.DateModified);
+                RuleSummary = BuildRuleSummary(smartPlaylist);
+                CurrentSortOrder = SortOrderHelper.MapToSongSortOrder(smartPlaylist.SortOrder);
+            }
+            else
+            {
+                _currentSmartPlaylistId = null;
             }
 
             await RefreshOrSortSongsCommand.ExecuteAsync(null);

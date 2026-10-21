@@ -716,9 +716,6 @@ Puk ma pe otwero tero i iye: {0, plural, one {#} other {#}}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Juk</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Puk Pe Onge</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Reny i puk</value>
   </data>
@@ -767,14 +764,8 @@ Puk ma pe otwero tero i iye: {0, plural, one {#} other {#}}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Reny i kit wer</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Chen Wer Pe Onge</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Reny i chen wer me ryeko</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Chen Wer Me Ryeko Pe Onge</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Ngiy Odoco Lok me Iye</value>

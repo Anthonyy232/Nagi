@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -18,13 +17,11 @@ namespace Nagi.WinUI.Pages;
 
 public sealed partial class FolderSongViewPage : SongListPage
 {
-    private readonly ILogger<FolderSongViewPage> _logger;
 
     public FolderSongViewPage()
     {
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<FolderSongListViewModel>();
-        _logger = App.Services!.GetRequiredService<ILogger<FolderSongViewPage>>();
         DataContext = ViewModel;
         InitializeSongList(ViewModel, ownsViewModel: true, SearchToggleButton, SearchTextBox,
             Strings.FolderSongViewPage_SearchButton_Search_ToolTip, FolderContentsListView);
@@ -39,19 +36,9 @@ public sealed partial class FolderSongViewPage : SongListPage
     {
         base.OnNavigatedTo(e);
 
-        if (e.Parameter is FolderSongViewNavigationParameter navParam)
-        {
-            await ViewModel.InitializeAsync(navParam.Title, navParam.FolderId, navParam.DirectoryPath);
-            await ViewModel.LoadAvailablePlaylistsAsync();
-        }
-        else
-        {
-            var paramType = e.Parameter?.GetType().Name ?? "null";
-            _logger.LogWarning(
-                "Received invalid navigation parameter. Expected '{ExpectedType}', got '{ActualType}'. Initializing with fallback state.",
-                nameof(FolderSongViewNavigationParameter), paramType);
-            await ViewModel.InitializeAsync(Strings.FolderSongViewPage_Default_Title, null);
-        }
+        var navParam = (FolderSongViewNavigationParameter)e.Parameter;
+        await ViewModel.InitializeAsync(navParam.Title, navParam.FolderId, navParam.DirectoryPath);
+        await ViewModel.LoadAvailablePlaylistsAsync();
     }
 
     private void OnBreadcrumbItemClicked(BreadcrumbBar sender, BreadcrumbBarItemClickedEventArgs args)

@@ -68,7 +68,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     [ObservableProperty]
     public partial bool IsAtRootLevel { get; set; } = true;
 
-    public async Task InitializeAsync(string title, Guid? rootFolderId, string? directoryPath = null)
+    public async Task InitializeAsync(string title, Guid rootFolderId, string? directoryPath = null)
     {
         if (_isDisposed) return;
         ResetState();
@@ -80,26 +80,17 @@ public partial class FolderSongListViewModel : SongListViewModelBase
             _rootFolderPath = null;
             _currentDirectoryPath = directoryPath ?? string.Empty;
 
-            if (_rootFolderId.HasValue)
-            {
-                var rootFolderTask = _libraryReader.GetFolderByIdAsync(_rootFolderId.Value);
-                var sortTask = _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.FolderViewSortOrderKey);
+            var rootFolderTask = _libraryReader.GetFolderByIdAsync(rootFolderId);
+            var sortTask = _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.FolderViewSortOrderKey);
 
-                await Task.WhenAll(rootFolderTask, sortTask);
-                if (!IsSongContextCurrent(generation)) return;
+            await Task.WhenAll(rootFolderTask, sortTask);
+            if (!IsSongContextCurrent(generation)) return;
 
-                _rootFolderPath = rootFolderTask.Result?.Path;
-                CurrentSortOrder = sortTask.Result;
+            _rootFolderPath = rootFolderTask.Result?.Path;
+            CurrentSortOrder = sortTask.Result;
 
-                if (string.IsNullOrEmpty(_currentDirectoryPath))
-                    _currentDirectoryPath = _rootFolderPath ?? string.Empty;
-            }
-            else
-            {
-                var sortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.FolderViewSortOrderKey);
-                if (!IsSongContextCurrent(generation)) return;
-                CurrentSortOrder = sortOrder;
-            }
+            if (string.IsNullOrEmpty(_currentDirectoryPath))
+                _currentDirectoryPath = _rootFolderPath ?? string.Empty;
 
             PageTitle = title;
             UpdateBreadcrumbs();

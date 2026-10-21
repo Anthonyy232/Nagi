@@ -716,9 +716,6 @@ Faili ambazo hazikuweza kuingizwa: {0}.</value>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
     <value>Ghairi</value>
   </data>
-  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>Folda Isiyojulikana</value>
-  </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tafuta ndani ya folda</value>
   </data>
@@ -767,14 +764,8 @@ Faili ambazo hazikuweza kuingizwa: {0}.</value>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tafuta katika aina ya muziki</value>
   </data>
-  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Orodha ya Kucheza Isiyojulikana</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tafuta ndani ya orodha ya kucheza nadhifu</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>Orodha ya Kucheza Nadhifu Isiyojulikana</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
     <value>Changanua Upya Metadata</value>
