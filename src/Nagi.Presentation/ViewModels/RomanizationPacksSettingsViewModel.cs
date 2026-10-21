@@ -25,7 +25,7 @@ public partial class RomanizationPacksSettingsViewModel : SettingsSectionViewMod
         ILogger<RomanizationPacksSettingsViewModel> logger)
         : base(dispatcherService, logger)
     {
-        _romanizationPackManager = romanizationPackManager ?? throw new ArgumentNullException(nameof(romanizationPackManager));
+        _romanizationPackManager = romanizationPackManager;
     }
 
     [ObservableProperty] public partial bool IsLoadingRomanizationPacks { get; set; }

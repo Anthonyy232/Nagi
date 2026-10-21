@@ -79,13 +79,13 @@ public partial class SettingsService : IUISettingsService
     public SettingsService(ISettingsStore settingsStore, IPathConfiguration pathConfig,
         ICredentialLockerService credentialLockerService, IAutoLaunchService autoLaunchService, ILogger<SettingsService> logger)
     {
-        _pathConfig = pathConfig ?? throw new ArgumentNullException(nameof(pathConfig));
+        _pathConfig = pathConfig;
         _credentialLockerService =
-            credentialLockerService ?? throw new ArgumentNullException(nameof(credentialLockerService));
-        _autoLaunchService = autoLaunchService ?? throw new ArgumentNullException(nameof(autoLaunchService));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            credentialLockerService;
+        _autoLaunchService = autoLaunchService;
+        _logger = logger;
 
-        _values = (settingsStore ?? throw new ArgumentNullException(nameof(settingsStore))).Values;
+        _values = (settingsStore).Values;
     }
 
     public event Action<bool>? PlayerAnimationSettingChanged;

@@ -23,7 +23,7 @@ public abstract class SettingsSectionViewModel : ObservableObject, IDisposable
 
     protected SettingsSectionViewModel(IDispatcherService dispatcherService, ILogger logger)
     {
-        _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
+        _dispatcherService = dispatcherService;
         _logger = logger;
     }
 

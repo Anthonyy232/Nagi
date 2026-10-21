@@ -44,10 +44,10 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
         TimeProvider? timeProvider = null)
         : base(dispatcherService, logger)
     {
-        _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-        _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
-        _libraryScanner = libraryScanner ?? throw new ArgumentNullException(nameof(libraryScanner));
-        _globalOperation = globalOperation ?? throw new ArgumentNullException(nameof(globalOperation));
+        _settingsService = settingsService;
+        _uiService = uiService;
+        _libraryScanner = libraryScanner;
+        _globalOperation = globalOperation;
         _globalOperation.PropertyChanged += OnGlobalOperationPropertyChanged;
         timeProvider ??= TimeProvider.System;
         _lyricsProviderSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs), timeProvider);

@@ -20,8 +20,8 @@ public abstract partial class SearchableViewModelBase : ObservableObject
 
     protected SearchableViewModelBase(IDispatcherService dispatcherService, ILogger logger)
     {
-        _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _dispatcherService = dispatcherService;
+        _logger = logger;
     }
 
     [ObservableProperty]

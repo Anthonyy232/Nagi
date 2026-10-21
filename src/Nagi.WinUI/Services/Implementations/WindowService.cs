@@ -34,11 +34,11 @@ public sealed class WindowService : IWindowService, IDisposable
         IDispatcherService dispatcherService, ILogger<WindowService> logger)
     {
         _createMiniPlayerWindow = createMiniPlayerWindow;
-        _mainWindow = mainWindow ?? throw new ArgumentNullException(nameof(mainWindow));
-        _win32InteropService = win32InteropService ?? throw new ArgumentNullException(nameof(win32InteropService));
-        _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-        _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _mainWindow = mainWindow;
+        _win32InteropService = win32InteropService;
+        _settingsService = settingsService;
+        _dispatcherService = dispatcherService;
+        _logger = logger;
     }
 
     public void Dispose()

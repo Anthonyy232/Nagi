@@ -47,14 +47,14 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         IDispatcherService dispatcherService, IUISettingsService settingsService, IWindowService windowService,
         ILibraryReader libraryReader, ILibraryWriter libraryWriter, ILibraryScanner libraryScanner, ILogger<PlayerViewModel> logger, IUIService uiService)
     {
-        _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
-        _musicNavigationService = musicNavigationService ?? throw new ArgumentNullException(nameof(musicNavigationService));
-        _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
-        _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-        _windowService = windowService ?? throw new ArgumentNullException(nameof(windowService));
-        _libraryReader = libraryReader ?? throw new ArgumentNullException(nameof(libraryReader));
-        _libraryWriter = libraryWriter ?? throw new ArgumentNullException(nameof(libraryWriter));
-        _libraryScanner = libraryScanner ?? throw new ArgumentNullException(nameof(libraryScanner));
+        _playbackService = playbackService;
+        _musicNavigationService = musicNavigationService;
+        _dispatcherService = dispatcherService;
+        _settingsService = settingsService;
+        _windowService = windowService;
+        _libraryReader = libraryReader;
+        _libraryWriter = libraryWriter;
+        _libraryScanner = libraryScanner;
         _logger = logger;
         _uiService = uiService;
 

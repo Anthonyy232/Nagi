@@ -24,9 +24,9 @@ public class ReplayGainService : IReplayGainService
         ILoudnessAnalyzer loudnessAnalyzer,
         ILogger<ReplayGainService> logger)
     {
-        _contextFactory = contextFactory ?? throw new ArgumentNullException(nameof(contextFactory));
+        _contextFactory = contextFactory;
         _loudnessAnalyzer = loudnessAnalyzer;
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _logger = logger;
     }
 
     public async Task<(double GainDb, double Peak)?> CalculateAsync(string filePath, CancellationToken cancellationToken = default)

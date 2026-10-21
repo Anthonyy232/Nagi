@@ -29,10 +29,10 @@ public partial class LibraryReader : ILibraryReader, IDisposable
         ISettingsService settingsService,
         ILogger<LibraryReader> logger)
     {
-        _contextFactory = contextFactory ?? throw new ArgumentNullException(nameof(contextFactory));
-        _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
-        _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _contextFactory = contextFactory;
+        _fileSystem = fileSystem;
+        _settingsService = settingsService;
+        _logger = logger;
         _settingsService.IgnoreLeadingArticlesOnSortEnabledChanged += OnIgnoreLeadingArticlesOnSortChanged;
         _ = InitializeIgnoreArticlesFlagAsync();
     }

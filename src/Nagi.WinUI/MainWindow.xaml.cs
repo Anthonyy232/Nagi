@@ -59,10 +59,10 @@ public sealed partial class MainWindow : Window
     public void InitializeDependencies(IUISettingsService settingsService, ITaskbarService taskbarService,
         TransparencyEffectsMonitor transparencyEffects, ILogger<MainWindow> logger)
     {
-        _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-        _taskbarService = taskbarService ?? throw new ArgumentNullException(nameof(taskbarService));
-        _transparencyEffects = transparencyEffects ?? throw new ArgumentNullException(nameof(transparencyEffects));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _settingsService = settingsService;
+        _taskbarService = taskbarService;
+        _transparencyEffects = transparencyEffects;
+        _logger = logger;
         _appWindow = AppWindow;
         _lastWindowSize = _appWindow.Size;
         _lastWindowPosition = _appWindow.Position;

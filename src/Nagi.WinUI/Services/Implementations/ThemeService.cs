@@ -22,7 +22,7 @@ public class ThemeService : IThemeService
     public ThemeService(MainWindow window, IUISettingsService settingsService, IMusicPlaybackService playbackService,
         IDispatcherService dispatcherService, ILogger<ThemeService> logger)
     {
-        _window = window ?? throw new ArgumentNullException(nameof(window));
+        _window = window;
         _settingsService = settingsService;
         _playbackService = playbackService;
         _dispatcherService = dispatcherService;

@@ -30,8 +30,8 @@ public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
 
     public SmtcMediaControls(IDispatcherService dispatcherService, ILogger<SmtcMediaControls> logger)
     {
-        _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _dispatcherService = dispatcherService;
+        _logger = logger;
     }
 
     public event Action? PlayPressed;

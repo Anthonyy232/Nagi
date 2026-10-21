@@ -34,10 +34,10 @@ public partial class DataManagementSettingsViewModel : ObservableObject
         IMusicPlaybackService playbackService,
         ILogger<DataManagementSettingsViewModel> logger)
     {
-        _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
-        _playlistExportService = playlistExportService ?? throw new ArgumentNullException(nameof(playlistExportService));
-        _backupRestoreService = backupRestoreService ?? throw new ArgumentNullException(nameof(backupRestoreService));
-        _applicationLifecycle = applicationLifecycle ?? throw new ArgumentNullException(nameof(applicationLifecycle));
+        _uiService = uiService;
+        _playlistExportService = playlistExportService;
+        _backupRestoreService = backupRestoreService;
+        _applicationLifecycle = applicationLifecycle;
         _settingsService = settingsService;
         _libraryWriter = libraryWriter;
         _playbackService = playbackService;

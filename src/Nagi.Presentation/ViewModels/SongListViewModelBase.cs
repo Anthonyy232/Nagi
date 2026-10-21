@@ -70,11 +70,11 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         ILogger logger)
         : base(libraryReader, libraryScanner, settingsService, dispatcherService, logger)
     {
-        _libraryWriter = libraryWriter ?? throw new ArgumentNullException(nameof(libraryWriter));
-        _playlistService = playlistService ?? throw new ArgumentNullException(nameof(playlistService));
-        _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
-        _musicNavigationService = musicNavigationService ?? throw new ArgumentNullException(nameof(musicNavigationService));
-        _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
+        _libraryWriter = libraryWriter;
+        _playlistService = playlistService;
+        _playbackService = playbackService;
+        _musicNavigationService = musicNavigationService;
+        _uiService = uiService;
 
         Songs.CollectionChanged += OnSongsCollectionChanged;
         _playlistService.PlaylistsChanged += OnPlaylistsChanged;

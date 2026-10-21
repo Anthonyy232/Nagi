@@ -14,7 +14,7 @@ public sealed class TransparencyEffectsMonitor : IDisposable
 
     public TransparencyEffectsMonitor(IDispatcherService dispatcherService)
     {
-        _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
+        _dispatcherService = dispatcherService;
         _uiSettings.AdvancedEffectsEnabledChanged += OnAdvancedEffectsEnabledChanged;
     }
 

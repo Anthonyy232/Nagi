@@ -54,9 +54,9 @@ public partial class SmartPlaylistEditorViewModel : ObservableObject, IDisposabl
         ILogger<SmartPlaylistEditorViewModel> logger,
         TimeProvider? timeProvider = null)
     {
-        _smartPlaylistService = smartPlaylistService ?? throw new ArgumentNullException(nameof(smartPlaylistService));
-        _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
-        _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
+        _smartPlaylistService = smartPlaylistService;
+        _uiService = uiService;
+        _dispatcherService = dispatcherService;
         _logger = logger;
         _matchCountDebouncer = new Debouncer(TimeSpan.FromMilliseconds(300), timeProvider);
         SelectedSortOption = SortOptions[0];
