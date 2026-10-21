@@ -199,7 +199,7 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
         if (existingFolder is not null)
             return existingFolder;
 
-        var folderName = _fileSystem.GetFileName(normalizedPath);
+        var folderName = Path.GetFileName(normalizedPath);
         var folder = new Folder
         {
             Path = normalizedPath,

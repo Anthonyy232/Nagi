@@ -26,9 +26,6 @@ public class ImageSharpProcessorTests
 
         pathConfig.AlbumArtCachePath.Returns(AlbumArtPath);
 
-        _fileSystem.Combine(Arg.Any<string>(), Arg.Any<string>())
-            .Returns(callInfo => Path.Combine(callInfo.ArgAt<string[]>(0)));
-
         _imageProcessor = new ImageSharpProcessor(pathConfig, _fileSystem, logger);
     }
 

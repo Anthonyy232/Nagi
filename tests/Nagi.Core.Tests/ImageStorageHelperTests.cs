@@ -13,9 +13,6 @@ public class ImageStorageHelperTests
     public ImageStorageHelperTests()
     {
         _fs = Substitute.For<IFileSystemService>();
-
-        _fs.Combine(Arg.Any<string[]>())
-            .Returns(ci => Path.Combine(ci.ArgAt<string[]>(0)));
     }
 
     [Fact]

@@ -64,15 +64,6 @@ public class LibraryServiceArtistImageTests : IDisposable
         _pathConfig.PlaylistImageCachePath.Returns("C:\\cache\\playlistimages");
         _pathConfig.LrcCachePath.Returns("C:\\cache\\lrc");
 
-        _fileSystem.Combine(Arg.Any<string[]>())
-            .Returns(ci => Path.Combine(ci.ArgAt<string[]>(0)));
-        _fileSystem.GetDirectoryName(Arg.Any<string>())
-            .Returns(ci => Path.GetDirectoryName(ci.ArgAt<string>(0)));
-        _fileSystem.GetExtension(Arg.Any<string>())
-            .Returns(ci => Path.GetExtension(ci.ArgAt<string>(0)) ?? string.Empty);
-        _fileSystem.GetFileNameWithoutExtension(Arg.Any<string>())
-            .Returns(ci => Path.GetFileNameWithoutExtension(ci.ArgAt<string>(0)) ?? string.Empty);
-
         _fileSystem.GetFiles(Arg.Any<string>(), Arg.Any<string>()).Returns(Array.Empty<string>());
         _fileSystem.DirectoryExists(Arg.Any<string>()).Returns(false);
         _fileSystem.FileExists(Arg.Any<string>()).Returns(false);
@@ -407,8 +398,6 @@ public class LibraryServiceArtistImageTests : IDisposable
         var artistBytes = new byte[] { 0x01, 0x02 };
 
         _fileSystem.GetFiles(FolderPath, "*.*").Returns(new[] { otherJpgPath, artistJpgPath });
-        _fileSystem.GetFileNameWithoutExtension(otherJpgPath).Returns("other");
-        _fileSystem.GetFileNameWithoutExtension(artistJpgPath).Returns("artist");
 
         _fileSystem.ReadAllBytesAsync(artistJpgPath).Returns(Task.FromResult(artistBytes));
         _imageProcessor.ProcessImageBytesAsync(artistBytes).Returns(Task.FromResult(ProcessedBytes));

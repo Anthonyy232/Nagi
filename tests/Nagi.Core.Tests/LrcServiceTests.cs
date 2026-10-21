@@ -86,8 +86,6 @@ public class LrcServiceTests : IDisposable
         var song = new Song { Title = "Song", FilePath = @"C:\Music\song.mp3" };
         _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
         _pathConfig.LrcCachePath.Returns(@"C:\LyricsCache");
-        _fileSystem.Combine(Arg.Any<string[]>())
-            .Returns(call => Path.Combine(call.Arg<string[]>()));
         _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
             Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>()).Returns(first);
         _netEaseLyricsService.SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
@@ -316,10 +314,6 @@ public class LrcServiceTests : IDisposable
         };
         var expectedPath = Path.Combine(cacheRoot, FileNameHelper.GenerateLrcOverrideFileName(song.FilePath));
         _pathConfig.LrcCachePath.Returns(cacheRoot);
-        _fileSystem.Combine(Arg.Any<string[]>()).Returns(call => Path.Combine(call.Arg<string[]>()!));
-        _fileSystem.GetDirectoryName(song.FilePath).Returns(@"C:\Music");
-        _fileSystem.GetFileNameWithoutExtension(song.FilePath).Returns("Song");
-        _fileSystem.GetFileNameWithoutExtension(externalPath).Returns("Song");
         _fileSystem.GetFiles(@"C:\Music", "*.lrc").Returns([externalPath]);
         _fileSystem.FileExists(expectedPath).Returns(true);
 
@@ -348,7 +342,6 @@ public class LrcServiceTests : IDisposable
         var previousPath = Path.Combine(cacheRoot, FileNameHelper.GenerateLrcOverrideFileName(song.FilePath));
         song.LrcFilePath = previousPath;
         _pathConfig.LrcCachePath.Returns(cacheRoot);
-        _fileSystem.Combine(Arg.Any<string[]>()).Returns(call => Path.Combine(call.Arg<string[]>()));
         _fileSystem.FileExists(Arg.Any<string>()).Returns(true);
         string? temporaryPath = null;
         _fileSystem.WriteAllTextAsync(Arg.Any<string>(), Arg.Any<string>()).Returns(call =>
@@ -511,8 +504,6 @@ public class LrcServiceTests : IDisposable
             Album = new Album { Title = "Album" }
         };
         _pathConfig.LrcCachePath.Returns(cacheRoot);
-        _fileSystem.Combine(Arg.Any<string[]>())
-            .Returns(call => Path.Combine(call.Arg<string[]>()!));
         _fileSystem.FileExists(legacyPath).Returns(true);
         _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
         _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
@@ -545,8 +536,6 @@ public class LrcServiceTests : IDisposable
             song.FilePath, song.PrimaryArtistName, song.Album.Title, song.Title));
         song.LrcFilePath = cachePath;
         _pathConfig.LrcCachePath.Returns(cacheRoot);
-        _fileSystem.Combine(Arg.Any<string[]>())
-            .Returns(call => Path.Combine(call.Arg<string[]>()!));
         _fileSystem.FileExists(cachePath).Returns(true);
         _fileSystem.ReadAllTextAsync(cachePath).Returns("[00:01.00]Local Lyrics");
 

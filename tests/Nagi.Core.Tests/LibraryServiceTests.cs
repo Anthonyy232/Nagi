@@ -42,7 +42,6 @@ public partial class LibraryServiceTests : IDisposable
     {
         _fileSystem = Substitute.For<IFileSystemService>();
         _fileSystem.NormalizePath(Arg.Any<string>()).Returns(call => PathCanonicalizer.Normalize(call.Arg<string>()));
-        _fileSystem.GetFileName(Arg.Any<string>()).Returns(call => Path.GetFileName(call.Arg<string>()));
         _metadataService = Substitute.For<IMetadataService>();
         _lastFmService = Substitute.For<ILastFmMetadataService>();
         _httpClientFactory = Substitute.For<IHttpClientFactory>();
@@ -224,7 +223,6 @@ public partial class LibraryServiceTests : IDisposable
             {
                 Biography = "Biography", ImageUrl = "https://example.com/artist.jpg"
             }));
-        _fileSystem.Combine(Arg.Any<string[]>()).Returns(call => Path.Combine(call.Arg<string[]>()));
         _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(_ => new HttpClient(_httpMessageHandler, disposeHandler: false));
         _httpMessageHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.ServiceUnavailable));
 
@@ -313,7 +311,6 @@ public partial class LibraryServiceTests : IDisposable
         }
         const string songPath = @"C:\Music\song.mp3";
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
-        _fileSystem.GetExtension(songPath).Returns(".mp3");
         _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
             .Returns(new[] { (songPath, DateTime.UtcNow) });
         var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -356,7 +353,6 @@ public partial class LibraryServiceTests : IDisposable
         var firstPath = firstFolder.Path + @"\first.mp3";
         var secondPath = secondFolder.Path + @"\second.mp3";
         _fileSystem.DirectoryExists(Arg.Any<string>()).Returns(true);
-        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
         _fileSystem.EnumerateFilesWithLastWriteTime(firstFolder.Path, "*.*", SearchOption.AllDirectories)
             .Returns(new[] { (firstPath, DateTime.UtcNow) });
         _fileSystem.EnumerateFilesWithLastWriteTime(secondFolder.Path, "*.*", SearchOption.AllDirectories)
@@ -532,7 +528,6 @@ public partial class LibraryServiceTests : IDisposable
         }
         _fileSystem.DirectoryExists(Arg.Any<string>()).Returns(true);
         _fileSystem.FileExists(Arg.Any<string>()).Returns(true);
-        _fileSystem.GetFileNameWithoutExtension(Arg.Any<string>()).Returns(call => Path.GetFileNameWithoutExtension(call.Arg<string>()));
         _fileSystem.EnumerateFiles(_pathConfig.AlbumArtCachePath, "*.fetched.jpg", SearchOption.TopDirectoryOnly).Returns(new[] { art });
         _fileSystem.EnumerateFiles(_pathConfig.ArtistImageCachePath, "*.*", SearchOption.TopDirectoryOnly).Returns(new[] { artistArt });
         _fileSystem.EnumerateFiles(_pathConfig.PlaylistImageCachePath, "*.*", SearchOption.TopDirectoryOnly).Returns(new[] { playlistArt });
@@ -557,7 +552,6 @@ public partial class LibraryServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
         var imagePath = Path.Combine(_pathConfig.ArtistImageCachePath, $"{artist.Id}.local.jpg");
-        _fileSystem.Combine(Arg.Any<string[]>()).Returns(call => Path.Combine(call.Arg<string[]>()));
         _fileSystem.DirectoryExists(_pathConfig.ArtistImageCachePath).Returns(true);
         _fileSystem.FileExists(imagePath).Returns(true);
         if (imageLocked)
@@ -582,8 +576,6 @@ public partial class LibraryServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
         _fileSystem.DirectoryExists(root.Path).Returns(true);
-        _fileSystem.GetDirectoryName(Arg.Any<string>()).Returns(call => Path.GetDirectoryName(call.Arg<string>()));
-        _fileSystem.GetExtension(filePath).Returns(".mp3");
         _fileSystem.EnumerateFilesWithLastWriteTime(root.Path, "*.*", SearchOption.AllDirectories)
             .Returns(new[] { (filePath, DateTime.UtcNow) });
         _metadataService.ExtractMetadataAsync(filePath, root.Path).Returns(new SongFileMetadata
@@ -726,7 +718,6 @@ public partial class LibraryServiceTests : IDisposable
             ("C:\\Music\\Scan\\updated.mp3",   new DateTime(2023, 2, 2)),
             ("C:\\Music\\Scan\\new.mp3",       new DateTime(2023, 3, 3)),
         });
-        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
 
         _metadataService.ExtractMetadataAsync("C:\\Music\\Scan\\updated.mp3", Arg.Any<string?>())
             .Returns(new SongFileMetadata
@@ -811,14 +802,10 @@ public partial class LibraryServiceTests : IDisposable
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
         _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
             .Returns(new[] { (song.FilePath, lastWriteTime) });
-        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
 
         var lyricsPath = "C:\\Music\\Scan\\song.txt";
-        _fileSystem.GetDirectoryName(song.FilePath).Returns("C:\\Music\\Scan");
-        _fileSystem.GetFileNameWithoutExtension(song.FilePath).Returns("song");
         _fileSystem.GetFiles("C:\\Music\\Scan", "*.lrc").Returns(Array.Empty<string>());
         _fileSystem.GetFiles("C:\\Music\\Scan", "*.txt").Returns(new[] { lyricsPath });
-        _fileSystem.GetFileNameWithoutExtension(lyricsPath).Returns("song");
 
         var result = await _libraryService.RescanFolderForMusicAsync(folder.Id);
 
@@ -853,7 +840,6 @@ public partial class LibraryServiceTests : IDisposable
         var artistCachePath = _pathConfig.ArtistImageCachePath;
         var artistImageFilename = $"{artist.Id}.fetched.jpg";
         var expectedImagePath = Path.Combine(artistCachePath, artistImageFilename);
-        _fileSystem.Combine(Arg.Any<string[]>()).Returns(call => Path.Combine(call.Arg<string[]>()));
         _fileSystem.FileExists(expectedImagePath).Returns(false);
         _imageProcessor.ProcessImageBytesAsync(Arg.Any<byte[]>()).Returns(new byte[] { 4, 5, 6 });
 
@@ -949,7 +935,6 @@ public partial class LibraryServiceTests : IDisposable
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
         _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, Arg.Any<string>(), Arg.Any<SearchOption>())
             .Returns(new[] { ("C:\\Music\\Concurrent\\song1.mp3", DateTime.UtcNow) });
-        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
 
         var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var metadata = new TaskCompletionSource<SongFileMetadata>(TaskCreationOptions.RunContinuationsAsynchronously);

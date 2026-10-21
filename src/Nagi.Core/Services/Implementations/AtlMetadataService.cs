@@ -45,7 +45,7 @@ public partial class AtlMetadataService : IMetadataService
             var fileInfo = _fileSystem.GetFileInfo(filePath);
             metadata.FileCreatedDate = fileInfo.CreationTimeUtc;
             metadata.FileModifiedDate = fileInfo.LastWriteTimeUtc;
-            metadata.Title = ArtistNameHelper.NormalizeStringCore(_fileSystem.GetFileNameWithoutExtension(filePath)) ?? _fileSystem.GetFileNameWithoutExtension(filePath);
+            metadata.Title = ArtistNameHelper.NormalizeStringCore(Path.GetFileNameWithoutExtension(filePath)) ?? Path.GetFileNameWithoutExtension(filePath);
 
             // ATL parsing is synchronous, so enforce the timeout while awaiting it.
             var track = await Task.Run(() => new Track(filePath)).WaitAsync(TimeSpan.FromSeconds(30)).ConfigureAwait(false);
@@ -266,7 +266,7 @@ public partial class AtlMetadataService : IMetadataService
     {
         try
         {
-            var currentDirectory = _fileSystem.GetDirectoryName(songFilePath);
+            var currentDirectory = Path.GetDirectoryName(songFilePath);
             if (string.IsNullOrEmpty(currentDirectory)) return null;
 
             var normalizedBasePath = baseFolderPath?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
@@ -283,7 +283,7 @@ public partial class AtlMetadataService : IMetadataService
                     break;
                 }
 
-                currentDirectory = _fileSystem.GetDirectoryName(currentDirectory);
+                currentDirectory = Path.GetDirectoryName(currentDirectory);
             }
 
             return null;
@@ -303,11 +303,11 @@ public partial class AtlMetadataService : IMetadataService
     private async Task<string?> GetLrcPathAsync(string audioFilePath, DateTime audioFileLastWriteTime, string? artist, string? album, string? title, Track track)
     {
         var overrideFileName = FileNameHelper.GenerateLrcOverrideFileName(audioFilePath);
-        var overridePath = _fileSystem.Combine(_pathConfig.LrcCachePath, overrideFileName);
+        var overridePath = Path.Combine(_pathConfig.LrcCachePath, overrideFileName);
         if (_fileSystem.FileExists(overridePath)) return overridePath;
 
         var cacheFileName = FileNameHelper.GenerateLrcCacheFileName(audioFilePath, artist, album, title);
-        var cachedLrcPath = _fileSystem.Combine(_pathConfig.LrcCachePath, cacheFileName);
+        var cachedLrcPath = Path.Combine(_pathConfig.LrcCachePath, cacheFileName);
 
         // Check for a valid cache entry. It's valid if it exists and is newer than the audio file.
         if (_fileSystem.FileExists(cachedLrcPath))

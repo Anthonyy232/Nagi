@@ -12,8 +12,8 @@ public static class ImageStorageHelper
         {
             return fileSystem.GetFiles(directory, "*.*")
                 .Where(path => !fileSystem.IsHiddenOrSystemFile(path) &&
-                               FileExtensions.ImageFileExtensions.Contains(fileSystem.GetExtension(path)))
-                .Select(path => (Path: path, Priority: FileExtensions.GetCoverArtPriority(fileSystem.GetFileNameWithoutExtension(path))))
+                               FileExtensions.ImageFileExtensions.Contains(Path.GetExtension(path)))
+                .Select(path => (Path: path, Priority: FileExtensions.GetCoverArtPriority(Path.GetFileNameWithoutExtension(path))))
                 .Where(candidate => candidate.Priority < int.MaxValue)
                 .OrderBy(candidate => candidate.Priority)
                 .FirstOrDefault().Path;
@@ -36,7 +36,7 @@ public static class ImageStorageHelper
 
         foreach (var ext in FileExtensions.ImageFileExtensions)
         {
-            var path = fs.Combine(directory, $"{baseFileName}{suffix}{ext}");
+            var path = Path.Combine(directory, $"{baseFileName}{suffix}{ext}");
             if (fs.FileExists(path))
             {
                 return path;
@@ -57,7 +57,7 @@ public static class ImageStorageHelper
         foreach (var ext in FileExtensions.ImageFileExtensions)
         {
             if (string.Equals(ext, exceptExtension, StringComparison.OrdinalIgnoreCase)) continue;
-            var path = fs.Combine(directory, $"{baseFileName}{suffix}{ext}");
+            var path = Path.Combine(directory, $"{baseFileName}{suffix}{ext}");
             if (fs.FileExists(path))
             {
                 fs.DeleteFile(path);
@@ -77,8 +77,8 @@ public static class ImageStorageHelper
         fs.CreateDirectory(directory);
 
         var newFileName = $"{baseFileName}{suffix}{extension}";
-        var destinationPath = fs.Combine(directory, newFileName);
-        var temporaryPath = fs.Combine(directory, $"{newFileName}.{Guid.NewGuid():N}.tmp");
+        var destinationPath = Path.Combine(directory, newFileName);
+        var temporaryPath = Path.Combine(directory, $"{newFileName}.{Guid.NewGuid():N}.tmp");
         try
         {
             await fs.WriteAllBytesAsync(temporaryPath, imageBytes).ConfigureAwait(false);

@@ -238,7 +238,7 @@ public class LrcService : ILrcService, IDisposable
             ? FileNameHelper.GenerateLrcOverrideFileName(cacheIdentity)
             : FileNameHelper.GenerateLrcCacheFileName(
                 cacheIdentity, song.PrimaryArtistName, song.Album?.Title, song.Title);
-        var cachedLrcPath = _fileSystemService.Combine(_pathConfig.LrcCachePath, cacheFileName);
+        var cachedLrcPath = Path.Combine(_pathConfig.LrcCachePath, cacheFileName);
         var previousPath = song.LrcFilePath;
 
         await LyricsStorageHelper.SaveAsync(_fileSystemService, cachedLrcPath, lrcContent).ConfigureAwait(false);
