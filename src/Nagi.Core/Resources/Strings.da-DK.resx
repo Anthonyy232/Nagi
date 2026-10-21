@@ -324,4 +324,13 @@
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>Den valgte fil er ikke en gyldig Nagi-sikkerhedskopi.</value>
   </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC stødte på en uspecificeret fejl.</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>LibVLC-fejl: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>Kunne ikke indlæse '{0}'.</value>
+  </data>
 </root>

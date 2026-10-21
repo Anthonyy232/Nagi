@@ -324,4 +324,13 @@
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>Skedari i zgjedhur nuk është një kopje rezerve e vlefshme e Nagi.</value>
   </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC ndeshi një gabim të papërcaktuar.</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>Gabim LibVLC: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>Dështoi ngarkimi i '{0}'.</value>
+  </data>
 </root>

@@ -324,4 +324,13 @@
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>선택한 파일은 유효한 Nagi 백업 파일이 아닙니다.</value>
   </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC에서 알 수 없는 오류가 발생했습니다.</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>LibVLC 오류: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>'{0}' 로드 실패.</value>
+  </data>
 </root>

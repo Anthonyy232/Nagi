@@ -324,4 +324,13 @@
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>הקובץ שנבחר אינו גיבוי תקין של Nagi.</value>
   </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC נתקלה בשגיאה לא מוגדרת.</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>שגיאת LibVLC: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>טעינת '{0}' נכשלה.</value>
+  </data>
 </root>

@@ -324,4 +324,13 @@
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>Ang napiling file ay hindi isang balidong backup ng Nagi.</value>
   </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>Nakaranas ang LibVLC ng hindi tinukoy na error.</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>LibVLC Error: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>Nabigo ang pag-load ng '{0}'.</value>
+  </data>
 </root>

@@ -629,15 +629,6 @@ Fișiere care nu au putut fi importate: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Următor</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC a întâmpinat o eroare nespecificată.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Eroare LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Încărcarea „{0}” a eșuat.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Bibliotecă</value>
   </data>

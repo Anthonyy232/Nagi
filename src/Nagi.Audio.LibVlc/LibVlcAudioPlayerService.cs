@@ -7,8 +7,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using System.Threading;
-using Nagi.Presentation.Resources;
-using Nagi.Presentation.Services.Abstractions;
+using Nagi.Core.Resources;
 
 namespace Nagi.Audio.LibVlc;
 

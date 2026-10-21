@@ -629,15 +629,6 @@ Comhaid nár fhéad a iompórtáil: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Ar Aghaidh</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>Tharla earráid neamhshonraithe le LibVLC.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Earráid LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Theip ar '{0}' a luchtú.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Leabharlann</value>
   </data>

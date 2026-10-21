@@ -629,15 +629,6 @@ Bestanden die niet konden worden geïmporteerd: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Volgende</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC heeft een ongespecificeerde fout ondervonden.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC Fout: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Laden van '{0}' mislukt.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Bibliotheek</value>
   </data>

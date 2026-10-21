@@ -629,15 +629,6 @@ Puk ma pe otwero tero i iye: {0, plural, one {#} other {#}}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Luwyo</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC onwanggo bal pe ongenne.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Bal me LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Pe otwero keto '{0}'.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Gwokwer</value>
   </data>

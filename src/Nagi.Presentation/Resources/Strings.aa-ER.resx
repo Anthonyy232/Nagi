@@ -629,15 +629,6 @@ Import abaguk mawagginna files: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Lakalay</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC baxsat aneewa agaliiyil raden.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC Agali: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>'{0}' cuurooteyil raden.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Library</value>
   </data>

@@ -324,4 +324,13 @@
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>चुनी गई फ़ाइल मान्य Nagi बैकअप नहीं है।</value>
   </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC को एक अनिर्दिष्ट त्रुटि का सामना करना पड़ा।</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>LibVLC त्रुटि: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>'{0}' लोड करने में विफल।</value>
+  </data>
 </root>

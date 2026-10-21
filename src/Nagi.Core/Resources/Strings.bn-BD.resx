@@ -324,4 +324,13 @@
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>নির্বাচিত ফাইলটি একটি বৈধ Nagi ব্যাকআপ নয়।</value>
   </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC একটি অনির্দিষ্ট ত্রুটির সম্মুখীন হয়েছে।</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>LibVLC ত্রুটি: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>'{0}' লোড করতে ব্যর্থ হয়েছে।</value>
+  </data>
 </root>

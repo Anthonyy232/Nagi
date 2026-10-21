@@ -629,15 +629,6 @@
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>পরবর্তী</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC একটি অনির্দিষ্ট ত্রুটির সম্মুখীন হয়েছে।</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC ত্রুটি: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>'{0}' লোড করতে ব্যর্থ হয়েছে।</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>লাইব্রেরি</value>
   </data>

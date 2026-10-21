@@ -629,15 +629,6 @@ Failid, mida ei õnnestunud importida: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Järgmine</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC-l ilmnes määramata viga.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC viga: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Ei suutnud '{0}' laadida.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Teek</value>
   </data>

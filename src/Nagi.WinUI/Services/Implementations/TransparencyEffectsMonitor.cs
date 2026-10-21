@@ -1,6 +1,6 @@
 using System;
-using Nagi.Presentation.Services.Abstractions;
 using Windows.UI.ViewManagement;
+using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.WinUI.Services.Implementations;
 

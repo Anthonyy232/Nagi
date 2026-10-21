@@ -629,15 +629,6 @@ Mga file na hindi ma-import: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Susunod</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>Nakaranas ang LibVLC ng hindi tinukoy na error.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC Error: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Nabigo ang pag-load ng '{0}'.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Aklatan</value>
   </data>

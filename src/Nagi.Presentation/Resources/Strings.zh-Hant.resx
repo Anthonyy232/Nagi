@@ -629,15 +629,6 @@
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>下一首</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC 遇到未指定的錯誤。</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC 錯誤：{0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>載入 '{0}' 失敗。</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>媒體庫</value>
   </data>

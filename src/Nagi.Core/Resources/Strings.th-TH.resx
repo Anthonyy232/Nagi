@@ -324,4 +324,13 @@
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>ไฟล์ที่เลือกไม่ใช่ไฟล์สำรองข้อมูล Nagi ที่ถูกต้อง</value>
   </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC พบข้อผิดพลาดที่ไม่ระบุ</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>ข้อผิดพลาด LibVLC: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>ไม่สามารถโหลด '{0}' ได้</value>
+  </data>
 </root>

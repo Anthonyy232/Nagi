@@ -629,15 +629,6 @@ Nem importálható fájlok: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Következő</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>A LibVLC ismeretlen hibába ütközött.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC hiba: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Nem sikerült betölteni: „{0}”.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Könyvtár</value>
   </data>

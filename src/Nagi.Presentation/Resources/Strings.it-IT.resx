@@ -629,15 +629,6 @@ File che non è stato possibile importare: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Successivo</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC ha riscontrato un errore non specificato.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Errore LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Impossibile caricare '{0}'.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Raccolta</value>
   </data>

@@ -629,15 +629,6 @@ Pliki, których nie udało się zaimportować: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Następny</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC napotkało nieokreślony błąd.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Błąd LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Nie udało się załadować '{0}'.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Biblioteka</value>
   </data>

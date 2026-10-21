@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Helpers;
-using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.Presentation.ViewModels;
 

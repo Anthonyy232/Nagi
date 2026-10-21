@@ -629,15 +629,6 @@ Filer som ikke kunne importeres: {0}.</value>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
     <value>Neste</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC støtte på en uspesifisert feil.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC-feil: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Klarte ikke å laste '{0}'.</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Bibliotek</value>
   </data>
