@@ -56,7 +56,7 @@ public class SettingsViewModelTests : IDisposable
             new RomanizationPacksSettingsViewModel(Substitute.For<IRomanizationPackManager>(), _dispatcher,
                 NullLogger<RomanizationPacksSettingsViewModel>.Instance),
             new DataManagementSettingsViewModel(_ui, Substitute.For<IPlaylistExportService>(),
-                _backup, _lifecycle,
+                _backup, _lifecycle, _settings, _library.Writer, _playback,
                 NullLogger<DataManagementSettingsViewModel>.Instance),
             NullLogger<SettingsViewModel>.Instance, _timeProvider);
     }
@@ -245,6 +245,36 @@ public class SettingsViewModelTests : IDisposable
         await _viewModel.DataManagement.RestoreFromBackupCommand.ExecuteAsync(null);
 
         _lifecycle.Received(requiresRestart ? 1 : 0).Restart();
+    }
+
+    [Fact]
+    public async Task ResetApplicationData_ClearsEverythingBeforeRestarting()
+    {
+        _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
+            Arg.Any<bool>()).Returns(true);
+
+        await _viewModel.DataManagement.ResetApplicationDataCommand.ExecuteAsync(null);
+
+        Received.InOrder(() =>
+        {
+            _settings.ResetToDefaultsAsync();
+            _library.Writer.ClearAllLibraryDataAsync();
+            _playback.ClearQueueAsync();
+            _lifecycle.Restart();
+        });
+    }
+
+    [Fact]
+    public async Task ResetApplicationData_WhenClearingFails_ReportsItAndDoesNotRestart()
+    {
+        _ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
+            Arg.Any<bool>()).Returns(true);
+        _library.Writer.ClearAllLibraryDataAsync().Returns(Task.FromException(new IOException("locked")));
+
+        await _viewModel.DataManagement.ResetApplicationDataCommand.ExecuteAsync(null);
+
+        _lifecycle.DidNotReceive().Restart();
+        await _ui.Received(1).ShowMessageDialogAsync(Arg.Any<string>(), Arg.Is<string>(m => m.Contains("locked")));
     }
 
     [Fact]

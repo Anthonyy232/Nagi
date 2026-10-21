@@ -19,6 +19,9 @@ public partial class DataManagementSettingsViewModel : ObservableObject
     private readonly IPlaylistExportService _playlistExportService;
     private readonly IBackupRestoreService _backupRestoreService;
     private readonly IApplicationLifecycle _applicationLifecycle;
+    private readonly ISettingsService _settingsService;
+    private readonly ILibraryWriter _libraryWriter;
+    private readonly IMusicPlaybackService _playbackService;
     private readonly ILogger<DataManagementSettingsViewModel> _logger;
 
     public DataManagementSettingsViewModel(
@@ -26,12 +29,18 @@ public partial class DataManagementSettingsViewModel : ObservableObject
         IPlaylistExportService playlistExportService,
         IBackupRestoreService backupRestoreService,
         IApplicationLifecycle applicationLifecycle,
+        ISettingsService settingsService,
+        ILibraryWriter libraryWriter,
+        IMusicPlaybackService playbackService,
         ILogger<DataManagementSettingsViewModel> logger)
     {
         _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
         _playlistExportService = playlistExportService ?? throw new ArgumentNullException(nameof(playlistExportService));
         _backupRestoreService = backupRestoreService ?? throw new ArgumentNullException(nameof(backupRestoreService));
         _applicationLifecycle = applicationLifecycle ?? throw new ArgumentNullException(nameof(applicationLifecycle));
+        _settingsService = settingsService;
+        _libraryWriter = libraryWriter;
+        _playbackService = playbackService;
         _logger = logger;
     }
 
@@ -48,7 +57,11 @@ public partial class DataManagementSettingsViewModel : ObservableObject
 
         try
         {
-            await _applicationLifecycle.ResetAndRestartAsync();
+            await _settingsService.ResetToDefaultsAsync();
+            await _libraryWriter.ClearAllLibraryDataAsync();
+            await _playbackService.ClearQueueAsync();
+            _logger.LogInformation("Application data reset. Restarting.");
+            _applicationLifecycle.Restart();
         }
         catch (Exception ex)
         {
