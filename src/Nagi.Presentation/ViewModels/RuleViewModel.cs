@@ -168,6 +168,8 @@ public class RuleViewModel : ObservableObject
         };
     }
 
+
+    public override string ToString() => $"{SelectedField.DisplayName} {SelectedOperator.DisplayName} {Value}".TrimEnd();
 }
 
 public record FieldOption(SmartPlaylistField Field, string DisplayName);

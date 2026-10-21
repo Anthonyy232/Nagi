@@ -35,4 +35,6 @@ public partial class PlayerButtonSetting : ObservableObject
     [ObservableProperty]
     [property: JsonIgnore]
     public partial string? DynamicToolTip { get; set; }
+
+    public override string ToString() => DisplayName;
 }

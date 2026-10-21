@@ -35,6 +35,8 @@ public sealed class FolderViewModelItem
     public string SongCountText => SongCount == 1
         ? ResourceFormatter.Format(Strings.Songs_Count_Singular, SongCount)
         : ResourceFormatter.Format(Strings.Songs_Count_Plural, SongCount);
+
+    public override string ToString() => Name;
 }
 
 /// <summary>

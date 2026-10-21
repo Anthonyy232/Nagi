@@ -229,7 +229,7 @@ public class Song : ObservableObject
 
     public override string ToString()
     {
-        return $"{Title} by {ArtistName}";
+        return $"{Title} — {ArtistName}";
     }
 
     public override bool Equals(object? obj)

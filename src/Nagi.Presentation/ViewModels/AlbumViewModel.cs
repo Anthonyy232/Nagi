@@ -35,6 +35,8 @@ public sealed class AlbumViewModelItem
 
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverArtUri);
 
+
+    public override string ToString() => $"{Title} — {ArtistName}";
 }
 
 public partial class AlbumViewModel : PagedListViewModelBase<Album>

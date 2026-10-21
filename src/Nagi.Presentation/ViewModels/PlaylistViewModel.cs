@@ -73,6 +73,8 @@ public partial class PlaylistViewModelItem : ObservableObject
         (false, true) => Strings.Playlist_Count_Singular,
         _ => Strings.Playlist_Count_Plural
     }, SongCount);
+
+    public override string ToString() => Name;
 }
 
 public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable

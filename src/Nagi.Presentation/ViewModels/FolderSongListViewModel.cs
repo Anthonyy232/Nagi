@@ -24,6 +24,8 @@ public sealed class BreadcrumbItem
     public string Name { get; init; } = string.Empty;
     public string Path { get; init; } = string.Empty;
     public bool IsLast { get; set; }
+
+    public override string ToString() => Name;
 }
 
 /// <summary>

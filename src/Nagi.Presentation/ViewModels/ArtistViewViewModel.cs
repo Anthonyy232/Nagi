@@ -32,6 +32,8 @@ public sealed class ArtistAlbumViewModelItem
     public string? CoverArtUri { get; }
     public string YearText { get; }
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverArtUri);
+
+    public override string ToString() => Name;
 }
 
 public partial class ArtistViewViewModel : SongListViewModelBase
