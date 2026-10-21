@@ -1,7 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using MaterialColorUtilities.ColorAppearance;
-using MaterialColorUtilities.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
@@ -10,17 +8,11 @@ using Nagi.Presentation.Models;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services;
 using Nagi.WinUI.Helpers;
-using Color = Windows.UI.Color;
 
 namespace Nagi.WinUI.Services.Implementations;
 
 public class ThemeService : IThemeService
 {
-    // Roughly 4.5:1 contrast against the dark media overlay surface (#303030).
-    private const double MinimumMediaOnImageLuminance = 0.31;
-    private const byte OpaqueAlpha = byte.MaxValue;
-    private static readonly Color White = Color.FromArgb(OpaqueAlpha, byte.MaxValue, byte.MaxValue, byte.MaxValue);
-
     private readonly MainWindow _window;
     private readonly ILogger<ThemeService> _logger;
     private readonly IMusicPlaybackService _playbackService;
@@ -81,11 +73,11 @@ public class ThemeService : IThemeService
 
         var swatchId = actualTheme == ElementTheme.Dark ? darkSwatchId : lightSwatchId;
 
-        if (TryParseSwatch(swatchId, out var targetColor))
+        if (ArgbColor.TryParseHex(swatchId, out var targetColor))
         {
             _logger.LogDebug("Applying dynamic theme using {ThemeMode} swatch: {Swatch}", actualTheme,
                 swatchId);
-            var mediaSourceColor = TryParseSwatch(darkSwatchId, out var darkSwatchColor)
+            var mediaSourceColor = ArgbColor.TryParseHex(darkSwatchId, out var darkSwatchColor)
                 ? darkSwatchColor
                 : targetColor;
 
@@ -101,7 +93,8 @@ public class ThemeService : IThemeService
     private async Task ActivateDefaultPrimaryColorAsync(ElementTheme? theme = null)
     {
         _logger.LogDebug("Activating configured primary color.");
-        await SetAppColorsAsync(await GetConfiguredAccentColorAsync(), theme ?? await GetActualThemeAsync());
+        var accentColor = await _settingsService.GetAccentColorAsync() ?? SettingsDefaults.BrandAccentColor;
+        await SetAppColorsAsync(accentColor, theme ?? await GetActualThemeAsync());
     }
 
     public async Task ApplyAccentColorAsync(ArgbColor? color)
@@ -112,40 +105,29 @@ public class ThemeService : IThemeService
             _logger.LogDebug("Applying manual accent color: {Color}", color);
         }
 
-        await SetAppColorsAsync((color ?? SettingsDefaults.BrandAccentColor).ToWindowsColor(), theme);
+        await SetAppColorsAsync(color ?? SettingsDefaults.BrandAccentColor, theme);
     }
 
-    private async Task SetAppColorsAsync(
-        Color primaryColor,
-        ElementTheme theme,
-        Color? mediaOnImageSourceColor = null)
+    private async Task SetAppColorsAsync(ArgbColor primaryColor, ElementTheme theme,
+        ArgbColor? mediaOnImageSourceColor = null)
     {
-        SetBrushColor("AppPrimaryColorBrush", primaryColor, refreshTaskbarIcons: true);
+        var palette = ThemePalette.Create(primaryColor, theme == ElementTheme.Light,
+            await _settingsService.GetPlayerTintIntensityAsync(), mediaOnImageSourceColor);
 
-        var mediaOnImageAccentColor = GetMediaOnImageAccentColor(mediaOnImageSourceColor ?? primaryColor);
-        SetBrushColor("MediaOnImageAccentBrush", mediaOnImageAccentColor);
-
-        var intensity = await _settingsService.GetPlayerTintIntensityAsync();
-        var baseChannel = theme == ElementTheme.Light ? byte.MaxValue : byte.MinValue;
-        var playerTintColor = Color.FromArgb(
-            OpaqueAlpha,
-            BlendChannel(baseChannel, primaryColor.R, intensity),
-            BlendChannel(baseChannel, primaryColor.G, intensity),
-            BlendChannel(baseChannel, primaryColor.B, intensity));
-        var isLight = theme == ElementTheme.Light;
-        var playerBackgroundColor = ClampTone(playerTintColor, isLight ? 85 : 0, isLight ? 100 : 35);
-        var playerAccentColor = ClampTone(primaryColor, isLight ? 0 : 80, isLight ? 40 : 100);
-        SetBrushColor("PlayerTintColorBrush", playerTintColor);
-        SetBrushColor("PlayerBackgroundBrush", playerBackgroundColor);
-        SetBrushColor("PlayerAccentBrush", playerAccentColor);
+        SetBrushColor("AppPrimaryColorBrush", palette.Primary, refreshTaskbarIcons: true);
+        SetBrushColor("MediaOnImageAccentBrush", palette.MediaOnImageAccent);
+        SetBrushColor("PlayerTintColorBrush", palette.PlayerTint);
+        SetBrushColor("PlayerBackgroundBrush", palette.PlayerBackground);
+        SetBrushColor("PlayerAccentBrush", palette.PlayerAccent);
     }
 
     /// <summary>
     ///     Updates the color of the app-level <see cref="SolidColorBrush" /> resource
     ///     <paramref name="resourceKey" />, which every bound element picks up.
     /// </summary>
-    private void SetBrushColor(string resourceKey, Color newColor, bool refreshTaskbarIcons = false)
+    private void SetBrushColor(string resourceKey, ArgbColor color, bool refreshTaskbarIcons = false)
     {
+        var newColor = color.ToWindowsColor();
         RunOnUIThread(() =>
         {
             if (Application.Current.Resources.TryGetValue(resourceKey, out var brushObject) &&
@@ -167,77 +149,6 @@ public class ThemeService : IThemeService
     {
         if (_dispatcherService.HasThreadAccess) action();
         else _dispatcherService.TryEnqueue(action);
-    }
-
-    private static Color ClampTone(Color color, double minimum, double maximum)
-    {
-        var hct = Hct.FromInt(ColorUtils.ArgbFromRgb(color.R, color.G, color.B));
-        var tone = Math.Clamp(hct.Tone, minimum, maximum);
-        if (tone == hct.Tone) return color;
-
-        hct.Tone = tone;
-        var argb = hct.ToInt();
-        return Color.FromArgb(OpaqueAlpha, (byte)(argb >> 16), (byte)(argb >> 8), (byte)argb);
-    }
-
-    private async Task<Color> GetConfiguredAccentColorAsync()
-    {
-        return (await _settingsService.GetAccentColorAsync() ?? SettingsDefaults.BrandAccentColor).ToWindowsColor();
-    }
-
-    private static bool TryParseSwatch(string? swatchId, out Color color)
-    {
-        var parsed = ArgbColor.TryParseHex(swatchId, out var argb);
-        color = argb.ToWindowsColor();
-        return parsed;
-    }
-
-    private static Color GetMediaOnImageAccentColor(Color color)
-    {
-        var opaqueColor = Color.FromArgb(OpaqueAlpha, color.R, color.G, color.B);
-        if (GetRelativeLuminance(opaqueColor) >= MinimumMediaOnImageLuminance)
-        {
-            return opaqueColor;
-        }
-
-        var low = 0.0;
-        var high = 1.0;
-
-        for (var i = 0; i < 8; i++)
-        {
-            var amount = (low + high) / 2;
-            var candidate = BlendColors(opaqueColor, White, amount);
-
-            if (GetRelativeLuminance(candidate) >= MinimumMediaOnImageLuminance)
-            {
-                high = amount;
-            }
-            else
-            {
-                low = amount;
-            }
-        }
-
-        return BlendColors(opaqueColor, White, high);
-    }
-
-    private static Color BlendColors(Color from, Color to, double amount)
-    {
-        return Color.FromArgb(
-            OpaqueAlpha,
-            BlendChannel(from.R, to.R, amount),
-            BlendChannel(from.G, to.G, amount),
-            BlendChannel(from.B, to.B, amount));
-    }
-
-    private static byte BlendChannel(byte from, byte to, double amount)
-    {
-        return (byte)(from + ((to - from) * amount));
-    }
-
-    private static double GetRelativeLuminance(Color color)
-    {
-        return ColorUtils.XyzFromArgb(ColorUtils.ArgbFromRgb(color.R, color.G, color.B))[1] / 100;
     }
 
     private async Task<ElementTheme> GetActualThemeAsync()
