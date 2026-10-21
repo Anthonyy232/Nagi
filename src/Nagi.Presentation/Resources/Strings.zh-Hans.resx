@@ -871,7 +871,7 @@
     <value>问题页面</value>
   </data>
   <data name="CrashReport_ReportIssuePostLink" xml:space="preserve">
-    <value>.</value>
+    <value>。</value>
   </data>
   <data name="CrashReport_ResetAppAdvice" xml:space="preserve">
     <value>如果此情况持续发生，您可以尝试“重置应用程序和数据”。这将清除您的设置和库，这有助于从损坏状态恢复应用程序。</value>
@@ -2020,7 +2020,7 @@
     <value>选中的文件不是有效的 Nagi 备份。</value>
   </data>
   <data name="Settings_Restore_Confirm_Title" xml:space="preserve">
-    <value>还原备份?</value>
+    <value>还原备份？</value>
   </data>
   <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
     <value>从备份恢复将替换当前所有应用数据。此操作无法撤销。该应用将在恢复后重新启动。是否继续？</value>

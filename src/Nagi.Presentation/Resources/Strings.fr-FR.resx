@@ -2158,7 +2158,7 @@ Voulez-vous continuer ?</value>
     <value>Votre musique, magnifiquement organisée</value>
   </data>
   <data name="SplashPage_Status" xml:space="preserve">
-    <value>Démarrage de Nagi...</value>
+    <value>Démarrage de Nagi…</value>
   </data>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>Voir tout</value>
