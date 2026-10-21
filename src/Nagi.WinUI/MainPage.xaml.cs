@@ -351,7 +351,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
                 {
                     Content = Strings.ResourceManager.GetString(resourceKey) ?? resourceKey,
                     Tag = item.Tag,
-                    Icon = new FontIcon { Glyph = item.IconGlyph }
+                    Icon = new FontIcon { Glyph = AppIconGlyphs.ToGlyph(item.Icon) }
                 });
             }
             UpdateNavViewSelection(ContentFrame.CurrentSourcePageType);

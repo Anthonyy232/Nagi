@@ -27,7 +27,7 @@
                     ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneWay}"
                     AutomationProperties.Name="{x:Bind DynamicToolTip, Mode=OneWay}">
                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                              Glyph="{x:Bind DynamicIcon, Mode=OneWay}"
+                              Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(DynamicIcon), Mode=OneWay}"
                               Opacity="{x:Bind IsIconActive, Mode=OneWay, Converter={StaticResource ToggleIconOpacityConverter}}" />
                 </Button>
             </DataTemplate>
@@ -43,7 +43,7 @@
                     <FontIcon
                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
                         FontSize="24"
-                        Glyph="{x:Bind DynamicIcon, Mode=OneWay}" />
+                        Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(DynamicIcon), Mode=OneWay}" />
                 </Button>
             </DataTemplate>
 
@@ -64,7 +64,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                            Glyph="{x:Bind DynamicIcon, Mode=OneWay}" />
+                            Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(DynamicIcon), Mode=OneWay}" />
                     </Grid>
                 </Button>
             </DataTemplate>
@@ -83,7 +83,7 @@
                         <Border Background="{ThemeResource ControlFillColorSecondaryBrush}"
                                 CornerRadius="{ThemeResource ControlCornerRadius}"
                                 Visibility="{Binding DataContext.IsQueuePanelOpen, ElementName=MainPageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{x:Bind DynamicIcon, Mode=OneWay}" />
+                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(DynamicIcon), Mode=OneWay}" />
                     </Grid>
                 </Button>
             </DataTemplate>

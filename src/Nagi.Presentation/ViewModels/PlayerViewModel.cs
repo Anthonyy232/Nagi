@@ -19,16 +19,6 @@ namespace Nagi.Presentation.ViewModels;
 
 public partial class PlayerViewModel : ObservableObject, INowPlayingSource
 {
-    private const string PlayIconGlyph = "\uE768";
-    private const string PauseIconGlyph = "\uE769";
-    private const string RepeatOffIconGlyph = "\uF5E7";
-    private const string RepeatAllIconGlyph = "\uE8EE";
-    private const string RepeatOneIconGlyph = "\uE8ED";
-    private const string MuteIconGlyph = "\uE74F";
-    private const string VolumeLowIconGlyph = "\uE993";
-    private const string VolumeMediumIconGlyph = "\uE994";
-    private const string VolumeHighIconGlyph = "\uE767";
-
     private const double VolumeLowThreshold = 33;
     private const double VolumeMediumThreshold = 66;
     private readonly IDispatcherService _dispatcherService;
@@ -86,7 +76,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     }
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(PlayPauseIconGlyph))]
+    [NotifyPropertyChangedFor(nameof(PlayPauseIcon))]
     [NotifyPropertyChangedFor(nameof(PlayPauseButtonToolTip))]
     public partial bool IsPlaying { get; set; }
 
@@ -112,17 +102,17 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     public partial bool IsShuffleEnabled { get; set; }
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(RepeatIconGlyph))]
+    [NotifyPropertyChangedFor(nameof(RepeatIcon))]
     [NotifyPropertyChangedFor(nameof(RepeatButtonToolTip))]
     public partial RepeatMode CurrentRepeatMode { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(VolumeButtonToolTip))]
-    [NotifyPropertyChangedFor(nameof(VolumeIconGlyph))]
+    [NotifyPropertyChangedFor(nameof(VolumeIcon))]
     public partial bool IsMuted { get; set; }
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(VolumeIconGlyph))]
+    [NotifyPropertyChangedFor(nameof(VolumeIcon))]
     public partial double CurrentVolume { get; set; }
     public ObservableRangeCollection<Song> CurrentQueue { get; } = new();
     [ObservableProperty] public partial double CurrentPosition { get; set; }
@@ -152,18 +142,18 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     public ObservableRangeCollection<PlayerButtonSetting> SecondaryControlsButtons { get; } = new();
 
     public bool IsArtworkAvailable => !string.IsNullOrWhiteSpace(AlbumArtUri);
-    public string PlayPauseIconGlyph => IsPlaying ? PauseIconGlyph : PlayIconGlyph;
+    public AppIcon PlayPauseIcon => IsPlaying ? AppIcon.Pause : AppIcon.Play;
     public string PlayPauseButtonToolTip => IsPlaying ? Strings.Tooltip_Pause : Strings.Tooltip_Play;
-    public string ShuffleIconGlyph => "\uE8B1";
+    public AppIcon ShuffleIcon => AppIcon.Shuffle;
     public string ShuffleButtonToolTip => IsShuffleEnabled
         ? ShuffleModeText.GetName(_playbackService.CurrentShuffleMode)
         : Strings.Tooltip_ShuffleOff;
 
-    public string RepeatIconGlyph => CurrentRepeatMode switch
+    public AppIcon RepeatIcon => CurrentRepeatMode switch
     {
-        RepeatMode.RepeatAll => RepeatAllIconGlyph,
-        RepeatMode.RepeatOne => RepeatOneIconGlyph,
-        _ => RepeatOffIconGlyph
+        RepeatMode.RepeatAll => AppIcon.RepeatAll,
+        RepeatMode.RepeatOne => AppIcon.RepeatOne,
+        _ => AppIcon.RepeatOff
     };
 
     public string RepeatButtonToolTip => CurrentRepeatMode switch
@@ -178,20 +168,20 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
 
     partial void OnIsPlayingChanged(bool value)
     {
-        UpdateButtonState("PlayPause", PlayPauseIconGlyph, PlayPauseButtonToolTip);
+        UpdateButtonState("PlayPause", PlayPauseIcon, PlayPauseButtonToolTip);
     }
 
     partial void OnIsShuffleEnabledChanged(bool value)
     {
-        UpdateButtonState("Shuffle", ShuffleIconGlyph, ShuffleButtonToolTip, IsShuffleEnabled);
+        UpdateButtonState("Shuffle", ShuffleIcon, ShuffleButtonToolTip, IsShuffleEnabled);
     }
 
     partial void OnCurrentRepeatModeChanged(RepeatMode value)
     {
-        UpdateButtonState("Repeat", RepeatIconGlyph, RepeatButtonToolTip);
+        UpdateButtonState("Repeat", RepeatIcon, RepeatButtonToolTip);
     }
 
-    private void UpdateButtonState(string buttonId, string icon, string toolTip, bool isIconActive = true)
+    private void UpdateButtonState(string buttonId, AppIcon icon, string toolTip, bool isIconActive = true)
     {
         var button = MainTransportButtons.FirstOrDefault(b => b.Id == buttonId)
                      ?? SecondaryControlsButtons.FirstOrDefault(b => b.Id == buttonId);
@@ -246,42 +236,42 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
             {
                 case "PlayPause":
                     button.Command = PlayPauseCommand;
-                    button.DynamicIcon = PlayPauseIconGlyph;
+                    button.DynamicIcon = PlayPauseIcon;
                     button.DynamicToolTip = PlayPauseButtonToolTip;
                     break;
                 case "Shuffle":
                     button.Command = ToggleShuffleCommand;
                     button.IsIconActive = IsShuffleEnabled;
-                    button.DynamicIcon = ShuffleIconGlyph;
+                    button.DynamicIcon = ShuffleIcon;
                     button.DynamicToolTip = ShuffleButtonToolTip;
                     break;
                 case "Repeat":
                     button.Command = CycleRepeatCommand;
-                    button.DynamicIcon = RepeatIconGlyph;
+                    button.DynamicIcon = RepeatIcon;
                     button.DynamicToolTip = RepeatButtonToolTip;
                     break;
                 case "Volume":
                     button.Command = ToggleMuteCommand;
-                    button.DynamicIcon = VolumeIconGlyph;
+                    button.DynamicIcon = VolumeIcon;
                     button.DynamicToolTip = VolumeButtonToolTip;
                     break;
                 case "Previous":
                     button.Command = PreviousCommand;
-                    button.DynamicIcon = button.IconGlyph;
+                    button.DynamicIcon = button.Icon;
                     button.DynamicToolTip = Strings.Player_PreviousButton_ToolTip;
                     break;
                 case "Next":
                     button.Command = NextCommand;
-                    button.DynamicIcon = button.IconGlyph;
+                    button.DynamicIcon = button.Icon;
                     button.DynamicToolTip = Strings.Player_NextButton_ToolTip;
                     break;
                 case "Lyrics":
-                    button.DynamicIcon = button.IconGlyph;
+                    button.DynamicIcon = button.Icon;
                     button.DynamicToolTip = Strings.Player_LyricsButton_ToolTip;
                     break;
                 case "Queue":
                     button.Command = ToggleQueuePanelCommand;
-                    button.DynamicIcon = button.IconGlyph;
+                    button.DynamicIcon = button.Icon;
                     button.DynamicToolTip = Strings.Player_QueueButton_ToolTip;
                     break;
             }
@@ -377,11 +367,11 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
 
     private bool CanNavigateToTrack(object? parameter) => parameter != null || CurrentPlayingTrack != null;
 
-    partial void OnIsMutedChanged(bool value) => UpdateButtonState("Volume", VolumeIconGlyph, VolumeButtonToolTip);
+    partial void OnIsMutedChanged(bool value) => UpdateButtonState("Volume", VolumeIcon, VolumeButtonToolTip);
 
     partial void OnCurrentVolumeChanged(double value)
     {
-        UpdateButtonState("Volume", VolumeIconGlyph, VolumeButtonToolTip);
+        UpdateButtonState("Volume", VolumeIcon, VolumeButtonToolTip);
         if (_isUpdatingFromService) return;
         var serviceVolume = Math.Clamp(value / 100.0, 0.0, 1.0);
         if (Math.Abs(_playbackService.Volume - serviceVolume) > 0.001)
@@ -538,13 +528,13 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     public Task AddFilesToQueueAsync(IEnumerable<string> paths) =>
         _playbackService.AddTransientFilesToQueueAsync(paths);
 
-    public string VolumeIconGlyph => IsMuted || CurrentVolume == 0
-        ? MuteIconGlyph
+    public AppIcon VolumeIcon => IsMuted || CurrentVolume == 0
+        ? AppIcon.Mute
         : CurrentVolume switch
         {
-            <= VolumeLowThreshold => VolumeLowIconGlyph,
-            <= VolumeMediumThreshold => VolumeMediumIconGlyph,
-            _ => VolumeHighIconGlyph
+            <= VolumeLowThreshold => AppIcon.VolumeLow,
+            <= VolumeMediumThreshold => AppIcon.VolumeMedium,
+            _ => AppIcon.VolumeHigh
         };
 
     private void RunOnUIThread(Action action)
@@ -646,7 +636,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         {
             IsShuffleEnabled = _playbackService.IsShuffleEnabled;
             OnPropertyChanged(nameof(ShuffleButtonToolTip));
-            UpdateButtonState("Shuffle", ShuffleIconGlyph, ShuffleButtonToolTip, IsShuffleEnabled);
+            UpdateButtonState("Shuffle", ShuffleIcon, ShuffleButtonToolTip, IsShuffleEnabled);
             UpdateCurrentQueueDisplay();
             SidebarQueue.Refresh();
         });

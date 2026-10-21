@@ -158,7 +158,7 @@
                                         ToolTipService.ToolTip="{x:Bind ViewModel.ShuffleButtonToolTip, Mode=OneWay}"
                                         AutomationProperties.Name="{x:Bind ViewModel.ShuffleButtonToolTip, Mode=OneWay}">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                              Glyph="{x:Bind ViewModel.ShuffleIconGlyph}"
+                                              Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.ShuffleIcon)}"
                                               Opacity="{x:Bind ViewModel.IsShuffleEnabled, Mode=OneWay, Converter={StaticResource ToggleIconOpacityConverter}}" />
                                 </Button>
                                 <Button Command="{x:Bind ViewModel.PreviousCommand}"
@@ -170,7 +170,7 @@
                                         ToolTipService.ToolTip="{x:Bind ViewModel.PlayPauseButtonToolTip, Mode=OneWay}"
                                         AutomationProperties.Name="{x:Bind ViewModel.PlayPauseButtonToolTip, Mode=OneWay}">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="24"
-                                              Glyph="{x:Bind ViewModel.PlayPauseIconGlyph, Mode=OneWay}" />
+                                              Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.PlayPauseIcon), Mode=OneWay}" />
                                 </Button>
                                 <Button Command="{x:Bind ViewModel.NextCommand}"
                                         ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_NextButton_ToolTip, Mode=OneTime}"
@@ -181,7 +181,7 @@
                                         ToolTipService.ToolTip="{x:Bind ViewModel.RepeatButtonToolTip, Mode=OneWay}"
                                         AutomationProperties.Name="{x:Bind ViewModel.RepeatButtonToolTip, Mode=OneWay}">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                              Glyph="{x:Bind ViewModel.RepeatIconGlyph, Mode=OneWay}" />
+                                              Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.RepeatIcon), Mode=OneWay}" />
                                 </Button>
                                 <Button Command="{x:Bind ViewModel.ShowQueueViewCommand}"
                                         ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_QueueButton_ToolTip, Mode=OneTime}"
@@ -196,12 +196,12 @@
                                         <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                   FontSize="20"
                                                   Foreground="{StaticResource MediaOnImageControlSecondaryBrush}"
-                                                  Glyph="{x:Bind ViewModel.VolumeIconGlyph, Mode=OneWay}" />
+                                                  Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.VolumeIcon), Mode=OneWay}" />
                                         <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                   FontSize="20"
                                                   Foreground="{StaticResource MediaOnImageAccentBrush}"
                                                   Clip="{x:Bind ViewModel.CurrentVolume, Mode=OneWay, Converter={StaticResource VolumeToClipRectConverter}, ConverterParameter='20'}"
-                                                  Glyph="{x:Bind ViewModel.VolumeIconGlyph, Mode=OneWay}" />
+                                                  Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.VolumeIcon), Mode=OneWay}" />
                                     </Grid>
                                 </Button>
                             </StackPanel>

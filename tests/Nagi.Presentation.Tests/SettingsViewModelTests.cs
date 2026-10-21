@@ -616,12 +616,12 @@ public class SettingsViewModelTests : IDisposable
     {
         var defaults = new List<PlayerButtonSetting>
         {
-            new() { Id = "PlayPause", DisplayName = "Play", IconGlyph = "play", IsEnabled = true },
-            new() { Id = "Next", DisplayName = "Next", IconGlyph = "next", IsEnabled = true }
+            new() { Id = "PlayPause", DisplayName = "Play", IsEnabled = true },
+            new() { Id = "Next", DisplayName = "Next", IsEnabled = true }
         };
         _settings.GetDefaultPlayerButtonSettings().Returns(defaults);
         _viewModel.PlayerButtons.Add(new PlayerButtonSetting
-            { Id = "Old", DisplayName = "Old", IconGlyph = "old", IsEnabled = true });
+            { Id = "Old", DisplayName = "Old", IsEnabled = true });
         var collectionChanges = 0;
         _viewModel.PlayerButtons.CollectionChanged += (_, _) => collectionChanges++;
 

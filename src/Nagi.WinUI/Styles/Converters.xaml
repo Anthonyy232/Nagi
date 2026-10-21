@@ -26,6 +26,7 @@ to avoid duplicate declarations across pages and controls.
     <converters:BooleanToOpacityConverter x:Key="ToggleIconOpacityConverter" FalseValue="0.6" />
     <converters:GenreToGradientConverter x:Key="GenreToGradientConverter" />
     <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
+    <converters:AppIconToGlyphConverter x:Key="AppIconToGlyphConverter" />
 
     <!-- Settings value converters -->
     <converters:AppThemeToFriendlyStringConverter x:Key="ThemeToStringConverter" />

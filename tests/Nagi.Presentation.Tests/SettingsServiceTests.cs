@@ -110,7 +110,7 @@ public class SettingsServiceTests
         items.Select(item => item.Tag).Should().Equal("Albums", "Library", "Folders", "Playlists", "Artists", "Genres", "Insights", "Favorites");
         items.Single(item => item.Tag == "Favorites").IsEnabled.Should().BeFalse();
         items[0].IsEnabled.Should().BeFalse();
-        items.Should().OnlyContain(item => item.DisplayName != "Old" && !string.IsNullOrEmpty(item.IconGlyph));
+        items.Should().OnlyContain(item => item.DisplayName != "Old" && item.Icon != AppIcon.None);
     }
 
     [Theory]
@@ -120,13 +120,13 @@ public class SettingsServiceTests
     {
         var saved = new List<PlayerButtonSetting>
         {
-            new() { Id = "shuffle", IsEnabled = false, DisplayName = "Old", IconGlyph = "Old" },
-            new() { Id = "Shuffle", IsEnabled = true, DisplayName = "Old", IconGlyph = "Old" },
-            new() { Id = "Next", IsEnabled = true, DisplayName = "Old", IconGlyph = "Old" },
-            new() { Id = "Removed", DisplayName = "Old", IconGlyph = "Old" }
+            new() { Id = "shuffle", IsEnabled = false, DisplayName = "Old" },
+            new() { Id = "Shuffle", IsEnabled = true, DisplayName = "Old" },
+            new() { Id = "Next", IsEnabled = true, DisplayName = "Old" },
+            new() { Id = "Removed", DisplayName = "Old" }
         };
         if (hasDivider) saved.Insert(0, new PlayerButtonSetting
-        { Id = "Separator", IsEnabled = false, DisplayName = "Old", IconGlyph = "Old" });
+        { Id = "Separator", IsEnabled = false, DisplayName = "Old" });
         var settings = CreateSettings(new Dictionary<string, object>
         { ["PlayerButtonSettings"] = JsonSerializer.Serialize(saved) });
 

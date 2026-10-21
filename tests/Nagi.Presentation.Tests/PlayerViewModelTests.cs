@@ -26,7 +26,7 @@ public partial class PlayerViewModelTests : IDisposable
         _playback.PlaybackQueue.Returns(Array.Empty<Guid>());
         _settings.GetPlayerButtonSettingsAsync().Returns(new List<PlayerButtonSetting>
         {
-            new() { Id = "Volume", DisplayName = "Volume", IconGlyph = "", IsEnabled = true }
+            new() { Id = "Volume", DisplayName = "Volume", IsEnabled = true }
         });
         _settings.GetQueueDisplaySettingsAsync().Returns(new QueueDisplaySettings());
         _viewModel = new PlayerViewModel(_playback, Substitute.For<IMusicNavigationService>(),
@@ -42,8 +42,8 @@ public partial class PlayerViewModelTests : IDisposable
         var volumeButton = _viewModel.MainTransportButtons.Single();
         _playback.Volume.Returns(.9);
         _playback.VolumeStateChanged += Raise.Event<Action>();
-        _viewModel.VolumeIconGlyph.Should().Be("\uE767");
-        volumeButton.DynamicIcon.Should().Be(_viewModel.VolumeIconGlyph);
+        _viewModel.VolumeIcon.Should().Be(AppIcon.VolumeHigh);
+        volumeButton.DynamicIcon.Should().Be(_viewModel.VolumeIcon);
 
         _playback.Volume.Returns(0);
         _playback.VolumeStateChanged += Raise.Event<Action>();
@@ -51,8 +51,8 @@ public partial class PlayerViewModelTests : IDisposable
         _playback.IsMuted.Returns(true);
         _playback.VolumeStateChanged += Raise.Event<Action>();
 
-        _viewModel.VolumeIconGlyph.Should().Be("\uE74F");
-        volumeButton.DynamicIcon.Should().Be(_viewModel.VolumeIconGlyph);
+        _viewModel.VolumeIcon.Should().Be(AppIcon.Mute);
+        volumeButton.DynamicIcon.Should().Be(_viewModel.VolumeIcon);
         volumeButton.DynamicToolTip.Should().NotBe(muteTooltip);
         _playback.DidNotReceive().SetVolumeAsync(Arg.Any<double>());
     }

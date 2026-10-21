@@ -427,7 +427,7 @@
                                         VerticalAlignment="Center"
                                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                         Foreground="{ThemeResource AppPrimaryColorBrush}"
-                                        Glyph="{x:Bind IconGlyph}" />
+                                        Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(Icon)}" />
 
                                     <TextBlock
                                         Grid.Column="2"
@@ -762,7 +762,7 @@
                                                         <FontIcon
                                                             FontFamily="{StaticResource SymbolThemeFontFamily}"
                                                             FontSize="14"
-                                                            Glyph="{x:Bind IconGlyph}"
+                                                            Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(Icon)}"
                                                             Visibility="{x:Bind IsNotSeparator, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                                         <Rectangle Width="1" Height="20"
                                                                    Fill="{ThemeResource TextFillColorSecondaryBrush}"
