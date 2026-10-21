@@ -130,7 +130,7 @@
     <value>新建 {0}</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
-    <value>未找到 {0}</value>
+    <value>未找到 {0}。</value>
   </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0}（A 到 Z）</value>

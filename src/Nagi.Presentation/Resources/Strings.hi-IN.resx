@@ -871,7 +871,7 @@
     <value>समस्याएँ पृष्ठ</value>
   </data>
   <data name="CrashReport_ReportIssuePostLink" xml:space="preserve">
-    <value>.</value>
+    <value>।</value>
   </data>
   <data name="CrashReport_ResetAppAdvice" xml:space="preserve">
     <value>यदि यह होता रहता है, तो आप 'ऐप और डेटा रीसेट करें' का प्रयास कर सकते हैं। यह आपकी सेटिंग्स और लाइब्रेरी को मिटा देगा, जिससे ऐप को खराब स्थिति से उबरने में मदद मिल सकती है।</value>
@@ -2158,7 +2158,7 @@
     <value>आपका संगीत, खूबसूरती से व्यवस्थित</value>
   </data>
   <data name="SplashPage_Status" xml:space="preserve">
-    <value>Nagi को सक्रिय किया जा रहा है...</value>
+    <value>Nagi को सक्रिय किया जा रहा है…</value>
   </data>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>सभी देखें</value>

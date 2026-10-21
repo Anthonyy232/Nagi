@@ -2191,10 +2191,10 @@
     <value>예: ;/\\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
-    <value>ms</value>
+    <value> ms</value>
   </data>
   <data name="SettingsPage_Unit_Decibels" xml:space="preserve">
-    <value>dB</value>
+    <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
     <value>최근 1일</value>
