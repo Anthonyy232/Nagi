@@ -385,7 +385,8 @@ public partial class App : Application
         try
         {
             Log.Information("User requested a full application data reset from the crash dialog.");
-            await AppDataReset.ResetAsync(Services);
+            await AppDataReset.ResetAsync(Services, PackagedAppData.CreatePathConfiguration(),
+                new ApplicationDataSettingsStore());
 
             Log.Information("Reset complete. Restarting application.");
             await Log.CloseAndFlushAsync();

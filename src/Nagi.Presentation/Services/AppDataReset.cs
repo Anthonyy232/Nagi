@@ -5,25 +5,24 @@ using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
-using Nagi.WinUI.Helpers;
+using Nagi.Presentation.Services.Abstractions;
 using Serilog;
 
-namespace Nagi.WinUI.Services.Implementations;
+namespace Nagi.Presentation.Services;
 
 /// <summary>
 ///     Wipes settings, the library database and caches when the user asks for a reset from the crash
 ///     dialog, when the app may be too broken to use its normal services.
 /// </summary>
-internal static class AppDataReset
+public static class AppDataReset
 {
     /// <summary>
     ///     Clears settings and library data through <paramref name="services" /> when they are available,
     ///     and deletes the files directly when they are not or when that fails.
     /// </summary>
-    public static async Task ResetAsync(IServiceProvider? services)
+    public static async Task ResetAsync(IServiceProvider? services, IPathConfiguration pathConfig,
+        ISettingsStore settingsStore)
     {
-        var pathConfig = PackagedAppData.CreatePathConfiguration();
-
         if (services != null)
         {
             try
@@ -37,28 +36,28 @@ internal static class AppDataReset
             catch (Exception serviceEx)
             {
                 Log.Warning(serviceEx, "Service-based reset failed. Falling back to manual file deletion.");
-                PerformManualFileReset(pathConfig);
+                PerformManualFileReset(pathConfig, settingsStore);
             }
         }
         else
         {
             Log.Warning("Services not available during reset. Performing manual file deletion.");
-            PerformManualFileReset(pathConfig);
+            PerformManualFileReset(pathConfig, settingsStore);
         }
     }
 
-    private static void PerformManualFileReset(IPathConfiguration pathConfig)
+    private static void PerformManualFileReset(IPathConfiguration pathConfig, ISettingsStore settingsStore)
     {
         try
         {
-            // Packaged settings live in LocalSettings; legacy state files are cleared below.
+            // Settings live in the platform store; settings.json is only left over from older versions.
             try
             {
-                new ApplicationDataSettingsStore().Values.Clear();
+                settingsStore.Values.Clear();
             }
             catch (Exception ex)
             {
-                Log.Warning(ex, "Failed to clear LocalSettings.");
+                Log.Warning(ex, "Failed to clear the settings store.");
             }
 
             SafelyDeleteFile(pathConfig.SettingsFilePath);
