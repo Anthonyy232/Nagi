@@ -17,6 +17,7 @@ The solution is layered so that everything except the Windows shell is platform-
 
 - **Put logic in the lowest layer that can own it.** If a Mac app would need it too, it belongs in Core or Presentation, not in a WinUI page or service. WinUI code should be about Windows: XAML, windowing, interop.
 - **No Windows types in Core or Presentation.** Small, guarded OS specifics are fine in shared code (`OperatingSystem.IsWindows()`).
+- **View models don't choose platform assets.** They expose neutral values such as `AppIcon`, and each UI head maps them to its own icons (WinUI: `AppIconGlyphs`).
 - **Services are interfaces registered in DI**, one registration entry point per layer (`AddNagiCore`, `AddNagiPresentation`, and the WinUI `AddNagi*` methods). Code that a test or another platform needs to replace goes behind an interface; other code doesn't need one.
 - **MVVM with the CommunityToolkit** (`[ObservableProperty]`, `[RelayCommand]`). Pages hold view-only code; workflows and decisions live in view models.
 - **Pages share behaviour through base classes and helpers** (`SearchablePage`, `SongListPage`, `CollapsibleSearch`, the menu flyout helpers). Similar pages should look and behave the same; when you change one, check its siblings.
