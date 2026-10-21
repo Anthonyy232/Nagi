@@ -71,7 +71,7 @@ public class DiscordPresenceServiceTests
             "https://archive.org/download/cover.jpg");
 
         presence.Type.Should().Be(ActivityType.Listening);
-        presence.StatusDisplay.Should().Be(StatusDisplayType.Name);
+        presence.StatusDisplay.Should().Be(StatusDisplayType.Details);
         presence.Details.Should().Be("From Zero");
         presence.State.Should().Be("by Linkin Park");
         presence.Timestamps.Should().BeSameAs(timestamps);

@@ -212,7 +212,7 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
         return new RichPresence
         {
             Type = ActivityType.Listening,
-            StatusDisplay = StatusDisplayType.Name,
+            StatusDisplay = StatusDisplayType.Details,
             Details = (song.Title ?? "Unknown").Truncate(MaxPresenceTextLength),
             State = stateText.Truncate(MaxPresenceTextLength),
             Timestamps = timestamps,
