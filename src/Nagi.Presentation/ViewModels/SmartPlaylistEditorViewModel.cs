@@ -171,15 +171,8 @@ public partial class SmartPlaylistEditorViewModel : ObservableObject, IDisposabl
     [RelayCommand]
     private async Task PickCoverImageAsync()
     {
-        try
-        {
-            var file = await _uiService.PickSingleFileAsync(FileExtensions.ImageFileExtensions);
-            if (file is not null) CoverImageUri = file;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error picking cover image");
-        }
+        var file = await _uiService.PickSingleFileAsync(FileExtensions.ImageFileExtensions);
+        if (file is not null) CoverImageUri = file;
     }
 
     /// <summary>

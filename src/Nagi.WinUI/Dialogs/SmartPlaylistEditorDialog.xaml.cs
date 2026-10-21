@@ -17,7 +17,6 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
     {
         ViewModel = viewModel;
         InitializeComponent();
-        DialogThemeHelper.ApplyThemeOverrides(this);
 
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
         Closed += OnDialogClosed;

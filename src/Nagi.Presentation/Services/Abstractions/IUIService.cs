@@ -13,6 +13,10 @@ public enum CrashReportResult
     Reset
 }
 
+/// <summary>
+///     Dialogs, pickers and shell actions. Implementations don't throw: when the platform can't show a dialog or
+///     picker, the call returns what a cancel would, and the failure is logged.
+/// </summary>
 public interface IUIService
 {
     Task<PlaybackMixOptions?> ShowPlayForDialogAsync();

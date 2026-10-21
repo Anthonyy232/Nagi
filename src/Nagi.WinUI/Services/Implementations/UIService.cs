@@ -56,17 +56,22 @@ public partial class UIService : IUIService
             DefaultButton = defaultToCancel ? ContentDialogButton.Close : ContentDialogButton.Primary
         };
 
-        DialogThemeHelper.ApplyThemeOverrides(dialog);
-        var result = await dialog.ShowAsync();
+        var result = await ShowDialogAsync(dialog);
         return result == ContentDialogResult.Primary;
     }
 
     public async Task<string?> PickSingleFolderAsync()
     {
-        var folderPicker = new FolderPicker(_window.AppWindow.Id);
-
-        var selectedFolder = await folderPicker.PickSingleFolderAsync();
-        return selectedFolder?.Path;
+        try
+        {
+            var selectedFolder = await new FolderPicker(_window.AppWindow.Id).PickSingleFolderAsync();
+            return selectedFolder?.Path;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to show the folder picker");
+            return null;
+        }
     }
 
     public async Task ShowInFolderAsync(string filePath)
@@ -76,11 +81,29 @@ public partial class UIService : IUIService
         var folderPath = Path.GetDirectoryName(filePath);
         if (folderPath is null) return;
 
-        var folder = await StorageFolder.GetFolderFromPathAsync(folderPath);
-        await Launcher.LaunchFolderAsync(folder);
+        try
+        {
+            var folder = await StorageFolder.GetFolderFromPathAsync(folderPath);
+            await Launcher.LaunchFolderAsync(folder);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to open folder {FolderPath}", folderPath);
+        }
     }
 
-    public async Task<bool> OpenUriAsync(Uri uri) => await Launcher.LaunchUriAsync(uri);
+    public async Task<bool> OpenUriAsync(Uri uri)
+    {
+        try
+        {
+            return await Launcher.LaunchUriAsync(uri);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to open {Uri}", uri);
+            return false;
+        }
+    }
 
     public async Task ShowMessageDialogAsync(string title, string message)
     {
@@ -94,8 +117,7 @@ public partial class UIService : IUIService
             XamlRoot = xamlRoot
         };
 
-        DialogThemeHelper.ApplyThemeOverrides(dialog);
-        await dialog.ShowAsync();
+        await ShowDialogAsync(dialog);
     }
 
     public async Task<CrashReportResult> ShowCrashReportDialogAsync(string report)
@@ -138,28 +160,37 @@ public partial class UIService : IUIService
 
     public async Task<string?> PickSingleFileAsync(IEnumerable<string> fileTypes)
     {
-        var filePicker = new FileOpenPicker(_window.AppWindow.Id);
-
-        foreach (var ext in fileTypes)
+        try
         {
-            filePicker.FileTypeFilter.Add(ext);
+            var file = await CreateFilePicker(fileTypes).PickSingleFileAsync();
+            return file?.Path;
         }
-
-        var file = await filePicker.PickSingleFileAsync();
-        return file?.Path;
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to show the file picker");
+            return null;
+        }
     }
 
     public async Task<IReadOnlyList<string>> PickMultipleFilesAsync(IEnumerable<string> fileTypes)
     {
-        var filePicker = new FileOpenPicker(_window.AppWindow.Id);
-
-        foreach (var ext in fileTypes)
+        try
         {
-            filePicker.FileTypeFilter.Add(ext);
+            var files = await CreateFilePicker(fileTypes).PickMultipleFilesAsync();
+            return files.Select(f => f.Path).ToList();
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to show the file picker");
+            return [];
+        }
+    }
 
-        var files = await filePicker.PickMultipleFilesAsync();
-        return files.Select(f => f.Path).ToList();
+    private FileOpenPicker CreateFilePicker(IEnumerable<string> fileTypes)
+    {
+        var filePicker = new FileOpenPicker(_window.AppWindow.Id);
+        foreach (var ext in fileTypes) filePicker.FileTypeFilter.Add(ext);
+        return filePicker;
     }
 
     public async Task<SmartPlaylist?> ShowSmartPlaylistEditorAsync(SmartPlaylist? editing = null)
@@ -169,7 +200,7 @@ public partial class UIService : IUIService
         using var viewModel = _viewModelFactory.Create<SmartPlaylistEditorViewModel>();
         viewModel.Initialize(editing);
         var dialog = new SmartPlaylistEditorDialog(viewModel) { XamlRoot = xamlRoot };
-        var result = await dialog.ShowAsync();
+        var result = await ShowDialogAsync(dialog);
         return result == ContentDialogResult.Primary ? viewModel.ResultPlaylist : null;
     }
 
@@ -239,8 +270,7 @@ public partial class UIService : IUIService
             }
         };
 
-        DialogThemeHelper.ApplyThemeOverrides(dialog);
-        var result = await dialog.ShowAsync();
+        var result = await ShowDialogAsync(dialog);
         return result == ContentDialogResult.Primary;
     }
 
@@ -248,5 +278,23 @@ public partial class UIService : IUIService
     {
         xamlRoot = _window.Content?.XamlRoot;
         return xamlRoot is not null;
+    }
+
+    /// <summary>
+    ///     Shows <paramref name="dialog" /> in the app's theme. WinUI throws when another dialog is already open;
+    ///     that is reported as <see cref="ContentDialogResult.None" />, the same as a cancel.
+    /// </summary>
+    private async Task<ContentDialogResult> ShowDialogAsync(ContentDialog dialog)
+    {
+        DialogThemeHelper.ApplyThemeOverrides(dialog);
+        try
+        {
+            return await dialog.ShowAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Could not show dialog {Title}", dialog.Title);
+            return ContentDialogResult.None;
+        }
     }
 }

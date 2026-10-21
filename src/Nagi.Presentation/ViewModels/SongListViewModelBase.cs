@@ -496,14 +496,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     {
         var targetSong = song ?? SelectedSongs.FirstOrDefault();
         if (targetSong?.FilePath is null) return;
-        try
-        {
-            await _uiService.ShowInFolderAsync(targetSong.FilePath);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to show {FilePath} in its folder", targetSong.FilePath);
-        }
+        await _uiService.ShowInFolderAsync(targetSong.FilePath);
     }
 
     [RelayCommand]
