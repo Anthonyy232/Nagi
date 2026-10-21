@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Resources;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -20,11 +21,17 @@ public partial class EqualizerBandViewModel : ObservableObject, IDisposable
         _debouncer = new Debouncer(TimeSpan.FromMilliseconds(AudioSettingsViewModel.EqualizerDebounceDelayMilliseconds), timeProvider);
         Index = index;
         FrequencyLabel = frequency < KiloHertzThreshold ? $"{frequency:F0}" : $"{frequency / KiloHertzThreshold:F0}K";
+        AccessibleName = string.Format(Strings.SettingsPage_EqualizerBand_Name, frequency);
         SetGainFromService(initialGain);
     }
 
     public uint Index { get; }
     public string FrequencyLabel { get; }
+
+    /// <summary>
+    ///     The band's full frequency for screen readers, which read the short label poorly.
+    /// </summary>
+    public string AccessibleName { get; }
 
     [ObservableProperty] public partial float Gain { get; set; }
 

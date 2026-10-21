@@ -70,6 +70,7 @@
                     </StackPanel>
 
                     <Slider x:Name="MediaSeekerSlider"
+                            AutomationProperties.Name="{x:Bind resources:Strings.Player_SeekSlider_Name, Mode=OneTime}"
                             Grid.Row="1"
                             Maximum="{Binding TotalDuration, Converter={StaticResource SliderMaximumConverter}}" Value="{Binding CurrentPosition, Mode=TwoWay}"
                             ThumbToolTipValueConverter="{StaticResource TimeSpanToTimeStringConverter}"

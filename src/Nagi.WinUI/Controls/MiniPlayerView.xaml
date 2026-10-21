@@ -141,6 +141,7 @@
                         <StackPanel VerticalAlignment="Bottom" Spacing="12">
                             <Slider
                                 x:Name="MediaSeekerSlider"
+                                AutomationProperties.Name="{x:Bind resources:Strings.Player_SeekSlider_Name, Mode=OneTime}"
                                 Margin="4,0"
                                 IsThumbToolTipEnabled="True"
                                 Maximum="{x:Bind ViewModel.TotalDuration, Mode=OneWay, Converter={StaticResource SliderMaximumConverter}}"

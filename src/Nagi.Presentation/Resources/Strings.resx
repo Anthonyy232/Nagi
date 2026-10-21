@@ -873,6 +873,9 @@ Do you want to continue?</value>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>Copy Log</value>
   </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>Crash log</value>
+  </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>Choose Cover</value>
   </data>
@@ -908,6 +911,12 @@ Do you want to continue?</value>
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>Value</value>
+  </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>Field</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>Condition</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>Remove this rule</value>
@@ -962,6 +971,9 @@ Do you want to continue?</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Go to Album</value>
+  </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>Seek</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Up Next</value>
@@ -1615,6 +1627,12 @@ Do you want to continue?</value>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Preamp</value>
   </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>Equalizer preset</value>
+  </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>Custom</value>
   </data>
@@ -2190,6 +2208,9 @@ Do you want to continue?</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>All Time</value>
+  </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>Time range</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}h {1}m</value>

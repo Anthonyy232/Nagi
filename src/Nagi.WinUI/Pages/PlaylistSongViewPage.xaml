@@ -131,7 +131,8 @@
                     </Grid>
 
                     <Button Style="{StaticResource SongListViewPageIconButton}"
-                            ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
+                            ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}"
+                            AutomationProperties.Name="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
                         <Button.Flyout>
                             <MenuFlyout Placement="Bottom">
                                 <RadioMenuFlyoutItem GroupName="PlaylistSongSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
@@ -181,6 +182,7 @@
 
                     <SplitButton Style="{StaticResource SongListViewPageShuffleButton}"
                             ToolTipService.ToolTip="{x:Bind resources:Strings.PlaylistSongViewPage_ShufflePlayAllButton_ToolTip, Mode=OneTime}"
+                            AutomationProperties.Name="{x:Bind resources:Strings.PlaylistSongViewPage_ShufflePlayAllButton_ToolTip, Mode=OneTime}"
                             Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}">
                         <SplitButton.Flyout><MenuFlyout Opening="ListeningOptions_Opening" /></SplitButton.Flyout>
                         <FontIcon Glyph="" FontSize="16" />
@@ -247,7 +249,8 @@
                         <Button Grid.Column="0" Style="{StaticResource SongListViewPageSongPlayButtonStyle}"
                                 Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}"
                                 CommandParameter="{x:Bind Mode=OneTime}"
-                                ToolTipService.ToolTip="{x:Bind resources:Strings.PlaylistSongViewPage_SongElement_PlayButton_ToolTip, Mode=OneTime}">
+                                ToolTipService.ToolTip="{x:Bind resources:Strings.PlaylistSongViewPage_SongElement_PlayButton_ToolTip, Mode=OneTime}"
+                                AutomationProperties.Name="{x:Bind resources:Strings.PlaylistSongViewPage_SongElement_PlayButton_ToolTip, Mode=OneTime}">
                             <Border Width="42" Height="42" CornerRadius="{StaticResource ArtworkCornerRadius}"
                                     Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}">
                                 <controls:ImageEx Width="42" Height="42"

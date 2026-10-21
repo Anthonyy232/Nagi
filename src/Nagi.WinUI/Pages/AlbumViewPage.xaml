@@ -138,7 +138,8 @@
                     </Grid>
 
                     <Button Style="{StaticResource SongListViewPageIconButton}"
-                            ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
+                            ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}"
+                            AutomationProperties.Name="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
                         <Button.Flyout>
                             <MenuFlyout Placement="Bottom">
                                 <RadioMenuFlyoutItem GroupName="AlbumViewSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
@@ -175,7 +176,7 @@
                         <FontIcon Glyph="" FontSize="16" />
                     </Button>
 
-                    <SplitButton Style="{StaticResource SongListViewPageShuffleButton}" ToolTipService.ToolTip="{x:Bind resources:Strings.AlbumViewPage_ShufflePlayButton_ToolTip, Mode=OneTime}"
+                    <SplitButton Style="{StaticResource SongListViewPageShuffleButton}" ToolTipService.ToolTip="{x:Bind resources:Strings.AlbumViewPage_ShufflePlayButton_ToolTip, Mode=OneTime}" AutomationProperties.Name="{x:Bind resources:Strings.AlbumViewPage_ShufflePlayButton_ToolTip, Mode=OneTime}"
                             Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}">
                         <SplitButton.Flyout><MenuFlyout Opening="ListeningOptions_Opening" /></SplitButton.Flyout>
                         <FontIcon Glyph="" FontSize="16" />
@@ -243,7 +244,7 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition MinWidth="50" Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <Button Grid.Column="0" ToolTipService.ToolTip="{x:Bind resources:Strings.AlbumViewPage_SongPlayButton_ToolTip, Mode=OneTime}" Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}" CommandParameter="{x:Bind}" Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
+                                <Button Grid.Column="0" ToolTipService.ToolTip="{x:Bind resources:Strings.AlbumViewPage_SongPlayButton_ToolTip, Mode=OneTime}" AutomationProperties.Name="{x:Bind resources:Strings.AlbumViewPage_SongPlayButton_ToolTip, Mode=OneTime}" Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}" CommandParameter="{x:Bind}" Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
                                     <Border Width="42" Height="42" CornerRadius="{StaticResource ArtworkCornerRadius}" Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
                                         <controls:ImageEx Width="42" Height="42" IsCacheEnabled="True" Stretch="UniformToFill"
                                                           DecodePixelWidth="48" DecodePixelType="Logical"
@@ -311,6 +312,7 @@
                         <Button
                             Grid.Column="0"
                             ToolTipService.ToolTip="{x:Bind resources:Strings.AlbumViewPage_SongPlayButton_ToolTip, Mode=OneTime}"
+                            AutomationProperties.Name="{x:Bind resources:Strings.AlbumViewPage_SongPlayButton_ToolTip, Mode=OneTime}"
                             Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}"
                             CommandParameter="{x:Bind}"
                             Style="{StaticResource SongListViewPageSongPlayButtonStyle}">

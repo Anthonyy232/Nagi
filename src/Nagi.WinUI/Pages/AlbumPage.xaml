@@ -95,7 +95,8 @@
                 </Grid>
 
                 <Button Style="{StaticResource SongListViewPageIconButton}"
-                        ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
+                        ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}"
+                        AutomationProperties.Name="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
                     <Button.Flyout>
                         <MenuFlyout Placement="Bottom">
                             <RadioMenuFlyoutItem GroupName="AlbumSort" Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
