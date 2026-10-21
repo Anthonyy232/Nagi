@@ -2397,4 +2397,12 @@
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Δεν υπάρχουν διαθέσιμες λίστες αναπαραγωγής</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>Το FFmpeg είναι απαραίτητο για την ανάλυση τραγουδιών για κανονικοποίηση έντασης, αλλά το Nagi δεν μπόρεσε να το βρει.
+
+1. Κατεβάστε μια έκδοση για Windows από το https://ffmpeg.org/download.html.
+2. Εξαγάγετε το αρχείο και εντοπίστε το ffmpeg.exe στον φάκελο bin.
+3. Προσθέστε τον φάκελο που περιέχει το ffmpeg.exe στη διαδρομή PATH των Windows.
+4. Επανεκκινήστε το Nagi και ενεργοποιήστε ξανά την κανονικοποίηση έντασης.</value>
+  </data>
 </root>

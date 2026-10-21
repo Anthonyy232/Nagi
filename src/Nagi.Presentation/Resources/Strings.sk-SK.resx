@@ -2397,4 +2397,12 @@ Chcete pokračovať?</value>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Žiadne dostupné zoznamy skladieb</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>Na analýzu skladieb na vyrovnanie hlasitosti je potrebný FFmpeg, ale aplikácia Nagi ho nemohla nájsť.
+
+1. Stiahnite si verziu pre Windows zo stránky https://ffmpeg.org/download.html.
+2. Rozbaľte archív a vyhľadajte ffmpeg.exe v jeho priečinku bin.
+3. Pridajte priečinok obsahujúci ffmpeg.exe do premennej Windows PATH.
+4. Reštartujte Nagi a znova zapnite vyrovnanie hlasitosti.</value>
+  </data>
 </root>

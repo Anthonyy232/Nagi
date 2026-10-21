@@ -2397,4 +2397,12 @@ Czy chcesz kontynuować?</value>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Brak dostępnych playlist</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>Program FFmpeg jest potrzebny do analizy utworów pod kątem wyrównywania głośności, ale aplikacja Nagi nie mogła go odnaleźć.
+
+1. Pobierz wersję dla systemu Windows ze strony https://ffmpeg.org/download.html.
+2. Rozpakuj archiwum i zlokalizuj plik ffmpeg.exe w folderze bin.
+3. Dodaj folder zawierający plik ffmpeg.exe do zmiennej PATH w systemie Windows.
+4. Uruchom ponownie aplikację Nagi, a następnie ponownie włącz wyrównywanie głośności.</value>
+  </data>
 </root>

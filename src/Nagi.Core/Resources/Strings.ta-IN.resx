@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>வரிசைப்படுத்து: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>ஒலிளவைச் சீராக்கப் பாடல்களைப் பகுப்பாய்வு செய்ய FFmpeg தேவை, ஆனால் Nagi செயலால் அதைக் கண்டறிய முடியவில்லை.
-
-1. https://ffmpeg.org/download.html இலிருந்து Windows பதிப்பைப் பதிவிறக்கவும்.
-2. காப்பகத்தைப் பிரித்தெடுத்து, அதன் bin கோப்புறையில் ffmpeg.exe-ஐக் கண்டறியவும்.
-3. ffmpeg.exe இருக்கும் கோப்புறையை உங்கள் Windows PATH-இல் சேர்க்கவும்.
-4. Nagi-ஐ மீண்டும் தொடங்கி, ஒலிளவு சீரமைப்பை மீண்டும் இயலுமைப்படுத்தவும்.</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>பிளேலிஸ்ட் உருவாக்கப்பட்டது, ஆனால் அதன் பாடல்களைச் சேர்க்க முடியவில்லை. தயவுசெய்து மீண்டும் இறக்குமதி செய்ய முயற்சிக்கவும்.</value>
   </data>

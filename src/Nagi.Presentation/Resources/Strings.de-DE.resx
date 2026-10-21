@@ -2397,4 +2397,12 @@ Möchten Sie fortfahren?</value>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Keine Wiedergabelisten verfügbar</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg wird benötigt, um Titel für die Lautstärkenormalisierung zu analysieren, aber Nagi konnte es nicht finden.
+
+1. Laden Sie ein Windows-Build von https://ffmpeg.org/download.html herunter.
+2. Entpacken Sie das Archiv und suchen Sie ffmpeg.exe in dessen bin-Ordner.
+3. Fügen Sie den Ordner mit ffmpeg.exe zu Ihrer Windows-PATH-Variablen hinzu.
+4. Starten Sie Nagi neu und aktivieren Sie die Lautstärkenormalisierung erneut.</value>
+  </data>
 </root>

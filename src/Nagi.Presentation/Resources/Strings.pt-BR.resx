@@ -2397,4 +2397,12 @@ Deseja continuar?</value>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Nenhuma playlist disponível</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>O FFmpeg é necessário para analisar as músicas para a normalização de volume, mas o Nagi não o encontrou.
+
+1. Baixe uma versão para Windows em https://ffmpeg.org/download.html.
+2. Extraia o arquivo e localize o ffmpeg.exe em sua pasta bin.
+3. Adicione a pasta que contém o ffmpeg.exe ao PATH do Windows.
+4. Reinicie o Nagi e ative a normalização de volume novamente.</value>
+  </data>
 </root>

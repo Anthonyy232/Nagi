@@ -173,7 +173,7 @@ public partial class UIService : IUIService
         return result == ContentDialogResult.Primary ? viewModel.ResultPlaylist : null;
     }
 
-    public async Task<bool> ShowFFmpegSetupDialogAsync(string title, string instructions, Func<Task<bool>> checkAction)
+    public async Task<bool> ShowFFmpegSetupDialogAsync(Func<Task<bool>> checkAction)
     {
         if (!TryGetXamlRoot(out var xamlRoot)) return false;
 
@@ -181,7 +181,7 @@ public partial class UIService : IUIService
 
         var instructionsBlock = new TextBlock
         {
-            Text = instructions,
+            Text = Strings.FFmpeg_SetupInstructions,
             TextWrapping = TextWrapping.Wrap
         };
         contentPanel.Children.Add(instructionsBlock);
@@ -196,7 +196,7 @@ public partial class UIService : IUIService
 
         var dialog = new ContentDialog
         {
-            Title = title,
+            Title = Strings.Settings_Dialog_FFmpegNotFound_Title,
             Content = contentPanel,
             PrimaryButtonText = Strings.Generic_Recheck,
             CloseButtonText = Strings.Generic_Cancel,

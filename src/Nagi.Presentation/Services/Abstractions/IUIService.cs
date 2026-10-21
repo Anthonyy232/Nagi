@@ -88,9 +88,9 @@ public interface IUIService
     Task<LyricsEdit?> ShowLyricsEditorAsync(string lyrics, bool canRemove);
 
     /// <summary>
-    ///     Shows a dialog for FFmpeg setup with a recheck button that doesn't close the dialog.
+    ///     Explains how to install FFmpeg on this platform, with a recheck button that doesn't close the dialog.
     /// </summary>
     /// <param name="checkAction">An async function that checks if FFmpeg is installed. Returns true if detected.</param>
     /// <returns>True if FFmpeg was detected after a recheck, false if the user cancelled.</returns>
-    Task<bool> ShowFFmpegSetupDialogAsync(string title, string instructions, Func<Task<bool>> checkAction);
+    Task<bool> ShowFFmpegSetupDialogAsync(Func<Task<bool>> checkAction);
 }

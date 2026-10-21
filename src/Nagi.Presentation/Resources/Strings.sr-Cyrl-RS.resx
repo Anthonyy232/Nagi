@@ -2397,4 +2397,12 @@
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Нису доступне плејлисте</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg је потребан за анализу песама ради нормализације гласноће, али Nagi га није пронашао.
+
+1. Преузмите верзију за Windows са странице https://ffmpeg.org/download.html.
+2. Распакујте архиву и пронађите ffmpeg.exe у њеној фасцикли bin.
+3. Додајте фасциклу која садржи ffmpeg.exe у ваш Windows PATH.
+4. Поново покрените Nagi, а затим омогућите нормализацију гласноће.</value>
+  </data>
 </root>

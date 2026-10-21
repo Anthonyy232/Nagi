@@ -2397,4 +2397,12 @@ Vols continuar?</value>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>No hi ha llistes de reproducció disponibles</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>Cal el FFmpeg per analitzar les cançons per a la normalització del volum, però Nagi no l'ha pogut trobar.
+
+1. Baixeu una versió per a Windows des de https://ffmpeg.org/download.html.
+2. Extraieu l'arxiu i cerqueu ffmpeg.exe a la carpeta bin.
+3. Afegiu la carpeta que conté ffmpeg.exe al PATH de Windows.
+4. Reinicieu Nagi i torneu a activar la normalització del volum.</value>
+  </data>
 </root>

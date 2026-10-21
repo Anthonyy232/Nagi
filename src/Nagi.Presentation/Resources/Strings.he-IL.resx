@@ -2397,4 +2397,12 @@
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>אין רשימות השמעה זמינות</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>דרוש FFmpeg כדי לנתח שירים לצורך נרמול עוצמת קול, אך Nagi לא הצליח למצוא אותו.
+
+1. הורד גרסת Windows מ-https://ffmpeg.org/download.html.
+2. חלץ את הארכיון ואתר את ffmpeg.exe בתיקיית bin שלו.
+3. הוסף את התיקייה שמכילה את ffmpeg.exe ל-PATH של Windows.
+4. הפעל מחדש את Nagi, ואז הפעל מחדש את נרמול עוצמת הקול.</value>
+  </data>
 </root>

@@ -2397,4 +2397,12 @@
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>لا توجد قوائم تشغيل متاحة</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>يلزم وجود FFmpeg لتحليل الأغاني لمعايرة الصوت، ولكن لم يتمكن Nagi من العثور عليه.
+
+1. نزّل نسخة Windows من https://ffmpeg.org/download.html.
+2. استخرج الأرشيف وحدد موقع ffmpeg.exe في مجلد bin الخاص به.
+3. أضف المجلد الذي يحتوي على ffmpeg.exe إلى متغير Windows PATH.
+4. أعد تشغيل Nagi، ثم فعّل معايرة الصوت مرة أخرى.</value>
+  </data>
 </root>

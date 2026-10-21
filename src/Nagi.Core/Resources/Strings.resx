@@ -242,14 +242,6 @@
     <value>Sort By: </value>
   </data>
 
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg is needed to analyze songs for volume normalization, but Nagi could not find it.
-
-1. Download a Windows build from https://ffmpeg.org/download.html.
-2. Extract the archive and locate ffmpeg.exe in its bin folder.
-3. Add the folder containing ffmpeg.exe to your Windows PATH.
-4. Restart Nagi, then enable volume normalization again.</value>
-  </data>
 
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>The playlist was created, but its songs could not be added. Please try importing again.</value>

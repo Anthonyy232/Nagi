@@ -2397,4 +2397,12 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Níl seinmliostaí ar fáil</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>Tá FFmpeg ag teastáil chun amhráin a anailísiú le haghaidh normalú airde fuaime, ach níorbh fhéidir le Nagi é a aimsiú.
+
+1. Íoslódáil leagan do Windows ó https://ffmpeg.org/download.html.
+2. Bain na comhaid as an gcartlann agus aimsigh ffmpeg.exe ina fhillteán bin.
+3. Cuir an fillteán ina bhfuil ffmpeg.exe le do PATH Windows.
+4. Atosaigh Nagi, ansin cumasaigh normalú airde fuaime arís.</value>
+  </data>
 </root>

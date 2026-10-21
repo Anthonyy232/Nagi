@@ -2397,4 +2397,12 @@ Bạn có muốn tiếp tục không?</value>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Không có danh sách phát nào khả dụng</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>Cần có FFmpeg để phân tích bài hát cho việc cân bằng âm lượng, nhưng Nagi không thể tìm thấy ứng dụng này.
+
+1. Tải bản dựng dành cho Windows từ https://ffmpeg.org/download.html.
+2. Giải nén tệp lưu trữ và tìm tệp ffmpeg.exe trong thư mục bin.
+3. Thêm thư mục chứa ffmpeg.exe vào PATH của Windows.
+4. Khởi động lại Nagi, sau đó bật lại tính năng cân bằng âm lượng.</value>
+  </data>
 </root>

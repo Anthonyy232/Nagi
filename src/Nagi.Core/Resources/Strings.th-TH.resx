@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>จัดเรียงตาม: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>จำเป็นต้องใช้ FFmpeg เพื่อวิเคราะห์เพลงสำหรับการปรับระดับความดัง แต่ Nagi ไม่พบโปรแกรมนี้
-
-1. ดาวน์โหลดเวอร์ชัน Windows จาก https://ffmpeg.org/download.html
-2. แตกไฟล์และหา ffmpeg.exe ในโฟลเดอร์ bin
-3. เพิ่มโฟลเดอร์ที่มี ffmpeg.exe ไปยัง Windows PATH ของคุณ
-4. รีสตาร์ท Nagi แล้วเปิดใช้งานการปรับระดับความดังอีกครั้ง</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>สร้างเพลย์ลิสต์แล้ว แต่ไม่สามารถเพิ่มเพลงได้ โปรดลองนำเข้าใหม่อีกครั้ง</value>
   </data>

@@ -2397,4 +2397,12 @@ Sigaaguk kok maay le?</value>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Playlists aneewa</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg Volume Normalization-ah kanta-xaagos korissanah Nagi-h xagga gee-mayyu.
+
+1. Windows build deeqa: https://ffmpeg.org/download.html.
+2. Archive ayyeetayi ffmpeg.exe bin galbatil gee.
+3. ffmpeg.exe le galbata Windows PATH-ah ossoba.
+4. Nagi ugusa, tefika volume normalization qadissa.</value>
+  </data>
 </root>

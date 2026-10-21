@@ -2397,4 +2397,12 @@
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Немає доступних списків відтворення</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg потрібен для аналізу пісень для нормалізації гучності, але Nagi не вдалося його знайти.
+
+1. Завантажте збірку для Windows із https://ffmpeg.org/download.html.
+2. Розархівуйте архів і знайдіть ffmpeg.exe у його папці bin.
+3. Додайте папку з ffmpeg.exe до змінної PATH у Windows.
+4. Перезапустіть Nagi, а потім знову увімкніть нормалізацію гучності.</value>
+  </data>
 </root>

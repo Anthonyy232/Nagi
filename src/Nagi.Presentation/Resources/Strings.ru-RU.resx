@@ -2397,4 +2397,12 @@
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Плейлисты недоступны</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>Для анализа треков и выравнивания громкости нужен FFmpeg, но Nagi не удалось его найти.
+
+1. Скачайте сборку для Windows с сайта https://ffmpeg.org/download.html.
+2. Распакуйте архив и найдите ffmpeg.exe в папке bin.
+3. Добавьте папку, содержащую ffmpeg.exe, в переменную окружения PATH Windows.
+4. Перезапустите Nagi и снова включите выравнивание громкости.</value>
+  </data>
 </root>

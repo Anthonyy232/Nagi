@@ -2397,4 +2397,12 @@
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>利用可能なプレイリストはありません</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>音量の平準化のために曲を解析するには FFmpeg が必要ですが、Nagi が見つけることができませんでした。
+
+1. https://ffmpeg.org/download.html から Windows ビルドをダウンロードします。
+2. アーカイブを解凍し、bin フォルダー内の ffmpeg.exe を探します。
+3. ffmpeg.exe を含むフォルダーを Windows の PATH に追加します。
+4. Nagi を再起動し、音量の平準化を再度有効にしてください。</value>
+  </data>
 </root>

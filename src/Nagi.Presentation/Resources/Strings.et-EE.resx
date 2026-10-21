@@ -2397,4 +2397,12 @@ Kas soovite jätkata?</value>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Esitusloendeid pole saadaval</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg on vajalik lugude analüüsimiseks helitugevuse normaliseerimise jaoks, kuid Nagi ei leidnud seda.
+
+1. Laadi Windowsi versioon alla aadressilt https://ffmpeg.org/download.html.
+2. Paki arhiiv lahti ja leia selle bin-kaustast ffmpeg.exe.
+3. Lisa ffmpeg.exe-t sisaldav kaust oma Windowsi PATH-i.
+4. Taaskäivita Nagi ja lülita helitugevuse normaliseerimine uuesti sisse.</value>
+  </data>
 </root>

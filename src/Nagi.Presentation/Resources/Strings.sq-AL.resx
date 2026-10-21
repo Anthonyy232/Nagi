@@ -2397,4 +2397,12 @@ Dëshironi të vazhdoni?</value>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Asnjë listë luajtjeje nuk është në dispozicion</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg nevojitet për të analizuar këngët për normalizimin e volumit, por Nagi nuk mund ta gjente.
+
+1. Shkarkoni një version për Windows nga https://ffmpeg.org/download.html.
+2. Nxjerrni arkivin dhe gjeni ffmpeg.exe në dosjen e tij bin.
+3. Shtoni dosjen që përmban ffmpeg.exe në PATH-in tuaj të Windows.
+4. Rinisni Nagi, pastaj aktivizoni përsëri normalizimin e volumit.</value>
+  </data>
 </root>

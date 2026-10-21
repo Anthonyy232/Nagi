@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Rūšiuoti pagal: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>Norint analizuoti dainas garsumo normalizavimui, reikalingas FFmpeg, bet Nagi jo nerado.
-
-1. Atsisiųskite „Windows“ versiją iš https://ffmpeg.org/download.html.
-2. Išpakuokite archyvą ir jo aplanke „bin“ suraskite ffmpeg.exe.
-3. Pridėkite aplanką, kuriame yra ffmpeg.exe, į Windows PATH.
-4. Paleiskite Nagi iš naujo, tada vėl įjunkite garsumo normalizavimą.</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>Grojaraštis sukurtas, tačiau nepavyko pridėti jo dainų. Bandykite importuoti dar kartą.</value>
   </data>

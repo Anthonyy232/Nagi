@@ -2397,4 +2397,12 @@ Haluatko jatkaa?</value>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Ei soittolistoja saatavilla</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg-ohjelmaa tarvitaan kappaleiden analysoimiseen äänenvoimakkuuden tasoitusta varten, mutta Nagi ei löytänyt sitä.
+
+1. Lataa Windows-versio osoitteesta https://ffmpeg.org/download.html.
+2. Pura arkisto ja etsi ffmpeg.exe sen bin-kansiosta.
+3. Lisää ffmpeg.exe-tiedoston sisältävä kansio Windowsin PATH-ympäristömuuttujaan.
+4. Käynnistä Nagi uudelleen ja ota äänenvoimakkuuden tasoitus uudelleen käyttöön.</value>
+  </data>
 </root>

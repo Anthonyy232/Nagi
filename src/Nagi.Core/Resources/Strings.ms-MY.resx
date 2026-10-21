@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Susun Mengikut: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg diperlukan untuk menganalisis lagu bagi penormalan kelantangan, tetapi Nagi tidak dapat menemuinya.
-
-1. Muat turun binaan Windows dari https://ffmpeg.org/download.html.
-2. Ekstrak arkib dan cari ffmpeg.exe dalam folder binnya.
-3. Tambah folder yang mengandungi ffmpeg.exe ke PATH Windows anda.
-4. Mulakan semula Nagi, kemudian dayakan penormalan kelantangan semula.</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>Senarai main telah dicipta, tetapi lagunya tidak dapat ditambah. Sila cuba mengimport lagi.</value>
   </data>

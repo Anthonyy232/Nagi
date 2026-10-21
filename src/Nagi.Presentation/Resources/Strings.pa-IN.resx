@@ -2397,4 +2397,12 @@
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>ਕੋਈ ਪਲੇਲਿਸਟ ਉਪਲਬਧ ਨਹੀਂ</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>ਆਵਾਜ਼ ਦੇ ਸਧਾਰਨੀਕਰਨ ਲਈ ਗਾਣਿਆਂ ਦੀ ਜਾਂਚ ਕਰਨ ਵਾਸਤੇ FFmpeg ਦੀ ਲੋੜ ਹੈ, ਪਰ Nagi ਨੂੰ ਇਹ ਨਹੀਂ ਮਿਲਿਆ।
+
+1. https://ffmpeg.org/download.html ਤੋਂ Windows ਬਿਲਡ ਡਾਊਨਲੋਡ ਕਰੋ।
+2. ਆਰਕਾਈਵ ਨੂੰ ਐਕਸਟ੍ਰੈਕਟ ਕਰੋ ਅਤੇ ਇਸਦੇ bin ਫ਼ੋਲਡਰ ਵਿੱਚ ffmpeg.exe ਲੱਭੋ।
+3. ffmpeg.exe ਵਾਲੇ ਫ਼ੋਲਡਰ ਨੂੰ ਆਪਣੇ Windows PATH ਵਿੱਚ ਜੋੜੋ।
+4. Nagi ਨੂੰ ਮੁੜ ਚਾਲੂ ਕਰੋ, ਅਤੇ ਫਿਰ ਆਵਾਜ਼ ਸਧਾਰਨੀਕਰਨ ਨੂੰ ਮੁੜ ਚਾਲੂ ਕਰੋ।</value>
+  </data>
 </root>

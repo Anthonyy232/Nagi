@@ -2397,4 +2397,12 @@ Imide?</value>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Pe tye chen wer mo</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>Mito FFmpeg me kwano wer me yub me dwong me dwan, ento Nagi pe otwero nwangone.
+
+1. Gam Windows build ki i https://ffmpeg.org/download.html.
+2. Yab archive dok inwang ffmpeg.exe i folder ne me bin.
+3. Med folder ma tye ki ffmpeg.exe i Windows PATH ni.
+4. Cak Nagi odoco, ka icak yub me dwong me dwan odoco.</value>
+  </data>
 </root>

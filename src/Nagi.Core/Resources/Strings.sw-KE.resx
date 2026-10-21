@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Panga Kwa: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg inahitajika ili kuchanganua nyimbo kwa ajili ya kurekebisha sauti, lakini Nagi haikuweza kuipata.
-
-1. Pakua toleo la Windows kutoka https://ffmpeg.org/download.html.
-2. Fungua kumbukumbu hiyo na utafute ffmpeg.exe kwenye folda yake ya bin.
-3. Ongeza folda yenye ffmpeg.exe kwenye PATH yako ya Windows.
-4. Anzisha tena Nagi, kisha uwezeshe kurekebisha sauti tena.</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>Orodha ya kucheza iliundwa, lakini nyimbo zake hazikuweza kuongezwa. Tafadhali jaribu kuingiza tena.</value>
   </data>

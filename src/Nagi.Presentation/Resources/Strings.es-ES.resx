@@ -2397,4 +2397,12 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>No hay listas de reproducción disponibles</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>Se necesita FFmpeg para analizar las canciones para la normalización de volumen, pero Nagi no lo ha encontrado.
+
+1. Descarga una versión para Windows desde https://ffmpeg.org/download.html.
+2. Extrae el archivo comprimido y localiza ffmpeg.exe en su carpeta bin.
+3. Añade la carpeta que contiene ffmpeg.exe a la variable PATH de Windows.
+4. Reinicia Nagi y vuelve a activar la normalización de volumen.</value>
+  </data>
 </root>

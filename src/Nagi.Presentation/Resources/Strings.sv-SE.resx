@@ -2397,4 +2397,12 @@ Vill du fortsätta?</value>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Inga spellistor tillgängliga</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg behövs för att analysera låtar för volymnormalisering, men Nagi kunde inte hitta det.
+
+1. Ladda ned en Windows-version från https://ffmpeg.org/download.html.
+2. Packa upp arkivet och leta reda på ffmpeg.exe i mappen bin.
+3. Lägg till mappen som innehåller ffmpeg.exe i din Windows PATH.
+4. Starta om Nagi och aktivera volymnormalisering igen.</value>
+  </data>
 </root>

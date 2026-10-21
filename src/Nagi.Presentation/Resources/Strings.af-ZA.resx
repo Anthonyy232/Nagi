@@ -2397,4 +2397,12 @@ Wil jy voortgaan?</value>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Geen snitlyste beskikbaar nie</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg is benodig om liedjies vir volumenormalisering te ontleed, maar Nagi kon dit nie vind nie.
+
+1. Laai 'n Windows-weergawe af vanaf https://ffmpeg.org/download.html.
+2. Pak die argief uit en spoor ffmpeg.exe in die bin-vouer daarvan op.
+3. Voeg die vouer wat ffmpeg.exe bevat by jou Windows PATH.
+4. Herbegin Nagi en aktiveer dan weer volumenormalisering.</value>
+  </data>
 </root>

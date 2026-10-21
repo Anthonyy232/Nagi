@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Сортирай по: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg е необходим за анализиране на песните за нормализиране на силата на звука, но Nagi не можа да го намери.
-
-1. Изтеглете версия за Windows от https://ffmpeg.org/download.html.
-2. Разархивирайте архива и намерете ffmpeg.exe в неговата папка bin.
-3. Добавете папката, съдържаща ffmpeg.exe, към вашия Windows PATH.
-4. Рестартирайте Nagi и активирайте отново нормализирането на силата на звука.</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>Плейлистът беше създаден, но песните му не можаха да бъдат добавени. Моля, опитайте да импортирате отново.</value>
   </data>

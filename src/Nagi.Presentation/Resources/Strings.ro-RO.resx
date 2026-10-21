@@ -2397,4 +2397,12 @@ Doriți să continuați?</value>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Nicio listă de redare disponibilă</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg este necesar pentru a analiza melodiile pentru normalizarea volumului, dar Nagi nu l-a putut găsi.
+
+1. Descărcați o versiune de Windows de la https://ffmpeg.org/download.html.
+2. Extrageți arhiva și localizați ffmpeg.exe în folderul bin al acesteia.
+3. Adăugați folderul care conține ffmpeg.exe în variabila PATH din Windows.
+4. Reporniți Nagi, apoi activați din nou normalizarea volumului.</value>
+  </data>
 </root>

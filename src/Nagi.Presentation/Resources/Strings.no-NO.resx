@@ -2397,4 +2397,12 @@ Vil du fortsette?</value>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Ingen spillelister tilgjengelig</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg er nødvendig for å analysere sanger for volumutjevning, men Nagi fant det ikke.
+
+1. Last ned en Windows-versjon fra https://ffmpeg.org/download.html.
+2. Pakk ut arkivet og finn ffmpeg.exe i bin-mappen.
+3. Legg til mappen som inneholder ffmpeg.exe i din Windows PATH.
+4. Start Nagi på nytt, og aktiver deretter volumutjevning igjen.</value>
+  </data>
 </root>

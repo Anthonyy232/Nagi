@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>並べ替え: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>音量の平準化のために曲を解析するには FFmpeg が必要ですが、Nagi が見つけることができませんでした。
-
-1. https://ffmpeg.org/download.html から Windows ビルドをダウンロードします。
-2. アーカイブを解凍し、bin フォルダー内の ffmpeg.exe を探します。
-3. ffmpeg.exe を含むフォルダーを Windows の PATH に追加します。
-4. Nagi を再起動し、音量の平準化を再度有効にしてください。</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>プレイリストは作成されましたが、曲を追加できませんでした。もう一度インポートをお試しください。</value>
   </data>

@@ -2397,4 +2397,12 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Nema dostupnih popisa pjesama</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg je potreban za analizu pjesama radi izjednačavanja glasnoće, ali ga Nagi nije mogao pronaći.
+
+1. Preuzmite verziju za Windows s https://ffmpeg.org/download.html.
+2. Raspakirajte arhivu i pronađite ffmpeg.exe u njezinoj mapi bin.
+3. Dodajte mapu koja sadrži ffmpeg.exe u svoj Windows PATH.
+4. Ponovno pokrenite Nagi, a zatim ponovno omogućite izjednačavanje glasnoće.</value>
+  </data>
 </root>

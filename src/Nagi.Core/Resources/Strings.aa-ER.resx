@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Ginginaay: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg Volume Normalization-ah kanta-xaagos korissanah Nagi-h xagga gee-mayyu.
-
-1. Windows build deeqa: https://ffmpeg.org/download.html.
-2. Archive ayyeetayi ffmpeg.exe bin galbatil gee.
-3. ffmpeg.exe le galbata Windows PATH-ah ossoba.
-4. Nagi ugusa, tefika volume normalization qadissa.</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>Playlist ginte, waddike teet kantitta ossa baahe-mayyu. Import-aata keeninna.</value>
   </data>

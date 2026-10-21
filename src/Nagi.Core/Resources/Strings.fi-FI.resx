@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Järjestä: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg-ohjelmaa tarvitaan kappaleiden analysoimiseen äänenvoimakkuuden tasoitusta varten, mutta Nagi ei löytänyt sitä.
-
-1. Lataa Windows-versio osoitteesta https://ffmpeg.org/download.html.
-2. Pura arkisto ja etsi ffmpeg.exe sen bin-kansiosta.
-3. Lisää ffmpeg.exe-tiedoston sisältävä kansio Windowsin PATH-ympäristömuuttujaan.
-4. Käynnistä Nagi uudelleen ja ota äänenvoimakkuuden tasoitus uudelleen käyttöön.</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>Soittolista luotiin, mutta sen kappaleita ei voitu lisätä. Yritä tuontia uudelleen.</value>
   </data>

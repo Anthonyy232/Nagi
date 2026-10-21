@@ -2397,4 +2397,12 @@
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>لا توجد قوائم تشغيل متاحة</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>يتطلب تحليل الأغاني لتوحيد مستوى الصوت وجود FFmpeg، ولكن تعذر على Nagi العثور عليه.
+
+1. قم بتنزيل نسخة Windows من https://ffmpeg.org/download.html.
+2. استخرج الأرشيف وحدد موقع ffmpeg.exe في مجلد bin التابع له.
+3. أضف المجلد الذي يحتوي على ffmpeg.exe إلى مسار PATH في Windows.
+4. أعد تشغيل Nagi، ثم قم بتمكين توحيد مستوى الصوت مرة أخرى.</value>
+  </data>
 </root>

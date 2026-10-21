@@ -2397,4 +2397,12 @@ Szeretné folytatni?</value>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Nincs elérhető lejátszási lista</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>Az FFmpeg szükséges a dalok hangerő-normalizáláshoz történő elemzéséhez, de a Nagi nem találta.
+
+1. Töltsön le egy Windows-verziót a https://ffmpeg.org/download.html oldalról.
+2. Csomagolja ki az archívumot, és keresse meg az ffmpeg.exe fájlt annak bin mappájában.
+3. Adja hozzá az ffmpeg.exe fájlt tartalmazó mappát a Windows PATH környezeti változójához.
+4. Indítsa újra a Nagi alkalmazást, majd engedélyezze újra a hangerő-normalizálást.</value>
+  </data>
 </root>

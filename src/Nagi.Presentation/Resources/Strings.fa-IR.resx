@@ -2397,4 +2397,12 @@
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>لیست پخش موجود نیست</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>برای تحلیل آهنگ‌ها جهت نرمال‌سازی صدا به FFmpeg نیاز است، اما Nagi نتوانست آن را پیدا کند.
+
+1. یک نسخه ویندوز را از https://ffmpeg.org/download.html دانلود کنید.
+2. فایل آرشیو را استخراج کرده و ffmpeg.exe را در پوشه bin آن پیدا کنید.
+3. پوشه حاوی ffmpeg.exe را به PATH ویندوز خود اضافه کنید.
+4. Nagi را دوباره اجرا کرده و سپس نرمال‌سازی صدا را مجدداً فعال کنید.</value>
+  </data>
 </root>

@@ -339,8 +339,6 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
             if (!ffmpegInstalled)
             {
                 ffmpegInstalled = await _uiService.ShowFFmpegSetupDialogAsync(
-                    Strings.Settings_Dialog_FFmpegNotFound_Title,
-                    _ffmpegService.GetFFmpegSetupInstructions(),
                     () => _ffmpegService.IsFFmpegInstalledAsync(forceRecheck: true));
                 if (!IsCurrent()) return;
                 if (!ffmpegInstalled)

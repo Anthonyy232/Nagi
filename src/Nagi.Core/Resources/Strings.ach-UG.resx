@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Yub ki: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>Mito FFmpeg me kwano wer me yub me dwong me dwan, ento Nagi pe otwero nwangone.
-
-1. Gam Windows build ki i https://ffmpeg.org/download.html.
-2. Yab archive dok inwang ffmpeg.exe i folder ne me bin.
-3. Med folder ma tye ki ffmpeg.exe i Windows PATH ni.
-4. Cak Nagi odoco, ka icak yub me dwong me dwan odoco.</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>Kiyubo playlist, ento pe otwero medo werne. Tim ber iyem kelo odoco.</value>
   </data>

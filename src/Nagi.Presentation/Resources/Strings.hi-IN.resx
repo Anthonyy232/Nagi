@@ -2397,4 +2397,12 @@
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>कोई प्लेलिस्ट उपलब्ध नहीं</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>वॉल्यूम नॉर्मलाइज़ेशन के लिए गानों का विश्लेषण करने हेतु FFmpeg की आवश्यकता है, लेकिन Nagi को यह नहीं मिला।
+
+1. https://ffmpeg.org/download.html से Windows बिल्ड डाउनलोड करें।
+2. आर्काइव को एक्सट्रैक्ट करें और इसके bin फ़ोल्डर में ffmpeg.exe खोजें।
+3. ffmpeg.exe वाले फ़ोल्डर को अपने Windows PATH में जोड़ें।
+4. Nagi को पुनरारंभ करें, फिर वॉल्यूम नॉर्मलाइज़ेशन को पुनः सक्षम करें।</value>
+  </data>
 </root>

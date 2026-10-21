@@ -52,9 +52,4 @@ public class FFmpegService : IFFmpegService
             _lock.Release();
         }
     }
-
-    public string GetFFmpegSetupInstructions()
-    {
-        return Resources.Strings.FFmpeg_SetupInstructions;
-    }
 }

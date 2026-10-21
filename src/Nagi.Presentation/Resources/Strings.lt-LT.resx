@@ -2397,4 +2397,12 @@ Ar norite tęsti?</value>
   <data name="Generic_NoPlaylists" xml:space="preserve">
     <value>Nėra galimų grojaraščių</value>
   </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>Norint analizuoti dainas garsumo normalizavimui, reikalingas FFmpeg, bet Nagi jo nerado.
+
+1. Atsisiųskite „Windows“ versiją iš https://ffmpeg.org/download.html.
+2. Išpakuokite archyvą ir jo aplanke „bin“ suraskite ffmpeg.exe.
+3. Pridėkite aplanką, kuriame yra ffmpeg.exe, į Windows PATH.
+4. Paleiskite Nagi iš naujo, tada vėl įjunkite garsumo normalizavimą.</value>
+  </data>
 </root>

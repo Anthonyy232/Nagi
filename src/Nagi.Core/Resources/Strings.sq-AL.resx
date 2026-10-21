@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Rendit sipas: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg nevojitet për të analizuar këngët për normalizimin e volumit, por Nagi nuk mund ta gjente.
-
-1. Shkarkoni një version për Windows nga https://ffmpeg.org/download.html.
-2. Nxjerrni arkivin dhe gjeni ffmpeg.exe në dosjen e tij bin.
-3. Shtoni dosjen që përmban ffmpeg.exe në PATH-in tuaj të Windows.
-4. Rinisni Nagi, pastaj aktivizoni përsëri normalizimin e volumit.</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>Lista e dëgjimit u krijua, por këngët e saj nuk mund të shtoheshin. Ju lutemi provoni ta importoni përsëri.</value>
   </data>

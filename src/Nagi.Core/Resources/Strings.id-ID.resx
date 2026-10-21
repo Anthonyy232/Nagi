@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Urutkan Berdasarkan: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg diperlukan untuk menganalisis lagu demi normalisasi volume, tetapi Nagi tidak dapat menemukannya.
-
-1. Unduh versi Windows dari https://ffmpeg.org/download.html.
-2. Ekstrak arsip lalu temukan ffmpeg.exe di folder bin miliknya.
-3. Tambahkan folder yang berisi ffmpeg.exe ke PATH Windows Anda.
-4. Mulai ulang Nagi, lalu aktifkan kembali normalisasi volume.</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>Daftar putar telah dibuat, tetapi lagunya tidak dapat ditambahkan. Silakan coba mengimpor lagi.</value>
   </data>

@@ -235,14 +235,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Seřadit podle: </value>
   </data>
-  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>Aplikace FFmpeg je potřeba k analýze skladeb pro vyrovnání hlasitosti, ale Nagi ji nemohl najít.
-
-1. Stáhněte si verzi pro Windows ze stránky https://ffmpeg.org/download.html.
-2. Rozbalte archiv a ve složce bin vyhledejte soubor ffmpeg.exe.
-3. Přidejte složku obsahující ffmpeg.exe do proměnné prostředí Windows PATH.
-4. Restartujte Nagi a znovu zapněte vyrovnání hlasitosti.</value>
-  </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>Seznam skladeb byl vytvořen, ale jeho skladby se nepodařilo přidat. Zkuste import zopakovat.</value>
   </data>
