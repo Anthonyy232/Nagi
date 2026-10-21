@@ -33,24 +33,17 @@ public sealed partial class PlaylistSongViewPage : SongListPage
     {
         base.OnNavigatedTo(e);
 
-        try
+        if (e.Parameter is PlaylistSongViewNavigationParameter navParam)
         {
-            if (e.Parameter is PlaylistSongViewNavigationParameter navParam)
-            {
-                await ViewModel.InitializeAsync(navParam.Title, navParam.PlaylistId, navParam.CoverImageUri);
-            }
-            else
-            {
-                var paramType = e.Parameter?.GetType().Name ?? "null";
-                _logger.LogWarning(
-                    "Received invalid navigation parameter. Expected '{ExpectedType}', got '{ActualType}'. Initializing with fallback state.",
-                    nameof(PlaylistSongViewNavigationParameter), paramType);
-                await ViewModel.InitializeAsync(Strings.PlaylistSongViewPage_UnknownPlaylist, null);
-            }
+            await ViewModel.InitializeAsync(navParam.Title, navParam.PlaylistId, navParam.CoverImageUri);
         }
-        catch (Exception ex)
+        else
         {
-            _logger.LogError(ex, "Failed to initialize PlaylistSongViewPage.");
+            var paramType = e.Parameter?.GetType().Name ?? "null";
+            _logger.LogWarning(
+                "Received invalid navigation parameter. Expected '{ExpectedType}', got '{ActualType}'. Initializing with fallback state.",
+                nameof(PlaylistSongViewNavigationParameter), paramType);
+            await ViewModel.InitializeAsync(Strings.PlaylistSongViewPage_UnknownPlaylist, null);
         }
     }
 

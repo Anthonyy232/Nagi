@@ -299,8 +299,15 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     {
         if (_isDisposed || IsAnyOperationInProgress) return;
 
-        var created = await _uiService.ShowSmartPlaylistEditorAsync();
-        if (created is not null && !_isDisposed) await LoadPlaylistsAsync();
+        try
+        {
+            var created = await _uiService.ShowSmartPlaylistEditorAsync();
+            if (created is not null && !_isDisposed) await LoadPlaylistsAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create a smart playlist");
+        }
     }
 
     [RelayCommand]

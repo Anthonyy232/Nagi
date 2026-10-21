@@ -199,13 +199,24 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
     ///     Lets the user pick an image file and stores it as the artist's custom image.
     /// </summary>
     [RelayCommand]
-    public async Task ChangeArtistImageAsync(Guid artistId)
+    private async Task ChangeArtistImageAsync(Guid artistId)
     {
-        var localPath = await _uiService.PickSingleFileAsync(FileExtensions.ImageFileExtensions);
-        if (string.IsNullOrWhiteSpace(localPath)) return;
-        await _libraryWriter.UpdateArtistImageAsync(artistId, localPath);
+        try
+        {
+            var localPath = await _uiService.PickSingleFileAsync(FileExtensions.ImageFileExtensions);
+            if (string.IsNullOrWhiteSpace(localPath)) return;
+            await _libraryWriter.UpdateArtistImageAsync(artistId, localPath);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to change the image of artist {ArtistId}", artistId);
+        }
     }
 
     [RelayCommand]
-    public Task RemoveArtistImageAsync(Guid artistId) => _libraryWriter.RemoveArtistImageAsync(artistId);
+    private async Task RemoveArtistImageAsync(Guid artistId)
+    {
+        try { await _libraryWriter.RemoveArtistImageAsync(artistId); }
+        catch (Exception ex) { _logger.LogError(ex, "Failed to remove the image of artist {ArtistId}", artistId); }
+    }
 }

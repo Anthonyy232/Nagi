@@ -1,7 +1,6 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
@@ -30,36 +29,17 @@ public sealed partial class SmartPlaylistSongViewPage : SongListPage
     {
         base.OnNavigatedTo(e);
 
-        try
+        if (e.Parameter is SmartPlaylistSongViewNavigationParameter navParam)
         {
-            if (e.Parameter is SmartPlaylistSongViewNavigationParameter navParam)
-            {
-                await ViewModel.InitializeAsync(navParam.Title, navParam.SmartPlaylistId, navParam.CoverImageUri);
-            }
-            else
-            {
-                var paramType = e.Parameter?.GetType().Name ?? "null";
-                _logger.LogWarning(
-                    "Received invalid navigation parameter. Expected '{ExpectedType}', got '{ActualType}'. Initializing with fallback state.",
-                    nameof(SmartPlaylistSongViewNavigationParameter), paramType);
-                await ViewModel.InitializeAsync(Strings.SmartPlaylistSongViewPage_UnknownPlaylist, null);
-            }
+            await ViewModel.InitializeAsync(navParam.Title, navParam.SmartPlaylistId, navParam.CoverImageUri);
         }
-        catch (Exception ex)
+        else
         {
-            _logger.LogError(ex, "Failed to initialize SmartPlaylistSongViewPage.");
-        }
-    }
-
-    private async void EditRulesButton_Click(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            await ViewModel.EditRulesCommand.ExecuteAsync(null);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error opening smart playlist editor");
+            var paramType = e.Parameter?.GetType().Name ?? "null";
+            _logger.LogWarning(
+                "Received invalid navigation parameter. Expected '{ExpectedType}', got '{ActualType}'. Initializing with fallback state.",
+                nameof(SmartPlaylistSongViewNavigationParameter), paramType);
+            await ViewModel.InitializeAsync(Strings.SmartPlaylistSongViewPage_UnknownPlaylist, null);
         }
     }
 }

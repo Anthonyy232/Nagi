@@ -159,10 +159,12 @@
                                     <MenuFlyoutSeparator />
                                     <MenuFlyoutItem
                                         Text="{x:Bind resources:Strings.ArtistPage_Menu_ChangeImage, Mode=OneTime}"
-                                        Click="ChangeImage_Click" />
+                                        Command="{Binding DataContext.ChangeArtistImageCommand, ElementName=ArtistPageRoot}"
+                                        CommandParameter="{x:Bind Id}" />
                                     <MenuFlyoutItem
                                         Text="{x:Bind resources:Strings.ArtistPage_Menu_RemoveImage, Mode=OneTime}"
-                                        Click="RemoveImage_Click"
+                                        Command="{Binding DataContext.RemoveArtistImageCommand, ElementName=ArtistPageRoot}"
+                                        CommandParameter="{x:Bind Id}"
                                         Visibility="{x:Bind IsCustomImage, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 </MenuFlyout>
                             </Grid.ContextFlyout>

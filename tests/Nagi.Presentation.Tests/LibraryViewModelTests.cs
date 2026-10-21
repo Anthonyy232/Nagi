@@ -122,10 +122,7 @@ public class LibraryViewModelTests
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), settings,
             Substitute.For<IUIService>(), NullLogger<LibraryViewModel>.Instance);
 
-        if (settingsFailure)
-            await Assert.ThrowsAsync<IOException>(() => viewModel.InitializeAsync());
-        else
-            await viewModel.InitializeAsync();
+        await viewModel.InitializeAsync();
         viewModel.HasInitialized.Should().BeFalse();
 
         await viewModel.InitializeAsync();

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Numerics;
 using CommunityToolkit.WinUI;
-using Microsoft.Extensions.Logging;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -21,16 +20,14 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider
     private const int StepStaggerMs = 60;
     private const int StepExitMs = 150;
 
-    private readonly ILogger<OnboardingPage> _logger;
     private readonly Dictionary<OnboardingStep, FrameworkElement> _steps;
     private OnboardingStep _shownStep;
 
-    public OnboardingPage(OnboardingViewModel viewModel, SettingsViewModel settings, ILogger<OnboardingPage> logger)
+    public OnboardingPage(OnboardingViewModel viewModel, SettingsViewModel settings)
     {
         InitializeComponent();
         ViewModel = viewModel;
         Settings = settings;
-        _logger = logger;
 
         _steps = new Dictionary<OnboardingStep, FrameworkElement>
         {
@@ -62,14 +59,7 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider
         ViewModel.PropertyChanged += ViewModel_PropertyChanged;
         ShowStep(ViewModel.CurrentStep, new Vector3(0f, StepSlideOffset / 2, 0f));
 
-        try
-        {
-            await Settings.LoadSettingsAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to load settings for onboarding.");
-        }
+        await Settings.LoadSettingsAsync();
     }
 
     private void OnboardingPage_Unloaded(object sender, RoutedEventArgs e)

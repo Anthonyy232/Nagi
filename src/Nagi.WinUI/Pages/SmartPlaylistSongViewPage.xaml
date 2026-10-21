@@ -229,7 +229,7 @@
                     <Button Style="{StaticResource SongListViewPageIconButton}"
                             ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylistSongViewPage_EditRulesButton_ToolTip, Mode=OneTime}"
                             AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylistSongViewPage_EditRulesButton_ToolTip, Mode=OneTime}"
-                            Click="EditRulesButton_Click">
+                            Command="{x:Bind ViewModel.EditRulesCommand}">
                         <FontIcon Glyph="&#xE70F;" FontSize="16" />
                     </Button>
 
@@ -387,7 +387,7 @@
             <Button
                 Style="{StaticResource AnimatedAccentButtonStyle}"
                 Content="{x:Bind resources:Strings.SmartPlaylistSongViewPage_EmptyState_Button_Content, Mode=OneTime}"
-                Click="EditRulesButton_Click"
+                Command="{x:Bind ViewModel.EditRulesCommand}"
                 HorizontalAlignment="Center" />
         </StackPanel>
 

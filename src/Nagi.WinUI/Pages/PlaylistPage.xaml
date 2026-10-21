@@ -146,12 +146,12 @@
                 </StackPanel>
                 <DropDownButton.Flyout>
                     <MenuFlyout Placement="Bottom">
-                        <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_NewPlaylistMenu_Regular, Mode=OneTime}" Click="CreateNewPlaylistButton_Click">
+                        <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_NewPlaylistMenu_Regular, Mode=OneTime}" Command="{x:Bind ViewModel.CreatePlaylistCommand}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE90B;" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_NewPlaylistMenu_Smart, Mode=OneTime}" Click="CreateSmartPlaylistButton_Click">
+                        <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_NewPlaylistMenu_Smart, Mode=OneTime}" Command="{x:Bind ViewModel.CreateSmartPlaylistCommand}">
                             <MenuFlyoutItem.Icon>
                             <FontIcon Glyph="&#xE71C;" />
                             </MenuFlyoutItem.Icon>
@@ -185,18 +185,20 @@
                         <Grid.ContextFlyout>
                             <MenuFlyout>
                                 <MenuFlyoutItem
-                                    Click="PlayPlaylist_Click"
+                                    Command="{Binding DataContext.PlayPlaylistCommand, ElementName=PlaylistPageRoot}"
+                                    CommandParameter="{x:Bind}"
                                     Text="{x:Bind resources:Strings.PlaylistPage_Context_Play, Mode=OneTime}"
                                     IsEnabled="{Binding DataContext.IsAnyOperationInProgress, ElementName=PlaylistPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
-                                <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_Context_Rename, Mode=OneTime}" Click="RenamePlaylist_Click" />
+                                <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_Context_Rename, Mode=OneTime}" Command="{Binding DataContext.RenamePlaylistCommand, ElementName=PlaylistPageRoot}" CommandParameter="{x:Bind}" />
                                 <MenuFlyoutSeparator />
-                                <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_Context_ChangeImage, Mode=OneTime}" Click="ChangeCover_Click" />
+                                <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_Context_ChangeImage, Mode=OneTime}" Command="{Binding DataContext.ChangePlaylistCoverCommand, ElementName=PlaylistPageRoot}" CommandParameter="{x:Bind}" />
                                 <MenuFlyoutItem
-                                    Click="RemoveImage_Click"
+                                    Command="{Binding DataContext.RemovePlaylistCoverCommand, ElementName=PlaylistPageRoot}"
+                                    CommandParameter="{x:Bind}"
                                     Text="{x:Bind resources:Strings.PlaylistPage_Context_RemoveImage, Mode=OneTime}"
                                     Visibility="{x:Bind IsCustomImage, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 <MenuFlyoutSeparator />
-                                <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_Context_Delete, Mode=OneTime}" Click="DeletePlaylist_Click" />
+                                <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_Context_Delete, Mode=OneTime}" Command="{Binding DataContext.DeletePlaylistCommand, ElementName=PlaylistPageRoot}" CommandParameter="{x:Bind}" />
                             </MenuFlyout>
                         </Grid.ContextFlyout>
                         <Grid.RowDefinitions>

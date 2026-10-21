@@ -53,7 +53,7 @@
                 VerticalAlignment="Center"
                 Style="{StaticResource SongListViewPageIconButton}"
                 IsEnabled="{x:Bind ViewModel.CanEditLyrics, Mode=OneWay}"
-                Click="EditLyricsButton_Click"
+                Command="{x:Bind ViewModel.EditLyricsCommand}"
                 AutomationProperties.Name="{x:Bind resources:Strings.LyricsPage_EditLyrics_ToolTip, Mode=OneTime}"
                 ToolTipService.ToolTip="{x:Bind resources:Strings.LyricsPage_EditLyrics_ToolTip, Mode=OneTime}">
                 <FontIcon Glyph="&#xE70F;" FontSize="16" />

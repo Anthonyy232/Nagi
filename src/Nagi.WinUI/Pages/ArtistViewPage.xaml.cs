@@ -50,15 +50,8 @@ public sealed partial class ArtistViewPage : SongListPage
 
         if (e.Parameter is ArtistViewNavigationParameter navParam)
         {
-            try
-            {
-                await ViewModel.LoadArtistDetailsAsync(navParam.ArtistId);
-                await ViewModel.LoadAvailablePlaylistsAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to load details for ArtistId: {ArtistId}", navParam.ArtistId);
-            }
+            await ViewModel.LoadArtistDetailsAsync(navParam.ArtistId);
+            await ViewModel.LoadAvailablePlaylistsAsync();
         }
         else
         {
@@ -99,30 +92,6 @@ public sealed partial class ArtistViewPage : SongListPage
     private void EditOverlay_PointerPressed(object sender, PointerRoutedEventArgs e)
     {
         ImageEditFlyout.ShowAt(EditOverlay, new FlyoutShowOptions { Position = e.GetCurrentPoint(EditOverlay).Position });
-    }
-
-    private async void ChangeImage_Click(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            await ViewModel.ChangeArtistImageCommand.ExecuteAsync(null);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error changing image for artist {ArtistName}", ViewModel.ArtistName);
-        }
-    }
-
-    private async void RemoveImage_Click(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            await ViewModel.RemoveArtistImageCommand.ExecuteAsync(null);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error removing image for artist {ArtistName}", ViewModel.ArtistName);
-        }
     }
 
     private void OnSongsListViewLoaded(object sender, RoutedEventArgs e)

@@ -35,15 +35,8 @@ public sealed partial class AlbumViewPage : SongListPage
 
         if (e.Parameter is AlbumViewNavigationParameter navParam)
         {
-            try
-            {
-                await ViewModel.LoadAlbumDetailsAsync(navParam.AlbumId);
-                await ViewModel.LoadAvailablePlaylistsAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to load details for AlbumId: {AlbumId}", navParam.AlbumId);
-            }
+            await ViewModel.LoadAlbumDetailsAsync(navParam.AlbumId);
+            await ViewModel.LoadAvailablePlaylistsAsync();
         }
         else
         {

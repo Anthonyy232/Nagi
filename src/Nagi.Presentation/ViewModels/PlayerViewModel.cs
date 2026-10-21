@@ -525,8 +525,11 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         }
     }
 
-    public Task AddFilesToQueueAsync(IEnumerable<string> paths) =>
-        _playbackService.AddTransientFilesToQueueAsync(paths);
+    public async Task AddFilesToQueueAsync(IEnumerable<string> paths)
+    {
+        try { await _playbackService.AddTransientFilesToQueueAsync(paths); }
+        catch (Exception ex) { _logger.LogError(ex, "Failed to add dropped files to the playback queue."); }
+    }
 
     public AppIcon VolumeIcon => IsMuted || CurrentVolume == 0
         ? AppIcon.Mute

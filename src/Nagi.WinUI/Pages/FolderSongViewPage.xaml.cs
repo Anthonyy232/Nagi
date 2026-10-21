@@ -39,25 +39,18 @@ public sealed partial class FolderSongViewPage : SongListPage
     {
         base.OnNavigatedTo(e);
 
-        try
+        if (e.Parameter is FolderSongViewNavigationParameter navParam)
         {
-            if (e.Parameter is FolderSongViewNavigationParameter navParam)
-            {
-                await ViewModel.InitializeAsync(navParam.Title, navParam.FolderId, navParam.DirectoryPath);
-                await ViewModel.LoadAvailablePlaylistsAsync();
-            }
-            else
-            {
-                var paramType = e.Parameter?.GetType().Name ?? "null";
-                _logger.LogWarning(
-                    "Received invalid navigation parameter. Expected '{ExpectedType}', got '{ActualType}'. Initializing with fallback state.",
-                    nameof(FolderSongViewNavigationParameter), paramType);
-                await ViewModel.InitializeAsync(Strings.FolderSongViewPage_Default_Title, null);
-            }
+            await ViewModel.InitializeAsync(navParam.Title, navParam.FolderId, navParam.DirectoryPath);
+            await ViewModel.LoadAvailablePlaylistsAsync();
         }
-        catch (Exception ex)
+        else
         {
-            _logger.LogError(ex, "Failed to initialize FolderSongViewPage.");
+            var paramType = e.Parameter?.GetType().Name ?? "null";
+            _logger.LogWarning(
+                "Received invalid navigation parameter. Expected '{ExpectedType}', got '{ActualType}'. Initializing with fallback state.",
+                nameof(FolderSongViewNavigationParameter), paramType);
+            await ViewModel.InitializeAsync(Strings.FolderSongViewPage_Default_Title, null);
         }
     }
 
@@ -69,31 +62,17 @@ public sealed partial class FolderSongViewPage : SongListPage
 
     private async void FolderContentsListView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        try
-        {
-            if (e.ClickedItem is FolderContentItem { Folder: { } folder })
-                await ViewModel.NavigateToSubfolderCommand.ExecuteAsync(folder);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error handling folder content item click");
-        }
+        if (e.ClickedItem is FolderContentItem { Folder: { } folder })
+            await ViewModel.NavigateToSubfolderCommand.ExecuteAsync(folder);
     }
 
     private async void FolderContentsListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {
-        try
-        {
-            if (e.OriginalSource is not FrameworkElement { DataContext: FolderContentItem contentItem }) return;
-            if (contentItem.Folder is { } folder)
-                await ViewModel.NavigateToSubfolderCommand.ExecuteAsync(folder);
-            else
-                SongsListView_DoubleTapped(sender, e);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error handling folder content double tap");
-        }
+        if (e.OriginalSource is not FrameworkElement { DataContext: FolderContentItem contentItem }) return;
+        if (contentItem.Folder is { } folder)
+            await ViewModel.NavigateToSubfolderCommand.ExecuteAsync(folder);
+        else
+            SongsListView_DoubleTapped(sender, e);
     }
 
     private void FolderItemMenuFlyout_Opening(object sender, object e)

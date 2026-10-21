@@ -168,6 +168,10 @@ public partial class SettingsViewModel : SettingsSectionViewModel
             IsDiscordRichPresenceEnabled = discordRpcTask.Result;
             _isLoaded = true;
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to load settings.");
+        }
         finally
         {
             _isInitializing = false;

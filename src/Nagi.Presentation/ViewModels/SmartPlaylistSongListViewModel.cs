@@ -61,15 +61,22 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
     {
         if (_currentSmartPlaylistId is not { } smartPlaylistId) return;
 
-        var smartPlaylist = await _smartPlaylistService.GetSmartPlaylistByIdAsync(smartPlaylistId);
-        if (smartPlaylist is null)
+        try
         {
-            _logger.LogWarning("Could not find smart playlist with ID {SmartPlaylistId}", smartPlaylistId);
-            return;
-        }
+            var smartPlaylist = await _smartPlaylistService.GetSmartPlaylistByIdAsync(smartPlaylistId);
+            if (smartPlaylist is null)
+            {
+                _logger.LogWarning("Could not find smart playlist with ID {SmartPlaylistId}", smartPlaylistId);
+                return;
+            }
 
-        var edited = await _uiService.ShowSmartPlaylistEditorAsync(smartPlaylist);
-        if (edited is not null) await InitializeAsync(edited.Name, smartPlaylistId, edited.CoverImageUri);
+            var edited = await _uiService.ShowSmartPlaylistEditorAsync(smartPlaylist);
+            if (edited is not null) await InitializeAsync(edited.Name, smartPlaylistId, edited.CoverImageUri);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to edit the rules of smart playlist {SmartPlaylistId}", smartPlaylistId);
+        }
     }
 
     [ObservableProperty]
