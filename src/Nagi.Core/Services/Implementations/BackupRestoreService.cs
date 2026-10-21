@@ -1,4 +1,5 @@
 using System.IO.Compression;
+using System.Text.Json;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
@@ -9,14 +10,20 @@ namespace Nagi.Core.Services.Implementations;
 
 public class BackupRestoreService : IBackupRestoreService
 {
+    // Settings live in the platform's settings store, so the backup carries them as a snapshot file.
+    private const string SettingsFileName = "settings.json";
+
     private readonly IPathConfiguration _pathConfiguration;
+    private readonly ISettingsService _settingsService;
     private readonly ILogger<BackupRestoreService> _logger;
 
     public BackupRestoreService(
         IPathConfiguration pathConfiguration,
+        ISettingsService settingsService,
         ILogger<BackupRestoreService> logger)
     {
         _pathConfiguration = pathConfiguration;
+        _settingsService = settingsService;
         _logger = logger;
     }
 
@@ -88,6 +95,9 @@ public class BackupRestoreService : IBackupRestoreService
                     var destDir = Path.Combine(stagingPath, dir.Name);
                     await CopyDirectoryAsync(dir.FullName, destDir).ConfigureAwait(false);
                 }
+
+                await File.WriteAllTextAsync(Path.Combine(stagingPath, SettingsFileName),
+                    await _settingsService.ExportAsync().ConfigureAwait(false)).ConfigureAwait(false);
 
                 var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
                 var zipFilePath = Path.Combine(destinationFolderPath, $"Nagi_Backup_{timestamp}.zip");
@@ -166,6 +176,14 @@ public class BackupRestoreService : IBackupRestoreService
                 Directory.CreateDirectory(incomingPath);
                 Directory.CreateDirectory(rollbackPath);
                 await ZipFile.ExtractToDirectoryAsync(backupFilePath, incomingPath).ConfigureAwait(false);
+
+                var incomingSettings = Path.Combine(incomingPath, SettingsFileName);
+                string? settingsSnapshot = null;
+                if (File.Exists(incomingSettings))
+                {
+                    settingsSnapshot = await File.ReadAllTextAsync(incomingSettings).ConfigureAwait(false);
+                    File.Delete(incomingSettings);
+                }
 
                 try
                 {
@@ -262,6 +280,20 @@ public class BackupRestoreService : IBackupRestoreService
                     return new RestoreResult(false, 0, false, restoreException.Message);
                 }
 
+                if (settingsSnapshot is not null)
+                {
+                    try
+                    {
+                        await _settingsService.ImportAsync(settingsSnapshot).ConfigureAwait(false);
+                        restoredCount++;
+                    }
+                    catch (JsonException ex)
+                    {
+                        // Backups made before settings moved to the platform store keep them in another format.
+                        _logger.LogWarning(ex, "Skipped settings in an unsupported format; the library was restored.");
+                    }
+                }
+
                 _logger.LogInformation("Restore completed successfully. {Count} items restored.", restoredCount);
                 return new RestoreResult(true, restoredCount, true);
             }
@@ -354,9 +386,8 @@ public class BackupRestoreService : IBackupRestoreService
                 using var archive = ZipFile.OpenRead(backupFilePath);
 
                 var hasDb = archive.Entries.Any(e => e.FullName.Equals("nagi.db", StringComparison.OrdinalIgnoreCase));
-                var hasSettings = archive.Entries.Any(e => e.FullName.Equals("settings.json", StringComparison.OrdinalIgnoreCase));
+                var hasSettings = archive.Entries.Any(e => e.FullName.Equals(SettingsFileName, StringComparison.OrdinalIgnoreCase));
 
-                // We require at least the DB or settings to consider it a valid backup of THIS app
                 return hasDb || hasSettings;
             }
             catch (Exception ex)

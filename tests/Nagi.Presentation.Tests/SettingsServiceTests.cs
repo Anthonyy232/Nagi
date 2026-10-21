@@ -230,6 +230,37 @@ public class SettingsServiceTests
         await autoLaunch.Received(1).SetEnabledAsync(false);
     }
 
+    [Fact]
+    public async Task ExportThenImport_RestoresEveryValueWithItsType_ButNotTheLastFmAuthToken()
+    {
+        var exported = new Dictionary<string, object>
+        {
+            ["Flag"] = true, ["Count"] = 3, ["Ticks"] = 638_000_000_000_000_000L, ["Volume"] = 1.0,
+            ["Theme"] = "Dark", ["LastFmAuthToken"] = "temporary"
+        };
+        var snapshot = await CreateSettings(exported).ExportAsync();
+        var restored = new Dictionary<string, object> { ["Stale"] = "removed" };
+
+        await CreateSettings(restored).ImportAsync(snapshot);
+
+        exported.Remove("LastFmAuthToken");
+        // Boxed values compare by type too, so 1.0 restored as an int would fail.
+        restored.Should().Equal(exported);
+    }
+
+    [Theory]
+    [InlineData("{\"Volume\":0.5}")]
+    [InlineData("{\"Volume\":{\"Type\":\"Double\",\"Value\":\"loud\"}}")]
+    [InlineData("{\"When\":{\"Type\":\"DateTimeOffset\",\"Value\":\"2026-01-01\"}}")]
+    public async Task Import_WithAnInvalidSnapshot_ThrowsAndKeepsCurrentSettings(string snapshot)
+    {
+        var values = new Dictionary<string, object> { ["Volume"] = 0.8 };
+
+        await CreateSettings(values).Invoking(settings => settings.ImportAsync(snapshot)).Should().ThrowAsync<JsonException>();
+
+        values.Should().Equal(new Dictionary<string, object> { ["Volume"] = 0.8 });
+    }
+
     private static SettingsService CreateSettings(IDictionary<string, object> values, string? playbackPath = null,
         IAutoLaunchService? autoLaunch = null)
     {

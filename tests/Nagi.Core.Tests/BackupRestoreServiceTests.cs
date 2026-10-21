@@ -1,8 +1,10 @@
 using System.IO.Compression;
+using System.Text.Json;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Data.Sqlite;
 using Nagi.Core.Helpers;
+using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Implementations;
 using NSubstitute;
@@ -13,6 +15,7 @@ namespace Nagi.Core.Tests;
 public class BackupRestoreServiceTests : IDisposable
 {
     private readonly IPathConfiguration _pathConfig;
+    private readonly ISettingsService _settings = Substitute.For<ISettingsService>();
     private readonly BackupRestoreService _service;
 
     private readonly List<string> _tempDirs = [];
@@ -21,7 +24,7 @@ public class BackupRestoreServiceTests : IDisposable
     {
         _pathConfig = Substitute.For<IPathConfiguration>();
         var logger = Substitute.For<ILogger<BackupRestoreService>>();
-        _service = new BackupRestoreService(_pathConfig, logger);
+        _service = new BackupRestoreService(_pathConfig, _settings, logger);
     }
 
     public void Dispose()
@@ -97,7 +100,7 @@ public class BackupRestoreServiceTests : IDisposable
         var sourceDir = CreateTempDir();
         var destDir = CreateTempDir();
         using (OpenTestDatabase(Path.Combine(sourceDir, "nagi.db"), "Track")) { }
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, "settings.json"), "{ }");
+        await File.WriteAllTextAsync(Path.Combine(sourceDir, "playback_state.json"), "{ }");
         _pathConfig.AppDataRoot.Returns(sourceDir);
 
         var result = await _service.CreateBackupAsync(destDir);
@@ -108,7 +111,7 @@ public class BackupRestoreServiceTests : IDisposable
 
         using var archive = ZipFile.OpenRead(result.BackupFilePath!);
         archive.Entries.Should().Contain(e => e.FullName == "nagi.db");
-        archive.Entries.Should().Contain(e => e.FullName == "settings.json");
+        archive.Entries.Should().Contain(e => e.FullName == "playback_state.json");
     }
 
     [Theory]
@@ -186,7 +189,7 @@ public class BackupRestoreServiceTests : IDisposable
 
         for (var i = 0; i < 4; i++)
         {
-            await File.WriteAllTextAsync(Path.Combine(sourceDir, "settings.json"), $"{{\"version\":{i}}}");
+            await File.WriteAllTextAsync(Path.Combine(sourceDir, "playback_state.json"), $"{{\"version\":{i}}}");
             var result = await _service.CreateBackupAsync(destinationDir);
             result.Success.Should().BeTrue(result.ErrorMessage);
             paths.Add(result.BackupFilePath!);
@@ -196,7 +199,7 @@ public class BackupRestoreServiceTests : IDisposable
         for (var i = 0; i < paths.Count; i++)
         {
             using var archive = ZipFile.OpenRead(paths[i]);
-            using var reader = new StreamReader(archive.GetEntry("settings.json")!.Open());
+            using var reader = new StreamReader(archive.GetEntry("playback_state.json")!.Open());
             (await reader.ReadToEndAsync()).Should().Be($"{{\"version\":{i}}}");
         }
         Directory.GetFiles(destinationDir, "*.tmp").Should().BeEmpty();
@@ -207,7 +210,7 @@ public class BackupRestoreServiceTests : IDisposable
     {
         var sourceDir = CreateTempDir();
         var destDir = CreateTempDir();
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, "settings.json"), "{ }");
+        await File.WriteAllTextAsync(Path.Combine(sourceDir, "playback_state.json"), "{ }");
         await File.WriteAllTextAsync(Path.Combine(sourceDir, "temp.tmp"), "tmp");
         await File.WriteAllTextAsync(Path.Combine(sourceDir, "data.lock"), "lock");
         await File.WriteAllTextAsync(Path.Combine(sourceDir, "nagi.db-wal"), "wal");
@@ -236,7 +239,7 @@ public class BackupRestoreServiceTests : IDisposable
             var dir = Directory.CreateDirectory(Path.Combine(sourceDir, dirName));
             await File.WriteAllTextAsync(Path.Combine(dir.FullName, "file.txt"), "content");
         }
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, "settings.json"), "{ }");
+        await File.WriteAllTextAsync(Path.Combine(sourceDir, "playback_state.json"), "{ }");
         _pathConfig.AppDataRoot.Returns(sourceDir);
 
         var result = await _service.CreateBackupAsync(destDir);
@@ -253,7 +256,7 @@ public class BackupRestoreServiceTests : IDisposable
     {
         var sourceDir = CreateTempDir();
         var destDir = CreateTempDir();
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, "settings.json"), "{ }");
+        await File.WriteAllTextAsync(Path.Combine(sourceDir, "playback_state.json"), "{ }");
         await File.WriteAllTextAsync(Path.Combine(sourceDir, ".libvlc-cache-version"), "1");
         _pathConfig.AppDataRoot.Returns(sourceDir);
 
@@ -271,7 +274,7 @@ public class BackupRestoreServiceTests : IDisposable
         var destDir = CreateTempDir();
         var albumArtDir = Directory.CreateDirectory(Path.Combine(sourceDir, "AlbumArt"));
         await File.WriteAllTextAsync(Path.Combine(albumArtDir.FullName, "cover.jpg"), "fake image");
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, "settings.json"), "{ }");
+        await File.WriteAllTextAsync(Path.Combine(sourceDir, "playback_state.json"), "{ }");
         _pathConfig.AppDataRoot.Returns(sourceDir);
 
         var result = await _service.CreateBackupAsync(destDir);
@@ -313,7 +316,7 @@ public class BackupRestoreServiceTests : IDisposable
     [Fact]
     public async Task RestoreFromBackupAsync_WithValidBackup_RestoresFilesToAppDataRoot()
     {
-        var zipPath = CreateDatabaseBackup("Restored track", ("settings.json", "restored settings"));
+        var zipPath = CreateDatabaseBackup("Restored track", ("playback_state.json", "restored state"));
         var destDir = CreateTempDir();
         _pathConfig.AppDataRoot.Returns(destDir);
 
@@ -321,7 +324,7 @@ public class BackupRestoreServiceTests : IDisposable
 
         result.Success.Should().BeTrue();
         File.Exists(Path.Combine(destDir, "nagi.db")).Should().BeTrue("nagi.db should be restored to AppDataRoot");
-        File.Exists(Path.Combine(destDir, "settings.json")).Should().BeTrue("settings.json should be restored to AppDataRoot");
+        File.Exists(Path.Combine(destDir, "playback_state.json")).Should().BeTrue("playback_state.json should be restored to AppDataRoot");
         using var database = new SqliteConnection(new SqliteConnectionStringBuilder
         {
             DataSource = Path.Combine(destDir, "nagi.db"), Mode = SqliteOpenMode.ReadOnly, Pooling = false
@@ -337,10 +340,10 @@ public class BackupRestoreServiceTests : IDisposable
     {
         var zipPath = CreateTempZip(
             ("a.txt", "new first item"),
-            ("settings.json", "new locked item"));
+            ("playback_state.json", "new locked item"));
         var destDir = CreateTempDir();
         var firstPath = Path.Combine(destDir, "a.txt");
-        var lockedPath = Path.Combine(destDir, "settings.json");
+        var lockedPath = Path.Combine(destDir, "playback_state.json");
         await File.WriteAllTextAsync(firstPath, "original first item");
         await File.WriteAllTextAsync(lockedPath, "original locked item");
         _pathConfig.AppDataRoot.Returns(destDir);
@@ -401,15 +404,15 @@ public class BackupRestoreServiceTests : IDisposable
     [Fact]
     public async Task RestoreFromBackupAsync_WhenRestoreFails_RollsBackDatabaseAndItsJournals()
     {
-        var zipPath = CreateDatabaseBackup("Backup track", ("settings.json", "backup settings"));
+        var zipPath = CreateDatabaseBackup("Backup track", ("playback_state.json", "backup state"));
         var destDir = CreateTempDir();
         _pathConfig.AppDataRoot.Returns(destDir);
-        var originalFiles = new[] { "nagi.db", "nagi.db-wal", "nagi.db-shm", "nagi.db-journal", "settings.json" };
+        var originalFiles = new[] { "nagi.db", "nagi.db-wal", "nagi.db-shm", "nagi.db-journal", "playback_state.json" };
         foreach (var name in originalFiles)
             await File.WriteAllTextAsync(Path.Combine(destDir, name), $"original {name}");
 
         RestoreResult result;
-        using (File.Open(Path.Combine(destDir, "settings.json"), FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+        using (File.Open(Path.Combine(destDir, "playback_state.json"), FileMode.Open, FileAccess.ReadWrite, FileShare.None))
             result = await _service.RestoreFromBackupAsync(zipPath);
 
         result.Success.Should().BeFalse();
@@ -480,8 +483,8 @@ public class BackupRestoreServiceTests : IDisposable
     public async Task RestoreFromBackupAsync_DamagedDatabase_DoesNotReplaceAnyLiveFiles(bool truncateDatabase)
     {
         var archivePath = truncateDatabase
-            ? CreateDatabaseBackup("Backup track", ("settings.json", "new settings"))
-            : CreateTempZip(("nagi.db", "not a database"), ("settings.json", "new settings"));
+            ? CreateDatabaseBackup("Backup track", ("playback_state.json", "new state"))
+            : CreateTempZip(("nagi.db", "not a database"), ("playback_state.json", "new state"));
         if (truncateDatabase)
         {
             using var archive = ZipFile.Open(archivePath, ZipArchiveMode.Update);
@@ -494,14 +497,70 @@ public class BackupRestoreServiceTests : IDisposable
         var databasePath = Path.Combine(destination, "nagi.db");
         using (OpenTestDatabase(databasePath, "Live track")) { }
         var originalDatabase = await File.ReadAllBytesAsync(databasePath);
-        var settingsPath = Path.Combine(destination, "settings.json");
-        await File.WriteAllTextAsync(settingsPath, "live settings");
+        var statePath = Path.Combine(destination, "playback_state.json");
+        await File.WriteAllTextAsync(statePath, "live state");
 
         var result = await _service.RestoreFromBackupAsync(archivePath);
 
         result.Success.Should().BeFalse();
         (await File.ReadAllBytesAsync(databasePath)).Should().Equal(originalDatabase);
-        (await File.ReadAllTextAsync(settingsPath)).Should().Be("live settings");
+        (await File.ReadAllTextAsync(statePath)).Should().Be("live state");
+    }
+
+    [Fact]
+    public async Task CreateBackupAsync_StoresTheSettingsSnapshotOverAnyLegacySettingsFile()
+    {
+        var sourceDir = CreateTempDir();
+        var destDir = CreateTempDir();
+        _pathConfig.AppDataRoot.Returns(sourceDir);
+        await File.WriteAllTextAsync(Path.Combine(sourceDir, "settings.json"), "legacy settings");
+        _settings.ExportAsync().Returns("snapshot");
+
+        var result = await _service.CreateBackupAsync(destDir);
+
+        using var archive = ZipFile.OpenRead(result.BackupFilePath!);
+        using var reader = new StreamReader(archive.GetEntry("settings.json")!.Open());
+        (await reader.ReadToEndAsync()).Should().Be("snapshot");
+    }
+
+    [Fact]
+    public async Task RestoreFromBackupAsync_ImportsSettingsInsteadOfCopyingTheSnapshot()
+    {
+        var zipPath = CreateDatabaseBackup("Backup track", ("settings.json", "snapshot"));
+        var destDir = CreateTempDir();
+        _pathConfig.AppDataRoot.Returns(destDir);
+
+        var result = await _service.RestoreFromBackupAsync(zipPath);
+
+        result.Success.Should().BeTrue(result.ErrorMessage);
+        await _settings.Received(1).ImportAsync("snapshot");
+        File.Exists(Path.Combine(destDir, "settings.json")).Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task RestoreFromBackupAsync_WithSettingsInAnOldFormat_StillRestoresTheLibrary()
+    {
+        var zipPath = CreateDatabaseBackup("Backup track", ("settings.json", "{\"Volume\":0.5}"));
+        var destDir = CreateTempDir();
+        _pathConfig.AppDataRoot.Returns(destDir);
+        _settings.ImportAsync(Arg.Any<string>()).Returns(Task.FromException(new JsonException("old format")));
+
+        var result = await _service.RestoreFromBackupAsync(zipPath);
+
+        result.Success.Should().BeTrue(result.ErrorMessage);
+        File.Exists(Path.Combine(destDir, "nagi.db")).Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task RestoreFromBackupAsync_WhenFilesFailToRestore_LeavesSettingsUntouched()
+    {
+        var zipPath = CreateTempZip(("nagi.db", "not a database"), ("settings.json", "snapshot"));
+        _pathConfig.AppDataRoot.Returns(CreateTempDir());
+
+        var result = await _service.RestoreFromBackupAsync(zipPath);
+
+        result.Success.Should().BeFalse();
+        await _settings.DidNotReceiveWithAnyArgs().ImportAsync(default!);
     }
 
     private string CreateTempDir()

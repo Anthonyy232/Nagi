@@ -119,6 +119,48 @@ public partial class SettingsService : IUISettingsService
         _logger.LogInformation("All application settings have been reset to their default values.");
     }
 
+    public Task<string> ExportAsync()
+    {
+        // The Last.fm auth token is only valid during one sign-in.
+        var snapshot = _values.Where(entry => entry.Key != LastFmAuthTokenKey).ToDictionary(
+            entry => entry.Key,
+            entry => new StoredSetting(entry.Value.GetType().Name, JsonSerializer.SerializeToElement(entry.Value)));
+        return Task.FromResult(JsonSerializer.Serialize(snapshot));
+    }
+
+    public Task ImportAsync(string snapshot)
+    {
+        Dictionary<string, object> values;
+        try
+        {
+            var entries = JsonSerializer.Deserialize<Dictionary<string, StoredSetting>>(snapshot)
+                          ?? throw new JsonException("The settings snapshot is empty.");
+            values = entries.ToDictionary(entry => entry.Key, entry => ToStoredValue(entry.Value));
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or FormatException)
+        {
+            throw new JsonException("The settings snapshot has a value of the wrong type.", ex);
+        }
+
+        _values.Clear();
+        foreach (var (key, value) in values) _values[key] = value;
+        _logger.LogInformation("Imported {Count} settings.", values.Count);
+        return Task.CompletedTask;
+    }
+
+    // Getters check the stored type, so the snapshot records it rather than relying on JSON number kinds.
+    private static object ToStoredValue(StoredSetting setting) => setting.Type switch
+    {
+        nameof(Boolean) => setting.Value.GetBoolean(),
+        nameof(Int32) => setting.Value.GetInt32(),
+        nameof(Int64) => setting.Value.GetInt64(),
+        nameof(Double) => setting.Value.GetDouble(),
+        nameof(String) => setting.Value.GetString()!,
+        _ => throw new JsonException($"Unsupported setting type '{setting.Type}'.")
+    };
+
+    private sealed record StoredSetting(string Type, JsonElement Value);
+
     internal async Task ResetStoredValuesAsync()
     {
         var tasks = new List<Task>
