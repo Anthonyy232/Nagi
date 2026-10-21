@@ -218,13 +218,11 @@ public partial class LibraryReader
 
         var normalizedPath = PathCanonicalizer.NormalizeDirectoryPath(directoryPath);
 
-        // Get all song IDs where DirectoryPath equals normalizedPath or starts with normalizedPath followed by a separator
-        // This prevents false positives (e.g., "C:\\Music\\Rock" matching "C:\\Music\\Rockabilly")
+        // Match subdirectories by "path + separator" so that "Music/Rock" doesn't match "Music/Rockabilly".
+        var childPrefix = normalizedPath.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
         var query = context.Songs.AsNoTracking()
             .Where(s => s.FolderId == folderId &&
-                        (s.DirectoryPath == normalizedPath ||
-                         s.DirectoryPath.StartsWith(normalizedPath.TrimEnd('\\', '/') + "\\") ||
-                         s.DirectoryPath.StartsWith(normalizedPath.TrimEnd('\\', '/') + "/")));
+                        (s.DirectoryPath == normalizedPath || s.DirectoryPath.StartsWith(childPrefix)));
 
         return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync(token).ConfigureAwait(false);
     }
