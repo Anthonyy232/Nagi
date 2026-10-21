@@ -10,7 +10,7 @@ internal sealed class Ebur128Meter : SafeHandle
     {
         const int integrated = (1 << 2) | 1;
         const int samplePeak = (1 << 4) | 1;
-        SetHandle(Init(2, 48000, integrated | samplePeak));
+        SetHandle(Init(2, new CULong(48000), integrated | samplePeak));
         if (IsInvalid) throw new OutOfMemoryException("Could not allocate the ReplayGain loudness meter.");
     }
 
@@ -45,7 +45,7 @@ internal sealed class Ebur128Meter : SafeHandle
     }
 
     [DllImport("ebur128", EntryPoint = "ebur128_init", CallingConvention = CallingConvention.Cdecl)]
-    private static extern IntPtr Init(uint channels, uint sampleRate, int mode);
+    private static extern IntPtr Init(uint channels, CULong sampleRate, int mode);
 
     [DllImport("ebur128", EntryPoint = "ebur128_destroy", CallingConvention = CallingConvention.Cdecl)]
     private static extern void Destroy(ref IntPtr state);
