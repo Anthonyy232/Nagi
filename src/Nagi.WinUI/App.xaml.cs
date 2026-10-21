@@ -287,8 +287,6 @@ public partial class App : Application
         args.Handled = true;
         if (_isExiting) return;
         _isExiting = true;
-        // Stops ApplicationLifecycle from replacing the content of a window that is closing.
-        if (Services?.GetService<IWindowService>() is { } windowService) windowService.IsExiting = true;
 
         try
         {
