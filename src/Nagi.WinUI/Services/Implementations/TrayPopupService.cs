@@ -67,11 +67,11 @@ public class TrayPopupService : ITrayPopupService, IDisposable
         GC.SuppressFinalize(this);
     }
 
-    public void ShowOrHidePopup()
+    public void TogglePopup()
     {
         if (_isDisposed)
         {
-            _logger.LogWarning("ShowOrHidePopup called on a disposed service.");
+            _logger.LogWarning("TogglePopup called on a disposed service.");
             return;
         }
 
@@ -85,12 +85,14 @@ public class TrayPopupService : ITrayPopupService, IDisposable
         if (_popupWindow == null) CreateWindow();
 
         if (_popupWindow!.AppWindow.IsVisible)
-            _ = HidePopup();
+            _ = HidePopupAsync();
         else
-            _ = ShowPopup();
+            _ = ShowPopupAsync();
     }
 
-    public async Task HidePopup()
+    public void HidePopup() => _ = HidePopupAsync();
+
+    private async Task HidePopupAsync()
     {
         if (_popupWindow == null || !_popupWindow.AppWindow.IsVisible) return;
 
@@ -109,7 +111,7 @@ public class TrayPopupService : ITrayPopupService, IDisposable
         _isAnimating = false;
     }
 
-    private async Task ShowPopup()
+    private async Task ShowPopupAsync()
     {
         _logger.LogDebug("Showing tray popup.");
         _isAnimating = true;
@@ -158,7 +160,7 @@ public class TrayPopupService : ITrayPopupService, IDisposable
     {
         _lastDeactivatedTime = Environment.TickCount64;
         _logger.LogDebug("Popup deactivated. Hiding.");
-        _ = HidePopup();
+        _ = HidePopupAsync();
     }
 
 

@@ -111,7 +111,7 @@ public partial class TrayIconViewModel : ObservableObject
             return;
         }
 
-        _trayPopupService.ShowOrHidePopup();
+        _trayPopupService.TogglePopup();
     }
 
     /// <summary>

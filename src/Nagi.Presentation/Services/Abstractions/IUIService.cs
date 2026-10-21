@@ -34,7 +34,7 @@ public interface IUIService
     ///     Opens the folder containing <paramref name="filePath" /> in the system file manager.
     /// </summary>
     /// <param name="filePath">The full path to a file within the target directory.</param>
-    Task OpenFolderInExplorerAsync(string filePath);
+    Task ShowInFolderAsync(string filePath);
 
     /// <returns>False if no app could open it.</returns>
     Task<bool> OpenUriAsync(Uri uri);
@@ -45,10 +45,9 @@ public interface IUIService
     Task ShowMessageDialogAsync(string title, string message);
 
     /// <summary>
-    ///     Shows a dialog informing the user about a previous application crash.
+    ///     Tells the user the app crashed, shows <paramref name="report" /> for an issue report, and offers a data reset.
     /// </summary>
-    /// <returns>A <see cref="CrashReportResult" /> indicating the user's choice.</returns>
-    Task<CrashReportResult> ShowCrashReportDialogAsync(string title, string introduction, string logContent, string githubUrl);
+    Task<CrashReportResult> ShowCrashReportDialogAsync(string report);
 
     /// <summary>
     ///     Opens a file open picker dialog that allows selecting a single file.
@@ -62,7 +61,7 @@ public interface IUIService
     /// </summary>
     /// <param name="fileTypes">The file extensions to filter by (e.g., ".m3u", ".m3u8").</param>
     /// <returns>The paths of the selected files, or an empty list if the user cancelled.</returns>
-    Task<IReadOnlyList<string>> PickOpenMultipleFilesAsync(IEnumerable<string> fileTypes);
+    Task<IReadOnlyList<string>> PickMultipleFilesAsync(IEnumerable<string> fileTypes);
 
     /// <summary>
     ///     Shows the smart playlist editor for a new playlist, or for <paramref name="editing" /> when given.

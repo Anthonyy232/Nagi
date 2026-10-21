@@ -25,6 +25,7 @@ public partial class UIService : IUIService
 {
     private const uint MB_OK = 0x00000000;
     private const uint MB_ICONERROR = 0x00000010;
+    private const string IssuesUrl = "https://github.com/Anthonyy232/Nagi/issues";
 
     private readonly IWin32InteropService _win32InteropService;
     private readonly IViewModelFactory _viewModelFactory;
@@ -68,7 +69,7 @@ public partial class UIService : IUIService
         return selectedFolder?.Path;
     }
 
-    public async Task OpenFolderInExplorerAsync(string filePath)
+    public async Task ShowInFolderAsync(string filePath)
     {
         if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath)) return;
 
@@ -97,20 +98,20 @@ public partial class UIService : IUIService
         await dialog.ShowAsync();
     }
 
-    public async Task<CrashReportResult> ShowCrashReportDialogAsync(string title, string introduction, string logContent, string githubUrl)
+    public async Task<CrashReportResult> ShowCrashReportDialogAsync(string report)
     {
         if (!TryGetXamlRoot(out var xamlRoot)) return CrashReportResult.Close;
 
         var dialogContent = new CrashReportDialogContent
         {
-            Introduction = introduction,
-            LogContent = logContent,
-            GitHubUrl = githubUrl
+            Introduction = Strings.CrashReport_Message,
+            LogContent = report,
+            GitHubUrl = IssuesUrl
         };
 
         var dialog = new ContentDialog
         {
-            Title = title,
+            Title = Strings.CrashReport_Title,
             Content = dialogContent,
             PrimaryButtonText = Strings.CrashReport_Button_Reset,
             CloseButtonText = Strings.Generic_Close,
@@ -129,8 +130,8 @@ public partial class UIService : IUIService
         {
             // Fallback to Win32 MessageBox if ContentDialog fails (e.g. another dialog is open)
             var hwnd = WindowNative.GetWindowHandle(_window);
-            var message = $"{introduction}\n\n{logContent}";
-            _win32InteropService.ShowMessageBox(hwnd, message, title, MB_ICONERROR | MB_OK);
+            var message = $"{Strings.CrashReport_Message}\n\n{report}";
+            _win32InteropService.ShowMessageBox(hwnd, message, Strings.CrashReport_Title, MB_ICONERROR | MB_OK);
             return CrashReportResult.Close;
         }
     }
@@ -148,7 +149,7 @@ public partial class UIService : IUIService
         return file?.Path;
     }
 
-    public async Task<IReadOnlyList<string>> PickOpenMultipleFilesAsync(IEnumerable<string> fileTypes)
+    public async Task<IReadOnlyList<string>> PickMultipleFilesAsync(IEnumerable<string> fileTypes)
     {
         var filePicker = new FileOpenPicker(_window.AppWindow.Id);
 

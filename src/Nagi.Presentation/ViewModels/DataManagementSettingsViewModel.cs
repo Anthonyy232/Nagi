@@ -81,7 +81,7 @@ public partial class DataManagementSettingsViewModel : ObservableObject
     [RelayCommand]
     private async Task ImportMultiplePlaylistsAsync()
     {
-        var filePaths = await _uiService.PickOpenMultipleFilesAsync([".m3u", ".m3u8"]);
+        var filePaths = await _uiService.PickMultipleFilesAsync([".m3u", ".m3u8"]);
         if (filePaths.Count == 0) return;
 
         var result = await _playlistExportService.ImportMultiplePlaylistsAsync(filePaths);

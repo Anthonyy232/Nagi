@@ -208,7 +208,7 @@
                                                    Text="{x:Bind resources:Strings.LibraryPage_Context_GoToArtist, Mode=OneTime}"
                                                    Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 <MenuFlyoutItem
-                                    Command="{Binding DataContext.ShowInFileExplorerCommand, ElementName=pageRoot}"
+                                    Command="{Binding DataContext.ShowInFolderCommand, ElementName=pageRoot}"
                                     CommandParameter="{x:Bind}"
                                     Text="{x:Bind resources:Strings.LibraryPage_Context_ShowInExplorer, Mode=OneTime}"
                                     Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
