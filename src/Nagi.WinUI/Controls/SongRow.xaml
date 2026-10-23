@@ -33,6 +33,10 @@
                                 Text="{x:Bind resources:Strings.LibraryPage_Context_ShowInExplorer}"
                                 Command="{x:Bind ViewModel.ShowInFolderCommand, Mode=OneWay}"
                                 CommandParameter="{x:Bind Song, Mode=OneWay}" />
+                <MenuFlyoutItem x:Name="SongInfoItem"
+                                Text="{x:Bind resources:Strings.SongList_Context_SongInfo}"
+                                Command="{x:Bind ViewModel.ShowSongInfoCommand, Mode=OneWay}"
+                                CommandParameter="{x:Bind Song, Mode=OneWay}" />
                 <MenuFlyoutSeparator x:Name="RemoveFromPlaylistSeparator" />
                 <MenuFlyoutItem x:Name="RemoveFromPlaylistItem"
                                 Text="{x:Bind resources:Strings.PlaylistSongViewPage_Context_RemoveFromPlaylist}"

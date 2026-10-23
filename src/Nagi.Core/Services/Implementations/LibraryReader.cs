@@ -132,6 +132,7 @@ public partial class LibraryReader : ILibraryReader, IDisposable
             .Include(s => s.SongArtists).ThenInclude(sa => sa.Artist)
             .Include(s => s.Album).ThenInclude(a => a!.AlbumArtists).ThenInclude(aa => aa.Artist)
             .Include(s => s.Folder)
+            .Include(s => s.Genres)
             .AsSplitQuery()
             .FirstOrDefaultAsync(s => s.Id == songId).ConfigureAwait(false);
     }

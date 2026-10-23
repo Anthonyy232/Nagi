@@ -171,6 +171,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ShowInFolderCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ShowSongInfoCommand))]
     [NotifyCanExecuteChangedFor(nameof(GoToAlbumCommand))]
     [NotifyCanExecuteChangedFor(nameof(GoToArtistCommand))]
     public partial bool IsSingleSongSelected { get; set; }
@@ -505,6 +506,13 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         var targetSong = song ?? SelectedSongs.FirstOrDefault();
         if (targetSong?.FilePath is null) return;
         await _uiService.ShowInFolderAsync(targetSong.FilePath);
+    }
+
+    [RelayCommand(CanExecute = nameof(CanExecuteSingleSongCommands))]
+    private async Task ShowSongInfoAsync(Song? song)
+    {
+        if ((song ?? SelectedSongs.FirstOrDefault()) is { } targetSong)
+            await _uiService.ShowSongInfoAsync(targetSong);
     }
 
     [RelayCommand]

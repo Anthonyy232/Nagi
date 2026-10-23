@@ -1,0 +1,82 @@
+<ContentDialog
+    x:Class="Nagi.WinUI.Dialogs.SongInfoDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:ImageEx"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:Nagi.Presentation.Models"
+    xmlns:resources="using:Nagi.Presentation.Resources"
+    mc:Ignorable="d"
+    CloseButtonText="{x:Bind resources:Strings.Generic_Close}"
+    DefaultButton="Close"
+    Style="{StaticResource DefaultContentDialogStyle}">
+
+    <ContentDialog.Resources>
+        <x:Double x:Key="ContentDialogMaxWidth">640</x:Double>
+    </ContentDialog.Resources>
+
+    <!-- The dialog's own content area clips rather than scrolls, so the sections scroll here. -->
+    <Grid RowSpacing="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid ColumnSpacing="16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Border Width="72" Height="72" CornerRadius="{StaticResource ArtworkCornerRadius}"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                <controls:ImageEx Width="72" Height="72" Stretch="UniformToFill"
+                                  DecodePixelWidth="72" DecodePixelType="Logical"
+                                  Source="{x:Bind ViewModel.ArtworkUri}" />
+            </Border>
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="{x:Bind ViewModel.Title}"
+                           TextWrapping="Wrap" IsTextSelectionEnabled="True" />
+                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.ArtistName}"
+                           TextWrapping="Wrap" IsTextSelectionEnabled="True" />
+            </StackPanel>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1" Padding="0,0,16,0">
+            <ItemsControl ItemsSource="{x:Bind ViewModel.Sections}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Spacing="20" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="models:SongInfoSection">
+                        <StackPanel Spacing="8">
+                            <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Bind Title}" />
+                            <ItemsControl ItemsSource="{x:Bind Fields}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Spacing="6" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="models:SongInfoField">
+                                        <Grid ColumnSpacing="16">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="140" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind Label}"
+                                                       TextWrapping="Wrap" />
+                                            <TextBlock Grid.Column="1" Text="{x:Bind Value}" TextWrapping="Wrap"
+                                                       IsTextSelectionEnabled="True" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</ContentDialog>

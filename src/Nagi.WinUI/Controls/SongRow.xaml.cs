@@ -133,6 +133,7 @@ public sealed partial class SongRow : UserControl
         GoToAlbumItem.Visibility = ToVisibility(isSingle && ShowGoToAlbum);
         GoToArtistSubMenu.Visibility = ToVisibility(isSingle && ShowGoToArtist);
         ShowInExplorerItem.Visibility = ToVisibility(isSingle);
+        SongInfoItem.Visibility = ToVisibility(isSingle);
         RemoveFromPlaylistSeparator.Visibility = ToVisibility(RemoveFromPlaylistCommand is not null);
         RemoveFromPlaylistItem.Visibility = ToVisibility(RemoveFromPlaylistCommand is not null);
 
