@@ -313,22 +313,25 @@
             </StackPanel>
         </ScrollViewer>
 
-        <ListView uihelpers:ScrollEdgeFade.IsEnabled="True"
-            Grid.Row="1"
-            x:Name="SongsListView"
-            Padding="{StaticResource PageContentPadding}"
-            IsItemClickEnabled="True"
-            ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
-            ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
-            SelectionChanged="SongsListView_SelectionChanged"
-            SelectionMode="Extended"
-            DoubleTapped="SongsListView_DoubleTapped">
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="models:Song">
-                    <uicontrols:SongRow Song="{x:Bind}" ViewModel="{Binding DataContext, ElementName=pageRoot}" Columns="{Binding DataContext.VisibleColumns, ElementName=pageRoot}" ShowGoToArtist="False" />
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+        <Grid Grid.Row="1" RowDefinitions="Auto,*">
+            <Border x:Name="ColumnHeaderHost" Padding="{StaticResource PageContentPadding}" />
+            <ListView uihelpers:ScrollEdgeFade.IsEnabled="True"
+                Grid.Row="1"
+                x:Name="SongsListView"
+                Padding="{StaticResource PageContentPadding}"
+                IsItemClickEnabled="True"
+                ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
+                ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
+                SelectionChanged="SongsListView_SelectionChanged"
+                SelectionMode="Extended"
+                DoubleTapped="SongsListView_DoubleTapped">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Song">
+                        <uicontrols:SongRow Song="{x:Bind}" ViewModel="{Binding DataContext, ElementName=pageRoot}" Columns="{Binding DataContext.VisibleColumns, ElementName=pageRoot}" ShowGoToArtist="False" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
 
         <uicontrols:PaginationControl
             Grid.Row="2"

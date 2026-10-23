@@ -131,6 +131,22 @@ public partial class SettingsService
         QueueDisplaySettingsChanged?.Invoke(settings);
     }
 
+    public Task<SongListColumns> GetSongListColumnsAsync() =>
+        Task.FromResult((SongListColumns)GetValue(SongListColumnsKey, (int)SettingsDefaults.DefaultSongListColumns));
+
+    public async Task SetSongListColumnsAsync(SongListColumns columns)
+    {
+        await SetValueAsync(SongListColumnsKey, (int)columns).ConfigureAwait(false);
+        SongListColumnsChanged?.Invoke(columns);
+    }
+
+    public Task<bool> GetShowSongListHeaderAsync() =>
+        Task.FromResult(GetValue(ShowSongListHeaderKey, SettingsDefaults.ShowSongListHeaderEnabled));
+
+    public Task SetShowSongListHeaderAsync(bool isEnabled) =>
+        SetValueAndNotifyAsync(ShowSongListHeaderKey, isEnabled, SettingsDefaults.ShowSongListHeaderEnabled,
+            ShowSongListHeaderSettingChanged);
+
     public Task<bool> GetRememberWindowSizeEnabledAsync() => Task.FromResult(GetValue(RememberWindowSizeEnabledKey, SettingsDefaults.RememberWindowSizeEnabled));
 
     public Task SetRememberWindowSizeEnabledAsync(bool isEnabled)

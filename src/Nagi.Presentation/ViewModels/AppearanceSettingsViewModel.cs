@@ -20,7 +20,7 @@ namespace Nagi.Presentation.ViewModels;
 
 /// <summary>
 ///     Settings section for how the app looks and is laid out: theme, accent color, backdrop, player
-///     styling, display language, remembered window layout and the navigation menu.
+///     styling, display language, remembered window layout, the navigation menu and song list columns.
 /// </summary>
 public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
 {
@@ -58,6 +58,7 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         _accentColorSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(VisualSettingDebounceMs), timeProvider);
 
         NavigationItems.CollectionChanged += OnNavigationItemsCollectionChanged;
+        foreach (var setting in SongListColumnSettings) setting.PropertyChanged += OnSongListColumnSettingChanged;
 
         ApplyWithoutSaving(() =>
         {
@@ -67,6 +68,7 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
             IsRememberWindowSizeEnabled = SettingsDefaults.RememberWindowSizeEnabled;
             IsRememberWindowPositionEnabled = SettingsDefaults.RememberWindowPositionEnabled;
             IsRememberPaneStateEnabled = SettingsDefaults.RememberPaneStateEnabled;
+            IsSongListHeaderEnabled = SettingsDefaults.ShowSongListHeaderEnabled;
         });
     }
 
@@ -80,12 +82,16 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
     [ObservableProperty] public partial bool IsRememberWindowSizeEnabled { get; set; }
     [ObservableProperty] public partial bool IsRememberWindowPositionEnabled { get; set; }
     [ObservableProperty] public partial bool IsRememberPaneStateEnabled { get; set; }
+    [ObservableProperty] public partial bool IsSongListHeaderEnabled { get; set; }
 
     public IReadOnlyList<AppTheme> AvailableThemes { get; } = Enum.GetValues<AppTheme>();
     public IReadOnlyList<BackdropMaterial> AvailableBackdropMaterials { get; } = Enum.GetValues<BackdropMaterial>();
     public IReadOnlyList<PlayerBackgroundMaterial> AvailablePlayerBackgroundMaterials { get; } = Enum.GetValues<PlayerBackgroundMaterial>();
     public ObservableRangeCollection<LanguageModel> AvailableLanguages { get; } = new();
     public ObservableRangeCollection<NavigationItemSetting> NavigationItems { get; } = new();
+
+    public IReadOnlyList<SongListColumnSetting> SongListColumnSettings { get; } =
+        SongListColumnsHelper.All.Select(column => new SongListColumnSetting(column)).ToList();
 
     internal Task PendingSettingsSaves => Task.WhenAll(
         _navigationItemSaveDebouncer.PendingInvocation,
@@ -115,10 +121,12 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         var rememberWindowTask = _settingsService.GetRememberWindowSizeEnabledAsync();
         var rememberPositionTask = _settingsService.GetRememberWindowPositionEnabledAsync();
         var rememberPaneTask = _settingsService.GetRememberPaneStateEnabledAsync();
+        var songListColumnsTask = _settingsService.GetSongListColumnsAsync();
+        var songListHeaderTask = _settingsService.GetShowSongListHeaderAsync();
 
         await Task.WhenAll(navItemsTask, themeTask, backdropTask, dynamicThemingTask, accentColorTask,
             playerMaterialTask, playerTintTask, languageTask, rememberWindowTask, rememberPositionTask,
-            rememberPaneTask);
+            rememberPaneTask, songListColumnsTask, songListHeaderTask);
 
         if (_isDisposed) return;
 
@@ -137,6 +145,8 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
             IsRememberWindowSizeEnabled = rememberWindowTask.Result;
             IsRememberWindowPositionEnabled = rememberPositionTask.Result;
             IsRememberPaneStateEnabled = rememberPaneTask.Result;
+            SetSongListColumnToggles(songListColumnsTask.Result);
+            IsSongListHeaderEnabled = songListHeaderTask.Result;
 
             SelectedPlayerBackgroundMaterial = playerMaterialTask.Result;
             PlayerTintIntensity = playerTintTask.Result;
@@ -160,6 +170,7 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         NavigationItems.CollectionChanged -= OnNavigationItemsCollectionChanged;
 
         foreach (var item in NavigationItems) item.PropertyChanged -= OnNavigationItemPropertyChanged;
+        foreach (var setting in SongListColumnSettings) setting.PropertyChanged -= OnSongListColumnSettingChanged;
 
         _navigationItemSaveDebouncer.Dispose();
         _playerTintSaveDebouncer.Dispose();
@@ -276,6 +287,16 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
         QueueSettingsSave(_navigationItemSaveDebouncer, _ => _settingsService.SetNavigationItemsAsync(snapshot), nameof(NavigationItems));
     }
 
+    partial void OnIsSongListHeaderEnabledChanged(bool value) =>
+        _ = SaveSettingAsync(() => _settingsService.SetShowSongListHeaderAsync(value));
+
+    private void OnSongListColumnSettingChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        var columns = SongListColumnSettings.Where(setting => setting.IsEnabled)
+            .Aggregate(SongListColumns.None, (all, setting) => all | setting.Column);
+        _ = SaveSettingAsync(() => _settingsService.SetSongListColumnsAsync(columns));
+    }
+
     async partial void OnSelectedThemeChanged(AppTheme value)
     {
         if (_isInitializing) return;
@@ -361,5 +382,17 @@ public partial class AppearanceSettingsViewModel : SettingsSectionViewModel
 
         await _settingsService.SetPlayerBackgroundMaterialAsync(SettingsDefaults.DefaultPlayerBackgroundMaterial);
         await _settingsService.SetPlayerTintIntensityAsync(SettingsDefaults.DefaultPlayerTintIntensity);
+    }
+
+    [RelayCommand]
+    private async Task ResetSongListColumnsAsync()
+    {
+        ApplyWithoutSaving(() => SetSongListColumnToggles(SettingsDefaults.DefaultSongListColumns));
+        await _settingsService.SetSongListColumnsAsync(SettingsDefaults.DefaultSongListColumns);
+    }
+
+    private void SetSongListColumnToggles(SongListColumns columns)
+    {
+        foreach (var setting in SongListColumnSettings) setting.IsEnabled = columns.HasFlag(setting.Column);
     }
 }

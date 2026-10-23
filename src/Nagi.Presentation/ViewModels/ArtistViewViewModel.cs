@@ -238,7 +238,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     }
 
 
-    public override SongListColumns VisibleColumns => SongListColumns.Album | SongListColumns.Year | SongListColumns.Duration;
+    public override SongListColumns VisibleColumns => ChosenColumns & ~SongListColumns.Artist;
 
     protected override PlaybackContext GetPlaybackContext() =>
         _artistId != Guid.Empty ? new(PlaybackContextType.Artist, _artistId) : base.GetPlaybackContext();

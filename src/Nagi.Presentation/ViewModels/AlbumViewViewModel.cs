@@ -248,7 +248,9 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         }
     }
 
-    public override SongListColumns VisibleColumns => SongListColumns.TrackNumber | SongListColumns.Duration;
+    // Track numbers always show because they give an album its order.
+    public override SongListColumns VisibleColumns =>
+        (ChosenColumns & ~(SongListColumns.Artist | SongListColumns.Album | SongListColumns.Year)) | SongListColumns.TrackNumber;
 
     protected override PlaybackContext GetPlaybackContext() =>
         _albumId != Guid.Empty ? new(PlaybackContextType.Album, _albumId) : base.GetPlaybackContext();

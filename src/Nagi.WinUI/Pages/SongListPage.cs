@@ -1,19 +1,21 @@
 using System.Collections.Generic;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Models;
 using Nagi.Presentation.ViewModels;
+using Nagi.WinUI.Controls;
 using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Pages;
 
 /// <summary>
 ///     A searchable page of songs. The selection is whatever the list has selected, including the
-///     list's own Ctrl+A. Also handles double-click to play and the now-playing indicator; each row's
-///     context menu is part of <see cref="Controls.SongRow" />.
+///     list's own Ctrl+A. Also handles double-click to play, the now-playing indicator and the column
+///     header; each row's context menu is part of <see cref="SongRow" />.
 /// </summary>
 public abstract class SongListPage : SearchablePage
 {
@@ -25,14 +27,17 @@ public abstract class SongListPage : SearchablePage
     /// <summary>
     ///     Call after InitializeComponent. When <paramref name="ownsViewModel" /> is true the view model
     ///     is disposed on navigating away; cached pages with a shared view model pass false.
+    ///     The column header goes in <paramref name="columnHeaderHost" /> above the lists, not in them, so it
+    ///     stays in view and re-sorting doesn't make a list follow its old first row.
     /// </summary>
     protected void InitializeSongList(SongListViewModelBase viewModel, bool ownsViewModel, Button searchButton,
-        TextBox searchBox, string searchToolTip, params ListView[] songLists)
+        TextBox searchBox, string searchToolTip, Border columnHeaderHost, params ListView[] songLists)
     {
         InitializeSearch(viewModel, searchButton, searchBox, searchToolTip);
         _viewModel = viewModel;
         _ownsViewModel = ownsViewModel;
         _songLists = songLists;
+        columnHeaderHost.Child = CreateColumnHeader(viewModel);
         Loaded += AttachNowPlayingBinders;
         Unloaded += DetachNowPlayingBinders;
     }
@@ -64,6 +69,23 @@ public abstract class SongListPage : SearchablePage
     {
         if (e.OriginalSource is FrameworkElement { DataContext: var item } && GetSong(item) is { } song)
             _viewModel!.PlaySongCommand.Execute(song);
+    }
+
+    private static SongRow CreateColumnHeader(SongListViewModelBase viewModel)
+    {
+        var header = new SongRow(isHeader: true);
+        header.SetBinding(SongRow.ColumnsProperty, new Binding
+        {
+            Source = viewModel,
+            Path = new PropertyPath(nameof(SongListViewModelBase.VisibleColumns))
+        });
+        header.SetBinding(VisibilityProperty, new Binding
+        {
+            Source = viewModel,
+            Path = new PropertyPath(nameof(SongListViewModelBase.ShowsColumnHeader)),
+            Converter = (IValueConverter)Application.Current.Resources["BooleanToVisibilityConverter"]
+        });
+        return header;
     }
 
     protected void ListeningOptions_Opening(object sender, object e) =>

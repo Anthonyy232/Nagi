@@ -27,6 +27,10 @@ public interface IUISettingsService : ISettingsService
 
     event Action<QueueDisplaySettings>? QueueDisplaySettingsChanged;
 
+    event Action<SongListColumns>? SongListColumnsChanged;
+
+    event Action<bool>? ShowSongListHeaderSettingChanged;
+
     event Action<BackdropMaterial>? BackdropMaterialChanged;
 
     event Action? PlayerDesignSettingsChanged;
@@ -87,6 +91,12 @@ public interface IUISettingsService : ISettingsService
 
     Task<QueueDisplaySettings> GetQueueDisplaySettingsAsync();
     Task SetQueueDisplaySettingsAsync(QueueDisplaySettings settings);
+
+    Task<SongListColumns> GetSongListColumnsAsync();
+    Task SetSongListColumnsAsync(SongListColumns columns);
+
+    Task<bool> GetShowSongListHeaderAsync();
+    Task SetShowSongListHeaderAsync(bool isEnabled);
 
     List<PlayerButtonSetting> GetDefaultPlayerButtonSettings();
 

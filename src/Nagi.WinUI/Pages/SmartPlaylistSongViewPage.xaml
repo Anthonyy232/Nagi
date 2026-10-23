@@ -253,24 +253,27 @@
         </StackPanel>
 
         <!-- Song List -->
-        <ListView uihelpers:ScrollEdgeFade.IsEnabled="True" Grid.Row="1"
-                  x:Name="SongsListView"
-                  SelectionMode="Extended"
-                  IsItemClickEnabled="True"
-                  Padding="{StaticResource PageContentPadding}"
-                  ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
-                  ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
-                  SelectionChanged="SongsListView_SelectionChanged"
-                  CanDragItems="False"
-                  CanReorderItems="False"
-                  AllowDrop="False"
-                  DoubleTapped="SongsListView_DoubleTapped">
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="models:Song">
-                    <uicontrols:SongRow Song="{x:Bind}" ViewModel="{Binding DataContext, ElementName=pageRoot}" Columns="{Binding DataContext.VisibleColumns, ElementName=pageRoot}" />
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+        <Grid Grid.Row="1" RowDefinitions="Auto,*">
+            <Border x:Name="ColumnHeaderHost" Padding="{StaticResource PageContentPadding}" />
+            <ListView uihelpers:ScrollEdgeFade.IsEnabled="True" Grid.Row="1"
+                      x:Name="SongsListView"
+                      SelectionMode="Extended"
+                      IsItemClickEnabled="True"
+                      Padding="{StaticResource PageContentPadding}"
+                      ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
+                      ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
+                      SelectionChanged="SongsListView_SelectionChanged"
+                      CanDragItems="False"
+                      CanReorderItems="False"
+                      AllowDrop="False"
+                      DoubleTapped="SongsListView_DoubleTapped">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Song">
+                        <uicontrols:SongRow Song="{x:Bind}" ViewModel="{Binding DataContext, ElementName=pageRoot}" Columns="{Binding DataContext.VisibleColumns, ElementName=pageRoot}" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
 
         <uicontrols:PaginationControl
             Grid.Row="2"

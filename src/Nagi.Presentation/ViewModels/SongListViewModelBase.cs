@@ -14,6 +14,7 @@ using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
+using Nagi.Presentation.Services;
 using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.Presentation.ViewModels;
@@ -87,6 +88,9 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         _playbackService.TrackChanged += OnPlaybackTrackChanged;
         IsPlaying = _playbackService.IsPlaying;
         _playbackService.PlaybackStateChanged += OnPlaybackStateChanged;
+        _settingsService.SongListColumnsChanged += OnSongListColumnsChanged;
+        _settingsService.ShowSongListHeaderSettingChanged += OnShowSongListHeaderChanged;
+        _ = LoadListSettingsAsync();
     }
 
     private void OnPlaybackTrackChanged()
@@ -160,12 +164,40 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
     public string CurrentSortOrderText => SortOrderHelper.GetDisplayName(CurrentSortOrder);
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(VisibleColumns))]
+    public partial SongListColumns ChosenColumns { get; set; } = SettingsDefaults.DefaultSongListColumns;
+
+    [ObservableProperty] public partial bool ShowsColumnHeader { get; set; } = SettingsDefaults.ShowSongListHeaderEnabled;
+
     /// <summary>
-    ///     The columns the list shows besides the title. Lists that already imply a column (an
-    ///     album's songs share one album) leave it out.
+    ///     The chosen columns, less any that every row would repeat, such as the album on an album's page.
     /// </summary>
-    public virtual SongListColumns VisibleColumns =>
-        SongListColumns.Artist | SongListColumns.Album | SongListColumns.Year | SongListColumns.Duration;
+    public virtual SongListColumns VisibleColumns => ChosenColumns;
+
+    private async Task LoadListSettingsAsync()
+    {
+        ChosenColumns = await _settingsService.GetSongListColumnsAsync();
+        ShowsColumnHeader = await _settingsService.GetShowSongListHeaderAsync();
+    }
+
+    private void OnSongListColumnsChanged(SongListColumns columns)
+    {
+        if (_isDisposed) return;
+        _dispatcherService.TryEnqueue(() =>
+        {
+            if (!_isDisposed) ChosenColumns = columns;
+        });
+    }
+
+    private void OnShowSongListHeaderChanged(bool isEnabled)
+    {
+        if (_isDisposed) return;
+        _dispatcherService.TryEnqueue(() =>
+        {
+            if (!_isDisposed) ShowsColumnHeader = isEnabled;
+        });
+    }
 
     public bool ShowEmptyState => !IsLoading && Songs.Count == 0;
 
@@ -646,6 +678,8 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         _playlistService.PlaylistsChanged -= OnPlaylistsChanged;
         _playbackService.TrackChanged -= OnPlaybackTrackChanged;
         _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
+        _settingsService.SongListColumnsChanged -= OnSongListColumnsChanged;
+        _settingsService.ShowSongListHeaderSettingChanged -= OnShowSongListHeaderChanged;
         Songs.CollectionChanged -= OnSongsCollectionChanged;
 
         base.Dispose();

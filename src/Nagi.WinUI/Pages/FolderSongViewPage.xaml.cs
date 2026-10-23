@@ -24,7 +24,7 @@ public sealed partial class FolderSongViewPage : SongListPage
         ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<FolderSongListViewModel>();
         DataContext = ViewModel;
         InitializeSongList(ViewModel, ownsViewModel: true, SearchToggleButton, SearchTextBox,
-            Strings.FolderSongViewPage_SearchButton_Search_ToolTip, FolderContentsListView);
+            Strings.FolderSongViewPage_SearchButton_Search_ToolTip, ColumnHeaderHost, FolderContentsListView);
     }
 
     public FolderSongListViewModel ViewModel { get; }

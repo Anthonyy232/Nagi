@@ -3,7 +3,7 @@ using System;
 namespace Nagi.Presentation.Models;
 
 /// <summary>
-///     The optional columns a song list can show. Title is always shown.
+///     The columns a song list can show. Saved in settings as a number, so existing values must not change.
 /// </summary>
 [Flags]
 public enum SongListColumns
@@ -13,5 +13,12 @@ public enum SongListColumns
     Artist = 1 << 1,
     Album = 1 << 2,
     Year = 1 << 3,
-    Duration = 1 << 4
+    Duration = 1 << 4,
+    Bpm = 1 << 5,
+    Bitrate = 1 << 6,
+    PlayCount = 1 << 7,
+    LastPlayed = 1 << 8,
+    DateAdded = 1 << 9,
+    FileCreatedDate = 1 << 10,
+    Title = 1 << 11
 }

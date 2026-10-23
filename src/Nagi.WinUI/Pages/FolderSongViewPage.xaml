@@ -234,19 +234,22 @@
             </Grid>
         </StackPanel>
 
-        <ListView uihelpers:ScrollEdgeFade.IsEnabled="True"
-            x:Name="FolderContentsListView"
-            Grid.Row="1"
-            Padding="{StaticResource PageContentPadding}"
-            IsItemClickEnabled="True"
-            ItemClick="FolderContentsListView_ItemClick"
-            ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
-            ItemsSource="{x:Bind ViewModel.FolderContents, Mode=OneWay}"
-            ItemTemplateSelector="{StaticResource FolderContentItemTemplateSelector}"
-            SelectionChanged="SongsListView_SelectionChanged"
-            SelectionMode="Extended"
-            DoubleTapped="FolderContentsListView_DoubleTapped">
-        </ListView>
+        <Grid Grid.Row="1" RowDefinitions="Auto,*">
+            <Border x:Name="ColumnHeaderHost" Padding="{StaticResource PageContentPadding}" />
+            <ListView uihelpers:ScrollEdgeFade.IsEnabled="True"
+                x:Name="FolderContentsListView"
+                Grid.Row="1"
+                Padding="{StaticResource PageContentPadding}"
+                IsItemClickEnabled="True"
+                ItemClick="FolderContentsListView_ItemClick"
+                ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
+                ItemsSource="{x:Bind ViewModel.FolderContents, Mode=OneWay}"
+                ItemTemplateSelector="{StaticResource FolderContentItemTemplateSelector}"
+                SelectionChanged="SongsListView_SelectionChanged"
+                SelectionMode="Extended"
+                DoubleTapped="FolderContentsListView_DoubleTapped">
+            </ListView>
+        </Grid>
 
         <uicontrols:PaginationControl
             Grid.Row="2"
