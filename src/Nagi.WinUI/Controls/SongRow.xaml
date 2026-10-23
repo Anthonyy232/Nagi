@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="Nagi.WinUI.Controls.SongRow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:ImageEx"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="using:Nagi.WinUI.Controls"
+    xmlns:presentationHelpers="using:Nagi.Presentation.Helpers"
+    xmlns:resources="using:Nagi.Presentation.Resources"
+    xmlns:uihelpers="using:Nagi.WinUI.Helpers"
+    mc:Ignorable="d">
+
+    <!-- Margins instead of ColumnSpacing so hidden columns leave no gap. -->
+    <Grid Height="54" Background="Transparent">
+        <Grid.ContextFlyout>
+            <MenuFlyout Opening="SongMenu_Opening">
+                <MenuFlyoutItem Text="{x:Bind resources:Strings.LibraryPage_Context_Play}"
+                                Command="{x:Bind ViewModel.PlaySelectedSongsCommand, Mode=OneWay}" />
+                <MenuFlyoutItem Text="{x:Bind resources:Strings.LibraryPage_Context_PlayNext}"
+                                Command="{x:Bind ViewModel.PlaySelectedSongsNextCommand, Mode=OneWay}" />
+                <MenuFlyoutItem Text="{x:Bind resources:Strings.LibraryPage_Context_AddToQueue}"
+                                Command="{x:Bind ViewModel.AddSelectedSongsToQueueCommand, Mode=OneWay}" />
+                <MenuFlyoutSubItem x:Name="AddToPlaylistSubMenu" Text="{x:Bind resources:Strings.LibraryPage_Context_AddToPlaylist}" />
+                <MenuFlyoutSeparator x:Name="SingleSongSeparator" />
+                <MenuFlyoutItem x:Name="GoToAlbumItem"
+                                Text="{x:Bind resources:Strings.LibraryPage_Context_GoToAlbum}"
+                                Command="{x:Bind ViewModel.GoToAlbumCommand, Mode=OneWay}"
+                                CommandParameter="{x:Bind Song, Mode=OneWay}" />
+                <MenuFlyoutSubItem x:Name="GoToArtistSubMenu" Text="{x:Bind resources:Strings.LibraryPage_Context_GoToArtist}" />
+                <MenuFlyoutItem x:Name="ShowInExplorerItem"
+                                Text="{x:Bind resources:Strings.LibraryPage_Context_ShowInExplorer}"
+                                Command="{x:Bind ViewModel.ShowInFolderCommand, Mode=OneWay}"
+                                CommandParameter="{x:Bind Song, Mode=OneWay}" />
+                <MenuFlyoutSeparator x:Name="RemoveFromPlaylistSeparator" />
+                <MenuFlyoutItem x:Name="RemoveFromPlaylistItem"
+                                Text="{x:Bind resources:Strings.PlaylistSongViewPage_Context_RemoveFromPlaylist}"
+                                Command="{x:Bind RemoveFromPlaylistCommand, Mode=OneWay}" />
+            </MenuFlyout>
+        </Grid.ContextFlyout>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition x:Name="ArtistColumn" Width="*" MinWidth="112" />
+            <ColumnDefinition x:Name="AlbumColumn" Width="*" MinWidth="112" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <Button Grid.Column="0"
+                Command="{x:Bind ViewModel.PlaySongCommand, Mode=OneWay}"
+                CommandParameter="{x:Bind Song, Mode=OneWay}"
+                Style="{StaticResource SongListViewPageSongPlayButtonStyle}"
+                ToolTipService.ToolTip="{x:Bind resources:Strings.LibraryPage_SongElement_PlayButton_ToolTip}"
+                AutomationProperties.Name="{x:Bind resources:Strings.LibraryPage_SongElement_PlayButton_ToolTip}">
+            <Border Width="42" Height="42" CornerRadius="{StaticResource ArtworkCornerRadius}"
+                    Visibility="{x:Bind Song.IsArtworkAvailable, Mode=OneWay, FallbackValue=Collapsed}">
+                <controls:ImageEx Width="42" Height="42"
+                                  IsCacheEnabled="True"
+                                  Stretch="UniformToFill"
+                                  DecodePixelWidth="48"
+                                  DecodePixelType="Logical"
+                                  Source="{x:Bind presentationHelpers:ImageUriHelper.GetUriWithCacheBuster(Song.AlbumArtUriFromTrack, Song.FileModifiedDate), Mode=OneWay}" />
+            </Border>
+        </Button>
+        <local:NowPlayingIndicator x:Name="NowPlayingIndicator"
+                                   Grid.Column="0"
+                                   Width="42"
+                                   Height="42"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+
+        <TextBlock x:Name="TrackText"
+                   Grid.Column="1"
+                   Margin="12,0,0,0"
+                   MinWidth="30"
+                   HorizontalAlignment="Center"
+                   Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
+                   Text="{x:Bind GetTrackText(Song, ShowDiscNumber), Mode=OneWay}" />
+
+        <TextBlock x:Name="SongTitle"
+                   Grid.Column="2"
+                   Margin="12,0,0,0"
+                   VerticalAlignment="Center"
+                   Style="{StaticResource BodyStrongTextBlockStyle}"
+                   Text="{x:Bind Song.Title, Mode=OneWay}"
+                   TextTrimming="CharacterEllipsis"
+                   TextWrapping="NoWrap" />
+
+        <Grid x:Name="ArtistCell" Grid.Column="3" Margin="12,0,0,0" SizeChanged="ArtistCell_SizeChanged">
+            <Grid x:Name="ArtistLinks" HorizontalAlignment="Left">
+                <TextBlock HorizontalAlignment="Left"
+                           Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
+                           uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind Song.ArtistName, Mode=OneWay}"
+                           uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind Song, Mode=OneWay}"
+                           uihelpers:MultiArtistHyperlinkHelper.Command="{x:Bind ViewModel.GoToArtistCommand, Mode=OneWay}" />
+            </Grid>
+        </Grid>
+
+        <HyperlinkButton x:Name="AlbumLink"
+                         Grid.Column="4"
+                         Margin="12,0,0,0"
+                         Command="{x:Bind ViewModel.GoToAlbumCommand, Mode=OneWay}"
+                         CommandParameter="{x:Bind Song, Mode=OneWay}"
+                         Content="{x:Bind Song.Album.Title, Mode=OneWay}"
+                         Style="{StaticResource SongListHyperlinkButtonStyle}" />
+
+        <TextBlock x:Name="YearText"
+                   Grid.Column="5"
+                   Margin="12,0,0,0"
+                   MinWidth="40"
+                   HorizontalAlignment="Center"
+                   TextAlignment="Center"
+                   Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
+                   Text="{x:Bind Song.Album.Year, Mode=OneWay}" />
+
+        <TextBlock x:Name="DurationText"
+                   Grid.Column="6"
+                   Margin="12,0,12,0"
+                   MinWidth="38"
+                   HorizontalAlignment="Right"
+                   TextAlignment="Right"
+                   Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
+                   Text="{x:Bind Song.Duration, Mode=OneWay, Converter={StaticResource TimeSpanToTimeStringConverter}}" />
+    </Grid>
+</UserControl>

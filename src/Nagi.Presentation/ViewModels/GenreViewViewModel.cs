@@ -8,6 +8,7 @@ using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Presentation.Models;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
@@ -88,6 +89,8 @@ public partial class GenreViewViewModel : SongListViewModelBase
         }
     }
 
+
+    public override SongListColumns VisibleColumns => SongListColumns.Artist | SongListColumns.Album | SongListColumns.Duration;
 
     protected override PlaybackContext GetPlaybackContext() =>
         _genreId != Guid.Empty ? new(PlaybackContextType.Genre, _genreId) : base.GetPlaybackContext();

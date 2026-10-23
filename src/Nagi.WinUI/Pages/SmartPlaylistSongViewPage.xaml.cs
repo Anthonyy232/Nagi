@@ -28,5 +28,6 @@ public sealed partial class SmartPlaylistSongViewPage : SongListPage
 
         var navParam = (SmartPlaylistSongViewNavigationParameter)e.Parameter;
         await ViewModel.InitializeAsync(navParam.Title, navParam.SmartPlaylistId, navParam.CoverImageUri);
+        await ViewModel.LoadAvailablePlaylistsAsync();
     }
 }

@@ -10,7 +10,6 @@
     xmlns:models="using:Nagi.Core.Models"
     xmlns:helpers="using:Nagi.Core.Helpers"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
-    xmlns:presentationHelpers="using:Nagi.Presentation.Helpers"
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
     mc:Ignorable="d"
     Background="Transparent"
@@ -268,88 +267,7 @@
                   DoubleTapped="SongsListView_DoubleTapped">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Song">
-                    <Grid Height="54" ColumnSpacing="12" Background="Transparent">
-                        <Grid.ContextFlyout>
-                            <MenuFlyout Opening="SongItemMenuFlyout_Opening">
-                                <MenuFlyoutItem Text="{x:Bind resources:Strings.SmartPlaylistSongViewPage_Context_Play, Mode=OneTime}"
-                                                Command="{Binding DataContext.PlaySelectedSongsCommand, ElementName=pageRoot}" />
-                                <MenuFlyoutItem Text="{x:Bind resources:Strings.SmartPlaylistSongViewPage_Context_PlayNext, Mode=OneTime}"
-                                                Command="{Binding DataContext.PlaySelectedSongsNextCommand, ElementName=pageRoot}" />
-                                <MenuFlyoutItem Text="{x:Bind resources:Strings.SmartPlaylistSongViewPage_Context_AddToQueue, Mode=OneTime}"
-                                                Command="{Binding DataContext.AddSelectedSongsToQueueCommand, ElementName=pageRoot}" />
-                                <MenuFlyoutSeparator
-                                    Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                <MenuFlyoutItem Text="{x:Bind resources:Strings.SmartPlaylistSongViewPage_Context_GoToAlbum, Mode=OneTime}"
-                                                Command="{Binding DataContext.GoToAlbumCommand, ElementName=pageRoot}"
-                                                CommandParameter="{x:Bind}"
-                                                Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                <MenuFlyoutSubItem x:Name="GoToArtistSubMenu"
-                                                   Text="{x:Bind resources:Strings.SmartPlaylistSongViewPage_Context_GoToArtist, Mode=OneTime}"
-                                                   Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                <MenuFlyoutItem Text="{x:Bind resources:Strings.SmartPlaylistSongViewPage_Context_ShowInExplorer, Mode=OneTime}"
-                                                Command="{Binding DataContext.ShowInFolderCommand, ElementName=pageRoot}"
-                                                CommandParameter="{x:Bind}"
-                                                Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            </MenuFlyout>
-                        </Grid.ContextFlyout>
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" MinWidth="100" />
-                            <ColumnDefinition Width="*" MinWidth="100" />
-                            <ColumnDefinition Width="Auto" MinWidth="40" />
-                            <ColumnDefinition Width="Auto" MinWidth="50" />
-                        </Grid.ColumnDefinitions>
-
-                        <Button Grid.Column="0" Style="{StaticResource SongListViewPageSongPlayButtonStyle}"
-                                Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}"
-                                CommandParameter="{x:Bind}"
-                                ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip, Mode=OneTime}"
-                                AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip, Mode=OneTime}">
-                            <Border Width="42" Height="42" CornerRadius="{StaticResource ArtworkCornerRadius}"
-                                    Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <controls:ImageEx Width="42" Height="42"
-                                    Source="{x:Bind presentationHelpers:ImageUriHelper.GetUriWithCacheBuster(AlbumArtUriFromTrack, FileModifiedDate), Mode=OneTime}"
-                                    Stretch="UniformToFill"
-                                    DecodePixelWidth="48"
-                                    DecodePixelType="Logical"
-                                    IsCacheEnabled="True" />
-                            </Border>
-                        </Button>
-                        <uicontrols:NowPlayingIndicator
-                            x:Name="NowPlayingIndicator"
-                            Grid.Column="0"
-                            Width="42"
-                            Height="42"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center" />
-
-                        <TextBlock Grid.Column="1" x:Name="SongTitle" Text="{x:Bind Title}" VerticalAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" />
-
-                        <TextBlock Grid.Column="2"
-                                   VerticalAlignment="Center"
-                                   TextTrimming="CharacterEllipsis"
-                                   TextWrapping="NoWrap"
-                                   Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
-                                   uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName}"
-                                   uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind}"
-                                   uihelpers:MultiArtistHyperlinkHelper.Command="{Binding DataContext.GoToArtistCommand, ElementName=pageRoot}" />
-
-                        <HyperlinkButton Grid.Column="3"
-                                         Content="{x:Bind Album.Title}"
-                                         Command="{Binding DataContext.GoToAlbumCommand, ElementName=pageRoot}"
-                                         CommandParameter="{x:Bind}"
-                                         Style="{StaticResource SongListHyperlinkButtonStyle}" />
-
-                        <TextBlock Grid.Column="4" Text="{x:Bind Album.Year}"
-                                   Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
-                                   HorizontalAlignment="Center" />
-                        <TextBlock Grid.Column="5"
-                                   Text="{x:Bind Duration, Converter={StaticResource TimeSpanToTimeStringConverter}}"
-                                   Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
-                                   HorizontalAlignment="Right" Margin="0,0,12,0" />
-                    </Grid>
+                    <uicontrols:SongRow Song="{x:Bind}" ViewModel="{Binding DataContext, ElementName=pageRoot}" Columns="{Binding DataContext.VisibleColumns, ElementName=pageRoot}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

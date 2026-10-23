@@ -12,6 +12,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
@@ -158,6 +159,13 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     }
 
     public string CurrentSortOrderText => SortOrderHelper.GetDisplayName(CurrentSortOrder);
+
+    /// <summary>
+    ///     The columns the list shows besides the title. Lists that already imply a column (an
+    ///     album's songs share one album) leave it out.
+    /// </summary>
+    public virtual SongListColumns VisibleColumns =>
+        SongListColumns.Artist | SongListColumns.Album | SongListColumns.Year | SongListColumns.Duration;
 
     public bool ShowEmptyState => !IsLoading && Songs.Count == 0;
 

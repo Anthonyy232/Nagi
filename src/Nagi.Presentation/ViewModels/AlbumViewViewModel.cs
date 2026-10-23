@@ -248,6 +248,8 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         }
     }
 
+    public override SongListColumns VisibleColumns => SongListColumns.TrackNumber | SongListColumns.Duration;
+
     protected override PlaybackContext GetPlaybackContext() =>
         _albumId != Guid.Empty ? new(PlaybackContextType.Album, _albumId) : base.GetPlaybackContext();
 

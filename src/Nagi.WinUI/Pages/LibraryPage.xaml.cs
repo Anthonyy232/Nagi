@@ -1,6 +1,5 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Presentation.Resources;
@@ -29,9 +28,6 @@ public sealed partial class LibraryPage : SongListPage
     private string GetEmptyStateSubtitle(bool isSearchActive, bool favorites) => isSearchActive
         ? Strings.LibraryPage_SearchEmpty_Subtitle
         : favorites ? Strings.Listening_FavoritesEmptyDescription : Strings.LibraryPage_EmptyState_Subtitle;
-
-    private void OnArtistColumnSizeChanged(object sender, SizeChangedEventArgs e) =>
-        ((FrameworkElement)((Grid)sender).Children[0]).MaxWidth = e.NewSize.Width;
 
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
