@@ -370,71 +370,27 @@ public partial class SettingsService
         return SetValueAndNotifyAsync(SongsPerPageKey, songsPerPage, SettingsDefaults.DefaultSongsPerPage, SongsPerPageChanged);
     }
 
+    // List position is the default priority.
     private static List<ServiceProviderSetting> GetDefaultServiceProviders(ServiceCategory category)
     {
         return category switch
         {
-            ServiceCategory.Lyrics => new List<ServiceProviderSetting>
-            {
-                new()
-                {
-                    Id = ServiceProviderIds.LrcLib,
-                    DisplayName = "LRCLIB",
-                    Category = ServiceCategory.Lyrics,
-                    IsEnabled = true,
-                    Order = 0,
-                    Description = Strings.Settings_Provider_LRCLIB_Desc
-                },
-                new()
-                {
-                    Id = ServiceProviderIds.NetEase,
-                    DisplayName = "NetEase",
-                    Category = ServiceCategory.Lyrics,
-                    IsEnabled = true,
-                    Order = 1,
-                    Description = Strings.Settings_Provider_NetEase_Desc
-                }
-            },
-            ServiceCategory.Metadata => new List<ServiceProviderSetting>
-            {
-                new()
-                {
-                    Id = ServiceProviderIds.MusicBrainz,
-                    DisplayName = "MusicBrainz",
-                    Category = ServiceCategory.Metadata,
-                    IsEnabled = true,
-                    Order = 0,
-                    Description = Strings.Settings_Provider_MusicBrainz_Desc
-                },
-                new()
-                {
-                    Id = ServiceProviderIds.TheAudioDb,
-                    DisplayName = "TheAudioDB",
-                    Category = ServiceCategory.Metadata,
-                    IsEnabled = true,
-                    Order = 1,
-                    Description = Strings.Settings_Provider_TheAudioDB_Desc
-                },
-                new()
-                {
-                    Id = ServiceProviderIds.FanartTv,
-                    DisplayName = "Fanart.tv",
-                    Category = ServiceCategory.Metadata,
-                    IsEnabled = true,
-                    Order = 2,
-                    Description = Strings.Settings_Provider_FanartTv_Desc
-                },
-                new()
-                {
-                    Id = ServiceProviderIds.LastFm,
-                    DisplayName = "Last.fm",
-                    Category = ServiceCategory.Metadata,
-                    IsEnabled = true,
-                    Order = 3,
-                    Description = Strings.Settings_Provider_LastFm_Desc
-                }
-            },
-            _ => new List<ServiceProviderSetting>()
+            ServiceCategory.Lyrics =>
+            [
+                Provider(ServiceProviderIds.LrcLib, "LRCLIB", Strings.Settings_Provider_LRCLIB_Desc),
+                Provider(ServiceProviderIds.NetEase, "NetEase", Strings.Settings_Provider_NetEase_Desc)
+            ],
+            ServiceCategory.Metadata =>
+            [
+                Provider(ServiceProviderIds.MusicBrainz, "MusicBrainz", Strings.Settings_Provider_MusicBrainz_Desc),
+                Provider(ServiceProviderIds.TheAudioDb, "TheAudioDB", Strings.Settings_Provider_TheAudioDB_Desc),
+                Provider(ServiceProviderIds.FanartTv, "Fanart.tv", Strings.Settings_Provider_FanartTv_Desc),
+                Provider(ServiceProviderIds.LastFm, "Last.fm", Strings.Settings_Provider_LastFm_Desc)
+            ],
+            _ => []
         };
+
+        ServiceProviderSetting Provider(string id, string displayName, string description) =>
+            new() { Id = id, DisplayName = displayName, Category = category, Description = description };
     }
 }
