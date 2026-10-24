@@ -7,7 +7,7 @@ using Nagi.Core.Services.Data;
 namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
-///     Online covers for albums that have no art of their own.
+///     Album covers: online covers for albums that have no art, and the album cover for tracks without their own.
 /// </summary>
 public partial class LibraryService
 {
@@ -103,6 +103,45 @@ public partial class LibraryService
                 .SetProperty(s => s.DarkSwatchId, cover.DarkSwatchId), token)
             .ConfigureAwait(false);
         return true;
+    }
+
+    /// <summary>
+    ///     Gives tracks without embedded or folder art the cover of their album, which may come from another
+    ///     track or an online source.
+    /// </summary>
+    /// <returns>The number of tracks updated.</returns>
+    private async Task<int> ApplyAlbumCoversToTracksWithoutArtAsync(Guid folderId, CancellationToken cancellationToken)
+    {
+        // "Unknown Album" groups unrelated tracks, so one of them must not lend its art to the rest.
+        var unknownAlbum = Album.UnknownAlbumName;
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
+        var tracksWithoutArt = context.Songs.Where(s => s.FolderId == folderId && s.AlbumArtUriFromTrack == null &&
+                                                        s.Album != null && s.Album.CoverArtUri != null &&
+                                                        s.Album.Title != unknownAlbum);
+        var covers = await tracksWithoutArt.Select(s => s.Album!.CoverArtUri!).Distinct()
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+
+        var updatedCount = 0;
+        foreach (var cover in covers)
+        {
+            // The album's cover came from one of its tracks or the online pass, which stored its theme colors.
+            var swatches = await context.Songs.Where(s => s.AlbumArtUriFromTrack == cover)
+                .Select(s => new { s.LightSwatchId, s.DarkSwatchId })
+                .FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+            var lightSwatchId = swatches?.LightSwatchId;
+            var darkSwatchId = swatches?.DarkSwatchId;
+
+            updatedCount += await tracksWithoutArt.Where(s => s.Album!.CoverArtUri == cover)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(s => s.AlbumArtUriFromTrack, cover)
+                    .SetProperty(s => s.LightSwatchId, lightSwatchId)
+                    .SetProperty(s => s.DarkSwatchId, darkSwatchId), cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+        if (updatedCount > 0)
+            _logger.LogInformation("Gave {Count} tracks without art their album cover.", updatedCount);
+        return updatedCount;
     }
 
     private sealed record AlbumCoverCandidate(Guid Id, string Title, string ArtistName, string? ReleaseId, string? ReleaseGroupId);

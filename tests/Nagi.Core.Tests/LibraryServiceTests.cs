@@ -1390,4 +1390,42 @@ public partial class LibraryServiceTests : IDisposable
         _fileSystem.DidNotReceive().DeleteFile(externalArt);
     }
 
+    [Fact]
+    public async Task Rescan_GivesTracksWithoutArtTheirAlbumCoverExceptInUnknownAlbum()
+    {
+        var timestamp = new DateTime(2024, 6, 1, 0, 0, 0, DateTimeKind.Utc);
+        const string albumCover = @"C:\cache\albumart\hash.aaaaaa.bbbbbb.fetched.jpg";
+        var folder = new Folder { Path = @"C:\Music", Name = "Music" };
+        var album = new Album { Title = "Album", CoverArtUri = albumCover };
+        var unknownAlbum = new Album { Title = Album.UnknownAlbumName, CoverArtUri = albumCover };
+        Song Track(string name, Album trackAlbum, string? art = null) => new()
+        {
+            Folder = folder,
+            FilePath = $@"C:\Music\{name}.mp3",
+            DirectoryPath = folder.Path,
+            FileModifiedDate = timestamp,
+            Album = trackAlbum,
+            AlbumArtUriFromTrack = art,
+            LightSwatchId = art is null ? null : "aaaaaa"
+        };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Songs.AddRange(Track("with-art", album, albumCover), Track("without-art", album), Track("unknown", unknownAlbum));
+            await context.SaveChangesAsync();
+        }
+        _fileSystem.DirectoryExists(folder.Path).Returns(true);
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories).Returns(new[]
+        {
+            (@"C:\Music\with-art.mp3", timestamp), (@"C:\Music\without-art.mp3", timestamp), (@"C:\Music\unknown.mp3", timestamp)
+        });
+
+        (await _libraryService.RescanFolderForMusicAsync(folder.Id)).Should().BeTrue();
+
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        var songs = await assertContext.Songs.ToDictionaryAsync(s => Path.GetFileNameWithoutExtension(s.FilePath));
+        songs["without-art"].AlbumArtUriFromTrack.Should().Be(albumCover);
+        songs["without-art"].LightSwatchId.Should().Be("aaaaaa");
+        songs["unknown"].AlbumArtUriFromTrack.Should().BeNull();
+        await _imageProcessor.DidNotReceive().SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>());
+    }
 }
