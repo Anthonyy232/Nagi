@@ -46,6 +46,7 @@ public partial class LibraryService
     public async Task StartMetadataBackgroundFetchAsync()
     {
         if (_shutdownCts.IsCancellationRequested) return;
+        if (!await _settingsService.GetFetchOnlineMetadataEnabledAsync().ConfigureAwait(false)) return;
         if (!await _metadataFetchSemaphore.WaitAsync(0).ConfigureAwait(false))
         {
             _logger.LogDebug("Metadata background fetch already running, skipping.");

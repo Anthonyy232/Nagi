@@ -70,6 +70,7 @@ public class ServiceProviderIntegrationTests : IDisposable
             Substitute.For<ILogger<LibraryService>>());
 
         _pathConfig.ArtistImageCachePath.Returns("C:\\cache\\artistimages");
+        _settingsService.GetFetchOnlineMetadataEnabledAsync().Returns(true);
     }
 
     public void Dispose()
@@ -254,5 +255,22 @@ public class ServiceProviderIntegrationTests : IDisposable
         assertContext.Albums.Single().CoverArtUri.Should().Be(scannedCover);
         assertContext.Albums.Single().CoverArtLastCheckedUtc.Should().NotBeNull();
         assertContext.Songs.Single().AlbumArtUriFromTrack.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task MetadataBackgroundFetch_DoesNothingWhileOnlineMetadataIsOff()
+    {
+        using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Artists.Add(new Artist { Name = "Artist" });
+            context.Albums.Add(new Album { Title = "Album" });
+            context.SaveChanges();
+        }
+        _settingsService.GetFetchOnlineMetadataEnabledAsync().Returns(false);
+
+        await _libraryService.StartMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(10));
+
+        await _settingsService.DidNotReceive().GetEnabledServiceProvidersAsync(Arg.Any<ServiceCategory>());
+        _albumCoverService.ReceivedCalls().Should().BeEmpty();
     }
 }

@@ -257,6 +257,7 @@ public partial class LibraryServiceTests : IDisposable
     [InlineData("reset")]
     public async Task BackgroundMetadata_CancellationLetsActiveRunUnwind(string action)
     {
+        _settingsService.GetFetchOnlineMetadataEnabledAsync().Returns(true);
         var artist = new Artist { Name = "Pending artist" };
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {
@@ -405,6 +406,7 @@ public partial class LibraryServiceTests : IDisposable
     [Fact]
     public async Task BackgroundMetadataFetch_AttemptsEachArtistOncePerRunAndRetriesOnNextRun()
     {
+        _settingsService.GetFetchOnlineMetadataEnabledAsync().Returns(true);
         _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata)
             .Returns(new List<ServiceProviderSetting> { new() { Id = ServiceProviderIds.LastFm } });
         _lastFmService.GetArtistInfoAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())

@@ -30,7 +30,7 @@ public interface ILibraryScanner
     Task<Artist?> GetArtistDetailsAsync(Guid artistId, bool allowOnlineFetch, CancellationToken cancellationToken = default);
     /// <summary>
     ///     Fills in missing artist images, biographies and album covers from the enabled online sources.
-    ///     Returns at once if a run is already in progress.
+    ///     Returns at once if online metadata is turned off or a run is already in progress.
     /// </summary>
     Task StartMetadataBackgroundFetchAsync();
 

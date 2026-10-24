@@ -86,10 +86,10 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
     }
 
     // Service's own semaphore dedupes concurrent runs of the metadata fetch.
-    protected override async Task OnPageLoadedAsync(PagedResult<Album> result, CancellationToken token)
+    protected override Task OnPageLoadedAsync(PagedResult<Album> result, CancellationToken token)
     {
-        if (await _settingsService.GetFetchOnlineMetadataEnabledAsync())
-            _ = _libraryScanner.StartMetadataBackgroundFetchAsync();
+        _ = _libraryScanner.StartMetadataBackgroundFetchAsync();
+        return Task.CompletedTask;
     }
 
     public async Task NavigateToAlbumDetailAsync(object? parameter)
