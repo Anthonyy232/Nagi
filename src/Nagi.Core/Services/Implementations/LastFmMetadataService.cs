@@ -37,107 +37,104 @@ public class LastFmMetadataService : ILastFmMetadataService
         _logger = logger;
     }
 
-    public async Task<ServiceResult<ArtistInfo>> GetArtistInfoAsync(string artistName,
+    public Task<ServiceResult<ArtistInfo>> GetArtistInfoAsync(string artistName,
         string? languageCode = null,
         CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(artistName))
-            return ServiceResult<ArtistInfo>.FromSuccessNotFound();
+            return Task.FromResult(ServiceResult<ArtistInfo>.FromSuccessNotFound());
 
+        var query = $"method=artist.getinfo&artist={Uri.EscapeDataString(artistName)}&autocorrect=1";
+        // Last.fm expects ISO 639-1 (2-letter) language codes.
+        if (!string.IsNullOrWhiteSpace(languageCode))
+            query += $"&lang={Uri.EscapeDataString(languageCode.Length > 2 ? languageCode[..2] : languageCode)}";
+
+        return GetAsync<LastFmArtistResponse, ArtistInfo>(query,
+            response => response.Artist is null ? null : ToArtistInfo(response.Artist),
+            $"artist '{artistName}'", cancellationToken);
+    }
+
+    private async Task<ServiceResult<T>> GetAsync<TResponse, T>(string query, Func<TResponse, T?> map, string subject,
+        CancellationToken cancellationToken)
+        where TResponse : LastFmResponse
+        where T : class
+    {
         if (_pipelines.IsCircuitOpen(ServiceProviderIds.LastFm))
-            return ServiceResult<ArtistInfo>.FromTemporaryError();
+            return ServiceResult<T>.FromTemporaryError();
 
         var apiKey = await _apiKeyService.GetApiKeyAsync(ApiKeyName, cancellationToken).ConfigureAwait(false);
         if (string.IsNullOrEmpty(apiKey))
         {
             _logger.LogError("Cannot fetch Last.fm metadata; API key '{ApiKeyName}' is unavailable.", ApiKeyName);
-            return ServiceResult<ArtistInfo>.FromTemporaryError();
+            return ServiceResult<T>.FromTemporaryError();
         }
 
-        var (result, errorCode) = await TryFetchAsync(artistName, apiKey, languageCode, cancellationToken)
-            .ConfigureAwait(false);
-
+        var (result, errorCode) = await TryFetchAsync(query, apiKey, map, subject, cancellationToken).ConfigureAwait(false);
         if (result is not null) return result;
 
         // Error code 10 = invalid API key. Refresh the key and retry once.
         if (errorCode == InvalidApiKeyErrorCode)
         {
-            _logger.LogWarning("Last.fm API key invalid. Refreshing and retrying for '{ArtistName}'.", artistName);
+            _logger.LogWarning("Last.fm API key invalid. Refreshing and retrying for {Subject}.", subject);
             apiKey = await _apiKeyService.RefreshApiKeyAsync(ApiKeyName, cancellationToken).ConfigureAwait(false);
             if (string.IsNullOrEmpty(apiKey))
             {
-                _logger.LogError("Failed to refresh Last.fm API key. Aborting fetch for '{ArtistName}'.", artistName);
-                return ServiceResult<ArtistInfo>.FromTemporaryError();
+                _logger.LogError("Failed to refresh Last.fm API key. Aborting fetch for {Subject}.", subject);
+                return ServiceResult<T>.FromTemporaryError();
             }
 
-            var (retryResult, _) = await TryFetchAsync(artistName, apiKey, languageCode, cancellationToken)
-                .ConfigureAwait(false);
-            return retryResult ?? ServiceResult<ArtistInfo>.FromTemporaryError();
+            var (retryResult, _) = await TryFetchAsync(query, apiKey, map, subject, cancellationToken).ConfigureAwait(false);
+            return retryResult ?? ServiceResult<T>.FromTemporaryError();
         }
 
-        return ServiceResult<ArtistInfo>.FromTemporaryError();
+        return ServiceResult<T>.FromTemporaryError();
     }
 
-    private async Task<(ServiceResult<ArtistInfo>? Result, int? ErrorCode)> TryFetchAsync(
-        string artistName, string apiKey, string? languageCode, CancellationToken cancellationToken)
+    private async Task<(ServiceResult<T>? Result, int? ErrorCode)> TryFetchAsync<TResponse, T>(
+        string query, string apiKey, Func<TResponse, T?> map, string subject, CancellationToken cancellationToken)
+        where TResponse : LastFmResponse
+        where T : class
     {
-        var requestUrl = BuildRequestUrl(artistName, apiKey, languageCode);
-        var isoCode = languageCode?.Length > 2 ? languageCode[..2] : (languageCode ?? "Default");
+        var requestUrl = $"{LastFmApiBaseUrl}?{query}&api_key={apiKey}&format=json";
 
-        return await _pipelines.ExecuteWithFallbackAsync<(ServiceResult<ArtistInfo>? Result, int? ErrorCode)>(
+        return await _pipelines.ExecuteWithFallbackAsync<(ServiceResult<T>? Result, int? ErrorCode)>(
             ServiceProviderIds.LastFm,
             async ct =>
             {
-                _logger.LogDebug("Fetching Last.fm metadata for artist: {ArtistName} (Language: {LanguageCode})",
-                    artistName, isoCode);
+                _logger.LogDebug("Fetching Last.fm metadata for {Subject}", subject);
                 return await _httpClient.GetAsync(requestUrl, ct).ConfigureAwait(false);
             },
             async (response, ct) =>
             {
                 var lastFmResponse = await response.Content
-                    .ReadFromJsonAsync<LastFmArtistResponse>(cancellationToken: ct).ConfigureAwait(false);
+                    .ReadFromJsonAsync<TResponse>(cancellationToken: ct).ConfigureAwait(false);
 
-                // Last.fm reports an unknown artist as an error rather than an empty result.
+                // Last.fm reports an unknown artist or album as an error rather than an empty result.
                 if (lastFmResponse?.ErrorCode == NotFoundErrorCode)
-                    return (ServiceResult<ArtistInfo>.FromSuccessNotFound(), null);
+                    return (ServiceResult<T>.FromSuccessNotFound(), null);
 
                 if (!response.IsSuccessStatusCode || lastFmResponse?.ErrorCode is not null)
                 {
                     _logger.LogWarning(
-                        "Error fetching Last.fm metadata for '{ArtistName}'. Status: {StatusCode}, Error: {ErrorMessage}",
-                        artistName, response.StatusCode, lastFmResponse?.Message ?? "Unknown");
-                    return ((ServiceResult<ArtistInfo>?)null, lastFmResponse?.ErrorCode);
+                        "Error fetching Last.fm metadata for {Subject}. Status: {StatusCode}, Error: {ErrorMessage}",
+                        subject, response.StatusCode, lastFmResponse?.Message ?? "Unknown");
+                    return ((ServiceResult<T>?)null, lastFmResponse?.ErrorCode);
                 }
 
-                var artistInfo = lastFmResponse?.Artist != null ? ToArtistInfo(lastFmResponse.Artist) : null;
-                if (artistInfo is null)
-                    return (ServiceResult<ArtistInfo>.FromSuccessNotFound(), null);
+                var mapped = lastFmResponse is null ? null : map(lastFmResponse);
+                if (mapped is null)
+                    return (ServiceResult<T>.FromSuccessNotFound(), null);
 
-                _logger.LogInformation(
-                    "Found Last.fm metadata for {ArtistName} (Requested Language: {LanguageCode}): Bio={HasBio}, Image={HasImage}",
-                    artistName, isoCode, !string.IsNullOrEmpty(artistInfo.Biography),
-                    !string.IsNullOrEmpty(artistInfo.ImageUrl));
-                return (ServiceResult<ArtistInfo>.FromSuccess(artistInfo), null);
+                _logger.LogInformation("Found Last.fm metadata for {Subject}", subject);
+                return (ServiceResult<T>.FromSuccess(mapped), null);
             },
-            fallback: (ServiceResult<ArtistInfo>.FromTemporaryError(), null),
+            fallback: (ServiceResult<T>.FromTemporaryError(), null),
             _logger,
-            $"metadata fetch for {artistName}",
+            $"metadata fetch for {subject}",
             cancellationToken).ConfigureAwait(false);
     }
 
-    private static string BuildRequestUrl(string artistName, string apiKey, string? languageCode)
-    {
-        var url = $"{LastFmApiBaseUrl}?method=artist.getinfo&artist={Uri.EscapeDataString(artistName)}&api_key={apiKey}&format=json&autocorrect=1";
-        if (!string.IsNullOrWhiteSpace(languageCode))
-        {
-            // Last.fm expects ISO 639-1 (2-letter) language codes.
-            var isoCode = languageCode.Length > 2 ? languageCode[..2] : languageCode;
-            url += $"&lang={Uri.EscapeDataString(isoCode)}";
-        }
-        return url;
-    }
-
-    private static ArtistInfo? ToArtistInfo(Data.LastFmArtist artist)
+    private static ArtistInfo? ToArtistInfo(LastFmArtist artist)
     {
         var bio = SanitizeBiography(artist.Bio?.Summary);
         var imageUrl = SelectBestImageUrl(artist.Image);
@@ -164,7 +161,7 @@ public class LastFmMetadataService : ILastFmMetadataService
     /// <summary>
     ///     Selects the most appropriate image URL from the available sizes, filtering out placeholder images.
     /// </summary>
-    private static string? SelectBestImageUrl(IEnumerable<Data.LastFmImage>? images)
+    private static string? SelectBestImageUrl(IEnumerable<LastFmImage>? images)
     {
         if (images is null) return null;
 
@@ -176,5 +173,4 @@ public class LastFmMetadataService : ILastFmMetadataService
                ?? imageList.FirstOrDefault(i => i.Size == "large")?.Url
                ?? imageList.LastOrDefault()?.Url;
     }
-
 }

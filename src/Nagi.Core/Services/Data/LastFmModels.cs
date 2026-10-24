@@ -2,13 +2,17 @@
 
 namespace Nagi.Core.Services.Data;
 
-public class LastFmArtistResponse
+/// <summary>Last.fm reports failures in the body, often alongside a 200 status.</summary>
+public abstract class LastFmResponse
 {
-    [JsonPropertyName("artist")] public LastFmArtist? Artist { get; set; }
-
     [JsonPropertyName("error")] public int? ErrorCode { get; set; }
 
     [JsonPropertyName("message")] public string? Message { get; set; }
+}
+
+public class LastFmArtistResponse : LastFmResponse
+{
+    [JsonPropertyName("artist")] public LastFmArtist? Artist { get; set; }
 }
 
 public class LastFmArtist
