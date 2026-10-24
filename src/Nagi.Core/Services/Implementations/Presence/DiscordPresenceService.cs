@@ -151,7 +151,7 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
 
             string stateText = _isPlaying
                 ? (string.IsNullOrWhiteSpace(_currentSong.ArtistName) ? "Unknown Artist" : $"by {_currentSong.ArtistName}")
-                : $"Paused | {FormatTimeSpan(_currentProgress)} / {FormatTimeSpan(_currentSong.Duration)}";
+                : $"Paused | {DurationFormatter.Format(_currentProgress)} / {DurationFormatter.Format(_currentSong.Duration)}";
 
             var presence = new RichPresence
             {
@@ -179,13 +179,6 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
         {
             _logger.LogError(ex, "Error building presence update.");
         }
-    }
-
-    private static string FormatTimeSpan(TimeSpan ts)
-    {
-        if (ts.TotalHours >= 1)
-            return $"{(int)ts.TotalHours}:{ts.Minutes:D2}:{ts.Seconds:D2}";
-        return ts.ToString(@"m\:ss");
     }
 
     public Task OnTrackProgressAsync(TimeSpan progress, TimeSpan duration)
