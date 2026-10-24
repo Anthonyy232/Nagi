@@ -294,6 +294,12 @@
         </Setter>
     </Style>
 
+    <Style x:Key="SettingsResetHyperlinkButtonStyle" TargetType="HyperlinkButton" BasedOn="{StaticResource AnimatedHyperlinkButtonStyle}">
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Padding" Value="4,2" />
+    </Style>
+
     <Style x:Key="AnimatedGridViewItemStyle" TargetType="GridViewItem">
         <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />

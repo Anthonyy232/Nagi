@@ -216,12 +216,9 @@
                                     <TextBlock Text="{x:Bind resources:Strings.SettingsPage_AccentColor, Mode=OneTime}" VerticalAlignment="Center" TextWrapping="Wrap" />
                                     <HyperlinkButton
                                         Grid.Column="1"
-                                        VerticalAlignment="Center"
                                         Command="{x:Bind ViewModel.Appearance.ResetAccentColorCommand}"
-                                        Style="{StaticResource AnimatedHyperlinkButtonStyle}"
-                                        Content="{x:Bind resources:Strings.SettingsPage_ResetAccentColor_Content, Mode=OneTime}"
-                                        FontSize="12"
-                                        Padding="4,2" />
+                                        Style="{StaticResource SettingsResetHyperlinkButtonStyle}"
+                                        Content="{x:Bind resources:Strings.SettingsPage_ResetAccentColor_Content, Mode=OneTime}" />
                                 </Grid>
                             </controls:SettingsCard.Header>
                             <ColorPicker
@@ -278,12 +275,9 @@
                             <TextBlock Text="{x:Bind resources:Strings.SettingsPage_PlayerStyling_Header, Mode=OneTime}" VerticalAlignment="Center" TextWrapping="Wrap" />
                             <HyperlinkButton
                                 Grid.Column="1"
-                                VerticalAlignment="Center"
                                 Command="{x:Bind ViewModel.Appearance.ResetPlayerDesignSettingsCommand}"
-                                Style="{StaticResource AnimatedHyperlinkButtonStyle}"
-                                Content="{x:Bind resources:Strings.SettingsPage_ResetAccentColor_Content, Mode=OneTime}"
-                                FontSize="12"
-                                Padding="4,2" />
+                                Style="{StaticResource SettingsResetHyperlinkButtonStyle}"
+                                Content="{x:Bind resources:Strings.SettingsPage_ResetAccentColor_Content, Mode=OneTime}" />
                         </Grid>
                     </controls:SettingsExpander.Header>
                     <controls:SettingsExpander.HeaderIcon>
@@ -473,12 +467,9 @@
                             <TextBlock Text="{x:Bind resources:Strings.SettingsPage_SongListColumns_Header, Mode=OneTime}" VerticalAlignment="Center" TextWrapping="Wrap" />
                             <HyperlinkButton
                                 Grid.Column="1"
-                                VerticalAlignment="Center"
                                 Command="{x:Bind ViewModel.Appearance.ResetSongListColumnsCommand}"
-                                Style="{StaticResource AnimatedHyperlinkButtonStyle}"
-                                Content="{x:Bind resources:Strings.SettingsPage_ResetAccentColor_Content, Mode=OneTime}"
-                                FontSize="12"
-                                Padding="4,2" />
+                                Style="{StaticResource SettingsResetHyperlinkButtonStyle}"
+                                Content="{x:Bind resources:Strings.SettingsPage_ResetAccentColor_Content, Mode=OneTime}" />
                         </Grid>
                     </controls:SettingsExpander.Header>
                     <controls:SettingsExpander.HeaderIcon>
@@ -601,12 +592,9 @@
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <TextBlock Text="{x:Bind resources:Strings.SettingsPage_Equalizer, Mode=OneTime}" VerticalAlignment="Center" />
                             <HyperlinkButton
-                                VerticalAlignment="Center"
                                 Command="{x:Bind ViewModel.Audio.ResetEqualizerCommand}"
-                                Style="{StaticResource AnimatedHyperlinkButtonStyle}"
-                                Content="{x:Bind resources:Strings.SettingsPage_ResetEqualizer_Content, Mode=OneTime}"
-                                FontSize="12"
-                                Padding="4,2" />
+                                Style="{StaticResource SettingsResetHyperlinkButtonStyle}"
+                                Content="{x:Bind resources:Strings.SettingsPage_ResetEqualizer_Content, Mode=OneTime}" />
                         </StackPanel>
                     </controls:SettingsCard.Header>
                     <controls:SettingsCard.HeaderIcon>
@@ -690,12 +678,9 @@
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <TextBlock Text="{x:Bind resources:Strings.SettingsPage_CustomizePlayer, Mode=OneTime}" VerticalAlignment="Center" />
                             <HyperlinkButton
-                                VerticalAlignment="Center"
                                 Command="{x:Bind ViewModel.ResetPlayerButtonsCommand}"
-                                Style="{StaticResource AnimatedHyperlinkButtonStyle}"
-                                Content="{x:Bind resources:Strings.SettingsPage_ResetPlayerButtons_Content, Mode=OneTime}"
-                                FontSize="12"
-                                Padding="4,2" />
+                                Style="{StaticResource SettingsResetHyperlinkButtonStyle}"
+                                Content="{x:Bind resources:Strings.SettingsPage_ResetPlayerButtons_Content, Mode=OneTime}" />
                         </StackPanel>
                     </controls:SettingsCard.Header>
                     <controls:SettingsCard.HeaderIcon>
