@@ -91,7 +91,6 @@ public sealed class SongInfoViewModel(
     private static string? Format(string pattern, double? value) =>
         value is { } v ? ResourceFormatter.Format(pattern, v) : null;
 
-    // Dates are stored in UTC.
     private static string? FormatDate(DateTime? utc) => utc?.ToLocalTime().ToString("g");
 
     private double? GetFileSizeInMegabytes(string path)
