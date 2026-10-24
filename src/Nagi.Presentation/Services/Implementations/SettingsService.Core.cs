@@ -304,9 +304,18 @@ public partial class SettingsService
                 definition.IsEnabled = configuration.IsEnabled;
                 return definition;
             }, StringComparer.OrdinalIgnoreCase)
-            .Concat(defaults)
-            .DistinctBy(p => p.Id, StringComparer.OrdinalIgnoreCase)
             .ToList();
+
+        // A source added by an update goes below every source ranked above it by default, wherever the user moved
+        // those, so it never outranks a source the user already preferred.
+        for (var i = 0; i < defaults.Count; i++)
+        {
+            if (providers.Any(p => string.Equals(p.Id, defaults[i].Id, StringComparison.OrdinalIgnoreCase))) continue;
+            var higherRanked = defaults.Take(i).Select(d => d.Id).ToHashSet(StringComparer.OrdinalIgnoreCase);
+            var insertAt = providers.FindLastIndex(p => higherRanked.Contains(p.Id)) + 1;
+            providers.Insert(insertAt, defaults[i]);
+        }
+
         for (var i = 0; i < providers.Count; i++) providers[i].Order = i;
         return Task.FromResult(providers);
     }
