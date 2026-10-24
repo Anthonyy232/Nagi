@@ -696,13 +696,26 @@ public partial class LibraryService
         var localPath = Path.Combine(_pathConfig.ArtistImageCachePath, $"{artistId}.fetched.jpg");
         if (_fileSystem.FileExists(localPath)) return localPath;
 
+        var imageBytes = await DownloadImageBytesAsync(imageUrl, cancellationToken).ConfigureAwait(false);
+        if (imageBytes is null) return null;
+
+        // Process image to standardized size (600px max, preserves aspect ratio).
+        // Offload heavy image processing to a background thread to prevent blocking.
+        var processedBytes = await Task.Run(() => _imageProcessor.ProcessImageBytesAsync(imageBytes), cancellationToken).ConfigureAwait(false);
+        cancellationToken.ThrowIfCancellationRequested();
+        return await ImageStorageHelper.SaveImageBytesAsync(_fileSystem, _pathConfig.ArtistImageCachePath,
+            artistId.ToString(), ".fetched", processedBytes).ConfigureAwait(false);
+    }
+
+    private async Task<byte[]?> DownloadImageBytesAsync(Uri imageUrl, CancellationToken cancellationToken)
+    {
         using var httpClient = _httpClientFactory.CreateClient("ImageDownloader");
 
-        return await _pipelines.ExecuteWithFallbackAsync<string?>(
+        return await _pipelines.ExecuteWithFallbackAsync<byte[]?>(
             ServiceProviderIds.ImageDownload,
             async ct =>
             {
-                _logger.LogDebug("Downloading artist image: {ImageUrl}", imageUrl);
+                _logger.LogDebug("Downloading image: {ImageUrl}", imageUrl);
                 return await httpClient.GetAsync(imageUrl, ct).ConfigureAwait(false);
             },
             async (response, ct) =>
@@ -713,13 +726,7 @@ public partial class LibraryService
                     return null;
                 }
 
-                var imageBytes = await response.Content.ReadAsByteArrayAsync(ct).ConfigureAwait(false);
-                // Process image to standardized size (600px max, preserves aspect ratio).
-                // Offload heavy image processing to a background thread to prevent blocking.
-                var processedBytes = await Task.Run(() => _imageProcessor.ProcessImageBytesAsync(imageBytes), ct).ConfigureAwait(false);
-                ct.ThrowIfCancellationRequested();
-                return await ImageStorageHelper.SaveImageBytesAsync(_fileSystem, _pathConfig.ArtistImageCachePath,
-                    artistId.ToString(), ".fetched", processedBytes).ConfigureAwait(false);
+                return await response.Content.ReadAsByteArrayAsync(ct).ConfigureAwait(false);
             },
             fallback: null,
             _logger,
