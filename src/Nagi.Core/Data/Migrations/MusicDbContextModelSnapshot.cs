@@ -140,10 +140,6 @@ namespace Nagi.Core.Data.Migrations
                         .HasColumnType("TEXT")
                         .UseCollation("NOCASE");
 
-                    b.Property<string>("RemoteImageUrl")
-                        .HasMaxLength(2000)
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("SortName")
                         .IsRequired()
                         .HasMaxLength(500)
