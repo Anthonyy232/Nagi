@@ -277,7 +277,10 @@ public class LrcService : ILrcService, IDisposable
         try
         {
             var document = LrcParser.Parse(content).Document;
-            var lyricLines = document.Lines.Select(line => new LyricLine(document.GetEffectiveTime(line.Timestamp), line.GetText()));
+            // LRC has no translation syntax, so files commonly repeat the original line's timestamp for it.
+            var lyricLines = document.Lines
+                .GroupBy(line => document.GetEffectiveTime(line.Timestamp))
+                .Select(group => CreateLine(group.Key, group.Select(line => line.GetText())));
             return new ParsedLrc(lyricLines, content);
         }
         catch (Exception ex)
@@ -285,6 +288,15 @@ public class LrcService : ILrcService, IDisposable
             _logger.LogError(ex, "Error parsing LRC content");
             return new ParsedLrc(Enumerable.Empty<LyricLine>(), content);
         }
+    }
+
+    private static LyricLine CreateLine(TimeSpan startTime, IEnumerable<string> texts)
+    {
+        var nonEmpty = texts.Where(text => !string.IsNullOrWhiteSpace(text)).ToList();
+        return new LyricLine(startTime, nonEmpty.FirstOrDefault() ?? string.Empty)
+        {
+            TranslatedText = nonEmpty.Count > 1 ? string.Join('\n', nonEmpty.Skip(1)) : null
+        };
     }
 
     public LyricLine? GetCurrentLine(ParsedLrc parsedLrc, TimeSpan currentTime, ref int searchStartIndex)
@@ -311,7 +323,6 @@ public class LrcService : ILrcService, IDisposable
         return bestMatchIndex != -1 ? lines[bestMatchIndex] : null;
     }
 
-    // An upper bound selects the last line when several lines share a timestamp.
     private static int FindBestMatchIndex(IReadOnlyList<LyricLine> lines, TimeSpan currentTime)
     {
         var low = 0;
