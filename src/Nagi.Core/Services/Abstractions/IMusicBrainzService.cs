@@ -7,4 +7,11 @@ public interface IMusicBrainzService
     /// </summary>
     /// <returns>The matching MBID, no match, or a retryable provider failure.</returns>
     Task<Data.ServiceResult<string>> SearchArtistAsync(string artistName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Searches MusicBrainz for the release group (album) matching the given title and artist.
+    /// </summary>
+    /// <returns>The matching release-group MBID, no match, or a retryable provider failure.</returns>
+    Task<Data.ServiceResult<string>> SearchReleaseGroupAsync(string albumTitle, string artistName,
+        CancellationToken cancellationToken = default);
 }

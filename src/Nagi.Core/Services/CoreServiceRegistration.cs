@@ -177,6 +177,7 @@ public static class CoreServiceRegistration
         services.AddSingleton<IListenBrainzScrobblerService>(sp => sp.GetRequiredService<ListenBrainzScrobblerService>());
         services.AddSingleton<IListenSubmitter>(sp => sp.GetRequiredService<ListenBrainzScrobblerService>());
         services.AddSingleton<IPresenceManager, PresenceManager>();
+        services.AddSingleton<IAlbumArtUrlResolver, AlbumArtUrlResolver>();
         services.AddSingleton<IPresenceService, DiscordPresenceService>();
         services.AddSingleton<IPresenceService, LastFmPresenceService>();
         services.AddSingleton<IPresenceService, ListenBrainzPresenceService>();
