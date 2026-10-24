@@ -181,6 +181,20 @@ public class LastFmMetadataServiceTests : IDisposable
         result.Status.Should().Be(ServiceResultStatus.SuccessNotFound);
         result.Data.Should().BeNull();
     }
+
+    // Last.fm sends error 6 with 200 for artists and with 404 for some other methods.
+    [Theory]
+    [InlineData(HttpStatusCode.OK)]
+    [InlineData(HttpStatusCode.NotFound)]
+    public async Task GetArtistInfoAsync_WhenArtistIsUnknown_ReturnsConclusiveNotFound(HttpStatusCode statusCode)
+    {
+        SetupApiKey();
+        SetupHttpResponse(statusCode, CreateErrorResponse(6, "The artist you supplied could not be found"));
+
+        var result = await _metadataService.GetArtistInfoAsync(ArtistName);
+
+        result.Status.Should().Be(ServiceResultStatus.SuccessNotFound);
+    }
     [Fact]
     public async Task GetArtistInfoAsync_WhenApiReturnsOtherError_ReturnsTemporaryError()
     {

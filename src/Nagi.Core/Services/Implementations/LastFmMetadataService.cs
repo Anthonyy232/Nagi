@@ -11,6 +11,7 @@ namespace Nagi.Core.Services.Implementations;
 public class LastFmMetadataService : ILastFmMetadataService
 {
     private const string LastFmApiBaseUrl = "https://ws.audioscrobbler.com/2.0/";
+    private const int NotFoundErrorCode = 6;
     private const int InvalidApiKeyErrorCode = 10;
     private const string ApiKeyName = ServiceProviderIds.LastFm;
 
@@ -95,6 +96,10 @@ public class LastFmMetadataService : ILastFmMetadataService
             {
                 var lastFmResponse = await response.Content
                     .ReadFromJsonAsync<LastFmArtistResponse>(cancellationToken: ct).ConfigureAwait(false);
+
+                // Last.fm reports an unknown artist as an error rather than an empty result.
+                if (lastFmResponse?.ErrorCode == NotFoundErrorCode)
+                    return (ServiceResult<ArtistInfo>.FromSuccessNotFound(), null);
 
                 if (!response.IsSuccessStatusCode || lastFmResponse?.ErrorCode is not null)
                 {
