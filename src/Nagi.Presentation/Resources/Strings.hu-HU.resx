@@ -1038,27 +1038,6 @@ Szeretné folytatni?</value>
   <data name="AlbumViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
     <value>Összes véletlenszerű lejátszása</value>
   </data>
-  <data name="AlbumViewPage_SongMenu_Play" xml:space="preserve">
-    <value>Lejátszás</value>
-  </data>
-  <data name="AlbumViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>Lejátszás következőként</value>
-  </data>
-  <data name="AlbumViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>Hozzáadás a sorhoz</value>
-  </data>
-  <data name="AlbumViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Hozzáadás lejátszási listához</value>
-  </data>
-  <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Ugrás az előadóhoz</value>
-  </data>
-  <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Megjelenítés a Fájlkezelőben</value>
-  </data>
-  <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>Lejátszás</value>
-  </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
     <value>Nem található dal ebben az albumban</value>
   </data>
@@ -1122,27 +1101,6 @@ Szeretné folytatni?</value>
   <data name="ArtistViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
     <value>Összes véletlenszerű lejátszása</value>
   </data>
-  <data name="ArtistViewPage_SongMenu_Play" xml:space="preserve">
-    <value>Lejátszás</value>
-  </data>
-  <data name="ArtistViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>Lejátszás következőként</value>
-  </data>
-  <data name="ArtistViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>Hozzáadás a sorhoz</value>
-  </data>
-  <data name="ArtistViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Hozzáadás lejátszási listához</value>
-  </data>
-  <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Ugrás az albumhoz</value>
-  </data>
-  <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Megjelenítés a Fájlkezelőben</value>
-  </data>
-  <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>Lejátszás</value>
-  </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
     <value>Nem található dal ehhez az előadóhoz</value>
   </data>
@@ -1181,30 +1139,6 @@ Szeretné folytatni?</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
     <value>Hozzáadás lejátszási listához</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_Play" xml:space="preserve">
-    <value>Lejátszás</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>Lejátszás következőként</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>Hozzáadás a sorhoz</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Hozzáadás lejátszási listához</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Ugrás az albumhoz</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Ugrás az előadóhoz</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Megjelenítés a Fájlkezelőben</value>
-  </data>
-  <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>Lejátszás</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Mappa</value>
@@ -1458,29 +1392,8 @@ Szeretné folytatni?</value>
   <data name="PlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
     <value>Összes véletlenszerű lejátszása</value>
   </data>
-  <data name="PlaylistSongViewPage_Context_Play" xml:space="preserve">
-    <value>Lejátszás</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
-    <value>Lejátszás következőként</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>Hozzáadás a sorhoz</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Ugrás az albumhoz</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Ugrás az előadóhoz</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Megjelenítés a Fájlkezelőben</value>
-  </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
     <value>Eltávolítás a lejátszási listáról</value>
-  </data>
-  <data name="PlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Lejátszás</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>Ez a lejátszási lista üres</value>
@@ -1505,30 +1418,6 @@ Szeretné folytatni?</value>
   </data>
   <data name="GenreViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
     <value>Összes véletlenszerű lejátszása</value>
-  </data>
-  <data name="GenreViewPage_Context_Play" xml:space="preserve">
-    <value>Lejátszás</value>
-  </data>
-  <data name="GenreViewPage_Context_PlayNext" xml:space="preserve">
-    <value>Lejátszás következőként</value>
-  </data>
-  <data name="GenreViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>Hozzáadás a sorhoz</value>
-  </data>
-  <data name="GenreViewPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Hozzáadás lejátszási listához</value>
-  </data>
-  <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Ugrás az albumhoz</value>
-  </data>
-  <data name="GenreViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Ugrás az előadóhoz</value>
-  </data>
-  <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Megjelenítés a Fájlkezelőben</value>
-  </data>
-  <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Lejátszás</value>
   </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
     <value>Nem található dal ehhez a műfajhoz</value>
@@ -1904,27 +1793,6 @@ Szeretné folytatni?</value>
   </data>
   <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
     <value>Összes véletlenszerű lejátszása</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_Play" xml:space="preserve">
-    <value>Lejátszás</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
-    <value>Lejátszás következőként</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>Hozzáadás a sorhoz</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Ugrás az albumhoz</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Ugrás az előadóhoz</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Megjelenítés a Fájlkezelőben</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Lejátszás</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>Egyetlen dal sem felel meg az aktuális szabályoknak</value>

@@ -38,6 +38,8 @@ public partial class SettingsService : IUISettingsService
     private const string NavigationItemsKey = "NavigationItems";
     private const string PlayerButtonSettingsKey = "PlayerButtonSettings";
     private const string QueueDisplaySettingsKey = "QueueDisplaySettings";
+    private const string SongListColumnsKey = "SongListColumns";
+    private const string ShowSongListHeaderKey = "ShowSongListHeader";
     private const string LastFmCredentialResource = "Nagi/LastFm";
     private const string LastFmAuthTokenKey = "LastFmAuthToken";
     private const string LastFmScrobblingEnabledKey = "LastFmScrobblingEnabled";
@@ -95,6 +97,8 @@ public partial class SettingsService : IUISettingsService
     public event Action? NavigationSettingsChanged;
     public event Action? PlayerButtonSettingsChanged;
     public event Action<QueueDisplaySettings>? QueueDisplaySettingsChanged;
+    public event Action<SongListColumns>? SongListColumnsChanged;
+    public event Action<bool>? ShowSongListHeaderSettingChanged;
     public event Action? LastFmSettingsChanged;
     public event Action? ListenBrainzSettingsChanged;
     public event Action<bool>? DiscordRichPresenceSettingChanged;
@@ -181,6 +185,8 @@ public partial class SettingsService : IUISettingsService
             SetNavigationItemsAsync(GetDefaultNavigationItems()),
             SetPlayerButtonSettingsAsync(GetDefaultPlayerButtonSettings()),
             SetQueueDisplaySettingsAsync(new QueueDisplaySettings()),
+            SetSongListColumnsAsync(SettingsDefaults.DefaultSongListColumns),
+            SetShowSongListHeaderAsync(SettingsDefaults.ShowSongListHeaderEnabled),
             SaveVolumeAsync(SettingsDefaults.Volume),
             SaveMuteStateAsync(SettingsDefaults.MuteState),
             SaveShuffleStateAsync(SettingsDefaults.ShuffleState),

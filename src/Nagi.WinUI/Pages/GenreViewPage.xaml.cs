@@ -17,7 +17,7 @@ public sealed partial class GenreViewPage : SongListPage
         ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<GenreViewViewModel>();
         DataContext = ViewModel;
         InitializeSongList(ViewModel, ownsViewModel: true, SearchToggleButton, SearchTextBox,
-            Strings.GenreViewPage_SearchButton_Search_ToolTip, SongsListView);
+            Strings.GenreViewPage_SearchButton_Search_ToolTip, ColumnHeaderHost, SongsListView);
     }
 
     public GenreViewViewModel ViewModel { get; }

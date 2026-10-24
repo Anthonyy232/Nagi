@@ -1,23 +1,21 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Models;
 using Nagi.Presentation.ViewModels;
+using Nagi.WinUI.Controls;
 using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Pages;
 
 /// <summary>
 ///     A searchable page of songs. The selection is whatever the list has selected, including the
-///     list's own Ctrl+A. Also handles double-click to play, the song context menu and the
-///     now-playing indicator.
+///     list's own Ctrl+A. Also handles double-click to play, the now-playing indicator and the column
+///     header; each row's context menu is part of <see cref="SongRow" />.
 /// </summary>
 public abstract class SongListPage : SearchablePage
 {
@@ -25,20 +23,21 @@ public abstract class SongListPage : SearchablePage
     private SongListViewModelBase? _viewModel;
     private ListView[] _songLists = [];
     private bool _ownsViewModel;
-    private ILogger? _logger;
 
     /// <summary>
     ///     Call after InitializeComponent. When <paramref name="ownsViewModel" /> is true the view model
     ///     is disposed on navigating away; cached pages with a shared view model pass false.
+    ///     The column header goes in <paramref name="columnHeaderHost" /> above the lists, not in them, so it
+    ///     stays in view and re-sorting doesn't make a list follow its old first row.
     /// </summary>
     protected void InitializeSongList(SongListViewModelBase viewModel, bool ownsViewModel, Button searchButton,
-        TextBox searchBox, string searchToolTip, params ListView[] songLists)
+        TextBox searchBox, string searchToolTip, Border columnHeaderHost, params ListView[] songLists)
     {
         InitializeSearch(viewModel, searchButton, searchBox, searchToolTip);
         _viewModel = viewModel;
         _ownsViewModel = ownsViewModel;
         _songLists = songLists;
-        _logger = App.Services!.GetRequiredService<ILoggerFactory>().CreateLogger(GetType());
+        columnHeaderHost.Child = CreateColumnHeader(viewModel);
         Loaded += AttachNowPlayingBinders;
         Unloaded += DetachNowPlayingBinders;
     }
@@ -72,27 +71,21 @@ public abstract class SongListPage : SearchablePage
             _viewModel!.PlaySongCommand.Execute(song);
     }
 
-    protected void SongItemMenuFlyout_Opening(object sender, object e)
+    private static SongRow CreateColumnHeader(SongListViewModelBase viewModel)
     {
-        if (sender is not MenuFlyout menu) return;
-
-        var item = menu.Target?.DataContext;
-        var song = GetSong(item);
-        // Right-clicking a row outside the selection acts on that row alone.
-        if (song is not null && !ActiveSongList.SelectedItems.Contains(item))
-            ActiveSongList.SelectedItem = item;
-
-        foreach (var subMenu in menu.Items.OfType<MenuFlyoutSubItem>())
+        var header = new SongRow(isHeader: true);
+        header.SetBinding(SongRow.ColumnsProperty, new Binding
         {
-            if (subMenu.Name.StartsWith("AddToPlaylistSubMenu", StringComparison.Ordinal))
-                PlaylistMenuFlyoutHelper.Populate(subMenu, _viewModel!.AvailablePlaylists,
-                    _viewModel.AddSelectedSongsToPlaylistCommand);
-            else if (song is not null && subMenu.Name.StartsWith("GoToArtistSubMenu", StringComparison.Ordinal))
-                ArtistMenuFlyoutHelper.PopulateSubMenu(subMenu, song, _viewModel!.GoToArtistCommand,
-                    _viewModel.GetArtistsForSongAsync, DispatcherQueue, _logger!);
-        }
-
-        ListeningMenuFlyoutHelper.PopulateFavorites(menu, _viewModel!);
+            Source = viewModel,
+            Path = new PropertyPath(nameof(SongListViewModelBase.VisibleColumns))
+        });
+        header.SetBinding(VisibilityProperty, new Binding
+        {
+            Source = viewModel,
+            Path = new PropertyPath(nameof(SongListViewModelBase.ShowsColumnHeader)),
+            Converter = (IValueConverter)Application.Current.Resources["BooleanToVisibilityConverter"]
+        });
+        return header;
     }
 
     protected void ListeningOptions_Opening(object sender, object e) =>

@@ -43,16 +43,16 @@ internal static class JumpListTasks
         var jumpList = await JumpList.LoadCurrentAsync();
         jumpList.SystemGroupKind = JumpListSystemGroupKind.None;
         jumpList.Items.Clear();
-        jumpList.Items.Add(CreateTask(ShuffleAllArgument, Strings.JumpList_ShuffleAll));
+        jumpList.Items.Add(CreateTask(ShuffleAllArgument, Strings.JumpList_ShuffleAll, "JumpListShuffle"));
         if (includeMiniPlayer)
-            jumpList.Items.Add(CreateTask(MiniPlayerArgument, Strings.JumpList_MiniPlayer));
+            jumpList.Items.Add(CreateTask(MiniPlayerArgument, Strings.JumpList_MiniPlayer, "JumpListMiniPlayer"));
         await jumpList.SaveAsync();
     }
 
-    private static JumpListItem CreateTask(string argument, string displayName)
+    private static JumpListItem CreateTask(string argument, string displayName, string iconName)
     {
         var item = JumpListItem.CreateWithArguments(argument, displayName);
-        item.Logo = new Uri("ms-appx:///Assets/Square44x44Logo.png");
+        item.Logo = new Uri($"ms-appx:///Assets/{iconName}.png");
         return item;
     }
 }

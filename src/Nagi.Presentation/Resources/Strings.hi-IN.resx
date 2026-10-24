@@ -1038,27 +1038,6 @@
   <data name="AlbumViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
     <value>शफ़ल करें और सभी चलाएँ</value>
   </data>
-  <data name="AlbumViewPage_SongMenu_Play" xml:space="preserve">
-    <value>चलाएँ</value>
-  </data>
-  <data name="AlbumViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>अगला चलाएँ</value>
-  </data>
-  <data name="AlbumViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>कतार में जोड़ें</value>
-  </data>
-  <data name="AlbumViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>प्लेलिस्ट में जोड़ें</value>
-  </data>
-  <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>कलाकार पर जाएँ</value>
-  </data>
-  <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>फ़ाइल एक्सप्लोरर में दिखाएँ</value>
-  </data>
-  <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>चलाएँ</value>
-  </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
     <value>इस एल्बम में कोई गाना नहीं मिला</value>
   </data>
@@ -1122,27 +1101,6 @@
   <data name="ArtistViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
     <value>शफ़ल करें और सभी चलाएँ</value>
   </data>
-  <data name="ArtistViewPage_SongMenu_Play" xml:space="preserve">
-    <value>चलाएँ</value>
-  </data>
-  <data name="ArtistViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>अगला चलाएँ</value>
-  </data>
-  <data name="ArtistViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>कतार में जोड़ें</value>
-  </data>
-  <data name="ArtistViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>प्लेलिस्ट में जोड़ें</value>
-  </data>
-  <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>एल्बम पर जाएँ</value>
-  </data>
-  <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>फ़ाइल एक्सप्लोरर में दिखाएँ</value>
-  </data>
-  <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>चलाएँ</value>
-  </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
     <value>इस कलाकार के लिए कोई गाना नहीं मिला</value>
   </data>
@@ -1181,30 +1139,6 @@
   </data>
   <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
     <value>प्लेलिस्ट में जोड़ें</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_Play" xml:space="preserve">
-    <value>चलाएँ</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>अगला चलाएँ</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>कतार में जोड़ें</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>प्लेलिस्ट में जोड़ें</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>एल्बम पर जाएँ</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>कलाकार पर जाएँ</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>फ़ाइल एक्सप्लोरर में दिखाएँ</value>
-  </data>
-  <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>चलाएँ</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>फ़ोल्डर</value>
@@ -1458,29 +1392,8 @@
   <data name="PlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
     <value>शफ़ल करें और सभी चलाएँ</value>
   </data>
-  <data name="PlaylistSongViewPage_Context_Play" xml:space="preserve">
-    <value>चलाएँ</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
-    <value>अगला चलाएँ</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>कतार में जोड़ें</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>एल्बम पर जाएँ</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>कलाकार पर जाएँ</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>फ़ाइल एक्सप्लोरर में दिखाएँ</value>
-  </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
     <value>प्लेलिस्ट से हटाएँ</value>
-  </data>
-  <data name="PlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>चलाएँ</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>यह प्लेलिस्ट खाली है</value>
@@ -1505,30 +1418,6 @@
   </data>
   <data name="GenreViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
     <value>शफ़ल करें और सभी चलाएँ</value>
-  </data>
-  <data name="GenreViewPage_Context_Play" xml:space="preserve">
-    <value>चलाएँ</value>
-  </data>
-  <data name="GenreViewPage_Context_PlayNext" xml:space="preserve">
-    <value>अगला चलाएँ</value>
-  </data>
-  <data name="GenreViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>कतार में जोड़ें</value>
-  </data>
-  <data name="GenreViewPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>प्लेलिस्ट में जोड़ें</value>
-  </data>
-  <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>एल्बम पर जाएँ</value>
-  </data>
-  <data name="GenreViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>कलाकार पर जाएँ</value>
-  </data>
-  <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>फ़ाइल एक्सप्लोरर में दिखाएँ</value>
-  </data>
-  <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>चलाएँ</value>
   </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
     <value>इस शैली के लिए कोई गाना नहीं मिला</value>
@@ -1904,27 +1793,6 @@
   </data>
   <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
     <value>शफ़ल करें और सभी चलाएँ</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_Play" xml:space="preserve">
-    <value>चलाएँ</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
-    <value>अगला चलाएँ</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>कतार में जोड़ें</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>एल्बम पर जाएँ</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>कलाकार पर जाएँ</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>फ़ाइल एक्सप्लोरर में दिखाएँ</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>चलाएँ</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>वर्तमान नियमों से कोई गाना मेल नहीं खाता</value>

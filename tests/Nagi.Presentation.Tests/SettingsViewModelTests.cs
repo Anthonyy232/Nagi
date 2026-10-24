@@ -546,6 +546,20 @@ public class SettingsViewModelTests : IDisposable
         await _settings.DidNotReceive().SetPlayerTintIntensityAsync(.75);
     }
 
+    [Fact]
+    public async Task ResetSongListColumns_SavesTheDefaultsOnceRatherThanEachToggle()
+    {
+        var trackNumber = _viewModel.Appearance.SongListColumnSettings.Single(s => s.Column == SongListColumns.TrackNumber);
+        trackNumber.IsEnabled = true;
+        _settings.ClearReceivedCalls();
+
+        await _viewModel.Appearance.ResetSongListColumnsCommand.ExecuteAsync(null);
+
+        trackNumber.IsEnabled.Should().BeFalse();
+        await _settings.Received(1).SetSongListColumnsAsync(Arg.Any<SongListColumns>());
+        await _settings.Received(1).SetSongListColumnsAsync(SettingsDefaults.DefaultSongListColumns);
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]

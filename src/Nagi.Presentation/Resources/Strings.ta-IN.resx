@@ -1038,27 +1038,6 @@
   <data name="AlbumViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
     <value>அனைத்தையும் கலக்கி இயக்கு</value>
   </data>
-  <data name="AlbumViewPage_SongMenu_Play" xml:space="preserve">
-    <value>இயக்கு</value>
-  </data>
-  <data name="AlbumViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>அடுத்து இயக்கு</value>
-  </data>
-  <data name="AlbumViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>வரிசையில் சேர்</value>
-  </data>
-  <data name="AlbumViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>பாடல் பட்டியலில் சேர்</value>
-  </data>
-  <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>கலைஞரிடம் செல்</value>
-  </data>
-  <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>ஃபைல் எக்ஸ்ப்ளோரரில் காட்டு</value>
-  </data>
-  <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>இயக்கு</value>
-  </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
     <value>இந்த ஆல்பத்தில் பாடல்கள் எதுவும் இல்லை</value>
   </data>
@@ -1122,27 +1101,6 @@
   <data name="ArtistViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
     <value>அனைத்தையும் கலக்கி இயக்கு</value>
   </data>
-  <data name="ArtistViewPage_SongMenu_Play" xml:space="preserve">
-    <value>இயக்கு</value>
-  </data>
-  <data name="ArtistViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>அடுத்து இயக்கு</value>
-  </data>
-  <data name="ArtistViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>வரிசையில் சேர்</value>
-  </data>
-  <data name="ArtistViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>பாடல் பட்டியலில் சேர்</value>
-  </data>
-  <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>ஆல்பத்திற்குச் செல்</value>
-  </data>
-  <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>ஃபைல் எக்ஸ்ப்ளோரரில் காட்டு</value>
-  </data>
-  <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>இயக்கு</value>
-  </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
     <value>இந்த கலைஞருக்கு பாடல்கள் எதுவும் இல்லை</value>
   </data>
@@ -1181,30 +1139,6 @@
   </data>
   <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
     <value>பாடல் பட்டியலில் சேர்</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_Play" xml:space="preserve">
-    <value>இயக்கு</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>அடுத்து இயக்கு</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>வரிசையில் சேர்</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>பாடல் பட்டியலில் சேர்</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>ஆல்பத்திற்குச் செல்</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>கலைஞரிடம் செல்</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>ஃபைல் எக்ஸ்ப்ளோரரில் காட்டு</value>
-  </data>
-  <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>இயக்கு</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>கோப்புறை</value>
@@ -1458,29 +1392,8 @@
   <data name="PlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
     <value>அனைத்தையும் கலக்கி இயக்கு</value>
   </data>
-  <data name="PlaylistSongViewPage_Context_Play" xml:space="preserve">
-    <value>இயக்கு</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
-    <value>அடுத்து இயக்கு</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>வரிசையில் சேர்</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>ஆல்பத்திற்குச் செல்</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>கலைஞரிடம் செல்</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>ஃபைல் எக்ஸ்ப்ளோரரில் காட்டு</value>
-  </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
     <value>பாடல் பட்டியலிருந்து அகற்று</value>
-  </data>
-  <data name="PlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>இயக்கு</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>இந்தப் பிளேலிஸ்ட் காலியாக உள்ளது</value>
@@ -1505,30 +1418,6 @@
   </data>
   <data name="GenreViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
     <value>அனைத்தையும் கலக்கி இயக்கு</value>
-  </data>
-  <data name="GenreViewPage_Context_Play" xml:space="preserve">
-    <value>இயக்கு</value>
-  </data>
-  <data name="GenreViewPage_Context_PlayNext" xml:space="preserve">
-    <value>அடுத்து இயக்கு</value>
-  </data>
-  <data name="GenreViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>வரிசையில் சேர்</value>
-  </data>
-  <data name="GenreViewPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>பாடல் பட்டியலில் சேர்</value>
-  </data>
-  <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>ஆல்பத்திற்குச் செல்</value>
-  </data>
-  <data name="GenreViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>கலைஞரிடம் செல்</value>
-  </data>
-  <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>ஃபைல் எக்ஸ்ப்ளோரரில் காட்டு</value>
-  </data>
-  <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>இயக்கு</value>
   </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
     <value>இந்த வகைக்கு பாடல்கள் எதுவும் இல்லை</value>
@@ -1904,27 +1793,6 @@
   </data>
   <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
     <value>அனைத்தையும் கலக்கி இயக்கு</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_Play" xml:space="preserve">
-    <value>இயக்கு</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
-    <value>அடுத்து இயக்கு</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>வரிசையில் சேர்</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>ஆல்பத்திற்குச் செல்</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>கலைஞரிடம் செல்</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>ஃபைல் எக்ஸ்ப்ளோரரில் காட்டு</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>இயக்கு</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>தற்போதைய விதிகளுடன் பாடல்கள் எதுவும் பொருந்தவில்லை</value>

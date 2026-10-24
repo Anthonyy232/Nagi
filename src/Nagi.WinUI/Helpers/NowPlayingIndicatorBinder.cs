@@ -85,7 +85,9 @@ public sealed class NowPlayingIndicatorBinder : IDisposable
 
     private void UpdateContainer(SelectorItem? container, object? item)
     {
-        if (container?.ContentTemplateRoot is not FrameworkElement root) return;
+        if (container?.ContentTemplateRoot is not FrameworkElement templateRoot) return;
+        // A row that is a user control, like SongRow, keeps its names in its own namescope.
+        var root = templateRoot is UserControl { Content: FrameworkElement content } ? content : templateRoot;
 
         var rowSongId = _songIdExtractor(item);
         var isThisRowPlaying = rowSongId is not null && _source.CurrentPlayingSongId == rowSongId;

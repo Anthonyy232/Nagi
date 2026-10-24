@@ -193,6 +193,15 @@ public partial class UIService : IUIService
         return filePicker;
     }
 
+    public async Task ShowSongInfoAsync(Song song)
+    {
+        if (!TryGetXamlRoot(out var xamlRoot)) return;
+
+        var viewModel = _viewModelFactory.Create<SongInfoViewModel>();
+        await viewModel.LoadAsync(song);
+        await ShowDialogAsync(new SongInfoDialog(viewModel) { XamlRoot = xamlRoot });
+    }
+
     public async Task<SmartPlaylist?> ShowSmartPlaylistEditorAsync(SmartPlaylist? editing = null)
     {
         if (!TryGetXamlRoot(out var xamlRoot)) return null;

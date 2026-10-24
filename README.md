@@ -41,6 +41,7 @@ Windows 10 (1809 or later) or Windows 11, on x64 or ARM64. The Store version upd
 - Playlists, rule-based smart playlists, and M3U export.
 - Favorites (Ctrl+D), stored in Nagi's database without touching your files.
 - Searchable listening history and an Insights page.
+- Choose which columns song lists show, such as BPM, plays or date added, and open Song Info for a track's tags and file details.
 
 **Playback**
 

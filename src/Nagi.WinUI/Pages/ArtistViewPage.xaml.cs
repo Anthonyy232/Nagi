@@ -29,7 +29,7 @@ public sealed partial class ArtistViewPage : SongListPage
         ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<ArtistViewViewModel>();
         DataContext = ViewModel;
         InitializeSongList(ViewModel, ownsViewModel: true, SearchToggleButton, SearchTextBox,
-            Strings.ArtistViewPage_SearchButton_Search_ToolTip, SongsListView);
+            Strings.ArtistViewPage_SearchButton_Search_ToolTip, ColumnHeaderHost, SongsListView);
         SongsListView.Loaded += OnSongsListViewLoaded;
     }
 

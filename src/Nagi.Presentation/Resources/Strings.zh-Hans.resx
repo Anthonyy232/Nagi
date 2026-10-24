@@ -1038,27 +1038,6 @@
   <data name="AlbumViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
     <value>随机播放全部</value>
   </data>
-  <data name="AlbumViewPage_SongMenu_Play" xml:space="preserve">
-    <value>播放</value>
-  </data>
-  <data name="AlbumViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>下一首播放</value>
-  </data>
-  <data name="AlbumViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>添加到队列</value>
-  </data>
-  <data name="AlbumViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>添加到播放列表</value>
-  </data>
-  <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>转到艺术家</value>
-  </data>
-  <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>在文件资源管理器中显示</value>
-  </data>
-  <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>播放</value>
-  </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
     <value>在此专辑中未找到歌曲</value>
   </data>
@@ -1122,27 +1101,6 @@
   <data name="ArtistViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
     <value>随机播放全部</value>
   </data>
-  <data name="ArtistViewPage_SongMenu_Play" xml:space="preserve">
-    <value>播放</value>
-  </data>
-  <data name="ArtistViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>下一首播放</value>
-  </data>
-  <data name="ArtistViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>添加到队列</value>
-  </data>
-  <data name="ArtistViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>添加到播放列表</value>
-  </data>
-  <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>转到专辑</value>
-  </data>
-  <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>在文件资源管理器中显示</value>
-  </data>
-  <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>播放</value>
-  </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
     <value>此艺术家未找到歌曲</value>
   </data>
@@ -1181,30 +1139,6 @@
   </data>
   <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
     <value>添加到播放列表</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_Play" xml:space="preserve">
-    <value>播放</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>下一首播放</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>添加到队列</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>添加到播放列表</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>转到专辑</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>转到艺术家</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>在文件资源管理器中显示</value>
-  </data>
-  <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>播放</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>文件夹</value>
@@ -1458,29 +1392,8 @@
   <data name="PlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
     <value>随机播放全部</value>
   </data>
-  <data name="PlaylistSongViewPage_Context_Play" xml:space="preserve">
-    <value>播放</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
-    <value>下一首播放</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>添加到队列</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>转到专辑</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>转到艺术家</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>在文件资源管理器中显示</value>
-  </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
     <value>从播放列表中移除</value>
-  </data>
-  <data name="PlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>播放</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>此播放列表为空</value>
@@ -1505,30 +1418,6 @@
   </data>
   <data name="GenreViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
     <value>随机播放全部</value>
-  </data>
-  <data name="GenreViewPage_Context_Play" xml:space="preserve">
-    <value>播放</value>
-  </data>
-  <data name="GenreViewPage_Context_PlayNext" xml:space="preserve">
-    <value>下一首播放</value>
-  </data>
-  <data name="GenreViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>添加到队列</value>
-  </data>
-  <data name="GenreViewPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>添加到播放列表</value>
-  </data>
-  <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>转到专辑</value>
-  </data>
-  <data name="GenreViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>转到艺术家</value>
-  </data>
-  <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>在文件资源管理器中显示</value>
-  </data>
-  <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>播放</value>
   </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
     <value>此流派未找到歌曲</value>
@@ -1904,27 +1793,6 @@
   </data>
   <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
     <value>随机播放全部</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_Play" xml:space="preserve">
-    <value>播放</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
-    <value>下一首播放</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>添加到队列</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>转到专辑</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>转到艺术家</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>在文件资源管理器中显示</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>播放</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>没有歌曲符合当前规则</value>

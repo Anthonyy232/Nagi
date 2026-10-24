@@ -450,6 +450,49 @@
                     </ListView>
                 </controls:SettingsCard>
 
+                <controls:SettingsCard
+                    Header="{x:Bind resources:Strings.SettingsPage_SongListHeader_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_SongListHeader_Description, Mode=OneTime}">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8FD;" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch
+                        HorizontalAlignment="Right"
+                        IsOn="{x:Bind ViewModel.Appearance.IsSongListHeaderEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
+                <controls:SettingsExpander
+                    AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_SongListColumns_Header, Mode=OneTime}"
+                    Description="{x:Bind resources:Strings.SettingsPage_SongListColumns_Description, Mode=OneTime}"
+                    ItemsSource="{x:Bind ViewModel.Appearance.SongListColumnSettings}">
+                    <controls:SettingsExpander.Header>
+                        <Grid HorizontalAlignment="Left" ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="{x:Bind resources:Strings.SettingsPage_SongListColumns_Header, Mode=OneTime}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                            <HyperlinkButton
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                Command="{x:Bind ViewModel.Appearance.ResetSongListColumnsCommand}"
+                                Style="{StaticResource AnimatedHyperlinkButtonStyle}"
+                                Content="{x:Bind resources:Strings.SettingsPage_ResetAccentColor_Content, Mode=OneTime}"
+                                FontSize="12"
+                                Padding="4,2" />
+                        </Grid>
+                    </controls:SettingsExpander.Header>
+                    <controls:SettingsExpander.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8FD;" />
+                    </controls:SettingsExpander.HeaderIcon>
+                    <controls:SettingsExpander.ItemTemplate>
+                        <DataTemplate x:DataType="models:SongListColumnSetting">
+                            <controls:SettingsCard Header="{x:Bind DisplayName}">
+                                <ToggleSwitch IsOn="{x:Bind IsEnabled, Mode=TwoWay}" />
+                            </controls:SettingsCard>
+                        </DataTemplate>
+                    </controls:SettingsExpander.ItemTemplate>
+                </controls:SettingsExpander>
+
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{x:Bind resources:Strings.SettingsPage_Section_Player, Mode=OneTime}" />
 
                 <controls:SettingsCard

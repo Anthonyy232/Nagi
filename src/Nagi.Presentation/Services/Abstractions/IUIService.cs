@@ -40,6 +40,11 @@ public interface IUIService
     /// <param name="filePath">The full path to a file within the target directory.</param>
     Task ShowInFolderAsync(string filePath);
 
+    /// <summary>
+    ///     Shows a read-only view of the song's tags, file details and listening stats.
+    /// </summary>
+    Task ShowSongInfoAsync(Song song);
+
     /// <returns>False if no app could open it.</returns>
     Task<bool> OpenUriAsync(Uri uri);
 

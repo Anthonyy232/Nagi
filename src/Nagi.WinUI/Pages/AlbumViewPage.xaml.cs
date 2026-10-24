@@ -18,7 +18,7 @@ public sealed partial class AlbumViewPage : SongListPage
         ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<AlbumViewViewModel>();
         DataContext = ViewModel;
         InitializeSongList(ViewModel, ownsViewModel: true, SearchToggleButton, SearchTextBox,
-            Strings.AlbumViewPage_SearchButton_Search_ToolTip, SongsListView, GroupedSongsListView);
+            Strings.AlbumViewPage_SearchButton_Search_ToolTip, ColumnHeaderHost, SongsListView, GroupedSongsListView);
     }
 
     public AlbumViewViewModel ViewModel { get; }

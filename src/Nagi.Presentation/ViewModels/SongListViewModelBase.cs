@@ -12,7 +12,9 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
+using Nagi.Presentation.Services;
 using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.Presentation.ViewModels;
@@ -86,6 +88,9 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         _playbackService.TrackChanged += OnPlaybackTrackChanged;
         IsPlaying = _playbackService.IsPlaying;
         _playbackService.PlaybackStateChanged += OnPlaybackStateChanged;
+        _settingsService.SongListColumnsChanged += OnSongListColumnsChanged;
+        _settingsService.ShowSongListHeaderSettingChanged += OnShowSongListHeaderChanged;
+        _ = LoadListSettingsAsync();
     }
 
     private void OnPlaybackTrackChanged()
@@ -159,10 +164,46 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
     public string CurrentSortOrderText => SortOrderHelper.GetDisplayName(CurrentSortOrder);
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(VisibleColumns))]
+    public partial SongListColumns ChosenColumns { get; set; } = SettingsDefaults.DefaultSongListColumns;
+
+    [ObservableProperty] public partial bool ShowsColumnHeader { get; set; } = SettingsDefaults.ShowSongListHeaderEnabled;
+
+    /// <summary>
+    ///     The chosen columns, less any that every row would repeat, such as the album on an album's page.
+    /// </summary>
+    public virtual SongListColumns VisibleColumns => ChosenColumns;
+
+    private async Task LoadListSettingsAsync()
+    {
+        ChosenColumns = await _settingsService.GetSongListColumnsAsync();
+        ShowsColumnHeader = await _settingsService.GetShowSongListHeaderAsync();
+    }
+
+    private void OnSongListColumnsChanged(SongListColumns columns)
+    {
+        if (_isDisposed) return;
+        _dispatcherService.TryEnqueue(() =>
+        {
+            if (!_isDisposed) ChosenColumns = columns;
+        });
+    }
+
+    private void OnShowSongListHeaderChanged(bool isEnabled)
+    {
+        if (_isDisposed) return;
+        _dispatcherService.TryEnqueue(() =>
+        {
+            if (!_isDisposed) ShowsColumnHeader = isEnabled;
+        });
+    }
+
     public bool ShowEmptyState => !IsLoading && Songs.Count == 0;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ShowInFolderCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ShowSongInfoCommand))]
     [NotifyCanExecuteChangedFor(nameof(GoToAlbumCommand))]
     [NotifyCanExecuteChangedFor(nameof(GoToArtistCommand))]
     public partial bool IsSingleSongSelected { get; set; }
@@ -499,6 +540,13 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         await _uiService.ShowInFolderAsync(targetSong.FilePath);
     }
 
+    [RelayCommand(CanExecute = nameof(CanExecuteSingleSongCommands))]
+    private async Task ShowSongInfoAsync(Song? song)
+    {
+        if ((song ?? SelectedSongs.FirstOrDefault()) is { } targetSong)
+            await _uiService.ShowSongInfoAsync(targetSong);
+    }
+
     [RelayCommand]
     private async Task GoToAlbumAsync(object? parameter)
     {
@@ -630,6 +678,8 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         _playlistService.PlaylistsChanged -= OnPlaylistsChanged;
         _playbackService.TrackChanged -= OnPlaybackTrackChanged;
         _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
+        _settingsService.SongListColumnsChanged -= OnSongListColumnsChanged;
+        _settingsService.ShowSongListHeaderSettingChanged -= OnShowSongListHeaderChanged;
         Songs.CollectionChanged -= OnSongsCollectionChanged;
 
         base.Dispose();

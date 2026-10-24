@@ -5,12 +5,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:ImageEx"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:Nagi.WinUI.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Nagi.Core.Models"
     xmlns:helpers="using:Nagi.Core.Helpers"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
-    xmlns:presentationHelpers="using:Nagi.Presentation.Helpers"
     xmlns:viewmodels="using:Nagi.Presentation.ViewModels"
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
     xmlns:resources="using:Nagi.Presentation.Resources"
@@ -187,166 +185,73 @@
         </StackPanel>
 
         <!-- Grouped ListView for Disc mode -->
-        <ListView uihelpers:ScrollEdgeFade.IsEnabled="True"
-            Grid.Row="1"
-            x:Name="GroupedSongsListView"
-            Padding="{StaticResource PageContentPadding}"
-            IsItemClickEnabled="True"
-            ItemsSource="{x:Bind ViewModel.GroupedSongsFlat, Mode=OneWay}"
-            SelectionChanged="SongsListView_SelectionChanged"
-            SelectionMode="Extended"
-            DoubleTapped="SongsListView_DoubleTapped"
-            Visibility="{x:Bind ViewModel.IsGroupedByDisc, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <ListView.ItemContainerStyleSelector>
-                <uihelpers:HeaderedListStyleSelector>
-                    <uihelpers:HeaderedListStyleSelector.HeaderStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="MinHeight" Value="0" />
-                            <Setter Property="Padding" Value="0,16,0,8" />
-                            <Setter Property="IsHitTestVisible" Value="False" />
-                            <Setter Property="IsTabStop" Value="False" />
-                        </Style>
-                    </uihelpers:HeaderedListStyleSelector.HeaderStyle>
-                    <uihelpers:HeaderedListStyleSelector.SongStyle>
-                        <Style TargetType="ListViewItem" BasedOn="{StaticResource SongListViewPageListViewItemStyle}" />
-                    </uihelpers:HeaderedListStyleSelector.SongStyle>
-                </uihelpers:HeaderedListStyleSelector>
-            </ListView.ItemContainerStyleSelector>
-            <ListView.ItemTemplateSelector>
-                <uihelpers:HeaderedListTemplateSelector>
-                    <uihelpers:HeaderedListTemplateSelector.HeaderTemplate>
-                        <DataTemplate x:DataType="viewmodels:DiscHeader">
-                            <TextBlock
-                                Text="{x:Bind Title}"
-                                Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                Foreground="{ThemeResource TextFillColorSecondary}"
-                                FontSize="13"
-                                Margin="0,0,0,0" />
-                        </DataTemplate>
-                    </uihelpers:HeaderedListTemplateSelector.HeaderTemplate>
-                    <uihelpers:HeaderedListTemplateSelector.SongTemplate>
-                        <DataTemplate x:DataType="models:Song">
-                            <Grid Height="54" ColumnSpacing="12" Background="Transparent">
-                                <Grid.ContextFlyout>
-                                    <MenuFlyout Opening="SongItemMenuFlyout_Opening">
-                                        <MenuFlyoutItem Text="{x:Bind resources:Strings.AlbumViewPage_SongMenu_Play, Mode=OneTime}" Command="{Binding DataContext.PlaySelectedSongsCommand, ElementName=pageRoot}" />
-                                        <MenuFlyoutItem Text="{x:Bind resources:Strings.AlbumViewPage_SongMenu_PlayNext, Mode=OneTime}" Command="{Binding DataContext.PlaySelectedSongsNextCommand, ElementName=pageRoot}" />
-                                        <MenuFlyoutItem Text="{x:Bind resources:Strings.AlbumViewPage_SongMenu_AddToQueue, Mode=OneTime}" Command="{Binding DataContext.AddSelectedSongsToQueueCommand, ElementName=pageRoot}" />
-                                        <MenuFlyoutSubItem x:Name="AddToPlaylistSubMenuGrouped" Text="{x:Bind resources:Strings.AlbumViewPage_SongMenu_AddToPlaylist, Mode=OneTime}" />
-                                        <MenuFlyoutSeparator Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                        <MenuFlyoutSubItem x:Name="GoToArtistSubMenuGrouped" Text="{x:Bind resources:Strings.AlbumViewPage_SongMenu_GoToArtist, Mode=OneTime}" Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                        <MenuFlyoutItem Text="{x:Bind resources:Strings.AlbumViewPage_SongMenu_ShowInExplorer, Mode=OneTime}" Command="{Binding DataContext.ShowInFolderCommand, ElementName=pageRoot}" CommandParameter="{x:Bind}" Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                    </MenuFlyout>
-                                </Grid.ContextFlyout>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition MinWidth="50" Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <Button Grid.Column="0" ToolTipService.ToolTip="{x:Bind resources:Strings.AlbumViewPage_SongPlayButton_ToolTip, Mode=OneTime}" AutomationProperties.Name="{x:Bind resources:Strings.AlbumViewPage_SongPlayButton_ToolTip, Mode=OneTime}" Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}" CommandParameter="{x:Bind}" Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
-                                    <Border Width="42" Height="42" CornerRadius="{StaticResource ArtworkCornerRadius}" Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                        <controls:ImageEx Width="42" Height="42" IsCacheEnabled="True" Stretch="UniformToFill"
-                                                          DecodePixelWidth="48" DecodePixelType="Logical"
-                                                          Source="{x:Bind presentationHelpers:ImageUriHelper.GetUriWithCacheBuster(AlbumArtUriFromTrack, FileModifiedDate), Mode=OneTime}" />
-                                    </Border>
-                                </Button>
-                                <uicontrols:NowPlayingIndicator x:Name="NowPlayingIndicator" Grid.Column="0" Width="42" Height="42" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                <TextBlock Grid.Column="1" MinWidth="30" HorizontalAlignment="Center" Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}" Text="{x:Bind TrackNumber}" />
-                                <TextBlock Grid.Column="2" x:Name="SongTitle" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Bind Title}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center" />
-                                <TextBlock Grid.Column="3" Margin="0,0,12,0" HorizontalAlignment="Right" Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}" Text="{x:Bind Duration, Converter={StaticResource TimeSpanToTimeStringConverter}}" />
-                            </Grid>
-                        </DataTemplate>
-                    </uihelpers:HeaderedListTemplateSelector.SongTemplate>
-                </uihelpers:HeaderedListTemplateSelector>
-            </ListView.ItemTemplateSelector>
-        </ListView>
+        <Grid Grid.Row="1" RowDefinitions="Auto,*">
+            <Border x:Name="ColumnHeaderHost" Padding="{StaticResource PageContentPadding}" />
+            <ListView uihelpers:ScrollEdgeFade.IsEnabled="True"
+                Grid.Row="1"
+                x:Name="GroupedSongsListView"
+                Padding="{StaticResource PageContentPadding}"
+                IsItemClickEnabled="True"
+                ItemsSource="{x:Bind ViewModel.GroupedSongsFlat, Mode=OneWay}"
+                SelectionChanged="SongsListView_SelectionChanged"
+                SelectionMode="Extended"
+                DoubleTapped="SongsListView_DoubleTapped"
+                Visibility="{x:Bind ViewModel.IsGroupedByDisc, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <ListView.ItemContainerStyleSelector>
+                    <uihelpers:HeaderedListStyleSelector>
+                        <uihelpers:HeaderedListStyleSelector.HeaderStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="MinHeight" Value="0" />
+                                <Setter Property="Padding" Value="0,16,0,8" />
+                                <Setter Property="IsHitTestVisible" Value="False" />
+                                <Setter Property="IsTabStop" Value="False" />
+                            </Style>
+                        </uihelpers:HeaderedListStyleSelector.HeaderStyle>
+                        <uihelpers:HeaderedListStyleSelector.SongStyle>
+                            <Style TargetType="ListViewItem" BasedOn="{StaticResource SongListViewPageListViewItemStyle}" />
+                        </uihelpers:HeaderedListStyleSelector.SongStyle>
+                    </uihelpers:HeaderedListStyleSelector>
+                </ListView.ItemContainerStyleSelector>
+                <ListView.ItemTemplateSelector>
+                    <uihelpers:HeaderedListTemplateSelector>
+                        <uihelpers:HeaderedListTemplateSelector.HeaderTemplate>
+                            <DataTemplate x:DataType="viewmodels:DiscHeader">
+                                <TextBlock
+                                    Text="{x:Bind Title}"
+                                    Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                    Foreground="{ThemeResource TextFillColorSecondary}"
+                                    FontSize="13"
+                                    Margin="0,0,0,0" />
+                            </DataTemplate>
+                        </uihelpers:HeaderedListTemplateSelector.HeaderTemplate>
+                        <uihelpers:HeaderedListTemplateSelector.SongTemplate>
+                            <DataTemplate x:DataType="models:Song">
+                                <uicontrols:SongRow Song="{x:Bind}" ViewModel="{Binding DataContext, ElementName=pageRoot}" Columns="{Binding DataContext.VisibleColumns, ElementName=pageRoot}" ShowDiscNumber="False" ShowGoToAlbum="False" />
+                            </DataTemplate>
+                        </uihelpers:HeaderedListTemplateSelector.SongTemplate>
+                    </uihelpers:HeaderedListTemplateSelector>
+                </ListView.ItemTemplateSelector>
+            </ListView>
 
-        <!-- Regular ListView for other sort modes -->
-        <ListView uihelpers:ScrollEdgeFade.IsEnabled="True"
-            Grid.Row="1"
-            x:Name="SongsListView"
-            Padding="{StaticResource PageContentPadding}"
-            IsItemClickEnabled="True"
-            ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
-            ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
-            SelectionChanged="SongsListView_SelectionChanged"
-            SelectionMode="Extended"
-            DoubleTapped="SongsListView_DoubleTapped"
-            Visibility="{x:Bind ViewModel.IsGroupedByDisc, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="models:Song">
-                    <Grid Height="54" ColumnSpacing="12" Background="Transparent">
-                        <Grid.ContextFlyout>
-                            <MenuFlyout Opening="SongItemMenuFlyout_Opening">
-                                <MenuFlyoutItem
-                                    Text="{x:Bind resources:Strings.AlbumViewPage_SongMenu_Play, Mode=OneTime}"
-                                    Command="{Binding DataContext.PlaySelectedSongsCommand, ElementName=pageRoot}" />
-                                <MenuFlyoutItem
-                                    Text="{x:Bind resources:Strings.AlbumViewPage_SongMenu_PlayNext, Mode=OneTime}"
-                                    Command="{Binding DataContext.PlaySelectedSongsNextCommand, ElementName=pageRoot}" />
-                                <MenuFlyoutItem
-                                    Text="{x:Bind resources:Strings.AlbumViewPage_SongMenu_AddToQueue, Mode=OneTime}"
-                                    Command="{Binding DataContext.AddSelectedSongsToQueueCommand, ElementName=pageRoot}" />
-                                <MenuFlyoutSubItem x:Name="AddToPlaylistSubMenu" Text="{x:Bind resources:Strings.AlbumViewPage_SongMenu_AddToPlaylist, Mode=OneTime}" />
-                                <MenuFlyoutSeparator
-                                    Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                <MenuFlyoutSubItem x:Name="GoToArtistSubMenu"
-                                                   Text="{x:Bind resources:Strings.AlbumViewPage_SongMenu_GoToArtist, Mode=OneTime}"
-                                                   Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                <MenuFlyoutItem
-                                    Text="{x:Bind resources:Strings.AlbumViewPage_SongMenu_ShowInExplorer, Mode=OneTime}"
-                                    Command="{Binding DataContext.ShowInFolderCommand, ElementName=pageRoot}"
-                                    CommandParameter="{x:Bind}"
-                                    Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            </MenuFlyout>
-                        </Grid.ContextFlyout>
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition MinWidth="50" Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <Button
-                            Grid.Column="0"
-                            ToolTipService.ToolTip="{x:Bind resources:Strings.AlbumViewPage_SongPlayButton_ToolTip, Mode=OneTime}"
-                            AutomationProperties.Name="{x:Bind resources:Strings.AlbumViewPage_SongPlayButton_ToolTip, Mode=OneTime}"
-                            Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}"
-                            CommandParameter="{x:Bind}"
-                            Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
-                            <Border Width="42" Height="42" CornerRadius="{StaticResource ArtworkCornerRadius}"
-                                    Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <controls:ImageEx Width="42" Height="42"
-                                    IsCacheEnabled="True"
-                                    Stretch="UniformToFill"
-                                    DecodePixelWidth="48"
-                                    DecodePixelType="Logical"
-                                    Source="{x:Bind presentationHelpers:ImageUriHelper.GetUriWithCacheBuster(AlbumArtUriFromTrack, FileModifiedDate), Mode=OneTime}" />
-                            </Border>
-                        </Button>
-                        <uicontrols:NowPlayingIndicator
-                            x:Name="NowPlayingIndicator"
-                            Grid.Column="0"
-                            Width="42"
-                            Height="42"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center" />
-
-                        <TextBlock Grid.Column="1" MinWidth="30" HorizontalAlignment="Center"
-                                   Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
-                                   Text="{x:Bind TrackDisplay}" />
-
-                        <TextBlock Grid.Column="2" x:Name="SongTitle" Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Bind Title}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center" />
-
-                        <TextBlock Grid.Column="3" Margin="0,0,12,0" HorizontalAlignment="Right"
-                                   Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
-                                   Text="{x:Bind Duration, Converter={StaticResource TimeSpanToTimeStringConverter}}" />
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+            <!-- Regular ListView for other sort modes -->
+            <ListView uihelpers:ScrollEdgeFade.IsEnabled="True"
+                Grid.Row="1"
+                x:Name="SongsListView"
+                Padding="{StaticResource PageContentPadding}"
+                IsItemClickEnabled="True"
+                ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
+                ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
+                SelectionChanged="SongsListView_SelectionChanged"
+                SelectionMode="Extended"
+                DoubleTapped="SongsListView_DoubleTapped"
+                Visibility="{x:Bind ViewModel.IsGroupedByDisc, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Song">
+                        <uicontrols:SongRow Song="{x:Bind}" ViewModel="{Binding DataContext, ElementName=pageRoot}" Columns="{Binding DataContext.VisibleColumns, ElementName=pageRoot}" ShowGoToAlbum="False" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
 
         <uicontrols:PaginationControl
             Grid.Row="2"

@@ -12,6 +12,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
@@ -236,6 +237,8 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         }
     }
 
+
+    public override SongListColumns VisibleColumns => ChosenColumns & ~SongListColumns.Artist;
 
     protected override PlaybackContext GetPlaybackContext() =>
         _artistId != Guid.Empty ? new(PlaybackContextType.Artist, _artistId) : base.GetPlaybackContext();

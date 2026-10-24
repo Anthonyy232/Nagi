@@ -1036,27 +1036,6 @@ Do you want to continue?</value>
   <data name="AlbumViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
     <value>Shuffle and play all</value>
   </data>
-  <data name="AlbumViewPage_SongMenu_Play" xml:space="preserve">
-    <value>Play</value>
-  </data>
-  <data name="AlbumViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
-  </data>
-  <data name="AlbumViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
-  </data>
-  <data name="AlbumViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Add to Playlist</value>
-  </data>
-  <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Go to Artist</value>
-  </data>
-  <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Show in File Explorer</value>
-  </data>
-  <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
-  </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
     <value>No songs found in this album</value>
   </data>
@@ -1120,27 +1099,6 @@ Do you want to continue?</value>
   <data name="ArtistViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
     <value>Shuffle and play all</value>
   </data>
-  <data name="ArtistViewPage_SongMenu_Play" xml:space="preserve">
-    <value>Play</value>
-  </data>
-  <data name="ArtistViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
-  </data>
-  <data name="ArtistViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
-  </data>
-  <data name="ArtistViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Add to Playlist</value>
-  </data>
-  <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Go to Album</value>
-  </data>
-  <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Show in File Explorer</value>
-  </data>
-  <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
-  </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
     <value>No songs found for this artist</value>
   </data>
@@ -1179,30 +1137,6 @@ Do you want to continue?</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
     <value>Add to Playlist</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_Play" xml:space="preserve">
-    <value>Play</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Add to Playlist</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Go to Album</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Go to Artist</value>
-  </data>
-  <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Show in File Explorer</value>
-  </data>
-  <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Folder</value>
@@ -1456,29 +1390,8 @@ Do you want to continue?</value>
   <data name="PlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
     <value>Shuffle and play all</value>
   </data>
-  <data name="PlaylistSongViewPage_Context_Play" xml:space="preserve">
-    <value>Play</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Go to Album</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Go to Artist</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Show in File Explorer</value>
-  </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
     <value>Remove from Playlist</value>
-  </data>
-  <data name="PlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>This playlist is empty</value>
@@ -1503,30 +1416,6 @@ Do you want to continue?</value>
   </data>
   <data name="GenreViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
     <value>Shuffle and play all</value>
-  </data>
-  <data name="GenreViewPage_Context_Play" xml:space="preserve">
-    <value>Play</value>
-  </data>
-  <data name="GenreViewPage_Context_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
-  </data>
-  <data name="GenreViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
-  </data>
-  <data name="GenreViewPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Add to Playlist</value>
-  </data>
-  <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Go to Album</value>
-  </data>
-  <data name="GenreViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Go to Artist</value>
-  </data>
-  <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Show in File Explorer</value>
-  </data>
-  <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
   </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
     <value>No songs found for this genre</value>
@@ -1908,27 +1797,6 @@ Do you want to continue?</value>
   </data>
   <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
     <value>Shuffle and play all</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_Play" xml:space="preserve">
-    <value>Play</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Go to Album</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Go to Artist</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Show in File Explorer</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>No songs match the current rules</value>
@@ -2402,5 +2270,65 @@ Do you want to continue?</value>
 2. Extract the archive and locate ffmpeg.exe in its bin folder.
 3. Add the folder containing ffmpeg.exe to your Windows PATH.
 4. Restart Nagi, then enable volume normalization again.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>Song Info</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>Tags</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>Listening</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>Album Artist</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>Conductor</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>Copyright</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>Path</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>Channels</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} of {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>Song List Columns</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>Choose the details song lists show.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>Column Headers</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>Label each column above song lists.</value>
   </data>
 </root>

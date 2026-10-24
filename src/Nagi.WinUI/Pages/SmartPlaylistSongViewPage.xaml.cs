@@ -17,7 +17,7 @@ public sealed partial class SmartPlaylistSongViewPage : SongListPage
         ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<SmartPlaylistSongListViewModel>();
         DataContext = ViewModel;
         InitializeSongList(ViewModel, ownsViewModel: true, SearchToggleButton, SearchTextBox,
-            Strings.SmartPlaylistSongViewPage_SearchButton_Search_ToolTip, SongsListView);
+            Strings.SmartPlaylistSongViewPage_SearchButton_Search_ToolTip, ColumnHeaderHost, SongsListView);
     }
 
     public SmartPlaylistSongListViewModel ViewModel { get; }
@@ -28,5 +28,6 @@ public sealed partial class SmartPlaylistSongViewPage : SongListPage
 
         var navParam = (SmartPlaylistSongViewNavigationParameter)e.Parameter;
         await ViewModel.InitializeAsync(navParam.Title, navParam.SmartPlaylistId, navParam.CoverImageUri);
+        await ViewModel.LoadAvailablePlaylistsAsync();
     }
 }
