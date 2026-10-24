@@ -145,26 +145,33 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
 
             if (_currentSong == null)
             {
-                client.SetPresence(new RichPresence { Details = "Browsing Music Library", State = "Idling" });
+                client.SetPresence(new RichPresence
+                {
+                    Details = Resources.Strings.Presence_BrowsingLibrary,
+                    State = Resources.Strings.Presence_Idling
+                });
                 return;
             }
 
             string stateText = _isPlaying
-                ? (string.IsNullOrWhiteSpace(_currentSong.ArtistName) ? "Unknown Artist" : $"by {_currentSong.ArtistName}")
-                : $"Paused | {DurationFormatter.Format(_currentProgress)} / {DurationFormatter.Format(_currentSong.Duration)}";
+                ? string.IsNullOrWhiteSpace(_currentSong.ArtistName)
+                    ? Artist.UnknownArtistName
+                    : string.Format(Resources.Strings.Presence_ByArtist, _currentSong.ArtistName)
+                : string.Format(Resources.Strings.Presence_PausedProgress,
+                    DurationFormatter.Format(_currentProgress), DurationFormatter.Format(_currentSong.Duration));
 
             var presence = new RichPresence
             {
-                Details = (_currentSong.Title ?? "Unknown").Truncate(128),
+                Details = _currentSong.Title.Truncate(128),
                 State = stateText.Truncate(128),
                 StatusDisplay = StatusDisplayType.Details,
                 Timestamps = _timestamps,
                 Assets = new Assets
                 {
                     LargeImageKey = "logo",
-                    LargeImageText = (_currentSong.Album?.Title ?? "Nagi Music Player").Truncate(128),
+                    LargeImageText = (_currentSong.Album?.Title ?? Resources.Strings.Presence_AppName).Truncate(128),
                     SmallImageKey = _isPlaying ? "play_icon" : "pause_icon",
-                    SmallImageText = (_isPlaying ? "Playing" : "Paused")
+                    SmallImageText = _isPlaying ? Resources.Strings.Presence_Playing : Resources.Strings.Presence_Paused
                 }
             };
 
