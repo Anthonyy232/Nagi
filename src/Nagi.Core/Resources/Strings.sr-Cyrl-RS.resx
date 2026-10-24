@@ -317,12 +317,12 @@
     <value>Изабрана датотека није важећа Nagi резервна копија.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC је наишао на неодређену грешку.</value>
+    <value>LibVLC encountered an unspecified error.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC Грешка: {0}</value>
+    <value>LibVLC Error: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Није успело учитавање '{0}'.</value>
+    <value>Failed to load '{0}'.</value>
   </data>
 </root>

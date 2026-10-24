@@ -317,12 +317,12 @@
     <value>Pail ma kiyero pe obedo backup me Nagi ma atir.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC onwanggo bal pe ongenne.</value>
+    <value>LibVLC encountered an unspecified error.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Bal me LibVLC: {0}</value>
+    <value>LibVLC Error: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Pe otwero keto '{0}'.</value>
+    <value>Failed to load '{0}'.</value>
   </data>
 </root>

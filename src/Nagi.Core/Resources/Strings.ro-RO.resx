@@ -317,12 +317,12 @@
     <value>Fișierul selectat nu este o copie de rezervă Nagi validă.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC a întâmpinat o eroare nespecificată.</value>
+    <value>LibVLC encountered an unspecified error.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Eroare LibVLC: {0}</value>
+    <value>LibVLC Error: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Încărcarea „{0}” a eșuat.</value>
+    <value>Failed to load '{0}'.</value>
   </data>
 </root>

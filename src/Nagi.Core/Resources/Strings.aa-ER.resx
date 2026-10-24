@@ -317,12 +317,12 @@
     <value>Doorimte fayli baxsa-le Nagi backup hinna.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC baxsat aneewa agaliiyil raden.</value>
+    <value>LibVLC encountered an unspecified error.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC Agali: {0}</value>
+    <value>LibVLC Error: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>'{0}' cuurooteyil raden.</value>
+    <value>Failed to load '{0}'.</value>
   </data>
 </root>

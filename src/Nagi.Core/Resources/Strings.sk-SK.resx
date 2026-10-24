@@ -317,12 +317,12 @@
     <value>Vybraný súbor nie je platnou zálohou aplikácie Nagi.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC narazil na nešpecifikovanú chybu.</value>
+    <value>LibVLC encountered an unspecified error.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Chyba LibVLC: {0}</value>
+    <value>LibVLC Error: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Nepodarilo sa načítať '{0}'.</value>
+    <value>Failed to load '{0}'.</value>
   </data>
 </root>

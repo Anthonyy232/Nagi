@@ -317,12 +317,12 @@
     <value>Valittu tiedosto ei ole kelvollinen Nagi-varmuuskopio.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC kohtasi määrittelemättömän virheen.</value>
+    <value>LibVLC encountered an unspecified error.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC virhe: {0}</value>
+    <value>LibVLC Error: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>'{0}' lataaminen epäonnistui.</value>
+    <value>Failed to load '{0}'.</value>
   </data>
 </root>

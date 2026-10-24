@@ -317,12 +317,12 @@
     <value>Seçilen dosya geçerli bir Nagi yedeği değil.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC belirtilmemiş bir hatayla karşılaştı.</value>
+    <value>LibVLC encountered an unspecified error.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC Hatası: {0}</value>
+    <value>LibVLC Error: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>'{0}' yüklenemedi.</value>
+    <value>Failed to load '{0}'.</value>
   </data>
 </root>

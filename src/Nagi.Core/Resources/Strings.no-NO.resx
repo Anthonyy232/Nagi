@@ -317,12 +317,12 @@
     <value>Den valgte filen er ikke en gyldig Nagi-sikkerhetskopi.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC støtte på en uspesifisert feil.</value>
+    <value>LibVLC encountered an unspecified error.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC-feil: {0}</value>
+    <value>LibVLC Error: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Klarte ikke å laste '{0}'.</value>
+    <value>Failed to load '{0}'.</value>
   </data>
 </root>

@@ -317,12 +317,12 @@
     <value>הקובץ שנבחר אינו גיבוי תקין של Nagi.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC נתקלה בשגיאה לא מוגדרת.</value>
+    <value>LibVLC encountered an unspecified error.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>שגיאת LibVLC: {0}</value>
+    <value>LibVLC Error: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>טעינת '{0}' נכשלה.</value>
+    <value>Failed to load '{0}'.</value>
   </data>
 </root>
