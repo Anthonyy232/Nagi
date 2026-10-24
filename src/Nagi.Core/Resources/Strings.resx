@@ -335,4 +335,27 @@
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>Failed to load '{0}'.</value>
   </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Browsing Music Library</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Idling</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>by {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Paused | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Nagi Music Player</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Playing</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Paused</value>
+  </data>
 </root>
