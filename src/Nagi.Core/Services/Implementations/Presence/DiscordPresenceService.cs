@@ -10,8 +10,13 @@ namespace Nagi.Core.Services.Implementations.Presence;
 
 public class DiscordPresenceService : IPresenceService, IAsyncDisposable
 {
+    // Absorbs the small lag between reading the playback position and handling it, so normal
+    // playback never spends an update from Discord's rate limit.
+    private static readonly TimeSpan SyncTolerance = TimeSpan.FromSeconds(2);
+
     private readonly string? _discordAppId;
     private readonly ILogger<DiscordPresenceService> _logger;
+    private readonly IMusicPlaybackService _playbackService;
     private readonly Func<string, DiscordRpcClient> _createClient;
     private readonly object _clientLock = new();
     private DiscordRpcClient? _client;
@@ -23,17 +28,19 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
 
     private Timer? _debounceTimer;
 
-    public DiscordPresenceService(IConfiguration configuration, ILogger<DiscordPresenceService> logger)
-        : this(configuration, logger, appId => new DiscordRpcClient(appId, pipe: -1,
+    public DiscordPresenceService(IConfiguration configuration, ILogger<DiscordPresenceService> logger,
+        IMusicPlaybackService playbackService)
+        : this(configuration, logger, playbackService, appId => new DiscordRpcClient(appId, pipe: -1,
             logger: new DiscordLoggerAdapter(logger), autoEvents: true,
             client: new SandboxAwareDiscordPipeClient { Logger = new DiscordLoggerAdapter(logger) }))
     {
     }
 
     internal DiscordPresenceService(IConfiguration configuration, ILogger<DiscordPresenceService> logger,
-        Func<string, DiscordRpcClient> createClient)
+        IMusicPlaybackService playbackService, Func<string, DiscordRpcClient> createClient)
     {
         _logger = logger;
+        _playbackService = playbackService;
         _createClient = createClient;
         _discordAppId = configuration["Discord:AppId"];
 
@@ -96,7 +103,7 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
     {
         _currentSong = song;
         _currentProgress = TimeSpan.Zero;
-        _timestamps = new Timestamps { Start = DateTime.UtcNow };
+        _timestamps = BuildTimestamps(TimeSpan.Zero);
         RequestUpdate();
         return Task.CompletedTask;
     }
@@ -105,10 +112,7 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
     {
         _isPlaying = isPlaying;
 
-        if (isPlaying)
-            _timestamps = new Timestamps { Start = DateTime.UtcNow - _currentProgress };
-        else
-            _timestamps = null;
+        _timestamps = isPlaying ? BuildTimestamps(_currentProgress) : null;
 
         RequestUpdate();
         return Task.CompletedTask;
@@ -190,9 +194,34 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
 
     public Task OnTrackProgressAsync(TimeSpan progress, TimeSpan duration)
     {
+        var previousProgress = _currentProgress;
         _currentProgress = progress;
+
+        if (_isPlaying)
+        {
+            // After a seek or a speed change the timestamps no longer match playback, so Discord's
+            // clock would stay wrong until the next pause or track change.
+            if (IsOutOfSync(_timestamps, progress, _playbackService.PlaybackRate, DateTime.UtcNow))
+            {
+                _timestamps = BuildTimestamps(progress);
+                RequestUpdate();
+            }
+        }
+        else if ((progress - previousProgress).Duration() > SyncTolerance)
+        {
+            // Seeking while paused changes the position shown in the paused text.
+            RequestUpdate();
+        }
+
         return Task.CompletedTask;
     }
+
+    // Discord's clock runs in real time, so scale by the playback speed to keep it in step with playback.
+    private Timestamps BuildTimestamps(TimeSpan progress) =>
+        new() { Start = DateTime.UtcNow - progress / _playbackService.PlaybackRate };
+
+    internal static bool IsOutOfSync(Timestamps? timestamps, TimeSpan progress, double playbackRate, DateTime utcNow) =>
+        timestamps?.Start is { } start && ((utcNow - start) * playbackRate - progress).Duration() > SyncTolerance;
 
     public Task OnTrackEligibleForScrobblingAsync(
         Song song,
