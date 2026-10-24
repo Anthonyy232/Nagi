@@ -34,71 +34,79 @@ public class MusicBrainzService : IMusicBrainzService
         _logger = logger;
     }
 
-    public async Task<ServiceResult<string>> SearchArtistAsync(string artistName, CancellationToken cancellationToken = default)
+    public Task<ServiceResult<string>> SearchArtistAsync(string artistName, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(artistName))
-            return ServiceResult<string>.FromSuccessNotFound();
+            return Task.FromResult(ServiceResult<string>.FromSuccessNotFound());
 
+        return SearchAsync($"artist?query=artist:{Phrase(artistName)}", result => result.Artists,
+            minimumScore: 80, $"artist: {artistName}", cancellationToken);
+    }
+
+    // Escape Lucene's quoted-phrase syntax before URL encoding.
+    private static string Phrase(string value) =>
+        Uri.EscapeDataString($"\"{value.Replace("\\", "\\\\").Replace("\"", "\\\"")}\"");
+
+    private async Task<ServiceResult<string>> SearchAsync(string pathAndQuery,
+        Func<MusicBrainzSearchResult, List<MusicBrainzMatch>?> selectMatches, int minimumScore, string subject,
+        CancellationToken cancellationToken)
+    {
         if (_pipelines.IsCircuitOpen(ServiceProviderIds.MusicBrainz))
         {
-            _logger.LogDebug("MusicBrainz circuit is open; skipping lookup for {ArtistName}.", artistName);
+            _logger.LogDebug("MusicBrainz circuit is open; skipping lookup for {Subject}.", subject);
             return ServiceResult<string>.FromTemporaryError();
         }
 
-        // Escape Lucene's quoted-phrase syntax before URL encoding.
-        var escapedName = artistName.Replace("\\", "\\\\").Replace("\"", "\\\"");
-        var encodedName = Uri.EscapeDataString($"\"{escapedName}\"");
-        var url = $"{BaseUrl}/artist?query=artist:{encodedName}&limit=1&fmt=json";
+        var url = $"{BaseUrl}/{pathAndQuery}&limit=1&fmt=json";
 
         return await _pipelines.ExecuteWithFallbackAsync(
             ServiceProviderIds.MusicBrainz,
             async ct =>
             {
-                _logger.LogDebug("Searching MusicBrainz for artist: {ArtistName}", artistName);
+                _logger.LogDebug("Searching MusicBrainz for {Subject}", subject);
                 return await _httpClient.GetAsync(url, ct).ConfigureAwait(false);
             },
             async (response, ct) =>
             {
                 if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogWarning("MusicBrainz search failed with status {StatusCode} for artist: {ArtistName}",
-                        response.StatusCode, artistName);
+                    _logger.LogWarning("MusicBrainz search failed with status {StatusCode} for {Subject}",
+                        response.StatusCode, subject);
                     return ServiceResult<string>.FromTemporaryError();
                 }
 
                 var result = await response.Content.ReadFromJsonAsync<MusicBrainzSearchResult>(cancellationToken: ct)
                     .ConfigureAwait(false);
 
-                var artist = result?.Artists?.FirstOrDefault();
-                if (artist is null)
+                var match = result is null ? null : selectMatches(result)?.FirstOrDefault();
+                if (match is null)
                 {
-                    _logger.LogDebug("No MusicBrainz match found for artist: {ArtistName}", artistName);
+                    _logger.LogDebug("No MusicBrainz match found for {Subject}", subject);
                     return ServiceResult<string>.FromSuccessNotFound();
                 }
 
-                if (artist.Score < 80)
+                if (match.Score < minimumScore)
                 {
-                    _logger.LogDebug("MusicBrainz match score too low ({Score}) for artist: {ArtistName}",
-                        artist.Score, artistName);
+                    _logger.LogDebug("MusicBrainz match score too low ({Score}) for {Subject}", match.Score, subject);
                     return ServiceResult<string>.FromSuccessNotFound();
                 }
 
-                _logger.LogInformation("Found MusicBrainz ID {MBID} for artist: {ArtistName}", artist.Id, artistName);
-                return ServiceResult<string>.FromSuccess(artist.Id);
+                _logger.LogInformation("Found MusicBrainz ID {MBID} for {Subject}", match.Id, subject);
+                return ServiceResult<string>.FromSuccess(match.Id);
             },
             fallback: ServiceResult<string>.FromTemporaryError(),
             _logger,
-            $"search for {artistName}",
+            $"search for {subject}",
             cancellationToken).ConfigureAwait(false);
     }
 
     private sealed class MusicBrainzSearchResult
     {
         [JsonPropertyName("artists")]
-        public List<MusicBrainzArtist>? Artists { get; set; }
+        public List<MusicBrainzMatch>? Artists { get; set; }
     }
 
-    private sealed class MusicBrainzArtist
+    private sealed class MusicBrainzMatch
     {
         [JsonPropertyName("id")]
         public string Id { get; set; } = string.Empty;
