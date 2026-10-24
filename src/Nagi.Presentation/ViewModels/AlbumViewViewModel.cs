@@ -199,13 +199,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
             : ResourceFormatter.Format(Strings.AlbumView_SongCount_Plural, _totalSongCount);
         detailsParts.Add(songCountText);
 
-        if (_totalDuration > TimeSpan.Zero)
-        {
-            var durationText = _totalDuration.TotalHours >= 1
-                ? $"{(long)_totalDuration.TotalHours}:{_totalDuration.Minutes:00}:{_totalDuration.Seconds:00}"
-                : _totalDuration.ToString(@"m\:ss");
-            detailsParts.Add(durationText);
-        }
+        if (_totalDuration > TimeSpan.Zero) detailsParts.Add(DurationFormatter.Format(_totalDuration));
 
         AlbumDetailsText = string.Join(" • ", detailsParts);
     }

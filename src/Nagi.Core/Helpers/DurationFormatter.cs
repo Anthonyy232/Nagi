@@ -1,6 +1,4 @@
-using System;
-
-namespace Nagi.Presentation.Helpers;
+namespace Nagi.Core.Helpers;
 
 public static class DurationFormatter
 {

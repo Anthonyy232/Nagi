@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
@@ -385,10 +386,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         if (currentSecond != _lastDisplayedSecond)
         {
             _lastDisplayedSecond = currentSecond;
-            var timeSpan = TimeSpan.FromSeconds(value);
-            CurrentTimeText = timeSpan.TotalHours >= 1
-                ? timeSpan.ToString(@"h\:mm\:ss")
-                : timeSpan.ToString(@"m\:ss");
+            CurrentTimeText = DurationFormatter.Format(TimeSpan.FromSeconds(value));
         }
 
         if (_isUpdatingFromService || IsUserDraggingSlider) return;
@@ -414,10 +412,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
 
     partial void OnTotalDurationChanged(double value)
     {
-        var timeSpan = TimeSpan.FromSeconds(value);
-        TotalDurationText = timeSpan.TotalHours >= 1
-            ? timeSpan.ToString(@"h\:mm\:ss")
-            : timeSpan.ToString(@"m\:ss");
+        TotalDurationText = DurationFormatter.Format(TimeSpan.FromSeconds(value));
     }
 
     private void UpdateEfficiencyMode()
