@@ -79,13 +79,10 @@ public class FanartTvService : IFanartTvService
 
                 var images = new FanartTvArtistImages(
                     BackgroundUrl: apiResult.ArtistBackgrounds?.FirstOrDefault()?.Url,
-                    LogoUrl: apiResult.HdMusicLogos?.FirstOrDefault()?.Url ?? apiResult.MusicLogos?.FirstOrDefault()?.Url,
-                    BannerUrl: apiResult.MusicBanners?.FirstOrDefault()?.Url,
                     ThumbUrl: apiResult.ArtistThumbs?.FirstOrDefault()?.Url
                 );
 
-                if (images.BackgroundUrl is null && images.LogoUrl is null &&
-                    images.BannerUrl is null && images.ThumbUrl is null)
+                if (images.BackgroundUrl is null && images.ThumbUrl is null)
                 {
                     _logger.LogDebug("Fanart.tv returned empty images for MBID: {MBID}", musicBrainzId);
                     return ServiceResult<FanartTvArtistImages>.FromSuccessNotFound();
@@ -104,15 +101,6 @@ public class FanartTvService : IFanartTvService
     {
         [JsonPropertyName("artistbackground")]
         public List<FanartImage>? ArtistBackgrounds { get; set; }
-
-        [JsonPropertyName("hdmusiclogo")]
-        public List<FanartImage>? HdMusicLogos { get; set; }
-
-        [JsonPropertyName("musiclogo")]
-        public List<FanartImage>? MusicLogos { get; set; }
-
-        [JsonPropertyName("musicbanner")]
-        public List<FanartImage>? MusicBanners { get; set; }
 
         [JsonPropertyName("artistthumb")]
         public List<FanartImage>? ArtistThumbs { get; set; }

@@ -14,12 +14,8 @@ public interface ITheAudioDbService
 }
 
 /// <param name="Biography">Localized biography, falling back to English when unavailable.</param>
-/// <param name="WideThumbUrl">Wide banner-style image URL.</param>
-/// <param name="LogoUrl">Artist logo (transparent PNG) URL.</param>
 public record TheAudioDbArtistInfo(
     string? Biography,
     string? ThumbUrl,
-    string? FanartUrl,
-    string? WideThumbUrl,
-    string? LogoUrl
+    string? FanartUrl
 );
