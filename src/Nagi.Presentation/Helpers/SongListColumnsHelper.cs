@@ -54,6 +54,5 @@ public static class SongListColumnsHelper
         _ => throw new ArgumentOutOfRangeException(nameof(column), column, null)
     } ?? string.Empty;
 
-    // Dates are stored in UTC.
     private static string? FormatDate(DateTime? utc) => utc?.ToLocalTime().ToString("d");
 }
