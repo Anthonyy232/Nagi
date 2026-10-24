@@ -24,12 +24,7 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
     private readonly ILibraryReader _libraryReader;
     private readonly IFileSystemService _fileSystem;
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly ILastFmMetadataService _lastFmService;
-    private readonly IMusicBrainzService _musicBrainzService;
-    private readonly IFanartTvService _fanartTvService;
-    private readonly ITheAudioDbService _theAudioDbService;
-    private readonly IDeezerService _deezerService;
-    private readonly IWikipediaService _wikipediaService;
+    private readonly IArtistMetadataService _artistMetadataService;
     private readonly IAlbumCoverService _albumCoverService;
     private readonly ILogger<LibraryService> _logger;
     private readonly SemaphoreSlim _metadataFetchSemaphore = new(1, 1);
@@ -50,12 +45,7 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
         ILibraryReader libraryReader,
         IFileSystemService fileSystem,
         IMetadataService metadataService,
-        ILastFmMetadataService lastFmService,
-        IMusicBrainzService musicBrainzService,
-        IFanartTvService fanartTvService,
-        ITheAudioDbService theAudioDbService,
-        IDeezerService deezerService,
-        IWikipediaService wikipediaService,
+        IArtistMetadataService artistMetadataService,
         IAlbumCoverService albumCoverService,
         IHttpClientFactory httpClientFactory,
         IPathConfiguration pathConfig,
@@ -69,12 +59,7 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
         _libraryReader = libraryReader;
         _fileSystem = fileSystem;
         _metadataService = metadataService;
-        _lastFmService = lastFmService;
-        _musicBrainzService = musicBrainzService;
-        _fanartTvService = fanartTvService;
-        _theAudioDbService = theAudioDbService;
-        _deezerService = deezerService;
-        _wikipediaService = wikipediaService;
+        _artistMetadataService = artistMetadataService;
         _albumCoverService = albumCoverService;
         _httpClientFactory = httpClientFactory;
         _pathConfig = pathConfig;

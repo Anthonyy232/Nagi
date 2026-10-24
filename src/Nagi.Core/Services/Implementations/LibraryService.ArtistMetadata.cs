@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Constants;
@@ -463,139 +462,29 @@ public partial class LibraryService
             return (wasMetadataFoundAndUpdated, artist.LocalImageCachePath);
         }
 
-        _logger.LogDebug("Using metadata providers for '{ArtistName}': {Providers}",
-            artist.Name, string.Join(", ", enabledProviders.Select(p => p.Id)));
+        var found = await _artistMetadataService
+            .FindAsync(artist.Name, artist.MusicBrainzId, enabledProviders, cancellationToken).ConfigureAwait(false);
+        var isConclusive = found.IsConclusive;
 
-        var enabledIds = enabledProviders.Select(p => p.Id).ToHashSet();
-
-        var tasks = new Dictionary<string, Task<(bool IsConclusive, string? ImageUrl, string? Biography)>>();
-
-        var mbid = artist.MusicBrainzId;
-        Task<ServiceResult<string>>? musicBrainzTask = null;
-        if (string.IsNullOrEmpty(mbid) && enabledIds.Contains(ServiceProviderIds.MusicBrainz))
+        if (found.MusicBrainzId is not null)
         {
-            musicBrainzTask = _musicBrainzService.SearchArtistAsync(artist.Name, cancellationToken);
+            artist.MusicBrainzId = found.MusicBrainzId;
+            wasMetadataFoundAndUpdated = true;
         }
 
-        // Name-based providers can start before MusicBrainz resolves the ID needed by the others.
-        if (enabledIds.Contains(ServiceProviderIds.LastFm))
-            tasks[ServiceProviderIds.LastFm] = FetchFromLastFmAsync(artist.Name, cancellationToken);
-        if (enabledIds.Contains(ServiceProviderIds.Deezer))
-            tasks[ServiceProviderIds.Deezer] = FetchFromDeezerAsync(artist.Name, cancellationToken);
-
-        var anyProviderConclusive = false;
-        var allProvidersConclusive = true;
-
-        string? finalImageUrl = null;
-        string? finalBiography = null;
-        try
+        if (!string.IsNullOrEmpty(found.Biography))
         {
-            if (musicBrainzTask != null)
-            {
-                try
-                {
-                    var result = await musicBrainzTask.ConfigureAwait(false);
-                    anyProviderConclusive = result.IsConclusive;
-                    allProvidersConclusive = result.IsConclusive;
-                    var resolvedMbid = result.Data;
-                    if (!string.IsNullOrEmpty(resolvedMbid))
-                    {
-                        mbid = resolvedMbid;
-                        artist.MusicBrainzId = mbid;
-                        wasMetadataFoundAndUpdated = true;
-                        _logger.LogInformation("Resolved MusicBrainz ID {MBID} for artist '{ArtistName}'", mbid, artist.Name);
-                    }
-                }
-                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-                {
-                    throw;
-                }
-                catch (Exception ex)
-                {
-                    allProvidersConclusive = false;
-                    _logger.LogDebug(ex, "MusicBrainz lookup failed for '{ArtistName}'.", artist.Name);
-                }
-            }
-
-            if (!string.IsNullOrEmpty(mbid))
-            {
-                if (enabledIds.Contains(ServiceProviderIds.TheAudioDb))
-                    tasks[ServiceProviderIds.TheAudioDb] = FetchFromTheAudioDbAsync(mbid, cancellationToken);
-                if (enabledIds.Contains(ServiceProviderIds.FanartTv))
-                    tasks[ServiceProviderIds.FanartTv] = FetchFromFanartTvAsync(mbid, cancellationToken);
-                if (enabledIds.Contains(ServiceProviderIds.Wikipedia))
-                    tasks[ServiceProviderIds.Wikipedia] = FetchFromWikipediaAsync(mbid, cancellationToken);
-            }
-
-            foreach (var provider in enabledProviders)
-            {
-                if (!tasks.TryGetValue(provider.Id, out var task)) continue;
-
-                try
-                {
-                    // Sequential await in priority order. If a higher priority task is still running,
-                    // we wait for it. If it finishes and has data, we break early and ignore lower priority ones.
-                    var (isConclusive, imageUrl, biography) = await task.ConfigureAwait(false);
-                    anyProviderConclusive |= isConclusive;
-                    allProvidersConclusive &= isConclusive;
-
-                    if (string.IsNullOrEmpty(finalImageUrl) && !string.IsNullOrEmpty(imageUrl))
-                    {
-                        finalImageUrl = imageUrl;
-                        _logger.LogDebug("Using image from {Provider} for artist '{ArtistName}'.", provider.DisplayName, artist.Name);
-                    }
-
-                    if (string.IsNullOrEmpty(finalBiography) && !string.IsNullOrEmpty(biography))
-                    {
-                        finalBiography = biography;
-                        _logger.LogDebug("Using biography from {Provider} for artist '{ArtistName}'.", provider.DisplayName, artist.Name);
-                    }
-
-                    if (!string.IsNullOrEmpty(finalImageUrl) && !string.IsNullOrEmpty(finalBiography))
-                        break;
-                }
-                catch (OperationCanceledException)
-                {
-                    allProvidersConclusive = false;
-                    if (cancellationToken.IsCancellationRequested) break;
-                }
-                catch (Exception ex)
-                {
-                    allProvidersConclusive = false;
-                    _logger.LogDebug(ex, "Metadata provider {Provider} failed for '{ArtistName}'.", provider.DisplayName, artist.Name);
-                }
-            }
-        }
-        finally
-        {
-            // Observe unfinished providers even when cancellation interrupts the identity lookup.
-            foreach (var task in tasks.Values)
-            {
-                _ = task.ContinueWith(
-                    static (t, state) => ((ILogger<LibraryService>)state!).LogDebug(
-                        t.Exception!.InnerException, "Metadata provider task faulted after lookup stopped waiting"),
-                    _logger,
-                    CancellationToken.None,
-                    TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously,
-                    TaskScheduler.Default);
-            }
-        }
-
-        cancellationToken.ThrowIfCancellationRequested();
-
-        if (!string.IsNullOrEmpty(finalBiography))
-        {
-            artist.Biography = finalBiography;
+            artist.Biography = found.Biography;
             wasMetadataFoundAndUpdated = true;
         }
 
         // Download and cache the best image found from external providers.
         // Skip if a local folder image or custom image is already set.
-        if (!string.IsNullOrEmpty(finalImageUrl) &&
+        if (!string.IsNullOrEmpty(found.ImageUrl) &&
             (artist.LocalImageCachePath == null || (!artist.LocalImageCachePath.Contains(".custom.") && !artist.LocalImageCachePath.Contains(".local."))))
         {
             var downloadedPath =
-                await DownloadAndCacheArtistImageAsync(artist, new Uri(finalImageUrl), cancellationToken).ConfigureAwait(false);
+                await DownloadAndCacheArtistImageAsync(artist, new Uri(found.ImageUrl), cancellationToken).ConfigureAwait(false);
             if (!string.IsNullOrEmpty(downloadedPath))
             {
                 artist.LocalImageCachePath = downloadedPath;
@@ -603,12 +492,12 @@ public partial class LibraryService
             }
             else
             {
-                allProvidersConclusive = false;
+                isConclusive = false;
             }
         }
 
         // Incomplete metadata remains retryable after a provider or image-download failure.
-        var stampChecked = (anyProviderConclusive && allProvidersConclusive) ||
+        var stampChecked = isConclusive ||
             (!string.IsNullOrWhiteSpace(artist.Biography) && !string.IsNullOrWhiteSpace(artist.LocalImageCachePath));
         if (stampChecked)
         {
@@ -634,51 +523,6 @@ public partial class LibraryService
         return (wasMetadataFoundAndUpdated, artist.LocalImageCachePath);
     }
 
-    private async Task<(bool IsConclusive, string? ImageUrl, string? Biography)> FetchFromTheAudioDbAsync(string mbid, CancellationToken ct)
-    {
-        var result = await _theAudioDbService.GetArtistMetadataAsync(mbid, CultureInfo.CurrentCulture.TwoLetterISOLanguageName, ct).ConfigureAwait(false);
-        if (result.Status == ServiceResultStatus.Success && result.Data is not null)
-        {
-            // Prefer square thumbnail over landscape fanart for round frame display
-            var url = result.Data.ThumbUrl ?? result.Data.FanartUrl;
-            return (true, url, result.Data.Biography);
-        }
-        return (result.IsConclusive, null, null);
-    }
-
-    private async Task<(bool IsConclusive, string? ImageUrl, string? Biography)> FetchFromFanartTvAsync(string mbid, CancellationToken ct)
-    {
-        var result = await _fanartTvService.GetArtistImagesAsync(mbid, ct).ConfigureAwait(false);
-        if (result.Status == ServiceResultStatus.Success && result.Data is not null)
-        {
-            // Prefer square thumbnail over landscape background for round frame display
-            var url = result.Data.ThumbUrl ?? result.Data.BackgroundUrl;
-            return (true, url, null);
-        }
-        return (result.IsConclusive, null, null);
-    }
-
-    private async Task<(bool IsConclusive, string? ImageUrl, string? Biography)> FetchFromLastFmAsync(string artistName, CancellationToken ct)
-    {
-        var result = await _lastFmService.GetArtistInfoAsync(artistName, CultureInfo.CurrentCulture.TwoLetterISOLanguageName, ct).ConfigureAwait(false);
-        if (result.Status == ServiceResultStatus.Success && result.Data is not null)
-        {
-            return (true, result.Data.ImageUrl, result.Data.Biography);
-        }
-        return (result.IsConclusive, null, null);
-    }
-
-    private async Task<(bool IsConclusive, string? ImageUrl, string? Biography)> FetchFromWikipediaAsync(string mbid, CancellationToken ct)
-    {
-        var result = await _wikipediaService.GetArtistBiographyAsync(mbid, CultureInfo.CurrentCulture.TwoLetterISOLanguageName, ct).ConfigureAwait(false);
-        return (result.IsConclusive, null, result.Data);
-    }
-
-    private async Task<(bool IsConclusive, string? ImageUrl, string? Biography)> FetchFromDeezerAsync(string artistName, CancellationToken ct)
-    {
-        var result = await _deezerService.GetArtistImageUrlAsync(artistName, ct).ConfigureAwait(false);
-        return (result.IsConclusive, result.Data, null);
-    }
 
     private async Task<string?> DownloadAndCacheArtistImageAsync(Artist artist, Uri imageUrl, CancellationToken cancellationToken)
     {

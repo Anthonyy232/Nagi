@@ -27,6 +27,7 @@ public partial class LibraryServiceTests : IDisposable
     private readonly LibraryReader _libraryReader;
 
     private readonly ILogger<LibraryService> _logger;
+    private readonly ILogger<ArtistMetadataService> _artistMetadataLogger = Substitute.For<ILogger<ArtistMetadataService>>();
 
     private readonly IMetadataService _metadataService;
     private readonly IPathConfiguration _pathConfig;
@@ -74,12 +75,14 @@ public partial class LibraryServiceTests : IDisposable
             _libraryReader,
             _fileSystem,
             _metadataService,
-            _lastFmService,
-            _musicBrainzService,
-            _fanartTvService,
-            _theAudioDbService,
-            Substitute.For<IDeezerService>(),
-            Substitute.For<IWikipediaService>(),
+            new ArtistMetadataService(
+                _lastFmService,
+                _musicBrainzService,
+                _fanartTvService,
+                _theAudioDbService,
+                Substitute.For<IDeezerService>(),
+                Substitute.For<IWikipediaService>(),
+                _artistMetadataLogger),
             Substitute.For<IAlbumCoverService>(),
             _httpClientFactory,
             _pathConfig,
@@ -194,7 +197,7 @@ public partial class LibraryServiceTests : IDisposable
             started.TrySetResult();
             return metadata.Task;
         });
-        _logger.When(logger => logger.Log(LogLevel.Debug, Arg.Any<EventId>(), Arg.Any<Arg.AnyType>(),
+        _artistMetadataLogger.When(logger => logger.Log(LogLevel.Debug, Arg.Any<EventId>(), Arg.Any<Arg.AnyType>(),
                 Arg.Is<Exception?>(exception => ReferenceEquals(exception, failure)),
                 Arg.Any<Func<Arg.AnyType, Exception?, string>>()))
             .Do(_ => observed.TrySetResult());
@@ -1226,8 +1229,9 @@ public partial class LibraryServiceTests : IDisposable
         using var reader = new LibraryReader(database.ContextFactory, _fileSystem, _settingsService,
             Substitute.For<ILogger<LibraryReader>>());
         using var service = new LibraryService(database.ContextFactory, reader, _fileSystem, _metadataService,
-            _lastFmService, _musicBrainzService, _fanartTvService, _theAudioDbService, Substitute.For<IDeezerService>(), Substitute.For<IWikipediaService>(), Substitute.For<IAlbumCoverService>(), _httpClientFactory,
-            _pathConfig, _settingsService, _replayGainService, _imageProcessor, _pipelines, _logger);
+            new ArtistMetadataService(_lastFmService, _musicBrainzService, _fanartTvService, _theAudioDbService,
+                Substitute.For<IDeezerService>(), Substitute.For<IWikipediaService>(), _artistMetadataLogger),
+            Substitute.For<IAlbumCoverService>(), _httpClientFactory, _pathConfig, _settingsService, _replayGainService, _imageProcessor, _pipelines, _logger);
         var song = new Song { FilePath = @"C:\Music\song.mp3", Folder = new Folder { Path = @"C:\Music", Name = "Music" } };
         await using (var context = database.ContextFactory.CreateDbContext())
         {

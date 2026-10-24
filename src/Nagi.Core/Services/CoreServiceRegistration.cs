@@ -219,6 +219,7 @@ public static class CoreServiceRegistration
         services.AddSingleton<IWikipediaService, WikipediaService>();
         services.AddSingleton<ICoverArtArchiveService, CoverArtArchiveService>();
         services.AddSingleton<IAppleMusicService, AppleMusicService>();
+        services.AddSingleton<IArtistMetadataService, ArtistMetadataService>();
         services.AddSingleton<IAlbumCoverService, AlbumCoverService>();
         services.AddSingleton<INetEaseLyricsService, NetEaseLyricsService>();
         services.AddSingleton<LastFmScrobblerService>();
