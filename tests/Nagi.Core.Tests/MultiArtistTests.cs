@@ -166,6 +166,47 @@ public class MultiArtistTests : IDisposable
     }
 
     [Fact]
+    public async Task RescanFolderForMusicAsync_FillsMissingArtistIdsFromTagsOnly()
+    {
+        var folder = new Folder { Path = @"C:\Music", Name = "Music" };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Artists.AddRange(new Artist { Name = "Known", MusicBrainzId = "known-id" }, new Artist { Name = "Unidentified" });
+            await context.SaveChangesAsync();
+        }
+        var pairedPath = @"C:\Music\paired.mp3";
+        var unpairedPath = @"C:\Music\unpaired.mp3";
+        _fileSystem.DirectoryExists(folder.Path).Returns(true);
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
+            .Returns(new[] { (pairedPath, DateTime.UtcNow), (unpairedPath, DateTime.UtcNow) });
+        _metadataService.ExtractMetadataAsync(pairedPath, folder.Path).Returns(new SongFileMetadata
+        {
+            FilePath = pairedPath,
+            Title = "Paired",
+            Artists = ["Known", "Unidentified", "New"],
+            MusicBrainzArtistIds = ["tag-known", "tag-unidentified", "tag-new"]
+        });
+        _metadataService.ExtractMetadataAsync(unpairedPath, folder.Path).Returns(new SongFileMetadata
+        {
+            FilePath = unpairedPath,
+            Title = "Unpaired",
+            Artists = ["Duo A", "Duo B"],
+            MusicBrainzArtistIds = ["tag-duo"]
+        });
+
+        await _libraryService.RescanFolderForMusicAsync(folder.Id);
+
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        var ids = await assertContext.Artists.ToDictionaryAsync(a => a.Name, a => a.MusicBrainzId);
+        ids["Known"].Should().Be("known-id");
+        ids["Unidentified"].Should().Be("tag-unidentified");
+        ids["New"].Should().Be("tag-new");
+        ids["Duo A"].Should().BeNull();
+        ids["Duo B"].Should().BeNull();
+    }
+
+    [Fact]
     public void Song_SyncDenormalizedFields_CorrectlyJoinsArtists()
     {
 
