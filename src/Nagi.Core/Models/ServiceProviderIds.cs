@@ -27,6 +27,9 @@ public static class ServiceProviderIds
     /// <summary>Deezer - Artist images found by name, no ID or key needed.</summary>
     public const string Deezer = "deezer";
 
+    /// <summary>Wikipedia - Artist biographies, found through the Wikidata entry for a MusicBrainz ID.</summary>
+    public const string Wikipedia = "wikipedia";
+
     /// <summary>Last.fm API Secret name for retrieval.</summary>
     public const string LastFmSecret = "lastfm-secret";
 

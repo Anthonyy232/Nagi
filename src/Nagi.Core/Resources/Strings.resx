@@ -358,4 +358,8 @@
   <data name="Presence_Paused" xml:space="preserve">
     <value>Paused</value>
   </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>From Wikipedia, under the CC BY-SA license.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
+  </data>
 </root>

@@ -695,6 +695,9 @@ Files that could not be imported: {0}.</value>
   <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
     <value>Artist images, found by name</value>
   </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>Artist biographies in your language (needs a MusicBrainz ID from your tags or MusicBrainz)</value>
+  </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Search albums</value>
   </data>

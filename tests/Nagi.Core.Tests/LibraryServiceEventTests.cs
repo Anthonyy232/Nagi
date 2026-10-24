@@ -46,6 +46,7 @@ public class LibraryServiceEventTests : IDisposable
             Substitute.For<IFanartTvService>(),
             Substitute.For<ITheAudioDbService>(),
             Substitute.For<IDeezerService>(),
+            Substitute.For<IWikipediaService>(),
             Substitute.For<IHttpClientFactory>(),
             Substitute.For<IPathConfiguration>(),
             Substitute.For<ISettingsService>(),

@@ -392,6 +392,7 @@ public partial class SettingsService
             ServiceCategory.Metadata =>
             [
                 Provider(ServiceProviderIds.MusicBrainz, "MusicBrainz", Strings.Settings_Provider_MusicBrainz_Desc),
+                Provider(ServiceProviderIds.Wikipedia, "Wikipedia", Strings.Settings_Provider_Wikipedia_Desc),
                 Provider(ServiceProviderIds.FanartTv, "Fanart.tv", Strings.Settings_Provider_FanartTv_Desc),
                 Provider(ServiceProviderIds.TheAudioDb, "TheAudioDB", Strings.Settings_Provider_TheAudioDB_Desc),
                 Provider(ServiceProviderIds.Deezer, "Deezer", Strings.Settings_Provider_Deezer_Desc),

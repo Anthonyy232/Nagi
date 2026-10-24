@@ -21,6 +21,7 @@ public class ServiceProviderIntegrationTests : IDisposable
     private readonly IFanartTvService _fanartTvService;
     private readonly ITheAudioDbService _theAudioDbService;
     private readonly IDeezerService _deezerService;
+    private readonly IWikipediaService _wikipediaService;
     private readonly DbContextFactoryTestHelper _dbHelper;
     private readonly TestHttpMessageHandler _httpHandler = new();
 
@@ -35,6 +36,7 @@ public class ServiceProviderIntegrationTests : IDisposable
         _fanartTvService = Substitute.For<IFanartTvService>();
         _theAudioDbService = Substitute.For<ITheAudioDbService>();
         _deezerService = Substitute.For<IDeezerService>();
+        _wikipediaService = Substitute.For<IWikipediaService>();
         _dbHelper = new DbContextFactoryTestHelper();
         var httpClientFactory = Substitute.For<IHttpClientFactory>();
         httpClientFactory.CreateClient(Arg.Any<string>()).Returns(_ => new HttpClient(_httpHandler, disposeHandler: false));
@@ -53,6 +55,7 @@ public class ServiceProviderIntegrationTests : IDisposable
             _fanartTvService,
             _theAudioDbService,
             _deezerService,
+            _wikipediaService,
             httpClientFactory,
             _pathConfig,
             _settingsService,

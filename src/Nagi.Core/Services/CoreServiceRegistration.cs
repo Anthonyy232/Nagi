@@ -115,6 +115,17 @@ public static class CoreServiceRegistration
                 },
             },
 
+            // Wikimedia: no fixed limit for reads, but clients are asked to keep requests serial and modest.
+            new ProviderPolicy
+            {
+                ProviderId = ServiceProviderIds.Wikipedia,
+                Channel = new ChannelPolicy
+                {
+                    PermitsPerWindow = 5,
+                    MaxConcurrent = 2,
+                },
+            },
+
             // LRCLIB: no rate limit documented. Keep concurrency reasonable to be polite.
             new ProviderPolicy
             {
@@ -181,6 +192,7 @@ public static class CoreServiceRegistration
         services.AddSingleton<IFanartTvService, FanartTvService>();
         services.AddSingleton<ITheAudioDbService, TheAudioDbService>();
         services.AddSingleton<IDeezerService, DeezerService>();
+        services.AddSingleton<IWikipediaService, WikipediaService>();
         services.AddSingleton<INetEaseLyricsService, NetEaseLyricsService>();
         services.AddSingleton<LastFmScrobblerService>();
         services.AddSingleton<ILastFmScrobblerService>(sp => sp.GetRequiredService<LastFmScrobblerService>());

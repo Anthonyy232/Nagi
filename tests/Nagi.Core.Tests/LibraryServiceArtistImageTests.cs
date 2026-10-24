@@ -91,6 +91,7 @@ public class LibraryServiceArtistImageTests : IDisposable
             _fanartTvService,
             _theAudioDbService,
             Substitute.For<IDeezerService>(),
+            Substitute.For<IWikipediaService>(),
             _httpClientFactory,
             _pathConfig,
             _settingsService,

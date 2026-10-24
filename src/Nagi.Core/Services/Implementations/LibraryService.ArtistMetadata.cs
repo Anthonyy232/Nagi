@@ -514,6 +514,8 @@ public partial class LibraryService
                     tasks[ServiceProviderIds.TheAudioDb] = FetchFromTheAudioDbAsync(mbid, cancellationToken);
                 if (enabledIds.Contains(ServiceProviderIds.FanartTv))
                     tasks[ServiceProviderIds.FanartTv] = FetchFromFanartTvAsync(mbid, cancellationToken);
+                if (enabledIds.Contains(ServiceProviderIds.Wikipedia))
+                    tasks[ServiceProviderIds.Wikipedia] = FetchFromWikipediaAsync(mbid, cancellationToken);
             }
 
             foreach (var provider in enabledProviders)
@@ -655,6 +657,12 @@ public partial class LibraryService
             return (true, result.Data.ImageUrl, result.Data.Biography);
         }
         return (result.IsConclusive, null, null);
+    }
+
+    private async Task<(bool IsConclusive, string? ImageUrl, string? Biography)> FetchFromWikipediaAsync(string mbid, CancellationToken ct)
+    {
+        var result = await _wikipediaService.GetArtistBiographyAsync(mbid, CultureInfo.CurrentCulture.TwoLetterISOLanguageName, ct).ConfigureAwait(false);
+        return (result.IsConclusive, null, result.Data);
     }
 
     private async Task<(bool IsConclusive, string? ImageUrl, string? Biography)> FetchFromDeezerAsync(string artistName, CancellationToken ct)
