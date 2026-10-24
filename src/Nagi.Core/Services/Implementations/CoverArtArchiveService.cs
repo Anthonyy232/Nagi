@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
@@ -15,7 +16,6 @@ namespace Nagi.Core.Services.Implementations;
 public class CoverArtArchiveService : ICoverArtArchiveService, IDisposable
 {
     private const string BaseUrl = "https://coverartarchive.org";
-    private const string UserAgent = "Nagi/1.0 (+https://github.com/Anthonyy232/Nagi)";
 
     private readonly HttpClient _httpClient;
     private readonly IProviderPipelineProvider _pipelines;
@@ -27,7 +27,7 @@ public class CoverArtArchiveService : ICoverArtArchiveService, IDisposable
         ILogger<CoverArtArchiveService> logger)
     {
         _httpClient = httpClientFactory.CreateClient();
-        _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(UserAgent);
+        _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(ProviderUserAgent.Value);
         _pipelines = pipelines;
         _logger = logger;
     }
