@@ -1,4 +1,3 @@
-using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Http;
@@ -6,6 +5,7 @@ using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Services.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -59,38 +59,14 @@ public class MusicBrainzService : IMusicBrainzService
     private static string Phrase(string value) =>
         Uri.EscapeDataString($"\"{value.Replace("\\", "\\\\").Replace("\"", "\\\"")}\"");
 
-    private async Task<ServiceResult<string>> SearchAsync(string pathAndQuery,
+    private Task<ServiceResult<string>> SearchAsync(string pathAndQuery,
         Func<MusicBrainzSearchResult, List<MusicBrainzMatch>?> selectMatches, int minimumScore, string subject,
-        CancellationToken cancellationToken)
-    {
-        if (_pipelines.IsCircuitOpen(ServiceProviderIds.MusicBrainz))
-        {
-            _logger.LogDebug("MusicBrainz circuit is open; skipping lookup for {Subject}.", subject);
-            return ServiceResult<string>.FromTemporaryError();
-        }
-
-        var url = $"{BaseUrl}/{pathAndQuery}&limit=1&fmt=json";
-
-        return await _pipelines.ExecuteWithFallbackAsync(
-            ServiceProviderIds.MusicBrainz,
-            async ct =>
+        CancellationToken cancellationToken) =>
+        _pipelines.GetJsonAsync<MusicBrainzSearchResult, string>(_httpClient, ServiceProviderIds.MusicBrainz,
+            $"{BaseUrl}/{pathAndQuery}&limit=1&fmt=json",
+            result =>
             {
-                _logger.LogDebug("Searching MusicBrainz for {Subject}", subject);
-                return await _httpClient.GetAsync(url, ct).ConfigureAwait(false);
-            },
-            async (response, ct) =>
-            {
-                if (!response.IsSuccessStatusCode)
-                {
-                    _logger.LogWarning("MusicBrainz search failed with status {StatusCode} for {Subject}",
-                        response.StatusCode, subject);
-                    return ServiceResult<string>.FromTemporaryError();
-                }
-
-                var result = await response.Content.ReadFromJsonAsync<MusicBrainzSearchResult>(cancellationToken: ct)
-                    .ConfigureAwait(false);
-
-                var match = result is null ? null : selectMatches(result)?.FirstOrDefault();
+                var match = selectMatches(result)?.FirstOrDefault();
                 if (match is null)
                 {
                     _logger.LogDebug("No MusicBrainz match found for {Subject}", subject);
@@ -106,11 +82,7 @@ public class MusicBrainzService : IMusicBrainzService
                 _logger.LogInformation("Found MusicBrainz ID {MBID} for {Subject}", match.Id, subject);
                 return ServiceResult<string>.FromSuccess(match.Id);
             },
-            fallback: ServiceResult<string>.FromTemporaryError(),
-            _logger,
-            $"search for {subject}",
-            cancellationToken).ConfigureAwait(false);
-    }
+            _logger, $"MusicBrainz search for {subject}", cancellationToken);
 
     private sealed class MusicBrainzSearchResult
     {

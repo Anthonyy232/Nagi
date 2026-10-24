@@ -1,4 +1,3 @@
-using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
@@ -6,6 +5,7 @@ using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Services.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -71,30 +71,12 @@ public class DeezerService : IDeezerService, IDisposable
         !string.IsNullOrEmpty(url) &&
         url.IndexOf("//", url.IndexOf("://", StringComparison.Ordinal) + 3, StringComparison.Ordinal) < 0;
 
-    private async Task<ServiceResult<string>> SearchAsync<T>(
-        string url, Func<List<T>, string?> selectUrl, string operation, CancellationToken cancellationToken)
-    {
-        if (_pipelines.IsCircuitOpen(ServiceProviderIds.Deezer))
-            return ServiceResult<string>.FromTemporaryError();
-
-        return await _pipelines.ExecuteWithFallbackAsync(
-            ServiceProviderIds.Deezer,
-            async ct =>
+    private Task<ServiceResult<string>> SearchAsync<T>(
+        string url, Func<List<T>, string?> selectUrl, string operation, CancellationToken cancellationToken) =>
+        _pipelines.GetJsonAsync<DeezerSearchResult<T>, string>(_httpClient, ServiceProviderIds.Deezer, url,
+            result =>
             {
-                _logger.LogDebug("Searching Deezer for {Operation}", operation);
-                return await _httpClient.GetAsync(url, ct).ConfigureAwait(false);
-            },
-            async (response, ct) =>
-            {
-                if (!response.IsSuccessStatusCode)
-                {
-                    _logger.LogWarning("Deezer search failed with status {StatusCode} for {Operation}",
-                        response.StatusCode, operation);
-                    return ServiceResult<string>.FromTemporaryError();
-                }
-
-                var result = await response.Content.ReadFromJsonAsync<DeezerSearchResult<T>>(ct).ConfigureAwait(false);
-                if (result?.Error is { } error)
+                if (result.Error is { } error)
                 {
                     if (error.Code == DataNotFoundErrorCode) return ServiceResult<string>.FromSuccessNotFound();
                     _logger.LogWarning("Deezer returned error {Code} ({Message}) for {Operation}",
@@ -102,16 +84,9 @@ public class DeezerService : IDeezerService, IDisposable
                     return ServiceResult<string>.FromTemporaryError();
                 }
 
-                var imageUrl = result?.Data is { } data ? selectUrl(data) : null;
-                return imageUrl is null
-                    ? ServiceResult<string>.FromSuccessNotFound()
-                    : ServiceResult<string>.FromSuccess(imageUrl);
+                return ServiceResult<string>.FromSuccessOrNotFound(result.Data is { } data ? selectUrl(data) : null);
             },
-            fallback: ServiceResult<string>.FromTemporaryError(),
-            _logger,
-            $"search for {operation}",
-            cancellationToken).ConfigureAwait(false);
-    }
+            _logger, $"Deezer {operation}", cancellationToken);
 
     private sealed class DeezerSearchResult<T>
     {

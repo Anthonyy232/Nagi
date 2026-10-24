@@ -1,4 +1,3 @@
-using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Http;
@@ -6,6 +5,7 @@ using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Services.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -83,39 +83,11 @@ public class WikipediaService : IWikipediaService, IDisposable
         return sitelinks.GetValueOrDefault("enwiki")?.Title is { } englishTitle ? new Article(FallbackLanguage, englishTitle) : null;
     }
 
-    private async Task<ServiceResult<TResult>> GetAsync<TResponse, TResult>(
+    private Task<ServiceResult<TResult>> GetAsync<TResponse, TResult>(
         string url, Func<TResponse, TResult?> select, string operation, CancellationToken cancellationToken)
-        where TResult : class
-    {
-        if (_pipelines.IsCircuitOpen(ServiceProviderIds.Wikipedia))
-            return ServiceResult<TResult>.FromTemporaryError();
-
-        return await _pipelines.ExecuteWithFallbackAsync(
-            ServiceProviderIds.Wikipedia,
-            async ct =>
-            {
-                _logger.LogDebug("Fetching {Operation}", operation);
-                return await _httpClient.GetAsync(url, ct).ConfigureAwait(false);
-            },
-            async (response, ct) =>
-            {
-                if (!response.IsSuccessStatusCode)
-                {
-                    _logger.LogWarning("Wikimedia request failed with status {StatusCode} for {Operation}",
-                        response.StatusCode, operation);
-                    return ServiceResult<TResult>.FromTemporaryError();
-                }
-
-                var body = await response.Content.ReadFromJsonAsync<TResponse>(ct).ConfigureAwait(false);
-                return body is not null && select(body) is { } result
-                    ? ServiceResult<TResult>.FromSuccess(result)
-                    : ServiceResult<TResult>.FromSuccessNotFound();
-            },
-            fallback: ServiceResult<TResult>.FromTemporaryError(),
-            _logger,
-            operation,
-            cancellationToken).ConfigureAwait(false);
-    }
+        where TResult : class =>
+        _pipelines.GetJsonAsync<TResponse, TResult>(_httpClient, ServiceProviderIds.Wikipedia, url,
+            body => ServiceResult<TResult>.FromSuccessOrNotFound(select(body)), _logger, operation, cancellationToken);
 
     private sealed record Article(string Language, string Title);
 
