@@ -864,6 +864,9 @@ Je, unataka kuendelea?</value>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>Nakili Kumbukumbu</value>
   </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>Crash log</value>
+  </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>Chagua Jalada</value>
   </data>
@@ -899,6 +902,12 @@ Je, unataka kuendelea?</value>
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>Thamani</value>
+  </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>Field</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>Condition</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>Ondoa sheria hii</value>
@@ -953,6 +962,9 @@ Je, unataka kuendelea?</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Nenda kwenye Albamu</value>
+  </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>Seek</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Inayofuata</value>
@@ -1509,6 +1521,12 @@ Je, unataka kuendelea?</value>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Kikuza Kabla</value>
   </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>Equalizer preset</value>
+  </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>Maalum</value>
   </data>
@@ -2064,6 +2082,9 @@ Je, unataka kuendelea?</value>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>Muda Wote</value>
   </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>Time range</value>
+  </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}h {1}m</value>
   </data>
@@ -2257,11 +2278,71 @@ Je, unataka kuendelea?</value>
     <value>Hakuna orodha za kucheza zinazopatikana</value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg inahitajika ili kuchanganua nyimbo kwa ajili ya kurekebisha sauti, lakini Nagi haikuweza kuipata.
+    <value>FFmpeg is needed to analyze songs for volume normalization, but Nagi could not find it.
 
-1. Pakua toleo la Windows kutoka https://ffmpeg.org/download.html.
-2. Fungua kumbukumbu hiyo na utafute ffmpeg.exe kwenye folda yake ya bin.
-3. Ongeza folda yenye ffmpeg.exe kwenye PATH yako ya Windows.
-4. Anzisha tena Nagi, kisha uwezeshe kurekebisha sauti tena.</value>
+1. Download a Windows build from https://ffmpeg.org/download.html.
+2. Extract the archive and locate ffmpeg.exe in its bin folder.
+3. Add the folder containing ffmpeg.exe to your Windows PATH.
+4. Restart Nagi, then enable volume normalization again.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>Song Info</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>Tags</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>Listening</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>Album Artist</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>Conductor</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>Copyright</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>Path</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>Channels</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} of {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>Song List Columns</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>Choose the details song lists show.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>Column Headers</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>Label each column above song lists.</value>
   </data>
 </root>

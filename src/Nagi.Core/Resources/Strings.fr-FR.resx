@@ -317,12 +317,12 @@
     <value>Le fichier sélectionné n'est pas une sauvegarde Nagi valide.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC a rencontré une erreur non spécifiée.</value>
+    <value>LibVLC encountered an unspecified error.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Erreur LibVLC : {0}</value>
+    <value>LibVLC Error: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Échec du chargement de '{0}'.</value>
+    <value>Failed to load '{0}'.</value>
   </data>
 </root>

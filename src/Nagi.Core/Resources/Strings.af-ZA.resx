@@ -317,12 +317,12 @@
     <value>Die gekose lêer is nie 'n geldige Nagi-rugsteun nie.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC het 'n ongespesifiseerde fout teëgekom.</value>
+    <value>LibVLC encountered an unspecified error.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC Fout: {0}</value>
+    <value>LibVLC Error: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Kon nie '{0}' laai nie.</value>
+    <value>Failed to load '{0}'.</value>
   </data>
 </root>

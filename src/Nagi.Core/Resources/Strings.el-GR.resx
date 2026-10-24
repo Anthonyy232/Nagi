@@ -317,12 +317,12 @@
     <value>Το επιλεγμένο αρχείο δεν είναι έγκυρο αντίγραφο ασφαλείας του Nagi.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>Το LibVLC αντιμετώπισε ένα μη καθορισμένο σφάλμα.</value>
+    <value>LibVLC encountered an unspecified error.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Σφάλμα LibVLC: {0}</value>
+    <value>LibVLC Error: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Αποτυχία φόρτωσης '{0}'.</value>
+    <value>Failed to load '{0}'.</value>
   </data>
 </root>

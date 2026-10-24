@@ -317,12 +317,12 @@
     <value>فایل انتخاب‌شده یک پشتیبان معتبر Nagi نیست.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC با خطای نامشخصی مواجه شد.</value>
+    <value>LibVLC encountered an unspecified error.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>خطای LibVLC: {0}</value>
+    <value>LibVLC Error: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>بارگذاری '{0}' ناموفق بود.</value>
+    <value>Failed to load '{0}'.</value>
   </data>
 </root>

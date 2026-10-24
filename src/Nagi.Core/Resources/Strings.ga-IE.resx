@@ -317,12 +317,12 @@
     <value>Ní cúltaca bailí Nagi é an comhad roghnaithe.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>Tharla earráid neamhshonraithe le LibVLC.</value>
+    <value>LibVLC encountered an unspecified error.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Earráid LibVLC: {0}</value>
+    <value>LibVLC Error: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Theip ar '{0}' a luchtú.</value>
+    <value>Failed to load '{0}'.</value>
   </data>
 </root>
