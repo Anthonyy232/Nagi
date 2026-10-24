@@ -92,6 +92,7 @@ public class LibraryServiceArtistImageTests : IDisposable
             _theAudioDbService,
             Substitute.For<IDeezerService>(),
             Substitute.For<IWikipediaService>(),
+            Substitute.For<IAlbumCoverService>(),
             _httpClientFactory,
             _pathConfig,
             _settingsService,

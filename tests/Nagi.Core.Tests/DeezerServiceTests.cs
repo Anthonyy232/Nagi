@@ -60,4 +60,20 @@ public class DeezerServiceTests : IDisposable
 
         result.Status.Should().Be(expected);
     }
+
+    [Fact]
+    public async Task GetAlbumCoverUrlAsync_SkipsOtherArtistsAndPlaceholderCovers()
+    {
+        _httpHandler.RespondSequence((HttpStatusCode.OK, """
+            {"data":[
+              {"title":"OK Computer","cover_xl":"https://cdn.test/images/cover/tribute/1000x1000.jpg","artist":{"name":"Radiohead Tribute"}},
+              {"title":"OK Computer","cover_xl":"https://cdn.test/images/cover//1000x1000.jpg","artist":{"name":"Radiohead"}},
+              {"title":"OK Computer [Collector's Edition]","cover_xl":"https://cdn.test/images/cover/real/1000x1000.jpg","artist":{"name":"Radiohead"}}
+            ]}
+            """));
+
+        var result = await _service.GetAlbumCoverUrlAsync("OK Computer", "Radiohead");
+
+        result.Data.Should().Be("https://cdn.test/images/cover/real/1000x1000.jpg");
+    }
 }

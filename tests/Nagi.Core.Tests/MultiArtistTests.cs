@@ -51,6 +51,7 @@ public class MultiArtistTests : IDisposable
             Substitute.For<ITheAudioDbService>(),
             Substitute.For<IDeezerService>(),
             Substitute.For<IWikipediaService>(),
+            Substitute.For<IAlbumCoverService>(),
             httpClientFactory,
             pathConfig,
             settingsService,

@@ -12,7 +12,8 @@ using Nagi.Core.Http.Pipelines;
 namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
-///     Artist details, images, and biographies from local folders and online metadata providers.
+///     Artist details, images, and biographies from local folders and online metadata providers, and the
+///     background run that also fills in album covers.
 /// </summary>
 public partial class LibraryService
 {
@@ -43,12 +44,12 @@ public partial class LibraryService
             .FirstOrDefaultAsync(a => a.Id == artistId, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task StartArtistMetadataBackgroundFetchAsync()
+    public async Task StartMetadataBackgroundFetchAsync()
     {
         if (_shutdownCts.IsCancellationRequested) return;
         if (!await _metadataFetchSemaphore.WaitAsync(0).ConfigureAwait(false))
         {
-            _logger.LogDebug("Artist metadata background fetch already running, skipping.");
+            _logger.LogDebug("Metadata background fetch already running, skipping.");
             return;
         }
 
@@ -65,111 +66,119 @@ public partial class LibraryService
 
                 if (enabledProviders.Count == 0)
                 {
-                    _logger.LogDebug("Artist metadata background fetch: no providers enabled, exiting.");
+                    _logger.LogDebug("Metadata background fetch: no providers enabled, exiting.");
                     return;
                 }
 
-                const int batchSize = 50;
-                Guid? afterId = null;
-                while (!token.IsCancellationRequested)
-                {
-                    await using var batchContext = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
-                    var query = batchContext.Artists.Where(a => a.MetadataLastCheckedUtc == null);
-                    if (afterId.HasValue) query = query.Where(a => a.Id > afterId.Value);
-                    var artistsInBatch = await query.OrderBy(a => a.Id).Take(batchSize)
-                        .ToListAsync(token).ConfigureAwait(false);
-
-                    if (artistsInBatch.Count == 0) break;
-                    // A failed lookup stays retryable, but must not loop forever in this run.
-                    afterId = artistsInBatch[^1].Id;
-                    var artistIdsToUpdate = artistsInBatch.Select(a => a.Id).ToArray();
-
-                    var directoryRows = await batchContext.SongArtists
-                        .AsNoTracking()
-                        .Where(sa => artistIdsToUpdate.Contains(sa.ArtistId))
-                        .Select(sa => new { sa.ArtistId, sa.Song.DirectoryPath })
-                        .Distinct()
-                        .ToListAsync(token).ConfigureAwait(false);
-
-                    var directoriesByArtist = directoryRows
-                        .GroupBy(r => r.ArtistId)
-                        .ToDictionary(g => g.Key, g => (IReadOnlyList<string?>)g.Select(r => r.DirectoryPath).ToList());
-
-                    var pendingUpdates = new List<ArtistMetadataUpdatedEventArgs>();
-                    var stopwatch = Stopwatch.StartNew();
-                    int processedCount = 0;
-
-                    foreach (var artist in artistsInBatch)
-                    {
-                        if (token.IsCancellationRequested) break;
-                        try
-                        {
-                            if (!directoriesByArtist.TryGetValue(artist.Id, out var artistDirectories))
-                                artistDirectories = Array.Empty<string?>();
-
-                            var (updated, newImagePath) = await FetchAndUpdateArtistFromRemoteAsync(
-                                batchContext, artist, token, saveChanges: false, suppressEvents: true,
-                                preloadedEnabledProviders: enabledProviders,
-                                preloadedSongDirectories: artistDirectories).ConfigureAwait(false);
-
-                            if (updated)
-                            {
-                                pendingUpdates.Add(new ArtistMetadataUpdatedEventArgs(artist.Id, newImagePath));
-                            }
-
-                            if (++processedCount >= 10 || stopwatch.Elapsed.TotalSeconds >= 5)
-                            {
-                                await batchContext.SaveChangesAsync(token).ConfigureAwait(false);
-
-                                if (pendingUpdates.Count > 0)
-                                {
-                                    _logger.LogInformation("Saved partial batch of {Count} artists metadata (Time: {Elapsed}s).", pendingUpdates.Count, stopwatch.Elapsed.TotalSeconds.ToString("F1"));
-                                    ArtistMetadataBatchUpdated?.Invoke(this, pendingUpdates.ToList());
-                                    pendingUpdates.Clear();
-                                }
-
-                                processedCount = 0;
-                                stopwatch.Restart();
-                            }
-                        }
-                        catch (DbUpdateConcurrencyException)
-                        {
-                            _logger.LogWarning(
-                                "Concurrency conflict for artist {ArtistId} during background fetch. Ignoring.",
-                                artist.Id);
-                        }
-                        catch (Exception ex) when (ex is not OperationCanceledException)
-                        {
-                            _logger.LogError(ex, "Failed to update artist {ArtistId} in background.", artist.Id);
-                        }
-                    }
-
-                    if (token.IsCancellationRequested) break;
-
-                    // Persist MetadataLastCheckedUtc even when no content was updated.
-                    await batchContext.SaveChangesAsync(token).ConfigureAwait(false);
-
-                    if (pendingUpdates.Count > 0)
-                    {
-                        _logger.LogInformation("Saved final batch of {Count} artists metadata.", pendingUpdates.Count);
-
-                        ArtistMetadataBatchUpdated?.Invoke(this, pendingUpdates);
-                    }
-                }
+                await Task.WhenAll(
+                    FetchMissingArtistMetadataAsync(enabledProviders, token),
+                    FetchMissingAlbumCoversAsync(enabledProviders, token)).ConfigureAwait(false);
             }, token).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
-            _logger.LogDebug("Artist metadata background fetch was cancelled.");
+            _logger.LogDebug("Metadata background fetch was cancelled.");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unhandled exception in artist metadata background fetch.");
+            _logger.LogError(ex, "Unhandled exception in metadata background fetch.");
         }
         finally
         {
             _metadataFetchCts = null;
             _metadataFetchSemaphore.Release();
+        }
+    }
+
+    private async Task FetchMissingArtistMetadataAsync(IReadOnlyList<ServiceProviderSetting> enabledProviders,
+        CancellationToken token)
+    {
+        const int batchSize = 50;
+        Guid? afterId = null;
+        while (!token.IsCancellationRequested)
+        {
+            await using var batchContext = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
+            var query = batchContext.Artists.Where(a => a.MetadataLastCheckedUtc == null);
+            if (afterId.HasValue) query = query.Where(a => a.Id > afterId.Value);
+            var artistsInBatch = await query.OrderBy(a => a.Id).Take(batchSize)
+                .ToListAsync(token).ConfigureAwait(false);
+
+            if (artistsInBatch.Count == 0) break;
+            // A failed lookup stays retryable, but must not loop forever in this run.
+            afterId = artistsInBatch[^1].Id;
+            var artistIdsToUpdate = artistsInBatch.Select(a => a.Id).ToArray();
+
+            var directoryRows = await batchContext.SongArtists
+                .AsNoTracking()
+                .Where(sa => artistIdsToUpdate.Contains(sa.ArtistId))
+                .Select(sa => new { sa.ArtistId, sa.Song.DirectoryPath })
+                .Distinct()
+                .ToListAsync(token).ConfigureAwait(false);
+
+            var directoriesByArtist = directoryRows
+                .GroupBy(r => r.ArtistId)
+                .ToDictionary(g => g.Key, g => (IReadOnlyList<string?>)g.Select(r => r.DirectoryPath).ToList());
+
+            var pendingUpdates = new List<ArtistMetadataUpdatedEventArgs>();
+            var stopwatch = Stopwatch.StartNew();
+            int processedCount = 0;
+
+            foreach (var artist in artistsInBatch)
+            {
+                if (token.IsCancellationRequested) break;
+                try
+                {
+                    if (!directoriesByArtist.TryGetValue(artist.Id, out var artistDirectories))
+                        artistDirectories = Array.Empty<string?>();
+
+                    var (updated, newImagePath) = await FetchAndUpdateArtistFromRemoteAsync(
+                        batchContext, artist, token, saveChanges: false, suppressEvents: true,
+                        preloadedEnabledProviders: enabledProviders,
+                        preloadedSongDirectories: artistDirectories).ConfigureAwait(false);
+
+                    if (updated)
+                    {
+                        pendingUpdates.Add(new ArtistMetadataUpdatedEventArgs(artist.Id, newImagePath));
+                    }
+
+                    if (++processedCount >= 10 || stopwatch.Elapsed.TotalSeconds >= 5)
+                    {
+                        await batchContext.SaveChangesAsync(token).ConfigureAwait(false);
+
+                        if (pendingUpdates.Count > 0)
+                        {
+                            _logger.LogInformation("Saved partial batch of {Count} artists metadata (Time: {Elapsed}s).", pendingUpdates.Count, stopwatch.Elapsed.TotalSeconds.ToString("F1"));
+                            ArtistMetadataBatchUpdated?.Invoke(this, pendingUpdates.ToList());
+                            pendingUpdates.Clear();
+                        }
+
+                        processedCount = 0;
+                        stopwatch.Restart();
+                    }
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    _logger.LogWarning(
+                        "Concurrency conflict for artist {ArtistId} during background fetch. Ignoring.",
+                        artist.Id);
+                }
+                catch (Exception ex) when (ex is not OperationCanceledException)
+                {
+                    _logger.LogError(ex, "Failed to update artist {ArtistId} in background.", artist.Id);
+                }
+            }
+
+            if (token.IsCancellationRequested) break;
+
+            // Persist MetadataLastCheckedUtc even when no content was updated.
+            await batchContext.SaveChangesAsync(token).ConfigureAwait(false);
+
+            if (pendingUpdates.Count > 0)
+            {
+                _logger.LogInformation("Saved final batch of {Count} artists metadata.", pendingUpdates.Count);
+
+                ArtistMetadataBatchUpdated?.Invoke(this, pendingUpdates);
+            }
         }
     }
 

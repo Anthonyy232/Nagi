@@ -336,6 +336,9 @@ public partial class LibraryService
                 await RunReplayGainAnalysisAsync(progress, operationToken).ConfigureAwait(false);
             }
 
+            if (scanResult && await _settingsService.GetFetchOnlineMetadataEnabledAsync().ConfigureAwait(false))
+                _ = StartMetadataBackgroundFetchAsync();
+
             return scanResult;
         }
         catch (OperationCanceledException)

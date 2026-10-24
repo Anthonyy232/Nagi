@@ -46,14 +46,30 @@ public class DeezerService : IDeezerService, IDisposable
         return SearchAsync<DeezerArtist>(
             $"{BaseUrl}/search/artist?q={Uri.EscapeDataString(artistName)}&limit=10",
             artists => artists.FirstOrDefault(artist =>
-                NameMatch.AreEquivalent(artist.Name, artistName) && HasPicture(artist.PictureXl))?.PictureXl,
+                NameMatch.AreEquivalent(artist.Name, artistName) && HasImage(artist.PictureXl))?.PictureXl,
             $"artist image for {artistName}",
             cancellationToken);
     }
 
-    // Artists without a picture still get a URL, with the image hash left empty.
-    private static bool HasPicture(string? url) =>
-        !string.IsNullOrEmpty(url) && !url.Contains("/artist//", StringComparison.Ordinal);
+    public Task<ServiceResult<string>> GetAlbumCoverUrlAsync(string albumTitle, string artistName,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(albumTitle) || string.IsNullOrWhiteSpace(artistName))
+            return Task.FromResult(ServiceResult<string>.FromSuccessNotFound());
+
+        return SearchAsync<DeezerAlbum>(
+            $"{BaseUrl}/search/album?q={Uri.EscapeDataString($"{artistName} {albumTitle}")}&limit=10",
+            albums => albums.FirstOrDefault(album =>
+                NameMatch.AreEquivalent(album.Artist?.Name, artistName) &&
+                NameMatch.AreSameAlbum(album.Title, albumTitle) && HasImage(album.CoverXl))?.CoverXl,
+            $"album cover for {albumTitle} by {artistName}",
+            cancellationToken);
+    }
+
+    // Items without an image still get a URL, with the image hash left empty ("/images/cover//1000x1000-...").
+    private static bool HasImage(string? url) =>
+        !string.IsNullOrEmpty(url) &&
+        url.IndexOf("//", url.IndexOf("://", StringComparison.Ordinal) + 3, StringComparison.Ordinal) < 0;
 
     private async Task<ServiceResult<string>> SearchAsync<T>(
         string url, Func<List<T>, string?> selectUrl, string operation, CancellationToken cancellationToken)
@@ -122,5 +138,17 @@ public class DeezerService : IDeezerService, IDisposable
 
         [JsonPropertyName("picture_xl")]
         public string? PictureXl { get; set; }
+    }
+
+    private sealed class DeezerAlbum
+    {
+        [JsonPropertyName("title")]
+        public string? Title { get; set; }
+
+        [JsonPropertyName("cover_xl")]
+        public string? CoverXl { get; set; }
+
+        [JsonPropertyName("artist")]
+        public DeezerArtist? Artist { get; set; }
     }
 }

@@ -15,6 +15,20 @@ public class LastFmArtistResponse : LastFmResponse
     [JsonPropertyName("artist")] public LastFmArtist? Artist { get; set; }
 }
 
+public class LastFmAlbumResponse : LastFmResponse
+{
+    [JsonPropertyName("album")] public LastFmAlbum? Album { get; set; }
+}
+
+public class LastFmAlbum
+{
+    [JsonPropertyName("name")] public string? Name { get; set; }
+
+    [JsonPropertyName("artist")] public string? Artist { get; set; }
+
+    [JsonPropertyName("image")] public List<LastFmImage> Image { get; set; } = new();
+}
+
 public class LastFmArtist
 {
     [JsonPropertyName("image")] public List<LastFmImage> Image { get; set; } = new();

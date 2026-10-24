@@ -126,6 +126,30 @@ public static class CoreServiceRegistration
                 },
             },
 
+            // Cover Art Archive: served from the Internet Archive with no published limit; stay modest.
+            new ProviderPolicy
+            {
+                ProviderId = ServiceProviderIds.CoverArtArchive,
+                Channel = new ChannelPolicy
+                {
+                    PermitsPerWindow = 5,
+                    MaxConcurrent = 4,
+                },
+            },
+
+            // iTunes Search API: about 20 requests a minute per IP. Past that it answers 403 for a while,
+            // which leaves the album retryable on a later run.
+            new ProviderPolicy
+            {
+                ProviderId = ServiceProviderIds.AppleMusic,
+                Channel = new ChannelPolicy
+                {
+                    PermitsPerWindow = 1,
+                    Window = TimeSpan.FromSeconds(3),
+                    MaxConcurrent = 1,
+                },
+            },
+
             // LRCLIB: no rate limit documented. Keep concurrency reasonable to be polite.
             new ProviderPolicy
             {
@@ -193,6 +217,9 @@ public static class CoreServiceRegistration
         services.AddSingleton<ITheAudioDbService, TheAudioDbService>();
         services.AddSingleton<IDeezerService, DeezerService>();
         services.AddSingleton<IWikipediaService, WikipediaService>();
+        services.AddSingleton<ICoverArtArchiveService, CoverArtArchiveService>();
+        services.AddSingleton<IAppleMusicService, AppleMusicService>();
+        services.AddSingleton<IAlbumCoverService, AlbumCoverService>();
         services.AddSingleton<INetEaseLyricsService, NetEaseLyricsService>();
         services.AddSingleton<LastFmScrobblerService>();
         services.AddSingleton<ILastFmScrobblerService>(sp => sp.GetRequiredService<LastFmScrobblerService>());

@@ -43,6 +43,9 @@ namespace Nagi.Core.Data.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime?>("CoverArtLastCheckedUtc")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("CoverArtUri")
                         .HasMaxLength(2000)
                         .HasColumnType("TEXT");

@@ -80,6 +80,7 @@ public partial class LibraryServiceTests : IDisposable
             _theAudioDbService,
             Substitute.For<IDeezerService>(),
             Substitute.For<IWikipediaService>(),
+            Substitute.For<IAlbumCoverService>(),
             _httpClientFactory,
             _pathConfig,
             _settingsService,
@@ -269,7 +270,7 @@ public partial class LibraryServiceTests : IDisposable
             return provider.Task;
         });
 
-        var run = _libraryService.StartArtistMetadataBackgroundFetchAsync();
+        var run = _libraryService.StartMetadataBackgroundFetchAsync();
         var token = await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
         Task reset = Task.CompletedTask;
         if (action == "dispose") _libraryService.Dispose();
@@ -295,7 +296,7 @@ public partial class LibraryServiceTests : IDisposable
         }
         _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(ServiceResult<ArtistInfo>.FromSuccessNotFound());
-        await _libraryService.StartArtistMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(5));
+        await _libraryService.StartMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(5));
         await _lastFmService.Received(action == "disable" ? 2 : 1)
             .GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>());
     }
@@ -411,7 +412,7 @@ public partial class LibraryServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        await _libraryService.StartArtistMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(10));
+        await _libraryService.StartMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(10));
 
         await _lastFmService.Received(51).GetArtistInfoAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
@@ -419,7 +420,7 @@ public partial class LibraryServiceTests : IDisposable
 
         _lastFmService.GetArtistInfoAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(ServiceResult<ArtistInfo>.FromSuccessNotFound());
-        await _libraryService.StartArtistMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(10));
+        await _libraryService.StartMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(10));
 
         await _lastFmService.Received(102).GetArtistInfoAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
@@ -1225,7 +1226,7 @@ public partial class LibraryServiceTests : IDisposable
         using var reader = new LibraryReader(database.ContextFactory, _fileSystem, _settingsService,
             Substitute.For<ILogger<LibraryReader>>());
         using var service = new LibraryService(database.ContextFactory, reader, _fileSystem, _metadataService,
-            _lastFmService, _musicBrainzService, _fanartTvService, _theAudioDbService, Substitute.For<IDeezerService>(), Substitute.For<IWikipediaService>(), _httpClientFactory,
+            _lastFmService, _musicBrainzService, _fanartTvService, _theAudioDbService, Substitute.For<IDeezerService>(), Substitute.For<IWikipediaService>(), Substitute.For<IAlbumCoverService>(), _httpClientFactory,
             _pathConfig, _settingsService, _replayGainService, _imageProcessor, _pipelines, _logger);
         var song = new Song { FilePath = @"C:\Music\song.mp3", Folder = new Folder { Path = @"C:\Music", Name = "Music" } };
         await using (var context = database.ContextFactory.CreateDbContext())

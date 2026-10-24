@@ -22,6 +22,8 @@ public class ServiceProviderIntegrationTests : IDisposable
     private readonly ITheAudioDbService _theAudioDbService;
     private readonly IDeezerService _deezerService;
     private readonly IWikipediaService _wikipediaService;
+    private readonly IAlbumCoverService _albumCoverService = Substitute.For<IAlbumCoverService>();
+    private readonly IImageProcessor _imageProcessor = Substitute.For<IImageProcessor>();
     private readonly DbContextFactoryTestHelper _dbHelper;
     private readonly TestHttpMessageHandler _httpHandler = new();
 
@@ -56,11 +58,12 @@ public class ServiceProviderIntegrationTests : IDisposable
             _theAudioDbService,
             _deezerService,
             _wikipediaService,
+            _albumCoverService,
             httpClientFactory,
             _pathConfig,
             _settingsService,
             Substitute.For<IReplayGainService>(),
-            Substitute.For<IImageProcessor>(),
+            _imageProcessor,
             _pipelines,
             Substitute.For<ILogger<LibraryService>>());
 
@@ -154,5 +157,100 @@ public class ServiceProviderIntegrationTests : IDisposable
         result!.Biography.Should().Be("Last.fm biography");
         _httpHandler.Requests.Select(request => request.RequestUri!.AbsoluteUri)
             .Should().Equal("https://deezer.test/artist.jpg");
+    }
+
+    [Theory]
+    [InlineData(ServiceResultStatus.Success, true, true)]
+    [InlineData(ServiceResultStatus.Success, false, false)]
+    [InlineData(ServiceResultStatus.SuccessNotFound, true, true)]
+    [InlineData(ServiceResultStatus.TemporaryError, true, false)]
+    public async Task MetadataBackgroundFetch_GivesAlbumsWithoutArtAnOnlineCover(ServiceResultStatus status, bool downloads,
+        bool expectChecked)
+    {
+        const string coverPath = @"C:\cache\albumart\cover.light.dark.fetched.jpg";
+        var folder = new Folder { Name = "Music", Path = @"C:\Music" };
+        var album = new Album { Title = "Album" };
+        album.AlbumArtists.Add(new AlbumArtist { Artist = new Artist { Name = "Artist" }, Order = 0 });
+        using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Songs.AddRange(
+                new Song { Title = "One", FilePath = @"C:\Music\1.mp3", Folder = folder, Album = album, MusicBrainzReleaseId = "release-id" },
+                new Song { Title = "Two", FilePath = @"C:\Music\2.mp3", Folder = folder, Album = album });
+            context.SaveChanges();
+        }
+
+        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata)
+            .Returns(new List<ServiceProviderSetting> { new() { Id = ServiceProviderIds.CoverArtArchive } });
+        _albumCoverService.FindCoverUrlAsync(
+                Arg.Is<AlbumCoverQuery>(q => q.Title == "Album" && q.ArtistName == "Artist" && q.ReleaseId == "release-id"),
+                Arg.Any<IReadOnlyList<ServiceProviderSetting>>(), Arg.Any<CancellationToken>())
+            .Returns(status switch
+            {
+                ServiceResultStatus.Success => ServiceResult<string>.FromSuccess("https://covers.test/front.jpg"),
+                ServiceResultStatus.SuccessNotFound => ServiceResult<string>.FromSuccessNotFound(),
+                _ => ServiceResult<string>.FromTemporaryError()
+            });
+        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(
+            downloads ? System.Net.HttpStatusCode.OK : System.Net.HttpStatusCode.NotFound)
+        {
+            Content = new ByteArrayContent([1, 2, 3])
+        });
+        _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>())
+            .Returns(Task.FromResult<(string?, string?, string?)>((coverPath, "light", "dark")));
+        var changes = new List<LibraryChangeType>();
+        _libraryService.LibraryContentChanged += (_, e) => changes.Add(e.ChangeType);
+
+        await _libraryService.StartMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(10));
+
+        var hasCover = status == ServiceResultStatus.Success && downloads;
+        using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        var storedAlbum = assertContext.Albums.Single();
+        storedAlbum.CoverArtUri.Should().Be(hasCover ? coverPath : null);
+        storedAlbum.CoverArtLastCheckedUtc.HasValue.Should().Be(expectChecked);
+        assertContext.Songs.Select(s => new { s.AlbumArtUriFromTrack, s.DarkSwatchId }).ToList().Should().AllBeEquivalentTo(
+            new { AlbumArtUriFromTrack = hasCover ? coverPath : null, DarkSwatchId = hasCover ? "dark" : null });
+        changes.Should().Equal(hasCover ? [LibraryChangeType.SongsUpdated] : []);
+    }
+
+    [Fact]
+    public async Task MetadataBackgroundFetch_KeepsArtThatAScanFoundDuringTheLookup()
+    {
+        const string scannedCover = @"C:\cache\albumart\scanned.jpg";
+        var album = new Album { Title = "Album" };
+        album.AlbumArtists.Add(new AlbumArtist { Artist = new Artist { Name = "Artist" }, Order = 0 });
+        using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Songs.Add(new Song
+            {
+                Title = "One",
+                FilePath = @"C:\Music\1.mp3",
+                Folder = new Folder { Name = "Music", Path = @"C:\Music" },
+                Album = album
+            });
+            context.SaveChanges();
+        }
+
+        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata)
+            .Returns(new List<ServiceProviderSetting> { new() { Id = ServiceProviderIds.CoverArtArchive } });
+        _albumCoverService.FindCoverUrlAsync(default!, default!, default).ReturnsForAnyArgs(_ =>
+        {
+            using var scanContext = _dbHelper.ContextFactory.CreateDbContext();
+            scanContext.Albums.Single().CoverArtUri = scannedCover;
+            scanContext.SaveChanges();
+            return ServiceResult<string>.FromSuccess("https://covers.test/front.jpg");
+        });
+        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+        {
+            Content = new ByteArrayContent([1, 2, 3])
+        });
+        _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>())
+            .Returns(Task.FromResult<(string?, string?, string?)>((@"C:\cache\albumart\online.jpg", "light", "dark")));
+
+        await _libraryService.StartMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(10));
+
+        using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        assertContext.Albums.Single().CoverArtUri.Should().Be(scannedCover);
+        assertContext.Albums.Single().CoverArtLastCheckedUtc.Should().NotBeNull();
+        assertContext.Songs.Single().AlbumArtUriFromTrack.Should().BeNull();
     }
 }

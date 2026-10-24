@@ -9,7 +9,7 @@ using Nagi.Core.Services.Data;
 namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
-///     Service for resolving artist identities via the MusicBrainz database.
+///     Service for resolving artist and album identities via the MusicBrainz database.
 ///     Rate limiting (1 req/s as MusicBrainz requires), retry, and circuit-breaker policy
 ///     are handled by <see cref="IProviderPipelineProvider"/>.
 /// </summary>
@@ -41,6 +41,18 @@ public class MusicBrainzService : IMusicBrainzService
 
         return SearchAsync($"artist?query=artist:{Phrase(artistName)}", result => result.Artists,
             minimumScore: 80, $"artist: {artistName}", cancellationToken);
+    }
+
+    public Task<ServiceResult<string>> SearchReleaseGroupAsync(string albumTitle, string artistName,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(albumTitle) || string.IsNullOrWhiteSpace(artistName))
+            return Task.FromResult(ServiceResult<string>.FromSuccessNotFound());
+
+        // Both phrases must score well; a looser match would attach another album's cover.
+        return SearchAsync(
+            $"release-group?query=releasegroup:{Phrase(albumTitle)}%20AND%20artist:{Phrase(artistName)}",
+            result => result.ReleaseGroups, minimumScore: 90, $"album: {albumTitle} by {artistName}", cancellationToken);
     }
 
     // Escape Lucene's quoted-phrase syntax before URL encoding.
@@ -104,6 +116,9 @@ public class MusicBrainzService : IMusicBrainzService
     {
         [JsonPropertyName("artists")]
         public List<MusicBrainzMatch>? Artists { get; set; }
+
+        [JsonPropertyName("release-groups")]
+        public List<MusicBrainzMatch>? ReleaseGroups { get; set; }
     }
 
     private sealed class MusicBrainzMatch

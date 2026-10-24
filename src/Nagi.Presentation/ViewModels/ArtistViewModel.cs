@@ -112,7 +112,7 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
     protected override async Task OnPageLoadedAsync(PagedResult<Artist> result, CancellationToken token)
     {
         if (await _settingsService.GetFetchOnlineMetadataEnabledAsync())
-            _ = _libraryScanner.StartArtistMetadataBackgroundFetchAsync();
+            _ = _libraryScanner.StartMetadataBackgroundFetchAsync();
     }
 
     public async Task NavigateToArtistDetailAsync(object? parameter)

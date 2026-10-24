@@ -125,6 +125,7 @@ public class SettingsServiceTests
 
         ids.IndexOf(ServiceProviderIds.TheAudioDb).Should().BeLessThan(ids.IndexOf(ServiceProviderIds.FanartTv));
         ids.IndexOf(ServiceProviderIds.Deezer).Should().BeGreaterThan(ids.IndexOf(ServiceProviderIds.FanartTv));
+        ids.IndexOf(ServiceProviderIds.AppleMusic).Should().BeGreaterThan(ids.IndexOf(ServiceProviderIds.FanartTv));
     }
 
     [Fact]

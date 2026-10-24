@@ -30,6 +30,7 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
     private readonly ITheAudioDbService _theAudioDbService;
     private readonly IDeezerService _deezerService;
     private readonly IWikipediaService _wikipediaService;
+    private readonly IAlbumCoverService _albumCoverService;
     private readonly ILogger<LibraryService> _logger;
     private readonly SemaphoreSlim _metadataFetchSemaphore = new(1, 1);
     private readonly IMetadataService _metadataService;
@@ -55,6 +56,7 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
         ITheAudioDbService theAudioDbService,
         IDeezerService deezerService,
         IWikipediaService wikipediaService,
+        IAlbumCoverService albumCoverService,
         IHttpClientFactory httpClientFactory,
         IPathConfiguration pathConfig,
         ISettingsService settingsService,
@@ -73,6 +75,7 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
         _theAudioDbService = theAudioDbService;
         _deezerService = deezerService;
         _wikipediaService = wikipediaService;
+        _albumCoverService = albumCoverService;
         _httpClientFactory = httpClientFactory;
         _pathConfig = pathConfig;
         _settingsService = settingsService;

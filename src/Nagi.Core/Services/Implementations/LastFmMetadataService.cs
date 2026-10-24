@@ -54,6 +54,22 @@ public class LastFmMetadataService : ILastFmMetadataService
             $"artist '{artistName}'", cancellationToken);
     }
 
+    public Task<ServiceResult<string>> GetAlbumCoverUrlAsync(string albumTitle, string artistName,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(albumTitle) || string.IsNullOrWhiteSpace(artistName))
+            return Task.FromResult(ServiceResult<string>.FromSuccessNotFound());
+
+        return GetAsync<LastFmAlbumResponse, string>(
+            $"method=album.getinfo&artist={Uri.EscapeDataString(artistName)}&album={Uri.EscapeDataString(albumTitle)}&autocorrect=1",
+            // Autocorrect can land on a different album, so accept only the one that was asked for.
+            response => response.Album is { } album && NameMatch.AreSameAlbum(album.Name, albumTitle) &&
+                        NameMatch.AreEquivalent(album.Artist, artistName)
+                ? SelectBestImageUrl(album.Image)
+                : null,
+            $"album '{albumTitle}' by '{artistName}'", cancellationToken);
+    }
+
     private async Task<ServiceResult<T>> GetAsync<TResponse, T>(string query, Func<TResponse, T?> map, string subject,
         CancellationToken cancellationToken)
         where TResponse : LastFmResponse
@@ -169,7 +185,8 @@ public class LastFmMetadataService : ILastFmMetadataService
             .Where(i => !string.IsNullOrWhiteSpace(i.Url) && !i.Url.Contains(PlaceholderImageHash, StringComparison.OrdinalIgnoreCase))
             .ToList();
 
-        return imageList.FirstOrDefault(i => i.Size == "extralarge")?.Url
+        return imageList.FirstOrDefault(i => i.Size == "mega")?.Url
+               ?? imageList.FirstOrDefault(i => i.Size == "extralarge")?.Url
                ?? imageList.FirstOrDefault(i => i.Size == "large")?.Url
                ?? imageList.LastOrDefault()?.Url;
     }

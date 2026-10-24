@@ -24,6 +24,12 @@ public class Album
 
     [MaxLength(2000)] public string? CoverArtUri { get; set; }
 
+    /// <summary>
+    ///     When online sources were last asked for a cover. Null means the album still needs a lookup
+    ///     or the previous one failed.
+    /// </summary>
+    public DateTime? CoverArtLastCheckedUtc { get; set; }
+
     public virtual ICollection<AlbumArtist> AlbumArtists { get; set; } = new List<AlbumArtist>();
     public virtual ICollection<Song> Songs { get; set; } = new List<Song>();
 
