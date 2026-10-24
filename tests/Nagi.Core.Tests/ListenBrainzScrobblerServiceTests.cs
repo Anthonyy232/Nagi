@@ -23,6 +23,7 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
     private readonly TestHttpMessageHandler _httpMessageHandler;
     private readonly ILogger<ListenBrainzScrobblerService> _logger;
     private readonly ISettingsService _settingsService;
+    private readonly IAppInfoService _appInfoService = Substitute.For<IAppInfoService>();
 
     private string? _capturedRequestBody;
 
@@ -59,7 +60,35 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
             _pipelines,
             _dbHelper.ContextFactory,
             _settingsService,
+            _appInfoService,
             _logger);
+    }
+
+    [Fact]
+    public async Task SubmitListenAsync_SendsMusicBrainzIdsAndClientDetails()
+    {
+        SetupHttpResponse(HttpStatusCode.OK, "{\"status\":\"ok\"}");
+        _appInfoService.GetAppVersion().Returns("2.3.0");
+        var song = CreateTestSong();
+        song.MusicBrainzTrackId = "33333333-3333-3333-3333-333333333333";
+        song.MusicBrainzReleaseId = "44444444-4444-4444-4444-444444444444";
+        song.TrackNumber = 4;
+
+        await CreateService().SubmitListenAsync(song, DateTime.UtcNow);
+
+        var info = JsonSerializer.Deserialize<ListenBrainzSubmitPayload>(_capturedRequestBody!)!
+            .Payload[0].TrackMetadata.AdditionalInfo;
+        info.Should().BeEquivalentTo(new ListenBrainzAdditionalInfo
+        {
+            RecordingMbid = "33333333-3333-3333-3333-333333333333",
+            ReleaseMbid = "44444444-4444-4444-4444-444444444444",
+            TrackNumber = 4,
+            DurationMs = 180_000,
+            MediaPlayer = "Nagi",
+            SubmissionClient = "Nagi",
+            SubmissionClientVersion = "2.3.0"
+        });
+        _capturedRequestBody.Should().NotContain("release_group_mbid");
     }
 
     [Fact]

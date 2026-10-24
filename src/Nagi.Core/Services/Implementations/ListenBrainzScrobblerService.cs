@@ -23,6 +23,7 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
     private const string DefaultBaseUrl = "https://api.listenbrainz.org";
     private const string SubmitListensPath = "/1/submit-listens";
     private const string ValidateTokenPath = "/1/validate-token";
+    private const string ClientName = "Nagi";
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -34,18 +35,21 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
     private readonly IProviderPipelineProvider _pipelines;
     private readonly ILogger<ListenBrainzScrobblerService> _logger;
     private readonly ISettingsService _settingsService;
+    private readonly IAppInfoService _appInfoService;
 
     public ListenBrainzScrobblerService(
         IHttpClientFactory httpClientFactory,
         IProviderPipelineProvider pipelines,
         IDbContextFactory<MusicDbContext> contextFactory,
         ISettingsService settingsService,
+        IAppInfoService appInfoService,
         ILogger<ListenBrainzScrobblerService> logger)
     {
         _httpClient = httpClientFactory.CreateClient();
         _pipelines = pipelines;
         _contextFactory = contextFactory;
         _settingsService = settingsService;
+        _appInfoService = appInfoService;
         _logger = logger;
     }
 
@@ -212,16 +216,30 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
             }, cancellationToken);
     }
 
-    private static ListenBrainzListen? CreateListen(Song song, long? listenedAt)
+    private ListenBrainzListen? CreateListen(Song song, long? listenedAt)
     {
         if (string.IsNullOrWhiteSpace(song.PrimaryArtistName) || string.IsNullOrWhiteSpace(song.Title))
             return null;
+
         return new ListenBrainzListen
         {
             ListenedAt = listenedAt,
             TrackMetadata = new ListenBrainzTrackMetadata
             {
-                ArtistName = song.PrimaryArtistName, TrackName = song.Title, ReleaseName = song.Album?.Title
+                ArtistName = song.PrimaryArtistName,
+                TrackName = song.Title,
+                ReleaseName = song.Album?.Title,
+                AdditionalInfo = new ListenBrainzAdditionalInfo
+                {
+                    RecordingMbid = song.MusicBrainzTrackId,
+                    ReleaseMbid = song.MusicBrainzReleaseId,
+                    ReleaseGroupMbid = song.MusicBrainzReleaseGroupId,
+                    TrackNumber = song.TrackNumber,
+                    DurationMs = song.Duration > TimeSpan.Zero ? (long)song.Duration.TotalMilliseconds : null,
+                    MediaPlayer = ClientName,
+                    SubmissionClient = ClientName,
+                    SubmissionClientVersion = _appInfoService.GetAppVersion()
+                }
             }
         };
     }

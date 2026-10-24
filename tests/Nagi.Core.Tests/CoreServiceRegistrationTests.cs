@@ -20,6 +20,7 @@ public class CoreServiceRegistrationTests
         services.AddSingleton(Substitute.For<IConfiguration>());
         services.AddSingleton(Substitute.For<IPathConfiguration>());
         services.AddSingleton(Substitute.For<ISettingsService>());
+        services.AddSingleton(Substitute.For<IAppInfoService>());
         services.AddSingleton(Substitute.For<IAudioPlayer>());
         services.AddSingleton(Substitute.For<ISystemMediaControls>());
         services.AddNagiCore();

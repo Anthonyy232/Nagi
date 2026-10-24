@@ -20,7 +20,7 @@ public static class CoreServiceRegistration
     /// <summary>
     ///     Adds the library, playback, metadata, scrobbling, lyrics, and maintenance services.
     ///     The host must also register logging, HTTP clients, <c>IConfiguration</c>, and its platform services:
-    ///     <see cref="IPathConfiguration" />, <see cref="ISettingsService" />, <see cref="IAudioPlayer" />
+    ///     <see cref="IPathConfiguration" />, <see cref="ISettingsService" />, <see cref="IAppInfoService" />, <see cref="IAudioPlayer" />
     ///     and <see cref="ISystemMediaControls" />.
     /// </summary>
     public static IServiceCollection AddNagiCore(this IServiceCollection services)
