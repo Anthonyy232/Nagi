@@ -468,9 +468,11 @@ public partial class LibraryService
             musicBrainzTask = _musicBrainzService.SearchArtistAsync(artist.Name, cancellationToken);
         }
 
-        // Last.fm can start before MusicBrainz resolves the ID needed by other providers.
+        // Name-based providers can start before MusicBrainz resolves the ID needed by the others.
         if (enabledIds.Contains(ServiceProviderIds.LastFm))
             tasks[ServiceProviderIds.LastFm] = FetchFromLastFmAsync(artist.Name, cancellationToken);
+        if (enabledIds.Contains(ServiceProviderIds.Deezer))
+            tasks[ServiceProviderIds.Deezer] = FetchFromDeezerAsync(artist.Name, cancellationToken);
 
         var anyProviderConclusive = false;
         var allProvidersConclusive = true;
@@ -653,6 +655,12 @@ public partial class LibraryService
             return (true, result.Data.ImageUrl, result.Data.Biography);
         }
         return (result.IsConclusive, null, null);
+    }
+
+    private async Task<(bool IsConclusive, string? ImageUrl, string? Biography)> FetchFromDeezerAsync(string artistName, CancellationToken ct)
+    {
+        var result = await _deezerService.GetArtistImageUrlAsync(artistName, ct).ConfigureAwait(false);
+        return (result.IsConclusive, result.Data, null);
     }
 
     private async Task<string?> DownloadAndCacheArtistImageAsync(Artist artist, Uri imageUrl, CancellationToken cancellationToken)

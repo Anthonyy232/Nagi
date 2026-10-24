@@ -692,6 +692,9 @@ Files that could not be imported: {0}.</value>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
     <value>Artist biographies and images (fallback)</value>
   </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>Artist images, found by name</value>
+  </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Search albums</value>
   </data>

@@ -394,6 +394,7 @@ public partial class SettingsService
                 Provider(ServiceProviderIds.MusicBrainz, "MusicBrainz", Strings.Settings_Provider_MusicBrainz_Desc),
                 Provider(ServiceProviderIds.FanartTv, "Fanart.tv", Strings.Settings_Provider_FanartTv_Desc),
                 Provider(ServiceProviderIds.TheAudioDb, "TheAudioDB", Strings.Settings_Provider_TheAudioDB_Desc),
+                Provider(ServiceProviderIds.Deezer, "Deezer", Strings.Settings_Provider_Deezer_Desc),
                 Provider(ServiceProviderIds.LastFm, "Last.fm", Strings.Settings_Provider_LastFm_Desc)
             ],
             _ => []

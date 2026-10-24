@@ -28,6 +28,7 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
     private readonly IMusicBrainzService _musicBrainzService;
     private readonly IFanartTvService _fanartTvService;
     private readonly ITheAudioDbService _theAudioDbService;
+    private readonly IDeezerService _deezerService;
     private readonly ILogger<LibraryService> _logger;
     private readonly SemaphoreSlim _metadataFetchSemaphore = new(1, 1);
     private readonly IMetadataService _metadataService;
@@ -51,6 +52,7 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
         IMusicBrainzService musicBrainzService,
         IFanartTvService fanartTvService,
         ITheAudioDbService theAudioDbService,
+        IDeezerService deezerService,
         IHttpClientFactory httpClientFactory,
         IPathConfiguration pathConfig,
         ISettingsService settingsService,
@@ -67,6 +69,7 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
         _musicBrainzService = musicBrainzService;
         _fanartTvService = fanartTvService;
         _theAudioDbService = theAudioDbService;
+        _deezerService = deezerService;
         _httpClientFactory = httpClientFactory;
         _pathConfig = pathConfig;
         _settingsService = settingsService;

@@ -78,6 +78,7 @@ public partial class LibraryServiceTests : IDisposable
             _musicBrainzService,
             _fanartTvService,
             _theAudioDbService,
+            Substitute.For<IDeezerService>(),
             _httpClientFactory,
             _pathConfig,
             _settingsService,
@@ -1223,7 +1224,7 @@ public partial class LibraryServiceTests : IDisposable
         using var reader = new LibraryReader(database.ContextFactory, _fileSystem, _settingsService,
             Substitute.For<ILogger<LibraryReader>>());
         using var service = new LibraryService(database.ContextFactory, reader, _fileSystem, _metadataService,
-            _lastFmService, _musicBrainzService, _fanartTvService, _theAudioDbService, _httpClientFactory,
+            _lastFmService, _musicBrainzService, _fanartTvService, _theAudioDbService, Substitute.For<IDeezerService>(), _httpClientFactory,
             _pathConfig, _settingsService, _replayGainService, _imageProcessor, _pipelines, _logger);
         var song = new Song { FilePath = @"C:\Music\song.mp3", Folder = new Folder { Path = @"C:\Music", Name = "Music" } };
         await using (var context = database.ContextFactory.CreateDbContext())

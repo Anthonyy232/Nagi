@@ -104,6 +104,17 @@ public static class CoreServiceRegistration
                 },
             },
 
+            // Deezer: 50 requests per 5 seconds per IP; past that it answers 200 with a quota error.
+            new ProviderPolicy
+            {
+                ProviderId = ServiceProviderIds.Deezer,
+                Channel = new ChannelPolicy
+                {
+                    PermitsPerWindow = 8,
+                    MaxConcurrent = 4,
+                },
+            },
+
             // LRCLIB: no rate limit documented. Keep concurrency reasonable to be polite.
             new ProviderPolicy
             {
@@ -169,6 +180,7 @@ public static class CoreServiceRegistration
         services.AddSingleton<IMusicBrainzService, MusicBrainzService>();
         services.AddSingleton<IFanartTvService, FanartTvService>();
         services.AddSingleton<ITheAudioDbService, TheAudioDbService>();
+        services.AddSingleton<IDeezerService, DeezerService>();
         services.AddSingleton<INetEaseLyricsService, NetEaseLyricsService>();
         services.AddSingleton<LastFmScrobblerService>();
         services.AddSingleton<ILastFmScrobblerService>(sp => sp.GetRequiredService<LastFmScrobblerService>());

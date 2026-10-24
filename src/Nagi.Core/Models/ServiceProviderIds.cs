@@ -24,6 +24,9 @@ public static class ServiceProviderIds
     /// <summary>Last.fm - Fallback for artist images and biographies.</summary>
     public const string LastFm = "lastfm";
 
+    /// <summary>Deezer - Artist images found by name, no ID or key needed.</summary>
+    public const string Deezer = "deezer";
+
     /// <summary>Last.fm API Secret name for retrieval.</summary>
     public const string LastFmSecret = "lastfm-secret";
 

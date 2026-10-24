@@ -109,6 +109,25 @@ public class SettingsServiceTests
     }
 
     [Fact]
+    public async Task Providers_MissingFromASavedOrderStayBelowSourcesTheUserRankedDifferently()
+    {
+        // The pre-update default order, which ranked TheAudioDB above Fanart.tv.
+        var saved = JsonSerializer.Serialize(new[]
+        {
+            new ServiceProviderSetting { Id = ServiceProviderIds.MusicBrainz, Order = 0 },
+            new ServiceProviderSetting { Id = ServiceProviderIds.TheAudioDb, Order = 1 },
+            new ServiceProviderSetting { Id = ServiceProviderIds.FanartTv, Order = 2 },
+            new ServiceProviderSetting { Id = ServiceProviderIds.LastFm, Order = 3 }
+        });
+        var settings = CreateSettings(new Dictionary<string, object> { ["MetadataServiceProviders"] = saved });
+
+        var ids = (await settings.GetServiceProvidersAsync(ServiceCategory.Metadata)).Select(p => p.Id).ToList();
+
+        ids.IndexOf(ServiceProviderIds.TheAudioDb).Should().BeLessThan(ids.IndexOf(ServiceProviderIds.FanartTv));
+        ids.IndexOf(ServiceProviderIds.Deezer).Should().BeGreaterThan(ids.IndexOf(ServiceProviderIds.FanartTv));
+    }
+
+    [Fact]
     public async Task Navigation_UsesCanonicalTagsAndCurrentLabelsWhilePreservingOrderAndVisibility()
     {
         var values = new Dictionary<string, object>

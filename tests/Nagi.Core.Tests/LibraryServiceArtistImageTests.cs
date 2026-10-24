@@ -90,6 +90,7 @@ public class LibraryServiceArtistImageTests : IDisposable
             _musicBrainzService,
             _fanartTvService,
             _theAudioDbService,
+            Substitute.For<IDeezerService>(),
             _httpClientFactory,
             _pathConfig,
             _settingsService,
