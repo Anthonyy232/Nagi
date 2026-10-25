@@ -4,10 +4,12 @@ base_path: .
 
 preserve_hierarchy: true
 
+# Untranslated strings are left out of the exported files so .NET and MRT fall back to the
+# English source, instead of Crowdin copying English text into every locale.
 files:
-  # Nagi.Core Shared Resources (.resx)
   - source: /src/Nagi.Core/Resources/Strings.resx
     translation: /src/Nagi.Core/Resources/Strings.%locale%.resx
+    skip_untranslated_strings: true
     languages_mapping:
       locale:
         ar: ar
@@ -15,9 +17,9 @@ files:
         zh-CN: zh-Hans
         zh-TW: zh-Hant
 
-  # Nagi.Presentation C# Resources (.resx)
   - source: /src/Nagi.Presentation/Resources/Strings.resx
     translation: /src/Nagi.Presentation/Resources/Strings.%locale%.resx
+    skip_untranslated_strings: true
     languages_mapping:
       locale:
         ar: ar
@@ -25,9 +27,9 @@ files:
         zh-CN: zh-Hans
         zh-TW: zh-Hant
 
-  # Windows package metadata (.resw)
   - source: /src/Nagi.WinUI/Strings/en-US/Resources.resw
     translation: /src/Nagi.WinUI/Strings/%locale%/Resources.resw
+    skip_untranslated_strings: true
     languages_mapping:
       locale:
         ar: ar
