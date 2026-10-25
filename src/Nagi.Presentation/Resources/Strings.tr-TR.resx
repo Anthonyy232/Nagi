@@ -59,7 +59,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NavItem_Library" xml:space="preserve">
-    <value>Arşiv</value>
+    <value>Kitaplık</value>
   </data>
   <data name="NavItem_Albums" xml:space="preserve">
     <value>Albümler</value>
@@ -104,7 +104,7 @@
     <value>Tümünü Tekrarla</value>
   </data>
   <data name="Tooltip_RepeatOne" xml:space="preserve">
-    <value>Tekrar Bir</value>
+    <value>Birini Tekrarla</value>
   </data>
   <data name="Tooltip_Repeat" xml:space="preserve">
     <value>Tekrarla</value>
@@ -302,7 +302,7 @@
     <value>Klasör eklenemedi. Yol geçersiz olabilir.</value>
   </data>
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
-    <value>Bu klasör zaten kütüphanede.</value>
+    <value>Bu klasör zaten kitaplıkta.</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Klasör kitaplığa ekleniyor…</value>
@@ -630,7 +630,7 @@ Kitaplığınızda bulunamayan şarkılar: {0}.</value>
     <value>Sonraki</value>
   </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
-    <value>Arşiv</value>
+    <value>Kitaplık</value>
   </data>
   <data name="Settings_Nav_Folders" xml:space="preserve">
     <value>Klasörler</value>
@@ -681,16 +681,28 @@ Kitaplığınızda bulunamayan şarkılar: {0}.</value>
     <value>Asya müziği için harika bir Çin müzik hizmeti</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Sanatçı kimliklerini getirir (TheAudioDB ve Fanart.tv için gereklidir)</value>
+    <value>Etiketlerinizde bulunmayan sanatçı ve albüm kimliklerini arar</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>Yüksek kaliteli sanatçı görselleri ve biyografileri (MusicBrainz gerektirir)</value>
+    <value>Sanatçı görselleri ve biyografileri (etiketlerinizden veya MusicBrainz'den bir MusicBrainz kimliği gerektirir)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>Yalnızca yüksek kaliteli sanatçı görselleri (MusicBrainz gerektirir)</value>
+    <value>Yüksek kaliteli sanatçı görselleri (etiketlerinizden veya MusicBrainz'den bir MusicBrainz kimliği gerektirir)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Sanatçı biyografileri ve görselleri (yedek)</value>
+    <value>Sanatçı biyografileri ve albüm kapakları (yedek)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>Ada göre bulunan sanatçı görselleri ve albüm kapakları</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>Kendi dilinizde sanatçı biyografileri (etiketlerinizden veya MusicBrainz'den bir MusicBrainz kimliği gerektirir)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>MusicBrainz yayınları için albüm kapakları (etiketlerinizdeki veya MusicBrainz'deki kimlikleri kullanır)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>Ada göre bulunan yüksek çözünürlüklü albüm kapakları</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Albümlerde ara</value>
@@ -723,7 +735,7 @@ Kitaplığınızda bulunamayan şarkılar: {0}.</value>
     <value>Türlerde ara</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Arşivde ara</value>
+    <value>Kitaplıkta ara</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Çalma listelerinde ara</value>
@@ -771,7 +783,7 @@ Kitaplığınızda bulunamayan şarkılar: {0}.</value>
     <value>Meta Verileri Yeniden Tara</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>Sanatçı ayrıştırma gibi üst veri ayarlarını uygulamak için kitaplığınızı yeniden tarayın. Büyük kitaplıklar için bu işlem biraz zaman alabilir. Devam edilsin mi?</value>
+    <value>Sanatçı ayrıştırma gibi meta veri ayarlarını uygulamak için kitaplığınızı yeniden tarayın. Büyük kitaplıklar için bu işlem biraz zaman alabilir. Devam edilsin mi?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
     <value>Yeniden Tara</value>
@@ -783,7 +795,7 @@ Kitaplığınızda bulunamayan şarkılar: {0}.</value>
     <value>Yeniden Tarama Tamamlandı</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Content" xml:space="preserve">
-    <value>Kütüphane meta verileri güncellendi.</value>
+    <value>Kitaplık meta verileri güncellendi.</value>
   </data>
   <data name="Settings_Dialog_RescanFailed_Title" xml:space="preserve">
     <value>Yeniden Tarama Başarısız</value>
@@ -800,7 +812,7 @@ Kitaplığınızda bulunamayan şarkılar: {0}.</value>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
     <value>Ses Normalleştirme (ReplayGain), tüm müziklerinizde tutarlı bir ses seviyesi sağlar.
 
-Bu, müzik kütüphanenizi analiz edecek ve ReplayGain etiketleri yazarak ses dosyalarınızı doğrudan değiştirecektir. Yalnızca mevcut etiketleri olmayan dosyalar işlenecektir. Kütüphane boyutunuza bağlı olarak bu biraz zaman alabilir.
+Bu, müzik kitaplığınızı analiz edecek ve ReplayGain etiketleri yazarak ses dosyalarınızı doğrudan değiştirecektir. Yalnızca mevcut etiketleri olmayan dosyalar işlenecektir. Kitaplığınızın boyutuna bağlı olarak bu biraz zaman alabilir.
 
 Devam etmek ister misiniz?</value>
   </data>
@@ -856,13 +868,16 @@ Devam etmek ister misiniz?</value>
     <value>.</value>
   </data>
   <data name="CrashReport_ResetAppAdvice" xml:space="preserve">
-    <value>Bu durum devam ederse, 'Uygulama ve Verileri Sıfırla'yı deneyebilirsiniz. Bu, ayarlarınızı ve arşivinizi silerek uygulamanın bozuk bir durumdan kurtarılmasına yardımcı olabilir.</value>
+    <value>Bu durum devam ederse, 'Uygulama ve Verileri Sıfırla'yı deneyebilirsiniz. Bu, ayarlarınızı ve kitaplığınızı silerek uygulamanın bozuk bir durumdan kurtarılmasına yardımcı olabilir.</value>
   </data>
   <data name="CrashReport_CopyLogButton_ToolTip" xml:space="preserve">
     <value>Günlüğü panoya kopyala</value>
   </data>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>Günlüğü Kopyala</value>
+  </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>Çökme günlüğü</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>Kapak Seç</value>
@@ -900,6 +915,12 @@ Devam etmek ister misiniz?</value>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>Değer</value>
   </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>Alan</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>Koşul</value>
+  </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>Bu kuralı kaldır</value>
   </data>
@@ -907,7 +928,7 @@ Devam etmek ister misiniz?</value>
     <value>Tanımlanmış kural yok</value>
   </data>
   <data name="SmartPlaylist_NoRulesMessage" xml:space="preserve">
-    <value>Arşivinizdeki tüm şarkılar bu çalma listesine dahil edilecektir.</value>
+    <value>Kitaplığınızdaki tüm şarkılar bu çalma listesine dahil edilecektir.</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_Content" xml:space="preserve">
     <value>İlk Kuralınızı Ekleyin</value>
@@ -954,6 +975,9 @@ Devam etmek ister misiniz?</value>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Albümüne Git</value>
   </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>Oynatma konumu</value>
+  </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Sıradaki</value>
   </data>
@@ -979,7 +1003,7 @@ Devam etmek ister misiniz?</value>
     <value>Parçalar: {0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
-    <value>Sıradaki Konum</value>
+    <value>Sıra Konumu</value>
   </data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve">
     <value>Tür</value>
@@ -1015,7 +1039,7 @@ Devam etmek ister misiniz?</value>
     <value>Albüm bulunamadı</value>
   </data>
   <data name="AlbumPage_Empty_Subtitle" xml:space="preserve">
-    <value>Albümleri doldurmak için müzik arşivinizi tarayın</value>
+    <value>Albümleri doldurmak için müzik kitaplığınızı tarayın</value>
   </data>
   <data name="AlbumViewPage_Header_Label" xml:space="preserve">
     <value>Albüm</value>
@@ -1060,7 +1084,7 @@ Devam etmek ister misiniz?</value>
     <value>Sanatçı bulunamadı</value>
   </data>
   <data name="ArtistPage_Empty_Subtitle" xml:space="preserve">
-    <value>Sanatçıları doldurmak için müzik arşivinizi tarayın</value>
+    <value>Sanatçıları doldurmak için müzik kitaplığınızı tarayın</value>
   </data>
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
     <value>Sanatçı resmini değiştir</value>
@@ -1165,10 +1189,10 @@ Devam etmek ister misiniz?</value>
     <value>Tür bulunamadı</value>
   </data>
   <data name="GenrePage_Empty_Subtitle" xml:space="preserve">
-    <value>Türleri doldurmak için müzik arşivinizi tarayın</value>
+    <value>Türleri doldurmak için müzik kitaplığınızı tarayın</value>
   </data>
   <data name="LibraryPage_Title" xml:space="preserve">
-    <value>Arşiv</value>
+    <value>Kitaplık</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Kitaplıkta ara…</value>
@@ -1183,7 +1207,7 @@ Devam etmek ister misiniz?</value>
     <value>Oynat</value>
   </data>
   <data name="LibraryPage_Context_PlayNext" xml:space="preserve">
-    <value>Sonrakini Oynat</value>
+    <value>Sıradaki Olarak Oynat</value>
   </data>
   <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
     <value>Sıraya Ekle</value>
@@ -1210,10 +1234,10 @@ Devam etmek ister misiniz?</value>
     <value>Başka bir şey aramayı deneyin</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
-    <value>Arşiviniz boş</value>
+    <value>Kitaplığınız boş</value>
   </data>
   <data name="LibraryPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Ayarlar'dan arşivinize klasör ekleyin</value>
+    <value>Ayarlar'dan kitaplığınıza klasör ekleyin</value>
   </data>
   <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
     <value>Bu şarkı için şarkı sözü bulunamadı</value>
@@ -1279,7 +1303,7 @@ Devam etmek ister misiniz?</value>
     <value>Kitaplığınıza hayat verin</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi tamamen çevrim dışı çalışır. Dosyalarınızda bulunmayan sanatçı fotoğraflarını, biyografileri ve şarkı sözlerini tamamlamak için bunları açın.</value>
+    <value>Nagi tamamen çevrim dışı çalışır. Dosyalarınızda bulunmayan sanatçı fotoğraflarını, biyografileri, albüm kapaklarını ve şarkı sözlerini tamamlamak için bunları açın.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>Masaüstünüze tam uyum sağlasın</value>
@@ -1375,7 +1399,7 @@ Devam etmek ister misiniz?</value>
     <value>Bu çalma listesi boş</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Arşivinizden şarkı ekleyin</value>
+    <value>Kitaplığınızdan şarkı ekleyin</value>
   </data>
   <data name="GenreViewPage_Header_Caption" xml:space="preserve">
     <value>Tür</value>
@@ -1456,7 +1480,7 @@ Devam etmek ister misiniz?</value>
     <value>Oynatıcı Yönetimi</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Header" xml:space="preserve">
-    <value>Ses Normalizasyonu (ReplayGain)</value>
+    <value>Ses Normalleştirme (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
     <value>ReplayGain kullanarak şarkılar arasındaki ses düzeyi farklarını azaltın.</value>
@@ -1481,6 +1505,12 @@ Devam etmek ister misiniz?</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Ön Yükseltici</value>
+  </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>Ekolayzır ön ayarı</value>
   </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>Özel</value>
@@ -1558,16 +1588,16 @@ Devam etmek ister misiniz?</value>
     <value>Birden çok türü ayırmak için kullanılan karakterleri tanımlayın (örn. ';/'). Devre dışı bırakmak için boş bırakın.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
-    <value>Arşivi Yeniden Tara</value>
+    <value>Kitaplığı Yeniden Tara</value>
   </data>
   <data name="SettingsPage_RescanLibrary_ToolTip" xml:space="preserve">
-    <value>Bölme değişikliklerini uygulamak için arşivi yeniden tarayın</value>
+    <value>Bölme değişikliklerini uygulamak için kitaplığı yeniden tarayın</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
-    <value>Çevrim İçi Üst Verileri Al</value>
+    <value>Çevrim İçi Meta Verileri Al</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Çevrim içi kaynaklardan sanatçı görsellerini ve biyografilerini alın.</value>
+    <value>Çevrim içi kaynaklardan sanatçı görsellerini, biyografilerini ve albüm kapaklarını alın.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Kaynaklar</value>
@@ -1579,7 +1609,7 @@ Devam etmek ister misiniz?</value>
     <value>Çevrim İçi Şarkı Sözlerini Al</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>Eksik şarkı sözlerini çevrim içi kaynaklardan alın. Bu işlem şarkı üst verilerini üçüncü taraf hizmetlere gönderir.</value>
+    <value>Eksik şarkı sözlerini çevrim içi kaynaklardan alın. Bu işlem şarkı meta verilerini üçüncü taraf hizmetlere gönderir.</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
     <value>Kaynaklar</value>
@@ -1591,7 +1621,7 @@ Devam etmek ister misiniz?</value>
     <value>Latin Harfli Şarkı Sözlerini Göster</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
-    <value>Yüklü bir paket komut dosyasıyla eşleştiğinde, desteklenen şarkı sözlerinin altında daha küçük bir latinize edilmiş satır göster.</value>
+    <value>Yüklü bir paket yazı sistemiyle eşleştiğinde, desteklenen şarkı sözlerinin altında daha küçük bir latinize edilmiş satır göster.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
     <value>Dil Paketleri</value>
@@ -1657,7 +1687,7 @@ Devam etmek ister misiniz?</value>
     <value>Uygulamayı Sıfırla</value>
   </data>
   <data name="SettingsPage_ResetApp_Description" xml:space="preserve">
-    <value>Bu işlem, tüm arşiv verilerini, çalma listelerini siler ve tüm ayarları varsayılan değerlerine sıfırlar. Uygulama yeniden başlatılacaktır.</value>
+    <value>Bu işlem, tüm kitaplık verilerini, çalma listelerini siler ve tüm ayarları varsayılan değerlerine sıfırlar. Uygulama yeniden başlatılacaktır.</value>
   </data>
   <data name="SettingsPage_ResetButton_Content" xml:space="preserve">
     <value>Tüm Verileri Sıfırla</value>
@@ -1918,7 +1948,7 @@ Devam etmek ister misiniz?</value>
     <value>En Popüler Albümler</value>
   </data>
   <data name="InsightsPage_TopGenres" xml:space="preserve">
-    <value>En Popüler Tarzlar</value>
+    <value>En Popüler Türler</value>
   </data>
   <data name="InsightsPage_Sources" xml:space="preserve">
     <value>Çalma Kaynakları</value>
@@ -1948,13 +1978,13 @@ Devam etmek ister misiniz?</value>
     <value>Klasörler</value>
   </data>
   <data name="InsightsPage_Source_Genres" xml:space="preserve">
-    <value>Tarzlar</value>
+    <value>Türler</value>
   </data>
   <data name="InsightsPage_Source_Search" xml:space="preserve">
     <value>Arama</value>
   </data>
   <data name="InsightsPage_Source_Library" xml:space="preserve">
-    <value>Arşiv</value>
+    <value>Kitaplık</value>
   </data>
   <data name="InsightsPage_Source_Files" xml:space="preserve">
     <value>Dosyalar</value>
@@ -2029,10 +2059,13 @@ Devam etmek ister misiniz?</value>
     <value>Son 90 Gün</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>Geçen Yıl</value>
+    <value>Son 1 Yıl</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>Tüm Zamanlar</value>
+  </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>Zaman aralığı</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}sa {1}dk</value>
@@ -2233,5 +2266,65 @@ Devam etmek ister misiniz?</value>
 2. Arşivi çıkarın ve bin klasöründeki ffmpeg.exe dosyasını bulun.
 3. ffmpeg.exe dosyasını içeren klasörü Windows PATH değişkeninize ekleyin.
 4. Nagi'yi yeniden başlatın, ardından ses düzeyi normalleştirmesini tekrar etkinleştirin.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>Şarkı Bilgisi</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>Etiketler</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>Dinleme</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>Albüm Sanatçısı</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>Şef</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>Telif Hakkı</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>Yol</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>Biçim</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>Kanallar</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>Boyut</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} / {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>Şarkı Listesi Sütunları</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>Şarkı listelerinde gösterilecek ayrıntıları seçin.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>Sütun Başlıkları</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>Şarkı listelerinin üstünde her sütunun başlığını gösterin.</value>
   </data>
 </root>

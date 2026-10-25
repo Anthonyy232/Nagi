@@ -567,10 +567,10 @@ Pliki, których nie udało się zaimportować: {0}.</value>
     <value>dowolne</value>
   </data>
   <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>reguła</value>
+    <value>reguły</value>
   </data>
   <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>reguły</value>
+    <value>reguł</value>
   </data>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>Utwory</value>
@@ -681,16 +681,28 @@ Pliki, których nie udało się zaimportować: {0}.</value>
     <value>Chińska usługa muzyczna, świetna dla muzyki azjatyckiej</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Pobiera identyfikatory wykonawców (wymagane dla TheAudioDB i Fanart.tv)</value>
+    <value>Wyszukuje identyfikatory wykonawców i albumów, których brakuje w Twoich tagach</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>Wysokiej jakości obrazy i biografie wykonawców (wymaga MusicBrainz)</value>
+    <value>Zdjęcia i biografie wykonawców (wymaga identyfikatora MusicBrainz z Twoich tagów lub z MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>Tylko wysokiej jakości obrazy wykonawców (wymaga MusicBrainz)</value>
+    <value>Wysokiej jakości zdjęcia wykonawców (wymaga identyfikatora MusicBrainz z Twoich tagów lub z MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Biografie i obrazy wykonawców (awaryjne)</value>
+    <value>Biografie wykonawców i okładki albumów (awaryjnie)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>Zdjęcia wykonawców i okładki albumów, wyszukiwane po nazwie</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>Biografie wykonawców w Twoim języku (wymaga identyfikatora MusicBrainz z Twoich tagów lub z MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>Okładki albumów dla wydań z MusicBrainz (korzysta z identyfikatorów z Twoich tagów lub z MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>Okładki albumów w wysokiej rozdzielczości, wyszukiwane po nazwie</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Szukaj albumów</value>
@@ -792,7 +804,7 @@ Pliki, których nie udało się zaimportować: {0}.</value>
     <value>Wystąpił błąd podczas skanowania. Sprawdź logi, aby uzyskać szczegóły.</value>
   </data>
   <data name="Settings_Dialog_FFmpegNotFound_Title" xml:space="preserve">
-    <value>FFmpeg Nie Znaleziono</value>
+    <value>Nie znaleziono FFmpeg</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Title" xml:space="preserve">
     <value>Włącz Normalizację Głośności</value>
@@ -856,13 +868,16 @@ Czy chcesz kontynuować?</value>
     <value>.</value>
   </data>
   <data name="CrashReport_ResetAppAdvice" xml:space="preserve">
-    <value>Jeśli problem będzie się powtarzał, możesz spróbować 'Zresetuj aplikację i dane'. Spowoduje to usunięcie ustawień i biblioteki, co może pomóc w przywróceniu aplikacji do działającego stanu.</value>
+    <value>Jeśli problem będzie się powtarzał, możesz spróbować 'Resetuj Aplikację i Dane'. Spowoduje to usunięcie ustawień i biblioteki, co może pomóc w przywróceniu aplikacji do działającego stanu.</value>
   </data>
   <data name="CrashReport_CopyLogButton_ToolTip" xml:space="preserve">
     <value>Kopiuj dziennik do schowka</value>
   </data>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>Kopiuj dziennik</value>
+  </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>Dziennik awarii</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>Wybierz okładkę</value>
@@ -899,6 +914,12 @@ Czy chcesz kontynuować?</value>
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>Wartość</value>
+  </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>Pole</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>Warunek</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>Usuń tę regułę</value>
@@ -953,6 +974,9 @@ Czy chcesz kontynuować?</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Przejdź do albumu</value>
+  </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>Pozycja odtwarzania</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Następne w kolejce</value>
@@ -1057,13 +1081,13 @@ Czy chcesz kontynuować?</value>
     <value>Usuń obraz</value>
   </data>
   <data name="ArtistPage_Empty_Title" xml:space="preserve">
-    <value>Nie znaleziono artystów</value>
+    <value>Nie znaleziono wykonawców</value>
   </data>
   <data name="ArtistPage_Empty_Subtitle" xml:space="preserve">
-    <value>Zeskanuj swoją bibliotekę muzyczną, aby wypełnić artystów</value>
+    <value>Zeskanuj swoją bibliotekę muzyczną, aby wypełnić listę wykonawców</value>
   </data>
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
-    <value>Zmień obraz artysty</value>
+    <value>Zmień obraz wykonawcy</value>
   </data>
   <data name="ArtistViewPage_ImageMenu_ChangeImage" xml:space="preserve">
     <value>Zmień obraz</value>
@@ -1072,7 +1096,7 @@ Czy chcesz kontynuować?</value>
     <value>Usuń obraz</value>
   </data>
   <data name="ArtistViewPage_Header_Label" xml:space="preserve">
-    <value>Artysta</value>
+    <value>Wykonawca</value>
   </data>
   <data name="ArtistViewPage_Albums_Title" xml:space="preserve">
     <value>Najlepsze albumy</value>
@@ -1081,7 +1105,7 @@ Czy chcesz kontynuować?</value>
     <value>Utwory</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Szukaj w wykonawcy…</value>
+    <value>Szukaj u wykonawcy…</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Odtwórz wszystko</value>
@@ -1090,7 +1114,7 @@ Czy chcesz kontynuować?</value>
     <value>Losowo odtwórz wszystko</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
-    <value>Nie znaleziono utworów tego artysty</value>
+    <value>Nie znaleziono utworów tego wykonawcy</value>
   </data>
   <data name="ArtistViewPage_Empty_Subtitle" xml:space="preserve">
     <value>Spróbuj wyszukać coś innego</value>
@@ -1228,7 +1252,7 @@ Czy chcesz kontynuować?</value>
     <value>Edytuj tekst</value>
   </data>
   <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
-    <value>Wklej zwykły tekst lub tekst LRC z znacznikami czasu</value>
+    <value>Wklej zwykły tekst lub tekst LRC ze znacznikami czasu</value>
   </data>
   <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
     <value>Zapisz</value>
@@ -1279,7 +1303,7 @@ Czy chcesz kontynuować?</value>
     <value>Ożyw swoją bibliotekę</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi działa w pełni offline. Włącz te funkcje, aby uzupełnić zdjęcia wykonawców, biografie i teksty utworów, których brakuje w Twoich plikach.</value>
+    <value>Nagi działa w pełni offline. Włącz te funkcje, aby uzupełnić zdjęcia wykonawców, biografie, okładki albumów i teksty utworów, których brakuje w Twoich plikach.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>Dopasuj do pulpitu</value>
@@ -1375,7 +1399,7 @@ Czy chcesz kontynuować?</value>
     <value>Ta playlista jest pusta</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Dodaj utwory z Twojej biblioteki</value>
+    <value>Dodaj utwory ze swojej biblioteki</value>
   </data>
   <data name="GenreViewPage_Header_Caption" xml:space="preserve">
     <value>Gatunek</value>
@@ -1482,6 +1506,12 @@ Czy chcesz kontynuować?</value>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Wzmocnienie wstępne</value>
   </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>Ustawienie wstępne korektora</value>
+  </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>Niestandardowy</value>
   </data>
@@ -1540,16 +1570,16 @@ Czy chcesz kontynuować?</value>
     <value>Ignoruj rodzajniki podczas sortowania</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Sortuj albumy, artystów i utwory według ich pierwszego znaczącego słowa (np. "The Beatles" jest sortowane pod literą B).</value>
+    <value>Sortuj albumy, wykonawców i utwory według ich pierwszego znaczącego słowa (np. "The Beatles" jest sortowane pod literą B).</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Zarządzanie danymi</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Header" xml:space="preserve">
-    <value>Dzielenie artystów</value>
+    <value>Dzielenie wykonawców</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Zdefiniuj znaki używane do rozdzielania wielu artystów (np. ';/'). Pozostaw puste, aby wyłączyć.</value>
+    <value>Zdefiniuj znaki używane do rozdzielania wielu wykonawców (np. ';/'). Pozostaw puste, aby wyłączyć.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Dzielenie gatunków</value>
@@ -1567,7 +1597,7 @@ Czy chcesz kontynuować?</value>
     <value>Pobieraj metadane z Internetu</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Pobieraj zdjęcia i biografie wykonawców ze źródeł internetowych.</value>
+    <value>Pobieraj zdjęcia i biografie wykonawców oraz okładki albumów ze źródeł internetowych.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Źródła</value>
@@ -1669,13 +1699,13 @@ Czy chcesz kontynuować?</value>
     <value>Last.fm</value>
   </data>
   <data name="SettingsPage_LastFm_Description" xml:space="preserve">
-    <value>Podłącz swoje konto Last.fm, aby scroblować utwory i pokazywać aktualnie odtwarzany utwór.</value>
+    <value>Podłącz swoje konto Last.fm, aby scrobblować utwory i pokazywać aktualnie odtwarzany utwór.</value>
   </data>
   <data name="SettingsPage_LastFm_Connect_Content" xml:space="preserve">
     <value>Połącz</value>
   </data>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
-    <value>Ukończono</value>
+    <value>Zakończ</value>
   </data>
   <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
     <value>Anuluj</value>
@@ -1912,7 +1942,7 @@ Czy chcesz kontynuować?</value>
     <value>Najpopularniejsze utwory</value>
   </data>
   <data name="InsightsPage_TopArtists" xml:space="preserve">
-    <value>Najpopularniejsi artyści</value>
+    <value>Najpopularniejsi wykonawcy</value>
   </data>
   <data name="InsightsPage_TopAlbums" xml:space="preserve">
     <value>Najpopularniejsze albumy</value>
@@ -2033,6 +2063,9 @@ Czy chcesz kontynuować?</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>Od początku</value>
+  </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>Zakres czasu</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}h {1}m</value>
@@ -2227,11 +2260,71 @@ Czy chcesz kontynuować?</value>
     <value>Brak dostępnych playlist</value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>Program FFmpeg jest potrzebny do analizy utworów pod kątem wyrównywania głośności, ale aplikacja Nagi nie mogła go odnaleźć.
+    <value>Program FFmpeg jest potrzebny do analizy utworów pod kątem normalizacji głośności, ale aplikacja Nagi nie mogła go odnaleźć.
 
 1. Pobierz wersję dla systemu Windows ze strony https://ffmpeg.org/download.html.
 2. Rozpakuj archiwum i zlokalizuj plik ffmpeg.exe w folderze bin.
 3. Dodaj folder zawierający plik ffmpeg.exe do zmiennej PATH w systemie Windows.
-4. Uruchom ponownie aplikację Nagi, a następnie ponownie włącz wyrównywanie głośności.</value>
+4. Uruchom ponownie aplikację Nagi, a następnie ponownie włącz normalizację głośności.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>Informacje o utworze</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>Tagi</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>Słuchanie</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>Wykonawca albumu</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>Dyrygent</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>Prawa autorskie</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>Ścieżka</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>Kanały</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>Rozmiar</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} z {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kb/s</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>Kolumny listy utworów</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>Wybierz, jakie informacje mają wyświetlać listy utworów.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>Nagłówki kolumn</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>Wyświetlaj nazwę każdej kolumny nad listami utworów.</value>
   </data>
 </root>

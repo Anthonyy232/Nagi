@@ -214,13 +214,13 @@
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
-    <value>may lyrics</value>
+    <value>may liriko</value>
   </data>
   <data name="Label_WithCoverArt" xml:space="preserve">
     <value>may cover art</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>na may larawan ng artist</value>
+    <value>na may larawan ng artista</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>at</value>
@@ -284,7 +284,7 @@
     <value>Sinusuri ang volume… Mga kanta: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Kina-kalkula ang normalization ng volume ({0}/{1})…</value>
+    <value>Kinakalkula ang volume normalization ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
     <value>Kumpleto na ang normalization ng volume. Mga kantang naproseso: {0}.</value>
@@ -320,9 +320,36 @@
     <value>Nakaranas ang LibVLC ng hindi tinukoy na error.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC Error: {0}</value>
+    <value>Error sa LibVLC: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>Nabigo ang pag-load ng '{0}'.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Nagba-browse sa Music Library</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Nakatambay</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>ni {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Naka-pause | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Nagi Music Player</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Tumutugtog</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Naka-pause</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>Mula sa Wikipedia, sa ilalim ng lisensyang CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

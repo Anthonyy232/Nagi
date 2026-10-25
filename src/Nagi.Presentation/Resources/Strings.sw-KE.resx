@@ -209,7 +209,7 @@
     <value>Ni angalau</value>
   </data>
   <data name="Operator_LessThanOrEqual" xml:space="preserve">
-    <value>Ni zaidi</value>
+    <value>Si zaidi ya</value>
   </data>
   <data name="Operator_IsInTheLast" xml:space="preserve">
     <value>Ipo katika siku zilizopita (siku)</value>
@@ -224,10 +224,10 @@
     <value>Si kweli</value>
   </data>
   <data name="SmartPlaylist_Title_New" xml:space="preserve">
-    <value>Orodha Mpya ya Cheza Nadhifu</value>
+    <value>Orodha Mpya ya Kucheza Nadhifu</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>Hariri Orodha Mahiri ya Nyimbo: {0}</value>
+    <value>Hariri Orodha ya Kucheza Nadhifu: {0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
     <value>Weka jina la orodha ya kucheza</value>
@@ -242,10 +242,10 @@
     <value>Inakokotoa…</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>Orodha ya nyimbo yenye jina hili tayari ipo.</value>
+    <value>Orodha ya kucheza yenye jina hili tayari ipo.</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>Ingiza jina la orodha ya nyimbo.</value>
+    <value>Ingiza jina la orodha ya kucheza.</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
     <value>Inapakia…</value>
@@ -281,7 +281,7 @@
     <value>nyimbo {0}</value>
   </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
-    <value>Msanii Haikupatikana</value>
+    <value>Msanii Hakupatikana</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
     <value>Hitilafu Wakati wa Kupakia Msanii</value>
@@ -317,13 +317,13 @@
     <value>Inaondoa &apos;{0}&apos; kutoka kwenye maktaba yako…</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Kuchanganua upya kwa '{0}' kukamilika.</value>
+    <value>Kuchanganua upya kwa '{0}' kumekamilika.</value>
   </data>
   <data name="Folders_Rescan_NoChanges" xml:space="preserve">
     <value>Hakuna mabadiliko yaliyogunduliwa kwa '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
-    <value>Inakagua tena '{0}'…</value>
+    <value>Inachanganua upya '{0}'…</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
     <value>Hakuna folda zenye muziki zilizopatikana.</value>
@@ -410,7 +410,7 @@
     <value>Hitilafu wakati wa kupakia orodha ya kucheza</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Inaanzisha orodha ya nyimbo…</value>
+    <value>Inaanzisha orodha ya kucheza…</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Hakuna nyimbo zinazolingana na sheria za orodha hii ya kucheza nadhifu.</value>
@@ -419,7 +419,7 @@
     <value>Hitilafu wakati wa kuanzisha uchezaji wa orodha hii ya kucheza.</value>
   </data>
   <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Inachagua orodha ya nyimbo bila mpangilio…</value>
+    <value>Inachagua orodha ya kucheza bila mpangilio…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Hakuna orodha za kucheza zilizopatikana.</value>
@@ -431,13 +431,13 @@
     <value>Hitilafu wakati wa kucheza orodha ya kucheza isiyo ya mpangilio.</value>
   </data>
   <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Inapakia orodha za nyimbo…</value>
+    <value>Inapakia orodha za kucheza…</value>
   </data>
   <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
     <value>Hitilafu wakati wa kupakia orodha za kucheza.</value>
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Inatengeneza orodha mpya ya nyimbo…</value>
+    <value>Inatengeneza orodha mpya ya kucheza…</value>
   </data>
   <data name="Playlist_Status_CreateFailed" xml:space="preserve">
     <value>Imeshindwa kuunda orodha ya kucheza. Huenda tayari ipo.</value>
@@ -446,7 +446,7 @@
     <value>Hitilafu imetokea wakati wa kuunda orodha ya kucheza.</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Inasasisha jalada la orodha ya nyimbo…</value>
+    <value>Inasasisha jalada la orodha ya kucheza…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Imeshindwa kusasisha jalada la orodha ya kucheza.</value>
@@ -455,7 +455,7 @@
     <value>Hitilafu imetokea wakati wa kusasisha jalada la orodha ya kucheza.</value>
   </data>
   <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Inaondoa picha ya orodha ya nyimbo…</value>
+    <value>Inaondoa picha ya orodha ya kucheza…</value>
   </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Imeshindwa kuondoa picha ya orodha ya kucheza.</value>
@@ -464,7 +464,7 @@
     <value>Hitilafu imetokea wakati wa kuondoa picha ya orodha ya kucheza.</value>
   </data>
   <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Inabadilisha jina la orodha ya nyimbo…</value>
+    <value>Inabadilisha jina la orodha ya kucheza…</value>
   </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Imeshindwa kubadilisha jina la orodha ya kucheza.</value>
@@ -473,7 +473,7 @@
     <value>Hitilafu imetokea wakati wa kubadilisha jina la orodha ya kucheza.</value>
   </data>
   <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Inafuta orodha ya nyimbo…</value>
+    <value>Inafuta orodha ya kucheza…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Imeshindwa kufuta orodha ya kucheza.</value>
@@ -512,7 +512,7 @@
     <value>Tenganisha Last.fm</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
-    <value>Una uhakika unataka kukata akaunti yako ya Last.fm? Historia yako ya "scrobbling" itahifadhiwa kwenye Last.fm, lakini Nagi haitaweza tena "scrobble".</value>
+    <value>Una uhakika unataka kukata akaunti yako ya Last.fm? Historia yako ya scrobbling itahifadhiwa kwenye Last.fm, lakini Nagi haitaweza tena kufanya scrobbling.</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Tenganisha</value>
@@ -521,7 +521,7 @@
     <value>Usafirishaji Umefanikiwa</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>Orodha za nyimbo zilizohamishwa: {0}
+    <value>Orodha za kucheza zilizohamishwa: {0}
 Nyimbo: {1}
 Imehifadhiwa kwa: {2}</value>
   </data>
@@ -532,7 +532,7 @@ Imehifadhiwa kwa: {2}</value>
     <value>Uingizaji Umefanikiwa</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>Orodha za nyimbo zilizoingizwa: {0}
+    <value>Orodha za kucheza zilizoingizwa: {0}
 Nyimbo: {1}</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
@@ -681,16 +681,28 @@ Faili ambazo hazikuweza kuingizwa: {0}.</value>
     <value>Huduma ya muziki ya Kichina, nzuri kwa muziki wa Asia</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Inapata vitambulisho vya wasanii (vinahitajika kwa TheAudioDB na Fanart.tv)</value>
+    <value>Hutafuta vitambulisho vya wasanii na albamu ambavyo lebo zako hazina</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>Picha na wasifu wa wasanii wa hali ya juu (inahitaji MusicBrainz)</value>
+    <value>Picha na wasifu wa wasanii (inahitaji kitambulisho cha MusicBrainz kutoka kwenye lebo zako au MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>Picha za wasanii za hali ya juu tu (inahitaji MusicBrainz)</value>
+    <value>Picha za wasanii za hali ya juu (inahitaji kitambulisho cha MusicBrainz kutoka kwenye lebo zako au MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Wasifu na picha za wasanii (mbadala)</value>
+    <value>Wasifu wa wasanii na majalada ya albamu (mbadala)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>Picha za wasanii na majalada ya albamu, zinazopatikana kwa jina</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>Wasifu wa wasanii kwa lugha yako (inahitaji kitambulisho cha MusicBrainz kutoka kwenye lebo zako au MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>Majalada ya albamu kwa matoleo ya MusicBrainz (hutumia vitambulisho kutoka kwenye lebo zako au MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>Majalada ya albamu ya ubora wa juu, yanayopatikana kwa jina</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tafuta albamu</value>
@@ -729,7 +741,7 @@ Faili ambazo hazikuweza kuingizwa: {0}.</value>
     <value>Tafuta orodha za kucheza</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>Ingiza jina la orodha ya nyimbo</value>
+    <value>Ingiza jina la orodha ya kucheza</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
     <value>Chagua Jalada</value>
@@ -771,16 +783,16 @@ Faili ambazo hazikuweza kuingizwa: {0}.</value>
     <value>Changanua Upya Metadata</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>Kagua tena maktaba yako ili kutumia mipangilio ya data ya meta, kama vile kutenganisha msanii. Hii inaweza kuchukua muda kwa maktaba kubwa. Ungependa kuendelea?</value>
+    <value>Changanua upya maktaba yako ili kutumia mipangilio ya metadata, kama vile kutenganisha msanii. Hii inaweza kuchukua muda kwa maktaba kubwa. Ungependa kuendelea?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
     <value>Changanua Upya</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
-    <value>Inatayarisha kukagua tena maktaba…</value>
+    <value>Inatayarisha kuchanganua upya maktaba…</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
-    <value>Kuchanganua Upya Kukamilika</value>
+    <value>Kuchanganua Upya Kumekamilika</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Content" xml:space="preserve">
     <value>Metadata ya maktaba imesasishwa.</value>
@@ -808,10 +820,10 @@ Je, unataka kuendelea?</value>
     <value>Washa &amp; Changanua</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>Inatayarisha ukaguzi wa kurekebisha sauti…</value>
+    <value>Inatayarisha uchanganuzi wa usawazishaji wa sauti…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Usawazishaji wa sauti umeghairiwa.</value>
+    <value>Uchanganuzi wa usawazishaji wa sauti umeghairiwa.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Hitilafu wakati wa kuchanganua: {0}</value>
@@ -864,6 +876,9 @@ Je, unataka kuendelea?</value>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>Nakili Kumbukumbu</value>
   </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>Kumbukumbu ya hitilafu</value>
+  </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>Chagua Jalada</value>
   </data>
@@ -871,10 +886,10 @@ Je, unataka kuendelea?</value>
     <value>Chagua picha ya jalada</value>
   </data>
   <data name="SmartPlaylist_PlaylistNameLabel" xml:space="preserve">
-    <value>Jina la Orodha ya Nyimbo</value>
+    <value>Jina la Orodha ya Kucheza</value>
   </data>
   <data name="SmartPlaylist_PlaylistNameTextBox_Placeholder" xml:space="preserve">
-    <value>Weka jina la orodha yako mahiri ya nyimbo</value>
+    <value>Weka jina la orodha yako ya kucheza nadhifu</value>
   </data>
   <data name="SmartPlaylist_SortOrderLabel" xml:space="preserve">
     <value>Mpangilio wa Kupanga</value>
@@ -900,6 +915,12 @@ Je, unataka kuendelea?</value>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>Thamani</value>
   </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>Sehemu</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>Sharti</value>
+  </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>Ondoa sheria hii</value>
   </data>
@@ -907,7 +928,7 @@ Je, unataka kuendelea?</value>
     <value>Hakuna sheria zilizofafanuliwa</value>
   </data>
   <data name="SmartPlaylist_NoRulesMessage" xml:space="preserve">
-    <value>Nyimbo zote kwenye maktaba yako zitajumuishwa kwenye orodha hii ya nyimbo.</value>
+    <value>Nyimbo zote kwenye maktaba yako zitajumuishwa kwenye orodha hii ya kucheza.</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_Content" xml:space="preserve">
     <value>Ongeza Sheria Yako ya Kwanza</value>
@@ -946,13 +967,16 @@ Je, unataka kuendelea?</value>
     <value>Inayofuata</value>
   </data>
   <data name="Player_LyricsButton_ToolTip" xml:space="preserve">
-    <value>Mashairi</value>
+    <value>Maneno ya Wimbo</value>
   </data>
   <data name="Player_QueueButton_ToolTip" xml:space="preserve">
     <value>Inayofuata</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Nenda kwenye Albamu</value>
+  </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>Nafasi ya kucheza</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Inayofuata</value>
@@ -1057,7 +1081,7 @@ Je, unataka kuendelea?</value>
     <value>Ondoa Picha</value>
   </data>
   <data name="ArtistPage_Empty_Title" xml:space="preserve">
-    <value>Hakuna wasanii walioapatikana</value>
+    <value>Hakuna wasanii waliopatikana</value>
   </data>
   <data name="ArtistPage_Empty_Subtitle" xml:space="preserve">
     <value>Changanua maktaba yako ya muziki kujaza wasanii</value>
@@ -1111,7 +1135,7 @@ Je, unataka kuendelea?</value>
     <value>Cheza</value>
   </data>
   <data name="FolderPage_Menu_Rescan" xml:space="preserve">
-    <value>Changanua Tena</value>
+    <value>Changanua Upya</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
     <value>Ondoa kwenye Maktaba</value>
@@ -1126,7 +1150,7 @@ Je, unataka kuendelea?</value>
     <value>Cheza</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>Ongeza kwenye Orodha ya Nyimbo</value>
+    <value>Ongeza kwenye Orodha ya Kucheza</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Folda</value>
@@ -1183,13 +1207,13 @@ Je, unataka kuendelea?</value>
     <value>Cheza</value>
   </data>
   <data name="LibraryPage_Context_PlayNext" xml:space="preserve">
-    <value>Cheza Inayofuata</value>
+    <value>Cheza Baada ya Wimbo Huu</value>
   </data>
   <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
     <value>Ongeza kwenye Foleni</value>
   </data>
   <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Ongeza kwenye Orodha ya Nyimbo</value>
+    <value>Ongeza kwenye Orodha ya Kucheza</value>
   </data>
   <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
     <value>Nenda kwenye Albamu</value>
@@ -1222,13 +1246,13 @@ Je, unataka kuendelea?</value>
     <value>Jaribu wimbo mwingine</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
-    <value>Hariri au ubadilishe nyimbo</value>
+    <value>Hariri au ubadilishe maneno ya wimbo</value>
   </data>
   <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
     <value>Hariri Maneno ya Wimbo</value>
   </data>
   <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
-    <value>Bandika maandishi wazi au nyimbo za LRC zenye muhuri wa muda</value>
+    <value>Bandika maandishi wazi au maneno ya wimbo ya LRC yenye muhuri wa muda</value>
   </data>
   <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
     <value>Hifadhi</value>
@@ -1237,10 +1261,10 @@ Je, unataka kuendelea?</value>
     <value>Ondoa Maneno ya Wimbo Yaliyohifadhiwa</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
-    <value>Nyimbo hazikuweza kusasishwa</value>
+    <value>Maneno ya wimbo hayakuweza kusasishwa</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Nagi haikuweza kuhifadhi nyimbo. Angalia kumbukumbu kwa maelezo na ujaribu tena.</value>
+    <value>Nagi haikuweza kuhifadhi maneno ya wimbo. Angalia kumbukumbu kwa maelezo na ujaribu tena.</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Karibu Nagi</value>
@@ -1279,7 +1303,7 @@ Je, unataka kuendelea?</value>
     <value>Leta uhai kwenye maktaba yako</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi inafanya kazi kikamilifu bila mtandao. Washa hizi ili kujaza picha za wasanii, wasifu na mashairi ambayo faili zako hazina.</value>
+    <value>Nagi inafanya kazi kikamilifu bila mtandao. Washa hizi ili kujaza picha za wasanii, wasifu, majalada ya albamu na mashairi ambayo faili zako hazina.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>Kaa vyema kwenye eneokazi lako</value>
@@ -1312,25 +1336,25 @@ Je, unataka kuendelea?</value>
     <value>Anza Kusikiliza</value>
   </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
-    <value>Orodha za Nyimbo</value>
+    <value>Orodha za Kucheza</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Tafuta orodha za nyimbo…</value>
+    <value>Tafuta orodha za kucheza…</value>
   </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Chagua moja kwa nasibu</value>
   </data>
   <data name="PlaylistPage_NewPlaylistButton_ToolTip" xml:space="preserve">
-    <value>Unda orodha mpya ya nyimbo</value>
+    <value>Unda orodha mpya ya kucheza</value>
   </data>
   <data name="PlaylistPage_NewPlaylistButton_Content" xml:space="preserve">
-    <value>Orodha Mpya ya Nyimbo</value>
+    <value>Orodha Mpya ya Kucheza</value>
   </data>
   <data name="PlaylistPage_NewPlaylistMenu_Regular" xml:space="preserve">
-    <value>Orodha ya Nyimbo ya Kawaida</value>
+    <value>Orodha ya Kucheza ya Kawaida</value>
   </data>
   <data name="PlaylistPage_NewPlaylistMenu_Smart" xml:space="preserve">
-    <value>Orodha Mahiri ya Nyimbo</value>
+    <value>Orodha ya Kucheza Nadhifu</value>
   </data>
   <data name="PlaylistPage_Context_Play" xml:space="preserve">
     <value>Cheza</value>
@@ -1348,19 +1372,19 @@ Je, unataka kuendelea?</value>
     <value>Futa</value>
   </data>
   <data name="PlaylistPage_EmptyState_Title" xml:space="preserve">
-    <value>Hakuna orodha za nyimbo bado</value>
+    <value>Hakuna orodha za kucheza bado</value>
   </data>
   <data name="PlaylistPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Unda orodha ya nyimbo ili kuanza</value>
+    <value>Unda orodha ya kucheza ili kuanza</value>
   </data>
   <data name="PlaylistSongViewPage_Header_Caption" xml:space="preserve">
-    <value>Orodha ya Nyimbo</value>
+    <value>Orodha ya Kucheza</value>
   </data>
   <data name="PlaylistSongViewPage_Section_Songs" xml:space="preserve">
     <value>Nyimbo</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Tafuta katika orodha ya nyimbo…</value>
+    <value>Tafuta katika orodha ya kucheza…</value>
   </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Cheza zote</value>
@@ -1369,10 +1393,10 @@ Je, unataka kuendelea?</value>
     <value>Changanya na cheza zote</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
-    <value>Ondoa kwenye Orodha ya Nyimbo</value>
+    <value>Ondoa kwenye Orodha ya Kucheza</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
-    <value>Orodha hii ya nyimbo haina kitu</value>
+    <value>Orodha hii ya kucheza haina kitu</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
     <value>Ongeza nyimbo kutoka kwenye maktaba yako</value>
@@ -1471,7 +1495,7 @@ Je, unataka kuendelea?</value>
     <value>Fifisha wakati wa Cheza / Sitisha</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Fifisha sauti taratibu inapoanza tena na kufifisha nje inaposimama badala ya kukata ghafla.</value>
+    <value>Ongeza sauti taratibu uchezaji unapoendelea na uipunguze taratibu unaposimamisha, badala ya kuikata ghafla.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>Kisawazisha Sauti</value>
@@ -1481,6 +1505,12 @@ Je, unataka kuendelea?</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Kikuza Kabla</value>
+  </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>Mpangilio wa awali wa kisawazisha</value>
   </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>Maalum</value>
@@ -1558,16 +1588,16 @@ Je, unataka kuendelea?</value>
     <value>Fafanua herufi zinazotumika kugawanya aina nyingi (k.m. ';/'). Acha tupu ili kuzima.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
-    <value>Changanua Tena Maktaba</value>
+    <value>Changanua Upya Maktaba</value>
   </data>
   <data name="SettingsPage_RescanLibrary_ToolTip" xml:space="preserve">
-    <value>Changanua tena maktaba ili kutumia mabadiliko ya kugawanya</value>
+    <value>Changanua upya maktaba ili kutumia mabadiliko ya kugawanya</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
-    <value>Pata Data ya Meta Mtandaoni</value>
+    <value>Pata Metadata Mtandaoni</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Leta picha na wasifu wa wasanii kutoka vyanzo vya mtandaoni.</value>
+    <value>Leta picha za wasanii, wasifu na majalada ya albamu kutoka vyanzo vya mtandaoni.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Vyanzo</value>
@@ -1579,19 +1609,19 @@ Je, unataka kuendelea?</value>
     <value>Leta Maneno ya Nyimbo Mtandaoni</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>Leta maneno ya nyimbo yanayokosekana kutoka vyanzo vya mtandaoni. Hii hutuma data ya meta ya wimbo kwa huduma za wahusika wengine.</value>
+    <value>Leta maneno ya nyimbo yanayokosekana kutoka vyanzo vya mtandaoni. Hii hutuma metadata ya wimbo kwa huduma za wahusika wengine.</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
     <value>Vyanzo</value>
   </data>
   <data name="SettingsPage_LyricsSources_Description" xml:space="preserve">
-    <value>Buruta ili kupanga upya vyanzo vya mashairi. Elea juu ya kila chanzo kwa maelezo.</value>
+    <value>Buruta ili kupanga upya vyanzo vya maneno ya nyimbo. Elea juu ya kila chanzo kwa maelezo.</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
     <value>Onyesha Maneno ya Nyimbo Yaliyoandikwa kwa Herufi za Kilatini</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
-    <value>Onyesha mstari mfupi wa Kilatini chini ya mashairi yanayoungwa mkono wakati kifurushi kilichosakinishwa kinalingana na maandishi.</value>
+    <value>Onyesha mstari mdogo wa Kilatini chini ya maneno ya nyimbo yanayotumika wakati kifurushi kilichosakinishwa kinalingana na hati ya maandishi.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
     <value>Vifurushi vya Lugha</value>
@@ -1636,28 +1666,28 @@ Je, unataka kuendelea?</value>
     <value>Leseni ya {0}</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>Ingiza na Uhamishe Orodha za Nyimbo</value>
+    <value>Ingiza na Uhamishe Orodha za Kucheza</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
-    <value>Hamisha orodha za nyimbo kwenye faili za M3U kwa matumizi katika vichezaji vingine, au leta orodha za nyimbo za M3U kwenye Nagi.</value>
+    <value>Hamisha orodha za kucheza kwenye faili za M3U kwa matumizi katika vichezaji vingine, au ingiza orodha za kucheza za M3U kwenye Nagi.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
     <value>Hamisha Zote…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
-    <value>Hamisha orodha zote za nyimbo kwenye folda</value>
+    <value>Hamisha orodha zote za kucheza kwenye folda</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
     <value>Ingiza…</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
-    <value>Leta faili moja au zaidi za M3U</value>
+    <value>Ingiza faili moja au zaidi za M3U</value>
   </data>
   <data name="SettingsPage_ResetApp_Header" xml:space="preserve">
     <value>Rudisha Programu Katika Hali ya Awali</value>
   </data>
   <data name="SettingsPage_ResetApp_Description" xml:space="preserve">
-    <value>Hii itafuta data yote ya maktaba, orodha za nyimbo, na kuweka upya mipangilio yote kwenye chaguo-msingi. Programu itaanza upya.</value>
+    <value>Hii itafuta data yote ya maktaba, orodha za kucheza, na kuweka upya mipangilio yote kwenye chaguo-msingi. Programu itaanza upya.</value>
   </data>
   <data name="SettingsPage_ResetButton_Content" xml:space="preserve">
     <value>Weka Upya Data Zote</value>
@@ -1747,13 +1777,13 @@ Je, unataka kuendelea?</value>
     <value>Onyesha shughuli yako ya kusikiliza ya sasa kama hali yako kwenye Discord.</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
-    <value>Orodha Mahiri ya Nyimbo</value>
+    <value>Orodha ya Kucheza Nadhifu</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Section_Songs" xml:space="preserve">
     <value>Nyimbo</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Tafuta katika orodha mahiri ya nyimbo…</value>
+    <value>Tafuta katika orodha ya kucheza nadhifu…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Hariri sheria</value>
@@ -1843,13 +1873,13 @@ Je, unataka kuendelea?</value>
     <value>Rejesha Nakala ya Hifadhi?</value>
   </data>
   <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
-    <value>Kurejesha kutoka nakala ya hifadhi kutafuta data zote za sasa za programu. Kitendo hiki hakiwezi kutenduliwa. Programu itaanza upya baada ya kurejesha. Endelea?</value>
+    <value>Kurejesha kutoka nakala ya hifadhi kutabadilisha data zote za sasa za programu. Kitendo hiki hakiwezi kutenduliwa. Programu itaanza upya baada ya kurejesha. Endelea?</value>
   </data>
   <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
     <value>Rejesha</value>
   </data>
   <data name="Settings_Restore_Success_Title" xml:space="preserve">
-    <value>Rejesha Imekamilika</value>
+    <value>Urejeshaji Umekamilika</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
     <value>Nakala rudufu imerejeshwa. Nagi sasa itaanzishwa tena.</value>
@@ -1942,7 +1972,7 @@ Je, unataka kuendelea?</value>
     <value>Orodha za kucheza</value>
   </data>
   <data name="InsightsPage_Source_SmartPlaylists" xml:space="preserve">
-    <value>Orodha Mahiri za kucheza</value>
+    <value>Orodha za Kucheza Nadhifu</value>
   </data>
   <data name="InsightsPage_Source_Folders" xml:space="preserve">
     <value>Folda</value>
@@ -2034,6 +2064,9 @@ Je, unataka kuendelea?</value>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>Muda Wote</value>
   </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>Kipindi cha muda</value>
+  </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}h {1}m</value>
   </data>
@@ -2053,7 +2086,7 @@ Je, unataka kuendelea?</value>
     <value>Jaribu Tena</value>
   </data>
   <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
-    <value>Mpangilio mpya wa orodha ya nyimbo haukuweza kuhifadhiwa. Tafadhali jaribu tena.</value>
+    <value>Mpangilio mpya wa orodha ya kucheza haukuweza kuhifadhiwa. Tafadhali jaribu tena.</value>
   </data>
   <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
     <value>Kifaa cha Kutoa Sauti</value>
@@ -2135,7 +2168,7 @@ Je, unataka kuendelea?</value>
     <comment>Task in the taskbar icon's right-click menu.</comment>
   </data>
   <data name="JumpList_MiniPlayer" xml:space="preserve">
-    <value>Fungua Kicheza Kidogo</value>
+    <value>Fungua Kichezaji Kidogo</value>
     <comment>Task in the taskbar icon's right-click menu.</comment>
   </data>
   <data name="Listening_PlaybackSpeed" xml:space="preserve">
@@ -2233,5 +2266,65 @@ Je, unataka kuendelea?</value>
 2. Fungua kumbukumbu hiyo na utafute ffmpeg.exe kwenye folda yake ya bin.
 3. Ongeza folda yenye ffmpeg.exe kwenye PATH yako ya Windows.
 4. Anzisha tena Nagi, kisha uwezeshe kurekebisha sauti tena.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>Maelezo ya Wimbo</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>Lebo</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>Usikilizaji</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>Msanii wa Albamu</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>Kondakta</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>Hakimiliki</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>Njia</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>Umbizo</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>Chaneli</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>Ukubwa</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} kati ya {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>Safu za Orodha ya Nyimbo</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>Chagua maelezo yanayoonyeshwa kwenye orodha za nyimbo.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>Vichwa vya Safu</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>Onyesha kichwa cha kila safu juu ya orodha za nyimbo.</value>
   </data>
 </root>

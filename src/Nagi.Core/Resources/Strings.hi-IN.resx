@@ -169,7 +169,7 @@
     <value>सबसे कम {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
-    <value>फ़ोल्डर {0} में से {1} स्कैन कर रहा है: {2} - {3}</value>
+    <value>{1} में से फ़ोल्डर {0} स्कैन किया जा रहा है: {2} - {3}</value>
   </data>
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>स्कैन पूरा हुआ। {0} {1} जोड़े या अपडेट किए गए।</value>
@@ -324,5 +324,32 @@
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>'{0}' लोड करने में विफल।</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>संगीत लाइब्रेरी ब्राउज़ कर रहे हैं</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>निष्क्रिय</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>{0} द्वारा</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>रुका हुआ | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Nagi म्यूज़िक प्लेयर</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>बज रहा है</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>रुका हुआ</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>विकिपीडिया से, CC BY-SA लाइसेंस के तहत।</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

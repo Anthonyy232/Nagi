@@ -62,18 +62,18 @@
     <value>Nagi</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Redescubra sua coleção de música local com o Nagi, um reprodutor de música focado em velocidade, simplicidade e privacidade.</value>
+    <value>Redescubra a sua coleção de música local com o Nagi, um reprodutor de música focado em velocidade, simplicidade e privacidade.</value>
   </data>
   <data name="AppShortName" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AppDisplayName" xml:space="preserve">
-    <value>Nagi Leitor de Música</value>
+    <value>Reprodutor de Música Nagi</value>
   </data>
   <data name="AppInfoTip" xml:space="preserve">
-    <value>Abrir com Nagi Leitor de Música</value>
+    <value>Abrir com o Reprodutor de Música Nagi</value>
   </data>
   <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Nagi Arranque</value>
+    <value>Arranque do Nagi</value>
   </data>
 </root>

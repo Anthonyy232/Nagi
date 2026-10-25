@@ -157,7 +157,7 @@
     <value>Terpanjang Dahulu</value>
   </data>
   <data name="Format_SlowestFirst" xml:space="preserve">
-    <value>Terperlahan Dahulu ({0})</value>
+    <value>Paling Perlahan Dahulu ({0})</value>
   </data>
   <data name="Format_FastestFirst" xml:space="preserve">
     <value>Terpantas Dahulu ({0})</value>
@@ -176,7 +176,7 @@
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
-    <value>Imbasan selesai. Pustaka dikemas kini.</value>
+    <value>Imbasan selesai. Pustaka sudah terkini.</value>
   </data>
   <data name="Status_ScanCancelled" xml:space="preserve">
     <value>Imbasan dibatalkan.</value>
@@ -197,7 +197,7 @@
     <value>Menyelesaikan…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
-    <value>Normalisasi volum gagal. Semak log untuk butiran.</value>
+    <value>Penormalan kelantangan gagal. Semak log untuk butiran.</value>
   </data>
   <data name="Status_NoFoldersToRefresh" xml:space="preserve">
     <value>Tiada folder dalam pustaka untuk dimuat semula.</value>
@@ -278,13 +278,13 @@
     <value>Vokal</value>
   </data>
   <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
-    <value>Semua lagu sudah mempunyai data volum.</value>
+    <value>Semua lagu sudah mempunyai data kelantangan.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
     <value>Menganalisis kelantangan… Lagu: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Menghitung penormalan kelantangan ({0}/{1})…</value>
+    <value>Mengira penormalan kelantangan ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
     <value>Penormalan kelantangan selesai. Lagu diproses: {0}.</value>
@@ -308,7 +308,7 @@
     <value>Tidak dapat menyambung ke ListenBrainz. Semak sambungan dan URL pelayan anda.</value>
   </data>
   <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi tidak dapat menemukan folder data pustakanya.</value>
+    <value>Nagi tidak dapat mencari folder data pustakanya.</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>Pemulihan gagal, dan data sebelumnya tidak dapat dipulihkan sepenuhnya. Fail pemulihan telah disimpan di &apos;{0}&apos;.</value>
@@ -324,5 +324,32 @@
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>Gagal memuatkan '{0}'.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Menyemak Imbas Pustaka Muzik</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Melahu</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>oleh {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Dijeda | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Pemain Muzik Nagi</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Sedang Dimainkan</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Dijeda</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>Daripada Wikipedia, di bawah lesen CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

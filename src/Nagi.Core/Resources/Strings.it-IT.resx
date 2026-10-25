@@ -124,10 +124,10 @@
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
-    <value>Sconosciuto {0}</value>
+    <value>{0} sconosciuto</value>
   </data>
   <data name="Format_New" xml:space="preserve">
-    <value>Nuovo {0}</value>
+    <value>Nuova {0}</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} non trovato.</value>
@@ -182,7 +182,7 @@
     <value>Scansione annullata.</value>
   </data>
   <data name="Status_ScanFailed" xml:space="preserve">
-    <value>Scansione fallita. Controllare i registri per i dettagli.</value>
+    <value>Scansione fallita. Controlla i log per i dettagli.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
     <value>Preparazione scansione libreria…</value>
@@ -197,7 +197,7 @@
     <value>Completamento…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
-    <value>Normalizzazione volume fallita. Controllare i registri per i dettagli.</value>
+    <value>Normalizzazione volume fallita. Controlla i log per i dettagli.</value>
   </data>
   <data name="Status_NoFoldersToRefresh" xml:space="preserve">
     <value>Nessuna cartella nella libreria da aggiornare.</value>
@@ -324,5 +324,32 @@
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>Impossibile caricare '{0}'.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Sfoglia la libreria musicale</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Inattivo</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>di {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>In pausa | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Lettore musicale Nagi</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>In riproduzione</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>In pausa</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>Da Wikipedia, con licenza CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

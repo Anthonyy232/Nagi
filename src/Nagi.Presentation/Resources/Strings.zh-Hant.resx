@@ -251,7 +251,7 @@
     <value>正在載入……</value>
   </data>
   <data name="Error_FailedToLoadArtists" xml:space="preserve">
-    <value>載入演出者失敗</value>
+    <value>載入藝人失敗</value>
   </data>
   <data name="CrashReport_Title" xml:space="preserve">
     <value>嚴重錯誤</value>
@@ -272,7 +272,7 @@
     <value>專輯</value>
   </data>
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>演出者</value>
+    <value>藝人</value>
   </data>
   <data name="AlbumView_SongCount_Singular" xml:space="preserve">
     <value>{0} 首歌曲</value>
@@ -281,16 +281,16 @@
     <value>{0} 首歌曲</value>
   </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
-    <value>找不到演出者</value>
+    <value>找不到藝人</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
-    <value>載入演出者錯誤</value>
+    <value>載入藝人錯誤</value>
   </data>
   <data name="ArtistView_DefaultArtistName" xml:space="preserve">
-    <value>演出者</value>
+    <value>藝人</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
-    <value>此演出者沒有可用的傳記資料。</value>
+    <value>此藝人沒有可用的傳記資料。</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>載入資料夾錯誤</value>
@@ -362,10 +362,10 @@
     <value>{0} 張專輯</value>
   </data>
   <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} 位演出者</value>
+    <value>{0} 位藝人</value>
   </data>
   <data name="Artists_Count_Plural" xml:space="preserve">
-    <value>{0} 位演出者</value>
+    <value>{0} 位藝人</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>無項目</value>
@@ -392,7 +392,7 @@
     <value>發生意外錯誤。請再試一次。</value>
   </data>
   <data name="Onboarding_LibraryReady" xml:space="preserve">
-    <value>您的音樂庫已準備就緒。</value>
+    <value>您的媒體庫已準備就緒。</value>
   </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>智慧 • {0} 首歌曲</value>
@@ -558,7 +558,7 @@
     <value>未定義規則 • 所有歌曲均符合</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>符合 {1} 個 {2} 中的 {0} 個</value>
+    <value>符合 {1} 條{2}中的{0}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>所有</value>
@@ -681,16 +681,28 @@
     <value>中文音樂服務，非常適合亞洲音樂</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>擷取演出者 ID (TheAudioDB 和 Fanart.tv 所需)</value>
+    <value>查詢標籤中未包含的演出者和專輯 ID</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>高品質演出者圖片和傳記 (需要 MusicBrainz)</value>
+    <value>演出者圖片和傳記 (需要來自標籤或 MusicBrainz 的 MusicBrainz ID)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>僅限高品質演出者圖片 (需要 MusicBrainz)</value>
+    <value>高品質演出者圖片 (需要來自標籤或 MusicBrainz 的 MusicBrainz ID)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>演出者傳記和圖片 (備用)</value>
+    <value>演出者傳記和專輯封面 (備用)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>依名稱搜尋的演出者圖片和專輯封面</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>以您的語言呈現的演出者傳記 (需要來自標籤或 MusicBrainz 的 MusicBrainz ID)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>MusicBrainz 發行版本的專輯封面 (使用來自標籤或 MusicBrainz 的 ID)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>依名稱搜尋的高解析度專輯封面</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>搜尋專輯</value>
@@ -699,10 +711,10 @@
     <value>在專輯中搜尋</value>
   </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>搜尋演出者</value>
+    <value>搜尋藝人</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>在演出者中搜尋</value>
+    <value>在藝人中搜尋</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
     <value>移除資料夾</value>
@@ -762,7 +774,7 @@
     <value>在播放清單中搜尋</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>在曲風中搜尋</value>
+    <value>在類型中搜尋</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>在智慧播放清單中搜尋</value>
@@ -771,7 +783,7 @@
     <value>重新掃描中繼資料</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>重新掃描您的媒體庫以套用元資料設定，例如藝人拆分。媒體庫較大時可能需要一些時間。要繼續嗎？</value>
+    <value>重新掃描您的媒體庫以套用中繼資料設定，例如藝人拆分。媒體庫較大時可能需要一些時間。要繼續嗎？</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
     <value>重新掃描</value>
@@ -795,12 +807,12 @@
     <value>找不到 FFmpeg</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Title" xml:space="preserve">
-    <value>啟用音量正常化</value>
+    <value>啟用音量標準化</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
-    <value>音量正常化 (ReplayGain) 可確保您所有音樂的音量一致。
+    <value>音量標準化 (ReplayGain) 可確保您所有音樂的音量一致。
 
-這將分析您的音樂媒體庫，並透過寫入 ReplayGain 標籤直接修改您的音訊檔案。只會處理沒有現有標籤的檔案。這可能需要一些時間，具體取決於您的媒體庫大小。
+這將分析您的媒體庫，並透過寫入 ReplayGain 標籤直接修改您的音訊檔案。只會處理沒有現有標籤的檔案。這可能需要一些時間，具體取決於您的媒體庫大小。
 
 您要繼續嗎？</value>
   </data>
@@ -811,7 +823,7 @@
     <value>正在準備音量標準化掃描……</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>音量正常化掃描已取消。</value>
+    <value>音量標準化掃描已取消。</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>掃描期間發生錯誤：{0}</value>
@@ -853,7 +865,7 @@
     <value>問題頁面</value>
   </data>
   <data name="CrashReport_ReportIssuePostLink" xml:space="preserve">
-    <value>。</value>
+    <value>上建立問題以回報此情況。</value>
   </data>
   <data name="CrashReport_ResetAppAdvice" xml:space="preserve">
     <value>如果這種情況持續發生，您可以嘗試「重設應用程式與資料」。這將清除您的設定和媒體庫，有助於從損壞狀態中恢復應用程式。</value>
@@ -863,6 +875,9 @@
   </data>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>複製日誌</value>
+  </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>當機日誌</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>選擇封面</value>
@@ -899,6 +914,12 @@
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>值</value>
+  </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>欄位</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>條件</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>移除此規則</value>
@@ -954,6 +975,9 @@
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>前往專輯</value>
   </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>播放進度</value>
+  </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>即將播放</value>
   </data>
@@ -967,7 +991,7 @@
     <value>關閉佇列</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
-    <value>演出者</value>
+    <value>藝人</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
     <value>時長</value>
@@ -982,7 +1006,7 @@
     <value>佇列位置</value>
   </data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve">
-    <value>流派</value>
+    <value>類型</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>總時長</value>
@@ -1012,7 +1036,7 @@
     <value>播放</value>
   </data>
   <data name="AlbumPage_Empty_Title" xml:space="preserve">
-    <value>找不到相簿</value>
+    <value>找不到專輯</value>
   </data>
   <data name="AlbumPage_Empty_Subtitle" xml:space="preserve">
     <value>掃描您的音樂庫以填充專輯</value>
@@ -1153,7 +1177,7 @@
     <value>類型</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>搜尋曲風……</value>
+    <value>搜尋類型……</value>
   </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>隨機選擇一個</value>
@@ -1258,7 +1282,7 @@
     <value>您的音樂存放在哪裡？</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>選擇存放音樂的資料夾。Nagi 會在您完成設定的同時建立音樂庫，您也可以在日後新增更多資料夾。</value>
+    <value>選擇存放音樂的資料夾。Nagi 會在您完成設定的同時建立媒體庫，您也可以在日後新增更多資料夾。</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>打造專屬風格</value>
@@ -1276,10 +1300,10 @@
     <value>從預設檔開始。您可以在「設定」中調整各個頻段。</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
-    <value>讓您的音樂庫更加生動</value>
+    <value>讓您的媒體庫更加生動</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi 可完全離線運作。開啟這些功能以補齊檔案中未包含的演出者相片、簡介與歌詞。</value>
+    <value>Nagi 可完全離線運作。開啟這些功能以補齊檔案中未包含的演出者相片、簡介、專輯封面與歌詞。</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>完美融入您的桌面</value>
@@ -1384,7 +1408,7 @@
     <value>歌曲</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>在曲風中搜尋……</value>
+    <value>在類型中搜尋……</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>播放全部</value>
@@ -1423,7 +1447,7 @@
     <value>選擇視窗背景材質。</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
-    <value>動態佈景</value>
+    <value>動態主題</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
     <value>使應用程式色彩配合當前專輯封面。</value>
@@ -1482,6 +1506,12 @@
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>前置放大器</value>
   </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>等化器預設集</value>
+  </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>自訂</value>
   </data>
@@ -1525,10 +1555,10 @@
     <value>最小化時，顯示一個精簡的浮動播放器，而不是隱藏視窗。</value>
   </data>
   <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
-    <value>隱藏至系統列</value>
+    <value>隱藏至系統匣</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>關閉視窗時讓 Nagi 繼續在系統列執行。</value>
+    <value>關閉視窗時讓 Nagi 繼續在系統匣執行。</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
     <value>在彈出視窗中顯示封面圖</value>
@@ -1549,7 +1579,7 @@
     <value>藝人分割</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>定義用於分割多個藝人的字元（例如「;/」）。留空則禁用。</value>
+    <value>定義用於分割多個藝人的字元（例如「;/」）。留空則停用。</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>類型分隔</value>
@@ -1564,10 +1594,10 @@
     <value>重新掃描媒體庫以套用分割變更</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
-    <value>擷取線上元資料</value>
+    <value>擷取線上中繼資料</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>從線上來源取得藝人圖片與個人簡介。</value>
+    <value>從線上來源取得演出者圖片、簡介與專輯封面。</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>來源</value>
@@ -1579,7 +1609,7 @@
     <value>取得線上歌詞</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>從線上來源取得缺失的歌詞。這會將歌曲元資料傳送給第三方服務。</value>
+    <value>從線上來源取得缺失的歌詞。這會將歌曲中繼資料傳送給第三方服務。</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
     <value>來源</value>
@@ -1591,7 +1621,7 @@
     <value>顯示羅馬化歌詞</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
-    <value>當安裝的語言包與腳本匹配時，在支援的歌詞下方顯示一行較小的羅馬拼音。</value>
+    <value>當已安裝的語言包與歌詞的文字系統相符時，在支援的歌詞下方顯示一行較小的羅馬拼音。</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
     <value>語言包</value>
@@ -1702,10 +1732,10 @@
     <value>將您的收聽記錄提交至 ListenBrainz（Last.fm 的開放替代方案）。</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenLabel" xml:space="preserve">
-    <value>使用者憑證</value>
+    <value>使用者權杖</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenPlaceholder" xml:space="preserve">
-    <value>從 listenbrainz.org/settings 貼上您的憑證</value>
+    <value>從 listenbrainz.org/settings 貼上您的權杖</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TestConnection" xml:space="preserve">
     <value>測試連線</value>
@@ -1735,7 +1765,7 @@
     <value>中斷 ListenBrainz 連線？</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Content" xml:space="preserve">
-    <value>這將移除您儲存的憑證。您可以隨時重新連線。</value>
+    <value>這將移除您儲存的權杖。您可以隨時重新連線。</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Button" xml:space="preserve">
     <value>中斷連線</value>
@@ -2034,6 +2064,9 @@
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>所有時間</value>
   </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>時間範圍</value>
+  </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}小時 {1}分鐘</value>
   </data>
@@ -2233,5 +2266,65 @@
 2. 解壓縮封存檔並在其 bin 資料夾中找到 ffmpeg.exe。
 3. 將包含 ffmpeg.exe 的資料夾新增至您的 Windows PATH。
 4. 重新啟動 Nagi，然後再次啟用音量標準化。</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>歌曲資訊</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>標籤</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>播放記錄</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>專輯演出者</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>指揮</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>版權</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>路徑</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>格式</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>聲道</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>大小</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} / {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>歌曲清單欄位</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>選擇歌曲清單要顯示的詳細資料。</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>欄位標題</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>在歌曲清單上方顯示各欄位的標題。</value>
   </data>
 </root>

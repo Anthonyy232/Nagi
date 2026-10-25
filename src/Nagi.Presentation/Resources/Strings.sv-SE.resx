@@ -681,16 +681,28 @@ Filer som inte kunde importeras: {0}.</value>
     <value>Kinesisk musiktjänst, utmärkt för asiatisk musik</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Hämtar artist-ID:n (krävs för TheAudioDB och Fanart.tv)</value>
+    <value>Slår upp artist- och album-ID:n som dina taggar saknar</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>Högkvalitativa artistbilder och biografier (kräver MusicBrainz)</value>
+    <value>Artistbilder och biografier (kräver ett MusicBrainz-ID från dina taggar eller MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>Endast högkvalitativa artistbilder (kräver MusicBrainz)</value>
+    <value>Högkvalitativa artistbilder (kräver ett MusicBrainz-ID från dina taggar eller MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Artistbiografier och bilder (återgång)</value>
+    <value>Artistbiografier och skivomslag (reserv)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>Artistbilder och skivomslag, hittade via namn</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>Artistbiografier på ditt språk (kräver ett MusicBrainz-ID från dina taggar eller MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>Skivomslag för MusicBrainz-utgåvor (använder ID:n från dina taggar eller MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>Skivomslag i hög upplösning, hittade via namn</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Sök album</value>
@@ -768,13 +780,13 @@ Filer som inte kunde importeras: {0}.</value>
     <value>Sök i smart spellista</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
-    <value>Sök om metadata</value>
+    <value>Skanna om metadata</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
     <value>Skanna om ditt bibliotek för att tillämpa metadatainställningar, som delning av artister. Detta kan ta en stund för stora bibliotek. Vill du fortsätta?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
-    <value>Sök om</value>
+    <value>Skanna om</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
     <value>Förbereder omskanning av biblioteket…</value>
@@ -864,6 +876,9 @@ Vill du fortsätta?</value>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>Kopiera logg</value>
   </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>Kraschlogg</value>
+  </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>Välj omslag</value>
   </data>
@@ -899,6 +914,12 @@ Vill du fortsätta?</value>
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>Värde</value>
+  </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>Fält</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>Villkor</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>Ta bort denna regel</value>
@@ -946,13 +967,16 @@ Vill du fortsätta?</value>
     <value>Nästa</value>
   </data>
   <data name="Player_LyricsButton_ToolTip" xml:space="preserve">
-    <value>Låtext</value>
+    <value>Låttext</value>
   </data>
   <data name="Player_QueueButton_ToolTip" xml:space="preserve">
     <value>Nästa i kö</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Gå till album</value>
+  </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>Uppspelningsposition</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Nästa i kö</value>
@@ -1279,7 +1303,7 @@ Vill du fortsätta?</value>
     <value>Ge ditt bibliotek liv</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi fungerar helt offline. Aktivera dessa för att hämta artistfoton, biografier och låttexter som dina filer saknar.</value>
+    <value>Nagi fungerar helt offline. Aktivera dessa för att hämta artistfoton, biografier, skivomslag och låttexter som dina filer saknar.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>Passa in på ditt skrivbord</value>
@@ -1474,13 +1498,19 @@ Vill du fortsätta?</value>
     <value>Tona smidigt in volymen när du återupptar uppspelningen och ut när du pausar, istället för att klippa direkt.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
-    <value>Ljudutjämnare</value>
+    <value>Equalizer</value>
   </data>
   <data name="SettingsPage_ResetEqualizer_Content" xml:space="preserve">
     <value>Återställ till standard</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Förförstärkare</value>
+  </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>Förinställning för utjämnare</value>
   </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>Anpassad</value>
@@ -1534,7 +1564,7 @@ Vill du fortsätta?</value>
     <value>Visa omslag i snabbfönster</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
-    <value>Visa omslagsbilden i den kompakta spelaren som visas när du klickar på systemfältikonen.</value>
+    <value>Visa omslagsbilden i den kompakta spelaren som visas när du klickar på ikonen i meddelandefältet.</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
     <value>Ignorera artiklar vid sortering</value>
@@ -1567,7 +1597,7 @@ Vill du fortsätta?</value>
     <value>Hämta metadata online</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Hämta artistbilder och biografier från källor online.</value>
+    <value>Hämta artistbilder, biografier och skivomslag från källor online.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Källor</value>
@@ -1834,7 +1864,7 @@ Vill du fortsätta?</value>
     <value>Misslyckades att skapa säkerhetskopia. Försök igen.</value>
   </data>
   <data name="Settings_Restore_Invalid_Title" xml:space="preserve">
-    <value>Ogiltig säkerhetskopiafil</value>
+    <value>Ogiltig säkerhetskopiefil</value>
   </data>
   <data name="Settings_Restore_Invalid_Message" xml:space="preserve">
     <value>Den valda filen är inte en giltig Nagi-säkerhetskopia.</value>
@@ -2033,6 +2063,9 @@ Vill du fortsätta?</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>Genom tiderna</value>
+  </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>Tidsintervall</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}t {1}m</value>
@@ -2233,5 +2266,65 @@ Vill du fortsätta?</value>
 2. Packa upp arkivet och leta reda på ffmpeg.exe i mappen bin.
 3. Lägg till mappen som innehåller ffmpeg.exe i din Windows PATH.
 4. Starta om Nagi och aktivera volymnormalisering igen.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>Låtinfo</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>Taggar</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>Lyssning</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>Albumartist</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>Dirigent</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>Upphovsrätt</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>Sökväg</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>Kanaler</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>Storlek</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} av {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>Kolumner i låtlistor</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>Välj vilka uppgifter låtlistor visar.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>Kolumnrubriker</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>Visa en rubrik ovanför varje kolumn i låtlistor.</value>
   </data>
 </root>

@@ -124,10 +124,10 @@
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
-    <value>E panjohur {0}</value>
+    <value>{0} i panjohur</value>
   </data>
   <data name="Format_New" xml:space="preserve">
-    <value>E re {0}</value>
+    <value>{0} e re</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} nuk u gjet.</value>
@@ -163,7 +163,7 @@
     <value>Më e shpejta fillimisht ({0})</value>
   </data>
   <data name="Format_Most" xml:space="preserve">
-    <value>Më e shumta {0}</value>
+    <value>Më shumë {0}</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
     <value>Më pak {0}</value>
@@ -236,7 +236,7 @@
     <value>Rendit sipas: </value>
   </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>Lista e dëgjimit u krijua, por këngët e saj nuk mund të shtoheshin. Ju lutemi provoni ta importoni përsëri.</value>
+    <value>Lista e luajtjes u krijua, por këngët e saj nuk mund të shtoheshin. Ju lutemi provoni ta importoni përsëri.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Asnjë këngë nga lista e luajtjes nuk u gjet në bibliotekën tuaj.</value>
@@ -314,7 +314,7 @@
     <value>Rikthimi dështoi dhe të dhënat tuaja të mëparshme nuk mund të riktheheshin plotësisht. Skedarët e rimëkëmbjes u ruajtën në &apos;{0}&apos;.</value>
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
-    <value>Skedari i zgjedhur nuk është një kopje rezerve e vlefshme e Nagi.</value>
+    <value>Skedari i zgjedhur nuk është një kopje rezervë e vlefshme e Nagi.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>LibVLC ndeshi një gabim të papërcaktuar.</value>
@@ -324,5 +324,32 @@
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>Dështoi ngarkimi i '{0}'.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Po shfleton bibliotekën muzikore</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Në pritje</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>nga {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Në pauzë | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Luajtësi muzikor Nagi</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Po luhet</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Në pauzë</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>Nga Wikipedia, sipas licencës CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

@@ -124,10 +124,10 @@
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
-    <value>Desconocido {0}</value>
+    <value>{0} desconocido</value>
   </data>
   <data name="Format_New" xml:space="preserve">
-    <value>Nuevo {0}</value>
+    <value>Nueva {0}</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} no encontrado.</value>
@@ -182,7 +182,7 @@
     <value>Escaneo cancelado.</value>
   </data>
   <data name="Status_ScanFailed" xml:space="preserve">
-    <value>Escaneo fallido. Consulte los registros para obtener detalles.</value>
+    <value>Escaneo fallido. Consulta los registros para obtener detalles.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
     <value>Preparando el escaneo de la biblioteca…</value>
@@ -197,7 +197,7 @@
     <value>Finalizando…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
-    <value>La normalización de volumen falló. Consulte los registros para obtener detalles.</value>
+    <value>La normalización de volumen falló. Consulta los registros para obtener detalles.</value>
   </data>
   <data name="Status_NoFoldersToRefresh" xml:space="preserve">
     <value>No hay carpetas en la biblioteca para actualizar.</value>
@@ -239,7 +239,7 @@
     <value>Se ha creado la lista de reproducción, pero no se han podido añadir sus canciones. Intenta importarla de nuevo.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>No se encontraron canciones de la lista de reproducción en su biblioteca.</value>
+    <value>No se encontraron canciones de la lista de reproducción en tu biblioteca.</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>No hay listas de reproducción para exportar.</value>
@@ -317,12 +317,39 @@
     <value>El archivo seleccionado no es una copia de seguridad válida de Nagi.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC encontró un error no especificado.</value>
+    <value>LibVLC ha encontrado un error no especificado.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
     <value>Error de LibVLC: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Error al cargar '{0}'.</value>
+    <value>No se ha podido cargar «{0}».</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Explorando la biblioteca de música</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Inactivo</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>de {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>En pausa | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Reproductor de música Nagi</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Reproduciendo</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>En pausa</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>De Wikipedia, bajo la licencia CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

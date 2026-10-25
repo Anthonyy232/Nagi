@@ -80,7 +80,7 @@
     <value>Любими</value>
   </data>
   <data name="NavItem_Insights" xml:space="preserve">
-    <value>Прозрения</value>
+    <value>Статистика</value>
   </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>Настройки</value>
@@ -392,7 +392,7 @@
     <value>Възникна неочаквана грешка. Моля, опитайте отново.</value>
   </data>
   <data name="Onboarding_LibraryReady" xml:space="preserve">
-    <value>Фонотеката ви е готова.</value>
+    <value>Библиотеката ви е готова.</value>
   </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>Интелигентен • {0} песен</value>
@@ -446,7 +446,7 @@
     <value>Възникна грешка при създаване на плейлиста.</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Актуализиране на корицата на плейлиста…</value>
+    <value>Актуализиране на обложката на плейлиста…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Неуспешно актуализиране на обложка на плейлист.</value>
@@ -512,7 +512,7 @@
     <value>Изключване от Last.fm</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
-    <value>Сигурни ли сте, че искате да изключите акаунта си в Last.fm? Вашата история на scrobbling ще бъде запазена в Last.fm, но Nagi вече няма да може да scrobble.</value>
+    <value>Сигурни ли сте, че искате да изключите акаунта си в Last.fm? Историята ви на скроблинг ще бъде запазена в Last.fm, но Nagi вече няма да може да скроблва.</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Изключване</value>
@@ -558,13 +558,13 @@
     <value>Няма дефинирани правила • Всички песни съответстват</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Съвпадат {0} от {1} {2}</value>
+    <value>Съвпадение с {0} от {1} {2}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>всички</value>
   </data>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>всяко</value>
+    <value>някое</value>
   </data>
   <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
     <value>правило</value>
@@ -582,7 +582,7 @@
     <value>{0} елемента</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
-    <value>{0} избрани</value>
+    <value>{0, plural, one {# избран} other {# избрани}}</value>
   </data>
   <data name="AlbumView_DiscHeader" xml:space="preserve">
     <value>Диск {0}</value>
@@ -681,16 +681,28 @@
     <value>Китайска музикална услуга, чудесна за азиатска музика</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Извлича ID на изпълнители (необходимо за TheAudioDB и Fanart.tv)</value>
+    <value>Търси ID на изпълнители и албуми, които липсват във вашите тагове</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>Висококачествени изображения и биографии на изпълнители (изисква MusicBrainz)</value>
+    <value>Изображения и биографии на изпълнители (изисква MusicBrainz ID от вашите тагове или от MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>Само висококачествени изображения на изпълнители (изисква MusicBrainz)</value>
+    <value>Висококачествени изображения на изпълнители (изисква MusicBrainz ID от вашите тагове или от MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Биографии и изображения на изпълнители (резервен вариант)</value>
+    <value>Биографии на изпълнители и обложки на албуми (резервен вариант)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>Изображения на изпълнители и обложки на албуми, намерени по име</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>Биографии на изпълнители на вашия език (изисква MusicBrainz ID от вашите тагове или от MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>Обложки на албуми за издания в MusicBrainz (използва ID от вашите тагове или от MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>Обложки на албуми с висока резолюция, намерени по име</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Търсене в албуми</value>
@@ -732,7 +744,7 @@
     <value>Въведете име на плейлист</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
-    <value>Избор на корица</value>
+    <value>Избор на обложка</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
     <value>Създай нов плейлист</value>
@@ -798,7 +810,7 @@
     <value>Активирай нормализиране на звука</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
-    <value>Нормализирането на звука (ReplayGain) осигурява постоянно ниво на звука във цялата ви музика.
+    <value>Нормализирането на звука (ReplayGain) осигурява постоянно ниво на звука в цялата ви музика.
 
 Това ще анализира вашата музикална библиотека и директно ще промени вашите аудио файлове, като запише ReplayGain тагове. Ще бъдат обработени само файлове без съществуващи тагове. Това може да отнеме известно време в зависимост от размера на вашата библиотека.
 
@@ -832,7 +844,7 @@
     <value>Обратно към плейъра</value>
   </data>
   <data name="MiniPlayer_UpNextHeader" xml:space="preserve">
-    <value>Следващо</value>
+    <value>Следващи песни</value>
   </data>
   <data name="MiniPlayer_RestoreButton_ToolTip" xml:space="preserve">
     <value>Покажи Nagi</value>
@@ -844,7 +856,7 @@
     <value>Следващо</value>
   </data>
   <data name="MiniPlayer_QueueButton_ToolTip" xml:space="preserve">
-    <value>Следващо</value>
+    <value>Следващи песни</value>
   </data>
   <data name="CrashReport_ReportIssuePreLink" xml:space="preserve">
     <value>Моля, обмислете да докладвате това, като създадете проблем на </value>
@@ -863,6 +875,9 @@
   </data>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>Копирай лог</value>
+  </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>Лог на срива</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>Избери обложка</value>
@@ -886,7 +901,7 @@
     <value>Всички</value>
   </data>
   <data name="SmartPlaylist_MatchLogic_Any_Content" xml:space="preserve">
-    <value>Някой</value>
+    <value>Някое</value>
   </data>
   <data name="SmartPlaylist_MatchSuffixLabel" xml:space="preserve">
     <value>от следните правила:</value>
@@ -899,6 +914,12 @@
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>Стойност</value>
+  </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>Поле</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>Условие</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>Премахни това правило</value>
@@ -928,13 +949,13 @@
     <value>Следващо</value>
   </data>
   <data name="TrayPopup_QueueButton_ToolTip" xml:space="preserve">
-    <value>Следващо</value>
+    <value>Следващи песни</value>
   </data>
   <data name="TrayPopup_BackButton_ToolTip" xml:space="preserve">
     <value>Обратно към плейъра</value>
   </data>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
-    <value>Следващо</value>
+    <value>Следващи песни</value>
   </data>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
@@ -949,13 +970,16 @@
     <value>Текстове</value>
   </data>
   <data name="Player_QueueButton_ToolTip" xml:space="preserve">
-    <value>Следващо</value>
+    <value>Следващи песни</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Към албума</value>
   </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>Позиция на възпроизвеждане</value>
+  </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>Следващо</value>
+    <value>Следващи песни</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>Изчистване на опашката</value>
@@ -1258,7 +1282,7 @@
     <value>Къде е музиката ви?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Изберете папката, в която съхранявате музиката си. Nagi създава вашата фонотека, докато завършвате настройката, а по-късно можете да добавите още папки.</value>
+    <value>Изберете папката, в която съхранявате музиката си. Nagi създава вашата библиотека, докато завършвате настройката, а по-късно можете да добавите още папки.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Персонализирайте по ваш вкус</value>
@@ -1276,10 +1300,10 @@
     <value>Започнете от готов профил. Можете да регулирате всяка честотна лента в Настройки.</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
-    <value>Вдъхнете живот на фонотеката си</value>
+    <value>Вдъхнете живот на библиотеката си</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi работи напълно офлайн. Включете ги, за да допълните снимки на изпълнители, биографии и текстове на песни, които липсват във файловете ви.</value>
+    <value>Nagi работи напълно офлайн. Включете ги, за да допълните снимки на изпълнители, биографии, обложки на албуми и текстове на песни, които липсват във файловете ви.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>Идеално вписване в работния плот</value>
@@ -1482,6 +1506,12 @@
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Предусилвател</value>
   </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Хц</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>Предварителна настройка на еквалайзера</value>
+  </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>Потребителски</value>
   </data>
@@ -1528,7 +1558,7 @@
     <value>Скриване в системната област</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>Задържане на Nagi да работи в системната област при затваряне на прозореца му.</value>
+    <value>Оставяне на Nagi да работи в системната област при затваряне на прозореца му.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
     <value>Показване на обложката в изскачащия прозорец</value>
@@ -1567,7 +1597,7 @@
     <value>Извличане на метаданни от интернет</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Изтегляне на изображения и биографии на изпълнители от онлайн източници.</value>
+    <value>Изтегляне на изображения и биографии на изпълнители и обложки на албуми от онлайн източници.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Източници</value>
@@ -1615,7 +1645,7 @@
     <value>Няма налични съвместими пакети за романизация.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Не може да се заредят пакети за романизация: {0}</value>
+    <value>Не могат да се заредят пакетите за романизация: {0}</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Инсталирането на пакета не бе успешно.</value>
@@ -1669,7 +1699,7 @@
     <value>Last.fm</value>
   </data>
   <data name="SettingsPage_LastFm_Description" xml:space="preserve">
-    <value>Свържете акаунта си в Last.fm, за да "скробвате" песни и да показвате текущо възпроизвежданата песен.</value>
+    <value>Свържете акаунта си в Last.fm, за да скроблвате песни и да показвате текущо възпроизвежданата песен.</value>
   </data>
   <data name="SettingsPage_LastFm_Connect_Content" xml:space="preserve">
     <value>Свържи</value>
@@ -1774,7 +1804,7 @@
     <value>Редактиране на правила</value>
   </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
-    <value>За</value>
+    <value>Относно</value>
   </data>
   <data name="SettingsPage_AboutExpander_Header" xml:space="preserve">
     <value>За Nagi</value>
@@ -1891,10 +1921,10 @@
     <value>Задайте колко време да продължава плавното затихване на звука при пауза.</value>
   </data>
   <data name="Settings_Nav_Insights" xml:space="preserve">
-    <value>Прозрения</value>
+    <value>Статистика</value>
   </data>
   <data name="InsightsPage_Title" xml:space="preserve">
-    <value>Прозрения</value>
+    <value>Статистика</value>
   </data>
   <data name="InsightsPage_TotalTime" xml:space="preserve">
     <value>Общо време на слушане</value>
@@ -1927,7 +1957,7 @@
     <value>Все още няма данни за слушане</value>
   </data>
   <data name="InsightsPage_Empty_Subtitle" xml:space="preserve">
-    <value>Започнете да слушате музика, за да видите своите прозрения тук</value>
+    <value>Започнете да слушате музика, за да видите статистиката си тук</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
     <value>Възпроизвеждания: {0}</value>
@@ -1942,7 +1972,7 @@
     <value>Плейлисти</value>
   </data>
   <data name="InsightsPage_Source_SmartPlaylists" xml:space="preserve">
-    <value>Смарт плейлисти</value>
+    <value>Интелигентни плейлисти</value>
   </data>
   <data name="InsightsPage_Source_Folders" xml:space="preserve">
     <value>Папки</value>
@@ -1990,7 +2020,7 @@
     <value>Търсене…</value>
   </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
-    <value>Изпълнения</value>
+    <value>Възпроизвеждания</value>
   </data>
   <data name="InsightsPage_SortBy_Duration" xml:space="preserve">
     <value>Време</value>
@@ -2008,7 +2038,7 @@
     <value>Следваща страница</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
-    <value>напр. ;/\</value>
+    <value>напр. ;/\\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
     <value> мс</value>
@@ -2033,6 +2063,9 @@
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>За цялото време</value>
+  </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>Времеви диапазон</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}ч {1}м</value>
@@ -2135,7 +2168,7 @@
     <comment>Task in the taskbar icon's right-click menu.</comment>
   </data>
   <data name="JumpList_MiniPlayer" xml:space="preserve">
-    <value>Отваряне на миниплеъра</value>
+    <value>Отваряне на миниплейъра</value>
     <comment>Task in the taskbar icon's right-click menu.</comment>
   </data>
   <data name="Listening_PlaybackSpeed" xml:space="preserve">
@@ -2227,11 +2260,71 @@
     <value>Няма налични плейлисти</value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg е необходим за анализиране на песните за нормализиране на силата на звука, но Nagi не можа да го намери.
+    <value>FFmpeg е необходим за анализ на песните за нормализиране на силата на звука, но Nagi не успя да го открие.
 
 1. Изтеглете версия за Windows от https://ffmpeg.org/download.html.
 2. Разархивирайте архива и намерете ffmpeg.exe в неговата папка bin.
 3. Добавете папката, съдържаща ffmpeg.exe, към вашия Windows PATH.
 4. Рестартирайте Nagi и активирайте отново нормализирането на силата на звука.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>Информация за песента</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>Тагове</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>Слушане</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>Изпълнител на албума</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>Диригент</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>Авторски права</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>Път</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>Формат</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>Канали</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>Размер</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} от {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} кбит/с</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Хц</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} МБ</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} дБ</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>Колони в списъците с песни</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>Изберете какви данни да показват списъците с песни.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>Заглавия на колоните</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>Показване на името на всяка колона над списъците с песни.</value>
   </data>
 </root>

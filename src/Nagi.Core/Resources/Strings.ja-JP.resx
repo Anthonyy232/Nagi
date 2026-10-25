@@ -169,7 +169,7 @@
     <value>{0}が最も少ない</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
-    <value>フォルダー {1} の {0} をスキャン中: {2} - {3}</value>
+    <value>フォルダーをスキャン中 ({0}/{1}): {2} - {3}</value>
   </data>
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>スキャンが完了しました。{0} {1}を追加または更新しました。</value>
@@ -284,10 +284,10 @@
     <value>音量を解析中… 曲数: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>音量の平準化を計算中 ({0}/{1})…</value>
+    <value>音量正規化を計算中 ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>音量の平準化が完了しました。処理された曲数: {0}。</value>
+    <value>音量正規化が完了しました。処理された曲数: {0}。</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
     <value>ListenBrainz のユーザートークンを入力してください。</value>
@@ -324,5 +324,32 @@
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>'{0}'の読み込みに失敗しました。</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>音楽ライブラリを閲覧中</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>待機中</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>アーティスト: {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>一時停止中 | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Nagi ミュージックプレーヤー</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>再生中</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>一時停止中</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>出典：ウィキペディア（CC BY-SA ライセンス）</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

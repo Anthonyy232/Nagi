@@ -66,7 +66,7 @@
     <value>Álbum</value>
   </data>
   <data name="Label_Genre" xml:space="preserve">
-    <value>Gênero</value>
+    <value>Género</value>
   </data>
   <data name="Label_Title" xml:space="preserve">
     <value>Título</value>
@@ -75,7 +75,7 @@
     <value>Lista de reprodução</value>
   </data>
   <data name="Label_File" xml:space="preserve">
-    <value>Arquivo</value>
+    <value>Ficheiro</value>
   </data>
   <data name="Label_Year" xml:space="preserve">
     <value>Ano</value>
@@ -124,10 +124,10 @@
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
-    <value>Desconhecido {0}</value>
+    <value>{0} desconhecido</value>
   </data>
   <data name="Format_New" xml:space="preserve">
-    <value>Novo {0}</value>
+    <value>Nova {0}</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} não encontrado.</value>
@@ -169,7 +169,7 @@
     <value>Menos {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
-    <value>Verificando pasta {0} de {1}: {2} - {3}</value>
+    <value>A verificar a pasta {0} de {1}: {2} - {3}</value>
   </data>
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Verificação concluída. {0} {1} adicionados ou atualizados.</value>
@@ -185,16 +185,16 @@
     <value>A verificação falhou. Verifique os registos para detalhes.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Preparando verificação da biblioteca…</value>
+    <value>A preparar a verificação da biblioteca…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>Lendo detalhes das músicas…</value>
+    <value>A ler os detalhes das músicas…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Limpando sua biblioteca…</value>
+    <value>A limpar a sua biblioteca…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
-    <value>Finalizando…</value>
+    <value>A finalizar…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
     <value>A normalização do volume falhou. Verifique os registos para detalhes.</value>
@@ -236,7 +236,7 @@
     <value>Ordenar por: </value>
   </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>A playlist foi criada, mas não foi possível adicionar suas músicas. Tente importar novamente.</value>
+    <value>A lista de reprodução foi criada, mas não foi possível adicionar as suas músicas. Tente importar novamente.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Nenhuma música da lista de reprodução foi encontrada na sua biblioteca.</value>
@@ -278,51 +278,78 @@
     <value>Vocal</value>
   </data>
   <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
-    <value>Todas as músicas já possuem dados de volume.</value>
+    <value>Todas as músicas já têm dados de volume.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Analisando volume… Músicas: {0}</value>
+    <value>A analisar o volume… Músicas: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Calculando a normalização de volume ({0}/{1})…</value>
+    <value>A calcular a normalização de volume ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
     <value>Normalização de volume concluída. Músicas processadas: {0}.</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
-    <value>Insira seu token de usuário do ListenBrainz.</value>
+    <value>Introduza o seu token de utilizador do ListenBrainz.</value>
   </data>
   <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
     <value>Não foi possível ler a resposta do ListenBrainz. Tente novamente mais tarde.</value>
   </data>
   <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
-    <value>Insira uma URL de servidor começando com http:// ou https://.</value>
+    <value>Introduza um URL de servidor que comece por http:// ou https://.</value>
   </data>
   <data name="ListenBrainz_InvalidToken" xml:space="preserve">
-    <value>O token de usuário é inválido. Verifique-o e tente novamente.</value>
+    <value>O token de utilizador é inválido. Verifique-o e tente novamente.</value>
   </data>
   <data name="ListenBrainz_ServerError" xml:space="preserve">
-    <value>O ListenBrainz retornou um erro (HTTP {0}). Tente novamente mais tarde.</value>
+    <value>O ListenBrainz devolveu um erro (HTTP {0}). Tente novamente mais tarde.</value>
   </data>
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
-    <value>Não foi possível conectar ao ListenBrainz. Verifique sua conexão e a URL do servidor.</value>
+    <value>Não foi possível ligar ao ListenBrainz. Verifique a sua ligação e o URL do servidor.</value>
   </data>
   <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>O Nagi não conseguiu encontrar sua pasta de dados da biblioteca.</value>
+    <value>O Nagi não conseguiu encontrar a pasta de dados da biblioteca.</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
-    <value>A restauração falhou e seus dados anteriores não puderam ser totalmente restaurados. Os arquivos de recuperação foram salvos em &apos;{0}&apos;.</value>
+    <value>O restauro falhou e os seus dados anteriores não puderam ser totalmente restaurados. Os ficheiros de recuperação foram guardados em '{0}'.</value>
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
-    <value>O arquivo selecionado não é um backup válido do Nagi.</value>
+    <value>O ficheiro selecionado não é uma cópia de segurança válida do Nagi.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC encontrou um erro não especificado.</value>
+    <value>O LibVLC encontrou um erro não especificado.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
     <value>Erro do LibVLC: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Falha ao carregar '{0}'.</value>
+    <value>Não foi possível carregar «{0}».</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>A explorar a biblioteca de música</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Inativo</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>de {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Em pausa | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Leitor de música Nagi</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>A reproduzir</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Em pausa</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>Da Wikipédia, ao abrigo da licença CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

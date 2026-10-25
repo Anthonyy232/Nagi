@@ -127,7 +127,7 @@
     <value>{0} desconegut</value>
   </data>
   <data name="Format_New" xml:space="preserve">
-    <value>Nou {0}</value>
+    <value>Nova {0}</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>No s'ha trobat {0}.</value>
@@ -182,7 +182,7 @@
     <value>Escaneig cancel·lat.</value>
   </data>
   <data name="Status_ScanFailed" xml:space="preserve">
-    <value>Escaneig fallit. Comproveu els registres per a més detalls.</value>
+    <value>Escaneig fallit. Comprova els registres per a més detalls.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
     <value>S'està preparant l'exploració de la biblioteca…</value>
@@ -197,7 +197,7 @@
     <value>S'està finalitzant…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
-    <value>La normalització del volum ha fallat. Comproveu els registres per a més detalls.</value>
+    <value>La normalització del volum ha fallat. Comprova els registres per a més detalls.</value>
   </data>
   <data name="Status_NoFoldersToRefresh" xml:space="preserve">
     <value>No hi ha cap carpeta a la biblioteca per actualitzar.</value>
@@ -236,10 +236,10 @@
     <value>Ordenar per: </value>
   </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>S'ha creat la llista de reproducció, però no se n'han pogut afegir les cançons. Torneu a intentar la importació.</value>
+    <value>S'ha creat la llista de reproducció, però no se n'han pogut afegir les cançons. Torna a intentar la importació.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>No s'han trobat cançons de la llista de reproducció a la vostra biblioteca.</value>
+    <value>No s'han trobat cançons de la llista de reproducció a la teva biblioteca.</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>No hi ha llistes de reproducció per exportar.</value>
@@ -290,22 +290,22 @@
     <value>S'ha completat la normalització del volum. Cançons processades: {0}.</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
-    <value>Introduïu el token d'usuari de ListenBrainz.</value>
+    <value>Introdueix el testimoni d'usuari de ListenBrainz.</value>
   </data>
   <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
-    <value>No s'ha pogut llegir la resposta de ListenBrainz. Torneu-ho a intentar més tard.</value>
+    <value>No s'ha pogut llegir la resposta de ListenBrainz. Torna-ho a provar més tard.</value>
   </data>
   <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
-    <value>Introduïu un URL de servidor que comenci per http:// o https://.</value>
+    <value>Introdueix un URL de servidor que comenci per http:// o https://.</value>
   </data>
   <data name="ListenBrainz_InvalidToken" xml:space="preserve">
-    <value>El token d'usuari no és vàlid. Comproveu-lo i torneu-ho a intentar.</value>
+    <value>El testimoni d'usuari no és vàlid. Comprova'l i torna-ho a provar.</value>
   </data>
   <data name="ListenBrainz_ServerError" xml:space="preserve">
-    <value>ListenBrainz ha retornat un error (HTTP {0}). Torneu-ho a intentar més tard.</value>
+    <value>ListenBrainz ha retornat un error (HTTP {0}). Torna-ho a provar més tard.</value>
   </data>
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
-    <value>No s'ha pogut connectar amb ListenBrainz. Comproveu la connexió i l'URL del servidor.</value>
+    <value>No s'ha pogut connectar amb ListenBrainz. Comprova la connexió i l'URL del servidor.</value>
   </data>
   <data name="Backup_DataFolderMissing" xml:space="preserve">
     <value>Nagi no ha trobat la carpeta de dades de la biblioteca.</value>
@@ -323,6 +323,33 @@
     <value>Error de LibVLC: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>No s'ha pogut carregar '{0}'.</value>
+    <value>No s'ha pogut carregar «{0}».</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Explorant la biblioteca de música</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Inactiu</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>de {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>En pausa | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Reproductor de música Nagi</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Reproduint</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>En pausa</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>De la Viquipèdia, amb llicència CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

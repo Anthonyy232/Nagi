@@ -68,10 +68,10 @@
     <value>Nagi</value>
   </data>
   <data name="AppDisplayName" xml:space="preserve">
-    <value>Nagi Glazbeni Reproduktor</value>
+    <value>Nagi glazbeni reproduktor</value>
   </data>
   <data name="AppInfoTip" xml:space="preserve">
-    <value>Otvori s Nagi Glazbenim Reproduktorom</value>
+    <value>Otvori s Nagi glazbenim reproduktorom</value>
   </data>
   <data name="StartupTaskDisplayName" xml:space="preserve">
     <value>Pokretanje Nagija</value>

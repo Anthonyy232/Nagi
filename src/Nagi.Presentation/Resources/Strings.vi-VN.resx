@@ -95,7 +95,7 @@
     <value>Tạm dừng</value>
   </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
-    <value>Phát ngẫu nhiên tắt</value>
+    <value>Tắt phát ngẫu nhiên</value>
   </data>
   <data name="Tooltip_RepeatOff" xml:space="preserve">
     <value>Tắt lặp lại</value>
@@ -104,7 +104,7 @@
     <value>Lặp lại tất cả</value>
   </data>
   <data name="Tooltip_RepeatOne" xml:space="preserve">
-    <value>Lặp lại một lần</value>
+    <value>Lặp lại một bài</value>
   </data>
   <data name="Tooltip_Repeat" xml:space="preserve">
     <value>Lặp lại</value>
@@ -669,7 +669,7 @@ Các tệp không thể nhập: {0}.</value>
     <value>Lời bài hát</value>
   </data>
   <data name="Settings_Button_Queue" xml:space="preserve">
-    <value>Hàng đợi</value>
+    <value>Hàng chờ</value>
   </data>
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>Âm lượng</value>
@@ -681,16 +681,28 @@ Các tệp không thể nhập: {0}.</value>
     <value>Dịch vụ nhạc Trung Quốc, tuyệt vời cho nhạc châu Á</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Lấy ID nghệ sĩ (bắt buộc cho TheAudioDB và Fanart.tv)</value>
+    <value>Tra cứu ID nghệ sĩ và album mà thẻ của bạn không có</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>Hình ảnh và tiểu sử nghệ sĩ chất lượng cao (yêu cầu MusicBrainz)</value>
+    <value>Hình ảnh và tiểu sử nghệ sĩ (cần ID MusicBrainz từ thẻ của bạn hoặc MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>Chỉ hình ảnh nghệ sĩ chất lượng cao (yêu cầu MusicBrainz)</value>
+    <value>Hình ảnh nghệ sĩ chất lượng cao (cần ID MusicBrainz từ thẻ của bạn hoặc MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Tiểu sử và hình ảnh nghệ sĩ (dự phòng)</value>
+    <value>Tiểu sử nghệ sĩ và ảnh bìa album (dự phòng)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>Hình ảnh nghệ sĩ và ảnh bìa album, tìm theo tên</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>Tiểu sử nghệ sĩ bằng ngôn ngữ của bạn (cần ID MusicBrainz từ thẻ của bạn hoặc MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>Ảnh bìa album cho các bản phát hành trên MusicBrainz (dùng ID từ thẻ của bạn hoặc MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>Ảnh bìa album độ phân giải cao, tìm theo tên</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Tìm kiếm album</value>
@@ -864,6 +876,9 @@ Bạn có muốn tiếp tục không?</value>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>Sao chép nhật ký</value>
   </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>Nhật ký sự cố</value>
+  </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>Chọn bìa</value>
   </data>
@@ -899,6 +914,12 @@ Bạn có muốn tiếp tục không?</value>
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>Giá trị</value>
+  </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>Trường</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>Điều kiện</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>Xóa quy tắc này</value>
@@ -953,6 +974,9 @@ Bạn có muốn tiếp tục không?</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Đi tới album</value>
+  </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>Vị trí phát</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Tiếp theo</value>
@@ -1186,7 +1210,7 @@ Bạn có muốn tiếp tục không?</value>
     <value>Phát tiếp theo</value>
   </data>
   <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
-    <value>Thêm vào hàng đợi</value>
+    <value>Thêm vào hàng chờ</value>
   </data>
   <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
     <value>Thêm vào danh sách phát</value>
@@ -1279,7 +1303,7 @@ Bạn có muốn tiếp tục không?</value>
     <value>Làm phong phú thư viện của bạn</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi hoạt động hoàn toàn ngoại tuyến. Bật các tính năng này để bổ sung ảnh nghệ sĩ, tiểu sử và lời bài hát còn thiếu trong các tệp của bạn.</value>
+    <value>Nagi hoạt động hoàn toàn ngoại tuyến. Bật các tính năng này để bổ sung ảnh nghệ sĩ, tiểu sử, ảnh bìa album và lời bài hát còn thiếu trong các tệp của bạn.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>Hòa hợp với máy tính của bạn</value>
@@ -1471,7 +1495,7 @@ Bạn có muốn tiếp tục không?</value>
     <value>Hiệu ứng mờ dần khi Phát / Tạm dừng</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Làm mờ dần âm lượng khi tiếp tục phát và mờ đi khi tạm dừng thay vì cắt ngay lập tức.</value>
+    <value>Tăng dần âm lượng khi tiếp tục phát và giảm dần khi tạm dừng thay vì ngắt đột ngột.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>Bộ cân bằng âm thanh</value>
@@ -1481,6 +1505,12 @@ Bạn có muốn tiếp tục không?</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Tiền khuếch đại</value>
+  </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>Cài đặt sẵn bộ cân bằng</value>
   </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>Tùy chỉnh</value>
@@ -1567,7 +1597,7 @@ Bạn có muốn tiếp tục không?</value>
     <value>Lấy siêu dữ liệu trực tuyến</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Tải hình ảnh và tiểu sử nghệ sĩ từ các nguồn trực tuyến.</value>
+    <value>Tải hình ảnh, tiểu sử nghệ sĩ và ảnh bìa album từ các nguồn trực tuyến.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Nguồn</value>
@@ -1588,16 +1618,16 @@ Bạn có muốn tiếp tục không?</value>
     <value>Kéo để sắp xếp lại các nguồn lời bài hát. Di chuột qua từng nguồn để biết chi tiết.</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
-    <value>Hiển thị lời bài hát phiên âm La-tinh</value>
+    <value>Hiển thị lời bài hát phiên âm Latinh</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
-    <value>Hiển thị một dòng phiên âm Latinh nhỏ hơn bên dưới lời bài hát được hỗ trợ khi một gói đã cài đặt khớp với tập lệnh.</value>
+    <value>Hiển thị một dòng phiên âm Latinh nhỏ hơn bên dưới lời bài hát được hỗ trợ khi một gói đã cài đặt khớp với hệ chữ viết.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
     <value>Gói ngôn ngữ</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>Cài đặt các gói ngôn ngữ để phiên âm La-tinh lời bài hát được hỗ trợ. Các gói được lưu trữ cục bộ.</value>
+    <value>Cài đặt các gói ngôn ngữ để phiên âm Latinh lời bài hát được hỗ trợ. Các gói được lưu trữ cục bộ.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
     <value>Làm mới</value>
@@ -1879,7 +1909,7 @@ Bạn có muốn tiếp tục không?</value>
     <value>Điều chỉnh độ đậm nhạt của màu nền trình phát.</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
-    <value>Thời gian mờ dần vào</value>
+    <value>Thời gian tăng dần âm lượng</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
     <value>Đặt thời gian âm lượng tăng dần khi tiếp tục phát.</value>
@@ -2033,6 +2063,9 @@ Bạn có muốn tiếp tục không?</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>Tất cả thời gian</value>
+  </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>Khoảng thời gian</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0} giờ {1} phút</value>
@@ -2227,11 +2260,71 @@ Bạn có muốn tiếp tục không?</value>
     <value>Không có danh sách phát nào khả dụng</value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>Cần có FFmpeg để phân tích bài hát cho việc cân bằng âm lượng, nhưng Nagi không thể tìm thấy ứng dụng này.
+    <value>Cần có FFmpeg để phân tích bài hát cho việc chuẩn hóa âm lượng, nhưng Nagi không thể tìm thấy ứng dụng này.
 
 1. Tải bản dựng dành cho Windows từ https://ffmpeg.org/download.html.
 2. Giải nén tệp lưu trữ và tìm tệp ffmpeg.exe trong thư mục bin.
 3. Thêm thư mục chứa ffmpeg.exe vào PATH của Windows.
-4. Khởi động lại Nagi, sau đó bật lại tính năng cân bằng âm lượng.</value>
+4. Khởi động lại Nagi, sau đó bật lại tính năng chuẩn hóa âm lượng.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>Thông tin bài hát</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>Thẻ</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>Lịch sử nghe</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>Nghệ sĩ album</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>Nhạc trưởng</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>Bản quyền</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>Đường dẫn</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>Định dạng</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>Kênh</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>Kích thước</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} / {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>Cột danh sách bài hát</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>Chọn các thông tin hiển thị trong danh sách bài hát.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>Tiêu đề cột</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>Hiển thị nhãn của từng cột phía trên danh sách bài hát.</value>
   </data>
 </root>

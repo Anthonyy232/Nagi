@@ -169,14 +169,14 @@
     <value>最少 {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
-    <value>正在扫描文件夹 {0} 共 {1} 个：{2} - {3}</value>
+    <value>正在扫描第 {0} 个文件夹（共 {1} 个）：{2} - {3}</value>
   </data>
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>扫描完成。已添加或更新 {0} {1}。</value>
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
-    <value>扫描完成。资料库已是最新。</value>
+    <value>扫描完成。音乐库已是最新。</value>
   </data>
   <data name="Status_ScanCancelled" xml:space="preserve">
     <value>扫描已取消。</value>
@@ -185,13 +185,13 @@
     <value>扫描失败。请检查日志以获取详细信息。</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>正在准备扫描媒体库……</value>
+    <value>正在准备扫描音乐库……</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
     <value>正在读取歌曲详情……</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>正在清理媒体库……</value>
+    <value>正在清理音乐库……</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
     <value>正在完成……</value>
@@ -200,10 +200,10 @@
     <value>音量标准化失败。请检查日志以获取详细信息。</value>
   </data>
   <data name="Status_NoFoldersToRefresh" xml:space="preserve">
-    <value>资料库中没有可刷新的文件夹。</value>
+    <value>音乐库中没有可刷新的文件夹。</value>
   </data>
   <data name="Status_LibraryRefreshComplete" xml:space="preserve">
-    <value>资料库刷新完成。</value>
+    <value>音乐库刷新完成。</value>
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
@@ -220,7 +220,7 @@
     <value>带封面艺术</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>带有艺人的图像</value>
+    <value>带艺术家图像</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>和</value>
@@ -239,7 +239,7 @@
     <value>播放列表已创建，但无法添加其中的歌曲。请尝试重新导入。</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>在您的资料库中未找到播放列表中的任何歌曲。</value>
+    <value>在您的音乐库中未找到播放列表中的任何歌曲。</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>没有可导出的播放列表。</value>
@@ -284,10 +284,10 @@
     <value>正在分析音量… 歌曲数：{0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>正在计算音量平准化 ({0}/{1})……</value>
+    <value>正在计算音量标准化 ({0}/{1})……</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>音量平准化完成。已处理歌曲：{0}。</value>
+    <value>音量标准化完成。已处理歌曲：{0}。</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
     <value>请输入您的 ListenBrainz 用户令牌。</value>
@@ -308,7 +308,7 @@
     <value>无法连接到 ListenBrainz。请检查您的连接和服务器 URL。</value>
   </data>
   <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi 无法找到其媒体库数据文件夹。</value>
+    <value>Nagi 无法找到其音乐库数据文件夹。</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>还原失败，无法完全恢复以前的数据。恢复文件已保存至 &apos;{0}&apos;。</value>
@@ -324,5 +324,32 @@
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>加载“{0}”失败。</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>正在浏览音乐库</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>空闲中</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>艺术家：{0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>已暂停 | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Nagi 音乐播放器</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>正在播放</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>已暂停</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>内容来自维基百科，依据 CC BY-SA 许可协议使用。</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

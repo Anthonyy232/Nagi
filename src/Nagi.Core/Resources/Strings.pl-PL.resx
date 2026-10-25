@@ -130,7 +130,7 @@
     <value>Nowy {0}</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
-    <value>{0} nie znaleziono.</value>
+    <value>Nie znaleziono: {0}.</value>
   </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
     <value>{0} (A do Z)</value>
@@ -163,7 +163,7 @@
     <value>Najszybsze najpierw ({0})</value>
   </data>
   <data name="Format_Most" xml:space="preserve">
-    <value>Najwięcej {0}</value>
+    <value>Najwięcej: {0}</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
     <value>Najmniej: {0}</value>
@@ -284,10 +284,10 @@
     <value>Analizowanie głośności… Utwory: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Obliczanie wyrównywania głośności ({0}/{1})…</value>
+    <value>Obliczanie normalizacji głośności ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Wyrównywanie głośności zakończone. Przetworzone utwory: {0}.</value>
+    <value>Normalizacja głośności zakończona. Przetworzone utwory: {0}.</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
     <value>Wprowadź token użytkownika ListenBrainz.</value>
@@ -324,5 +324,32 @@
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>Nie udało się załadować '{0}'.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Przegląda bibliotekę muzyczną</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Bezczynny</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>autorstwa {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Wstrzymano | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Odtwarzacz muzyki Nagi</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Odtwarzanie</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Wstrzymano</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>Z Wikipedii, na licencji CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

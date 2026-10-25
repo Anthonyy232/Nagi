@@ -197,7 +197,7 @@
     <value>Ολοκλήρωση…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
-    <value>Η ομαλοποίηση έντασης απέτυχε. Ελέγξτε τα αρχεία καταγραφής για λεπτομέρειες.</value>
+    <value>Η κανονικοποίηση έντασης απέτυχε. Ελέγξτε τα αρχεία καταγραφής για λεπτομέρειες.</value>
   </data>
   <data name="Status_NoFoldersToRefresh" xml:space="preserve">
     <value>Δεν υπάρχουν φάκελοι στη βιβλιοθήκη για ανανέωση.</value>
@@ -324,5 +324,32 @@
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>Αποτυχία φόρτωσης '{0}'.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Περιήγηση στη μουσική βιβλιοθήκη</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Σε αδράνεια</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>από {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Σε παύση | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Πρόγραμμα αναπαραγωγής μουσικής Nagi</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Αναπαραγωγή</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Σε παύση</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>Από τη Βικιπαίδεια, με άδεια CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

@@ -227,7 +227,7 @@
     <value>Nouvelle liste de lecture intelligente</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>Modifier la playlist intelligente : {0}</value>
+    <value>Modifier la liste de lecture intelligente : {0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
     <value>Saisir un nom de liste de lecture</value>
@@ -242,10 +242,10 @@
     <value>Calcul en cours…</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>Une playlist portant ce nom existe déjà.</value>
+    <value>Une liste de lecture portant ce nom existe déjà.</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>Saisissez un nom de playlist.</value>
+    <value>Saisissez un nom de liste de lecture.</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
     <value>Chargement…</value>
@@ -410,7 +410,7 @@
     <value>Erreur de chargement de la liste de lecture</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Lancement de la playlist…</value>
+    <value>Lancement de la liste de lecture…</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Aucun morceau ne correspond aux règles de cette liste de lecture intelligente.</value>
@@ -419,7 +419,7 @@
     <value>Erreur au démarrage de la lecture pour cette liste de lecture.</value>
   </data>
   <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Choix d'une playlist aléatoire…</value>
+    <value>Choix d'une liste de lecture aléatoire…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Aucune liste de lecture trouvée.</value>
@@ -431,13 +431,13 @@
     <value>Erreur lors de la lecture aléatoire d'une liste de lecture.</value>
   </data>
   <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Chargement des playlists…</value>
+    <value>Chargement des listes de lecture…</value>
   </data>
   <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
     <value>Erreur de chargement des listes de lecture.</value>
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Création d'une nouvelle playlist…</value>
+    <value>Création d'une nouvelle liste de lecture…</value>
   </data>
   <data name="Playlist_Status_CreateFailed" xml:space="preserve">
     <value>Échec de la création de la liste de lecture. Elle peut déjà exister.</value>
@@ -446,7 +446,7 @@
     <value>Une erreur est survenue lors de la création de la liste de lecture.</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Mise à jour de la pochette de la playlist…</value>
+    <value>Mise à jour de la pochette de la liste de lecture…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Échec de la mise à jour de la pochette de la liste de lecture.</value>
@@ -455,7 +455,7 @@
     <value>Une erreur est survenue lors de la mise à jour de la pochette de la liste de lecture.</value>
   </data>
   <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Suppression de l'image de la playlist…</value>
+    <value>Suppression de l'image de la liste de lecture…</value>
   </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Échec de la suppression de l'image de la liste de lecture.</value>
@@ -464,7 +464,7 @@
     <value>Une erreur est survenue lors de la suppression de l'image de la liste de lecture.</value>
   </data>
   <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Renommage de la playlist…</value>
+    <value>Renommage de la liste de lecture…</value>
   </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Échec du renommage de la liste de lecture.</value>
@@ -473,7 +473,7 @@
     <value>Une erreur est survenue lors du renommage de la liste de lecture.</value>
   </data>
   <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Suppression de la playlist…</value>
+    <value>Suppression de la liste de lecture…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Échec de la suppression de la liste de lecture.</value>
@@ -521,7 +521,7 @@
     <value>Exportation réussie</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>Playlists exportées : {0}
+    <value>Listes de lecture exportées : {0}
 Morceaux : {1}
 Enregistré sous : {2}</value>
   </data>
@@ -532,7 +532,7 @@ Enregistré sous : {2}</value>
     <value>Importation réussie</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>Playlists importées : {0}
+    <value>Listes de lecture importées : {0}
 Morceaux : {1}</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
@@ -681,16 +681,28 @@ Fichiers qui n'ont pas pu être importés : {0}.</value>
     <value>Service de musique chinois, idéal pour la musique asiatique</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Récupère les identifiants d'artiste (requis pour TheAudioDB et Fanart.tv)</value>
+    <value>Recherche les identifiants d'artiste et d'album absents de vos balises</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>Images et biographies d'artistes de haute qualité (nécessite MusicBrainz)</value>
+    <value>Images et biographies d'artistes (nécessite un identifiant MusicBrainz issu de vos balises ou de MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>Uniquement des images d'artistes de haute qualité (nécessite MusicBrainz)</value>
+    <value>Images d'artistes de haute qualité (nécessite un identifiant MusicBrainz issu de vos balises ou de MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Biographies et images d'artistes (solution de repli)</value>
+    <value>Biographies d'artistes et pochettes d'albums (solution de repli)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>Images d'artistes et pochettes d'albums, trouvées par nom</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>Biographies d'artistes dans votre langue (nécessite un identifiant MusicBrainz issu de vos balises ou de MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>Pochettes d'albums pour les parutions MusicBrainz (utilise les identifiants de vos balises ou de MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>Pochettes d'albums en haute résolution, trouvées par nom</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Rechercher des albums</value>
@@ -729,7 +741,7 @@ Fichiers qui n'ont pas pu être importés : {0}.</value>
     <value>Rechercher des listes de lecture</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>Saisir un nom de playlist</value>
+    <value>Saisir un nom de liste de lecture</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
     <value>Choisir une pochette</value>
@@ -864,6 +876,9 @@ Voulez-vous continuer ?</value>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>Copier le journal</value>
   </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>Journal de plantage</value>
+  </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>Choisir la pochette</value>
   </data>
@@ -883,10 +898,10 @@ Voulez-vous continuer ?</value>
     <value>Correspondance</value>
   </data>
   <data name="SmartPlaylist_MatchLogic_All_Content" xml:space="preserve">
-    <value>Tous</value>
+    <value>Toutes</value>
   </data>
   <data name="SmartPlaylist_MatchLogic_Any_Content" xml:space="preserve">
-    <value>N'importe lequel</value>
+    <value>N'importe laquelle</value>
   </data>
   <data name="SmartPlaylist_MatchSuffixLabel" xml:space="preserve">
     <value>des règles suivantes :</value>
@@ -899,6 +914,12 @@ Voulez-vous continuer ?</value>
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>Valeur</value>
+  </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>Champ</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>Condition</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>Supprimer cette règle</value>
@@ -953,6 +974,9 @@ Voulez-vous continuer ?</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Aller à l'album</value>
+  </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>Position de lecture</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>À suivre</value>
@@ -1126,7 +1150,7 @@ Voulez-vous continuer ?</value>
     <value>Lire</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>Ajouter à la playlist</value>
+    <value>Ajouter à la liste de lecture</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Dossier</value>
@@ -1183,13 +1207,13 @@ Voulez-vous continuer ?</value>
     <value>Lire</value>
   </data>
   <data name="LibraryPage_Context_PlayNext" xml:space="preserve">
-    <value>Lire la suite</value>
+    <value>Lire ensuite</value>
   </data>
   <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
     <value>Ajouter à la file d'attente</value>
   </data>
   <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Ajouter à la playlist</value>
+    <value>Ajouter à la liste de lecture</value>
   </data>
   <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
     <value>Aller à l'album</value>
@@ -1279,7 +1303,7 @@ Voulez-vous continuer ?</value>
     <value>Donnez vie à votre bibliothèque</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi fonctionne entièrement hors ligne. Activez ces options pour compléter les photos d'artistes, les biographies et les paroles absentes de vos fichiers.</value>
+    <value>Nagi fonctionne entièrement hors ligne. Activez ces options pour compléter les photos d'artistes, les biographies, les pochettes d'albums et les paroles absentes de vos fichiers.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>S'intègre parfaitement à votre bureau</value>
@@ -1315,7 +1339,7 @@ Voulez-vous continuer ?</value>
     <value>Listes de lecture</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Rechercher des playlists…</value>
+    <value>Rechercher des listes de lecture…</value>
   </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>En choisir une au hasard</value>
@@ -1360,7 +1384,7 @@ Voulez-vous continuer ?</value>
     <value>Chansons</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Rechercher dans la playlist…</value>
+    <value>Rechercher dans la liste de lecture…</value>
   </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Tout lire</value>
@@ -1369,7 +1393,7 @@ Voulez-vous continuer ?</value>
     <value>Lecture aléatoire et tout lire</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
-    <value>Retirer de la playlist</value>
+    <value>Retirer de la liste de lecture</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>Cette liste de lecture est vide</value>
@@ -1482,6 +1506,12 @@ Voulez-vous continuer ?</value>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Préampli</value>
   </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>Préréglage de l'égaliseur</value>
+  </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>Personnalisé</value>
   </data>
@@ -1534,7 +1564,7 @@ Voulez-vous continuer ?</value>
     <value>Afficher la pochette dans le volet surgissant</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
-    <value>Afficher la pochette dans le lecteur compact qui apparaît lors du clic sur l'icône de la barre des tâches.</value>
+    <value>Afficher la pochette dans le lecteur compact qui apparaît lors du clic sur l'icône de la zone de notification.</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
     <value>Ignorer les articles lors du tri</value>
@@ -1567,7 +1597,7 @@ Voulez-vous continuer ?</value>
     <value>Récupérer les métadonnées en ligne</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Télécharger les images et biographies d'artistes depuis des sources en ligne.</value>
+    <value>Récupérer les images et biographies d'artistes ainsi que les pochettes d'albums depuis des sources en ligne.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Sources</value>
@@ -1636,7 +1666,7 @@ Voulez-vous continuer ?</value>
     <value>Licence {0}</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>Importer et exporter des playlists</value>
+    <value>Importer et exporter des listes de lecture</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
     <value>Exporter des listes de lecture vers des fichiers M3U pour les utiliser dans d'autres lecteurs, ou importer des listes de lecture M3U dans Nagi.</value>
@@ -1675,7 +1705,7 @@ Voulez-vous continuer ?</value>
     <value>Connecter</value>
   </data>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
-    <value>Terminé</value>
+    <value>Terminer</value>
   </data>
   <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
     <value>Annuler</value>
@@ -1753,7 +1783,7 @@ Voulez-vous continuer ?</value>
     <value>Chansons</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Rechercher dans la playlist intelligente…</value>
+    <value>Rechercher dans la liste de lecture intelligente…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Modifier les règles</value>
@@ -1939,10 +1969,10 @@ Voulez-vous continuer ?</value>
     <value>Artistes</value>
   </data>
   <data name="InsightsPage_Source_Playlists" xml:space="preserve">
-    <value>Playlists</value>
+    <value>Listes de lecture</value>
   </data>
   <data name="InsightsPage_Source_SmartPlaylists" xml:space="preserve">
-    <value>Playlists intelligentes</value>
+    <value>Listes de lecture intelligentes</value>
   </data>
   <data name="InsightsPage_Source_Folders" xml:space="preserve">
     <value>Dossiers</value>
@@ -2029,10 +2059,13 @@ Voulez-vous continuer ?</value>
     <value>90 derniers jours</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>L'année dernière</value>
+    <value>12 derniers mois</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>Depuis le début</value>
+  </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>Période</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}h {1}m</value>
@@ -2053,7 +2086,7 @@ Voulez-vous continuer ?</value>
     <value>Réessayer</value>
   </data>
   <data name="Playlist_ErrorSavingOrder" xml:space="preserve">
-    <value>Le nouvel ordre de la playlist n'a pas pu être enregistré. Veuillez réessayer.</value>
+    <value>Le nouvel ordre de la liste de lecture n'a pas pu être enregistré. Veuillez réessayer.</value>
   </data>
   <data name="SettingsPage_AudioOutput_Header" xml:space="preserve">
     <value>Périphérique de sortie audio</value>
@@ -2233,5 +2266,65 @@ Voulez-vous continuer ?</value>
 2. Extrayez l'archive et localisez ffmpeg.exe dans son dossier bin.
 3. Ajoutez le dossier contenant ffmpeg.exe à votre PATH Windows.
 4. Redémarrez Nagi, puis réactivez la normalisation du volume.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>Informations sur le morceau</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>Balises</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>Écoute</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>Artiste de l'album</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>Chef d'orchestre</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>Copyright</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>Chemin</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>Canaux</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>Taille</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} sur {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>Colonnes des listes de morceaux</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>Choisissez les informations affichées dans les listes de morceaux.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>En-têtes de colonnes</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>Afficher un libellé au-dessus de chaque colonne des listes de morceaux.</value>
   </data>
 </root>

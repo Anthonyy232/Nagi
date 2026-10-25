@@ -212,10 +212,10 @@
     <value>Είναι το πολύ</value>
   </data>
   <data name="Operator_IsInTheLast" xml:space="preserve">
-    <value>Είναι τις τελευταίες (ημέρες)</value>
+    <value>Εντός των τελευταίων (ημερών)</value>
   </data>
   <data name="Operator_IsNotInTheLast" xml:space="preserve">
-    <value>Δεν είναι τις τελευταίες (ημέρες)</value>
+    <value>Όχι εντός των τελευταίων (ημερών)</value>
   </data>
   <data name="Operator_IsTrue" xml:space="preserve">
     <value>Είναι αληθές</value>
@@ -317,7 +317,7 @@
     <value>Αφαίρεση του &apos;{0}&apos; από τη βιβλιοθήκη σας…</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Η επανεξέταση του '{0}' ολοκληρώθηκε.</value>
+    <value>Η επανασάρωση του '{0}' ολοκληρώθηκε.</value>
   </data>
   <data name="Folders_Rescan_NoChanges" xml:space="preserve">
     <value>Δεν εντοπίστηκαν αλλαγές για το '{0}'.</value>
@@ -341,7 +341,7 @@
     <value>Δεν ήταν δυνατή η αφαίρεση του φακέλου από τη βιβλιοθήκη σας: {0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
-    <value>Σφάλμα επανεξέτασης φακέλου: {0}</value>
+    <value>Σφάλμα επανασάρωσης φακέλου: {0}</value>
   </data>
   <data name="Folders_Count_Singular" xml:space="preserve">
     <value>{0} φάκελος</value>
@@ -512,7 +512,7 @@
     <value>Αποσύνδεση Last.fm</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
-    <value>Είστε βέβαιοι ότι θέλετε να αποσυνδέσετε τον λογαριασμό σας Last.fm; Το ιστορικό scrobbling σας θα διατηρηθεί στο Last.fm, αλλά το Nagi δεν θα μπορεί πλέον να scrobble.</value>
+    <value>Είστε βέβαιοι ότι θέλετε να αποσυνδέσετε τον λογαριασμό σας Last.fm; Το ιστορικό scrobbling σας θα διατηρηθεί στο Last.fm, αλλά το Nagi δεν θα μπορεί πλέον να κάνει scrobble.</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Αποσύνδεση</value>
@@ -558,13 +558,13 @@
     <value>Δεν ορίστηκαν κανόνες • Όλα τα τραγούδια ταιριάζουν</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Αντιστοίχιση {0} από {1} {2}</value>
+    <value>Ταιριάζει με {0} από {1} {2}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>όλοι</value>
+    <value>όλους</value>
   </data>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>οποιοδήποτε</value>
+    <value>οποιονδήποτε</value>
   </data>
   <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
     <value>κανόνας</value>
@@ -582,7 +582,7 @@
     <value>{0} αντικείμενα</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
-    <value>{0} επιλεγμένο</value>
+    <value>{0} επιλεγμένα</value>
   </data>
   <data name="AlbumView_DiscHeader" xml:space="preserve">
     <value>Δίσκος {0}</value>
@@ -681,16 +681,28 @@
     <value>Κινεζική υπηρεσία μουσικής, εξαιρετική για ασιατική μουσική</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Ανακτά αναγνωριστικά καλλιτεχνών (απαιτείται για TheAudioDB και Fanart.tv)</value>
+    <value>Αναζητά αναγνωριστικά καλλιτεχνών και άλμπουμ που λείπουν από τις ετικέτες σας</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>Εικόνες και βιογραφίες καλλιτεχνών υψηλής ποιότητας (απαιτεί MusicBrainz)</value>
+    <value>Εικόνες και βιογραφίες καλλιτεχνών (απαιτεί αναγνωριστικό MusicBrainz από τις ετικέτες σας ή το MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>Μόνο εικόνες καλλιτεχνών υψηλής ποιότητας (απαιτεί MusicBrainz)</value>
+    <value>Εικόνες καλλιτεχνών υψηλής ποιότητας (απαιτεί αναγνωριστικό MusicBrainz από τις ετικέτες σας ή το MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Βιογραφίες και εικόνες καλλιτεχνών (εφεδρική)</value>
+    <value>Βιογραφίες καλλιτεχνών και εξώφυλλα άλμπουμ (εφεδρική)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>Εικόνες καλλιτεχνών και εξώφυλλα άλμπουμ, με αναζήτηση βάσει ονόματος</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>Βιογραφίες καλλιτεχνών στη γλώσσα σας (απαιτεί αναγνωριστικό MusicBrainz από τις ετικέτες σας ή το MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>Εξώφυλλα άλμπουμ για κυκλοφορίες του MusicBrainz (χρησιμοποιεί αναγνωριστικά από τις ετικέτες σας ή το MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>Εξώφυλλα άλμπουμ υψηλής ανάλυσης, με αναζήτηση βάσει ονόματος</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Αναζήτηση άλμπουμ</value>
@@ -768,25 +780,25 @@
     <value>Αναζήτηση σε έξυπνη λίστα αναπαραγωγής</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
-    <value>Επανεξέταση Μεταδεδομένων</value>
+    <value>Επανασάρωση Μεταδεδομένων</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
     <value>Επανασαρώστε τη βιβλιοθήκη σας για να εφαρμόσετε τις ρυθμίσεις μεταδεδομένων, όπως τον διαχωρισμό καλλιτεχνών. Αυτό μπορεί να διαρκέσει λίγο για μεγάλες βιβλιοθήκες. Συνέχεια;</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
-    <value>Επανεξέταση</value>
+    <value>Επανασάρωση</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
     <value>Προετοιμασία επανασάρωσης βιβλιοθήκης…</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
-    <value>Ολοκληρώθηκε η Επανεξέταση</value>
+    <value>Ολοκληρώθηκε η Επανασάρωση</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Content" xml:space="preserve">
     <value>Τα μεταδεδομένα της βιβλιοθήκης έχουν ενημερωθεί.</value>
   </data>
   <data name="Settings_Dialog_RescanFailed_Title" xml:space="preserve">
-    <value>Αποτυχία Επανεξέτασης</value>
+    <value>Αποτυχία Επανασάρωσης</value>
   </data>
   <data name="Settings_Dialog_RescanFailed_Content" xml:space="preserve">
     <value>Παρουσιάστηκε σφάλμα κατά τη σάρωση. Ελέγξτε τα αρχεία καταγραφής για λεπτομέρειες.</value>
@@ -864,6 +876,9 @@
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>Αντιγραφή αρχείου καταγραφής</value>
   </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>Αρχείο καταγραφής κατάρρευσης</value>
+  </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>Επιλογή εξωφύλλου</value>
   </data>
@@ -899,6 +914,12 @@
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>Τιμή</value>
+  </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>Πεδίο</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>Συνθήκη</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>Κατάργηση αυτού του κανόνα</value>
@@ -953,6 +974,9 @@
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Μετάβαση στο άλμπουμ</value>
+  </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>Θέση αναπαραγωγής</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Επόμενο</value>
@@ -1279,7 +1303,7 @@
     <value>Ζωντανέψτε τη βιβλιοθήκη σας</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Το Nagi λειτουργεί πλήρως χωρίς σύνδεση. Ενεργοποιήστε αυτά για να προσθέσετε φωτογραφίες καλλιτεχνών, βιογραφίες και στίχους που δεν περιλαμβάνονται στα αρχεία σας.</value>
+    <value>Το Nagi λειτουργεί πλήρως χωρίς σύνδεση. Ενεργοποιήστε αυτά για να προσθέσετε φωτογραφίες καλλιτεχνών, βιογραφίες, εξώφυλλα άλμπουμ και στίχους που δεν περιλαμβάνονται στα αρχεία σας.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>Πλήρης ενσωμάτωση στην επιφάνεια εργασίας</value>
@@ -1432,13 +1456,13 @@
     <value>Απομνημόνευση μεγέθους παραθύρου</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Description" xml:space="preserve">
-    <value>Επαναφορά του κύριου παραθύρου στην προηγούμενη του διάσταση στην επόμενη εκκίνηση.</value>
+    <value>Επαναφορά του κύριου παραθύρου στο προηγούμενο μέγεθός του κατά την επόμενη εκκίνηση.</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Header" xml:space="preserve">
     <value>Απομνημόνευση θέσης παραθύρου</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Description" xml:space="preserve">
-    <value>Επαναφορά του κύριου παραθύρου στην προηγούμενη του θέση οθόνης στην επόμενη εκκίνηση.</value>
+    <value>Επαναφορά του κύριου παραθύρου στην προηγούμενη θέση του στην οθόνη κατά την επόμενη εκκίνηση.</value>
   </data>
   <data name="SettingsPage_RememberNavState_Header" xml:space="preserve">
     <value>Απομνημόνευση κατάστασης πίνακα πλοήγησης</value>
@@ -1482,6 +1506,12 @@
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Προενίσχυση</value>
   </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>Προεπιλογή ισοσταθμιστή</value>
+  </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>Προσαρμοσμένο</value>
   </data>
@@ -1495,7 +1525,7 @@
     <value>Περάστε το ποντίκι για εναλλαγή ορατότητας. Σύρετε για αναδιάταξη. Ο διαχωριστής χωρίζει τα κεντρικά και δεξιά χειριστήρια.</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Header" xml:space="preserve">
-    <value>Ππτυσσόμενο πρόγραμμα αναπαραγωγής</value>
+    <value>Πτυσσόμενο πρόγραμμα αναπαραγωγής</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
     <value>Ανάπτυξη της γραμμής αναπαραγωγής όταν δείχνετε πάνω της.</value>
@@ -1546,7 +1576,7 @@
     <value>Διαχείριση δεδομένων</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Header" xml:space="preserve">
-    <value>Διαχωρισμός καλλιτέχνη</value>
+    <value>Διαχωρισμός καλλιτεχνών</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
     <value>Ορίστε χαρακτήρες που χρησιμοποιούνται για τον διαχωρισμό πολλών καλλιτεχνών (π.χ. ';/'). Αφήστε κενό για απενεργοποίηση.</value>
@@ -1567,7 +1597,7 @@
     <value>Ανάκτηση διαδικτυακών μεταδεδομένων</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Λήψη εικόνων και βιογραφικών καλλιτεχνών από διαδικτυακές πηγές.</value>
+    <value>Λήψη εικόνων και βιογραφιών καλλιτεχνών και εξωφύλλων άλμπουμ από διαδικτυακές πηγές.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Πηγές</value>
@@ -1591,7 +1621,7 @@
     <value>Εμφάνιση λατινοποιημένων στίχων</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
-    <value>Εμφάνιση μικρότερης λατινοποιημένης γραμμής κάτω από υποστηριζόμενους στίχους όταν ένα εγκατεστημένο πακέτο ταιριάζει με το σενάριο.</value>
+    <value>Εμφάνιση μικρότερης λατινοποιημένης γραμμής κάτω από υποστηριζόμενους στίχους όταν ένα εγκατεστημένο πακέτο ταιριάζει με το σύστημα γραφής.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
     <value>Πακέτα γλωσσών</value>
@@ -1861,7 +1891,7 @@
     <value>Δεν ήταν δυνατή η επαναφορά του αντιγράφου ασφαλείας.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
-    <value>Στυλ αναπαραγωγής</value>
+    <value>Στυλ προγράμματος αναπαραγωγής</value>
   </data>
   <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
     <value>Ακρυλικό (Γυαλί)</value>
@@ -1981,7 +2011,7 @@
     <value>Ξυπνώντας το Nagi…</value>
   </data>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
-    <value>Δείτε όλα</value>
+    <value>Προβολή όλων</value>
   </data>
   <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
     <value>Αναζήτηση</value>
@@ -2033,6 +2063,9 @@
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>Όλος ο χρόνος</value>
+  </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>Χρονικό διάστημα</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}ώ {1}λ</value>
@@ -2227,11 +2260,71 @@
     <value>Δεν υπάρχουν διαθέσιμες λίστες αναπαραγωγής</value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>Το FFmpeg είναι απαραίτητο για την ανάλυση τραγουδιών για κανονικοποίηση έντασης, αλλά το Nagi δεν μπόρεσε να το βρει.
+    <value>Το FFmpeg απαιτείται για την ανάλυση τραγουδιών για κανονικοποίηση έντασης, αλλά το Nagi δεν μπόρεσε να το βρει.
 
 1. Κατεβάστε μια έκδοση για Windows από το https://ffmpeg.org/download.html.
 2. Εξαγάγετε το αρχείο και εντοπίστε το ffmpeg.exe στον φάκελο bin.
 3. Προσθέστε τον φάκελο που περιέχει το ffmpeg.exe στη διαδρομή PATH των Windows.
 4. Επανεκκινήστε το Nagi και ενεργοποιήστε ξανά την κανονικοποίηση έντασης.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>Πληροφορίες τραγουδιού</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>Ετικέτες</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>Ακρόαση</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>Καλλιτέχνης άλμπουμ</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>Μαέστρος</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>Πνευματικά δικαιώματα</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>Διαδρομή</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>Μορφή</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>Κανάλια</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>Μέγεθος</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} από {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>Στήλες λίστας τραγουδιών</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>Επιλέξτε ποιες πληροφορίες εμφανίζουν οι λίστες τραγουδιών.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>Κεφαλίδες στηλών</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>Εμφάνιση του ονόματος κάθε στήλης πάνω από τις λίστες τραγουδιών.</value>
   </data>
 </root>

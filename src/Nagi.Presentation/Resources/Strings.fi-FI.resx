@@ -98,16 +98,16 @@
     <value>Satunnaistoisto pois päältä</value>
   </data>
   <data name="Tooltip_RepeatOff" xml:space="preserve">
-    <value>Toisto pois päältä</value>
+    <value>Uudelleentoisto pois päältä</value>
   </data>
   <data name="Tooltip_RepeatAll" xml:space="preserve">
-    <value>Toista kaikki</value>
+    <value>Toista kaikki uudelleen</value>
   </data>
   <data name="Tooltip_RepeatOne" xml:space="preserve">
-    <value>Toista yksi</value>
+    <value>Toista kappale uudelleen</value>
   </data>
   <data name="Tooltip_Repeat" xml:space="preserve">
-    <value>Toista</value>
+    <value>Uudelleentoisto</value>
   </data>
   <data name="Tooltip_Unmute" xml:space="preserve">
     <value>Poista mykistys</value>
@@ -512,7 +512,7 @@
     <value>Katkaise yhteys Last.fm:stä</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
-    <value>Haluatko varmasti katkaista yhteyden Last.fm-tiliisi? Kuunteluhistoriasi säilyy Last.fm:ssä, mutta Nagi ei voi enää skroblata.</value>
+    <value>Haluatko varmasti katkaista yhteyden Last.fm-tiliisi? Kuunteluhistoriasi säilyy Last.fm:ssä, mutta Nagi ei voi enää scrobblata.</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Katkaise yhteys</value>
@@ -558,7 +558,7 @@ Tiedostoja, joita ei voitu tuoda: {0}.</value>
     <value>Ei sääntöjä määritetty • Kaikki kappaleet vastaavat</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Vastaa {0} {2} seuraavista {1}:stä</value>
+    <value>Vastaavuus: {0} ({1} {2})</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>kaikki</value>
@@ -660,7 +660,7 @@ Tiedostoja, joita ei voitu tuoda: {0}.</value>
     <value>Seuraava</value>
   </data>
   <data name="Settings_Button_Repeat" xml:space="preserve">
-    <value>Toista</value>
+    <value>Uudelleentoisto</value>
   </data>
   <data name="Settings_Button_Divider" xml:space="preserve">
     <value>Asettelun jakaja</value>
@@ -681,16 +681,28 @@ Tiedostoja, joita ei voitu tuoda: {0}.</value>
     <value>Kiinalainen musiikkipalvelu, erinomainen aasialaiselle musiikille</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Hakee artistien ID:t (tarvitaan TheAudioDB:lle ja Fanart.tv:lle)</value>
+    <value>Hakee artistien ja albumien ID:t, jotka puuttuvat tageistasi</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>Laadukkaat artistikuvat ja elämäkerrat (vaatii MusicBrainz:in)</value>
+    <value>Artistikuvat ja elämäkerrat (vaatii MusicBrainz-ID:n tageistasi tai MusicBrainzista)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>Vain laadukkaat artistikuvat (vaatii MusicBrainz:in)</value>
+    <value>Laadukkaat artistikuvat (vaatii MusicBrainz-ID:n tageistasi tai MusicBrainzista)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Artistien elämäkerrat ja kuvat (vararatkaisu)</value>
+    <value>Artistien elämäkerrat ja albumien kansikuvat (vararatkaisu)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>Artistikuvat ja albumien kansikuvat nimen perusteella</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>Artistien elämäkerrat omalla kielelläsi (vaatii MusicBrainz-ID:n tageistasi tai MusicBrainzista)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>Albumien kansikuvat MusicBrainz-julkaisuille (käyttää ID:itä tageistasi tai MusicBrainzista)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>Korkearesoluutioiset albumien kansikuvat nimen perusteella</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hae albumeista</value>
@@ -771,13 +783,13 @@ Tiedostoja, joita ei voitu tuoda: {0}.</value>
     <value>Skannaa metatiedot uudelleen</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>Skannaa kirjastosi uudelleen ottaaksesi käyttöön metatietoasetukset, kuten esittäjien jakamisen. Tämä voi kestää hetken suurissa kirjastoissa. Jatketaanko?</value>
+    <value>Skannaa kirjastosi uudelleen ottaaksesi käyttöön metatietoasetukset, kuten artistien jakamisen. Tämä voi kestää hetken suurissa kirjastoissa. Jatketaanko?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
     <value>Skannaa uudelleen</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
-    <value>Valmistellaan kirjaston uudellenskannausta…</value>
+    <value>Valmistellaan kirjaston uudelleenskannausta…</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
     <value>Uudelleenskannaus valmis</value>
@@ -808,7 +820,7 @@ Haluatko jatkaa?</value>
     <value>Ota käyttöön ja skannaa</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>Valmistellaan äänenvoimakkuuden tasauksen skannausta…</value>
+    <value>Valmistellaan äänenvoimakkuuden normalisoinnin skannausta…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
     <value>Äänenvoimakkuuden normalisoinnin skannaus peruutettu.</value>
@@ -847,7 +859,7 @@ Haluatko jatkaa?</value>
     <value>Seuraavat</value>
   </data>
   <data name="CrashReport_ReportIssuePreLink" xml:space="preserve">
-    <value>Harkitse tämän raportoimista luomalla ongelma </value>
+    <value>Harkitse tämän raportoimista luomalla ilmoitus </value>
   </data>
   <data name="CrashReport_IssueLink" xml:space="preserve">
     <value>Ongelmat-sivulle</value>
@@ -863,6 +875,9 @@ Haluatko jatkaa?</value>
   </data>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>Kopioi loki</value>
+  </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>Kaatumisloki</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>Valitse kansikuva</value>
@@ -899,6 +914,12 @@ Haluatko jatkaa?</value>
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>Arvo</value>
+  </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>Kenttä</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>Ehto</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>Poista tämä sääntö</value>
@@ -954,6 +975,9 @@ Haluatko jatkaa?</value>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Siirry albumiin</value>
   </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>Toistokohta</value>
+  </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Seuraavat</value>
   </data>
@@ -967,7 +991,7 @@ Haluatko jatkaa?</value>
     <value>Sulje jono</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
-    <value>Esittäjä</value>
+    <value>Artisti</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
     <value>Kesto</value>
@@ -982,7 +1006,7 @@ Haluatko jatkaa?</value>
     <value>Sijainti jonossa</value>
   </data>
   <data name="QueuePanel_ShowGenre" xml:space="preserve">
-    <value>Tyylilaji</value>
+    <value>Genre</value>
   </data>
   <data name="QueuePanel_ShowTotalDuration" xml:space="preserve">
     <value>Kokonaiskesto</value>
@@ -1030,7 +1054,7 @@ Haluatko jatkaa?</value>
     <value>Toista kaikki</value>
   </data>
   <data name="AlbumViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Satunnaistoista ja toista kaikki</value>
+    <value>Sekoita ja toista kaikki</value>
   </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
     <value>Tästä albumista ei löytynyt kappaleita</value>
@@ -1042,7 +1066,7 @@ Haluatko jatkaa?</value>
     <value>Artistit</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Etsi esittäjiä…</value>
+    <value>Etsi artisteja…</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Valitse satunnainen</value>
@@ -1081,13 +1105,13 @@ Haluatko jatkaa?</value>
     <value>Kappaleet</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Etsi esittäjästä…</value>
+    <value>Etsi artistista…</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Toista kaikki</value>
   </data>
   <data name="ArtistViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Satunnaistoista ja toista kaikki</value>
+    <value>Sekoita ja toista kaikki</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
     <value>Tälle artistille ei löytynyt kappaleita</value>
@@ -1141,7 +1165,7 @@ Haluatko jatkaa?</value>
     <value>Toista kaikki</value>
   </data>
   <data name="FolderSongViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Satunnaistoista ja toista kaikki</value>
+    <value>Sekoita ja toista kaikki</value>
   </data>
   <data name="FolderSongViewPage_Empty_Title" xml:space="preserve">
     <value>Tämä kansio on tyhjä</value>
@@ -1177,7 +1201,7 @@ Haluatko jatkaa?</value>
     <value>Toista kaikki</value>
   </data>
   <data name="LibraryPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Satunnaistoista ja toista kaikki</value>
+    <value>Sekoita ja toista kaikki</value>
   </data>
   <data name="LibraryPage_Context_Play" xml:space="preserve">
     <value>Toista</value>
@@ -1195,7 +1219,7 @@ Haluatko jatkaa?</value>
     <value>Siirry albumiin</value>
   </data>
   <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
-    <value>Siirry esittäjään</value>
+    <value>Siirry artistiin</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Näytä Resurssienhallinnassa</value>
@@ -1279,7 +1303,7 @@ Haluatko jatkaa?</value>
     <value>Herätä kirjastosi henkiin</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi toimii täysin ilman verkkoyhteyttä. Ota nämä käyttöön hakeaksesi esittäjien kuvia, elämäkertoja ja sanoituksia, joita tiedostosi eivät sisällä.</value>
+    <value>Nagi toimii täysin ilman verkkoyhteyttä. Ota nämä käyttöön hakeaksesi esittäjien kuvia, elämäkertoja, kansikuvia ja sanoituksia, joita tiedostosi eivät sisällä.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>Sovi saumattomasti työpöydällesi</value>
@@ -1306,7 +1330,7 @@ Haluatko jatkaa?</value>
     <value>Takaisin</value>
   </data>
   <data name="OnboardingPage_Continue" xml:space="preserve">
-    <value>Jatkat</value>
+    <value>Jatka</value>
   </data>
   <data name="OnboardingPage_StartListening" xml:space="preserve">
     <value>Aloita kuuntelu</value>
@@ -1366,7 +1390,7 @@ Haluatko jatkaa?</value>
     <value>Toista kaikki</value>
   </data>
   <data name="PlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Satunnaistoista ja toista kaikki</value>
+    <value>Sekoita ja toista kaikki</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
     <value>Poista soittolistalta</value>
@@ -1390,7 +1414,7 @@ Haluatko jatkaa?</value>
     <value>Toista kaikki</value>
   </data>
   <data name="GenreViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Satunnaistoista ja toista kaikki</value>
+    <value>Sekoita ja toista kaikki</value>
   </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
     <value>Tälle genrelle ei löytynyt kappaleita</value>
@@ -1468,10 +1492,10 @@ Haluatko jatkaa?</value>
     <value>Anna Nagille yksinoikeus Windowsin äänilaitteeseen. Muut sovellukset saattavat olla hiljaa. Käynnistä Nagi uudelleen tämän asetuksen muuttamisen jälkeen.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
-    <value>Himmennys toistettaessa / keskeytettäessä</value>
+    <value>Häivytys toistettaessa / keskeytettäessä</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Himmennä äänenvoimakkuus tasaisesti sisään jatkettaessa ja ulos keskeytettäessä välittömän katkaisun sijaan.</value>
+    <value>Häivytä äänenvoimakkuus tasaisesti sisään jatkettaessa ja ulos keskeytettäessä välittömän katkaisun sijaan.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>Äänen taajuuskorjain</value>
@@ -1481,6 +1505,12 @@ Haluatko jatkaa?</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Esivahvistin</value>
+  </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>Taajuuskorjaimen esiasetus</value>
   </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>Mukautettu</value>
@@ -1534,7 +1564,7 @@ Haluatko jatkaa?</value>
     <value>Näytä kansikuva ponnahdusikkunassa</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
-    <value>Näytä kansikuva kompaktissa soittimessa, joka ilmestyy napsautettaessa ilmaisinalueen kuvaketta.</value>
+    <value>Näytä kansikuva kompaktissa soittimessa, joka ilmestyy napsautettaessa ilmoitusalueen kuvaketta.</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
     <value>Jätä artikkelit huomiotta järjestettäessä</value>
@@ -1555,7 +1585,7 @@ Haluatko jatkaa?</value>
     <value>Genren jakaminen</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Määritä merkit, joita käytetään useiden genren jakamiseen (esim. ';/'). Jätä tyhjäksi poistaaksesi käytöstä.</value>
+    <value>Määritä merkit, joita käytetään useiden genrejen jakamiseen (esim. ';/'). Jätä tyhjäksi poistaaksesi käytöstä.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Skannaa kirjasto uudelleen</value>
@@ -1567,7 +1597,7 @@ Haluatko jatkaa?</value>
     <value>Hae metatiedot verkosta</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Hae esittäjien kuvat ja elämäkerrat verkkolähteistä.</value>
+    <value>Hae esittäjien kuvat, elämäkerrat ja albumien kansikuvat verkkolähteistä.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Lähteet</value>
@@ -1669,7 +1699,7 @@ Haluatko jatkaa?</value>
     <value>Last.fm</value>
   </data>
   <data name="SettingsPage_LastFm_Description" xml:space="preserve">
-    <value>Yhdistä Last.fm-tilisi skrobblataksesi kappaleita ja näyttääksesi parhaillaan toistettavan kappaleen.</value>
+    <value>Yhdistä Last.fm-tilisi scrobblataksesi kappaleita ja näyttääksesi parhaillaan toistettavan kappaleen.</value>
   </data>
   <data name="SettingsPage_LastFm_Connect_Content" xml:space="preserve">
     <value>Yhdistä</value>
@@ -1762,7 +1792,7 @@ Haluatko jatkaa?</value>
     <value>Toista kaikki</value>
   </data>
   <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Satunnaistoista ja toista kaikki</value>
+    <value>Sekoita ja toista kaikki</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>Mitkään kappaleet eivät vastaa nykyisiä sääntöjä</value>
@@ -1843,7 +1873,7 @@ Haluatko jatkaa?</value>
     <value>Palautetaanko varmuuskopio?</value>
   </data>
   <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
-    <value>Varmuuskopiosta palauttaminen korvaa kaikki nykyiset sovellustiedot. Tätä toimintoa ei voi kumota. Sovellus käynnistyy uudelleen palautuksen jälkeen. Jatka?</value>
+    <value>Varmuuskopiosta palauttaminen korvaa kaikki nykyiset sovellustiedot. Tätä toimintoa ei voi kumota. Sovellus käynnistyy uudelleen palautuksen jälkeen. Jatketaanko?</value>
   </data>
   <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
     <value>Palauta</value>
@@ -2029,10 +2059,13 @@ Haluatko jatkaa?</value>
     <value>Viimeiset 90 päivää</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>Viime vuosi</value>
+    <value>Viimeinen vuosi</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>Kaikki ajat</value>
+  </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>Aikaväli</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0} t {1} min</value>
@@ -2164,7 +2197,7 @@ Haluatko jatkaa?</value>
     <value>Peruuta ajastettu pysäytys</value>
   </data>
   <data name="Listening_TimerRemaining" xml:space="preserve">
-    <value>Pysähtyy ajassa {0}</value>
+    <value>Pysähtyy {0} kuluttua</value>
   </data>
   <data name="Listening_PlayerOptions" xml:space="preserve">
     <value>Soittimen asetukset</value>
@@ -2206,7 +2239,7 @@ Haluatko jatkaa?</value>
     <value>Lisää kappale suosikkeihin sen valikosta tai valitse se ja paina Ctrl+D.</value>
   </data>
   <data name="Listening_VarietyDescription" xml:space="preserve">
-    <value>Enemmän vaihtelua välttelee äskettäin toistettuja kappaleita ja erottelee saman esittäjän kappaleet mahdollisuuksien mukaan.</value>
+    <value>Enemmän vaihtelua välttelee äskettäin toistettuja kappaleita ja erottelee saman artistin kappaleet mahdollisuuksien mukaan.</value>
   </data>
   <data name="Listening_RediscoverDescription" xml:space="preserve">
     <value>Löydä uudelleen käyttää Nagissa toistettuja kappaleita, joita on viimeksi toistettu yli 30 päivää sitten.</value>
@@ -2227,11 +2260,71 @@ Haluatko jatkaa?</value>
     <value>Ei soittolistoja saatavilla</value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg-ohjelmaa tarvitaan kappaleiden analysoimiseen äänenvoimakkuuden tasoitusta varten, mutta Nagi ei löytänyt sitä.
+    <value>FFmpeg-ohjelmaa tarvitaan kappaleiden analysoimiseen äänenvoimakkuuden normalisointia varten, mutta Nagi ei löytänyt sitä.
 
 1. Lataa Windows-versio osoitteesta https://ffmpeg.org/download.html.
 2. Pura arkisto ja etsi ffmpeg.exe sen bin-kansiosta.
 3. Lisää ffmpeg.exe-tiedoston sisältävä kansio Windowsin PATH-ympäristömuuttujaan.
-4. Käynnistä Nagi uudelleen ja ota äänenvoimakkuuden tasoitus uudelleen käyttöön.</value>
+4. Käynnistä Nagi uudelleen ja ota äänenvoimakkuuden normalisointi uudelleen käyttöön.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>Kappaleen tiedot</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>Tagit</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>Kuuntelu</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>Albumin artisti</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>Kapellimestari</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>Tekijänoikeudet</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>Polku</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>Muoto</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>Kanavat</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>Koko</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0}/{1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>Kappaleluettelon sarakkeet</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>Valitse, mitä tietoja kappaleluettelot näyttävät.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>Sarakeotsikot</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>Näytä otsikko kappaleluettelon jokaisen sarakkeen yläpuolella.</value>
   </data>
 </root>

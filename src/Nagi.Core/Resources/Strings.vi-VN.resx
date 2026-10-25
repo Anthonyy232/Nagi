@@ -99,7 +99,7 @@
     <value>BPM</value>
   </data>
   <data name="Label_TrackNumber" xml:space="preserve">
-    <value>Số bài hát</value>
+    <value>Số thứ tự bài hát</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
     <value>Lượt phát</value>
@@ -176,7 +176,7 @@
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
-    <value>Quét hoàn tất. Thư viện đã được cập nhật.</value>
+    <value>Quét hoàn tất. Thư viện đã là mới nhất.</value>
   </data>
   <data name="Status_ScanCancelled" xml:space="preserve">
     <value>Đã hủy quét.</value>
@@ -284,10 +284,10 @@
     <value>Đang phân tích âm lượng… Bài hát: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Đang tính toán cân bằng âm lượng ({0}/{1})…</value>
+    <value>Đang tính toán chuẩn hóa âm lượng ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Hoàn tất cân bằng âm lượng. Số bài hát đã xử lý: {0}.</value>
+    <value>Hoàn tất chuẩn hóa âm lượng. Số bài hát đã xử lý: {0}.</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
     <value>Nhập mã token người dùng ListenBrainz của bạn.</value>
@@ -324,5 +324,32 @@
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>Không thể tải '{0}'.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Đang duyệt thư viện nhạc</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Đang chờ</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>của {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Đã tạm dừng | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Trình phát nhạc Nagi</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Đang phát</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Đã tạm dừng</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>Từ Wikipedia, theo giấy phép CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

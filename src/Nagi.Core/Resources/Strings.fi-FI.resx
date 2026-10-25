@@ -90,7 +90,7 @@
     <value>Muokkauspäivämäärä</value>
   </data>
   <data name="Label_LastPlayed" xml:space="preserve">
-    <value>Viimeksi soitettu</value>
+    <value>Viimeksi toistettu</value>
   </data>
   <data name="Label_Duration" xml:space="preserve">
     <value>Kesto</value>
@@ -185,7 +185,7 @@
     <value>Skannaus epäonnistui. Tarkista lokitiedot.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Valmistellaan kirjaston tarkistusta…</value>
+    <value>Valmistellaan kirjaston skannausta…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
     <value>Luetaan kappaleen tiedot…</value>
@@ -284,10 +284,10 @@
     <value>Analysoidaan äänenvoimakkuutta… Kappaleita: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Lasketaan äänenvoimakkuuden tasoitusta ({0}/{1})…</value>
+    <value>Lasketaan äänenvoimakkuuden normalisointia ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Äänenvoimakkuuden tasoitus valmis. Käsitellyt kappaleet: {0}.</value>
+    <value>Äänenvoimakkuuden normalisointi valmis. Käsitellyt kappaleet: {0}.</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
     <value>Syötä ListenBrainz-käyttäjätunnisteesi.</value>
@@ -317,12 +317,39 @@
     <value>Valittu tiedosto ei ole kelvollinen Nagi-varmuuskopio.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC kohtasi määrittelemättömän virheen.</value>
+    <value>LibVLC kohtasi määrittämättömän virheen.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC virhe: {0}</value>
+    <value>LibVLC-virhe: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>'{0}' lataaminen epäonnistui.</value>
+    <value>Kohteen '{0}' lataaminen epäonnistui.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Selaa musiikkikirjastoa</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Joutilaana</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>Esittäjä: {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Tauolla | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Nagi-musiikkisoitin</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Toistetaan</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Tauolla</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>Lähde: Wikipedia, CC BY-SA -lisenssi.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

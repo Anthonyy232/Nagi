@@ -60,7 +60,7 @@
   </resheader>
   <!-- Noun Labels -->
   <data name="Label_Artist" xml:space="preserve">
-    <value>Уметник</value>
+    <value>Извођач</value>
   </data>
   <data name="Label_Album" xml:space="preserve">
     <value>Албум</value>
@@ -236,7 +236,7 @@
     <value>Сортирај по: </value>
   </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>Листа песама је направљена, али песме нису могле бити додате. Покушајте поново са увозом.</value>
+    <value>Плејлиста је направљена, али њене песме нису могле бити додате. Покушајте поново са увозом.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Ниједна песма из плејлисте није пронађена у вашој библиотеци.</value>
@@ -281,13 +281,13 @@
     <value>Све песме већ имају податке о јачини звука.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>Анализирање гласноће… Песме: {0}</value>
+    <value>Анализирање јачине звука… Песме: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Израчунавање нормализације гласноће ({0}/{1})…</value>
+    <value>Израчунавање нормализације јачине звука ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Нормализација гласноће је завршена. Обрађене песме: {0}.</value>
+    <value>Нормализација јачине звука је завршена. Обрађене песме: {0}.</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
     <value>Унесите свој кориснички токен за ListenBrainz.</value>
@@ -320,9 +320,36 @@
     <value>LibVLC је наишао на неодређену грешку.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC Грешка: {0}</value>
+    <value>LibVLC грешка: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Није успело учитавање '{0}'.</value>
+    <value>Учитавање „{0}“ није успело.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Прегледа музичку библиотеку</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Неактиван</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>од {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Паузирано | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Nagi музички плејер</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Пушта се</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Паузирано</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>Са Википедије, под лиценцом CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

@@ -59,7 +59,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NavItem_Library" xml:space="preserve">
-    <value>Sammlung</value>
+    <value>Bibliothek</value>
   </data>
   <data name="NavItem_Albums" xml:space="preserve">
     <value>Alben</value>
@@ -630,7 +630,7 @@ Dateien, die nicht importiert werden konnten: {0}.</value>
     <value>Weiter</value>
   </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
-    <value>Sammlung</value>
+    <value>Bibliothek</value>
   </data>
   <data name="Settings_Nav_Folders" xml:space="preserve">
     <value>Ordner</value>
@@ -681,16 +681,28 @@ Dateien, die nicht importiert werden konnten: {0}.</value>
     <value>Chinesischer Musikdienst, ideal für asiatische Musik</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Ruft Künstler-IDs ab (erforderlich für TheAudioDB und Fanart.tv)</value>
+    <value>Sucht Künstler- und Album-IDs, die in Ihren Tags fehlen</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>Hochwertige Künstlerbilder und -biografien (erfordert MusicBrainz)</value>
+    <value>Künstlerbilder und -biografien (erfordert eine MusicBrainz-ID aus Ihren Tags oder von MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>Nur hochwertige Künstlerbilder (erfordert MusicBrainz)</value>
+    <value>Hochwertige Künstlerbilder (erfordert eine MusicBrainz-ID aus Ihren Tags oder von MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Künstlerbiografien und -bilder (Fallback)</value>
+    <value>Künstlerbiografien und Albumcover (Fallback)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>Künstlerbilder und Albumcover, anhand des Namens gefunden</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>Künstlerbiografien in Ihrer Sprache (erfordert eine MusicBrainz-ID aus Ihren Tags oder von MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>Albumcover für MusicBrainz-Veröffentlichungen (verwendet IDs aus Ihren Tags oder von MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>Hochauflösende Albumcover, anhand des Namens gefunden</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Alben suchen</value>
@@ -864,6 +876,9 @@ Möchten Sie fortfahren?</value>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>Protokoll kopieren</value>
   </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>Absturzprotokoll</value>
+  </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>Cover auswählen</value>
   </data>
@@ -871,10 +886,10 @@ Möchten Sie fortfahren?</value>
     <value>Ein Coverbild auswählen</value>
   </data>
   <data name="SmartPlaylist_PlaylistNameLabel" xml:space="preserve">
-    <value>Playlist-Name</value>
+    <value>Name der Wiedergabeliste</value>
   </data>
   <data name="SmartPlaylist_PlaylistNameTextBox_Placeholder" xml:space="preserve">
-    <value>Geben Sie einen Namen für Ihre Smart-Playlist ein</value>
+    <value>Geben Sie einen Namen für Ihre intelligente Wiedergabeliste ein</value>
   </data>
   <data name="SmartPlaylist_SortOrderLabel" xml:space="preserve">
     <value>Sortierreihenfolge</value>
@@ -900,6 +915,12 @@ Möchten Sie fortfahren?</value>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>Wert</value>
   </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>Feld</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>Bedingung</value>
+  </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>Diese Regel entfernen</value>
   </data>
@@ -907,7 +928,7 @@ Möchten Sie fortfahren?</value>
     <value>Keine Regeln definiert</value>
   </data>
   <data name="SmartPlaylist_NoRulesMessage" xml:space="preserve">
-    <value>Alle Titel in Ihrer Bibliothek werden in dieser Playlist enthalten sein.</value>
+    <value>Alle Titel in Ihrer Bibliothek werden in dieser Wiedergabeliste enthalten sein.</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_Content" xml:space="preserve">
     <value>Fügen Sie Ihre erste Regel hinzu</value>
@@ -954,6 +975,9 @@ Möchten Sie fortfahren?</value>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Zum Album</value>
   </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>Wiedergabeposition</value>
+  </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Als Nächstes</value>
   </data>
@@ -967,7 +991,7 @@ Möchten Sie fortfahren?</value>
     <value>Warteschlange schließen</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
-    <value>Interpret</value>
+    <value>Künstler</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
     <value>Dauer</value>
@@ -1168,7 +1192,7 @@ Möchten Sie fortfahren?</value>
     <value>Scannen Sie Ihre Musikbibliothek, um Genres zu füllen</value>
   </data>
   <data name="LibraryPage_Title" xml:space="preserve">
-    <value>Sammlung</value>
+    <value>Bibliothek</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Bibliothek durchsuchen…</value>
@@ -1279,7 +1303,7 @@ Möchten Sie fortfahren?</value>
     <value>Bringen Sie Leben in Ihre Bibliothek</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi funktioniert vollständig offline. Aktivieren Sie diese Optionen, um Künstlerfotos, Biografien und Songtexte zu ergänzen, die in Ihren Dateien fehlen.</value>
+    <value>Nagi funktioniert vollständig offline. Aktivieren Sie diese Optionen, um Künstlerfotos, Biografien, Albumcover und Songtexte zu ergänzen, die in Ihren Dateien fehlen.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>Perfekt für Ihren Desktop</value>
@@ -1312,7 +1336,7 @@ Möchten Sie fortfahren?</value>
     <value>Wiedergabe starten</value>
   </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
-    <value>Playlists</value>
+    <value>Wiedergabelisten</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Wiedergabelisten suchen…</value>
@@ -1321,16 +1345,16 @@ Möchten Sie fortfahren?</value>
     <value>Zufällig auswählen</value>
   </data>
   <data name="PlaylistPage_NewPlaylistButton_ToolTip" xml:space="preserve">
-    <value>Neue Playlist erstellen</value>
+    <value>Neue Wiedergabeliste erstellen</value>
   </data>
   <data name="PlaylistPage_NewPlaylistButton_Content" xml:space="preserve">
-    <value>Neue Playlist</value>
+    <value>Neue Wiedergabeliste</value>
   </data>
   <data name="PlaylistPage_NewPlaylistMenu_Regular" xml:space="preserve">
-    <value>Reguläre Playlist</value>
+    <value>Normale Wiedergabeliste</value>
   </data>
   <data name="PlaylistPage_NewPlaylistMenu_Smart" xml:space="preserve">
-    <value>Smart-Playlist</value>
+    <value>Intelligente Wiedergabeliste</value>
   </data>
   <data name="PlaylistPage_Context_Play" xml:space="preserve">
     <value>Wiedergeben</value>
@@ -1348,13 +1372,13 @@ Möchten Sie fortfahren?</value>
     <value>Löschen</value>
   </data>
   <data name="PlaylistPage_EmptyState_Title" xml:space="preserve">
-    <value>Noch keine Playlists</value>
+    <value>Noch keine Wiedergabelisten</value>
   </data>
   <data name="PlaylistPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Erstellen Sie eine Playlist, um zu beginnen</value>
+    <value>Erstellen Sie eine Wiedergabeliste, um zu beginnen</value>
   </data>
   <data name="PlaylistSongViewPage_Header_Caption" xml:space="preserve">
-    <value>Playlist</value>
+    <value>Wiedergabeliste</value>
   </data>
   <data name="PlaylistSongViewPage_Section_Songs" xml:space="preserve">
     <value>Titel</value>
@@ -1372,7 +1396,7 @@ Möchten Sie fortfahren?</value>
     <value>Aus Wiedergabeliste entfernen</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
-    <value>Diese Playlist ist leer</value>
+    <value>Diese Wiedergabeliste ist leer</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
     <value>Fügen Sie Titel aus Ihrer Bibliothek hinzu</value>
@@ -1456,7 +1480,7 @@ Möchten Sie fortfahren?</value>
     <value>Player-Verwaltung</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Header" xml:space="preserve">
-    <value>Lautstärke-Normalisierung (ReplayGain)</value>
+    <value>Lautstärkenormalisierung (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
     <value>Lautstärkeunterschiede zwischen Titeln mithilfe von ReplayGain reduzieren.</value>
@@ -1481,6 +1505,12 @@ Möchten Sie fortfahren?</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Vorverstärker</value>
+  </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>Equalizer-Voreinstellung</value>
   </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>Benutzerdefiniert</value>
@@ -1534,13 +1564,13 @@ Möchten Sie fortfahren?</value>
     <value>Cover-Art im Flyout anzeigen</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
-    <value>Zeigt das Cover-Art im kompakten Player an, der beim Klicken auf das Tray-Symbol erscheint.</value>
+    <value>Zeigt das Cover im kompakten Player an, der beim Klicken auf das Tray-Symbol erscheint.</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
     <value>Artikel beim Sortieren ignorieren</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Alben, Interpreten und Lieder nach ihrem ersten signifikanten Wort sortieren (z.B. werden "The Beatles" unter B sortiert).</value>
+    <value>Alben, Künstler und Lieder nach ihrem ersten signifikanten Wort sortieren (z.B. werden "The Beatles" unter B sortiert).</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Datenverwaltung</value>
@@ -1567,7 +1597,7 @@ Möchten Sie fortfahren?</value>
     <value>Online-Metadaten abrufen</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Künstlerbilder und Biografie-Informationen aus Online-Quellen abrufen.</value>
+    <value>Künstlerbilder, Biografien und Albumcover aus Online-Quellen abrufen.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Quellen</value>
@@ -1639,13 +1669,13 @@ Möchten Sie fortfahren?</value>
     <value>Wiedergabelisten importieren &amp; exportieren</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
-    <value>Exportieren Sie Playlists in M3U-Dateien zur Verwendung in anderen Playern oder importieren Sie M3U-Playlists in Nagi.</value>
+    <value>Exportieren Sie Wiedergabelisten in M3U-Dateien zur Verwendung in anderen Playern oder importieren Sie M3U-Wiedergabelisten in Nagi.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
     <value>Alle exportieren…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
-    <value>Alle Playlists in einen Ordner exportieren</value>
+    <value>Alle Wiedergabelisten in einen Ordner exportieren</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
     <value>Importieren…</value>
@@ -1657,7 +1687,7 @@ Möchten Sie fortfahren?</value>
     <value>Anwendung zurücksetzen</value>
   </data>
   <data name="SettingsPage_ResetApp_Description" xml:space="preserve">
-    <value>Dadurch werden alle Bibliotheksdaten und Playlists gelöscht und alle Einstellungen auf die Standardwerte zurückgesetzt. Die Anwendung wird neu gestartet.</value>
+    <value>Dadurch werden alle Bibliotheksdaten und Wiedergabelisten gelöscht und alle Einstellungen auf die Standardwerte zurückgesetzt. Die Anwendung wird neu gestartet.</value>
   </data>
   <data name="SettingsPage_ResetButton_Content" xml:space="preserve">
     <value>Alle Daten zurücksetzen</value>
@@ -1675,7 +1705,7 @@ Möchten Sie fortfahren?</value>
     <value>Verbinden</value>
   </data>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
-    <value>Abgeschlossen</value>
+    <value>Abschließen</value>
   </data>
   <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
     <value>Abbrechen</value>
@@ -1699,13 +1729,13 @@ Möchten Sie fortfahren?</value>
     <value>ListenBrainz</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Description" xml:space="preserve">
-    <value>Übertrage deine Wiedergaben an ListenBrainz (eine offene Alternative zu Last.fm).</value>
+    <value>Übertragen Sie Ihre Wiedergaben an ListenBrainz (eine offene Alternative zu Last.fm).</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenLabel" xml:space="preserve">
     <value>Benutzer-Token</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenPlaceholder" xml:space="preserve">
-    <value>Füge dein Token von listenbrainz.org/settings ein</value>
+    <value>Fügen Sie Ihr Token von listenbrainz.org/settings ein</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TestConnection" xml:space="preserve">
     <value>Verbindung testen</value>
@@ -1747,7 +1777,7 @@ Möchten Sie fortfahren?</value>
     <value>Zeigen Sie Ihre aktuelle Höraktivität als Status auf Discord an.</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
-    <value>Smart-Playlist</value>
+    <value>Intelligente Wiedergabeliste</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Section_Songs" xml:space="preserve">
     <value>Titel</value>
@@ -1954,7 +1984,7 @@ Möchten Sie fortfahren?</value>
     <value>Suche</value>
   </data>
   <data name="InsightsPage_Source_Library" xml:space="preserve">
-    <value>Sammlung</value>
+    <value>Bibliothek</value>
   </data>
   <data name="InsightsPage_Source_Files" xml:space="preserve">
     <value>Dateien</value>
@@ -1975,7 +2005,7 @@ Möchten Sie fortfahren?</value>
     <value>Nagi</value>
   </data>
   <data name="SplashPage_Tagline" xml:space="preserve">
-    <value>Deine Musik, wunderschön organisiert</value>
+    <value>Ihre Musik, wunderschön organisiert</value>
   </data>
   <data name="SplashPage_Status" xml:space="preserve">
     <value>Nagi wird aufgeweckt…</value>
@@ -2029,10 +2059,13 @@ Möchten Sie fortfahren?</value>
     <value>Letzte 90 Tage</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>Letztes Jahr</value>
+    <value>Letzte 12 Monate</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>Gesamte Zeit</value>
+  </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>Zeitraum</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}h {1}m</value>
@@ -2233,5 +2266,65 @@ Möchten Sie fortfahren?</value>
 2. Entpacken Sie das Archiv und suchen Sie ffmpeg.exe in dessen bin-Ordner.
 3. Fügen Sie den Ordner mit ffmpeg.exe zu Ihrer Windows-PATH-Variablen hinzu.
 4. Starten Sie Nagi neu und aktivieren Sie die Lautstärkenormalisierung erneut.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>Titelinformationen</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>Tags</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>Wiedergabe</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>Albuminterpret</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>Dirigent</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>Copyright</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>Pfad</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>Kanäle</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>Größe</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} von {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>Spalten der Titellisten</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>Wählen Sie, welche Details Titellisten anzeigen.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>Spaltenüberschriften</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>Über Titellisten eine Beschriftung für jede Spalte anzeigen.</value>
   </data>
 </root>

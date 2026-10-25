@@ -95,7 +95,7 @@
     <value>Onderbreek</value>
   </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
-    <value>Skuifel Af</value>
+    <value>Skommel Af</value>
   </data>
   <data name="Tooltip_RepeatOff" xml:space="preserve">
     <value>Herhaal Af</value>
@@ -149,7 +149,7 @@
     <value>Oorslaantelling</value>
   </data>
   <data name="Label_DiscNumber" xml:space="preserve">
-    <value>Disknommer</value>
+    <value>Skyfnommer</value>
   </data>
   <data name="Label_Bitrate" xml:space="preserve">
     <value>Bistempo</value>
@@ -597,13 +597,13 @@ Lêers wat nie ingevoer kon word nie: {0}.</value>
     <value>Maak toe</value>
   </data>
   <data name="Generic_Recheck" xml:space="preserve">
-    <value>Her-kontroleer</value>
+    <value>Herkontroleer</value>
   </data>
   <data name="CrashReport_Button_Reset" xml:space="preserve">
     <value>Herstel Toepassing &amp; Data</value>
   </data>
   <data name="FFmpeg_Status_NotDetected" xml:space="preserve">
-    <value>FFmpeg nie bespeur nie. Installeer asseblief FFmpeg en klik 'Her-kontroleer'.</value>
+    <value>FFmpeg nie bespeur nie. Installeer asseblief FFmpeg en klik 'Herkontroleer'.</value>
   </data>
   <data name="FFmpeg_Status_Checking" xml:space="preserve">
     <value>Kyk tans vir FFmpeg…</value>
@@ -612,7 +612,7 @@ Lêers wat nie ingevoer kon word nie: {0}.</value>
     <value>FFmpeg bespeur.</value>
   </data>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
-    <value>FFmpeg steeds nie bespeur nie. Installeer asseblief FFmpeg en klik 'Her-kontroleer'.</value>
+    <value>FFmpeg steeds nie bespeur nie. Installeer asseblief FFmpeg en klik 'Herkontroleer'.</value>
   </data>
   <data name="FFmpeg_Status_Error" xml:space="preserve">
     <value>Fout met soek na FFmpeg. Probeer asseblief weer.</value>
@@ -648,7 +648,7 @@ Lêers wat nie ingevoer kon word nie: {0}.</value>
     <value>Genres</value>
   </data>
   <data name="Settings_Button_Shuffle" xml:space="preserve">
-    <value>Skuifel</value>
+    <value>Skommel</value>
   </data>
   <data name="Settings_Button_Previous" xml:space="preserve">
     <value>Vorige</value>
@@ -681,16 +681,28 @@ Lêers wat nie ingevoer kon word nie: {0}.</value>
     <value>Chinese musiekdiens, uitstekend vir Asiatiese musiek</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Verkry kunstenaar-ID's (vereis vir TheAudioDB en Fanart.tv)</value>
+    <value>Soek kunstenaar- en album-ID's op wat jou etikette nie bevat nie</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>Hoëgehalte kunstenaarprente en biografieë (vereis MusicBrainz)</value>
+    <value>Kunstenaarprente en biografieë (benodig 'n MusicBrainz-ID uit jou etikette of MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>Slegs hoëgehalte kunstenaarprente (vereis MusicBrainz)</value>
+    <value>Hoëgehalte kunstenaarprente (benodig 'n MusicBrainz-ID uit jou etikette of MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Kunstenaarbiografieë en -prente (terugval)</value>
+    <value>Kunstenaarbiografieë en albumomslae (terugval)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>Kunstenaarprente en albumomslae, gevind volgens naam</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>Kunstenaarbiografieë in jou taal (benodig 'n MusicBrainz-ID uit jou etikette of MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>Albumomslae vir MusicBrainz-vrystellings (gebruik ID's uit jou etikette of MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>Hoëresolusie-albumomslae, gevind volgens naam</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Soek albums</value>
@@ -864,6 +876,9 @@ Wil jy voortgaan?</value>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>Kopieer Log</value>
   </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>Omvallog</value>
+  </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>Kies Omslag</value>
   </data>
@@ -899,6 +914,12 @@ Wil jy voortgaan?</value>
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>Waarde</value>
+  </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>Veld</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>Voorwaarde</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>Verwyder hierdie reël</value>
@@ -953,6 +974,9 @@ Wil jy voortgaan?</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Gaan na album</value>
+  </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>Speelposisie</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Volgende</value>
@@ -1102,25 +1126,25 @@ Wil jy voortgaan?</value>
     <value>Kies een ewekansig</value>
   </data>
   <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Voeg 'n musiekgids by</value>
+    <value>Voeg 'n musiekvouer by</value>
   </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
-    <value>Voeg Gids by</value>
+    <value>Voeg Vouer by</value>
   </data>
   <data name="FolderPage_Menu_Play" xml:space="preserve">
     <value>Speel</value>
   </data>
   <data name="FolderPage_Menu_Rescan" xml:space="preserve">
-    <value>Herskan</value>
+    <value>Herskandeer</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
     <value>Verwyder uit biblioteek</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
-    <value>Geen gidse is nog bygevoeg nie</value>
+    <value>Geen vouers is nog bygevoeg nie</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Voeg musiekgidse by om te begin</value>
+    <value>Voeg musiekvouers by om te begin</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Speel</value>
@@ -1129,7 +1153,7 @@ Wil jy voortgaan?</value>
     <value>Voeg by snitlys toe</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
-    <value>Gids</value>
+    <value>Vouer</value>
   </data>
   <data name="FolderSongViewPage_Songs_Title" xml:space="preserve">
     <value>Liedjies</value>
@@ -1144,10 +1168,10 @@ Wil jy voortgaan?</value>
     <value>Skommel en speel alles</value>
   </data>
   <data name="FolderSongViewPage_Empty_Title" xml:space="preserve">
-    <value>Hierdie gids is leeg</value>
+    <value>Hierdie vouer is leeg</value>
   </data>
   <data name="FolderSongViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Geen liedjies of subgidse gevind nie</value>
+    <value>Geen liedjies of subvouers gevind nie</value>
   </data>
   <data name="GenrePage_Title" xml:space="preserve">
     <value>Genres</value>
@@ -1186,7 +1210,7 @@ Wil jy voortgaan?</value>
     <value>Speel Volgende</value>
   </data>
   <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
-    <value>Voeg by Tou</value>
+    <value>Voeg by Waglys</value>
   </data>
   <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
     <value>Voeg by snitlys toe</value>
@@ -1198,7 +1222,7 @@ Wil jy voortgaan?</value>
     <value>Gaan na kunstenaar</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Wys in Lêerkenner</value>
+    <value>Wys in Lêerverkenner</value>
   </data>
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
     <value>Speel</value>
@@ -1213,7 +1237,7 @@ Wil jy voortgaan?</value>
     <value>Jou biblioteek is leeg</value>
   </data>
   <data name="LibraryPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Voeg gidse by jou biblioteek in Instellings</value>
+    <value>Voeg vouers by jou biblioteek in Instellings</value>
   </data>
   <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
     <value>Geen lirieke vir hierdie liedjie gevind nie</value>
@@ -1246,7 +1270,7 @@ Wil jy voortgaan?</value>
     <value>Welkom by Nagi</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
-    <value>Voeg Musiekgids by</value>
+    <value>Voeg Musiekvouer by</value>
   </data>
   <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
     <value>'n Rustige, plaaslik-eerste tuiste vir jou musiek. Opstelling neem ongeveer 'n minuut.</value>
@@ -1258,7 +1282,7 @@ Wil jy voortgaan?</value>
     <value>Waar is jou musiek?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Kies die gids waar jy jou musiek stoor. Nagi bou jou biblioteek terwyl jy die opstelling voltooi, en jy kan later nog gidse byvoeg.</value>
+    <value>Kies die vouer waar jy jou musiek stoor. Nagi bou jou biblioteek terwyl jy die opstelling voltooi, en jy kan later nog vouers byvoeg.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Maak dit joune</value>
@@ -1279,7 +1303,7 @@ Wil jy voortgaan?</value>
     <value>Bring jou biblioteek tot lewe</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi werk heeltemal vanlyn. Skakel dit in om kunstenaarsfoto's, biografieë en lirieke aan te vul wat jou lêers nie insluit nie.</value>
+    <value>Nagi werk heeltemal aflyn. Skakel dit in om kunstenaarsfoto's, biografieë, albumomslae en lirieke aan te vul wat jou lêers nie insluit nie.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>Pas in op jou werkskerm</value>
@@ -1456,7 +1480,7 @@ Wil jy voortgaan?</value>
     <value>Spelerbestuur</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Header" xml:space="preserve">
-    <value>Volume Normalisering (ReplayGain)</value>
+    <value>Volumenormalisering (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
     <value>Verminder volumeverskille tussen liedjies met behulp van ReplayGain.</value>
@@ -1465,10 +1489,10 @@ Wil jy voortgaan?</value>
     <value>WASAPI-eksklusiewe modus</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Gee aan Nagi eksklusiewe beheer oor die Windows-oudiodiwice. Ander toepassings sal dalk stil wees. Herbegin Nagi nadat u hierdie instelling verander het.</value>
+    <value>Gee aan Nagi eksklusiewe beheer oor die Windows-oudiotoestel. Ander toepassings sal dalk stil wees. Herbegin Nagi nadat jy hierdie instelling verander het.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
-    <value>Vervaag by Speel / Pouse</value>
+    <value>Vervaag by Speel / Onderbreek</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
     <value>Vervaag die volume glad in wanneer hervat en uit wanneer gepouseer, in plaas daarvan om onmiddellik te sny.</value>
@@ -1481,6 +1505,12 @@ Wil jy voortgaan?</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Voorversterker</value>
+  </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>Gelykmaker-voorinstelling</value>
   </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>Pasgemaak</value>
@@ -1522,7 +1552,7 @@ Wil jy voortgaan?</value>
     <value>Minimiseer na minispeler</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Description" xml:space="preserve">
-    <value>Wanneer geminimaliseer, wys 'n kompakte drywende speler in plaas daarvan om die venster te versteek.</value>
+    <value>Wanneer geminimeer, wys 'n kompakte drywende speler in plaas daarvan om die venster te versteek.</value>
   </data>
   <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
     <value>Versteek na stelsellaai</value>
@@ -1534,7 +1564,7 @@ Wil jy voortgaan?</value>
     <value>Wys omslagkuns in uitvouvenster</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
-    <value>Vertoon die omslagkuns in die kompakte speler wat verskyn wanneer die skinkbordikoon geklik word.</value>
+    <value>Vertoon die omslagkuns in die kompakte speler wat verskyn wanneer die stelsellaai-ikoon geklik word.</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
     <value>Ignoreer lidwoorde wanneer gesorteer word</value>
@@ -1558,16 +1588,16 @@ Wil jy voortgaan?</value>
     <value>Definieer karakters wat gebruik word om veelvuldige genres te skei (bv. ';/'). Laat leeg om te deaktiveer.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
-    <value>Herskan Biblioteek</value>
+    <value>Herskandeer Biblioteek</value>
   </data>
   <data name="SettingsPage_RescanLibrary_ToolTip" xml:space="preserve">
-    <value>Herskan biblioteek om veranderings toe te pas</value>
+    <value>Herskandeer biblioteek om verdelingsveranderinge toe te pas</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
     <value>Kry aanlyn metadata</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Haal kunstenaarbeelde en -biografieë van aanlyn bronne af.</value>
+    <value>Haal kunstenaarprente, biografieë en albumomslae van aanlyn bronne af.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Bronne</value>
@@ -1645,7 +1675,7 @@ Wil jy voortgaan?</value>
     <value>Voer alles uit…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
-    <value>Voer alle snitlyste na 'n gids uit</value>
+    <value>Voer alle snitlyste na 'n vouer uit</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
     <value>Voer in…</value>
@@ -1888,7 +1918,7 @@ Wil jy voortgaan?</value>
     <value>Uitvaagduur</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
-    <value>Stel hoe lank die volume neem om uit te vaag wanneer afspeel laat wag word.</value>
+    <value>Stel hoe lank die volume neem om uit te vaag wanneer afspeel onderbreek word.</value>
   </data>
   <data name="Settings_Nav_Insights" xml:space="preserve">
     <value>Insigte</value>
@@ -1990,7 +2020,7 @@ Wil jy voortgaan?</value>
     <value>Soek…</value>
   </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
-    <value>Afspeel</value>
+    <value>Afspeelkeer</value>
   </data>
   <data name="InsightsPage_SortBy_Duration" xml:space="preserve">
     <value>Duur</value>
@@ -2033,6 +2063,9 @@ Wil jy voortgaan?</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>Alle tye</value>
+  </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>Tydperk</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}u {1}m</value>
@@ -2131,7 +2164,7 @@ Wil jy voortgaan?</value>
     <value>Stop afspeel</value>
   </data>
   <data name="JumpList_ShuffleAll" xml:space="preserve">
-    <value>Meng alle liedjies</value>
+    <value>Skommel alle liedjies</value>
     <comment>Task in the taskbar icon's right-click menu.</comment>
   </data>
   <data name="JumpList_MiniPlayer" xml:space="preserve">
@@ -2227,11 +2260,71 @@ Wil jy voortgaan?</value>
     <value>Geen snitlyste beskikbaar nie</value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg is benodig om liedjies vir volumenormalisering te ontleed, maar Nagi kon dit nie vind nie.
+    <value>FFmpeg is nodig om liedjies vir volumenormalisering te ontleed, maar Nagi kon dit nie vind nie.
 
 1. Laai 'n Windows-weergawe af vanaf https://ffmpeg.org/download.html.
 2. Pak die argief uit en spoor ffmpeg.exe in die bin-vouer daarvan op.
 3. Voeg die vouer wat ffmpeg.exe bevat by jou Windows PATH.
 4. Herbegin Nagi en aktiveer dan weer volumenormalisering.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>Liedjie-inligting</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>Etikette</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>Luister</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>Albumkunstenaar</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>Dirigent</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>Kopiereg</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>Pad</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>Formaat</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>Kanale</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>Grootte</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} van {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>Liedjielyskolomme</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>Kies watter besonderhede liedjielyste wys.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>Kolomopskrifte</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>Wys 'n opskrif bo elke kolom in liedjielyste.</value>
   </data>
 </root>

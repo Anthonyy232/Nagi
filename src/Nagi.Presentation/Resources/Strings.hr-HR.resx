@@ -59,7 +59,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NavItem_Library" xml:space="preserve">
-    <value>Knjižnica</value>
+    <value>Biblioteka</value>
   </data>
   <data name="NavItem_Albums" xml:space="preserve">
     <value>Albumi</value>
@@ -278,7 +278,7 @@
     <value>{0} pjesma</value>
   </data>
   <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} pjesama</value>
+    <value>{0, plural, one {# pjesma} few {# pjesme} other {# pjesama}}</value>
   </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Izvođač nije pronađen</value>
@@ -302,7 +302,7 @@
     <value>Dodavanje mape nije uspjelo. Putanja možda nije valjana.</value>
   </data>
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
-    <value>Ova mapa je već u knjižnici.</value>
+    <value>Ova mapa je već u biblioteci.</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Dodavanje mape u biblioteku…</value>
@@ -347,25 +347,25 @@
     <value>{0} mapa</value>
   </data>
   <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} mapa</value>
+    <value>{0, plural, one {# mapa} few {# mape} other {# mapa}}</value>
   </data>
   <data name="Songs_Count_Singular" xml:space="preserve">
     <value>{0} pjesma</value>
   </data>
   <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} pjesama</value>
+    <value>{0, plural, one {# pjesma} few {# pjesme} other {# pjesama}}</value>
   </data>
   <data name="Albums_Count_Singular" xml:space="preserve">
     <value>{0} album</value>
   </data>
   <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} albuma</value>
+    <value>{0, plural, one {# album} few {# albuma} other {# albuma}}</value>
   </data>
   <data name="Artists_Count_Singular" xml:space="preserve">
     <value>{0} izvođač</value>
   </data>
   <data name="Artists_Count_Plural" xml:space="preserve">
-    <value>{0} izvođača</value>
+    <value>{0, plural, one {# izvođač} few {# izvođača} other {# izvođača}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Nema stavki</value>
@@ -398,13 +398,13 @@
     <value>Pametno • {0} pjesma</value>
   </data>
   <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Pametno • {0} pjesama</value>
+    <value>Pametno • {0, plural, one {# pjesma} few {# pjesme} other {# pjesama}}</value>
   </data>
   <data name="Playlist_Count_Singular" xml:space="preserve">
     <value>{0} pjesma</value>
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} pjesama</value>
+    <value>{0, plural, one {# pjesma} few {# pjesme} other {# pjesama}}</value>
   </data>
   <data name="Playlist_ErrorLoading" xml:space="preserve">
     <value>Pogreška pri učitavanju popisa pjesama</value>
@@ -512,7 +512,7 @@
     <value>Prekini vezu s Last.fm-om</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
-    <value>Jeste li sigurni da želite prekinuti vezu sa svojim Last.fm računom? Vaša povijest "scrobblinga" bit će sačuvana na Last.fm-u, ali Nagi više neće moći "scrobbati".</value>
+    <value>Jeste li sigurni da želite prekinuti vezu sa svojim Last.fm računom? Vaša povijest bilježenja slušanja bit će sačuvana na Last.fm-u, ali Nagi više neće moći bilježiti slušanja.</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Prekini vezu</value>
@@ -579,7 +579,7 @@ Datoteke koje nije bilo moguće uvesti: {0}.</value>
     <value>{0} stavka</value>
   </data>
   <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
-    <value>{0} stavki</value>
+    <value>{0, plural, one {# stavka} few {# stavke} other {# stavki}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
     <value>{0} odabrano</value>
@@ -630,7 +630,7 @@ Datoteke koje nije bilo moguće uvesti: {0}.</value>
     <value>Sljedeća</value>
   </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
-    <value>Knjižnica</value>
+    <value>Biblioteka</value>
   </data>
   <data name="Settings_Nav_Folders" xml:space="preserve">
     <value>Mape</value>
@@ -681,16 +681,28 @@ Datoteke koje nije bilo moguće uvesti: {0}.</value>
     <value>Kineska glazbena usluga, izvrsna za azijsku glazbu</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Dohvaća ID-ove izvođača (potrebno za TheAudioDB i Fanart.tv)</value>
+    <value>Traži ID-ove izvođača i albuma koje vaše oznake ne sadrže</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>Visokokvalitetne slike i biografije izvođača (zahtijeva MusicBrainz)</value>
+    <value>Slike i biografije izvođača (potreban je MusicBrainz ID iz vaših oznaka ili servisa MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>Samo visokokvalitetne slike izvođača (zahtijeva MusicBrainz)</value>
+    <value>Visokokvalitetne slike izvođača (potreban je MusicBrainz ID iz vaših oznaka ili servisa MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Biografije i slike izvođača (rezervno)</value>
+    <value>Biografije izvođača i naslovnice albuma (rezervno)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>Slike izvođača i naslovnice albuma, pronađene po nazivu</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>Biografije izvođača na vašem jeziku (potreban je MusicBrainz ID iz vaših oznaka ili servisa MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>Naslovnice albuma za izdanja na MusicBrainzu (koristi ID-ove iz vaših oznaka ili servisa MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>Naslovnice albuma visoke razlučivosti, pronađene po nazivu</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Pretraži albume</value>
@@ -723,7 +735,7 @@ Datoteke koje nije bilo moguće uvesti: {0}.</value>
     <value>Pretraži žanrove</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Pretraži knjižnicu</value>
+    <value>Pretraži biblioteku</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Pretraži popise pjesama</value>
@@ -783,7 +795,7 @@ Datoteke koje nije bilo moguće uvesti: {0}.</value>
     <value>Ponovno skeniranje završeno</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Content" xml:space="preserve">
-    <value>Metapodaci knjižnice su ažurirani.</value>
+    <value>Metapodaci biblioteke su ažurirani.</value>
   </data>
   <data name="Settings_Dialog_RescanFailed_Title" xml:space="preserve">
     <value>Ponovno skeniranje nije uspjelo</value>
@@ -800,7 +812,7 @@ Datoteke koje nije bilo moguće uvesti: {0}.</value>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
     <value>Normalizacija glasnoće (ReplayGain) osigurava dosljednu razinu glasnoće u svoj vašoj glazbi.
 
-Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio datoteke upisivanjem ReplayGain oznaka. Obrađivat će se samo datoteke bez postojećih oznaka. To može potrajati ovisno o veličini vaše knjižnice.
+Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio datoteke upisivanjem ReplayGain oznaka. Obrađivat će se samo datoteke bez postojećih oznaka. To može potrajati ovisno o veličini vaše biblioteke.
 
 Želite li nastaviti?</value>
   </data>
@@ -864,6 +876,9 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>Kopiraj zapisnik</value>
   </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>Zapisnik rušenja</value>
+  </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>Odaberi naslovnicu</value>
   </data>
@@ -871,10 +886,10 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
     <value>Odaberi sliku naslovnice</value>
   </data>
   <data name="SmartPlaylist_PlaylistNameLabel" xml:space="preserve">
-    <value>Naziv popisa za reprodukciju</value>
+    <value>Naziv popisa pjesama</value>
   </data>
   <data name="SmartPlaylist_PlaylistNameTextBox_Placeholder" xml:space="preserve">
-    <value>Unesite naziv za vaš pametni popis za reprodukciju</value>
+    <value>Unesite naziv za vaš pametni popis pjesama</value>
   </data>
   <data name="SmartPlaylist_SortOrderLabel" xml:space="preserve">
     <value>Redoslijed sortiranja</value>
@@ -900,6 +915,12 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>Vrijednost</value>
   </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>Polje</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>Uvjet</value>
+  </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>Ukloni ovo pravilo</value>
   </data>
@@ -907,7 +928,7 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
     <value>Nema definiranih pravila</value>
   </data>
   <data name="SmartPlaylist_NoRulesMessage" xml:space="preserve">
-    <value>Sve pjesme u vašoj biblioteci bit će uključene u ovaj popis za reprodukciju.</value>
+    <value>Sve pjesme u vašoj biblioteci bit će uključene u ovaj popis pjesama.</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_Content" xml:space="preserve">
     <value>Dodajte svoje prvo pravilo</value>
@@ -953,6 +974,9 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Idi na album</value>
+  </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>Položaj reprodukcije</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Sljedeće na redu</value>
@@ -1168,7 +1192,7 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
     <value>Skenirajte svoju glazbenu biblioteku za popunjavanje žanrova</value>
   </data>
   <data name="LibraryPage_Title" xml:space="preserve">
-    <value>Knjižnica</value>
+    <value>Biblioteka</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Traži u biblioteci…</value>
@@ -1279,10 +1303,10 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
     <value>Oživite svoju biblioteku</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi radi potpuno izvan mreže. Uključite ove opcije kako biste dodali fotografije izvođača, biografije i tekstove pjesama koje vaše datoteke ne sadrže.</value>
+    <value>Nagi radi potpuno izvan mreže. Uključite ove opcije kako biste dodali fotografije izvođača, biografije, naslovnice albuma i tekstove pjesama koje vaše datoteke ne sadrže.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
-    <value>Uklopite u svoju radnu površinu</value>
+    <value>Uklopite Nagi u svoju radnu površinu</value>
   </data>
   <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
     <value>Odaberite kako se Nagi pokreće i što se događa kada ga zatvorite ili smanjite.</value>
@@ -1312,7 +1336,7 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
     <value>Započni slušanje</value>
   </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
-    <value>Popisi za reprodukciju</value>
+    <value>Popisi pjesama</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Traži popise pjesama…</value>
@@ -1321,16 +1345,16 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
     <value>Odaberi nasumično</value>
   </data>
   <data name="PlaylistPage_NewPlaylistButton_ToolTip" xml:space="preserve">
-    <value>Stvori novi popis za reprodukciju</value>
+    <value>Stvori novi popis pjesama</value>
   </data>
   <data name="PlaylistPage_NewPlaylistButton_Content" xml:space="preserve">
-    <value>Novi popis za reprodukciju</value>
+    <value>Novi popis pjesama</value>
   </data>
   <data name="PlaylistPage_NewPlaylistMenu_Regular" xml:space="preserve">
-    <value>Standardni popis za reprodukciju</value>
+    <value>Standardni popis pjesama</value>
   </data>
   <data name="PlaylistPage_NewPlaylistMenu_Smart" xml:space="preserve">
-    <value>Pametni popis za reprodukciju</value>
+    <value>Pametni popis pjesama</value>
   </data>
   <data name="PlaylistPage_Context_Play" xml:space="preserve">
     <value>Reproduciraj</value>
@@ -1348,13 +1372,13 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
     <value>Izbriši</value>
   </data>
   <data name="PlaylistPage_EmptyState_Title" xml:space="preserve">
-    <value>Još nema popisa za reprodukciju</value>
+    <value>Još nema popisa pjesama</value>
   </data>
   <data name="PlaylistPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Stvorite popis za reprodukciju za početak</value>
+    <value>Stvorite popis pjesama za početak</value>
   </data>
   <data name="PlaylistSongViewPage_Header_Caption" xml:space="preserve">
-    <value>Popis za reprodukciju</value>
+    <value>Popis pjesama</value>
   </data>
   <data name="PlaylistSongViewPage_Section_Songs" xml:space="preserve">
     <value>Pjesme</value>
@@ -1372,7 +1396,7 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
     <value>Ukloni s popisa pjesama</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
-    <value>Ovaj popis za reprodukciju je prazan</value>
+    <value>Ovaj popis pjesama je prazan</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
     <value>Dodajte pjesme iz svoje biblioteke</value>
@@ -1408,7 +1432,7 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
     <value>Tema</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>Odaberite svijetu, tamnu ili sistemsku temu.</value>
+    <value>Odaberite svijetlu, tamnu ili sistemsku temu.</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
     <value>Boja naglaska</value>
@@ -1468,19 +1492,25 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
     <value>Omogućite aplikaciji Nagi isključivu kontrolu nad Windows audio uređajem. Ostale aplikacije mogu biti tihe. Ponovo pokrenite Nagi nakon promjene ove postavke.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
-    <value>Blijedi pri reprodukciji / pauzi</value>
+    <value>Postupni prijelaz pri reprodukciji / pauzi</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Glatko utišajte glasnoću prilikom nastavka i pojačajte prilikom pauziranja umjesto naglog rezanja.</value>
+    <value>Glatko pojačajte glasnoću prilikom nastavka i utišajte je prilikom pauziranja umjesto naglog prekida.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
-    <value>Audio ekvilizator</value>
+    <value>Audio ekvalizator</value>
   </data>
   <data name="SettingsPage_ResetEqualizer_Content" xml:space="preserve">
     <value>Vrati na zadano</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
-    <value>Predpojačalo</value>
+    <value>Pretpojačalo</value>
+  </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>Predložak ekvalizatora</value>
   </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>Prilagođeno</value>
@@ -1567,7 +1597,7 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
     <value>Dohvati mrežne metapodatke</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Dohvatite slike i biografije izvođača iz mrežnih izvora.</value>
+    <value>Dohvatite slike i biografije izvođača te naslovnice albuma iz mrežnih izvora.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Izvori</value>
@@ -1639,13 +1669,13 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
     <value>Uvoz i izvoz popisa pjesama</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
-    <value>Izvezite popise za reprodukciju u M3U datoteke za upotrebu u drugim reproduktorima, ili uvezite M3U popise za reprodukciju u Nagi.</value>
+    <value>Izvezite popise pjesama u M3U datoteke za upotrebu u drugim reproduktorima ili uvezite M3U popise pjesama u Nagi.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
     <value>Izvezi sve…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
-    <value>Izvezite sve popise za reprodukciju u mapu</value>
+    <value>Izvezite sve popise pjesama u mapu</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
     <value>Uvezi…</value>
@@ -1657,7 +1687,7 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
     <value>Ponovno postavi aplikaciju</value>
   </data>
   <data name="SettingsPage_ResetApp_Description" xml:space="preserve">
-    <value>Ovo će izbrisati sve podatke biblioteke, popise za reprodukciju i resetirati sve postavke na zadane. Aplikacija će se ponovno pokrenuti.</value>
+    <value>Ovo će izbrisati sve podatke biblioteke, popise pjesama i resetirati sve postavke na zadane. Aplikacija će se ponovno pokrenuti.</value>
   </data>
   <data name="SettingsPage_ResetButton_Content" xml:space="preserve">
     <value>Poništi sve podatke</value>
@@ -1669,7 +1699,7 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
     <value>Last.fm</value>
   </data>
   <data name="SettingsPage_LastFm_Description" xml:space="preserve">
-    <value>Povežite svoj Last.fm račun za "scrobble" pjesme i prikaz trenutno reproducirane pjesme.</value>
+    <value>Povežite svoj Last.fm račun za bilježenje slušanja pjesama i prikaz trenutno reproducirane pjesme.</value>
   </data>
   <data name="SettingsPage_LastFm_Connect_Content" xml:space="preserve">
     <value>Poveži</value>
@@ -1747,7 +1777,7 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
     <value>Prikažite svoju trenutnu aktivnost slušanja kao svoj status na Discordu.</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
-    <value>Pametni popis za reprodukciju</value>
+    <value>Pametni popis pjesama</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Section_Songs" xml:space="preserve">
     <value>Pjesme</value>
@@ -1903,22 +1933,22 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
     <value>Jedinstvene pjesme</value>
   </data>
   <data name="InsightsPage_PeakHour" xml:space="preserve">
-    <value>Sati najveće aktivnosti</value>
+    <value>Sat najveće aktivnosti</value>
   </data>
   <data name="InsightsPage_MostActiveDay" xml:space="preserve">
     <value>Najaktivniji dan</value>
   </data>
   <data name="InsightsPage_TopSongs" xml:space="preserve">
-    <value>Najbolje pjesme</value>
+    <value>Najslušanije pjesme</value>
   </data>
   <data name="InsightsPage_TopArtists" xml:space="preserve">
-    <value>Najbolji izvođači</value>
+    <value>Najslušaniji izvođači</value>
   </data>
   <data name="InsightsPage_TopAlbums" xml:space="preserve">
-    <value>Najbolji albumi</value>
+    <value>Najslušaniji albumi</value>
   </data>
   <data name="InsightsPage_TopGenres" xml:space="preserve">
-    <value>Najbolji žanrovi</value>
+    <value>Najslušaniji žanrovi</value>
   </data>
   <data name="InsightsPage_Sources" xml:space="preserve">
     <value>Izvori reprodukcije</value>
@@ -1939,10 +1969,10 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
     <value>Izvođači</value>
   </data>
   <data name="InsightsPage_Source_Playlists" xml:space="preserve">
-    <value>Popisi za reprodukciju</value>
+    <value>Popisi pjesama</value>
   </data>
   <data name="InsightsPage_Source_SmartPlaylists" xml:space="preserve">
-    <value>Pametni popisi za reprodukciju</value>
+    <value>Pametni popisi pjesama</value>
   </data>
   <data name="InsightsPage_Source_Folders" xml:space="preserve">
     <value>Mape</value>
@@ -1954,7 +1984,7 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
     <value>Pretraživanje</value>
   </data>
   <data name="InsightsPage_Source_Library" xml:space="preserve">
-    <value>Knjižnica</value>
+    <value>Biblioteka</value>
   </data>
   <data name="InsightsPage_Source_Files" xml:space="preserve">
     <value>Datoteke</value>
@@ -2008,7 +2038,7 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
     <value>Sljedeća stranica</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
-    <value>npr. ;/\</value>
+    <value>npr. ;/\\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
     <value> ms</value>
@@ -2029,10 +2059,13 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
     <value>Zadnjih 90 dana</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>Prošla godina</value>
+    <value>Zadnja godina</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>Sve vrijeme</value>
+  </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>Vremenski raspon</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}h {1}m</value>
@@ -2161,7 +2194,7 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
     <value>Za 60 minuta</value>
   </data>
   <data name="Listening_CancelStop" xml:space="preserve">
-    <value>Otkazi zakazano zaustavljanje</value>
+    <value>Otkaži zakazano zaustavljanje</value>
   </data>
   <data name="Listening_TimerRemaining" xml:space="preserve">
     <value>Zaustavlja se za {0}</value>
@@ -2227,11 +2260,71 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
     <value>Nema dostupnih popisa pjesama</value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg je potreban za analizu pjesama radi izjednačavanja glasnoće, ali ga Nagi nije mogao pronaći.
+    <value>FFmpeg je potreban za analizu pjesama radi normalizacije glasnoće, ali ga Nagi nije mogao pronaći.
 
 1. Preuzmite verziju za Windows s https://ffmpeg.org/download.html.
 2. Raspakirajte arhivu i pronađite ffmpeg.exe u njezinoj mapi bin.
 3. Dodajte mapu koja sadrži ffmpeg.exe u svoj Windows PATH.
-4. Ponovno pokrenite Nagi, a zatim ponovno omogućite izjednačavanje glasnoće.</value>
+4. Ponovno pokrenite Nagi, a zatim ponovno omogućite normalizaciju glasnoće.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>Informacije o pjesmi</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>Oznake</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>Slušanje</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>Izvođač albuma</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>Dirigent</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>Autorska prava</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>Putanja</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>Kanali</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>Veličina</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} od {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>Stupci popisa pjesama</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>Odaberite podatke koje prikazuju popisi pjesama.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>Zaglavlja stupaca</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>Prikaži naziv svakog stupca iznad popisa pjesama.</value>
   </data>
 </root>

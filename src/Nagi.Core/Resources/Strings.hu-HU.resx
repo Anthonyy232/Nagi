@@ -60,7 +60,7 @@
   </resheader>
   <!-- Noun Labels -->
   <data name="Label_Artist" xml:space="preserve">
-    <value>Művész</value>
+    <value>Előadó</value>
   </data>
   <data name="Label_Album" xml:space="preserve">
     <value>Album</value>
@@ -185,13 +185,13 @@
     <value>Beolvasás sikertelen. Részletekért lásd a naplókat.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Zenetár-beolvasás előkészítése…</value>
+    <value>Könyvtár beolvasásának előkészítése…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
     <value>Dalok adatainak beolvasása…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>A zenetár megtisztítása…</value>
+    <value>A könyvtár megtisztítása…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
     <value>Véglegesítés…</value>
@@ -308,7 +308,7 @@
     <value>Nem sikerült csatlakozni a ListenBrainz szolgáltatáshoz. Ellenőrizze a kapcsolatot és a szerver URL-jét.</value>
   </data>
   <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>A Nagi nem találta a zenetára adatmappáját.</value>
+    <value>A Nagi nem találta a könyvtár adatmappáját.</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>A helyreállítás nem sikerült, és a korábbi adatokat nem sikerült teljesen visszaállítani. A helyreállítási fájlok ide lettek mentve: &apos;{0}&apos;.</value>
@@ -317,12 +317,39 @@
     <value>A kiválasztott fájl nem érvényes Nagi-biztonsági mentés.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>A LibVLC ismeretlen hibába ütközött.</value>
+    <value>A LibVLC nem meghatározott hibába ütközött.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
     <value>LibVLC hiba: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>Nem sikerült betölteni: „{0}”.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Zenei könyvtár böngészése</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Tétlen</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>{0} előadásában</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Szüneteltetve | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Nagi zenelejátszó</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Lejátszás</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Szüneteltetve</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>A Wikipédiából, CC BY-SA licenc alatt.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

@@ -323,6 +323,33 @@
     <value>LibVLC-fel: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Kunde inte ladda '{0}'.</value>
+    <value>Kunde inte läsa in '{0}'.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Bläddrar i musikbiblioteket</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Inaktiv</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>av {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Pausad | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Nagi musikspelare</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Spelar</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Pausad</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>Från Wikipedia, under licensen CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

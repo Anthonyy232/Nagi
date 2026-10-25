@@ -71,7 +71,7 @@
     <value>مشغل موسيقى Nagi</value>
   </data>
   <data name="AppInfoTip" xml:space="preserve">
-    <value>افتح بـ مشغل موسيقى Nagi</value>
+    <value>افتح باستخدام مشغل موسيقى Nagi</value>
   </data>
   <data name="StartupTaskDisplayName" xml:space="preserve">
     <value>بدء تشغيل Nagi</value>

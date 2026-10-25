@@ -362,10 +362,10 @@
     <value>{0}개 앨범</value>
   </data>
   <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0}명 아티스트</value>
+    <value>아티스트 {0}명</value>
   </data>
   <data name="Artists_Count_Plural" xml:space="preserve">
-    <value>{0}명 아티스트</value>
+    <value>아티스트 {0}명</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>항목 없음</value>
@@ -681,16 +681,28 @@
     <value>아시아 음악에 적합한 중국 음악 서비스</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>아티스트 ID를 가져옵니다 (TheAudioDB 및 Fanart.tv에 필요)</value>
+    <value>태그에 없는 아티스트 및 앨범 ID를 조회합니다</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>고품질 아티스트 이미지 및 바이오그래피 (MusicBrainz 필요)</value>
+    <value>아티스트 이미지 및 바이오그래피 (태그 또는 MusicBrainz의 MusicBrainz ID 필요)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>고품질 아티스트 이미지만 (MusicBrainz 필요)</value>
+    <value>고품질 아티스트 이미지 (태그 또는 MusicBrainz의 MusicBrainz ID 필요)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>아티스트 바이오그래피 및 이미지 (대체)</value>
+    <value>아티스트 바이오그래피 및 앨범 커버 (대체)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>이름으로 찾은 아티스트 이미지 및 앨범 커버</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>사용자 언어로 된 아티스트 바이오그래피 (태그 또는 MusicBrainz의 MusicBrainz ID 필요)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>MusicBrainz 릴리스의 앨범 커버 (태그 또는 MusicBrainz의 ID 사용)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>이름으로 찾은 고해상도 앨범 커버</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>앨범 검색</value>
@@ -798,7 +810,7 @@
     <value>볼륨 정규화 활성화</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
-    <value>볼륨 정규화(리플레이게인)는 모든 음악에서 일관된 볼륨 레벨을 보장합니다.
+    <value>볼륨 정규화(ReplayGain)는 모든 음악에서 일관된 볼륨 레벨을 보장합니다.
 
 이 기능은 음악 라이브러리를 분석하고 ReplayGain 태그를 작성하여 오디오 파일을 직접 수정합니다. 기존 태그가 없는 파일만 처리됩니다. 라이브러리 크기에 따라 시간이 걸릴 수 있습니다.
 
@@ -808,7 +820,7 @@
     <value>활성화 및 스캔</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>음량 정규화 스캔 준비 중…</value>
+    <value>볼륨 정규화 스캔 준비 중…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
     <value>볼륨 정규화 스캔이 취소되었습니다.</value>
@@ -847,22 +859,25 @@
     <value>다음 재생</value>
   </data>
   <data name="CrashReport_ReportIssuePreLink" xml:space="preserve">
-    <value>문제 페이지에서 이슈를 생성하여 이 문제를 보고해 주십시오.</value>
+    <value>이 문제를 보고하려면 </value>
   </data>
   <data name="CrashReport_IssueLink" xml:space="preserve">
     <value>문제 페이지</value>
   </data>
   <data name="CrashReport_ReportIssuePostLink" xml:space="preserve">
-    <value>.</value>
+    <value>에서 이슈를 생성해 주세요.</value>
   </data>
   <data name="CrashReport_ResetAppAdvice" xml:space="preserve">
-    <value>이 문제가 계속 발생하면 '앱 및 데이터 재설정'을 시도해 보세요. 이 작업을 수행하면 설정과 라이브러리가 초기화되어 손상된 상태에서 앱을 복구하는 데 도움이 될 수 있습니다.</value>
+    <value>이 문제가 계속 발생하면 '앱 및 데이터 초기화'를 시도해 보세요. 이 작업을 수행하면 설정과 라이브러리가 초기화되어 손상된 상태에서 앱을 복구하는 데 도움이 될 수 있습니다.</value>
   </data>
   <data name="CrashReport_CopyLogButton_ToolTip" xml:space="preserve">
     <value>로그를 클립보드에 복사</value>
   </data>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>로그 복사</value>
+  </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>충돌 로그</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>커버 선택</value>
@@ -886,7 +901,7 @@
     <value>모두</value>
   </data>
   <data name="SmartPlaylist_MatchLogic_Any_Content" xml:space="preserve">
-    <value>아무거나</value>
+    <value>어느 하나</value>
   </data>
   <data name="SmartPlaylist_MatchSuffixLabel" xml:space="preserve">
     <value>다음 규칙 중:</value>
@@ -899,6 +914,12 @@
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>값</value>
+  </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>필드</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>조건</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>이 규칙 제거</value>
@@ -953,6 +974,9 @@
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>앨범으로 이동</value>
+  </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>재생 위치</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>다음 재생</value>
@@ -1279,7 +1303,7 @@
     <value>라이브러리에 생동감 더하기</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi는 완전히 오프라인으로 작동합니다. 이 옵션을 켜면 파일에 없는 아티스트 사진, 약력, 가사를 채울 수 있습니다.</value>
+    <value>Nagi는 완전히 오프라인으로 작동합니다. 이 옵션을 켜면 파일에 없는 아티스트 사진, 약력, 앨범 커버, 가사를 채울 수 있습니다.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>데스크톱 환경에 맞추기</value>
@@ -1482,6 +1506,12 @@
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>프리앰프</value>
   </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>이퀄라이저 프리셋</value>
+  </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>사용자 지정</value>
   </data>
@@ -1567,7 +1597,7 @@
     <value>온라인 메타데이터 가져오기</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>온라인 소스에서 아티스트 이미지와 약력을 가져옵니다.</value>
+    <value>온라인 소스에서 아티스트 이미지, 약력, 앨범 커버를 가져옵니다.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>소스</value>
@@ -1591,7 +1621,7 @@
     <value>로마자 표기 가사 표시</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
-    <value>설치된 팩이 스크립트와 일치할 때 지원되는 가사 아래에 더 작은 로마자 줄을 표시합니다.</value>
+    <value>설치된 팩이 가사의 문자 체계와 일치하면 지원되는 가사 아래에 더 작은 로마자 줄을 표시합니다.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
     <value>언어 팩</value>
@@ -1711,7 +1741,7 @@
     <value>연결 테스트</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Connected" xml:space="preserve">
-    <value>{0}으로 연결됨</value>
+    <value>{0}(으)로 연결됨</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ConnectionFailed" xml:space="preserve">
     <value>연결 실패: {0}</value>
@@ -2029,10 +2059,13 @@
     <value>최근 90일</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>작년</value>
+    <value>최근 1년</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>전체 기간</value>
+  </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>기간</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}시간 {1}분</value>
@@ -2047,7 +2080,7 @@
     <value>음악을 재생하거나 오디오 파일을 여기에 끌어다 놓아 대기열을 생성하세요.</value>
   </data>
   <data name="QueuePanel_LoadError" xml:space="preserve">
-    <value>일부 곡을 로드할 수 없습니다. 대기열을 다시 로드하려면 Retry를 선택하세요.</value>
+    <value>일부 곡을 로드할 수 없습니다. 대기열을 다시 로드하려면 '다시 시도'를 선택하세요.</value>
   </data>
   <data name="QueuePanel_Retry" xml:space="preserve">
     <value>다시 시도</value>
@@ -2179,7 +2212,7 @@
     <value>청취 기록이 없습니다</value>
   </data>
   <data name="Listening_HistoryLoadError" xml:space="preserve">
-    <value>최근 재생한 곡을 로드할 수 없습니다. 다시 시도하려면 Retry를 선택하세요.</value>
+    <value>최근 재생한 곡을 로드할 수 없습니다. 다시 시도하려면 '다시 시도'를 선택하세요.</value>
   </data>
   <data name="Listening_Today" xml:space="preserve">
     <value>오늘</value>
@@ -2233,5 +2266,65 @@
 2. 압축을 해제하고 bin 폴더에서 ffmpeg.exe를 찾습니다.
 3. ffmpeg.exe가 포함된 폴더를 Windows PATH에 추가합니다.
 4. Nagi를 다시 시작한 후 음량 정규화를 다시 활성화합니다.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>곡 정보</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>태그</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>재생 기록</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>앨범 아티스트</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>지휘자</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>저작권</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>경로</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>형식</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>채널</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>크기</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} / {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>곡 목록 열</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>곡 목록에 표시할 정보를 선택합니다.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>열 머리글</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>곡 목록 위에 각 열의 머리글을 표시합니다.</value>
   </data>
 </root>
