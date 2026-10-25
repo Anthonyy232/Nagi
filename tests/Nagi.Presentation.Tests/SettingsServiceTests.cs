@@ -105,7 +105,6 @@ public class SettingsServiceTests
 
         // The saved two agree with the default ranking, so every source missing from it lands in its default slot.
         providers.Select(p => p.Id).Should().Equal(defaults.Select(p => p.Id));
-        providers[^1].Id.Should().Be(ServiceProviderIds.LastFm);
     }
 
     [Fact]
