@@ -89,6 +89,14 @@
                             Enabled="false"
                             DisplayName="ms-resource:Resources/StartupTaskDisplayName"/>
                 </uap5:Extension>
+
+                <!-- The install folder changes with every update; the alias gives shortcuts and
+                     launchers a path that doesn't. -->
+                <uap5:Extension Category="windows.appExecutionAlias">
+                    <uap5:AppExecutionAlias>
+                        <uap5:ExecutionAlias Alias="nagi.exe"/>
+                    </uap5:AppExecutionAlias>
+                </uap5:Extension>
             </Extensions>
         </Application>
     </Applications>
