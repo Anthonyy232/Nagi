@@ -681,16 +681,28 @@ Puk ma pe otwero tero i iye: {0, plural, one {#} other {#}}.</value>
     <value>Tic me wer me China, maber me wer me Asia</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Nwanggo ID me luwer (mitte me TheAudioDB ki Fanart.tv)</value>
+    <value>Looks up artist and album IDs that your tags don't include</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>Cal ki lok me luwer maber (mitte MusicBrainz)</value>
+    <value>Artist images and biographies (needs a MusicBrainz ID from your tags or MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>Cal me lugero ma kite ber keken (mito MusicBrainz)</value>
+    <value>High-quality artist images (needs a MusicBrainz ID from your tags or MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Lok me kwo ki cal me luwer (lalub kor)</value>
+    <value>Artist biographies and album covers (fallback)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>Artist images and album covers, found by name</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>Artist biographies in your language (needs a MusicBrainz ID from your tags or MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>Album covers for MusicBrainz releases (uses IDs from your tags or MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>High-resolution album covers, found by name</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Reny album-i</value>
@@ -864,6 +876,9 @@ Imide?</value>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>Gwany Lok</value>
   </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>Crash log</value>
+  </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>Yer Cal</value>
   </data>
@@ -899,6 +914,12 @@ Imide?</value>
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>Wel</value>
+  </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>Field</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>Condition</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>Kwany cik man</value>
@@ -953,6 +974,9 @@ Imide?</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Cit i Album</value>
+  </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>Seek</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Luwyo me Tuk</value>
@@ -1297,7 +1321,7 @@ Imide?</value>
     <value>Kel kwo i kan weri meri</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi tiyo labongo intanet. Cwiny magi wek opong cal pa luwer, lok ikom kwo gi ki tyeng wer ma fayil meri pe kwede.</value>
+    <value>Nagi works fully offline. Turn these on to fill in artist photos, biographies, album covers and lyrics that your files don't include.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>Lony atir i wi kompiuta</value>
@@ -1509,6 +1533,12 @@ Imide?</value>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Dwon me Acaki</value>
   </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>Equalizer preset</value>
+  </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>Me Cingyi</value>
   </data>
@@ -1594,7 +1624,7 @@ Imide?</value>
     <value>Nwang Lok me Iye ki Net</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Nwang cal ki lok me luwer ki i intanet.</value>
+    <value>Fetch artist images, biographies and album covers from online sources.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Yo me Nwanggo</value>
@@ -2064,6 +2094,9 @@ Imide?</value>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>Kare Weng</value>
   </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>Time range</value>
+  </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}h {1}m</value>
   </data>
@@ -2257,11 +2290,71 @@ Imide?</value>
     <value>Pe tye chen wer mo</value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>Mito FFmpeg me kwano wer me yub me dwong me dwan, ento Nagi pe otwero nwangone.
+    <value>FFmpeg is needed to analyze songs for volume normalization, but Nagi could not find it.
 
-1. Gam Windows build ki i https://ffmpeg.org/download.html.
-2. Yab archive dok inwang ffmpeg.exe i folder ne me bin.
-3. Med folder ma tye ki ffmpeg.exe i Windows PATH ni.
-4. Cak Nagi odoco, ka icak yub me dwong me dwan odoco.</value>
+1. Download a Windows build from https://ffmpeg.org/download.html.
+2. Extract the archive and locate ffmpeg.exe in its bin folder.
+3. Add the folder containing ffmpeg.exe to your Windows PATH.
+4. Restart Nagi, then enable volume normalization again.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>Song Info</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>Tags</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>Listening</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>Album Artist</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>Conductor</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>Copyright</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>Path</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>Channels</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} of {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>Song List Columns</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>Choose the details song lists show.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>Column Headers</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>Label each column above song lists.</value>
   </data>
 </root>

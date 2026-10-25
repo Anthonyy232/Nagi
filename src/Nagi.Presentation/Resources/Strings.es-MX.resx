@@ -681,16 +681,28 @@ Archivos que no se pudieron importar: {0}.</value>
     <value>Servicio de música chino, ideal para música asiática</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Obtiene IDs de artista (requerido para TheAudioDB y Fanart.tv)</value>
+    <value>Looks up artist and album IDs that your tags don't include</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>Imágenes y biografías de artistas de alta calidad (requiere MusicBrainz)</value>
+    <value>Artist images and biographies (needs a MusicBrainz ID from your tags or MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>Solo imágenes de artistas de alta calidad (requiere MusicBrainz)</value>
+    <value>High-quality artist images (needs a MusicBrainz ID from your tags or MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Biografías e imágenes de artistas (alternativa)</value>
+    <value>Artist biographies and album covers (fallback)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>Artist images and album covers, found by name</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>Artist biographies in your language (needs a MusicBrainz ID from your tags or MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>Album covers for MusicBrainz releases (uses IDs from your tags or MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>High-resolution album covers, found by name</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Buscar álbumes</value>
@@ -864,6 +876,9 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>Copiar registro</value>
   </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>Crash log</value>
+  </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>Elegir portada</value>
   </data>
@@ -899,6 +914,12 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>Valor</value>
+  </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>Field</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>Condition</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>Eliminar esta regla</value>
@@ -953,6 +974,9 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Ir al álbum</value>
+  </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>Seek</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Siguiente en la lista</value>
@@ -1297,7 +1321,7 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
     <value>Dale vida a tu biblioteca</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi funciona totalmente sin conexión. Activa estas opciones para incluir fotos de artistas, biografías y letras que tus archivos no contengan.</value>
+    <value>Nagi works fully offline. Turn these on to fill in artist photos, biographies, album covers and lyrics that your files don't include.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>Intégralo a tu escritorio</value>
@@ -1509,6 +1533,12 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Preamplificador</value>
   </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>Equalizer preset</value>
+  </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>Personalizado</value>
   </data>
@@ -1594,7 +1624,7 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
     <value>Obtener metadatos en línea</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Obtén imágenes y biografías de artistas de fuentes en línea.</value>
+    <value>Fetch artist images, biographies and album covers from online sources.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Fuentes</value>
@@ -2064,6 +2094,9 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>Todo el tiempo</value>
   </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>Time range</value>
+  </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}h {1}m</value>
   </data>
@@ -2257,11 +2290,71 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
     <value>No hay listas de reproducción disponibles</value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>Se necesita FFmpeg para analizar el volumen de las canciones, pero Nagi no pudo encontrarlo.
+    <value>FFmpeg is needed to analyze songs for volume normalization, but Nagi could not find it.
 
-1. Descarga una versión para Windows desde https://ffmpeg.org/download.html.
-2. Extrae el archivo comprimido y ubica ffmpeg.exe en su carpeta bin.
-3. Agrega la carpeta que contiene ffmpeg.exe a tu PATH de Windows.
-4. Reinicia Nagi y vuelve a activar la normalización de volumen.</value>
+1. Download a Windows build from https://ffmpeg.org/download.html.
+2. Extract the archive and locate ffmpeg.exe in its bin folder.
+3. Add the folder containing ffmpeg.exe to your Windows PATH.
+4. Restart Nagi, then enable volume normalization again.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>Song Info</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>Tags</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>Listening</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>Album Artist</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>Conductor</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>Copyright</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>Path</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>Channels</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} of {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>Song List Columns</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>Choose the details song lists show.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>Column Headers</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>Label each column above song lists.</value>
   </data>
 </root>

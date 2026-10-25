@@ -317,12 +317,39 @@
     <value>Wybrany plik nie jest prawidłową kopią zapasową aplikacji Nagi.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC napotkało nieokreślony błąd.</value>
+    <value>LibVLC encountered an unspecified error.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Błąd LibVLC: {0}</value>
+    <value>LibVLC Error: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Nie udało się załadować '{0}'.</value>
+    <value>Failed to load '{0}'.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Browsing Music Library</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Idling</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>by {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Paused | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Nagi Music Player</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Playing</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Paused</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>From Wikipedia, under the CC BY-SA license.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>
