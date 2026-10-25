@@ -90,6 +90,9 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
                             _logger.LogInformation("Discord warm-up complete. Syncing state.");
                             RequestUpdate();
                         }
+
+                        // A track that started before Discord connected skipped its cover lookup.
+                        if (_currentSong is { } song) _ = ShowAlbumCoverAsync(song);
                     };
 
                     client.OnConnectionFailed += (_, e) => _logger.LogWarning("Discord connection failed: {Pipe}", e.FailedPipe);
@@ -115,7 +118,9 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
         _currentProgress = TimeSpan.Zero;
         _timestamps = BuildTimestamps(TimeSpan.Zero);
         RequestUpdate();
-        _ = ShowAlbumCoverAsync(song);
+
+        // Without a Discord connection there is nothing to show the cover on, so skip the network lookup.
+        if (_isReady) _ = ShowAlbumCoverAsync(song);
         return Task.CompletedTask;
     }
 
