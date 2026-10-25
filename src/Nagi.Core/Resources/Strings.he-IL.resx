@@ -72,7 +72,7 @@
     <value>כותרת</value>
   </data>
   <data name="Label_Playlist" xml:space="preserve">
-    <value>פלייליסט</value>
+    <value>רשימת השמעה</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>קובץ</value>
@@ -197,7 +197,7 @@
     <value>מסיים…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
-    <value>נורמליזציית עוצמת הקול נכשלה. בדוק את יומני הרישום לפרטים.</value>
+    <value>נרמול עוצמת הקול נכשל. בדוק את יומני הרישום לפרטים.</value>
   </data>
   <data name="Status_NoFoldersToRefresh" xml:space="preserve">
     <value>אין תיקיות בספרייה לרענון.</value>
@@ -210,7 +210,7 @@
     <value>לא הייתה אפשרות להוסיף את התיקייה.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
-    <value>שם הפלייליסט אינו יכול להיות ריק.</value>
+    <value>שם רשימת ההשמעה אינו יכול להיות ריק.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
@@ -239,10 +239,10 @@
     <value>רשימת ההשמעה נוצרה, אך לא הייתה אפשרות להוסיף את השירים שלה. נסה לייבא שוב.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>לא נמצאו שירים מהפלייליסט בספרייה שלך.</value>
+    <value>לא נמצאו שירים מרשימת ההשמעה בספרייה שלך.</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
-    <value>אין פלייליסטים לייצוא.</value>
+    <value>אין רשימות השמעה לייצוא.</value>
   </data>
   <data name="EqPreset_None" xml:space="preserve">
     <value>ללא</value>
@@ -324,5 +324,32 @@
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>טעינת '{0}' נכשלה.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>גולש בספריית המוזיקה</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>בהמתנה</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>מאת {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>מושהה | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>נגן המוזיקה Nagi</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>מתנגן</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>מושהה</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>מתוך ויקיפדיה, תחת רישיון CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

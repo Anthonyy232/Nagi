@@ -99,10 +99,10 @@
     <value>BPM</value>
   </data>
   <data name="Label_TrackNumber" xml:space="preserve">
-    <value>رقم المقطع</value>
+    <value>رقم المسار</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
-    <value>مرات التشغيل</value>
+    <value>عدد التشغيلات</value>
   </data>
   <data name="Label_Songs" xml:space="preserve">
     <value>الأغاني</value>
@@ -130,13 +130,13 @@
     <value>{0} جديد</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
-    <value>{0} لم يتم العثور عليه.</value>
+    <value>لم يتم العثور على {0}.</value>
   </data>
   <data name="Format_AlphaAsc" xml:space="preserve">
-    <value>{0} (من الألف إلى الياء)</value>
+    <value>{0} (ألف إلى ياء)</value>
   </data>
   <data name="Format_AlphaDesc" xml:space="preserve">
-    <value>{0} (من الياء إلى الألف)</value>
+    <value>{0} (ياء إلى ألف)</value>
   </data>
   <data name="Format_TemporalNewest" xml:space="preserve">
     <value>{0} (الأحدث)</value>
@@ -176,7 +176,7 @@
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
-    <value>اكتمل الفحص. المكتبة محدّثة.</value>
+    <value>اكتمل الفحص. المكتبة محدثة.</value>
   </data>
   <data name="Status_ScanCancelled" xml:space="preserve">
     <value>تم إلغاء الفحص.</value>
@@ -185,10 +185,10 @@
     <value>فشل الفحص. تحقق من السجلات للحصول على التفاصيل.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>جاري تحضير فحص المكتبة…</value>
+    <value>جاري التحضير لفحص المكتبة…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
-    <value>جاري قراءة تفاصيل الأغنية…</value>
+    <value>جاري قراءة تفاصيل الأغاني…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
     <value>جاري تنظيف مكتبتك…</value>
@@ -197,7 +197,7 @@
     <value>جاري الإنهاء…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
-    <value>فشل تطبيع مستوى الصوت. تحقق من السجلات للحصول على التفاصيل.</value>
+    <value>فشلت تسوية مستوى الصوت. تحقق من السجلات للحصول على التفاصيل.</value>
   </data>
   <data name="Status_NoFoldersToRefresh" xml:space="preserve">
     <value>لا توجد مجلدات في المكتبة لتحديثها.</value>
@@ -207,17 +207,17 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>تعذرت إضافة المجلد.</value>
+    <value>تعذر إضافة المجلد.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>لا يمكن أن يكون اسم قائمة التشغيل فارغًا.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
-    <value>مع كلمات الأغنية</value>
+    <value>مع كلمات الأغاني</value>
   </data>
   <data name="Label_WithCoverArt" xml:space="preserve">
-    <value>مع غلاف الألبوم</value>
+    <value>مع صورة الغلاف</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
     <value>مع صورة الفنان</value>
@@ -230,22 +230,22 @@
     <value>غير معروف</value>
   </data>
   <data name="ArtistSeparator" xml:space="preserve">
-    <value> و </value>
+    <value> &amp; </value>
   </data>
   <data name="SortByPrefix" xml:space="preserve">
-    <value>الترتيب حسب: </value>
+    <value>فرز حسب: </value>
   </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>تم إنشاء قائمة التشغيل، ولكن تعذرت إضافة أغانيها. يُرجى محاولة الاستيراد مجددًا.</value>
+    <value>تم إنشاء قائمة التشغيل، ولكن تعذر إضافة أغانيها. يُرجى محاولة الاستيراد مرة أخرى.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>لم يتم العثور على أي أغانٍ من قائمة التشغيل في مكتبتك.</value>
+    <value>لم يتم العثور على أغاني من قائمة التشغيل في مكتبتك.</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>لا توجد قوائم تشغيل لتصديرها.</value>
   </data>
   <data name="EqPreset_None" xml:space="preserve">
-    <value>بلا</value>
+    <value>لا شيء</value>
   </data>
   <data name="EqPreset_Classical" xml:space="preserve">
     <value>كلاسيكي</value>
@@ -254,10 +254,10 @@
     <value>رقص</value>
   </data>
   <data name="EqPreset_FullBass" xml:space="preserve">
-    <value>جهير كامل</value>
+    <value>صوت جهير كامل</value>
   </data>
   <data name="EqPreset_FullTreble" xml:space="preserve">
-    <value>صوت ثلاثي كامل</value>
+    <value>صوت حاد كامل</value>
   </data>
   <data name="EqPreset_Jazz" xml:space="preserve">
     <value>جاز</value>
@@ -275,7 +275,7 @@
     <value>تكنو</value>
   </data>
   <data name="EqPreset_Vocal" xml:space="preserve">
-    <value>صوتي</value>
+    <value>غنائي</value>
   </data>
   <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
     <value>جميع الأغاني تحتوي بالفعل على بيانات مستوى الصوت.</value>
@@ -284,16 +284,16 @@
     <value>جاري تحليل مستوى الصوت… الأغاني: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>جاري حساب معايرة مستوى الصوت ({0}/{1})…</value>
+    <value>جاري حساب تسوية مستوى الصوت ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>اكتملت معايرة مستوى الصوت. الأغاني المعالجة: {0}.</value>
+    <value>اكتملت تسوية مستوى الصوت. الأغاني المعالجة: {0}.</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
-    <value>أدخل رمز مستخدم ListenBrainz الخاص بك.</value>
+    <value>أدخل رمز المستخدم الخاص بك في ListenBrainz.</value>
   </data>
   <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
-    <value>تعذرت قراءة الاستجابة من ListenBrainz. حاول مرة أخرى لاحقًا.</value>
+    <value>تعذر قراءة الاستجابة من ListenBrainz. حاول مرة أخرى لاحقًا.</value>
   </data>
   <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
     <value>أدخل عنوان URL للخادم يبدأ بـ http:// أو https://.</value>
@@ -308,13 +308,13 @@
     <value>تعذر الاتصال بـ ListenBrainz. تحقق من اتصالك وعنوان URL للخادم.</value>
   </data>
   <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>تعذر على Nagi العثور على مجلد بيانات المكتبة الخاص به.</value>
+    <value>لم يتمكن Nagi من العثور على مجلد بيانات مكتبته.</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
-    <value>فشلت الاستعادة، وتعذرت استعادة بياناتك السابقة بالكامل. تم حفظ ملفات الاسترداد في &apos;{0}&apos;.</value>
+    <value>فشلت الاستعادة، ولم يتم التمكن من استعادة بياناتك السابقة بالكامل. تم حفظ ملفات الاسترداد في &apos;{0}&apos;.</value>
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
-    <value>الملف المحدد ليس ملف نسخ احتياطي صالحًا لـ Nagi.</value>
+    <value>الملف المحدد ليس نسخة احتياطية صالحة لـ Nagi.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
     <value>واجه LibVLC خطأ غير محدد.</value>
@@ -324,5 +324,32 @@
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>فشل تحميل '{0}'.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>يتصفح مكتبة الموسيقى</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>خامل</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>بواسطة {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>متوقف مؤقتًا | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>مشغل الموسيقى Nagi</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>قيد التشغيل</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>متوقف مؤقتًا</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>من ويكيبيديا، بموجب ترخيص CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

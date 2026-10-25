@@ -72,7 +72,7 @@
     <value>Teideal</value>
   </data>
   <data name="Label_Playlist" xml:space="preserve">
-    <value>Seinnliosta</value>
+    <value>Seinmliosta</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>Comhad</value>
@@ -99,7 +99,7 @@
     <value>BPM</value>
   </data>
   <data name="Label_TrackNumber" xml:space="preserve">
-    <value>Uimhir Rian</value>
+    <value>Uimhir an Riain</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
     <value>Seinnte</value>
@@ -117,7 +117,7 @@
     <value>Fillteán</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
-    <value>Ordú Láimhe</value>
+    <value>Ord Láimhe</value>
   </data>
   <data name="Label_Random" xml:space="preserve">
     <value>Randamach</value>
@@ -139,7 +139,7 @@
     <value>{0} (Z go A)</value>
   </data>
   <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (Is Nua)</value>
+    <value>{0} (Is Nuaí)</value>
   </data>
   <data name="Format_TemporalOldest" xml:space="preserve">
     <value>{0} (Is Sine)</value>
@@ -163,13 +163,13 @@
     <value>An Ceann is Tapa ar dTús ({0})</value>
   </data>
   <data name="Format_Most" xml:space="preserve">
-    <value>An chuid is mó de {0}</value>
+    <value>An líon is mó {0}</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
     <value>An líon is lú {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
-    <value>Ag scanadh fillteán {0} de {1}: {2} - {3}</value>
+    <value>Ag scanadh fillteáin {0} de {1}: {2} - {3}</value>
   </data>
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Scanadh críochnaithe. Cuireadh nó nuashonraíodh {0} {1}.</value>
@@ -197,7 +197,7 @@
     <value>Á thabhairt chun críche…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
-    <value>Theip ar normalú toirte. Seiceáil logaí le haghaidh sonraí.</value>
+    <value>Theip ar normalú airde fuaime. Seiceáil logaí le haghaidh sonraí.</value>
   </data>
   <data name="Status_NoFoldersToRefresh" xml:space="preserve">
     <value>Níl aon fhillteáin sa leabharlann le hathnuachan.</value>
@@ -210,7 +210,7 @@
     <value>Níorbh fhéidir an fillteán a chur leis.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
-    <value>Ní féidir ainm an tseinnliosta a bheith folamh.</value>
+    <value>Ní féidir ainm an tseinmliosta a bheith folamh.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
@@ -236,7 +236,7 @@
     <value>Sórtáil De Réir: </value>
   </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>Cruthaíodh an liosta seinme, ach níorbh fhéidir a chuid amhrán a chur leis. Bain triail as é a iompórtáil arís.</value>
+    <value>Cruthaíodh an seinmliosta, ach níorbh fhéidir a chuid amhrán a chur leis. Bain triail as é a iompórtáil arís.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Níor aimsíodh aon amhráin ón seinmliosta i do leabharlann.</value>
@@ -278,7 +278,7 @@
     <value>Gutha</value>
   </data>
   <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
-    <value>Tá sonraí toirte ag gach amhrán cheana féin.</value>
+    <value>Tá sonraí airde fuaime ag gach amhrán cheana féin.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
     <value>Airde fuaime á hanailísiú… Amhráin: {0}</value>
@@ -324,5 +324,32 @@
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>Theip ar '{0}' a luchtú.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Ag Brabhsáil na Leabharlainne Ceoil</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Díomhaoin</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>le {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Ar Sos | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Seinnteoir Ceoil Nagi</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Á Sheinm</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Ar Sos</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>Ó Vicipéid, faoin gceadúnas CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

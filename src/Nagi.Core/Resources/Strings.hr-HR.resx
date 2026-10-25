@@ -176,7 +176,7 @@
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
-    <value>Skeniranje završeno. Knjižnica je ažurna.</value>
+    <value>Skeniranje završeno. Biblioteka je ažurna.</value>
   </data>
   <data name="Status_ScanCancelled" xml:space="preserve">
     <value>Skeniranje otkazano.</value>
@@ -200,10 +200,10 @@
     <value>Normalizacija glasnoće nije uspjela. Provjerite zapisnike za detalje.</value>
   </data>
   <data name="Status_NoFoldersToRefresh" xml:space="preserve">
-    <value>Nema mapa u knjižnici za osvježavanje.</value>
+    <value>Nema mapa u biblioteci za osvježavanje.</value>
   </data>
   <data name="Status_LibraryRefreshComplete" xml:space="preserve">
-    <value>Osvježavanje knjižnice završeno.</value>
+    <value>Osvježavanje biblioteke završeno.</value>
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
@@ -236,10 +236,10 @@
     <value>Sortiraj po: </value>
   </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>Popis izvođenja je stvoren, ali njegove pjesme nisu mogle biti dodane. Pokušajte ponovno uvesti.</value>
+    <value>Popis pjesama je stvoren, ali njegove pjesme nisu mogle biti dodane. Pokušajte ponovno uvesti.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Nijedna pjesma s popisa pjesama nije pronađena u vašoj knjižnici.</value>
+    <value>Nijedna pjesma s popisa pjesama nije pronađena u vašoj biblioteci.</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Nema popisa pjesama za izvoz.</value>
@@ -284,10 +284,10 @@
     <value>Analiza glasnoće… Pjesme: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Izračunavanje izjednačavanja glasnoće ({0}/{1})…</value>
+    <value>Izračunavanje normalizacije glasnoće ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Izjednačavanje glasnoće je dovršeno. Obrađene pjesme: {0}.</value>
+    <value>Normalizacija glasnoće je dovršena. Obrađene pjesme: {0}.</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
     <value>Unesite svoj korisnički token za ListenBrainz.</value>
@@ -324,5 +324,32 @@
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>Učitavanje '{0}' nije uspjelo.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Pregledava glazbenu knjižnicu</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Neaktivan</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>od {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Pauzirano | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Nagi glazbeni reproduktor</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Reproducira se</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Pauzirano</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>S Wikipedije, pod licencom CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

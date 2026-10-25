@@ -104,7 +104,7 @@
     <value>Repetir tot</value>
   </data>
   <data name="Tooltip_RepeatOne" xml:space="preserve">
-    <value>Repetir un</value>
+    <value>Repetir una</value>
   </data>
   <data name="Tooltip_Repeat" xml:space="preserve">
     <value>Repetir</value>
@@ -582,7 +582,7 @@ Fitxers que no s'han pogut importar: {0}.</value>
     <value>{0} elements</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
-    <value>{0} seleccionats</value>
+    <value>{0, plural, one {# seleccionat} other {# seleccionats}}</value>
   </data>
   <data name="AlbumView_DiscHeader" xml:space="preserve">
     <value>Disc {0}</value>
@@ -681,16 +681,28 @@ Fitxers que no s'han pogut importar: {0}.</value>
     <value>Servei de música xinès, ideal per a música asiàtica</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Obté els ID d'artista (requerit per a TheAudioDB i Fanart.tv)</value>
+    <value>Cerca els ID d'artista i d'àlbum que les teves etiquetes no inclouen</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>Imatges i biografies d'artista d'alta qualitat (requereix MusicBrainz)</value>
+    <value>Imatges i biografies d'artistes (cal un ID de MusicBrainz de les teves etiquetes o de MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>Només imatges d'artista d'alta qualitat (requereix MusicBrainz)</value>
+    <value>Imatges d'artistes d'alta qualitat (cal un ID de MusicBrainz de les teves etiquetes o de MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Biografies i imatges d'artista (alternativa)</value>
+    <value>Biografies d'artistes i portades d'àlbums (alternativa)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>Imatges d'artistes i portades d'àlbums, cercades pel nom</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>Biografies d'artistes en el teu idioma (cal un ID de MusicBrainz de les teves etiquetes o de MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>Portades d'àlbums per a publicacions de MusicBrainz (fa servir els ID de les teves etiquetes o de MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>Portades d'àlbums d'alta resolució, cercades pel nom</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cercar àlbums</value>
@@ -744,7 +756,7 @@ Fitxers que no s'han pogut importar: {0}.</value>
     <value>Cancel·la</value>
   </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
-    <value>Canviar nom '{0}'</value>
+    <value>Canviar el nom de '{0}'</value>
   </data>
   <data name="PlaylistPage_RenameDialog_RenameButton" xml:space="preserve">
     <value>Canviar nom</value>
@@ -762,7 +774,7 @@ Fitxers que no s'han pogut importar: {0}.</value>
     <value>Cercar a la llista de reproducció</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Cerca al gènere</value>
+    <value>Cercar al gènere</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cercar a la llista de reproducció intel·ligent</value>
@@ -805,7 +817,7 @@ Això analitzarà la teva biblioteca de música i modificarà directament els te
 Vols continuar?</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
-    <value>Activar i Escanejar</value>
+    <value>Activar i escanejar</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>S'està preparant l'escaneig de normalització del volum…</value>
@@ -832,7 +844,7 @@ Vols continuar?</value>
     <value>Tornar al reproductor</value>
   </data>
   <data name="MiniPlayer_UpNextHeader" xml:space="preserve">
-    <value>Següent</value>
+    <value>A continuació</value>
   </data>
   <data name="MiniPlayer_RestoreButton_ToolTip" xml:space="preserve">
     <value>Mostrar Nagi</value>
@@ -844,7 +856,7 @@ Vols continuar?</value>
     <value>Següent</value>
   </data>
   <data name="MiniPlayer_QueueButton_ToolTip" xml:space="preserve">
-    <value>Següent</value>
+    <value>A continuació</value>
   </data>
   <data name="CrashReport_ReportIssuePreLink" xml:space="preserve">
     <value>Si us plau, considera reportar això creant una incidència a la </value>
@@ -856,13 +868,16 @@ Vols continuar?</value>
     <value>.</value>
   </data>
   <data name="CrashReport_ResetAppAdvice" xml:space="preserve">
-    <value>Si això continua passant, pots provar 'Reiniciar l'aplicació i les dades'. Això esborrarà la configuració i la biblioteca, la qual cosa pot ajudar a recuperar l'aplicació d'un estat danyat.</value>
+    <value>Si això continua passant, pots provar 'Restablir aplicació i dades'. Això esborrarà la configuració i la biblioteca, la qual cosa pot ajudar a recuperar l'aplicació d'un estat danyat.</value>
   </data>
   <data name="CrashReport_CopyLogButton_ToolTip" xml:space="preserve">
     <value>Copiar registre al porta-retalls</value>
   </data>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>Copiar registre</value>
+  </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>Registre d'errors</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>Triar portada</value>
@@ -900,6 +915,12 @@ Vols continuar?</value>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>Valor</value>
   </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>Camp</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>Condició</value>
+  </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>Eliminar aquesta regla</value>
   </data>
@@ -928,13 +949,13 @@ Vols continuar?</value>
     <value>Següent</value>
   </data>
   <data name="TrayPopup_QueueButton_ToolTip" xml:space="preserve">
-    <value>Següent</value>
+    <value>A continuació</value>
   </data>
   <data name="TrayPopup_BackButton_ToolTip" xml:space="preserve">
     <value>Tornar al reproductor</value>
   </data>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
-    <value>Següent</value>
+    <value>A continuació</value>
   </data>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
@@ -949,13 +970,16 @@ Vols continuar?</value>
     <value>Lletres</value>
   </data>
   <data name="Player_QueueButton_ToolTip" xml:space="preserve">
-    <value>Següent</value>
+    <value>A continuació</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Vés a l'àlbum</value>
   </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>Posició de reproducció</value>
+  </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>Següent</value>
+    <value>A continuació</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>Neteja la cua</value>
@@ -1005,9 +1029,6 @@ Vols continuar?</value>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca àlbums…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cercar àlbums</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Triar un a l'atzar</value>
   </data>
@@ -1029,9 +1050,6 @@ Vols continuar?</value>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca a l'àlbum…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cercar a l'àlbum</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Reprodueix-ho tot</value>
   </data>
@@ -1049,9 +1067,6 @@ Vols continuar?</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca artistes…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cercar artistes</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Triar un a l'atzar</value>
@@ -1091,9 +1106,6 @@ Vols continuar?</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca a l'artista…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cercar a l'artista</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Reprodueix-ho tot</value>
@@ -1167,9 +1179,6 @@ Vols continuar?</value>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca gèneres…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cercar gèneres</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>Triar un a l'atzar</value>
   </data>
@@ -1187,9 +1196,6 @@ Vols continuar?</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca a la biblioteca…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cercar a la biblioteca</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Reprodueix-ho tot</value>
@@ -1258,7 +1264,7 @@ Vols continuar?</value>
     <value>No s'ha pogut actualitzar la lletra</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Nagi no ha pogut desar la lletra. Comproveu el registre per veure els detalls i torneu-ho a provar.</value>
+    <value>Nagi no ha pogut desar la lletra. Comprova el registre per veure els detalls i torna-ho a provar.</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Benvingut a Nagi</value>
@@ -1297,7 +1303,7 @@ Vols continuar?</value>
     <value>Dona vida a la biblioteca</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi funciona completament sense connexió. Activa aquestes opcions per afegir fotos dels artistes, biografies i lletres que no estiguin incloses als teus fitxers.</value>
+    <value>Nagi funciona completament sense connexió. Activa aquestes opcions per afegir fotos d'artistes, biografies, portades d'àlbums i lletres que no estiguin incloses als teus fitxers.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>Integra'l perfectament a l'escriptori</value>
@@ -1334,9 +1340,6 @@ Vols continuar?</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca llistes de reproducció…</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cercar llistes de reproducció</value>
   </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Triar un a l'atzar</value>
@@ -1383,9 +1386,6 @@ Vols continuar?</value>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca a la llista de reproducció…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cercar a la llista de reproducció</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Reprodueix-ho tot</value>
   </data>
@@ -1409,9 +1409,6 @@ Vols continuar?</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca al gènere…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cercar al gènere</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Reprodueix-ho tot</value>
@@ -1492,10 +1489,10 @@ Vols continuar?</value>
     <value>Mode exclusiu de WASAPI</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Dona a Nagi el control exclusiu del dispositiu d'àudio de Windows. Altres aplicacions poden quedar-se sense so. Reinicieu Nagi després de canviar aquesta configuració.</value>
+    <value>Dona a Nagi el control exclusiu del dispositiu d'àudio de Windows. Altres aplicacions poden quedar-se sense so. Reinicia Nagi després de canviar aquesta configuració.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
-    <value>Enfocament en reproducció / pausa</value>
+    <value>Esvaïment en reproduir / pausar</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
     <value>Fes que el volum s'esvaeixi suaument en reprendre i en posar en pausa, en lloc de tallar-lo instantàniament.</value>
@@ -1508,6 +1505,12 @@ Vols continuar?</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Preamp</value>
+  </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>Perfil predefinit de l'equalitzador</value>
   </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>Personalitzat</value>
@@ -1594,7 +1597,7 @@ Vols continuar?</value>
     <value>Obtén metadades en línia</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Obtén imatges i biografies d'artistes des de fonts en línia.</value>
+    <value>Obtén imatges i biografies d'artistes i portades d'àlbums des de fonts en línia.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Fonts</value>
@@ -1687,7 +1690,7 @@ Vols continuar?</value>
     <value>Això esborrarà totes les dades de la biblioteca, les llistes de reproducció i restablirà tota la configuració als valors predeterminats. L'aplicació es reiniciarà.</value>
   </data>
   <data name="SettingsPage_ResetButton_Content" xml:space="preserve">
-    <value>Reiniciar totes les dades</value>
+    <value>Restablir totes les dades</value>
   </data>
   <data name="SettingsPage_Section_Integrations" xml:space="preserve">
     <value>Integracions</value>
@@ -1782,9 +1785,6 @@ Vols continuar?</value>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca a la llista de reproducció intel·ligent…</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cercar a la llista de reproducció intel·ligent</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Editar regles</value>
   </data>
@@ -1843,7 +1843,7 @@ Vols continuar?</value>
     <value>Còpia de seguretat i restauració</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Crea una còpia de seguretat de les dades i la configuració de la biblioteca, o restaura'n una de anterior.</value>
+    <value>Crea una còpia de seguretat de les dades i la configuració de la biblioteca, o restaura'n una d'anterior.</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
     <value>Crear còpia de seguretat</value>
@@ -1906,7 +1906,7 @@ Vols continuar?</value>
     <value>Intensitat del tint</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Ajusta l'intensitat del color de fons del reproductor.</value>
+    <value>Ajusta la intensitat del color de fons del reproductor.</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
     <value>Durada de l'aparició gradual</value>
@@ -2063,6 +2063,9 @@ Vols continuar?</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>Sempre</value>
+  </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>Període</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}h {1}m</value>
@@ -2257,11 +2260,71 @@ Vols continuar?</value>
     <value>No hi ha llistes de reproducció disponibles</value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>Cal el FFmpeg per analitzar les cançons per a la normalització del volum, però Nagi no l'ha pogut trobar.
+    <value>Cal FFmpeg per analitzar les cançons per a la normalització del volum, però Nagi no l'ha pogut trobar.
 
-1. Baixeu una versió per a Windows des de https://ffmpeg.org/download.html.
-2. Extraieu l'arxiu i cerqueu ffmpeg.exe a la carpeta bin.
-3. Afegiu la carpeta que conté ffmpeg.exe al PATH de Windows.
-4. Reinicieu Nagi i torneu a activar la normalització del volum.</value>
+1. Baixa una versió per a Windows des de https://ffmpeg.org/download.html.
+2. Extreu l'arxiu i cerca ffmpeg.exe a la seva carpeta bin.
+3. Afegeix la carpeta que conté ffmpeg.exe al PATH de Windows.
+4. Reinicia Nagi i torna a activar la normalització del volum.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>Informació de la cançó</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>Etiquetes</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>Escolta</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>Artista de l'àlbum</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>Director</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>Copyright</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>Camí</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>Canals</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>Mida</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} de {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>Columnes de les llistes de cançons</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>Tria quins detalls mostren les llistes de cançons.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>Capçaleres de columna</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>Mostra una etiqueta a sobre de cada columna de les llistes de cançons.</value>
   </data>
 </root>

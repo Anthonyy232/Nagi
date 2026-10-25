@@ -176,7 +176,7 @@
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
-    <value>Сканирование завершено. Библиотека обновлена.</value>
+    <value>Сканирование завершено. Библиотека в актуальном состоянии.</value>
   </data>
   <data name="Status_ScanCancelled" xml:space="preserve">
     <value>Сканирование отменено.</value>
@@ -284,10 +284,10 @@
     <value>Анализ громкости… Треков: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Расчет выравнивания громкости ({0}/{1})…</value>
+    <value>Расчет нормализации громкости ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Выравнивание громкости завершено. Обработано треков: {0}.</value>
+    <value>Нормализация громкости завершена. Обработано треков: {0}.</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
     <value>Введите ваш токен пользователя ListenBrainz.</value>
@@ -324,5 +324,32 @@
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>Не удалось загрузить '{0}'.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Просматривает музыкальную библиотеку</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Бездействует</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>от {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>На паузе | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Музыкальный плеер Nagi</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Воспроизводится</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>На паузе</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>Из Википедии, по лицензии CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

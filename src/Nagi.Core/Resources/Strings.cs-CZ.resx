@@ -60,7 +60,7 @@
   </resheader>
   <!-- Noun Labels -->
   <data name="Label_Artist" xml:space="preserve">
-    <value>Umělec</value>
+    <value>Interpret</value>
   </data>
   <data name="Label_Album" xml:space="preserve">
     <value>Album</value>
@@ -163,10 +163,10 @@
     <value>Nejrychlejší první ({0})</value>
   </data>
   <data name="Format_Most" xml:space="preserve">
-    <value>Nejvíce {0}</value>
+    <value>Nejvíce: {0}</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
-    <value>Nejméně {0}</value>
+    <value>Nejméně: {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Skenuji složku {0} z {1}: {2} - {3}</value>
@@ -220,7 +220,7 @@
     <value>s obalem</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>s obrázkem umělce</value>
+    <value>s obrázkem interpreta</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>a</value>
@@ -284,10 +284,10 @@
     <value>Analýza hlasitosti… Skladby: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Výpočet vyrovnání hlasitosti ({0}/{1})…</value>
+    <value>Výpočet normalizace hlasitosti ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Vyrovnání hlasitosti je dokončeno. Zpracované skladby: {0}.</value>
+    <value>Normalizace hlasitosti je dokončena. Zpracované skladby: {0}.</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
     <value>Zadejte uživatelský token ListenBrainz.</value>
@@ -324,5 +324,32 @@
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>Nepodařilo se načíst „{0}“.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Prochází hudební knihovnu</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Nečinný</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>od {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Pozastaveno | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Hudební přehrávač Nagi</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Přehrává se</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Pozastaveno</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>Z Wikipedie, pod licencí CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

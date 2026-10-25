@@ -182,7 +182,7 @@
     <value>Tidak mengandung</value>
   </data>
   <data name="Operator_Is" xml:space="preserve">
-    <value>Tepatnya</value>
+    <value>Sama persis dengan</value>
   </data>
   <data name="Operator_IsNot" xml:space="preserve">
     <value>Bukan</value>
@@ -588,7 +588,7 @@ Berkas yang tidak dapat diimpor: {0}.</value>
     <value>Disk {0}</value>
   </data>
   <data name="Generic_OK" xml:space="preserve">
-    <value>OKE</value>
+    <value>OK</value>
   </data>
   <data name="Generic_Cancel" xml:space="preserve">
     <value>Batal</value>
@@ -681,16 +681,28 @@ Berkas yang tidak dapat diimpor: {0}.</value>
     <value>Layanan musik Tiongkok, bagus untuk musik Asia</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Mengambil ID artis (diperlukan untuk TheAudioDB dan Fanart.tv)</value>
+    <value>Mencari ID artis dan album yang tidak ada di tag Anda</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>Gambar dan biografi artis berkualitas tinggi (membutuhkan MusicBrainz)</value>
+    <value>Gambar dan biografi artis (membutuhkan ID MusicBrainz dari tag Anda atau MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>Hanya gambar artis berkualitas tinggi (membutuhkan MusicBrainz)</value>
+    <value>Gambar artis berkualitas tinggi (membutuhkan ID MusicBrainz dari tag Anda atau MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Biografi dan gambar artis (cadangan)</value>
+    <value>Biografi artis dan sampul album (cadangan)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>Gambar artis dan sampul album, dicari berdasarkan nama</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>Biografi artis dalam bahasa Anda (membutuhkan ID MusicBrainz dari tag Anda atau MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>Sampul album untuk rilisan MusicBrainz (menggunakan ID dari tag Anda atau MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>Sampul album resolusi tinggi, dicari berdasarkan nama</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cari album</value>
@@ -864,6 +876,9 @@ Apakah Anda ingin melanjutkan?</value>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>Salin Log</value>
   </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>Log kerusakan</value>
+  </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>Pilih Sampul</value>
   </data>
@@ -899,6 +914,12 @@ Apakah Anda ingin melanjutkan?</value>
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>Nilai</value>
+  </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>Bidang</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>Kondisi</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>Hapus aturan ini</value>
@@ -954,6 +975,9 @@ Apakah Anda ingin melanjutkan?</value>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Buka Album</value>
   </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>Posisi pemutaran</value>
+  </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Berikutnya</value>
   </data>
@@ -1005,9 +1029,6 @@ Apakah Anda ingin melanjutkan?</value>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cari album…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cari album</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Pilih secara acak</value>
   </data>
@@ -1029,9 +1050,6 @@ Apakah Anda ingin melanjutkan?</value>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cari dalam album…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cari di album</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Putar semua</value>
   </data>
@@ -1049,9 +1067,6 @@ Apakah Anda ingin melanjutkan?</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cari artis…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cari artis</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Pilih secara acak</value>
@@ -1091,9 +1106,6 @@ Apakah Anda ingin melanjutkan?</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cari dalam artis…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cari di artis</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Putar semua</value>
@@ -1167,9 +1179,6 @@ Apakah Anda ingin melanjutkan?</value>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cari genre…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cari genre</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>Pilih secara acak</value>
   </data>
@@ -1187,9 +1196,6 @@ Apakah Anda ingin melanjutkan?</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cari pustaka…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cari di pustaka</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Putar semua</value>
@@ -1297,7 +1303,7 @@ Apakah Anda ingin melanjutkan?</value>
     <value>Hidupkan pustaka Anda</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi bekerja sepenuhnya secara luring. Aktifkan ini untuk melengkapi foto artis, biografi, dan lirik yang tidak ada di berkas Anda.</value>
+    <value>Nagi bekerja sepenuhnya secara luring. Aktifkan ini untuk melengkapi foto artis, biografi, sampul album, dan lirik yang tidak ada di berkas Anda.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>Menyatu dengan desktop Anda</value>
@@ -1334,9 +1340,6 @@ Apakah Anda ingin melanjutkan?</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cari daftar putar…</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cari daftar putar</value>
   </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Pilih secara acak</value>
@@ -1383,9 +1386,6 @@ Apakah Anda ingin melanjutkan?</value>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cari dalam daftar putar…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cari di daftar putar</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Putar semua</value>
   </data>
@@ -1409,9 +1409,6 @@ Apakah Anda ingin melanjutkan?</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cari dalam genre…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cari di genre</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Putar semua</value>
@@ -1492,13 +1489,13 @@ Apakah Anda ingin melanjutkan?</value>
     <value>Mode Eksklusif WASAPI</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Berikan Nagi kontrol eksklusif atas perangkat audio Windows. Aplikasi lain mungkin akan bersuara senyap. Mulai ulang Nagi setelah mengubah pengaturan ini.</value>
+    <value>Berikan Nagi kontrol eksklusif atas perangkat audio Windows. Aplikasi lain mungkin tidak bersuara. Mulai ulang Nagi setelah mengubah pengaturan ini.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>Fade saat Putar / Jeda</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Meredupkan volume secara halus saat melanjutkan dan memudar saat menjeda, bukan memotong secara instan.</value>
+    <value>Menaikkan volume secara halus saat melanjutkan dan menurunkannya saat menjeda, bukan memotong secara instan.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>Ekualiser Audio</value>
@@ -1508,6 +1505,12 @@ Apakah Anda ingin melanjutkan?</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Preamp</value>
+  </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>Preset ekualiser</value>
   </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>Kustom</value>
@@ -1540,10 +1543,10 @@ Apakah Anda ingin melanjutkan?</value>
     <value>Mulai Nagi secara otomatis saat Anda masuk ke komputer Anda.</value>
   </data>
   <data name="SettingsPage_StartMinimized_Header" xml:space="preserve">
-    <value>Mulai Diciutkan</value>
+    <value>Mulai Diminimalkan</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>Jalankan Nagi dengan jendela diciutkan.</value>
+    <value>Jalankan Nagi dengan jendela diminimalkan.</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
     <value>Minimalkan ke Pemutar Mini</value>
@@ -1573,7 +1576,7 @@ Apakah Anda ingin melanjutkan?</value>
     <value>Manajemen Data</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Header" xml:space="preserve">
-    <value>Pembagian Artis</value>
+    <value>Pemisahan Artis</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
     <value>Definisikan karakter yang digunakan untuk memisahkan beberapa artis (misalnya ';/'). Biarkan kosong untuk menonaktifkan.</value>
@@ -1588,13 +1591,13 @@ Apakah Anda ingin melanjutkan?</value>
     <value>Pindai Ulang Pustaka</value>
   </data>
   <data name="SettingsPage_RescanLibrary_ToolTip" xml:space="preserve">
-    <value>Pindai ulang pustaka untuk menerapkan perubahan pembagian</value>
+    <value>Pindai ulang pustaka untuk menerapkan perubahan pemisahan</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
     <value>Ambil Metadata Daring</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Ambil gambar dan biografi artis dari sumber daring.</value>
+    <value>Ambil gambar artis, biografi, dan sampul album dari sumber daring.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Sumber</value>
@@ -1687,7 +1690,7 @@ Apakah Anda ingin melanjutkan?</value>
     <value>Ini akan menghapus semua data pustaka, daftar putar, dan mengatur ulang semua pengaturan ke defaultnya. Aplikasi akan memulai ulang.</value>
   </data>
   <data name="SettingsPage_ResetButton_Content" xml:space="preserve">
-    <value>Setel Ulang Semua Data</value>
+    <value>Atur Ulang Semua Data</value>
   </data>
   <data name="SettingsPage_Section_Integrations" xml:space="preserve">
     <value>Integrasi</value>
@@ -1782,9 +1785,6 @@ Apakah Anda ingin melanjutkan?</value>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cari dalam daftar putar cerdas…</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cari di daftar putar cerdas</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Edit aturan</value>
   </data>
@@ -1831,7 +1831,7 @@ Apakah Anda ingin melanjutkan?</value>
     <value>Mulai ulang Nagi untuk menerapkan perubahan bahasa.</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
-    <value>Restart Diperlukan</value>
+    <value>Perlu Mulai Ulang</value>
   </data>
   <data name="SettingsPage_RestartRequired_Message" xml:space="preserve">
     <value>Harap mulai ulang aplikasi agar perubahan bahasa dapat berlaku sepenuhnya.</value>
@@ -2059,10 +2059,13 @@ Apakah Anda ingin melanjutkan?</value>
     <value>90 Hari Terakhir</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>Tahun Lalu</value>
+    <value>1 Tahun Terakhir</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>Sepanjang Waktu</value>
+  </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>Rentang waktu</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}j {1}m</value>
@@ -2263,5 +2266,65 @@ Apakah Anda ingin melanjutkan?</value>
 2. Ekstrak arsip lalu temukan ffmpeg.exe di folder bin miliknya.
 3. Tambahkan folder yang berisi ffmpeg.exe ke PATH Windows Anda.
 4. Mulai ulang Nagi, lalu aktifkan kembali normalisasi volume.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>Info Lagu</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>Riwayat Putar</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>Artis Album</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>Konduktor</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>Hak Cipta</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>Jalur</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>Saluran</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>Ukuran</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} dari {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>Kolom Daftar Lagu</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>Pilih detail yang ditampilkan di daftar lagu.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>Judul Kolom</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>Tampilkan label setiap kolom di atas daftar lagu.</value>
   </data>
 </root>

@@ -60,7 +60,7 @@
   </resheader>
   <!-- Noun Labels -->
   <data name="Label_Artist" xml:space="preserve">
-    <value>Aktør</value>
+    <value>Artist</value>
   </data>
   <data name="Label_Album" xml:space="preserve">
     <value>Album</value>
@@ -284,10 +284,10 @@
     <value>Analyserer volum… Sanger: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Beregner volumutjevning ({0}/{1})…</value>
+    <value>Beregner volumnormalisering ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Volumutjevning fullført. Behandlede sanger: {0}.</value>
+    <value>Volumnormalisering fullført. Behandlede sanger: {0}.</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
     <value>Skriv inn din ListenBrainz-brukertoken.</value>
@@ -324,5 +324,32 @@
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>Klarte ikke å laste '{0}'.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Blar i musikkbiblioteket</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Inaktiv</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>av {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Satt på pause | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Nagi-musikkspiller</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Spiller</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Satt på pause</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>Fra Wikipedia, under CC BY-SA-lisensen.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

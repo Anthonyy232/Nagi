@@ -66,13 +66,13 @@
     <value>آلبوم</value>
   </data>
   <data name="Label_Genre" xml:space="preserve">
-    <value>سبک</value>
+    <value>ژانر</value>
   </data>
   <data name="Label_Title" xml:space="preserve">
     <value>عنوان</value>
   </data>
   <data name="Label_Playlist" xml:space="preserve">
-    <value>پلی‌لیست</value>
+    <value>لیست پخش</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>فایل</value>
@@ -197,7 +197,7 @@
     <value>در حال نهایی‌سازی…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
-    <value>عادی‌سازی صدا ناموفق بود. برای جزئیات به گزارش‌ها مراجعه کنید.</value>
+    <value>نرمال‌سازی صدا ناموفق بود. برای جزئیات به گزارش‌ها مراجعه کنید.</value>
   </data>
   <data name="Status_NoFoldersToRefresh" xml:space="preserve">
     <value>هیچ پوشه‌ای در کتابخانه برای تازه‌سازی وجود ندارد.</value>
@@ -210,7 +210,7 @@
     <value>افزودن پوشه امکان‌پذیر نبود.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
-    <value>نام پلی‌لیست نمی‌تواند خالی باشد.</value>
+    <value>نام لیست پخش نمی‌تواند خالی باشد.</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
@@ -236,13 +236,13 @@
     <value>مرتب‌سازی بر اساس: </value>
   </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>فهرست پخش ساخته شد، اما افزودن آهنگ‌های آن امکان‌پذیر نبود. لطفاً دوباره وارد کردن را امتحان کنید.</value>
+    <value>لیست پخش ساخته شد، اما افزودن آهنگ‌های آن امکان‌پذیر نبود. لطفاً دوباره وارد کردن را امتحان کنید.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>هیچ آهنگی از پلی‌لیست در کتابخانه شما یافت نشد.</value>
+    <value>هیچ آهنگی از لیست پخش در کتابخانه شما یافت نشد.</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
-    <value>هیچ پلی‌لیستی برای خروجی گرفتن وجود ندارد.</value>
+    <value>هیچ لیست پخشی برای خروجی گرفتن وجود ندارد.</value>
   </data>
   <data name="EqPreset_None" xml:space="preserve">
     <value>هیچ‌کدام</value>
@@ -324,5 +324,32 @@
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>بارگذاری '{0}' ناموفق بود.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>در حال مرور کتابخانه موسیقی</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>بیکار</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>از {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>مکث شده | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>پخش‌کننده موسیقی Nagi</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>در حال پخش</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>مکث شده</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>برگرفته از ویکی‌پدیا، تحت مجوز CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

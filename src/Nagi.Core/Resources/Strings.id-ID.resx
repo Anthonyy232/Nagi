@@ -163,7 +163,7 @@
     <value>Tercepat Dahulu ({0})</value>
   </data>
   <data name="Format_Most" xml:space="preserve">
-    <value>Terbanyak {0}</value>
+    <value>{0} Terbanyak</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
     <value>Paling sedikit {0}</value>
@@ -176,7 +176,7 @@
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
-    <value>Pemindaian selesai. Pustaka sudah diperbarui.</value>
+    <value>Pemindaian selesai. Pustaka sudah terbaru.</value>
   </data>
   <data name="Status_ScanCancelled" xml:space="preserve">
     <value>Pemindaian dibatalkan.</value>
@@ -200,10 +200,10 @@
     <value>Normalisasi volume gagal. Periksa log untuk detail.</value>
   </data>
   <data name="Status_NoFoldersToRefresh" xml:space="preserve">
-    <value>Tidak ada folder di perpustakaan untuk disegarkan.</value>
+    <value>Tidak ada folder di pustaka untuk disegarkan.</value>
   </data>
   <data name="Status_LibraryRefreshComplete" xml:space="preserve">
-    <value>Penyegaran perpustakaan selesai.</value>
+    <value>Penyegaran pustaka selesai.</value>
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
@@ -239,7 +239,7 @@
     <value>Daftar putar telah dibuat, tetapi lagunya tidak dapat ditambahkan. Silakan coba mengimpor lagi.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Tidak ada lagu dari daftar putar yang ditemukan di perpustakaan Anda.</value>
+    <value>Tidak ada lagu dari daftar putar yang ditemukan di pustaka Anda.</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Tidak ada daftar putar untuk diekspor.</value>
@@ -251,7 +251,7 @@
     <value>Klasik</value>
   </data>
   <data name="EqPreset_Dance" xml:space="preserve">
-    <value>Dans</value>
+    <value>Dansa</value>
   </data>
   <data name="EqPreset_FullBass" xml:space="preserve">
     <value>Bass Penuh</value>
@@ -324,5 +324,32 @@
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>Gagal memuat '{0}'.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Menjelajahi Pustaka Musik</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Siaga</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>oleh {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Dijeda | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Pemutar Musik Nagi</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Memutar</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Dijeda</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>Dari Wikipedia, di bawah lisensi CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

@@ -681,16 +681,28 @@
     <value>ਚੀਨੀ ਸੰਗੀਤ ਸੇਵਾ, ਏਸ਼ੀਆਈ ਸੰਗੀਤ ਲਈ ਵਧੀਆ</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>ਕਲਾਕਾਰ ID ਪ੍ਰਾਪਤ ਕਰਦਾ ਹੈ (TheAudioDB ਅਤੇ Fanart.tv ਲਈ ਲੋੜੀਂਦਾ)</value>
+    <value>ਕਲਾਕਾਰ ਅਤੇ ਐਲਬਮ ID ਲੱਭਦਾ ਹੈ ਜੋ ਤੁਹਾਡੇ ਟੈਗਾਂ ਵਿੱਚ ਸ਼ਾਮਲ ਨਹੀਂ ਹਨ</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>ਉੱਚ-ਗੁਣਵੱਤਾ ਵਾਲੇ ਕਲਾਕਾਰ ਚਿੱਤਰ ਅਤੇ ਜੀਵਨੀ (MusicBrainz ਦੀ ਲੋੜ ਹੈ)</value>
+    <value>ਕਲਾਕਾਰ ਚਿੱਤਰ ਅਤੇ ਜੀਵਨੀਆਂ (ਤੁਹਾਡੇ ਟੈਗਾਂ ਜਾਂ MusicBrainz ਤੋਂ MusicBrainz ID ਦੀ ਲੋੜ ਹੈ)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>ਸਿਰਫ਼ ਉੱਚ-ਗੁਣਵੱਤਾ ਵਾਲੇ ਕਲਾਕਾਰ ਚਿੱਤਰ (MusicBrainz ਦੀ ਲੋੜ ਹੈ)</value>
+    <value>ਉੱਚ-ਗੁਣਵੱਤਾ ਵਾਲੇ ਕਲਾਕਾਰ ਚਿੱਤਰ (ਤੁਹਾਡੇ ਟੈਗਾਂ ਜਾਂ MusicBrainz ਤੋਂ MusicBrainz ID ਦੀ ਲੋੜ ਹੈ)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>ਕਲਾਕਾਰ ਦੀਆਂ ਜੀਵਨੀਆਂ ਅਤੇ ਚਿੱਤਰ (ਫਾਲਬੈਕ)</value>
+    <value>ਕਲਾਕਾਰ ਦੀਆਂ ਜੀਵਨੀਆਂ ਅਤੇ ਐਲਬਮ ਕਵਰ (ਫਾਲਬੈਕ)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ ਚਿੱਤਰ ਅਤੇ ਐਲਬਮ ਕਵਰ, ਨਾਮ ਨਾਲ ਲੱਭੇ ਗਏ</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>ਤੁਹਾਡੀ ਭਾਸ਼ਾ ਵਿੱਚ ਕਲਾਕਾਰ ਦੀਆਂ ਜੀਵਨੀਆਂ (ਤੁਹਾਡੇ ਟੈਗਾਂ ਜਾਂ MusicBrainz ਤੋਂ MusicBrainz ID ਦੀ ਲੋੜ ਹੈ)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>MusicBrainz ਰਿਲੀਜ਼ਾਂ ਲਈ ਐਲਬਮ ਕਵਰ (ਤੁਹਾਡੇ ਟੈਗਾਂ ਜਾਂ MusicBrainz ਤੋਂ ID ਵਰਤਦਾ ਹੈ)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>ਉੱਚ-ਰੈਜ਼ੋਲਿਊਸ਼ਨ ਐਲਬਮ ਕਵਰ, ਨਾਮ ਨਾਲ ਲੱਭੇ ਗਏ</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ਐਲਬਮਾਂ ਖੋਜੋ</value>
@@ -795,10 +807,10 @@
     <value>FFmpeg ਨਹੀਂ ਮਿਲਿਆ</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Title" xml:space="preserve">
-    <value>ਆਵਾਜ਼ ਨੂੰ ਆਮ ਬਣਾਉਣਾ ਸਮਰੱਥ ਕਰੋ</value>
+    <value>ਵਾਲੀਅਮ ਨਾਰਮਲਾਈਜ਼ੇਸ਼ਨ ਸਮਰੱਥ ਕਰੋ</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
-    <value>ਆਵਾਜ਼ ਨੂੰ ਆਮ ਬਣਾਉਣਾ (ReplayGain) ਤੁਹਾਡੇ ਸਾਰੇ ਸੰਗੀਤ ਵਿੱਚ ਇੱਕ ਸਥਿਰ ਆਵਾਜ਼ ਪੱਧਰ ਨੂੰ ਯਕੀਨੀ ਬਣਾਉਂਦਾ ਹੈ।
+    <value>ਵਾਲੀਅਮ ਨਾਰਮਲਾਈਜ਼ੇਸ਼ਨ (ReplayGain) ਤੁਹਾਡੇ ਸਾਰੇ ਸੰਗੀਤ ਵਿੱਚ ਇੱਕ ਸਥਿਰ ਆਵਾਜ਼ ਪੱਧਰ ਨੂੰ ਯਕੀਨੀ ਬਣਾਉਂਦਾ ਹੈ।
 
 ਇਹ ਤੁਹਾਡੀ ਸੰਗੀਤ ਲਾਇਬ੍ਰੇਰੀ ਦਾ ਵਿਸ਼ਲੇਸ਼ਣ ਕਰੇਗਾ ਅਤੇ ReplayGain ਟੈਗਸ ਲਿਖ ਕੇ ਤੁਹਾਡੀਆਂ ਆਡੀਓ ਫਾਈਲਾਂ ਨੂੰ ਸਿੱਧਾ ਸੋਧੇਗਾ। ਸਿਰਫ਼ ਉਹ ਫਾਈਲਾਂ ਜਿਨ੍ਹਾਂ ਵਿੱਚ ਮੌਜੂਦਾ ਟੈਗ ਨਹੀਂ ਹਨ, ਉਹਨਾਂ 'ਤੇ ਪ੍ਰਕਿਰਿਆ ਕੀਤੀ ਜਾਵੇਗੀ। ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਦੇ ਆਕਾਰ ਦੇ ਆਧਾਰ 'ਤੇ ਇਸ ਵਿੱਚ ਕੁਝ ਸਮਾਂ ਲੱਗ ਸਕਦਾ ਹੈ।
 
@@ -808,10 +820,10 @@
     <value>ਸਮਰੱਥ ਕਰੋ ਅਤੇ ਸਕੈਨ ਕਰੋ</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>ਅਵਾਜ਼ ਨੌਰਮਲਾਈਜ਼ੇਸ਼ਨ ਸਕੈਨ ਦੀ ਤਿਆਰੀ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ…</value>
+    <value>ਵਾਲੀਅਮ ਨਾਰਮਲਾਈਜ਼ੇਸ਼ਨ ਸਕੈਨ ਦੀ ਤਿਆਰੀ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>ਆਵਾਜ਼ ਨੂੰ ਆਮ ਬਣਾਉਣ ਲਈ ਸਕੈਨ ਰੱਦ ਕੀਤਾ ਗਿਆ।</value>
+    <value>ਵਾਲੀਅਮ ਨਾਰਮਲਾਈਜ਼ੇਸ਼ਨ ਸਕੈਨ ਰੱਦ ਕੀਤਾ ਗਿਆ।</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>ਸਕੈਨ ਦੌਰਾਨ ਗਲਤੀ: {0}</value>
@@ -832,7 +844,7 @@
     <value>ਪਲੇਅਰ 'ਤੇ ਵਾਪਸ</value>
   </data>
   <data name="MiniPlayer_UpNextHeader" xml:space="preserve">
-    <value>ਅਗਲਾ</value>
+    <value>ਅਗਲੇ ਗੀਤ</value>
   </data>
   <data name="MiniPlayer_RestoreButton_ToolTip" xml:space="preserve">
     <value>Nagi ਦਿਖਾਓ</value>
@@ -844,16 +856,16 @@
     <value>ਅਗਲਾ</value>
   </data>
   <data name="MiniPlayer_QueueButton_ToolTip" xml:space="preserve">
-    <value>ਅਗਲਾ</value>
+    <value>ਅਗਲੇ ਗੀਤ</value>
   </data>
   <data name="CrashReport_ReportIssuePreLink" xml:space="preserve">
-    <value>ਕਿਰਪਾ ਕਰਕੇ ਇਸਦੀ ਰਿਪੋਰਟ ਇਸ 'ਤੇ ਇੱਕ ਸਮੱਸਿਆ ਬਣਾ ਕੇ ਕਰੋ </value>
+    <value>ਕਿਰਪਾ ਕਰਕੇ ਇਸਦੀ ਰਿਪੋਰਟ ਕਰਨ ਲਈ </value>
   </data>
   <data name="CrashReport_IssueLink" xml:space="preserve">
     <value>ਸਮੱਸਿਆਵਾਂ ਦਾ ਪੰਨਾ</value>
   </data>
   <data name="CrashReport_ReportIssuePostLink" xml:space="preserve">
-    <value>.</value>
+    <value> 'ਤੇ ਇੱਕ ਇਸ਼ੂ ਬਣਾਓ।</value>
   </data>
   <data name="CrashReport_ResetAppAdvice" xml:space="preserve">
     <value>ਜੇਕਰ ਇਹ ਵਾਰ-ਵਾਰ ਹੁੰਦਾ ਰਹਿੰਦਾ ਹੈ, ਤਾਂ ਤੁਸੀਂ 'ਐਪ ਅਤੇ ਡਾਟਾ ਰੀਸੈਟ ਕਰੋ' ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰ ਸਕਦੇ ਹੋ। ਇਹ ਤੁਹਾਡੀਆਂ ਸੈਟਿੰਗਾਂ ਅਤੇ ਲਾਇਬ੍ਰੇਰੀ ਨੂੰ ਮਿਟਾ ਦੇਵੇਗਾ, ਜੋ ਐਪ ਨੂੰ ਖਰਾਬ ਸਥਿਤੀ ਤੋਂ ਠੀਕ ਕਰਨ ਵਿੱਚ ਮਦਦ ਕਰ ਸਕਦਾ ਹੈ।</value>
@@ -863,6 +875,9 @@
   </data>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>ਲੌਗ ਕਾਪੀ ਕਰੋ</value>
+  </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>ਕ੍ਰੈਸ਼ ਲੌਗ</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>ਕਵਰ ਚੁਣੋ</value>
@@ -900,6 +915,12 @@
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>ਮੁੱਲ</value>
   </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>ਖੇਤਰ</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>ਸ਼ਰਤ</value>
+  </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>ਇਹ ਨਿਯਮ ਹਟਾਓ</value>
   </data>
@@ -928,13 +949,13 @@
     <value>ਅਗਲਾ</value>
   </data>
   <data name="TrayPopup_QueueButton_ToolTip" xml:space="preserve">
-    <value>ਅਗਲਾ</value>
+    <value>ਅਗਲੇ ਗੀਤ</value>
   </data>
   <data name="TrayPopup_BackButton_ToolTip" xml:space="preserve">
     <value>ਪਲੇਅਰ 'ਤੇ ਵਾਪਸ</value>
   </data>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
-    <value>ਅਗਲਾ</value>
+    <value>ਅਗਲੇ ਗੀਤ</value>
   </data>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
@@ -949,13 +970,16 @@
     <value>ਬੋਲ</value>
   </data>
   <data name="Player_QueueButton_ToolTip" xml:space="preserve">
-    <value>ਅਗਲਾ</value>
+    <value>ਅਗਲੇ ਗੀਤ</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>ਐਲਬਮ 'ਤੇ ਜਾਓ</value>
   </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>ਸੀਕ ਕਰੋ</value>
+  </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>ਅਗਲਾ</value>
+    <value>ਅਗਲੇ ਗੀਤ</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>ਕਤਾਰ ਖਾਲੀ ਕਰੋ</value>
@@ -1005,9 +1029,6 @@
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ਐਲਬਮਾਂ ਖੋਜੋ…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ਐਲਬਮਾਂ ਖੋਜੋ</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>ਕੋਈ ਇੱਕ ਬੇਤਰਤੀਬੇ ਚੁਣੋ</value>
   </data>
@@ -1029,9 +1050,6 @@
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ਐਲਬਮ ਵਿੱਚ ਖੋਜੋ…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ਐਲਬਮ ਵਿੱਚ ਖੋਜੋ</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>ਸਾਰੇ ਚਲਾਓ</value>
   </data>
@@ -1049,9 +1067,6 @@
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ਕਲਾਕਾਰ ਖੋਜੋ…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ਕਲਾਕਾਰ ਖੋਜੋ</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>ਕੋਈ ਇੱਕ ਬੇਤਰਤੀਬੇ ਚੁਣੋ</value>
@@ -1091,9 +1106,6 @@
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ਕਲਾਕਾਰ ਵਿੱਚ ਖੋਜੋ…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ਕਲਾਕਾਰ ਵਿੱਚ ਖੋਜੋ</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>ਸਾਰੇ ਚਲਾਓ</value>
@@ -1167,9 +1179,6 @@
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>ਸ਼ੈਲੀਆਂ ਖੋਜੋ…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ਸ਼ੈਲੀਆਂ ਖੋਜੋ</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>ਕੋਈ ਇੱਕ ਬੇਤਰਤੀਬੇ ਚੁਣੋ</value>
   </data>
@@ -1187,9 +1196,6 @@
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚ ਖੋਜੋ…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ਲਾਇਬ੍ਰੇਰੀ ਖੋਜੋ</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>ਸਾਰੇ ਚਲਾਓ</value>
@@ -1258,7 +1264,7 @@
     <value>ਬੋਲ ਅੱਪਡੇਟ ਨਹੀਂ ਕੀਤੇ ਜਾ ਸਕੇ</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Nagi ਬੋਲਾਂ ਨੂੰ ਸੇਵ ਨਹੀਂ ਕਰ ਸਕਿਆ। ਵੇਰਵਿਆਂ ਲਈ ਲੌਗ ਦੀ ਜਾਂਚ ਕਰੋ ਅਤੇ ਦੁਬਾਰਾ کوشش ਕਰੋ।</value>
+    <value>Nagi ਬੋਲਾਂ ਨੂੰ ਸੇਵ ਨਹੀਂ ਕਰ ਸਕਿਆ। ਵੇਰਵਿਆਂ ਲਈ ਲੌਗ ਦੀ ਜਾਂਚ ਕਰੋ ਅਤੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Nagi ਵਿੱਚ ਤੁਹਾਡਾ ਸੁਆਗਤ ਹੈ</value>
@@ -1297,7 +1303,7 @@
     <value>ਆਪਣੀ ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚ ਜਾਨ ਪਾਓ</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi ਪੂਰੀ ਤਰ੍ਹਾਂ ਆਫਲਾਈਨ ਕੰਮ ਕਰਦਾ ਹੈ। ਕਲਾਕਾਰਾਂ ਦੀਆਂ ਫੋਟੋਆਂ, ਜੀਵਨੀ ਅਤੇ ਬੋਲ ਸ਼ਾਮਲ ਕਰਨ ਲਈ ਇਹਨਾਂ ਨੂੰ ਚਾਲੂ ਕਰੋ ਜੋ ਤੁਹਾਡੀਆਂ ਫਾਈਲਾਂ ਵਿੱਚ ਸ਼ਾਮਲ ਨਹੀਂ ਹਨ।</value>
+    <value>Nagi ਪੂਰੀ ਤਰ੍ਹਾਂ ਆਫਲਾਈਨ ਕੰਮ ਕਰਦਾ ਹੈ। ਕਲਾਕਾਰਾਂ ਦੀਆਂ ਫੋਟੋਆਂ, ਜੀਵਨੀਆਂ, ਐਲਬਮ ਕਵਰ ਅਤੇ ਬੋਲ ਸ਼ਾਮਲ ਕਰਨ ਲਈ ਇਹਨਾਂ ਨੂੰ ਚਾਲੂ ਕਰੋ ਜੋ ਤੁਹਾਡੀਆਂ ਫਾਈਲਾਂ ਵਿੱਚ ਸ਼ਾਮਲ ਨਹੀਂ ਹਨ।</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>ਤੁਹਾਡੇ ਡੈਸਕਟੌਪ ਵਿੱਚ ਪੂਰੀ ਤਰ੍ਹਾਂ ਫਿੱਟ ਹੁੰਦਾ ਹੈ</value>
@@ -1335,9 +1341,6 @@
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ਪਲੇਅਲਿਸਟਾਂ ਖੋਜੋ…</value>
   </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ਪਲੇਲਿਸਟਾਂ ਖੋਜੋ</value>
-  </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>ਕੋਈ ਇੱਕ ਬੇਤਰਤੀਬੇ ਚੁਣੋ</value>
   </data>
@@ -1357,7 +1360,7 @@
     <value>ਚਲਾਓ</value>
   </data>
   <data name="PlaylistPage_Context_Rename" xml:space="preserve">
-    <value>ਮੁੜ ਨਾਮ ਬਦਲੋ</value>
+    <value>ਨਾਮ ਬਦਲੋ</value>
   </data>
   <data name="PlaylistPage_Context_ChangeImage" xml:space="preserve">
     <value>ਚਿੱਤਰ ਬਦਲੋ</value>
@@ -1383,9 +1386,6 @@
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ਪਲੇਅਲਿਸਟ ਵਿੱਚ ਖੋਜੋ…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ਪਲੇਲਿਸਟ ਵਿੱਚ ਖੋਜੋ</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>ਸਾਰੇ ਚਲਾਓ</value>
   </data>
@@ -1409,9 +1409,6 @@
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ਸ਼ੈਲੀ ਵਿੱਚ ਖੋਜੋ…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ਸ਼ੈਲੀ ਵਿੱਚ ਖੋਜੋ</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>ਸਾਰੇ ਚਲਾਓ</value>
@@ -1492,7 +1489,7 @@
     <value>WASAPI ਐਕਸਕਲੂਸਿਵ ਮੋਡ</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Nagi ਨੂੰ Windows ਆਡੀਓ ਡਿਵਾਈਸ ਦਾ ਵਿਸ਼ੇਸ਼ ਕੰਟਰੋਲ ਦਿਓ। ਹੋਰ ਐਪਾਂ ਬੰਦ ਰਹਿ ਸਕਦੀਆਂ ਹਨ। ਇਸ ਸੈਟਿੰਗ ਨੂੰ ਬਦਲਣ ਤੋਂ ਬਾਅਦ Nagi ਨੂੰ ਰੀਸਟਾਰਟ ਕਰੋ।</value>
+    <value>Nagi ਨੂੰ Windows ਆਡੀਓ ਡਿਵਾਈਸ ਦਾ ਵਿਸ਼ੇਸ਼ ਕੰਟਰੋਲ ਦਿਓ। ਹੋਰ ਐਪਾਂ ਦੀ ਆਵਾਜ਼ ਬੰਦ ਹੋ ਸਕਦੀ ਹੈ। ਇਸ ਸੈਟਿੰਗ ਨੂੰ ਬਦਲਣ ਤੋਂ ਬਾਅਦ Nagi ਨੂੰ ਰੀਸਟਾਰਟ ਕਰੋ।</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>ਪਲੇ / ਪੌਜ਼ 'ਤੇ ਫੇਡ</value>
@@ -1508,6 +1505,12 @@
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>ਪ੍ਰੀਐਂਪ</value>
+  </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>ਇਕੁਅਲਾਈਜ਼ਰ ਪ੍ਰੀਸੈੱਟ</value>
   </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>ਕਸਟਮ</value>
@@ -1594,7 +1597,7 @@
     <value>ਔਨਲਾਈਨ ਮੈਟਾਡੇਟਾ ਪ੍ਰਾਪਤ ਕਰੋ</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>ਔਨਲਾਈਨ ਸਰੋਤਾਂ ਤੋਂ ਕਲਾਕਾਰਾਂ ਦੀਆਂ ਤਸਵੀਰਾਂ ਅਤੇ ਜੀਵਨੀ ਪ੍ਰਾਪਤ ਕਰੋ।</value>
+    <value>ਔਨਲਾਈਨ ਸਰੋਤਾਂ ਤੋਂ ਕਲਾਕਾਰਾਂ ਦੀਆਂ ਤਸਵੀਰਾਂ, ਜੀਵਨੀਆਂ ਅਤੇ ਐਲਬਮ ਕਵਰ ਪ੍ਰਾਪਤ ਕਰੋ।</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>ਸਰੋਤ</value>
@@ -1726,7 +1729,7 @@
     <value>ListenBrainz</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Description" xml:space="preserve">
-    <value>ਆਪਣੀਆਂ ਸੁਣੀਆਂ ਆਵਾਜ਼ਾਂ ListenBrainz ਨੂੰ ਭੇਜੋ (Last.fm ਦਾ ਇੱਕ ਖੁੱਲ੍ਹਾ ਬਦਲ ਹੈ)।</value>
+    <value>ਆਪਣੇ ਸੁਣੇ ਗਏ ਗੀਤਾਂ ਦੀ ਜਾਣਕਾਰੀ ListenBrainz ਨੂੰ ਭੇਜੋ (Last.fm ਦਾ ਇੱਕ ਖੁੱਲ੍ਹਾ ਬਦਲ)।</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenLabel" xml:space="preserve">
     <value>ਉਪਭੋਗਤਾ ਟੋਕਨ</value>
@@ -1768,10 +1771,10 @@
     <value>ਡਿਸਕਨੈਕਟ ਕਰੋ</value>
   </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
-    <value>ਡਿਸਕੋਰਡ</value>
+    <value>Discord</value>
   </data>
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
-    <value>ਆਪਣੀ ਮੌਜੂਦਾ ਸੁਣਨ ਦੀ ਗਤੀਵਿਧੀ ਨੂੰ ਡਿਸਕੋਰਡ 'ਤੇ ਆਪਣੀ ਸਥਿਤੀ ਵਜੋਂ ਦਿਖਾਓ।</value>
+    <value>ਆਪਣੀ ਮੌਜੂਦਾ ਸੁਣਨ ਦੀ ਗਤੀਵਿਧੀ ਨੂੰ Discord 'ਤੇ ਆਪਣੀ ਸਥਿਤੀ ਵਜੋਂ ਦਿਖਾਓ।</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>ਸਮਾਰਟ ਪਲੇਲਿਸਟ</value>
@@ -1781,9 +1784,6 @@
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ਸਮਾਰਟ ਪਲੇਅਲਿਸਟ ਵਿੱਚ ਖੋਜੋ…</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ਸਮਾਰਟ ਪਲੇਲਿਸਟ ਵਿੱਚ ਖੋਜੋ</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>ਨਿਯਮ ਸੰਪਾਦਿਤ ਕਰੋ</value>
@@ -2059,16 +2059,19 @@
     <value>ਪਿਛਲੇ 90 ਦਿਨ</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>ਪਿਛਲਾ ਸਾਲ</value>
+    <value>ਪਿਛਲੇ 12 ਮਹੀਨੇ</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>ਸਭ ਸਮਾਂ</value>
   </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>ਸਮਾਂ ਸੀਮਾ</value>
+  </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
-    <value>{0}h {1}m</value>
+    <value>{0}ਘੰ {1}ਮਿੰ</value>
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
-    <value>{0}m {1}s</value>
+    <value>{0}ਮਿੰ {1}ਸ</value>
   </data>
   <data name="QueuePanel_EmptyTitle" xml:space="preserve">
     <value>ਤੁਹਾਡੀ ਕਤਾਰ ਖਾਲੀ ਹੈ</value>
@@ -2242,7 +2245,7 @@
     <value>'ਮੁੜ-ਖੋਜੋ' Nagi ਵਿੱਚ ਰਿਕਾਰਡ ਕੀਤੇ ਚਲਾਏ ਗਏ ਗੀਤਾਂ ਦੀ ਵਰਤੋਂ ਕਰਦੀ ਹੈ ਜੋ ਆਖਰੀ ਵਾਰ 30 ਦਿਨਾਂ ਤੋਂ ਵੱਧ ਪਹਿਲਾਂ ਚਲਾਏ ਗਏ ਸਨ।</value>
   </data>
   <data name="Listening_UnheardDescription" xml:space="preserve">
-    <value>'ਅਣ-ਸੁਣੇ' Nagi ਵਿੱਚ ਬਿਨਾਂ ਰਿਕਾਰਡ ਕੀਤੇ ਚਲਾਏ ਗਏ ਗੀਤਾਂ ਦੀ ਵਰਤੋਂ ਕਰਦੀ ਹੈ।</value>
+    <value>'ਅਣ-ਸੁਣੇ' ਉਹਨਾਂ ਗੀਤਾਂ ਦੀ ਵਰਤੋਂ ਕਰਦੀ ਹੈ ਜਿਨ੍ਹਾਂ ਦਾ Nagi ਵਿੱਚ ਕੋਈ ਚਲਾਇਆ ਜਾਣਾ ਦਰਜ ਨਹੀਂ ਹੈ।</value>
   </data>
   <data name="Listening_HistoryNoMatches" xml:space="preserve">
     <value>ਤੁਹਾਡੀ ਖੋਜ ਨਾਲ ਕੋਈ ਵੀ ਸੁਣੇ ਗਏ ਗੀਤ ਮੇਲ ਨਹੀਂ ਖਾਂਦੇ</value>
@@ -2257,11 +2260,71 @@
     <value>ਕੋਈ ਪਲੇਲਿਸਟ ਉਪਲਬਧ ਨਹੀਂ</value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>ਆਵਾਜ਼ ਦੇ ਸਧਾਰਨੀਕਰਨ ਲਈ ਗਾਣਿਆਂ ਦੀ ਜਾਂਚ ਕਰਨ ਵਾਸਤੇ FFmpeg ਦੀ ਲੋੜ ਹੈ, ਪਰ Nagi ਨੂੰ ਇਹ ਨਹੀਂ ਮਿਲਿਆ।
+    <value>ਆਵਾਜ਼ ਦੇ ਸਧਾਰਨੀਕਰਨ ਲਈ ਗਾਣਿਆਂ ਦੀ ਜਾਂਚ ਕਰਨ ਵਾਸਤੇ FFmpeg ਦੀ ਲੋੜ ਹੈ, ਪਰ Nagi ਨੂੰ ਇਹ ਨਹੀਂ ਮਿਲਿਆ।
 
 1. https://ffmpeg.org/download.html ਤੋਂ Windows ਬਿਲਡ ਡਾਊਨਲੋਡ ਕਰੋ।
-2. ਆਰਕਾਈਵ ਨੂੰ ਐਕਸਟ੍ਰੈਕਟ ਕਰੋ ਅਤੇ ਇਸਦੇ bin ਫ਼ੋਲਡਰ ਵਿੱਚ ffmpeg.exe ਲੱਭੋ।
-3. ffmpeg.exe ਵਾਲੇ ਫ਼ੋਲਡਰ ਨੂੰ ਆਪਣੇ Windows PATH ਵਿੱਚ ਜੋੜੋ।
-4. Nagi ਨੂੰ ਮੁੜ ਚਾਲੂ ਕਰੋ, ਅਤੇ ਫਿਰ ਆਵਾਜ਼ ਸਧਾਰਨੀਕਰਨ ਨੂੰ ਮੁੜ ਚਾਲੂ ਕਰੋ।</value>
+2. ਆਰਕਾਈਵ ਨੂੰ ਐਕਸਟ੍ਰੈਕਟ ਕਰੋ ਅਤੇ ਇਸਦੇ bin ਫ਼ੋਲਡਰ ਵਿੱਚ ffmpeg.exe ਲੱਭੋ।
+3. ffmpeg.exe ਵਾਲੇ ਫ਼ੋਲਡਰ ਨੂੰ ਆਪਣੇ Windows PATH ਵਿੱਚ ਜੋੜੋ।
+4. Nagi ਨੂੰ ਮੁੜ ਚਾਲੂ ਕਰੋ, ਅਤੇ ਫਿਰ ਆਵਾਜ਼ ਸਧਾਰਨੀਕਰਨ ਨੂੰ ਮੁੜ ਚਾਲੂ ਕਰੋ।</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>ਗੀਤ ਦੀ ਜਾਣਕਾਰੀ</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>ਟੈਗ</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>ਸੁਣਨ ਦੀ ਗਤੀਵਿਧੀ</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>ਐਲਬਮ ਕਲਾਕਾਰ</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>ਕੰਡਕਟਰ</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>ਕਾਪੀਰਾਈਟ</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>ਮਾਰਗ</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>ਫਾਰਮੈਟ</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>ਚੈਨਲ</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>ਆਕਾਰ</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{1} ਵਿੱਚੋਂ {0}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>ਗੀਤ ਸੂਚੀ ਦੇ ਕਾਲਮ</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>ਚੁਣੋ ਕਿ ਗੀਤ ਸੂਚੀਆਂ ਕਿਹੜੇ ਵੇਰਵੇ ਦਿਖਾਉਣ।</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>ਕਾਲਮ ਸਿਰਲੇਖ</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>ਗੀਤ ਸੂਚੀਆਂ ਦੇ ਉੱਪਰ ਹਰੇਕ ਕਾਲਮ ਦਾ ਲੇਬਲ ਦਿਖਾਓ।</value>
   </data>
 </root>

@@ -90,7 +90,7 @@
     <value>Dato ændret</value>
   </data>
   <data name="Label_LastPlayed" xml:space="preserve">
-    <value>Sidst spillet</value>
+    <value>Sidst afspillet</value>
   </data>
   <data name="Label_Duration" xml:space="preserve">
     <value>Varighed</value>
@@ -197,7 +197,7 @@
     <value>Færdiggør…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
-    <value>Volumennormalisering mislykkedes. Se logs for detaljer.</value>
+    <value>Lydstyrkenormalisering mislykkedes. Se logs for detaljer.</value>
   </data>
   <data name="Status_NoFoldersToRefresh" xml:space="preserve">
     <value>Ingen mapper i biblioteket at opdatere.</value>
@@ -217,7 +217,7 @@
     <value>med tekster</value>
   </data>
   <data name="Label_WithCoverArt" xml:space="preserve">
-    <value>med cover-art</value>
+    <value>med albumcover</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
     <value>med kunstnerbillede</value>
@@ -236,7 +236,7 @@
     <value>Sortér efter: </value>
   </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>Spillelisten blev oprettet, men dens sange kunne ikke tilføjes. Prøv at importere igen.</value>
+    <value>Afspilningslisten blev oprettet, men dens sange kunne ikke tilføjes. Prøv at importere igen.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>Ingen sange fra afspilningslisten blev fundet i dit bibliotek.</value>
@@ -278,7 +278,7 @@
     <value>Vokal</value>
   </data>
   <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
-    <value>Alle sange har allerede volumedata.</value>
+    <value>Alle sange har allerede lydstyrkedata.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
     <value>Analyserer lydstyrke… Sange: {0}</value>
@@ -324,5 +324,32 @@
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>Kunne ikke indlæse '{0}'.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Gennemser musikbiblioteket</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Inaktiv</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>af {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Sat på pause | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Nagi-musikafspiller</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Afspiller</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Sat på pause</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>Fra Wikipedia under CC BY-SA-licensen.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

@@ -95,10 +95,10 @@
     <value>إيقاف مؤقت</value>
   </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
-    <value>خلط عشوائي إيقاف</value>
+    <value>إيقاف الخلط العشوائي</value>
   </data>
   <data name="Tooltip_RepeatOff" xml:space="preserve">
-    <value>إعادة إيقاف</value>
+    <value>إيقاف الإعادة</value>
   </data>
   <data name="Tooltip_RepeatAll" xml:space="preserve">
     <value>إعادة الكل</value>
@@ -681,16 +681,28 @@
     <value>خدمة موسيقى صينية، رائعة للموسيقى الآسيوية</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>يجلب معرفات الفنانين (مطلوبة لـ TheAudioDB و Fanart.tv)</value>
+    <value>يبحث عن معرفات الفنانين والألبومات غير الموجودة في وسوم ملفاتك</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>صور وسير ذاتية عالية الجودة للفنانين (تتطلب MusicBrainz)</value>
+    <value>صور الفنانين وسيرهم الذاتية (تتطلب معرف MusicBrainz من وسوم ملفاتك أو من MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>صور فنانين عالية الجودة فقط (تتطلب MusicBrainz)</value>
+    <value>صور فنانين عالية الجودة (تتطلب معرف MusicBrainz من وسوم ملفاتك أو من MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>سير وصور الفنانين (بديل)</value>
+    <value>سير الفنانين وأغلفة الألبومات (بديل)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>صور الفنانين وأغلفة الألبومات، بالبحث بالاسم</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>سير الفنانين الذاتية بلغتك (تتطلب معرف MusicBrainz من وسوم ملفاتك أو من MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>أغلفة الألبومات لإصدارات MusicBrainz (تستخدم المعرفات من وسوم ملفاتك أو من MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>أغلفة ألبومات عالية الدقة، بالبحث بالاسم</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>البحث في الألبومات</value>
@@ -808,7 +820,7 @@
     <value>تمكين وفحص</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>جاري تحضير فحص توحيد مستوى الصوت…</value>
+    <value>جاري تحضير فحص تسوية مستوى الصوت…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
     <value>تم إلغاء فحص تسوية مستوى الصوت.</value>
@@ -856,13 +868,16 @@
     <value>.</value>
   </data>
   <data name="CrashReport_ResetAppAdvice" xml:space="preserve">
-    <value>إذا استمر هذا، يمكنك محاولة "إعادة تعيين التطبيق والبيانات". سيؤدي هذا إلى مسح إعداداتك ومكتبتك، مما قد يساعد في استعادة التطبيق من حالة تالفة.</value>
+    <value>إذا استمر هذا، يمكنك محاولة "إعادة ضبط التطبيق والبيانات". سيؤدي هذا إلى مسح إعداداتك ومكتبتك، مما قد يساعد في استعادة التطبيق من حالة تالفة.</value>
   </data>
   <data name="CrashReport_CopyLogButton_ToolTip" xml:space="preserve">
     <value>نسخ السجل إلى الحافظة</value>
   </data>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>نسخ السجل</value>
+  </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>سجل الأعطال</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>اختيار غلاف</value>
@@ -899,6 +914,12 @@
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>القيمة</value>
+  </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>الحقل</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>الشرط</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>إزالة هذه القاعدة</value>
@@ -954,6 +975,9 @@
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>الانتقال إلى الألبوم</value>
   </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>موضع التشغيل</value>
+  </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>التالي</value>
   </data>
@@ -976,7 +1000,7 @@
     <value>عدد المسارات</value>
   </data>
   <data name="QueuePanel_TrackCount" xml:space="preserve">
-    <value>المقاطع: {0:N0}</value>
+    <value>المسارات: {0:N0}</value>
   </data>
   <data name="QueuePanel_ShowPosition" xml:space="preserve">
     <value>الموقع في قائمة الانتظار</value>
@@ -1005,9 +1029,6 @@
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>البحث في الألبومات…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>البحث في الألبومات</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>اختر واحدًا عشوائيًا</value>
   </data>
@@ -1015,10 +1036,10 @@
     <value>تشغيل</value>
   </data>
   <data name="AlbumPage_Empty_Title" xml:space="preserve">
-    <value>مافيش ألبومات موجودة</value>
+    <value>لم يتم العثور على ألبومات</value>
   </data>
   <data name="AlbumPage_Empty_Subtitle" xml:space="preserve">
-    <value>امسح مكتبة الموسيقى الخاصة بك لملء الألبومات</value>
+    <value>افحص مكتبة الموسيقى الخاصة بك لملء الألبومات</value>
   </data>
   <data name="AlbumViewPage_Header_Label" xml:space="preserve">
     <value>ألبوم</value>
@@ -1028,9 +1049,6 @@
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>البحث في الألبوم…</value>
-  </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>البحث في الألبوم</value>
   </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>تشغيل الكل</value>
@@ -1050,9 +1068,6 @@
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>البحث في الفنانين…</value>
   </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>البحث في الفنانين</value>
-  </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>اختر واحدًا عشوائيًا</value>
   </data>
@@ -1069,7 +1084,7 @@
     <value>لم يتم العثور على فنانين</value>
   </data>
   <data name="ArtistPage_Empty_Subtitle" xml:space="preserve">
-    <value>امسح مكتبة الموسيقى الخاصة بك لملء الفنانين</value>
+    <value>افحص مكتبة الموسيقى الخاصة بك لملء الفنانين</value>
   </data>
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
     <value>تغيير صورة الفنان</value>
@@ -1091,9 +1106,6 @@
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>البحث في الفنان…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>البحث في الفنان</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>تشغيل الكل</value>
@@ -1117,7 +1129,7 @@
     <value>أضف مجلد موسيقى</value>
   </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
-    <value>حط مجلد</value>
+    <value>إضافة مجلد</value>
   </data>
   <data name="FolderPage_Menu_Play" xml:space="preserve">
     <value>تشغيل</value>
@@ -1167,9 +1179,6 @@
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>البحث في الأنواع الموسيقية…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>البحث في الأنواع</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>اختر واحدًا عشوائيًا</value>
   </data>
@@ -1180,16 +1189,13 @@
     <value>لم يتم العثور على أنواع</value>
   </data>
   <data name="GenrePage_Empty_Subtitle" xml:space="preserve">
-    <value>امسح مكتبة الموسيقى الخاصة بك لملء الأنواع</value>
+    <value>افحص مكتبة الموسيقى الخاصة بك لملء الأنواع</value>
   </data>
   <data name="LibraryPage_Title" xml:space="preserve">
     <value>المكتبة</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>البحث في المكتبة…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>البحث في المكتبة</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>تشغيل الكل</value>
@@ -1258,7 +1264,7 @@
     <value>تعذر تحديث كلمات الأغاني</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>تعذر على Nagi حفظ كلمات الأغاني. تحقق من سجل التشغيل لمعرفة التفاصيل وحاول مرة أخرى.</value>
+    <value>تعذر على Nagi حفظ كلمات الأغاني. تحقق من السجل لمعرفة التفاصيل وحاول مرة أخرى.</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>مرحبًا بك في Nagi</value>
@@ -1297,7 +1303,7 @@
     <value>أحيِ مكتبتك</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>يعمل Nagi بدون إنترنت تمامًا. فعِّل هذه الخيارات لملء صور الفنانين والسير الذاتية وكلمات الأغاني التي لا تتضمنها ملفاتك.</value>
+    <value>يعمل Nagi بدون إنترنت تمامًا. فعِّل هذه الخيارات لملء صور الفنانين والسير الذاتية وأغلفة الألبومات وكلمات الأغاني التي لا تتضمنها ملفاتك.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>الانسيابية مع سطح المكتب</value>
@@ -1335,9 +1341,6 @@
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>البحث في قوائم التشغيل…</value>
   </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>البحث في قوائم التشغيل</value>
-  </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>اختر واحدًا عشوائيًا</value>
   </data>
@@ -1366,7 +1369,7 @@
     <value>إزالة الصورة</value>
   </data>
   <data name="PlaylistPage_Context_Delete" xml:space="preserve">
-    <value>امسح</value>
+    <value>حذف</value>
   </data>
   <data name="PlaylistPage_EmptyState_Title" xml:space="preserve">
     <value>لا توجد قوائم تشغيل حتى الآن</value>
@@ -1382,9 +1385,6 @@
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>البحث في قائمة التشغيل…</value>
-  </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>البحث في قائمة التشغيل</value>
   </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>تشغيل الكل</value>
@@ -1410,9 +1410,6 @@
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>البحث في النوع الموسيقي…</value>
   </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>البحث في النوع</value>
-  </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>تشغيل الكل</value>
   </data>
@@ -1432,7 +1429,7 @@
     <value>المظهر</value>
   </data>
   <data name="SettingsPage_Theme_Header" xml:space="preserve">
-    <value>المظهر</value>
+    <value>النسق</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
     <value>اختر نسقًا فاتحًا أو داكنًا أو نسق النظام.</value>
@@ -1483,7 +1480,7 @@
     <value>إدارة المشغل</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Header" xml:space="preserve">
-    <value>تطبيع مستوى الصوت (ReplayGain)</value>
+    <value>تسوية مستوى الصوت (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
     <value>تقليل الفروق في مستوى الصوت بين الأغاني باستخدام ReplayGain.</value>
@@ -1498,7 +1495,7 @@
     <value>تلاشي الصوت عند التشغيل / الإيقاف المؤقت</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>تلاشي الصوت تدريجياً عند الاستئناف وإخفاضه تدريجياً عند الإيقاف المؤقت بدلاً من القطع الفوري.</value>
+    <value>رفع الصوت تدريجياً عند الاستئناف وخفضه تدريجياً عند الإيقاف المؤقت بدلاً من القطع الفوري.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>معادل الصوت</value>
@@ -1507,7 +1504,13 @@
     <value>إعادة الضبط للافتراضي</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
-    <value>مضخم الصوت</value>
+    <value>المضخم الأولي</value>
+  </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>الإعداد المسبق لمعادل الصوت</value>
   </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>مخصص</value>
@@ -1561,7 +1564,7 @@
     <value>إظهار صورة الغلاف في القائمة المنبثقة</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
-    <value>عرض صورة الألبوم في المشغل المصغر الذي يظهر عند النقر على أيقونة علبة النظام.</value>
+    <value>عرض صورة الألبوم في المشغل المصغر الذي يظهر عند النقر على أيقونة صينية النظام.</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
     <value>تجاهل أدوات التعريف والتنكير عند الفرز</value>
@@ -1594,7 +1597,7 @@
     <value>جلب البيانات الوصفية عبر الإنترنت</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>جلب صور الفنانين وسيرهم الذاتية من مصادر عبر الإنترنت.</value>
+    <value>جلب صور الفنانين وسيرهم الذاتية وأغلفة الألبومات من مصادر عبر الإنترنت.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>المصادر</value>
@@ -1618,7 +1621,7 @@
     <value>إظهار الكلمات بالأحرف اللاتينية</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
-    <value>إظهار سطر روماني أصغر تحت الكلمات المدعومة عندما تتطابق حزمة مثبتة مع النص.</value>
+    <value>إظهار سطر أصغر بالأحرف اللاتينية تحت الكلمات المدعومة عندما تتطابق حزمة مثبتة مع نظام الكتابة.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
     <value>حزم اللغات</value>
@@ -1639,10 +1642,10 @@
     <value>إزالة</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
-    <value>لا توجد حزم تحويل روماني متوافقة متاحة.</value>
+    <value>لا توجد حزم تحويل إلى الأحرف اللاتينية متوافقة متاحة.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>تعذر تحميل حزم التحويل الروماني: {0}</value>
+    <value>تعذر تحميل حزم التحويل إلى الأحرف اللاتينية: {0}</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>فشل تثبيت الحزمة.</value>
@@ -1702,7 +1705,7 @@
     <value>ربط</value>
   </data>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
-    <value>اكتمل</value>
+    <value>إكمال</value>
   </data>
   <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
     <value>إلغاء</value>
@@ -1717,10 +1720,10 @@
     <value>إضافة الأغاني التي تستمع إليها في Nagi تلقائيًا إلى ملفك الشخصي على Last.fm.</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
-    <value>تحديث الأغنية الشغالة حاليًا</value>
+    <value>تحديث الأغنية قيد التشغيل حاليًا</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>إظهار الأغنية القيد التشغيل حاليًا على ملفك الشخصي في Last.fm.</value>
+    <value>إظهار الأغنية قيد التشغيل حاليًا على ملفك الشخصي في Last.fm.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
     <value>ListenBrainz</value>
@@ -1747,7 +1750,7 @@
     <value>إرسال الاستماعات (Scrobbling)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>إرسال تحديثات الأغنية الشغالة حاليًا</value>
+    <value>إرسال تحديثات الأغنية قيد التشغيل حاليًا</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
     <value>إعدادات متقدمة</value>
@@ -1782,9 +1785,6 @@
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>البحث في قائمة التشغيل الذكية…</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>البحث في قائمة التشغيل الذكية</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>تعديل القواعد</value>
   </data>
@@ -1804,7 +1804,7 @@
     <value>تعديل القواعد</value>
   </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
-    <value>عَنَّا</value>
+    <value>حول</value>
   </data>
   <data name="SettingsPage_AboutExpander_Header" xml:space="preserve">
     <value>عن Nagi</value>
@@ -2011,7 +2011,7 @@
     <value>جارٍ تشغيل Nagi…</value>
   </data>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
-    <value>شوف الكل</value>
+    <value>عرض الكل</value>
   </data>
   <data name="InsightsPage_SeeAll_SearchButton_ToolTip" xml:space="preserve">
     <value>بحث</value>
@@ -2038,7 +2038,7 @@
     <value>الصفحة التالية</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
-    <value>مثال: ;/\</value>
+    <value>مثال: ;/\\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
     <value> مللي ثانية</value>
@@ -2047,7 +2047,7 @@
     <value> ديسيبل</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
-    <value>آخر 1 يوم</value>
+    <value>آخر يوم</value>
   </data>
   <data name="Insights_TimeRange_Last7Days" xml:space="preserve">
     <value>آخر 7 أيام</value>
@@ -2059,10 +2059,13 @@
     <value>آخر 90 يومًا</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>العام الماضي</value>
+    <value>آخر 12 شهرًا</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>كل الأوقات</value>
+  </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>الفترة الزمنية</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0} ساعة {1} دقيقة</value>
@@ -2110,7 +2113,7 @@
     <value>إعادة اكتشاف</value>
   </data>
   <data name="Listening_Unheard" xml:space="preserve">
-    <value>غير مسموعة</value>
+    <value>لم تُسمع بعد</value>
   </data>
   <data name="Listening_PlayFor" xml:space="preserve">
     <value>التشغيل لمدة…</value>
@@ -2239,10 +2242,10 @@
     <value>يتجنب خيار "تنوع أكبر" الأغاني التي تم تشغيلها مؤخرًا ويفصل بين أغانٍ لنفس الفنان قدر الإمكان.</value>
   </data>
   <data name="Listening_RediscoverDescription" xml:space="preserve">
-    <value>يستخدم خيار "إعادة اكتشاف" الأغاني المسجلة في Nagi والتي تم تشغيلها لأخر مرة منذ أكثر من 30 يومًا.</value>
+    <value>يستخدم خيار "إعادة اكتشاف" الأغاني التي لها تشغيلات مسجلة في Nagi وتم تشغيلها لآخر مرة منذ أكثر من 30 يومًا.</value>
   </data>
   <data name="Listening_UnheardDescription" xml:space="preserve">
-    <value>يستخدم خيار "غير مسموعة" الأغاني التي ليس لها أي تسجيلات تشغيل في Nagi.</value>
+    <value>يستخدم خيار "لم تُسمع بعد" الأغاني التي ليس لها أي تسجيلات تشغيل في Nagi.</value>
   </data>
   <data name="Listening_HistoryNoMatches" xml:space="preserve">
     <value>لا توجد استماعات تطابق بحثك</value>
@@ -2263,5 +2266,65 @@
 2. استخرج الأرشيف وحدد موقع ffmpeg.exe في مجلد bin التابع له.
 3. أضف المجلد الذي يحتوي على ffmpeg.exe إلى مسار PATH في Windows.
 4. أعد تشغيل Nagi، ثم قم بتمكين توحيد مستوى الصوت مرة أخرى.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>معلومات الأغنية</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>الوسوم</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>الاستماع</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>فنان الألبوم</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>قائد الأوركسترا</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>حقوق النشر</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>المسار</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>الصيغة</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>القنوات</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>الحجم</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} من {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} ميجابايت</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} ديسيبل</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>أعمدة قائمة الأغاني</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>اختر التفاصيل التي تظهر في قوائم الأغاني.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>عناوين الأعمدة</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>إظهار عنوان لكل عمود فوق قوائم الأغاني.</value>
   </data>
 </root>

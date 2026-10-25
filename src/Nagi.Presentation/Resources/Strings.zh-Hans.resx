@@ -137,7 +137,7 @@
     <value>作曲家</value>
   </data>
   <data name="Label_Comment" xml:space="preserve">
-    <value>评论</value>
+    <value>备注</value>
   </data>
   <data name="Label_Rating" xml:space="preserve">
     <value>评分</value>
@@ -308,10 +308,10 @@
     <value>正在将文件夹添加到音乐库……</value>
   </data>
   <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>已从你的音乐库中移除 &apos;{0}&apos;。</value>
+    <value>已从您的音乐库中移除 '{0}'。</value>
   </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
-    <value>无法从你的音乐库中移除 &apos;{0}&apos;。</value>
+    <value>无法从您的音乐库中移除 '{0}'。</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>正在从音乐库中移除 &apos;{0}&apos;……</value>
@@ -338,7 +338,7 @@
     <value>添加文件夹出错：{0}</value>
   </data>
   <data name="Folders_Error_DeleteFolder" xml:space="preserve">
-    <value>无法从你的音乐库中移除文件夹：{0}</value>
+    <value>无法从您的音乐库中移除文件夹：{0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
     <value>重新扫描文件夹出错：{0}</value>
@@ -558,7 +558,7 @@
     <value>未定义规则 • 所有歌曲均匹配</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>匹配 {1}{2} 中的 {0} 条</value>
+    <value>匹配 {1} 条{2}中的{0}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
     <value>所有</value>
@@ -681,16 +681,28 @@
     <value>中国音乐服务，非常适合亚洲音乐</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>获取艺术家 ID（TheAudioDB 和 Fanart.tv 所需）</value>
+    <value>查找标签中未包含的艺术家和专辑 ID</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>高质量艺术家图片和传记（需要 MusicBrainz）</value>
+    <value>艺术家图片和传记（需要来自标签或 MusicBrainz 的 MusicBrainz ID）</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>仅高质量艺术家图片（需要 MusicBrainz）</value>
+    <value>高质量艺术家图片（需要来自标签或 MusicBrainz 的 MusicBrainz ID）</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>艺术家传记和图片（备用）</value>
+    <value>艺术家传记和专辑封面（备用）</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>按名称查找的艺术家图片和专辑封面</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>您所用语言的艺术家传记（需要来自标签或 MusicBrainz 的 MusicBrainz ID）</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>MusicBrainz 发行版本的专辑封面（使用来自标签或 MusicBrainz 的 ID）</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>按名称查找的高分辨率专辑封面</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>搜索专辑</value>
@@ -708,7 +720,7 @@
     <value>移除文件夹</value>
   </data>
   <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
-    <value>要从你的音乐库中移除 &apos;{0}&apos; 吗？你的音频文件仍会保留在计算机上。</value>
+    <value>要从您的音乐库中移除 '{0}' 吗？您的音频文件仍会保留在计算机上。</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
     <value>移除</value>
@@ -808,7 +820,7 @@
     <value>启用并扫描</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>正在准备音量平准化扫描……</value>
+    <value>正在准备音量标准化扫描……</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
     <value>音量标准化扫描已取消。</value>
@@ -832,7 +844,7 @@
     <value>返回播放器</value>
   </data>
   <data name="MiniPlayer_UpNextHeader" xml:space="preserve">
-    <value>下一首</value>
+    <value>接下来播放</value>
   </data>
   <data name="MiniPlayer_RestoreButton_ToolTip" xml:space="preserve">
     <value>显示 Nagi</value>
@@ -844,16 +856,16 @@
     <value>下一首</value>
   </data>
   <data name="MiniPlayer_QueueButton_ToolTip" xml:space="preserve">
-    <value>下一首</value>
+    <value>接下来播放</value>
   </data>
   <data name="CrashReport_ReportIssuePreLink" xml:space="preserve">
-    <value>请考虑通过在以下位置创建问题来报告此情况</value>
+    <value>请考虑在</value>
   </data>
   <data name="CrashReport_IssueLink" xml:space="preserve">
     <value>问题页面</value>
   </data>
   <data name="CrashReport_ReportIssuePostLink" xml:space="preserve">
-    <value>。</value>
+    <value>上创建问题以报告此情况。</value>
   </data>
   <data name="CrashReport_ResetAppAdvice" xml:space="preserve">
     <value>如果此情况持续发生，您可以尝试“重置应用程序和数据”。这将清除您的设置和库，这有助于从损坏状态恢复应用程序。</value>
@@ -863,6 +875,9 @@
   </data>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>复制日志</value>
+  </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>崩溃日志</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>选择封面</value>
@@ -900,6 +915,12 @@
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>值</value>
   </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>字段</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>条件</value>
+  </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>删除此规则</value>
   </data>
@@ -928,13 +949,13 @@
     <value>下一首</value>
   </data>
   <data name="TrayPopup_QueueButton_ToolTip" xml:space="preserve">
-    <value>下一首</value>
+    <value>接下来播放</value>
   </data>
   <data name="TrayPopup_BackButton_ToolTip" xml:space="preserve">
     <value>返回播放器</value>
   </data>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
-    <value>下一首</value>
+    <value>接下来播放</value>
   </data>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
@@ -949,13 +970,16 @@
     <value>歌词</value>
   </data>
   <data name="Player_QueueButton_ToolTip" xml:space="preserve">
-    <value>下一首</value>
+    <value>接下来播放</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>转到专辑</value>
   </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>播放进度</value>
+  </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>下一首</value>
+    <value>接下来播放</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>清空队列</value>
@@ -1005,9 +1029,6 @@
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>搜索专辑……</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>搜索专辑</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>随机选择一个</value>
   </data>
@@ -1029,9 +1050,6 @@
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>在专辑中搜索……</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>在专辑中搜索</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>播放全部</value>
   </data>
@@ -1049,9 +1067,6 @@
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>搜索艺术家……</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>搜索艺术家</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>随机选择一个</value>
@@ -1091,9 +1106,6 @@
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>在艺术家中搜索……</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>在艺术家中搜索</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>播放全部</value>
@@ -1167,9 +1179,6 @@
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>搜索流派……</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>搜索流派</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>随机选择一个</value>
   </data>
@@ -1187,9 +1196,6 @@
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>搜索音乐库……</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>搜索库</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>播放全部</value>
@@ -1297,7 +1303,7 @@
     <value>赋予音乐库更多活力</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi 完全支持离线工作。开启这些选项以补充文件中未包含的艺术家照片、简介和歌词。</value>
+    <value>Nagi 完全支持离线工作。开启这些选项以补充文件中未包含的艺术家照片、简介、专辑封面和歌词。</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>无缝融入您的桌面</value>
@@ -1334,9 +1340,6 @@
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>搜索播放列表……</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>搜索播放列表</value>
   </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>随机选择一个</value>
@@ -1383,9 +1386,6 @@
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>在播放列表中搜索……</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>在播放列表中搜索</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>播放全部</value>
   </data>
@@ -1409,9 +1409,6 @@
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>在流派中搜索……</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>在流派中搜索</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>播放全部</value>
@@ -1509,6 +1506,12 @@
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>前置放大器</value>
   </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>均衡器预设</value>
+  </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>自定义</value>
   </data>
@@ -1594,7 +1597,7 @@
     <value>获取在线元数据</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>从在线数据源获取艺术家图片和简介。</value>
+    <value>从在线数据源获取艺术家图片、简介和专辑封面。</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>来源</value>
@@ -1618,7 +1621,7 @@
     <value>显示罗马化歌词</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
-    <value>当已安装的包与脚本匹配时，在支持的歌词下方显示一行较小的罗马化歌词。</value>
+    <value>当已安装的语言包与歌词的文字系统匹配时，在支持的歌词下方显示一行较小的罗马化歌词。</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
     <value>语言包</value>
@@ -1720,7 +1723,7 @@
     <value>更新正在播放</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>在你的 Last.fm 个人资料中显示当前正在播放的歌曲。</value>
+    <value>在您的 Last.fm 个人资料中显示当前正在播放的歌曲。</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
     <value>ListenBrainz</value>
@@ -1781,9 +1784,6 @@
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>在智能播放列表中搜索……</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>在智能播放列表中搜索</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>编辑规则</value>
@@ -1894,10 +1894,10 @@
     <value>播放器样式</value>
   </data>
   <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
-    <value>亚克力 （玻璃）</value>
+    <value>亚克力（玻璃）</value>
   </data>
   <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
-    <value>实心 （不透明）</value>
+    <value>实心（不透明）</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
     <value>自定义播放栏的外观。</value>
@@ -2059,10 +2059,13 @@
     <value>过去 90 天</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>去年</value>
+    <value>过去一年</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>所有时间</value>
+  </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>时间范围</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0} 小时 {1} 分钟</value>
@@ -2257,11 +2260,71 @@
     <value>无可用播放列表</value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>需要使用 FFmpeg 分析歌曲以进行音量平准化，但 Nagi 无法找到该程序。
+    <value>需要使用 FFmpeg 分析歌曲以进行音量标准化，但 Nagi 无法找到该程序。
 
 1. 从 https://ffmpeg.org/download.html 下载 Windows 版本。
 2. 解压压缩包并在其 bin 文件夹中找到 ffmpeg.exe。
 3. 将包含 ffmpeg.exe 的文件夹添加到 Windows 的 PATH 环境变量中。
-4. 重新启动 Nagi，然后再次启用音量平准化。</value>
+4. 重新启动 Nagi，然后再次启用音量标准化。</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>歌曲信息</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>标签</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>播放记录</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>专辑艺术家</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>指挥</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>版权</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>路径</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>格式</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>声道</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>大小</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} / {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>歌曲列表列</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>选择歌曲列表中显示的详细信息。</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>列标题</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>在歌曲列表上方显示各列的标题。</value>
   </data>
 </root>

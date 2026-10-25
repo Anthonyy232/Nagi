@@ -284,10 +284,10 @@
     <value>Analýza hlasitosti… Skladby: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Výpočet vyrovnania hlasitosti ({0}/{1})…</value>
+    <value>Výpočet normalizácie hlasitosti ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Vyrovnanie hlasitosti je dokončené. Spracované skladby: {0}.</value>
+    <value>Normalizácia hlasitosti je dokončená. Spracované skladby: {0}.</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
     <value>Zadajte svoj používateľský token pre ListenBrainz.</value>
@@ -323,6 +323,33 @@
     <value>Chyba LibVLC: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Nepodarilo sa načítať '{0}'.</value>
+    <value>Nepodarilo sa načítať „{0}“.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Prehliada hudobnú knižnicu</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Nečinný</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>od {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Pozastavené | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Hudobný prehrávač Nagi</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Prehráva sa</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Pozastavené</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>Z Wikipédie, pod licenciou CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

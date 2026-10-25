@@ -681,16 +681,28 @@
     <value>中国の音楽サービス、アジア音楽に最適</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>アーティストIDを取得します (TheAudioDBとFanart.tvに必要)</value>
+    <value>タグに含まれていないアーティストとアルバムのIDを検索します</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>高品質のアーティスト画像とバイオグラフィー (MusicBrainzが必要)</value>
+    <value>アーティスト画像とバイオグラフィー (タグまたはMusicBrainzから取得したMusicBrainz IDが必要)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>高品質のアーティスト画像のみ (MusicBrainzが必要)</value>
+    <value>高品質のアーティスト画像 (タグまたはMusicBrainzから取得したMusicBrainz IDが必要)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>アーティストのバイオグラフィーと画像 (フォールバック)</value>
+    <value>アーティストのバイオグラフィーとアルバムカバー (フォールバック)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>名前で検索したアーティスト画像とアルバムカバー</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>お使いの言語のアーティストバイオグラフィー (タグまたはMusicBrainzから取得したMusicBrainz IDが必要)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>MusicBrainzリリースのアルバムカバー (タグまたはMusicBrainzから取得したIDを使用)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>名前で検索した高解像度のアルバムカバー</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>アルバムを検索</value>
@@ -795,10 +807,10 @@
     <value>FFmpegが見つかりません</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Title" xml:space="preserve">
-    <value>音量ノーマライゼーションを有効にする</value>
+    <value>音量正規化を有効にする</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
-    <value>音量ノーマライゼーション (ReplayGain) により、すべての音楽で一貫した音量レベルが保証されます。
+    <value>音量正規化 (ReplayGain) により、すべての音楽で一貫した音量レベルが保証されます。
 
 これにより、音楽ライブラリが分析され、ReplayGainタグを書き込むことによってオーディオファイルが直接変更されます。既存のタグがないファイルのみが処理されます。ライブラリのサイズによっては時間がかかる場合があります。
 
@@ -808,10 +820,10 @@
     <value>有効にしてスキャン</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>音量平坦化スキャンを準備中…</value>
+    <value>音量正規化スキャンを準備中…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>音量ノーマライゼーションのスキャンがキャンセルされました。</value>
+    <value>音量正規化のスキャンがキャンセルされました。</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>スキャン中にエラーが発生しました: {0}</value>
@@ -864,6 +876,9 @@
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>ログをコピー</value>
   </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>クラッシュログ</value>
+  </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>カバーを選択</value>
   </data>
@@ -899,6 +914,12 @@
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>値</value>
+  </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>フィールド</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>条件</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>このルールを削除</value>
@@ -954,6 +975,9 @@
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>アルバムへ移動</value>
   </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>再生位置</value>
+  </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>次に再生</value>
   </data>
@@ -1005,9 +1029,6 @@
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>アルバムを検索…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>アルバムを検索</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>ランダムに選択</value>
   </data>
@@ -1029,9 +1050,6 @@
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>アルバム内を検索…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>アルバム内を検索</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>すべて再生</value>
   </data>
@@ -1049,9 +1067,6 @@
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>アーティストを検索…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>アーティストを検索</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>ランダムに選択</value>
@@ -1091,9 +1106,6 @@
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>アーティスト内を検索…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>アーティスト内を検索</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>すべて再生</value>
@@ -1167,9 +1179,6 @@
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>ジャンルを検索…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ジャンルを検索</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>ランダムに選択</value>
   </data>
@@ -1187,9 +1196,6 @@
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ライブラリを検索…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ライブラリを検索</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>すべて再生</value>
@@ -1297,7 +1303,7 @@
     <value>ライブラリをより豊かに</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi は完全にオフラインで動作します。これらをオンにすると、ファイルに含まれていないアーティストの写真、バイオグラフィ、歌詞を補完できます。</value>
+    <value>Nagi は完全にオフラインで動作します。これらをオンにすると、ファイルに含まれていないアーティストの写真、バイオグラフィ、アルバムカバー、歌詞を補完できます。</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>デスクトップにフィット</value>
@@ -1334,9 +1340,6 @@
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>プレイリストを検索…</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>プレイリストを検索</value>
   </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>ランダムに選択</value>
@@ -1383,9 +1386,6 @@
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>プレイリスト内を検索…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>プレイリスト内を検索</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>すべて再生</value>
   </data>
@@ -1409,9 +1409,6 @@
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ジャンル内を検索…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ジャンル内を検索</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>すべて再生</value>
@@ -1462,7 +1459,7 @@
     <value>次回の起動時にメインウィンドウを以前のサイズに復元します。</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Header" xml:space="preserve">
-    <value>ウィンドウ 位置を記憶する</value>
+    <value>ウィンドウ位置を記憶する</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Description" xml:space="preserve">
     <value>次回の起動時にメインウィンドウを以前の画面位置に復元します。</value>
@@ -1508,6 +1505,12 @@
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>プリアンプ</value>
+  </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>イコライザーのプリセット</value>
   </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>カスタム</value>
@@ -1582,7 +1585,7 @@
     <value>ジャンルの分割</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>複数のジャンルを分割するために使用される文字を定義します (例: ';/'). 空白のままにすると無効になります。</value>
+    <value>複数のジャンルを分割するために使用される文字を定義します（例: ';/'）。空白のままにすると無効になります。</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>ライブラリを再スキャン</value>
@@ -1594,7 +1597,7 @@
     <value>オンライン メタデータを取得</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>オンライン ソースからアーティストの画像とバイオグラフィを取得します。</value>
+    <value>オンライン ソースからアーティストの画像、バイオグラフィ、アルバムカバーを取得します。</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>ソース</value>
@@ -1618,7 +1621,7 @@
     <value>ローマ字歌詞を表示</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
-    <value>インストール済みのパックがスクリプトと一致する場合、対応する歌詞の下に小さなローマ字の行を表示します。</value>
+    <value>インストール済みのパックが歌詞の文字体系に対応している場合、その歌詞の下に小さなローマ字の行を表示します。</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
     <value>言語パック</value>
@@ -1729,7 +1732,7 @@
     <value>再生履歴をListenBrainz（Last.fmのオープンな代替サービス）に送信します。</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenLabel" xml:space="preserve">
-    <value>ユーザーートークン</value>
+    <value>ユーザートークン</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenPlaceholder" xml:space="preserve">
     <value>listenbrainz.org/settings からトークンを貼り付けてください</value>
@@ -1781,9 +1784,6 @@
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>スマート プレイリスト内を検索…</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>スマートプレイリスト内を検索</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>ルールを編集</value>
@@ -2059,10 +2059,13 @@
     <value>過去 90 日間</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>昨年</value>
+    <value>過去 1 年</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>全期間</value>
+  </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>期間</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}時間 {1}分</value>
@@ -2263,5 +2266,65 @@
 2. アーカイブを解凍し、bin フォルダー内の ffmpeg.exe を探します。
 3. ffmpeg.exe を含むフォルダーを Windows の PATH に追加します。
 4. Nagi を再起動し、音量の平準化を再度有効にしてください。</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>曲の情報</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>タグ</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>再生履歴</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>アルバムアーティスト</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>指揮者</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>著作権</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>パス</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>形式</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>チャンネル</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>サイズ</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} / {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>曲リストの列</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>曲リストに表示する項目を選択します。</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>列見出し</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>曲リストの上に各列の見出しを表示します。</value>
   </data>
 </root>

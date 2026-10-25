@@ -275,10 +275,10 @@
     <value>Interpret</value>
   </data>
   <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0, plural, one{# skladba} few{# skladby} other{# skladeb}}</value>
+    <value>{0, plural, one{# skladba} few{# skladby} many{# skladby} other{# skladeb}}</value>
   </data>
   <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0, plural, one{# skladba} few{# skladby} other{# skladeb}}</value>
+    <value>{0, plural, one{# skladba} few{# skladby} many{# skladby} other{# skladeb}}</value>
   </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Interpret nenalezen</value>
@@ -344,28 +344,28 @@
     <value>Chyba při opětovném skenování složky: {0}</value>
   </data>
   <data name="Folders_Count_Singular" xml:space="preserve">
-    <value>{0, plural, one{# složka} few{# složky} other{# složek}}</value>
+    <value>{0, plural, one{# složka} few{# složky} many{# složky} other{# složek}}</value>
   </data>
   <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0, plural, one{# složka} few{# složky} other{# složek}}</value>
+    <value>{0, plural, one{# složka} few{# složky} many{# složky} other{# složek}}</value>
   </data>
   <data name="Songs_Count_Singular" xml:space="preserve">
-    <value>{0, plural, one{# skladba} few{# skladby} other{# skladeb}}</value>
+    <value>{0, plural, one{# skladba} few{# skladby} many{# skladby} other{# skladeb}}</value>
   </data>
   <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0, plural, one{# skladba} few{# skladby} other{# skladeb}}</value>
+    <value>{0, plural, one{# skladba} few{# skladby} many{# skladby} other{# skladeb}}</value>
   </data>
   <data name="Albums_Count_Singular" xml:space="preserve">
-    <value>{0, plural, one{# album} few{# alba} other{# alb}}</value>
+    <value>{0, plural, one{# album} few{# alba} many{# alba} other{# alb}}</value>
   </data>
   <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0, plural, one{# album} few{# alba} other{# alb}}</value>
+    <value>{0, plural, one{# album} few{# alba} many{# alba} other{# alb}}</value>
   </data>
   <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0, plural, one{# interpret} few{# interpreti} other{# interpretů}}</value>
+    <value>{0, plural, one{# interpret} few{# interpreti} many{# interpreta} other{# interpretů}}</value>
   </data>
   <data name="Artists_Count_Plural" xml:space="preserve">
-    <value>{0, plural, one{# interpret} few{# interpreti} other{# interpretů}}</value>
+    <value>{0, plural, one{# interpret} few{# interpreti} many{# interpreta} other{# interpretů}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Žádné položky</value>
@@ -395,16 +395,16 @@
     <value>Vaše knihovna je připravena.</value>
   </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
-    <value>Chytrý • {0, plural, one{# skladba} few{# skladby} other{# skladeb}}</value>
+    <value>Chytrý • {0, plural, one{# skladba} few{# skladby} many{# skladby} other{# skladeb}}</value>
   </data>
   <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Chytrý • {0, plural, one{# skladba} few{# skladby} other{# skladeb}}</value>
+    <value>Chytrý • {0, plural, one{# skladba} few{# skladby} many{# skladby} other{# skladeb}}</value>
   </data>
   <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0, plural, one{# skladba} few{# skladby} other{# skladeb}}</value>
+    <value>{0, plural, one{# skladba} few{# skladby} many{# skladby} other{# skladeb}}</value>
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0, plural, one{# skladba} few{# skladby} other{# skladeb}}</value>
+    <value>{0, plural, one{# skladba} few{# skladby} many{# skladby} other{# skladeb}}</value>
   </data>
   <data name="Playlist_ErrorLoading" xml:space="preserve">
     <value>Chyba při načítání seznamu skladeb</value>
@@ -512,7 +512,7 @@
     <value>Odpojit Last.fm</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
-    <value>Opravdu chcete odpojit svůj účet Last.fm? Vaše historie scrobblingu zůstane na Last.fm zachována, ale Nagi již nebude moci scroblovat.</value>
+    <value>Opravdu chcete odpojit svůj účet Last.fm? Vaše historie scrobblingu zůstane na Last.fm zachována, ale Nagi již nebude moci scrobblovat.</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Odpojit</value>
@@ -555,34 +555,34 @@ Soubory, které se nepodařilo importovat: {0}.</value>
     <value>Chyba při načítání chytrého seznamu skladeb</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
-    <value>Žádná pravidla definována • Všechny skladby odpovídají</value>
+    <value>Nejsou definována žádná pravidla • Všechny skladby odpovídají</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>Shoduje se {0} z {1} {2}</value>
+    <value>Odpovídá {0} z {1} {2}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>všechna</value>
+    <value>všem</value>
   </data>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>jakékoli</value>
+    <value>kterémukoli</value>
   </data>
   <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>pravidlo</value>
+    <value>pravidla</value>
   </data>
   <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>pravidla</value>
+    <value>pravidel</value>
   </data>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
     <value>Skladby</value>
   </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0, plural, one{# položka} few{# položky} other{# položek}}</value>
+    <value>{0, plural, one{# položka} few{# položky} many{# položky} other{# položek}}</value>
   </data>
   <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
-    <value>{0, plural, one{# položka} few{# položky} other{# položek}}</value>
+    <value>{0, plural, one{# položka} few{# položky} many{# položky} other{# položek}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
-    <value>{0, plural, one{# vybrána} few{# vybrány} other{# vybráno}}</value>
+    <value>{0, plural, one{# vybrána} few{# vybrány} many{# vybráno} other{# vybráno}}</value>
   </data>
   <data name="AlbumView_DiscHeader" xml:space="preserve">
     <value>Disk {0}</value>
@@ -681,16 +681,28 @@ Soubory, které se nepodařilo importovat: {0}.</value>
     <value>Čínská hudební služba, skvělá pro asijskou hudbu</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Získává ID interpretů (vyžadováno pro TheAudioDB a Fanart.tv)</value>
+    <value>Vyhledává ID interpretů a alb, která vaše značky neobsahují</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>Vysoce kvalitní obrázky a biografie interpretů (vyžaduje MusicBrainz)</value>
+    <value>Obrázky a biografie interpretů (vyžaduje MusicBrainz ID z vašich značek nebo z MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>Pouze vysoce kvalitní obrázky interpretů (vyžaduje MusicBrainz)</value>
+    <value>Vysoce kvalitní obrázky interpretů (vyžaduje MusicBrainz ID z vašich značek nebo z MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Biografie a obrázky interpretů (záložní)</value>
+    <value>Biografie interpretů a obaly alb (záložní)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>Obrázky interpretů a obaly alb, vyhledávané podle názvu</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>Biografie interpretů ve vašem jazyce (vyžaduje MusicBrainz ID z vašich značek nebo z MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>Obaly alb pro vydání v MusicBrainz (používá ID z vašich značek nebo z MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>Obaly alb ve vysokém rozlišení, vyhledávané podle názvu</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hledat alba</value>
@@ -856,13 +868,16 @@ Chcete pokračovat?</value>
     <value>.</value>
   </data>
   <data name="CrashReport_ResetAppAdvice" xml:space="preserve">
-    <value>Pokud se to stále děje, můžete zkusit 'Obnovit aplikaci a data'. Tím vymažete svá nastavení a knihovnu, což může pomoci obnovit aplikaci z poškozeného stavu.</value>
+    <value>Pokud se to stále děje, můžete zkusit 'Resetovat aplikaci a data'. Tím vymažete svá nastavení a knihovnu, což může pomoci obnovit aplikaci z poškozeného stavu.</value>
   </data>
   <data name="CrashReport_CopyLogButton_ToolTip" xml:space="preserve">
     <value>Kopírovat protokol do schránky</value>
   </data>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>Kopírovat protokol</value>
+  </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>Protokol o pádu</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>Vybrat obal</value>
@@ -900,6 +915,12 @@ Chcete pokračovat?</value>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>Hodnota</value>
   </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>Pole</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>Podmínka</value>
+  </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>Odebrat toto pravidlo</value>
   </data>
@@ -910,10 +931,10 @@ Chcete pokračovat?</value>
     <value>Všechny skladby ve vaší knihovně budou zahrnuty v tomto seznamu skladeb.</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_Content" xml:space="preserve">
-    <value>Přidat vaše první pravidlo</value>
+    <value>Přidat první pravidlo</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_ToolTip" xml:space="preserve">
-    <value>Přidat vaše první pravidlo</value>
+    <value>Přidat první pravidlo</value>
   </data>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
     <value>Uložit</value>
@@ -953,6 +974,9 @@ Chcete pokračovat?</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Přejít na album</value>
+  </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>Pozice přehrávání</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Další v pořadí</value>
@@ -1005,9 +1029,6 @@ Chcete pokračovat?</value>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hledat alba…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Hledat alba</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Vybrat náhodně</value>
   </data>
@@ -1029,9 +1050,6 @@ Chcete pokračovat?</value>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hledat v albu…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Hledat v albu</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Přehrát vše</value>
   </data>
@@ -1049,9 +1067,6 @@ Chcete pokračovat?</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hledat interprety…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Hledat interprety</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Vybrat náhodně</value>
@@ -1091,9 +1106,6 @@ Chcete pokračovat?</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hledat u interpreta…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Hledat v interpretovi</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Přehrát vše</value>
@@ -1167,9 +1179,6 @@ Chcete pokračovat?</value>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hledat žánry…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Hledat žánry</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>Vybrat náhodně</value>
   </data>
@@ -1187,9 +1196,6 @@ Chcete pokračovat?</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hledat v knihovně…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Hledat v knihovně</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Přehrát vše</value>
@@ -1258,7 +1264,7 @@ Chcete pokračovat?</value>
     <value>Text písně se nepodařilo aktualizovat</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Aplikaci Nagi se nepodařilo uložit text písně. Podrobnosti naleznete v protokolu, a zkuste to znovu.</value>
+    <value>Aplikaci Nagi se nepodařilo uložit text písně. Podrobnosti naleznete v protokolu. Zkuste to znovu.</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Vítejte v Nagi</value>
@@ -1297,7 +1303,7 @@ Chcete pokračovat?</value>
     <value>Oživte svou knihovnu</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi funguje zcela offline. Zapnutím těchto funkcí doplníte fotky interpretů, biografie a texty skladeb, které vaše soubory neobsahují.</value>
+    <value>Nagi funguje zcela offline. Zapnutím těchto funkcí doplníte fotky interpretů, biografie, obaly alb a texty skladeb, které vaše soubory neobsahují.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>Perfektně zapadne na plochu</value>
@@ -1334,9 +1340,6 @@ Chcete pokračovat?</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hledat seznamy skladeb…</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Hledat seznamy skladeb</value>
   </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Vybrat náhodně</value>
@@ -1383,9 +1386,6 @@ Chcete pokračovat?</value>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hledat v seznamu skladeb…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Hledat v seznamu skladeb</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Přehrát vše</value>
   </data>
@@ -1409,9 +1409,6 @@ Chcete pokračovat?</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hledat v žánru…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Hledat v žánru</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Přehrát vše</value>
@@ -1509,6 +1506,12 @@ Chcete pokračovat?</value>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Preamp</value>
   </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>Předvolba ekvalizéru</value>
+  </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>Vlastní</value>
   </data>
@@ -1594,7 +1597,7 @@ Chcete pokračovat?</value>
     <value>Načítat metadata z internetu</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Stahovat obrázky a biografie interpretů z online zdrojů.</value>
+    <value>Stahovat obrázky a biografie interpretů a obaly alb z online zdrojů.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Zdroje</value>
@@ -1781,9 +1784,6 @@ Chcete pokračovat?</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hledat v chytrém seznamu skladeb…</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Hledat v chytrém seznamu skladeb</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Upravit pravidla</value>
@@ -2064,6 +2064,9 @@ Chcete pokračovat?</value>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>Za celou dobu</value>
   </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>Časové období</value>
+  </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}h {1}m</value>
   </data>
@@ -2248,7 +2251,7 @@ Chcete pokračovat?</value>
     <value>Vašemu vyhledávání neodpovídají žádné poslechy</value>
   </data>
   <data name="Listening_NoTimedMixDescription" xml:space="preserve">
-    <value>Žádné skladby v tomto seznamu nesplňují požadavky na mix a nepřizpůsobují se zvolené délce. Zkuste delší dobu, jiný mix nebo jiný seznam skladeb.</value>
+    <value>V tomto seznamu nejsou žádné skladby, které by splňovaly požadavky mixu a vešly se do zvolené délky. Zkuste delší dobu, jiný mix nebo jiný seznam skladeb.</value>
   </data>
   <data name="Generic_CloseSearch" xml:space="preserve">
     <value>Zavřít hledání</value>
@@ -2257,11 +2260,71 @@ Chcete pokračovat?</value>
     <value>Žádné seznamy skladeb k dispozici</value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>Aplikace FFmpeg je potřeba k analýze skladeb pro vyrovnání hlasitosti, ale Nagi ji nemohl najít.
+    <value>Aplikace FFmpeg je potřeba k analýze skladeb pro normalizaci hlasitosti, ale Nagi ji nemohl najít.
 
 1. Stáhněte si verzi pro Windows ze stránky https://ffmpeg.org/download.html.
 2. Rozbalte archiv a ve složce bin vyhledejte soubor ffmpeg.exe.
 3. Přidejte složku obsahující ffmpeg.exe do proměnné prostředí Windows PATH.
-4. Restartujte Nagi a znovu zapněte vyrovnání hlasitosti.</value>
+4. Restartujte Nagi a znovu zapněte normalizaci hlasitosti.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>Informace o skladbě</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>Značky</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>Poslech</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>Interpret alba</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>Dirigent</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>Autorská práva</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>Cesta</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>Formát</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>Kanály</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>Velikost</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} z {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kb/s</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>Sloupce seznamu skladeb</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>Zvolte, jaké údaje mají seznamy skladeb zobrazovat.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>Záhlaví sloupců</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>Zobrazovat název každého sloupce nad seznamy skladeb.</value>
   </data>
 </root>

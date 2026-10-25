@@ -197,7 +197,7 @@
     <value>চূড়ান্ত করা হচ্ছে…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
-    <value>ভলিউম নরমালাইজেশন ব্যর্থ হয়েছে। বিস্তারিত জানতে লগ পরীক্ষা করুন।</value>
+    <value>ভলিউম স্বাভাবিককরণ ব্যর্থ হয়েছে। বিস্তারিত জানতে লগ পরীক্ষা করুন।</value>
   </data>
   <data name="Status_NoFoldersToRefresh" xml:space="preserve">
     <value>রিফ্রেশ করার জন্য লাইব্রেরিতে কোনো ফোল্ডার নেই।</value>
@@ -284,10 +284,10 @@
     <value>ভলিউম বিশ্লেষণ করা হচ্ছে… গান: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>ভলিউম নরম্যালাইজেশন গণনা করা হচ্ছে ({0}/{1})…</value>
+    <value>ভলিউম স্বাভাবিককরণ গণনা করা হচ্ছে ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>ভলিউম নরম্যালাইজেশন সম্পন্ন হয়েছে। প্রক্রিয়াজাত গান: {0}।</value>
+    <value>ভলিউম স্বাভাবিককরণ সম্পন্ন হয়েছে। প্রক্রিয়াজাত গান: {0}।</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
     <value>আপনার ListenBrainz ইউজার টোকেন লিখুন।</value>
@@ -324,5 +324,32 @@
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>'{0}' লোড করতে ব্যর্থ হয়েছে।</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>মিউজিক লাইব্রেরি ব্রাউজ করছেন</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>নিষ্ক্রিয়</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>শিল্পী: {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>বিরতিতে | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Nagi মিউজিক প্লেয়ার</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>বাজছে</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>বিরতিতে</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>উইকিপিডিয়া থেকে, CC BY-SA লাইসেন্সের অধীনে।</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

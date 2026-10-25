@@ -278,7 +278,7 @@
     <value>{0} skladba</value>
   </data>
   <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} skladieb</value>
+    <value>{0, plural, one {# skladba} few {# skladby} many {# skladby} other {# skladieb}}</value>
   </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
     <value>Interpret nenájdený</value>
@@ -317,7 +317,7 @@
     <value>Odstraňuje sa &apos;{0}&apos; z vašej knižnice…</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Prehľadávanie '{0}' dokončené.</value>
+    <value>Opätovné skenovanie '{0}' dokončené.</value>
   </data>
   <data name="Folders_Rescan_NoChanges" xml:space="preserve">
     <value>Pre '{0}' neboli zistené žiadne zmeny.</value>
@@ -347,25 +347,25 @@
     <value>{0} priečinok</value>
   </data>
   <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} priečinkov</value>
+    <value>{0, plural, one {# priečinok} few {# priečinky} many {# priečinka} other {# priečinkov}}</value>
   </data>
   <data name="Songs_Count_Singular" xml:space="preserve">
     <value>{0} skladba</value>
   </data>
   <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} skladieb</value>
+    <value>{0, plural, one {# skladba} few {# skladby} many {# skladby} other {# skladieb}}</value>
   </data>
   <data name="Albums_Count_Singular" xml:space="preserve">
     <value>{0} album</value>
   </data>
   <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} albumov</value>
+    <value>{0, plural, one {# album} few {# albumy} many {# albumu} other {# albumov}}</value>
   </data>
   <data name="Artists_Count_Singular" xml:space="preserve">
     <value>{0} interpret</value>
   </data>
   <data name="Artists_Count_Plural" xml:space="preserve">
-    <value>{0} interpretov</value>
+    <value>{0, plural, one {# interpret} few {# interpreti} many {# interpreta} other {# interpretov}}</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
     <value>Žiadne položky</value>
@@ -398,13 +398,13 @@
     <value>Inteligentné • {0} skladba</value>
   </data>
   <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>Inteligentné • {0} skladieb</value>
+    <value>Inteligentné • {0, plural, one {# skladba} few {# skladby} many {# skladby} other {# skladieb}}</value>
   </data>
   <data name="Playlist_Count_Singular" xml:space="preserve">
     <value>{0} skladba</value>
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} skladieb</value>
+    <value>{0, plural, one {# skladba} few {# skladby} many {# skladby} other {# skladieb}}</value>
   </data>
   <data name="Playlist_ErrorLoading" xml:space="preserve">
     <value>Chyba pri načítaní zoznamu skladieb</value>
@@ -579,10 +579,10 @@ Súbory, ktoré sa nepodarilo importovať: {0}.</value>
     <value>{0} položka</value>
   </data>
   <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
-    <value>{0} položiek</value>
+    <value>{0, plural, one {# položka} few {# položky} many {# položky} other {# položiek}}</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
-    <value>{0} vybraných</value>
+    <value>{0, plural, one {# vybraná} few {# vybrané} many {# vybranej} other {# vybraných}}</value>
   </data>
   <data name="AlbumView_DiscHeader" xml:space="preserve">
     <value>Disk {0}</value>
@@ -669,7 +669,7 @@ Súbory, ktoré sa nepodarilo importovať: {0}.</value>
     <value>Texty</value>
   </data>
   <data name="Settings_Button_Queue" xml:space="preserve">
-    <value>Front</value>
+    <value>Rad</value>
   </data>
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>Hlasitosť</value>
@@ -681,16 +681,28 @@ Súbory, ktoré sa nepodarilo importovať: {0}.</value>
     <value>Čínska hudobná služba, skvelá pre ázijskú hudbu</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Načíta ID interpretov (vyžaduje sa pre TheAudioDB a Fanart.tv)</value>
+    <value>Vyhľadáva ID interpretov a albumov, ktoré vaše značky neobsahujú</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>Vysokokvalitné obrázky a biografie interpretov (vyžaduje MusicBrainz)</value>
+    <value>Obrázky a biografie interpretov (vyžaduje MusicBrainz ID z vašich značiek alebo z MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>Iba vysokokvalitné obrázky interpretov (vyžaduje MusicBrainz)</value>
+    <value>Vysokokvalitné obrázky interpretov (vyžaduje MusicBrainz ID z vašich značiek alebo z MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Biografie a obrázky interpretov (záložné)</value>
+    <value>Biografie interpretov a obaly albumov (záložné)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>Obrázky interpretov a obaly albumov, vyhľadávané podľa názvu</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>Biografie interpretov vo vašom jazyku (vyžaduje MusicBrainz ID z vašich značiek alebo z MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>Obaly albumov pre vydania v MusicBrainz (používa ID z vašich značiek alebo z MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>Obaly albumov vo vysokom rozlíšení, vyhľadávané podľa názvu</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Hľadať albumy</value>
@@ -702,7 +714,7 @@ Súbory, ktoré sa nepodarilo importovať: {0}.</value>
     <value>Hľadať interpretov</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Hľadať v interpretovi</value>
+    <value>Hľadať u interpreta</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
     <value>Odstrániť priečinok</value>
@@ -768,25 +780,25 @@ Súbory, ktoré sa nepodarilo importovať: {0}.</value>
     <value>Hľadať v inteligentnom zozname skladieb</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
-    <value>Prehľadať metadáta</value>
+    <value>Znova skenovať metadáta</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
     <value>Na aplikovanie nastavení metadát, ako je rozdeľovanie interpretov, znova preskúmajte knižnicu. Pri veľkých knižniciach to môže chvíľu trvať. Pokračovať?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
-    <value>Prehľadať</value>
+    <value>Znova skenovať</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
     <value>Pripravuje sa opätovné skenovanie knižnice…</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
-    <value>Prehľadávanie dokončené</value>
+    <value>Opätovné skenovanie dokončené</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Content" xml:space="preserve">
     <value>Metadáta knižnice boli aktualizované.</value>
   </data>
   <data name="Settings_Dialog_RescanFailed_Title" xml:space="preserve">
-    <value>Prehľadávanie zlyhalo</value>
+    <value>Opätovné skenovanie zlyhalo</value>
   </data>
   <data name="Settings_Dialog_RescanFailed_Content" xml:space="preserve">
     <value>Počas skenovania došlo k chybe. Podrobnosti nájdete v protokoloch.</value>
@@ -864,6 +876,9 @@ Chcete pokračovať?</value>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>Kopírovať protokol</value>
   </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>Protokol o páde</value>
+  </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>Vybrať obal</value>
   </data>
@@ -871,10 +886,10 @@ Chcete pokračovať?</value>
     <value>Vybrať obrázok obalu</value>
   </data>
   <data name="SmartPlaylist_PlaylistNameLabel" xml:space="preserve">
-    <value>Názov playlistu</value>
+    <value>Názov zoznamu skladieb</value>
   </data>
   <data name="SmartPlaylist_PlaylistNameTextBox_Placeholder" xml:space="preserve">
-    <value>Zadajte názov pre váš inteligentný playlist</value>
+    <value>Zadajte názov pre váš inteligentný zoznam skladieb</value>
   </data>
   <data name="SmartPlaylist_SortOrderLabel" xml:space="preserve">
     <value>Poradie zoradenia</value>
@@ -900,6 +915,12 @@ Chcete pokračovať?</value>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>Hodnota</value>
   </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>Pole</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>Podmienka</value>
+  </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>Odstrániť toto pravidlo</value>
   </data>
@@ -907,7 +928,7 @@ Chcete pokračovať?</value>
     <value>Žiadne definované pravidlá</value>
   </data>
   <data name="SmartPlaylist_NoRulesMessage" xml:space="preserve">
-    <value>Všetky skladby vo vašej knižnici budú zahrnuté v tomto playliste.</value>
+    <value>Všetky skladby vo vašej knižnici budú zahrnuté v tomto zozname skladieb.</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_Content" xml:space="preserve">
     <value>Pridať prvé pravidlo</value>
@@ -954,6 +975,9 @@ Chcete pokračovať?</value>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Prejsť na album</value>
   </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>Pozícia prehrávania</value>
+  </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Ďalej na rade</value>
   </data>
@@ -967,7 +991,7 @@ Chcete pokračovať?</value>
     <value>Zatvoriť rad</value>
   </data>
   <data name="QueuePanel_ShowArtist" xml:space="preserve">
-    <value>Umelec</value>
+    <value>Interpret</value>
   </data>
   <data name="QueuePanel_ShowDuration" xml:space="preserve">
     <value>Trvanie</value>
@@ -1005,9 +1029,6 @@ Chcete pokračovať?</value>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať albumy…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Vyhľadať albumy</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Vybrať náhodný</value>
   </data>
@@ -1029,9 +1050,6 @@ Chcete pokračovať?</value>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať v albume…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Vyhľadať v albume</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Prehrať všetky</value>
   </data>
@@ -1049,9 +1067,6 @@ Chcete pokračovať?</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať interpretov…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Vyhľadať interpretov</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Vybrať náhodného</value>
@@ -1091,9 +1106,6 @@ Chcete pokračovať?</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať u interpreta…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Vyhľadať u interpreta</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Prehrať všetky</value>
@@ -1167,9 +1179,6 @@ Chcete pokračovať?</value>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať žánre…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Vyhľadať žánre</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>Vybrať náhodný</value>
   </data>
@@ -1188,9 +1197,6 @@ Chcete pokračovať?</value>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať v knižnici…</value>
   </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Vyhľadať v knižnici</value>
-  </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Prehrať všetky</value>
   </data>
@@ -1204,7 +1210,7 @@ Chcete pokračovať?</value>
     <value>Prehrať ďalšie</value>
   </data>
   <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
-    <value>Pridať do frontu</value>
+    <value>Pridať do radu</value>
   </data>
   <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
     <value>Pridať do zoznamu skladieb</value>
@@ -1285,7 +1291,7 @@ Chcete pokračovať?</value>
     <value>Vyberte si, ako má Nagi vyzerať. Zmeny sa prejavia okamžite.</value>
   </data>
   <data name="OnboardingPage_Listening_Title" xml:space="preserve">
-    <value>Vyllaďte si zvuk</value>
+    <value>Vylaďte si zvuk</value>
   </data>
   <data name="OnboardingPage_Listening_Description" xml:space="preserve">
     <value>Upravte spôsob prehrávania hudby.</value>
@@ -1297,7 +1303,7 @@ Chcete pokračovať?</value>
     <value>Oživte svoju knižnicu</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi funguje plne offline. Zapnutím týchto funkcií doplníte fotky interpretov, biografie a texty piesní, ktoré vaše súbory neobsahujú.</value>
+    <value>Nagi funguje plne offline. Zapnutím týchto funkcií doplníte fotky interpretov, biografie, obaly albumov a texty piesní, ktoré vaše súbory neobsahujú.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>Dokonalé zapadnutie do plochy</value>
@@ -1330,28 +1336,25 @@ Chcete pokračovať?</value>
     <value>Začať počúvať</value>
   </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
-    <value>Playlisty</value>
+    <value>Zoznamy skladieb</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať zoznamy skladieb…</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Vyhľadať playlisty</value>
   </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Vybrať náhodný</value>
   </data>
   <data name="PlaylistPage_NewPlaylistButton_ToolTip" xml:space="preserve">
-    <value>Vytvoriť nový playlist</value>
+    <value>Vytvoriť nový zoznam skladieb</value>
   </data>
   <data name="PlaylistPage_NewPlaylistButton_Content" xml:space="preserve">
-    <value>Nový playlist</value>
+    <value>Nový zoznam skladieb</value>
   </data>
   <data name="PlaylistPage_NewPlaylistMenu_Regular" xml:space="preserve">
-    <value>Bežný playlist</value>
+    <value>Bežný zoznam skladieb</value>
   </data>
   <data name="PlaylistPage_NewPlaylistMenu_Smart" xml:space="preserve">
-    <value>Inteligentný playlist</value>
+    <value>Inteligentný zoznam skladieb</value>
   </data>
   <data name="PlaylistPage_Context_Play" xml:space="preserve">
     <value>Prehrať</value>
@@ -1369,22 +1372,19 @@ Chcete pokračovať?</value>
     <value>Vymazať</value>
   </data>
   <data name="PlaylistPage_EmptyState_Title" xml:space="preserve">
-    <value>Zatiaľ žiadne playlisty</value>
+    <value>Zatiaľ žiadne zoznamy skladieb</value>
   </data>
   <data name="PlaylistPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Vytvorte si playlist, aby ste mohli začať</value>
+    <value>Vytvorte si zoznam skladieb, aby ste mohli začať</value>
   </data>
   <data name="PlaylistSongViewPage_Header_Caption" xml:space="preserve">
-    <value>Playlist</value>
+    <value>Zoznam skladieb</value>
   </data>
   <data name="PlaylistSongViewPage_Section_Songs" xml:space="preserve">
     <value>Skladby</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať v zozname skladieb…</value>
-  </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Vyhľadať v playliste</value>
   </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Prehrať všetky</value>
@@ -1396,7 +1396,7 @@ Chcete pokračovať?</value>
     <value>Odstrániť zo zoznamu skladieb</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
-    <value>Tento playlist je prázdny</value>
+    <value>Tento zoznam skladieb je prázdny</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
     <value>Pridajte skladby z vašej knižnice</value>
@@ -1409,9 +1409,6 @@ Chcete pokračovať?</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať v žánri…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Vyhľadať v žánri</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Prehrať všetky</value>
@@ -1495,10 +1492,10 @@ Chcete pokračovať?</value>
     <value>Poskytnúť aplikácii Nagi výhradnú kontrolu nad zvukovým zariadením systému Windows. Iné aplikácie môžu byť bez zvuku. Po zmenení tohto nastavenia reštartujte Nagi.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
-    <value>Prelínanie pri Prehrávaní / Pozastavení</value>
+    <value>Prelínanie pri prehrávaní / pozastavení</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Plynulo zoslabte hlasitosť pri obnovení a zosilnite pri pozastavení namiesto okamžitého prerušenia.</value>
+    <value>Plynulo zosilniť hlasitosť pri obnovení a zoslabiť pri pozastavení namiesto okamžitého prerušenia.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>Audio ekvalizér</value>
@@ -1508,6 +1505,12 @@ Chcete pokračovať?</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Predzosilňovač</value>
+  </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>Predvoľba ekvalizéra</value>
   </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>Vlastné</value>
@@ -1594,7 +1597,7 @@ Chcete pokračovať?</value>
     <value>Získavať metadáta z internetu</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Získavať obrázky interpretov a ich životopisy z online zdrojov.</value>
+    <value>Získavať obrázky interpretov, ich biografie a obaly albumov z online zdrojov.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Zdroje</value>
@@ -1666,13 +1669,13 @@ Chcete pokračovať?</value>
     <value>Import a export zoznamov skladieb</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
-    <value>Exportovať playlisty do súborov M3U pre použitie v iných prehrávačoch, alebo importovať playlisty M3U do Nagi.</value>
+    <value>Exportovať zoznamy skladieb do súborov M3U pre použitie v iných prehrávačoch, alebo importovať zoznamy skladieb M3U do Nagi.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
     <value>Exportovať všetko…</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
-    <value>Exportovať všetky playlisty do priečinka</value>
+    <value>Exportovať všetky zoznamy skladieb do priečinka</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
     <value>Importovať…</value>
@@ -1681,10 +1684,10 @@ Chcete pokračovať?</value>
     <value>Importovať jeden alebo viac súborov M3U</value>
   </data>
   <data name="SettingsPage_ResetApp_Header" xml:space="preserve">
-    <value>Obnoviť aplikáciu</value>
+    <value>Resetovať aplikáciu</value>
   </data>
   <data name="SettingsPage_ResetApp_Description" xml:space="preserve">
-    <value>Týmto sa vymažú všetky dáta knižnice, playlisty a resetujú všetky nastavenia na predvolené. Aplikácia sa reštartuje.</value>
+    <value>Týmto sa vymažú všetky dáta knižnice, zoznamy skladieb a resetujú všetky nastavenia na predvolené. Aplikácia sa reštartuje.</value>
   </data>
   <data name="SettingsPage_ResetButton_Content" xml:space="preserve">
     <value>Resetovať všetky dáta</value>
@@ -1774,16 +1777,13 @@ Chcete pokračovať?</value>
     <value>Zobraziť vašu aktuálnu aktivitu počúvania ako stav na Discorde.</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
-    <value>Inteligentný playlist</value>
+    <value>Inteligentný zoznam skladieb</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Section_Songs" xml:space="preserve">
     <value>Skladby</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať v inteligentnom zozname skladieb…</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Vyhľadať v inteligentnom playliste</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Upraviť pravidlá</value>
@@ -1960,7 +1960,7 @@ Chcete pokračovať?</value>
     <value>Začnite prehrávať hudbu, aby ste tu videli svoje štatistiky</value>
   </data>
   <data name="InsightsPage_Plays" xml:space="preserve">
-    <value>Prehrania: {0}</value>
+    <value>Prehratia: {0}</value>
   </data>
   <data name="InsightsPage_Source_Albums" xml:space="preserve">
     <value>Albumy</value>
@@ -2063,6 +2063,9 @@ Chcete pokračovať?</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>Celý čas</value>
+  </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>Časové obdobie</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}h {1}m</value>
@@ -2257,11 +2260,71 @@ Chcete pokračovať?</value>
     <value>Žiadne dostupné zoznamy skladieb</value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>Na analýzu skladieb na vyrovnanie hlasitosti je potrebný FFmpeg, ale aplikácia Nagi ho nemohla nájsť.
+    <value>Na analýzu skladieb na normalizáciu hlasitosti je potrebný FFmpeg, ale aplikácia Nagi ho nemohla nájsť.
 
 1. Stiahnite si verziu pre Windows zo stránky https://ffmpeg.org/download.html.
 2. Rozbaľte archív a vyhľadajte ffmpeg.exe v jeho priečinku bin.
 3. Pridajte priečinok obsahujúci ffmpeg.exe do premennej Windows PATH.
-4. Reštartujte Nagi a znova zapnite vyrovnanie hlasitosti.</value>
+4. Reštartujte Nagi a znova zapnite normalizáciu hlasitosti.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>Informácie o skladbe</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>Značky</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>Počúvanie</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>Interpret albumu</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>Dirigent</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>Autorské práva</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>Cesta</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>Formát</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>Kanály</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>Veľkosť</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} z {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kb/s</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>Stĺpce zoznamu skladieb</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>Vyberte, aké údaje majú zoznamy skladieb zobrazovať.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>Hlavičky stĺpcov</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>Zobrazovať názov každého stĺpca nad zoznamami skladieb.</value>
   </data>
 </root>

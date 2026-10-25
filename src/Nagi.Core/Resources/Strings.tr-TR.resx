@@ -169,14 +169,14 @@
     <value>En az {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
-    <value>{1} klasöründen {0} taranıyor: {2} - {3}</value>
+    <value>Klasör taranıyor ({0}/{1}): {2} - {3}</value>
   </data>
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Tarama tamamlandı. {0} {1} eklendi veya güncellendi.</value>
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
-    <value>Tarama tamamlandı. Kütüphane güncel.</value>
+    <value>Tarama tamamlandı. Kitaplık güncel.</value>
   </data>
   <data name="Status_ScanCancelled" xml:space="preserve">
     <value>Tarama iptal edildi.</value>
@@ -197,13 +197,13 @@
     <value>Tamamlanıyor…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
-    <value>Ses normalizasyonu başarısız oldu. Ayrıntılar için günlükleri kontrol edin.</value>
+    <value>Ses normalleştirme başarısız oldu. Ayrıntılar için günlükleri kontrol edin.</value>
   </data>
   <data name="Status_NoFoldersToRefresh" xml:space="preserve">
-    <value>Kütüphanede yenilenecek klasör bulunmuyor.</value>
+    <value>Kitaplıkta yenilenecek klasör bulunmuyor.</value>
   </data>
   <data name="Status_LibraryRefreshComplete" xml:space="preserve">
-    <value>Kütüphane yenileme tamamlandı.</value>
+    <value>Kitaplık yenileme tamamlandı.</value>
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
@@ -239,7 +239,7 @@
     <value>Çalma listesi oluşturuldu, ancak şarkıları eklenemedi. Lütfen tekrar içe aktarmayı deneyin.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Çalma listesindeki şarkılardan hiçbiri kütüphanenizde bulunamadı.</value>
+    <value>Çalma listesindeki şarkılardan hiçbiri kitaplığınızda bulunamadı.</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Dışa aktarılacak çalma listesi bulunmuyor.</value>
@@ -290,7 +290,7 @@
     <value>Ses düzeyi normalleştirmesi tamamlandı. İşlenen şarkı sayısı: {0}.</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
-    <value>ListenBrainz kullanıcı belirtecinizi girin.</value>
+    <value>ListenBrainz kullanıcı anahtarınızı girin.</value>
   </data>
   <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
     <value>ListenBrainz'den gelen yanıt okunamadı. Daha sonra tekrar deneyin.</value>
@@ -299,7 +299,7 @@
     <value>Sunucu URL'sini http:// veya https:// ile başlayacak şekilde girin.</value>
   </data>
   <data name="ListenBrainz_InvalidToken" xml:space="preserve">
-    <value>Kullanıcı belirteci geçersiz. Kontrol edip tekrar deneyin.</value>
+    <value>Kullanıcı anahtarı geçersiz. Kontrol edip tekrar deneyin.</value>
   </data>
   <data name="ListenBrainz_ServerError" xml:space="preserve">
     <value>ListenBrainz bir hata döndürdü (HTTP {0}). Daha sonra tekrar deneyin.</value>
@@ -324,5 +324,32 @@
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>'{0}' yüklenemedi.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Müzik Arşivine Göz Atıyor</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Boşta</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>{0} tarafından</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Duraklatıldı | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Nagi Müzik Çalar</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Çalıyor</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Duraklatıldı</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>Vikipedi'den, CC BY-SA lisansı altında.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

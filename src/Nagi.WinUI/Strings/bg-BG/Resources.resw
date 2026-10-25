@@ -68,10 +68,10 @@
     <value>Nagi</value>
   </data>
   <data name="AppDisplayName" xml:space="preserve">
-    <value>Nagi Музикален Плейър</value>
+    <value>Nagi музикален плейър</value>
   </data>
   <data name="AppInfoTip" xml:space="preserve">
-    <value>Отваряне с Nagi Музикален Плейър</value>
+    <value>Отваряне с Nagi музикален плейър</value>
   </data>
   <data name="StartupTaskDisplayName" xml:space="preserve">
     <value>Стартиране на Nagi</value>

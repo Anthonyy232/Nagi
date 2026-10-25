@@ -90,7 +90,7 @@
     <value>Pakeitimo data</value>
   </data>
   <data name="Label_LastPlayed" xml:space="preserve">
-    <value>Paskutinį kartą grojo</value>
+    <value>Paskutinį kartą grota</value>
   </data>
   <data name="Label_Duration" xml:space="preserve">
     <value>Trukmė</value>
@@ -284,13 +284,13 @@
     <value>Analizuojamas garsumas… Dainų: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Skaičiuojamas garsumo normalizavimas ({0}/{1})…</value>
+    <value>Skaičiuojamas garso normalizavimas ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Garsumo normalizavimas baigtas. Apdorota dainų: {0}.</value>
+    <value>Garso normalizavimas baigtas. Apdorota dainų: {0}.</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
-    <value>Įveskite savo ListenBrainz naudotojo žetoną.</value>
+    <value>Įveskite savo ListenBrainz naudotojo prieigos raktą.</value>
   </data>
   <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
     <value>Nepavyko perskaityti atsakymo iš ListenBrainz. Bandykite vėliau dar kartą.</value>
@@ -299,7 +299,7 @@
     <value>Įveskite serverio URL adresą, prasidedantį http:// arba https://.</value>
   </data>
   <data name="ListenBrainz_InvalidToken" xml:space="preserve">
-    <value>Naudotojo žetonas netinkamas. Patikrinkite jį ir bandykite dar kartą.</value>
+    <value>Naudotojo prieigos raktas netinkamas. Patikrinkite jį ir bandykite dar kartą.</value>
   </data>
   <data name="ListenBrainz_ServerError" xml:space="preserve">
     <value>ListenBrainz grąžino klaidą (HTTP {0}). Bandykite vėliau dar kartą.</value>
@@ -323,6 +323,33 @@
     <value>LibVLC klaida: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Nepavyko įkelti "{0}".</value>
+    <value>Nepavyko įkelti „{0}“.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Naršo muzikos biblioteką</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Neaktyvus</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>atlieka {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Pristabdyta | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Nagi muzikos grotuvas</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Groja</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Pristabdyta</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>Iš Vikipedijos, pagal CC BY-SA licenciją.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

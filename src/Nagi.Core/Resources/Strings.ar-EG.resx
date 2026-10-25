@@ -127,7 +127,7 @@
     <value>{0} غير معروف</value>
   </data>
   <data name="Format_New" xml:space="preserve">
-    <value>جديد {0}</value>
+    <value>{0} جديد</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} لم يتم العثور عليه.</value>
@@ -197,7 +197,7 @@
     <value>جاري الإنهاء…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
-    <value>فشل تطبيع مستوى الصوت. تحقق من السجلات للحصول على التفاصيل.</value>
+    <value>فشلت تسوية مستوى الصوت. تحقق من السجلات للحصول على التفاصيل.</value>
   </data>
   <data name="Status_NoFoldersToRefresh" xml:space="preserve">
     <value>لا توجد مجلدات في المكتبة لتحديثها.</value>
@@ -257,7 +257,7 @@
     <value>صوت جهير كامل</value>
   </data>
   <data name="EqPreset_FullTreble" xml:space="preserve">
-    <value>صوت ثلاثي كامل</value>
+    <value>صوت حاد كامل</value>
   </data>
   <data name="EqPreset_Jazz" xml:space="preserve">
     <value>جاز</value>
@@ -275,7 +275,7 @@
     <value>تكنو</value>
   </data>
   <data name="EqPreset_Vocal" xml:space="preserve">
-    <value>صوتي</value>
+    <value>غنائي</value>
   </data>
   <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
     <value>جميع الأغاني تحتوي بالفعل على بيانات مستوى الصوت.</value>
@@ -284,10 +284,10 @@
     <value>جاري تحليل مستوى الصوت… الأغاني: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>جاري حساب توحيد مستوى الصوت ({0}/{1})…</value>
+    <value>جاري حساب تسوية مستوى الصوت ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>اكتمل توحيد مستوى الصوت. الأغاني المعالجة: {0}.</value>
+    <value>اكتملت تسوية مستوى الصوت. الأغاني المعالجة: {0}.</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
     <value>أدخل رمز مستخدم ListenBrainz الخاص بك.</value>
@@ -296,7 +296,7 @@
     <value>تعذر قراءة الاستجابة من ListenBrainz. حاول مرة أخرى لاحقًا.</value>
   </data>
   <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
-    <value>أدخل عنوان URL للسيرفر يبدأ بـ http:// أو https://.</value>
+    <value>أدخل عنوان URL للخادم يبدأ بـ http:// أو https://.</value>
   </data>
   <data name="ListenBrainz_InvalidToken" xml:space="preserve">
     <value>رمز المستخدم غير صالح. تحقق منه وحاول مرة أخرى.</value>
@@ -305,7 +305,7 @@
     <value>أرجع ListenBrainz خطأً (HTTP {0}). حاول مرة أخرى لاحقًا.</value>
   </data>
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
-    <value>تعذر الاتصال بـ ListenBrainz. تحقق من اتصالك وعنوان URL للسيرفر.</value>
+    <value>تعذر الاتصال بـ ListenBrainz. تحقق من اتصالك وعنوان URL للخادم.</value>
   </data>
   <data name="Backup_DataFolderMissing" xml:space="preserve">
     <value>تعذر على Nagi العثور على مجلد بيانات المكتبة الخاص به.</value>
@@ -324,5 +324,32 @@
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>فشل في تحميل '{0}'.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>يتصفح مكتبة الموسيقى</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>خامل</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>بواسطة {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>متوقف مؤقتًا | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>مشغل الموسيقى Nagi</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>قيد التشغيل</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>متوقف مؤقتًا</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>من ويكيبيديا، بموجب ترخيص CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

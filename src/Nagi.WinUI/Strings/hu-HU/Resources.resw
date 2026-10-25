@@ -62,18 +62,18 @@
     <value>Nagi</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Fedezd fel újra helyi zenei gyűjteményedet a Nagival, a sebességre, egyszerűségre és adatvédelemre összpontosító zenelejátszóval.</value>
+    <value>Fedezze fel újra helyi zenei gyűjteményét a Nagival, a sebességre, egyszerűségre és adatvédelemre összpontosító zenelejátszóval.</value>
   </data>
   <data name="AppShortName" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AppDisplayName" xml:space="preserve">
-    <value>Nagi Zenelejátszó</value>
+    <value>Nagi zenelejátszó</value>
   </data>
   <data name="AppInfoTip" xml:space="preserve">
-    <value>Megnyitás Nagi Zenelejátszóval</value>
+    <value>Megnyitás a Nagi zenelejátszóval</value>
   </data>
   <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Nagi Indítás</value>
+    <value>Nagi indítása</value>
   </data>
 </root>

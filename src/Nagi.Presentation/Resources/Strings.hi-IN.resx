@@ -182,7 +182,7 @@
     <value>शामिल नहीं है</value>
   </data>
   <data name="Operator_Is" xml:space="preserve">
-    <value>ठीक है</value>
+    <value>बिल्कुल यही है</value>
   </data>
   <data name="Operator_IsNot" xml:space="preserve">
     <value>नहीं है</value>
@@ -666,31 +666,43 @@
     <value>लेआउट डिवाइडर</value>
   </data>
   <data name="Settings_Button_Lyrics" xml:space="preserve">
-    <value>गीत</value>
+    <value>बोल</value>
   </data>
   <data name="Settings_Button_Queue" xml:space="preserve">
-    <value>पंक्ति</value>
+    <value>क्यू</value>
   </data>
   <data name="Settings_Button_Volume" xml:space="preserve">
     <value>वॉल्यूम</value>
   </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
-    <value>समुदाय द्वारा संग्रहित गीत डेटाबेस</value>
+    <value>समुदाय द्वारा संग्रहित बोल डेटाबेस</value>
   </data>
   <data name="Settings_Provider_NetEase_Desc" xml:space="preserve">
     <value>चीनी संगीत सेवा, एशियाई संगीत के लिए शानदार</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>कलाकार ID प्राप्त करता है (TheAudioDB और Fanart.tv के लिए आवश्यक)</value>
+    <value>कलाकार और एल्बम ID खोजता है जो आपके टैग में शामिल नहीं हैं</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>उच्च-गुणवत्ता वाली कलाकार छवियाँ और जीवनियाँ (MusicBrainz आवश्यक है)</value>
+    <value>कलाकार की छवियाँ और जीवनियाँ (आपके टैग या MusicBrainz से MusicBrainz ID आवश्यक है)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>केवल उच्च-गुणवत्ता वाली कलाकार छवियाँ (MusicBrainz आवश्यक है)</value>
+    <value>उच्च-गुणवत्ता वाली कलाकार छवियाँ (आपके टैग या MusicBrainz से MusicBrainz ID आवश्यक है)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>कलाकार की जीवनियाँ और छवियाँ (फ़ॉलबैक)</value>
+    <value>कलाकार की जीवनियाँ और एल्बम कवर (फ़ॉलबैक)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>कलाकार की छवियाँ और एल्बम कवर, नाम से खोजे गए</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>आपकी भाषा में कलाकार की जीवनियाँ (आपके टैग या MusicBrainz से MusicBrainz ID आवश्यक है)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>MusicBrainz रिलीज़ के लिए एल्बम कवर (आपके टैग या MusicBrainz से ID का उपयोग करता है)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>उच्च-रिज़ॉल्यूशन एल्बम कवर, नाम से खोजे गए</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>एल्बम खोजें</value>
@@ -847,13 +859,13 @@
     <value>आगे क्या</value>
   </data>
   <data name="CrashReport_ReportIssuePreLink" xml:space="preserve">
-    <value>कृपया इस समस्या को रिपोर्ट करने के लिए एक मुद्दा बनाएँ </value>
+    <value>कृपया इसे रिपोर्ट करने के लिए </value>
   </data>
   <data name="CrashReport_IssueLink" xml:space="preserve">
     <value>समस्याएँ पृष्ठ</value>
   </data>
   <data name="CrashReport_ReportIssuePostLink" xml:space="preserve">
-    <value>।</value>
+    <value> पर एक समस्या बनाने पर विचार करें।</value>
   </data>
   <data name="CrashReport_ResetAppAdvice" xml:space="preserve">
     <value>यदि यह होता रहता है, तो आप 'ऐप और डेटा रीसेट करें' का प्रयास कर सकते हैं। यह आपकी सेटिंग्स और लाइब्रेरी को मिटा देगा, जिससे ऐप को खराब स्थिति से उबरने में मदद मिल सकती है।</value>
@@ -863,6 +875,9 @@
   </data>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>लॉग कॉपी करें</value>
+  </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>क्रैश लॉग</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>कवर चुनें</value>
@@ -899,6 +914,12 @@
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>मान</value>
+  </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>फ़ील्ड</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>शर्त</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>यह नियम हटाएँ</value>
@@ -946,13 +967,16 @@
     <value>अगला</value>
   </data>
   <data name="Player_LyricsButton_ToolTip" xml:space="preserve">
-    <value>गीत</value>
+    <value>बोल</value>
   </data>
   <data name="Player_QueueButton_ToolTip" xml:space="preserve">
     <value>आगे क्या</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>एल्बम पर जाएँ</value>
+  </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>सीक करें</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>आगे क्या</value>
@@ -1005,9 +1029,6 @@
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>एल्बम खोजें…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>एल्बम खोजें</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>यादृच्छिक रूप से एक चुनें</value>
   </data>
@@ -1029,9 +1050,6 @@
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>एल्बम में खोजें…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>एल्बम में खोजें</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>सभी चलाएँ</value>
   </data>
@@ -1049,9 +1067,6 @@
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>कलाकार खोजें…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>कलाकार खोजें</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>यादृच्छिक रूप से एक चुनें</value>
@@ -1091,9 +1106,6 @@
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>कलाकार में खोजें…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>कलाकार में खोजें</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>सभी चलाएँ</value>
@@ -1167,9 +1179,6 @@
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>शैली खोजें…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>शैलियाँ खोजें</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>यादृच्छिक रूप से एक चुनें</value>
   </data>
@@ -1188,9 +1197,6 @@
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>लाइब्रेरी में खोजें…</value>
   </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>लाइब्रेरी खोजें</value>
-  </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>सभी चलाएँ</value>
   </data>
@@ -1204,7 +1210,7 @@
     <value>अगला चलाएँ</value>
   </data>
   <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
-    <value>कतार में जोड़ें</value>
+    <value>क्यू में जोड़ें</value>
   </data>
   <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
     <value>प्लेलिस्ट में जोड़ें</value>
@@ -1297,7 +1303,7 @@
     <value>अपनी लाइब्रेरी को जीवंत बनाएं</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi पूरी तरह से ऑफ़लाइन काम करता है। कलाकारों की फ़ोटो, जीवनियाँ और बोल जोड़ने के लिए इन्हें चालू करें, जो आपकी फ़ाइलों में शामिल नहीं हैं।</value>
+    <value>Nagi पूरी तरह से ऑफ़लाइन काम करता है। कलाकारों की फ़ोटो, जीवनियाँ, एल्बम कवर और बोल जोड़ने के लिए इन्हें चालू करें, जो आपकी फ़ाइलों में शामिल नहीं हैं।</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>अपने डेस्कटॉप के अनुकूल बनाएं</value>
@@ -1334,9 +1340,6 @@
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>प्लेलिस्ट खोजें…</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>प्लेलिस्ट खोजें</value>
   </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>यादृच्छिक रूप से एक चुनें</value>
@@ -1383,9 +1386,6 @@
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>प्लेलिस्ट में खोजें…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>प्लेलिस्ट में खोजें</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>सभी चलाएँ</value>
   </data>
@@ -1409,9 +1409,6 @@
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>शैली में खोजें…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>शैली में खोजें</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>सभी चलाएँ</value>
@@ -1509,6 +1506,12 @@
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>प्रीएम्प</value>
   </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>इक्वलाइज़र प्रीसेट</value>
+  </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>कस्टम</value>
   </data>
@@ -1594,7 +1597,7 @@
     <value>ऑनलाइन मेटाडेटा प्राप्त करें</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>ऑनलाइन स्रोतों से कलाकार की छवियाँ और जीवनी प्राप्त करें।</value>
+    <value>ऑनलाइन स्रोतों से कलाकार की छवियाँ, जीवनियाँ और एल्बम कवर प्राप्त करें।</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>स्रोत</value>
@@ -1612,7 +1615,7 @@
     <value>स्रोत</value>
   </data>
   <data name="SettingsPage_LyricsSources_Description" xml:space="preserve">
-    <value>गीत स्रोतों को पुनर्व्यवस्थित करने के लिए खींचें। विवरण के लिए प्रत्येक स्रोत पर होवर करें।</value>
+    <value>बोल स्रोतों को पुनर्व्यवस्थित करने के लिए खींचें। विवरण के लिए प्रत्येक स्रोत पर होवर करें।</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
     <value>रोमनीकृत बोल दिखाएँ</value>
@@ -1696,7 +1699,7 @@
     <value>Last.fm</value>
   </data>
   <data name="SettingsPage_LastFm_Description" xml:space="preserve">
-    <value>ट्रैक स्क्रोबल करने और आपके वर्तमान में चल रहे गाने को दिखाने के लिए अपने Last.fm खाते को कनेक्ट करें।</value>
+    <value>ट्रैक स्क्रॉबल करने और आपके वर्तमान में चल रहे गाने को दिखाने के लिए अपने Last.fm खाते को कनेक्ट करें।</value>
   </data>
   <data name="SettingsPage_LastFm_Connect_Content" xml:space="preserve">
     <value>कनेक्ट करें</value>
@@ -1768,10 +1771,10 @@
     <value>डिस्कनेक्ट करें</value>
   </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
-    <value>डिस्कॉर्ड</value>
+    <value>Discord</value>
   </data>
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
-    <value>डिस्कॉर्ड पर अपनी वर्तमान सुनने की गतिविधि को अपनी स्थिति के रूप में दिखाएँ।</value>
+    <value>Discord पर अपनी वर्तमान सुनने की गतिविधि को अपनी स्थिति के रूप में दिखाएँ।</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>स्मार्ट प्लेलिस्ट</value>
@@ -1781,9 +1784,6 @@
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>स्मार्ट प्लेलिस्ट में खोजें…</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>स्मार्ट प्लेलिस्ट में खोजें</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>नियम संपादित करें</value>
@@ -2059,10 +2059,13 @@
     <value>पिछले 90 दिन</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>पिछला वर्ष</value>
+    <value>पिछले 12 महीने</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>सभी समय</value>
+  </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>समय सीमा</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}घं {1}मि</value>
@@ -2191,7 +2194,7 @@
     <value>60 मिनट में</value>
   </data>
   <data name="Listening_CancelStop" xml:space="preserve">
-    <value>निधारित रोक रद्द करें</value>
+    <value>निर्धारित रोक रद्द करें</value>
   </data>
   <data name="Listening_TimerRemaining" xml:space="preserve">
     <value>{0} में रुक जाएगा</value>
@@ -2263,5 +2266,65 @@
 2. आर्काइव को एक्सट्रैक्ट करें और इसके bin फ़ोल्डर में ffmpeg.exe खोजें।
 3. ffmpeg.exe वाले फ़ोल्डर को अपने Windows PATH में जोड़ें।
 4. Nagi को पुनरारंभ करें, फिर वॉल्यूम नॉर्मलाइज़ेशन को पुनः सक्षम करें।</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>गीत की जानकारी</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>टैग</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>सुनने की गतिविधि</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>एल्बम कलाकार</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>कंडक्टर</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>कॉपीराइट</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>पथ</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>फ़ॉर्मेट</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>चैनल</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>आकार</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{1} में से {0}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>गीत सूची के कॉलम</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>चुनें कि गीत सूचियाँ कौन-से विवरण दिखाएँ।</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>कॉलम हेडर</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>गीत सूचियों के ऊपर प्रत्येक कॉलम का लेबल दिखाएँ।</value>
   </data>
 </root>

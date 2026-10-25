@@ -124,7 +124,7 @@
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
-    <value>Onbekende {0}</value>
+    <value>{0} onbekend</value>
   </data>
   <data name="Format_New" xml:space="preserve">
     <value>Nieuwe {0}</value>
@@ -239,7 +239,7 @@
     <value>De afspeellijst is aangemaakt, maar de nummers konden niet worden toegevoegd. Probeer opnieuw te importeren.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Geen nummers van de afspeellijst zijn gevonden in uw bibliotheek.</value>
+    <value>Er zijn geen nummers uit de afspeellijst gevonden in je bibliotheek.</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Geen afspeellijsten om te exporteren.</value>
@@ -317,12 +317,39 @@
     <value>Het geselecteerde bestand is geen geldige Nagi-back-up.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC heeft een ongespecificeerde fout ondervonden.</value>
+    <value>LibVLC heeft een niet-gespecificeerde fout ondervonden.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC Fout: {0}</value>
+    <value>LibVLC-fout: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>Laden van '{0}' mislukt.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Bladert door muziekbibliotheek</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Inactief</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>van {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Gepauzeerd | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Nagi-muziekspeler</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Speelt af</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Gepauzeerd</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>Van Wikipedia, onder de CC BY-SA-licentie.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

@@ -59,7 +59,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NavItem_Library" xml:space="preserve">
-    <value>Aklatan</value>
+    <value>Library</value>
   </data>
   <data name="NavItem_Albums" xml:space="preserve">
     <value>Mga Album</value>
@@ -239,7 +239,7 @@
     <value>Hindi mabilang ang mga katugmang kanta</value>
   </data>
   <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
-    <value>Kina-kalkula…</value>
+    <value>Kinakalkula…</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
     <value>May umiiral nang playlist na may ganitong pangalan.</value>
@@ -257,7 +257,7 @@
     <value>Kritikal na Error</value>
   </data>
   <data name="CrashReport_Message" xml:space="preserve">
-    <value>Nakararanas ng error ang Nagi at kailangang mag-sara.</value>
+    <value>Nakaranas ng error ang Nagi at kailangan itong magsara.</value>
   </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
     <value>Nagi</value>
@@ -302,7 +302,7 @@
     <value>Nabigo ang pagdagdag ng folder. Maaaring invalid ang path.</value>
   </data>
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
-    <value>Nasa aklatan na ang folder na ito.</value>
+    <value>Nasa library na ang folder na ito.</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Idinadagdag ang folder sa library…</value>
@@ -323,7 +323,7 @@
     <value>Walang pagbabagong nakita para sa '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
-    <value>Muling sinusuri ang '{0}'…</value>
+    <value>Muling ini-scan ang '{0}'…</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
     <value>Walang nakitang mga folder na may musika.</value>
@@ -494,7 +494,7 @@
     <value>Error sa Pag-reset</value>
   </data>
   <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>May error na naganap habang ni-re-reset ang data ng application: {0}. Mangyaring subukang i-restart nang mano-mano ang app.</value>
+    <value>May error na naganap habang nire-reset ang data ng application: {0}. Mangyaring subukang i-restart nang mano-mano ang app.</value>
   </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
     <value>Error</value>
@@ -630,7 +630,7 @@ Mga file na hindi ma-import: {0}.</value>
     <value>Susunod</value>
   </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
-    <value>Aklatan</value>
+    <value>Library</value>
   </data>
   <data name="Settings_Nav_Folders" xml:space="preserve">
     <value>Mga Folder</value>
@@ -666,7 +666,7 @@ Mga file na hindi ma-import: {0}.</value>
     <value>Tagapaghati ng Layout</value>
   </data>
   <data name="Settings_Button_Lyrics" xml:space="preserve">
-    <value>Lyrics</value>
+    <value>Liriko</value>
   </data>
   <data name="Settings_Button_Queue" xml:space="preserve">
     <value>Pila</value>
@@ -675,22 +675,34 @@ Mga file na hindi ma-import: {0}.</value>
     <value>Volume</value>
   </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
-    <value>Database ng lyrics na curated ng komunidad</value>
+    <value>Database ng liriko na curated ng komunidad</value>
   </data>
   <data name="Settings_Provider_NetEase_Desc" xml:space="preserve">
-    <value>Chinese music service, mahusay para sa musikang Asyano</value>
+    <value>Serbisyo ng musikang Chinese, mahusay para sa musikang Asyano</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Kumukuha ng mga ID ng artista (kinakailangan para sa TheAudioDB at Fanart.tv)</value>
+    <value>Hinahanap ang mga ID ng artista at album na wala sa iyong mga tag</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>Mataas na kalidad na mga larawan at biography ng artista (nangangailangan ng MusicBrainz)</value>
+    <value>Mga larawan at biography ng artista (nangangailangan ng MusicBrainz ID mula sa iyong mga tag o sa MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>Mga larawan lamang ng artista na mataas ang kalidad (nangangailangan ng MusicBrainz)</value>
+    <value>Mataas na kalidad na mga larawan ng artista (nangangailangan ng MusicBrainz ID mula sa iyong mga tag o sa MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Mga biography at larawan ng artista (fallback)</value>
+    <value>Mga biography ng artista at cover ng album (fallback)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>Mga larawan ng artista at cover ng album, hinahanap ayon sa pangalan</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>Mga biography ng artista sa iyong wika (nangangailangan ng MusicBrainz ID mula sa iyong mga tag o sa MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>Mga cover ng album para sa mga release sa MusicBrainz (gumagamit ng mga ID mula sa iyong mga tag o sa MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>Mga high-resolution na cover ng album, hinahanap ayon sa pangalan</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Maghanap ng mga album</value>
@@ -723,7 +735,7 @@ Mga file na hindi ma-import: {0}.</value>
     <value>Maghanap ng mga genre</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Maghanap sa aklatan</value>
+    <value>Maghanap sa library</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Maghanap ng mga playlist</value>
@@ -771,7 +783,7 @@ Mga file na hindi ma-import: {0}.</value>
     <value>Muling I-scan ang Metadata</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>Muling i-scan ang iyong library upang ilapat ang mga setting ng metadata, tulad ng paghahati sa artist. Maaari itong tumagal para sa mga malalaking library. Magpatuloy?</value>
+    <value>Muling i-scan ang iyong library upang ilapat ang mga setting ng metadata, tulad ng paghihiwalay ng artista. Maaari itong tumagal para sa mga malalaking library. Magpatuloy?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
     <value>Muling I-scan</value>
@@ -783,7 +795,7 @@ Mga file na hindi ma-import: {0}.</value>
     <value>Kumpleto na ang Muling Pag-scan</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Content" xml:space="preserve">
-    <value>Na-update na ang metadata ng aklatan.</value>
+    <value>Na-update na ang metadata ng library.</value>
   </data>
   <data name="Settings_Dialog_RescanFailed_Title" xml:space="preserve">
     <value>Nabigo ang Muling Pag-scan</value>
@@ -808,7 +820,7 @@ Gusto mo bang magpatuloy?</value>
     <value>Paganahin at I-scan</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>Inihahanda ang pag-scan sa normalization ng lakas ng tunog…</value>
+    <value>Inihahanda ang pag-scan para sa volume normalization…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
     <value>Kinansela ang scan para sa volume normalization.</value>
@@ -864,11 +876,14 @@ Gusto mo bang magpatuloy?</value>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>Kopyahin ang Log</value>
   </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>Log ng crash</value>
+  </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
-    <value>Pumili ng Pabalat</value>
+    <value>Pumili ng Cover</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_ToolTip" xml:space="preserve">
-    <value>Pumili ng larawan ng pabalat</value>
+    <value>Pumili ng larawan ng cover</value>
   </data>
   <data name="SmartPlaylist_PlaylistNameLabel" xml:space="preserve">
     <value>Pangalan ng Playlist</value>
@@ -899,6 +914,12 @@ Gusto mo bang magpatuloy?</value>
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>Halaga</value>
+  </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>Patlang</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>Kondisyon</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>Alisin ang panuntunang ito</value>
@@ -946,13 +967,16 @@ Gusto mo bang magpatuloy?</value>
     <value>Susunod</value>
   </data>
   <data name="Player_LyricsButton_ToolTip" xml:space="preserve">
-    <value>Lyrics</value>
+    <value>Liriko</value>
   </data>
   <data name="Player_QueueButton_ToolTip" xml:space="preserve">
     <value>Susunod</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Pumunta sa Album</value>
+  </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>Posisyon ng pagtugtog</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Susunod</value>
@@ -1005,9 +1029,6 @@ Gusto mo bang magpatuloy?</value>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Maghanap ng mga album…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Maghanap ng mga album</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Pumili ng isa nang random</value>
   </data>
@@ -1029,9 +1050,6 @@ Gusto mo bang magpatuloy?</value>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Maghanap sa album…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Maghanap sa album</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>I-play lahat</value>
   </data>
@@ -1048,10 +1066,7 @@ Gusto mo bang magpatuloy?</value>
     <value>Mga Artista</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Maghanap ng mga artist…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Maghanap ng mga artist</value>
+    <value>Maghanap ng mga artista…</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Pumili ng isa nang random</value>
@@ -1066,13 +1081,13 @@ Gusto mo bang magpatuloy?</value>
     <value>Alisin ang Larawan</value>
   </data>
   <data name="ArtistPage_Empty_Title" xml:space="preserve">
-    <value>Walang artist na natagpuan</value>
+    <value>Walang artistang natagpuan</value>
   </data>
   <data name="ArtistPage_Empty_Subtitle" xml:space="preserve">
-    <value>I-scan ang iyong library ng musika upang punan ang mga artist</value>
+    <value>I-scan ang iyong library ng musika upang punan ang mga artista</value>
   </data>
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
-    <value>Palitan ang larawan ng artist</value>
+    <value>Palitan ang larawan ng artista</value>
   </data>
   <data name="ArtistViewPage_ImageMenu_ChangeImage" xml:space="preserve">
     <value>Palitan ang Larawan</value>
@@ -1081,7 +1096,7 @@ Gusto mo bang magpatuloy?</value>
     <value>Alisin ang Larawan</value>
   </data>
   <data name="ArtistViewPage_Header_Label" xml:space="preserve">
-    <value>Artist</value>
+    <value>Artista</value>
   </data>
   <data name="ArtistViewPage_Albums_Title" xml:space="preserve">
     <value>Nangungunang Mga Album</value>
@@ -1090,10 +1105,7 @@ Gusto mo bang magpatuloy?</value>
     <value>Mga Kanta</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Maghanap sa artist…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Maghanap sa artist</value>
+    <value>Maghanap sa artista…</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>I-play lahat</value>
@@ -1102,7 +1114,7 @@ Gusto mo bang magpatuloy?</value>
     <value>I-shuffle at i-play lahat</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
-    <value>Walang kantang natagpuan para sa artist na ito</value>
+    <value>Walang kantang natagpuan para sa artistang ito</value>
   </data>
   <data name="ArtistViewPage_Empty_Subtitle" xml:space="preserve">
     <value>Subukang maghanap ng iba</value>
@@ -1167,9 +1179,6 @@ Gusto mo bang magpatuloy?</value>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Maghanap ng mga genre…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Maghanap ng mga genre</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>Pumili ng isa nang random</value>
   </data>
@@ -1183,13 +1192,10 @@ Gusto mo bang magpatuloy?</value>
     <value>I-scan ang iyong library ng musika upang punan ang mga genre</value>
   </data>
   <data name="LibraryPage_Title" xml:space="preserve">
-    <value>Aklatan</value>
+    <value>Library</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Maghanap sa library…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Maghanap sa library</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>I-play lahat</value>
@@ -1204,7 +1210,7 @@ Gusto mo bang magpatuloy?</value>
     <value>I-play Susunod</value>
   </data>
   <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
-    <value>Idagdag sa Queue</value>
+    <value>Idagdag sa Pila</value>
   </data>
   <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
     <value>Idagdag sa Playlist</value>
@@ -1213,7 +1219,7 @@ Gusto mo bang magpatuloy?</value>
     <value>Pumunta sa Album</value>
   </data>
   <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
-    <value>Pumunta sa Artist</value>
+    <value>Pumunta sa Artista</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
     <value>Ipakita sa File Explorer</value>
@@ -1240,13 +1246,13 @@ Gusto mo bang magpatuloy?</value>
     <value>Subukan ang ibang kanta</value>
   </data>
   <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
-    <value>I-edit o palitan ang mga lyrics</value>
+    <value>I-edit o palitan ang liriko</value>
   </data>
   <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
     <value>I-edit ang Liriko</value>
   </data>
   <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
-    <value>Mag-paste ng plain text o may timestamp na LRC lyrics</value>
+    <value>Mag-paste ng plain text o LRC na liriko na may timestamp</value>
   </data>
   <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
     <value>I-save</value>
@@ -1255,10 +1261,10 @@ Gusto mo bang magpatuloy?</value>
     <value>Alisin ang Nai-save na Liriko</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
-    <value>Hindi na-update ang lyrics</value>
+    <value>Hindi na-update ang liriko</value>
   </data>
   <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
-    <value>Hindi na-save ng Nagi ang lyrics. Suriin ang log para sa mga detalye at subukan muli.</value>
+    <value>Hindi na-save ng Nagi ang liriko. Suriin ang log para sa mga detalye at subukan muli.</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Maligayang Pagdating sa Nagi</value>
@@ -1297,7 +1303,7 @@ Gusto mo bang magpatuloy?</value>
     <value>Buhayin ang iyong library</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Ganap na gumagana offline ang Nagi. I-on ang mga ito upang idagdag ang mga larawan ng artist, biyograpiya, at mga liriko na wala sa iyong mga file.</value>
+    <value>Ganap na gumagana offline ang Nagi. I-on ang mga ito upang idagdag ang mga larawan ng artista, biyograpiya, cover ng album, at mga liriko na wala sa iyong mga file.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>Babagay mismo sa iyong desktop</value>
@@ -1334,9 +1340,6 @@ Gusto mo bang magpatuloy?</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Maghanap ng mga playlist…</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Maghanap ng mga playlist</value>
   </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Pumili ng isa nang random</value>
@@ -1383,9 +1386,6 @@ Gusto mo bang magpatuloy?</value>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Maghanap sa playlist…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Maghanap sa playlist</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>I-play lahat</value>
   </data>
@@ -1409,9 +1409,6 @@ Gusto mo bang magpatuloy?</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Maghanap sa genre…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Maghanap sa genre</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>I-play lahat</value>
@@ -1453,7 +1450,7 @@ Gusto mo bang magpatuloy?</value>
     <value>Dynamic Theming</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>I-tutugma ang mga kulay ng app sa kasalukuyang artwork ng album.</value>
+    <value>Itugma ang mga kulay ng app sa kasalukuyang artwork ng album.</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
     <value>Tandaan ang Laki ng Window</value>
@@ -1509,6 +1506,12 @@ Gusto mo bang magpatuloy?</value>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Preamp</value>
   </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>Preset ng equalizer</value>
+  </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>Custom</value>
   </data>
@@ -1552,7 +1555,7 @@ Gusto mo bang magpatuloy?</value>
     <value>Kapag na-minimize, magpakita ng compact na floating player sa halip na itago ang window.</value>
   </data>
   <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
-    <value>I-tago sa System Tray</value>
+    <value>Itago sa System Tray</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
     <value>Panatilihing gumagana ang Nagi sa system tray kapag isinara mo ang window nito.</value>
@@ -1567,16 +1570,16 @@ Gusto mo bang magpatuloy?</value>
     <value>Ibalewala ang mga Artikulo Kapag Nag-uuri</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Ayusin ang mga album, artist, at kanta batay sa kanilang unang makabuluhang salita (hal. Ang "The Beatles" ay inaayos sa ilalim ng B).</value>
+    <value>Ayusin ang mga album, artista, at kanta batay sa kanilang unang makabuluhang salita (hal. Ang "The Beatles" ay inaayos sa ilalim ng B).</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Pamamahala ng Data</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Header" xml:space="preserve">
-    <value>Paghihiwalay ng Artist</value>
+    <value>Paghihiwalay ng Artista</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Tukuyin ang mga karakter na ginagamit upang paghiwalayin ang maraming artist (hal. ';/'). Iwanang blangko upang i-disable.</value>
+    <value>Tukuyin ang mga karakter na ginagamit upang paghiwalayin ang maraming artista (hal. ';/'). Iwanang blangko upang i-disable.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
     <value>Paghihiwalay ng Genre</value>
@@ -1594,7 +1597,7 @@ Gusto mo bang magpatuloy?</value>
     <value>Kumuha ng Online Metadata</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Kumuha ng mga larawan at talambuhay ng artist mula sa mga online na pinagmulan.</value>
+    <value>Kumuha ng mga larawan at talambuhay ng artista at cover ng album mula sa mga online na pinagmulan.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Mga Pinagmulan</value>
@@ -1612,7 +1615,7 @@ Gusto mo bang magpatuloy?</value>
     <value>Mga Pinagmulan</value>
   </data>
   <data name="SettingsPage_LyricsSources_Description" xml:space="preserve">
-    <value>I-drag upang muling ayusin ang mga pinagmulan ng lyrics. Mag-hover sa bawat pinagmulan para sa mga detalye.</value>
+    <value>I-drag upang muling ayusin ang mga pinagmulan ng liriko. Mag-hover sa bawat pinagmulan para sa mga detalye.</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
     <value>Ipakita ang Naka-Romanize na Liriko</value>
@@ -1782,9 +1785,6 @@ Gusto mo bang magpatuloy?</value>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Maghanap sa smart playlist…</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Maghanap sa smart playlist</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>I-edit ang mga panuntunan</value>
   </data>
@@ -1897,7 +1897,7 @@ Gusto mo bang magpatuloy?</value>
     <value>Acrylic (Salamin)</value>
   </data>
   <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
-    <value>Solid (Malabo)</value>
+    <value>Solid (Hindi Naaaninag)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
     <value>Ibagay ang hitsura ng bar ng player.</value>
@@ -1942,7 +1942,7 @@ Gusto mo bang magpatuloy?</value>
     <value>Nangungunang Kanta</value>
   </data>
   <data name="InsightsPage_TopArtists" xml:space="preserve">
-    <value>Nangungunang Artist</value>
+    <value>Nangungunang Artista</value>
   </data>
   <data name="InsightsPage_TopAlbums" xml:space="preserve">
     <value>Nangungunang Album</value>
@@ -1984,7 +1984,7 @@ Gusto mo bang magpatuloy?</value>
     <value>Paghahanap</value>
   </data>
   <data name="InsightsPage_Source_Library" xml:space="preserve">
-    <value>Aklatan</value>
+    <value>Library</value>
   </data>
   <data name="InsightsPage_Source_Files" xml:space="preserve">
     <value>Mga File</value>
@@ -2008,7 +2008,7 @@ Gusto mo bang magpatuloy?</value>
     <value>Ang iyong musika, magandang organisado</value>
   </data>
   <data name="SplashPage_Status" xml:space="preserve">
-    <value>Ginising si Nagi…</value>
+    <value>Ginigising ang Nagi…</value>
   </data>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>Tingnan lahat</value>
@@ -2059,10 +2059,13 @@ Gusto mo bang magpatuloy?</value>
     <value>Huling 90 Araw</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>Nakaraang Taon</value>
+    <value>Huling 1 Taon</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>Lahat ng Panahon</value>
+  </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>Saklaw ng oras</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}h {1}m</value>
@@ -2236,7 +2239,7 @@ Gusto mo bang magpatuloy?</value>
     <value>I-paborito ang kanta mula sa menu nito, o piliin ito at pindutin ang Ctrl+D.</value>
   </data>
   <data name="Listening_VarietyDescription" xml:space="preserve">
-    <value>Iniiwasan ng Mas Maraming Pagkakaiba ang mga kantang pinatugtog sa loob ng nakaraang panahon ng pagpapatugtog at pinaghihiwalay ang mga kanta ng parehong artist hangga't maaari.</value>
+    <value>Iniiwasan ng Mas Maraming Pagkakaiba ang mga kantang pinatugtog sa loob ng nakaraang panahon ng pagpapatugtog at pinaghihiwalay ang mga kanta ng parehong artista hangga't maaari.</value>
   </data>
   <data name="Listening_RediscoverDescription" xml:space="preserve">
     <value>Pumipili ang Muling Tuklasin ng mga kantang may naitalang pagpapatugtog sa Nagi na huling pinatugtog nang higit sa 30 araw na ang nakalipas.</value>
@@ -2263,5 +2266,65 @@ Gusto mo bang magpatuloy?</value>
 2. I-extract ang archive at hanapin ang ffmpeg.exe sa bin folder nito.
 3. Idagdag ang folder na naglalaman ng ffmpeg.exe sa iyong Windows PATH.
 4. I-restart ang Nagi, pagkatapos ay paganahin muli ang normalization ng volume.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>Impormasyon ng Kanta</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>Mga Tag</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>Pakikinig</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>Artista ng Album</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>Konduktor</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>Karapatang-ari</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>Lokasyon</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>Mga Channel</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>Laki</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} sa {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>Mga Column ng Listahan ng Kanta</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>Piliin ang mga detalyeng ipinapakita sa mga listahan ng kanta.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>Mga Header ng Column</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>Lagyan ng label ang bawat column sa itaas ng mga listahan ng kanta.</value>
   </data>
 </root>

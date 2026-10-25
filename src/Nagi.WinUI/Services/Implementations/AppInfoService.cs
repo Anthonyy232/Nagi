@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
@@ -11,6 +13,8 @@ namespace Nagi.WinUI.Services.Implementations;
 public class AppInfoService : IAppInfoService
 {
     private readonly ILogger<AppInfoService> _logger;
+    private readonly SemaphoreSlim _languageCacheLock = new(1, 1);
+    private IReadOnlyList<string>? _cachedAvailableLanguages;
 
     public AppInfoService(ILogger<AppInfoService> logger)
     {
@@ -28,11 +32,9 @@ public class AppInfoService : IAppInfoService
         return $"{version.Major}.{version.Minor}.{version.Build}";
     }
 
+    public Task InitializeAsync() => GetAvailableLanguagesAsync();
 
-    private IReadOnlyList<string>? _cachedAvailableLanguages;
-    private readonly System.Threading.SemaphoreSlim _languageCacheLock = new(1, 1);
-
-    public async System.Threading.Tasks.Task<IReadOnlyList<string>> GetAvailableLanguagesAsync()
+    public async Task<IReadOnlyList<string>> GetAvailableLanguagesAsync()
     {
         if (_cachedAvailableLanguages != null)
             return _cachedAvailableLanguages;
@@ -43,31 +45,22 @@ public class AppInfoService : IAppInfoService
             if (_cachedAvailableLanguages != null)
                 return _cachedAvailableLanguages;
 
-            // Discover supported languages by scanning package subdirectories for satellite assemblies.
-            // ManifestLanguages only reflects WinRT (.resw) resources; this app uses .resx satellite
-            // assemblies. StorageFolder is used instead of Directory.EnumerateFiles because MSIX's VFS
-            // blocks Win32 filesystem enumeration inside WindowsApps install directories.
+            // ManifestLanguages only reflects WinRT (.resw) resources, but the UI strings live in .resx
+            // satellite assemblies, so look for those in the package's locale folders instead.
+            // StorageFolder is used because MSIX's VFS blocks Win32 enumeration of WindowsApps folders.
             var satelliteName = typeof(Strings).Assembly.GetName().Name + ".resources.dll";
-            var installFolder = Package.Current.InstalledLocation;
-            _logger.LogDebug("Language scan: installFolder={Path}, satellite={Satellite}", installFolder.Path, satelliteName);
-
             var results = new List<string>();
-            var subFolders = await installFolder.GetFoldersAsync();
-            _logger.LogDebug("Language scan: {Count} subfolders found", subFolders.Count);
 
-            foreach (var folder in subFolders)
+            foreach (var folder in await Package.Current.InstalledLocation.GetFoldersAsync())
             {
-                try { _ = new CultureInfo(folder.Name); }
+                try { _ = CultureInfo.GetCultureInfo(folder.Name); }
                 catch (CultureNotFoundException) { continue; }
 
-                var item = await folder.TryGetItemAsync(satelliteName);
-                _logger.LogDebug("Language scan: {Folder}/{Satellite} -> {Found}", folder.Name, satelliteName, item != null ? "found" : "missing");
-                if (item == null) continue;
-
-                results.Add(folder.Name);
+                if (await folder.TryGetItemAsync(satelliteName) != null)
+                    results.Add(folder.Name);
             }
 
-            _logger.LogDebug("Language scan: completed with {Count} languages", results.Count);
+            _logger.LogDebug("Found {Count} UI languages in the package", results.Count);
             _cachedAvailableLanguages = results;
             return _cachedAvailableLanguages;
         }
@@ -81,5 +74,4 @@ public class AppInfoService : IAppInfoService
             _languageCacheLock.Release();
         }
     }
-    public System.Threading.Tasks.Task InitializeAsync() => GetAvailableLanguagesAsync();
 }

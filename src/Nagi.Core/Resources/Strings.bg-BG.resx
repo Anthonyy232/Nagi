@@ -325,4 +325,31 @@
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>Неуспешно зареждане на '{0}'.</value>
   </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Разглежда музикалната библиотека</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Неактивен</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>от {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>На пауза | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Музикален плейър Nagi</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Възпроизвежда се</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>На пауза</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>От Уикипедия, под лиценза CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
+  </data>
 </root>

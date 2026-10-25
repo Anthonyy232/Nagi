@@ -197,7 +197,7 @@
     <value>இறுதி செய்கிறது…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
-    <value>ஒலியளவு சீராக்கம் தோல்வியடைந்தது. விவரங்களுக்குப் பதிவுகளைச் சரிபார்க்கவும்.</value>
+    <value>ஒலியளவு இயல்பாக்கம் தோல்வியடைந்தது. விவரங்களுக்குப் பதிவுகளைச் சரிபார்க்கவும்.</value>
   </data>
   <data name="Status_NoFoldersToRefresh" xml:space="preserve">
     <value>நூலகத்தில் புதுப்பிக்க எந்தக் கோப்புறைகளும் இல்லை.</value>
@@ -281,13 +281,13 @@
     <value>அனைத்து பாடல்களுக்கும் ஏற்கனவே ஒலியளவு தரவு உள்ளது.</value>
   </data>
   <data name="ReplayGain_CalculatingCount" xml:space="preserve">
-    <value>ஒலிளவைப் பகுப்பாய்வு செய்கிறது… பாடல்கள்: {0}</value>
+    <value>ஒலியளவைப் பகுப்பாய்வு செய்கிறது… பாடல்கள்: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>ஒலிளவு சீரமைப்பைக் கணக்கிடுகிறது ({0}/{1})…</value>
+    <value>ஒலியளவு இயல்பாக்கத்தைக் கணக்கிடுகிறது ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>ஒலிளவு சீரமைப்பு முடிந்தது. செயலாக்கப்பட்ட பாடல்கள்: {0}.</value>
+    <value>ஒலியளவு இயல்பாக்கம் முடிந்தது. செயலாக்கப்பட்ட பாடல்கள்: {0}.</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
     <value>உங்கள் ListenBrainz பயனர் டோக்கனை உள்ளிடவும்.</value>
@@ -324,5 +324,32 @@
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>'{0}' ஐ ஏற்றத் தவறிவிட்டது.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>இசை நூலகத்தை உலாவுகிறார்</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>செயலற்ற நிலை</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>கலைஞர்: {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>இடைநிறுத்தப்பட்டது | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Nagi இசை பிளேயர்</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>இயங்குகிறது</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>இடைநிறுத்தப்பட்டது</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>விக்கிப்பீடியாவிலிருந்து, CC BY-SA உரிமத்தின் கீழ்.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

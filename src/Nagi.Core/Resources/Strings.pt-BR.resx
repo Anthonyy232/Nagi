@@ -124,7 +124,7 @@
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
-    <value>Desconhecido {0}</value>
+    <value>{0} desconhecido</value>
   </data>
   <data name="Format_New" xml:space="preserve">
     <value>Novo {0}</value>
@@ -317,12 +317,39 @@
     <value>O arquivo selecionado não é um backup válido do Nagi.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC encontrou um erro não especificado.</value>
+    <value>O LibVLC encontrou um erro não especificado.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Erro LibVLC: {0}</value>
+    <value>Erro do LibVLC: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Falha ao carregar '{0}'.</value>
+    <value>Não foi possível carregar “{0}”.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Navegando na biblioteca de músicas</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Ocioso</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>de {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Pausado | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Player de música Nagi</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Tocando</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Pausado</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>Da Wikipédia, sob a licença CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

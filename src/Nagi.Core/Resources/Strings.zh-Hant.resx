@@ -60,7 +60,7 @@
   </resheader>
   <!-- Noun Labels -->
   <data name="Label_Artist" xml:space="preserve">
-    <value>藝術家</value>
+    <value>藝人</value>
   </data>
   <data name="Label_Album" xml:space="preserve">
     <value>專輯</value>
@@ -72,7 +72,7 @@
     <value>標題</value>
   </data>
   <data name="Label_Playlist" xml:space="preserve">
-    <value>播放列表</value>
+    <value>播放清單</value>
   </data>
   <data name="Label_File" xml:space="preserve">
     <value>檔案</value>
@@ -185,13 +185,13 @@
     <value>掃描失敗。請查看日誌了解詳情。</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>正在準備掃描音樂庫……</value>
+    <value>正在準備掃描媒體庫……</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
     <value>正在讀取歌曲詳細資料……</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>正在清理您的音樂庫……</value>
+    <value>正在清理您的媒體庫……</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
     <value>正在完成……</value>
@@ -210,7 +210,7 @@
     <value>無法新增資料夾。</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
-    <value>播放列表名稱不能為空。</value>
+    <value>播放清單名稱不能為空。</value>
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
@@ -239,10 +239,10 @@
     <value>已建立播放清單，但無法新增其中的歌曲。請嘗試再次匯入。</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>在您的媒體庫中找不到播放列表中的任何歌曲。</value>
+    <value>在您的媒體庫中找不到播放清單中的任何歌曲。</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
-    <value>沒有可匯出的播放列表。</value>
+    <value>沒有可匯出的播放清單。</value>
   </data>
   <data name="EqPreset_None" xml:space="preserve">
     <value>無</value>
@@ -272,7 +272,7 @@
     <value>柔和</value>
   </data>
   <data name="EqPreset_Techno" xml:space="preserve">
-    <value>科技</value>
+    <value>科技舞曲</value>
   </data>
   <data name="EqPreset_Vocal" xml:space="preserve">
     <value>人聲</value>
@@ -308,7 +308,7 @@
     <value>無法連線至 ListenBrainz。請檢查您的連線與伺服器 URL。</value>
   </data>
   <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi 找不到其音樂庫資料資料夾。</value>
+    <value>Nagi 找不到其媒體庫資料資料夾。</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>還原失敗，且無法完整還原您的先前資料。復原檔案已儲存於 &apos;{0}&apos;。</value>
@@ -323,6 +323,33 @@
     <value>LibVLC 錯誤：{0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>載入 '{0}' 失敗。</value>
+    <value>載入「{0}」失敗。</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>正在瀏覽音樂庫</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>閒置中</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>演出者：{0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>已暫停 | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Nagi 音樂播放器</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>正在播放</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>已暫停</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>內容取自維基百科，依 CC BY-SA 授權條款使用。</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

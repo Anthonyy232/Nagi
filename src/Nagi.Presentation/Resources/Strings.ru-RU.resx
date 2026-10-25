@@ -392,7 +392,7 @@
     <value>Произошла непредвиденная ошибка. Пожалуйста, попробуйте еще раз.</value>
   </data>
   <data name="Onboarding_LibraryReady" xml:space="preserve">
-    <value>Ваша медиатека готова.</value>
+    <value>Ваша библиотека готова.</value>
   </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
     <value>Умный • {0, plural, one {# песня} few {# песни} many {# песен} other {# песен}}</value>
@@ -561,10 +561,10 @@
     <value>Соответствует {0} из {1} {2}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>все</value>
+    <value>всем</value>
   </data>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>любое</value>
+    <value>любому</value>
   </data>
   <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
     <value>правило</value>
@@ -681,16 +681,28 @@
     <value>Китайский музыкальный сервис, отлично подходит для азиатской музыки</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Получает идентификаторы исполнителей (требуется для TheAudioDB и Fanart.tv)</value>
+    <value>Находит идентификаторы исполнителей и альбомов, которых нет в ваших тегах</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>Высококачественные изображения и биографии исполнителей (требуется MusicBrainz)</value>
+    <value>Изображения и биографии исполнителей (требуется идентификатор MusicBrainz из ваших тегов или MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>Только высококачественные изображения исполнителей (требуется MusicBrainz)</value>
+    <value>Высококачественные изображения исполнителей (требуется идентификатор MusicBrainz из ваших тегов или MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Биографии и изображения исполнителей (резервный вариант)</value>
+    <value>Биографии исполнителей и обложки альбомов (резервный вариант)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>Изображения исполнителей и обложки альбомов, найденные по названию</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>Биографии исполнителей на вашем языке (требуется идентификатор MusicBrainz из ваших тегов или MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>Обложки альбомов для релизов MusicBrainz (использует идентификаторы из ваших тегов или MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>Обложки альбомов в высоком разрешении, найденные по названию</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Искать альбомы</value>
@@ -864,6 +876,9 @@
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>Скопировать лог</value>
   </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>Журнал сбоя</value>
+  </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>Выбрать обложку</value>
   </data>
@@ -899,6 +914,12 @@
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>Значение</value>
+  </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>Поле</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>Условие</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>Удалить это правило</value>
@@ -954,6 +975,9 @@
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Перейти к альбому</value>
   </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>Позиция воспроизведения</value>
+  </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Далее</value>
   </data>
@@ -1005,9 +1029,6 @@
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Поиск альбомов…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Поиск альбомов</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Выбрать случайный</value>
   </data>
@@ -1029,9 +1050,6 @@
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Искать в альбоме…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Поиск в альбоме</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Воспроизвести все</value>
   </data>
@@ -1049,9 +1067,6 @@
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Поиск исполнителей…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Поиск исполнителей</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Выбрать случайного</value>
@@ -1091,9 +1106,6 @@
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Искать у исполнителя…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Поиск у исполнителя</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Воспроизвести все</value>
@@ -1167,9 +1179,6 @@
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Поиск жанров…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Поиск жанров</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>Выбрать случайный</value>
   </data>
@@ -1187,9 +1196,6 @@
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Поиск по библиотеке…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Поиск в библиотеке</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Воспроизвести все</value>
@@ -1276,7 +1282,7 @@
     <value>Где хранится ваша музыка?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Выберите папку, в которой хранится ваша музыка. Nagi создаст медиатеку, пока вы завершаете настройку, а позже вы сможете добавить другие папки.</value>
+    <value>Выберите папку, в которой хранится ваша музыка. Nagi создаст библиотеку, пока вы завершаете настройку, а позже вы сможете добавить другие папки.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Настройте под себя</value>
@@ -1291,13 +1297,13 @@
     <value>Настройте воспроизведение музыки.</value>
   </data>
   <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
-    <value>Начните с пресета. Вы сможете настроить каждую полосу в Параметрах.</value>
+    <value>Начните с пресета. Вы сможете настроить каждую полосу в Настройках.</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
-    <value>Оживите вашу медиатеку</value>
+    <value>Оживите вашу библиотеку</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi может работать полностью автономно. Включите эти функции, чтобы загрузить фотографии исполнителей, биографии и тексты песен, отсутствующие в ваших файлах.</value>
+    <value>Nagi работает полностью автономно. Включите эти функции, чтобы загрузить фотографии исполнителей, биографии, обложки альбомов и тексты песен, отсутствующие в ваших файлах.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>Идеально для вашего рабочего стола</value>
@@ -1309,13 +1315,13 @@
     <value>Делитесь тем, что слушаете</value>
   </data>
   <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
-    <value>Отправляйте скробблы на Last.fm и показывайте друзьям в Discord, что вы слушаете. ListenBrainz доступен в Параметрах.</value>
+    <value>Отправляйте скробблы на Last.fm и показывайте друзьям в Discord, что вы слушаете. ListenBrainz доступен в Настройках.</value>
   </data>
   <data name="OnboardingPage_Finish_Title" xml:space="preserve">
     <value>Всё готово</value>
   </data>
   <data name="OnboardingPage_Finish_Description" xml:space="preserve">
-    <value>Вы можете изменить любой из этих параметров в любое время в Параметрах.</value>
+    <value>Вы можете изменить любой из этих параметров в любое время в Настройках.</value>
   </data>
   <data name="OnboardingPage_SkipSetup" xml:space="preserve">
     <value>Пропустить настройку</value>
@@ -1334,9 +1340,6 @@
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Поиск плейлистов…</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Поиск плейлистов</value>
   </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Выбрать случайный</value>
@@ -1383,9 +1386,6 @@
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Искать в плейлисте…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Поиск в плейлисте</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Воспроизвести все</value>
   </data>
@@ -1409,9 +1409,6 @@
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Искать в жанре…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Поиск в жанре</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Воспроизвести все</value>
@@ -1509,6 +1506,12 @@
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Предусилитель</value>
   </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Гц</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>Пресет эквалайзера</value>
+  </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>Пользовательский</value>
   </data>
@@ -1594,7 +1597,7 @@
     <value>Загружать метаданные из сети</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Загружать изображения и биографии исполнителей из сети.</value>
+    <value>Загружать изображения и биографии исполнителей, а также обложки альбомов из сети.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Источники</value>
@@ -1618,7 +1621,7 @@
     <value>Показывать романизированные тексты песен</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
-    <value>Показывать меньшую романизированную строку под поддерживаемыми текстами песен, если установленный пакет соответствует скрипту.</value>
+    <value>Показывать меньшую романизированную строку под поддерживаемыми текстами песен, если установленный пакет соответствует системе письма.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
     <value>Языковые пакеты</value>
@@ -1782,9 +1785,6 @@
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Искать в умном плейлисте…</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Поиск в умном плейлисте</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Редактировать правила</value>
   </data>
@@ -1804,7 +1804,7 @@
     <value>Редактировать правила</value>
   </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
-    <value>О нас</value>
+    <value>О программе</value>
   </data>
   <data name="SettingsPage_AboutExpander_Header" xml:space="preserve">
     <value>О Nagi</value>
@@ -1891,7 +1891,7 @@
     <value>Не удалось восстановить резервную копию.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
-    <value>Стилизация проигрывателя</value>
+    <value>Стилизация плеера</value>
   </data>
   <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
     <value>Акрил (Стекло)</value>
@@ -2064,6 +2064,9 @@
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>За всё время</value>
   </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>Период</value>
+  </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}ч {1}м</value>
   </data>
@@ -2113,7 +2116,7 @@
     <value>Непрослушанное</value>
   </data>
   <data name="Listening_PlayFor" xml:space="preserve">
-    <value>Воспроизводить…</value>
+    <value>Воспроизводить в течение…</value>
   </data>
   <data name="Listening_Minutes" xml:space="preserve">
     <value>Минуты</value>
@@ -2257,11 +2260,71 @@
     <value>Плейлисты недоступны</value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>Для анализа треков и выравнивания громкости нужен FFmpeg, но Nagi не удалось его найти.
+    <value>FFmpeg необходим для анализа песен при нормализации громкости, но Nagi не удалось его найти.
 
 1. Скачайте сборку для Windows с сайта https://ffmpeg.org/download.html.
 2. Распакуйте архив и найдите ffmpeg.exe в папке bin.
 3. Добавьте папку, содержащую ffmpeg.exe, в переменную окружения PATH Windows.
-4. Перезапустите Nagi и снова включите выравнивание громкости.</value>
+4. Перезапустите Nagi и снова включите нормализацию громкости.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>Сведения о песне</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>Теги</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>Прослушивание</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>Исполнитель альбома</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>Дирижер</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>Авторские права</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>Путь</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>Формат</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>Каналы</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>Размер</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} из {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} кбит/с</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Гц</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} МБ</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} дБ</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>Столбцы списка песен</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>Выберите, какие сведения показывать в списках песен.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>Заголовки столбцов</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>Показывать название каждого столбца над списками песен.</value>
   </data>
 </root>

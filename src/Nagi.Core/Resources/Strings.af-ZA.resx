@@ -197,7 +197,7 @@
     <value>Rond tans af…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
-    <value>Volume-normalisering het misluk. Gaan logs na vir besonderhede.</value>
+    <value>Volumenormalisering het misluk. Gaan logs na vir besonderhede.</value>
   </data>
   <data name="Status_NoFoldersToRefresh" xml:space="preserve">
     <value>Geen vouers in die biblioteek om te verfris nie.</value>
@@ -239,7 +239,7 @@
     <value>Die snitlys is geskep, maar die liedjies daarvan kon nie bygevoeg word nie. Probeer asseblief weer invoer.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Geen liedjies van die snitlys is in u biblioteek gevind nie.</value>
+    <value>Geen liedjies van die snitlys is in jou biblioteek gevind nie.</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Geen snitlyste om uit te voer nie.</value>
@@ -257,7 +257,7 @@
     <value>Volbas</value>
   </data>
   <data name="EqPreset_FullTreble" xml:space="preserve">
-    <value>Volle Trebel</value>
+    <value>Volle Diskant</value>
   </data>
   <data name="EqPreset_Jazz" xml:space="preserve">
     <value>Jazz</value>
@@ -290,7 +290,7 @@
     <value>Volumenormalisering voltooi. Liedjies verwerk: {0}.</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
-    <value>Voer jou ListenBrainz-gebruikersteken in.</value>
+    <value>Voer jou ListenBrainz-gebruikertoken in.</value>
   </data>
   <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
     <value>Kon nie die reaksie van ListenBrainz lees nie. Probeer later weer.</value>
@@ -299,7 +299,7 @@
     <value>Voer 'n bediener-URL in wat met http:// of https:// begin.</value>
   </data>
   <data name="ListenBrainz_InvalidToken" xml:space="preserve">
-    <value>Die gebruikersteken is ongeldig. Kontroleer dit en probeer weer.</value>
+    <value>Die gebruikertoken is ongeldig. Kontroleer dit en probeer weer.</value>
   </data>
   <data name="ListenBrainz_ServerError" xml:space="preserve">
     <value>ListenBrainz het 'n fout teruggestuur (HTTP {0}). Probeer later weer.</value>
@@ -320,9 +320,36 @@
     <value>LibVLC het 'n ongespesifiseerde fout teëgekom.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>LibVLC Fout: {0}</value>
+    <value>LibVLC-fout: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>Kon nie '{0}' laai nie.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Blaai deur musiekbiblioteek</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Ledig</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>deur {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Gepouseer | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Nagi Musiekspeler</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Speel tans</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Gepouseer</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>Van Wikipedia, onder die CC BY-SA-lisensie.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

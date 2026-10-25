@@ -95,7 +95,7 @@
     <value>หยุดชั่วคราว</value>
   </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
-    <value>สลับเพลงปิด</value>
+    <value>ปิดการสุ่มเพลง</value>
   </data>
   <data name="Tooltip_RepeatOff" xml:space="preserve">
     <value>เล่นซ้ำปิด</value>
@@ -648,7 +648,7 @@
     <value>แนวเพลง</value>
   </data>
   <data name="Settings_Button_Shuffle" xml:space="preserve">
-    <value>สลับเพลง</value>
+    <value>สุ่มเพลง</value>
   </data>
   <data name="Settings_Button_Previous" xml:space="preserve">
     <value>ก่อนหน้า</value>
@@ -681,16 +681,28 @@
     <value>บริการเพลงจีน เหมาะสำหรับเพลงเอเชีย</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>ดึง ID ศิลปิน (จำเป็นสำหรับ TheAudioDB และ Fanart.tv)</value>
+    <value>ค้นหา ID ศิลปินและอัลบั้มที่แท็กของคุณไม่มี</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>รูปภาพและประวัติศิลปินคุณภาพสูง (ต้องใช้ MusicBrainz)</value>
+    <value>รูปภาพและประวัติศิลปิน (ต้องใช้ MusicBrainz ID จากแท็กของคุณหรือ MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>เฉพาะรูปภาพศิลปินคุณภาพสูง (ต้องใช้ MusicBrainz)</value>
+    <value>รูปภาพศิลปินคุณภาพสูง (ต้องใช้ MusicBrainz ID จากแท็กของคุณหรือ MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>ประวัติและรูปภาพศิลปิน (ตัวสำรอง)</value>
+    <value>ประวัติศิลปินและปกอัลบั้ม (ตัวสำรอง)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>รูปภาพศิลปินและปกอัลบั้ม ค้นหาจากชื่อ</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>ประวัติศิลปินในภาษาของคุณ (ต้องใช้ MusicBrainz ID จากแท็กของคุณหรือ MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>ปกอัลบั้มสำหรับผลงานที่เผยแพร่บน MusicBrainz (ใช้ ID จากแท็กของคุณหรือ MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>ปกอัลบั้มความละเอียดสูง ค้นหาจากชื่อ</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>ค้นหาอัลบั้ม</value>
@@ -795,10 +807,10 @@
     <value>ไม่พบ FFmpeg</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Title" xml:space="preserve">
-    <value>เปิดใช้งานการปรับระดับเสียงให้ปกติ</value>
+    <value>เปิดใช้งานการปรับระดับเสียงให้เป็นมาตรฐาน</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
-    <value>การปรับระดับเสียงให้ปกติ (ReplayGain) ช่วยให้ระดับเสียงเพลงของคุณสม่ำเสมอ
+    <value>การปรับระดับเสียงให้เป็นมาตรฐาน (ReplayGain) ช่วยให้ระดับเสียงเพลงของคุณสม่ำเสมอ
 
 สิ่งนี้จะวิเคราะห์คลังเพลงของคุณและแก้ไขไฟล์เสียงของคุณโดยตรงโดยการเขียนแท็ก ReplayGain เฉพาะไฟล์ที่ไม่มีแท็กอยู่แล้วเท่านั้นที่จะถูกประมวลผล ซึ่งอาจใช้เวลาสักครู่ขึ้นอยู่กับขนาดคลังเพลงของคุณ
 
@@ -808,10 +820,10 @@
     <value>เปิดใช้งานและสแกน</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>กำลังเตรียมการสแกนปรับระดับเสียงสม่ำเสมอ…</value>
+    <value>กำลังเตรียมการสแกนการปรับระดับเสียงให้เป็นมาตรฐาน…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>ยกเลิกการสแกนการปรับระดับเสียงให้ปกติแล้ว</value>
+    <value>ยกเลิกการสแกนการปรับระดับเสียงให้เป็นมาตรฐานแล้ว</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>ข้อผิดพลาดระหว่างการสแกน: {0}</value>
@@ -856,13 +868,16 @@
     <value>.</value>
   </data>
   <data name="CrashReport_ResetAppAdvice" xml:space="preserve">
-    <value>หากยังคงเกิดขึ้น คุณสามารถลอง 'รีเซ็ตแอปและข้อมูล' ซึ่งจะล้างการตั้งค่าและไลบรารีของคุณ ซึ่งอาจช่วยกู้คืนแอปจากสถานะที่เสียหายได้</value>
+    <value>หากยังคงเกิดขึ้น คุณสามารถลอง 'รีเซ็ตแอปและข้อมูล' ซึ่งจะล้างการตั้งค่าและคลังเพลงของคุณ ซึ่งอาจช่วยกู้คืนแอปจากสถานะที่เสียหายได้</value>
   </data>
   <data name="CrashReport_CopyLogButton_ToolTip" xml:space="preserve">
     <value>คัดลอกบันทึกไปยังคลิปบอร์ด</value>
   </data>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>คัดลอกบันทึก</value>
+  </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>บันทึกข้อขัดข้อง</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>เลือกหน้าปก</value>
@@ -900,6 +915,12 @@
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>ค่า</value>
   </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>ฟิลด์</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>เงื่อนไข</value>
+  </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>ลบกฎนี้</value>
   </data>
@@ -907,7 +928,7 @@
     <value>ไม่ได้กำหนดกฎ</value>
   </data>
   <data name="SmartPlaylist_NoRulesMessage" xml:space="preserve">
-    <value>เพลงทั้งหมดในไลบรารีของคุณจะถูกรวมอยู่ในเพลย์ลิสต์นี้</value>
+    <value>เพลงทั้งหมดในคลังเพลงของคุณจะถูกรวมอยู่ในเพลย์ลิสต์นี้</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_Content" xml:space="preserve">
     <value>เพิ่มกฎแรกของคุณ</value>
@@ -953,6 +974,9 @@
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>ไปยังอัลบั้ม</value>
+  </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>ตำแหน่งการเล่น</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>กำลังจะเล่น</value>
@@ -1005,9 +1029,6 @@
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ค้นหาอัลบั้ม…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ค้นหาอัลบั้ม</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>สุ่มเลือกหนึ่งรายการ</value>
   </data>
@@ -1018,7 +1039,7 @@
     <value>ไม่พบอัลบั้ม</value>
   </data>
   <data name="AlbumPage_Empty_Subtitle" xml:space="preserve">
-    <value>สแกนไลบรารีเพลงของคุณเพื่อเพิ่มอัลบั้ม</value>
+    <value>สแกนคลังเพลงของคุณเพื่อเพิ่มอัลบั้ม</value>
   </data>
   <data name="AlbumViewPage_Header_Label" xml:space="preserve">
     <value>อัลบั้ม</value>
@@ -1028,9 +1049,6 @@
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ค้นหาในอัลบั้ม…</value>
-  </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ค้นหาในอัลบั้ม</value>
   </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>เล่นทั้งหมด</value>
@@ -1050,9 +1068,6 @@
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ค้นหาศิลปิน…</value>
   </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ค้นหาศิลปิน</value>
-  </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>สุ่มเลือกหนึ่งรายการ</value>
   </data>
@@ -1069,7 +1084,7 @@
     <value>ไม่พบศิลปิน</value>
   </data>
   <data name="ArtistPage_Empty_Subtitle" xml:space="preserve">
-    <value>สแกนไลบรารีเพลงของคุณเพื่อเพิ่มศิลปิน</value>
+    <value>สแกนคลังเพลงของคุณเพื่อเพิ่มศิลปิน</value>
   </data>
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
     <value>เปลี่ยนรูปภาพศิลปิน</value>
@@ -1091,9 +1106,6 @@
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ค้นหาในศิลปิน…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ค้นหาในศิลปิน</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>เล่นทั้งหมด</value>
@@ -1167,9 +1179,6 @@
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>ค้นหาแนวเพลง…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ค้นหาแนวเพลง</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>สุ่มเลือกหนึ่งรายการ</value>
   </data>
@@ -1180,16 +1189,13 @@
     <value>ไม่พบแนวเพลง</value>
   </data>
   <data name="GenrePage_Empty_Subtitle" xml:space="preserve">
-    <value>สแกนไลบรารีเพลงของคุณเพื่อเพิ่มแนวเพลง</value>
+    <value>สแกนคลังเพลงของคุณเพื่อเพิ่มแนวเพลง</value>
   </data>
   <data name="LibraryPage_Title" xml:space="preserve">
     <value>คลังเพลง</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ค้นหาในคลังเพลง…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ค้นหาไลบรารี</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>เล่นทั้งหมด</value>
@@ -1228,10 +1234,10 @@
     <value>ลองค้นหาด้วยคำอื่น</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
-    <value>ไลบรารีของคุณว่างเปล่า</value>
+    <value>คลังเพลงของคุณว่างเปล่า</value>
   </data>
   <data name="LibraryPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>เพิ่มโฟลเดอร์ไปยังไลบรารีของคุณในการตั้งค่า</value>
+    <value>เพิ่มโฟลเดอร์ไปยังคลังเพลงของคุณในการตั้งค่า</value>
   </data>
   <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
     <value>ไม่พบเนื้อเพลงสำหรับเพลงนี้</value>
@@ -1297,7 +1303,7 @@
     <value>เพิ่มชีวิตชีวาให้คลังเพลงของคุณ</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi ทำงานแบบออฟไลน์ได้อย่างสมบูรณ์ เปิดใช้งานสิ่งนี้เพื่อเติมรูปภาพศิลปิน ชีวประวัติ และเนื้อเพลงที่ไฟล์ของคุณไม่มี</value>
+    <value>Nagi ทำงานแบบออฟไลน์ได้อย่างสมบูรณ์ เปิดใช้งานสิ่งนี้เพื่อเติมรูปภาพศิลปิน ชีวประวัติ ปกอัลบั้ม และเนื้อเพลงที่ไฟล์ของคุณไม่มี</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>ผสานเข้ากับเดสก์ท็อปของคุณได้อย่างลงตัว</value>
@@ -1334,9 +1340,6 @@
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ค้นหาเพลย์ลิสต์…</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ค้นหาเพลย์ลิสต์</value>
   </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>สุ่มเลือกหนึ่งรายการ</value>
@@ -1383,9 +1386,6 @@
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ค้นหาในเพลย์ลิสต์…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ค้นหาในเพลย์ลิสต์</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>เล่นทั้งหมด</value>
   </data>
@@ -1399,7 +1399,7 @@
     <value>เพลย์ลิสต์นี้ว่างเปล่า</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>เพิ่มเพลงจากไลบรารีของคุณ</value>
+    <value>เพิ่มเพลงจากคลังเพลงของคุณ</value>
   </data>
   <data name="GenreViewPage_Header_Caption" xml:space="preserve">
     <value>แนวเพลง</value>
@@ -1409,9 +1409,6 @@
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ค้นหาในแนวเพลง…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ค้นหาในแนวเพลง</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>เล่นทั้งหมด</value>
@@ -1509,6 +1506,12 @@
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>ปรีแอมป์</value>
   </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>พรีเซ็ตอีควอไลเซอร์</value>
+  </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>กำหนดเอง</value>
   </data>
@@ -1579,22 +1582,22 @@
     <value>กำหนดอักขระที่ใช้ในการแยกศิลปินหลายคน (เช่น ';/') เว้นว่างไว้เพื่อปิดใช้งาน</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
-    <value>การแยกประเภทเพลง</value>
+    <value>การแยกแนวเพลง</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>กำหนดตัวอักษรที่ใช้ในการแยกประเภทเพลงหลายประเภท (เช่น ';/') เว้นว่างไว้เพื่อปิดใช้งาน</value>
+    <value>กำหนดตัวอักษรที่ใช้ในการแยกแนวเพลงหลายแนว (เช่น ';/') เว้นว่างไว้เพื่อปิดใช้งาน</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
-    <value>สแกนไลบรารีซ้ำ</value>
+    <value>สแกนคลังเพลงซ้ำ</value>
   </data>
   <data name="SettingsPage_RescanLibrary_ToolTip" xml:space="preserve">
-    <value>สแกนไลบรารีซ้ำเพื่อปรับใช้การเปลี่ยนแปลงการแยก</value>
+    <value>สแกนคลังเพลงซ้ำเพื่อปรับใช้การเปลี่ยนแปลงการแยก</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
     <value>ดึงข้อมูลเมทาดาตาออนไลน์</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>ดึงรูปภาพและประวัติศิลปินจากแหล่งข้อมูลออนไลน์</value>
+    <value>ดึงรูปภาพศิลปิน ประวัติ และปกอัลบั้มจากแหล่งข้อมูลออนไลน์</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>แหล่งที่มา</value>
@@ -1684,7 +1687,7 @@
     <value>รีเซ็ตแอปพลิเคชัน</value>
   </data>
   <data name="SettingsPage_ResetApp_Description" xml:space="preserve">
-    <value>การดำเนินการนี้จะลบข้อมูลไลบรารี เพลย์ลิสต์ทั้งหมด และรีเซ็ตการตั้งค่าทั้งหมดเป็นค่าเริ่มต้น แอปพลิเคชันจะเริ่มต้นใหม่</value>
+    <value>การดำเนินการนี้จะลบข้อมูลคลังเพลง เพลย์ลิสต์ทั้งหมด และรีเซ็ตการตั้งค่าทั้งหมดเป็นค่าเริ่มต้น แอปพลิเคชันจะเริ่มต้นใหม่</value>
   </data>
   <data name="SettingsPage_ResetButton_Content" xml:space="preserve">
     <value>รีเซ็ตข้อมูลทั้งหมด</value>
@@ -1782,9 +1785,6 @@
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ค้นหาในเพลย์ลิสต์อัจฉริยะ…</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ค้นหาในเพลย์ลิสต์อัจฉริยะ</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>แก้ไขกฎ</value>
   </data>
@@ -1843,7 +1843,7 @@
     <value>สำรองและกู้คืน</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>สร้างสำรองข้อมูลคลังเพลงและการตั้งค่าของคุณ หรือสำรองข้อมูลคืนค่าจากก่อนหน้า</value>
+    <value>สร้างข้อมูลสำรองของคลังเพลงและการตั้งค่าของคุณ หรือกู้คืนข้อมูลสำรองก่อนหน้า</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
     <value>สร้างข้อมูลสำรอง</value>
@@ -1891,7 +1891,7 @@
     <value>ไม่สามารถคืนค่าข้อมูลสำรองได้</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
-    <value>สไตล์โปรแกรมเล่น</value>
+    <value>สไตล์เครื่องเล่น</value>
   </data>
   <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
     <value>อะคริลิก (กระจก)</value>
@@ -2063,6 +2063,9 @@
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>ตลอดกาล</value>
+  </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>ช่วงเวลา</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}ชม. {1}น.</value>
@@ -2257,11 +2260,71 @@
     <value>ไม่มีเพลย์ลิสต์</value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>จำเป็นต้องใช้ FFmpeg เพื่อวิเคราะห์เพลงสำหรับการปรับระดับความดัง แต่ Nagi ไม่พบโปรแกรมนี้
+    <value>จำเป็นต้องใช้ FFmpeg เพื่อวิเคราะห์เพลงสำหรับการปรับระดับเสียงให้เป็นมาตรฐาน แต่ Nagi ไม่พบโปรแกรมนี้
 
 1. ดาวน์โหลดเวอร์ชัน Windows จาก https://ffmpeg.org/download.html
 2. แตกไฟล์และหา ffmpeg.exe ในโฟลเดอร์ bin
 3. เพิ่มโฟลเดอร์ที่มี ffmpeg.exe ไปยัง Windows PATH ของคุณ
-4. รีสตาร์ท Nagi แล้วเปิดใช้งานการปรับระดับความดังอีกครั้ง</value>
+4. รีสตาร์ท Nagi แล้วเปิดใช้งานการปรับระดับเสียงให้เป็นมาตรฐานอีกครั้ง</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>ข้อมูลเพลง</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>แท็ก</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>ประวัติการฟัง</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>ศิลปินอัลบั้ม</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>ผู้ควบคุมวง</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>ลิขสิทธิ์</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>ตำแหน่งไฟล์</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>รูปแบบ</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>ช่องสัญญาณ</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>ขนาด</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} จาก {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>คอลัมน์รายการเพลง</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>เลือกรายละเอียดที่จะแสดงในรายการเพลง</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>ส่วนหัวคอลัมน์</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>แสดงชื่อของแต่ละคอลัมน์เหนือรายการเพลง</value>
   </data>
 </root>

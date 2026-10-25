@@ -114,7 +114,7 @@
     <value>Wimbo</value>
   </data>
   <data name="Label_Folder" xml:space="preserve">
-    <value>Jalada</value>
+    <value>Folda</value>
   </data>
   <data name="Label_ManualOrder" xml:space="preserve">
     <value>Mpangilio wa Mwongozo</value>
@@ -127,7 +127,7 @@
     <value>Haijulikani {0}</value>
   </data>
   <data name="Format_New" xml:space="preserve">
-    <value>Mpya {0}</value>
+    <value>{0} Mpya</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} haikupatikana.</value>
@@ -169,7 +169,7 @@
     <value>{0} Chache Zaidi</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
-    <value>Inachanganua jalada {0} kati ya {1}: {2} - {3}</value>
+    <value>Inachanganua folda {0} kati ya {1}: {2} - {3}</value>
   </data>
   <data name="Format_ScanCompleteResult" xml:space="preserve">
     <value>Uchanganuzi umekamilika. Imeongeza au kusasisha {0} {1}.</value>
@@ -200,7 +200,7 @@
     <value>Usawazishaji wa sauti umeshindwa. Angalia kumbukumbu kwa maelezo.</value>
   </data>
   <data name="Status_NoFoldersToRefresh" xml:space="preserve">
-    <value>Hakuna majalada katika maktaba ya kusasisha.</value>
+    <value>Hakuna folda katika maktaba ya kusasisha.</value>
   </data>
   <data name="Status_LibraryRefreshComplete" xml:space="preserve">
     <value>Usasishaji wa maktaba umekamilika.</value>
@@ -214,7 +214,7 @@
   </data>
   <!-- Labels -->
   <data name="Label_WithLyrics" xml:space="preserve">
-    <value>yenye mashairi</value>
+    <value>yenye maneno ya wimbo</value>
   </data>
   <data name="Label_WithCoverArt" xml:space="preserve">
     <value>yenye picha ya jalada</value>
@@ -284,10 +284,10 @@
     <value>Inachanganua sauti… Nyimbo: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>Inakokotoa marekebisho ya sauti ({0}/{1})…</value>
+    <value>Inakokotoa usawazishaji wa sauti ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>Urekebishaji wa sauti umekamilika. Nyimbo zilizochakatwa: {0}.</value>
+    <value>Usawazishaji wa sauti umekamilika. Nyimbo zilizochakatwa: {0}.</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
     <value>Ingiza tokeni yako ya mtumiaji wa ListenBrainz.</value>
@@ -324,5 +324,32 @@
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>Imeshindwa kupakia '{0}'.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Inavinjari Maktaba ya Muziki</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Bila shughuli</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>na {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Imesitishwa | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Kicheza Muziki cha Nagi</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Inacheza</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Imesitishwa</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>Kutoka Wikipedia, chini ya leseni ya CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

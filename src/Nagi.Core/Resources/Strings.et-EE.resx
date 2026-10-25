@@ -99,7 +99,7 @@
     <value>BPM</value>
   </data>
   <data name="Label_TrackNumber" xml:space="preserve">
-    <value>Raja number</value>
+    <value>Loo number</value>
   </data>
   <data name="Label_PlayCount" xml:space="preserve">
     <value>Esituskorrad</value>
@@ -166,7 +166,7 @@
     <value>Kõige rohkem {0}</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
-    <value>Vähim {0}</value>
+    <value>Kõige vähem {0}</value>
   </data>
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Kausta {0}/{1} skaneerimine: {2} - {3}</value>
@@ -185,13 +185,13 @@
     <value>Skaneerimine ebaõnnestus. Vaadake logidest lisateavet.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
-    <value>Kogu skannimise ettevalmistamine…</value>
+    <value>Teegi skaneerimise ettevalmistamine…</value>
   </data>
   <data name="Status_ReadingSongDetails" xml:space="preserve">
     <value>Loo üksikasjade lugemine…</value>
   </data>
   <data name="Status_CleaningUpLibrary" xml:space="preserve">
-    <value>Kogu puhastamine…</value>
+    <value>Teegi puhastamine…</value>
   </data>
   <data name="Status_Finalizing" xml:space="preserve">
     <value>Lõpetamine…</value>
@@ -308,7 +308,7 @@
     <value>ListenBrainz-iga ei saanud ühendust luua. Kontrolli oma ühendust ja serveri URL-i.</value>
   </data>
   <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi ei leidnud oma kogu andmekausta.</value>
+    <value>Nagi ei leidnud oma teegi andmekausta.</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
     <value>Taastamine ebaõnnestus ja sinu varasemaid andmeid ei saanud täielikult taastada. Taastefailid salvestati asukohta &apos;{0}&apos;.</value>
@@ -317,12 +317,39 @@
     <value>Valitud fail ei ole kehtiv Nagi varukoopia.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC-l ilmnes määramata viga.</value>
+    <value>LibVLC-s ilmnes määramata viga.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
     <value>LibVLC viga: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Ei suutnud '{0}' laadida.</value>
+    <value>Faili '{0}' laadimine ebaõnnestus.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Sirvib muusikakogu</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Jõude</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>esitajalt {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Peatatud | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Nagi muusikapleier</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Mängib</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Peatatud</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>Allikas: Vikipeedia, CC BY-SA litsentsi alusel.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

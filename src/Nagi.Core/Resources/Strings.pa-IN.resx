@@ -139,10 +139,10 @@
     <value>{0} (Z ਤੋਂ A)</value>
   </data>
   <data name="Format_TemporalNewest" xml:space="preserve">
-    <value>{0} (ਨਵਾਂ)</value>
+    <value>{0} (ਸਭ ਤੋਂ ਨਵਾਂ)</value>
   </data>
   <data name="Format_TemporalOldest" xml:space="preserve">
-    <value>{0} (ਪੁਰਾਣਾ)</value>
+    <value>{0} (ਸਭ ਤੋਂ ਪੁਰਾਣਾ)</value>
   </data>
   <data name="Format_DirectionalAsc" xml:space="preserve">
     <value>{0} (ਚੜ੍ਹਦਾ ਕ੍ਰਮ)</value>
@@ -197,7 +197,7 @@
     <value>ਅੰਤਿਮ ਰੂਪ ਦਿੱਤਾ ਜਾ ਰਿਹਾ ਹੈ…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
-    <value>ਵਾਲੀਅਮ ਨੋਰਮਲਾਈਜ਼ੇਸ਼ਨ ਅਸਫਲ ਰਿਹਾ। ਵੇਰਵਿਆਂ ਲਈ ਲੌਗਸ ਦੀ ਜਾਂਚ ਕਰੋ।</value>
+    <value>ਵਾਲੀਅਮ ਨਾਰਮਲਾਈਜ਼ੇਸ਼ਨ ਅਸਫਲ ਰਿਹਾ। ਵੇਰਵਿਆਂ ਲਈ ਲੌਗਸ ਦੀ ਜਾਂਚ ਕਰੋ।</value>
   </data>
   <data name="Status_NoFoldersToRefresh" xml:space="preserve">
     <value>ਰਿਫ੍ਰੈਸ਼ ਕਰਨ ਲਈ ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚ ਕੋਈ ਫੋਲਡਰ ਨਹੀਂ।</value>
@@ -233,7 +233,7 @@
     <value> ਅਤੇ </value>
   </data>
   <data name="SortByPrefix" xml:space="preserve">
-    <value>ਦੁਆਰਾ ਕ੍ਰਮਬੱਧ ਕਰੋ: </value>
+    <value>ਕ੍ਰਮਬੱਧ ਕਰੋ: </value>
   </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
     <value>ਪਲੇਅਲਿਸਟ ਬਣਾ ਦਿੱਤੀ ਗਈ ਸੀ, ਪਰ ਇਸਦੇ ਗਾਣੇ ਜੋੜੇ ਨਹੀਂ ਜਾ ਸਕੇ। ਕਿਰਪਾ ਕਰਕੇ ਮੁੜ ਇੰਪੋਰਟ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</value>
@@ -284,10 +284,10 @@
     <value>ਆਵਾਜ਼ ਦੀ ਜਾਂਚ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ… ਗਾਣੇ: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>ਆਵਾਜ਼ ਸਧਾਰਨੀਕਰਨ ਦੀ ਗਣਨਾ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ ({0}/{1})…</value>
+    <value>ਵਾਲੀਅਮ ਨਾਰਮਲਾਈਜ਼ੇਸ਼ਨ ਦੀ ਗਣਨਾ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>ਆਵਾਜ਼ ਸਧਾਰਨੀਕਰਨ ਪੂਰਾ ਹੋਇਆ। ਪ੍ਰੋਸੈਸ ਕੀਤੇ ਗਾਣੇ: {0}।</value>
+    <value>ਵਾਲੀਅਮ ਨਾਰਮਲਾਈਜ਼ੇਸ਼ਨ ਪੂਰਾ ਹੋਇਆ। ਪ੍ਰੋਸੈਸ ਕੀਤੇ ਗਾਣੇ: {0}।</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
     <value>ਆਪਣਾ ListenBrainz ਵਰਤੋਂਕਾਰ ਟੋਕਨ ਦਰਜ ਕਰੋ।</value>
@@ -324,5 +324,32 @@
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>'{0}' ਲੋਡ ਕਰਨ ਵਿੱਚ ਅਸਫਲ।</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>ਸੰਗੀਤ ਲਾਇਬ੍ਰੇਰੀ ਬ੍ਰਾਊਜ਼ ਕਰ ਰਹੇ ਹਨ</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>ਵਿਹਲਾ</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>{0} ਵੱਲੋਂ</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>ਰੁਕਿਆ ਹੋਇਆ | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Nagi ਸੰਗੀਤ ਪਲੇਅਰ</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>ਚੱਲ ਰਿਹਾ ਹੈ</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>ਰੁਕਿਆ ਹੋਇਆ</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>ਵਿਕੀਪੀਡੀਆ ਤੋਂ, CC BY-SA ਲਾਇਸੈਂਸ ਅਧੀਨ।</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

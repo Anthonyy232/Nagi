@@ -325,4 +325,31 @@
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>Не вдалося завантажити '{0}'.</value>
   </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Переглядає музичну бібліотеку</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Неактивний</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>від {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>Призупинено | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Музичний плеєр Nagi</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>Відтворюється</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>Призупинено</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>З Вікіпедії, за ліцензією CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
+  </data>
 </root>

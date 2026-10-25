@@ -176,7 +176,7 @@
   </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
-    <value>สแกนเสร็จสมบูรณ์ ไลบรารีเป็นปัจจุบันแล้ว</value>
+    <value>สแกนเสร็จสมบูรณ์ คลังเพลงเป็นปัจจุบันแล้ว</value>
   </data>
   <data name="Status_ScanCancelled" xml:space="preserve">
     <value>ยกเลิกการสแกนแล้ว</value>
@@ -197,13 +197,13 @@
     <value>กำลังดำเนินการขั้นสุดท้าย…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
-    <value>การปรับระดับเสียงล้มเหลว โปรดตรวจสอบบันทึกสำหรับรายละเอียด</value>
+    <value>การปรับระดับเสียงให้เป็นมาตรฐานล้มเหลว โปรดตรวจสอบบันทึกสำหรับรายละเอียด</value>
   </data>
   <data name="Status_NoFoldersToRefresh" xml:space="preserve">
-    <value>ไม่มีโฟลเดอร์ในไลบรารีให้อัปเดต</value>
+    <value>ไม่มีโฟลเดอร์ในคลังเพลงให้รีเฟรช</value>
   </data>
   <data name="Status_LibraryRefreshComplete" xml:space="preserve">
-    <value>อัปเดตไลบรารีเสร็จสมบูรณ์</value>
+    <value>รีเฟรชคลังเพลงเสร็จสมบูรณ์</value>
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
@@ -239,7 +239,7 @@
     <value>สร้างเพลย์ลิสต์แล้ว แต่ไม่สามารถเพิ่มเพลงได้ โปรดลองนำเข้าใหม่อีกครั้ง</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>ไม่พบเพลงจากเพลย์ลิสต์ในไลบรารีของคุณ</value>
+    <value>ไม่พบเพลงจากเพลย์ลิสต์ในคลังเพลงของคุณ</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>ไม่มีเพลย์ลิสต์ที่จะส่งออก</value>
@@ -284,10 +284,10 @@
     <value>กำลังวิเคราะห์ระดับความดัง… เพลง: {0}</value>
   </data>
   <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
-    <value>กำลังคำนวณการปรับระดับความดัง ({0}/{1})…</value>
+    <value>กำลังคำนวณการปรับระดับเสียงให้เป็นมาตรฐาน ({0}/{1})…</value>
   </data>
   <data name="ReplayGain_Complete" xml:space="preserve">
-    <value>การปรับระดับความดังเสร็จสมบูรณ์ ประมวลผลเพลงแล้ว: {0}</value>
+    <value>การปรับระดับเสียงให้เป็นมาตรฐานเสร็จสมบูรณ์ ประมวลผลเพลงแล้ว: {0}</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
     <value>ป้อนโทเค็นผู้ใช้ ListenBrainz ของคุณ</value>
@@ -324,5 +324,32 @@
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
     <value>ไม่สามารถโหลด '{0}' ได้</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>กำลังเรียกดูคลังเพลง</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>ว่างอยู่</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>โดย {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>หยุดชั่วคราว | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>เครื่องเล่นเพลง Nagi</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>กำลังเล่น</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>หยุดชั่วคราว</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>จากวิกิพีเดีย ภายใต้สัญญาอนุญาต CC BY-SA</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

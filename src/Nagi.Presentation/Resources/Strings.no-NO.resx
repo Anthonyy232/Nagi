@@ -317,7 +317,7 @@
     <value>Fjerner &apos;{0}&apos; fra biblioteket ditt…</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Omskaning av '{0}' fullført.</value>
+    <value>Omskanning av '{0}' fullført.</value>
   </data>
   <data name="Folders_Rescan_NoChanges" xml:space="preserve">
     <value>Ingen endringer oppdaget for '{0}'.</value>
@@ -341,7 +341,7 @@
     <value>Kunne ikke fjerne mappe fra biblioteket ditt: {0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
-    <value>Feil ved omskaning av mappe: {0}</value>
+    <value>Feil ved omskanning av mappe: {0}</value>
   </data>
   <data name="Folders_Count_Singular" xml:space="preserve">
     <value>{0} mappe</value>
@@ -663,7 +663,7 @@ Filer som ikke kunne importeres: {0}.</value>
     <value>Gjenta</value>
   </data>
   <data name="Settings_Button_Divider" xml:space="preserve">
-    <value>Oppsett divider</value>
+    <value>Skillelinje</value>
   </data>
   <data name="Settings_Button_Lyrics" xml:space="preserve">
     <value>Tekster</value>
@@ -681,16 +681,28 @@ Filer som ikke kunne importeres: {0}.</value>
     <value>Kinesisk musikktjeneste, flott for asiatisk musikk</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Henter artist-ID-er (kreves for TheAudioDB og Fanart.tv)</value>
+    <value>Slår opp artist- og album-ID-er som taggene dine mangler</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>Høykvalitets artistbilder og biografier (krever MusicBrainz)</value>
+    <value>Artistbilder og biografier (krever en MusicBrainz-ID fra taggene dine eller MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>Kun høykvalitets artistbilder (krever MusicBrainz)</value>
+    <value>Artistbilder i høy kvalitet (krever en MusicBrainz-ID fra taggene dine eller MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Artistbiografier og bilder (reserve)</value>
+    <value>Artistbiografier og plateomslag (reserve)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>Artistbilder og plateomslag, funnet etter navn</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>Artistbiografier på ditt språk (krever en MusicBrainz-ID fra taggene dine eller MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>Plateomslag for MusicBrainz-utgivelser (bruker ID-er fra taggene dine eller MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>Plateomslag i høy oppløsning, funnet etter navn</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Søk album</value>
@@ -771,7 +783,7 @@ Filer som ikke kunne importeres: {0}.</value>
     <value>Skann metadata på nytt</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>Skann biblioteket på nytt for å ta i bruk metadatasandlinger, som oppdeling av artister. Dette kan ta litt tid for store bibliotek. Vil du fortsette?</value>
+    <value>Skann biblioteket på nytt for å ta i bruk metadatainnstillinger, som oppdeling av artister. Dette kan ta litt tid for store bibliotek. Vil du fortsette?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
     <value>Skann på nytt</value>
@@ -864,6 +876,9 @@ Vil du fortsette?</value>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>Kopier logg</value>
   </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>Krasjlogg</value>
+  </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>Velg omslag</value>
   </data>
@@ -899,6 +914,12 @@ Vil du fortsette?</value>
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>Verdi</value>
+  </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>Felt</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>Betingelse</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>Fjern denne regelen</value>
@@ -954,6 +975,9 @@ Vil du fortsette?</value>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Gå til album</value>
   </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>Avspillingsposisjon</value>
+  </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>Neste i kø</value>
   </data>
@@ -1005,9 +1029,6 @@ Vil du fortsette?</value>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Søk etter album…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Søk album</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Velg en tilfeldig</value>
   </data>
@@ -1029,9 +1050,6 @@ Vil du fortsette?</value>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Søk i album…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Søk i album</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Spill av alle</value>
   </data>
@@ -1049,9 +1067,6 @@ Vil du fortsette?</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Søk etter artister…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Søk artister</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Velg en tilfeldig</value>
@@ -1091,9 +1106,6 @@ Vil du fortsette?</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Søk hos artist…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Søk i artist</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Spill av alle</value>
@@ -1167,9 +1179,6 @@ Vil du fortsette?</value>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Søk etter sjangere…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Søk sjangere</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>Velg en tilfeldig</value>
   </data>
@@ -1187,9 +1196,6 @@ Vil du fortsette?</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Søk i bibliotek…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Søk i bibliotek</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Spill av alle</value>
@@ -1297,7 +1303,7 @@ Vil du fortsette?</value>
     <value>Gi biblioteket ditt liv</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi fungerer helt frakoblet. Slå på disse for å fylle inn artistbilder, biografier og sangtekster som filene dine mangler.</value>
+    <value>Nagi fungerer helt frakoblet. Slå på disse for å fylle inn artistbilder, biografier, plateomslag og sangtekster som filene dine mangler.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>Pass rett inn på skrivebordet ditt</value>
@@ -1334,9 +1340,6 @@ Vil du fortsette?</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Søk etter spillelister…</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Søk spillelister</value>
   </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Velg en tilfeldig</value>
@@ -1383,9 +1386,6 @@ Vil du fortsette?</value>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Søk i spilleliste…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Søk i spilleliste</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Spill av alle</value>
   </data>
@@ -1409,9 +1409,6 @@ Vil du fortsette?</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Søk i sjanger…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Søk i sjanger</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Spill av alle</value>
@@ -1509,6 +1506,12 @@ Vil du fortsette?</value>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Forforsterker</value>
   </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>Equalizer-forhåndsinnstilling</value>
+  </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>Tilpasset</value>
   </data>
@@ -1582,7 +1585,7 @@ Vil du fortsette?</value>
     <value>Sjangerdeling</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Definer tegn som brukes til å dele flere sjangere (f.eks. ';/'). La stå tom for å deaktivere.</value>
+    <value>Definer tegn som brukes til å dele flere sjangere (f.eks. ';/'). La stå tomt for å deaktivere.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Skann bibliotek på nytt</value>
@@ -1594,7 +1597,7 @@ Vil du fortsette?</value>
     <value>Hent metadata på nettet</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Hent artistbilder og biografier fra nettkilder.</value>
+    <value>Hent artistbilder, biografier og plateomslag fra nettkilder.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Kilder</value>
@@ -1696,7 +1699,7 @@ Vil du fortsette?</value>
     <value>Last.fm</value>
   </data>
   <data name="SettingsPage_LastFm_Description" xml:space="preserve">
-    <value>Koble til Last.fm-kontoen din for å skrobble spor og vise sangen du spiller for øyeblikket.</value>
+    <value>Koble til Last.fm-kontoen din for å scrobble spor og vise sangen du spiller for øyeblikket.</value>
   </data>
   <data name="SettingsPage_LastFm_Connect_Content" xml:space="preserve">
     <value>Koble til</value>
@@ -1711,7 +1714,7 @@ Vil du fortsette?</value>
     <value>Koble fra</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
-    <value>Aktiver skrobbling</value>
+    <value>Aktiver scrobbling</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Description" xml:space="preserve">
     <value>Legg automatisk til sporene du lytter til på Nagi i Last.fm-profilen din.</value>
@@ -1744,7 +1747,7 @@ Vil du fortsette?</value>
     <value>Tilkobling mislyktes: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>Send inn avspillinger (skrobbling)</value>
+    <value>Send inn avspillinger (scrobbling)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
     <value>Send inn oppdateringer for «Spilles nå»</value>
@@ -1781,9 +1784,6 @@ Vil du fortsette?</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Søk i smart spilleliste…</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Søk i smart spilleliste</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Rediger regler</value>
@@ -1897,7 +1897,7 @@ Vil du fortsette?</value>
     <value>Akryl (Glass)</value>
   </data>
   <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
-    <value>Solid (Ugjenomsiktig)</value>
+    <value>Solid (Ugjennomsiktig)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
     <value>Tilpass utseendet til spillerlinjen.</value>
@@ -2063,6 +2063,9 @@ Vil du fortsette?</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>Gjennom tidene</value>
+  </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>Tidsperiode</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}t {1}m</value>
@@ -2257,11 +2260,71 @@ Vil du fortsette?</value>
     <value>Ingen spillelister tilgjengelig</value>
   </data>
   <data name="FFmpeg_SetupInstructions" xml:space="preserve">
-    <value>FFmpeg er nødvendig for å analysere sanger for volumutjevning, men Nagi fant det ikke.
+    <value>FFmpeg er nødvendig for å analysere sanger for volumnormalisering, men Nagi fant det ikke.
 
 1. Last ned en Windows-versjon fra https://ffmpeg.org/download.html.
 2. Pakk ut arkivet og finn ffmpeg.exe i bin-mappen.
-3. Legg til mappen som inneholder ffmpeg.exe i din Windows PATH.
-4. Start Nagi på nytt, og aktiver deretter volumutjevning igjen.</value>
+3. Legg til mappen som inneholder ffmpeg.exe, i Windows PATH.
+4. Start Nagi på nytt, og slå deretter på volumnormalisering igjen.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>Sanginfo</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>Tagger</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>Lytting</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>Albumartist</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>Dirigent</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>Opphavsrett</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>Bane</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>Kanaler</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>Størrelse</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} av {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>Kolonner i sanglister</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>Velg hvilke detaljer sanglister viser.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>Kolonneoverskrifter</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>Vis en overskrift over hver kolonne i sanglister.</value>
   </data>
 </root>

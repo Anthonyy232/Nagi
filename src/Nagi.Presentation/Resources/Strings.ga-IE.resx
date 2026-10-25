@@ -113,7 +113,7 @@
     <value>Díbhalbhaigh</value>
   </data>
   <data name="Tooltip_Mute" xml:space="preserve">
-    <value>Bhalbhaigh</value>
+    <value>Balbhaigh</value>
   </data>
   <data name="Theme_Light" xml:space="preserve">
     <value>Éadrom</value>
@@ -146,7 +146,7 @@
     <value>Grúpáil</value>
   </data>
   <data name="Label_SkipCount" xml:space="preserve">
-    <value>Líon na nLéimneach</value>
+    <value>Líon na Léimeanna</value>
   </data>
   <data name="Label_DiscNumber" xml:space="preserve">
     <value>Uimhir an Diosca</value>
@@ -179,13 +179,13 @@
     <value>Cuimsíonn</value>
   </data>
   <data name="Operator_DoesNotContain" xml:space="preserve">
-    <value>Níl ann</value>
+    <value>Ní chuimsíonn</value>
   </data>
   <data name="Operator_Is" xml:space="preserve">
     <value>Is ionann go díreach</value>
   </data>
   <data name="Operator_IsNot" xml:space="preserve">
-    <value>Níl</value>
+    <value>Ní ionann</value>
   </data>
   <data name="Operator_StartsWith" xml:space="preserve">
     <value>Tosaíonn le</value>
@@ -413,7 +413,7 @@
     <value>Liosta seinm á thosú…</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
-    <value>Níl aon amhráin ag teacht le rialacha an seinmliosta chliste seo.</value>
+    <value>Níl aon amhráin ag teacht le rialacha an tseinmliosta chliste seo.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>Earráid ag tosú athsheinm don seinmliosta seo.</value>
@@ -512,7 +512,7 @@
     <value>Dínasc Last.fm</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
-    <value>An bhfuil tú cinnte gur mhaith leat do chuntas Last.fm a dhínascadh? Caomhnófar do stair scrobbling ar Last.fm, ach ní bheidh Nagi in ann scrobble a dhéanamh a thuilleadh.</value>
+    <value>An bhfuil tú cinnte gur mhaith leat do chuntas Last.fm a dhínascadh? Caomhnófar do stair scrobbláil ar Last.fm, ach ní bheidh Nagi in ann scrobbláil a dhéanamh a thuilleadh.</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
     <value>Dínasc</value>
@@ -543,7 +543,7 @@ Amhráin nár aimsíodh i do leabharlann: {0}.</value>
   <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
     <value>
 
-Comhaid nár fhéad a iompórtáil: {0}.</value>
+Comhaid nárbh fhéidir a iompórtáil: {0}.</value>
   </data>
   <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
     <value>Theip ar Iompórtáil</value>
@@ -555,7 +555,7 @@ Comhaid nár fhéad a iompórtáil: {0}.</value>
     <value>Earráid ag luchtú seinmliosta cliste</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
-    <value>Níl aon rialacha sainithe • Tagann gach amhrán le chéile</value>
+    <value>Níl aon rialacha sainithe • Meaitseálann gach amhrán</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
     <value>Meaitseáil {0} de {1} {2}</value>
@@ -666,7 +666,7 @@ Comhaid nár fhéad a iompórtáil: {0}.</value>
     <value>Deighilteoir Leagan Amach</value>
   </data>
   <data name="Settings_Button_Lyrics" xml:space="preserve">
-    <value>Focail</value>
+    <value>Liricí</value>
   </data>
   <data name="Settings_Button_Queue" xml:space="preserve">
     <value>Scuaine</value>
@@ -681,16 +681,28 @@ Comhaid nár fhéad a iompórtáil: {0}.</value>
     <value>Seirbhís ceoil Síneach, iontach do cheol na hÁise</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Faigheann sé Aitheantais ealaíontóra (riachtanach do TheAudioDB agus Fanart.tv)</value>
+    <value>Aimsíonn sé Aitheantais ealaíontóra agus albaim nach bhfuil i do chlibeanna</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>Íomhánna agus beathaisnéisí ardcháilíochta ealaíontóirí (éilíonn MusicBrainz)</value>
+    <value>Íomhánna agus beathaisnéisí ealaíontóirí (teastaíonn Aitheantas MusicBrainz ó do chlibeanna nó ó MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>Íomhánna ardcháilíochta ealaíontóirí amháin (éilíonn MusicBrainz)</value>
+    <value>Íomhánna ardcháilíochta ealaíontóirí (teastaíonn Aitheantas MusicBrainz ó do chlibeanna nó ó MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Beathaisnéisí agus íomhánna ealaíontóirí (cúlú)</value>
+    <value>Beathaisnéisí ealaíontóirí agus clúdaigh albam (cúlú)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>Íomhánna ealaíontóirí agus clúdaigh albam, aimsithe de réir ainm</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>Beathaisnéisí ealaíontóirí i do theanga féin (teastaíonn Aitheantas MusicBrainz ó do chlibeanna nó ó MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>Clúdaigh albam d'eisiúintí MusicBrainz (úsáideann sé Aitheantais ó do chlibeanna nó ó MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>Clúdaigh albam ardtaifigh, aimsithe de réir ainm</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cuardaigh albaim</value>
@@ -723,7 +735,7 @@ Comhaid nár fhéad a iompórtáil: {0}.</value>
     <value>Cuardaigh seánraí</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>Cuardaigh leabharlann</value>
+    <value>Cuardaigh sa leabharlann</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cuardaigh seinmliostaí</value>
@@ -795,10 +807,10 @@ Comhaid nár fhéad a iompórtáil: {0}.</value>
     <value>Níor Aimsíodh FFmpeg</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Title" xml:space="preserve">
-    <value>Cumasaigh Gnáthú Toirte</value>
+    <value>Cumasaigh Normalú Airde Fuaime</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
-    <value>Cinntíonn Gnáthú Toirte (ReplayGain) leibhéal toirte comhsheasmhach ar fud do cheoil go léir.
+    <value>Cinntíonn Normalú Airde Fuaime (ReplayGain) leibhéal airde fuaime comhsheasmhach ar fud do cheoil go léir.
 
 Déanfaidh sé seo anailís ar do leabharlann ceoil agus athróidh sé do chuid comhad fuaime go díreach trí chlibeanna ReplayGain a scríobh. Ní dhéanfar ach comhaid gan chlibeanna reatha a phróiseáil. D'fhéadfadh sé seo tamall a thógáil ag brath ar mhéid do leabharlainne.
 
@@ -811,7 +823,7 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Scanadh normalaithe airde fuaime á ullmhú…</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Cealaíodh scanadh gnáthaithe toirte.</value>
+    <value>Cealaíodh scanadh normalaithe airde fuaime.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Earráid le linn scanadh: {0}</value>
@@ -859,10 +871,13 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Má leanann sé seo ar aghaidh, is féidir leat triail a bhaint as 'Athshocraigh Aip &amp; Sonraí'. Scriosfaidh sé seo do shocruithe agus do leabharlann, rud a chabhróidh leis an aip a ghnóthú ó staid briste.</value>
   </data>
   <data name="CrashReport_CopyLogButton_ToolTip" xml:space="preserve">
-    <value>Cóipeáil logáil chuig an gearrthaisce</value>
+    <value>Cóipeáil logáil chuig an ghearrthaisce</value>
   </data>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>Cóipeáil Logáil</value>
+  </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>Logáil Tuairteála</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>Roghnaigh Clúdach</value>
@@ -874,7 +889,7 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Ainm an Seinmliosta</value>
   </data>
   <data name="SmartPlaylist_PlaylistNameTextBox_Placeholder" xml:space="preserve">
-    <value>Iontráil ainm do do seinmliosta cliste</value>
+    <value>Iontráil ainm do do sheinmliosta cliste</value>
   </data>
   <data name="SmartPlaylist_SortOrderLabel" xml:space="preserve">
     <value>Ord Sórtála</value>
@@ -899,6 +914,12 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>Luach</value>
+  </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>Réimse</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>Coinníoll</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>Bain an riail seo</value>
@@ -954,6 +975,9 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Gabh go dtí an tAlbam</value>
   </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>Suíomh Seinnte</value>
+  </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>An Chéad Eile</value>
   </data>
@@ -1005,9 +1029,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cuardaigh albaim…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cuardaigh albaim</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Roghnaigh ceann go randamach</value>
   </data>
@@ -1029,9 +1050,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cuardaigh san albam…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cuardaigh san albam</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Seinn uile</value>
   </data>
@@ -1049,9 +1067,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cuardaigh ealaíontóirí…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cuardaigh ealaíontóirí</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Roghnaigh ceann go randamach</value>
@@ -1091,9 +1106,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cuardaigh san ealaíontóir…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cuardaigh san ealaíontóir</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Seinn uile</value>
@@ -1147,7 +1159,7 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Amhráin</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Cuardaigh sa fhillteán…</value>
+    <value>Cuardaigh san fhillteán…</value>
   </data>
   <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Seinn uile</value>
@@ -1167,9 +1179,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cuardaigh seánraí…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cuardaigh seánraí</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>Roghnaigh ceann go randamach</value>
   </data>
@@ -1187,9 +1196,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cuardaigh sa leabharlann…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cuardaigh sa leabharlann</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Seinn uile</value>
@@ -1297,10 +1303,10 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Tabhair beatha do do leabharlann</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Oibríonn Nagi go hiomlán as líne. Cas orthu seo chun grianghraif ealaíontóirí, beathaisnéisí agus liricí nach bhfuil i do chomhaid a líonadh isteach.</value>
+    <value>Oibríonn Nagi go hiomlán as líne. Cas orthu seo chun grianghraif ealaíontóirí, beathaisnéisí, clúdaigh albam agus liricí nach bhfuil i do chomhaid a líonadh isteach.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
-    <value>Imeasc i do dheasc</value>
+    <value>Oiriúnaigh do do dheasc é</value>
   </data>
   <data name="OnboardingPage_Desktop_Description" xml:space="preserve">
     <value>Roghnaigh an chaoi a dtosaíonn Nagi agus cad a tharlaíonn nuair a dhúnann tú nó nuair a íoslaghdaíonn tú é.</value>
@@ -1309,7 +1315,7 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Roinn a bhfuil á sheinm agat</value>
   </data>
   <data name="OnboardingPage_Sharing_Description" xml:space="preserve">
-    <value>Scrobhláil do chuid seinnte ar Last.fm agus taispeáin do do chairde ar Discord cad atá á chloisteáil agat. Tá ListenBrainz ar fáil sna Socruithe.</value>
+    <value>Scrobbláil do chuid seinnte ar Last.fm agus taispeáin do do chairde ar Discord cad atá á chloisteáil agat. Tá ListenBrainz ar fáil sna Socruithe.</value>
   </data>
   <data name="OnboardingPage_Finish_Title" xml:space="preserve">
     <value>Tá gach rud réidh</value>
@@ -1334,9 +1340,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cuardaigh liostaí seinm…</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cuardaigh seinmliostaí</value>
   </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Roghnaigh ceann go randamach</value>
@@ -1383,9 +1386,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cuardaigh sa liosta seinm…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cuardaigh sa seinmliosta</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Seinn uile</value>
   </data>
@@ -1409,9 +1409,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cuardaigh sa seánra…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cuardaigh sa seánra</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Seinn uile</value>
@@ -1480,10 +1477,10 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Tarraing chun leathanaigh a atheagrú sa roghchlár nascleanúna. Bain úsáid as an lasc chun leathanach a thaispeáint nó a cheilt.</value>
   </data>
   <data name="SettingsPage_Section_Player" xml:space="preserve">
-    <value>Bainistíocht Seinnteoirí</value>
+    <value>Bainistíocht an tSeinnteora</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Header" xml:space="preserve">
-    <value>Gnáthú Toirte (ReplayGain)</value>
+    <value>Normalú Airde Fuaime (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
     <value>Laghdaigh difríochtaí airde fuaime idir amhráin ag baint úsáide as ReplayGain.</value>
@@ -1492,7 +1489,7 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Mód Eisiach WASAPI</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Tabhair smacht eisiach do Nagi ar an ggléas fuaime Windows. D'fhéadfadh aipeanna eile bheith ciúin. Atosaigh Nagi tar éis an socrú seo a athrú.</value>
+    <value>Tabhair smacht eisiach do Nagi ar an ngléas fuaime Windows. D'fhéadfadh aipeanna eile bheith ciúin. Atosaigh Nagi tar éis an socrú seo a athrú.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>Meath ar Seinn / Sos</value>
@@ -1509,23 +1506,29 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Réamh-Aimplitheoir</value>
   </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>Réamhshocrú an Chothromóra</value>
+  </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>Saincheaptha</value>
   </data>
   <data name="SettingsPage_CustomizePlayer" xml:space="preserve">
-    <value>Saincheap Rialuithe Seinnteoirí</value>
+    <value>Saincheap Rialuithe an tSeinnteora</value>
   </data>
   <data name="SettingsPage_ResetPlayerButtons_Content" xml:space="preserve">
     <value>Athshocraigh go dtí an Réamhshocrú</value>
   </data>
   <data name="SettingsPage_CustomizePlayer_Instructions" xml:space="preserve">
-    <value>Ligeann tú an cúrsóir thairis chun infheictheacht a scoránaigh. Tarraing chun atheagrú. Scarann an deighilteoir na rialuithe láir agus ar dheis.</value>
+    <value>Coinnigh an cúrsóir os a chionn chun infheictheacht a scoránú. Tarraing chun atheagrú. Scarann an deighilteoir na rialuithe láir agus ar dheis.</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Header" xml:space="preserve">
     <value>Seinnteoir In-chraptha</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>Lánaimsigh barra an tseinnteora nuair a ghluaiseann tú an pointeoir os a chionn.</value>
+    <value>Leathnaigh barra an tseinnteora nuair a ghluaiseann tú an pointeoir os a chionn.</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
     <value>Athbhunaigh Staid an tSeinm</value>
@@ -1549,16 +1552,16 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Íoslaghdaigh go dtí an Mionseinnteoir</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Description" xml:space="preserve">
-    <value>Nuair a dhéantar é a íoslaghdú, taispeáin seinnteoir beag ar snámh in ionad an fhuinneog a cheilt.</value>
+    <value>Nuair a dhéantar é a íoslaghdú, taispeáin seinnteoir beag ar snámh in ionad na fuinneoige a cheilt.</value>
   </data>
   <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
-    <value>Folaigh sa Trádaire Córais</value>
+    <value>Folaigh sa Tráidire Córais</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>Coinnigh Nagi ag rith i dtrádaire an chórais nuair a dhúnann tú a fhuinneog.</value>
+    <value>Coinnigh Nagi ag rith i dtráidire an chórais nuair a dhúnann tú a fhuinneog.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
-    <value>Taispeáin Art Clúdaigh sa Phreabfhuinneog</value>
+    <value>Taispeáin Ealaín an Chlúdaigh sa Phreabfhuinneog</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
     <value>Taispeáin ealaín an chlúdaigh sa seinnteoir dlúth a thaispeántar nuair a chliceálann tú an deilbhín tráidire.</value>
@@ -1585,16 +1588,16 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Sainmhínigh carachtair a úsáidtear chun seánraí iolracha a scoilt (m.sh. ';/'). Fág folamh chun a dhíchumasú.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
-    <value>Athscanadh Leabharlann</value>
+    <value>Athscan an Leabharlann</value>
   </data>
   <data name="SettingsPage_RescanLibrary_ToolTip" xml:space="preserve">
-    <value>Athscanadh leabharlann chun athruithe scoilte a chur i bhfeidhm</value>
+    <value>Athscan an leabharlann chun athruithe scoilte a chur i bhfeidhm</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
     <value>Faigh Meiteashonraí Ar Líne</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Faigh íomhánna agus beathaisnéisí ealaíontóirí ó fhoinsí ar líne.</value>
+    <value>Faigh íomhánna agus beathaisnéisí ealaíontóirí agus clúdaigh albam ó fhoinsí ar líne.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Foinsí</value>
@@ -1618,7 +1621,7 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Taispeáin Liricí Rómhánaithe</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
-    <value>Taispeáin líne rómánaithe níos lú faoi liricí tacaithe nuair a mheaitseálann pacáiste suiteáilte an script.</value>
+    <value>Taispeáin líne rómhánaithe níos lú faoi liricí tacaithe nuair a mheaitseálann pacáiste suiteáilte an script.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
     <value>Pacaí Teanga</value>
@@ -1639,10 +1642,10 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Bain</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
-    <value>Níl aon phacáistí rómánaithe comhoiriúnacha ar fáil.</value>
+    <value>Níl aon phacáistí rómhánaithe comhoiriúnacha ar fáil.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Níorbh fhéidir pacáistí rómánaithe a luchtú: {0}</value>
+    <value>Níorbh fhéidir pacáistí rómhánaithe a luchtú: {0}</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
     <value>Theip ar shuiteáil an phacáiste.</value>
@@ -1696,7 +1699,7 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Last.fm</value>
   </data>
   <data name="SettingsPage_LastFm_Description" xml:space="preserve">
-    <value>Ceangail do chuntas Last.fm chun rianta a scroblaigh agus chun an t-amhrán atá á sheinm agat faoi láthair a thaispeáint.</value>
+    <value>Ceangail do chuntas Last.fm chun rianta a scrobbláil agus chun an t-amhrán atá á sheinm agat faoi láthair a thaispeáint.</value>
   </data>
   <data name="SettingsPage_LastFm_Connect_Content" xml:space="preserve">
     <value>Ceangail</value>
@@ -1782,9 +1785,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cuardaigh sa liosta seinm cliste…</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cuardaigh sa seinmliosta cliste</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Cuir rialacha in eagar</value>
   </data>
@@ -1795,7 +1795,7 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Seinn gach amhrán in ord randamach</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
-    <value>Ní hionann aon amhrán agus na rialacha reatha</value>
+    <value>Ní mheaitseálann aon amhrán na rialacha reatha</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
     <value>Bain triail as na rialacha a chur in eagar</value>
@@ -1810,7 +1810,7 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Maidir le Nagi</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
-    <value>Athfhionnachtain do bhailiúchán ceoil áitiúil le Nagi, seinnteoir ceoil a dhíríonn ar luas, simplíocht, agus príobháideachas.</value>
+    <value>Athfhionn do bhailiúchán ceoil áitiúil le Nagi, seinnteoir ceoil a dhíríonn ar luas, simplíocht, agus príobháideachas.</value>
   </data>
   <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
     <value>Leagan </value>
@@ -1828,7 +1828,7 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Teanga an Fheidhmchláir</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>Aththosaigh Nagi chun athrú teanga a chur i bhfeidhm.</value>
+    <value>Atosaigh Nagi chun athrú teanga a chur i bhfeidhm.</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
     <value>Atosú Ag Teastáil</value>
@@ -1873,7 +1873,7 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Athchóirigh Cúltaca?</value>
   </data>
   <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
-    <value>Má athchóiríonn tú ó chúltaca, cuirfear sonraí reatha uile an aipe in ionad. Ní féidir an gníomh seo a chealú. Atosóidh an aip tar éis athchóirithe. Lean ar aghaidh?</value>
+    <value>Má athchóiríonn tú ó chúltaca, cuirfear an cúltaca in ionad shonraí reatha uile na haipe. Ní féidir an gníomh seo a chealú. Atosóidh an aip tar éis athchóirithe. Lean ar aghaidh?</value>
   </data>
   <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
     <value>Athchóirigh</value>
@@ -1882,7 +1882,7 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Athchóiriú Críochnaithe</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Athbhunaíodh an cúltaca. Aththosóidh Nagi anois.</value>
+    <value>Athbhunaíodh an cúltaca. Atosóidh Nagi anois.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
     <value>Theip ar Athchóiriú</value>
@@ -1891,7 +1891,7 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Níorbh fhéidir an cúltaca a athbhunú.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
-    <value>Stíliú an Imreora</value>
+    <value>Stíliú an tSeinnteora</value>
   </data>
   <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
     <value>Aicrileach (Gloine)</value>
@@ -1909,13 +1909,13 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Coigeartaigh déine dath chúlra an tseinnteora.</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
-    <value>Fad Feadaithe Isteach</value>
+    <value>Fad an Mheatha Isteach</value>
   </data>
   <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
-    <value>Socraigh cén fad a thógann sé ar an airde fuaime feadú isteach nuair a athchromtar ar an seinm.</value>
+    <value>Socraigh cén fad a thógann sé ar an airde fuaime meath isteach nuair a athchromtar ar an seinm.</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
-    <value>Fad Feadaithe Amach</value>
+    <value>Fad an Mheatha Amach</value>
   </data>
   <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
     <value>Socraigh cén fad a thógann sé ar an airde fuaime dul i léig nuair a chuirtear an seinm ar sos.</value>
@@ -2008,7 +2008,7 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Do cheol, eagraithe go hálainn</value>
   </data>
   <data name="SplashPage_Status" xml:space="preserve">
-    <value>Á dhúiseacht Nagi…</value>
+    <value>Nagi á dhúiseacht…</value>
   </data>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>Féach ar fad</value>
@@ -2059,10 +2059,13 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Na 90 Lá Is Déanaí</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>An Bhliain Seo Caite</value>
+    <value>An Bhliain Is Déanaí</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>Gach Tráth</value>
+  </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>Raon Ama</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}h {1}m</value>
@@ -2101,7 +2104,7 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Níorbh fhéidir an t-aschur fuaime a nuashonrú. Bain triail as arís nó roghnaigh gléas eile.</value>
   </data>
   <data name="Listening_Random" xml:space="preserve">
-    <value>Randamaigh</value>
+    <value>Suaitheadh</value>
   </data>
   <data name="Listening_MoreVariety" xml:space="preserve">
     <value>Tuilleadh Éagsúlachta</value>
@@ -2161,7 +2164,7 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Stad an Seinm</value>
   </data>
   <data name="JumpList_ShuffleAll" xml:space="preserve">
-    <value>Crandáil Gach Amhrán</value>
+    <value>Seinn Gach Amhrán in Ord Randamach</value>
     <comment>Task in the taskbar icon's right-click menu.</comment>
   </data>
   <data name="JumpList_MiniPlayer" xml:space="preserve">
@@ -2200,7 +2203,7 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Roghanna an Tseinnteora</value>
   </data>
   <data name="Listening_RecentlyPlayed" xml:space="preserve">
-    <value>Seinte le Déanaí</value>
+    <value>Seinnte le Déanaí</value>
   </data>
   <data name="Listening_HistorySearch" xml:space="preserve">
     <value>Cuardaigh stair éisteachta</value>
@@ -2209,7 +2212,7 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Gan stair éisteachta fós</value>
   </data>
   <data name="Listening_HistoryLoadError" xml:space="preserve">
-    <value>Níorbh fhéidir “Seinte le Déanaí” a lódáil. Roghnaigh Athriail chun triail a bhaint as arís.</value>
+    <value>Níorbh fhéidir “Seinnte le Déanaí” a lódáil. Roghnaigh Athriail chun triail a bhaint as arís.</value>
   </data>
   <data name="Listening_Today" xml:space="preserve">
     <value>Inniu</value>
@@ -2218,7 +2221,7 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Inné</value>
   </data>
   <data name="Listening_RediscoveryReason" xml:space="preserve">
-    <value>Seinte go deireanach {0:d}</value>
+    <value>Seinnte go deireanach {0:d}</value>
   </data>
   <data name="Listening_RediscoveryTitle" xml:space="preserve">
     <value>Is fiú éisteacht leis arís</value>
@@ -2239,10 +2242,10 @@ Ar mhaith leat leanúint ar aghaidh?</value>
     <value>Seachnaíonn Tuilleadh Éagsúlachta amhráin a seinneadh le déanaí agus scarann sé amhráin leis an ealaíontóir céanna más féidir.</value>
   </data>
   <data name="Listening_RediscoverDescription" xml:space="preserve">
-    <value>Úsáideann Aisaimsigh amhráin a bhfuil seinnteacht taifeadta acu i Nagi a seinneadh níos mó ná 30 lá ó shin.</value>
+    <value>Úsáideann Aisaimsigh amhráin a bhfuil seinm taifeadta acu i Nagi a seinneadh níos mó ná 30 lá ó shin.</value>
   </data>
   <data name="Listening_UnheardDescription" xml:space="preserve">
-    <value>Úsáideann Nár cloisteadh amhráin nach bhfuil aon seinnteacht taifeadta acu i Nagi.</value>
+    <value>Úsáideann Nár cloisteadh amhráin nach bhfuil aon seinm taifeadta acu i Nagi.</value>
   </data>
   <data name="Listening_HistoryNoMatches" xml:space="preserve">
     <value>Ní mheaitseálann aon éisteacht do chuardach</value>
@@ -2263,5 +2266,65 @@ Ar mhaith leat leanúint ar aghaidh?</value>
 2. Bain na comhaid as an gcartlann agus aimsigh ffmpeg.exe ina fhillteán bin.
 3. Cuir an fillteán ina bhfuil ffmpeg.exe le do PATH Windows.
 4. Atosaigh Nagi, ansin cumasaigh normalú airde fuaime arís.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>Faisnéis an Amhráin</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>Clibeanna</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>Éisteacht</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>Ealaíontóir an Albaim</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>Stiúrthóir</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>Cóipcheart</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>Conair</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>Formáid</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>Cainéil</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>Méid</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} as {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>Colúin Liostaí Amhrán</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>Roghnaigh na sonraí a thaispeánann liostaí amhrán.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>Ceanntásca Colún</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>Taispeáin ceanntásc os cionn gach colúin i liostaí amhrán.</value>
   </data>
 </root>

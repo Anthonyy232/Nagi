@@ -74,6 +74,6 @@
     <value>Maak oop met Nagi Musiekspeler</value>
   </data>
   <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Nagi Begin</value>
+    <value>Nagi-opstart</value>
   </data>
 </root>

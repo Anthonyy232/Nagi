@@ -681,16 +681,28 @@
     <value>שירות מוזיקה סיני, נהדר למוזיקה אסיאתית</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>שולף מזהי אמן (נדרש עבור TheAudioDB ו-Fanart.tv)</value>
+    <value>מאתר מזהי אמנים ואלבומים שאינם כלולים בתגיות שלך</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>תמונות וביוגרפיות אמנים באיכות גבוהה (דורש MusicBrainz)</value>
+    <value>תמונות וביוגרפיות של אמנים (דורש מזהה MusicBrainz מהתגיות שלך או מ-MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>תמונות אמנים באיכות גבוהה בלבד (דורש MusicBrainz)</value>
+    <value>תמונות אמנים באיכות גבוהה (דורש מזהה MusicBrainz מהתגיות שלך או מ-MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>ביוגרפיות ותמונות אמנים (חלופי)</value>
+    <value>ביוגרפיות אמנים ועטיפות אלבומים (חלופי)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>תמונות אמנים ועטיפות אלבומים, לפי שם</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>ביוגרפיות אמנים בשפה שלך (דורש מזהה MusicBrainz מהתגיות שלך או מ-MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>עטיפות אלבומים להוצאות של MusicBrainz (משתמש במזהים מהתגיות שלך או מ-MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>עטיפות אלבומים ברזולוציה גבוהה, לפי שם</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>חפש אלבומים</value>
@@ -856,13 +868,16 @@
     <value>.</value>
   </data>
   <data name="CrashReport_ResetAppAdvice" xml:space="preserve">
-    <value>אם זה ממשיך לקרות, תוכל לנסות 'איפוס יישום ונתונים'. פעולה זו תמחק את ההגדרות והספרייה שלך, מה שעשוי לעזור לשחזר את היישום ממצב תקול.</value>
+    <value>אם זה ממשיך לקרות, תוכל לנסות 'אפס יישום ונתונים'. פעולה זו תמחק את ההגדרות והספרייה שלך, מה שעשוי לעזור לשחזר את היישום ממצב תקול.</value>
   </data>
   <data name="CrashReport_CopyLogButton_ToolTip" xml:space="preserve">
     <value>העתק יומן ללוח</value>
   </data>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>העתק יומן</value>
+  </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>יומן קריסה</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>בחר עטיפה</value>
@@ -899,6 +914,12 @@
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>ערך</value>
+  </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>שדה</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>תנאי</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>הסר כלל זה</value>
@@ -954,6 +975,9 @@
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>עבור לאלבום</value>
   </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>מיקום בהשמעה</value>
+  </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
     <value>הבא בתור</value>
   </data>
@@ -1005,9 +1029,6 @@
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>חיפוש אלבומים…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>חפש אלבומים</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>בחר אחד אקראי</value>
   </data>
@@ -1029,9 +1050,6 @@
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>חיפוש באלבום…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>חפש באלבום</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>נגן הכל</value>
   </data>
@@ -1049,9 +1067,6 @@
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>חיפוש אמנים…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>חפש אמנים</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>בחר אחד אקראי</value>
@@ -1091,9 +1106,6 @@
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>חיפוש באמן…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>חפש באמן</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>נגן הכל</value>
@@ -1167,9 +1179,6 @@
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>חיפוש ז'אנרים…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>חפש ז'אנרים</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>בחר אחד אקראי</value>
   </data>
@@ -1187,9 +1196,6 @@
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>חיפוש בספרייה…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>חפש בספרייה</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>נגן הכל</value>
@@ -1267,7 +1273,7 @@
     <value>הוסף תיקיית מוזיקה</value>
   </data>
   <data name="OnboardingPage_Welcome_Description" xml:space="preserve">
-    <value>בית רגוע הממוקד במקומי עבור המוזיקה שלך. ההגדרה אורכת כדקה.</value>
+    <value>בית רגוע ומקומי למוזיקה שלך. ההגדרה אורכת כדקה.</value>
   </data>
   <data name="OnboardingPage_GetStarted" xml:space="preserve">
     <value>להתחיל</value>
@@ -1297,7 +1303,7 @@
     <value>להפיח חיים בספרייה שלך</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi פועלת לחלוטין ללא חיבור לרשת. יש להפעיל אפשרויות אלו כדי להשלים תמונות אמנים, ביוגרפיות ומילים שאינן כלולות בקבצים שלך.</value>
+    <value>Nagi פועלת לחלוטין ללא חיבור לרשת. יש להפעיל אפשרויות אלו כדי להשלים תמונות אמנים, ביוגרפיות, עטיפות אלבומים ומילים שאינן כלולות בקבצים שלך.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>השתלבות בשולחן העבודה</value>
@@ -1334,9 +1340,6 @@
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>חיפוש רשימות השמעה…</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>חפש רשימות השמעה</value>
   </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>בחר אחד אקראי</value>
@@ -1383,9 +1386,6 @@
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>חיפוש ברשימת ההשמעה…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>חפש ברשימת השמעה</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>נגן הכל</value>
   </data>
@@ -1409,9 +1409,6 @@
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>חיפוש בז'אנר…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>חפש בז'אנר</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>נגן הכל</value>
@@ -1483,7 +1480,7 @@
     <value>ניהול נגן</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Header" xml:space="preserve">
-    <value>נורמליזציית עוצמת קול (ReplayGain)</value>
+    <value>נרמול עוצמת קול (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
     <value>הפחת את פערי עוצמת הקול בין שירים באמצעות ReplayGain.</value>
@@ -1498,7 +1495,7 @@
     <value>התעמעמות בהפעלה / השהיה</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>הנחתת עוצמת הקול בצורה חלקה בהפעלה מחדש ובהשהיה, במקום חיתוך מיידי.</value>
+    <value>הגברה הדרגתית של עוצמת הקול בהמשך ההשמעה והנמכה הדרגתית בהשהיה, במקום חיתוך מיידי.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>אקולייזר שמע</value>
@@ -1508,6 +1505,12 @@
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>קדם-מגבר</value>
+  </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>הגדרה קבועה של האקולייזר</value>
   </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>מותאם אישית</value>
@@ -1534,7 +1537,7 @@
     <value>שחזר את התור ואת מיקום ההשמעה בעת הפעלת Nagi.</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
-    <value>הפעלה אוטומטית בעת העלייה</value>
+    <value>הפעלה אוטומטית עם הפעלת המחשב</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
     <value>הפעל את Nagi אוטומטית כשאתה נכנס למחשב שלך.</value>
@@ -1567,7 +1570,7 @@
     <value>התעלם ממילות יידוע בעת מיון</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>מיין אלבומים, אמנים ושירים לפי המילה המשמעותית הראשונה שלהם (לדוגמה, "הביטלס" ימוין תחת ב').</value>
+    <value>מיין אלבומים, אמנים ושירים לפי המילה המשמעותית הראשונה שלהם (לדוגמה, "The Beatles" ימוין תחת B).</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>ניהול נתונים</value>
@@ -1594,7 +1597,7 @@
     <value>אחזר מטא-נתונים מהאינטרנט</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>אחזר תמונות וביוגרפיות של אמנים ממקורות מקוונים.</value>
+    <value>אחזר תמונות אמנים, ביוגרפיות ועטיפות אלבומים ממקורות מקוונים.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>מקורות</value>
@@ -1782,9 +1785,6 @@
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>חיפוש ברשימת השמעה חכמה…</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>חפש ברשימת השמעה חכמה</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>ערוך כללים</value>
   </data>
@@ -1855,7 +1855,7 @@
     <value>הגיבוי נוצר</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>נוצר גיבוי ({0:F2} מ"ב) בכתובת: {1}</value>
+    <value>נוצר גיבוי ({0:F2} מ"ב) בנתיב: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
     <value>הגיבוי נכשל</value>
@@ -2038,7 +2038,7 @@
     <value>עמוד הבא</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
-    <value>לדוגמה ;/\</value>
+    <value>לדוגמה ;/\\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
     <value> מ״ש</value>
@@ -2047,7 +2047,7 @@
     <value> ד״ב</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
-    <value>ביום ה-1 האחרון</value>
+    <value>ביום האחרון</value>
   </data>
   <data name="Insights_TimeRange_Last7Days" xml:space="preserve">
     <value>ב-7 הימים האחרונים</value>
@@ -2064,11 +2064,14 @@
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>בכל הזמנים</value>
   </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>טווח זמן</value>
+  </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}ש׳ {1}ד׳</value>
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
-    <value>{0}ד׳ {1}ש׳</value>
+    <value>{0}ד׳ {1}שנ׳</value>
   </data>
   <data name="QueuePanel_EmptyTitle" xml:space="preserve">
     <value>תור ההשמעה שלך ריק</value>
@@ -2149,7 +2152,7 @@
     <value>טיימר שינה</value>
   </data>
   <data name="Listening_FinishTrack" xml:space="preserve">
-    <value>סיים את השיר הנוכחי כשתוקף הטיימר פג</value>
+    <value>סיים את השיר הנוכחי כשהטיימר מסתיים</value>
   </data>
   <data name="Listening_StopAfterTrack" xml:space="preserve">
     <value>עצור לאחר שיר זה</value>
@@ -2239,7 +2242,7 @@
     <value>האפשרות 'מגוון רחב יותר' נמנעת משירים שהושמעו בחלון הזמן של ההשמעות האחרונות ומפרידה במידת האפשר בין שירים של אותו אמן.</value>
   </data>
   <data name="Listening_RediscoverDescription" xml:space="preserve">
-    <value>האפשרות 'גלה מחדש' משתמשת בשירים שזכו להשמעה מתועדת ב-Nagi ושלהם הושמעו לאחרונה לפני יותר מ-30 יום.</value>
+    <value>האפשרות 'גלה מחדש' משתמשת בשירים שזכו להשמעה מתועדת ב-Nagi ושהושמעו לאחרונה לפני יותר מ-30 יום.</value>
   </data>
   <data name="Listening_UnheardDescription" xml:space="preserve">
     <value>האפשרות 'לא הושמעו' משתמשת בשירים ללא השמעות מתועדות ב-Nagi.</value>
@@ -2263,5 +2266,65 @@
 2. חלץ את הארכיון ואתר את ffmpeg.exe בתיקיית bin שלו.
 3. הוסף את התיקייה שמכילה את ffmpeg.exe ל-PATH של Windows.
 4. הפעל מחדש את Nagi, ואז הפעל מחדש את נרמול עוצמת הקול.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>פרטי השיר</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>תגיות</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>האזנה</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>אמן האלבום</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>מנצח</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>זכויות יוצרים</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>נתיב</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>פורמט</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>ערוצים</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>גודל</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} מתוך {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} מ״ב</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} ד״ב</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>עמודות ברשימת השירים</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>בחר אילו פרטים יוצגו ברשימות השירים.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>כותרות עמודות</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>הצג כותרת לכל עמודה מעל רשימות השירים.</value>
   </data>
 </root>

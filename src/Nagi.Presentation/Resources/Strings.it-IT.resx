@@ -59,7 +59,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NavItem_Library" xml:space="preserve">
-    <value>Raccolta</value>
+    <value>Libreria</value>
   </data>
   <data name="NavItem_Albums" xml:space="preserve">
     <value>Album</value>
@@ -630,7 +630,7 @@ File che non è stato possibile importare: {0}.</value>
     <value>Successivo</value>
   </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
-    <value>Raccolta</value>
+    <value>Libreria</value>
   </data>
   <data name="Settings_Nav_Folders" xml:space="preserve">
     <value>Cartelle</value>
@@ -681,16 +681,28 @@ File che non è stato possibile importare: {0}.</value>
     <value>Servizio musicale cinese, ottimo per la musica asiatica</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Recupera ID artista (richiesto per TheAudioDB e Fanart.tv)</value>
+    <value>Cerca gli ID di artisti e album non presenti nei tuoi tag</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>Immagini e biografie di artisti di alta qualità (richiede MusicBrainz)</value>
+    <value>Immagini e biografie degli artisti (richiede un ID MusicBrainz dai tuoi tag o da MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>Solo immagini di artisti di alta qualità (richiede MusicBrainz)</value>
+    <value>Immagini di artisti di alta qualità (richiede un ID MusicBrainz dai tuoi tag o da MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Biografie e immagini artista (fallback)</value>
+    <value>Biografie degli artisti e copertine degli album (fallback)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>Immagini degli artisti e copertine degli album, cercate per nome</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>Biografie degli artisti nella tua lingua (richiede un ID MusicBrainz dai tuoi tag o da MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>Copertine degli album per le pubblicazioni MusicBrainz (usa gli ID dai tuoi tag o da MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>Copertine degli album ad alta risoluzione, cercate per nome</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Cerca album</value>
@@ -832,7 +844,7 @@ Vuoi continuare?</value>
     <value>Torna al lettore</value>
   </data>
   <data name="MiniPlayer_UpNextHeader" xml:space="preserve">
-    <value>In riproduzione</value>
+    <value>Prossimi brani</value>
   </data>
   <data name="MiniPlayer_RestoreButton_ToolTip" xml:space="preserve">
     <value>Mostra Nagi</value>
@@ -844,7 +856,7 @@ Vuoi continuare?</value>
     <value>Successivo</value>
   </data>
   <data name="MiniPlayer_QueueButton_ToolTip" xml:space="preserve">
-    <value>In riproduzione</value>
+    <value>Prossimi brani</value>
   </data>
   <data name="CrashReport_ReportIssuePreLink" xml:space="preserve">
     <value>Considera di segnalarlo creando un problema sulla </value>
@@ -856,13 +868,16 @@ Vuoi continuare?</value>
     <value>.</value>
   </data>
   <data name="CrashReport_ResetAppAdvice" xml:space="preserve">
-    <value>Se il problema persiste, puoi provare a 'Reimpostare app e dati'. Questo cancellerà le tue impostazioni e la libreria, il che può aiutare a recuperare l'app da uno stato danneggiato.</value>
+    <value>Se il problema persiste, puoi provare 'Ripristina App e Dati'. Questo cancellerà le tue impostazioni e la libreria, il che può aiutare a recuperare l'app da uno stato danneggiato.</value>
   </data>
   <data name="CrashReport_CopyLogButton_ToolTip" xml:space="preserve">
     <value>Copia log negli appunti</value>
   </data>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
     <value>Copia log</value>
+  </data>
+  <data name="CrashReport_Log_Name" xml:space="preserve">
+    <value>Log dell'arresto anomalo</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
     <value>Scegli copertina</value>
@@ -877,7 +892,7 @@ Vuoi continuare?</value>
     <value>Inserisci un nome per la tua playlist intelligente</value>
   </data>
   <data name="SmartPlaylist_SortOrderLabel" xml:space="preserve">
-    <value>Ordine di smistamento</value>
+    <value>Ordinamento</value>
   </data>
   <data name="SmartPlaylist_MatchLabel" xml:space="preserve">
     <value>Corrispondenza</value>
@@ -899,6 +914,12 @@ Vuoi continuare?</value>
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
     <value>Valore</value>
+  </data>
+  <data name="SmartPlaylist_RuleField_Name" xml:space="preserve">
+    <value>Campo</value>
+  </data>
+  <data name="SmartPlaylist_RuleOperator_Name" xml:space="preserve">
+    <value>Condizione</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
     <value>Rimuovi questa regola</value>
@@ -928,13 +949,13 @@ Vuoi continuare?</value>
     <value>Successivo</value>
   </data>
   <data name="TrayPopup_QueueButton_ToolTip" xml:space="preserve">
-    <value>In riproduzione</value>
+    <value>Prossimi brani</value>
   </data>
   <data name="TrayPopup_BackButton_ToolTip" xml:space="preserve">
     <value>Torna al lettore</value>
   </data>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
-    <value>In riproduzione</value>
+    <value>Prossimi brani</value>
   </data>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
@@ -949,13 +970,16 @@ Vuoi continuare?</value>
     <value>Testi</value>
   </data>
   <data name="Player_QueueButton_ToolTip" xml:space="preserve">
-    <value>In riproduzione</value>
+    <value>Prossimi brani</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
     <value>Vai all'album</value>
   </data>
+  <data name="Player_SeekSlider_Name" xml:space="preserve">
+    <value>Posizione di riproduzione</value>
+  </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>In riproduzione</value>
+    <value>Prossimi brani</value>
   </data>
   <data name="QueueFlyout_ClearQueue" xml:space="preserve">
     <value>Svuota coda</value>
@@ -1005,9 +1029,6 @@ Vuoi continuare?</value>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca album…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cerca album</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Scegli uno a caso</value>
   </data>
@@ -1029,9 +1050,6 @@ Vuoi continuare?</value>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca nell'album…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cerca nell'album</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Riproduci tutto</value>
   </data>
@@ -1049,9 +1067,6 @@ Vuoi continuare?</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca artisti…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cerca artisti</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Scegli uno a caso</value>
@@ -1091,9 +1106,6 @@ Vuoi continuare?</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca nell'artista…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cerca nell'artista</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Riproduci tutto</value>
@@ -1167,9 +1179,6 @@ Vuoi continuare?</value>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca generi…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cerca generi</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>Scegli uno a caso</value>
   </data>
@@ -1183,13 +1192,10 @@ Vuoi continuare?</value>
     <value>Scansiona la tua libreria musicale per popolare i generi</value>
   </data>
   <data name="LibraryPage_Title" xml:space="preserve">
-    <value>Raccolta</value>
+    <value>Libreria</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca nella libreria…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cerca nella libreria</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Riproduci tutto</value>
@@ -1291,13 +1297,13 @@ Vuoi continuare?</value>
     <value>Personalizza la riproduzione della tua musica.</value>
   </data>
   <data name="OnboardingPage_Equalizer_Description" xml:space="preserve">
-    <value>Inizia da un predefinito. Puoi regolare ciascuna banda nelle Impostazioni.</value>
+    <value>Inizia da un preset. Puoi regolare ciascuna banda nelle Impostazioni.</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Title" xml:space="preserve">
     <value>Dai vita alla tua libreria</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi funziona completamente offline. Attiva queste opzioni per inserire foto degli artisti, biografie e testi non inclusi nei tuoi file.</value>
+    <value>Nagi funziona completamente offline. Attiva queste opzioni per inserire foto degli artisti, biografie, copertine degli album e testi non inclusi nei tuoi file.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>Adattalo al tuo desktop</value>
@@ -1315,7 +1321,7 @@ Vuoi continuare?</value>
     <value>È tutto pronto</value>
   </data>
   <data name="OnboardingPage_Finish_Description" xml:space="preserve">
-    <value>Puoi modificare queste impostazioni in qualsiasi momento.</value>
+    <value>Puoi modificare queste impostazioni in qualsiasi momento nelle Impostazioni.</value>
   </data>
   <data name="OnboardingPage_SkipSetup" xml:space="preserve">
     <value>Salta configurazione</value>
@@ -1334,9 +1340,6 @@ Vuoi continuare?</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca playlist…</value>
-  </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cerca playlist</value>
   </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Scegli una a caso</value>
@@ -1383,9 +1386,6 @@ Vuoi continuare?</value>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca nella playlist…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cerca nella playlist</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Riproduci tutto</value>
   </data>
@@ -1409,9 +1409,6 @@ Vuoi continuare?</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca nel genere…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cerca nel genere</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Riproduci tutto</value>
@@ -1438,7 +1435,7 @@ Vuoi continuare?</value>
     <value>Scegli un tema chiaro, scuro o di sistema.</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
-    <value>Colore accentuato</value>
+    <value>Colore principale</value>
   </data>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
     <value>Ripristina predefinito</value>
@@ -1509,6 +1506,12 @@ Vuoi continuare?</value>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Preamplificatore</value>
   </data>
+  <data name="SettingsPage_EqualizerBand_Name" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SettingsPage_EqualizerPreset_Name" xml:space="preserve">
+    <value>Preset dell'equalizzatore</value>
+  </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
     <value>Personalizzato</value>
   </data>
@@ -1561,7 +1564,7 @@ Vuoi continuare?</value>
     <value>Mostra copertina nel menu a comparsa</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
-    <value>Visualizza la copertina nel lettore compatto che appare cliccando sull'icona della barra delle applicazioni.</value>
+    <value>Visualizza la copertina nel lettore compatto che appare cliccando sull'icona nell'area di notifica.</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
     <value>Ignora gli articoli durante l'ordinamento</value>
@@ -1594,7 +1597,7 @@ Vuoi continuare?</value>
     <value>Recupera metadati online</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Recupera immagini e biografie degli artisti da fonti online.</value>
+    <value>Recupera immagini e biografie degli artisti e copertine degli album da fonti online.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Sorgenti</value>
@@ -1781,9 +1784,6 @@ Vuoi continuare?</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca nella playlist intelligente…</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cerca nella playlist intelligente</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Modifica regole</value>
@@ -1984,7 +1984,7 @@ Vuoi continuare?</value>
     <value>Cerca</value>
   </data>
   <data name="InsightsPage_Source_Library" xml:space="preserve">
-    <value>Raccolta</value>
+    <value>Libreria</value>
   </data>
   <data name="InsightsPage_Source_Files" xml:space="preserve">
     <value>File</value>
@@ -2063,6 +2063,9 @@ Vuoi continuare?</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
     <value>Sempre</value>
+  </data>
+  <data name="InsightsPage_TimeRange_Name" xml:space="preserve">
+    <value>Periodo</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}h {1}m</value>
@@ -2165,7 +2168,7 @@ Vuoi continuare?</value>
     <comment>Task in the taskbar icon's right-click menu.</comment>
   </data>
   <data name="JumpList_MiniPlayer" xml:space="preserve">
-    <value>Apri mini-riproduttore</value>
+    <value>Apri mini-lettore</value>
     <comment>Task in the taskbar icon's right-click menu.</comment>
   </data>
   <data name="Listening_PlaybackSpeed" xml:space="preserve">
@@ -2263,5 +2266,65 @@ Vuoi continuare?</value>
 2. Estrai l'archivio e individua ffmpeg.exe nella relativa cartella bin.
 3. Aggiungi la cartella contenente ffmpeg.exe alla variabile PATH di Windows.
 4. Riavvia Nagi, quindi abilita di nuovo la normalizzazione del volume.</value>
+  </data>
+  <data name="SongList_Context_SongInfo" xml:space="preserve">
+    <value>Info brano</value>
+  </data>
+  <data name="SongInfo_Section_Tags" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="SongInfo_Section_Listening" xml:space="preserve">
+    <value>Ascolto</value>
+  </data>
+  <data name="Label_AlbumArtist" xml:space="preserve">
+    <value>Artista album</value>
+  </data>
+  <data name="Label_Conductor" xml:space="preserve">
+    <value>Direttore</value>
+  </data>
+  <data name="Label_Copyright" xml:space="preserve">
+    <value>Copyright</value>
+  </data>
+  <data name="Label_ReplayGain" xml:space="preserve">
+    <value>ReplayGain</value>
+  </data>
+  <data name="Label_Path" xml:space="preserve">
+    <value>Percorso</value>
+  </data>
+  <data name="Label_Format" xml:space="preserve">
+    <value>Formato</value>
+  </data>
+  <data name="Label_Channels" xml:space="preserve">
+    <value>Canali</value>
+  </data>
+  <data name="Label_FileSize" xml:space="preserve">
+    <value>Dimensione</value>
+  </data>
+  <data name="SongInfo_NumberOfTotal_Format" xml:space="preserve">
+    <value>{0} di {1}</value>
+  </data>
+  <data name="SongInfo_Bitrate_Format" xml:space="preserve">
+    <value>{0:N0} kbps</value>
+  </data>
+  <data name="SongInfo_SampleRate_Format" xml:space="preserve">
+    <value>{0:N0} Hz</value>
+  </data>
+  <data name="SongInfo_FileSize_Format" xml:space="preserve">
+    <value>{0:N1} MB</value>
+  </data>
+  <data name="SongInfo_Gain_Format" xml:space="preserve">
+    <value>{0:+0.00;-0.00} dB</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Header" xml:space="preserve">
+    <value>Colonne degli elenchi dei brani</value>
+  </data>
+  <data name="SettingsPage_SongListColumns_Description" xml:space="preserve">
+    <value>Scegli quali dettagli mostrano gli elenchi dei brani.</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Header" xml:space="preserve">
+    <value>Intestazioni delle colonne</value>
+  </data>
+  <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
+    <value>Mostra un'etichetta sopra ogni colonna degli elenchi dei brani.</value>
   </data>
 </root>

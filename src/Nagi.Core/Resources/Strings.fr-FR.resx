@@ -127,7 +127,7 @@
     <value>{0} inconnu</value>
   </data>
   <data name="Format_New" xml:space="preserve">
-    <value>Nouveau {0}</value>
+    <value>Nouvelle {0}</value>
   </data>
   <data name="Format_NotFound" xml:space="preserve">
     <value>{0} introuvable.</value>
@@ -163,7 +163,7 @@
     <value>Plus rapide d'abord ({0})</value>
   </data>
   <data name="Format_Most" xml:space="preserve">
-    <value>Le plus {0}</value>
+    <value>Le plus de {0}</value>
   </data>
   <data name="Format_Least" xml:space="preserve">
     <value>Moins de {0}</value>
@@ -323,6 +323,33 @@
     <value>Erreur LibVLC : {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Échec du chargement de '{0}'.</value>
+    <value>Échec du chargement de « {0} ».</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Parcourt la bibliothèque musicale</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Inactif</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>par {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>En pause | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Lecteur de musique Nagi</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>En lecture</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>En pause</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>Extrait de Wikipédia, sous licence CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>

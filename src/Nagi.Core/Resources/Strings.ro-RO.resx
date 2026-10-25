@@ -124,7 +124,7 @@
   </data>
   <!-- Format Patterns -->
   <data name="Format_Unknown" xml:space="preserve">
-    <value>Necunoscut {0}</value>
+    <value>{0} necunoscut</value>
   </data>
   <data name="Format_New" xml:space="preserve">
     <value>Nou {0}</value>
@@ -182,7 +182,7 @@
     <value>Scanare anulată.</value>
   </data>
   <data name="Status_ScanFailed" xml:space="preserve">
-    <value>Scanare eșuată. Verificați jurnalele pentru detalii.</value>
+    <value>Scanare eșuată. Verifică jurnalele pentru detalii.</value>
   </data>
   <data name="Status_PreparingScanCaches" xml:space="preserve">
     <value>Se pregătește scanarea bibliotecii…</value>
@@ -197,7 +197,7 @@
     <value>Se finalizează…</value>
   </data>
   <data name="Status_NormalizationFailed" xml:space="preserve">
-    <value>Normalizarea volumului a eșuat. Verificați jurnalele pentru detalii.</value>
+    <value>Normalizarea volumului a eșuat. Verifică jurnalele pentru detalii.</value>
   </data>
   <data name="Status_NoFoldersToRefresh" xml:space="preserve">
     <value>Nu există dosare în bibliotecă de reîmprospătat.</value>
@@ -207,7 +207,7 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>Nu s-a putut adăuga folderul.</value>
+    <value>Nu s-a putut adăuga dosarul.</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Numele listei de redare nu poate fi gol.</value>
@@ -236,10 +236,10 @@
     <value>Sortare după: </value>
   </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>Lista de redare a fost creată, dar melodiile acesteia nu au putut fi adăugate. Încercați să importați din nou.</value>
+    <value>Lista de redare a fost creată, dar melodiile acesteia nu au putut fi adăugate. Încearcă să imporți din nou.</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Niciun cântec din lista de redare nu a fost găsit în biblioteca dvs.</value>
+    <value>Niciun cântec din lista de redare nu a fost găsit în biblioteca ta.</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Nu există liste de redare de exportat.</value>
@@ -290,22 +290,22 @@
     <value>Normalizarea volumului este finalizată. Melodii procesate: {0}.</value>
   </data>
   <data name="ListenBrainz_EmptyToken" xml:space="preserve">
-    <value>Introduceți tokenul de utilizator ListenBrainz.</value>
+    <value>Introdu tokenul de utilizator ListenBrainz.</value>
   </data>
   <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
-    <value>Nu s-a putut citi răspunsul de la ListenBrainz. Încercați din nou mai târziu.</value>
+    <value>Nu s-a putut citi răspunsul de la ListenBrainz. Încearcă din nou mai târziu.</value>
   </data>
   <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
-    <value>Introduceți un URL de server care începe cu http:// sau https://.</value>
+    <value>Introdu un URL de server care începe cu http:// sau https://.</value>
   </data>
   <data name="ListenBrainz_InvalidToken" xml:space="preserve">
-    <value>Tokenul de utilizator nu este valid. Verificați-l și încercați din nou.</value>
+    <value>Tokenul de utilizator nu este valid. Verifică-l și încearcă din nou.</value>
   </data>
   <data name="ListenBrainz_ServerError" xml:space="preserve">
-    <value>ListenBrainz a returnat o eroare (HTTP {0}). Încercați din nou mai târziu.</value>
+    <value>ListenBrainz a returnat o eroare (HTTP {0}). Încearcă din nou mai târziu.</value>
   </data>
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
-    <value>Nu s-a putut conecta la ListenBrainz. Verificați conexiunea și URL-ul serverului.</value>
+    <value>Nu s-a putut conecta la ListenBrainz. Verifică conexiunea și URL-ul serverului.</value>
   </data>
   <data name="Backup_DataFolderMissing" xml:space="preserve">
     <value>Nagi nu a putut găsi folderul de date al bibliotecii.</value>
@@ -323,6 +323,33 @@
     <value>Eroare LibVLC: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Încărcarea „{0}” a eșuat.</value>
+    <value>Nu s-a putut încărca „{0}”.</value>
+  </data>
+  <data name="Presence_BrowsingLibrary" xml:space="preserve">
+    <value>Răsfoiește biblioteca muzicală</value>
+  </data>
+  <data name="Presence_Idling" xml:space="preserve">
+    <value>Inactiv</value>
+  </data>
+  <data name="Presence_ByArtist" xml:space="preserve">
+    <value>de {0}</value>
+    <comment>{0} is the artist name.</comment>
+  </data>
+  <data name="Presence_PausedProgress" xml:space="preserve">
+    <value>În pauză | {0} / {1}</value>
+    <comment>{0} is the elapsed time and {1} the track length, e.g. 1:23 / 3:45.</comment>
+  </data>
+  <data name="Presence_AppName" xml:space="preserve">
+    <value>Player muzical Nagi</value>
+  </data>
+  <data name="Presence_Playing" xml:space="preserve">
+    <value>În redare</value>
+  </data>
+  <data name="Presence_Paused" xml:space="preserve">
+    <value>În pauză</value>
+  </data>
+  <data name="Biography_WikipediaAttribution" xml:space="preserve">
+    <value>De pe Wikipedia, sub licența CC BY-SA.</value>
+    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
 </root>
