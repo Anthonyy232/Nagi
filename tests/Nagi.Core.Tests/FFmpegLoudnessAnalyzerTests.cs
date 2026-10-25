@@ -84,7 +84,7 @@ public sealed class FFmpegLoudnessAnalyzerTests : IDisposable
     [Fact]
     public async Task Cancellation_StopsDecoderAndReleasesInputFile()
     {
-        var path = await GenerateAsync("anullsrc=r=48000:cl=stereo:d=600", "flac");
+        var path = await GenerateAsync("anullsrc=r=48000:cl=stereo:d=60", "flac");
         using var cancellation = new CancellationTokenSource();
         var analyzing = _analyzer.AnalyzeAsync(path, cancellation.Token);
         cancellation.Cancel();
@@ -138,7 +138,8 @@ public sealed class FFmpegLoudnessAnalyzerTests : IDisposable
         var errors = process.StandardError.ReadToEndAsync();
         try
         {
-            await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(15));
+            // Only catches a hung ffmpeg: CI runners can stall a launch for many seconds.
+            await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(60));
             process.ExitCode.Should().Be(0, await errors);
         }
         finally
