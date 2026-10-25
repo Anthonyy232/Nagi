@@ -102,8 +102,8 @@ public class ArtistMetadataService : IArtistMetadataService
 
                 try
                 {
-                    // Sequential await in priority order. If a higher priority task is still running,
-                    // we wait for it. If it finishes and has data, we break early and ignore lower priority ones.
+                    // The sources run in parallel, but awaiting them in priority order lets a higher one win
+                    // even when a lower one answers first.
                     var (isConclusive, imageUrl, biography) = await task.ConfigureAwait(false);
                     anyProviderConclusive |= isConclusive;
                     allProvidersConclusive &= isConclusive;

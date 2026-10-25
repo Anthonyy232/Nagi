@@ -10,7 +10,6 @@ using Nagi.Core.Services.Helpers;
 namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
-///     Service for resolving artist and album identities via the MusicBrainz database.
 ///     Rate limiting (1 req/s as MusicBrainz requires), retry, and circuit-breaker policy
 ///     are handled by <see cref="IProviderPipelineProvider"/>.
 /// </summary>
