@@ -12,7 +12,7 @@ files:
     skip_untranslated_strings: true
     languages_mapping:
       locale:
-        ar: ar
+        ar-SA: ar
         sr: sr-Cyrl-RS
         zh-CN: zh-Hans
         zh-TW: zh-Hant
@@ -22,7 +22,7 @@ files:
     skip_untranslated_strings: true
     languages_mapping:
       locale:
-        ar: ar
+        ar-SA: ar
         sr: sr-Cyrl-RS
         zh-CN: zh-Hans
         zh-TW: zh-Hant
@@ -32,7 +32,7 @@ files:
     skip_untranslated_strings: true
     languages_mapping:
       locale:
-        ar: ar
+        ar-SA: ar
         sr: sr-Cyrl-RS
         zh-CN: zh-Hans
         zh-TW: zh-Hant
