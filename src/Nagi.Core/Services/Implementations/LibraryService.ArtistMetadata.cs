@@ -553,8 +553,6 @@ public partial class LibraryService
         var imageBytes = await DownloadImageBytesAsync(imageUrl, cancellationToken).ConfigureAwait(false);
         if (imageBytes is null) return null;
 
-        // Process image to standardized size (600px max, preserves aspect ratio).
-        // Offload heavy image processing to a background thread to prevent blocking.
         var processedBytes = await Task.Run(() => _imageProcessor.ProcessImageBytesAsync(imageBytes), cancellationToken).ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();
         return await ImageStorageHelper.SaveImageBytesAsync(_fileSystem, _pathConfig.ArtistImageCachePath,

@@ -4,9 +4,6 @@ namespace Nagi.Core.Services.Abstractions;
 
 public interface IFanartTvService
 {
-    /// <summary>
-    ///     Fetches artist thumbnails and backgrounds using a MusicBrainz ID.
-    /// </summary>
     Task<ServiceResult<FanartTvArtistImages>> GetArtistImagesAsync(string musicBrainzId, CancellationToken cancellationToken = default);
 }
 
