@@ -40,16 +40,14 @@ internal sealed class LibraryBenchmarkFixture : IDisposable
         });
 
         services.AddSingleton<IImageProcessor>(Substitute.For<IImageProcessor>());
-        services.AddSingleton<ILastFmMetadataService>(Substitute.For<ILastFmMetadataService>());
+        services.AddSingleton<IArtistMetadataService>(Substitute.For<IArtistMetadataService>());
+        services.AddSingleton<IAlbumCoverService>(Substitute.For<IAlbumCoverService>());
 
         var settingsService = Substitute.For<ISettingsService>();
         settingsService.GetVolumeNormalizationEnabledAsync().Returns(false);
         services.AddSingleton<ISettingsService>(settingsService);
 
         services.AddSingleton<IReplayGainService>(Substitute.For<IReplayGainService>());
-        services.AddSingleton<IMusicBrainzService>(Substitute.For<IMusicBrainzService>());
-        services.AddSingleton<IFanartTvService>(Substitute.For<IFanartTvService>());
-        services.AddSingleton<ITheAudioDbService>(Substitute.For<ITheAudioDbService>());
         services.AddSingleton<IProviderPipelineProvider>(Substitute.For<IProviderPipelineProvider>());
         services.AddSingleton<IMetadataService, AtlMetadataService>();
         services.AddSingleton<ILibraryReader, LibraryReader>();
