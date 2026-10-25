@@ -105,8 +105,12 @@
                                         Style="{StaticResource LyricLineTextBlockStyle}" />
                                     <TextBlock
                                         Text="{x:Bind RomanizedText}"
-                                        Style="{StaticResource RomanizedLyricLineTextBlockStyle}"
+                                        Style="{StaticResource SecondaryLyricLineTextBlockStyle}"
                                         Visibility="{x:Bind HasRomanizedText, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                    <TextBlock
+                                        Text="{x:Bind TranslatedText}"
+                                        Style="{StaticResource SecondaryLyricLineTextBlockStyle}"
+                                        Visibility="{x:Bind HasTranslatedText, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 </StackPanel>
                                 <!-- Active color overlay (opacity controlled entirely via Composition) -->
                                 <StackPanel Spacing="6">
@@ -116,9 +120,14 @@
                                         Foreground="{StaticResource AppPrimaryColorBrush}" />
                                     <TextBlock
                                         Text="{x:Bind RomanizedText}"
-                                        Style="{StaticResource RomanizedLyricLineTextBlockStyle}"
+                                        Style="{StaticResource SecondaryLyricLineTextBlockStyle}"
                                         Foreground="{StaticResource AppPrimaryColorBrush}"
                                         Visibility="{x:Bind HasRomanizedText, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                    <TextBlock
+                                        Text="{x:Bind TranslatedText}"
+                                        Style="{StaticResource SecondaryLyricLineTextBlockStyle}"
+                                        Foreground="{StaticResource AppPrimaryColorBrush}"
+                                        Visibility="{x:Bind HasTranslatedText, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 </StackPanel>
                             </Grid>
                         </DataTemplate>
@@ -148,7 +157,7 @@
                             Opacity="1.0" />
                         <TextBlock
                             Text="{x:Bind RomanizedText}"
-                            Style="{StaticResource RomanizedInactiveLyricLineStyle}"
+                            Style="{StaticResource SecondaryInactiveLyricLineStyle}"
                             Visibility="{x:Bind HasRomanizedText, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     </StackPanel>
                 </DataTemplate>

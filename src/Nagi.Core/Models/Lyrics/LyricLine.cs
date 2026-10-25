@@ -22,4 +22,11 @@ public class LyricLine
     public string? RomanizedText { get; set; }
 
     public bool HasRomanizedText => !string.IsNullOrWhiteSpace(RomanizedText);
+
+    /// <summary>
+    ///     Further source lines that share this line's timestamp, usually a translation, joined by newlines.
+    /// </summary>
+    public string? TranslatedText { get; set; }
+
+    public bool HasTranslatedText => !string.IsNullOrWhiteSpace(TranslatedText);
 }

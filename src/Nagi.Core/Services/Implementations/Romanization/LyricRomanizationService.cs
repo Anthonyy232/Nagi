@@ -28,7 +28,7 @@ public sealed class LyricRomanizationService : ILyricRomanizationService
     public async Task<IReadOnlyList<LyricLine>> ApplyRomanizationAsync(IEnumerable<LyricLine> lines, CancellationToken cancellationToken = default)
     {
         var snapshot = lines
-            .Select(line => new LyricLine(line.StartTime, line.Text))
+            .Select(line => new LyricLine(line.StartTime, line.Text) { TranslatedText = line.TranslatedText })
             .ToList();
 
         if (!await _settingsService.GetLyricsRomanizationEnabledAsync().ConfigureAwait(false))

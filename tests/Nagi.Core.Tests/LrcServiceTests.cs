@@ -392,14 +392,35 @@ public class LrcServiceTests : IDisposable
     [InlineData(0)]
     [InlineData(1)]
     [InlineData(2)]
-    public void GetCurrentLine_WithDuplicateTimestamps_SelectsLastMatchingLine(int hint)
+    public void GetCurrentLine_WithTranslatedLines_SelectsOriginalLine(int hint)
     {
-        var parsed = _lrcService.ParseLyrics("[00:01.00]First\n[00:01.00]Second\n[00:02.00]Third");
+        var parsed = _lrcService.ParseLyrics("[00:01.00]First\n[00:01.00]Translation\n[00:02.00]Second\n[00:03.00]Third");
 
         var line = _lrcService.GetCurrentLine(parsed, TimeSpan.FromSeconds(1), ref hint);
 
-        line!.Text.Should().Be("Second");
-        hint.Should().Be(1);
+        line!.Text.Should().Be("First");
+        hint.Should().Be(0);
+    }
+
+    [Fact]
+    public void ParseLyrics_WithRepeatedTimestamps_MergesLaterLinesAsTranslation()
+    {
+        var content = string.Join('\n',
+            "[00:01.00][00:09.00]Chorus",
+            "[00:03.00]Verse",
+            "[00:03.00]",
+            "[00:03.00]Verse translation",
+            "[00:03.00]Verse transliteration",
+            "[00:05.00]Untranslated",
+            "[00:01.00][00:09.00]Chorus translation");
+
+        var result = _lrcService.ParseLyrics(content);
+
+        result.Lines.Select(line => (line.StartTime.TotalSeconds, line.Text, line.TranslatedText)).Should().Equal(
+            (1, "Chorus", "Chorus translation"),
+            (3, "Verse", "Verse translation\nVerse transliteration"),
+            (5, "Untranslated", null),
+            (9, "Chorus", "Chorus translation"));
     }
 
     private static ParsedLrc CreateTestParsedLrc()

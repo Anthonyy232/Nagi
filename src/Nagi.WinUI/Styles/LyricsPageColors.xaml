@@ -15,7 +15,7 @@
         <Setter Property="LineHeight" Value="42" />
     </Style>
 
-    <Style x:Key="RomanizedLyricLineTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource LyricLineTextBlockStyle}">
+    <Style x:Key="SecondaryLyricLineTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource LyricLineTextBlockStyle}">
         <Setter Property="FontFamily" Value="Segoe UI Variable Text" />
         <Setter Property="FontSize" Value="18" />
         <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
@@ -34,7 +34,7 @@
         <Setter Property="LineHeight" Value="28" />
     </Style>
 
-    <Style x:Key="RomanizedInactiveLyricLineStyle" TargetType="TextBlock" BasedOn="{StaticResource InactiveLyricLineStyle}">
+    <Style x:Key="SecondaryInactiveLyricLineStyle" TargetType="TextBlock" BasedOn="{StaticResource InactiveLyricLineStyle}">
         <Setter Property="FontSize" Value="15" />
         <Setter Property="Margin" Value="0,-6,0,10" />
         <Setter Property="Opacity" Value="0.75" />

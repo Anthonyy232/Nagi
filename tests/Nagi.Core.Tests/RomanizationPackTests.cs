@@ -362,6 +362,20 @@ public sealed class RomanizationPackTests : IDisposable
     }
 
     [Fact]
+    public async Task LyricRomanizationService_KeepsTranslationWithoutRomanizingIt()
+    {
+        var service = CreateLyricService(isEnabled: true, installedPack: CreateInstalledDevanagariPack());
+
+        var lines = await service.ApplyRomanizationAsync(new[]
+        {
+            new LyricLine(TimeSpan.Zero, "hello") { TranslatedText = HindiText }
+        });
+
+        lines[0].TranslatedText.Should().Be(HindiText);
+        lines[0].RomanizedText.Should().BeNull();
+    }
+
+    [Fact]
     public async Task LyricRomanizationService_WithInstalledKoreanPack_RomanizesMixedScriptLine()
     {
         var service = CreateLyricService(isEnabled: true, installedPack: LoadSourcePack("korean-revised"));
