@@ -90,6 +90,9 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
                             _logger.LogInformation("Discord warm-up complete. Syncing state.");
                             RequestUpdate();
                         }
+
+                        // A track that started before Discord connected skipped its cover lookup.
+                        if (_currentSong is { } song) _ = ShowAlbumCoverAsync(song);
                     };
 
                     client.OnConnectionFailed += (_, e) => _logger.LogWarning("Discord connection failed: {Pipe}", e.FailedPipe);
@@ -115,7 +118,9 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
         _currentProgress = TimeSpan.Zero;
         _timestamps = BuildTimestamps(TimeSpan.Zero);
         RequestUpdate();
-        _ = ShowAlbumCoverAsync(song);
+
+        // Without a Discord connection there is nothing to show the cover on, so skip the network lookup.
+        if (_isReady) _ = ShowAlbumCoverAsync(song);
         return Task.CompletedTask;
     }
 
@@ -194,6 +199,7 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
             {
                 client.SetPresence(new RichPresence
                 {
+                    Type = ActivityType.Listening,
                     Details = Resources.Strings.Presence_BrowsingLibrary,
                     State = Resources.Strings.Presence_Idling
                 });
@@ -209,6 +215,7 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
 
             var presence = new RichPresence
             {
+                Type = ActivityType.Listening,
                 Details = _currentSong.Title.Truncate(128),
                 State = stateText.Truncate(128),
                 StatusDisplay = StatusDisplayType.Details,
@@ -261,8 +268,17 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
     }
 
     // Discord's clock runs in real time, so scale by the playback speed to keep it in step with playback.
-    private Timestamps BuildTimestamps(TimeSpan progress) =>
-        new() { Start = DateTime.UtcNow - progress / _playbackService.PlaybackRate };
+    private Timestamps BuildTimestamps(TimeSpan progress)
+    {
+        var rate = _playbackService.PlaybackRate;
+        var start = DateTime.UtcNow - progress / rate;
+        var duration = _currentSong?.Duration ?? TimeSpan.Zero;
+
+        // Discord shows elapsed and remaining time together when both ends are known.
+        return duration > TimeSpan.Zero
+            ? new Timestamps { Start = start, End = start + duration / rate }
+            : new Timestamps { Start = start };
+    }
 
     internal static bool IsOutOfSync(Timestamps? timestamps, TimeSpan progress, double playbackRate, DateTime utcNow) =>
         timestamps?.Start is { } start && ((utcNow - start) * playbackRate - progress).Duration() > SyncTolerance;

@@ -33,7 +33,7 @@ Nagi can fetch lyrics for your tracks from:
 ### Scrobbling and Social
 - **Last.fm Scrobbling**: If you choose to connect your Last.fm account, Nagi will send your playback history (track name, artist, album, album artist, track number, duration, timestamp, and the track's MusicBrainz ID when tagged) to Last.fm so you can track your listening habits.
 - **ListenBrainz**: If enabled, Nagi sends listening history and, when separately enabled, the currently playing track to ListenBrainz or the compatible server you configure. Each listen includes the track details above, the release's MusicBrainz IDs when tagged, and Nagi's name and version. Requests use your user token to associate listening activity with your account.
-- **Discord Rich Presence**: If enabled, Nagi will share your currently playing track details with your Discord client to display as your status. Discord can only show images from the web, so when online metadata is also enabled, Nagi looks up the playing album's cover with the album cover sources above and shares that image link with Discord.
+- **Discord Rich Presence**: If enabled, Nagi will share your currently playing track details with your Discord client to display as your status. Discord can only show images from the web, so when online metadata is also enabled and Discord is running, Nagi looks up the playing album's cover with the album cover sources above and shares that image link with Discord.
 
 ### Application Updates and Downloads
 - **Updates**: Microsoft Store installations use the Store's update mechanism. Installations through the GitHub `.appinstaller` file use Windows App Installer to check GitHub for updates on launch. These update mechanisms are managed by Windows, rather than an in-app update setting.
