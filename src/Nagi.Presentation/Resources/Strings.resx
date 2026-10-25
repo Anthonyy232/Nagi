@@ -1307,7 +1307,7 @@ Do you want to continue?</value>
     <value>Bring your library to life</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi works fully offline. Turn these on to fill in artist photos, biographies and lyrics that your files don't include.</value>
+    <value>Nagi works fully offline. Turn these on to fill in artist photos, biographies, album covers and lyrics that your files don't include.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>Fit right into your desktop</value>
