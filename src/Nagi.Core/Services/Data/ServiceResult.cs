@@ -37,5 +37,7 @@ public class ServiceResult<T> where T : class
 
     public static ServiceResult<T> FromSuccessNotFound() => new(null, ServiceResultStatus.SuccessNotFound);
 
+    public static ServiceResult<T> FromSuccessOrNotFound(T? data) => data is null ? FromSuccessNotFound() : FromSuccess(data);
+
     public static ServiceResult<T> FromTemporaryError() => new(null, ServiceResultStatus.TemporaryError);
 }

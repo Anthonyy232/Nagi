@@ -153,12 +153,7 @@ public partial class AtlMetadataService : IMetadataService
         metadata.Comment = ArtistNameHelper.NormalizeStringCore(track.Comment);
         metadata.Conductor = ArtistNameHelper.NormalizeStringCore(track.Conductor);
 
-        // ATL uses AdditionalFields for MusicBrainz IDs
-        if (track.AdditionalFields.TryGetValue("MUSICBRAINZ_TRACKID", out var mbTrackId))
-            metadata.MusicBrainzTrackId = ArtistNameHelper.NormalizeStringCore(mbTrackId);
-        if (track.AdditionalFields.TryGetValue("MUSICBRAINZ_RELEASEID", out var mbReleaseId) ||
-            track.AdditionalFields.TryGetValue("MUSICBRAINZ_ALBUMID", out mbReleaseId))
-            metadata.MusicBrainzReleaseId = ArtistNameHelper.NormalizeStringCore(mbReleaseId);
+        PopulateMusicBrainzIds(metadata, track);
 
         // Parse genre (ATL returns a single string, may need to split)
         var genreString = ArtistNameHelper.NormalizeStringCore(track.Genre);
@@ -182,6 +177,42 @@ public partial class AtlMetadataService : IMetadataService
         if (peakKey != null && track.AdditionalFields.TryGetValue(peakKey, out var peakStr))
             metadata.ReplayGainTrackPeak = ParseReplayGainValue(peakStr);
     }
+
+    private static void PopulateMusicBrainzIds(SongFileMetadata metadata, Track track)
+    {
+        foreach (var (key, value) in track.AdditionalFields)
+        {
+            if (key != "UFID" && !key.Contains("MusicBrainz", StringComparison.OrdinalIgnoreCase)) continue;
+
+            // Each format spells these keys differently (MUSICBRAINZ_ALBUMID, "MusicBrainz Album Id",
+            // "MusicBrainz/Album Id"), and Picard writes the MP3 recording ID to a UFID frame.
+            var name = key == "UFID" && value.StartsWith("http://musicbrainz.org", StringComparison.OrdinalIgnoreCase)
+                ? "MUSICBRAINZTRACKID"
+                : string.Concat(key.Where(char.IsLetter)).ToUpperInvariant();
+            switch (name)
+            {
+                case "MUSICBRAINZTRACKID":
+                    metadata.MusicBrainzTrackId ??= ParseMusicBrainzIds(value).FirstOrDefault();
+                    break;
+                case "MUSICBRAINZALBUMID" or "MUSICBRAINZRELEASEID":
+                    metadata.MusicBrainzReleaseId ??= ParseMusicBrainzIds(value).FirstOrDefault();
+                    break;
+                case "MUSICBRAINZRELEASEGROUPID":
+                    metadata.MusicBrainzReleaseGroupId ??= ParseMusicBrainzIds(value).FirstOrDefault();
+                    break;
+                case "MUSICBRAINZARTISTID":
+                    metadata.MusicBrainzArtistIds = ParseMusicBrainzIds(value);
+                    break;
+                case "MUSICBRAINZALBUMARTISTID":
+                    metadata.MusicBrainzAlbumArtistIds = ParseMusicBrainzIds(value);
+                    break;
+            }
+        }
+    }
+
+    // Multi-artist IDs arrive joined by whatever separator the tagger chose, so match the IDs themselves.
+    private static List<string> ParseMusicBrainzIds(string value) =>
+        MusicBrainzIdRegex().Matches(value).Select(match => match.Value.ToLowerInvariant()).ToList();
 
     private static List<string> SplitMetadataList(string? input, string splitCharacters)
     {
@@ -374,4 +405,7 @@ public partial class AtlMetadataService : IMetadataService
 
     [GeneratedRegex(@"^[-+]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][-+]?[0-9]+)?")]
     private static partial Regex ReplayGainNumberRegex();
+
+    [GeneratedRegex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", RegexOptions.IgnoreCase)]
+    private static partial Regex MusicBrainzIdRegex();
 }

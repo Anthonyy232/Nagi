@@ -136,6 +136,9 @@ public class Song : ObservableObject
     [MaxLength(100)]
     public string? MusicBrainzReleaseId { get; set; }
 
+    [MaxLength(100)]
+    public string? MusicBrainzReleaseGroupId { get; set; }
+
     [NotMapped] public double Order { get; set; }
     [NotMapped] public bool IsArtworkAvailable => !string.IsNullOrEmpty(AlbumArtUriFromTrack);
 

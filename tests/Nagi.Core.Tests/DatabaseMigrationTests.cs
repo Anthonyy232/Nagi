@@ -183,4 +183,25 @@ public class DatabaseMigrationTests
             await using var reader = await command.ExecuteReaderAsync();
         }
     }
+
+    [Fact]
+    public async Task RecheckIncompleteArtistMetadata_ClearsTheCheckOnlyForArtistsMissingABioOrImage()
+    {
+        await using var context = new MusicDbContext(
+            new DbContextOptionsBuilder<MusicDbContext>().UseSqlite("Data Source=:memory:").Options);
+        await context.Database.OpenConnectionAsync();
+        await context.GetService<IMigrator>().MigrateAsync("20261024222916_AddSongReleaseGroupId");
+        var checkedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        context.Artists.AddRange(
+            new Artist { Name = "Complete", Biography = "Bio", LocalImageCachePath = "image.jpg", MetadataLastCheckedUtc = checkedAt },
+            new Artist { Name = "No bio", LocalImageCachePath = "image.jpg", MetadataLastCheckedUtc = checkedAt },
+            new Artist { Name = "No image", Biography = "Bio", MetadataLastCheckedUtc = checkedAt });
+        await context.SaveChangesAsync();
+        context.ChangeTracker.Clear();
+
+        await context.Database.MigrateAsync();
+
+        (await context.Artists.ToDictionaryAsync(a => a.Name, a => a.MetadataLastCheckedUtc)).Should().Equal(
+            new Dictionary<string, DateTime?> { ["Complete"] = checkedAt, ["No bio"] = null, ["No image"] = null });
+    }
 }

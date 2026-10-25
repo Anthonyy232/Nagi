@@ -52,8 +52,6 @@ public class FanartTvServiceTests : IDisposable
         var fanartResponse = new
         {
             artistbackground = new[] { new { url = "https://fanart.tv/bg.jpg" } },
-            hdmusiclogo = new[] { new { url = "https://fanart.tv/logo-hd.png" } },
-            musicbanner = new[] { new { url = "https://fanart.tv/banner.jpg" } },
             artistthumb = new[] { new { url = "https://fanart.tv/thumb.jpg" } }
         };
         _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
@@ -64,8 +62,6 @@ public class FanartTvServiceTests : IDisposable
         result.Status.Should().Be(ServiceResultStatus.Success);
         result.Data.Should().NotBeNull();
         result.Data!.BackgroundUrl.Should().Be("https://fanart.tv/bg.jpg");
-        result.Data.LogoUrl.Should().Be("https://fanart.tv/logo-hd.png");
-        result.Data.BannerUrl.Should().Be("https://fanart.tv/banner.jpg");
         result.Data.ThumbUrl.Should().Be("https://fanart.tv/thumb.jpg");
     }
 
@@ -84,23 +80,6 @@ public class FanartTvServiceTests : IDisposable
         result.Status.Should().Be(ServiceResultStatus.Success);
         result.Data!.ThumbUrl.Should().Be("https://fanart.tv/thumb.jpg");
         result.Data.BackgroundUrl.Should().BeNull();
-        result.Data.LogoUrl.Should().BeNull();
-    }
-
-    [Fact]
-    public async Task GetArtistImagesAsync_PrefersHdLogoOverStandardLogo()
-    {
-        var fanartResponse = new
-        {
-            hdmusiclogo = new[] { new { url = "https://fanart.tv/logo-hd.png" } },
-            musiclogo = new[] { new { url = "https://fanart.tv/logo-sd.png" } }
-        };
-        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = new StringContent(JsonSerializer.Serialize(fanartResponse))
-        });
-        var result = await _service.GetArtistImagesAsync(ValidMbid);
-        result.Data!.LogoUrl.Should().Be("https://fanart.tv/logo-hd.png");
     }
 
     [Fact]
@@ -155,7 +134,7 @@ public class FanartTvServiceTests : IDisposable
         var fanartResponse = new
         {
             artistbackground = Array.Empty<object>(),
-            hdmusiclogo = Array.Empty<object>()
+            artistthumb = Array.Empty<object>()
         };
         _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
         {

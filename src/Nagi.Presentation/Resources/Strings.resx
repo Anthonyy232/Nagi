@@ -681,16 +681,28 @@ Files that could not be imported: {0}.</value>
     <value>Chinese music service, great for Asian music</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>Fetches artist IDs (required for TheAudioDB and Fanart.tv)</value>
+    <value>Looks up artist and album IDs that your tags don't include</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>High-quality artist images and biographies (requires MusicBrainz)</value>
+    <value>Artist images and biographies (needs a MusicBrainz ID from your tags or MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>High-quality artist images only (requires MusicBrainz)</value>
+    <value>High-quality artist images (needs a MusicBrainz ID from your tags or MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>Artist biographies and images (fallback)</value>
+    <value>Artist biographies and album covers (fallback)</value>
+  </data>
+  <data name="Settings_Provider_Deezer_Desc" xml:space="preserve">
+    <value>Artist images and album covers, found by name</value>
+  </data>
+  <data name="Settings_Provider_Wikipedia_Desc" xml:space="preserve">
+    <value>Artist biographies in your language (needs a MusicBrainz ID from your tags or MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_CoverArtArchive_Desc" xml:space="preserve">
+    <value>Album covers for MusicBrainz releases (uses IDs from your tags or MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_AppleMusic_Desc" xml:space="preserve">
+    <value>High-resolution album covers, found by name</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
     <value>Search albums</value>
@@ -1295,7 +1307,7 @@ Do you want to continue?</value>
     <value>Bring your library to life</value>
   </data>
   <data name="OnboardingPage_OnlineFeatures_Description" xml:space="preserve">
-    <value>Nagi works fully offline. Turn these on to fill in artist photos, biographies and lyrics that your files don't include.</value>
+    <value>Nagi works fully offline. Turn these on to fill in artist photos, biographies, album covers and lyrics that your files don't include.</value>
   </data>
   <data name="OnboardingPage_Desktop_Title" xml:space="preserve">
     <value>Fit right into your desktop</value>
@@ -1598,7 +1610,7 @@ Do you want to continue?</value>
     <value>Retrieve Online Metadata</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Fetch artist images and biographies from online sources.</value>
+    <value>Fetch artist images, biographies and album covers from online sources.</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
     <value>Sources</value>

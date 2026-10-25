@@ -56,7 +56,7 @@ public class ScrobbleQueueCancellationTests
             ? new LastFmScrobblerService(httpFactory, pipeline, keys, settings, db.ContextFactory,
                 NullLogger<LastFmScrobblerService>.Instance)
             : new ListenBrainzScrobblerService(httpFactory, pipeline, db.ContextFactory, settings,
-                NullLogger<ListenBrainzScrobblerService>.Instance);
+                Substitute.For<IAppInfoService>(), NullLogger<ListenBrainzScrobblerService>.Instance);
         var successBody = provider == ServiceProviderIds.LastFm ? "<lfm status='ok'><scrobbles accepted='1' ignored='0'><scrobble><ignoredMessage code='0'/></scrobble></scrobbles></lfm>" : "{}";
         handler.RespondSequence((HttpStatusCode.OK, successBody));
         var requestStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);

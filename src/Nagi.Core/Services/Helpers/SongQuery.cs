@@ -97,6 +97,7 @@ internal static class SongQuery
             Conductor = s.Conductor,
             MusicBrainzTrackId = s.MusicBrainzTrackId,
             MusicBrainzReleaseId = s.MusicBrainzReleaseId,
+            MusicBrainzReleaseGroupId = s.MusicBrainzReleaseGroupId,
             ArtistName = s.ArtistName,
             PrimaryArtistName = s.PrimaryArtistName,
             SortTitle = s.SortTitle,

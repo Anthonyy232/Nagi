@@ -36,6 +36,37 @@ public class ListenBrainzTrackMetadata
 
     [JsonPropertyName("release_name")]
     public string? ReleaseName { get; set; }
+
+    [JsonPropertyName("additional_info")]
+    public ListenBrainzAdditionalInfo AdditionalInfo { get; set; } = new();
+}
+
+/// <summary>MusicBrainz IDs let ListenBrainz link a listen without guessing from names.</summary>
+public class ListenBrainzAdditionalInfo
+{
+    [JsonPropertyName("recording_mbid")]
+    public string? RecordingMbid { get; set; }
+
+    [JsonPropertyName("release_mbid")]
+    public string? ReleaseMbid { get; set; }
+
+    [JsonPropertyName("release_group_mbid")]
+    public string? ReleaseGroupMbid { get; set; }
+
+    [JsonPropertyName("tracknumber")]
+    public int? TrackNumber { get; set; }
+
+    [JsonPropertyName("duration_ms")]
+    public long? DurationMs { get; set; }
+
+    [JsonPropertyName("media_player")]
+    public string? MediaPlayer { get; set; }
+
+    [JsonPropertyName("submission_client")]
+    public string? SubmissionClient { get; set; }
+
+    [JsonPropertyName("submission_client_version")]
+    public string? SubmissionClientVersion { get; set; }
 }
 
 /// <summary>Response from GET /1/validate-token.</summary>

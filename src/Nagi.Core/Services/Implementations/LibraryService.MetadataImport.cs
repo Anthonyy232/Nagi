@@ -280,6 +280,7 @@ public partial class LibraryService
             .ToList();
 
         var artistLookup = ResolveArtistsForBatch(context, artistNames, artistIdCache);
+        await ApplyTaggedArtistIdsAsync(context, metadataList, artistLookup, cancellationToken).ConfigureAwait(false);
         var genreLookup = ResolveGenresForBatch(context, genreNames, genreIdCache);
 
         var albumDefinitions = BuildAlbumDefinitions(metadataList);
@@ -377,6 +378,51 @@ public partial class LibraryService
         }
 
         return artistLookup;
+    }
+
+    // Tags only fill artists without an ID, so an ID resolved earlier is never replaced mid-scan.
+    private static async Task ApplyTaggedArtistIdsAsync(MusicDbContext context, IEnumerable<SongFileMetadata> metadataList,
+        Dictionary<string, Artist> artistLookup, CancellationToken cancellationToken)
+    {
+        var taggedIds = new Dictionary<Artist, string>();
+        foreach (var metadata in metadataList)
+        {
+            Collect(metadata.Artists, metadata.MusicBrainzArtistIds);
+            Collect(metadata.AlbumArtists, metadata.MusicBrainzAlbumArtistIds);
+        }
+
+        if (taggedIds.Count == 0) return;
+
+        var existingIds = taggedIds.Keys.Where(a => context.Entry(a).State != EntityState.Added).Select(a => a.Id).ToList();
+        var unidentifiedIds = (await context.Artists
+            .Where(a => existingIds.Contains(a.Id) && a.MusicBrainzId == null)
+            .Select(a => a.Id)
+            .ToListAsync(cancellationToken).ConfigureAwait(false)).ToHashSet();
+
+        foreach (var (artist, musicBrainzId) in taggedIds)
+        {
+            var entry = context.Entry(artist);
+            if (entry.State == EntityState.Added)
+            {
+                artist.MusicBrainzId = musicBrainzId;
+            }
+            else if (unidentifiedIds.Contains(artist.Id))
+            {
+                artist.MusicBrainzId = musicBrainzId;
+                entry.Property(a => a.MusicBrainzId).IsModified = true;
+            }
+        }
+
+        void Collect(List<string> names, List<string> musicBrainzIds)
+        {
+            // Tags can't say which ID belongs to which name unless there is one per artist.
+            if (names.Count != musicBrainzIds.Count) return;
+            for (var i = 0; i < names.Count; i++)
+            {
+                if (artistLookup.TryGetValue(ArtistNameHelper.Normalize(names[i]), out var artist))
+                    taggedIds.TryAdd(artist, musicBrainzIds[i]);
+            }
+        }
     }
 
     private Dictionary<string, Genre> ResolveGenresForBatch(
@@ -597,6 +643,7 @@ public partial class LibraryService
         song.Comment = metadata.Comment;
         song.Conductor = metadata.Conductor;
         song.MusicBrainzTrackId = metadata.MusicBrainzTrackId;
+        song.MusicBrainzReleaseGroupId = metadata.MusicBrainzReleaseGroupId;
         song.MusicBrainzReleaseId = metadata.MusicBrainzReleaseId;
         song.ReplayGainTrackGain = metadata.ReplayGainTrackGain;
         song.ReplayGainTrackPeak = metadata.ReplayGainTrackPeak;

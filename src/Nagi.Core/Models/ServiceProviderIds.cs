@@ -21,8 +21,20 @@ public static class ServiceProviderIds
     /// <summary>Fanart.tv - Fan-contributed artist artwork. Requires MusicBrainz ID.</summary>
     public const string FanartTv = "fanarttv";
 
-    /// <summary>Last.fm - Fallback for artist images and biographies.</summary>
+    /// <summary>Last.fm - Fallback for artist biographies and album covers.</summary>
     public const string LastFm = "lastfm";
+
+    /// <summary>Deezer - Artist images and album covers found by name, no ID or key needed.</summary>
+    public const string Deezer = "deezer";
+
+    /// <summary>Wikipedia - Artist biographies, found through the Wikidata entry for a MusicBrainz ID.</summary>
+    public const string Wikipedia = "wikipedia";
+
+    /// <summary>Cover Art Archive - Album covers for MusicBrainz releases.</summary>
+    public const string CoverArtArchive = "coverartarchive";
+
+    /// <summary>Apple Music - Album covers from the iTunes Search API, found by name.</summary>
+    public const string AppleMusic = "applemusic";
 
     /// <summary>Last.fm API Secret name for retrieval.</summary>
     public const string LastFmSecret = "lastfm-secret";

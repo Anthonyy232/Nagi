@@ -1,6 +1,7 @@
 using ATL;
 using FluentAssertions;
 using System.Globalization;
+using System.Text;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Tests.Utils;
@@ -126,6 +127,50 @@ public class AtlMetadataServiceTests : IDisposable
         result.DarkSwatchId.Should().Be("dark1");
         await _imageProcessor.Received(1).SaveCoverArtAndExtractColorsAsync(
             Arg.Is<byte[]>(bytes => bytes.SequenceEqual(pictureData)));
+    }
+
+    [Theory]
+    [InlineData("MusicBrainz {0} Id")]
+    [InlineData("MUSICBRAINZ_{1}ID")]
+    [InlineData("MusicBrainz/{0} Id")]
+    public async Task ExtractMetadataAsync_ReadsMusicBrainzIdsWhateverTheTagSpelling(string keyFormat)
+    {
+        const string first = "11111111-1111-1111-1111-111111111111";
+        const string second = "22222222-2222-2222-2222-222222222222";
+        string Key(string label) => string.Format(keyFormat, label, label.Replace(" ", "").ToUpperInvariant());
+        var filePath = CreateTestAudioFile("musicbrainz.mp3", track =>
+        {
+            track.AdditionalFields.Add(Key("Track"), "33333333-3333-3333-3333-333333333333");
+            track.AdditionalFields.Add(Key("Album"), "44444444-4444-4444-4444-444444444444");
+            track.AdditionalFields.Add(Key("Release Group"), "55555555-5555-5555-5555-555555555555");
+            track.AdditionalFields.Add(Key("Artist"), $"{first.ToUpperInvariant()}/{second}");
+            track.AdditionalFields.Add(Key("Album Artist"), first);
+        });
+
+        var result = await _metadataService.ExtractMetadataAsync(filePath);
+
+        result.MusicBrainzTrackId.Should().Be("33333333-3333-3333-3333-333333333333");
+        result.MusicBrainzReleaseId.Should().Be("44444444-4444-4444-4444-444444444444");
+        result.MusicBrainzReleaseGroupId.Should().Be("55555555-5555-5555-5555-555555555555");
+        result.MusicBrainzArtistIds.Should().Equal(first, second);
+        result.MusicBrainzAlbumArtistIds.Should().Equal(first);
+    }
+
+    [Fact]
+    public async Task ExtractMetadataAsync_ReadsRecordingIdFromPicardUfidFrame()
+    {
+        const string recordingId = "33333333-3333-3333-3333-333333333333";
+        byte[] body = [.. "http://musicbrainz.org"u8, 0, .. Encoding.ASCII.GetBytes(recordingId)];
+        byte[] frame = [.. "UFID"u8, 0, 0, 0, (byte)body.Length, 0, 0, .. body];
+        var mpegFrames = ValidMp3Bytes[10..];
+        var filePath = Path.Combine(_tempDirectory, "ufid.mp3");
+        File.WriteAllBytes(filePath, [0x49, 0x44, 0x33, 0x03, 0x00, 0x00, 0, 0, 0, (byte)frame.Length, .. frame, .. mpegFrames]);
+        _fileSystem.GetFileInfo(filePath).Returns(new FileInfo(filePath));
+        _fileSystem.FileExists(filePath).Returns(true);
+
+        var result = await _metadataService.ExtractMetadataAsync(filePath);
+
+        result.MusicBrainzTrackId.Should().Be(recordingId);
     }
 
     [Fact]

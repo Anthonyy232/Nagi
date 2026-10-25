@@ -15,7 +15,7 @@ namespace Nagi.Core.Data.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "10.0.7");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.12");
 
             modelBuilder.Entity("GenreSong", b =>
                 {
@@ -41,6 +41,9 @@ namespace Nagi.Core.Data.Migrations
                     b.Property<string>("ArtistName")
                         .IsRequired()
                         .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CoverArtLastCheckedUtc")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("CoverArtUri")
@@ -136,10 +139,6 @@ namespace Nagi.Core.Data.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("TEXT")
                         .UseCollation("NOCASE");
-
-                    b.Property<string>("RemoteImageUrl")
-                        .HasMaxLength(2000)
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("SortName")
                         .IsRequired()
@@ -494,6 +493,10 @@ namespace Nagi.Core.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("LyricsLastCheckedUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("MusicBrainzReleaseGroupId")
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("MusicBrainzReleaseId")

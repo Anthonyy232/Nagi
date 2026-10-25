@@ -728,7 +728,7 @@ public partial class InsightsViewModel : ObservableObject
         ArtistId = a.Artist.Id,
         Rank = a.GlobalRank,
         Name = a.Artist.Name,
-        ImageUri = ImageUriHelper.GetUriWithCacheBuster(a.Artist.LocalImageCachePath ?? a.Artist.RemoteImageUrl),
+        ImageUri = ImageUriHelper.GetUriWithCacheBuster(a.Artist.LocalImageCachePath),
         StatText = ArtistsSortMetric == SortMetric.PlayCount
             ? ResourceFormatter.Format(Strings.InsightsPage_Plays, a.TotalPlays)
             : FormatListenTime(a.TotalDuration),

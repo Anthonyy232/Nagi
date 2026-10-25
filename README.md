@@ -67,7 +67,7 @@ Windows 10 (1809 or later) or Windows 11, on x64 or ARM64. The Store version upd
 
 - Last.fm and ListenBrainz scrobbling, with an offline queue.
 - Discord Rich Presence.
-- Artist and album metadata from Last.fm, MusicBrainz, fanart.tv and TheAudioDB.
+- Artist images, biographies and album covers from MusicBrainz, Wikipedia, Cover Art Archive, fanart.tv, TheAudioDB, Deezer, Apple Music and Last.fm.
 - Lyrics from LRCLIB and NetEase.
 
 ## Screenshots

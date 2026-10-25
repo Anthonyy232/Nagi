@@ -63,8 +63,7 @@ public class LastFmScrobblerService : ILastFmScrobblerService, IListenSubmitter
             { "sk", sessionKey }
         };
 
-        if (song.Album != null) parameters.Add("album", song.Album.Title);
-        if (song.Duration > TimeSpan.Zero) parameters.Add("duration", ((long)song.Duration.TotalSeconds).ToString(CultureInfo.InvariantCulture));
+        AddTrackDetails(parameters, song);
 
         var success = await PostToLastFmAsync(parameters, apiSecret, CancellationToken.None).ConfigureAwait(false)
             == SubmissionOutcome.Success;
@@ -97,9 +96,26 @@ public class LastFmScrobblerService : ILastFmScrobblerService, IListenSubmitter
             { "sk", sessionKey }
         };
 
-        if (song.Album != null) parameters.Add("album", song.Album.Title);
+        AddTrackDetails(parameters, song);
 
         return await PostToLastFmAsync(parameters, apiSecret, cancellationToken).ConfigureAwait(false);
+    }
+
+    private static void AddTrackDetails(Dictionary<string, string> parameters, Song song)
+    {
+        if (song.Album != null)
+        {
+            parameters.Add("album", song.Album.Title);
+            if (!string.Equals(song.Album.ArtistName, song.PrimaryArtistName, StringComparison.OrdinalIgnoreCase))
+                parameters.Add("albumArtist", song.Album.ArtistName);
+        }
+
+        if (song.Duration > TimeSpan.Zero)
+            parameters.Add("duration", ((long)song.Duration.TotalSeconds).ToString(CultureInfo.InvariantCulture));
+        if (song.TrackNumber is > 0)
+            parameters.Add("trackNumber", song.TrackNumber.Value.ToString(CultureInfo.InvariantCulture));
+        if (!string.IsNullOrEmpty(song.MusicBrainzTrackId))
+            parameters.Add("mbid", song.MusicBrainzTrackId);
     }
 
     public string Id => ServiceProviderIds.LastFm;

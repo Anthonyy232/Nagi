@@ -80,14 +80,52 @@ public class SettingsServiceTests
 
         var providers = await settings.GetServiceProvidersAsync(ServiceCategory.Lyrics);
 
-        providers.Select(p => p.Id).Should().Equal(ServiceProviderIds.NetEase, ServiceProviderIds.LrcLib);
+        providers.Select(p => p.Id).Should().Equal(ServiceProviderIds.LrcLib, ServiceProviderIds.NetEase);
         providers.Select(p => p.Order).Should().Equal(0, 1);
-        providers[0].IsEnabled.Should().BeFalse();
-        providers[0].DisplayName.Should().Be("NetEase");
+        providers[1].IsEnabled.Should().BeFalse();
+        providers[1].DisplayName.Should().Be("NetEase");
         providers.Should().OnlyContain(p => p.Category == ServiceCategory.Lyrics);
         values["LyricsServiceProviders"].Should().Be(saved);
         (await settings.GetEnabledServiceProvidersAsync(ServiceCategory.Lyrics)).Select(p => p.Id)
             .Should().Equal(ServiceProviderIds.LrcLib);
+    }
+
+    [Fact]
+    public async Task Providers_MissingFromASavedOrderTakeTheirDefaultSlot()
+    {
+        var saved = JsonSerializer.Serialize(new[]
+        {
+            new ServiceProviderSetting { Id = ServiceProviderIds.MusicBrainz, Order = 0 },
+            new ServiceProviderSetting { Id = ServiceProviderIds.LastFm, Order = 1 }
+        });
+        var settings = CreateSettings(new Dictionary<string, object> { ["MetadataServiceProviders"] = saved });
+        var defaults = await CreateSettings(new Dictionary<string, object>()).GetServiceProvidersAsync(ServiceCategory.Metadata);
+
+        var providers = await settings.GetServiceProvidersAsync(ServiceCategory.Metadata);
+
+        // The saved two agree with the default ranking, so every source missing from it lands in its default slot.
+        providers.Select(p => p.Id).Should().Equal(defaults.Select(p => p.Id));
+        providers[^1].Id.Should().Be(ServiceProviderIds.LastFm);
+    }
+
+    [Fact]
+    public async Task Providers_MissingFromASavedOrderStayBelowSourcesTheUserRankedDifferently()
+    {
+        // The pre-update default order, which ranked TheAudioDB above Fanart.tv.
+        var saved = JsonSerializer.Serialize(new[]
+        {
+            new ServiceProviderSetting { Id = ServiceProviderIds.MusicBrainz, Order = 0 },
+            new ServiceProviderSetting { Id = ServiceProviderIds.TheAudioDb, Order = 1 },
+            new ServiceProviderSetting { Id = ServiceProviderIds.FanartTv, Order = 2 },
+            new ServiceProviderSetting { Id = ServiceProviderIds.LastFm, Order = 3 }
+        });
+        var settings = CreateSettings(new Dictionary<string, object> { ["MetadataServiceProviders"] = saved });
+
+        var ids = (await settings.GetServiceProvidersAsync(ServiceCategory.Metadata)).Select(p => p.Id).ToList();
+
+        ids.IndexOf(ServiceProviderIds.TheAudioDb).Should().BeLessThan(ids.IndexOf(ServiceProviderIds.FanartTv));
+        ids.IndexOf(ServiceProviderIds.Deezer).Should().BeGreaterThan(ids.IndexOf(ServiceProviderIds.FanartTv));
+        ids.IndexOf(ServiceProviderIds.AppleMusic).Should().BeGreaterThan(ids.IndexOf(ServiceProviderIds.FanartTv));
     }
 
     [Fact]

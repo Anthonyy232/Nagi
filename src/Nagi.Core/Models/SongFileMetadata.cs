@@ -36,4 +36,11 @@ public class SongFileMetadata
     public string? Conductor { get; set; }
     public string? MusicBrainzTrackId { get; set; }
     public string? MusicBrainzReleaseId { get; set; }
+    public string? MusicBrainzReleaseGroupId { get; set; }
+
+    /// <summary>Artist IDs in tag order; they pair with <see cref="Artists"/> only when the counts match.</summary>
+    public List<string> MusicBrainzArtistIds { get; set; } = new();
+
+    /// <summary>Album artist IDs in tag order; they pair with <see cref="AlbumArtists"/> only when the counts match.</summary>
+    public List<string> MusicBrainzAlbumArtistIds { get; set; } = new();
 }

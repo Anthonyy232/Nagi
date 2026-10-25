@@ -27,6 +27,7 @@ public partial class LibraryServiceTests : IDisposable
     private readonly LibraryReader _libraryReader;
 
     private readonly ILogger<LibraryService> _logger;
+    private readonly ILogger<ArtistMetadataService> _artistMetadataLogger = Substitute.For<ILogger<ArtistMetadataService>>();
 
     private readonly IMetadataService _metadataService;
     private readonly IPathConfiguration _pathConfig;
@@ -74,10 +75,15 @@ public partial class LibraryServiceTests : IDisposable
             _libraryReader,
             _fileSystem,
             _metadataService,
-            _lastFmService,
-            _musicBrainzService,
-            _fanartTvService,
-            _theAudioDbService,
+            new ArtistMetadataService(
+                _lastFmService,
+                _musicBrainzService,
+                _fanartTvService,
+                _theAudioDbService,
+                Substitute.For<IDeezerService>(),
+                Substitute.For<IWikipediaService>(),
+                _artistMetadataLogger),
+            Substitute.For<IAlbumCoverService>(),
             _httpClientFactory,
             _pathConfig,
             _settingsService,
@@ -191,7 +197,7 @@ public partial class LibraryServiceTests : IDisposable
             started.TrySetResult();
             return metadata.Task;
         });
-        _logger.When(logger => logger.Log(LogLevel.Debug, Arg.Any<EventId>(), Arg.Any<Arg.AnyType>(),
+        _artistMetadataLogger.When(logger => logger.Log(LogLevel.Debug, Arg.Any<EventId>(), Arg.Any<Arg.AnyType>(),
                 Arg.Is<Exception?>(exception => ReferenceEquals(exception, failure)),
                 Arg.Any<Func<Arg.AnyType, Exception?, string>>()))
             .Do(_ => observed.TrySetResult());
@@ -251,6 +257,7 @@ public partial class LibraryServiceTests : IDisposable
     [InlineData("reset")]
     public async Task BackgroundMetadata_CancellationLetsActiveRunUnwind(string action)
     {
+        _settingsService.GetFetchOnlineMetadataEnabledAsync().Returns(true);
         var artist = new Artist { Name = "Pending artist" };
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {
@@ -267,7 +274,7 @@ public partial class LibraryServiceTests : IDisposable
             return provider.Task;
         });
 
-        var run = _libraryService.StartArtistMetadataBackgroundFetchAsync();
+        var run = _libraryService.StartMetadataBackgroundFetchAsync();
         var token = await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
         Task reset = Task.CompletedTask;
         if (action == "dispose") _libraryService.Dispose();
@@ -293,7 +300,7 @@ public partial class LibraryServiceTests : IDisposable
         }
         _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(ServiceResult<ArtistInfo>.FromSuccessNotFound());
-        await _libraryService.StartArtistMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(5));
+        await _libraryService.StartMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(5));
         await _lastFmService.Received(action == "disable" ? 2 : 1)
             .GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>());
     }
@@ -399,6 +406,7 @@ public partial class LibraryServiceTests : IDisposable
     [Fact]
     public async Task BackgroundMetadataFetch_AttemptsEachArtistOncePerRunAndRetriesOnNextRun()
     {
+        _settingsService.GetFetchOnlineMetadataEnabledAsync().Returns(true);
         _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata)
             .Returns(new List<ServiceProviderSetting> { new() { Id = ServiceProviderIds.LastFm } });
         _lastFmService.GetArtistInfoAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
@@ -409,7 +417,7 @@ public partial class LibraryServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        await _libraryService.StartArtistMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(10));
+        await _libraryService.StartMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(10));
 
         await _lastFmService.Received(51).GetArtistInfoAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
@@ -417,7 +425,7 @@ public partial class LibraryServiceTests : IDisposable
 
         _lastFmService.GetArtistInfoAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(ServiceResult<ArtistInfo>.FromSuccessNotFound());
-        await _libraryService.StartArtistMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(10));
+        await _libraryService.StartMetadataBackgroundFetchAsync().WaitAsync(TimeSpan.FromSeconds(10));
 
         await _lastFmService.Received(102).GetArtistInfoAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
@@ -1223,8 +1231,9 @@ public partial class LibraryServiceTests : IDisposable
         using var reader = new LibraryReader(database.ContextFactory, _fileSystem, _settingsService,
             Substitute.For<ILogger<LibraryReader>>());
         using var service = new LibraryService(database.ContextFactory, reader, _fileSystem, _metadataService,
-            _lastFmService, _musicBrainzService, _fanartTvService, _theAudioDbService, _httpClientFactory,
-            _pathConfig, _settingsService, _replayGainService, _imageProcessor, _pipelines, _logger);
+            new ArtistMetadataService(_lastFmService, _musicBrainzService, _fanartTvService, _theAudioDbService,
+                Substitute.For<IDeezerService>(), Substitute.For<IWikipediaService>(), _artistMetadataLogger),
+            Substitute.For<IAlbumCoverService>(), _httpClientFactory, _pathConfig, _settingsService, _replayGainService, _imageProcessor, _pipelines, _logger);
         var song = new Song { FilePath = @"C:\Music\song.mp3", Folder = new Folder { Path = @"C:\Music", Name = "Music" } };
         await using (var context = database.ContextFactory.CreateDbContext())
         {
@@ -1387,4 +1396,42 @@ public partial class LibraryServiceTests : IDisposable
         _fileSystem.DidNotReceive().DeleteFile(externalArt);
     }
 
+    [Fact]
+    public async Task Rescan_GivesTracksWithoutArtTheirAlbumCoverExceptInUnknownAlbum()
+    {
+        var timestamp = new DateTime(2024, 6, 1, 0, 0, 0, DateTimeKind.Utc);
+        const string albumCover = @"C:\cache\albumart\hash.aaaaaa.bbbbbb.fetched.jpg";
+        var folder = new Folder { Path = @"C:\Music", Name = "Music" };
+        var album = new Album { Title = "Album", CoverArtUri = albumCover };
+        var unknownAlbum = new Album { Title = Album.UnknownAlbumName, CoverArtUri = albumCover };
+        Song Track(string name, Album trackAlbum, string? art = null) => new()
+        {
+            Folder = folder,
+            FilePath = $@"C:\Music\{name}.mp3",
+            DirectoryPath = folder.Path,
+            FileModifiedDate = timestamp,
+            Album = trackAlbum,
+            AlbumArtUriFromTrack = art,
+            LightSwatchId = art is null ? null : "aaaaaa"
+        };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Songs.AddRange(Track("with-art", album, albumCover), Track("without-art", album), Track("unknown", unknownAlbum));
+            await context.SaveChangesAsync();
+        }
+        _fileSystem.DirectoryExists(folder.Path).Returns(true);
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories).Returns(new[]
+        {
+            (@"C:\Music\with-art.mp3", timestamp), (@"C:\Music\without-art.mp3", timestamp), (@"C:\Music\unknown.mp3", timestamp)
+        });
+
+        (await _libraryService.RescanFolderForMusicAsync(folder.Id)).Should().BeTrue();
+
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        var songs = await assertContext.Songs.ToDictionaryAsync(s => Path.GetFileNameWithoutExtension(s.FilePath));
+        songs["without-art"].AlbumArtUriFromTrack.Should().Be(albumCover);
+        songs["without-art"].LightSwatchId.Should().Be("aaaaaa");
+        songs["unknown"].AlbumArtUriFromTrack.Should().BeNull();
+        await _imageProcessor.DidNotReceive().SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>());
+    }
 }

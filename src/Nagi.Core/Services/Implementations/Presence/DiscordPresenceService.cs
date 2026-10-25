@@ -1,4 +1,5 @@
-﻿using DiscordRPC;
+﻿using System.Collections.Concurrent;
+using DiscordRPC;
 using DiscordRPC.Message;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -17,30 +18,39 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
     private readonly string? _discordAppId;
     private readonly ILogger<DiscordPresenceService> _logger;
     private readonly IMusicPlaybackService _playbackService;
+    private readonly IAlbumCoverService _albumCoverService;
+    private readonly ISettingsService _settingsService;
     private readonly Func<string, DiscordRpcClient> _createClient;
     private readonly object _clientLock = new();
     private DiscordRpcClient? _client;
     private TimeSpan _currentProgress;
     private Song? _currentSong;
     private Timestamps? _timestamps;
+
+    // Discord can only show images by URL, so a local cover can't be sent; remember each album's online one.
+    private readonly ConcurrentDictionary<Guid, string?> _coverUrls = new();
+    private volatile SongCover? _cover;
     private volatile bool _isPlaying;
     private volatile bool _isReady;
 
     private Timer? _debounceTimer;
 
     public DiscordPresenceService(IConfiguration configuration, ILogger<DiscordPresenceService> logger,
-        IMusicPlaybackService playbackService)
-        : this(configuration, logger, playbackService, appId => new DiscordRpcClient(appId, pipe: -1,
+        IMusicPlaybackService playbackService, IAlbumCoverService albumCoverService, ISettingsService settingsService)
+        : this(configuration, logger, playbackService, albumCoverService, settingsService, appId => new DiscordRpcClient(appId, pipe: -1,
             logger: new DiscordLoggerAdapter(logger), autoEvents: true,
             client: new SandboxAwareDiscordPipeClient { Logger = new DiscordLoggerAdapter(logger) }))
     {
     }
 
     internal DiscordPresenceService(IConfiguration configuration, ILogger<DiscordPresenceService> logger,
-        IMusicPlaybackService playbackService, Func<string, DiscordRpcClient> createClient)
+        IMusicPlaybackService playbackService, IAlbumCoverService albumCoverService, ISettingsService settingsService,
+        Func<string, DiscordRpcClient> createClient)
     {
         _logger = logger;
         _playbackService = playbackService;
+        _albumCoverService = albumCoverService;
+        _settingsService = settingsService;
         _createClient = createClient;
         _discordAppId = configuration["Discord:AppId"];
 
@@ -105,7 +115,40 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
         _currentProgress = TimeSpan.Zero;
         _timestamps = BuildTimestamps(TimeSpan.Zero);
         RequestUpdate();
+        _ = ShowAlbumCoverAsync(song);
         return Task.CompletedTask;
+    }
+
+    private async Task ShowAlbumCoverAsync(Song song)
+    {
+        try
+        {
+            var url = await FindCoverUrlAsync(song).ConfigureAwait(false);
+            if (url is null || !ReferenceEquals(_currentSong, song)) return;
+            _cover = new SongCover(song, url);
+            RequestUpdate();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to find an album cover for Discord.");
+        }
+    }
+
+    internal async Task<string?> FindCoverUrlAsync(Song song)
+    {
+        if (song.Album is not { } album) return null;
+        if (_coverUrls.TryGetValue(album.Id, out var cachedUrl)) return cachedUrl;
+        if (!await _settingsService.GetFetchOnlineMetadataEnabledAsync().ConfigureAwait(false)) return null;
+
+        var providers = await _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata).ConfigureAwait(false);
+        var result = await _albumCoverService.FindCoverUrlAsync(
+            new AlbumCoverQuery(album.Title, album.PrimaryArtistName, song.MusicBrainzReleaseId, song.MusicBrainzReleaseGroupId),
+            providers).ConfigureAwait(false);
+
+        // Discord rejects image URLs longer than 256 characters.
+        var url = result.Data is { Length: <= 256 } data ? data : null;
+        if (result.IsConclusive) _coverUrls[album.Id] = url;
+        return url;
     }
 
     public Task OnPlaybackStateChangedAsync(bool isPlaying)
@@ -172,7 +215,8 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
                 Timestamps = _timestamps,
                 Assets = new Assets
                 {
-                    LargeImageKey = "logo",
+                    // A lookup for the previous track can finish after the switch; never show its cover.
+                    LargeImageKey = _cover is { } cover && ReferenceEquals(cover.Song, _currentSong) ? cover.Url : "logo",
                     LargeImageText = (_currentSong.Album?.Title ?? Resources.Strings.Presence_AppName).Truncate(128),
                     SmallImageKey = _isPlaying ? "play_icon" : "pause_icon",
                     SmallImageText = _isPlaying ? Resources.Strings.Presence_Playing : Resources.Strings.Presence_Paused
@@ -255,4 +299,6 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
     {
         _logger.LogError("An error occurred in the Discord RPC client. Code: {ErrorCode}, Message: {ErrorMessage}", e.Code, e.Message);
     }
+
+    private sealed record SongCover(Song Song, string Url);
 }

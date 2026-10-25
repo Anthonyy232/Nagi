@@ -26,9 +26,6 @@ public class Artist
     [MaxLength(50000)]
     public string? Biography { get; set; }
 
-    [MaxLength(2000)]
-    public string? RemoteImageUrl { get; set; }
-
     [MaxLength(1000)]
     public string? LocalImageCachePath { get; set; }
 

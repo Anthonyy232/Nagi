@@ -108,11 +108,12 @@ public class LastFmScrobblerServiceTests : IDisposable
             { "artist", song.ArtistName },
             { "track", song.Title },
             { "album", song.Album?.Title ?? string.Empty },
+            { "duration", "180" },
             { "timestamp", expectedTimestamp },
             { "api_key", ApiKey },
             { "sk", SessionKey }
         };
-        const string expectedSignature = "afb993f03d639c9a955ddd486808ebaf";
+        const string expectedSignature = "43a14dbd8f9f65f1f1929600d9c9d770";
         expectedParams.Add("api_sig", expectedSignature);
 
         var result = await _scrobblerService.ScrobbleAsync(song, startTime);
@@ -188,6 +189,24 @@ public class LastFmScrobblerServiceTests : IDisposable
         _capturedRequestParams!.Should().ContainKey("artist").WhoseValue.Should().Be("Unknown Artist");
         _capturedRequestParams.Should().NotContainKey("album");
         _capturedRequestParams.Should().NotContainKey("duration");
+        _capturedRequestParams.Should().NotContainKey("mbid");
+    }
+
+    [Fact]
+    public async Task ScrobbleAsync_SendsMusicBrainzIdTrackNumberAndDifferingAlbumArtist()
+    {
+        var song = CreateTestSong();
+        song.MusicBrainzTrackId = "33333333-3333-3333-3333-333333333333";
+        song.TrackNumber = 4;
+        song.Album!.ArtistName = "Various Artists";
+        SetupValidCredentials();
+        SetupHttpResponse(HttpStatusCode.OK);
+
+        await _scrobblerService.ScrobbleAsync(song, DateTime.UtcNow);
+
+        _capturedRequestParams.Should().Contain("mbid", "33333333-3333-3333-3333-333333333333")
+            .And.Contain("trackNumber", "4")
+            .And.Contain("albumArtist", "Various Artists");
     }
 
     [Fact]
@@ -347,6 +366,7 @@ public class LastFmScrobblerServiceTests : IDisposable
         };
         song.SongArtists.Add(new SongArtist { Artist = artist, Order = 0 });
         song.SyncDenormalizedFields();
+        album.SyncDenormalizedFields();
         return song;
     }
     private static async Task<Dictionary<string, string>> GetRequestParameters(HttpRequestMessage request)

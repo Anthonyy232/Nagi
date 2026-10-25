@@ -171,4 +171,26 @@ public class MusicBrainzServiceTests : IDisposable
     }
 
 
+
+    [Theory]
+    [InlineData(95, "group-id")]
+    [InlineData(89, null)]
+    public async Task SearchReleaseGroupAsync_NeedsAStrongMatchOnTitleAndArtist(int score, string? expected)
+    {
+        string? capturedUrl = null;
+        _httpHandler.SendAsyncFunc = (request, _) =>
+        {
+            capturedUrl = request.RequestUri?.ToString();
+            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent($$"""{"release-groups":[{"id":"group-id","score":{{score}}}]}""")
+            });
+        };
+
+        var result = await _service.SearchReleaseGroupAsync("OK Computer", "Radiohead");
+
+        result.Data.Should().Be(expected);
+        HttpUtility.ParseQueryString(new Uri(capturedUrl!).Query)["query"]
+            .Should().Be("releasegroup:\"OK Computer\" AND artist:\"Radiohead\"");
+    }
 }

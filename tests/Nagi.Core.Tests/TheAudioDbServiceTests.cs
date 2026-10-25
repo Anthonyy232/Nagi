@@ -59,9 +59,7 @@ public class TheAudioDbServiceTests : IDisposable
                 {
                     strBiographyEN = "A famous rock band from the UK.",
                     strArtistThumb = "https://theaudiodb.com/thumb.jpg",
-                    strArtistFanart = "https://theaudiodb.com/fanart.jpg",
-                    strArtistWideThumb = "https://theaudiodb.com/wide.jpg",
-                    strArtistLogo = "https://theaudiodb.com/logo.png"
+                    strArtistFanart = "https://theaudiodb.com/fanart.jpg"
                 }
             }
         };
@@ -75,8 +73,6 @@ public class TheAudioDbServiceTests : IDisposable
         result.Data!.Biography.Should().Be("A famous rock band from the UK.");
         result.Data.ThumbUrl.Should().Be("https://theaudiodb.com/thumb.jpg");
         result.Data.FanartUrl.Should().Be("https://theaudiodb.com/fanart.jpg");
-        result.Data.WideThumbUrl.Should().Be("https://theaudiodb.com/wide.jpg");
-        result.Data.LogoUrl.Should().Be("https://theaudiodb.com/logo.png");
     }
 
     [Fact]

@@ -36,12 +36,6 @@ file class TheAudioDbArtist
 
     [JsonPropertyName("strArtistFanart3")]
     public string? ArtistFanart3 { get; set; }
-
-    [JsonPropertyName("strArtistWideThumb")]
-    public string? ArtistWideThumb { get; set; }
-
-    [JsonPropertyName("strArtistLogo")]
-    public string? ArtistLogo { get; set; }
 }
 
 /// <summary>
@@ -136,22 +130,18 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
                     ThumbUrl: ArtistNameHelper.NormalizeStringCore(artist.ArtistThumb),
                     FanartUrl: ArtistNameHelper.NormalizeStringCore(artist.ArtistFanart)
                                ?? ArtistNameHelper.NormalizeStringCore(artist.ArtistFanart2)
-                               ?? ArtistNameHelper.NormalizeStringCore(artist.ArtistFanart3),
-                    WideThumbUrl: ArtistNameHelper.NormalizeStringCore(artist.ArtistWideThumb),
-                    LogoUrl: ArtistNameHelper.NormalizeStringCore(artist.ArtistLogo)
+                               ?? ArtistNameHelper.NormalizeStringCore(artist.ArtistFanart3)
                 );
 
-                if (info.Biography is null && info.ThumbUrl is null && info.FanartUrl is null &&
-                    info.WideThumbUrl is null && info.LogoUrl is null)
+                if (info.Biography is null && info.ThumbUrl is null && info.FanartUrl is null)
                 {
                     _logger.LogDebug("TheAudioDB returned empty metadata for MBID: {MBID}", musicBrainzId);
                     return ServiceResult<TheAudioDbArtistInfo>.FromSuccessNotFound();
                 }
 
-                _logger.LogInformation("Found TheAudioDB metadata for MBID: {MBID} (Language: {LanguageCode}): Bio={HasBio} ({BioSource}), Thumb={HasThumb}, Fanart={HasFanart}, WideThumb={HasWideThumb}, Logo={HasLogo}",
+                _logger.LogInformation("Found TheAudioDB metadata for MBID: {MBID} (Language: {LanguageCode}): Bio={HasBio} ({BioSource}), Thumb={HasThumb}, Fanart={HasFanart}",
                     musicBrainzId, isoCode, !string.IsNullOrEmpty(info.Biography), isLocalizedBio ? isoCode : "en",
-                    !string.IsNullOrEmpty(info.ThumbUrl), !string.IsNullOrEmpty(info.FanartUrl),
-                    !string.IsNullOrEmpty(info.WideThumbUrl), !string.IsNullOrEmpty(info.LogoUrl));
+                    !string.IsNullOrEmpty(info.ThumbUrl), !string.IsNullOrEmpty(info.FanartUrl));
                 return ServiceResult<TheAudioDbArtistInfo>.FromSuccess(info);
             },
             fallback: ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError(),

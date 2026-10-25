@@ -20,7 +20,7 @@ public static class CoreServiceRegistration
     /// <summary>
     ///     Adds the library, playback, metadata, scrobbling, lyrics, and maintenance services.
     ///     The host must also register logging, HTTP clients, <c>IConfiguration</c>, and its platform services:
-    ///     <see cref="IPathConfiguration" />, <see cref="ISettingsService" />, <see cref="IAudioPlayer" />
+    ///     <see cref="IPathConfiguration" />, <see cref="ISettingsService" />, <see cref="IAppInfoService" />, <see cref="IAudioPlayer" />
     ///     and <see cref="ISystemMediaControls" />.
     /// </summary>
     public static IServiceCollection AddNagiCore(this IServiceCollection services)
@@ -104,6 +104,52 @@ public static class CoreServiceRegistration
                 },
             },
 
+            // Deezer: 50 requests per 5 seconds per IP; past that it answers 200 with a quota error.
+            new ProviderPolicy
+            {
+                ProviderId = ServiceProviderIds.Deezer,
+                Channel = new ChannelPolicy
+                {
+                    PermitsPerWindow = 8,
+                    MaxConcurrent = 4,
+                },
+            },
+
+            // Wikimedia: no fixed limit for reads, but clients are asked to keep requests serial and modest.
+            new ProviderPolicy
+            {
+                ProviderId = ServiceProviderIds.Wikipedia,
+                Channel = new ChannelPolicy
+                {
+                    PermitsPerWindow = 5,
+                    MaxConcurrent = 2,
+                },
+            },
+
+            // Cover Art Archive: served from the Internet Archive with no published limit; stay modest.
+            new ProviderPolicy
+            {
+                ProviderId = ServiceProviderIds.CoverArtArchive,
+                Channel = new ChannelPolicy
+                {
+                    PermitsPerWindow = 5,
+                    MaxConcurrent = 4,
+                },
+            },
+
+            // iTunes Search API: about 20 requests a minute per IP. Past that it answers 403 for a while,
+            // which leaves the album retryable on a later run.
+            new ProviderPolicy
+            {
+                ProviderId = ServiceProviderIds.AppleMusic,
+                Channel = new ChannelPolicy
+                {
+                    PermitsPerWindow = 1,
+                    Window = TimeSpan.FromSeconds(3),
+                    MaxConcurrent = 1,
+                },
+            },
+
             // LRCLIB: no rate limit documented. Keep concurrency reasonable to be polite.
             new ProviderPolicy
             {
@@ -169,6 +215,12 @@ public static class CoreServiceRegistration
         services.AddSingleton<IMusicBrainzService, MusicBrainzService>();
         services.AddSingleton<IFanartTvService, FanartTvService>();
         services.AddSingleton<ITheAudioDbService, TheAudioDbService>();
+        services.AddSingleton<IDeezerService, DeezerService>();
+        services.AddSingleton<IWikipediaService, WikipediaService>();
+        services.AddSingleton<ICoverArtArchiveService, CoverArtArchiveService>();
+        services.AddSingleton<IAppleMusicService, AppleMusicService>();
+        services.AddSingleton<IArtistMetadataService, ArtistMetadataService>();
+        services.AddSingleton<IAlbumCoverService, AlbumCoverService>();
         services.AddSingleton<INetEaseLyricsService, NetEaseLyricsService>();
         services.AddSingleton<LastFmScrobblerService>();
         services.AddSingleton<ILastFmScrobblerService>(sp => sp.GetRequiredService<LastFmScrobblerService>());

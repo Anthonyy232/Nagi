@@ -292,29 +292,6 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
     private void OnMetadataProviderPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (_isInitializing || e.PropertyName != nameof(ServiceProviderSettingViewModel.IsEnabled)) return;
-
-        if (sender is ServiceProviderSettingViewModel provider)
-        {
-            // If MusicBrainz is disabled, disable dependent services
-            if (provider.Id == ServiceProviderIds.MusicBrainz && !provider.IsEnabled)
-            {
-                var dependents = MetadataProviders.Where(p => p.Id == ServiceProviderIds.TheAudioDb || p.Id == ServiceProviderIds.FanartTv).ToList();
-                foreach (var dependent in dependents)
-                {
-                    dependent.IsEnabled = false;
-                }
-            }
-            // If trying to enable a dependent service while MusicBrainz is disabled, revert it
-            else if ((provider.Id == ServiceProviderIds.TheAudioDb || provider.Id == ServiceProviderIds.FanartTv) && provider.IsEnabled)
-            {
-                var musicBrainz = MetadataProviders.FirstOrDefault(p => p.Id == ServiceProviderIds.MusicBrainz);
-                if (musicBrainz is not { IsEnabled: true })
-                {
-                    provider.IsEnabled = false;
-                }
-            }
-        }
-
         QueueMetadataProviderSave();
     }
 

@@ -276,6 +276,27 @@ public class LastFmMetadataServiceTests : IDisposable
         result.Data!.ImageUrl.Should().Be(expected);
     }
 
+    [Theory]
+    [InlineData("OK Computer (Remastered)", "http://mega.jpg")]
+    [InlineData("OK Computer OKNOTOK 1997 2017", null)]
+    public async Task GetAlbumCoverUrlAsync_PrefersTheLargestRealImageOfTheRequestedAlbum(string returnedTitle, string? expected)
+    {
+        SetupApiKey();
+        SetupHttpResponse(HttpStatusCode.OK, """
+            {"album":{"name":"TITLE","artist":"Radiohead","image":[
+              {"#text":"http://large.jpg","size":"large"},
+              {"#text":"","size":"extralarge"},
+              {"#text":"http://mega.jpg","size":"mega"}
+            ]}}
+            """.Replace("TITLE", returnedTitle));
+
+        var result = await _metadataService.GetAlbumCoverUrlAsync("OK Computer", "Radiohead");
+
+        result.Data.Should().Be(expected);
+        _httpMessageHandler.Requests[0].RequestUri!.Query.Should()
+            .Contain("method=album.getinfo").And.Contain("album=OK%20Computer").And.Contain("artist=Radiohead");
+    }
+
     private void SetupApiKey(string key = ApiKey)
     {
         _apiKeyService.GetApiKeyAsync("lastfm", Arg.Any<CancellationToken>()).Returns(Task.FromResult<string?>(key));

@@ -85,6 +85,13 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
         Albums.AppendOrReplace(result.Items.Select(a => new AlbumViewModelItem(a)), append);
     }
 
+    // Service's own semaphore dedupes concurrent runs of the metadata fetch.
+    protected override Task OnPageLoadedAsync(PagedResult<Album> result, CancellationToken token)
+    {
+        _ = _libraryScanner.StartMetadataBackgroundFetchAsync();
+        return Task.CompletedTask;
+    }
+
     public async Task NavigateToAlbumDetailAsync(object? parameter)
     {
         if (_isNavigating) return;
