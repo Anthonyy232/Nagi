@@ -1005,9 +1005,6 @@ Bạn có muốn tiếp tục không?</value>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tìm kiếm album…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Tìm album</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Chọn ngẫu nhiên</value>
   </data>
@@ -1029,9 +1026,6 @@ Bạn có muốn tiếp tục không?</value>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tìm kiếm trong album…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Tìm trong album</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Phát tất cả</value>
   </data>
@@ -1049,9 +1043,6 @@ Bạn có muốn tiếp tục không?</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tìm kiếm nghệ sĩ…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Tìm nghệ sĩ</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Chọn ngẫu nhiên</value>
@@ -1091,9 +1082,6 @@ Bạn có muốn tiếp tục không?</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tìm kiếm trong nghệ sĩ…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Tìm trong nghệ sĩ</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Phát tất cả</value>
@@ -1167,9 +1155,6 @@ Bạn có muốn tiếp tục không?</value>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tìm kiếm thể loại…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Tìm thể loại</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>Chọn ngẫu nhiên</value>
   </data>
@@ -1187,9 +1172,6 @@ Bạn có muốn tiếp tục không?</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tìm kiếm thư viện…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Tìm thư viện</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Phát tất cả</value>
@@ -1335,9 +1317,6 @@ Bạn có muốn tiếp tục không?</value>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tìm kiếm danh sách phát…</value>
   </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Tìm danh sách phát</value>
-  </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Chọn ngẫu nhiên</value>
   </data>
@@ -1383,9 +1362,6 @@ Bạn có muốn tiếp tục không?</value>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tìm kiếm trong danh sách phát…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Tìm trong danh sách phát</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Phát tất cả</value>
   </data>
@@ -1409,9 +1385,6 @@ Bạn có muốn tiếp tục không?</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tìm kiếm trong thể loại…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Tìm trong thể loại</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Phát tất cả</value>
@@ -1781,9 +1754,6 @@ Bạn có muốn tiếp tục không?</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tìm kiếm trong danh sách phát thông minh…</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Tìm trong danh sách phát thông minh</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Sửa quy tắc</value>

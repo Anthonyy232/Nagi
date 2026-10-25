@@ -1005,9 +1005,6 @@
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ค้นหาอัลบั้ม…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ค้นหาอัลบั้ม</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>สุ่มเลือกหนึ่งรายการ</value>
   </data>
@@ -1029,9 +1026,6 @@
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ค้นหาในอัลบั้ม…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ค้นหาในอัลบั้ม</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>เล่นทั้งหมด</value>
   </data>
@@ -1049,9 +1043,6 @@
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ค้นหาศิลปิน…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ค้นหาศิลปิน</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>สุ่มเลือกหนึ่งรายการ</value>
@@ -1091,9 +1082,6 @@
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ค้นหาในศิลปิน…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ค้นหาในศิลปิน</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>เล่นทั้งหมด</value>
@@ -1167,9 +1155,6 @@
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>ค้นหาแนวเพลง…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ค้นหาแนวเพลง</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>สุ่มเลือกหนึ่งรายการ</value>
   </data>
@@ -1187,9 +1172,6 @@
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ค้นหาในคลังเพลง…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ค้นหาไลบรารี</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>เล่นทั้งหมด</value>
@@ -1335,9 +1317,6 @@
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ค้นหาเพลย์ลิสต์…</value>
   </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ค้นหาเพลย์ลิสต์</value>
-  </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>สุ่มเลือกหนึ่งรายการ</value>
   </data>
@@ -1383,9 +1362,6 @@
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ค้นหาในเพลย์ลิสต์…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ค้นหาในเพลย์ลิสต์</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>เล่นทั้งหมด</value>
   </data>
@@ -1409,9 +1385,6 @@
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ค้นหาในแนวเพลง…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ค้นหาในแนวเพลง</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>เล่นทั้งหมด</value>
@@ -1781,9 +1754,6 @@
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>ค้นหาในเพลย์ลิสต์อัจฉริยะ…</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>ค้นหาในเพลย์ลิสต์อัจฉริยะ</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>แก้ไขกฎ</value>

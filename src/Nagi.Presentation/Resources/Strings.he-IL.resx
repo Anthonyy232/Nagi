@@ -1005,9 +1005,6 @@
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>חיפוש אלבומים…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>חפש אלבומים</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>בחר אחד אקראי</value>
   </data>
@@ -1029,9 +1026,6 @@
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>חיפוש באלבום…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>חפש באלבום</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>נגן הכל</value>
   </data>
@@ -1049,9 +1043,6 @@
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>חיפוש אמנים…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>חפש אמנים</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>בחר אחד אקראי</value>
@@ -1091,9 +1082,6 @@
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>חיפוש באמן…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>חפש באמן</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>נגן הכל</value>
@@ -1167,9 +1155,6 @@
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>חיפוש ז'אנרים…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>חפש ז'אנרים</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>בחר אחד אקראי</value>
   </data>
@@ -1187,9 +1172,6 @@
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>חיפוש בספרייה…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>חפש בספרייה</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>נגן הכל</value>
@@ -1335,9 +1317,6 @@
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>חיפוש רשימות השמעה…</value>
   </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>חפש רשימות השמעה</value>
-  </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>בחר אחד אקראי</value>
   </data>
@@ -1383,9 +1362,6 @@
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>חיפוש ברשימת ההשמעה…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>חפש ברשימת השמעה</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>נגן הכל</value>
   </data>
@@ -1409,9 +1385,6 @@
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>חיפוש בז'אנר…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>חפש בז'אנר</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>נגן הכל</value>
@@ -1781,9 +1754,6 @@
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>חיפוש ברשימת השמעה חכמה…</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>חפש ברשימת השמעה חכמה</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>ערוך כללים</value>

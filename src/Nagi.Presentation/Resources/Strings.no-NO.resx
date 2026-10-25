@@ -1005,9 +1005,6 @@ Vil du fortsette?</value>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Søk etter album…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Søk album</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Velg en tilfeldig</value>
   </data>
@@ -1029,9 +1026,6 @@ Vil du fortsette?</value>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Søk i album…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Søk i album</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Spill av alle</value>
   </data>
@@ -1049,9 +1043,6 @@ Vil du fortsette?</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Søk etter artister…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Søk artister</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Velg en tilfeldig</value>
@@ -1091,9 +1082,6 @@ Vil du fortsette?</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Søk hos artist…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Søk i artist</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Spill av alle</value>
@@ -1167,9 +1155,6 @@ Vil du fortsette?</value>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Søk etter sjangere…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Søk sjangere</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>Velg en tilfeldig</value>
   </data>
@@ -1187,9 +1172,6 @@ Vil du fortsette?</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Søk i bibliotek…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Søk i bibliotek</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Spill av alle</value>
@@ -1335,9 +1317,6 @@ Vil du fortsette?</value>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Søk etter spillelister…</value>
   </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Søk spillelister</value>
-  </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Velg en tilfeldig</value>
   </data>
@@ -1383,9 +1362,6 @@ Vil du fortsette?</value>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Søk i spilleliste…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Søk i spilleliste</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Spill av alle</value>
   </data>
@@ -1409,9 +1385,6 @@ Vil du fortsette?</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Søk i sjanger…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Søk i sjanger</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Spill av alle</value>
@@ -1781,9 +1754,6 @@ Vil du fortsette?</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Søk i smart spilleliste…</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Søk i smart spilleliste</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Rediger regler</value>

@@ -1005,9 +1005,6 @@ Apakah Anda ingin melanjutkan?</value>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cari album…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cari album</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Pilih secara acak</value>
   </data>
@@ -1029,9 +1026,6 @@ Apakah Anda ingin melanjutkan?</value>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cari dalam album…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cari di album</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Putar semua</value>
   </data>
@@ -1049,9 +1043,6 @@ Apakah Anda ingin melanjutkan?</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cari artis…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cari artis</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Pilih secara acak</value>
@@ -1091,9 +1082,6 @@ Apakah Anda ingin melanjutkan?</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cari dalam artis…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cari di artis</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Putar semua</value>
@@ -1167,9 +1155,6 @@ Apakah Anda ingin melanjutkan?</value>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cari genre…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cari genre</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>Pilih secara acak</value>
   </data>
@@ -1187,9 +1172,6 @@ Apakah Anda ingin melanjutkan?</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cari pustaka…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cari di pustaka</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Putar semua</value>
@@ -1335,9 +1317,6 @@ Apakah Anda ingin melanjutkan?</value>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cari daftar putar…</value>
   </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cari daftar putar</value>
-  </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Pilih secara acak</value>
   </data>
@@ -1383,9 +1362,6 @@ Apakah Anda ingin melanjutkan?</value>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cari dalam daftar putar…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cari di daftar putar</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Putar semua</value>
   </data>
@@ -1409,9 +1385,6 @@ Apakah Anda ingin melanjutkan?</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cari dalam genre…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cari di genre</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Putar semua</value>
@@ -1781,9 +1754,6 @@ Apakah Anda ingin melanjutkan?</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cari dalam daftar putar cerdas…</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cari di daftar putar cerdas</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Edit aturan</value>

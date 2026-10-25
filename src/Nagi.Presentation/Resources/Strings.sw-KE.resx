@@ -1005,9 +1005,6 @@ Je, unataka kuendelea?</value>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tafuta albamu…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Tafuta albamu</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Chagua moja kwa nasibu</value>
   </data>
@@ -1029,9 +1026,6 @@ Je, unataka kuendelea?</value>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tafuta katika albamu…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Tafuta kwenye albamu</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Cheza zote</value>
   </data>
@@ -1049,9 +1043,6 @@ Je, unataka kuendelea?</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tafuta wasanii…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Tafuta wasanii</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Chagua moja kwa nasibu</value>
@@ -1091,9 +1082,6 @@ Je, unataka kuendelea?</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tafuta katika msanii…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Tafuta kwenye msanii</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Cheza zote</value>
@@ -1167,9 +1155,6 @@ Je, unataka kuendelea?</value>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tafuta aina za muziki…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Tafuta aina za muziki</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>Chagua moja kwa nasibu</value>
   </data>
@@ -1187,9 +1172,6 @@ Je, unataka kuendelea?</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tafuta katika maktaba…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Tafuta maktaba</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Cheza zote</value>
@@ -1335,9 +1317,6 @@ Je, unataka kuendelea?</value>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tafuta orodha za nyimbo…</value>
   </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Tafuta orodha za nyimbo</value>
-  </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Chagua moja kwa nasibu</value>
   </data>
@@ -1383,9 +1362,6 @@ Je, unataka kuendelea?</value>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tafuta katika orodha ya nyimbo…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Tafuta kwenye orodha ya nyimbo</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Cheza zote</value>
   </data>
@@ -1409,9 +1385,6 @@ Je, unataka kuendelea?</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tafuta katika aina ya muziki…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Tafuta kwenye aina ya muziki</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Cheza zote</value>
@@ -1781,9 +1754,6 @@ Je, unataka kuendelea?</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Tafuta katika orodha mahiri ya nyimbo…</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Tafuta kwenye orodha mahiri ya nyimbo</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Hariri sheria</value>

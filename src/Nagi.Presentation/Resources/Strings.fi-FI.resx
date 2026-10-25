@@ -1005,9 +1005,6 @@ Haluatko jatkaa?</value>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Etsi albumeita…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Hae albumeista</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Valitse satunnainen</value>
   </data>
@@ -1029,9 +1026,6 @@ Haluatko jatkaa?</value>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Etsi albumista…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Hae albumista</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Toista kaikki</value>
   </data>
@@ -1049,9 +1043,6 @@ Haluatko jatkaa?</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Etsi esittäjiä…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Hae artisteista</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Valitse satunnainen</value>
@@ -1091,9 +1082,6 @@ Haluatko jatkaa?</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Etsi esittäjästä…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Hae artistista</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Toista kaikki</value>
@@ -1167,9 +1155,6 @@ Haluatko jatkaa?</value>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Etsi genrejä…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Hae genreistä</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>Valitse satunnainen</value>
   </data>
@@ -1187,9 +1172,6 @@ Haluatko jatkaa?</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Etsi kirjastosta…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Hae kirjastosta</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Toista kaikki</value>
@@ -1335,9 +1317,6 @@ Haluatko jatkaa?</value>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Etsi soittolistoja…</value>
   </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Hae soittolistoista</value>
-  </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Valitse satunnainen</value>
   </data>
@@ -1383,9 +1362,6 @@ Haluatko jatkaa?</value>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Etsi soittolistalta…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Hae soittolistasta</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Toista kaikki</value>
   </data>
@@ -1409,9 +1385,6 @@ Haluatko jatkaa?</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Etsi genrestä…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Hae genrestä</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Toista kaikki</value>
@@ -1781,9 +1754,6 @@ Haluatko jatkaa?</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Etsi älykkäältä soittolistalta…</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Hae älykkäästä soittolistasta</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Muokkaa sääntöjä</value>

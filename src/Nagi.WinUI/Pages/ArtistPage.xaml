@@ -83,8 +83,8 @@
                         </TextBox.OpacityTransition>
                     </TextBox>
                     <Button x:Name="SearchToggleButton"
-                            ToolTipService.ToolTip="{x:Bind resources:Strings.ArtistPage_SearchButton_ToolTip, Mode=OneTime}"
-                            AutomationProperties.Name="{x:Bind resources:Strings.ArtistPage_SearchButton_ToolTip, Mode=OneTime}"
+                            ToolTipService.ToolTip="{x:Bind resources:Strings.ArtistPage_SearchButton_Search_ToolTip, Mode=OneTime}"
+                            AutomationProperties.Name="{x:Bind resources:Strings.ArtistPage_SearchButton_Search_ToolTip, Mode=OneTime}"
                             Click="OnSearchToggleButtonClick"
                             Style="{StaticResource SongListViewPageIconButton}"
                             HorizontalAlignment="Right"

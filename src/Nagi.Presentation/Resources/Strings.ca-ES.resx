@@ -1005,9 +1005,6 @@ Vols continuar?</value>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca àlbums…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cercar àlbums</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Triar un a l'atzar</value>
   </data>
@@ -1029,9 +1026,6 @@ Vols continuar?</value>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca a l'àlbum…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cercar a l'àlbum</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Reprodueix-ho tot</value>
   </data>
@@ -1049,9 +1043,6 @@ Vols continuar?</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca artistes…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cercar artistes</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Triar un a l'atzar</value>
@@ -1091,9 +1082,6 @@ Vols continuar?</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca a l'artista…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cercar a l'artista</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Reprodueix-ho tot</value>
@@ -1167,9 +1155,6 @@ Vols continuar?</value>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca gèneres…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cercar gèneres</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>Triar un a l'atzar</value>
   </data>
@@ -1187,9 +1172,6 @@ Vols continuar?</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca a la biblioteca…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cercar a la biblioteca</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Reprodueix-ho tot</value>
@@ -1335,9 +1317,6 @@ Vols continuar?</value>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca llistes de reproducció…</value>
   </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cercar llistes de reproducció</value>
-  </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Triar un a l'atzar</value>
   </data>
@@ -1383,9 +1362,6 @@ Vols continuar?</value>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca a la llista de reproducció…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cercar a la llista de reproducció</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Reprodueix-ho tot</value>
   </data>
@@ -1409,9 +1385,6 @@ Vols continuar?</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca al gènere…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cercar al gènere</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Reprodueix-ho tot</value>
@@ -1781,9 +1754,6 @@ Vols continuar?</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca a la llista de reproducció intel·ligent…</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cercar a la llista de reproducció intel·ligent</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Editar regles</value>

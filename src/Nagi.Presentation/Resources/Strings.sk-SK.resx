@@ -1005,9 +1005,6 @@ Chcete pokračovať?</value>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať albumy…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Vyhľadať albumy</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Vybrať náhodný</value>
   </data>
@@ -1029,9 +1026,6 @@ Chcete pokračovať?</value>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať v albume…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Vyhľadať v albume</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Prehrať všetky</value>
   </data>
@@ -1049,9 +1043,6 @@ Chcete pokračovať?</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať interpretov…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Vyhľadať interpretov</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Vybrať náhodného</value>
@@ -1091,9 +1082,6 @@ Chcete pokračovať?</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať u interpreta…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Vyhľadať u interpreta</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Prehrať všetky</value>
@@ -1167,9 +1155,6 @@ Chcete pokračovať?</value>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať žánre…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Vyhľadať žánre</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>Vybrať náhodný</value>
   </data>
@@ -1187,9 +1172,6 @@ Chcete pokračovať?</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať v knižnici…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Vyhľadať v knižnici</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Prehrať všetky</value>
@@ -1335,9 +1317,6 @@ Chcete pokračovať?</value>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať zoznamy skladieb…</value>
   </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Vyhľadať playlisty</value>
-  </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Vybrať náhodný</value>
   </data>
@@ -1383,9 +1362,6 @@ Chcete pokračovať?</value>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať v zozname skladieb…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Vyhľadať v playliste</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Prehrať všetky</value>
   </data>
@@ -1409,9 +1385,6 @@ Chcete pokračovať?</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať v žánri…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Vyhľadať v žánri</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Prehrať všetky</value>
@@ -1781,9 +1754,6 @@ Chcete pokračovať?</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Hľadať v inteligentnom zozname skladieb…</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Vyhľadať v inteligentnom playliste</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Upraviť pravidlá</value>

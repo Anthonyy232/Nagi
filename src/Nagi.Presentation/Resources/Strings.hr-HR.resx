@@ -1005,9 +1005,6 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Traži albume…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Pretraži albume</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Odaberi nasumično</value>
   </data>
@@ -1029,9 +1026,6 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Traži u albumu…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Pretraži u albumu</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Reproduciraj sve</value>
   </data>
@@ -1049,9 +1043,6 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Traži izvođače…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Pretraži izvođače</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Odaberi nasumično</value>
@@ -1091,9 +1082,6 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Traži kod izvođača…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Pretraži kod izvođača</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Reproduciraj sve</value>
@@ -1167,9 +1155,6 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Traži žanrove…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Pretraži žanrove</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>Odaberi nasumično</value>
   </data>
@@ -1187,9 +1172,6 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Traži u biblioteci…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Pretraži biblioteku</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Reproduciraj sve</value>
@@ -1335,9 +1317,6 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Traži popise pjesama…</value>
   </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Pretraži popise za reprodukciju</value>
-  </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Odaberi nasumično</value>
   </data>
@@ -1383,9 +1362,6 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Traži na popisu pjesama…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Pretraži u popisu za reprodukciju</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Reproduciraj sve</value>
   </data>
@@ -1409,9 +1385,6 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Traži u žanru…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Pretraži u žanru</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Reproduciraj sve</value>
@@ -1781,9 +1754,6 @@ Ovo će analizirati vašu glazbenu knjižnicu i izravno modificirati vaše audio
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Traži na pametnom popisu pjesama…</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Pretraži u pametnom popisu za reprodukciju</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Uredi pravila</value>

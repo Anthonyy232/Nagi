@@ -1005,9 +1005,6 @@ Vuoi continuare?</value>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca album…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cerca album</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Scegli uno a caso</value>
   </data>
@@ -1029,9 +1026,6 @@ Vuoi continuare?</value>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca nell'album…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cerca nell'album</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Riproduci tutto</value>
   </data>
@@ -1049,9 +1043,6 @@ Vuoi continuare?</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca artisti…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cerca artisti</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Scegli uno a caso</value>
@@ -1091,9 +1082,6 @@ Vuoi continuare?</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca nell'artista…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cerca nell'artista</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Riproduci tutto</value>
@@ -1167,9 +1155,6 @@ Vuoi continuare?</value>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca generi…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cerca generi</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>Scegli uno a caso</value>
   </data>
@@ -1187,9 +1172,6 @@ Vuoi continuare?</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca nella libreria…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cerca nella libreria</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Riproduci tutto</value>
@@ -1335,9 +1317,6 @@ Vuoi continuare?</value>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca playlist…</value>
   </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cerca playlist</value>
-  </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Scegli una a caso</value>
   </data>
@@ -1383,9 +1362,6 @@ Vuoi continuare?</value>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca nella playlist…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cerca nella playlist</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Riproduci tutto</value>
   </data>
@@ -1409,9 +1385,6 @@ Vuoi continuare?</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca nel genere…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cerca nel genere</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Riproduci tutto</value>
@@ -1781,9 +1754,6 @@ Vuoi continuare?</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cerca nella playlist intelligente…</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Cerca nella playlist intelligente</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Modifica regole</value>

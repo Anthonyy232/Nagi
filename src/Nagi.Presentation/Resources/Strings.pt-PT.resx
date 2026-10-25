@@ -1005,9 +1005,6 @@ Deseja continuar?</value>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Pesquisar álbuns…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Pesquisar álbuns</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Escolher um aleatoriamente</value>
   </data>
@@ -1029,9 +1026,6 @@ Deseja continuar?</value>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Pesquisar no álbum…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Pesquisar no álbum</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Reproduzir tudo</value>
   </data>
@@ -1049,9 +1043,6 @@ Deseja continuar?</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Pesquisar artistas…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Pesquisar artistas</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Escolher um aleatoriamente</value>
@@ -1091,9 +1082,6 @@ Deseja continuar?</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Pesquisar no artista…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Pesquisar no artista</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Reproduzir tudo</value>
@@ -1167,9 +1155,6 @@ Deseja continuar?</value>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Pesquisar gêneros…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Pesquisar gêneros</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>Escolher um aleatoriamente</value>
   </data>
@@ -1187,9 +1172,6 @@ Deseja continuar?</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Pesquisar na biblioteca…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Pesquisar na biblioteca</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Reproduzir tudo</value>
@@ -1335,9 +1317,6 @@ Deseja continuar?</value>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Pesquisar playlists…</value>
   </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Pesquisar listas de reprodução</value>
-  </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Escolher uma aleatoriamente</value>
   </data>
@@ -1383,9 +1362,6 @@ Deseja continuar?</value>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Pesquisar na playlist…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Pesquisar na lista de reprodução</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Reproduzir tudo</value>
   </data>
@@ -1409,9 +1385,6 @@ Deseja continuar?</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Pesquisar no gênero…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Pesquisar no gênero</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Reproduzir tudo</value>
@@ -1781,9 +1754,6 @@ Deseja continuar?</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Pesquisar na playlist inteligente…</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Pesquisar na lista de reprodução inteligente</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Editar regras</value>

@@ -1005,9 +1005,6 @@ Wilt u doorgaan?</value>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Albums zoeken…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Zoek albums</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Kies er willekeurig een</value>
   </data>
@@ -1029,9 +1026,6 @@ Wilt u doorgaan?</value>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Zoeken in album…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Zoek in album</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Alles afspelen</value>
   </data>
@@ -1049,9 +1043,6 @@ Wilt u doorgaan?</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Artiesten zoeken…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Zoek artiesten</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Kies er willekeurig een</value>
@@ -1091,9 +1082,6 @@ Wilt u doorgaan?</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Zoeken in artiest…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Zoek in artiest</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Alles afspelen</value>
@@ -1167,9 +1155,6 @@ Wilt u doorgaan?</value>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Genres zoeken…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Zoek genres</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>Kies er willekeurig een</value>
   </data>
@@ -1187,9 +1172,6 @@ Wilt u doorgaan?</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Bibliotheek zoeken…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Zoek in bibliotheek</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Alles afspelen</value>
@@ -1335,9 +1317,6 @@ Wilt u doorgaan?</value>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Afspeellijsten zoeken…</value>
   </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Zoek afspeellijsten</value>
-  </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Kies er willekeurig een</value>
   </data>
@@ -1383,9 +1362,6 @@ Wilt u doorgaan?</value>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Zoeken in afspeellijst…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Zoek in afspeellijst</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Alles afspelen</value>
   </data>
@@ -1409,9 +1385,6 @@ Wilt u doorgaan?</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Zoeken in genre…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Zoek in genre</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Alles afspelen</value>
@@ -1781,9 +1754,6 @@ Wilt u doorgaan?</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Zoeken in slimme afspeellijst…</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Zoek in slimme afspeellijst</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Regels bewerken</value>

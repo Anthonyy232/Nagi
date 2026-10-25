@@ -1005,9 +1005,6 @@ Kas soovite jätkata?</value>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Otsi albumeid…</value>
   </data>
-  <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Otsi albumeid</value>
-  </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Vali juhuslikult</value>
   </data>
@@ -1029,9 +1026,6 @@ Kas soovite jätkata?</value>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Otsi albumist…</value>
   </data>
-  <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Otsi albumist</value>
-  </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Esita kõik</value>
   </data>
@@ -1049,9 +1043,6 @@ Kas soovite jätkata?</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Otsi esitajaid…</value>
-  </data>
-  <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Otsi artiste</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Vali juhuslikult</value>
@@ -1091,9 +1082,6 @@ Kas soovite jätkata?</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Otsi esitajalt…</value>
-  </data>
-  <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Otsi artistilt</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Esita kõik</value>
@@ -1167,9 +1155,6 @@ Kas soovite jätkata?</value>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Otsi žanreid…</value>
   </data>
-  <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Otsi žanreid</value>
-  </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
     <value>Vali juhuslikult</value>
   </data>
@@ -1187,9 +1172,6 @@ Kas soovite jätkata?</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Otsi kogust…</value>
-  </data>
-  <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Otsi teegist</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Esita kõik</value>
@@ -1335,9 +1317,6 @@ Kas soovite jätkata?</value>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Otsi esitusloendeid…</value>
   </data>
-  <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Otsi esitusloendeid</value>
-  </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Vali juhuslikult</value>
   </data>
@@ -1383,9 +1362,6 @@ Kas soovite jätkata?</value>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Otsi esitusloendist…</value>
   </data>
-  <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Otsi esitusloendist</value>
-  </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Esita kõik</value>
   </data>
@@ -1409,9 +1385,6 @@ Kas soovite jätkata?</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Otsi žanrist…</value>
-  </data>
-  <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Otsi žanrist</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
     <value>Esita kõik</value>
@@ -1781,9 +1754,6 @@ Kas soovite jätkata?</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Otsi nutikast esitusloendist…</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Otsi nutikast esitusloendist</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Muuda reegleid</value>
