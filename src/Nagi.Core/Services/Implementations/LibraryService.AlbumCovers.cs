@@ -7,7 +7,8 @@ using Nagi.Core.Services.Data;
 namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
-///     Album covers: online covers for albums that have no art, and the album cover for tracks without their own.
+///     Album covers: online covers for albums that have no art, keeping album covers in step with their tracks, and
+///     the album cover for tracks without their own.
 /// </summary>
 public partial class LibraryService
 {
@@ -103,6 +104,54 @@ public partial class LibraryService
                 .SetProperty(s => s.DarkSwatchId, cover.DarkSwatchId), token)
             .ConfigureAwait(false);
         return true;
+    }
+
+    /// <summary>
+    ///     Gives each album whose cover none of its tracks use the art of its first track that has some. Without such
+    ///     art, a cover whose cached file is missing is cleared so the online pass looks for one again. Replaced covers
+    ///     are deleted when nothing else uses them.
+    /// </summary>
+    /// <returns>The number of albums updated.</returns>
+    private async Task<int> SyncAlbumCoversWithTracksAsync(Guid folderId, CancellationToken cancellationToken)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
+        // A cover a track uses is current; if its file is missing, scanning the folder of that track recreates it.
+        var albums = await context.Albums
+            .Where(a => a.Songs.Any(s => s.FolderId == folderId) &&
+                        (a.CoverArtUri == null || !a.Songs.Any(s => s.AlbumArtUriFromTrack == a.CoverArtUri)))
+            .Select(a => new
+            {
+                a.Id,
+                a.CoverArtUri,
+                TrackArt = a.Songs
+                    .Where(s => s.AlbumArtUriFromTrack != null)
+                    .OrderBy(s => s.DiscNumber).ThenBy(s => s.TrackNumber).ThenBy(s => s.FilePath)
+                    .Select(s => s.AlbumArtUriFromTrack)
+                    .FirstOrDefault()
+            })
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+
+        var updatedCount = 0;
+        var replacedCovers = new List<string>();
+        foreach (var album in albums)
+        {
+            // A track re-read without art of its own drops the album cover it showed, which doesn't make that cover
+            // out of date.
+            if (album.TrackArt is null && (album.CoverArtUri is null || _fileSystem.FileExists(album.CoverArtUri)))
+                continue;
+
+            updatedCount += await context.Albums.Where(a => a.Id == album.Id)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(a => a.CoverArtUri, album.TrackArt)
+                    .SetProperty(a => a.CoverArtLastCheckedUtc, (DateTime?)null), cancellationToken)
+                .ConfigureAwait(false);
+            if (album.CoverArtUri is not null) replacedCovers.Add(album.CoverArtUri);
+        }
+
+        await DeleteUnreferencedCoverArtAsync(context, replacedCovers, cancellationToken).ConfigureAwait(false);
+        if (updatedCount > 0)
+            _logger.LogInformation("Updated the cover of {Count} albums to match their tracks.", updatedCount);
+        return updatedCount;
     }
 
     /// <summary>

@@ -20,14 +20,15 @@ public partial class LibraryService
     ///     waiting for all files to be extracted first, reducing peak memory usage.
     ///     Uses scan-scoped caches for Artists, Albums, and Genres across sequential batches.
     /// </summary>
-    private async Task<(int SavedCount, HashSet<string> DiscoveredDirectories)> ExtractAndSaveMetadataStreamingAsync(
+    private async Task<(int SavedCount, HashSet<string> DiscoveredDirectories, HashSet<string> ReplacedCovers)>
+        ExtractAndSaveMetadataStreamingAsync(
         Guid folderId,
         List<string> filesToProcess,
         string baseFolderPath,
         IReadOnlySet<string> filePathsBeingUpdated,
+        IReadOnlySet<string> unchangedFiles,
         IProgress<ScanProgress>? progress,
-        CancellationToken cancellationToken,
-        bool skipMediaAssetsForUpdates = false)
+        CancellationToken cancellationToken)
     {
         const int channelCapacity = 100; // ~2 batches of buffer for backpressure
         var channel = Channel.CreateBounded<SongFileMetadata>(new BoundedChannelOptions(channelCapacity)
@@ -43,6 +44,7 @@ public partial class LibraryService
         var processedCount = 0;
         const int progressReportingBatchSize = 25;
         var discoveredDirectories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var replacedCovers = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         progress?.Report(new ScanProgress
         { StatusText = Resources.Strings.Status_PreparingScanCaches, Percentage = 0 });
@@ -122,7 +124,7 @@ public partial class LibraryService
                     {
                         try
                         {
-                            var includeMediaAssets = !skipMediaAssetsForUpdates || !filePathsBeingUpdated.Contains(filePath);
+                            var includeMediaAssets = !unchangedFiles.Contains(filePath);
                             var extractionTask = includeMediaAssets
                                 ? _metadataService.ExtractMetadataAsync(filePath, baseFolderPath)
                                 : _metadataService.ExtractMetadataAsync(filePath, baseFolderPath, false);
@@ -199,7 +201,7 @@ public partial class LibraryService
                     });
 
                     var saved = await ProcessSingleBatchAsync(folderId, batch, batchContext, artistIdCache,
-                        albumIdCache, genreIdCache, filePathsBeingUpdated, skipMediaAssetsForUpdates,
+                        albumIdCache, genreIdCache, filePathsBeingUpdated, unchangedFiles, replacedCovers,
                         pipelineToken).ConfigureAwait(false);
                     _logger.LogInformation("Consumer finished batch {BatchNumber}. Saved {Count} items.", batchNumber, saved);
                     totalSaved += saved;
@@ -223,7 +225,7 @@ public partial class LibraryService
                 failureSummary.Values.Sum(), breakdown);
         }
 
-        return (totalSaved, discoveredDirectories);
+        return (totalSaved, discoveredDirectories, replacedCovers);
     }
 
     /// <summary>
@@ -238,7 +240,8 @@ public partial class LibraryService
         Dictionary<(string Title, string Artist), Guid> albumIdCache,
         Dictionary<string, Guid> genreIdCache,
         IReadOnlySet<string> filePathsBeingUpdated,
-        bool preserveMediaAssetsForUpdates,
+        IReadOnlySet<string> unchangedFiles,
+        ISet<string> replacedCovers,
         CancellationToken cancellationToken)
     {
         // Only load existing song records for files that are known updates (not new additions).
@@ -294,8 +297,11 @@ public partial class LibraryService
         foreach (var metadata in metadataList)
         {
             existingSongs.TryGetValue(metadata.FilePath, out var existingSong);
+            var previousArt = existingSong?.AlbumArtUriFromTrack;
             AddSongWithDetailsCached(context, folderId, metadata, artistLookup, albumLookup, genreLookup, existingSong,
-                preserveMediaAssetsForUpdates && existingSong != null);
+                unchangedFiles.Contains(metadata.FilePath));
+            if (previousArt is not null && previousArt != existingSong!.AlbumArtUriFromTrack)
+                replacedCovers.Add(previousArt);
         }
 
         _logger.LogInformation("Saving changes for batch...");

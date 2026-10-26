@@ -139,7 +139,7 @@ public partial class LibraryService
 
                     progress?.Report(new ScanProgress
                     { StatusText = Resources.Strings.Status_PreparingScanCaches, IsIndeterminate = true });
-                    var (filesToAdd, filesToUpdate, filesRemovedFromDisk) =
+                    var (filesToAdd, filesToUpdate, filesRemovedFromDisk, unchangedFiles) =
                         await AnalyzeFolderChangesAsync(folderId, folder.Path, forceFullScan, operationToken).ConfigureAwait(false);
 
                     if (filesToAdd.Any() || filesToUpdate.Any() || filesRemovedFromDisk.Any())
@@ -208,6 +208,9 @@ public partial class LibraryService
                         await DeleteUnreferencedCoverArtAsync(deleteContext, albumArtPathsToDelete, operationToken).ConfigureAwait(false);
                     }
 
+                    // Before the folder image check, so it can replace the images that are gone.
+                    var clearedArtistImages = await ClearMissingArtistImagesAsync(folderId, operationToken).ConfigureAwait(false);
+
                     var filesToProcess = filesToAdd.Concat(filesToUpdate).ToList();
 
                     if (!filesToProcess.Any())
@@ -228,13 +231,15 @@ public partial class LibraryService
 
                         await Task.WhenAll(lrcTask, coverArtTask, artistImageTask).ConfigureAwait(false);
                         // After the folder art check, so a track's own folder art wins over its album's cover.
+                        var syncedAlbumCovers = await SyncAlbumCoversWithTracksAsync(folderId, operationToken).ConfigureAwait(false);
                         var albumCoverUpdates = await ApplyAlbumCoversToTracksWithoutArtAsync(folderId, operationToken).ConfigureAwait(false);
 
                         var lrcUpdates = lrcTask.Result;
                         var coverArtUpdates = coverArtTask.Result + albumCoverUpdates;
                         var artistImageUpdates = artistImageTask.Result;
 
-                        var hasChanges = allFilePathsToDelete.Any() || lrcUpdates > 0 || coverArtUpdates > 0 || artistImageUpdates > 0;
+                        var hasChanges = allFilePathsToDelete.Any() || lrcUpdates > 0 || coverArtUpdates > 0 ||
+                                         artistImageUpdates > 0 || syncedAlbumCovers > 0 || clearedArtistImages > 0;
 
                         var updates = new List<string>();
                         if (lrcUpdates > 0)
@@ -270,9 +275,9 @@ public partial class LibraryService
                     }
 
                     var filePathsBeingUpdated = filesToUpdate.ToHashSet(StringComparer.OrdinalIgnoreCase);
-                    var (newSongsFound, discoveredDirs) = await ExtractAndSaveMetadataStreamingAsync(
-                        folderId, filesToProcess, folder.Path, filePathsBeingUpdated, progress, operationToken,
-                        skipMediaAssetsForUpdates: forceFullScan).ConfigureAwait(false);
+                    var (newSongsFound, discoveredDirs, replacedCovers) = await ExtractAndSaveMetadataStreamingAsync(
+                        folderId, filesToProcess, folder.Path, filePathsBeingUpdated, unchangedFiles, progress,
+                        operationToken).ConfigureAwait(false);
 
                     operationToken.ThrowIfCancellationRequested();
 
@@ -294,6 +299,8 @@ public partial class LibraryService
                         postScanTasks.Add(UpdateMissingCoverArtAsync(folderId, folder.Path, operationToken));
                     }
                     await Task.WhenAll(postScanTasks).ConfigureAwait(false);
+                    if (!isPureAddScan)
+                        await SyncAlbumCoversWithTracksAsync(folderId, operationToken).ConfigureAwait(false);
                     await ApplyAlbumCoversToTracksWithoutArtAsync(folderId, operationToken).ConfigureAwait(false);
 
                     progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_Finalizing, IsIndeterminate = true });
@@ -305,6 +312,8 @@ public partial class LibraryService
                         await using (var finalContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false))
                         {
                             DeleteOrphanedArtistImages(await CleanUpOrphanedEntitiesAsync(finalContext, operationToken).ConfigureAwait(false));
+                            // Only after every batch is saved, since songs read later in the scan may reuse a replaced cover.
+                            await DeleteUnreferencedCoverArtAsync(finalContext, replacedCovers, operationToken).ConfigureAwait(false);
                         }
                     }
 
@@ -531,7 +540,12 @@ public partial class LibraryService
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    private async Task<(List<string> filesToAdd, List<string> filesToUpdate, List<string> filesRemovedFromDisk)>
+    /// <returns>
+    ///     Updates include songs whose cached cover is missing. <c>unchangedFiles</c> are the updates a forced scan
+    ///     re-reads although they didn't change on disk, so they keep their art and lyrics.
+    /// </returns>
+    private async Task<(List<string> filesToAdd, List<string> filesToUpdate, List<string> filesRemovedFromDisk,
+            HashSet<string> unchangedFiles)>
         AnalyzeFolderChangesAsync(Guid folderId, string folderPath, bool forceFullScan, CancellationToken cancellationToken)
     {
         await using var analysisContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -539,8 +553,15 @@ public partial class LibraryService
         var dbFiles = await analysisContext.Songs
             .AsNoTracking()
             .Where(s => s.FolderId == folderId)
-            .Select(s => new { s.FilePath, s.FileModifiedDate })
+            .Select(s => new { s.FilePath, s.FileModifiedDate, s.AlbumArtUriFromTrack })
             .ToListAsync(cancellationToken).ConfigureAwait(false);
+
+        // Covers are named by their content, so re-reading a song recreates a deleted cover at its old path.
+        var missingCovers = dbFiles.Select(s => s.AlbumArtUriFromTrack).OfType<string>()
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        missingCovers.RemoveWhere(_fileSystem.FileExists);
+        if (missingCovers.Count > 0)
+            _logger.LogInformation("Re-reading songs for {Count} missing cached covers.", missingCovers.Count);
 
         var diskFileMap = _fileSystem.EnumerateFilesWithLastWriteTime(folderPath, "*.*", SearchOption.AllDirectories)
             .Where(x => FileExtensions.MusicFileExtensions.Contains(Path.GetExtension(x.Path)))
@@ -548,17 +569,25 @@ public partial class LibraryService
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var dbFileMap = dbFiles
-            .ToDictionary(s => s.FilePath, s => s.FileModifiedDate, StringComparer.OrdinalIgnoreCase);
+        var dbFileMap = dbFiles.ToDictionary(s => s.FilePath, StringComparer.OrdinalIgnoreCase);
 
         var filesToAdd = new List<string>();
         var filesToUpdate = new List<string>();
+        var unchangedFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var (path, diskModTime) in diskFileMap)
         {
-            if (dbFileMap.TryGetValue(path, out var dbModTime))
+            if (dbFileMap.TryGetValue(path, out var dbFile))
             {
-                if (forceFullScan || diskModTime != dbModTime)
+                if (diskModTime != dbFile.FileModifiedDate ||
+                    (dbFile.AlbumArtUriFromTrack is { } cover && missingCovers.Contains(cover)))
+                {
                     filesToUpdate.Add(path);
+                }
+                else if (forceFullScan)
+                {
+                    filesToUpdate.Add(path);
+                    unchangedFiles.Add(path);
+                }
             }
             else
             {
@@ -570,7 +599,7 @@ public partial class LibraryService
             .Where(path => !diskFileMap.ContainsKey(path))
             .ToList();
 
-        return (filesToAdd, filesToUpdate, filesRemovedFromDisk);
+        return (filesToAdd, filesToUpdate, filesRemovedFromDisk, unchangedFiles);
     }
 
     /// <summary>
