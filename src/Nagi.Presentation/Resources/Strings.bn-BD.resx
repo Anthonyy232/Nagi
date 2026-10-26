@@ -1489,7 +1489,7 @@
     <value>WASAPI এক্সক্লুসিভ মোড</value>
   </data>
   <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
-    <value>Nagi-কে উইন্ডোজ অডিও ডিভাইসের একচ্ছত্র নিয়ন্ত্রণ দিন। অন্যান্য অ্যাপ নীরব থাকতে পারে। এই সেটিং পরিবর্তনের পর Nagi আবার চালু করুন।</value>
+    <value>Nagi-কে উইন্ডোজ অডিও ডিভাইসের একচ্ছত্র নিয়ন্ত্রণ দিন। অন্যান্য অ্যাপ নীরব থাকতে পারে। এই সেটিং পরিবর্তনের পর Nagi আবার চালু করুন।</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>প্লে / পজে ফেড</value>
@@ -2251,7 +2251,7 @@
     <value>আপনার অনুসন্ধানের সাথে কোনো রেকর্ড মিলেনি</value>
   </data>
   <data name="Listening_NoTimedMixDescription" xml:space="preserve">
-    <value>এই তালিকার কোনো গান মিক্সের শর্ত পূরণ করে আপনার নির্ধারিত সময়সীমার মধ্যে ফিট করে না। দীর্ঘতর সময়সীমা, অন্য মিক্স বা ভিন্ন গানের তালিকা চেষ্টা করুন।</value>
+    <value>এই তালিকার কোনো গান মিক্সের শর্ত পূরণ করে আপনার নির্ধারিত সময়সীমার মধ্যে ফিট করে না। দীর্ঘতর সময়সীমা, অন্য মিক্স বা ভিন্ন গানের তালিকা চেষ্টা করুন।</value>
   </data>
   <data name="Generic_CloseSearch" xml:space="preserve">
     <value>অনুসন্ধান বন্ধ করুন</value>
