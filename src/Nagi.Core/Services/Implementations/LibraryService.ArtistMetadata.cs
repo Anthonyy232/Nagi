@@ -183,6 +183,35 @@ public partial class LibraryService
     }
 
     /// <summary>
+    ///     Clears the image of artists linked to songs or albums in the given folder whose cached image file is missing,
+    ///     so the folder scan and the online lookup look for one again.
+    /// </summary>
+    /// <returns>The number of artists cleared.</returns>
+    private async Task<int> ClearMissingArtistImagesAsync(Guid folderId, CancellationToken cancellationToken)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
+        var cachedImages = await context.Artists
+            .Where(a => a.LocalImageCachePath != null &&
+                        (a.SongArtists.Any(sa => sa.Song.FolderId == folderId) ||
+                         a.AlbumArtists.Any(aa => aa.Album.Songs.Any(s => s.FolderId == folderId))))
+            .Select(a => new { a.Id, Path = a.LocalImageCachePath! })
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+        var artistIds = cachedImages.Where(a => !_fileSystem.FileExists(a.Path)).Select(a => a.Id).ToList();
+        if (artistIds.Count == 0) return 0;
+
+        await context.Artists.Where(a => artistIds.Contains(a.Id))
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(a => a.LocalImageCachePath, (string?)null)
+                .SetProperty(a => a.MetadataLastCheckedUtc, (DateTime?)null), cancellationToken)
+            .ConfigureAwait(false);
+        _logger.LogInformation("Cleared the missing cached image of {Count} artists.", artistIds.Count);
+        foreach (var artistId in artistIds)
+            ArtistMetadataUpdated?.Invoke(this, new ArtistMetadataUpdatedEventArgs(artistId, null));
+        return artistIds.Count;
+    }
+
+    /// <summary>
     ///     Finds artists linked to songs in the given folder that have no local or custom image,
     ///     then searches their associated directories for artist image files (e.g., artist.jpg).
     ///     Updates each artist's <see cref="Artist.LocalImageCachePath"/> and fires

@@ -202,6 +202,7 @@ public class LibraryServiceArtistImageTests : IDisposable
     {
         var customPath = $"C:\\cache\\artistimages\\abc{suffix}.jpg";
         var (folder, artist, _) = await SeedUpToDateSongAsync(localImageCachePath: customPath);
+        _fileSystem.FileExists(customPath).Returns(true);
 
         SetupArtistImageAt(ArtistImagePath);
 
@@ -210,6 +211,61 @@ public class LibraryServiceArtistImageTests : IDisposable
         var localPath = await GetArtistLocalImagePathAsync(artist.Id);
         localPath.Should().Be(customPath);
         await _imageProcessor.DidNotReceive().ProcessImageBytesAsync(Arg.Any<byte[]>());
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task RescanFolder_ArtistWhoseCachedImageIsMissing_LooksForItAgain(bool hasFolderImage)
+    {
+        var deletedPath = "C:\\cache\\artistimages\\abc.custom.jpg";
+        var (folder, artist, _) = await SeedUpToDateSongAsync(localImageCachePath: deletedPath);
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            await context.Artists.ExecuteUpdateAsync(setters =>
+                setters.SetProperty(a => a.MetadataLastCheckedUtc, DateTime.UtcNow));
+        }
+        if (hasFolderImage) SetupArtistImageAt(ArtistImagePath);
+        var notifiedPaths = new List<string?>();
+        _libraryService.ArtistMetadataUpdated += (_, args) => notifiedPaths.Add(args.NewLocalImageCachePath);
+
+        // Reporting a change makes the scan start the online lookup afterwards.
+        (await _libraryService.RescanFolderForMusicAsync(folder.Id)).Should().BeTrue();
+
+        var expectedPath = hasFolderImage ? Path.Combine(ArtistImageCachePath, $"{artist.Id}.local.jpg") : null;
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        var updated = await assertContext.Artists.SingleAsync();
+        updated.LocalImageCachePath.Should().Be(expectedPath);
+        updated.MetadataLastCheckedUtc.Should().BeNull(because: "the online lookup may find an image again");
+        notifiedPaths.Should().EndWith(expectedPath);
+    }
+
+    [Fact]
+    public async Task RescanFolder_AlbumOnlyArtistWhoseCachedImageIsMissing_IsCleared()
+    {
+        var (folder, _, song) = await SeedUpToDateSongAsync();
+        var albumArtist = new Artist
+        {
+            Name = "Various Artists",
+            LocalImageCachePath = "C:\\cache\\artistimages\\va.fetched.jpg",
+            MetadataLastCheckedUtc = DateTime.UtcNow
+        };
+        var album = new Album { Title = "Compilation" };
+        album.AlbumArtists.Add(new AlbumArtist { Artist = albumArtist, Order = 0 });
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Albums.Add(album);
+            await context.SaveChangesAsync();
+            await context.Songs.Where(s => s.Id == song.Id)
+                .ExecuteUpdateAsync(setters => setters.SetProperty(s => s.AlbumId, album.Id));
+        }
+
+        await _libraryService.RescanFolderForMusicAsync(folder.Id);
+
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        var updated = await assertContext.Artists.SingleAsync(a => a.Id == albumArtist.Id);
+        updated.LocalImageCachePath.Should().BeNull();
+        updated.MetadataLastCheckedUtc.Should().BeNull();
     }
 
     [Fact]

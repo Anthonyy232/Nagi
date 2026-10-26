@@ -208,6 +208,9 @@ public partial class LibraryService
                         await DeleteUnreferencedCoverArtAsync(deleteContext, albumArtPathsToDelete, operationToken).ConfigureAwait(false);
                     }
 
+                    // Before the folder image check, so it can replace the images that are gone.
+                    var clearedArtistImages = await ClearMissingArtistImagesAsync(folderId, operationToken).ConfigureAwait(false);
+
                     var filesToProcess = filesToAdd.Concat(filesToUpdate).ToList();
 
                     if (!filesToProcess.Any())
@@ -236,7 +239,7 @@ public partial class LibraryService
                         var artistImageUpdates = artistImageTask.Result;
 
                         var hasChanges = allFilePathsToDelete.Any() || lrcUpdates > 0 || coverArtUpdates > 0 ||
-                                         artistImageUpdates > 0 || syncedAlbumCovers > 0;
+                                         artistImageUpdates > 0 || syncedAlbumCovers > 0 || clearedArtistImages > 0;
 
                         var updates = new List<string>();
                         if (lrcUpdates > 0)
