@@ -25,9 +25,9 @@ public partial class LibraryService
         List<string> filesToProcess,
         string baseFolderPath,
         IReadOnlySet<string> filePathsBeingUpdated,
+        IReadOnlySet<string> unchangedFiles,
         IProgress<ScanProgress>? progress,
-        CancellationToken cancellationToken,
-        bool skipMediaAssetsForUpdates = false)
+        CancellationToken cancellationToken)
     {
         const int channelCapacity = 100; // ~2 batches of buffer for backpressure
         var channel = Channel.CreateBounded<SongFileMetadata>(new BoundedChannelOptions(channelCapacity)
@@ -122,7 +122,7 @@ public partial class LibraryService
                     {
                         try
                         {
-                            var includeMediaAssets = !skipMediaAssetsForUpdates || !filePathsBeingUpdated.Contains(filePath);
+                            var includeMediaAssets = !unchangedFiles.Contains(filePath);
                             var extractionTask = includeMediaAssets
                                 ? _metadataService.ExtractMetadataAsync(filePath, baseFolderPath)
                                 : _metadataService.ExtractMetadataAsync(filePath, baseFolderPath, false);
@@ -199,7 +199,7 @@ public partial class LibraryService
                     });
 
                     var saved = await ProcessSingleBatchAsync(folderId, batch, batchContext, artistIdCache,
-                        albumIdCache, genreIdCache, filePathsBeingUpdated, skipMediaAssetsForUpdates,
+                        albumIdCache, genreIdCache, filePathsBeingUpdated, unchangedFiles,
                         pipelineToken).ConfigureAwait(false);
                     _logger.LogInformation("Consumer finished batch {BatchNumber}. Saved {Count} items.", batchNumber, saved);
                     totalSaved += saved;
@@ -238,7 +238,7 @@ public partial class LibraryService
         Dictionary<(string Title, string Artist), Guid> albumIdCache,
         Dictionary<string, Guid> genreIdCache,
         IReadOnlySet<string> filePathsBeingUpdated,
-        bool preserveMediaAssetsForUpdates,
+        IReadOnlySet<string> unchangedFiles,
         CancellationToken cancellationToken)
     {
         // Only load existing song records for files that are known updates (not new additions).
@@ -295,7 +295,7 @@ public partial class LibraryService
         {
             existingSongs.TryGetValue(metadata.FilePath, out var existingSong);
             AddSongWithDetailsCached(context, folderId, metadata, artistLookup, albumLookup, genreLookup, existingSong,
-                preserveMediaAssetsForUpdates && existingSong != null);
+                unchangedFiles.Contains(metadata.FilePath));
         }
 
         _logger.LogInformation("Saving changes for batch...");

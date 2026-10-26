@@ -139,7 +139,7 @@ public partial class LibraryService
 
                     progress?.Report(new ScanProgress
                     { StatusText = Resources.Strings.Status_PreparingScanCaches, IsIndeterminate = true });
-                    var (filesToAdd, filesToUpdate, filesRemovedFromDisk) =
+                    var (filesToAdd, filesToUpdate, filesRemovedFromDisk, unchangedFiles) =
                         await AnalyzeFolderChangesAsync(folderId, folder.Path, forceFullScan, operationToken).ConfigureAwait(false);
 
                     if (filesToAdd.Any() || filesToUpdate.Any() || filesRemovedFromDisk.Any())
@@ -271,8 +271,8 @@ public partial class LibraryService
 
                     var filePathsBeingUpdated = filesToUpdate.ToHashSet(StringComparer.OrdinalIgnoreCase);
                     var (newSongsFound, discoveredDirs) = await ExtractAndSaveMetadataStreamingAsync(
-                        folderId, filesToProcess, folder.Path, filePathsBeingUpdated, progress, operationToken,
-                        skipMediaAssetsForUpdates: forceFullScan).ConfigureAwait(false);
+                        folderId, filesToProcess, folder.Path, filePathsBeingUpdated, unchangedFiles, progress,
+                        operationToken).ConfigureAwait(false);
 
                     operationToken.ThrowIfCancellationRequested();
 
@@ -531,7 +531,12 @@ public partial class LibraryService
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    private async Task<(List<string> filesToAdd, List<string> filesToUpdate, List<string> filesRemovedFromDisk)>
+    /// <returns>
+    ///     <c>unchangedFiles</c> are the updates a forced scan re-reads although they didn't change on disk, so they keep
+    ///     their art and lyrics.
+    /// </returns>
+    private async Task<(List<string> filesToAdd, List<string> filesToUpdate, List<string> filesRemovedFromDisk,
+            HashSet<string> unchangedFiles)>
         AnalyzeFolderChangesAsync(Guid folderId, string folderPath, bool forceFullScan, CancellationToken cancellationToken)
     {
         await using var analysisContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -553,12 +558,20 @@ public partial class LibraryService
 
         var filesToAdd = new List<string>();
         var filesToUpdate = new List<string>();
+        var unchangedFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var (path, diskModTime) in diskFileMap)
         {
             if (dbFileMap.TryGetValue(path, out var dbModTime))
             {
-                if (forceFullScan || diskModTime != dbModTime)
+                if (diskModTime != dbModTime)
+                {
                     filesToUpdate.Add(path);
+                }
+                else if (forceFullScan)
+                {
+                    filesToUpdate.Add(path);
+                    unchangedFiles.Add(path);
+                }
             }
             else
             {
@@ -570,7 +583,7 @@ public partial class LibraryService
             .Where(path => !diskFileMap.ContainsKey(path))
             .ToList();
 
-        return (filesToAdd, filesToUpdate, filesRemovedFromDisk);
+        return (filesToAdd, filesToUpdate, filesRemovedFromDisk, unchangedFiles);
     }
 
     /// <summary>

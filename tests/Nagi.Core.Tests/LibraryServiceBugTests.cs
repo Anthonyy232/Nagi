@@ -415,6 +415,47 @@ public class LibraryServiceBugTests : IDisposable
     }
 
     [Fact]
+    public async Task ForceRescanMetadataAsync_ReadsArtForFilesThatChanged()
+    {
+        var folder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Music\\Changed", Name = "Changed" };
+        var filePath = "C:\\Music\\Changed\\song.mp3";
+        var modified = DateTime.UtcNow.AddDays(-1);
+        var song = new Song
+        {
+            Title = "Song",
+            FilePath = filePath,
+            DirectoryPath = folder.Path,
+            FolderId = folder.Id,
+            FileModifiedDate = modified,
+            AlbumArtUriFromTrack = "old-cover.jpg"
+        };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Songs.Add(song);
+            await context.SaveChangesAsync();
+        }
+
+        _fileSystem.DirectoryExists(folder.Path).Returns(true);
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
+            .Returns(new[] { (filePath, modified.AddHours(1)) });
+        _metadataService.ExtractMetadataAsync(filePath, folder.Path, true)
+            .Returns(new SongFileMetadata
+            {
+                FilePath = filePath,
+                FileModifiedDate = modified.AddHours(1),
+                Title = "Song",
+                Artists = ["Artist"],
+                CoverArtUri = "new-cover.jpg"
+            });
+
+        (await _libraryService.ForceRescanMetadataAsync().WaitAsync(TimeSpan.FromSeconds(5))).Should().BeTrue();
+
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        (await assertContext.Songs.SingleAsync()).AlbumArtUriFromTrack.Should().Be("new-cover.jpg");
+    }
+
+    [Fact]
     public async Task ForceRescanMetadataAsync_WhenFolderIsUnavailable_ReportsFailure()
     {
         var folder = new Folder { Id = Guid.NewGuid(), Path = "Z:\\Offline", Name = "Offline" };
