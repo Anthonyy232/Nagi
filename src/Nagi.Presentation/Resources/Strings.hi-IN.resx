@@ -1621,7 +1621,7 @@
     <value>रोमनीकृत बोल दिखाएँ</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
-    <value>समर्थित बोलों के नीचे एक छोटी रोमानाइज़्ड लाइन दिखाएँ जब इंस्टॉल किया गया पैक स्क्रिप्ट से मेल खाता हो।</value>
+    <value>समर्थित बोलों के नीचे एक छोटी रोमानाइज़्ड लाइन दिखाएँ जब इंस्टॉल किया गया पैक स्क्रिप्ट से मेल खाता हो।</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
     <value>भाषा पैक</value>
@@ -1630,7 +1630,7 @@
     <value>समर्थित बोलों को रोमन लिपि में बदलने के लिए भाषा पैक इंस्टॉल करें। पैक स्थानीय रूप से संग्रहीत होते हैं।</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
-    <value>रीफ़्रेश करें</value>
+    <value>रीफ़्रेश करें</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Install" xml:space="preserve">
     <value>इंस्टॉल करें</value>

@@ -1585,7 +1585,7 @@
     <value>ਸ਼ੈਲੀ ਵੰਡ</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>ਕਈ ਸ਼ੈਲੀਆਂ ਨੂੰ ਵੰਡਣ ਲਈ ਵਰਤੇ ਜਾਣ ਵਾਲੇ ਅੱਖਰਾਂ ਨੂੰ ਪਰਿਭਾਸ਼ਿਤ ਕਰੋ (ਉਦਾਹਰਨ ਲਈ ';/'). ਅਯੋਗ ਕਰਨ ਲਈ ਖਾਲੀ ਛੱਡੋ।</value>
+    <value>ਕਈ ਸ਼ੈਲੀਆਂ ਨੂੰ ਵੰਡਣ ਲਈ ਵਰਤੇ ਜਾਣ ਵਾਲੇ ਅੱਖਰਾਂ ਨੂੰ ਪਰਿਭਾਸ਼ਿਤ ਕਰੋ (ਉਦਾਹਰਨ ਲਈ ';/')। ਅਯੋਗ ਕਰਨ ਲਈ ਖਾਲੀ ਛੱਡੋ।</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>ਲਾਇਬ੍ਰੇਰੀ ਨੂੰ ਮੁੜ ਸਕੈਨ ਕਰੋ</value>

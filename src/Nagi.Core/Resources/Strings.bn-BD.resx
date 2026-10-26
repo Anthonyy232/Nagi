@@ -90,7 +90,7 @@
     <value>পরিবর্তনের তারিখ</value>
   </data>
   <data name="Label_LastPlayed" xml:space="preserve">
-    <value>শেষবার চালানো হয়েছে</value>
+    <value>শেষবার চালানো হয়েছে</value>
   </data>
   <data name="Label_Duration" xml:space="preserve">
     <value>সময়কাল</value>
@@ -207,7 +207,7 @@
   </data>
   <!-- Error Mssages -->
   <data name="Error_FailedToAddFolder" xml:space="preserve">
-    <value>ফোল্ডারটি যোগ করা সম্ভব হয়নি।</value>
+    <value>ফোল্ডারটি যোগ করা সম্ভব হয়নি।</value>
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>প্লেলিস্টের নাম খালি থাকতে পারবে না।</value>
@@ -236,7 +236,7 @@
     <value>সাজান: </value>
   </data>
   <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>প্লেলিস্টটি তৈরি করা হয়েছে, কিন্তু এর গানগুলো যোগ করা সম্ভব হয়নি। অনুগ্রহ করে পুনরায় ইমপোর্ট করার চেষ্টা করুন।</value>
+    <value>প্লেলিস্টটি তৈরি করা হয়েছে, কিন্তু এর গানগুলো যোগ করা সম্ভব হয়নি। অনুগ্রহ করে পুনরায় ইমপোর্ট করার চেষ্টা করুন।</value>
   </data>
   <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
     <value>আপনার লাইব্রেরিতে প্লেলিস্টের কোনো গান পাওয়া যায়নি।</value>
@@ -293,7 +293,7 @@
     <value>আপনার ListenBrainz ইউজার টোকেন লিখুন।</value>
   </data>
   <data name="ListenBrainz_InvalidResponse" xml:space="preserve">
-    <value>ListenBrainz থেকে পাওয়া উত্তর পড়া সম্ভব হয়নি। পরে আবার চেষ্টা করুন।</value>
+    <value>ListenBrainz থেকে পাওয়া উত্তর পড়া সম্ভব হয়নি। পরে আবার চেষ্টা করুন।</value>
   </data>
   <data name="ListenBrainz_InvalidServerUrl" xml:space="preserve">
     <value>এমন একটি সার্ভার URL লিখুন যা http:// বা https:// দিয়ে শুরু হয়।</value>
@@ -302,16 +302,16 @@
     <value>ইউজার টোকেনটি অকার্যকর। এটি পরীক্ষা করে আবার চেষ্টা করুন।</value>
   </data>
   <data name="ListenBrainz_ServerError" xml:space="preserve">
-    <value>ListenBrainz একটি ত্রুটি দেখিয়েছে (HTTP {0})। পরে আবার চেষ্টা করুন।</value>
+    <value>ListenBrainz একটি ত্রুটি দেখিয়েছে (HTTP {0})। পরে আবার চেষ্টা করুন।</value>
   </data>
   <data name="ListenBrainz_Unreachable" xml:space="preserve">
-    <value>ListenBrainz-এর সাথে সংযোগ স্থাপন করা সম্ভব হয়নি। আপনার সংযোগ এবং সার্ভার URL পরীক্ষা করুন।</value>
+    <value>ListenBrainz-এর সাথে সংযোগ স্থাপন করা সম্ভব হয়নি। আপনার সংযোগ এবং সার্ভার URL পরীক্ষা করুন।</value>
   </data>
   <data name="Backup_DataFolderMissing" xml:space="preserve">
-    <value>Nagi তার লাইব্রেরি ডেটা ফোল্ডার খুঁজে পায়নি।</value>
+    <value>Nagi তার লাইব্রেরি ডেটা ফোল্ডার খুঁজে পায়নি।</value>
   </data>
   <data name="Backup_IncompleteRestore" xml:space="preserve">
-    <value>রিস্টোর ব্যর্থ হয়েছে এবং আপনার পূর্ববর্তী ডেটা সম্পূর্ণরূপে পুনরুদ্ধার করা সম্ভব হয়নি। রিকভারি ফাইলগুলো &apos;{0}&apos;-এ সংরক্ষণ করা হয়েছে।</value>
+    <value>রিস্টোর ব্যর্থ হয়েছে এবং আপনার পূর্ববর্তী ডেটা সম্পূর্ণরূপে পুনরুদ্ধার করা সম্ভব হয়নি। রিকভারি ফাইলগুলো &apos;{0}&apos;-এ সংরক্ষণ করা হয়েছে।</value>
   </data>
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>নির্বাচিত ফাইলটি একটি বৈধ Nagi ব্যাকআপ নয়।</value>
