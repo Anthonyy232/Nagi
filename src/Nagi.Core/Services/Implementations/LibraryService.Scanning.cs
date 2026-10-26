@@ -228,13 +228,15 @@ public partial class LibraryService
 
                         await Task.WhenAll(lrcTask, coverArtTask, artistImageTask).ConfigureAwait(false);
                         // After the folder art check, so a track's own folder art wins over its album's cover.
+                        var syncedAlbumCovers = await SyncAlbumCoversWithTracksAsync(folderId, operationToken).ConfigureAwait(false);
                         var albumCoverUpdates = await ApplyAlbumCoversToTracksWithoutArtAsync(folderId, operationToken).ConfigureAwait(false);
 
                         var lrcUpdates = lrcTask.Result;
                         var coverArtUpdates = coverArtTask.Result + albumCoverUpdates;
                         var artistImageUpdates = artistImageTask.Result;
 
-                        var hasChanges = allFilePathsToDelete.Any() || lrcUpdates > 0 || coverArtUpdates > 0 || artistImageUpdates > 0;
+                        var hasChanges = allFilePathsToDelete.Any() || lrcUpdates > 0 || coverArtUpdates > 0 ||
+                                         artistImageUpdates > 0 || syncedAlbumCovers > 0;
 
                         var updates = new List<string>();
                         if (lrcUpdates > 0)
@@ -294,6 +296,8 @@ public partial class LibraryService
                         postScanTasks.Add(UpdateMissingCoverArtAsync(folderId, folder.Path, operationToken));
                     }
                     await Task.WhenAll(postScanTasks).ConfigureAwait(false);
+                    if (!isPureAddScan)
+                        await SyncAlbumCoversWithTracksAsync(folderId, operationToken).ConfigureAwait(false);
                     await ApplyAlbumCoversToTracksWithoutArtAsync(folderId, operationToken).ConfigureAwait(false);
 
                     progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_Finalizing, IsIndeterminate = true });

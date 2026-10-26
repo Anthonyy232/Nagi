@@ -1434,4 +1434,75 @@ public partial class LibraryServiceTests : IDisposable
         songs["unknown"].AlbumArtUriFromTrack.Should().BeNull();
         await _imageProcessor.DidNotReceive().SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>());
     }
+
+    [Fact]
+    public async Task Rescan_KeepsAlbumCoversInStepWithTheirTracks()
+    {
+        var timestamp = new DateTime(2024, 6, 1, 0, 0, 0, DateTimeKind.Utc);
+        const string oldCover = @"C:\cache\albumart\old.jpg";
+        const string newCover = @"C:\cache\albumart\new.jpg";
+        var folder = new Folder { Path = @"C:\Music", Name = "Music" };
+        var artist = new Artist { Name = "Artist" };
+        var albums = new Dictionary<string, Album>();
+        Song Track(string albumTitle, int trackNumber, string? albumCover = oldCover, string? art = oldCover)
+        {
+            if (!albums.TryGetValue(albumTitle, out var album))
+            {
+                album = new Album { Title = albumTitle, CoverArtUri = albumCover };
+                album.AlbumArtists.Add(new AlbumArtist { Artist = artist, Order = 0 });
+                albums.Add(albumTitle, album);
+            }
+            var song = new Song
+            {
+                Folder = folder,
+                FilePath = $@"C:\Music\{albumTitle}{trackNumber}.mp3",
+                DirectoryPath = folder.Path,
+                FileModifiedDate = timestamp,
+                Album = album,
+                TrackNumber = trackNumber,
+                AlbumArtUriFromTrack = art
+            };
+            song.SongArtists.Add(new SongArtist { Artist = artist, Order = 0 });
+            return song;
+        }
+        var retagged = new[] { Track("Retagged", 1), Track("Retagged", 2) };
+        var bonus = new[] { Track("Bonus", 1), Track("Bonus", 2) };
+        // Tracks without art of their own show the album's online cover.
+        var online = new[] { Track("Online", 1), Track("Online", 2) };
+        var uncovered = Track("Uncovered", 1, albumCover: null, art: newCover);
+        var changed = retagged.Append(bonus[1]).Concat(online).ToArray();
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Songs.AddRange(retagged.Concat(bonus).Concat(online).Append(uncovered));
+            await context.SaveChangesAsync();
+        }
+        _fileSystem.DirectoryExists(folder.Path).Returns(true);
+        _fileSystem.FileExists(Arg.Any<string>()).Returns(true);
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
+            .Returns(retagged.Concat(bonus).Concat(online).Append(uncovered)
+                .Select(s => (s.FilePath, changed.Contains(s) ? timestamp.AddDays(1) : timestamp)).ToArray());
+        foreach (var song in changed)
+            _metadataService.ExtractMetadataAsync(song.FilePath, folder.Path, true).Returns(new SongFileMetadata
+            {
+                FilePath = song.FilePath,
+                FileModifiedDate = timestamp.AddDays(1),
+                Title = song.FilePath,
+                Album = song.Album!.Title,
+                TrackNumber = song.TrackNumber,
+                Artists = ["Artist"],
+                AlbumArtists = ["Artist"],
+                CoverArtUri = online.Contains(song) ? null : newCover
+            });
+
+        (await _libraryService.RescanFolderForMusicAsync(folder.Id)).Should().BeTrue();
+
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        var covers = await assertContext.Albums.ToDictionaryAsync(a => a.Title, a => a.CoverArtUri);
+        covers["Retagged"].Should().Be(newCover);
+        covers["Bonus"].Should().Be(oldCover, because: "another track still uses the album's cover");
+        covers["Online"].Should().Be(oldCover, because: "re-reading tracks without art doesn't make the cover stale");
+        covers["Uncovered"].Should().Be(newCover);
+        (await assertContext.Songs.Where(s => s.Album!.Title == "Online").Select(s => s.AlbumArtUriFromTrack).ToListAsync())
+            .Should().AllBe(oldCover);
+    }
 }

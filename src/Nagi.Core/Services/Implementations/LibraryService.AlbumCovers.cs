@@ -7,7 +7,8 @@ using Nagi.Core.Services.Data;
 namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
-///     Album covers: online covers for albums that have no art, and the album cover for tracks without their own.
+///     Album covers: online covers for albums that have no art, keeping album covers in step with their tracks, and
+///     the album cover for tracks without their own.
 /// </summary>
 public partial class LibraryService
 {
@@ -103,6 +104,45 @@ public partial class LibraryService
                 .SetProperty(s => s.DarkSwatchId, cover.DarkSwatchId), token)
             .ConfigureAwait(false);
         return true;
+    }
+
+    /// <summary>
+    ///     Gives each album whose cover none of its tracks use the art of its first track that has some.
+    /// </summary>
+    /// <returns>The number of albums updated.</returns>
+    private async Task<int> SyncAlbumCoversWithTracksAsync(Guid folderId, CancellationToken cancellationToken)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
+        var albums = await context.Albums
+            .Where(a => a.Songs.Any(s => s.FolderId == folderId) &&
+                        (a.CoverArtUri == null || !a.Songs.Any(s => s.AlbumArtUriFromTrack == a.CoverArtUri)))
+            .Select(a => new
+            {
+                a.Id,
+                TrackArt = a.Songs
+                    .Where(s => s.AlbumArtUriFromTrack != null)
+                    .OrderBy(s => s.DiscNumber).ThenBy(s => s.TrackNumber).ThenBy(s => s.FilePath)
+                    .Select(s => s.AlbumArtUriFromTrack)
+                    .FirstOrDefault()
+            })
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+
+        var updatedCount = 0;
+        foreach (var album in albums)
+        {
+            // A track re-read without art of its own drops the album cover it showed, which doesn't make that cover
+            // out of date.
+            if (album.TrackArt is null) continue;
+
+            updatedCount += await context.Albums.Where(a => a.Id == album.Id)
+                .ExecuteUpdateAsync(setters => setters.SetProperty(a => a.CoverArtUri, album.TrackArt),
+                    cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+        if (updatedCount > 0)
+            _logger.LogInformation("Gave {Count} albums the art of their tracks.", updatedCount);
+        return updatedCount;
     }
 
     /// <summary>
