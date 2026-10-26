@@ -1420,6 +1420,7 @@ public partial class LibraryServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
+        _fileSystem.FileExists(albumCover).Returns(true);
         _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories).Returns(new[]
         {
             (@"C:\Music\with-art.mp3", timestamp), (@"C:\Music\without-art.mp3", timestamp), (@"C:\Music\unknown.mp3", timestamp)
@@ -1504,5 +1505,87 @@ public partial class LibraryServiceTests : IDisposable
         covers["Uncovered"].Should().Be(newCover);
         (await assertContext.Songs.Where(s => s.Album!.Title == "Online").Select(s => s.AlbumArtUriFromTrack).ToListAsync())
             .Should().AllBe(oldCover);
+    }
+
+    [Fact]
+    public async Task Rescan_RebuildsCoversWhoseCachedImageIsMissing()
+    {
+        var timestamp = new DateTime(2024, 6, 1, 0, 0, 0, DateTimeKind.Utc);
+        const string embeddedCover = @"C:\cache\albumart\embedded.jpg";
+        const string onlineCover = @"C:\cache\albumart\online.jpg";
+        const string splitCover = @"C:\cache\albumart\split.jpg";
+        var folder = new Folder { Path = @"C:\Music", Name = "Music" };
+        var otherFolder = new Folder { Path = @"C:\Other", Name = "Other" };
+        var artist = new Artist { Name = "Artist" };
+        Song Track(string title, string cover)
+        {
+            var album = new Album { Title = title, CoverArtUri = cover, CoverArtLastCheckedUtc = timestamp };
+            album.AlbumArtists.Add(new AlbumArtist { Artist = artist, Order = 0 });
+            var song = new Song
+            {
+                Folder = folder,
+                FilePath = $@"C:\Music\{title}.mp3",
+                DirectoryPath = folder.Path,
+                FileModifiedDate = timestamp,
+                Album = album,
+                AlbumArtUriFromTrack = cover
+            };
+            song.SongArtists.Add(new SongArtist { Artist = artist, Order = 0 });
+            return song;
+        }
+        SongFileMetadata Metadata(string title, string? cover) => new()
+        {
+            FilePath = $@"C:\Music\{title}.mp3",
+            FileModifiedDate = timestamp,
+            Title = title,
+            Album = title,
+            Artists = ["Artist"],
+            AlbumArtists = ["Artist"],
+            CoverArtUri = cover
+        };
+        var split = Track("Split", splitCover);
+        // The split album's cover is embedded in a track of a folder this scan doesn't cover.
+        var otherFolderTrack = new Song
+        {
+            Folder = otherFolder,
+            FilePath = @"C:\Other\SplitOther.mp3",
+            DirectoryPath = otherFolder.Path,
+            FileModifiedDate = timestamp,
+            Album = split.Album,
+            AlbumArtUriFromTrack = splitCover
+        };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Songs.AddRange(Track("Embedded", embeddedCover), Track("Online", onlineCover), split, otherFolderTrack);
+            await context.SaveChangesAsync();
+        }
+        _fileSystem.DirectoryExists(folder.Path).Returns(true);
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories).Returns(new[]
+        {
+            (@"C:\Music\Embedded.mp3", timestamp), (@"C:\Music\Online.mp3", timestamp), (@"C:\Music\Split.mp3", timestamp)
+        });
+        _metadataService.ExtractMetadataAsync(@"C:\Music\Split.mp3", folder.Path, true).Returns(Metadata("Split", null));
+        // Both covers are missing. Re-reading the embedded art recreates its cover; the online one only comes back online.
+        var embeddedCoverRecreated = false;
+        _fileSystem.FileExists(embeddedCover).Returns(_ => embeddedCoverRecreated);
+        _metadataService.ExtractMetadataAsync(@"C:\Music\Embedded.mp3", folder.Path, true).Returns(_ =>
+        {
+            embeddedCoverRecreated = true;
+            return Metadata("Embedded", embeddedCover);
+        });
+        _metadataService.ExtractMetadataAsync(@"C:\Music\Online.mp3", folder.Path, true)
+            .Returns(Metadata("Online", null));
+
+        (await _libraryService.RescanFolderForMusicAsync(folder.Id)).Should().BeTrue();
+
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        var songs = await assertContext.Songs.Include(s => s.Album)
+            .ToDictionaryAsync(s => Path.GetFileNameWithoutExtension(s.FilePath));
+        songs["Embedded"].AlbumArtUriFromTrack.Should().Be(embeddedCover);
+        songs["Embedded"].Album!.CoverArtUri.Should().Be(embeddedCover);
+        songs["Online"].AlbumArtUriFromTrack.Should().BeNull();
+        songs["Online"].Album!.CoverArtUri.Should().BeNull();
+        songs["Online"].Album!.CoverArtLastCheckedUtc.Should().BeNull();
+        songs["Split"].Album!.CoverArtUri.Should().Be(splitCover, because: "scanning the other folder recreates it");
     }
 }

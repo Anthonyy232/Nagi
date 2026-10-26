@@ -107,18 +107,21 @@ public partial class LibraryService
     }
 
     /// <summary>
-    ///     Gives each album whose cover none of its tracks use the art of its first track that has some.
+    ///     Gives each album whose cover none of its tracks use the art of its first track that has some. Without such
+    ///     art, a cover whose cached file is missing is cleared so the online pass looks for one again.
     /// </summary>
     /// <returns>The number of albums updated.</returns>
     private async Task<int> SyncAlbumCoversWithTracksAsync(Guid folderId, CancellationToken cancellationToken)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
+        // A cover a track uses is current; if its file is missing, scanning the folder of that track recreates it.
         var albums = await context.Albums
             .Where(a => a.Songs.Any(s => s.FolderId == folderId) &&
                         (a.CoverArtUri == null || !a.Songs.Any(s => s.AlbumArtUriFromTrack == a.CoverArtUri)))
             .Select(a => new
             {
                 a.Id,
+                a.CoverArtUri,
                 TrackArt = a.Songs
                     .Where(s => s.AlbumArtUriFromTrack != null)
                     .OrderBy(s => s.DiscNumber).ThenBy(s => s.TrackNumber).ThenBy(s => s.FilePath)
@@ -132,16 +135,18 @@ public partial class LibraryService
         {
             // A track re-read without art of its own drops the album cover it showed, which doesn't make that cover
             // out of date.
-            if (album.TrackArt is null) continue;
+            if (album.TrackArt is null && (album.CoverArtUri is null || _fileSystem.FileExists(album.CoverArtUri)))
+                continue;
 
             updatedCount += await context.Albums.Where(a => a.Id == album.Id)
-                .ExecuteUpdateAsync(setters => setters.SetProperty(a => a.CoverArtUri, album.TrackArt),
-                    cancellationToken)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(a => a.CoverArtUri, album.TrackArt)
+                    .SetProperty(a => a.CoverArtLastCheckedUtc, (DateTime?)null), cancellationToken)
                 .ConfigureAwait(false);
         }
 
         if (updatedCount > 0)
-            _logger.LogInformation("Gave {Count} albums the art of their tracks.", updatedCount);
+            _logger.LogInformation("Updated the cover of {Count} albums to match their tracks.", updatedCount);
         return updatedCount;
     }
 

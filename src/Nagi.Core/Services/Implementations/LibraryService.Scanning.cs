@@ -536,8 +536,8 @@ public partial class LibraryService
     }
 
     /// <returns>
-    ///     <c>unchangedFiles</c> are the updates a forced scan re-reads although they didn't change on disk, so they keep
-    ///     their art and lyrics.
+    ///     Updates include songs whose cached cover is missing. <c>unchangedFiles</c> are the updates a forced scan
+    ///     re-reads although they didn't change on disk, so they keep their art and lyrics.
     /// </returns>
     private async Task<(List<string> filesToAdd, List<string> filesToUpdate, List<string> filesRemovedFromDisk,
             HashSet<string> unchangedFiles)>
@@ -548,8 +548,15 @@ public partial class LibraryService
         var dbFiles = await analysisContext.Songs
             .AsNoTracking()
             .Where(s => s.FolderId == folderId)
-            .Select(s => new { s.FilePath, s.FileModifiedDate })
+            .Select(s => new { s.FilePath, s.FileModifiedDate, s.AlbumArtUriFromTrack })
             .ToListAsync(cancellationToken).ConfigureAwait(false);
+
+        // Covers are named by their content, so re-reading a song recreates a deleted cover at its old path.
+        var missingCovers = dbFiles.Select(s => s.AlbumArtUriFromTrack).OfType<string>()
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        missingCovers.RemoveWhere(_fileSystem.FileExists);
+        if (missingCovers.Count > 0)
+            _logger.LogInformation("Re-reading songs for {Count} missing cached covers.", missingCovers.Count);
 
         var diskFileMap = _fileSystem.EnumerateFilesWithLastWriteTime(folderPath, "*.*", SearchOption.AllDirectories)
             .Where(x => FileExtensions.MusicFileExtensions.Contains(Path.GetExtension(x.Path)))
@@ -557,17 +564,17 @@ public partial class LibraryService
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var dbFileMap = dbFiles
-            .ToDictionary(s => s.FilePath, s => s.FileModifiedDate, StringComparer.OrdinalIgnoreCase);
+        var dbFileMap = dbFiles.ToDictionary(s => s.FilePath, StringComparer.OrdinalIgnoreCase);
 
         var filesToAdd = new List<string>();
         var filesToUpdate = new List<string>();
         var unchangedFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var (path, diskModTime) in diskFileMap)
         {
-            if (dbFileMap.TryGetValue(path, out var dbModTime))
+            if (dbFileMap.TryGetValue(path, out var dbFile))
             {
-                if (diskModTime != dbModTime)
+                if (diskModTime != dbFile.FileModifiedDate ||
+                    (dbFile.AlbumArtUriFromTrack is { } cover && missingCovers.Contains(cover)))
                 {
                     filesToUpdate.Add(path);
                 }

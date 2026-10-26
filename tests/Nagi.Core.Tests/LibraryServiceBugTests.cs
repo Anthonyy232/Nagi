@@ -388,6 +388,7 @@ public class LibraryServiceBugTests : IDisposable
         }
 
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
+        _fileSystem.FileExists("cached-cover.jpg").Returns(true);
         _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
             .Returns(new[] { (filePath, modified) });
         _metadataService.ExtractMetadataAsync(filePath, folder.Path, false)
