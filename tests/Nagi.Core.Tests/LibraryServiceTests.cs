@@ -1588,4 +1588,53 @@ public partial class LibraryServiceTests : IDisposable
         songs["Online"].Album!.CoverArtLastCheckedUtc.Should().BeNull();
         songs["Split"].Album!.CoverArtUri.Should().Be(splitCover, because: "scanning the other folder recreates it");
     }
+
+    [Fact]
+    public async Task Rescan_DeletesReplacedCoversThatNoSongStillUses()
+    {
+        var timestamp = new DateTime(2024, 6, 1, 0, 0, 0, DateTimeKind.Utc);
+        const string orphanedCover = @"C:\cache\albumart\orphaned.jpg";
+        const string sharedCover = @"C:\cache\albumart\shared.jpg";
+        const string newCover = @"C:\cache\albumart\new.jpg";
+        const string staleAlbumCover = @"C:\cache\albumart\stale.jpg";
+        var folder = new Folder { Path = @"C:\Music", Name = "Music" };
+        Song Track(string name, string cover, Album? album = null) => new()
+        {
+            Folder = folder,
+            FilePath = $@"C:\Music\{name}.mp3",
+            DirectoryPath = folder.Path,
+            FileModifiedDate = timestamp,
+            AlbumArtUriFromTrack = cover,
+            Album = album
+        };
+        var staleAlbum = new Album { Title = "Stale", CoverArtUri = staleAlbumCover };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Songs.AddRange(Track("first", orphanedCover), Track("second", sharedCover),
+                Track("unchanged", sharedCover, staleAlbum));
+            await context.SaveChangesAsync();
+        }
+        _fileSystem.DirectoryExists(folder.Path).Returns(true);
+        _fileSystem.FileExists(Arg.Any<string>()).Returns(true);
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories).Returns(new[]
+        {
+            (@"C:\Music\first.mp3", timestamp.AddDays(1)), (@"C:\Music\second.mp3", timestamp.AddDays(1)),
+            (@"C:\Music\unchanged.mp3", timestamp)
+        });
+        foreach (var name in new[] { "first", "second" })
+            _metadataService.ExtractMetadataAsync($@"C:\Music\{name}.mp3", folder.Path, true).Returns(new SongFileMetadata
+            {
+                FilePath = $@"C:\Music\{name}.mp3",
+                FileModifiedDate = timestamp.AddDays(1),
+                Title = name,
+                Artists = ["Artist"],
+                CoverArtUri = newCover
+            });
+
+        (await _libraryService.RescanFolderForMusicAsync(folder.Id)).Should().BeTrue();
+
+        _fileSystem.Received(1).DeleteFile(orphanedCover);
+        _fileSystem.Received(1).DeleteFile(staleAlbumCover);
+        _fileSystem.DidNotReceive().DeleteFile(sharedCover);
+    }
 }

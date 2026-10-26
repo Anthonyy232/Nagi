@@ -108,7 +108,8 @@ public partial class LibraryService
 
     /// <summary>
     ///     Gives each album whose cover none of its tracks use the art of its first track that has some. Without such
-    ///     art, a cover whose cached file is missing is cleared so the online pass looks for one again.
+    ///     art, a cover whose cached file is missing is cleared so the online pass looks for one again. Replaced covers
+    ///     are deleted when nothing else uses them.
     /// </summary>
     /// <returns>The number of albums updated.</returns>
     private async Task<int> SyncAlbumCoversWithTracksAsync(Guid folderId, CancellationToken cancellationToken)
@@ -131,6 +132,7 @@ public partial class LibraryService
             .ToListAsync(cancellationToken).ConfigureAwait(false);
 
         var updatedCount = 0;
+        var replacedCovers = new List<string>();
         foreach (var album in albums)
         {
             // A track re-read without art of its own drops the album cover it showed, which doesn't make that cover
@@ -143,8 +145,10 @@ public partial class LibraryService
                     .SetProperty(a => a.CoverArtUri, album.TrackArt)
                     .SetProperty(a => a.CoverArtLastCheckedUtc, (DateTime?)null), cancellationToken)
                 .ConfigureAwait(false);
+            if (album.CoverArtUri is not null) replacedCovers.Add(album.CoverArtUri);
         }
 
+        await DeleteUnreferencedCoverArtAsync(context, replacedCovers, cancellationToken).ConfigureAwait(false);
         if (updatedCount > 0)
             _logger.LogInformation("Updated the cover of {Count} albums to match their tracks.", updatedCount);
         return updatedCount;

@@ -272,7 +272,7 @@ public partial class LibraryService
                     }
 
                     var filePathsBeingUpdated = filesToUpdate.ToHashSet(StringComparer.OrdinalIgnoreCase);
-                    var (newSongsFound, discoveredDirs) = await ExtractAndSaveMetadataStreamingAsync(
+                    var (newSongsFound, discoveredDirs, replacedCovers) = await ExtractAndSaveMetadataStreamingAsync(
                         folderId, filesToProcess, folder.Path, filePathsBeingUpdated, unchangedFiles, progress,
                         operationToken).ConfigureAwait(false);
 
@@ -309,6 +309,8 @@ public partial class LibraryService
                         await using (var finalContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false))
                         {
                             DeleteOrphanedArtistImages(await CleanUpOrphanedEntitiesAsync(finalContext, operationToken).ConfigureAwait(false));
+                            // Only after every batch is saved, since songs read later in the scan may reuse a replaced cover.
+                            await DeleteUnreferencedCoverArtAsync(finalContext, replacedCovers, operationToken).ConfigureAwait(false);
                         }
                     }
 
