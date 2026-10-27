@@ -6,7 +6,7 @@ namespace Nagi.Core.Services.Implementations;
 /// <summary>
 ///     Periodically retries pending listens across registered scrobbling destinations.
 /// </summary>
-public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable
+public class OfflineScrobbleService : IDisposable
 {
     private static readonly TimeSpan InitialDelay = TimeSpan.FromMinutes(1);
     private static readonly TimeSpan BaseCheckInterval = TimeSpan.FromMinutes(15);

@@ -10,7 +10,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Nagi.Core.Models.Lyrics;
-using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services.Implementations;
 using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
 
@@ -45,7 +45,7 @@ public sealed partial class LyricsPage : Page
 
     public LyricsPage()
     {
-        ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<LyricsPageViewModel>();
+        ViewModel = App.Services!.GetRequiredService<ViewModelFactory>().Create<LyricsPageViewModel>();
         InitializeComponent();
         Storyboard.SetTarget(_progressBarAnimation, LyricsProgressBar);
         Storyboard.SetTargetProperty(_progressBarAnimation, nameof(ProgressBar.Value));

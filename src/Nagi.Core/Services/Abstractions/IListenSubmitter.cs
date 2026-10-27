@@ -2,7 +2,7 @@ namespace Nagi.Core.Services.Abstractions;
 
 /// <summary>
 ///     An abstraction for "something that can submit past listens" to a scrobbling service.
-///     Consumed by <see cref="IOfflineScrobbleService" /> to fan out queue processing across
+///     Consumed by <see cref="Implementations.OfflineScrobbleService" /> to fan out queue processing across
 ///     multiple scrobbling destinations (e.g. Last.fm, ListenBrainz).
 /// </summary>
 public interface IListenSubmitter

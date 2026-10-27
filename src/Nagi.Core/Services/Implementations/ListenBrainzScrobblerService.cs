@@ -15,7 +15,7 @@ namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
 ///     Handles HTTP communication with ListenBrainz for listen submission and token validation.
-///     Also implements <see cref="IListenSubmitter" /> so <see cref="IOfflineScrobbleService" />
+///     Also implements <see cref="IListenSubmitter" /> so <see cref="OfflineScrobbleService" />
 ///     can fan out queue processing to this destination.
 /// </summary>
 public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IListenSubmitter

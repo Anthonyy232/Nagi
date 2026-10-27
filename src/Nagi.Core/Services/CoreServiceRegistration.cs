@@ -38,10 +38,10 @@ public static class CoreServiceRegistration
         services.AddSingleton<LibraryService>();
         services.AddSingleton<ILibraryWriter>(sp => sp.GetRequiredService<LibraryService>());
         services.AddSingleton<ILibraryScanner>(sp => sp.GetRequiredService<LibraryService>());
-        services.AddSingleton<ILibraryFolderWatcher, LibraryFolderWatcher>();
+        services.AddSingleton<LibraryFolderWatcher>();
 
         services.AddSingleton<IMusicPlaybackService, MusicPlaybackService>();
-        services.AddSingleton<IOfflineScrobbleService, OfflineScrobbleService>();
+        services.AddSingleton<OfflineScrobbleService>();
         services.AddSingleton<IImageProcessor, ImageSharpProcessor>();
         services.AddSingleton<IMetadataService, AtlMetadataService>();
         services.AddSingleton<ILrcService, LrcService>();
@@ -229,7 +229,7 @@ public static class CoreServiceRegistration
         services.AddSingleton<ListenBrainzScrobblerService>();
         services.AddSingleton<IListenBrainzScrobblerService>(sp => sp.GetRequiredService<ListenBrainzScrobblerService>());
         services.AddSingleton<IListenSubmitter>(sp => sp.GetRequiredService<ListenBrainzScrobblerService>());
-        services.AddSingleton<IPresenceManager, PresenceManager>();
+        services.AddSingleton<PresenceManager>();
         services.AddSingleton<IPresenceService, DiscordPresenceService>();
         services.AddSingleton<IPresenceService, LastFmPresenceService>();
         services.AddSingleton<IPresenceService, ListenBrainzPresenceService>();

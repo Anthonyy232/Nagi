@@ -12,6 +12,7 @@ using Microsoft.UI.Xaml.Controls;
 using Nagi.Core.Models;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services.Implementations;
 using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Dialogs;
@@ -28,11 +29,11 @@ public partial class UIService : IUIService
     private const string IssuesUrl = "https://github.com/Anthonyy232/Nagi/issues";
 
     private readonly IWin32InteropService _win32InteropService;
-    private readonly IViewModelFactory _viewModelFactory;
+    private readonly ViewModelFactory _viewModelFactory;
     private readonly ILogger<UIService> _logger;
     private readonly MainWindow _window;
 
-    public UIService(MainWindow window, IWin32InteropService win32InteropService, IViewModelFactory viewModelFactory,
+    public UIService(MainWindow window, IWin32InteropService win32InteropService, ViewModelFactory viewModelFactory,
         ILogger<UIService> logger)
     {
         _window = window;

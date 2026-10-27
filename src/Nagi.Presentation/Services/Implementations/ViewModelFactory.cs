@@ -1,10 +1,12 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.Presentation.Services.Implementations;
 
-public sealed class ViewModelFactory : IViewModelFactory
+/// <summary>
+///     Creates page-owned view models that the page is responsible for disposing.
+/// </summary>
+public sealed class ViewModelFactory
 {
     private readonly IServiceProvider _services;
 

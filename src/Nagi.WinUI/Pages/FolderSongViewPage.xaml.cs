@@ -9,7 +9,7 @@ using Nagi.Core.Models;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services.Implementations;
 using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
 
@@ -21,7 +21,7 @@ public sealed partial class FolderSongViewPage : SongListPage
     public FolderSongViewPage()
     {
         InitializeComponent();
-        ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<FolderSongListViewModel>();
+        ViewModel = App.Services!.GetRequiredService<ViewModelFactory>().Create<FolderSongListViewModel>();
         DataContext = ViewModel;
         InitializeSongList(ViewModel, ownsViewModel: true, SearchToggleButton, SearchTextBox,
             Strings.FolderSongViewPage_SearchButton_Search_ToolTip, ColumnHeaderHost, FolderContentsListView);
