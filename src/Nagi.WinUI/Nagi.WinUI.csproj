@@ -116,9 +116,6 @@
         <PackageReference Include="H.NotifyIcon.WinUI" />
         <PackageReference Include="ImageEx.WinUI" />
 
-        <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" />
-        <PackageReference Include="SixLabors.ImageSharp" />
-
         <!-- LibVLC native libraries for Windows, used by the player in Nagi.Audio.LibVlc -->
         <PackageReference Include="VideoLAN.LibVLC.Windows" />
     </ItemGroup>
