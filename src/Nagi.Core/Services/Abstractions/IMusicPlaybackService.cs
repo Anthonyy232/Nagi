@@ -17,7 +17,7 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     PlaybackStopMode StopMode { get; }
     DateTimeOffset? StopDeadline { get; }
     event Action? StopScheduleChanged;
-    Task<bool> PlayMixAsync(IEnumerable<Guid> songIds, ShuffleMode mode, TimeSpan? duration = null, PlaybackContext? context = null, int avoidRecentDays = 1);
+    Task<bool> PlayMixAsync(IEnumerable<Guid> songIds, ShuffleMode mode, TimeSpan? duration = null, PlaybackContext? context = null, int avoidRecentDays = PlaybackMixLimits.DefaultAvoidRecentDays);
     void ScheduleStop(PlaybackStopMode mode, TimeSpan? delay = null, bool finishCurrentTrack = true);
     Task CheckStopScheduleAsync();
 

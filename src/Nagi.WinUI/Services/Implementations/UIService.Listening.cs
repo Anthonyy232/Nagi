@@ -16,12 +16,10 @@ public partial class UIService
     {
         Header = Strings.Listening_Minutes,
         Minimum = 1,
-        Maximum = 1440,
-        Value = 30,
+        Maximum = PlaybackMixLimits.MaxMinutes,
+        Value = ListeningMinutes.Default,
         SpinButtonPlacementMode = NumberBoxSpinButtonPlacementMode.Inline
     };
-
-    private static bool IsValidMinutes(double value) => value is >= 1 and <= 1440 && value == Math.Truncate(value);
 
     public async Task<PlaybackMixOptions?> ShowPlayForDialogAsync()
     {
@@ -38,8 +36,8 @@ public partial class UIService
         {
             Header = Strings.Listening_AvoidRecentDays,
             Minimum = 0,
-            Maximum = 365,
-            Value = 1,
+            Maximum = PlaybackMixLimits.MaxAvoidRecentDays,
+            Value = PlaybackMixLimits.DefaultAvoidRecentDays,
             SpinButtonPlacementMode = NumberBoxSpinButtonPlacementMode.Inline
         };
         var more = new Expander
@@ -65,12 +63,13 @@ public partial class UIService
             DefaultButton = ContentDialogButton.Primary,
             XamlRoot = root
         };
-        void Validate() => dialog.IsPrimaryButtonEnabled = IsValidMinutes(minutes.Value)
-            && (mode.SelectedIndex != (int)ShuffleMode.MoreVariety
-                || avoid.Value is >= 0 and <= 365 && avoid.Value == Math.Truncate(avoid.Value));
+        void Validate() => dialog.IsPrimaryButtonEnabled = ListeningMinutes.IsValid(minutes.Value)
+            && (!PlaybackMixOptions.UsesAvoidRecentDays((ShuffleMode)mode.SelectedIndex)
+                || PlaybackMixOptions.IsValidAvoidRecentDays(avoid.Value));
         mode.SelectionChanged += (_, _) =>
         {
-            more.Visibility = mode.SelectedIndex == (int)ShuffleMode.MoreVariety ? Visibility.Visible : Visibility.Collapsed;
+            more.Visibility = PlaybackMixOptions.UsesAvoidRecentDays((ShuffleMode)mode.SelectedIndex)
+                ? Visibility.Visible : Visibility.Collapsed;
             description.Text = ShuffleModeText.GetDescription((ShuffleMode)mode.SelectedIndex);
             description.Visibility = description.Text.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
             Validate();
@@ -79,7 +78,8 @@ public partial class UIService
         avoid.ValueChanged += (_, _) => Validate();
         return await ShowDialogAsync(dialog) == ContentDialogResult.Primary
             ? new PlaybackMixOptions((int)minutes.Value, (ShuffleMode)mode.SelectedIndex,
-                mode.SelectedIndex == (int)ShuffleMode.MoreVariety ? (int)avoid.Value : 1) : null;
+                PlaybackMixOptions.UsesAvoidRecentDays((ShuffleMode)mode.SelectedIndex)
+                    ? (int)avoid.Value : PlaybackMixLimits.DefaultAvoidRecentDays) : null;
     }
 
     public async Task<(int Minutes, bool FinishTrack)?> ShowSleepTimerDialogAsync()
@@ -99,7 +99,7 @@ public partial class UIService
             DefaultButton = ContentDialogButton.Primary,
             XamlRoot = root
         };
-        minutes.ValueChanged += (_, _) => dialog.IsPrimaryButtonEnabled = IsValidMinutes(minutes.Value);
+        minutes.ValueChanged += (_, _) => dialog.IsPrimaryButtonEnabled = ListeningMinutes.IsValid(minutes.Value);
         return await ShowDialogAsync(dialog) == ContentDialogResult.Primary ? ((int)minutes.Value, finish.IsChecked == true) : null;
     }
 }
