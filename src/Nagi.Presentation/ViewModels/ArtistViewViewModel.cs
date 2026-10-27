@@ -202,10 +202,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteLoadCommands))]
-    private async Task PlayAlbumAsync(Guid albumId)
-    {
-        await _playbackService.PlayAlbumAsync(albumId);
-    }
+    private Task PlayAlbumAsync(Guid albumId) => RunActionAsync(() => _playbackService.PlayAlbumAsync(albumId));
 
     /// <summary>
     ///     Handles real-time updates to artist metadata, such as a downloaded artist image.

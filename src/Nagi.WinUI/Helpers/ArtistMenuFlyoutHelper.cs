@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Microsoft.Extensions.Logging;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.Core.Models;
@@ -23,9 +22,8 @@ public static class ArtistMenuFlyoutHelper
         MenuFlyoutSubItem subMenu,
         Song song,
         ICommand goToArtistCommand,
-        Func<Song, Task<IReadOnlyList<Artist>>> loadArtists,
-        DispatcherQueue dispatcherQueue,
-        ILogger logger)
+        Func<Song, Task<IReadOnlyList<Artist>?>> loadArtists,
+        DispatcherQueue dispatcherQueue)
     {
         subMenu.Items.Clear();
 
@@ -42,7 +40,7 @@ public static class ArtistMenuFlyoutHelper
         var loadingItem = new MenuFlyoutItem { Text = Strings.Status_Loading, IsEnabled = false };
         subMenu.Items.Add(loadingItem);
 
-        _ = PopulateArtistsAsync(subMenu, song, loadingItem, goToArtistCommand, loadArtists, dispatcherQueue, logger);
+        _ = PopulateArtistsAsync(subMenu, song, loadingItem, goToArtistCommand, loadArtists, dispatcherQueue);
     }
 
     private static async Task PopulateArtistsAsync(
@@ -50,39 +48,32 @@ public static class ArtistMenuFlyoutHelper
         Song song,
         MenuFlyoutItem loadingItem,
         ICommand goToArtistCommand,
-        Func<Song, Task<IReadOnlyList<Artist>>> loadArtists,
-        DispatcherQueue dispatcherQueue,
-        ILogger logger)
+        Func<Song, Task<IReadOnlyList<Artist>?>> loadArtists,
+        DispatcherQueue dispatcherQueue)
     {
-        try
+        var artists = await loadArtists(song).ConfigureAwait(false);
+
+        dispatcherQueue.TryEnqueue(() =>
         {
-            var artists = (await loadArtists(song).ConfigureAwait(false)).ToList();
-
-            dispatcherQueue.TryEnqueue(() =>
+            if (!subMenu.Items.Contains(loadingItem)) return;
+            if (artists is null)
             {
-                if (!subMenu.Items.Contains(loadingItem)) return;
-                subMenu.Items.Remove(loadingItem);
+                loadingItem.Text = Strings.Error_FailedToLoadArtists;
+                return;
+            }
 
-                if (artists.Count == 0)
-                {
-                    subMenu.Items.Add(new MenuFlyoutItem { Text = Artist.UnknownArtistName, IsEnabled = false });
-                    return;
-                }
-
-                foreach (var artist in artists)
-                {
-                    AddArtistMenuItem(subMenu, song, artist.Name, goToArtistCommand);
-                }
-            });
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Failed to populate artist submenu for song {SongId}", song.Id);
-            dispatcherQueue.TryEnqueue(() =>
+            subMenu.Items.Remove(loadingItem);
+            if (artists.Count == 0)
             {
-                if (subMenu.Items.Contains(loadingItem)) loadingItem.Text = Strings.Error_FailedToLoadArtists;
-            });
-        }
+                subMenu.Items.Add(new MenuFlyoutItem { Text = Artist.UnknownArtistName, IsEnabled = false });
+                return;
+            }
+
+            foreach (var artist in artists)
+            {
+                AddArtistMenuItem(subMenu, song, artist.Name, goToArtistCommand);
+            }
+        });
     }
 
     private static void AddArtistMenuItem(

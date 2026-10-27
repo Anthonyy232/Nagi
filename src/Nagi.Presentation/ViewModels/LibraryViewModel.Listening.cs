@@ -71,7 +71,7 @@ public partial class LibraryViewModel
     {
         var suggestion = Suggestion;
         if (suggestion is null) return Task.CompletedTask;
-        return RunListeningActionAsync(async () =>
+        return RunActionAsync(async () =>
         {
             await _playbackService.PlayAsync(suggestion.SongId);
             DismissSuggestion();

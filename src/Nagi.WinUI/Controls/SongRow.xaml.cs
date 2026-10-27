@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 using CommunityToolkit.WinUI;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Automation.Peers;
@@ -237,8 +235,7 @@ public sealed partial class SongRow : UserControl
             viewModel.AddSelectedSongsToPlaylistCommand);
         if (isSingle && ShowGoToArtist)
             ArtistMenuFlyoutHelper.PopulateSubMenu(GoToArtistSubMenu, Song!, viewModel.GoToArtistCommand,
-                viewModel.GetArtistsForSongAsync, DispatcherQueue,
-                App.Services!.GetRequiredService<ILogger<SongRow>>());
+                viewModel.GetArtistsForSongAsync, DispatcherQueue);
         ListeningMenuFlyoutHelper.PopulateFavorites((MenuFlyout)sender, viewModel);
     }
 }

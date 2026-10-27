@@ -88,7 +88,7 @@ public partial class PlayerViewModel
     private bool CanFavorite() => CurrentPlayingTrack is { FolderId: var folderId } && folderId != Guid.Empty;
 
     [RelayCommand(CanExecute = nameof(CanFavorite))]
-    private Task ToggleFavoriteAsync() => RunListeningActionAsync(async () =>
+    private Task ToggleFavoriteAsync() => RunActionAsync(async () =>
     {
         var current = CurrentPlayingTrack;
         if (current is null) return;
@@ -101,10 +101,10 @@ public partial class PlayerViewModel
     });
 
     [RelayCommand]
-    private Task PlayHistoryNextAsync(RecentListenEntry? entry) => entry is null ? Task.CompletedTask : RunListeningActionAsync(() => _playbackService.PlayNextAsync(entry.Listen.SongId));
+    private Task PlayHistoryNextAsync(RecentListenEntry? entry) => entry is null ? Task.CompletedTask : RunActionAsync(() => _playbackService.PlayNextAsync(entry.Listen.SongId));
 
     [RelayCommand]
-    private Task PlayHistoryNowAsync(RecentListenEntry? entry) => RunListeningActionAsync(async () =>
+    private Task PlayHistoryNowAsync(RecentListenEntry? entry) => RunActionAsync(async () =>
     {
         if (entry is null) return;
         await _playbackService.PlayNextAsync(entry.Listen.SongId);
@@ -118,23 +118,12 @@ public partial class PlayerViewModel
     });
 
     [RelayCommand]
-    private Task SetCustomSleepTimerAsync() => RunListeningActionAsync(async () =>
+    private Task SetCustomSleepTimerAsync() => RunActionAsync(async () =>
     {
         var options = await _uiService.ShowSleepTimerDialogAsync();
         if (options is { } timer)
             _playbackService.ScheduleStop(PlaybackStopMode.Timer, TimeSpan.FromMinutes(timer.Minutes), timer.FinishTrack);
     });
-
-    private async Task RunListeningActionAsync(Func<Task> action)
-    {
-        try { await action(); }
-        catch (OperationCanceledException) { }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Listening action failed");
-            if (!_isCleanedUp) await _uiService.ShowMessageDialogAsync(Strings.Generic_Error, Strings.Listening_ActionError);
-        }
-    }
 
     private bool CanStopAfterTrack() => CurrentPlayingTrack is not null;
 

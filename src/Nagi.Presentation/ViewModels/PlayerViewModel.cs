@@ -309,16 +309,27 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     private void ToggleQueuePanel() => IsQueuePanelOpen = !IsQueuePanelOpen;
 
     [RelayCommand(CanExecute = nameof(CanClearQueue))]
-    private Task ClearQueueAsync() => _playbackService.ClearQueueAsync();
+    private Task ClearQueueAsync() => RunActionAsync(_playbackService.ClearQueueAsync);
 
     [RelayCommand]
-    private Task PlayPauseAsync() => _playbackService.PlayPauseAsync();
+    private Task PlayPauseAsync() => RunActionAsync(_playbackService.PlayPauseAsync);
 
     [RelayCommand]
-    private Task PreviousAsync() => _playbackService.PreviousAsync();
+    private Task PreviousAsync() => RunActionAsync(_playbackService.PreviousAsync);
 
     [RelayCommand]
-    private Task NextAsync() => _playbackService.NextAsync();
+    private Task NextAsync() => RunActionAsync(_playbackService.NextAsync);
+
+    private async Task RunActionAsync(Func<Task> action)
+    {
+        try { await action(); }
+        catch (OperationCanceledException) { }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Action failed");
+            if (!_isCleanedUp) await _uiService.ShowMessageDialogAsync(Strings.Generic_Error, Strings.Listening_ActionError);
+        }
+    }
 
     [RelayCommand]
     private Task ToggleShuffleAsync()

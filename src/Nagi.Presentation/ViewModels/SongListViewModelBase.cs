@@ -459,29 +459,41 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     /// </summary>
     protected virtual PlaybackContext GetPlaybackContext() => new(PlaybackContextType.Library, null);
 
+    /// <summary>
+    ///     Runs a user action, logging a failure and telling the user instead of letting it reach the view.
+    /// </summary>
+    protected async Task RunActionAsync(Func<Task> action)
+    {
+        try { await action(); }
+        catch (OperationCanceledException) { }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Action failed");
+            if (!_isDisposed) await _uiService.ShowMessageDialogAsync(Strings.Generic_Error, Strings.Listening_ActionError);
+        }
+    }
+
     [RelayCommand(CanExecute = nameof(CanExecutePlayAllCommands))]
-    private async Task PlayAllSongsAsync()
+    private Task PlayAllSongsAsync() => RunActionAsync(async () =>
     {
         var context = GetPlaybackContext();
         var ids = await GetFullSongIdsAsync();
         if (ids.Count == 0) return;
         await _playbackService.PlayAsync(ids, 0, null, context);
-    }
+    });
 
     [RelayCommand(CanExecute = nameof(CanExecutePlayAllCommands))]
-    private async Task ShuffleAndPlayAllSongsAsync()
+    private Task ShuffleAndPlayAllSongsAsync() => RunActionAsync(async () =>
     {
         var context = GetPlaybackContext();
         var ids = await GetFullSongIdsAsync();
         if (ids.Count == 0) return;
         await _playbackService.PlayAsync(ids, 0, true, context);
-    }
+    });
 
     [RelayCommand]
-    private async Task PlaySongAsync(Song? song)
+    private Task PlaySongAsync(Song? song) => song is null ? Task.CompletedTask : RunActionAsync(async () =>
     {
-        if (song == null) return;
-
         var generation = CaptureSongContext();
         var context = GetPlaybackContext();
         var ids = await GetFullSongIdsAsync();
@@ -496,41 +508,41 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         }
 
         await _playbackService.PlayAsync(ids, startIndex, null, context);
-    }
+    });
 
     [RelayCommand(CanExecute = nameof(CanExecuteSelectedSongsCommands))]
-    private async Task PlaySelectedSongsAsync()
+    private Task PlaySelectedSongsAsync() => RunActionAsync(async () =>
     {
         var context = GetPlaybackContext();
         var ids = await GetCurrentSelectionIdsAsync();
         if (ids.Count == 0) return;
         await _playbackService.PlayAsync(ids, 0, null, context);
-    }
+    });
 
     [RelayCommand(CanExecute = nameof(CanExecuteSelectedSongsCommands))]
-    private async Task PlaySelectedSongsNextAsync()
+    private Task PlaySelectedSongsNextAsync() => RunActionAsync(async () =>
     {
         var ids = await GetCurrentSelectionIdsAsync();
         // Reverse the list so songs are added in the selected order after the current track.
         foreach (var id in ids.AsEnumerable().Reverse()) await _playbackService.PlayNextAsync(id);
-    }
+    });
 
     [RelayCommand(CanExecute = nameof(CanExecuteSelectedSongsCommands))]
-    private async Task AddSelectedSongsToQueueAsync()
+    private Task AddSelectedSongsToQueueAsync() => RunActionAsync(async () =>
     {
         var ids = await GetCurrentSelectionIdsAsync();
         if (ids.Count == 0) return;
         await _playbackService.AddRangeToQueueAsync(ids);
-    }
+    });
 
     [RelayCommand(CanExecute = nameof(CanAddSelectedSongsToPlaylist))]
-    private async Task AddSelectedSongsToPlaylistAsync(Playlist? playlist)
-    {
-        if (playlist == null || !HasSelectedSongs) return;
-        var ids = await GetCurrentSelectionIdsAsync();
-        if (ids.Count == 0) return;
-        await _playlistService.AddSongsToPlaylistAsync(playlist.Id, ids);
-    }
+    private Task AddSelectedSongsToPlaylistAsync(Playlist? playlist) =>
+        playlist is null || !HasSelectedSongs ? Task.CompletedTask : RunActionAsync(async () =>
+        {
+            var ids = await GetCurrentSelectionIdsAsync();
+            if (ids.Count == 0) return;
+            await _playlistService.AddSongsToPlaylistAsync(playlist.Id, ids);
+        });
 
     [RelayCommand(CanExecute = nameof(CanExecuteSingleSongCommands))]
     private async Task ShowInFolderAsync(Song? song)
@@ -566,8 +578,19 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     /// <summary>
     ///     Loads a song's credited artists in credit order, for the "Go to artist" submenu.
     /// </summary>
-    public async Task<IReadOnlyList<Artist>> GetArtistsForSongAsync(Song song) =>
-        (await _libraryReader.GetArtistsForSongAsync(song.Id).ConfigureAwait(false)).ToList();
+    /// <returns>The artists, or <c>null</c> if they couldn't be loaded.</returns>
+    public async Task<IReadOnlyList<Artist>?> GetArtistsForSongAsync(Song song)
+    {
+        try
+        {
+            return (await _libraryReader.GetArtistsForSongAsync(song.Id).ConfigureAwait(false)).ToList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to load the artists of song {SongId}", song.Id);
+            return null;
+        }
+    }
 
     [RelayCommand]
     public async Task GoToArtistAsync(object? parameter)

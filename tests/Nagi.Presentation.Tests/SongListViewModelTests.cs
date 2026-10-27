@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
 using NSubstitute;
@@ -120,11 +121,11 @@ public class SongListViewModelTests
         await playback.DidNotReceive().PlayAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<int>(), Arg.Any<bool?>(), Arg.Any<PlaybackContext?>());
     }
 
-    private sealed class SelectionTestList(Task<List<Guid>> ids, IMusicPlaybackService? playback = null)
+    private sealed class SelectionTestList(Task<List<Guid>> ids, IMusicPlaybackService? playback = null, IUIService? ui = null)
         : SongListViewModelBase(Substitute.For<ILibraryReader>(), Substitute.For<ILibraryWriter>(), Substitute.For<ILibraryScanner>(), Substitute.For<IPlaylistService>(),
             playback ?? Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), Substitute.For<IUISettingsService>(),
-            Substitute.For<IUIService>(), NullLogger.Instance)
+            ui ?? Substitute.For<IUIService>(), NullLogger.Instance)
     {
         protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default) => ids;
     }
@@ -139,5 +140,18 @@ public class SongListViewModelTests
         await viewModel.PlaySongCommand.ExecuteAsync(song);
 
         await playback.Received(1).PlayAsync(song.Id);
+    }
+
+    [Fact]
+    public async Task PlaySong_WhenPlaybackFails_TellsTheUserInsteadOfThrowing()
+    {
+        var playback = Substitute.For<IMusicPlaybackService>();
+        playback.PlayAsync(Arg.Any<Guid>()).Returns(Task.FromException(new IOException("database is locked")));
+        var ui = Substitute.For<IUIService>();
+        using var viewModel = new SelectionTestList(Task.FromResult(new List<Guid>()), playback, ui);
+
+        await viewModel.PlaySongCommand.ExecuteAsync(new Song());
+
+        await ui.Received(1).ShowMessageDialogAsync(Strings.Generic_Error, Strings.Listening_ActionError);
     }
 }
