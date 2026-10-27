@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -27,7 +29,25 @@ public partial class PlayerViewModel
     public string FavoriteActionText => IsCurrentTrackFavorite ? Strings.Listening_RemoveFavorite : Strings.Listening_AddFavorite;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ListeningPaneTitle), nameof(ListeningPaneToggleText))]
     public partial bool IsHistoryVisible { get; set; }
+
+    public string ListeningPaneTitle => IsHistoryVisible ? Strings.Listening_RecentlyPlayed : Strings.QueueFlyout_Title;
+
+    /// <summary>Names the pane the toggle switches to.</summary>
+    public string ListeningPaneToggleText => IsHistoryVisible ? Strings.QueueFlyout_Title : Strings.Listening_RecentlyPlayed;
+
+    public IReadOnlyList<PlaybackRateOption> PlaybackRateOptions { get; } =
+        new[] { 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0 }.Select(rate => new PlaybackRateOption(rate,
+            rate == 1.0 ? Strings.Listening_PlaybackSpeedNormal : string.Format(Strings.Listening_PlaybackSpeedFormat, rate)))
+        .ToList();
+
+    public IReadOnlyList<SleepTimerOption> SleepTimerOptions { get; } =
+    [
+        new(15, Strings.Listening_Timer15),
+        new(30, Strings.Listening_Timer30),
+        new(60, Strings.Listening_Timer60)
+    ];
 
     [ObservableProperty]
     public partial bool IsStopScheduled { get; set; }
@@ -178,3 +198,7 @@ public partial class PlayerViewModel
     }
 
 }
+
+public record PlaybackRateOption(double Rate, string DisplayName);
+
+public record SleepTimerOption(int Minutes, string DisplayName);

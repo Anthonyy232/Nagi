@@ -318,7 +318,7 @@
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
                                             <StackPanel VerticalAlignment="Center" Spacing="4">
-                                                <TextBlock Text="{x:Bind GetListeningPaneTitle(ViewModel.IsHistoryVisible), Mode=OneWay}" Style="{ThemeResource SubtitleTextBlockStyle}"
+                                                <TextBlock Text="{x:Bind ViewModel.ListeningPaneTitle, Mode=OneWay}" Style="{ThemeResource SubtitleTextBlockStyle}"
                                                            Foreground="{StaticResource PlayerAccentBrush}" />
                                                 <TextBlock Text="{x:Bind ViewModel.SidebarQueue.TrackCountText, Mode=OneWay}"
                                                            Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -359,8 +359,8 @@
                                             </Button>
                                             <Button Grid.Column="3" VerticalAlignment="Top" Style="{StaticResource CompactMediaControlButtonStyle}"
                                                     Foreground="{StaticResource PlayerAccentBrush}" Click="ToggleListeningPane_Click"
-                                                    ToolTipService.ToolTip="{x:Bind GetListeningPaneToggleLabel(ViewModel.IsHistoryVisible), Mode=OneWay}"
-                                                    AutomationProperties.Name="{x:Bind GetListeningPaneToggleLabel(ViewModel.IsHistoryVisible), Mode=OneWay}">
+                                                    ToolTipService.ToolTip="{x:Bind ViewModel.ListeningPaneToggleText, Mode=OneWay}"
+                                                    AutomationProperties.Name="{x:Bind ViewModel.ListeningPaneToggleText, Mode=OneWay}">
                                                 <FontIcon Glyph="{x:Bind GetListeningPaneToggleIcon(ViewModel.IsHistoryVisible), Mode=OneWay}" FontSize="16" />
                                             </Button>
                                             <Button Grid.Column="4" VerticalAlignment="Top" Style="{StaticResource CompactMediaControlButtonStyle}"

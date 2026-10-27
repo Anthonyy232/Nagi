@@ -303,6 +303,16 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         IsQueueViewVisible = false;
     }
 
+    /// <returns>Whether the navigation pane was open last time, or <c>null</c> when its state isn't remembered.</returns>
+    public async Task<bool?> GetRememberedPaneOpenAsync() =>
+        await _settingsService.GetRememberPaneStateEnabledAsync() ? await _settingsService.GetLastPaneOpenAsync() : null;
+
+    public async Task RememberPaneOpenAsync(bool isOpen)
+    {
+        if (await _settingsService.GetRememberPaneStateEnabledAsync())
+            await _settingsService.SetLastPaneOpenAsync(isOpen);
+    }
+
     private bool CanClearQueue() => _playbackService.PlaybackQueue.Count > 0;
 
     [RelayCommand]

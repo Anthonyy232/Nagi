@@ -40,7 +40,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private void QueueListView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
     {
-        if (e.Items.OfType<QueueEntry>().Any(entry => entry.Id == ViewModel.CurrentPlayingTrack?.Id))
+        if (!e.Items.OfType<QueueEntry>().All(ViewModel.SidebarQueue.CanMove))
         {
             e.Cancel = true;
             return;
@@ -599,7 +599,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private void AppTitleBar_PaneToggleRequested(TitleBar sender, object args)
     {
         NavView.IsPaneOpen = !NavView.IsPaneOpen;
-        _ = SavePaneStateAsync(NavView.IsPaneOpen);
+        _ = ViewModel.RememberPaneOpenAsync(NavView.IsPaneOpen);
     }
 
     private void AppTitleBar_BackRequested(TitleBar sender, object args)
@@ -633,12 +633,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         }
     }
 
-    private async Task SavePaneStateAsync(bool isOpen)
-    {
-        if (await _settingsService.GetRememberPaneStateEnabledAsync())
-            await _settingsService.SetLastPaneOpenAsync(isOpen);
-    }
-
     private void VolumeSliderContainer_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
     {
         var pointerPoint = e.GetCurrentPoint((UIElement)sender);
@@ -651,11 +645,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private async Task RestorePaneStateAsync()
     {
-        if (await _settingsService.GetRememberPaneStateEnabledAsync())
-        {
-            var savedState = await _settingsService.GetLastPaneOpenAsync();
-            if (!_isUnloaded && savedState.HasValue) NavView.IsPaneOpen = savedState.Value;
-        }
+        if (await ViewModel.GetRememberedPaneOpenAsync() is { } isOpen && !_isUnloaded) NavView.IsPaneOpen = isOpen;
     }
 
     /// <summary>
