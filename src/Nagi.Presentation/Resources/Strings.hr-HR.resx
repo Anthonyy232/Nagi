@@ -58,30 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NavItem_Library" xml:space="preserve">
-    <value>Biblioteka</value>
-  </data>
-  <data name="NavItem_Albums" xml:space="preserve">
-    <value>Albumi</value>
-  </data>
-  <data name="NavItem_Artists" xml:space="preserve">
-    <value>Izvođači</value>
-  </data>
-  <data name="NavItem_Genres" xml:space="preserve">
-    <value>Žanrovi</value>
-  </data>
-  <data name="NavItem_Playlists" xml:space="preserve">
-    <value>Popisi pjesama</value>
-  </data>
-  <data name="NavItem_Folders" xml:space="preserve">
-    <value>Mape</value>
-  </data>
-  <data name="NavItem_Favorites" xml:space="preserve">
-    <value>Omiljeno</value>
-  </data>
-  <data name="NavItem_Insights" xml:space="preserve">
-    <value>Uvidi</value>
-  </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>Postavke</value>
   </data>

@@ -58,30 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NavItem_Library" xml:space="preserve">
-    <value>คลังเพลง</value>
-  </data>
-  <data name="NavItem_Albums" xml:space="preserve">
-    <value>อัลบั้ม</value>
-  </data>
-  <data name="NavItem_Artists" xml:space="preserve">
-    <value>ศิลปิน</value>
-  </data>
-  <data name="NavItem_Genres" xml:space="preserve">
-    <value>แนวเพลง</value>
-  </data>
-  <data name="NavItem_Playlists" xml:space="preserve">
-    <value>เพลย์ลิสต์</value>
-  </data>
-  <data name="NavItem_Folders" xml:space="preserve">
-    <value>โฟลเดอร์</value>
-  </data>
-  <data name="NavItem_Favorites" xml:space="preserve">
-    <value>รายการโปรด</value>
-  </data>
-  <data name="NavItem_Insights" xml:space="preserve">
-    <value>ข้อมูลเชิงลึก</value>
-  </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>การตั้งค่า</value>
   </data>

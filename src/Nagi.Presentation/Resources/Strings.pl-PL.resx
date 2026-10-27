@@ -58,30 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NavItem_Library" xml:space="preserve">
-    <value>Biblioteka</value>
-  </data>
-  <data name="NavItem_Albums" xml:space="preserve">
-    <value>Albumy</value>
-  </data>
-  <data name="NavItem_Artists" xml:space="preserve">
-    <value>Wykonawcy</value>
-  </data>
-  <data name="NavItem_Genres" xml:space="preserve">
-    <value>Gatunki</value>
-  </data>
-  <data name="NavItem_Playlists" xml:space="preserve">
-    <value>Playlisty</value>
-  </data>
-  <data name="NavItem_Folders" xml:space="preserve">
-    <value>Foldery</value>
-  </data>
-  <data name="NavItem_Favorites" xml:space="preserve">
-    <value>Ulubione</value>
-  </data>
-  <data name="NavItem_Insights" xml:space="preserve">
-    <value>Statystyki</value>
-  </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>Ustawienia</value>
   </data>

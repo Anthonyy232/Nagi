@@ -58,30 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NavItem_Library" xml:space="preserve">
-    <value>库</value>
-  </data>
-  <data name="NavItem_Albums" xml:space="preserve">
-    <value>专辑</value>
-  </data>
-  <data name="NavItem_Artists" xml:space="preserve">
-    <value>艺术家</value>
-  </data>
-  <data name="NavItem_Genres" xml:space="preserve">
-    <value>流派</value>
-  </data>
-  <data name="NavItem_Playlists" xml:space="preserve">
-    <value>播放列表</value>
-  </data>
-  <data name="NavItem_Folders" xml:space="preserve">
-    <value>文件夹</value>
-  </data>
-  <data name="NavItem_Favorites" xml:space="preserve">
-    <value>收藏</value>
-  </data>
-  <data name="NavItem_Insights" xml:space="preserve">
-    <value>洞察</value>
-  </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>设置</value>
   </data>

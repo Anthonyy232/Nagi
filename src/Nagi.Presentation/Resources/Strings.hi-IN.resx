@@ -58,30 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NavItem_Library" xml:space="preserve">
-    <value>लाइब्रेरी</value>
-  </data>
-  <data name="NavItem_Albums" xml:space="preserve">
-    <value>एल्बम</value>
-  </data>
-  <data name="NavItem_Artists" xml:space="preserve">
-    <value>कलाकार</value>
-  </data>
-  <data name="NavItem_Genres" xml:space="preserve">
-    <value>शैलियाँ</value>
-  </data>
-  <data name="NavItem_Playlists" xml:space="preserve">
-    <value>प्लेलिस्ट</value>
-  </data>
-  <data name="NavItem_Folders" xml:space="preserve">
-    <value>फ़ोल्डर</value>
-  </data>
-  <data name="NavItem_Favorites" xml:space="preserve">
-    <value>पसंदीदा</value>
-  </data>
-  <data name="NavItem_Insights" xml:space="preserve">
-    <value>इनसाइट्स</value>
-  </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>सेटिंग्स</value>
   </data>

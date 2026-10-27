@@ -58,30 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NavItem_Library" xml:space="preserve">
-    <value>Pustaka</value>
-  </data>
-  <data name="NavItem_Albums" xml:space="preserve">
-    <value>Album</value>
-  </data>
-  <data name="NavItem_Artists" xml:space="preserve">
-    <value>Artis</value>
-  </data>
-  <data name="NavItem_Genres" xml:space="preserve">
-    <value>Genre</value>
-  </data>
-  <data name="NavItem_Playlists" xml:space="preserve">
-    <value>Senarai Main</value>
-  </data>
-  <data name="NavItem_Folders" xml:space="preserve">
-    <value>Folder</value>
-  </data>
-  <data name="NavItem_Favorites" xml:space="preserve">
-    <value>Kegemaran</value>
-  </data>
-  <data name="NavItem_Insights" xml:space="preserve">
-    <value>Wawasan</value>
-  </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>Tetapan</value>
   </data>

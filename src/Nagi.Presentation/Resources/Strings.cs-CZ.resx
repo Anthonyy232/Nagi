@@ -58,30 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NavItem_Library" xml:space="preserve">
-    <value>Knihovna</value>
-  </data>
-  <data name="NavItem_Albums" xml:space="preserve">
-    <value>Alba</value>
-  </data>
-  <data name="NavItem_Artists" xml:space="preserve">
-    <value>Interpreti</value>
-  </data>
-  <data name="NavItem_Genres" xml:space="preserve">
-    <value>Žánry</value>
-  </data>
-  <data name="NavItem_Playlists" xml:space="preserve">
-    <value>Seznamy skladeb</value>
-  </data>
-  <data name="NavItem_Folders" xml:space="preserve">
-    <value>Složky</value>
-  </data>
-  <data name="NavItem_Favorites" xml:space="preserve">
-    <value>Oblíbené</value>
-  </data>
-  <data name="NavItem_Insights" xml:space="preserve">
-    <value>Přehledy</value>
-  </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>Nastavení</value>
   </data>

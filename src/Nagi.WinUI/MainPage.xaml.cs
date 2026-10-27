@@ -339,10 +339,9 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             NavView.MenuItems.Clear();
             foreach (var item in navItems.Where(i => i.IsEnabled))
             {
-                var resourceKey = $"NavItem_{item.Tag}";
                 NavView.MenuItems.Add(new NavigationViewItem
                 {
-                    Content = Strings.ResourceManager.GetString(resourceKey) ?? resourceKey,
+                    Content = item.DisplayName,
                     Tag = item.Tag,
                     Icon = new FontIcon { Glyph = AppIconGlyphs.ToGlyph(item.Icon) }
                 });

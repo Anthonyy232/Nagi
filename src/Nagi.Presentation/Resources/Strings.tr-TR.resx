@@ -58,30 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NavItem_Library" xml:space="preserve">
-    <value>Kitaplık</value>
-  </data>
-  <data name="NavItem_Albums" xml:space="preserve">
-    <value>Albümler</value>
-  </data>
-  <data name="NavItem_Artists" xml:space="preserve">
-    <value>Sanatçılar</value>
-  </data>
-  <data name="NavItem_Genres" xml:space="preserve">
-    <value>Türler</value>
-  </data>
-  <data name="NavItem_Playlists" xml:space="preserve">
-    <value>Çalma Listeleri</value>
-  </data>
-  <data name="NavItem_Folders" xml:space="preserve">
-    <value>Klasörler</value>
-  </data>
-  <data name="NavItem_Favorites" xml:space="preserve">
-    <value>Favoriler</value>
-  </data>
-  <data name="NavItem_Insights" xml:space="preserve">
-    <value>İstatistikler</value>
-  </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>Ayarlar</value>
   </data>

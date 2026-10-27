@@ -58,30 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NavItem_Library" xml:space="preserve">
-    <value>Bibliotecă</value>
-  </data>
-  <data name="NavItem_Albums" xml:space="preserve">
-    <value>Albume</value>
-  </data>
-  <data name="NavItem_Artists" xml:space="preserve">
-    <value>Artiști</value>
-  </data>
-  <data name="NavItem_Genres" xml:space="preserve">
-    <value>Genuri</value>
-  </data>
-  <data name="NavItem_Playlists" xml:space="preserve">
-    <value>Liste de redare</value>
-  </data>
-  <data name="NavItem_Folders" xml:space="preserve">
-    <value>Dosare</value>
-  </data>
-  <data name="NavItem_Favorites" xml:space="preserve">
-    <value>Favorite</value>
-  </data>
-  <data name="NavItem_Insights" xml:space="preserve">
-    <value>Statistici</value>
-  </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>Setări</value>
   </data>

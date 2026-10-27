@@ -58,30 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NavItem_Library" xml:space="preserve">
-    <value>라이브러리</value>
-  </data>
-  <data name="NavItem_Albums" xml:space="preserve">
-    <value>앨범</value>
-  </data>
-  <data name="NavItem_Artists" xml:space="preserve">
-    <value>아티스트</value>
-  </data>
-  <data name="NavItem_Genres" xml:space="preserve">
-    <value>장르</value>
-  </data>
-  <data name="NavItem_Playlists" xml:space="preserve">
-    <value>재생 목록</value>
-  </data>
-  <data name="NavItem_Folders" xml:space="preserve">
-    <value>폴더</value>
-  </data>
-  <data name="NavItem_Favorites" xml:space="preserve">
-    <value>즐겨찾기</value>
-  </data>
-  <data name="NavItem_Insights" xml:space="preserve">
-    <value>인사이트</value>
-  </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>설정</value>
   </data>
