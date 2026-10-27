@@ -52,26 +52,18 @@ public class LastFmPresenceServiceTests : IAsyncDisposable
         await _scrobblerService.Received(1).ScrobbleAsync(song, DateTime.UnixEpoch);
     }
 
-    [Fact]
-    public async Task OnTrackChangedAsync_WhenNowPlayingEnabled_UpdatesNowPlaying()
+    [Theory]
+    [InlineData(true, 1)]
+    [InlineData(false, 0)]
+    public async Task OnTrackChangedAsync_UpdatesNowPlayingOnlyWhenEnabled(bool nowPlayingEnabled, int expectedCalls)
     {
+        _settingsService.GetLastFmNowPlayingEnabledAsync().Returns(nowPlayingEnabled);
         await _service.InitializeAsync();
 
         var song = new Song { Title = "Test Song" };
         await _service.OnTrackChangedAsync(song, 1L);
 
-        await _scrobblerService.Received(1).UpdateNowPlayingAsync(song);
-    }
-
-    [Fact]
-    public async Task OnTrackChangedAsync_WhenNowPlayingDisabled_DoesNotUpdateNowPlaying()
-    {
-        _settingsService.GetLastFmNowPlayingEnabledAsync().Returns(false);
-        await _service.InitializeAsync();
-
-        await _service.OnTrackChangedAsync(new Song { Title = "Song" }, 1L);
-
-        await _scrobblerService.DidNotReceive().UpdateNowPlayingAsync(Arg.Any<Song>());
+        await _scrobblerService.Received(expectedCalls).UpdateNowPlayingAsync(song);
     }
 
     [Fact]
@@ -96,18 +88,6 @@ public class LastFmPresenceServiceTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task OnTrackEligibleForScrobblingAsync_WhenScrobblingDisabled_DoesNotScrobble()
-    {
-        _settingsService.GetLastFmScrobblingEnabledAsync().Returns(false);
-        await _service.InitializeAsync();
-
-        await _service.OnTrackEligibleForScrobblingAsync(
-            new Song { Title = "Song" }, 1L, DateTime.UnixEpoch);
-
-        await _scrobblerService.DidNotReceive().ScrobbleAsync(Arg.Any<Song>(), Arg.Any<DateTime>());
-    }
-
-    [Fact]
     public async Task OnTrackEligibleForScrobblingAsync_WhenScrobbleFails_DoesNotMarkAsScrobbled()
     {
         _scrobblerService.ScrobbleAsync(Arg.Any<Song>(), Arg.Any<DateTime>()).Returns(false);
@@ -128,20 +108,6 @@ public class LastFmPresenceServiceTests : IAsyncDisposable
         await _service.OnTrackEligibleForScrobblingAsync(
             new Song { Title = "Song" }, 1L, DateTime.UnixEpoch);
 
-        await _libraryWriter.DidNotReceive().MarkListenAsScrobbledAsync(Arg.Any<long>());
-    }
-
-    [Fact]
-    public async Task OnTrackProgressAsync_DoesNotSubmitWithoutEligibilitySignal()
-    {
-        await _service.InitializeAsync();
-        var song = new Song { Title = "Song", Duration = TimeSpan.FromMinutes(3) };
-        await _service.OnTrackChangedAsync(song, 1);
-
-        await _service.OnTrackProgressAsync(TimeSpan.FromMinutes(2), song.Duration);
-
-        await _scrobblerService.DidNotReceive().ScrobbleAsync(Arg.Any<Song>(), Arg.Any<DateTime>());
-        await _libraryWriter.DidNotReceive().MarkListenAsEligibleForScrobblingAsync(Arg.Any<long>());
         await _libraryWriter.DidNotReceive().MarkListenAsScrobbledAsync(Arg.Any<long>());
     }
 

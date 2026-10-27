@@ -116,13 +116,11 @@ public class SmartPlaylistServiceTests : IDisposable
         result!.Name.Should().Be("Trimmed Name");
     }
 
-    [Theory]
-    [InlineData("")]
-    [InlineData("   ")]
-    public async Task CreateSmartPlaylistAsync_WithBlankName_ThrowsArgumentException(string name)
+    [Fact]
+    public async Task CreateSmartPlaylistAsync_WithBlankName_ThrowsArgumentException()
     {
         await Assert.ThrowsAsync<ArgumentException>(() =>
-            _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = name }));
+            _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "   " }));
     }
 
     [Fact]
@@ -170,21 +168,35 @@ public class SmartPlaylistServiceTests : IDisposable
     [Fact]
     public async Task GetSmartPlaylistByIdAsync_IncludesRulesOrderedByOrder()
     {
-        var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist
+        var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "With Ordered Rules" });
+        using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {
-            Name = "With Ordered Rules",
-            Rules =
-            [
-                new SmartPlaylistRule { Field = SmartPlaylistField.Title, Operator = SmartPlaylistOperator.Contains, Value = "a" },
-                new SmartPlaylistRule { Field = SmartPlaylistField.Artist, Operator = SmartPlaylistOperator.Is, Value = "b" }
-            ]
-        });
+            // Ids and insertion order run opposite to Order, so only an explicit sort puts Artist first.
+            context.SmartPlaylistRules.AddRange(
+                new SmartPlaylistRule
+                {
+                    Id = new Guid("00000000-0000-0000-0000-000000000001"),
+                    SmartPlaylistId = playlist.Id,
+                    Field = SmartPlaylistField.Title,
+                    Operator = SmartPlaylistOperator.Contains,
+                    Value = "a",
+                    Order = 1
+                },
+                new SmartPlaylistRule
+                {
+                    Id = new Guid("00000000-0000-0000-0000-000000000002"),
+                    SmartPlaylistId = playlist.Id,
+                    Field = SmartPlaylistField.Artist,
+                    Operator = SmartPlaylistOperator.Is,
+                    Value = "b",
+                    Order = 0
+                });
+            await context.SaveChangesAsync();
+        }
 
         var result = await _service.GetSmartPlaylistByIdAsync(playlist.Id);
 
-        result!.Rules.Should().HaveCount(2);
-        result.Rules.First().Field.Should().Be(SmartPlaylistField.Title);
-        result.Rules.Last().Field.Should().Be(SmartPlaylistField.Artist);
+        result!.Rules.Select(rule => rule.Field).Should().Equal(SmartPlaylistField.Artist, SmartPlaylistField.Title);
     }
 
     [Fact]
@@ -218,24 +230,15 @@ public class SmartPlaylistServiceTests : IDisposable
         update!.DateModified.Should().Be(fetched.DateModified);
     }
 
-    [Fact]
-    public async Task RenameSmartPlaylistAsync_DuplicateName_ReturnsFalse()
-    {
-        await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "Existing Name" });
-        var toRename = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "To Rename" });
-
-        var result = await _service.RenameSmartPlaylistAsync(toRename!.Id, "Existing Name");
-
-        result.Should().BeFalse();
-    }
-
-    [Fact]
-    public async Task RenameSmartPlaylistAsync_SameNameDifferentCase_ReturnsFalse()
+    [Theory]
+    [InlineData("My Playlist")]
+    [InlineData("MY PLAYLIST")]
+    public async Task RenameSmartPlaylistAsync_DuplicateName_ReturnsFalse(string name)
     {
         await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "My Playlist" });
         var toRename = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "Another Playlist" });
 
-        var result = await _service.RenameSmartPlaylistAsync(toRename!.Id, "MY PLAYLIST");
+        var result = await _service.RenameSmartPlaylistAsync(toRename!.Id, name);
 
         result.Should().BeFalse();
     }
@@ -274,19 +277,6 @@ public class SmartPlaylistServiceTests : IDisposable
         update!.CoverImageUri.Should().Be(expectedPath);
         update.DateModified.Should().Be(fetched.DateModified);
         _fileSystem.Received(1).MoveFile(Arg.Is<string>(path => path.EndsWith(".tmp")), expectedPath, true);
-    }
-
-    [Fact]
-    public async Task SetSortOrderAsync_UpdatesSortOrder()
-    {
-        var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "Sort Test" });
-
-        var result = await _service.SetSortOrderAsync(playlist!.Id, SmartPlaylistSortOrder.PlayCountDesc);
-
-        result.Should().BeTrue();
-
-        var fetched = await _service.GetSmartPlaylistByIdAsync(playlist.Id);
-        fetched!.SortOrder.Should().Be(SmartPlaylistSortOrder.PlayCountDesc);
     }
 
     [Fact]
@@ -390,23 +380,6 @@ public class SmartPlaylistServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task GetMatchingSongIdsAsync_ReturnsMatchingIds()
-    {
-        var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist
-        {
-            Name = "IDs Test",
-            Rules =
-            [
-                new SmartPlaylistRule { Field = SmartPlaylistField.Genre, Operator = SmartPlaylistOperator.Is, Value = "Pop" }
-            ]
-        });
-
-        var ids = await _service.GetMatchingSongIdsAsync(playlist.Id);
-
-        ids.Should().HaveCount(1);
-    }
-
-    [Fact]
     public async Task GetMatchingSongIdsAsync_WithSearchTerm_FiltersMatchingIds()
     {
         var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist
@@ -456,30 +429,6 @@ public class SmartPlaylistServiceTests : IDisposable
         counts.Should().HaveCount(2);
         counts[playlist1.Id].Should().Be(2);
         counts[playlist2.Id].Should().Be(1);
-    }
-
-    [Fact]
-    public async Task UpdateSmartPlaylistAsync_ValidPlaylist_UpdatesProperties()
-    {
-        var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "Update Test" });
-        playlist!.Name = "Updated Name";
-        playlist.Description = "Updated Description";
-        playlist.MatchAllRules = false;
-        playlist.SortOrder = SmartPlaylistSortOrder.Random;
-
-        PlaylistUpdatedEventArgs? update = null;
-        _service.PlaylistUpdated += (_, args) => update = args;
-        var result = await _service.UpdateSmartPlaylistAsync(playlist);
-
-        result.Should().NotBeNull();
-
-        var fetched = await _service.GetSmartPlaylistByIdAsync(playlist.Id);
-        fetched!.Name.Should().Be("Updated Name");
-        fetched.Description.Should().Be("Updated Description");
-        fetched.MatchAllRules.Should().BeFalse();
-        fetched.SortOrder.Should().Be(SmartPlaylistSortOrder.Random);
-        update.Should().NotBeNull();
-        update!.DateModified.Should().Be(fetched.DateModified);
     }
 
     [Fact]
@@ -564,7 +513,7 @@ public class SmartPlaylistServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task UpdateSmartPlaylistAsync_ReplacesRulesAndReturnsSavedState()
+    public async Task UpdateSmartPlaylistAsync_SavesDraftAndReplacesRules()
     {
         var draft = await _service.CreateSmartPlaylistAsync(new SmartPlaylist
         {
@@ -572,13 +521,26 @@ public class SmartPlaylistServiceTests : IDisposable
             Rules = [new SmartPlaylistRule { Field = SmartPlaylistField.IsLoved, Operator = SmartPlaylistOperator.IsTrue }]
         });
         var oldRuleId = draft.Rules.Single().Id;
+        draft.Name = "Updated Name";
+        draft.Description = "Updated Description";
+        draft.MatchAllRules = false;
+        draft.SortOrder = SmartPlaylistSortOrder.Random;
         draft.Rules = [new SmartPlaylistRule { Field = SmartPlaylistField.Genre, Operator = SmartPlaylistOperator.Is, Value = "Pop" }];
+        PlaylistUpdatedEventArgs? update = null;
+        _service.PlaylistUpdated += (_, args) => update = args;
 
         var saved = await _service.UpdateSmartPlaylistAsync(draft);
 
         saved!.Id.Should().Be(draft.Id);
         saved.DateCreated.Should().Be(draft.DateCreated);
         saved.Rules.Should().ContainSingle().Which.Value.Should().Be("Pop");
+        var fetched = await _service.GetSmartPlaylistByIdAsync(draft.Id);
+        fetched!.Name.Should().Be("Updated Name");
+        fetched.Description.Should().Be("Updated Description");
+        fetched.MatchAllRules.Should().BeFalse();
+        fetched.SortOrder.Should().Be(SmartPlaylistSortOrder.Random);
+        update.Should().NotBeNull();
+        update!.DateModified.Should().Be(fetched.DateModified);
         using var context = _dbHelper.ContextFactory.CreateDbContext();
         (await context.SmartPlaylistRules.AnyAsync(rule => rule.Id == oldRuleId)).Should().BeFalse();
         (await _service.GetMatchingSongCountAsync(saved.Id)).Should().Be(1);

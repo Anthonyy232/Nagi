@@ -13,6 +13,7 @@ using NSubstitute.ExceptionExtensions;
 using Xunit;
 
 namespace Nagi.Core.Tests;
+
 public class LibraryServiceArtistImageTests : IDisposable
 {
     private const string ArtistImageCachePath = "C:\\cache\\artistimages";
@@ -285,7 +286,7 @@ public class LibraryServiceArtistImageTests : IDisposable
     [Fact]
     public async Task RescanFolder_ArtistJpgInBothPassA_AndPassB_PassATakesPriority()
     {
-        var (folder, artist, _) = await SeedUpToDateSongAsync();
+        var (folder, _, _) = await SeedUpToDateSongAsync();
 
         var parentImagePath = ArtistImagePath;
         var albumImagePath = AlbumArtistImagePath;
@@ -379,6 +380,7 @@ public class LibraryServiceArtistImageTests : IDisposable
     {
         const string legacyPath = "C:\\cache\\artistimages\\abc.png";
         var (folder, artist, _) = await SeedUpToDateSongAsync(localImageCachePath: legacyPath);
+        _fileSystem.FileExists(legacyPath).Returns(true);
         SetupArtistImageAt(ArtistImagePath);
 
         await _libraryService.RescanFolderForMusicAsync(folder.Id);
@@ -426,8 +428,7 @@ public class LibraryServiceArtistImageTests : IDisposable
     {
         const string existingLocal = "C:\\cache\\artistimages\\existing.local.jpg";
         var (_, artist, _) = await SeedUpToDateSongAsync(localImageCachePath: existingLocal);
-
-        _fileSystem.GetFiles(FolderPath, "*.*").Returns(new[] { ArtistImagePath });
+        SetupArtistImageAt(ArtistImagePath);
 
         await _libraryService.GetArtistDetailsAsync(artist.Id, allowOnlineFetch: true);
 
@@ -437,7 +438,7 @@ public class LibraryServiceArtistImageTests : IDisposable
     [Fact]
     public async Task FindArtistImageInDirectory_OnlyMatchesArtistFileName()
     {
-        var (folder, artist, _) = await SeedUpToDateSongAsync();
+        var (folder, _, _) = await SeedUpToDateSongAsync();
 
         var otherJpgPath = Path.Combine(FolderPath, "other.jpg");
         var artistJpgPath = Path.Combine(FolderPath, "artist.jpg");

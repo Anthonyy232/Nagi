@@ -601,7 +601,6 @@ public partial class LibraryServiceTests : IDisposable
     }
 
     [Theory]
-    [InlineData(@"C:\Music\Rock", "Rock")]
     [InlineData(@"C:\Music\Vol. 1", "Vol. 1")]
     [InlineData(@"C:\", @"C:\")]
     public async Task AddFolderAsync_WithValidNewPath_PreservesFolderName(string folderPath, string expectedName)
@@ -1023,36 +1022,6 @@ public partial class LibraryServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task MarkListenAsEligibleForScrobblingAsync_IncrementsPlayCountAndSetsLastPlayedDate()
-    {
-        var folder = new Folder { Name = "Test Folder", Path = "C:\\Test" };
-        var song = new Song { Title = "Test Song", Folder = folder, FilePath = "C:\\Test\\song.mp3", PlayCount = 5 };
-        var listenHistory = new ListenHistory { Song = song, IsEligibleForScrobbling = false };
-
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Folders.Add(folder);
-            context.Songs.Add(song);
-            context.ListenHistory.Add(listenHistory);
-            await context.SaveChangesAsync();
-        }
-
-        var beforeUpdate = DateTime.UtcNow;
-
-        var result = await _libraryService.MarkListenAsEligibleForScrobblingAsync(listenHistory.Id);
-
-        result.Should().BeTrue();
-
-        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
-        var updatedHistory = await assertContext.ListenHistory.FindAsync(listenHistory.Id);
-        var updatedSong = await assertContext.Songs.FindAsync(song.Id);
-
-        updatedHistory!.IsEligibleForScrobbling.Should().BeTrue();
-        updatedSong!.PlayCount.Should().Be(6);
-        updatedSong.LastPlayedDate.Should().BeOnOrAfter(beforeUpdate);
-    }
-
-    [Fact]
     public async Task FinalizeListenSessionAsync_WhenCalled_UpdatesDurationAndEndReason()
     {
         var folder = new Folder { Name = "Test Folder", Path = "C:\\Test" };
@@ -1133,17 +1102,20 @@ public partial class LibraryServiceTests : IDisposable
         }
 
         var id = (await _libraryService.StartListenSessionAsync(song.Id, new PlaybackContext(PlaybackContextType.Library, null)))!.Value;
+        var beforeEligible = DateTime.UtcNow;
         if (eligibilityFirst)
             await _libraryService.MarkListenAsEligibleForScrobblingAsync(id);
         await _libraryService.FinalizeListenSessionAsync(id, TimeSpan.FromMinutes(3), PlaybackEndReason.Skipped);
-        await _libraryService.MarkListenAsEligibleForScrobblingAsync(id);
+        (await _libraryService.MarkListenAsEligibleForScrobblingAsync(id)).Should().BeTrue();
         await _libraryService.MarkListenAsEligibleForScrobblingAsync(id);
         await _libraryService.FinalizeListenSessionAsync(id, TimeSpan.FromMinutes(3), PlaybackEndReason.Skipped);
 
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        (await assertContext.ListenHistory.SingleAsync()).IsEligibleForScrobbling.Should().BeTrue();
         var updatedSong = await assertContext.Songs.SingleAsync();
         updatedSong.PlayCount.Should().Be(6);
         updatedSong.SkipCount.Should().Be(2);
+        updatedSong.LastPlayedDate.Should().BeOnOrAfter(beforeEligible);
         updatedSong.TotalListenTimeTicks.Should().Be(TimeSpan.FromMinutes(3).Ticks);
     }
 

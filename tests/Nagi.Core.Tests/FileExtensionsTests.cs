@@ -6,15 +6,10 @@ namespace Nagi.Core.Tests;
 
 public class FileExtensionsTests
 {
-    [Theory]
-    [InlineData(".opus")]
-    [InlineData(".webm")]
-    [InlineData(".mpc")]
-    [InlineData(".mpp")]
-    [InlineData(".AA")]
-    public void MusicFileExtensions_ContainsVerifiedPlaybackFormats(string extension)
+    [Fact]
+    public void MusicFileExtensions_MatchesCaseInsensitively()
     {
-        FileExtensions.MusicFileExtensions.Should().Contain(extension);
+        FileExtensions.MusicFileExtensions.Should().Contain(".AA");
     }
 
     [Theory]

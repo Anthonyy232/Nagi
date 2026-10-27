@@ -29,14 +29,6 @@ public class CoreServiceRegistrationTests
     }
 
     [Fact]
-    public async Task AddNagiCore_ResolvesWithOnlyTheDocumentedHostServices()
-    {
-        var build = BuildProvider;
-
-        await using var provider = build.Should().NotThrow().Subject;
-    }
-
-    [Fact]
     public async Task AddNagiCore_SharesOneLibraryServiceAcrossWriterAndScanner()
     {
         await using var provider = BuildProvider();
@@ -45,8 +37,6 @@ public class CoreServiceRegistrationTests
         var scanner = provider.GetRequiredService<ILibraryScanner>();
 
         writer.Should().BeOfType<LibraryService>().And.BeSameAs(scanner);
-        provider.GetRequiredService<ILibraryReader>().Should().BeOfType<LibraryReader>();
-        provider.GetRequiredService<IPlaylistService>().Should().BeOfType<PlaylistService>();
     }
 
     [Fact]

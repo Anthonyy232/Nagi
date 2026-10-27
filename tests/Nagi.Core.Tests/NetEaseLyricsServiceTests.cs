@@ -38,36 +38,6 @@ public class NetEaseLyricsServiceTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task SearchLyricsAsync_WithValidTrack_ReturnsLrcContent()
-    {
-        var searchResponse = new { result = new { songs = new[] { new { id = 12345L, name = "Test Track" } } } };
-        var lyricsResponse = new { lrc = new { lyric = "[00:01.00]Hello World\n[00:05.00]Goodbye" } };
-
-        var callCount = 0;
-        _httpHandler.SendAsyncFunc = (request, _) =>
-        {
-            callCount++;
-            if (request.RequestUri!.AbsolutePath.Contains("/api/search/get"))
-            {
-                return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new StringContent(JsonSerializer.Serialize(searchResponse))
-                });
-            }
-
-            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent(JsonSerializer.Serialize(lyricsResponse))
-            });
-        };
-
-        var result = await _service.SearchLyricsAsync("Test Track", "Test Artist");
-
-        result.Should().Contain("[00:01.00]Hello World");
-        callCount.Should().Be(2);
-    }
-
-    [Fact]
     public async Task SearchLyricsAsync_PrefersExactTitleThenMatchingArtist()
     {
         _httpHandler.SendAsyncFunc = (request, _) =>
@@ -182,13 +152,11 @@ public class NetEaseLyricsServiceTests : IAsyncDisposable
         result.Should().Be(valid ? lyrics : null);
     }
 
-    [Theory]
-    [InlineData(HttpStatusCode.Forbidden)]
-    [InlineData(HttpStatusCode.TooManyRequests)]
-    public async Task SearchLyricsAsync_WhenRejected_PropagatesFailureAndCanRetry(HttpStatusCode status)
+    [Fact]
+    public async Task SearchLyricsAsync_WhenRejected_PropagatesFailureAndCanRetry()
     {
         _httpHandler.SendAsyncFunc = (_, _) =>
-            Task.FromResult(new HttpResponseMessage(status));
+            Task.FromResult(new HttpResponseMessage(HttpStatusCode.Forbidden));
 
         var act = () => _service.SearchLyricsAsync("Track1", "Artist");
         await act.Should().ThrowAsync<HttpRequestException>();

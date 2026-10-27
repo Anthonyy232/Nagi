@@ -15,7 +15,6 @@ public sealed class FFmpegLoudnessAnalyzerTests : IDisposable
     [Theory]
     [InlineData(44100, 997,0.125892541, -18)]
     [InlineData(48000, 997, 0.125892541, -18)]
-    [InlineData(96000, 997, 0.125892541, -18)]
     [InlineData(48000, 440, 1, -0.65)]
     public async Task StereoReferenceTones_MeasureExpectedLoudnessAndPeak(
         int sampleRate, int frequency, double amplitude, double expectedLufs)

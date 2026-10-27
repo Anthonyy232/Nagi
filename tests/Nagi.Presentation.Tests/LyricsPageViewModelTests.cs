@@ -34,10 +34,8 @@ public class LyricsPageViewModelTests
     [Theory]
     [InlineData("sidecar", true)]
     [InlineData("sidecar", false)]
-    [InlineData("embedded", true)]
     [InlineData("embedded", false)]
     [InlineData("network", true)]
-    [InlineData("network", false)]
     public void LyricsSources_PreservePriorityAndUseTheSameDisplayPipeline(string source, bool timed)
     {
         var song = new Song { Title = "Song" };

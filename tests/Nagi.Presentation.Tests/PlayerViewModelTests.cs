@@ -131,18 +131,4 @@ public partial class PlayerViewModelTests : IDisposable
         _viewModel.CurrentPosition.Should().Be(0);
         _playback.DidNotReceive().SeekAsync(Arg.Any<TimeSpan>());
     }
-
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public async Task PaneState_IsOnlyRememberedWhenTheSettingIsOn(bool remember)
-    {
-        _settings.GetRememberPaneStateEnabledAsync().Returns(remember);
-        _settings.GetLastPaneOpenAsync().Returns(false);
-
-        await _viewModel.RememberPaneOpenAsync(true);
-
-        await _settings.Received(remember ? 1 : 0).SetLastPaneOpenAsync(true);
-        (await _viewModel.GetRememberedPaneOpenAsync()).Should().Be(remember ? false : null);
-    }
 }

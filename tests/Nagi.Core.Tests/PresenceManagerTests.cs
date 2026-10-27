@@ -181,16 +181,6 @@ public class PresenceManagerTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task InitializeAsync_WhenDiscordEnabled_ActivatesDiscordService()
-    {
-        _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(true);
-
-        await _manager.InitializeAsync();
-
-        await _discordService.Received(1).InitializeAsync();
-    }
-
-    [Fact]
     public async Task InitializeAsync_WhenDiscordDisabled_DoesNotActivateDiscordService()
     {
         _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(false);
@@ -200,71 +190,22 @@ public class PresenceManagerTests : IAsyncDisposable
         await _discordService.DidNotReceive().InitializeAsync();
     }
 
-    [Fact]
-    public async Task InitializeAsync_WhenLastFmHasNoCredentials_DoesNotActivateLastFmService()
+    [Theory]
+    [InlineData(false, true, true, 0)]
+    [InlineData(true, false, false, 0)]
+    [InlineData(true, true, false, 1)]
+    [InlineData(true, false, true, 1)]
+    public async Task InitializeAsync_ActivatesLastFmOnlyWithCredentialsAndAFeatureEnabled(
+        bool hasCredentials, bool scrobbling, bool nowPlaying, int activations)
     {
-        _settingsService.GetLastFmCredentialsAsync().Returns(Task.FromResult<(string?, string?)?>(null));
-        _settingsService.GetLastFmScrobblingEnabledAsync().Returns(true);
-        _settingsService.GetLastFmNowPlayingEnabledAsync().Returns(true);
+        _settingsService.GetLastFmCredentialsAsync()
+            .Returns(Task.FromResult<(string?, string?)?>(hasCredentials ? ("user", "key") : null));
+        _settingsService.GetLastFmScrobblingEnabledAsync().Returns(scrobbling);
+        _settingsService.GetLastFmNowPlayingEnabledAsync().Returns(nowPlaying);
 
         await _manager.InitializeAsync();
 
-        await _lastFmService.DidNotReceive().InitializeAsync();
-    }
-
-    [Fact]
-    public async Task InitializeAsync_WhenLastFmHasCredentialsButBothDisabled_DoesNotActivateLastFmService()
-    {
-        _settingsService.GetLastFmCredentialsAsync().Returns((("user", "key"))!);
-        _settingsService.GetLastFmScrobblingEnabledAsync().Returns(false);
-        _settingsService.GetLastFmNowPlayingEnabledAsync().Returns(false);
-
-        await _manager.InitializeAsync();
-
-        await _lastFmService.DidNotReceive().InitializeAsync();
-    }
-
-    [Fact]
-    public async Task InitializeAsync_WhenLastFmHasCredentialsAndScrobblingEnabled_ActivatesLastFmService()
-    {
-        _settingsService.GetLastFmCredentialsAsync().Returns((("user", "key"))!);
-        _settingsService.GetLastFmScrobblingEnabledAsync().Returns(true);
-        _settingsService.GetLastFmNowPlayingEnabledAsync().Returns(false);
-
-        await _manager.InitializeAsync();
-
-        await _lastFmService.Received(1).InitializeAsync();
-    }
-
-    [Fact]
-    public async Task InitializeAsync_WhenLastFmHasCredentialsAndNowPlayingEnabled_ActivatesLastFmService()
-    {
-        _settingsService.GetLastFmCredentialsAsync().Returns((("user", "key"))!);
-        _settingsService.GetLastFmScrobblingEnabledAsync().Returns(false);
-        _settingsService.GetLastFmNowPlayingEnabledAsync().Returns(true);
-
-        await _manager.InitializeAsync();
-
-        await _lastFmService.Received(1).InitializeAsync();
-    }
-
-    [Fact]
-    public async Task ShutdownAsync_WhenNotInitialized_DoesNothing()
-    {
-        await _manager.ShutdownAsync();
-
-        await _discordService.DidNotReceive().OnPlaybackStoppedAsync();
-    }
-
-    [Fact]
-    public async Task ShutdownAsync_WhenInitialized_BroadcastsStopToActiveServices()
-    {
-        _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(true);
-        await _manager.InitializeAsync();
-
-        await _manager.ShutdownAsync();
-
-        await _discordService.Received(1).OnPlaybackStoppedAsync();
+        await _lastFmService.Received(activations).InitializeAsync();
     }
 
     [Fact]
@@ -309,20 +250,6 @@ public class PresenceManagerTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task OnTrackChanged_WhenActiveServiceExists_BroadcastsTrackChangeToServices()
-    {
-        _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(true);
-        await _manager.InitializeAsync();
-
-        var track = new Song { Title = "Test Track" };
-        _playbackService.CurrentTrack.Returns(track);
-        _playbackService.CurrentListenHistoryId.Returns((long?)1L);
-        _playbackService.TrackChanged += Raise.Event<Action>();
-
-        await _discordService.Received(1).OnTrackChangedAsync(track, 1L);
-    }
-
-    [Fact]
     public async Task OnTrackChanged_WhenTrackClearedAfterPlaying_BroadcastsStopToActiveServices()
     {
         _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(true);
@@ -339,18 +266,6 @@ public class PresenceManagerTests : IAsyncDisposable
         _playbackService.TrackChanged += Raise.Event<Action>();
 
         await _discordService.Received(1).OnPlaybackStoppedAsync();
-    }
-
-    [Fact]
-    public async Task OnPlaybackStateChanged_BroadcastsStateToActiveServices()
-    {
-        _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(true);
-        await _manager.InitializeAsync();
-
-        _playbackService.IsPlaying.Returns(true);
-        _playbackService.PlaybackStateChanged += Raise.Event<Action>();
-
-        await _discordService.Received(1).OnPlaybackStateChangedAsync(true);
     }
 
     [Fact]

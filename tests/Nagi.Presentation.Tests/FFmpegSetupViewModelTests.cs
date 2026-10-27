@@ -6,20 +6,18 @@ namespace Nagi.Presentation.Tests;
 
 public class FFmpegSetupViewModelTests
 {
-    public static TheoryData<Func<Task<bool>>, FFmpegSetupStatus, bool> Rechecks => new()
+    [Fact]
+    public async Task Recheck_ShowsCheckingUntilTheCheckCompletes()
     {
-        { () => Task.FromResult(true), FFmpegSetupStatus.Detected, true },
-        { () => Task.FromResult(false), FFmpegSetupStatus.StillNotDetected, false }
-    };
+        var check = new TaskCompletionSource<bool>();
+        var viewModel = new FFmpegSetupViewModel(() => check.Task);
 
-    [Theory]
-    [MemberData(nameof(Rechecks))]
-    public async Task Recheck_ReportsWhatTheCheckFound(Func<Task<bool>> check, FFmpegSetupStatus status, bool installed)
-    {
-        var viewModel = new FFmpegSetupViewModel(check);
+        var recheck = viewModel.RecheckAsync();
+        viewModel.Status.Should().Be(FFmpegSetupStatus.Checking);
 
-        (await viewModel.RecheckAsync()).Should().Be(installed);
+        check.SetResult(true);
 
-        viewModel.Status.Should().Be(status);
+        (await recheck).Should().BeTrue();
+        viewModel.Status.Should().Be(FFmpegSetupStatus.Detected);
     }
 }

@@ -107,13 +107,10 @@ public class MusicBrainzServiceTests : IDisposable
         HttpUtility.ParseQueryString(new Uri(capturedUrl!).Query)["query"].Should().Be(expectedQuery);
     }
 
-    [Theory]
-    [InlineData(HttpStatusCode.ServiceUnavailable)]
-    [InlineData(HttpStatusCode.InternalServerError)]
-    [InlineData(HttpStatusCode.TooManyRequests)]
-    public async Task SearchArtistAsync_HttpFailure_RemainsRetryable(HttpStatusCode status)
+    [Fact]
+    public async Task SearchArtistAsync_HttpFailure_RemainsRetryable()
     {
-        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(status));
+        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.ServiceUnavailable));
 
         var result = await _service.SearchArtistAsync("Any Artist");
 

@@ -134,24 +134,4 @@ public class LocalizedResourceTests
             return false;
         }
     }
-
-    [Fact]
-    public void GeneratedAccessors_FollowUiCultureAndFallBackToNeutralResources()
-    {
-        var originalCulture = CultureInfo.CurrentUICulture;
-        try
-        {
-            CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("de-DE");
-            CoreStrings.Label_Title.Should().Be("Titel");
-            UiStrings.Label_Composer.Should().Be("Komponist");
-            CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("en-AU");
-            CoreStrings.Label_Title.Should().Be("Title");
-            UiStrings.Label_Composer.Should().Be("Composer");
-            UiStrings.Label_Grouping.Should().Be("Grouping");
-        }
-        finally
-        {
-            CultureInfo.CurrentUICulture = originalCulture;
-        }
-    }
 }

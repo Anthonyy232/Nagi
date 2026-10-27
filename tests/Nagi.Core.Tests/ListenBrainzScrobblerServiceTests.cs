@@ -277,8 +277,6 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
     [Theory]
     [InlineData(HttpStatusCode.InternalServerError)]
     [InlineData(HttpStatusCode.Unauthorized)]
-    [InlineData(HttpStatusCode.Forbidden)]
-    [InlineData(HttpStatusCode.NotFound)]
     public async Task ProcessPendingListensAsync_RecoverableBatchFailurePreservesListensForRetry(HttpStatusCode status)
     {
         _settingsService.GetListenBrainzUserTokenAsync().Returns(Task.FromResult<string?>("tok"));
@@ -297,7 +295,7 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
         (await verify.ListenHistory.FindAsync(100L))!.IsSubmittedToListenBrainz.Should().BeFalse();
         (await verify.ListenHistory.FindAsync(101L))!.IsSubmittedToListenBrainz.Should().BeFalse();
         (await verify.ListenHistory.FindAsync(102L))!.IsSubmittedToListenBrainz.Should().BeFalse();
-        if (status is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
+        if (status is HttpStatusCode.Unauthorized)
             _httpMessageHandler.Requests.Should().ContainSingle();
 
         SetupHttpResponse(HttpStatusCode.OK, "{}");

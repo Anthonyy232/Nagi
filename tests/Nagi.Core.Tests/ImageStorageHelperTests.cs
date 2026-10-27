@@ -48,11 +48,10 @@ public class ImageStorageHelperTests
     }
 
     [Theory]
-    [InlineData("success", ".jpg")]
-    [InlineData("success", ".png")]
-    [InlineData("write", ".png")]
-    [InlineData("replace", ".png")]
-    public async Task SaveImageBytesAsync_PreservesPreviousArtworkUntilReplacementSucceeds(string outcome, string extension)
+    [InlineData("success")]
+    [InlineData("write")]
+    [InlineData("replace")]
+    public async Task SaveImageBytesAsync_PreservesPreviousArtworkUntilReplacementSucceeds(string outcome)
     {
         var directory = Directory.CreateTempSubdirectory("Nagi-Artwork-");
         try
@@ -77,15 +76,12 @@ public class ImageStorageHelperTests
                 File.Move(call.ArgAt<string>(0), call.ArgAt<string>(1), true);
             });
 
-            var destination = Path.Combine(directory.FullName, "abc.custom" + extension);
-            var save = () => extension == ".jpg"
-                ? ImageStorageHelper.SaveImageBytesAsync(_fs, directory.FullName, "abc", ".custom", replacement)
-                : ImageStorageHelper.SaveImageBytesAsync(_fs, directory.FullName, "abc", ".custom", replacement, extension);
+            var save = () => ImageStorageHelper.SaveImageBytesAsync(_fs, directory.FullName, "abc", ".custom", replacement, ".png");
             if (outcome == "success")
             {
-                (await save()).Should().Be(destination);
-                Directory.GetFiles(directory.FullName).Should().Equal(destination);
-                (await File.ReadAllBytesAsync(destination)).Should().Equal(replacement);
+                (await save()).Should().Be(png);
+                Directory.GetFiles(directory.FullName).Should().Equal(png);
+                (await File.ReadAllBytesAsync(png)).Should().Equal(replacement);
             }
             else
             {

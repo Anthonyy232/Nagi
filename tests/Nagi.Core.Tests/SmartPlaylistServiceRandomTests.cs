@@ -39,15 +39,10 @@ public class SmartPlaylistServiceRandomTests : IDisposable
     }
 
     [Fact]
-    public async Task GetRandomSmartPlaylistIdAsync_WithEmptyDatabase_ReturnsNull()
+    public async Task GetRandomSmartPlaylistIdAsync_ReturnsNullWhenEmptyElseAStoredId()
     {
-        var result = await _smartPlaylistService.GetRandomSmartPlaylistIdAsync();
-        result.Should().BeNull();
-    }
+        (await _smartPlaylistService.GetRandomSmartPlaylistIdAsync()).Should().BeNull();
 
-    [Fact]
-    public async Task GetRandomSmartPlaylistIdAsync_WithSingleItem_ReturnsThatItemId()
-    {
         var playlist = new SmartPlaylist { Name = "Test Smart" };
         using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {

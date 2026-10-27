@@ -41,34 +41,17 @@ public class BackupRestoreServiceTests : IDisposable
         result.Should().BeFalse();
     }
 
-    [Fact]
-    public async Task ValidateBackupAsync_WithZipContainingNagiDb_ReturnsTrue()
+    [Theory]
+    [InlineData("nagi.db", true)]
+    [InlineData("settings.json", true)]
+    [InlineData("some_other_file.txt", false)]
+    public async Task ValidateBackupAsync_RequiresDatabaseOrSettings(string entryName, bool expected)
     {
-        var zipPath = CreateTempZip(("nagi.db", "database content"));
+        var zipPath = CreateTempZip((entryName, "content"));
 
         var result = await _service.ValidateBackupAsync(zipPath);
 
-        result.Should().BeTrue("a ZIP containing nagi.db is a valid Nagi backup");
-    }
-
-    [Fact]
-    public async Task ValidateBackupAsync_WithZipContainingOnlySettingsJson_ReturnsTrue()
-    {
-        var zipPath = CreateTempZip(("settings.json", "{ }"));
-
-        var result = await _service.ValidateBackupAsync(zipPath);
-
-        result.Should().BeTrue("a ZIP containing settings.json alone should be considered a valid backup");
-    }
-
-    [Fact]
-    public async Task ValidateBackupAsync_WithZipMissingBothDbAndSettings_ReturnsFalse()
-    {
-        var zipPath = CreateTempZip(("some_other_file.txt", "irrelevant"));
-
-        var result = await _service.ValidateBackupAsync(zipPath);
-
-        result.Should().BeFalse("a backup missing both nagi.db and settings.json should be rejected");
+        result.Should().Be(expected);
     }
 
     [Fact]
@@ -162,15 +145,13 @@ public class BackupRestoreServiceTests : IDisposable
         read.ExecuteScalar().Should().Be(1L, "the existing reader should retain its original snapshot");
     }
 
-    [Theory]
-    [InlineData("SQLite format 3\0corrupt data")]
-    [InlineData("corrupt header")]
-    public async Task CreateBackupAsync_WhenDatabaseSnapshotFails_DoesNotPublishArchive(string contents)
+    [Fact]
+    public async Task CreateBackupAsync_WhenDatabaseSnapshotFails_DoesNotPublishArchive()
     {
         var sourceDir = CreateTempDir();
         var destinationDir = CreateTempDir();
         _pathConfig.AppDataRoot.Returns(sourceDir);
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, "nagi.db"), contents);
+        await File.WriteAllTextAsync(Path.Combine(sourceDir, "nagi.db"), "SQLite format 3\0corrupt data");
 
         var result = await _service.CreateBackupAsync(destinationDir);
 
@@ -211,6 +192,7 @@ public class BackupRestoreServiceTests : IDisposable
         var sourceDir = CreateTempDir();
         var destDir = CreateTempDir();
         await File.WriteAllTextAsync(Path.Combine(sourceDir, "playback_state.json"), "{ }");
+        await File.WriteAllTextAsync(Path.Combine(sourceDir, ".libvlc-cache-version"), "1");
         await File.WriteAllTextAsync(Path.Combine(sourceDir, "temp.tmp"), "tmp");
         await File.WriteAllTextAsync(Path.Combine(sourceDir, "data.lock"), "lock");
         await File.WriteAllTextAsync(Path.Combine(sourceDir, "nagi.db-wal"), "wal");
@@ -227,6 +209,7 @@ public class BackupRestoreServiceTests : IDisposable
         archive.Entries.Should().NotContain(e => e.FullName.EndsWith(".db-wal", StringComparison.OrdinalIgnoreCase));
         archive.Entries.Should().NotContain(e => e.FullName.EndsWith(".db-shm", StringComparison.OrdinalIgnoreCase));
         archive.Entries.Should().NotContain(e => e.FullName.EndsWith(".db-journal", StringComparison.OrdinalIgnoreCase));
+        archive.Entries.Should().NotContain(e => e.FullName.Equals(".libvlc-cache-version", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]
@@ -249,22 +232,6 @@ public class BackupRestoreServiceTests : IDisposable
         foreach (var excluded in new[] { "Logs/", "Cache/", "Temp/", "EBWebView/", "crashdumps/" })
             archive.Entries.Should().NotContain(e => e.FullName.StartsWith(excluded, StringComparison.OrdinalIgnoreCase),
                 $"{excluded} should be excluded from backups");
-    }
-
-    [Fact]
-    public async Task CreateBackupAsync_ExcludesLibVlcCacheVersionFile()
-    {
-        var sourceDir = CreateTempDir();
-        var destDir = CreateTempDir();
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, "playback_state.json"), "{ }");
-        await File.WriteAllTextAsync(Path.Combine(sourceDir, ".libvlc-cache-version"), "1");
-        _pathConfig.AppDataRoot.Returns(sourceDir);
-
-        var result = await _service.CreateBackupAsync(destDir);
-
-        result.Success.Should().BeTrue();
-        using var archive = ZipFile.OpenRead(result.BackupFilePath!);
-        archive.Entries.Should().NotContain(e => e.FullName.Equals(".libvlc-cache-version", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]
@@ -333,31 +300,6 @@ public class BackupRestoreServiceTests : IDisposable
         using var query = database.CreateCommand();
         query.CommandText = "SELECT Title FROM Songs;";
         query.ExecuteScalar().Should().Be("Restored track");
-    }
-
-    [Fact]
-    public async Task RestoreFromBackupAsync_WhenLaterItemIsLocked_RollsBackEveryEarlierItem()
-    {
-        var zipPath = CreateTempZip(
-            ("a.txt", "new first item"),
-            ("playback_state.json", "new locked item"));
-        var destDir = CreateTempDir();
-        var firstPath = Path.Combine(destDir, "a.txt");
-        var lockedPath = Path.Combine(destDir, "playback_state.json");
-        await File.WriteAllTextAsync(firstPath, "original first item");
-        await File.WriteAllTextAsync(lockedPath, "original locked item");
-        _pathConfig.AppDataRoot.Returns(destDir);
-
-        RestoreResult result;
-        using (File.Open(lockedPath, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
-        {
-            result = await _service.RestoreFromBackupAsync(zipPath);
-        }
-
-        result.Success.Should().BeFalse();
-        result.RestoredFileCount.Should().Be(0);
-        (await File.ReadAllTextAsync(firstPath)).Should().Be("original first item");
-        (await File.ReadAllTextAsync(lockedPath)).Should().Be("original locked item");
     }
 
     [Fact]

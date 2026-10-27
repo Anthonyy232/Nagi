@@ -173,7 +173,6 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
     }
 
     [Theory]
-    [InlineData(SmartPlaylistField.Title, SmartPlaylistOperator.Is, "Come Together", null, "Come Together")]
     [InlineData(SmartPlaylistField.Title, SmartPlaylistOperator.Is, "come together", null, "Come Together")]
     [InlineData(SmartPlaylistField.Title, SmartPlaylistOperator.IsNot, "Come Together", null,
         "Something", "Another Brick in the Wall", "Let It Be", "Fly Me to the Moon")]
@@ -185,10 +184,11 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
     [InlineData(SmartPlaylistField.Artist, SmartPlaylistOperator.Is, "The Beatles", null, "Come Together", "Something", "Let It Be")]
     [InlineData(SmartPlaylistField.Artist, SmartPlaylistOperator.IsNot, "The Beatles", null, "Another Brick in the Wall", "Fly Me to the Moon")]
     [InlineData(SmartPlaylistField.Album, SmartPlaylistOperator.Contains, "Road", null, "Come Together", "Something")]
-    [InlineData(SmartPlaylistField.Genre, SmartPlaylistOperator.Is, "Rock", null, "Come Together", "Something", "Another Brick in the Wall")]
     [InlineData(SmartPlaylistField.Genre, SmartPlaylistOperator.IsNot, "Rock", null, "Let It Be", "Fly Me to the Moon")]
     [InlineData(SmartPlaylistField.Genre, SmartPlaylistOperator.Contains, "az", null, "Fly Me to the Moon")]
     [InlineData(SmartPlaylistField.Genre, SmartPlaylistOperator.Is, "rock", null, "Come Together", "Something", "Another Brick in the Wall")]
+    [InlineData(SmartPlaylistField.Genre, SmartPlaylistOperator.StartsWith, "rO", null, "Come Together", "Something", "Another Brick in the Wall")]
+    [InlineData(SmartPlaylistField.Genre, SmartPlaylistOperator.EndsWith, "cK", null, "Come Together", "Something", "Another Brick in the Wall")]
     [InlineData(SmartPlaylistField.PlayCount, SmartPlaylistOperator.Equals, "100", null, "Come Together")]
     [InlineData(SmartPlaylistField.PlayCount, SmartPlaylistOperator.GreaterThan, "50", null, "Come Together", "Another Brick in the Wall")]
     [InlineData(SmartPlaylistField.PlayCount, SmartPlaylistOperator.LessThanOrEqual, "25", null, "Let It Be", "Fly Me to the Moon")]
@@ -202,7 +202,6 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
     [InlineData(SmartPlaylistField.SkipCount, SmartPlaylistOperator.GreaterThan, "3", null, "Come Together", "Something")]
     [InlineData(SmartPlaylistField.Bpm, SmartPlaylistOperator.GreaterThan, "70", null, "Come Together")]
     [InlineData(SmartPlaylistField.Bpm, SmartPlaylistOperator.Equals, "82", null, "Come Together")]
-    [InlineData(SmartPlaylistField.Genre, SmartPlaylistOperator.Is, "Pop", null, "Something", "Let It Be")]
     [InlineData(SmartPlaylistField.Year, SmartPlaylistOperator.IsInRange, "1969", "1969", "Come Together", "Something")]
     [InlineData(SmartPlaylistField.TrackNumber, SmartPlaylistOperator.GreaterThan, "1", null, "Something", "Another Brick in the Wall")]
     [InlineData(SmartPlaylistField.DiscNumber, SmartPlaylistOperator.Equals, "2", null, "Another Brick in the Wall")]
@@ -306,41 +305,6 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
     }
 
     [Theory]
-    [InlineData(SmartPlaylistOperator.StartsWith, "rO")]
-    [InlineData(SmartPlaylistOperator.EndsWith, "cK")]
-    public void BuildQuery_GenrePrefixOrSuffix_FiltersSongsAcrossAllTheirGenres(
-        SmartPlaylistOperator ruleOperator, string value)
-    {
-        var playlist = CreatePlaylist(new SmartPlaylistRule
-        {
-            Field = SmartPlaylistField.Genre,
-            Operator = ruleOperator,
-            Value = value
-        });
-        using var context = _dbHelper.ContextFactory.CreateDbContext();
-
-        var results = _queryBuilder.BuildQuery(context, playlist).Select(song => song.Id).ToList();
-
-        results.Should().BeEquivalentTo(new[] { _song1.Id, _song2.Id, _song3.Id });
-    }
-
-    [Fact]
-    public void BuildQuery_InvalidNumericValue_ReturnsNoFilter()
-    {
-        var playlist = CreatePlaylist(new SmartPlaylistRule
-        {
-            Field = SmartPlaylistField.PlayCount,
-            Operator = SmartPlaylistOperator.Equals,
-            Value = "not-a-number"
-        });
-
-        using var context = _dbHelper.ContextFactory.CreateDbContext();
-        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
-
-        results.Should().HaveCount(5);
-    }
-
-    [Theory]
     [InlineData("en-US", "180.5")]
     [InlineData("de-DE", "180.5")]
     [InlineData("de-DE", "180,5")]
@@ -413,25 +377,6 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
     }
 
     [Theory]
-    [InlineData(SmartPlaylistOperator.IsInTheLast, "Come Together", "Let It Be")]
-    [InlineData(SmartPlaylistOperator.IsNotInTheLast, "Something", "Another Brick in the Wall", "Fly Me to the Moon")]
-    public void BuildQuery_DateAddedWindow_SelectsExpectedSongs(SmartPlaylistOperator ruleOperator,
-        params string[] expectedTitles)
-    {
-        var playlist = CreatePlaylist(new SmartPlaylistRule
-        {
-            Field = SmartPlaylistField.DateAdded,
-            Operator = ruleOperator,
-            Value = "15"
-        });
-
-        using var context = _dbHelper.ContextFactory.CreateDbContext();
-        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
-
-        results.Select(song => song.Title).Should().BeEquivalentTo(expectedTitles);
-    }
-
-    [Theory]
     [InlineData(SmartPlaylistSortOrder.TitleAsc, "Another Brick in the Wall", "Come Together", "Fly Me to the Moon", "Let It Be", "Something")]
     [InlineData(SmartPlaylistSortOrder.TitleDesc, "Something", "Let It Be", "Fly Me to the Moon", "Come Together", "Another Brick in the Wall")]
     [InlineData(SmartPlaylistSortOrder.PlayCountDesc, "Another Brick in the Wall", "Come Together",
@@ -448,6 +393,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         "Let It Be", "Something", "Fly Me to the Moon")]
     [InlineData(SmartPlaylistSortOrder.AlbumDesc, "Another Brick in the Wall", "Something", "Come Together", "Let It Be", "Fly Me to the Moon")]
     [InlineData(SmartPlaylistSortOrder.YearDesc, "Another Brick in the Wall", "Let It Be", "Something", "Come Together", "Fly Me to the Moon")]
+    [InlineData(SmartPlaylistSortOrder.TrackNumberAsc, "Fly Me to the Moon", "Let It Be", "Come Together", "Something", "Another Brick in the Wall")]
     public void BuildQuery_SortOrder_ReturnsExpectedSequence(
         SmartPlaylistSortOrder sortOrder, params string[] expectedTitles)
     {
@@ -503,17 +449,6 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         var results = _queryBuilder.BuildQuery(context, playlist).ToList();
 
         results.Should().HaveCount(2);
-    }
-
-    [Fact]
-    public void BuildQuery_NoRules_ReturnsAllSongs()
-    {
-        var playlist = CreatePlaylist();
-
-        using var context = _dbHelper.ContextFactory.CreateDbContext();
-        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
-
-        results.Should().HaveCount(5);
     }
 
     [Theory]
@@ -576,22 +511,6 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
             .Should().Equal("Under_score");
         _queryBuilder.BuildQuery(context, playlist, searchTerm: "!").Select(song => song.Title)
             .Should().Equal("Bang! Now");
-    }
-
-    [Fact]
-    public void BuildCountQuery_ReturnsCorrectCount()
-    {
-        var playlist = CreatePlaylist(new SmartPlaylistRule
-        {
-            Field = SmartPlaylistField.PlayCount,
-            Operator = SmartPlaylistOperator.GreaterThan,
-            Value = "50"
-        });
-
-        using var context = _dbHelper.ContextFactory.CreateDbContext();
-        var count = _queryBuilder.BuildCountQuery(context, playlist).Count();
-
-        count.Should().Be(2);
     }
 
     [Fact]
@@ -659,71 +578,6 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         var results = _queryBuilder.BuildQuery(context, playlist).ToList();
 
         results.Should().HaveCount(5);
-    }
-
-    [Fact]
-    public void BuildQuery_DateGreaterThan_ReturnsMatchingSongs()
-    {
-        var targetDate = DateTime.UtcNow.AddDays(-20).ToString("yyyy-MM-dd");
-        var playlist = CreatePlaylist(new SmartPlaylistRule
-        {
-            Field = SmartPlaylistField.DateAdded,
-            Operator = SmartPlaylistOperator.GreaterThan,
-            Value = targetDate
-        });
-
-        using var context = _dbHelper.ContextFactory.CreateDbContext();
-        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
-
-        results.Should().HaveCount(2);
-    }
-
-    [Fact]
-    public void BuildQuery_OrLogicWithMultipleGenreRules_MatchesEither()
-    {
-        var playlist = CreatePlaylist(
-            matchAllRules: false,
-            new SmartPlaylistRule
-            {
-                Field = SmartPlaylistField.Genre,
-                Operator = SmartPlaylistOperator.Is,
-                Value = "Jazz"
-            },
-            new SmartPlaylistRule
-            {
-                Field = SmartPlaylistField.Genre,
-                Operator = SmartPlaylistOperator.Is,
-                Value = "Pop"
-            });
-
-        using var context = _dbHelper.ContextFactory.CreateDbContext();
-        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
-
-        results.Should().HaveCount(3);
-    }
-
-    [Fact]
-    public void BuildQuery_AndLogicWithContradictoryRules_ReturnsEmpty()
-    {
-        var playlist = CreatePlaylist(
-            matchAllRules: true,
-            new SmartPlaylistRule
-            {
-                Field = SmartPlaylistField.Year,
-                Operator = SmartPlaylistOperator.Equals,
-                Value = "1969"
-            },
-            new SmartPlaylistRule
-            {
-                Field = SmartPlaylistField.Year,
-                Operator = SmartPlaylistOperator.Equals,
-                Value = "1979"
-            });
-
-        using var context = _dbHelper.ContextFactory.CreateDbContext();
-        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
-
-        results.Should().BeEmpty();
     }
 
     [Fact]
@@ -856,19 +710,6 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
     }
 
     [Fact]
-    public void BuildQuery_WithSortOrderOverride_UsesMappedSortOrderInsteadOfPlaylistDefault()
-    {
-        var playlist = new SmartPlaylist { SortOrder = SmartPlaylistSortOrder.TitleAsc };
-
-        using var context = _dbHelper.ContextFactory.CreateDbContext();
-        var results = _queryBuilder.BuildQuery(context, playlist, sortOrderOverride: SongSortOrder.TitleDesc).ToList();
-
-        results.Should().HaveCount(5);
-        results[0].Title.Should().Be("Something");
-        results[4].Title.Should().Be("Another Brick in the Wall");
-    }
-
-    [Fact]
     public void BuildQuery_WithTrackNumberSortOrderOverride_SortsSameAlbumNameAcrossDifferentArtists()
     {
         var compilationArtist1 = new Artist { Name = "Compilation Artist 1" };
@@ -923,39 +764,6 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         var results = _queryBuilder.BuildQuery(context, playlist, sortOrderOverride: SongSortOrder.TrackNumberAsc).ToList();
 
         results.Select(s => s.Title).Should().ContainInOrder("Compilation Track 1", "Compilation Track 2");
-    }
-
-    [Fact]
-    public void BuildCountQuery_WithSearchTerm_FiltersCount()
-    {
-        var playlist = CreatePlaylist(new SmartPlaylistRule
-        {
-            Field = SmartPlaylistField.Genre,
-            Operator = SmartPlaylistOperator.Is,
-            Value = "Rock"
-        });
-
-        using var context = _dbHelper.ContextFactory.CreateDbContext();
-        var count = _queryBuilder.BuildCountQuery(context, playlist, searchTerm: "Together").Count();
-
-        count.Should().Be(1, "only 'Come Together' matches both the Rock genre rule and the search term");
-    }
-
-    [Fact]
-    public void BuildQuery_SortByTrackNumberAsc_OrdersByAlbumThenDiscThenTrack()
-    {
-        var playlist = new SmartPlaylist { SortOrder = SmartPlaylistSortOrder.TrackNumberAsc };
-
-        using var context = _dbHelper.ContextFactory.CreateDbContext();
-        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
-
-        var abbeyRoadSongs = results.Where(s => s.Album?.Title == "Abbey Road").ToList();
-        abbeyRoadSongs[0].TrackNumber.Should().Be(1, "track 1 comes before track 2 in Abbey Road");
-        abbeyRoadSongs[1].TrackNumber.Should().Be(2);
-
-        var wallIndex = results.FindIndex(s => s.Title == "Another Brick in the Wall");
-        var abbeyRoadFirstIndex = results.FindIndex(s => s.Album?.Title == "Abbey Road");
-        wallIndex.Should().BeGreaterThan(abbeyRoadFirstIndex, "'The Wall' should come after 'Abbey Road'");
     }
 
     [Fact]

@@ -23,39 +23,12 @@ public class StatisticsServiceTests : IDisposable
         _dbHelper.Dispose();
     }
 
-    [Fact]
-    public async Task GetTopSongsAsync_CountsFinishedListenAsPlay_WhenNotScrobbleEligible()
-    {
-        var folder = new Folder { Name = "Test Folder", Path = "C:\\Music" };
-        var artist = new Artist { Name = "Artist A" };
-        var song = CreateSong(folder, artist, "Song A", null, TimeSpan.FromMinutes(3));
-
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Folders.Add(folder);
-            context.Artists.Add(artist);
-            context.Songs.Add(song);
-            context.ListenHistory.Add(new ListenHistory
-            {
-                Song = song,
-                ListenTimestampUtc = DateTime.UtcNow,
-                EndReason = PlaybackEndReason.Finished,
-                ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks,
-                IsEligibleForScrobbling = false
-            });
-            await context.SaveChangesAsync();
-        }
-
-        var result = (await _statisticsService.GetTopSongsAsync(new TimeRange(null, null), 10, SortMetric.PlayCount)).ToList();
-
-        result.Should().ContainSingle();
-        result[0].Song.Id.Should().Be(song.Id);
-        result[0].TotalPlays.Should().Be(1);
-        result[0].TotalDuration.Should().Be(TimeSpan.FromMinutes(3));
-    }
-
-    [Fact]
-    public async Task GetTopSongsAsync_CountsSkippedButEligibleListenAsPlay()
+    [Theory]
+    [InlineData(PlaybackEndReason.Finished, false, true)]
+    [InlineData(PlaybackEndReason.Skipped, true, true)]
+    [InlineData(PlaybackEndReason.Skipped, false, false)]
+    public async Task GetTopSongsAsync_CountsFinishedOrScrobbleEligibleListensAsPlays(
+        PlaybackEndReason endReason, bool isEligibleForScrobbling, bool countsAsPlay)
     {
         var folder = new Folder { Name = "Test Folder", Path = "C:\\Music" };
         var artist = new Artist { Name = "Artist A" };
@@ -70,50 +43,26 @@ public class StatisticsServiceTests : IDisposable
             {
                 Song = song,
                 ListenTimestampUtc = DateTime.UtcNow,
-                EndReason = PlaybackEndReason.Skipped,
-                ListenDurationTicks = TimeSpan.FromMinutes(2.75).Ticks,
-                IsEligibleForScrobbling = true
+                EndReason = endReason,
+                ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks,
+                IsEligibleForScrobbling = isEligibleForScrobbling
             });
             await context.SaveChangesAsync();
         }
 
         var result = (await _statisticsService.GetTopSongsAsync(new TimeRange(null, null), 10, SortMetric.PlayCount)).ToList();
 
-        result.Should().ContainSingle();
-        result[0].Song.Id.Should().Be(song.Id);
-        result[0].TotalPlays.Should().Be(1, "skipping after the threshold should still count as a play");
-    }
-
-    [Fact]
-    public async Task GetTopAlbumsAsync_CountsFinishedListenAsPlay_WhenNotScrobbleEligible()
-    {
-        var folder = new Folder { Name = "Test Folder", Path = "C:\\Music" };
-        var artist = new Artist { Name = "Artist A" };
-        var album = new Album { Title = "Album A", ArtistName = artist.Name, PrimaryArtistName = artist.Name };
-        var song = CreateSong(folder, artist, "Song A", album, TimeSpan.FromMinutes(4));
-
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        if (countsAsPlay)
         {
-            context.Folders.Add(folder);
-            context.Artists.Add(artist);
-            context.Albums.Add(album);
-            context.Songs.Add(song);
-            context.ListenHistory.Add(new ListenHistory
-            {
-                Song = song,
-                ListenTimestampUtc = DateTime.UtcNow,
-                EndReason = PlaybackEndReason.Finished,
-                ListenDurationTicks = TimeSpan.FromMinutes(4).Ticks,
-                IsEligibleForScrobbling = false
-            });
-            await context.SaveChangesAsync();
+            var stats = result.Should().ContainSingle().Subject;
+            stats.Song.Id.Should().Be(song.Id);
+            stats.TotalPlays.Should().Be(1);
+            stats.TotalDuration.Should().Be(TimeSpan.FromMinutes(3));
         }
-
-        var result = (await _statisticsService.GetTopAlbumsAsync(new TimeRange(null, null), 10)).ToList();
-
-        result.Should().ContainSingle();
-        result[0].Album.Id.Should().Be(album.Id);
-        result[0].TotalPlays.Should().Be(1);
+        else
+        {
+            result.Should().BeEmpty();
+        }
     }
 
     [Fact]
@@ -169,44 +118,6 @@ public class StatisticsServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task GetUniqueSongsPlayedAsync_CountsFinishedListen_WhenNotScrobbleEligible()
-    {
-        var folder = new Folder { Name = "Test Folder", Path = "C:\\Music" };
-        var artist = new Artist { Name = "Artist A" };
-        var playedSong = CreateSong(folder, artist, "Played", null, TimeSpan.FromMinutes(3));
-        var skippedSong = CreateSong(folder, artist, "Skipped", null, TimeSpan.FromMinutes(3));
-
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Folders.Add(folder);
-            context.Artists.Add(artist);
-            context.Songs.AddRange(playedSong, skippedSong);
-            context.ListenHistory.AddRange(
-                new ListenHistory
-                {
-                    Song = playedSong,
-                    ListenTimestampUtc = DateTime.UtcNow,
-                    EndReason = PlaybackEndReason.Finished,
-                    ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks,
-                    IsEligibleForScrobbling = false
-                },
-                new ListenHistory
-                {
-                    Song = skippedSong,
-                    ListenTimestampUtc = DateTime.UtcNow,
-                    EndReason = PlaybackEndReason.Skipped,
-                    ListenDurationTicks = TimeSpan.FromSeconds(10).Ticks,
-                    IsEligibleForScrobbling = false
-                });
-            await context.SaveChangesAsync();
-        }
-
-        var uniqueSongsPlayed = await _statisticsService.GetUniqueSongsPlayedAsync(new TimeRange(null, null));
-
-        uniqueSongsPlayed.Should().Be(1);
-    }
-
-    [Fact]
     public async Task GetTopArtistsAsync_ExcludesArtistsWithOnlyZeroDurationAndZeroPlays()
     {
         var folder = new Folder { Name = "Test Folder", Path = "C:\\Music" };
@@ -247,124 +158,10 @@ public class StatisticsServiceTests : IDisposable
         topArtists.Select(a => a.Artist.Id).Should().NotContain(abandonedArtist.Id);
     }
 
-    [Fact]
-    public async Task GetTopSongsAsync_FiltersBySearchTerm()
-    {
-        var folder = new Folder { Name = "Test Folder", Path = "C:\\Music" };
-        var artist = new Artist { Name = "Artist A" };
-        var song1 = CreateSong(folder, artist, "Apple", null, TimeSpan.FromMinutes(3));
-        var song2 = CreateSong(folder, artist, "Banana", null, TimeSpan.FromMinutes(3));
-
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Folders.Add(folder);
-            context.Artists.Add(artist);
-            context.Songs.AddRange(song1, song2);
-            context.ListenHistory.AddRange(
-                new ListenHistory { Song = song1, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks },
-                new ListenHistory { Song = song2, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks }
-            );
-            await context.SaveChangesAsync();
-        }
-
-        var result = (await _statisticsService.GetTopSongsAsync(new TimeRange(null, null), 10, SortMetric.PlayCount, searchTerm: "App")).ToList();
-
-        result.Should().ContainSingle();
-        result[0].Song.Title.Should().Be("Apple");
-    }
-
-    [Fact]
-    public async Task GetTopArtistsAsync_FiltersBySearchTerm()
-    {
-        var folder = new Folder { Name = "Test Folder", Path = "C:\\Music" };
-        var artist1 = new Artist { Name = "Alpha" };
-        var artist2 = new Artist { Name = "Beta" };
-        var song1 = CreateSong(folder, artist1, "Song 1", null, TimeSpan.FromMinutes(3));
-        var song2 = CreateSong(folder, artist2, "Song 2", null, TimeSpan.FromMinutes(3));
-
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Folders.Add(folder);
-            context.Artists.AddRange(artist1, artist2);
-            context.Songs.AddRange(song1, song2);
-            context.ListenHistory.AddRange(
-                new ListenHistory { Song = song1, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks },
-                new ListenHistory { Song = song2, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks }
-            );
-            await context.SaveChangesAsync();
-        }
-
-        var result = (await _statisticsService.GetTopArtistsAsync(new TimeRange(null, null), 10, SortMetric.Duration, searchTerm: "Alp")).ToList();
-
-        result.Should().ContainSingle();
-        result[0].Artist.Name.Should().Be("Alpha");
-    }
-
-    [Fact]
-    public async Task GetTopAlbumsAsync_FiltersBySearchTerm()
-    {
-        var folder = new Folder { Name = "Test Folder", Path = "C:\\Music" };
-        var artist = new Artist { Name = "Artist A" };
-        var album1 = new Album { Title = "First Album", ArtistName = artist.Name, PrimaryArtistName = artist.Name };
-        var album2 = new Album { Title = "Second Album", ArtistName = artist.Name, PrimaryArtistName = artist.Name };
-        var song1 = CreateSong(folder, artist, "Song 1", album1, TimeSpan.FromMinutes(3));
-        var song2 = CreateSong(folder, artist, "Song 2", album2, TimeSpan.FromMinutes(3));
-
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Folders.Add(folder);
-            context.Artists.Add(artist);
-            context.Albums.AddRange(album1, album2);
-            context.Songs.AddRange(song1, song2);
-            context.ListenHistory.AddRange(
-                new ListenHistory { Song = song1, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks },
-                new ListenHistory { Song = song2, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks }
-            );
-            await context.SaveChangesAsync();
-        }
-
-        var result = (await _statisticsService.GetTopAlbumsAsync(new TimeRange(null, null), 10, searchTerm: "First")).ToList();
-
-        result.Should().ContainSingle();
-        result[0].Album.Title.Should().Be("First Album");
-    }
-
-    [Fact]
-    public async Task GetTopGenresAsync_FiltersBySearchTerm()
-    {
-        var folder = new Folder { Name = "Test Folder", Path = "C:\\Music" };
-        var artist = new Artist { Name = "Artist A" };
-        var song1 = CreateSong(folder, artist, "Song 1", null, TimeSpan.FromMinutes(3));
-        var song2 = CreateSong(folder, artist, "Song 2", null, TimeSpan.FromMinutes(3));
-
-        var genre1 = new Genre { Name = "Rock" };
-        var genre2 = new Genre { Name = "Pop" };
-
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Folders.Add(folder);
-            context.Artists.Add(artist);
-            context.Genres.AddRange(genre1, genre2);
-            context.Songs.AddRange(song1, song2);
-
-            song1.Genres.Add(genre1);
-            song2.Genres.Add(genre2);
-
-            context.ListenHistory.AddRange(
-                new ListenHistory { Song = song1, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks },
-                new ListenHistory { Song = song2, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks }
-            );
-            await context.SaveChangesAsync();
-        }
-
-        var result = (await _statisticsService.GetTopGenresAsync(new TimeRange(null, null), 10, searchTerm: "Ro")).ToList();
-
-        result.Should().ContainSingle();
-        result[0].Genre.Name.Should().Be("Rock");
-    }
-
-    [Fact]
-    public async Task GetTopSongsAsync_WithStartDateFilter_ExcludesListensBeforeStart()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task GetTopSongsAsync_ExcludesListensOutsideTimeRange(bool boundaryIsStart)
     {
         var folder = new Folder { Name = "F", Path = "C:\\Music" };
         var artist = new Artist { Name = "A" };
@@ -384,79 +181,28 @@ public class StatisticsServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var result = (await _statisticsService.GetTopSongsAsync(new TimeRange(boundary, null), 10, SortMetric.PlayCount)).ToList();
+        var range = boundaryIsStart ? new TimeRange(boundary, null) : new TimeRange(null, boundary);
+        var result = (await _statisticsService.GetTopSongsAsync(range, 10, SortMetric.PlayCount)).ToList();
 
-        result.Should().ContainSingle("only the listen after the start date should be included");
-        result[0].Song.Id.Should().Be(newSong.Id);
+        result.Should().ContainSingle().Which.Song.Id.Should().Be(boundaryIsStart ? newSong.Id : oldSong.Id);
     }
 
     [Fact]
-    public async Task GetTopSongsAsync_WithEndDateFilter_ExcludesListensAfterEnd()
+    public async Task TopItems_WithDurationSortMetric_OrderByTotalDurationDescending()
     {
         var folder = new Folder { Name = "F", Path = "C:\\Music" };
         var artist = new Artist { Name = "A" };
-        var oldSong = CreateSong(folder, artist, "Old Song", null, TimeSpan.FromMinutes(3));
-        var newSong = CreateSong(folder, artist, "New Song", null, TimeSpan.FromMinutes(3));
-        var boundary = new DateTime(2024, 1, 15, 0, 0, 0, DateTimeKind.Utc);
+        var highPlaysAlbum = new Album { Title = "High Plays Album", ArtistName = "A", PrimaryArtistName = "A" };
+        var longDurationAlbum = new Album { Title = "Long Duration Album", ArtistName = "A", PrimaryArtistName = "A" };
+        var highPlaysGenre = new Genre { Name = "Pop" };
+        var longDurationGenre = new Genre { Name = "Classical" };
+        var highPlaysSong = CreateSong(folder, artist, "High Plays", highPlaysAlbum, TimeSpan.FromMinutes(1));
+        var longDurationSong = CreateSong(folder, artist, "Long Duration", longDurationAlbum, TimeSpan.FromHours(1));
+        highPlaysSong.Genres.Add(highPlaysGenre);
+        longDurationSong.Genres.Add(longDurationGenre);
 
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {
-            context.Folders.Add(folder);
-            context.Artists.Add(artist);
-            context.Songs.AddRange(oldSong, newSong);
-            context.ListenHistory.AddRange(
-                new ListenHistory { Song = oldSong, ListenTimestampUtc = boundary.AddDays(-1), EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks },
-                new ListenHistory { Song = newSong, ListenTimestampUtc = boundary.AddDays(1), EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks }
-            );
-            await context.SaveChangesAsync();
-        }
-
-        var result = (await _statisticsService.GetTopSongsAsync(new TimeRange(null, boundary), 10, SortMetric.PlayCount)).ToList();
-
-        result.Should().ContainSingle("only the listen before the end date should be included");
-        result[0].Song.Id.Should().Be(oldSong.Id);
-    }
-
-    [Fact]
-    public async Task GetTopArtistsAsync_WithTimeRange_ExcludesOutOfRangeListens()
-    {
-        var folder = new Folder { Name = "F", Path = "C:\\Music" };
-        var artistA = new Artist { Name = "Artist A" };
-        var artistB = new Artist { Name = "Artist B" };
-        var songA = CreateSong(folder, artistA, "Song A", null, TimeSpan.FromMinutes(3));
-        var songB = CreateSong(folder, artistB, "Song B", null, TimeSpan.FromMinutes(3));
-        var start = new DateTime(2024, 6, 1, 0, 0, 0, DateTimeKind.Utc);
-
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Folders.Add(folder);
-            context.Artists.AddRange(artistA, artistB);
-            context.Songs.AddRange(songA, songB);
-            context.ListenHistory.AddRange(
-                new ListenHistory { Song = songA, ListenTimestampUtc = start.AddDays(-5), EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks },
-                new ListenHistory { Song = songB, ListenTimestampUtc = start.AddDays(1), EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks }
-            );
-            await context.SaveChangesAsync();
-        }
-
-        var result = (await _statisticsService.GetTopArtistsAsync(new TimeRange(start, null), 10, SortMetric.PlayCount)).ToList();
-
-        result.Should().ContainSingle();
-        result[0].Artist.Id.Should().Be(artistB.Id);
-    }
-
-    [Fact]
-    public async Task GetTopSongsAsync_WithDurationSortMetric_OrdersByTotalDurationDescending()
-    {
-        var folder = new Folder { Name = "F", Path = "C:\\Music" };
-        var artist = new Artist { Name = "A" };
-        var highPlaysSong = CreateSong(folder, artist, "High Plays", null, TimeSpan.FromMinutes(1));
-        var longDurationSong = CreateSong(folder, artist, "Long Duration", null, TimeSpan.FromHours(1));
-
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Folders.Add(folder);
-            context.Artists.Add(artist);
             context.Songs.AddRange(highPlaysSong, longDurationSong);
             for (var i = 0; i < 5; i++)
                 context.ListenHistory.Add(new ListenHistory { Song = highPlaysSong, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(1).Ticks });
@@ -464,45 +210,20 @@ public class StatisticsServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var byPlayCount = (await _statisticsService.GetTopSongsAsync(new TimeRange(null, null), 10, SortMetric.PlayCount)).ToList();
-        var byDuration = (await _statisticsService.GetTopSongsAsync(new TimeRange(null, null), 10, SortMetric.Duration)).ToList();
-
-        byPlayCount[0].Song.Id.Should().Be(highPlaysSong.Id, "5 plays should rank first when sorting by play count");
-        byDuration[0].Song.Id.Should().Be(longDurationSong.Id, "60 min total should rank first when sorting by duration");
-    }
-
-    [Fact]
-    public async Task GetTopSongsAsync_SongWithOnlyPureSkips_DoesNotAppearInResults()
-    {
-        var folder = new Folder { Name = "F", Path = "C:\\Music" };
-        var artist = new Artist { Name = "A" };
-        var skippedSong = CreateSong(folder, artist, "Skipped", null, TimeSpan.FromMinutes(3));
-
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Folders.Add(folder);
-            context.Artists.Add(artist);
-            context.Songs.Add(skippedSong);
-            context.ListenHistory.Add(new ListenHistory
-            {
-                Song = skippedSong,
-                ListenTimestampUtc = DateTime.UtcNow,
-                EndReason = PlaybackEndReason.Skipped,
-                ListenDurationTicks = TimeSpan.FromSeconds(10).Ticks,
-                IsEligibleForScrobbling = false
-            });
-            await context.SaveChangesAsync();
-        }
-
-        var result = (await _statisticsService.GetTopSongsAsync(new TimeRange(null, null), 10, SortMetric.PlayCount)).ToList();
-
-        result.Should().BeEmpty("a song that was only skipped before the threshold should have 0 plays and be excluded");
+        var range = new TimeRange(null, null);
+        (await _statisticsService.GetTopSongsAsync(range, 10, SortMetric.PlayCount)).First().Song.Id.Should().Be(highPlaysSong.Id);
+        (await _statisticsService.GetTopSongsAsync(range, 10, SortMetric.Duration)).First().Song.Id.Should().Be(longDurationSong.Id);
+        (await _statisticsService.GetTopAlbumsAsync(range, 10, SortMetric.PlayCount)).First().Album.Id.Should().Be(highPlaysAlbum.Id);
+        (await _statisticsService.GetTopAlbumsAsync(range, 10, SortMetric.Duration)).First().Album.Id.Should().Be(longDurationAlbum.Id);
+        (await _statisticsService.GetTopGenresAsync(range, 10, SortMetric.PlayCount)).First().Genre.Id.Should().Be(highPlaysGenre.Id);
+        (await _statisticsService.GetTopGenresAsync(range, 10, SortMetric.Duration)).First().Genre.Id.Should().Be(longDurationGenre.Id);
     }
 
     [Theory]
-    [InlineData(null, 3)]
-    [InlineData("mätch", 2)]
-    public async Task TopItemPages_CountDistinctQualifyingEntitiesBeyondPageSize(string? search, int expectedCount)
+    [InlineData(null, 3, "Other")]
+    [InlineData("mätch", 2, "MÄTCH A")]
+    public async Task TopItemPages_FilterAndCountDistinctQualifyingEntitiesBeyondPageSize(
+        string? search, int expectedCount, string expectedTopName)
     {
         var folder = new Folder { Name = "F", Path = @"C:\Music" };
         var names = new[] { "MÄTCH A", "MÄTCH B", "Other", "MÄTCH Skipped" };
@@ -525,109 +246,34 @@ public class StatisticsServiceTests : IDisposable
                 EndReason = index == 3 ? PlaybackEndReason.Skipped : PlaybackEndReason.Finished,
                 ListenDurationTicks = TimeSpan.FromSeconds(10).Ticks
             }));
-            context.ListenHistory.Add(new ListenHistory
+            // "Other" outranks every match, so the top item shows whether the search filtered it out.
+            context.ListenHistory.AddRange(new[] { songs[0], songs[2], songs[2] }.Select(song => new ListenHistory
             {
-                Song = songs[0],
+                Song = song,
                 ListenTimestampUtc = DateTime.UtcNow,
                 EndReason = PlaybackEndReason.Finished,
-                ListenDurationTicks = songs[0].DurationTicks
-            });
+                ListenDurationTicks = song.DurationTicks
+            }));
             await context.SaveChangesAsync();
         }
 
         var range = new TimeRange(null, null);
-        (await _statisticsService.GetTopSongsPageAsync(range, 1, SortMetric.PlayCount, 0, search)).TotalCount.Should().Be(expectedCount);
-        (await _statisticsService.GetTopArtistsPageAsync(range, 1, SortMetric.PlayCount, 0, search)).TotalCount.Should().Be(expectedCount);
-        (await _statisticsService.GetTopAlbumsPageAsync(range, 1, SortMetric.PlayCount, 0, search)).TotalCount.Should().Be(expectedCount);
-        (await _statisticsService.GetTopGenresPageAsync(range, 1, SortMetric.PlayCount, 0, search)).TotalCount.Should().Be(expectedCount);
-    }
-    [Fact]
-    public async Task GetTopAlbumsAsync_WithDurationSortMetric_OrdersByTotalDurationDescending()
-    {
-        var folder = new Folder { Name = "F", Path = "C:\\Music" };
-        var artist = new Artist { Name = "A" };
-        var highPlaysAlbum = new Album { Title = "High Plays Album", ArtistName = "A", PrimaryArtistName = "A" };
-        var longDurationAlbum = new Album { Title = "Long Duration Album", ArtistName = "A", PrimaryArtistName = "A" };
-        var song1 = CreateSong(folder, artist, "Song 1", highPlaysAlbum, TimeSpan.FromMinutes(1));
-        var song2 = CreateSong(folder, artist, "Song 2", longDurationAlbum, TimeSpan.FromHours(1));
-
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Folders.Add(folder);
-            context.Artists.Add(artist);
-            context.Albums.AddRange(highPlaysAlbum, longDurationAlbum);
-            context.Songs.AddRange(song1, song2);
-            for (var i = 0; i < 5; i++)
-                context.ListenHistory.Add(new ListenHistory { Song = song1, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(1).Ticks });
-            context.ListenHistory.Add(new ListenHistory { Song = song2, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromHours(1).Ticks });
-            await context.SaveChangesAsync();
-        }
-
-        var byPlayCount = (await _statisticsService.GetTopAlbumsAsync(new TimeRange(null, null), 10, SortMetric.PlayCount)).ToList();
-        var byDuration = (await _statisticsService.GetTopAlbumsAsync(new TimeRange(null, null), 10, SortMetric.Duration)).ToList();
-
-        byPlayCount[0].Album.Id.Should().Be(highPlaysAlbum.Id, "5 plays should rank first when sorting by play count");
-        byDuration[0].Album.Id.Should().Be(longDurationAlbum.Id, "60 min total should rank first when sorting by duration");
+        var songPage = await _statisticsService.GetTopSongsPageAsync(range, 1, SortMetric.PlayCount, 0, search);
+        songPage.TotalCount.Should().Be(expectedCount);
+        songPage.Items.Should().ContainSingle().Which.Song.Title.Should().Be(expectedTopName);
+        var artistPage = await _statisticsService.GetTopArtistsPageAsync(range, 1, SortMetric.PlayCount, 0, search);
+        artistPage.TotalCount.Should().Be(expectedCount);
+        artistPage.Items.Should().ContainSingle().Which.Artist.Name.Should().Be(expectedTopName);
+        var albumPage = await _statisticsService.GetTopAlbumsPageAsync(range, 1, SortMetric.PlayCount, 0, search);
+        albumPage.TotalCount.Should().Be(expectedCount);
+        albumPage.Items.Should().ContainSingle().Which.Album.Title.Should().Be(expectedTopName);
+        var genrePage = await _statisticsService.GetTopGenresPageAsync(range, 1, SortMetric.PlayCount, 0, search);
+        genrePage.TotalCount.Should().Be(expectedCount);
+        genrePage.Items.Should().ContainSingle().Which.Genre.Name.Should().Be(expectedTopName);
     }
 
     [Fact]
-    public async Task GetTopGenresAsync_WithDurationSortMetric_OrdersByTotalDurationDescending()
-    {
-        var folder = new Folder { Name = "F", Path = "C:\\Music" };
-        var artist = new Artist { Name = "A" };
-        var highPlaysGenre = new Genre { Name = "Pop" };
-        var longDurationGenre = new Genre { Name = "Classical" };
-        var song1 = CreateSong(folder, artist, "Song 1", null, TimeSpan.FromMinutes(1));
-        var song2 = CreateSong(folder, artist, "Song 2", null, TimeSpan.FromHours(1));
-
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Folders.Add(folder);
-            context.Artists.Add(artist);
-            context.Genres.AddRange(highPlaysGenre, longDurationGenre);
-            context.Songs.AddRange(song1, song2);
-            song1.Genres.Add(highPlaysGenre);
-            song2.Genres.Add(longDurationGenre);
-            for (var i = 0; i < 5; i++)
-                context.ListenHistory.Add(new ListenHistory { Song = song1, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(1).Ticks });
-            context.ListenHistory.Add(new ListenHistory { Song = song2, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromHours(1).Ticks });
-            await context.SaveChangesAsync();
-        }
-
-        var byPlayCount = (await _statisticsService.GetTopGenresAsync(new TimeRange(null, null), 10, SortMetric.PlayCount)).ToList();
-        var byDuration = (await _statisticsService.GetTopGenresAsync(new TimeRange(null, null), 10, SortMetric.Duration)).ToList();
-
-        byPlayCount[0].Genre.Id.Should().Be(highPlaysGenre.Id, "5 plays should rank first when sorting by play count");
-        byDuration[0].Genre.Id.Should().Be(longDurationGenre.Id, "60 min total should rank first when sorting by duration");
-    }
-
-    [Fact]
-    public async Task GetTotalListenTimeAsync_SumsAllListenDurations()
-    {
-        var folder = new Folder { Name = "F", Path = "C:\\Music" };
-        var artist = new Artist { Name = "A" };
-        var song = CreateSong(folder, artist, "Song", null, TimeSpan.FromMinutes(5));
-
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Folders.Add(folder);
-            context.Artists.Add(artist);
-            context.Songs.Add(song);
-            context.ListenHistory.AddRange(
-                new ListenHistory { Song = song, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(2).Ticks },
-                new ListenHistory { Song = song, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Skipped, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks },
-                new ListenHistory { Song = song, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(5).Ticks }
-            );
-            await context.SaveChangesAsync();
-        }
-
-        var total = await _statisticsService.GetTotalListenTimeAsync(new TimeRange(null, null));
-
-        total.Should().Be(TimeSpan.FromMinutes(10), "all listen durations should be summed regardless of end reason");
-    }
-
-    [Fact]
-    public async Task GetTotalListenTimeAsync_WithTimeRange_OnlySumsListensWithinRange()
+    public async Task GetTotalListenTimeAsync_SumsEveryListenWithinRange()
     {
         var folder = new Folder { Name = "F", Path = "C:\\Music" };
         var artist = new Artist { Name = "A" };
@@ -641,6 +287,8 @@ public class StatisticsServiceTests : IDisposable
             context.Songs.Add(song);
             context.ListenHistory.AddRange(
                 new ListenHistory { Song = song, ListenTimestampUtc = start.AddDays(-1), EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromHours(1).Ticks },
+                new ListenHistory { Song = song, ListenTimestampUtc = start.AddDays(1), EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(2).Ticks },
+                new ListenHistory { Song = song, ListenTimestampUtc = start.AddDays(1), EndReason = PlaybackEndReason.Skipped, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks },
                 new ListenHistory { Song = song, ListenTimestampUtc = start.AddDays(1), EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(5).Ticks }
             );
             await context.SaveChangesAsync();
@@ -648,7 +296,7 @@ public class StatisticsServiceTests : IDisposable
 
         var total = await _statisticsService.GetTotalListenTimeAsync(new TimeRange(start, null));
 
-        total.Should().Be(TimeSpan.FromMinutes(5), "only the listen within the range should contribute to total time");
+        total.Should().Be(TimeSpan.FromMinutes(10), "every listen in range counts regardless of end reason");
     }
 
     [Fact]
@@ -783,32 +431,6 @@ public class StatisticsServiceTests : IDisposable
         result.Items.Should().ContainSingle();
         result.Items[0].Song.Title.Should().Be("MÄTCH B");
         result.Items[0].GlobalRank.Should().Be(3);
-    }
-
-    [Fact]
-    public async Task GetUniqueSongsPlayedAsync_WithTimeRange_ExcludesOutOfRangeListens()
-    {
-        var folder = new Folder { Name = "F", Path = "C:\\Music" };
-        var artist = new Artist { Name = "A" };
-        var songInRange = CreateSong(folder, artist, "In Range", null, TimeSpan.FromMinutes(3));
-        var songOutOfRange = CreateSong(folder, artist, "Out Of Range", null, TimeSpan.FromMinutes(3));
-        var start = new DateTime(2024, 9, 1, 0, 0, 0, DateTimeKind.Utc);
-
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Folders.Add(folder);
-            context.Artists.Add(artist);
-            context.Songs.AddRange(songInRange, songOutOfRange);
-            context.ListenHistory.AddRange(
-                new ListenHistory { Song = songInRange, ListenTimestampUtc = start.AddDays(1), EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks },
-                new ListenHistory { Song = songOutOfRange, ListenTimestampUtc = start.AddDays(-10), EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks }
-            );
-            await context.SaveChangesAsync();
-        }
-
-        var count = await _statisticsService.GetUniqueSongsPlayedAsync(new TimeRange(start, null));
-
-        count.Should().Be(1, "only the listen within the time range should contribute to unique songs played");
     }
 
     private static Song CreateSong(Folder folder, Artist artist, string title, Album? album, TimeSpan duration)

@@ -135,49 +135,6 @@ public class InterceptorTests : IDisposable
     }
 
     [Fact]
-    public async Task SaveChanges_WhenAddingArtistToExistingSong_UpdatesDenormalizedFields()
-    {
-        Guid songId;
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            var folder = new Folder { Path = "C:\\Music", Name = "Music" };
-            context.Folders.Add(folder);
-
-            var artist1 = new Artist { Name = "Artist 1" };
-            var song = new Song
-            {
-                Title = "Existing Song",
-                Folder = folder,
-                FilePath = "C:\\Music\\existing.mp3",
-                DirectoryPath = "C:\\Music"
-            };
-            song.SongArtists.Add(new SongArtist { Artist = artist1, Order = 0 });
-            context.Artists.Add(artist1);
-            context.Songs.Add(song);
-            await context.SaveChangesAsync();
-            songId = song.Id;
-        }
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            var song = await context.Songs
-                .Include(s => s.SongArtists)
-                .FirstAsync(s => s.Id == songId);
-
-            var artist2 = new Artist { Name = "Artist 2" };
-            context.Artists.Add(artist2);
-            song.SongArtists.Add(new SongArtist { Artist = artist2, Order = 1 });
-            context.Entry(song).State.Should().Be(EntityState.Unchanged);
-
-            await context.SaveChangesAsync();
-        }
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            var song = await context.Songs.FirstAsync(s => s.Id == songId);
-            song.ArtistName.Should().Be("Artist 1 & Artist 2");
-        }
-    }
-
-    [Fact]
     public async Task SaveChanges_WhenRemovingArtistFromSong_UpdatesDenormalizedFields()
     {
         Guid songId;

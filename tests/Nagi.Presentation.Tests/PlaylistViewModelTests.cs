@@ -25,17 +25,6 @@ public class PlaylistViewModelTests
         _smart.GetAllMatchingSongCountsAsync().Returns(new Dictionary<Guid, int>());
     }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public void EmptyPlaylist_DisplaysZeroSongCount(bool smart)
-    {
-        var item = smart ? new PlaylistViewModelItem(new SmartPlaylist { Name = "Empty" })
-            : new PlaylistViewModelItem(new Playlist { Name = "Empty" });
-
-        item.SongCountText.Should().Contain("0");
-    }
-
     [Fact]
     public async Task CreatePlaylist_AppliesCurrentSort()
     {

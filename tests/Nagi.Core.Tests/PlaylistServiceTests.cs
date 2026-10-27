@@ -112,40 +112,22 @@ public class PlaylistServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task DeletePlaylistAsync_WhenCoverCleanupFails_StillRemovesPlaylistAndNotifies()
+    public async Task DeletePlaylistAsync_DeletesCustomCoverAndStillRemovesPlaylistWhenCleanupFails()
     {
         var playlist = await _playlistService.CreatePlaylistAsync("Playlist");
         var changed = false;
         _playlistService.PlaylistsChanged += (_, _) => changed = true;
-        _fileSystem.DirectoryExists(_pathConfig.PlaylistImageCachePath).Returns(true);
-        _fileSystem.FileExists(Arg.Any<string>()).Returns(true);
-        _fileSystem.When(fs => fs.DeleteFile(Arg.Any<string>())).Do(_ => throw new IOException("File is locked"));
-
-        (await _playlistService.DeletePlaylistAsync(playlist!.Id)).Should().BeTrue();
-
-        changed.Should().BeTrue();
-        await using var context = _dbHelper.ContextFactory.CreateDbContext();
-        (await context.Playlists.CountAsync()).Should().Be(0);
-    }
-
-    [Fact]
-    public async Task DeletePlaylistAsync_WithCustomCover_DeletesImageFromDisk()
-    {
-        var playlistName = "Playlist with Art";
-        var playlist = await _playlistService.CreatePlaylistAsync(playlistName);
-        playlist.Should().NotBeNull();
-
         var cachePath = _pathConfig.PlaylistImageCachePath;
         var expectedImagePath = Path.Combine(cachePath, $"{playlist!.Id}.custom.jpg");
         _fileSystem.DirectoryExists(cachePath).Returns(true);
         _fileSystem.FileExists(expectedImagePath).Returns(true);
+        _fileSystem.When(fs => fs.DeleteFile(expectedImagePath)).Do(_ => throw new IOException("File is locked"));
 
-        var result = await _playlistService.DeletePlaylistAsync(playlist.Id);
+        (await _playlistService.DeletePlaylistAsync(playlist.Id)).Should().BeTrue();
 
-        result.Should().BeTrue();
         _fileSystem.Received(1).DeleteFile(expectedImagePath);
-
-        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
-        (await assertContext.Playlists.CountAsync()).Should().Be(0);
+        changed.Should().BeTrue();
+        await using var context = _dbHelper.ContextFactory.CreateDbContext();
+        (await context.Playlists.CountAsync()).Should().Be(0);
     }
 }
