@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using Nagi.Core.Models;
+using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Navigation;
 
 namespace Nagi.WinUI.Helpers;
@@ -120,10 +120,8 @@ public static class MultiArtistHyperlinkHelper
         }
         stackPanel.Children.Clear();
 
-        var artistParts = GetArtistNames(song, albumArtists, artistString);
-        var usesSongDisplayName = song is not null
-                                 && !song.SongArtists.Any(link => !string.IsNullOrWhiteSpace(link.Artist?.Name))
-                                 && (albumArtists is null || albumArtists.Count == 0);
+        var artistParts = ArtistLinks.GetNames(song, albumArtists, artistString);
+        var showsStoredSongName = ArtistLinks.ShowsStoredSongName(song, albumArtists);
         if (artistParts.Count == 0)
         {
             var unknownArtist = new TextBlock
@@ -147,7 +145,7 @@ public static class MultiArtistHyperlinkHelper
             {
                 Content = artistPart,
                 Command = command,
-                CommandParameter = new ArtistNavigationRequest { Song = song, ArtistName = usesSongDisplayName ? null : artistPart }
+                CommandParameter = new ArtistNavigationRequest { Song = song, ArtistName = showsStoredSongName ? null : artistPart }
             };
             if (Application.Current.Resources.TryGetValue("SongListHyperlinkButtonStyle", out var styleObj) && styleObj is Style style)
             {
@@ -179,19 +177,5 @@ public static class MultiArtistHyperlinkHelper
                 stackPanel.Children.Add(separatorText);
             }
         }
-    }
-
-    public static List<string> GetArtistNames(Song? song, ICollection<AlbumArtist>? albumArtists, string? artistName)
-    {
-        var names = (song?.SongArtists.Count > 0
-                ? song.SongArtists.OrderBy(a => a.Order).Select(a => a.Artist?.Name)
-                : albumArtists?.OrderBy(a => a.Order).Select(a => a.Artist?.Name) ?? [])
-            .Where(name => !string.IsNullOrWhiteSpace(name))
-            .Select(name => name!)
-            .ToList();
-
-        // A denormalized name is still useful when navigation relationships aren't loaded.
-        if (names.Count == 0 && !string.IsNullOrWhiteSpace(artistName)) names.Add(artistName);
-        return names;
     }
 }

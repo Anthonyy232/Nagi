@@ -187,6 +187,11 @@ public class Song : ObservableObject
     [MaxLength(500)]
     public string PrimaryArtistSortName { get; set; } = string.Empty;
 
+    /// <summary>
+    ///     The credited artists in credit order. Empty when <see cref="SongArtists" /> and their artists aren't loaded.
+    /// </summary>
+    public List<Artist> GetCreditedArtists() =>
+        SongArtists.OrderBy(sa => sa.Order).Select(sa => sa.Artist).OfType<Artist>().ToList();
 
     /// <summary>
     ///     Updates the denormalized <see cref="ArtistName" />, <see cref="PrimaryArtistName" />,
@@ -212,7 +217,7 @@ public class Song : ObservableObject
             }
         }
 
-        var artists = SongArtists.OrderBy(sa => sa.Order).Select(sa => sa.Artist?.Name).Where(n => !string.IsNullOrEmpty(n)).ToList();
+        var artists = GetCreditedArtists().Select(artist => artist.Name).Where(n => !string.IsNullOrEmpty(n)).ToList();
         if (artists.Count == 0)
         {
             ArtistName = Artist.UnknownArtistName;

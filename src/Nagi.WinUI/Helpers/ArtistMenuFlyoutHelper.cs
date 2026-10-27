@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.UI.Dispatching;
@@ -27,7 +26,7 @@ public static class ArtistMenuFlyoutHelper
     {
         subMenu.Items.Clear();
 
-        var artists = song.SongArtists.OrderBy(sa => sa.Order).Select(sa => sa.Artist).OfType<Artist>().ToList();
+        var artists = song.GetCreditedArtists();
         if (artists.Count > 0)
         {
             foreach (var artist in artists)

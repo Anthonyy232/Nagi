@@ -70,8 +70,7 @@ public class MusicNavigationService(
 
         if (song is not null)
         {
-            var artists = song.SongArtists.OrderBy(link => link.Order)
-                .Select(link => link.Artist).OfType<Artist>().ToList();
+            var artists = song.GetCreditedArtists();
             if (artists.Count == 0)
                 artists = (await libraryReader.GetArtistsForSongAsync(song.Id)).ToList();
 
