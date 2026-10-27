@@ -930,9 +930,6 @@ Devam etmek ister misiniz?</value>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
     <value>Sıradaki</value>
   </data>
-  <data name="AppName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Önceki</value>
   </data>

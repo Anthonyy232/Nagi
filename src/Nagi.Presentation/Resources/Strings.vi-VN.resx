@@ -930,9 +930,6 @@ Bạn có muốn tiếp tục không?</value>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
     <value>Tiếp theo</value>
   </data>
-  <data name="AppName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Trước</value>
   </data>

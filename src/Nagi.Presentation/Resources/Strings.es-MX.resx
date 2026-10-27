@@ -930,9 +930,6 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
     <value>Siguiente en la lista</value>
   </data>
-  <data name="AppName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Anterior</value>
   </data>

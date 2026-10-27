@@ -930,9 +930,6 @@ Chcete pokračovať?</value>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
     <value>Ďalej na rade</value>
   </data>
-  <data name="AppName" xml:space="preserve">
-    <value>Nagi</value>
-  </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Predchádzajúce</value>
   </data>
