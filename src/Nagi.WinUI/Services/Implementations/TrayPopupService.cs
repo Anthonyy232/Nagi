@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Windows.Graphics;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;

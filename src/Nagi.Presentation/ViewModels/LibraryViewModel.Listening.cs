@@ -1,7 +1,5 @@
-using System;
 using System.Threading;
 using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nagi.Core.Models;

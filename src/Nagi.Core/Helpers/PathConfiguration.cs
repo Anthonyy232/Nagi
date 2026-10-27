@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace Nagi.Core.Helpers;
+﻿namespace Nagi.Core.Helpers;
 
 /// <summary>
 ///     Lays out the app's files under <see cref="AppDataRoot" />, which each platform chooses, and creates the folders.

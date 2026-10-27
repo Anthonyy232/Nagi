@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Nagi.Core.Services.Data;
+﻿namespace Nagi.Core.Services.Data;
 
 public class PlaylistUpdatedEventArgs : EventArgs
 {

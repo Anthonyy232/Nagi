@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Microsoft.UI.Xaml.Media;
 using Nagi.Core.Models;
 using Nagi.Presentation.Helpers;

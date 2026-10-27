@@ -1,7 +1,5 @@
-using System;
 using System.Threading.Tasks;
 using CommunityToolkit.WinUI;
-using System.Linq;
 using System.Numerics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;

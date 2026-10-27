@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Windows.Input;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.Presentation.Helpers;

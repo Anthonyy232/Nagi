@@ -1,5 +1,3 @@
-using System;
-
 namespace Nagi.Presentation.Navigation;
 
 public record PlaylistSongViewNavigationParameter : INavigationParameter

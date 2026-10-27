@@ -1,4 +1,3 @@
-using System;
 using Windows.UI.ViewManagement;
 using Nagi.Core.Services.Abstractions;
 

@@ -1,7 +1,5 @@
-using System;
 using LibVLCSharp;
 using Microsoft.Extensions.Logging;
-using System.Threading;
 using Nagi.Core.Resources;
 
 namespace Nagi.Audio.LibVlc;

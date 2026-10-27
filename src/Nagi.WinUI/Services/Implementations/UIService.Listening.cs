@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -6,7 +5,6 @@ using Nagi.Core.Models;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
-using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Services.Implementations;
 

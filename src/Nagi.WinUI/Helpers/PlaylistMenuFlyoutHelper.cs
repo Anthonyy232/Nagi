@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Windows.Input;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.Core.Models;

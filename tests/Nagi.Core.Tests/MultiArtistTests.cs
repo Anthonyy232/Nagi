@@ -9,7 +9,6 @@ using Nagi.Core.Services.Implementations;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
-using System.IO;
 
 namespace Nagi.Core.Tests;
 

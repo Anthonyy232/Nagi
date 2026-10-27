@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft Corporation.  All rights reserved.
 
-using System;
 using System.Runtime.InteropServices;
 
 // Originally sourced from https://github.com/Wox-launcher/Wox/blob/master/Wox.Infrastructure/Windows/Taskbar/TaskbarNativeMethods.cs
