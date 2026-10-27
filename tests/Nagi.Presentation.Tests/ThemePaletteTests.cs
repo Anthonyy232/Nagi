@@ -37,5 +37,28 @@ public class ThemePaletteTests
         Tone(palette.PlayerAccent).Should().BeInRange(minAccent - 0.5, maxAccent + 0.5);
     }
 
+    [Theory]
+    [InlineData(true, "C04020")]
+    [InlineData(false, "F0A060")]
+    public void ForTrack_UsesTheSwatchForTheTheme(bool isLightTheme, string expectedPrimary)
+    {
+        var palette = ThemePalette.ForTrack(true, "C04020", "F0A060", accent: null, isLightTheme, tintIntensity: 1);
+
+        ArgbColor.TryParseHex(expectedPrimary, out var expected).Should().BeTrue();
+        palette.Should().Be(ThemePalette.Create(expected, isLightTheme, 1, ArgbColor.FromRgb(0xF0, 0xA0, 0x60)));
+    }
+
+    [Theory]
+    [InlineData(false, "C04020")]
+    [InlineData(true, null)]
+    public void ForTrack_FallsBackToTheAccent_WhenDynamicThemingIsOffOrTheSwatchIsMissing(bool dynamicTheming,
+        string? lightSwatch)
+    {
+        var accent = ArgbColor.FromRgb(10, 20, 30);
+
+        ThemePalette.ForTrack(dynamicTheming, lightSwatch, "F0A060", accent, isLightTheme: true, tintIntensity: 1)
+            .Should().Be(ThemePalette.Create(accent, isLightTheme: true, tintIntensity: 1));
+    }
+
     private static double Tone(ArgbColor color) => Hct.FromInt(ColorUtils.ArgbFromRgb(color.R, color.G, color.B)).Tone;
 }

@@ -1,5 +1,6 @@
 using MaterialColorUtilities.ColorAppearance;
 using MaterialColorUtilities.Utils;
+using Nagi.Presentation.Services;
 
 namespace Nagi.Presentation.Models;
 
@@ -16,6 +17,25 @@ public readonly record struct ThemePalette(
     // Roughly 4.5:1 contrast against the dark media overlay surface (#303030).
     private const double MinimumMediaOnImageLuminance = 0.31;
     private static readonly ArgbColor White = ArgbColor.FromRgb(byte.MaxValue, byte.MaxValue, byte.MaxValue);
+
+    /// <summary>
+    ///     The palette for the playing track's album colors, or for <paramref name="accent" /> when dynamic theming is
+    ///     off or the track has no swatch for this theme.
+    /// </summary>
+    public static ThemePalette ForTrack(bool dynamicTheming, string? lightSwatchId, string? darkSwatchId,
+        ArgbColor? accent, bool isLightTheme, double tintIntensity)
+    {
+        if (!dynamicTheming || !ArgbColor.TryParseHex(isLightTheme ? lightSwatchId : darkSwatchId, out var swatch))
+            return ForAccent(accent, isLightTheme, tintIntensity);
+
+        // The accent over album art sits on a dark overlay in both themes, so it starts from the dark swatch.
+        return Create(swatch, isLightTheme, tintIntensity,
+            ArgbColor.TryParseHex(darkSwatchId, out var darkSwatch) ? darkSwatch : swatch);
+    }
+
+    /// <param name="accent">The user's accent color; <c>null</c> uses the brand color.</param>
+    public static ThemePalette ForAccent(ArgbColor? accent, bool isLightTheme, double tintIntensity) =>
+        Create(accent ?? SettingsDefaults.BrandAccentColor, isLightTheme, tintIntensity);
 
     /// <param name="tintIntensity">How far the player tint moves from the theme background towards the primary color, from 0 to 1.</param>
     /// <param name="mediaOnImageSource">The color to derive the accent shown over album art from; <c>null</c> uses the primary color.</param>
