@@ -177,8 +177,7 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
             && newSortOrder != CurrentSortOrder)
         {
             CurrentSortOrder = newSortOrder;
-            try { await _settingsService.SetSortOrderAsync(SortOrderHelper.GenresSortOrderKey, newSortOrder); }
-            catch (Exception ex) { _logger.LogError(ex, "Failed to save genre sort order"); }
+            await _settingsService.SetSortOrderAsync(SortOrderHelper.GenresSortOrderKey, newSortOrder);
             ApplyFilter();
         }
     }

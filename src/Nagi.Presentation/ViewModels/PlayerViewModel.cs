@@ -766,13 +766,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     {
         if (e.PropertyName == nameof(QueueDisplaySettings.ShowTotalDuration))
             SidebarQueue.SetShowTotalDuration(QueueDisplaySettings.ShowTotalDuration);
-        try
-        {
-            await _settingsService.SetQueueDisplaySettingsAsync(QueueDisplaySettings);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to save queue display settings.");
-        }
+        await _settingsService.SetQueueDisplaySettingsAsync(QueueDisplaySettings);
     }
 }

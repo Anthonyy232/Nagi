@@ -173,25 +173,18 @@ public sealed partial class MainWindow : Window
     {
         if (_settingsService == null) return;
 
-        try
+        if (await _settingsService.GetRememberWindowSizeEnabledAsync())
         {
-            if (await _settingsService.GetRememberWindowSizeEnabledAsync())
-            {
-                var size = _lastWindowSize;
-                await _settingsService.SetLastWindowSizeAsync(size.Width, size.Height);
-                _logger?.LogDebug("Saving window size: {Width}x{Height}", size.Width, size.Height);
-            }
-
-            if (await _settingsService.GetRememberWindowPositionEnabledAsync())
-            {
-                var position = _lastWindowPosition;
-                await _settingsService.SetLastWindowPositionAsync(position.X, position.Y);
-                _logger?.LogDebug("Saving window position: ({X}, {Y})", position.X, position.Y);
-            }
+            var size = _lastWindowSize;
+            await _settingsService.SetLastWindowSizeAsync(size.Width, size.Height);
+            _logger?.LogDebug("Saving window size: {Width}x{Height}", size.Width, size.Height);
         }
-        catch (Exception ex)
+
+        if (await _settingsService.GetRememberWindowPositionEnabledAsync())
         {
-            _logger?.LogWarning(ex, "Failed to save window state.");
+            var position = _lastWindowPosition;
+            await _settingsService.SetLastWindowPositionAsync(position.X, position.Y);
+            _logger?.LogDebug("Saving window position: ({X}, {Y})", position.X, position.Y);
         }
     }
 

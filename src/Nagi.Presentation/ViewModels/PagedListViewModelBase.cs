@@ -153,19 +153,13 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
 
         CancelInflightPageLoad();
 
-        _ = SaveSongsPerPageAsync(value);
+        _ = _settingsService.SetSongsPerPageAsync(value);
 
         _dispatcherService.TryEnqueue(() =>
         {
             CurrentPage = 1;
             _ = RefreshAsync(CancellationToken.None);
         });
-    }
-
-    private async Task SaveSongsPerPageAsync(int value)
-    {
-        try { await _settingsService.SetSongsPerPageAsync(value); }
-        catch (Exception ex) { _logger.LogError(ex, "Failed to save page size"); }
     }
 
     protected virtual void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)

@@ -267,8 +267,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
             {
                 CurrentSortOrder = newSortOrder;
                 CurrentPage = 1;
-                try { await SaveSortOrderAsync(newSortOrder); }
-                catch (Exception ex) { _logger.LogError(ex, "Failed to save sort order"); }
+                await SaveSortOrderAsync(newSortOrder);
             }
             ClearFullSongIds();
 
@@ -387,10 +386,6 @@ public partial class FolderSongListViewModel : SongListViewModelBase
             FolderContents.Clear();
             UpdateBreadcrumbs();
             await RefreshOrSortSongsCommand.ExecuteAsync(null);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to navigate to folder {Path}", path);
         }
         finally
         {

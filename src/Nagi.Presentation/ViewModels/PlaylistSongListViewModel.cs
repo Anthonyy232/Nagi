@@ -223,10 +223,6 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
                         Strings.Generic_Error, Strings.Playlist_ErrorSavingOrder);
             }
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to recover playlist view after an unsuccessful reorder");
-        }
         finally
         {
             _isSavingOrder = false;

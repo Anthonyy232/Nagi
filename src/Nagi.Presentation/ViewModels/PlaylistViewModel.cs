@@ -301,15 +301,8 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     {
         if (_isDisposed || IsAnyOperationInProgress) return;
 
-        try
-        {
-            var created = await _uiService.ShowSmartPlaylistEditorAsync();
-            if (created is not null && !_isDisposed) await LoadPlaylistsAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to create a smart playlist");
-        }
+        var created = await _uiService.ShowSmartPlaylistEditorAsync();
+        if (created is not null && !_isDisposed) await LoadPlaylistsAsync();
     }
 
     [RelayCommand]
@@ -608,8 +601,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
             && newSortOrder != CurrentSortOrder)
         {
             CurrentSortOrder = newSortOrder;
-            try { await _settingsService.SetSortOrderAsync(SortOrderHelper.PlaylistsSortOrderKey, newSortOrder); }
-            catch (Exception ex) { _logger.LogError(ex, "Failed to save playlist sort order"); }
+            await _settingsService.SetSortOrderAsync(SortOrderHelper.PlaylistsSortOrderKey, newSortOrder);
             ApplyFilter();
         }
     }

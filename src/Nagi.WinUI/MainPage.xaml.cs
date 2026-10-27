@@ -636,15 +636,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private async Task SavePaneStateAsync(bool isOpen)
     {
-        try
-        {
-            if (await _settingsService.GetRememberPaneStateEnabledAsync())
-                await _settingsService.SetLastPaneOpenAsync(isOpen);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogTrace(ex, "Failed to save navigation pane state.");
-        }
+        if (await _settingsService.GetRememberPaneStateEnabledAsync())
+            await _settingsService.SetLastPaneOpenAsync(isOpen);
     }
 
     private void VolumeSliderContainer_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
@@ -659,17 +652,10 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private async Task RestorePaneStateAsync()
     {
-        try
+        if (await _settingsService.GetRememberPaneStateEnabledAsync())
         {
-            if (await _settingsService.GetRememberPaneStateEnabledAsync())
-            {
-                var savedState = await _settingsService.GetLastPaneOpenAsync();
-                if (!_isUnloaded && savedState.HasValue) NavView.IsPaneOpen = savedState.Value;
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogTrace(ex, "Failed to restore navigation pane state.");
+            var savedState = await _settingsService.GetLastPaneOpenAsync();
+            if (!_isUnloaded && savedState.HasValue) NavView.IsPaneOpen = savedState.Value;
         }
     }
 

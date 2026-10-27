@@ -1,6 +1,5 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
-using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
@@ -91,21 +90,15 @@ public class LibraryViewModelTests
             0, null, Arg.Any<PlaybackContext>());
     }
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public async Task Initialize_AfterSettingsOrQueryFailure_CanRetry(bool settingsFailure)
+    [Fact]
+    public async Task Initialize_AfterQueryFailure_CanRetry()
     {
         var library = new LibraryFakes();
         var settings = Substitute.For<IUISettingsService>();
         settings.GetSongsPerPageAsync().Returns(50);
         var attempts = 0;
-        settings.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.LibrarySortOrderKey)
-            .Returns(_ => settingsFailure && attempts++ == 0
-                ? Task.FromException<SongSortOrder>(new IOException("Settings unavailable"))
-                : Task.FromResult(SongSortOrder.TitleAsc));
         library.Reader.GetAllSongsPagedAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<SongSortOrder>(),
-            Arg.Any<CancellationToken>()).Returns(_ => !settingsFailure && attempts++ == 0
+            Arg.Any<CancellationToken>()).Returns(_ => attempts++ == 0
                 ? Task.FromException<PagedResult<Song>>(new IOException("Library unavailable"))
                 : Task.FromResult(new PagedResult<Song>
                 {

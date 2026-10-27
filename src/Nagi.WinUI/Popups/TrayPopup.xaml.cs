@@ -79,19 +79,9 @@ public sealed partial class TrayPopup : Window
 
     private async Task InitializeSettingsAsync()
     {
-        _logger.LogDebug("Initializing settings for tray popup...");
-        try
-        {
-            _isCoverArtInFlyoutEnabled = await _settingsService.GetShowCoverArtInTrayFlyoutAsync();
-            if (_isClosed) return;
-            UpdateCoverArtVisibility();
-            _logger.LogDebug("Successfully initialized settings. ShowCoverArtInTrayFlyout is {IsEnabled}.",
-                _isCoverArtInFlyoutEnabled);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to initialize tray popup settings.");
-        }
+        _isCoverArtInFlyoutEnabled = await _settingsService.GetShowCoverArtInTrayFlyoutAsync();
+        if (_isClosed) return;
+        UpdateCoverArtVisibility();
     }
 
     private void UpdateCoverArtVisibility()

@@ -149,8 +149,7 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
             return;
 
         CurrentSortOrder = newSortOrder;
-        try { await _settingsService.SetSortOrderAsync(SortOrderHelper.ArtistsSortOrderKey, newSortOrder); }
-        catch (Exception ex) { _logger.LogError(ex, "Failed to save artist sort order"); }
+        await _settingsService.SetSortOrderAsync(SortOrderHelper.ArtistsSortOrderKey, newSortOrder);
         CurrentPage = 1;
         await LoadCommand.ExecuteAsync(CancellationToken.None);
     }
