@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
+using CoreStrings = Nagi.Core.Resources.Strings;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -285,7 +286,7 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
             ListenBrainzIsConnected = false;
             ListenBrainzConnectionStatus = string.Format(
                 Strings.SettingsPage_ListenBrainz_ConnectionFailed,
-                "Could not reach ListenBrainz.");
+                CoreStrings.ListenBrainz_Unreachable);
         }
     }
 

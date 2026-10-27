@@ -74,6 +74,8 @@ public sealed class RomanizationPackOperationResult
     }
 
     public bool Succeeded { get; }
+
+    /// <summary>Why the operation failed, for logs and tests. Not localized, so not for display.</summary>
     public string? ErrorMessage { get; }
 
     public static RomanizationPackOperationResult Success() => new(true);
