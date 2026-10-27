@@ -115,6 +115,23 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
     public ObservableRangeCollection<LyricLine> UnsyncedLyricLines { get; } = new();
 
+    /// <summary>
+    ///     How far playback is through <see cref="CurrentLine" />, from 0 to 1, and the time until the next line starts.
+    ///     The last line runs to the end of the song.
+    /// </summary>
+    public (double Fraction, TimeSpan Remaining) GetCurrentLineProgress()
+    {
+        if (CurrentLine is not { } line) return (0, TimeSpan.Zero);
+
+        var index = LyricLines.IndexOf(line);
+        var nextLineStart = index >= 0 && index < LyricLines.Count - 1 ? LyricLines[index + 1].StartTime : SongDuration;
+        var lineDuration = nextLineStart - line.StartTime;
+        if (lineDuration <= TimeSpan.Zero) return (1, TimeSpan.Zero);
+
+        var positionInLine = CurrentPosition < line.StartTime ? TimeSpan.Zero : CurrentPosition - line.StartTime;
+        return (Math.Clamp(positionInLine / lineDuration, 0, 1), lineDuration - positionInLine);
+    }
+
     public void Dispose()
     {
         lock (_lyricsFetchLock)

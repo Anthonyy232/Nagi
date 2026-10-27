@@ -268,6 +268,23 @@ public class LyricsPageViewModelTests
         _playback.TrackChanged += Raise.Event<Action>();
     }
 
+    [Theory]
+    [InlineData(0, 15, 0.5, 5)]
+    [InlineData(2, 40, 0.5, 20)]
+    [InlineData(1, 25, 1, 0)]
+    public void CurrentLineProgress_RunsUntilTheNextLineOrTheSongEnds(int lineIndex, int positionSeconds,
+        double fraction, int remainingSeconds)
+    {
+        using var viewModel = CreateViewModel();
+        var lines = new[] { 10, 20, 20 }.Select(start => new LyricLine(TimeSpan.FromSeconds(start), "line")).ToList();
+        viewModel.LyricLines.ReplaceRange(lines);
+        viewModel.SongDuration = TimeSpan.FromSeconds(60);
+        viewModel.CurrentLine = lines[lineIndex];
+        viewModel.CurrentPosition = TimeSpan.FromSeconds(positionSeconds);
+
+        viewModel.GetCurrentLineProgress().Should().Be((fraction, TimeSpan.FromSeconds(remainingSeconds)));
+    }
+
     private LyricsPageViewModel CreateViewModel(IDispatcherService? dispatcher = null) => new(
         _playback, dispatcher ?? new ImmediateDispatcher(), _lyrics, _library, _romanization,
         Substitute.For<ISettingsService>(), Substitute.For<IRomanizationPackManager>(), _ui,
