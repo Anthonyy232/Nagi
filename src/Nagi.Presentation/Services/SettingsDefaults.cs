@@ -52,6 +52,10 @@ public static class SettingsDefaults
     public const PlayerBackgroundMaterial DefaultPlayerBackgroundMaterial = Models.PlayerBackgroundMaterial.Acrylic;
     public const double DefaultPlayerTintIntensity = 1.0;
     public const int DefaultSongsPerPage = 50;
+
+    /// <summary>The page sizes a list offers; 0 shows every song on one page.</summary>
+    public static IReadOnlyList<int> PageSizeOptions { get; } = [25, 50, 100, 250, 500, 0];
+
     public const bool ShowSongListHeaderEnabled = true;
     public const SongListColumns DefaultSongListColumns =
         SongListColumns.Title | SongListColumns.Artist | SongListColumns.Album | SongListColumns.Year |

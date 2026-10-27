@@ -8,6 +8,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Services;
 using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.Presentation.ViewModels;
@@ -46,8 +47,14 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     public partial int TotalPages { get; set; } = 1;
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasNextPage), nameof(HasPreviousPage))]
-    public partial int SongsPerPage { get; set; } = 50;
-    [ObservableProperty] public partial int TotalItemCount { get; set; }
+    public partial int SongsPerPage { get; set; } = SettingsDefaults.DefaultSongsPerPage;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanPaginate))]
+    public partial int TotalItemCount { get; set; }
+
+    /// <summary>Paging only means something once there are more items than the smallest page holds.</summary>
+    public bool CanPaginate => TotalItemCount > SettingsDefaults.PageSizeOptions[0];
+
     public bool HasNextPage => IsPaginationEnabled && SongsPerPage != 0 && CurrentPage < TotalPages;
     public bool HasPreviousPage => IsPaginationEnabled && SongsPerPage != 0 && CurrentPage > 1;
 

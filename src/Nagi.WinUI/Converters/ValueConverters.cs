@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
 using Nagi.Core.Helpers;
+using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
 using Nagi.WinUI.Helpers;
@@ -17,7 +18,7 @@ namespace Nagi.WinUI.Converters;
 public sealed class PageSizeLabelConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language) =>
-        value is 0 ? Strings.PaginationControl_All : value?.ToString() ?? string.Empty;
+        value is int pageSize ? SettingsText.GetPageSizeName(pageSize) : string.Empty;
 
     public object ConvertBack(object value, Type targetType, object parameter, string language) =>
         DependencyProperty.UnsetValue;
@@ -71,27 +72,11 @@ public class BooleanToInverseBooleanConverter : IValueConverter
 
 public class AppThemeToFriendlyStringConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        return value switch
-        {
-            AppTheme.Light => Strings.Theme_Light,
-            AppTheme.Dark => Strings.Theme_Dark,
-            AppTheme.Default => Strings.Theme_Default,
-            _ => value?.ToString() ?? string.Empty
-        };
-    }
+    public object Convert(object value, Type targetType, object parameter, string language) =>
+        value is AppTheme theme ? SettingsText.GetName(theme) : string.Empty;
 
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        if (value is string strValue)
-        {
-            foreach (var theme in Enum.GetValues<AppTheme>())
-                if ((string)Convert(theme, targetType, parameter, language) == strValue) return theme;
-        }
-
-        return DependencyProperty.UnsetValue;
-    }
+    public object ConvertBack(object value, Type targetType, object parameter, string language) =>
+        DependencyProperty.UnsetValue;
 }
 
 public class ArgbColorToColorConverter : IValueConverter
@@ -287,18 +272,8 @@ public class GenreToGradientConverter : IValueConverter
 
 public class BackdropMaterialToStringConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        if (value is BackdropMaterial material)
-            return material switch
-            {
-                BackdropMaterial.Mica => Strings.Backdrop_Mica,
-                BackdropMaterial.MicaAlt => Strings.Backdrop_MicaAlt,
-                BackdropMaterial.Acrylic => Strings.Backdrop_Acrylic,
-                _ => material.ToString()
-            };
-        return string.Empty;
-    }
+    public object Convert(object value, Type targetType, object parameter, string language) =>
+        value is BackdropMaterial material ? SettingsText.GetName(material) : string.Empty;
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
@@ -308,17 +283,8 @@ public class BackdropMaterialToStringConverter : IValueConverter
 
 public class PlayerBackgroundMaterialToStringConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        if (value is PlayerBackgroundMaterial material)
-            return material switch
-            {
-                PlayerBackgroundMaterial.Acrylic => Strings.PlayerBackgroundMaterial_Acrylic,
-                PlayerBackgroundMaterial.Solid => Strings.PlayerBackgroundMaterial_Solid,
-                _ => material.ToString()
-            };
-        return string.Empty;
-    }
+    public object Convert(object value, Type targetType, object parameter, string language) =>
+        value is PlayerBackgroundMaterial material ? SettingsText.GetName(material) : string.Empty;
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {

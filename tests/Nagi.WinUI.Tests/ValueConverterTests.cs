@@ -10,7 +10,7 @@ namespace Nagi.WinUI.Tests;
 public class ValueConverterTests
 {
     [Fact]
-    public void ThemeConverter_AfterCultureChange_UsesCurrentLabelsInBothDirections()
+    public void ThemeConverter_AfterCultureChange_UsesCurrentLabels()
     {
         var originalCulture = CultureInfo.CurrentUICulture;
         try
@@ -22,8 +22,6 @@ public class ValueConverterTests
             CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("fr-FR");
             Strings.Theme_Light.Should().NotBe(english);
             converter.Convert(AppTheme.Light, typeof(string), null!, "fr-FR").Should().Be(Strings.Theme_Light);
-            converter.ConvertBack(Strings.Theme_Light, typeof(AppTheme), null!, "fr-FR")
-                .Should().Be(AppTheme.Light);
         }
         finally
         {
