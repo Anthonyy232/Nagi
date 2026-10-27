@@ -1,5 +1,4 @@
 ﻿using System;
-using Windows.System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -36,6 +35,7 @@ public sealed partial class TrayPopup : Window
 
         OuterBorder.RequestedTheme = initialTheme;
         OuterBorder.DataContext = ViewModel;
+        PlayerInputHelper.AttachSeekSlider(MediaSeekerSlider, ViewModel);
 
         ConfigureWindowAppearance();
         _ = InitializeSettingsAsync();
@@ -159,46 +159,8 @@ public sealed partial class TrayPopup : Window
         _settingsService.ShowCoverArtInTrayFlyoutSettingChanged -= OnShowCoverArtSettingChanged;
     }
 
-    private void VolumeButton_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
-    {
-        var properties = e.GetCurrentPoint(sender as UIElement).Properties;
-        var delta = properties.MouseWheelDelta;
-
-        double newVolume = ViewModel.CurrentVolume + (delta > 0 ? 5 : -5);
-        ViewModel.CurrentVolume = Math.Clamp(newVolume, 0, 100);
-        e.Handled = true;
-    }
-
-    private void MediaSeekerSlider_PointerPressed(object sender, PointerRoutedEventArgs e)
-    {
-        ViewModel.IsUserDraggingSlider = true;
-    }
-
-    private void MediaSeekerSlider_PointerReleased(object sender, PointerRoutedEventArgs e)
-    {
-        ViewModel.IsUserDraggingSlider = false;
-    }
-
-    private void MediaSeekerSlider_PointerCaptureLost(object sender, PointerRoutedEventArgs e)
-    {
-        ViewModel.IsUserDraggingSlider = false;
-    }
-
-    private void MediaSeekerSlider_KeyDown(object sender, KeyRoutedEventArgs e)
-    {
-        if (e.Key is VirtualKey.Left or VirtualKey.Right or VirtualKey.PageUp or VirtualKey.PageDown or VirtualKey.Home or VirtualKey.End)
-        {
-            ViewModel.IsUserDraggingSlider = true;
-        }
-    }
-
-    private void MediaSeekerSlider_KeyUp(object sender, KeyRoutedEventArgs e)
-    {
-        if (e.Key is VirtualKey.Left or VirtualKey.Right or VirtualKey.PageUp or VirtualKey.PageDown or VirtualKey.Home or VirtualKey.End)
-        {
-            ViewModel.IsUserDraggingSlider = false;
-        }
-    }
+    private void VolumeButton_PointerWheelChanged(object sender, PointerRoutedEventArgs e) =>
+        PlayerInputHelper.StepVolumeWithWheel(sender, e, ViewModel);
 
     private const int GWL_EXSTYLE = -20;
     private const int WS_EX_LAYERED = 0x00080000;

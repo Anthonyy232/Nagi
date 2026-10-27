@@ -75,12 +75,7 @@
                             Maximum="{Binding TotalDuration, Converter={StaticResource SliderMaximumConverter}}" Value="{Binding CurrentPosition, Mode=TwoWay}"
                             ThumbToolTipValueConverter="{StaticResource TimeSpanToTimeStringConverter}"
                             IsThumbToolTipEnabled="True"
-                            Style="{StaticResource MediaSeekerSliderStyle}"
-                            PointerPressed="MediaSeekerSlider_PointerPressed"
-                            PointerReleased="MediaSeekerSlider_PointerReleased"
-                            PointerCaptureLost="MediaSeekerSlider_PointerCaptureLost"
-                            KeyDown="MediaSeekerSlider_KeyDown"
-                            KeyUp="MediaSeekerSlider_KeyUp" />
+                            Style="{StaticResource MediaSeekerSliderStyle}" />
 
                     <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8">
 

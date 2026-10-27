@@ -391,6 +391,9 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
 
     partial void OnIsMutedChanged(bool value) => UpdateButtonState("Volume", VolumeIcon, VolumeButtonToolTip);
 
+    /// <summary>Moves the volume one step, as the mouse wheel does over a volume control.</summary>
+    public void StepVolume(bool up) => CurrentVolume = Math.Clamp(CurrentVolume + (up ? 5 : -5), 0, 100);
+
     partial void OnCurrentVolumeChanged(double value)
     {
         UpdateButtonState("Volume", VolumeIcon, VolumeButtonToolTip);

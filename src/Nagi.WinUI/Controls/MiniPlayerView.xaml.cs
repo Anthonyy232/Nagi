@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using Windows.Foundation;
 using Windows.Graphics;
-using Windows.System;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -25,6 +24,7 @@ public sealed partial class MiniPlayerView : UserControl
 
         ViewModel = viewModel;
         DataContext = this;
+        PlayerInputHelper.AttachSeekSlider(MediaSeekerSlider, ViewModel);
 
         SubscribeToEvents();
     }
@@ -177,44 +177,6 @@ public sealed partial class MiniPlayerView : UserControl
         }
     }
 
-    private void VolumeButton_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
-    {
-        var properties = e.GetCurrentPoint(sender as UIElement).Properties;
-        var delta = properties.MouseWheelDelta;
-
-        double newVolume = ViewModel.CurrentVolume + (delta > 0 ? 5 : -5);
-        ViewModel.CurrentVolume = Math.Clamp(newVolume, 0, 100);
-        e.Handled = true;
-    }
-
-    private void MediaSeekerSlider_PointerPressed(object sender, PointerRoutedEventArgs e)
-    {
-        ViewModel.IsUserDraggingSlider = true;
-    }
-
-    private void MediaSeekerSlider_PointerReleased(object sender, PointerRoutedEventArgs e)
-    {
-        ViewModel.IsUserDraggingSlider = false;
-    }
-
-    private void MediaSeekerSlider_PointerCaptureLost(object sender, PointerRoutedEventArgs e)
-    {
-        ViewModel.IsUserDraggingSlider = false;
-    }
-
-    private void MediaSeekerSlider_KeyDown(object sender, KeyRoutedEventArgs e)
-    {
-        if (e.Key is VirtualKey.Left or VirtualKey.Right or VirtualKey.PageUp or VirtualKey.PageDown or VirtualKey.Home or VirtualKey.End)
-        {
-            ViewModel.IsUserDraggingSlider = true;
-        }
-    }
-
-    private void MediaSeekerSlider_KeyUp(object sender, KeyRoutedEventArgs e)
-    {
-        if (e.Key is VirtualKey.Left or VirtualKey.Right or VirtualKey.PageUp or VirtualKey.PageDown or VirtualKey.Home or VirtualKey.End)
-        {
-            ViewModel.IsUserDraggingSlider = false;
-        }
-    }
+    private void VolumeButton_PointerWheelChanged(object sender, PointerRoutedEventArgs e) =>
+        PlayerInputHelper.StepVolumeWithWheel(sender, e, ViewModel);
 }

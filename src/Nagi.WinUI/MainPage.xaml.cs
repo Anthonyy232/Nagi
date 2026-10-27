@@ -33,7 +33,6 @@ namespace Nagi.WinUI;
 /// </summary>
 public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 {
-    private const double VolumeChangeStep = 5.0;
     private int _queueDragVersion;
     private NowPlayingIndicatorBinder? _queuePlayingBinder;
     private NowPlayingIndicatorBinder? _historyPlayingBinder;
@@ -152,6 +151,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
         InitializeComponent();
         DataContext = ViewModel;
+        PlayerInputHelper.AttachSeekSlider(MediaSeekerSlider, ViewModel);
         _seeAllSearch = new CollapsibleSearch(this, SeeAllSearchToggleButton, SeeAllSearchTextBox,
             Strings.InsightsPage_SeeAll_SearchButton_ToolTip, "SeeAllSearchExpanded", "SeeAllSearchCollapsed",
             () => InsightsVm.SearchTerm = string.Empty);
@@ -607,41 +607,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         TryGoBack();
     }
 
-    private void MediaSeekerSlider_PointerPressed(object sender, PointerRoutedEventArgs e)
-    {
-        ViewModel.IsUserDraggingSlider = true;
-    }
-
-    private void MediaSeekerSlider_PointerReleased(object sender, PointerRoutedEventArgs e)
-    {
-        ViewModel.IsUserDraggingSlider = false;
-    }
-
-    private void MediaSeekerSlider_KeyDown(object sender, KeyRoutedEventArgs e)
-    {
-        if (e.Key is VirtualKey.Left or VirtualKey.Right or VirtualKey.PageUp or VirtualKey.PageDown or VirtualKey.Home or VirtualKey.End)
-        {
-            ViewModel.IsUserDraggingSlider = true;
-        }
-    }
-
-    private void MediaSeekerSlider_KeyUp(object sender, KeyRoutedEventArgs e)
-    {
-        if (e.Key is VirtualKey.Left or VirtualKey.Right or VirtualKey.PageUp or VirtualKey.PageDown or VirtualKey.Home or VirtualKey.End)
-        {
-            ViewModel.IsUserDraggingSlider = false;
-        }
-    }
-
-    private void VolumeSliderContainer_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
-    {
-        var pointerPoint = e.GetCurrentPoint((UIElement)sender);
-        var delta = pointerPoint.Properties.MouseWheelDelta;
-
-        ViewModel.CurrentVolume = Math.Clamp(ViewModel.CurrentVolume + Math.Sign(delta) * VolumeChangeStep, 0, 100);
-
-        e.Handled = true;
-    }
+    private void VolumeSliderContainer_PointerWheelChanged(object sender, PointerRoutedEventArgs e) =>
+        PlayerInputHelper.StepVolumeWithWheel(sender, e, ViewModel);
 
     private async Task RestorePaneStateAsync()
     {

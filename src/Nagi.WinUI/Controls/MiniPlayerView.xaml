@@ -146,12 +146,7 @@
                                 IsThumbToolTipEnabled="True"
                                 Maximum="{x:Bind ViewModel.TotalDuration, Mode=OneWay, Converter={StaticResource SliderMaximumConverter}}"
                                 ThumbToolTipValueConverter="{StaticResource TimeSpanToTimeStringConverter}"
-                                Value="{x:Bind ViewModel.CurrentPosition, Mode=TwoWay}"
-                                PointerPressed="MediaSeekerSlider_PointerPressed"
-                                PointerReleased="MediaSeekerSlider_PointerReleased"
-                                PointerCaptureLost="MediaSeekerSlider_PointerCaptureLost"
-                                KeyDown="MediaSeekerSlider_KeyDown"
-                                KeyUp="MediaSeekerSlider_KeyUp" />
+                                Value="{x:Bind ViewModel.CurrentPosition, Mode=TwoWay}" />
 
                             <StackPanel x:Name="MediaControlsPanel" HorizontalAlignment="Center" Orientation="Horizontal" Spacing="2">
 
