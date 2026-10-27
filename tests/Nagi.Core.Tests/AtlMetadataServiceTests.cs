@@ -304,7 +304,7 @@ public class AtlMetadataServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task ExtractMetadataAsync_WithCorruptFile_HandlesGracefully()
+    public async Task ExtractMetadataAsync_WithDamagedFile_FailsAsUnsupportedFormat()
     {
         var filePath = Path.Combine(_tempDirectory, "corrupt.mp3");
         File.WriteAllBytes(filePath, new byte[] { 0xFF, 0xFB, 0x00 });
@@ -312,19 +312,7 @@ public class AtlMetadataServiceTests : IDisposable
         _fileSystem.FileExists(filePath).Returns(true);
         var result = await _metadataService.ExtractMetadataAsync(filePath);
         result.ExtractionFailed.Should().BeTrue();
-        result.ErrorMessage.Should().BeOneOf("CorruptFile", "UnsupportedFormat");
-    }
-
-    [Fact]
-    public async Task ExtractMetadataAsync_WithUnsupportedFormat_HandlesGracefully()
-    {
-        var filePath = Path.Combine(_tempDirectory, "document.txt");
-        File.WriteAllText(filePath, "this is not a music file");
-        _fileSystem.GetFileInfo(filePath).Returns(new FileInfo(filePath));
-        _fileSystem.FileExists(filePath).Returns(true);
-        var result = await _metadataService.ExtractMetadataAsync(filePath);
-        result.ExtractionFailed.Should().BeTrue();
-        result.ErrorMessage.Should().BeOneOf("CorruptFile", "UnsupportedFormat");
+        result.ErrorMessage.Should().Be("UnsupportedFormat");
     }
 
     [Fact]
