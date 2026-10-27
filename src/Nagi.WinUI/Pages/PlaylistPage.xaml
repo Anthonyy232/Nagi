@@ -243,7 +243,7 @@
                                 Background="{StaticResource AppPrimaryColorBrush}"
                                 CornerRadius="{ThemeResource ControlCornerRadius}"
                                 Visibility="{x:Bind IsSmart, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <FontIcon Glyph="&#xE71C;" FontSize="12" Foreground="White" />
+                                <FontIcon Glyph="&#xE71C;" FontSize="12" Foreground="{StaticResource TextOnAppPrimaryBrush}" />
                             </Border>
                         </Grid>
 

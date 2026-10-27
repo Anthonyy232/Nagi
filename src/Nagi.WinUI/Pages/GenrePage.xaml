@@ -159,7 +159,7 @@
                                 <TextBlock
                                     FontSize="22"
                                     FontWeight="Bold"
-                                    Foreground="White"
+                                    Foreground="{StaticResource MediaOnImageTextPrimaryBrush}"
                                     Text="{x:Bind Name, Mode=OneTime}"
                                     TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap" />
