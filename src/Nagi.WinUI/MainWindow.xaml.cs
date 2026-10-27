@@ -472,8 +472,7 @@ public sealed class MiniPlayerWindow : Window
     }
 
     /// <summary>
-    ///     Gets the DPI scale factor for this window.
-    ///     Calculates on-demand to handle multi-monitor scenarios where DPI may change.
+    ///     Computed on demand because the DPI changes when the window moves between monitors.
     /// </summary>
     private float GetDpiScale()
     {

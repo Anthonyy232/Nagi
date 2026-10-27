@@ -4,8 +4,7 @@ using Nagi.Core.Services.Data;
 namespace Nagi.Core.Services.Abstractions;
 
 /// <summary>
-///     Defines a service for managing application-wide, non-UI settings.
-///     This interface is safe to use in the Core project.
+///     Application-wide, non-UI settings.
 /// </summary>
 public interface ISettingsService
 {

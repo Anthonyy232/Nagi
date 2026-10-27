@@ -26,7 +26,7 @@ namespace Nagi.WinUI;
 
 /// <summary>
 ///     The main shell of the application, hosting navigation, content, and the media player.
-///     This page also provides the custom title bar elements to the main window.
+///     It also provides the custom title bar elements to the main window.
 /// </summary>
 public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 {

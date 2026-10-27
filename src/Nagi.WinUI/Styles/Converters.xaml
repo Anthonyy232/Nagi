@@ -8,11 +8,8 @@ to avoid duplicate declarations across pages and controls.
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="using:Nagi.WinUI.Converters">
 
-    <!-- Boolean to Visibility converters -->
     <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     <converters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" Invert="True" />
-
-    <!-- String and collection converters -->
     <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
     <converters:StringToDecodedImageSourceConverter x:Key="StringToDecodedImageSourceConverter" />
     <converters:CollectionCountToVisibilityConverter x:Key="CollectionCountToVisibilityConverter" />
@@ -27,15 +24,9 @@ to avoid duplicate declarations across pages and controls.
     <converters:GenreToGradientConverter x:Key="GenreToGradientConverter" />
     <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
     <converters:AppIconToGlyphConverter x:Key="AppIconToGlyphConverter" />
-
-    <!-- Settings value converters -->
     <converters:AppThemeToFriendlyStringConverter x:Key="ThemeToStringConverter" />
     <converters:BackdropMaterialToStringConverter x:Key="BackdropMaterialToStringConverter" />
-
-    <!-- Sort order comparison converter -->
     <converters:SortOrderEqualsConverter x:Key="SortOrderEqualsConverter" />
-
-    <!-- Time converters -->
     <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
 
     <!-- Slider helper converter to prevent E_INVALIDARG when Maximum is 0 -->

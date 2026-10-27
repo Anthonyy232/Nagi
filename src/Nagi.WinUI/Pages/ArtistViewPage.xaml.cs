@@ -37,7 +37,6 @@ public sealed partial class ArtistViewPage : SongListPage
     {
         base.OnNavigatedTo(e);
 
-        // Reset layout state for new artist
         AlbumsViewport.Height = double.NaN;
         AlbumsViewport.Opacity = 1;
         AlbumsContent.Translation = Vector3.Zero;

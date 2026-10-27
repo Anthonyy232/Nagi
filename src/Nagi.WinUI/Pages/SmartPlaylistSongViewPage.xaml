@@ -46,7 +46,6 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- Header Content -->
         <StackPanel Grid.Row="0" Padding="{StaticResource ViewPageHeaderPadding}">
             <Grid Margin="{StaticResource SectionHeaderMargin}">
                 <Grid.ColumnDefinitions>
@@ -54,7 +53,6 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <!-- Smart Playlist Cover Art -->
                 <Grid Grid.Column="0" Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}">
                     <Border CornerRadius="{StaticResource ArtworkCornerRadius}"
                             Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
@@ -83,7 +81,6 @@
                 </StackPanel>
             </Grid>
 
-            <!-- Rule Summary Bar -->
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                     Padding="16,8" CornerRadius="{ThemeResource OverlayCornerRadius}" Margin="{StaticResource SectionHeaderMargin}">
                 <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
@@ -94,7 +91,6 @@
                 </StackPanel>
             </Border>
 
-            <!-- Action Bar -->
             <Grid Margin="{StaticResource SectionHeaderMargin}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -116,7 +112,6 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                    <!-- Search functionality -->
                     <Grid>
                         <TextBox x:Name="SearchTextBox"
                                  Style="{StaticResource SearchTextBoxStyle}"
@@ -252,7 +247,6 @@
             </Grid>
         </StackPanel>
 
-        <!-- Song List -->
         <Grid Grid.Row="1" RowDefinitions="Auto,*">
             <Border x:Name="ColumnHeaderHost" Padding="{StaticResource PageContentPadding}" />
             <ListView uihelpers:ScrollEdgeFade.IsEnabled="True" Grid.Row="1"
@@ -281,7 +275,6 @@
             HorizontalAlignment="Right"
             Margin="0,16,24,16" />
 
-        <!-- Empty State -->
         <StackPanel
             Grid.Row="1"
             HorizontalAlignment="Center"

@@ -165,7 +165,7 @@ public class Song : ObservableObject
     public virtual ICollection<ListenHistory> ListenHistory { get; set; } = new List<ListenHistory>();
 
     /// <summary>
-    ///     Gets or sets the names of all associated artists joined by " & ".
+    ///     The names of all associated artists joined by " & ".
     ///     This is a denormalized field for efficient display and searching.
     /// </summary>
     [MaxLength(2000)]
@@ -173,7 +173,7 @@ public class Song : ObservableObject
 
 
     /// <summary>
-    ///     Gets or sets the name of the primary artist (the one with the lowest order).
+    ///     The name of the primary artist (the one with the lowest order).
     ///     This is a denormalized field for efficient sorting.
     /// </summary>
     [MaxLength(500)]

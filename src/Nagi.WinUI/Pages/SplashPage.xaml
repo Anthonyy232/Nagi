@@ -95,7 +95,6 @@
         <Grid Grid.Row="1">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20">
 
-                <!-- Logo -->
                 <Border x:Name="LogoContainer"
                         HorizontalAlignment="Center"
                         Opacity="0"
@@ -106,7 +105,6 @@
                     <Image Source="/Assets/AppLogo.png" Width="108" Height="108"/>
                 </Border>
 
-                <!-- App name + tagline -->
                 <StackPanel x:Name="TitlePanel"
                             HorizontalAlignment="Center"
                             Spacing="6"
@@ -124,7 +122,6 @@
                                Opacity="0.6"/>
                 </StackPanel>
 
-                <!-- Spinner + status text -->
                 <StackPanel x:Name="StatusPanel"
                             HorizontalAlignment="Center"
                             Orientation="Horizontal"

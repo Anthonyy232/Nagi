@@ -18,7 +18,7 @@ public class ServiceProviderSetting
     public bool IsEnabled { get; set; } = true;
 
     /// <summary>
-    ///     Gets or sets the priority order (lower = higher priority, 0 = highest).
+    ///     Priority order: lower is higher priority, 0 is highest.
     /// </summary>
     public int Order { get; set; }
 

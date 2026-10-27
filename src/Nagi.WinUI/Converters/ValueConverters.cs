@@ -95,7 +95,6 @@ public class IncrementalLoadingConverter : IValueConverter
 public class BooleanToVisibilityConverter : IValueConverter
 {
     /// <summary>
-    ///     Gets or sets a value indicating whether the conversion should be inverted.
     ///     If true, true becomes Collapsed and false becomes Visible.
     /// </summary>
     public bool Invert { get; set; }
@@ -140,7 +139,6 @@ public class StringToVisibilityConverter : IValueConverter
 public class CollectionCountToVisibilityConverter : IValueConverter
 {
     /// <summary>
-    ///     Gets or sets a value indicating whether the conversion should be inverted.
     ///     If true, 0 becomes Visible and >0 becomes Collapsed.
     /// </summary>
     public bool Invert { get; set; }

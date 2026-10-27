@@ -91,7 +91,7 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     /// <summary>
     ///     Occurs once per listening session when the current track has been played
     ///     long enough to be eligible for scrobbling (track &gt; 30 s AND played ≥ 50% or ≥ 4 min).
-    ///     Subscribers receive the song and the listen history session ID.
+    ///     Subscribers receive the song, the listen history session ID and the UTC time the listen started.
     /// </summary>
     event Action<Song, long, DateTime>? ScrobbleEligibilityReached;
 

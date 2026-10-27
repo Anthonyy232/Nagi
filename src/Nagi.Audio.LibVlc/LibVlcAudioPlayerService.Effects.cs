@@ -208,15 +208,11 @@ public sealed partial class LibVlcAudioPlayerService
         _isPausing = false;
     }
 
-    /// <summary>
-    ///     Applies the combined preamp value from user EQ settings and ReplayGain offset.
-    /// </summary>
     private void ApplyCombinedPreamp()
     {
         if (_isDisposed || !_isInitialized || _equalizer is null || _mediaPlayer is null) return;
 
         // VLC equalizer preamp range: -20 to +20 dB
-        // Combine user's base preamp with ReplayGain offset
         var combinedPreamp = (float)Math.Clamp(_basePreamp + _replayGainOffset, -20.0, 20.0);
         _equalizer.SetPreamp(combinedPreamp);
         _mediaPlayer.SetEqualizer(_equalizer);

@@ -29,9 +29,7 @@
 
     <Grid RowDefinitions="Auto,Auto,*,Auto" ColumnDefinitions="*" Margin="0,12,0,0">
 
-        <!-- Row 0: General Info with Cover Image -->
         <Grid Grid.Row="0" ColumnDefinitions="Auto, 24, *, 24, Auto" Margin="0,0,0,24">
-            <!-- Cover Image Section -->
             <StackPanel Grid.Column="0" Spacing="8" VerticalAlignment="Top">
                 <Grid x:Name="CoverImageGrid" Width="100" Height="100"
                       Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
@@ -55,7 +53,6 @@
                         HorizontalAlignment="Stretch" />
             </StackPanel>
 
-            <!-- Name Section -->
             <StackPanel Grid.Column="2" Spacing="4" VerticalAlignment="Top">
                 <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_PlaylistNameLabel, Mode=OneTime}" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
                 <TextBox x:Name="PlaylistNameTextBox"
@@ -64,7 +61,6 @@
                          MaxLength="200" />
             </StackPanel>
 
-            <!-- Sort Order Section -->
             <StackPanel Grid.Column="4" Spacing="4" MinWidth="200" VerticalAlignment="Top">
                 <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_SortOrderLabel, Mode=OneTime}" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
                 <ComboBox x:Name="SortByComboBox" HorizontalAlignment="Stretch"
@@ -75,7 +71,6 @@
             </StackPanel>
         </Grid>
 
-        <!-- Row 1: Rules Toolbar -->
         <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,12">
             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                 <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_MatchLabel, Mode=OneTime}" VerticalAlignment="Center"/>
@@ -96,7 +91,6 @@
             </Button>
         </Grid>
 
-        <!-- Row 2: Rules List & Empty State -->
         <Border Grid.Row="2"
                 BorderThickness="1"
                 BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
@@ -166,7 +160,6 @@
                             </ListView.ItemTemplate>
                         </ListView>
 
-                        <!-- Empty State -->
                         <StackPanel x:Name="NoRulesPanel"
                                    Visibility="{x:Bind ViewModel.HasNoRules, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                    HorizontalAlignment="Center"
@@ -190,7 +183,6 @@
             </Grid>
         </Border>
 
-        <!-- Row 3: Footer Status -->
         <Border Grid.Row="3" Margin="0,16,0,0" Padding="12,8"
                 Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
                 CornerRadius="{ThemeResource ControlCornerRadius}"

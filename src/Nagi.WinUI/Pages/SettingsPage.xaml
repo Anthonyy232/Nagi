@@ -262,7 +262,6 @@
                         IsOn="{x:Bind ViewModel.Appearance.IsDynamicThemingEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
-                <!-- Player Styling Settings -->
                 <controls:SettingsExpander
                     AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_PlayerStyling_Header, Mode=OneTime}"
                     Description="{x:Bind resources:Strings.SettingsPage_PlayerStyling_Description, Mode=OneTime}">
@@ -601,7 +600,6 @@
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE9E9;" />
                     </controls:SettingsCard.HeaderIcon>
                     <StackPanel Spacing="20" HorizontalAlignment="Center">
-                        <!-- Preamp slider -->
                         <StackPanel Spacing="6" Width="320">
                             <TextBlock FontWeight="SemiBold" Text="{x:Bind resources:Strings.SettingsPage_Equalizer_Preamp, Mode=OneTime}" HorizontalAlignment="Center" />
                             <Slider
@@ -620,7 +618,6 @@
                             </TextBlock>
                         </StackPanel>
 
-                        <!-- EQ Bands -->
                         <ItemsRepeater ItemsSource="{x:Bind ViewModel.Audio.EqualizerBands}" HorizontalAlignment="Center">
                             <ItemsRepeater.Layout>
                                 <StackLayout Orientation="Horizontal" Spacing="8" />
@@ -628,7 +625,6 @@
                             <ItemsRepeater.ItemTemplate>
                                 <DataTemplate x:DataType="viewmodels:EqualizerBandViewModel">
                                     <StackPanel Width="44" Spacing="6">
-                                        <!-- 0 dB indicator and slider container -->
                                         <Grid Height="140">
                                             <!-- 0 dB center line -->
                                             <Border
@@ -636,7 +632,6 @@
                                                 VerticalAlignment="Center"
                                                 Background="{ThemeResource TextFillColorTertiaryBrush}"
                                                 Opacity="0.5" />
-                                            <!-- Vertical slider -->
                                             <Slider
                                                 AutomationProperties.Name="{x:Bind AccessibleName}"
                                                 HorizontalAlignment="Center"
@@ -759,7 +754,6 @@
                                                 CornerRadius="{ThemeResource ControlCornerRadius}"
                                                 Visibility="{x:Bind IsNotSeparator, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                                            <!-- Separator visual -->
                                             <Border
                                                 x:Name="SeparatorVisual"
                                                 Width="2"
@@ -771,7 +765,6 @@
                                                 CornerRadius="1"
                                                 Visibility="{x:Bind IsSeparator, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                                            <!-- Button content -->
                                             <StackPanel
                                                 Width="57"
                                                 Padding="0,8"
@@ -787,7 +780,6 @@
                                                     Foreground="{ThemeResource TextFillColorTertiaryBrush}"
                                                     Glyph="&#xE76F;" />
 
-                                                <!-- Button preview -->
                                                 <Button
                                                     Width="36"
                                                     Height="36"

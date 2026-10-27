@@ -28,8 +28,8 @@ public sealed partial class ArtistPage : SearchablePage
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
+        // The singleton view model outlives the page, so it is reset rather than disposed.
         ViewModel.ResetState();
-        // Note: ViewModel is Singleton, do not dispose - state persists across navigations
     }
 
     private void ArtistsGridView_ItemClick(object sender, ItemClickEventArgs e)

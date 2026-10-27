@@ -95,7 +95,6 @@ public sealed partial class LibVlcAudioPlayerService
                 PlaybackEnded?.Invoke();
             }
 
-            // Reset flag when playback starts
             if (state == VLCState.Playing)
             {
                 _isExplicitStop = false;

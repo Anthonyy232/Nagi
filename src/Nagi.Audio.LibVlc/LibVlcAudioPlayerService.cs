@@ -31,7 +31,6 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private readonly Lazy<Task> _disposeTask;
     private volatile bool _isInitialized;
 
-    // Deferred LibVLC components (nullable until initialized)
     private LibVLC? _libVlc;
     private MediaPlayer? _mediaPlayer;
     private Equalizer? _equalizer;
@@ -41,7 +40,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
     private volatile bool _isDisposed;
     private bool _isExplicitStop; // Prevents false PlaybackEnded events on user/error stop
-    private double _replayGainOffset; // Separate tracking of ReplayGain adjustment
+    private double _replayGainOffset;
 
     // Nagi intentionally keeps approximately 2 dB of headroom below LibVLC's
     // nominal 12 dB flat/unity preset.
@@ -61,9 +60,6 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     // Tracks if we are currently fading out to pause, so IsPlaying can return false early
     private volatile bool _isPausing;
 
-    /// <summary>
-    ///     Creates a new instance. LibVLC initialization is deferred until first use.
-    /// </summary>
     public LibVlcAudioPlayerService(
         IDispatcherService dispatcherService,
         ISystemMediaControls mediaControls,

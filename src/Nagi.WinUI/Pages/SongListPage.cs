@@ -41,9 +41,6 @@ public abstract class SongListPage : SearchablePage
         Unloaded += DetachNowPlayingBinders;
     }
 
-    /// <summary>
-    ///     The list currently showing the songs.
-    /// </summary>
     protected virtual ListView ActiveSongList => _songLists[0];
 
     /// <summary>

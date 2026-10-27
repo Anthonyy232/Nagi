@@ -480,7 +480,7 @@ public partial class LibraryService
         if (albumDefinitions.Count == 0)
             return albumLookup;
 
-        // Step 1: Check the case-insensitive cache first to partition into known vs unknown
+        // Check the case-insensitive cache first to partition into known vs unknown
         var cachedEntries = new List<(Guid Id, (string Title, string Artist) Key)>();
         var uncachedKeys = new List<(string Title, string Artist)>();
 
@@ -514,7 +514,7 @@ public partial class LibraryService
             }
         }
 
-        // Step 3: Create new albums directly — no DB double-check needed.
+        // Create new albums directly — no DB double-check needed.
         // Pre-warm loaded all existing albums into the cache; cache miss = genuinely new album.
         // Sequential consumer means no concurrent batch can create the same album.
         if (uncachedKeys.Count == 0)

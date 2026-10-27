@@ -1,8 +1,8 @@
 ﻿namespace Nagi.Core.Services.Abstractions;
 
 /// <summary>
-///     Service for fetching synchronized lyrics from NetEase Cloud Music.
-///     Used as a fallback for Asian music (J-Pop, K-Pop, Anime) when LRCLIB fails.
+///     Fetches synchronized lyrics from NetEase Cloud Music. Often has lyrics for Asian music
+///     (J-Pop, K-Pop, anime) that LRCLIB lacks.
 /// </summary>
 public interface INetEaseLyricsService
 {

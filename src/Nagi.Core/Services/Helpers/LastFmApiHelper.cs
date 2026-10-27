@@ -8,7 +8,7 @@ public static class LastFmApiHelper
     /// <summary>
     ///     Creates the required MD5 signature for an authenticated Last.fm API call.
     ///     Parameters are sorted alphabetically, concatenated, and hashed with the secret.
-    /// <param name="secret">The Last.fm API secret.</param>
+    /// </summary>
     /// <returns>The MD5 hash signature as a lowercase hex string.</returns>
     public static string CreateSignature(IDictionary<string, string> parameters, string secret)
     {

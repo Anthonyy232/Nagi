@@ -2,7 +2,6 @@
 
 public enum SmartPlaylistField
 {
-    // Text Fields
     Title,
     Artist,
     Album,
@@ -11,7 +10,6 @@ public enum SmartPlaylistField
     Comment,
     Grouping,
 
-    // Numeric Fields
     PlayCount,
     SkipCount,
     Rating,
@@ -23,11 +21,9 @@ public enum SmartPlaylistField
     Bitrate,
     SampleRate,
 
-    // Boolean Fields
     IsLoved,
     HasLyrics,
 
-    // Date Fields
     DateAdded,
     LastPlayed,
     FileCreatedDate,
@@ -36,7 +32,6 @@ public enum SmartPlaylistField
 
 public enum SmartPlaylistOperator
 {
-    // Text operators
     Is,
     IsNot,
     Contains,
@@ -44,7 +39,6 @@ public enum SmartPlaylistOperator
     StartsWith,
     EndsWith,
 
-    // Numeric/Date operators
     Equals,
     NotEquals,
     GreaterThan,
@@ -53,11 +47,10 @@ public enum SmartPlaylistOperator
     LessThanOrEqual,
     IsInRange,
 
-    // Date-specific operators (value is in days)
+    // Value is in days.
     IsInTheLast,
     IsNotInTheLast,
 
-    // Boolean operators
     IsTrue,
     IsFalse
 }

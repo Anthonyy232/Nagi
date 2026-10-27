@@ -320,7 +320,6 @@ public partial class SettingsService
 
     public async Task SetServiceProvidersAsync(ServiceCategory category, List<ServiceProviderSetting> providers)
     {
-        // Normalize order values based on list position
         for (var i = 0; i < providers.Count; i++)
             providers[i].Order = i;
 
