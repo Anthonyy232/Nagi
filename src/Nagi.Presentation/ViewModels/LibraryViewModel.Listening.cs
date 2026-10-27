@@ -41,7 +41,6 @@ public partial class LibraryViewModel
     public async Task OpenAsync(bool favorites)
     {
         await SetLibraryViewAsync(favorites);
-        if (!HasLoadedPlaylists) await LoadAvailablePlaylistsAsync();
         if (!HasInitialized) await InitializeAsync();
     }
 

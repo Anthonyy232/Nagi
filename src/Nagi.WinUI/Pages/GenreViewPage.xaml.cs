@@ -28,6 +28,5 @@ public sealed partial class GenreViewPage : SongListPage
 
         var navParam = (GenreViewNavigationParameter)e.Parameter;
         await ViewModel.LoadGenreDetailsAsync(navParam);
-        await ViewModel.LoadAvailablePlaylistsAsync();
     }
 }

@@ -64,6 +64,8 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
         _musicNavigationService = musicNavigationService;
 
         Artists.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasArtists));
+        _libraryScanner.ArtistMetadataUpdated += OnArtistMetadataUpdated;
+        _libraryScanner.ArtistMetadataBatchUpdated += OnArtistMetadataBatchUpdated;
     }
 
     public ObservableRangeCollection<ArtistViewModelItem> Artists { get; } = new();
@@ -178,21 +180,10 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
         });
     }
 
-    public void SubscribeToEvents()
-    {
-        _libraryScanner.ArtistMetadataUpdated += OnArtistMetadataUpdated;
-        _libraryScanner.ArtistMetadataBatchUpdated += OnArtistMetadataBatchUpdated;
-    }
-
-    public void UnsubscribeFromEvents()
+    public override void Dispose()
     {
         _libraryScanner.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
         _libraryScanner.ArtistMetadataBatchUpdated -= OnArtistMetadataBatchUpdated;
-    }
-
-    public override void Dispose()
-    {
-        UnsubscribeFromEvents();
         base.Dispose();
     }
 

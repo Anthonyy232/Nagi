@@ -52,6 +52,13 @@ public abstract class SongListPage : SearchablePage
     /// </summary>
     protected virtual Song? GetSong(object? item) => item as Song;
 
+    protected override void OnNavigatedTo(NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
+        // For the "Add to playlist" menu. A cached page's shared view model keeps them up to date once loaded.
+        if (!_viewModel!.HasLoadedPlaylists) _ = _viewModel.LoadAvailablePlaylistsAsync();
+    }
+
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);

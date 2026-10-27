@@ -47,7 +47,6 @@ public sealed partial class ArtistViewPage : SongListPage
 
         var navParam = (ArtistViewNavigationParameter)e.Parameter;
         await ViewModel.LoadArtistDetailsAsync(navParam.ArtistId);
-        await ViewModel.LoadAvailablePlaylistsAsync();
     }
 
     protected override void OnNavigatedFrom(NavigationEventArgs e)

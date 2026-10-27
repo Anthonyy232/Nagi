@@ -241,7 +241,7 @@
                                 </DropDownButton>
                                 <Button x:Name="SeeAllSongsButton"
                                         Grid.Column="2"
-                                        Click="OnSeeAllSongsClick"
+                                        Command="{x:Bind ViewModel.OpenSeeAllSongsCommand}"
                                         Style="{StaticResource SubtleButtonStyle}"
                                         Width="28" Height="28" Padding="0"
                                         VerticalAlignment="Center"
@@ -294,7 +294,7 @@
                                 </DropDownButton>
                                 <Button x:Name="SeeAllArtistsButton"
                                         Grid.Column="2"
-                                        Click="OnSeeAllArtistsClick"
+                                        Command="{x:Bind ViewModel.OpenSeeAllArtistsCommand}"
                                         Style="{StaticResource SubtleButtonStyle}"
                                         Width="28" Height="28" Padding="0"
                                         VerticalAlignment="Center"
@@ -358,7 +358,7 @@
                                 </DropDownButton>
                                 <Button x:Name="SeeAllAlbumsButton"
                                         Grid.Column="2"
-                                        Click="OnSeeAllAlbumsClick"
+                                        Command="{x:Bind ViewModel.OpenSeeAllAlbumsCommand}"
                                         Style="{StaticResource SubtleButtonStyle}"
                                         Width="28" Height="28" Padding="0"
                                         VerticalAlignment="Center"
@@ -411,7 +411,7 @@
                                 </DropDownButton>
                                 <Button x:Name="SeeAllGenresButton"
                                         Grid.Column="2"
-                                        Click="OnSeeAllGenresClick"
+                                        Command="{x:Bind ViewModel.OpenSeeAllGenresCommand}"
                                         Style="{StaticResource SubtleButtonStyle}"
                                         Width="28" Height="28" Padding="0"
                                         VerticalAlignment="Center"

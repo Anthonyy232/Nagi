@@ -32,18 +32,6 @@ public sealed partial class InsightsPage : Page
         ViewModel.CloseSeeAllCommand.Execute(null);
     }
 
-    private void OnSeeAllSongsClick(object sender, RoutedEventArgs e) =>
-        ViewModel.OpenSeeAllSongsCommand.Execute(null);
-
-    private void OnSeeAllArtistsClick(object sender, RoutedEventArgs e) =>
-        ViewModel.OpenSeeAllArtistsCommand.Execute(null);
-
-    private void OnSeeAllAlbumsClick(object sender, RoutedEventArgs e) =>
-        ViewModel.OpenSeeAllAlbumsCommand.Execute(null);
-
-    private void OnSeeAllGenresClick(object sender, RoutedEventArgs e) =>
-        ViewModel.OpenSeeAllGenresCommand.Execute(null);
-
     private void OnSongsSortByPlayCountClick(object sender, RoutedEventArgs e) =>
         ViewModel.SongsSortMetric = SortMetric.PlayCount;
 

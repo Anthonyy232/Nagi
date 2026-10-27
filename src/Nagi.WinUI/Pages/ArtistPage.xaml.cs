@@ -23,16 +23,12 @@ public sealed partial class ArtistPage : SearchablePage
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        ViewModel.SubscribeToEvents();
-
         await ViewModel.LoadAsync(CancellationToken.None);
     }
 
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        ViewModel.UnsubscribeFromEvents();
-
         ViewModel.ResetState();
         // Note: ViewModel is Singleton, do not dispose - state persists across navigations
     }

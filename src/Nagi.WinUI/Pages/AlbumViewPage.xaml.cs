@@ -32,6 +32,5 @@ public sealed partial class AlbumViewPage : SongListPage
 
         var navParam = (AlbumViewNavigationParameter)e.Parameter;
         await ViewModel.LoadAlbumDetailsAsync(navParam.AlbumId);
-        await ViewModel.LoadAvailablePlaylistsAsync();
     }
 }

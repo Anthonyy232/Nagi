@@ -38,7 +38,6 @@ public sealed partial class FolderSongViewPage : SongListPage
 
         var navParam = (FolderSongViewNavigationParameter)e.Parameter;
         await ViewModel.InitializeAsync(navParam.Title, navParam.FolderId, navParam.DirectoryPath);
-        await ViewModel.LoadAvailablePlaylistsAsync();
     }
 
     private void OnBreadcrumbItemClicked(BreadcrumbBar sender, BreadcrumbBarItemClickedEventArgs args)
