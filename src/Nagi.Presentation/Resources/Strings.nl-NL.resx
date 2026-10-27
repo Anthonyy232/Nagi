@@ -614,9 +614,6 @@ Bestanden die niet konden worden geïmporteerd: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg nog steeds niet gedetecteerd. Installeer FFmpeg en klik op 'Opnieuw controleren'.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Fout bij controleren op FFmpeg. Probeer het opnieuw.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Vorige</value>
   </data>

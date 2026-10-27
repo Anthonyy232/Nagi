@@ -21,4 +21,15 @@
         <Setter Property="MinHeight" Value="0" />
     </Style>
 
+    <!--  FFmpeg setup dialog status. The setters use ThemeResource so the colors follow the dialog's theme.  -->
+    <Style x:Key="FFmpegStatusCheckingTextStyle" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+    </Style>
+    <Style x:Key="FFmpegStatusDetectedTextStyle" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{ThemeResource SystemFillColorSuccessBrush}" />
+    </Style>
+    <Style x:Key="FFmpegStatusMissingTextStyle" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{ThemeResource SystemFillColorCautionBrush}" />
+    </Style>
+
 </ResourceDictionary>

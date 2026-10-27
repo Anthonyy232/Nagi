@@ -614,9 +614,6 @@
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>Το FFmpeg εξακολουθεί να μην εντοπίζεται. Παρακαλώ εγκαταστήστε το FFmpeg και κάντε κλικ στο 'Επανέλεγχος'.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Σφάλμα κατά τον έλεγχο για FFmpeg. Παρακαλώ δοκιμάστε ξανά.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Προηγούμενο</value>
   </data>

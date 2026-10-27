@@ -614,9 +614,6 @@
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg עדיין לא זוהה. אנא התקן את FFmpeg ולחץ על 'בדיקה חוזרת'.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>שגיאה בבדיקת FFmpeg. אנא נסה שוב.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>קודם</value>
   </data>

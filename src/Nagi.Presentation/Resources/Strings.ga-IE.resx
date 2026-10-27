@@ -614,9 +614,6 @@ Comhaid nárbh fhéidir a iompórtáil: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>Níor braitheadh FFmpeg fós. Suiteáil FFmpeg le do thoil agus cliceáil 'Athsheiceáil'.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Earráid ag seiceáil le haghaidh FFmpeg. Bain triail eile as le do thoil.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Roimhe Seo</value>
   </data>

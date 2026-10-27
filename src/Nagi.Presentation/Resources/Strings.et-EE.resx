@@ -614,9 +614,6 @@ Failid, mida ei õnnestunud importida: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg'i ikka veel ei tuvastatud. Palun installige FFmpeg ja klõpsake 'Kontrolli uuesti'.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>FFmpeg'i kontrollimisel ilmnes viga. Palun proovige uuesti.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Eelmine</value>
   </data>

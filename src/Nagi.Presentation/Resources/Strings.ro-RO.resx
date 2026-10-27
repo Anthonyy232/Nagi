@@ -614,9 +614,6 @@ Fișiere care nu au putut fi importate: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg nu este încă detectat. Te rugăm să instalezi FFmpeg și să faci clic pe „Verifică din nou”.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Eroare la verificarea FFmpeg. Te rugăm să încerci din nou.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Anterior</value>
   </data>

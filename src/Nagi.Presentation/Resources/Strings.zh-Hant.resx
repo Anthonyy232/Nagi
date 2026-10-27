@@ -614,9 +614,6 @@
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>仍未偵測到 FFmpeg。請安裝 FFmpeg 並點擊「重新檢查」。</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>檢查 FFmpeg 時發生錯誤。請再試一次。</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>上一首</value>
   </data>

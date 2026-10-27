@@ -614,9 +614,6 @@
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpegはまだ検出されていません。FFmpegをインストールし、「再確認」をクリックしてください。</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>FFmpegの確認中にエラーが発生しました。もう一度お試しください。</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>前へ</value>
   </data>

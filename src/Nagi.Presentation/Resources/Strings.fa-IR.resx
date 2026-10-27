@@ -614,9 +614,6 @@
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg همچنان شناسایی نشد. لطفاً FFmpeg را نصب کرده و روی 'بررسی مجدد' کلیک کنید.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>خطا در بررسی FFmpeg. لطفاً دوباره تلاش کنید.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>قبلی</value>
   </data>

@@ -614,9 +614,6 @@ Faili ambazo hazikuweza kuingizwa: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg bado haijagunduliwa. Tafadhali sakinisha FFmpeg na ubofye 'Angalia Upya'.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Hitilafu wakati wa kuangalia FFmpeg. Tafadhali jaribu tena.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Iliyopita</value>
   </data>

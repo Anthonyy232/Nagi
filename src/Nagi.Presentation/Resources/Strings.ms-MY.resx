@@ -614,9 +614,6 @@ Fail yang tidak dapat diimport: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg masih belum dikesan. Sila pasang FFmpeg dan klik 'Semak Semula'.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Ralat menyemak FFmpeg. Sila cuba lagi.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Sebelumnya</value>
   </data>

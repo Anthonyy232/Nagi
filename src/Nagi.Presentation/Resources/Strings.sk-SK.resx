@@ -614,9 +614,6 @@ Súbory, ktoré sa nepodarilo importovať: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg stále nebol zistený. Prosím, nainštalujte FFmpeg a kliknite na 'Znova skontrolovať'.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Chyba pri kontrole FFmpeg. Skúste to znova.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Predchádzajúce</value>
   </data>

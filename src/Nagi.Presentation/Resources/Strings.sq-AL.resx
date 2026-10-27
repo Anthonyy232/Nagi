@@ -614,9 +614,6 @@ Skedarët që nuk u mundësuan të importohen: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg ende nuk u zbulua. Ju lutemi instaloni FFmpeg dhe klikoni 'Rikontrollo'.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Gabim në kontrollimin për FFmpeg. Ju lutemi provoni përsëri.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>E mëparshmja</value>
   </data>

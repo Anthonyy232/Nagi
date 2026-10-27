@@ -614,9 +614,6 @@ Files that could not be imported: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg still not detected. Please install FFmpeg and click 'Recheck'.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Error checking for FFmpeg. Please try again.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Previous</value>
   </data>

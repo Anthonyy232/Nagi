@@ -614,9 +614,6 @@ Datoteke koje nije bilo moguće uvesti: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg još uvijek nije otkriven. Molimo instalirajte FFmpeg i kliknite 'Ponovno provjeri'.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Pogreška pri provjeri FFmpeg-a. Molimo pokušajte ponovo.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Prethodna</value>
   </data>

@@ -614,9 +614,6 @@
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg по-прежнему не обнаружен. Пожалуйста, установите FFmpeg и нажмите 'Перепроверить'.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Ошибка проверки FFmpeg. Пожалуйста, попробуйте еще раз.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Предыдущий</value>
   </data>

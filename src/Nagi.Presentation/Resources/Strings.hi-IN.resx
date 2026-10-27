@@ -614,9 +614,6 @@
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg का अभी भी पता नहीं चला। कृपया FFmpeg इंस्टॉल करें और 'पुन: जाँच करें' पर क्लिक करें।</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>FFmpeg की जाँच करने में त्रुटि। कृपया पुनः प्रयास करें।</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>पिछला</value>
   </data>

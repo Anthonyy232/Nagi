@@ -614,9 +614,6 @@ Filer, der ikke kunne importeres: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg er stadig ikke fundet. Installer venligst FFmpeg og klik på 'Tjek igen'.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Fejl ved kontrol af FFmpeg. Prøv venligst igen.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Forrige</value>
   </data>

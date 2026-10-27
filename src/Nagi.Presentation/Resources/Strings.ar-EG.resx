@@ -614,9 +614,6 @@
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>لم يتم اكتشاف FFmpeg بعد. يرجى تثبيت FFmpeg والنقر على 'إعادة الفحص'.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>خطأ أثناء التحقق من FFmpeg. الرجاء المحاولة مرة أخرى.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>السابق</value>
   </data>

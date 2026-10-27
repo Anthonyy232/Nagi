@@ -614,9 +614,6 @@ Kitaplığınızda bulunamayan şarkılar: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg hala algılanmadı. Lütfen FFmpeg'i yükleyin ve 'Yeniden kontrol et'e tıklayın.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>FFmpeg kontrol edilirken hata oluştu. Lütfen tekrar deneyin.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Önceki</value>
   </data>

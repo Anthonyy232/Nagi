@@ -614,9 +614,6 @@ Nem importálható fájlok: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>Az FFmpeg továbbra sem észlelhető. Kérjük, telepítse az FFmpeg-et, majd kattintson az „Újraellenőrzés” gombra.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Hiba az FFmpeg ellenőrzésekor. Kérjük, próbálja újra.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Előző</value>
   </data>

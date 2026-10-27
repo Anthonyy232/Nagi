@@ -614,9 +614,6 @@ Failai, kurių nepavyko importuoti: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg vis dar nerastas. Įdiekite FFmpeg ir spustelėkite "Patikrinti iš naujo".</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Klaida tikrinant FFmpeg. Bandykite dar kartą.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Ankstesnis</value>
   </data>

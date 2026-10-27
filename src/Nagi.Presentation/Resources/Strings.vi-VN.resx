@@ -614,9 +614,6 @@ Các tệp không thể nhập: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg vẫn chưa được phát hiện. Vui lòng cài đặt FFmpeg và nhấp 'Kiểm tra lại'.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Lỗi khi kiểm tra FFmpeg. Vui lòng thử lại.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Trước</value>
   </data>

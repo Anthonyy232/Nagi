@@ -614,9 +614,6 @@
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg এখনও সনাক্ত করা যায়নি। অনুগ্রহ করে FFmpeg ইনস্টল করুন এবং 'পুনরায় পরীক্ষা করুন' ক্লিক করুন।</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>FFmpeg পরীক্ষা করতে ত্রুটি। অনুগ্রহ করে আবার চেষ্টা করুন।</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>পূর্ববর্তী</value>
   </data>

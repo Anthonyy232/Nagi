@@ -614,9 +614,6 @@ Mga file na hindi ma-import: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>Hindi pa rin nakita ang FFmpeg. Mangyaring i-install ang FFmpeg at i-click ang 'Muling Suriin'.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Error sa pagsusuri ng FFmpeg. Pakisubukan muli.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Nakaraan</value>
   </data>

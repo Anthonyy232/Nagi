@@ -614,9 +614,6 @@
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg இன்னும் கண்டறியப்படவில்லை. தயவுசெய்து FFmpeg ஐ நிறுவி 'மீண்டும் சரிபார்க்கவும்' என்பதைக் கிளிக் செய்யவும்.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>FFmpeg ஐ சரிபார்க்கும் போது பிழை ஏற்பட்டது. மீண்டும் முயற்சிக்கவும்.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>முந்தைய</value>
   </data>

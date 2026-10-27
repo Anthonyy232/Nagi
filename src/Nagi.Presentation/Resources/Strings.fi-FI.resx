@@ -614,9 +614,6 @@ Tiedostoja, joita ei voitu tuoda: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpegia ei edelleenkään havaittu. Asenna FFmpeg ja napsauta 'Tarkista uudelleen'.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Virhe FFmpegia tarkistettaessa. Yritä uudelleen.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Edellinen</value>
   </data>

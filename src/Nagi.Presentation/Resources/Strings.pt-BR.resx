@@ -614,9 +614,6 @@ Arquivos que não puderam ser importados: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg ainda não detectado. Por favor, instale o FFmpeg e clique em 'Verificar Novamente'.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Erro ao verificar FFmpeg. Por favor, tente novamente.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Anterior</value>
   </data>
