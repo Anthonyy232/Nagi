@@ -23,7 +23,6 @@ public class AppServiceRegistrationTests
         // The window and its dispatcher exist only inside the running app; validation never creates them.
         services.AddSingleton<MainWindow>(_ => throw new NotSupportedException());
         services.AddSingleton<DispatcherQueue>(_ => throw new NotSupportedException());
-        services.AddNagiHttpClients();
         services.AddNagiPlatformServices();
         services.AddNagiCore();
         services.AddNagiPresentation();

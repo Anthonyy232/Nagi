@@ -1,6 +1,5 @@
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
@@ -28,7 +27,6 @@ public class WikipediaService : IWikipediaService, IDisposable
         ILogger<WikipediaService> logger)
     {
         _httpClient = httpClientFactory.CreateClient();
-        _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(ProviderUserAgent.Value);
         _pipelines = pipelines;
         _logger = logger;
     }

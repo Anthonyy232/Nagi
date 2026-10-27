@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
+using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
@@ -19,7 +20,7 @@ public static class CoreServiceRegistration
 {
     /// <summary>
     ///     Adds the library, playback, metadata, scrobbling, lyrics, and maintenance services.
-    ///     The host must also register logging, HTTP clients, <c>IConfiguration</c>, and its platform services:
+    ///     The host must also register logging, <c>IConfiguration</c>, and its platform services:
     ///     <see cref="IPathConfiguration" />, <see cref="ISettingsService" />, <see cref="IAppInfoService" />, <see cref="IAudioPlayer" />
     ///     and <see cref="ISystemMediaControls" />.
     /// </summary>
@@ -248,6 +249,32 @@ public static class CoreServiceRegistration
         services.AddSingleton<ILoudnessAnalyzer, FFmpegLoudnessAnalyzer>();
         services.AddSingleton<IReplayGainService, ReplayGainService>();
 
+        AddHttpClients(services);
         return services;
+    }
+
+    private static void AddHttpClients(IServiceCollection services)
+    {
+        services.ConfigureHttpClientDefaults(builder =>
+            builder.ConfigureHttpClient(client => client.DefaultRequestHeaders.UserAgent.ParseAdd(ProviderUserAgent.Value)));
+        services.AddHttpClient("")
+            .ConfigureHttpClient(client => client.Timeout = TimeSpan.FromSeconds(20))
+            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
+            {
+                PooledConnectionLifetime = TimeSpan.FromMinutes(2),
+                ConnectTimeout = TimeSpan.FromSeconds(10),
+                KeepAlivePingPolicy = HttpKeepAlivePingPolicy.Always,
+                KeepAlivePingDelay = TimeSpan.FromSeconds(30),
+                KeepAlivePingTimeout = TimeSpan.FromSeconds(5)
+            });
+
+        // Image downloads are larger payloads and tolerate slower CDNs; use a longer timeout.
+        services.AddHttpClient("ImageDownloader")
+            .ConfigureHttpClient(client => client.Timeout = TimeSpan.FromSeconds(30))
+            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
+            {
+                PooledConnectionLifetime = TimeSpan.FromMinutes(2),
+                ConnectTimeout = TimeSpan.FromSeconds(10),
+            });
     }
 }

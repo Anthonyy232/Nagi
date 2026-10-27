@@ -243,7 +243,6 @@ public partial class App : Application
 
         services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog());
         services.AddSingleton(configuration);
-        services.AddNagiHttpClients();
         services.AddNagiMainWindow(mainWindow);
         services.AddNagiPlatformServices();
         services.AddNagiCore();
