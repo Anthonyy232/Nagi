@@ -21,29 +21,10 @@ public sealed partial class LibraryPage : SongListPage
 
     public LibraryViewModel ViewModel { get; }
 
-    private string GetEmptyStateTitle(bool isSearchActive, bool favorites) => isSearchActive
-        ? Strings.LibraryPage_SearchEmpty_Title
-        : favorites ? Strings.Listening_FavoritesEmpty : Strings.LibraryPage_EmptyState_Title;
-
-    private string GetEmptyStateSubtitle(bool isSearchActive, bool favorites) => isSearchActive
-        ? Strings.LibraryPage_SearchEmpty_Subtitle
-        : favorites ? Strings.Listening_FavoritesEmptyDescription : Strings.LibraryPage_EmptyState_Subtitle;
-
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
         ClearSelection();
-
-        await ViewModel.SetLibraryViewAsync(e.Parameter is "Favorites");
-        if (!ViewModel.HasLoadedPlaylists)
-        {
-            await ViewModel.LoadAvailablePlaylistsAsync();
-        }
-
-        if (!ViewModel.HasInitialized)
-        {
-            // Loads songs and triggers the initial background rescan (once per session).
-            await ViewModel.InitializeAsync();
-        }
+        await ViewModel.OpenAsync(e.Parameter is "Favorites");
     }
 }

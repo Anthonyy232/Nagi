@@ -5,6 +5,9 @@ namespace Nagi.Presentation.Helpers;
 
 public static class ShuffleModeText
 {
+    /// <summary>The modes offered as mixes; <see cref="ShuffleMode.Random" /> is the plain shuffle.</summary>
+    public static IEnumerable<ShuffleMode> MixModes => Enum.GetValues<ShuffleMode>().Where(mode => mode != ShuffleMode.Random);
+
     public static string GetName(ShuffleMode mode) => mode switch
     {
         ShuffleMode.MoreVariety => Strings.Listening_MoreVariety,

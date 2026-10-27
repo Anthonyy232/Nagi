@@ -127,7 +127,7 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
 
             var metadataProviders = metadataProvidersTask.Result
                 .Select(ServiceProviderSettingViewModel.FromSetting)
-                .OrderByDescending(provider => provider.Id == ServiceProviderIds.MusicBrainz)
+                .OrderByDescending(provider => provider.IsPinnedFirst)
                 .ToList();
 
             foreach (var item in metadataProviders)
@@ -276,12 +276,12 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
             _dispatcherService.TryEnqueue(() =>
             {
                 if (_isDisposed) return;
-                var musicBrainz = MetadataProviders.FirstOrDefault(provider => provider.Id == ServiceProviderIds.MusicBrainz);
-                var musicBrainzIndex = musicBrainz is null ? -1 : MetadataProviders.IndexOf(musicBrainz);
+                var pinned = MetadataProviders.FirstOrDefault(provider => provider.IsPinnedFirst);
+                var pinnedIndex = pinned is null ? -1 : MetadataProviders.IndexOf(pinned);
 
-                if (musicBrainzIndex > 0)
+                if (pinnedIndex > 0)
                 {
-                    ApplyWithoutSaving(() => MetadataProviders.Move(musicBrainzIndex, 0));
+                    ApplyWithoutSaving(() => MetadataProviders.Move(pinnedIndex, 0));
                 }
 
                 QueueMetadataProviderSave();

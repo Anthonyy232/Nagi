@@ -47,6 +47,10 @@ public abstract partial class SongListViewModelBase
         }
     });
 
+    /// <summary>The favorite action for the one selected song.</summary>
+    public string SelectedFavoriteActionText =>
+        SelectedSongs.FirstOrDefault()?.IsLoved == true ? Strings.Listening_RemoveFavorite : Strings.Listening_AddFavorite;
+
     [RelayCommand(CanExecute = nameof(CanExecuteSingleSongCommands))]
     private async Task ToggleSelectedFavoriteAsync()
     {

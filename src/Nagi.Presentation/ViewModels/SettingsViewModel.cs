@@ -113,6 +113,17 @@ public partial class SettingsViewModel : SettingsSectionViewModel
         Romanization.Dispose();
     }
 
+    /// <summary>
+    ///     Loads the settings page: the saved settings, then the current audio devices, with the romanization packs
+    ///     loading in the background.
+    /// </summary>
+    public async Task OpenAsync()
+    {
+        await LoadSettingsAsync();
+        await Audio.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
+        _ = Romanization.LoadRomanizationPacksAsync();
+    }
+
     public async Task LoadSettingsAsync()
     {
         if (_isDisposed) return;
