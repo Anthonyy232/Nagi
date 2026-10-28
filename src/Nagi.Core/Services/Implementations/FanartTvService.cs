@@ -1,11 +1,10 @@
-using System.Net;
-using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Services.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -37,6 +36,7 @@ public class FanartTvService : IFanartTvService
         if (string.IsNullOrWhiteSpace(musicBrainzId))
             return ServiceResult<FanartTvArtistImages>.FromSuccessNotFound();
 
+        // Checked before the key too, so a failing provider doesn't cost a key request.
         if (_pipelines.IsCircuitOpen(ServiceProviderIds.FanartTv))
             return ServiceResult<FanartTvArtistImages>.FromTemporaryError();
 
@@ -47,54 +47,16 @@ public class FanartTvService : IFanartTvService
             return ServiceResult<FanartTvArtistImages>.FromTemporaryError();
         }
 
-        var url = $"{BaseUrl}/{musicBrainzId}?api_key={apiKey}";
-
-        return await _pipelines.ExecuteWithFallbackAsync(
-            ServiceProviderIds.FanartTv,
-            async ct =>
+        return await _pipelines.GetJsonAsync<FanartTvResponse, FanartTvArtistImages>(_httpClient, ServiceProviderIds.FanartTv,
+            $"{BaseUrl}/{musicBrainzId}?api_key={apiKey}", response =>
             {
-                _logger.LogDebug("Fetching Fanart.tv images for MBID: {MBID}", musicBrainzId);
-                return await _httpClient.GetAsync(url, ct).ConfigureAwait(false);
-            },
-            async (response, ct) =>
-            {
-                if (response.StatusCode == HttpStatusCode.NotFound)
-                {
-                    _logger.LogDebug("No Fanart.tv images found for MBID: {MBID}", musicBrainzId);
-                    return ServiceResult<FanartTvArtistImages>.FromSuccessNotFound();
-                }
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    _logger.LogWarning("Fanart.tv request failed with status {StatusCode} for MBID: {MBID}",
-                        response.StatusCode, musicBrainzId);
-                    return ServiceResult<FanartTvArtistImages>.FromTemporaryError();
-                }
-
-                var apiResult = await response.Content.ReadFromJsonAsync<FanartTvResponse>(cancellationToken: ct)
-                    .ConfigureAwait(false);
-
-                if (apiResult is null)
-                    return ServiceResult<FanartTvArtistImages>.FromSuccessNotFound();
-
                 var images = new FanartTvArtistImages(
-                    BackgroundUrl: apiResult.ArtistBackgrounds?.FirstOrDefault()?.Url,
-                    ThumbUrl: apiResult.ArtistThumbs?.FirstOrDefault()?.Url
-                );
-
-                if (images.BackgroundUrl is null && images.ThumbUrl is null)
-                {
-                    _logger.LogDebug("Fanart.tv returned empty images for MBID: {MBID}", musicBrainzId);
-                    return ServiceResult<FanartTvArtistImages>.FromSuccessNotFound();
-                }
-
-                _logger.LogInformation("Found Fanart.tv images for MBID: {MBID}", musicBrainzId);
-                return ServiceResult<FanartTvArtistImages>.FromSuccess(images);
-            },
-            fallback: ServiceResult<FanartTvArtistImages>.FromTemporaryError(),
-            _logger,
-            $"fetch images for MBID {musicBrainzId}",
-            cancellationToken).ConfigureAwait(false);
+                    BackgroundUrl: response.ArtistBackgrounds?.FirstOrDefault()?.Url,
+                    ThumbUrl: response.ArtistThumbs?.FirstOrDefault()?.Url);
+                return images.BackgroundUrl is null && images.ThumbUrl is null
+                    ? ServiceResult<FanartTvArtistImages>.FromSuccessNotFound()
+                    : ServiceResult<FanartTvArtistImages>.FromSuccess(images);
+            }, _logger, $"images for MBID {musicBrainzId}", cancellationToken).ConfigureAwait(false);
     }
 
     private sealed class FanartTvResponse
