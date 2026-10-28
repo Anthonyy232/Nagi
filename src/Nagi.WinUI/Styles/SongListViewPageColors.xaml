@@ -90,7 +90,7 @@
 
     <Style x:Key="SongListViewPageSecondaryTextBlockStyle" TargetType="TextBlock"
            BasedOn="{StaticResource BodyTextBlockStyle}">
-        <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondary}" />
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="TextTrimming" Value="CharacterEllipsis" />
         <Setter Property="TextWrapping" Value="NoWrap" />
@@ -98,7 +98,7 @@
     </Style>
 
     <Style x:Key="SongListHyperlinkButtonStyle" TargetType="HyperlinkButton" BasedOn="{StaticResource AnimatedHyperlinkButtonStyle}">
-        <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondary}" />
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="FontSize" Value="13" />
         <Setter Property="Padding" Value="0" />

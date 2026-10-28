@@ -59,17 +59,24 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <controls:ImageEx x:Name="AlbumArtwork" Grid.Row="0"
+                <Grid x:Name="AlbumArtwork" Grid.Row="0"
                     Width="{StaticResource AlbumCardImageSize}"
                     Height="{StaticResource AlbumCardImageSize}"
-                    HorizontalAlignment="Center"
-                    CornerRadius="{StaticResource ArtworkCornerRadius}"
-                    Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}"
-                    IsCacheEnabled="True"
-                    Source="{x:Bind CoverArtUri}"
-                    DecodePixelWidth="{StaticResource AlbumCardImageSizeLarge}"
-                    DecodePixelType="Logical"
-                    Stretch="UniformToFill" />
+                    HorizontalAlignment="Center">
+                    <controls:ImageEx
+                        CornerRadius="{StaticResource ArtworkCornerRadius}"
+                        Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        IsCacheEnabled="True"
+                        Source="{x:Bind CoverArtUri, Converter={StaticResource StringToImageSourceConverter}}"
+                        DecodePixelWidth="{StaticResource AlbumCardImageSizeLarge}"
+                        DecodePixelType="Logical"
+                        Stretch="UniformToFill" />
+                    <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                          CornerRadius="{StaticResource ArtworkCornerRadius}"
+                          Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                        <FontIcon HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" Glyph="&#xE93C;" />
+                    </Grid>
+                </Grid>
                 <TextBlock x:Name="AlbumName"
                     Grid.Row="1"
                     Margin="4,8,4,0"
@@ -228,7 +235,7 @@
                             Text="{x:Bind ViewModel.SelectedItemsCountText, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                        <TextBlock VerticalAlignment="Center" FontSize="13"
-                                   Foreground="{ThemeResource TextFillColorSecondary}"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                    Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}"
                                    Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                     </StackPanel>

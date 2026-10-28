@@ -55,6 +55,7 @@
             ItemClick="FoldersGridView_ItemClick"
             ItemContainerStyle="{StaticResource AnimatedGridViewItemStyle}"
             ItemsSource="{x:Bind ViewModel.Folders, Mode=OneWay}"
+            SelectionMode="None"
             Padding="{StaticResource PageContentPadding}"
             Visibility="{x:Bind ViewModel.HasFolders, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
             <GridView.ItemsPanel>

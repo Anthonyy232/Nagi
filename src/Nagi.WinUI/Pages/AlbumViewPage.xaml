@@ -53,19 +53,26 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Border Grid.Column="0"
-                        Width="{StaticResource HeaderImageSize}"
-                        Height="{StaticResource HeaderImageSize}"
-                        CornerRadius="{StaticResource ArtworkCornerRadius}"
-                        Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                    <controls:ImageEx Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}"
-                        IsCacheEnabled="True"
-                        Source="{x:Bind ViewModel.CoverArtUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
-                        DecodePixelWidth="{StaticResource HeaderImageSize}"
-                        DecodePixelType="Logical"
-                        Stretch="UniformToFill" />
-
-                </Border>
+                <Grid Grid.Column="0" Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}">
+                    <Border CornerRadius="{StaticResource ArtworkCornerRadius}"
+                            Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                        <controls:ImageEx Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}"
+                            IsCacheEnabled="True"
+                            Source="{x:Bind ViewModel.CoverArtUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
+                            DecodePixelWidth="{StaticResource HeaderImageSize}"
+                            DecodePixelType="Logical"
+                            Stretch="UniformToFill" />
+                    </Border>
+                    <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                          CornerRadius="{StaticResource ArtworkCornerRadius}"
+                          Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
+                        <FontIcon
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontSize="64"
+                            Glyph="&#xE93C;" />
+                    </Grid>
+                </Grid>
 
                 <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Bottom" Spacing="8">
                     <TextBlock Text="{x:Bind resources:Strings.AlbumViewPage_Header_Label, Mode=OneTime}" Style="{ThemeResource CaptionTextBlockStyle}" />
@@ -99,7 +106,7 @@
                         Text="{x:Bind ViewModel.SelectedItemsCountText, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     <TextBlock Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}"
-                               Foreground="{ThemeResource TextFillColorSecondary}" VerticalAlignment="Center"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"
                                FontSize="13"
                                Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                 </StackPanel>
@@ -218,7 +225,7 @@
                                 <TextBlock
                                     Text="{x:Bind Title}"
                                     Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                    Foreground="{ThemeResource TextFillColorSecondary}"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                     FontSize="13"
                                     Margin="0,0,0,0" />
                             </DataTemplate>

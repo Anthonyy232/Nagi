@@ -68,7 +68,7 @@
                     Margin="0,0,0,5"
                     VerticalAlignment="Bottom"
                     FontSize="13"
-                    Foreground="{ThemeResource TextFillColorSecondary}"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                     Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}"
                     Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
             </StackPanel>
