@@ -453,16 +453,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     /// <summary>
     ///     Runs a user action, logging a failure and telling the user instead of letting it reach the view.
     /// </summary>
-    protected async Task RunActionAsync(Func<Task> action)
-    {
-        try { await action(); }
-        catch (OperationCanceledException) { }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Action failed");
-            if (!_isDisposed) await _uiService.ShowMessageDialogAsync(Strings.Generic_Error, Strings.Listening_ActionError);
-        }
-    }
+    protected Task RunActionAsync(Func<Task> action) => UserAction.RunAsync(action, _logger, _uiService, () => _isDisposed);
 
     [RelayCommand(CanExecute = nameof(CanExecutePlayAllCommands))]
     private Task PlayAllSongsAsync() => RunActionAsync(async () =>

@@ -21,13 +21,15 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly INavigationService _navigationService;
     private readonly IUISettingsService _settingsService;
+    private readonly IUIService _uiService;
     private bool _hasSortOrderLoaded;
     private List<GenreSummary> _allGenres = new();
     private readonly Debouncer _debouncer = new(TimeSpan.FromSeconds(1));
     private readonly SemaphoreSlim _loadLock = new(1, 1);
 
     public GenreViewModel(ILibraryReader libraryReader, ILibraryScanner libraryScanner, IMusicPlaybackService musicPlaybackService,
-        INavigationService navigationService, IUISettingsService settingsService, IDispatcherService dispatcherService, ILogger<GenreViewModel> logger)
+        INavigationService navigationService, IUISettingsService settingsService, IDispatcherService dispatcherService, IUIService uiService,
+        ILogger<GenreViewModel> logger)
         : base(dispatcherService, logger)
     {
         _libraryReader = libraryReader;
@@ -35,6 +37,7 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
         _settingsService = settingsService;
+        _uiService = uiService;
 
         Genres.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasGenres));
 
@@ -185,14 +188,7 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
     {
         if (IsLoading || genreId == Guid.Empty) return;
 
-        try
-        {
-            await _musicPlaybackService.PlayGenreAsync(genreId);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogCritical(ex, "Failed to play genre {GenreId}", genreId);
-        }
+        await UserAction.RunAsync(() => _musicPlaybackService.PlayGenreAsync(genreId), _logger, _uiService);
     }
 
     [RelayCommand]
@@ -200,17 +196,9 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
     {
         if (IsLoading) return;
 
-        try
+        await UserAction.RunAsync(async () =>
         {
-            var randomGenreId = await _libraryReader.GetRandomGenreIdAsync();
-            if (randomGenreId.HasValue)
-            {
-                await _musicPlaybackService.PlayGenreAsync(randomGenreId.Value);
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogCritical(ex, "Error playing random genre");
-        }
+            if (await _libraryReader.GetRandomGenreIdAsync() is { } id) await _musicPlaybackService.PlayGenreAsync(id);
+        }, _logger, _uiService);
     }
 }

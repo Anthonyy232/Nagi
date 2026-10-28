@@ -333,16 +333,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     [RelayCommand]
     private Task NextAsync() => RunActionAsync(_playbackService.NextAsync);
 
-    private async Task RunActionAsync(Func<Task> action)
-    {
-        try { await action(); }
-        catch (OperationCanceledException) { }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Action failed");
-            if (!_isCleanedUp) await _uiService.ShowMessageDialogAsync(Strings.Generic_Error, Strings.Listening_ActionError);
-        }
-    }
+    private Task RunActionAsync(Func<Task> action) => UserAction.RunAsync(action, _logger, _uiService, () => _isCleanedUp);
 
     [RelayCommand]
     private Task ToggleShuffleAsync()

@@ -41,16 +41,18 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
 {
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly IMusicNavigationService _musicNavigationService;
+    private readonly IUIService _uiService;
 
     private bool _isNavigating;
 
     public AlbumViewModel(ILibraryReader libraryReader, ILibraryScanner libraryScanner, IMusicPlaybackService musicPlaybackService,
         IMusicNavigationService musicNavigationService,
-        IUISettingsService settingsService, IDispatcherService dispatcherService, ILogger<AlbumViewModel> logger)
+        IUISettingsService settingsService, IDispatcherService dispatcherService, IUIService uiService, ILogger<AlbumViewModel> logger)
         : base(libraryReader, libraryScanner, settingsService, dispatcherService, logger)
     {
         _musicPlaybackService = musicPlaybackService;
         _musicNavigationService = musicNavigationService;
+        _uiService = uiService;
 
         Albums.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasAlbums));
     }
@@ -101,20 +103,17 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
     private async Task PlayAlbumAsync(Guid albumId)
     {
         if (IsLoading || albumId == Guid.Empty) return;
-        try { await _musicPlaybackService.PlayAlbumAsync(albumId); }
-        catch (Exception ex) { _logger.LogCritical(ex, "Error playing album {AlbumId}", albumId); }
+        await UserAction.RunAsync(() => _musicPlaybackService.PlayAlbumAsync(albumId), _logger, _uiService);
     }
 
     [RelayCommand]
     private async Task PlayRandomAlbumAsync()
     {
         if (IsLoading) return;
-        try
+        await UserAction.RunAsync(async () =>
         {
-            var id = await _libraryReader.GetRandomAlbumIdAsync();
-            if (id.HasValue) await _musicPlaybackService.PlayAlbumAsync(id.Value);
-        }
-        catch (Exception ex) { _logger.LogCritical(ex, "Error playing random album"); }
+            if (await _libraryReader.GetRandomAlbumIdAsync() is { } id) await _musicPlaybackService.PlayAlbumAsync(id);
+        }, _logger, _uiService);
     }
 
     [RelayCommand]
