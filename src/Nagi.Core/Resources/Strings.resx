@@ -247,12 +247,6 @@
   </data>
 
 
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>The playlist was created, but its songs could not be added. Please try importing again.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>No songs from the playlist were found in your library.</value>
-  </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>No playlists to export.</value>
   </data>

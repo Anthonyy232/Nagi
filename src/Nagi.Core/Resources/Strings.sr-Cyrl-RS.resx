@@ -214,12 +214,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Сортирај по: </value>
   </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>Плејлиста је направљена, али њене песме нису могле бити додате. Покушајте поново са увозом.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Ниједна песма из плејлисте није пронађена у вашој библиотеци.</value>
-  </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Нема плејлиста за извоз.</value>
   </data>

@@ -214,12 +214,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Ordenar por: </value>
   </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>Se ha creado la lista de reproducción, pero no se han podido añadir sus canciones. Intenta importarla de nuevo.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>No se encontraron canciones de la lista de reproducción en tu biblioteca.</value>
-  </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>No hay listas de reproducción para exportar.</value>
   </data>

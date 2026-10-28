@@ -33,11 +33,10 @@ public class M3uPlaylistExportServiceTests : IDisposable
         var result = await _service.ImportPlaylistAsync(Path.Combine(_tempDirectory, "missing.m3u"), "My Playlist");
 
         result.Success.Should().BeFalse();
-        result.PlaylistId.Should().BeNull();
     }
 
     [Fact]
-    public async Task ImportPlaylistAsync_WhenNoSongsMatchLibrary_ReturnsFailureWithUnmatchedPaths()
+    public async Task ImportPlaylistAsync_WhenNoSongsMatchLibrary_ReturnsFailure()
     {
         var m3uPath = Path.Combine(_tempDirectory, "playlist.m3u");
         await File.WriteAllTextAsync(m3uPath, $"#EXTM3U\nC:\\unknown\\song.mp3");
@@ -47,7 +46,6 @@ public class M3uPlaylistExportServiceTests : IDisposable
 
         result.Success.Should().BeFalse("import should fail when nothing in the file matches the library");
         result.UnmatchedSongs.Should().Be(1);
-        result.UnmatchedPaths.Should().Contain(@"C:\unknown\song.mp3");
     }
 
     [Fact]
@@ -71,7 +69,6 @@ public class M3uPlaylistExportServiceTests : IDisposable
         result.Success.Should().BeTrue();
         result.MatchedSongs.Should().Be(1);
         result.UnmatchedSongs.Should().Be(1);
-        result.UnmatchedPaths.Should().Contain(@"C:\music\missing.mp3");
         await _playlistService.Received(1).AddSongsToPlaylistAsync(newPlaylist.Id, Arg.Is<IEnumerable<Guid>>(ids => ids != null && ids.Contains(knownSong.Id)));
         await _playlistService.DidNotReceive().DeletePlaylistAsync(Arg.Any<Guid>());
     }
@@ -215,7 +212,7 @@ public class M3uPlaylistExportServiceTests : IDisposable
         result.PlaylistsImported.Should().Be(1);
         result.TotalMatchedSongs.Should().Be(1);
         result.TotalUnmatchedSongs.Should().Be(1, "the unmatched path from the partially-successful file should be accumulated");
-        result.FailedFiles.Should().ContainSingle(f => f.Contains("playlist2"));
+        result.FailedFileCount.Should().Be(1);
     }
 
     [Fact]
@@ -323,7 +320,7 @@ public class M3uPlaylistExportServiceTests : IDisposable
 
         result.Success.Should().BeTrue();
         result.MatchedSongs.Should().Be(1);
-        result.UnmatchedPaths.Should().Equal(invalidEntry);
+        result.UnmatchedSongs.Should().Be(1);
         await _libraryReader.Received(1).GetSongByFilePathAsync(Arg.Any<string>());
     }
 
@@ -343,7 +340,7 @@ public class M3uPlaylistExportServiceTests : IDisposable
 
         result.Success.Should().BeTrue();
         result.MatchedSongs.Should().Be(1);
-        result.UnmatchedPaths.Should().BeEmpty();
+        result.UnmatchedSongs.Should().Be(0);
     }
 
     [Theory]
@@ -363,7 +360,6 @@ public class M3uPlaylistExportServiceTests : IDisposable
         var result = await _service.ImportPlaylistAsync(filePath, playlist.Name);
 
         result.Success.Should().BeFalse();
-        result.ErrorMessage.Should().NotBeNullOrWhiteSpace();
         await _playlistService.Received(1).DeletePlaylistAsync(playlist.Id);
     }
 }

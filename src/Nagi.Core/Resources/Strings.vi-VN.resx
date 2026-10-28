@@ -214,12 +214,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Sắp xếp theo: </value>
   </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>Danh sách phát đã được tạo, nhưng không thể thêm các bài hát. Vui lòng thử nhập lại.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Không tìm thấy bài hát nào từ danh sách phát trong thư viện của bạn.</value>
-  </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Không có danh sách phát nào để xuất.</value>
   </data>

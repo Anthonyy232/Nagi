@@ -214,12 +214,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Сортирай по: </value>
   </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>Плейлистът беше създаден, но песните му не можаха да бъдат добавени. Моля, опитайте да импортирате отново.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Няма намерени песни от плейлиста във вашата библиотека.</value>
-  </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Няма плейлисти за експортиране.</value>
   </data>

@@ -214,12 +214,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Sırala: </value>
   </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>Çalma listesi oluşturuldu, ancak şarkıları eklenemedi. Lütfen tekrar içe aktarmayı deneyin.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Çalma listesindeki şarkılardan hiçbiri kitaplığınızda bulunamadı.</value>
-  </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Dışa aktarılacak çalma listesi bulunmuyor.</value>
   </data>

@@ -214,12 +214,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Pagbukud-bukurin Ayon sa: </value>
   </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>Nagawa ang playlist, ngunit hindi naidagdag ang mga kanta nito. Subukang i-import muli.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Walang mga kanta mula sa playlist ang natagpuan sa iyong library.</value>
-  </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Walang mga playlist na i-e-export.</value>
   </data>

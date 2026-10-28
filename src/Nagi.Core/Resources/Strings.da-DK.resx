@@ -214,12 +214,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Sortér efter: </value>
   </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>Afspilningslisten blev oprettet, men dens sange kunne ikke tilføjes. Prøv at importere igen.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Ingen sange fra afspilningslisten blev fundet i dit bibliotek.</value>
-  </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Ingen afspilningslister at eksportere.</value>
   </data>

@@ -214,12 +214,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Rendezés: </value>
   </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>A lejátszási lista létrejött, de a dalait nem sikerült hozzáadni. Próbálja meg újra az importálást.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Nem találtunk dalt a lejátszási listáról a könyvtárában.</value>
-  </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Nincsenek exportálható lejátszási listák.</value>
   </data>

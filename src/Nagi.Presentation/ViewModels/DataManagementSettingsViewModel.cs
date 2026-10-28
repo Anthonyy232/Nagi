@@ -105,9 +105,9 @@ public partial class DataManagementSettingsViewModel : ObservableObject
             {
                 message += ResourceFormatter.Format(Strings.Settings_Import_Unmatched_Message, result.TotalUnmatchedSongs);
             }
-            if (result.FailedFiles.Count > 0)
+            if (result.FailedFileCount > 0)
             {
-                message += ResourceFormatter.Format(Strings.Settings_Import_FailedFiles_Message, result.FailedFiles.Count);
+                message += ResourceFormatter.Format(Strings.Settings_Import_FailedFiles_Message, result.FailedFileCount);
             }
             await _uiService.ShowMessageDialogAsync(Strings.Settings_Import_Success_Title, message);
         }

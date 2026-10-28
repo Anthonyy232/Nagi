@@ -214,12 +214,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>সাজান: </value>
   </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>প্লেলিস্টটি তৈরি করা হয়েছে, কিন্তু এর গানগুলো যোগ করা সম্ভব হয়নি। অনুগ্রহ করে পুনরায় ইমপোর্ট করার চেষ্টা করুন।</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>আপনার লাইব্রেরিতে প্লেলিস্টের কোনো গান পাওয়া যায়নি।</value>
-  </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>এক্সপোর্ট করার জন্য কোনো প্লেলিস্ট নেই।</value>
   </data>

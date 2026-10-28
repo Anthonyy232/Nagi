@@ -214,12 +214,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>क्रमबद्ध करें: </value>
   </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>प्लेलिस्ट बना दी गई थी, लेकिन इसके गाने जोड़े नहीं जा सके। कृपया पुनः इंपोर्ट करने का प्रयास करें।</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>आपकी लाइब्रेरी में प्लेलिस्ट से कोई गीत नहीं मिला।</value>
-  </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>निर्यात करने के लिए कोई प्लेलिस्ट नहीं है।</value>
   </data>

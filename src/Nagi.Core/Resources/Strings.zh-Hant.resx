@@ -214,12 +214,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>排序依據：</value>
   </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>已建立播放清單，但無法新增其中的歌曲。請嘗試再次匯入。</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>在您的媒體庫中找不到播放清單中的任何歌曲。</value>
-  </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>沒有可匯出的播放清單。</value>
   </data>

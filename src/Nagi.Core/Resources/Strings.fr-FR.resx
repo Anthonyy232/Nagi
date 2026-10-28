@@ -214,12 +214,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Trier par : </value>
   </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>La liste de lecture a été créée, mais ses morceaux n'ont pas pu être ajoutés. Veuillez réessayer l'importation.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Aucune chanson de la liste de lecture n'a été trouvée dans votre bibliothèque.</value>
-  </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Aucune liste de lecture à exporter.</value>
   </data>

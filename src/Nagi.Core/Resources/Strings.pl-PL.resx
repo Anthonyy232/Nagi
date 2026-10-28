@@ -214,12 +214,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Sortuj według: </value>
   </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>Playlista została utworzona, ale nie można było dodać do niej utworów. Spróbuj zaimportować ponownie.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Żadne utwory z playlisty nie zostały znalezione w Twojej bibliotece.</value>
-  </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Brak playlist do wyeksportowania.</value>
   </data>

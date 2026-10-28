@@ -214,12 +214,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>정렬 기준: </value>
   </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>재생목록이 생성되었지만 곡을 추가하지 못했습니다. 다시 가져오기를 시도해 주세요.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>재생 목록의 곡을 라이브러리에서 찾을 수 없습니다.</value>
-  </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>내보낼 재생 목록이 없습니다.</value>
   </data>

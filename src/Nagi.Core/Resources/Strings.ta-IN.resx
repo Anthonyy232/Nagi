@@ -214,12 +214,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>வரிசைப்படுத்து: </value>
   </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>பிளேலிஸ்ட் உருவாக்கப்பட்டது, ஆனால் அதன் பாடல்களைச் சேர்க்க முடியவில்லை. தயவுசெய்து மீண்டும் இறக்குமதி செய்ய முயற்சிக்கவும்.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>உங்கள் நூலகத்தில் பிளேலிஸ்ட்டில் இருந்து பாடல்கள் எதுவும் கண்டறியப்படவில்லை.</value>
-  </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>ஏற்றுமதி செய்ய பிளேலிஸ்ட்கள் இல்லை.</value>
   </data>

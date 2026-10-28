@@ -214,12 +214,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Sórtáil De Réir: </value>
   </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>Cruthaíodh an seinmliosta, ach níorbh fhéidir a chuid amhrán a chur leis. Bain triail as é a iompórtáil arís.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Níor aimsíodh aon amhráin ón seinmliosta i do leabharlann.</value>
-  </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Níl aon seinmliostaí le heaspórtáil.</value>
   </data>

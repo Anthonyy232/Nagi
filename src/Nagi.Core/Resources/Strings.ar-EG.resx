@@ -214,12 +214,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>ترتيب حسب: </value>
   </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>تم إنشاء قائمة التشغيل، ولكن تعذر إضافة أغانيها. يُرجى محاولة الاستيراد مرة أخرى.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>لم يتم العثور على أي أغاني من قائمة التشغيل في مكتبتك.</value>
-  </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>لا توجد قوائم تشغيل للتصدير.</value>
   </data>

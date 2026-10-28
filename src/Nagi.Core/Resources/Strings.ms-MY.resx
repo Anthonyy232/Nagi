@@ -214,12 +214,6 @@
   <data name="SortByPrefix" xml:space="preserve">
     <value>Susun Mengikut: </value>
   </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>Senarai main telah dicipta, tetapi lagunya tidak dapat ditambah. Sila cuba mengimport lagi.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Tiada lagu daripada senarai main ditemui dalam pustaka anda.</value>
-  </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Tiada senarai main untuk dieksport.</value>
   </data>
