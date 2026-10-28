@@ -203,7 +203,6 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         AlbumDetailsText = string.Join(" • ", detailsParts);
     }
 
-
     protected override void ApplyItemsToCollection(PagedResult<Song> result, bool append)
     {
         base.ApplyItemsToCollection(result, append);

@@ -150,7 +150,6 @@ public interface IUISettingsService : ISettingsService
     /// <param name="languageCode">The BCP-47 language tag, or empty string for "Auto".</param>
     Task SetLanguageAsync(string languageCode);
 
-
     /// <summary>
     ///     Gets the user-defined accent color, if any.
     /// </summary>

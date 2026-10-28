@@ -228,7 +228,6 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         }
     }
 
-
     public override SongListColumns VisibleColumns => ChosenColumns & ~SongListColumns.Artist;
 
     protected override PlaybackContext GetPlaybackContext() =>

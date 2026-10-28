@@ -140,7 +140,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
     [ObservableProperty] public partial string PageTitle { get; set; } = Strings.SongList_PageTitle_Default;
 
-
     [ObservableProperty]
     public partial string SelectedItemsCountText { get; set; } = string.Empty;
 
@@ -613,8 +612,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         }
     }
 
-
-
     protected bool CanExecuteLoadCommands()
     {
         return !IsLoading;
@@ -675,8 +672,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         SetSelectedFavoritesCommand.NotifyCanExecuteChanged();
         ToggleSelectedFavoriteCommand.NotifyCanExecuteChanged();
     }
-
-
 
     public override void ResetState()
     {

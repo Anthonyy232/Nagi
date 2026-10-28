@@ -8,7 +8,6 @@ public class Album
     public static string UnknownAlbumName => string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Album);
     [Key] public Guid Id { get; set; } = Guid.NewGuid();
 
-
     [Required][MaxLength(500)] public string Title { get; set; } = string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Album);
 
     /// <summary>
@@ -39,7 +38,6 @@ public class Album
     [MaxLength(2000)]
     public string ArtistName { get; set; } = Artist.UnknownArtistName;
 
-
     /// <summary>
     ///     The name of the primary artist (the one with the lowest order).
     ///     This is a denormalized field for efficient sorting.
@@ -54,7 +52,6 @@ public class Album
     [Required]
     [MaxLength(500)]
     public string PrimaryArtistSortName { get; set; } = string.Empty;
-
 
     /// <summary>
     ///     Updates the denormalized <see cref="ArtistName" />, <see cref="PrimaryArtistName" />,

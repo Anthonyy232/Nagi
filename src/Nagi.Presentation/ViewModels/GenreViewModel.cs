@@ -87,7 +87,6 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
 
     public string CurrentSortOrderText => SortOrderHelper.GetDisplayName(CurrentSortOrder);
 
-
     public bool HasGenres => Genres.Any();
 
     public void NavigateToGenreDetail(GenreSummary? genre)

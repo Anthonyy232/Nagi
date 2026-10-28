@@ -27,7 +27,6 @@ public partial class ArtistViewModelItem : ObservableObject
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(LocalImageCachePath);
     public bool IsCustomImage => LocalImageCachePath?.Contains(".custom.") == true;
 
-
     public override string ToString() => Name;
 }
 

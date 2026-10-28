@@ -162,7 +162,6 @@ public class TrayPopupService : ITrayPopupService, IDisposable
         _ = HidePopupAsync();
     }
 
-
     private void OnPopupWindowClosed(object? sender, WindowEventArgs args)
     {
         if (sender is TrayPopup popup)

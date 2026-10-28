@@ -255,8 +255,6 @@ public class BooleanToOpacityConverter : IValueConverter
     }
 }
 
-
-
 /// <summary>
 ///     Safely converts a URI string to a BitmapImage. Returns null for empty or invalid strings.
 /// </summary>

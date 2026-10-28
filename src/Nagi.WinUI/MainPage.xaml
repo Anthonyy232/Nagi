@@ -47,7 +47,6 @@
                 </Button>
             </DataTemplate>
 
-
             <DataTemplate x:Key="LyricsButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
                 <Button
                     ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneTime}"

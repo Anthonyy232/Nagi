@@ -18,7 +18,6 @@
     Background="Transparent"
     NavigationCacheMode="Required">
 
-
     <Page.Resources>
         <Style TargetType="ToggleSwitch" BasedOn="{StaticResource DefaultToggleSwitchStyle}">
             <Setter Property="OnContent" Value="" />
@@ -1067,7 +1066,6 @@
                         </controls:SettingsCard>
                     </controls:SettingsExpander.Items>
                 </controls:SettingsExpander>
-
 
                 <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_PlaylistsIO_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_PlaylistsIO_Description, Mode=OneTime}">

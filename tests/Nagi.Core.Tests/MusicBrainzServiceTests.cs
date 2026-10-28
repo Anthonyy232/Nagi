@@ -167,8 +167,6 @@ public class MusicBrainzServiceTests : IDisposable
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() => request);
     }
 
-
-
     [Theory]
     [InlineData(95, "group-id")]
     [InlineData(89, null)]

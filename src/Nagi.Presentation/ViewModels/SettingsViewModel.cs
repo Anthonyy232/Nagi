@@ -288,5 +288,4 @@ public partial class SettingsViewModel : SettingsSectionViewModel
     partial void OnIsDiscordRichPresenceEnabledChanged(bool value) =>
         _ = SaveSettingAsync(() => _settingsService.SetDiscordRichPresenceEnabledAsync(value));
 
-
 }

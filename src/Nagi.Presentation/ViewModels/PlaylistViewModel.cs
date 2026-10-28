@@ -50,8 +50,6 @@ public partial class PlaylistViewModelItem : ObservableObject
 
     public DateTime DateModified { get; set; }
 
-
-
     [ObservableProperty] public partial string Name { get; set; }
 
     [ObservableProperty]
@@ -152,12 +150,10 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
 
     partial void OnCurrentSortOrderChanged(PlaylistSortOrder value) => UpdateSortOrderText();
 
-
     public bool IsAnyOperationInProgress =>
         IsLoadingPlaylists || IsCreatingPlaylist || IsRenamingPlaylist || IsDeletingPlaylist || IsUpdatingCover;
 
     public bool HasPlaylists => Playlists.Count > 0;
-
 
     public void NavigateToPlaylistDetail(PlaylistViewModelItem? playlist)
     {

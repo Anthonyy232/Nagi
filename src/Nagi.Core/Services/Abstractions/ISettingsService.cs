@@ -202,7 +202,6 @@ public interface ISettingsService
     /// </summary>
     Task ImportAsync(string snapshot);
 
-
     /// <summary>
     ///     Gets the configured service providers for a specific category.
     /// </summary>

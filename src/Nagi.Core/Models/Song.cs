@@ -171,7 +171,6 @@ public class Song : ObservableObject
     [MaxLength(2000)]
     public string ArtistName { get; set; } = Artist.UnknownArtistName;
 
-
     /// <summary>
     ///     The name of the primary artist (the one with the lowest order).
     ///     This is a denormalized field for efficient sorting.

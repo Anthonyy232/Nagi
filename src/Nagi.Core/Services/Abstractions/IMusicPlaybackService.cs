@@ -58,7 +58,6 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     /// </summary>
     int CurrentShuffledIndex { get; }
 
-
     bool IsShuffleEnabled { get; }
 
     RepeatMode CurrentRepeatMode { get; }

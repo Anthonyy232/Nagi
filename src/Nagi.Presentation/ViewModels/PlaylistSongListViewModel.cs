@@ -38,12 +38,9 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         Songs.CollectionChanged += OnSongsCollectionChanged;
     }
 
-
     public bool IsReorderingEnabled => !_isDisposed && !_isSavingOrder && !IsLoading && !HasLoadError &&
         IsCurrentViewAPlaylist && CurrentSortOrder == SongSortOrder.PlaylistOrder && !IsSearchActive &&
         Songs.Count == TotalItemCount;
-
-
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(RemoveSelectedSongsFromPlaylistCommand))]
@@ -104,7 +101,6 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
             Songs.Clear();
         }
     }
-
 
     protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
         SongSortOrder sortOrder, CancellationToken cancellationToken = default)

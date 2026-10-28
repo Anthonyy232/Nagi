@@ -48,7 +48,6 @@ public partial class TrayIconViewModel : ObservableObject
         _settingsService.HideToTraySettingChanged -= OnHideToTraySettingChanged;
     }
 
-
     public async Task InitializeAsync()
     {
         _windowService.Closing += OnAppWindowClosing;

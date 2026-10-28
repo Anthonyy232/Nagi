@@ -167,7 +167,6 @@ public class RuleViewModel : ObservableObject
         };
     }
 
-
     public override string ToString() => $"{SelectedField.DisplayName} {SelectedOperator.DisplayName} {Value}".TrimEnd();
 }
 

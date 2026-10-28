@@ -34,7 +34,6 @@ public class MultiArtistTests : IDisposable
         pathConfig.ArtistImageCachePath.Returns("C:\\cache\\artistimages");
         pathConfig.LrcCachePath.Returns("C:\\cache\\lrc");
 
-
         _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
 
         _libraryReader = new LibraryReader(_dbHelper.ContextFactory, _fileSystem, settingsService, Substitute.For<ILogger<LibraryReader>>());

@@ -190,7 +190,6 @@ public sealed class WindowService : IWindowService, IDisposable
         _isMiniPlayerEnabled = isEnabled;
     }
 
-
     private void OnAppWindowClosing(AppWindow sender, AppWindowClosingEventArgs args)
     {
         var closing = new WindowClosingEventArgs();

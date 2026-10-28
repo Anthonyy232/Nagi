@@ -49,7 +49,6 @@ public class ArtistViewViewModelTests
         await library.Writer.DidNotReceiveWithAnyArgs().UpdateArtistImageAsync(default, default!);
     }
 
-
     private static ArtistViewViewModel CreateViewModel(LibraryFakes library, ILibraryScanner scanner, IUIService? ui = null)
     {
         library.Reader.GetSongsByArtistIdPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),

@@ -12,7 +12,6 @@ namespace Nagi.Presentation.Tests;
 public class PagedListViewModelTests
 {
 
-
     [Fact]
     public async Task LoadAsync_WhenLibraryBecomesEmpty_ResetsPagerToFirstPage()
     {
