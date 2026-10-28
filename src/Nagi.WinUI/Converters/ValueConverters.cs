@@ -157,35 +157,11 @@ public class CollectionCountToVisibilityConverter : IValueConverter
     }
 }
 
-/// <summary>
-///     Converts a string to Visibility. Visible if the string is not null or empty.
-/// </summary>
-public class NullOrEmptyStringToVisibilityConverter : IValueConverter
-{
-    public bool Invert { get; set; }
-
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        var isVisible = !string.IsNullOrEmpty(value as string);
-        if (Invert) isVisible = !isVisible;
-        return isVisible ? Visibility.Visible : Visibility.Collapsed;
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
-    }
-}
-
 public class ObjectToVisibilityConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
     {
-        var isVisible = value != null;
-
-        if ("Invert".Equals(parameter as string, StringComparison.OrdinalIgnoreCase)) isVisible = !isVisible;
-
-        return isVisible ? Visibility.Visible : Visibility.Collapsed;
+        return value != null ? Visibility.Visible : Visibility.Collapsed;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)

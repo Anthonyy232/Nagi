@@ -17,12 +17,12 @@ to avoid duplicate declarations across pages and controls.
     <converters:BooleanToInverseBooleanConverter x:Key="BooleanToInverseBooleanConverter" />
     <converters:IncrementalLoadingConverter x:Key="IncrementalLoadingConverter" />
     <converters:ObjectToVisibilityConverter x:Key="ObjectToVisibilityConverter" />
-    <converters:NullOrEmptyStringToVisibilityConverter x:Key="NullOrEmptyStringToVisibilityConverter" />
-    <converters:NullOrEmptyStringToVisibilityConverter x:Key="InverseNullOrEmptyStringToVisibilityConverter" Invert="True" />
     <converters:BooleanToOpacityConverter x:Key="BooleanToOpacityConverter" />
     <converters:BooleanToOpacityConverter x:Key="ToggleIconOpacityConverter" FalseValue="0.6" />
     <converters:GenreToGradientConverter x:Key="GenreToGradientConverter" />
     <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
+    <converters:StringToVisibilityConverter x:Key="InverseStringToVisibilityConverter" Invert="True" />
+    <converters:VolumeToClipRectConverter x:Key="VolumeToClipRectConverter" />
     <converters:AppIconToGlyphConverter x:Key="AppIconToGlyphConverter" />
     <converters:AppThemeToFriendlyStringConverter x:Key="ThemeToStringConverter" />
     <converters:BackdropMaterialToStringConverter x:Key="BackdropMaterialToStringConverter" />

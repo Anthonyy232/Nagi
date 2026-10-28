@@ -141,12 +141,12 @@
                             Stretch="UniformToFill"
                             DecodePixelWidth="{StaticResource HeaderImageSize}"
                             DecodePixelType="Logical"
-                            Visibility="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource NullOrEmptyStringToVisibilityConverter}}" />
+                            Visibility="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}" />
 
                         <Grid
                             Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                             CornerRadius="75"
-                            Visibility="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource InverseNullOrEmptyStringToVisibilityConverter}}">
+                            Visibility="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource InverseStringToVisibilityConverter}}">
                             <FontIcon
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
