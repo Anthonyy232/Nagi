@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Errore durante il caricamento della cartella</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>Cartella '{0}' aggiunta e scansionata con successo.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Impossibile aggiungere la cartella. Il percorso potrebbe non essere valido.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Aggiunta della cartella alla libreria in corso…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Rimossa &apos;{0}&apos; dalla libreria.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>Impossibile rimuovere &apos;{0}&apos; dalla libreria.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>Rimozione di &apos;{0}&apos; dalla libreria in corso…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Scansione di '{0}' completata.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Nessuna modifica rilevata per '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>Nuova scansione di '{0}' in corso…</value>

@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Erro ao carregar pasta</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>'{0}' adicionado e analisado com sucesso.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Falha ao adicionar pasta. O caminho pode ser inválido.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>A adicionar pasta à biblioteca…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>'{0}' removido da sua biblioteca.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>Não foi possível remover &apos;{0}&apos; da sua biblioteca.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>A remover '{0}' da sua biblioteca…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Nova análise de '{0}' concluída.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Nenhuma alteração detetada em '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>A reanalisar '{0}'…</value>

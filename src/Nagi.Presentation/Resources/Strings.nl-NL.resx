@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Fout bij laden map</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>'{0}' is succesvol toegevoegd en gescand.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Map toevoegen mislukt. Het pad is mogelijk ongeldig.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Map toevoegen aan bibliotheek…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>&apos;{0}&apos; verwijderd uit je bibliotheek.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>Kon &apos;{0}&apos; niet verwijderen uit je bibliotheek.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>&apos;{0}&apos; verwijderen uit je bibliotheek…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Herscan van '{0}' voltooid.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Geen wijzigingen gedetecteerd voor '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>'{0}' opnieuw scannen…</value>

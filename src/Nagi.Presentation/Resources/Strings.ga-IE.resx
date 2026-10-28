@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Earráid ag luchtú fillteáin</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>Cuireadh agus scanadh '{0}' go rathúil.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Theip ar an bhfillteán a chur leis. D'fhéadfadh an cosán a bheith neamhbhailí.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Fillteán á chur leis an leabharlann…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Baineadh &apos;{0}&apos; de do leabharlann.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>Níorbh fhéidir &apos;{0}&apos; a bhaint de do leabharlann.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>&apos;{0}&apos; á bhaint de do leabharlann…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Athscanadh '{0}' críochnaithe.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Níor braitheadh aon athruithe do '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>'{0}' á athscanadh…</value>

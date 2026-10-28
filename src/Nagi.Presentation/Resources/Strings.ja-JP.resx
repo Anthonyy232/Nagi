@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>フォルダーの読み込みエラー</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>'{0}'の追加とスキャンが完了しました。</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>フォルダーの追加に失敗しました。パスが無効な可能性があります。</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>フォルダーをライブラリに追加中…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>ライブラリから &apos;{0}&apos; を削除しました。</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>ライブラリから &apos;{0}&apos; を削除できませんでした。</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>ライブラリから &apos;{0}&apos; を削除中…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>'{0}'の再スキャンが完了しました。</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>'{0}'の変更は検出されませんでした。</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>'{0}' を再スキャン中…</value>

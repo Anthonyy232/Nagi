@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>फ़ोल्डर लोड करने में त्रुटि</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>'{0}' सफलतापूर्वक जोड़ा गया और स्कैन किया गया।</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>फ़ोल्डर जोड़ने में विफल। पथ अमान्य हो सकता है।</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>लाइब्रेरी में फ़ोल्डर जोड़ा जा रहा है…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>आपकी लाइब्रेरी से &apos;{0}&apos; हटा दिया गया।</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>आपकी लाइब्रेरी से &apos;{0}&apos; को हटाया नहीं जा सका।</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>आपकी लाइब्रेरी से &apos;{0}&apos; को हटाया जा रहा है…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>'{0}' का पुन: स्कैन पूरा हुआ।</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>'{0}' के लिए कोई परिवर्तन नहीं मिला।</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>'{0}' को फिर से स्कैन किया जा रहा है…</value>

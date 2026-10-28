@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Erreur de chargement du dossier</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>'{0}' a été ajouté et analysé avec succès.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Échec de l'ajout du dossier. Le chemin peut être invalide.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Ajout du dossier à la bibliothèque…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>&apos;{0}&apos; a été retiré de votre bibliothèque.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>Impossible de retirer &apos;{0}&apos; de votre bibliothèque.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>Retrait de &apos;{0}&apos; de votre bibliothèque…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Réanalyse de '{0}' terminée.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Aucune modification détectée pour '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>Analyse de '{0}' en cours…</value>

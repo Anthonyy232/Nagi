@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>載入資料夾錯誤</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>已成功新增並掃描 '{0}'。</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>新增資料夾失敗。路徑可能無效。</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>正在新增資料夾至媒體庫……</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>已從您的媒體庫移除 &apos;{0}&apos;。</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>無法從您的媒體庫移除 &apos;{0}&apos;。</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>正在從您的媒體庫移除 &apos;{0}&apos;……</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>'{0}' 的重新掃描完成。</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>'{0}' 未偵測到任何變更。</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>正在重新掃描 '{0}'……</value>

@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Fejl ved indlæsning af mappe</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>Tilføjet og scannet '{0}' med succes.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Kunne ikke tilføje mappe. Stien er muligvis ugyldig.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Tilføjer mappe til biblioteket…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Fjernede &apos;{0}&apos; fra dit bibliotek.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>Kunne ikke fjerne &apos;{0}&apos; fra dit bibliotek.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>Fjerner &apos;{0}&apos; fra dit bibliotek…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Genscanning af '{0}' fuldført.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Ingen ændringer registreret for '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>Genscanner '{0}'…</value>

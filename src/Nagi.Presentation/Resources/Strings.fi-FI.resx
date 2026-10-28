@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Kansion latausvirhe</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>'{0}' lisätty ja skannattu onnistuneesti.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Kansion lisääminen epäonnistui. Polku saattaa olla virheellinen.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Lisätään kansiota kirjastoon…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Poistettiin &apos;{0}&apos; kirjastostasi.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>Ei voitu poistaa kohdetta &apos;{0}&apos; kirjastostasi.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>Poistetaan kohdetta &apos;{0}&apos; kirjastostasi…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>'{0}' uudelleenskannaus valmis.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Ei muutoksia havaittu kohteelle '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>Skannataan '{0}' uudelleen…</value>

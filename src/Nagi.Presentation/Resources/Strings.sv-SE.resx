@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Fel vid laddning av mapp</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>Mappen '{0}' har lagts till och skannats.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Kunde inte lägga till mapp. Sökvägen kan vara ogiltig.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Lägger till mapp i biblioteket…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Tog bort &apos;{0}&apos; från ditt bibliotek.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>Kunde inte ta bort &apos;{0}&apos; från ditt bibliotek.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>Tar bort &apos;{0}&apos; från ditt bibliotek…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Omsökning av '{0}' slutförd.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Inga ändringar upptäcktes för '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>Skannar om '{0}'…</value>

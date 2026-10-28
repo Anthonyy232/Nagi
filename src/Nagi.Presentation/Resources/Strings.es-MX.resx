@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Error al cargar carpeta</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>Se agregó y escaneó '{0}' correctamente.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Error al agregar carpeta. La ruta puede ser inválida.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Agregando carpeta a la biblioteca…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Se quitó &apos;{0}&apos; de tu biblioteca.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>No se pudo quitar &apos;{0}&apos; de tu biblioteca.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>Quitando &apos;{0}&apos; de tu biblioteca…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Análisis de '{0}' completado.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>No se detectaron cambios para '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>Volviendo a examinar '{0}'…</value>

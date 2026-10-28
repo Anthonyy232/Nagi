@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Błąd ładowania folderu</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>Pomyślnie dodano i przeskanowano '{0}'.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Nie udało się dodać folderu. Ścieżka może być nieprawidłowa.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Dodawanie folderu do biblioteki…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Usunięto &apos;{0}&apos; z biblioteki.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>Nie udało się usunąć &apos;{0}&apos; z biblioteki.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>Usuwanie &apos;{0}&apos; z biblioteki…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Ponowne skanowanie '{0}' zakończone.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Nie wykryto zmian dla '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>Ponowne skanowanie '{0}'…</value>

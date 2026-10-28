@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Klasör yüklenirken hata oluştu</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>'{0}' başarıyla eklendi ve tarandı.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Klasör eklenemedi. Yol geçersiz olabilir.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Klasör kitaplığa ekleniyor…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>&apos;{0}&apos; kitaplığınızdan kaldırıldı.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>&apos;{0}&apos; kitaplığınızdan kaldırılamadı.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>&apos;{0}&apos; kitaplığınızdan kaldırılıyor…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>'{0}' yeniden taraması tamamlandı.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>'{0}' için değişiklik algılanmadı.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>'{0}' yeniden taranıyor…</value>

@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Грешка при зареждане на папка</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>Успешно добавена и сканирана '{0}'.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Неуспешно добавяне на папка. Пътят може да е невалиден.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Добавяне на папка към библиотеката…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Премахнато е &apos;{0}&apos; от библиотеката ви.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>&apos;{0}&apos; не можа да бъде премахнат от библиотеката ви.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>Премахване на &apos;{0}&apos; от библиотеката ви…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Повторно сканиране на '{0}' завършено.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Не са открити промени за '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>Повторно сканиране на '{0}'…</value>

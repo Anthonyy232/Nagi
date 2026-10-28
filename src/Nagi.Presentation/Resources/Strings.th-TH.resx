@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>ข้อผิดพลาดในการโหลดโฟลเดอร์</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>เพิ่มและสแกน '{0}' สำเร็จแล้ว</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>ไม่สามารถเพิ่มโฟลเดอร์ได้ เส้นทางอาจไม่ถูกต้อง</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>กำลังเพิ่มโฟลเดอร์ไปยังคลังเพลง…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>ลบ &apos;{0}&apos; ออกจากคลังเพลงของคุณแล้ว</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>ไม่สามารถลบ &apos;{0}&apos; ออกจากคลังเพลงของคุณได้</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>กำลังลบ &apos;{0}&apos; ออกจากคลังเพลงของคุณ…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>สแกน '{0}' ซ้ำเสร็จสมบูรณ์</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>ไม่พบการเปลี่ยนแปลงสำหรับ '{0}'</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>กำลังสแกน '{0}' ใหม่อีกครั้ง…</value>

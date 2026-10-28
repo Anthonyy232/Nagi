@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Error loading folder</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>Successfully added and scanned '{0}'.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Failed to add folder. The path may be invalid.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Adding folder to library…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Removed &apos;{0}&apos; from your library.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>Could not remove &apos;{0}&apos; from your library.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>Removing &apos;{0}&apos; from your library…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Rescan of '{0}' complete.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>No changes detected for '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>Rescanning '{0}'…</value>

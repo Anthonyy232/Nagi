@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Chyba při načítání složky</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>Složka „{0}“ byla úspěšně přidána a prohledána.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Nepodařilo se přidat složku. Cesta může být neplatná.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Přidávání složky do knihovny…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Složka &apos;{0}&apos; byla odebrána z knihovny.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>Složku &apos;{0}&apos; se nepodařilo odebrat z knihovny.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>Odebírání složky &apos;{0}&apos; z knihovny…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Opětovné skenování „{0}“ dokončeno.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Pro „{0}“ nebyly detekovány žádné změny.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>Opětovné skenování '{0}'…</value>

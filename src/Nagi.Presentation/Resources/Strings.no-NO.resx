@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Feil ved lasting av mappe</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>'{0}' ble lagt til og skannet.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Klarte ikke å legge til mappe. Banen kan være ugyldig.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Legger til mappe i biblioteket…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Fjernet &apos;{0}&apos; fra biblioteket ditt.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>Kunne ikke fjerne &apos;{0}&apos; fra biblioteket ditt.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>Fjerner &apos;{0}&apos; fra biblioteket ditt…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Omskanning av '{0}' fullført.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Ingen endringer oppdaget for '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>Skanner '{0}' på nytt…</value>

@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Error sa pag-load ng folder</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>Matagumpay na naidagdag at na-scan ang '{0}'.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Nabigo ang pagdagdag ng folder. Maaaring invalid ang path.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Idinadagdag ang folder sa library…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Inalis ang &apos;{0}&apos; sa iyong library.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>Hindi maalis ang &apos;{0}&apos; sa iyong library.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>Inaalis ang &apos;{0}&apos; sa iyong library…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Kumpleto na ang muling pag-scan ng '{0}'.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Walang pagbabagong nakita para sa '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>Muling ini-scan ang '{0}'…</value>

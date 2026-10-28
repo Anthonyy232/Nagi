@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>ਫੋਲਡਰ ਲੋਡ ਕਰਨ ਵਿੱਚ ਗਲਤੀ</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>'{0}' ਸਫਲਤਾਪੂਰਵਕ ਜੋੜਿਆ ਗਿਆ ਅਤੇ ਸਕੈਨ ਕੀਤਾ ਗਿਆ।</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>ਫੋਲਡਰ ਜੋੜਨ ਵਿੱਚ ਅਸਫਲ। ਮਾਰਗ ਅਵੈਧ ਹੋ ਸਕਦਾ ਹੈ।</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚ ਫੋਲਡਰ ਜੋੜਿਆ ਜਾ ਰਿਹਾ ਹੈ…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚੋਂ &apos;{0}&apos; ਹਟਾਇਆ ਗਿਆ।</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚੋਂ &apos;{0}&apos; ਹਟਾਇਆ ਨਹੀਂ ਜਾ ਸਕਿਆ।</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚੋਂ &apos;{0}&apos; ਹਟਾਇਆ ਜਾ ਰਿਹਾ ਹੈ…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>'{0}' ਦਾ ਮੁੜ-ਸਕੈਨ ਪੂਰਾ ਹੋ ਗਿਆ।</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>'{0}' ਲਈ ਕੋਈ ਬਦਲਾਅ ਨਹੀਂ ਮਿਲੇ।</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>'{0}' ਨੂੰ ਮੁੜ-ਸਕੈਨ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ…</value>

@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>폴더 로드 오류</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>'{0}'이(가) 성공적으로 추가되고 스캔되었습니다.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>폴더 추가에 실패했습니다. 경로가 잘못되었을 수 있습니다.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>라이브러리에 폴더 추가 중…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>라이브러리에서 &apos;{0}&apos; 항목을 제거했습니다.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>라이브러리에서 &apos;{0}&apos; 항목을 제거하지 못했습니다.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>라이브러리에서 &apos;{0}&apos; 제거 중…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>'{0}' 재스캔 완료.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>'{0}'에서 변경 사항이 감지되지 않았습니다.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>'{0}' 다시 스캔 중…</value>

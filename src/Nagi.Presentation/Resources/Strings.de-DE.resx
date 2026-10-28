@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Fehler beim Laden des Ordners</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>„{0}“ erfolgreich hinzugefügt und gescannt.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Ordner konnte nicht hinzugefügt werden. Der Pfad ist möglicherweise ungültig.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Ordner wird zur Bibliothek hinzugefügt…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>&apos;{0}&apos; wurde aus Ihrer Bibliothek entfernt.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>&apos;{0}&apos; konnte nicht aus Ihrer Bibliothek entfernt werden.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>&apos;{0}&apos; wird aus Ihrer Bibliothek entfernt…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Neuprüfung von „{0}“ abgeschlossen.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Keine Änderungen für „{0}“ erkannt.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>'{0}' wird neu gescannt…</value>

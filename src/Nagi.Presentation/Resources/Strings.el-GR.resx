@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Σφάλμα φόρτωσης φακέλου</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>Προστέθηκε και σαρώθηκε με επιτυχία το '{0}'.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Αποτυχία προσθήκης φακέλου. Η διαδρομή ενδέχεται να είναι μη έγκυρη.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Προσθήκη φακέλου στη βιβλιοθήκη…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Το &apos;{0}&apos; αφαιρέθηκε από τη βιβλιοθήκη σας.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>Δεν ήταν δυνατή η αφαίρεση του &apos;{0}&apos; από τη βιβλιοθήκη σας.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>Αφαίρεση του &apos;{0}&apos; από τη βιβλιοθήκη σας…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Η επανασάρωση του '{0}' ολοκληρώθηκε.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Δεν εντοπίστηκαν αλλαγές για το '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>Επανασάρωση του '{0}'…</value>

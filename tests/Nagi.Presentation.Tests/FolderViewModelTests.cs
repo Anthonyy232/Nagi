@@ -56,6 +56,23 @@ public class FolderViewModelTests
         await library.Writer.DidNotReceiveWithAnyArgs().AddFolderAsync(default!, default);
     }
 
+    [Fact]
+    public async Task AddFolder_AlreadyInTheLibrary_TellsTheUserAndAddsNothing()
+    {
+        var library = new LibraryFakes();
+        var folder = new Folder { Name = "Music", Path = @"C:\Music" };
+        library.Reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new FolderSummary(folder, 1) });
+        var ui = Substitute.For<IUIService>();
+        ui.PickSingleFolderAsync().Returns(@"c:\music\");
+        using var viewModel = CreateViewModel(library, ui);
+        await viewModel.LoadFoldersCommand.ExecuteAsync(null);
+
+        await viewModel.AddFolderCommand.ExecuteAsync(null);
+
+        await ui.Received(1).ShowMessageDialogAsync(Arg.Any<string>(), Arg.Any<string>());
+        await library.Writer.DidNotReceiveWithAnyArgs().AddFolderAsync(default!, default);
+    }
+
     [Theory]
     [InlineData(true)]
     [InlineData(false)]

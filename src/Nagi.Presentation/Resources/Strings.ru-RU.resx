@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Ошибка загрузки папки</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>Папка '{0}' успешно добавлена и просканирована.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Не удалось добавить папку. Возможно, путь недействителен.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Добавление папки в библиотеку…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Папка &apos;{0}&apos; удалена из вашей библиотеки.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>Не удалось удалить &apos;{0}&apos; из вашей библиотеки.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>Удаление &apos;{0}&apos; из вашей библиотеки…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Повторное сканирование '{0}' завершено.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Изменений для '{0}' не обнаружено.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>Повторное сканирование '{0}'…</value>
