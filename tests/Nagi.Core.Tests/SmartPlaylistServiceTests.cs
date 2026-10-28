@@ -124,7 +124,7 @@ public class SmartPlaylistServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task DeleteSmartPlaylistAsync_RemovesThePlaylistAndItsRules()
+    public async Task DeleteSmartPlaylistAsync_RemovesThePlaylistItsRulesAndCover()
     {
         var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist
         {
@@ -136,8 +136,13 @@ public class SmartPlaylistServiceTests : IDisposable
             ]
         });
 
+        var cover = $"C:\\cache\\playlists\\{playlist.Id}.custom.jpg";
+        _fileSystem.DirectoryExists("C:\\cache\\playlists").Returns(true);
+        _fileSystem.FileExists(cover).Returns(true);
+
         (await _service.DeleteSmartPlaylistAsync(playlist.Id)).Should().BeTrue();
 
+        _fileSystem.Received(1).DeleteFile(cover);
         (await _service.GetSmartPlaylistByIdAsync(playlist.Id)).Should().BeNull();
         using var context = _dbHelper.ContextFactory.CreateDbContext();
         var rules = await context.SmartPlaylistRules

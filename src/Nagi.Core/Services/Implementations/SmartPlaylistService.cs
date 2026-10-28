@@ -88,13 +88,19 @@ public class SmartPlaylistService : ISmartPlaylistService
             .Where(sp => sp.Id == smartPlaylistId)
             .ExecuteDeleteAsync().ConfigureAwait(false);
 
-        if (rowsAffected > 0)
-        {
-            _logger.LogInformation("Deleted smart playlist with ID {Id}", smartPlaylistId);
-            PlaylistsChanged?.Invoke(this, EventArgs.Empty);
-        }
+        if (rowsAffected == 0) return false;
 
-        return rowsAffected > 0;
+        _logger.LogInformation("Deleted smart playlist with ID {Id}", smartPlaylistId);
+        try
+        {
+            ImageStorageHelper.DeleteImage(_fileSystem, _pathConfig.PlaylistImageCachePath, smartPlaylistId.ToString(), ".custom");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to delete cached cover for deleted smart playlist {Id}.", smartPlaylistId);
+        }
+        PlaylistsChanged?.Invoke(this, EventArgs.Empty);
+        return true;
     }
 
     public async Task<SmartPlaylist?> GetSmartPlaylistByIdAsync(Guid smartPlaylistId)
