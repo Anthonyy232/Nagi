@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Resources;
 
@@ -191,7 +192,7 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
         {
             var duration = await playbackService.GetQueueDurationAsync(_ids, token);
             token.ThrowIfCancellationRequested();
-            TotalDurationText = $"{(long)duration.TotalHours}:{duration.Minutes:00}:{duration.Seconds:00}";
+            TotalDurationText = DurationFormatter.Format(duration);
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(TotalDurationText)));
         }
         catch (OperationCanceledException) { }

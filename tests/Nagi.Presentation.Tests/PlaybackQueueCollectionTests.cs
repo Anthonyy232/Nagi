@@ -208,7 +208,7 @@ public class PlaybackQueueCollectionTests
         queue.SetActive(false);
         queue.SetActive(true);
         queue.Should().ContainSingle().Which.Should().BeSameAs(originalEntry);
-        queue.TotalDurationText.Should().Be("0:01:30");
+        queue.TotalDurationText.Should().Be("1:30");
         await playback.Received(1).GetQueueDurationAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>());
         await playback.Received(1).GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>());
 
