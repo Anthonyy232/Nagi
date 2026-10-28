@@ -150,6 +150,16 @@ public class SmartPlaylistServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task GetRandomSmartPlaylistIdAsync_ReturnsNullWhenEmptyElseAStoredId()
+    {
+        (await _service.GetRandomSmartPlaylistIdAsync()).Should().BeNull();
+
+        var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "Test Smart" });
+
+        (await _service.GetRandomSmartPlaylistIdAsync()).Should().Be(playlist.Id);
+    }
+
+    [Fact]
     public async Task UnknownPlaylist_EveryOperationReportsNotFound()
     {
         var id = Guid.NewGuid();

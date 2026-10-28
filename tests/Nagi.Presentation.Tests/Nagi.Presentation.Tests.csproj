@@ -20,4 +20,10 @@
     <ItemGroup>
         <ProjectReference Include="..\..\src\Nagi.Presentation\Nagi.Presentation.csproj" />
     </ItemGroup>
+
+    <!-- Shared with the Core tests rather than copied. -->
+    <ItemGroup>
+        <Compile Include="..\Nagi.Core.Tests\Utils\LibraryFakes.cs" Link="LibraryFakes.cs" />
+        <Using Include="Nagi.Core.Tests.Utils" />
+    </ItemGroup>
 </Project>
