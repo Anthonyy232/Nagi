@@ -290,17 +290,7 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
         DeleteOrphanedArtistImages(orphanedArtistIds);
         await DeleteUnreferencedCoverArtAsync(context, albumArtPathsToDelete, cancellationToken).ConfigureAwait(false);
 
-        foreach (var lrcPath in lrcPathsToDelete)
-            if (IsPathInLrcCache(lrcPath))
-                try
-                {
-                    _fileSystem.DeleteFile(lrcPath);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "Failed to delete cached LRC file {LrcPath} during folder removal.",
-                        lrcPath);
-                }
+        DeleteCachedLrcFiles(lrcPathsToDelete);
 
         LibraryContentChanged?.Invoke(this, new LibraryContentChangedEventArgs(LibraryChangeType.FolderRemoved, folderId));
 
@@ -413,6 +403,20 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
     }
 
     private bool IsPathInLrcCache(string? filePath) => IsExistingCacheFile(filePath, _pathConfig.LrcCachePath);
+
+    // Only files in Nagi's own cache: an LRC that sits next to the song belongs to the user.
+    private void DeleteCachedLrcFiles(IEnumerable<string> lrcPaths)
+    {
+        foreach (var lrcPath in lrcPaths.Where(IsPathInLrcCache))
+            try
+            {
+                _fileSystem.DeleteFile(lrcPath);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to delete cached LRC file {LrcPath}.", lrcPath);
+            }
+    }
 
     private bool IsExistingCacheFile(string? filePath, string cachePath)
     {

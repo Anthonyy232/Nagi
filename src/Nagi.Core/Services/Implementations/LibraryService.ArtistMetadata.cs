@@ -450,8 +450,7 @@ public partial class LibraryService
         // Navidrome priority: local folder images first (artist.*, album/artist.*), then external providers.
         // Skip if a custom image or a previously-found local folder image is already cached.
         // We DO NOT skip if they only have a .fetched (external) image, as local files take precedence.
-        if (artist.LocalImageCachePath == null ||
-            (!artist.LocalImageCachePath.Contains(".custom.") && !artist.LocalImageCachePath.Contains(".local.")))
+        if (!ImageStorageHelper.IsUserOrFolderImage(artist.LocalImageCachePath))
         {
             var localImageBytes = preloadedSongDirectories is not null
                 ? await FindArtistImageInDirectoriesAsync(preloadedSongDirectories, artist.Name, cancellationToken).ConfigureAwait(false)
@@ -511,7 +510,7 @@ public partial class LibraryService
         // Download and cache the best image found from external providers.
         // Skip if a local folder image or custom image is already set.
         if (!string.IsNullOrEmpty(found.ImageUrl) &&
-            (artist.LocalImageCachePath == null || (!artist.LocalImageCachePath.Contains(".custom.") && !artist.LocalImageCachePath.Contains(".local."))))
+            !ImageStorageHelper.IsUserOrFolderImage(artist.LocalImageCachePath))
         {
             var downloadedPath =
                 await DownloadAndCacheArtistImageAsync(artist, new Uri(found.ImageUrl), cancellationToken).ConfigureAwait(false);

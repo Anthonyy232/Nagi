@@ -70,7 +70,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     [NotifyPropertyChangedFor(nameof(IsCustomImage))]
     public partial string? ArtistImageUri { get; set; }
 
-    public bool IsCustomImage => ArtistImageUri?.Contains(".custom.") == true;
+    public bool IsCustomImage => ImageStorageHelper.IsCustomImage(ArtistImageUri);
 
     public ObservableRangeCollection<ArtistAlbumViewModelItem> Albums { get; } = new();
     public bool HasAlbums => Albums.Any();

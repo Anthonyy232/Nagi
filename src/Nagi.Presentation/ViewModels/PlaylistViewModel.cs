@@ -58,7 +58,7 @@ public partial class PlaylistViewModelItem : ObservableObject
     public partial string? CoverImageUri { get; set; }
 
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverImageUri);
-    public bool IsCustomImage => CoverImageUri?.Contains(".custom.") == true;
+    public bool IsCustomImage => ImageStorageHelper.IsCustomImage(CoverImageUri);
 
     public int SongCount { get; }
 

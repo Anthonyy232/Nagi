@@ -190,17 +190,7 @@ public partial class LibraryService
 
                         await songsToDeleteQuery.ExecuteDeleteAsync(operationToken).ConfigureAwait(false);
 
-                        foreach (var lrcPath in lrcPathsToDelete)
-                            if (IsPathInLrcCache(lrcPath))
-                                try
-                                {
-                                    _fileSystem.DeleteFile(lrcPath);
-                                }
-                                catch (Exception ex)
-                                {
-                                    _logger.LogWarning(ex,
-                                        "Failed to delete cached LRC file {LrcPath} during rescan.", lrcPath);
-                                }
+                        DeleteCachedLrcFiles(lrcPathsToDelete);
 
                         await DeleteUnreferencedCoverArtAsync(deleteContext, albumArtPathsToDelete, operationToken).ConfigureAwait(false);
                     }
