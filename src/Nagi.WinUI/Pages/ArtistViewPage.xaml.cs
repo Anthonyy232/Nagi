@@ -59,7 +59,7 @@ public sealed partial class ArtistViewPage : SongListPage
     {
         if (e.ClickedItem is ArtistAlbumViewModelItem clickedAlbum)
         {
-            ViewModel.ViewAlbumCommand.Execute(clickedAlbum.Id);
+            ViewModel.GoToAlbumCommand.Execute(clickedAlbum);
         }
     }
 

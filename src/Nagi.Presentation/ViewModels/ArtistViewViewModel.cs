@@ -39,7 +39,6 @@ public sealed class ArtistAlbumViewModelItem
 public partial class ArtistViewViewModel : SongListViewModelBase
 {
     private Guid _artistId;
-    private bool _isNavigatingToAlbum;
     private CancellationTokenSource? _pageCts;
 
     public ArtistViewViewModel(
@@ -182,23 +181,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         Songs.Clear();
     }
 
-    [RelayCommand(CanExecute = nameof(CanExecuteLoadCommands))]
-    private async Task ViewAlbumAsync(object? parameter)
-    {
-        if (_isNavigatingToAlbum) return;
-
-        try
-        {
-            _isNavigatingToAlbum = true;
-            await _musicNavigationService.NavigateToAlbumAsync(parameter);
-        }
-        finally
-        {
-            _isNavigatingToAlbum = false;
-        }
-    }
-
-    [RelayCommand(CanExecute = nameof(CanExecuteLoadCommands))]
+    [RelayCommand]
     private Task PlayAlbumAsync(Guid albumId) => RunActionAsync(() => _playbackService.PlayAlbumAsync(albumId));
 
     private void OnArtistMetadataUpdated(object? sender, ArtistMetadataUpdatedEventArgs e)
