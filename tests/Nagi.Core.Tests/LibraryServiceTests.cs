@@ -651,6 +651,24 @@ public partial class LibraryServiceTests : IDisposable
         (await assertContext.Folders.CountAsync()).Should().Be(1);
     }
 
+    [Theory]
+    [InlineData("C:\\Music\\Pop\\80s")]
+    [InlineData("C:\\Music")]
+    public async Task AddFolderAsync_OverlappingAnExistingRoot_ThrowsAndAddsNothing(string folderPath)
+    {
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(new Folder { Path = "C:\\Music\\Pop", Name = "Pop" });
+            await context.SaveChangesAsync();
+        }
+
+        var add = () => _libraryService.AddFolderAsync(folderPath);
+
+        await add.Should().ThrowAsync<FolderOverlapsException>();
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        (await assertContext.Folders.CountAsync()).Should().Be(1);
+    }
+
     [Fact]
     public async Task RemoveFolderAsync_WithExistingFolder_RemovesFolderAndAssociatedData()
     {

@@ -32,4 +32,15 @@ public class PathCanonicalizerTests
     {
         PathCanonicalizer.Normalize(input, '/').Should().Be(expected);
     }
+
+    [Theory]
+    [InlineData(@"C:\Music", @"C:\Music", true)]
+    [InlineData(@"C:\Music\Rock", @"c:\music", true)]
+    [InlineData(@"C:\Music", @"C:\", true)]
+    [InlineData(@"C:\Musical", @"C:\Music", false)]
+    [InlineData(@"C:\Music", @"C:\Music\Rock", false)]
+    public void IsSameOrInside_MatchesWholeFolderNamesOnly(string path, string directory, bool expected)
+    {
+        PathCanonicalizer.IsSameOrInside(path, directory).Should().Be(expected);
+    }
 }

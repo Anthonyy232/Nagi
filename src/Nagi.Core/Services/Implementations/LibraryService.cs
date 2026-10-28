@@ -188,10 +188,13 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
         // collapse mapped-drive vs UNC or Unicode equivalence classes.
         var normalizedPath = _fileSystem.NormalizePath(path);
 
-        var existingFolder = await context.Folders.AsNoTracking()
-            .FirstOrDefaultAsync(f => f.Path == normalizedPath).ConfigureAwait(false);
-        if (existingFolder is not null)
+        var roots = await context.Folders.AsNoTracking().Where(f => f.ParentFolderId == null).ToListAsync().ConfigureAwait(false);
+        if (roots.FirstOrDefault(f => f.Path.Equals(normalizedPath, StringComparison.OrdinalIgnoreCase)) is { } existingFolder)
             return existingFolder;
+
+        // Scans assume each file belongs to one root, so a root inside another would re-add the other's songs.
+        if (roots.Any(f => PathCanonicalizer.IsSameOrInside(normalizedPath, f.Path) || PathCanonicalizer.IsSameOrInside(f.Path, normalizedPath)))
+            throw new FolderOverlapsException(normalizedPath);
 
         var folderName = Path.GetFileName(normalizedPath);
         var folder = new Folder

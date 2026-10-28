@@ -73,6 +73,16 @@ public static class PathCanonicalizer
         Path.TrimEndingDirectorySeparator(path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar));
 
     /// <summary>
+    ///     Whether <paramref name="path" /> is <paramref name="directory" /> or inside it. Both must already be normalized.
+    /// </summary>
+    public static bool IsSameOrInside(string path, string directory)
+    {
+        if (path.Equals(directory, StringComparison.OrdinalIgnoreCase)) return true;
+        var prefix = Path.EndsInDirectorySeparator(directory) ? directory : directory + Path.DirectorySeparatorChar;
+        return path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
     ///     Recognizes either slash form of a UNC prefix.
     /// </summary>
     public static bool IsUncPath(string path)

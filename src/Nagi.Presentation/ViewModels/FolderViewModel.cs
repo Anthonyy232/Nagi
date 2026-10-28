@@ -210,14 +210,9 @@ public partial class FolderViewModel : ObservableObject, IDisposable
     {
         if (string.IsNullOrWhiteSpace(folderPath) || IsAnyOperationInProgress) return;
 
-        // Pre-flight textual dedup using the shared canonicalizer. This won't collapse
-        // mapped-drive vs UNC (that requires platform resolution in LibraryService), but it
-        // catches case, separator, and Unicode variations so the user gets an immediate
-        // "already added" message instead of a silent no-op.
+        // LibraryService hands back a folder that is already in the library, so say so here rather than rescanning it.
         var canonicalNew = PathCanonicalizer.Normalize(folderPath);
-        if (!string.IsNullOrEmpty(canonicalNew) &&
-            Folders.Any(f => PathCanonicalizer.Normalize(f.Path)
-                .Equals(canonicalNew, StringComparison.OrdinalIgnoreCase)))
+        if (Folders.Any(f => PathCanonicalizer.Normalize(f.Path).Equals(canonicalNew, StringComparison.OrdinalIgnoreCase)))
         {
             await _uiService.ShowMessageDialogAsync(Strings.FolderPage_AddFolder_Label, Strings.Folders_AddFolder_Exists);
             return;
@@ -228,6 +223,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         _globalOperation.ProgressValue = 0;
         _globalOperation.IsIndeterminate = true;
 
+        var title = Strings.Generic_Error;
         string? error = null;
         try
         {
@@ -236,6 +232,11 @@ public partial class FolderViewModel : ObservableObject, IDisposable
                 error = Strings.Folders_AddFolder_Failed;
             else
                 await _libraryScanner.ScanFolderForMusicAsync(folder.Path, _globalOperation.CreateProgress());
+        }
+        catch (FolderOverlapsException)
+        {
+            title = Strings.FolderPage_AddFolder_Label;
+            error = Strings.Folders_AddFolder_Overlaps;
         }
         catch (Exception ex)
         {
@@ -248,7 +249,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
             _globalOperation.IsIndeterminate = false;
         }
 
-        if (error != null) await _uiService.ShowMessageDialogAsync(Strings.Generic_Error, error);
+        if (error != null) await _uiService.ShowMessageDialogAsync(title, error);
     }
 
     [RelayCommand]

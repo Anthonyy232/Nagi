@@ -1,10 +1,13 @@
 using Nagi.Core.Models;
+using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Services.Abstractions;
 
 public interface ILibraryWriter
 {
     Task<bool> SetSongsLovedAsync(IEnumerable<Guid> songIds, bool loved);
+    /// <returns>The existing folder when the path is already in the library.</returns>
+    /// <exception cref="FolderOverlapsException">The path is inside, or contains, a folder already in the library.</exception>
     Task<Folder?> AddFolderAsync(string path, string? name = null);
     Task<bool> RemoveFolderAsync(Guid folderId);
     Task<bool> UpdateSongLrcPathAsync(Guid songId, string? lrcPath);
