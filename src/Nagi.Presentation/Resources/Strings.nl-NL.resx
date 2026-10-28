@@ -783,9 +783,6 @@ Wil je doorgaan?</value>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Scan voor volumenormalisatie voorbereiden…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Scannen volumenormalisatie geannuleerd.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Fout tijdens scan: {0}</value>
   </data>

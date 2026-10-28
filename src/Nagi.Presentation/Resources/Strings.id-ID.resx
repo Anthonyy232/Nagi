@@ -783,9 +783,6 @@ Apakah Anda ingin melanjutkan?</value>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Menyiapkan pemindaian normalisasi volume…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Pemindaian normalisasi volume dibatalkan.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Kesalahan selama pemindaian: {0}</value>
   </data>

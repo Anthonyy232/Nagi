@@ -783,9 +783,6 @@
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>ஒலி அளவு இயல்பாக்க ஸ்கேன் தயார் செய்யப்படுகிறது…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>ஒலி அளவு இயல்பாக்க ஸ்கேன் ரத்து செய்யப்பட்டது.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>ஸ்கேன் செய்யும் போது பிழை: {0}</value>
   </data>

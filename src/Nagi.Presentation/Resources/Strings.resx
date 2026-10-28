@@ -783,9 +783,6 @@ Do you want to continue?</value>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Preparing volume normalization scan…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Volume normalization scan cancelled.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Error during scan: {0}</value>
   </data>

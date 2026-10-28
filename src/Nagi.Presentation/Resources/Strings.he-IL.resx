@@ -783,9 +783,6 @@
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>מכין סריקת נרמול עוצמת קול…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>סריקת נרמול עוצמת קול בוטלה.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>שגיאה במהלך הסריקה: {0}</value>
   </data>

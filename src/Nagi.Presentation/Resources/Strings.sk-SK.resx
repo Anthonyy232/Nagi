@@ -783,9 +783,6 @@ Chcete pokračovať?</value>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Pripravuje sa skenovanie na normalizáciu hlasitosti…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Skenovanie normalizácie hlasitosti zrušené.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Chyba počas skenovania: {0}</value>
   </data>

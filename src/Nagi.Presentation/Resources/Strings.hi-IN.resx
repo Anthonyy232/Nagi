@@ -783,9 +783,6 @@
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>वॉल्यूम सामान्यीकरण स्कैन की तैयारी की जा रही है…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>वॉल्यूम सामान्यीकरण स्कैन रद्द कर दिया गया।</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>स्कैन के दौरान त्रुटि: {0}</value>
   </data>

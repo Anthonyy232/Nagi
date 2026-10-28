@@ -783,9 +783,6 @@ Vrei să continui?</value>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Se pregătește scanarea pentru normalizarea volumului…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Scanarea pentru normalizarea volumului a fost anulată.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Eroare în timpul scanării: {0}</value>
   </data>

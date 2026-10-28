@@ -783,9 +783,6 @@ Gusto mo bang magpatuloy?</value>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Inihahanda ang pag-scan para sa volume normalization…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Kinansela ang scan para sa volume normalization.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Error habang ini-scan: {0}</value>
   </data>

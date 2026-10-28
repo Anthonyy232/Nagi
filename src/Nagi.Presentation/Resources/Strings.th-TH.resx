@@ -783,9 +783,6 @@
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>กำลังเตรียมการสแกนการปรับระดับเสียงให้เป็นมาตรฐาน…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>ยกเลิกการสแกนการปรับระดับเสียงให้เป็นมาตรฐานแล้ว</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>ข้อผิดพลาดระหว่างการสแกน: {0}</value>
   </data>

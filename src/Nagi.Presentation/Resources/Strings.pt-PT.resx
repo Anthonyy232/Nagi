@@ -783,9 +783,6 @@ Pretende continuar?</value>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>A preparar a análise de normalização de volume…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Análise de normalização de volume cancelada.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Erro durante a análise: {0}</value>
   </data>

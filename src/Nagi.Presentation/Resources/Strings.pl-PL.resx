@@ -783,9 +783,6 @@ Czy chcesz kontynuować?</value>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Przygotowywanie skanowania normalizacji głośności…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Skanowanie normalizacji głośności anulowane.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Błąd podczas skanowania: {0}</value>
   </data>

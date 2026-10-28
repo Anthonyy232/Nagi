@@ -783,9 +783,6 @@ Vil du fortsette?</value>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Forbereder skanning for volumnormalisering…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Skanning for volumnormalisering avbrutt.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Feil under skanning: {0}</value>
   </data>

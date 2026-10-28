@@ -783,9 +783,6 @@
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>볼륨 정규화 스캔 준비 중…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>볼륨 정규화 스캔이 취소되었습니다.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>스캔 중 오류: {0}</value>
   </data>

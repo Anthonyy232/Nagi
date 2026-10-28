@@ -783,9 +783,6 @@ Bạn có muốn tiếp tục không?</value>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Đang chuẩn bị quét chuẩn hóa âm lượng…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Đã hủy quét chuẩn hóa âm lượng.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Lỗi trong quá trình quét: {0}</value>
   </data>

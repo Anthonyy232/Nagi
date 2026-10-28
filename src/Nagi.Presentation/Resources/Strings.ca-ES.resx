@@ -783,9 +783,6 @@ Vols continuar?</value>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>S'està preparant l'escaneig de normalització del volum…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>L'escaneig de normalització de volum s'ha cancel·lat.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Error durant l'escaneig: {0}</value>
   </data>

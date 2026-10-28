@@ -783,9 +783,6 @@ Dëshironi të vazhdoni?</value>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Po përgatitet skanimi i normalizimit të volumit…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Skanimi i normalizimit të volumit u anulua.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Gabim gjatë skanimit: {0}</value>
   </data>

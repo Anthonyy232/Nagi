@@ -783,9 +783,6 @@ Devam etmek ister misiniz?</value>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Ses düzeyi normalleştirme taraması hazırlanıyor…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Ses normalleştirme taraması iptal edildi.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Tarama sırasında hata: {0}</value>
   </data>

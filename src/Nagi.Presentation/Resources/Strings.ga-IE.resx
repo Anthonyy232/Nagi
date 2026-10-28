@@ -783,9 +783,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Scanadh normalaithe airde fuaime á ullmhú…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Cealaíodh scanadh normalaithe airde fuaime.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Earráid le linn scanadh: {0}</value>
   </data>

@@ -783,9 +783,6 @@
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Προετοιμασία σάρωσης κανονικοποίησης έντασης…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Η σάρωση κανονικοποίησης έντασης ακυρώθηκε.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Σφάλμα κατά τη σάρωση: {0}</value>
   </data>

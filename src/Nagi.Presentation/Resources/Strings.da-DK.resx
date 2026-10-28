@@ -783,9 +783,6 @@ Vil du fortsætte?</value>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Forbereder scanning til lydstyrkenormalisering…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Scanning af lydstyrkenormalisering annulleret.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Fejl under scanning: {0}</value>
   </data>

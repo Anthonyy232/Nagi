@@ -783,9 +783,6 @@ Ar norite tęsti?</value>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Ruošiamasi garso normalizavimo nuskaitymui…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Garso normalizavimo nuskaitymas atšauktas.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Klaida skenavimo metu: {0}</value>
   </data>

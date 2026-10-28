@@ -783,9 +783,6 @@
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>ভলিউম স্বাভাবিককরণ স্ক্যানের প্রস্তুতি নেওয়া হচ্ছে…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>ভলিউম স্বাভাবিককরণ স্ক্যান বাতিল করা হয়েছে।</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>স্ক্যান করার সময় ত্রুটি: {0}</value>
   </data>

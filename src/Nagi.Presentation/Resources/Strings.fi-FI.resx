@@ -783,9 +783,6 @@ Haluatko jatkaa?</value>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Valmistellaan äänenvoimakkuuden normalisoinnin skannausta…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Äänenvoimakkuuden normalisoinnin skannaus peruutettu.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Virhe skannauksen aikana: {0}</value>
   </data>

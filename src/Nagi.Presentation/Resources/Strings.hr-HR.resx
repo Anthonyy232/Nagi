@@ -783,9 +783,6 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Priprema skeniranja za normalizaciju glasnoće…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Skeniranje normalizacije glasnoće je otkazano.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Pogreška tijekom skeniranja: {0}</value>
   </data>

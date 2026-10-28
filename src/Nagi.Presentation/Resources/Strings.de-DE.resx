@@ -783,9 +783,6 @@ Möchten Sie fortfahren?</value>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Lautstärkenormalisierungsscan wird vorbereitet…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Lautstärkenormalisierungs-Scan abgebrochen.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Fehler während des Scans: {0}</value>
   </data>

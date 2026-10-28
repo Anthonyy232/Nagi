@@ -783,9 +783,6 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Preparando el análisis de normalización de volumen…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Escaneo de normalización de volumen cancelado.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Error durante el escaneo: {0}</value>
   </data>

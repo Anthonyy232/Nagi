@@ -783,9 +783,6 @@
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>در حال آماده‌سازی اسکن نرمال‌سازی صدا…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>اسکن نرمال‌سازی صدا لغو شد.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>خطا در حین اسکن: {0}</value>
   </data>

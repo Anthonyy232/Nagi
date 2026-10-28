@@ -783,9 +783,6 @@ Deseja continuar?</value>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Preparando verificação de normalização de volume…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Verificação de normalização de volume cancelada.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Erro durante a verificação: {0}</value>
   </data>

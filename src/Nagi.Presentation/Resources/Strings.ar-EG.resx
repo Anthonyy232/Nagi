@@ -783,9 +783,6 @@
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>جاري تحضير فحص تسوية مستوى الصوت…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>تم إلغاء فحص تسوية مستوى الصوت.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>خطأ أثناء الفحص: {0}</value>
   </data>

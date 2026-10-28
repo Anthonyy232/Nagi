@@ -783,9 +783,6 @@ Szeretné folytatni?</value>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Hangerő-normalizálási vizsgálat előkészítése…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Hangerő-normalizálási beolvasás megszakítva.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Hiba a beolvasás során: {0}</value>
   </data>

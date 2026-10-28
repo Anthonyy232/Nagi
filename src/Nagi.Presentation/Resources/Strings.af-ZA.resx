@@ -783,9 +783,6 @@ Wil jy voortgaan?</value>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Berei tans volumenormaliseringskandering voor…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Volumenormaliseringskandering gekanselleer.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Fout tydens skandering: {0}</value>
   </data>

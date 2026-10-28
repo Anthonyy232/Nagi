@@ -783,9 +783,6 @@ Kas soovite jätkata?</value>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Helitugevuse normaliseerimise skannimise ettevalmistamine…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Helitugevuse normaliseerimise skaneerimine tühistatud.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Viga skaneerimise ajal: {0}</value>
   </data>

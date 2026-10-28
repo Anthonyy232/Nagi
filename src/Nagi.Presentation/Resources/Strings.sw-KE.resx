@@ -783,9 +783,6 @@ Je, unataka kuendelea?</value>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Inatayarisha uchanganuzi wa usawazishaji wa sauti…</value>
   </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Uchanganuzi wa usawazishaji wa sauti umeghairiwa.</value>
-  </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Hitilafu wakati wa kuchanganua: {0}</value>
   </data>
