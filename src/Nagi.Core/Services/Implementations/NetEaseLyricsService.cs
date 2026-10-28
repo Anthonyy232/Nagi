@@ -29,8 +29,9 @@ public class NetEaseLyricsService : INetEaseLyricsService
     {
         _httpClient = httpClientFactory.CreateClient();
         _httpClient.DefaultRequestHeaders.Add("Referer", "https://music.163.com/");
-        _httpClient.DefaultRequestHeaders.Add("User-Agent",
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
+        // The web API expects a browser, so this replaces the Nagi user agent every client gets by default.
+        _httpClient.DefaultRequestHeaders.UserAgent.Clear();
+        _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
         _pipelines = pipelines;
         _logger = logger;
     }
