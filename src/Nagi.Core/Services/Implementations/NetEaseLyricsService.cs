@@ -48,38 +48,30 @@ public class NetEaseLyricsService : INetEaseLyricsService
             throw new BrokenCircuitException("NetEase is temporarily unavailable.");
         }
 
-        try
+        var normalizedTrack = ArtistNameHelper.NormalizeStringCore(trackName)!;
+        var normalizedArtist = ArtistNameHelper.NormalizeStringCore(artistName);
+        if (string.Equals(normalizedArtist, Artist.UnknownArtistName, StringComparison.OrdinalIgnoreCase)) normalizedArtist = null;
+
+        var query = normalizedArtist is null
+            ? normalizedTrack
+            : $"{normalizedTrack} {normalizedArtist}";
+
+        var songId = await SearchSongAsync(query, normalizedTrack, normalizedArtist, cancellationToken).ConfigureAwait(false);
+        if (songId is null)
         {
-            var normalizedTrack = ArtistNameHelper.NormalizeStringCore(trackName)!;
-            var normalizedArtist = ArtistNameHelper.NormalizeStringCore(artistName);
-            if (string.Equals(normalizedArtist, Artist.UnknownArtistName, StringComparison.OrdinalIgnoreCase)) normalizedArtist = null;
-
-            var query = normalizedArtist is null
-                ? normalizedTrack
-                : $"{normalizedTrack} {normalizedArtist}";
-
-            var songId = await SearchSongAsync(query, normalizedTrack, normalizedArtist, cancellationToken).ConfigureAwait(false);
-            if (songId is null)
-            {
-                _logger.LogDebug("No NetEase match found for: {Query}", query);
-                return null;
-            }
-
-            var lyrics = await GetLyricsAsync(songId.Value, cancellationToken).ConfigureAwait(false);
-            if (string.IsNullOrWhiteSpace(lyrics))
-            {
-                _logger.LogDebug("No lyrics found for NetEase song ID: {SongId}", songId);
-                return null;
-            }
-
-            _logger.LogInformation("Found NetEase lyrics for: {TrackName}", trackName);
-            return lyrics;
+            _logger.LogDebug("No NetEase match found for: {Query}", query);
+            return null;
         }
-        catch (Exception ex) when (ex is not OperationCanceledException)
+
+        var lyrics = await GetLyricsAsync(songId.Value, cancellationToken).ConfigureAwait(false);
+        if (string.IsNullOrWhiteSpace(lyrics))
         {
-            _logger.LogError(ex, "Error fetching NetEase lyrics for: {TrackName}", trackName);
-            throw;
+            _logger.LogDebug("No lyrics found for NetEase song ID: {SongId}", songId);
+            return null;
         }
+
+        _logger.LogInformation("Found NetEase lyrics for: {TrackName}", trackName);
+        return lyrics;
     }
 
     private async Task<long?> SearchSongAsync(string query, string trackName, string? artistName, CancellationToken cancellationToken)
