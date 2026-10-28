@@ -15,7 +15,7 @@ public class AppDataResetTests
         try
         {
             using (var connection = new SqliteConnection(new SqliteConnectionStringBuilder
-                   { DataSource = path, Pooling = true }.ToString()))
+            { DataSource = path, Pooling = true }.ToString()))
             {
                 connection.Open();
                 using var command = connection.CreateCommand();

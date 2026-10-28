@@ -200,8 +200,12 @@ public class LibraryReaderTests : IDisposable
         var artists = new[] { new Artist { Name = "Lead" }, new Artist { Name = "Guest" } };
         var songs = Enumerable.Range(0, 601).Select(i => new Song
         {
-            Title = $"Queue {i}", FilePath = $"C:\\Queue\\{i}.mp3", Folder = folder,
-            Duration = TimeSpan.FromSeconds(60), Genres = [genre], Lyrics = "Heavy lyrics",
+            Title = $"Queue {i}",
+            FilePath = $"C:\\Queue\\{i}.mp3",
+            Folder = folder,
+            Duration = TimeSpan.FromSeconds(60),
+            Genres = [genre],
+            Lyrics = "Heavy lyrics",
             AlbumArtUriFromTrack = "C:\\cache\\cover.jpg",
             SongArtists = artists.Select((artist, order) => new SongArtist { Artist = artist, Order = order }).ToList()
         }).ToArray();
@@ -335,10 +339,15 @@ public class LibraryReaderTests : IDisposable
         var album = new Album { Title = "Needle% Collection" };
         var songs = Enumerable.Range(0, 3).Select(index => new Song
         {
-            Title = $"Song {index}", FilePath = $@"C:\Music\{index}.mp3", DirectoryPath = folder.Path,
-            Folder = folder, Album = index < 2 ? album : new Album { Title = "NeedleX Collection" },
-            TrackNumber = index + 1, DurationTicks = TimeSpan.FromMinutes(1).Ticks,
-            SongArtists = [new() { Artist = artist }], Genres = [genre]
+            Title = $"Song {index}",
+            FilePath = $@"C:\Music\{index}.mp3",
+            DirectoryPath = folder.Path,
+            Folder = folder,
+            Album = index < 2 ? album : new Album { Title = "NeedleX Collection" },
+            TrackNumber = index + 1,
+            DurationTicks = TimeSpan.FromMinutes(1).Ticks,
+            SongArtists = [new() { Artist = artist }],
+            Genres = [genre]
         }).ToArray();
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {
@@ -379,8 +388,11 @@ public class LibraryReaderTests : IDisposable
         var paths = new[] { @"C:\Music\Rock", @"C:\Music\Rock", @"C:\Music", @"C:\Music\Jazz", @"C:\Music\Rock\Live" };
         var songs = paths.Select((path, index) => new Song
         {
-            Folder = root, DirectoryPath = path, FilePath = $@"{path}\{index}.mp3",
-            Title = $"Match {index}", TrackNumber = index + 1
+            Folder = root,
+            DirectoryPath = path,
+            FilePath = $@"{path}\{index}.mp3",
+            Title = $"Match {index}",
+            TrackNumber = index + 1
         }).ToArray();
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {

@@ -135,7 +135,9 @@ public class PagedListViewModelTests
             requestedPages.Add(page);
             return Task.FromResult(new PagedResult<int>
             {
-                PageNumber = page, PageSize = size, TotalCount = 1500,
+                PageNumber = page,
+                PageSize = size,
+                TotalCount = 1500,
                 Items = Enumerable.Range((page - 1) * size, size).ToArray()
             });
         }, dispatcher);

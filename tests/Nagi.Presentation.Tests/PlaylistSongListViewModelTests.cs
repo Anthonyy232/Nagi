@@ -25,7 +25,10 @@ public class PlaylistSongListViewModelTests
                 Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns(call => new PagedResult<Song>
             {
-                PageNumber = 1, PageSize = call.ArgAt<int>(2), TotalCount = _songs.Count, Items = _songs.ToList()
+                PageNumber = 1,
+                PageSize = call.ArgAt<int>(2),
+                TotalCount = _songs.Count,
+                Items = _songs.ToList()
             });
         _library.Reader.GetAllSongIdsByPlaylistIdAsync(Arg.Any<Guid>(), Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns(_ => _songs.Select(song => song.Id).ToList());

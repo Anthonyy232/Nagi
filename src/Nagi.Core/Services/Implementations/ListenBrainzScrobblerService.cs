@@ -212,7 +212,8 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
             ? Task.FromResult(SubmissionOutcome.PermanentFailure)
             : PostPayloadAsync(new ListenBrainzSubmitPayload
             {
-                ListenType = listens.Count == 1 ? "single" : "import", Payload = listens
+                ListenType = listens.Count == 1 ? "single" : "import",
+                Payload = listens
             }, cancellationToken);
     }
 

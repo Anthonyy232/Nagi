@@ -32,7 +32,8 @@ public class SmartPlaylistSongListViewModelTests
         _playlists.GetSmartPlaylistByIdAsync(oldId).Returns(pending.Task);
         var current = new SmartPlaylist
         {
-            Name = "Current", CoverImageUri = "https://example.com/current.jpg",
+            Name = "Current",
+            CoverImageUri = "https://example.com/current.jpg",
             SortOrder = SmartPlaylistSortOrder.DurationDesc
         };
         _playlists.GetSmartPlaylistByIdAsync(current.Id).Returns(current);

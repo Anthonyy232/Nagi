@@ -38,7 +38,8 @@ public class ScrobbleQueueCancellationTests
         {
             var song = new Song
             {
-                Title = "Song", FilePath = "C:/Music/song.mp3",
+                Title = "Song",
+                FilePath = "C:/Music/song.mp3",
                 Folder = new Folder { Name = "Music", Path = "C:/Music" }
             };
             song.SongArtists.Add(new SongArtist { Artist = new Artist { Name = "Artist" } });
@@ -46,7 +47,9 @@ public class ScrobbleQueueCancellationTests
             context.Songs.Add(song);
             context.ListenHistory.AddRange(Enumerable.Range(1, batchSize + 1).Select(id => new ListenHistory
             {
-                Id = id, Song = song, IsEligibleForScrobbling = true,
+                Id = id,
+                Song = song,
+                IsEligibleForScrobbling = true,
                 ListenTimestampUtc = DateTime.UtcNow.AddMinutes(-batchSize - 2).AddSeconds(id)
             }));
             await context.SaveChangesAsync();

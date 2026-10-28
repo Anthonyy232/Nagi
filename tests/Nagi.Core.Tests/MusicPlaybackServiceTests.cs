@@ -165,7 +165,9 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         const string path = "C:\\temp\\queue.mp3";
         _metadataService.ExtractMetadataAsync(path).Returns(new SongFileMetadata
         {
-            Title = "External", Genres = ["Rock", "rock", ""], Duration = TimeSpan.FromSeconds(90)
+            Title = "External",
+            Genres = ["Rock", "rock", ""],
+            Duration = TimeSpan.FromSeconds(90)
         });
 
         await _service.InitializeAsync();
@@ -1526,7 +1528,8 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
         _settingsService.GetPlaybackStateAsync().Returns(new PlaybackState
         {
-            PlaybackQueueTrackIds = [_testSongs[0].Id], CurrentTrackId = _testSongs[0].Id
+            PlaybackQueueTrackIds = [_testSongs[0].Id],
+            CurrentTrackId = _testSongs[0].Id
         });
         _library.Writer.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(52L);
         await _service.InitializeAsync();

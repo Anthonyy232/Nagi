@@ -202,7 +202,9 @@ public class BackupRestoreService : IBackupRestoreService
                 {
                     using var database = new SqliteConnection(new SqliteConnectionStringBuilder
                     {
-                        DataSource = incomingDatabase, Mode = SqliteOpenMode.ReadOnly, Pooling = false
+                        DataSource = incomingDatabase,
+                        Mode = SqliteOpenMode.ReadOnly,
+                        Pooling = false
                     }.ToString());
                     database.Open();
                     using var check = database.CreateCommand();

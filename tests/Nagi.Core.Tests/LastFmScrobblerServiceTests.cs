@@ -13,6 +13,7 @@ using NSubstitute;
 using Xunit;
 
 namespace Nagi.Core.Tests;
+
 public class LastFmScrobblerServiceTests : IDisposable
 {
     private const string ApiKey = "test-api-key";
@@ -313,7 +314,10 @@ public class LastFmScrobblerServiceTests : IDisposable
         song.Folder = new Folder { Name = "Music", Path = "C:/Music" };
         context.ListenHistory.AddRange(listens.Select(listen => new ListenHistory
         {
-            Id = listen.Id, Song = song, ListenTimestampUtc = listen.Timestamp, IsEligibleForScrobbling = true
+            Id = listen.Id,
+            Song = song,
+            ListenTimestampUtc = listen.Timestamp,
+            IsEligibleForScrobbling = true
         }));
         await context.SaveChangesAsync();
     }

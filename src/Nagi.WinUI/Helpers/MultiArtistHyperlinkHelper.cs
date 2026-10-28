@@ -130,7 +130,9 @@ public static class MultiArtistHyperlinkHelper
             };
             unknownArtist.SetBinding(TextBlock.ForegroundProperty, new Binding
             {
-                Source = textBlock, Path = new PropertyPath(nameof(TextBlock.Foreground)), Mode = BindingMode.OneWay
+                Source = textBlock,
+                Path = new PropertyPath(nameof(TextBlock.Foreground)),
+                Mode = BindingMode.OneWay
             });
             stackPanel.Children.Add(unknownArtist);
             return;
@@ -153,7 +155,9 @@ public static class MultiArtistHyperlinkHelper
 
             button.SetBinding(Control.ForegroundProperty, new Binding
             {
-                Source = textBlock, Path = new PropertyPath(nameof(TextBlock.Foreground)), Mode = BindingMode.OneWay
+                Source = textBlock,
+                Path = new PropertyPath(nameof(TextBlock.Foreground)),
+                Mode = BindingMode.OneWay
             });
 
             stackPanel.Children.Add(button);
@@ -170,7 +174,9 @@ public static class MultiArtistHyperlinkHelper
 
                 separatorText.SetBinding(TextBlock.ForegroundProperty, new Binding
                 {
-                    Source = textBlock, Path = new PropertyPath(nameof(TextBlock.Foreground)), Mode = BindingMode.OneWay
+                    Source = textBlock,
+                    Path = new PropertyPath(nameof(TextBlock.Foreground)),
+                    Mode = BindingMode.OneWay
                 });
 
                 stackPanel.Children.Add(separatorText);

@@ -13,7 +13,7 @@ public sealed class FFmpegLoudnessAnalyzerTests : IDisposable
 
     // 997 Hz rather than 1 kHz: FFmpeg 9 probes a 48 kHz float WAV of an exact 1 kHz sine as MPEG-TS.
     [Theory]
-    [InlineData(44100, 997,0.125892541, -18)]
+    [InlineData(44100, 997, 0.125892541, -18)]
     [InlineData(48000, 997, 0.125892541, -18)]
     [InlineData(48000, 440, 1, -0.65)]
     public async Task StereoReferenceTones_MeasureExpectedLoudnessAndPeak(

@@ -54,7 +54,9 @@ public class ArtistViewViewModelTests
         library.Reader.GetSongsByArtistIdPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
             Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>
             {
-                PageNumber = 1, PageSize = 50, Items = []
+                PageNumber = 1,
+                PageSize = 50,
+                Items = []
             });
         var settings = Substitute.For<IUISettingsService>();
         settings.GetSongsPerPageAsync().Returns(50);

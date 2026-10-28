@@ -105,7 +105,10 @@ public class RuleViewModelTests
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de-DE");
             var editor = new RuleViewModel(new SmartPlaylistRule
             {
-                Field = field, Operator = SmartPlaylistOperator.IsInRange, Value = value, SecondValue = upper
+                Field = field,
+                Operator = SmartPlaylistOperator.IsInRange,
+                Value = value,
+                SecondValue = upper
             });
             var saved = editor.ToSmartPlaylistRule();
             saved.Value.Should().Be(storedValue);

@@ -294,7 +294,9 @@ public class BackupRestoreServiceTests : IDisposable
         File.Exists(Path.Combine(destDir, "playback_state.json")).Should().BeTrue("playback_state.json should be restored to AppDataRoot");
         using var database = new SqliteConnection(new SqliteConnectionStringBuilder
         {
-            DataSource = Path.Combine(destDir, "nagi.db"), Mode = SqliteOpenMode.ReadOnly, Pooling = false
+            DataSource = Path.Combine(destDir, "nagi.db"),
+            Mode = SqliteOpenMode.ReadOnly,
+            Pooling = false
         }.ToString());
         database.Open();
         using var query = database.CreateCommand();

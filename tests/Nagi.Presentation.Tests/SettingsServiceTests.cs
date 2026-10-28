@@ -272,8 +272,12 @@ public class SettingsServiceTests
     {
         var exported = new Dictionary<string, object>
         {
-            ["Flag"] = true, ["Count"] = 3, ["Ticks"] = 638_000_000_000_000_000L, ["Volume"] = 1.0,
-            ["Theme"] = "Dark", ["LastFmAuthToken"] = "temporary"
+            ["Flag"] = true,
+            ["Count"] = 3,
+            ["Ticks"] = 638_000_000_000_000_000L,
+            ["Volume"] = 1.0,
+            ["Theme"] = "Dark",
+            ["LastFmAuthToken"] = "temporary"
         };
         var snapshot = await CreateSettings(exported).ExportAsync();
         var restored = new Dictionary<string, object> { ["Stale"] = "removed" };

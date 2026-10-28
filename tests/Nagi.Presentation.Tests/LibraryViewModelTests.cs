@@ -62,7 +62,10 @@ public class LibraryViewModelTests
         library.Reader.GetAllSongsPagedAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<SongSortOrder>(),
             Arg.Any<CancellationToken>()).Returns(_ => new PagedResult<Song>
             {
-                PageNumber = 1, PageSize = 50, TotalCount = 2, Items = orderedSongs
+                PageNumber = 1,
+                PageSize = 50,
+                TotalCount = 2,
+                Items = orderedSongs
             });
         library.Reader.GetAllSongIdsAsync(Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns(_ => orderedSongs.Select(song => song.Id).ToList());
@@ -102,7 +105,10 @@ public class LibraryViewModelTests
                 ? Task.FromException<PagedResult<Song>>(new IOException("Library unavailable"))
                 : Task.FromResult(new PagedResult<Song>
                 {
-                    PageNumber = 1, PageSize = 50, TotalCount = 1, Items = [new Song { Title = "Recovered" }]
+                    PageNumber = 1,
+                    PageSize = 50,
+                    TotalCount = 1,
+                    Items = [new Song { Title = "Recovered" }]
                 }));
         var scanFinished = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         library.Scanner.RefreshAllFoldersAsync(Arg.Any<IProgress<ScanProgress>>(), Arg.Any<CancellationToken>()).Returns(_ =>
@@ -137,7 +143,10 @@ public class LibraryViewModelTests
         library.Reader.GetAllSongsPagedAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<SongSortOrder>(),
             Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>
             {
-                PageNumber = 1, PageSize = 50, TotalCount = 1, Items = [new Song { Title = "New song" }]
+                PageNumber = 1,
+                PageSize = 50,
+                TotalCount = 1,
+                Items = [new Song { Title = "New song" }]
             });
         var dispatcher = new HeldDispatcher();
         using var viewModel = new LibraryViewModel(library.Reader, library.Writer, library.Scanner, Substitute.For<IPlaylistService>(),

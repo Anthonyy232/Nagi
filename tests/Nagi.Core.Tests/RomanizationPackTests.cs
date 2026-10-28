@@ -305,7 +305,9 @@ public sealed class RomanizationPackTests : IDisposable
         {
             Phrases = new Dictionary<string, string>
             {
-                ["愛"] = "ai", ["愛情歌"] = "aijouka", ["愛情"] = "aijou"
+                ["愛"] = "ai",
+                ["愛情歌"] = "aijouka",
+                ["愛情"] = "aijou"
             },
             Sequences = new Dictionary<string, string> { ["き"] = "ki", ["きゃ"] = "kya" }
         };

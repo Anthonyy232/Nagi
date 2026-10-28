@@ -93,7 +93,9 @@ public class PlaylistServiceTests : IDisposable
         var modified = DateTime.UtcNow.AddDays(-1);
         var playlist = new Playlist
         {
-            Name = "Playlist", CoverImageUri = @"C:\cache\playlistimages\cover.jpg", DateModified = modified
+            Name = "Playlist",
+            CoverImageUri = @"C:\cache\playlistimages\cover.jpg",
+            DateModified = modified
         };
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {

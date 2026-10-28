@@ -221,7 +221,10 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
     {
         var playlist = CreatePlaylist(new SmartPlaylistRule
         {
-            Field = field, Operator = ruleOperator, Value = value, SecondValue = secondValue
+            Field = field,
+            Operator = ruleOperator,
+            Value = value,
+            SecondValue = secondValue
         });
         using var context = _dbHelper.ContextFactory.CreateDbContext();
 
@@ -316,7 +319,9 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo(culture);
             var playlist = CreatePlaylist(new SmartPlaylistRule
             {
-                Field = SmartPlaylistField.Duration, Operator = SmartPlaylistOperator.LessThan, Value = value
+                Field = SmartPlaylistField.Duration,
+                Operator = SmartPlaylistOperator.LessThan,
+                Value = value
             });
             using var context = _dbHelper.ContextFactory.CreateDbContext();
 
@@ -458,7 +463,9 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
     {
         var playlist = CreatePlaylist(new SmartPlaylistRule
         {
-            Field = SmartPlaylistField.Title, Operator = SmartPlaylistOperator.Contains, Value = value
+            Field = SmartPlaylistField.Title,
+            Operator = SmartPlaylistOperator.Contains,
+            Value = value
         });
         using var context = _dbHelper.ContextFactory.CreateDbContext();
 

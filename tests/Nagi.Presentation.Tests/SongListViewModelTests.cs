@@ -19,7 +19,10 @@ public class SongListViewModelTests
         Song first = new(), second = new(), third = new();
         using var viewModel = new TestSongList((page, size, _) => Task.FromResult(new PagedResult<Song>
         {
-            PageNumber = page, PageSize = size, TotalCount = 3, Items = [first, second, third]
+            PageNumber = page,
+            PageSize = size,
+            TotalCount = 3,
+            Items = [first, second, third]
         }));
         await viewModel.LoadPageAsync(1);
 
@@ -40,7 +43,10 @@ public class SongListViewModelTests
             pages.Add(page);
             return Task.FromResult(new PagedResult<Song>
             {
-                PageNumber = page, PageSize = size, TotalCount = 51, Items = page == 2 ? [song] : []
+                PageNumber = page,
+                PageSize = size,
+                TotalCount = 51,
+                Items = page == 2 ? [song] : []
             });
         });
 

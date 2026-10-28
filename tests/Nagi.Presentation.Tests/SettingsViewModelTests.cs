@@ -665,7 +665,7 @@ public class SettingsViewModelTests : IDisposable
         };
         _settings.GetDefaultPlayerButtonSettings().Returns(defaults);
         _viewModel.PlayerButtons.Add(new PlayerButtonSetting
-            { Id = "Old", DisplayName = "Old", IsEnabled = true });
+        { Id = "Old", DisplayName = "Old", IsEnabled = true });
         var collectionChanges = 0;
         _viewModel.PlayerButtons.CollectionChanged += (_, _) => collectionChanges++;
 

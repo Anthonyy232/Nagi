@@ -527,8 +527,10 @@ public partial class LibraryService
 
             var folder = new Folder
             {
-                Name = Path.GetFileName(path), Path = path,
-                ParentFolderId = parentId, LastModifiedDate = DateTime.UtcNow
+                Name = Path.GetFileName(path),
+                Path = path,
+                ParentFolderId = parentId,
+                LastModifiedDate = DateTime.UtcNow
             };
             context.Folders.Add(folder);
             foldersByPath.Add(path, folder);

@@ -193,8 +193,13 @@ public class MultiArtistTests : IDisposable
             .Returns(new[] { (filePath, DateTime.UtcNow) });
         _metadataService.ExtractMetadataAsync(filePath, folder.Path).Returns(new SongFileMetadata
         {
-            FilePath = filePath, Title = "New track", Album = "Album", Year = 2024,
-            Artists = ["Primary"], AlbumArtists = ["Primary", "Guest"], CoverArtUri = @"C:\cache\new.jpg"
+            FilePath = filePath,
+            Title = "New track",
+            Album = "Album",
+            Year = 2024,
+            Artists = ["Primary"],
+            AlbumArtists = ["Primary", "Guest"],
+            CoverArtUri = @"C:\cache\new.jpg"
         });
 
         (await _libraryService.RescanFolderForMusicAsync(folder.Id)).Should().BeTrue();

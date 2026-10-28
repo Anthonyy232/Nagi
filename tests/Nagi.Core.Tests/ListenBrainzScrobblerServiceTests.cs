@@ -320,7 +320,9 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
             song.Folder = new Folder { Name = "Music", Path = "C:/Music" };
             context.ListenHistory.AddRange(Enumerable.Range(1, 3).Select(id => new ListenHistory
             {
-                Id = id, Song = song, IsEligibleForScrobbling = true,
+                Id = id,
+                Song = song,
+                IsEligibleForScrobbling = true,
                 ListenTimestampUtc = DateTime.UtcNow.AddMinutes(-10 + id)
             }));
             await context.SaveChangesAsync();
@@ -349,7 +351,10 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
         song.Folder = new Folder { Name = "Music", Path = "C:/Music" };
         context.ListenHistory.AddRange(listens.Select(listen => new ListenHistory
         {
-            Id = listen.Id, Song = song, ListenTimestampUtc = listen.Timestamp, IsEligibleForScrobbling = true
+            Id = listen.Id,
+            Song = song,
+            ListenTimestampUtc = listen.Timestamp,
+            IsEligibleForScrobbling = true
         }));
         await context.SaveChangesAsync();
     }

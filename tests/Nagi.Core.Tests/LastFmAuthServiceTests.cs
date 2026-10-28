@@ -12,6 +12,7 @@ using NSubstitute;
 using Xunit;
 
 namespace Nagi.Core.Tests;
+
 public class LastFmAuthServiceTests : IDisposable
 {
     private const string ApiKey = "test-api-key";
