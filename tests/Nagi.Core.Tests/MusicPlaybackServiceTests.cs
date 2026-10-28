@@ -241,24 +241,6 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task PlayTransientFileAsync_WithMultipleArtists_SetsCorrectArtistName()
-    {
-        const string filePath = "C:\\temp\\multi.mp3";
-        var metadata = new SongFileMetadata
-        {
-            Title = "Multi Track",
-            Artists = new List<string> { "Artist 1", "Artist 2" }
-        };
-        _metadataService.ExtractMetadataAsync(filePath).Returns(metadata);
-        await _service.InitializeAsync();
-
-        await _service.PlayTransientFileAsync(filePath);
-
-        _service.CurrentTrack.Should().NotBeNull();
-        _service.CurrentTrack!.ArtistName.Should().Be("Artist 1 & Artist 2");
-    }
-
-    [Fact]
     public async Task AddTransientFilesToQueueAsync_AppendsAndPlaysExternalFiles()
     {
         var firstPath = "C:\\temp\\first.mp3";

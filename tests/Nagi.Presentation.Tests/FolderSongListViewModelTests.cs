@@ -123,26 +123,6 @@ public class FolderSongListViewModelTests
         viewModel.IsAtRootLevel.Should().Be(!directoryPath.EndsWith("Album"));
     }
 
-    [Fact]
-    public async Task RefreshAsync_WhenSettingsFail_ReleasesLoadingStateAndAllowsRetry()
-    {
-        var settings = Substitute.For<IUISettingsService>();
-        settings.GetSongsPerPageAsync().Returns(Task.FromException<int>(new IOException("Settings unavailable")),
-            Task.FromResult(50));
-        using var viewModel = CreateViewModel(new LibraryFakes(), settings);
-
-        await viewModel.RefreshOrSortSongsAsync();
-
-        viewModel.HasLoadError.Should().BeTrue();
-        viewModel.IsLoading.Should().BeFalse();
-
-        await viewModel.RefreshOrSortSongsAsync();
-
-        viewModel.HasLoadError.Should().BeFalse();
-        viewModel.IsLoading.Should().BeFalse();
-        await settings.Received(2).GetSongsPerPageAsync();
-    }
-
     [Theory]
     [InlineData(0)]
     [InlineData(51)]

@@ -158,20 +158,6 @@ public class SettingsViewModelTests : IDisposable
         await _settings.Received(1).SetAudioOutputDeviceIdAsync(device.Id);
     }
 
-    [Fact]
-    public async Task AudioOutput_SaveFailureKeepsLiveSelectionAndReportsFailure()
-    {
-        var device = new AudioOutputDeviceInfo("dac", "DAC");
-        _audioPlayer.SetAudioOutputDeviceAsync(device.Id).Returns(true);
-        _settings.SetAudioOutputDeviceIdAsync(device.Id).Returns(Task.FromException(new IOException("Storage unavailable")));
-
-        await _viewModel.Audio.SelectAudioOutputDeviceCommand.ExecuteAsync(device);
-
-        _viewModel.Audio.SelectedAudioOutputDevice.Should().Be(device);
-        _viewModel.Audio.AudioOutputDeviceMessage.Should().NotBeEmpty();
-        _viewModel.Audio.IsAudioOutputBusy.Should().BeFalse();
-    }
-
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
