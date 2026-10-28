@@ -189,14 +189,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private void TryGoBack()
     {
-        try
-        {
-            if (ContentFrame.CanGoBack) ContentFrame.GoBack();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to navigate back.");
-        }
+        if (ContentFrame.CanGoBack) ContentFrame.GoBack();
     }
 
     private void LyricsButton_Click(object sender, RoutedEventArgs e)
@@ -374,42 +367,35 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             settingsItem.Content = Strings.NavItem_Settings;
         }
 
-        try
-        {
-            _lastKnownTheme = ActualTheme;
-            ActualThemeChanged += OnActualThemeChanged;
-            ContentFrame.Navigated += OnContentFrameNavigated;
-            ViewModel.PropertyChanged += OnViewModelPropertyChanged;
-            CompositionAnimationHelper.AnimationsEnabledChanged += OnAnimationsEnabledChanged;
-            _settingsService.PlayerAnimationSettingChanged += OnPlayerAnimationSettingChanged;
-            _settingsService.NavigationSettingsChanged += OnNavigationSettingsChanged;
-            _transparencyEffects.Changed += OnTransparencyEffectsChanged;
-            _settingsService.PlayerDesignSettingsChanged += OnPlayerDesignSettingsChanged;
-            AddHandler(PointerPressedEvent, new PointerEventHandler(OnGlobalPointerPressed), true);
-            KeyDown += OnSelectionKeyDown;
+        _lastKnownTheme = ActualTheme;
+        ActualThemeChanged += OnActualThemeChanged;
+        ContentFrame.Navigated += OnContentFrameNavigated;
+        ViewModel.PropertyChanged += OnViewModelPropertyChanged;
+        CompositionAnimationHelper.AnimationsEnabledChanged += OnAnimationsEnabledChanged;
+        _settingsService.PlayerAnimationSettingChanged += OnPlayerAnimationSettingChanged;
+        _settingsService.NavigationSettingsChanged += OnNavigationSettingsChanged;
+        _transparencyEffects.Changed += OnTransparencyEffectsChanged;
+        _settingsService.PlayerDesignSettingsChanged += OnPlayerDesignSettingsChanged;
+        AddHandler(PointerPressedEvent, new PointerEventHandler(OnGlobalPointerPressed), true);
+        KeyDown += OnSelectionKeyDown;
 
-            var brushTask = SetPlatformSpecificBrushAsync();
-            var navTask = PopulateNavigationAsync();
-            var animTask = _settingsService.GetPlayerAnimationEnabledAsync();
-            var paneTask = RestorePaneStateAsync();
+        var brushTask = SetPlatformSpecificBrushAsync();
+        var navTask = PopulateNavigationAsync();
+        var animTask = _settingsService.GetPlayerAnimationEnabledAsync();
+        var paneTask = RestorePaneStateAsync();
 
-            await Task.WhenAll(brushTask, navTask, animTask, paneTask);
-            if (_isUnloaded) return;
+        await Task.WhenAll(brushTask, navTask, animTask, paneTask);
+        if (_isUnloaded) return;
 
-            _isPlayerAnimationEnabled = await animTask;
+        _isPlayerAnimationEnabled = await animTask;
 
-            if (ContentFrame.CurrentSourcePageType is null)
-                NavView.SelectedItem = NavView.MenuItems.FirstOrDefault() ?? NavView.SettingsItem;
+        if (ContentFrame.CurrentSourcePageType is null)
+            NavView.SelectedItem = NavView.MenuItems.FirstOrDefault() ?? NavView.SettingsItem;
 
-            UpdateNavViewSelection(ContentFrame.CurrentSourcePageType);
+        UpdateNavViewSelection(ContentFrame.CurrentSourcePageType);
 
-            UpdatePlayerVisualState(false);
-            await ApplyDynamicThemeForCurrentTrackAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error during MainPage initialization");
-        }
+        UpdatePlayerVisualState(false);
+        await ApplyDynamicThemeForCurrentTrackAsync();
     }
 
     private void OnMainPageUnloaded(object sender, RoutedEventArgs e)
@@ -544,30 +530,23 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private void OnContentFrameNavigated(object sender, NavigationEventArgs e)
     {
         _logger.LogDebug("Navigated to {PageName}.", e.SourcePageType.Name);
-        try
-        {
-            var isDetailPage = _detailPageToParentTagMap.ContainsKey(e.SourcePageType);
-            var isLyricsPage = e.SourcePageType == typeof(LyricsPage);
-            ViewModel.IsLyricsPageActive = isLyricsPage;
+        var isDetailPage = _detailPageToParentTagMap.ContainsKey(e.SourcePageType);
+        var isLyricsPage = e.SourcePageType == typeof(LyricsPage);
+        ViewModel.IsLyricsPageActive = isLyricsPage;
 
-            AppTitleBar.IsBackButtonVisible = ContentFrame.CanGoBack && (isDetailPage || isLyricsPage);
+        AppTitleBar.IsBackButtonVisible = ContentFrame.CanGoBack && (isDetailPage || isLyricsPage);
 
-            UpdateNavViewSelection(e.SourcePageType, e.Parameter is "Favorites");
+        UpdateNavViewSelection(e.SourcePageType, e.Parameter is "Favorites");
 
-            var isSettingsPage = e.SourcePageType == typeof(SettingsPage);
-            // Keep destination bounds stable while player space changes, so WinUI can finish the outgoing fade.
-            var pageHeightAnimation = isSettingsPage ? HiddenPageHeightAnimation : VisiblePageHeightAnimation;
-            var reservedHeight = isSettingsPage ? 0 : ShouldExpandPlayer ? 132 : 80;
-            pageHeightAnimation.From = pageHeightAnimation.To = Math.Max(0, ContentRegion.ActualHeight - reservedHeight);
-            if (isSettingsPage) PlayerSpaceHideAnimation.From = PlayerContentSpace.ActualHeight;
-            var stateName = isSettingsPage ? "PlayerHidden" : "PlayerVisible";
-            VisualStateManager.GoToState(this, stateName, CompositionAnimationHelper.AreAnimationsEnabled);
-            if (!CompositionAnimationHelper.AreAnimationsEnabled) PlayerVisibilityStates.CurrentState?.Storyboard?.SkipToFill();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error processing OnContentFrameNavigated");
-        }
+        var isSettingsPage = e.SourcePageType == typeof(SettingsPage);
+        // Keep destination bounds stable while player space changes, so WinUI can finish the outgoing fade.
+        var pageHeightAnimation = isSettingsPage ? HiddenPageHeightAnimation : VisiblePageHeightAnimation;
+        var reservedHeight = isSettingsPage ? 0 : ShouldExpandPlayer ? 132 : 80;
+        pageHeightAnimation.From = pageHeightAnimation.To = Math.Max(0, ContentRegion.ActualHeight - reservedHeight);
+        if (isSettingsPage) PlayerSpaceHideAnimation.From = PlayerContentSpace.ActualHeight;
+        var stateName = isSettingsPage ? "PlayerHidden" : "PlayerVisible";
+        VisualStateManager.GoToState(this, stateName, CompositionAnimationHelper.AreAnimationsEnabled);
+        if (!CompositionAnimationHelper.AreAnimationsEnabled) PlayerVisibilityStates.CurrentState?.Storyboard?.SkipToFill();
     }
 
     private void FloatingPlayerContainer_PointerEntered(object sender, PointerRoutedEventArgs e) =>
