@@ -154,7 +154,7 @@ public sealed class TaskbarService : IDisposable
             try
             {
                 var foregroundColor = await _dispatcherService.EnqueueAsync(() =>
-                    token.IsCancellationRequested || _isDisposed ? default : GetCurrentThemeForegroundColor()).ConfigureAwait(false);
+                    token.IsCancellationRequested || _isDisposed ? default : GetAccentColor()).ConfigureAwait(false);
 
                 // Win2D icon generation can run off the UI thread.
                 await Task.Run(() =>
@@ -251,22 +251,8 @@ public sealed class TaskbarService : IDisposable
         return Math.Max(DefaultIconSize, (int)(DefaultIconSize * dpi / BaseDpi));
     }
 
-    /// <summary>
-    ///     Gets the app primary color for icon rendering.
-    ///     Falls back to theme-based foreground if the resource is not found.
-    ///     Must be called from the UI thread.
-    /// </summary>
-    private static Color GetCurrentThemeForegroundColor()
-    {
-        if (Application.Current.Resources.TryGetValue("AppPrimaryColorBrush", out var resource)
-            && resource is SolidColorBrush brush)
-        {
-            return brush.Color;
-        }
-        return Application.Current.RequestedTheme == ApplicationTheme.Dark
-            ? Color.FromArgb(255, 255, 255, 255)
-            : Color.FromArgb(255, 0, 0, 0);
-    }
+    // The accent brush is a top-level app resource, so it is always there. Read it on the UI thread.
+    private static Color GetAccentColor() => ((SolidColorBrush)Application.Current.Resources["AppPrimaryColorBrush"]).Color;
 
     /// <summary>
     ///     Renders a glyph to an HICON using Win2D.

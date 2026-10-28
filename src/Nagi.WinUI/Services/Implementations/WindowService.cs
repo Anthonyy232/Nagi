@@ -25,7 +25,6 @@ public sealed class WindowService : IWindowService, IDisposable
     private readonly MainWindow _mainWindow;
     private readonly Func<MiniPlayerWindow> _createMiniPlayerWindow;
     private MiniPlayerWindow? _miniPlayerWindow;
-    private Window? _window;
 
     public WindowService(MainWindow mainWindow, Func<MiniPlayerWindow> createMiniPlayerWindow,
         Win32InteropService win32InteropService, IUISettingsService settingsService,
@@ -51,7 +50,7 @@ public sealed class WindowService : IWindowService, IDisposable
         if (_appWindow is not null)
         {
             _appWindow.Closing -= OnAppWindowClosing;
-            if (_window is not null) _window.Closed -= OnWindowClosed;
+            _mainWindow.Closed -= OnWindowClosed;
             _appWindow.Changed -= OnAppWindowChanged;
             _appWindow.IsShownInSwitchers = true;
         }
@@ -104,11 +103,10 @@ public sealed class WindowService : IWindowService, IDisposable
 
     public async Task InitializeAsync()
     {
-        _window = _mainWindow;
-        _appWindow = _window.AppWindow;
+        _appWindow = _mainWindow.AppWindow;
 
         _appWindow.Closing += OnAppWindowClosing;
-        _window.Closed += OnWindowClosed;
+        _mainWindow.Closed += OnWindowClosed;
         _appWindow.Changed += OnAppWindowChanged;
         _settingsService.MinimizeToMiniPlayerSettingChanged += OnMinimizeToMiniPlayerSettingChanged;
 
@@ -117,18 +115,18 @@ public sealed class WindowService : IWindowService, IDisposable
 
     public void Hide()
     {
-        if (_window is null) return;
-        _window.Hide(false);
+        if (_appWindow is null) return;
+        _mainWindow.Hide(false);
     }
 
     public void ShowAndActivate()
     {
-        if (_window is null) return;
+        if (_appWindow is null) return;
 
         // Force high priority immediately to prevent black screen lag during activation
         SetEfficiencyMode(false);
 
-        var windowHandle = WinRT.Interop.WindowNative.GetWindowHandle(_window);
+        var windowHandle = WinRT.Interop.WindowNative.GetWindowHandle(_mainWindow);
         var foregroundHandle = _win32InteropService.GetForegroundWindow();
 
         if (windowHandle == foregroundHandle && IsVisible && !IsMinimized && !IsMiniPlayerActive)
@@ -138,14 +136,14 @@ public sealed class WindowService : IWindowService, IDisposable
         }
 
         HideMiniPlayer();
-        if (_appWindow is not null) _appWindow.IsShownInSwitchers = true;
-        WindowActivator.ShowAndActivate(_window, _win32InteropService);
+        _appWindow.IsShownInSwitchers = true;
+        WindowActivator.ShowAndActivate(_mainWindow, _win32InteropService);
     }
 
     public void Exit()
     {
         IsExiting = true;
-        _dispatcherService.TryEnqueue(() => _window?.Close());
+        _dispatcherService.TryEnqueue(() => { if (_appWindow is not null) _mainWindow.Close(); });
     }
 
     public void SetEfficiencyMode(bool isEnabled)
