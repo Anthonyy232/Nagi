@@ -244,7 +244,6 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
         CurrentTrack = transientSong;
         CurrentQueueIndex = -1;
-        CurrentListenHistoryId = null;
         _currentContext = new PlaybackContext(PlaybackContextType.Transient, null);
 
         // Track listens for transient playback only when the file maps to a known library song.

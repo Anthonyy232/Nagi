@@ -151,7 +151,7 @@ public partial class LibraryService
                     // while barely adding any, something upstream failed (e.g., a transient NAS
                     // enumeration failure). Skip the delete pass to avoid data loss; the next
                     // successful scan will reconcile correctly.
-                    if (allFilePathsToDelete.Count >= 50 || allFilePathsToDelete.Count * 2 > filesToAdd.Count + filesToUpdate.Count + 50)
+                    if (allFilePathsToDelete.Count > 50)
                     {
                         await using var guardContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
                         var existingCount = await guardContext.Songs.AsNoTracking()

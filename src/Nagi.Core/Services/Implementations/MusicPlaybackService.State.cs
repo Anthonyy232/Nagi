@@ -66,7 +66,6 @@ public partial class MusicPlaybackService
                     CurrentShuffledIndex = _queue.ShuffledIndexOf(currentSong.Id);
                 }
 
-                CurrentListenHistoryId = null;
                 await _audioPlayer.LoadAsync(CurrentTrack);
             }
             else
@@ -77,7 +76,6 @@ public partial class MusicPlaybackService
                 CurrentQueueIndex = 0;
                 CurrentShuffledIndex = IsShuffleEnabled ? 0 : -1;
                 CurrentTrack = null;
-                CurrentListenHistoryId = null;
             }
         }
         else
