@@ -58,30 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NavItem_Library" xml:space="preserve">
-    <value>நூலகம்</value>
-  </data>
-  <data name="NavItem_Albums" xml:space="preserve">
-    <value>ஆல்பங்கள்</value>
-  </data>
-  <data name="NavItem_Artists" xml:space="preserve">
-    <value>கலைஞர்கள்</value>
-  </data>
-  <data name="NavItem_Genres" xml:space="preserve">
-    <value>வகைகள்</value>
-  </data>
-  <data name="NavItem_Playlists" xml:space="preserve">
-    <value>பிளேலிஸ்ட்கள்</value>
-  </data>
-  <data name="NavItem_Folders" xml:space="preserve">
-    <value>கோப்புறைகள்</value>
-  </data>
-  <data name="NavItem_Favorites" xml:space="preserve">
-    <value>விருப்பமானவை</value>
-  </data>
-  <data name="NavItem_Insights" xml:space="preserve">
-    <value>நுண்ணறிவுகள்</value>
-  </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>அமைப்புகள்</value>
   </data>
@@ -614,9 +590,6 @@
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg இன்னும் கண்டறியப்படவில்லை. தயவுசெய்து FFmpeg ஐ நிறுவி 'மீண்டும் சரிபார்க்கவும்' என்பதைக் கிளிக் செய்யவும்.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>FFmpeg ஐ சரிபார்க்கும் போது பிழை ஏற்பட்டது. மீண்டும் முயற்சிக்கவும்.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>முந்தைய</value>
   </data>
@@ -956,9 +929,6 @@
   </data>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
     <value>அடுத்து வருபவை</value>
-  </data>
-  <data name="AppName" xml:space="preserve">
-    <value>Nagi</value>
   </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>முந்தையது</value>

@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
@@ -48,7 +47,6 @@ public partial class TrayIconViewModel : ObservableObject
         _windowService.UIStateChanged -= OnWindowStateChanged;
         _settingsService.HideToTraySettingChanged -= OnHideToTraySettingChanged;
     }
-
 
     public async Task InitializeAsync()
     {
@@ -114,11 +112,6 @@ public partial class TrayIconViewModel : ObservableObject
         _trayPopupService.TogglePopup();
     }
 
-    /// <summary>
-    ///     Restores the main application window from the system tray.
-    ///     If the window is hidden, it restores and activates it.
-    ///     If it is already visible (e.g., minimized to mini-player), it activates the main window.
-    /// </summary>
     [RelayCommand]
     private void RestoreWindow()
     {

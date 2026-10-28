@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
@@ -22,19 +21,13 @@ public sealed partial class SettingsPage : Page
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        await ViewModel.LoadSettingsAsync();
-        await ViewModel.Audio.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
-
+        await ViewModel.OpenAsync();
         Bindings.Update();
-        _ = ViewModel.Romanization.LoadRomanizationPacksAsync();
     }
 
     private void ProvidersListView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
     {
-        if (e.Items.Any(i => i is ServiceProviderSettingViewModel { Id: ServiceProviderIds.MusicBrainz }))
-        {
-            e.Cancel = true;
-        }
+        if (e.Items.Any(i => i is ServiceProviderSettingViewModel { IsPinnedFirst: true })) e.Cancel = true;
     }
 
     private async void AudioOutput_DropDownOpened(object sender, object e) =>

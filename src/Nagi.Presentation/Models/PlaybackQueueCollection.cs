@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -200,11 +198,14 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
         catch (Exception ex) { logger.LogError(ex, "Failed to calculate queue duration."); }
     }
 
+    /// <summary>The playing track stays where it is.</summary>
+    public bool CanMove(QueueEntry entry) => entry.Id != playbackService.CurrentTrack?.Id;
+
     public void CompleteReorder(QueueEntry entry, int version)
     {
         if (version != Version) { Refresh(); return; }
         var index = IndexOf(entry);
-        if (index < FirstMovableIndex || entry.Id == playbackService.CurrentTrack?.Id) { Refresh(); return; }
+        if (index < FirstMovableIndex || !CanMove(entry)) { Refresh(); return; }
         Guid? beforeId = index + 1 < Count ? this[index + 1].Id
             : _loadedCount < _ids.Length ? _ids[_loadedCount] : null;
         playbackService.MoveQueueItem(entry.Id, beforeId);

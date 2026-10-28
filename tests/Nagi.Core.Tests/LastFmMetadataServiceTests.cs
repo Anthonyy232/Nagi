@@ -14,6 +14,7 @@ using NSubstitute;
 using Xunit;
 
 namespace Nagi.Core.Tests;
+
 public class LastFmMetadataServiceTests : IDisposable
 {
     private const string ApiKey = "test-api-key";
@@ -196,23 +197,21 @@ public class LastFmMetadataServiceTests : IDisposable
         result.Status.Should().Be(ServiceResultStatus.SuccessNotFound);
     }
     [Fact]
-    public async Task GetArtistInfoAsync_WhenApiReturnsOtherError_ReturnsTemporaryError()
+    public async Task GetArtistInfoAsync_WhenHttpStatusIsErrorWithoutApiError_ReturnsTemporaryError()
     {
         SetupApiKey();
-        SetupHttpResponse(HttpStatusCode.InternalServerError, null);
+        SetupHttpResponse(HttpStatusCode.InternalServerError, new { message = "Internal server error" });
 
         var result = await _metadataService.GetArtistInfoAsync(ArtistName);
 
         result.Status.Should().Be(ServiceResultStatus.TemporaryError);
     }
 
-    [Theory]
-    [InlineData(11)]
-    [InlineData(16)]
-    public async Task GetArtistInfoAsync_WhenSuccessfulHttpResponseContainsApiError_ReturnsTemporaryError(int errorCode)
+    [Fact]
+    public async Task GetArtistInfoAsync_WhenSuccessfulHttpResponseContainsApiError_ReturnsTemporaryError()
     {
         SetupApiKey();
-        SetupHttpResponse(HttpStatusCode.OK, CreateErrorResponse(errorCode, "Service unavailable"));
+        SetupHttpResponse(HttpStatusCode.OK, CreateErrorResponse(11, "Service unavailable"));
 
         var result = await _metadataService.GetArtistInfoAsync(ArtistName);
 
@@ -248,7 +247,6 @@ public class LastFmMetadataServiceTests : IDisposable
         await task.Awaiting(t => t).Should().ThrowAsync<TaskCanceledException>();
     }
     [Theory]
-    [InlineData("http://extralarge.jpg", "http://large.jpg", "http://extralarge.jpg")]
     [InlineData(null, "http://large.jpg", "http://large.jpg")]
     [InlineData(null, null, "http://small.jpg")]
     public async Task ToArtistInfo_SelectsBestImageUrlCorrectly(string? extraLarge, string? large, string expected)

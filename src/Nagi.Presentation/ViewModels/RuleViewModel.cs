@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Nagi.Core.Helpers;
@@ -167,7 +166,6 @@ public class RuleViewModel : ObservableObject
                 : SmartPlaylistRuleValue.ToStoredValue(_selectedField.Field, _selectedOperator.Operator, _secondValue)
         };
     }
-
 
     public override string ToString() => $"{SelectedField.DisplayName} {SelectedOperator.DisplayName} {Value}".TrimEnd();
 }

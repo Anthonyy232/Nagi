@@ -44,26 +44,17 @@ public class ListenBrainzPresenceServiceTests : IAsyncDisposable
         return new Song { Id = Guid.NewGuid(), Title = "Test Song", Duration = duration };
     }
 
-    [Fact]
-    public async Task OnTrackChangedAsync_WithNowPlayingEnabled_UpdatesNowPlaying()
+    [Theory]
+    [InlineData(true, 1)]
+    [InlineData(false, 0)]
+    public async Task OnTrackChangedAsync_UpdatesNowPlayingOnlyWhenEnabled(bool nowPlayingEnabled, int expectedCalls)
     {
-        await InitializeServiceAsync(true, false);
+        await InitializeServiceAsync(nowPlayingEnabled, false);
         var song = CreateTestSong(TimeSpan.FromMinutes(3));
 
         await _service.OnTrackChangedAsync(song, 1);
 
-        await _scrobblerService.Received(1).UpdateNowPlayingAsync(song);
-    }
-
-    [Fact]
-    public async Task OnTrackChangedAsync_WithNowPlayingDisabled_DoesNotUpdateNowPlaying()
-    {
-        await InitializeServiceAsync(false, false);
-        var song = CreateTestSong(TimeSpan.FromMinutes(3));
-
-        await _service.OnTrackChangedAsync(song, 1);
-
-        await _scrobblerService.DidNotReceive().UpdateNowPlayingAsync(Arg.Any<Song>());
+        await _scrobblerService.Received(expectedCalls).UpdateNowPlayingAsync(song);
     }
 
     [Fact]

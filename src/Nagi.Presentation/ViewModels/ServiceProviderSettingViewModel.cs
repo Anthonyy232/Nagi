@@ -12,6 +12,9 @@ public partial class ServiceProviderSettingViewModel : ObservableObject
     public string? Description { get; init; }
     public ServiceCategory Category { get; init; }
 
+    /// <summary>MusicBrainz looks up the IDs other metadata providers use, so it stays first.</summary>
+    public bool IsPinnedFirst => Id == ServiceProviderIds.MusicBrainz;
+
     public static ServiceProviderSettingViewModel FromSetting(ServiceProviderSetting setting)
     {
         return new ServiceProviderSettingViewModel

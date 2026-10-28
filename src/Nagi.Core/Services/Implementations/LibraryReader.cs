@@ -182,8 +182,11 @@ public partial class LibraryReader : ILibraryReader, IDisposable
             var songs = await context.Songs.AsNoTracking().Where(s => chunk.Contains(s.Id))
                 .Select(s => new Song
                 {
-                    Id = s.Id, Title = s.Title, ArtistName = s.ArtistName,
-                    DurationTicks = s.DurationTicks, Genres = s.Genres,
+                    Id = s.Id,
+                    Title = s.Title,
+                    ArtistName = s.ArtistName,
+                    DurationTicks = s.DurationTicks,
+                    Genres = s.Genres,
                     SongArtists = s.SongArtists.Select(sa => new SongArtist
                     {
                         Order = sa.Order,

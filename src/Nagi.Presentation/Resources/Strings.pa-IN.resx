@@ -58,30 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NavItem_Library" xml:space="preserve">
-    <value>ਲਾਇਬ੍ਰੇਰੀ</value>
-  </data>
-  <data name="NavItem_Albums" xml:space="preserve">
-    <value>ਐਲਬਮਾਂ</value>
-  </data>
-  <data name="NavItem_Artists" xml:space="preserve">
-    <value>ਕਲਾਕਾਰ</value>
-  </data>
-  <data name="NavItem_Genres" xml:space="preserve">
-    <value>ਸ਼ੈਲੀਆਂ</value>
-  </data>
-  <data name="NavItem_Playlists" xml:space="preserve">
-    <value>ਪਲੇਲਿਸਟਾਂ</value>
-  </data>
-  <data name="NavItem_Folders" xml:space="preserve">
-    <value>ਫੋਲਡਰ</value>
-  </data>
-  <data name="NavItem_Favorites" xml:space="preserve">
-    <value>ਪਸੰਦੀਦਾ</value>
-  </data>
-  <data name="NavItem_Insights" xml:space="preserve">
-    <value>ਇਨਸਾਈਟਸ</value>
-  </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>ਸੈਟਿੰਗਾਂ</value>
   </data>
@@ -614,9 +590,6 @@
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg ਅਜੇ ਵੀ ਨਹੀਂ ਮਿਲਿਆ। ਕਿਰਪਾ ਕਰਕੇ FFmpeg ਇੰਸਟਾਲ ਕਰੋ ਅਤੇ 'ਦੁਬਾਰਾ ਜਾਂਚ ਕਰੋ' 'ਤੇ ਕਲਿੱਕ ਕਰੋ।</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>FFmpeg ਦੀ ਜਾਂਚ ਕਰਨ ਵਿੱਚ ਗਲਤੀ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>ਪਿਛਲਾ</value>
   </data>
@@ -956,9 +929,6 @@
   </data>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
     <value>ਅਗਲੇ ਗੀਤ</value>
-  </data>
-  <data name="AppName" xml:space="preserve">
-    <value>Nagi</value>
   </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>ਪਿਛਲਾ</value>

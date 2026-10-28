@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,6 +11,7 @@ using Microsoft.UI.Xaml.Controls;
 using Nagi.Core.Models;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services.Implementations;
 using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Dialogs;
@@ -28,11 +28,11 @@ public partial class UIService : IUIService
     private const string IssuesUrl = "https://github.com/Anthonyy232/Nagi/issues";
 
     private readonly IWin32InteropService _win32InteropService;
-    private readonly IViewModelFactory _viewModelFactory;
+    private readonly ViewModelFactory _viewModelFactory;
     private readonly ILogger<UIService> _logger;
     private readonly MainWindow _window;
 
-    public UIService(MainWindow window, IWin32InteropService win32InteropService, IViewModelFactory viewModelFactory,
+    public UIService(MainWindow window, IWin32InteropService win32InteropService, ViewModelFactory viewModelFactory,
         ILogger<UIService> logger)
     {
         _window = window;
@@ -217,21 +217,23 @@ public partial class UIService : IUIService
     {
         if (!TryGetXamlRoot(out var xamlRoot)) return false;
 
+        var viewModel = new FFmpegSetupViewModel(checkAction);
+        var statusBlock = new TextBlock { TextWrapping = TextWrapping.Wrap };
+        void ShowStatus()
+        {
+            statusBlock.Text = viewModel.StatusText;
+            statusBlock.Style = (Style)Application.Current.Resources[viewModel.Status switch
+            {
+                FFmpegSetupStatus.Checking => "FFmpegStatusCheckingTextStyle",
+                FFmpegSetupStatus.Detected => "FFmpegStatusDetectedTextStyle",
+                _ => "FFmpegStatusMissingTextStyle"
+            }];
+        }
+        viewModel.PropertyChanged += (_, _) => ShowStatus();
+        ShowStatus();
+
         var contentPanel = new StackPanel { Spacing = 12 };
-
-        var instructionsBlock = new TextBlock
-        {
-            Text = Strings.FFmpeg_SetupInstructions,
-            TextWrapping = TextWrapping.Wrap
-        };
-        contentPanel.Children.Add(instructionsBlock);
-
-        var statusBlock = new TextBlock
-        {
-            Text = Strings.FFmpeg_Status_NotDetected,
-            TextWrapping = TextWrapping.Wrap,
-            Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Orange)
-        };
+        contentPanel.Children.Add(new TextBlock { Text = Strings.FFmpeg_SetupInstructions, TextWrapping = TextWrapping.Wrap });
         contentPanel.Children.Add(statusBlock);
 
         var dialog = new ContentDialog
@@ -244,39 +246,11 @@ public partial class UIService : IUIService
             DefaultButton = ContentDialogButton.Primary
         };
 
-        dialog.PrimaryButtonClick += async (sender, args) =>
+        dialog.PrimaryButtonClick += async (_, args) =>
         {
             var deferral = args.GetDeferral();
-
-            statusBlock.Text = Strings.FFmpeg_Status_Checking;
-            statusBlock.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Gray);
-
-            try
-            {
-                var isInstalled = await checkAction();
-
-                if (isInstalled)
-                {
-                    statusBlock.Text = Strings.FFmpeg_Status_Detected;
-                    statusBlock.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Green);
-                }
-                else
-                {
-                    args.Cancel = true;
-                    statusBlock.Text = Strings.FFmpeg_Status_StillNotDetected;
-                    statusBlock.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Orange);
-                }
-            }
-            catch
-            {
-                args.Cancel = true;
-                statusBlock.Text = Strings.FFmpeg_Status_Error;
-                statusBlock.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Red);
-            }
-            finally
-            {
-                deferral.Complete();
-            }
+            args.Cancel = !await viewModel.RecheckAsync();
+            deferral.Complete();
         };
 
         var result = await ShowDialogAsync(dialog);

@@ -165,15 +165,14 @@ public class Song : ObservableObject
     public virtual ICollection<ListenHistory> ListenHistory { get; set; } = new List<ListenHistory>();
 
     /// <summary>
-    ///     Gets or sets the names of all associated artists joined by " & ".
+    ///     The names of all associated artists joined by " & ".
     ///     This is a denormalized field for efficient display and searching.
     /// </summary>
     [MaxLength(2000)]
     public string ArtistName { get; set; } = Artist.UnknownArtistName;
 
-
     /// <summary>
-    ///     Gets or sets the name of the primary artist (the one with the lowest order).
+    ///     The name of the primary artist (the one with the lowest order).
     ///     This is a denormalized field for efficient sorting.
     /// </summary>
     [MaxLength(500)]
@@ -187,6 +186,11 @@ public class Song : ObservableObject
     [MaxLength(500)]
     public string PrimaryArtistSortName { get; set; } = string.Empty;
 
+    /// <summary>
+    ///     The credited artists in credit order. Empty when <see cref="SongArtists" /> and their artists aren't loaded.
+    /// </summary>
+    public List<Artist> GetCreditedArtists() =>
+        SongArtists.OrderBy(sa => sa.Order).Select(sa => sa.Artist).OfType<Artist>().ToList();
 
     /// <summary>
     ///     Updates the denormalized <see cref="ArtistName" />, <see cref="PrimaryArtistName" />,
@@ -212,7 +216,7 @@ public class Song : ObservableObject
             }
         }
 
-        var artists = SongArtists.OrderBy(sa => sa.Order).Select(sa => sa.Artist?.Name).Where(n => !string.IsNullOrEmpty(n)).ToList();
+        var artists = GetCreditedArtists().Select(artist => artist.Name).Where(n => !string.IsNullOrEmpty(n)).ToList();
         if (artists.Count == 0)
         {
             ArtistName = Artist.UnknownArtistName;

@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -119,15 +118,11 @@ public partial class FolderViewModel : ObservableObject, IDisposable
     public partial bool IsDeletingFolder { get; set; }
 
     /// <summary>
-    ///     Gets a value indicating whether any long-running library operation is currently in progress.
+    ///     Disables the UI while a long-running library operation runs, so conflicting operations can't start.
     /// </summary>
-    /// <remarks>
-    ///     This is used to disable UI elements to prevent concurrent conflicting operations.
-    /// </remarks>
     public bool IsAnyOperationInProgress => IsAddingFolder || IsScanning || IsDeletingFolder;
 
     public bool HasFolders => Folders.Any();
-
 
     public void NavigateToFolderDetail(FolderViewModelItem? folder)
     {

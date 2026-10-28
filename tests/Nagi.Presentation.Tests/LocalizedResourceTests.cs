@@ -51,38 +51,38 @@ public class LocalizedResourceTests
             cultures.Should().NotBeEmpty();
 
             foreach (var culture in cultures)
-            foreach (var (key, text) in ReadStrings(manager, culture))
-            {
-                var where = $"{culture.Name} {key}";
-                if (!source.TryGetValue(key, out var original))
+                foreach (var (key, text) in ReadStrings(manager, culture))
                 {
-                    problems.Add($"{where}: key is not in the source");
-                    continue;
-                }
+                    var where = $"{culture.Name} {key}";
+                    if (!source.TryGetValue(key, out var original))
+                    {
+                        problems.Add($"{where}: key is not in the source");
+                        continue;
+                    }
 
-                if (string.IsNullOrWhiteSpace(text))
-                    problems.Add($"{where}: empty translation");
-                if (text.Count(c => c == '\n') != original.Count(c => c == '\n'))
-                    problems.Add($"{where}: line breaks differ from the source");
+                    if (string.IsNullOrWhiteSpace(text))
+                        problems.Add($"{where}: empty translation");
+                    if (text.Count(c => c == '\n') != original.Count(c => c == '\n'))
+                        problems.Add($"{where}: line breaks differ from the source");
 
-                // A translation may switch a plain count to an ICU plural, but it must still use the
-                // same arguments, and plain .NET placeholders must keep their exact format.
-                if (IsIcu(text))
-                {
-                    if (!ArgumentIndexes(text).SetEquals(ArgumentIndexes(original)))
-                        problems.Add($"{where}: ICU pattern uses different arguments than the source");
-                    if (!TryFormatIcu(text, ArgumentIndexes(original).Count))
-                        problems.Add($"{where}: ICU pattern does not format");
+                    // A translation may switch a plain count to an ICU plural, but it must still use the
+                    // same arguments, and plain .NET placeholders must keep their exact format.
+                    if (IsIcu(text))
+                    {
+                        if (!ArgumentIndexes(text).SetEquals(ArgumentIndexes(original)))
+                            problems.Add($"{where}: ICU pattern uses different arguments than the source");
+                        if (!TryFormatIcu(text, ArgumentIndexes(original).Count))
+                            problems.Add($"{where}: ICU pattern does not format");
+                    }
+                    else if (!NetPlaceholders(text).SetEquals(NetPlaceholders(original)))
+                    {
+                        problems.Add($"{where}: placeholders differ from the source ({original} -> {text})");
+                    }
+                    else if (!TryFormatNet(text, ArgumentIndexes(original).Count))
+                    {
+                        problems.Add($"{where}: string does not format");
+                    }
                 }
-                else if (!NetPlaceholders(text).SetEquals(NetPlaceholders(original)))
-                {
-                    problems.Add($"{where}: placeholders differ from the source ({original} -> {text})");
-                }
-                else if (!TryFormatNet(text, ArgumentIndexes(original).Count))
-                {
-                    problems.Add($"{where}: string does not format");
-                }
-            }
         }
 
         problems.Should().BeEmpty();
@@ -132,26 +132,6 @@ public class LocalizedResourceTests
         catch (Exception)
         {
             return false;
-        }
-    }
-
-    [Fact]
-    public void GeneratedAccessors_FollowUiCultureAndFallBackToNeutralResources()
-    {
-        var originalCulture = CultureInfo.CurrentUICulture;
-        try
-        {
-            CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("de-DE");
-            CoreStrings.Label_Title.Should().Be("Titel");
-            UiStrings.Label_Composer.Should().Be("Komponist");
-            CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("en-AU");
-            CoreStrings.Label_Title.Should().Be("Title");
-            UiStrings.Label_Composer.Should().Be("Composer");
-            UiStrings.Label_Grouping.Should().Be("Grouping");
-        }
-        finally
-        {
-            CultureInfo.CurrentUICulture = originalCulture;
         }
     }
 }

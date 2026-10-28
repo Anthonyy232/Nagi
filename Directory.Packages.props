@@ -13,7 +13,6 @@
     <PackageVersion Include="Microsoft.WindowsAppSDK.WinUI" Version="2.3.9" />
     <PackageVersion Include="Microsoft.WindowsAppSDK.InteractiveExperiences" Version="2.1.9" />
     <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2705" />
-    <PackageVersion Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.1" />
     <!-- UI Controls -->
     <PackageVersion Include="H.NotifyIcon.WinUI" Version="2.5.0-dev.2" />
     <PackageVersion Include="ImageEx.WinUI" Version="5.0.0" />

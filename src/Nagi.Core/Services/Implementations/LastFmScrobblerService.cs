@@ -12,7 +12,7 @@ namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
 ///     Handles direct API communication with Last.fm for scrobbling and "now playing" updates.
-///     Also implements <see cref="IListenSubmitter" /> so <see cref="IOfflineScrobbleService" />
+///     Also implements <see cref="IListenSubmitter" /> so <see cref="OfflineScrobbleService" />
 ///     can fan out queue processing to this destination alongside other scrobblers.
 /// </summary>
 public class LastFmScrobblerService : ILastFmScrobblerService, IListenSubmitter

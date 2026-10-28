@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -34,7 +33,6 @@ public sealed class AlbumViewModelItem
     public string? CoverArtUri { get; }
 
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverArtUri);
-
 
     public override string ToString() => $"{Title} — {ArtistName}";
 }
@@ -134,8 +132,7 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
             return;
 
         CurrentSortOrder = newSortOrder;
-        try { await _settingsService.SetSortOrderAsync(SortOrderHelper.AlbumsSortOrderKey, newSortOrder); }
-        catch (Exception ex) { _logger.LogError(ex, "Failed to save album sort order"); }
+        await _settingsService.SetSortOrderAsync(SortOrderHelper.AlbumsSortOrderKey, newSortOrder);
         CurrentPage = 1;
         await LoadCommand.ExecuteAsync(CancellationToken.None);
     }

@@ -178,8 +178,7 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
 
     private void RequestUpdate()
     {
-        // Increase debounce to 500ms. Discord's rate limit is 1 update per 15s,
-        // but the library specifically crashes if updates are sent within ~200ms of each other.
+        // Discord's rate limit is 1 update per 15s, but the library specifically crashes if updates are sent within ~200ms of each other.
         lock (_clientLock)
         {
             if (_client == null) return;

@@ -3,6 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Services.Implementations;
+using Nagi.Core.Services.Implementations.Presence;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
 
@@ -38,7 +40,7 @@ public static class AppServices
         // Start non-EF services while database migration is still running.
         await windowTask;
 
-        var presenceTask = services.GetRequiredService<IPresenceManager>().InitializeAsync();
+        var presenceTask = services.GetRequiredService<PresenceManager>().InitializeAsync();
         var trayTask = services.GetRequiredService<TrayIconViewModel>().InitializeAsync();
         var appInfoTask = services.GetRequiredService<IAppInfoService>().InitializeAsync();
 
@@ -47,9 +49,9 @@ public static class AppServices
         // Offline scrobbling queries ListenHistory, including columns added by recent migrations,
         // so start it only after database migration/backfill has completed.
         await dbTask;
-        var offlineScrobbleService = services.GetRequiredService<IOfflineScrobbleService>();
+        var offlineScrobbleService = services.GetRequiredService<OfflineScrobbleService>();
         offlineScrobbleService.Start();
-        services.GetRequiredService<ILibraryFolderWatcher>().Start();
+        services.GetRequiredService<LibraryFolderWatcher>().Start();
         var scrobbleTask = offlineScrobbleService.ProcessQueueAsync();
         var playbackTask = services.GetRequiredService<IMusicPlaybackService>().InitializeAsync(restoreSession);
         await playbackTask;
@@ -70,7 +72,7 @@ public static class AppServices
         services.GetRequiredService<PlayerViewModel>().Cleanup();
         services.GetRequiredService<TrayIconViewModel>().Cleanup();
 
-        var presenceTask = services.GetRequiredService<IPresenceManager>().ShutdownAsync();
+        var presenceTask = services.GetRequiredService<PresenceManager>().ShutdownAsync();
         var saveStateTask = SaveSessionAsync(services, logger);
 
         await Task.WhenAll(presenceTask, saveStateTask);

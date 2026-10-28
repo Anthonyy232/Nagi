@@ -1,4 +1,3 @@
-using System;
 using Nagi.Core.Models;
 
 namespace Nagi.Presentation.Models;

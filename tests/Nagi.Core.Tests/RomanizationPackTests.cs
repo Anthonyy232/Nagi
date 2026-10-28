@@ -256,7 +256,6 @@ public sealed class RomanizationPackTests : IDisposable
     [InlineData("hindi.")]
     [InlineData("../hindi")]
     [InlineData("..\\hindi")]
-    [InlineData("C:\\Music")]
     [InlineData("hindi:stream")]
     public async Task RemovePackAsync_WithReservedPathPackId_DoesNotDeleteOutsideTargetPack(string packId)
     {
@@ -266,6 +265,21 @@ public sealed class RomanizationPackTests : IDisposable
         await File.WriteAllTextAsync(sentinelPath, "keep");
 
         var result = await manager.RemovePackAsync(packId);
+
+        result.Succeeded.Should().BeFalse();
+        File.Exists(sentinelPath).Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task RemovePackAsync_WithRootedPackId_DoesNotDeleteThatDirectory()
+    {
+        var packBytes = CreateDevanagariPack();
+        var manager = CreateManager(CreateCatalogJson(CreateEntry("hindi", "devanagari-v1", packBytes)), packBytes);
+        var rootedDirectory = Directory.CreateDirectory(Path.Combine(_tempRoot, "Music")).FullName;
+        var sentinelPath = Path.Combine(rootedDirectory, "sentinel.txt");
+        await File.WriteAllTextAsync(sentinelPath, "keep");
+
+        var result = await manager.RemovePackAsync(rootedDirectory);
 
         result.Succeeded.Should().BeFalse();
         File.Exists(sentinelPath).Should().BeTrue();
@@ -291,7 +305,9 @@ public sealed class RomanizationPackTests : IDisposable
         {
             Phrases = new Dictionary<string, string>
             {
-                ["愛"] = "ai", ["愛情歌"] = "aijouka", ["愛情"] = "aijou"
+                ["愛"] = "ai",
+                ["愛情歌"] = "aijouka",
+                ["愛情"] = "aijou"
             },
             Sequences = new Dictionary<string, string> { ["き"] = "ki", ["きゃ"] = "kya" }
         };

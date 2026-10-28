@@ -5,7 +5,11 @@ using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Services.Implementations;
 
-public sealed class LibraryFolderWatcher : ILibraryFolderWatcher, IDisposable
+/// <summary>
+///     Watches the library's root folders and refreshes a folder in the background when audio files
+///     in it are added, removed, renamed or changed.
+/// </summary>
+public sealed class LibraryFolderWatcher : IDisposable
 {
     private readonly ILibraryReader _libraryReader;
     private readonly ILibraryScanner _libraryScanner;

@@ -12,7 +12,6 @@ namespace Nagi.Presentation.Tests;
 public class PagedListViewModelTests
 {
 
-
     [Fact]
     public async Task LoadAsync_WhenLibraryBecomesEmpty_ResetsPagerToFirstPage()
     {
@@ -136,7 +135,9 @@ public class PagedListViewModelTests
             requestedPages.Add(page);
             return Task.FromResult(new PagedResult<int>
             {
-                PageNumber = page, PageSize = size, TotalCount = 1500,
+                PageNumber = page,
+                PageSize = size,
+                TotalCount = 1500,
                 Items = Enumerable.Range((page - 1) * size, size).ToArray()
             });
         }, dispatcher);
@@ -189,11 +190,10 @@ public class PagedListViewModelTests
     }
 
     [Fact]
-    public async Task ChangingPageSize_WhenSavingFails_StillReloadsTheSelectedSize()
+    public async Task ChangingPageSize_ReloadsTheSelectedSize()
     {
         var settings = Substitute.For<IUISettingsService>();
         settings.GetSongsPerPageAsync().Returns(50);
-        settings.SetSongsPerPageAsync(25).Returns(_ => throw new IOException("Settings unavailable"));
         using var viewModel = new TestViewModel(settings, (page, size, _) => Task.FromResult(
             new PagedResult<int> { PageNumber = page, PageSize = size, TotalCount = 100, Items = [size] }));
         await viewModel.LoadAsync(CancellationToken.None);

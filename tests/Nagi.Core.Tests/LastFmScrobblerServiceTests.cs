@@ -13,6 +13,7 @@ using NSubstitute;
 using Xunit;
 
 namespace Nagi.Core.Tests;
+
 public class LastFmScrobblerServiceTests : IDisposable
 {
     private const string ApiKey = "test-api-key";
@@ -142,17 +143,6 @@ public class LastFmScrobblerServiceTests : IDisposable
         nowPlayingResult.Should().BeFalse();
         scrobbleResult.Should().BeFalse();
         _httpMessageHandler.Requests.Should().BeEmpty();
-    }
-    [Fact]
-    public async Task UpdateNowPlayingAsync_WhenApiCallFails_ReturnsFalse()
-    {
-        SetupValidCredentials();
-        SetupHttpResponse(HttpStatusCode.InternalServerError);
-
-        var result = await _scrobblerService.UpdateNowPlayingAsync(CreateTestSong());
-
-        result.Should().BeFalse();
-        _httpMessageHandler.Requests.Should().HaveCount(1);
     }
     [Fact]
     public async Task ScrobbleAsync_WhenApiCallFails_ReturnsFalse()
@@ -295,15 +285,13 @@ public class LastFmScrobblerServiceTests : IDisposable
         (await verify.ListenHistory.AllAsync(listen => listen.IsScrobbled)).Should().BeTrue();
     }
 
-    [Theory]
-    [InlineData(DateTimeKind.Utc)]
-    [InlineData(DateTimeKind.Unspecified)]
-    public async Task ScrobbleAsync_UtcTimestamp_RemainsUtcAfterSqliteDropsKind(DateTimeKind kind)
+    [Fact]
+    public async Task ScrobbleAsync_UtcTimestamp_RemainsUtcAfterSqliteDropsKind()
     {
         SetupValidCredentials();
         SetupHttpResponse(HttpStatusCode.OK);
 
-        await _scrobblerService.ScrobbleAsync(CreateTestSong(), new DateTime(2023, 1, 1, 12, 0, 0, kind));
+        await _scrobblerService.ScrobbleAsync(CreateTestSong(), new DateTime(2023, 1, 1, 12, 0, 0, DateTimeKind.Unspecified));
 
         _capturedRequestParams!["timestamp"].Should().Be("1672574400");
     }
@@ -326,7 +314,10 @@ public class LastFmScrobblerServiceTests : IDisposable
         song.Folder = new Folder { Name = "Music", Path = "C:/Music" };
         context.ListenHistory.AddRange(listens.Select(listen => new ListenHistory
         {
-            Id = listen.Id, Song = song, ListenTimestampUtc = listen.Timestamp, IsEligibleForScrobbling = true
+            Id = listen.Id,
+            Song = song,
+            ListenTimestampUtc = listen.Timestamp,
+            IsEligibleForScrobbling = true
         }));
         await context.SaveChangesAsync();
     }

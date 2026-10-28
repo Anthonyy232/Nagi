@@ -1,7 +1,5 @@
-using System;
 using LibVLCSharp;
 using Microsoft.Extensions.Logging;
-using System.Threading;
 using Nagi.Core.Resources;
 
 namespace Nagi.Audio.LibVlc;
@@ -97,7 +95,6 @@ public sealed partial class LibVlcAudioPlayerService
                 PlaybackEnded?.Invoke();
             }
 
-            // Reset flag when playback starts
             if (state == VLCState.Playing)
             {
                 _isExplicitStop = false;

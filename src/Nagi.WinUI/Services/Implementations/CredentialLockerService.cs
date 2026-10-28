@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Windows.Security.Credentials;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;

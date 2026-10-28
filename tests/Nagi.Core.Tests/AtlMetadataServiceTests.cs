@@ -304,7 +304,7 @@ public class AtlMetadataServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task ExtractMetadataAsync_WithCorruptFile_HandlesGracefully()
+    public async Task ExtractMetadataAsync_WithDamagedFile_FailsAsUnsupportedFormat()
     {
         var filePath = Path.Combine(_tempDirectory, "corrupt.mp3");
         File.WriteAllBytes(filePath, new byte[] { 0xFF, 0xFB, 0x00 });
@@ -312,43 +312,7 @@ public class AtlMetadataServiceTests : IDisposable
         _fileSystem.FileExists(filePath).Returns(true);
         var result = await _metadataService.ExtractMetadataAsync(filePath);
         result.ExtractionFailed.Should().BeTrue();
-        result.ErrorMessage.Should().BeOneOf("CorruptFile", "UnsupportedFormat");
-    }
-
-    [Fact]
-    public async Task ExtractMetadataAsync_WithUnsupportedFormat_HandlesGracefully()
-    {
-        var filePath = Path.Combine(_tempDirectory, "document.txt");
-        File.WriteAllText(filePath, "this is not a music file");
-        _fileSystem.GetFileInfo(filePath).Returns(new FileInfo(filePath));
-        _fileSystem.FileExists(filePath).Returns(true);
-        var result = await _metadataService.ExtractMetadataAsync(filePath);
-        result.ExtractionFailed.Should().BeTrue();
-        result.ErrorMessage.Should().BeOneOf("CorruptFile", "UnsupportedFormat");
-    }
-
-    [Fact]
-    public async Task ProcessAlbumArtAsync_WithDirectoryCoverArt_UsesFallback()
-    {
-        var audioFilePath = CreateTestAudioFile("nocoverart.mp3", track =>
-        {
-            track.Title = "No Cover Song";
-            track.Artist = "No Cover Artist";
-        });
-
-        var coverArtPath = Path.Combine(_tempDirectory, "cover.jpg");
-        var coverArtBytes = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A }; // PNG header
-
-        _fileSystem.GetFiles(_tempDirectory, "*.*").Returns(new[] { coverArtPath });
-        _fileSystem.ReadAllBytesAsync(coverArtPath).Returns(Task.FromResult(coverArtBytes));
-
-        _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>())
-            .Returns(Task.FromResult<(string?, string?, string?)>(("C:/art/cover.jpg", "lightCover", "darkCover")));
-        var result = await _metadataService.ExtractMetadataAsync(audioFilePath);
-        result.CoverArtUri.Should().Be("C:/art/cover.jpg");
-        result.LightSwatchId.Should().Be("lightCover");
-        result.DarkSwatchId.Should().Be("darkCover");
-        await _fileSystem.Received(1).ReadAllBytesAsync(coverArtPath);
+        result.ErrorMessage.Should().Be("UnsupportedFormat");
     }
 
     [Fact]

@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Nagi.Presentation.Services;
 using Nagi.Presentation.ViewModels;
 
 namespace Nagi.WinUI.Controls;
@@ -11,14 +12,7 @@ public sealed partial class PaginationControl : UserControl
         InitializeComponent();
     }
 
-    public int[] PageSizeOptions { get; } = [25, 50, 100, 250, 500, 0];
-
-    /// <summary>
-    ///     Hide the entire control when the total item count fits within the smallest
-    ///     page-size tier — pagination is meaningless at that scale.
-    /// </summary>
-    public Visibility VisibleIfPaginates(int totalItemCount) =>
-        totalItemCount > 25 ? Visibility.Visible : Visibility.Collapsed;
+    public IReadOnlyList<int> PageSizeOptions => SettingsDefaults.PageSizeOptions;
 
     public IPagedListViewModel ViewModel
     {

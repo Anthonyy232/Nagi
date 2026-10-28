@@ -1,5 +1,3 @@
-using System;
-using System.Net.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Nagi.Audio.LibVlc;
@@ -15,38 +13,11 @@ using Nagi.WinUI.Services.Implementations;
 namespace Nagi.WinUI.Services;
 
 /// <summary>
-///     Registers the WinUI host's services: HTTP clients, the Windows implementations of the Core and
+///     Registers the WinUI host's services: the Windows implementations of the Core and
 ///     Presentation abstractions, and the window and page factories.
 /// </summary>
 public static class AppServiceRegistration
 {
-    public static IServiceCollection AddNagiHttpClients(this IServiceCollection services)
-    {
-        services.ConfigureHttpClientDefaults(builder => builder.ConfigureHttpClient(client =>
-            client.DefaultRequestHeaders.UserAgent.ParseAdd("Nagi/1.0 (+https://github.com/Anthonyy232/Nagi)")));
-        services.AddHttpClient("")
-            .ConfigureHttpClient(client => client.Timeout = TimeSpan.FromSeconds(20))
-            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
-            {
-                PooledConnectionLifetime = TimeSpan.FromMinutes(2),
-                ConnectTimeout = TimeSpan.FromSeconds(10),
-                KeepAlivePingPolicy = HttpKeepAlivePingPolicy.Always,
-                KeepAlivePingDelay = TimeSpan.FromSeconds(30),
-                KeepAlivePingTimeout = TimeSpan.FromSeconds(5)
-            });
-
-        // Image downloads are larger payloads and tolerate slower CDNs; use a longer timeout.
-        services.AddHttpClient("ImageDownloader")
-            .ConfigureHttpClient(client => client.Timeout = TimeSpan.FromSeconds(30))
-            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
-            {
-                PooledConnectionLifetime = TimeSpan.FromMinutes(2),
-                ConnectTimeout = TimeSpan.FromSeconds(10),
-            });
-
-        return services;
-    }
-
     /// <summary>
     ///     Registers <paramref name="mainWindow" /> and its dispatcher queue, which the window, theme,
     ///     dialog and dispatcher services work with.

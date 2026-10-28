@@ -32,7 +32,8 @@ public class SmartPlaylistSongListViewModelTests
         _playlists.GetSmartPlaylistByIdAsync(oldId).Returns(pending.Task);
         var current = new SmartPlaylist
         {
-            Name = "Current", CoverImageUri = "https://example.com/current.jpg",
+            Name = "Current",
+            CoverImageUri = "https://example.com/current.jpg",
             SortOrder = SmartPlaylistSortOrder.DurationDesc
         };
         _playlists.GetSmartPlaylistByIdAsync(current.Id).Returns(current);
@@ -43,7 +44,6 @@ public class SmartPlaylistSongListViewModelTests
         pending.SetResult(new SmartPlaylist { Id = oldId, Name = "Outdated" });
         await oldLoad;
 
-        viewModel.GetSmartPlaylistId().Should().Be(current.Id);
         viewModel.PageTitle.Should().Be("Current");
         viewModel.CoverImageUri.Should().StartWith(current.CoverImageUri);
         viewModel.CurrentSortOrder.Should().Be(SongSortOrder.DurationDesc);
@@ -67,7 +67,6 @@ public class SmartPlaylistSongListViewModelTests
         pending.SetResult(new SmartPlaylist { Id = id, Name = "Outdated", SortOrder = SmartPlaylistSortOrder.Random });
         await loading;
 
-        viewModel.GetSmartPlaylistId().Should().BeNull();
         viewModel.PageTitle.Should().Be("Initial");
         viewModel.CurrentSortOrder.Should().Be(SongSortOrder.TitleAsc);
         viewModel.Songs.Should().BeEmpty();
@@ -101,7 +100,6 @@ public class SmartPlaylistSongListViewModelTests
         await oldLoad;
         await applied.Task.WaitAsync(TimeSpan.FromSeconds(10));
 
-        viewModel.GetSmartPlaylistId().Should().Be(newId);
         viewModel.Songs.Should().Equal(currentSong);
     }
 

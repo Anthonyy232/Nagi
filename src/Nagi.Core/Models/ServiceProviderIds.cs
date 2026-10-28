@@ -2,15 +2,9 @@
 
 public static class ServiceProviderIds
 {
-    #region Lyrics Providers
-
     public const string LrcLib = "lrclib";
 
     public const string NetEase = "netease";
-
-    #endregion
-
-    #region Metadata Providers
 
     /// <summary>MusicBrainz - Open music encyclopedia, provides artist/release IDs.</summary>
     public const string MusicBrainz = "musicbrainz";
@@ -41,10 +35,6 @@ public static class ServiceProviderIds
 
     public const string ListenBrainz = "listenbrainz";
 
-    #endregion
-
-    #region Internal Providers
-
     /// <summary>Nagi's own API server (key bootstrap). Not a third-party provider.</summary>
     public const string NagiApi = "nagi-api";
 
@@ -53,6 +43,4 @@ public static class ServiceProviderIds
     ///     Used when the originating provider is not knowable at download time.
     /// </summary>
     public const string ImageDownload = "image-download";
-
-    #endregion
 }

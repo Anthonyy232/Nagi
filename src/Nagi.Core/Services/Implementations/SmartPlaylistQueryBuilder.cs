@@ -74,7 +74,6 @@ public class SmartPlaylistQueryBuilder
     {
         return rule.Field switch
         {
-            // Text fields
             SmartPlaylistField.Title => BuildTextPredicate(s => s.Title, rule),
             SmartPlaylistField.Artist => BuildArtistPredicate(rule),
             SmartPlaylistField.Album => BuildTextPredicate(s => s.Album != null ? s.Album.Title : null, rule),
@@ -85,7 +84,6 @@ public class SmartPlaylistQueryBuilder
             // Genre is special (many-to-many)
             SmartPlaylistField.Genre => BuildGenrePredicate(rule),
 
-            // Numeric fields
             SmartPlaylistField.PlayCount => BuildNumericPredicate(s => s.PlayCount, rule),
             SmartPlaylistField.SkipCount => BuildNumericPredicate(s => s.SkipCount, rule),
             SmartPlaylistField.Rating => BuildNullableNumericPredicate(s => s.Rating, rule),
@@ -97,11 +95,9 @@ public class SmartPlaylistQueryBuilder
             SmartPlaylistField.Bitrate => BuildNullableNumericPredicate(s => s.Bitrate, rule),
             SmartPlaylistField.SampleRate => BuildNullableNumericPredicate(s => s.SampleRate, rule),
 
-            // Boolean fields
             SmartPlaylistField.IsLoved => BuildBooleanPredicate(s => s.IsLoved, rule),
             SmartPlaylistField.HasLyrics => BuildBooleanPredicate(s => !string.IsNullOrEmpty(s.LrcFilePath) || !string.IsNullOrEmpty(s.Lyrics), rule),
 
-            // Date fields
             SmartPlaylistField.DateAdded => BuildDatePredicate(s => s.DateAddedToLibrary, rule),
             SmartPlaylistField.LastPlayed => BuildDatePredicate(s => s.LastPlayedDate, rule),
             SmartPlaylistField.FileCreatedDate => BuildDatePredicate(s => s.FileCreatedDate, rule),

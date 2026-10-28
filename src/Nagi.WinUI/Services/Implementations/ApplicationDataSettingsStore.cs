@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Nagi.Presentation.Services.Abstractions;
+﻿using Nagi.Presentation.Services.Abstractions;
 using Windows.Storage;
 
 namespace Nagi.WinUI.Services.Implementations;

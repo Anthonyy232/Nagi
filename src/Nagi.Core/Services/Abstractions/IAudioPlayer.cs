@@ -45,7 +45,6 @@ public interface IAudioPlayer : IDisposable
     ///     This can be called from a background thread to pre-warm the audio engine
     ///     without blocking the UI thread during app startup. Concurrent calls are serialized.
     /// </summary>
-    /// <returns>A task that completes when initialization is done.</returns>
     Task EnsureInitializedAsync();
 
     /// <summary>Enumerates named outputs; system default is represented separately by an empty ID.</summary>
@@ -60,7 +59,7 @@ public interface IAudioPlayer : IDisposable
     /// <summary>
     ///     Asynchronously loads a song for playback. The returned task completes when the media is successfully opened or has
     ///     failed to load.
-    /// <param name="song">The song to load.</param>
+    /// </summary>
     Task LoadAsync(Song song);
 
     Task PlayAsync();
@@ -74,9 +73,6 @@ public interface IAudioPlayer : IDisposable
 
     Task SeekAsync(TimeSpan position);
 
-    /// <summary>
-    ///     Sets the player's volume.
-    /// </summary>
     /// <param name="volume">The volume level, clamped between 0.0 and 1.0.</param>
     Task SetVolumeAsync(double volume);
 

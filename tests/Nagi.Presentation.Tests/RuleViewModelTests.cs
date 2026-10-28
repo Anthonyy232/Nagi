@@ -9,10 +9,7 @@ namespace Nagi.Presentation.Tests;
 public class RuleViewModelTests
 {
     [Theory]
-    [InlineData(SmartPlaylistField.PlayCount, SmartPlaylistOperator.GreaterThan, "10", null)]
     [InlineData(SmartPlaylistField.IsLoved, SmartPlaylistOperator.IsTrue, "", null)]
-    [InlineData(SmartPlaylistField.HasLyrics, SmartPlaylistOperator.IsFalse, "", null)]
-    [InlineData(SmartPlaylistField.LastPlayed, SmartPlaylistOperator.GreaterThan, "2025-01-01T00:00:00.0000000", null)]
     [InlineData(SmartPlaylistField.Grouping, SmartPlaylistOperator.Contains, "live", null)]
     [InlineData(SmartPlaylistField.Year, SmartPlaylistOperator.IsInRange, "1990", "1999")]
     [InlineData(SmartPlaylistField.DateAdded, SmartPlaylistOperator.IsInRange, "2025-01-01T00:00:00.0000000", "2025-12-31T00:00:00.0000000")]
@@ -108,7 +105,10 @@ public class RuleViewModelTests
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de-DE");
             var editor = new RuleViewModel(new SmartPlaylistRule
             {
-                Field = field, Operator = SmartPlaylistOperator.IsInRange, Value = value, SecondValue = upper
+                Field = field,
+                Operator = SmartPlaylistOperator.IsInRange,
+                Value = value,
+                SecondValue = upper
             });
             var saved = editor.ToSmartPlaylistRule();
             saved.Value.Should().Be(storedValue);

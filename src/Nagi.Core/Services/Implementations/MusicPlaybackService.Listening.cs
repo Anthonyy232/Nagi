@@ -15,12 +15,12 @@ public partial class MusicPlaybackService
     public event Action? StopScheduleChanged;
 
     public async Task<bool> PlayMixAsync(IEnumerable<Guid> songIds, ShuffleMode mode, TimeSpan? duration = null,
-        PlaybackContext? context = null, int avoidRecentDays = 1)
+        PlaybackContext? context = null, int avoidRecentDays = PlaybackMixLimits.DefaultAvoidRecentDays)
     {
         if (!Enum.IsDefined(mode)) throw new ArgumentOutOfRangeException(nameof(mode));
-        if (duration is { } limit && (limit <= TimeSpan.Zero || limit > TimeSpan.FromDays(1)))
+        if (duration is { } limit && (limit <= TimeSpan.Zero || limit > TimeSpan.FromMinutes(PlaybackMixLimits.MaxMinutes)))
             throw new ArgumentOutOfRangeException(nameof(duration));
-        if (avoidRecentDays is < 0 or > 365) throw new ArgumentOutOfRangeException(nameof(avoidRecentDays));
+        if (avoidRecentDays is < 0 or > PlaybackMixLimits.MaxAvoidRecentDays) throw new ArgumentOutOfRangeException(nameof(avoidRecentDays));
 
         var played = false;
         await RunPlaybackRequest(async request =>

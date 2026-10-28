@@ -1,5 +1,3 @@
-using System;
-
 namespace Nagi.Presentation.Navigation;
 
 public record FolderSongViewNavigationParameter : INavigationParameter
@@ -9,8 +7,7 @@ public record FolderSongViewNavigationParameter : INavigationParameter
     public Guid FolderId { get; init; }
 
     /// <summary>
-    ///     Gets or sets the directory path within the folder to display.
-    ///     If null or empty, the root of the folder is displayed.
+    ///     The directory within the folder to show; null or empty shows the folder's root.
     /// </summary>
     public string? DirectoryPath { get; init; }
 }

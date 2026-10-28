@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -203,7 +202,6 @@ public partial class AlbumViewViewModel : SongListViewModelBase
 
         AlbumDetailsText = string.Join(" • ", detailsParts);
     }
-
 
     protected override void ApplyItemsToCollection(PagedResult<Song> result, bool append)
     {

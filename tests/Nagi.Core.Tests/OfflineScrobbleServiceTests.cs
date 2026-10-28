@@ -132,47 +132,20 @@ public class OfflineScrobbleServiceTests
         await submitter.Received(1).ProcessPendingListensAsync(Arg.Any<CancellationToken>());
     }
 
-    [Fact]
-    public async Task ProcessQueueAsync_WhenIsEnabledThrows_ContinuesWithOtherSubmitters()
-    {
-        var throwing = Substitute.For<IListenSubmitter>();
-        throwing.Id.Returns("throwing");
-        throwing.IsEnabledAsync().Returns<Task<bool>>(_ => throw new InvalidOperationException("config broken"));
-
-        var healthy = Substitute.For<IListenSubmitter>();
-        healthy.Id.Returns("healthy");
-        healthy.IsEnabledAsync().Returns(true);
-
-        using var service = CreateService(throwing, healthy);
-
-        await service.ProcessQueueAsync();
-
-        await throwing.DidNotReceive().ProcessPendingListensAsync(Arg.Any<CancellationToken>());
-        await healthy.Received(1).ProcessPendingListensAsync(Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task OnLastFmSettingsChanged_TriggersImmediateProcessing()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task SettingsChanged_TriggersImmediateProcessing(bool lastFm)
     {
         var submitter = Substitute.For<IListenSubmitter>();
         submitter.IsEnabledAsync().Returns(true);
 
         using var service = CreateService(submitter);
 
-        _settingsService.LastFmSettingsChanged += Raise.Event<Action>();
-
-        await submitter.Received().ProcessPendingListensAsync(Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task OnListenBrainzSettingsChanged_TriggersImmediateProcessing()
-    {
-        var submitter = Substitute.For<IListenSubmitter>();
-        submitter.IsEnabledAsync().Returns(true);
-
-        using var service = CreateService(submitter);
-
-        _settingsService.ListenBrainzSettingsChanged += Raise.Event<Action>();
+        if (lastFm)
+            _settingsService.LastFmSettingsChanged += Raise.Event<Action>();
+        else
+            _settingsService.ListenBrainzSettingsChanged += Raise.Event<Action>();
 
         await submitter.Received().ProcessPendingListensAsync(Arg.Any<CancellationToken>());
     }

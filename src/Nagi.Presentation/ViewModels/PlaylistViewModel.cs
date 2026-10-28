@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -51,8 +49,6 @@ public partial class PlaylistViewModelItem : ObservableObject
     public DateTime DateCreated { get; }
 
     public DateTime DateModified { get; set; }
-
-
 
     [ObservableProperty] public partial string Name { get; set; }
 
@@ -154,12 +150,10 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
 
     partial void OnCurrentSortOrderChanged(PlaylistSortOrder value) => UpdateSortOrderText();
 
-
     public bool IsAnyOperationInProgress =>
         IsLoadingPlaylists || IsCreatingPlaylist || IsRenamingPlaylist || IsDeletingPlaylist || IsUpdatingCover;
 
     public bool HasPlaylists => Playlists.Count > 0;
-
 
     public void NavigateToPlaylistDetail(PlaylistViewModelItem? playlist)
     {
@@ -301,15 +295,8 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     {
         if (_isDisposed || IsAnyOperationInProgress) return;
 
-        try
-        {
-            var created = await _uiService.ShowSmartPlaylistEditorAsync();
-            if (created is not null && !_isDisposed) await LoadPlaylistsAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to create a smart playlist");
-        }
+        var created = await _uiService.ShowSmartPlaylistEditorAsync();
+        if (created is not null && !_isDisposed) await LoadPlaylistsAsync();
     }
 
     [RelayCommand]
@@ -608,8 +595,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
             && newSortOrder != CurrentSortOrder)
         {
             CurrentSortOrder = newSortOrder;
-            try { await _settingsService.SetSortOrderAsync(SortOrderHelper.PlaylistsSortOrderKey, newSortOrder); }
-            catch (Exception ex) { _logger.LogError(ex, "Failed to save playlist sort order"); }
+            await _settingsService.SetSortOrderAsync(SortOrderHelper.PlaylistsSortOrderKey, newSortOrder);
             ApplyFilter();
         }
     }

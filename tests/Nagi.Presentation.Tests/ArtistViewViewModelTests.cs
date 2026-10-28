@@ -37,26 +37,6 @@ public class ArtistViewViewModelTests
     }
 
     [Fact]
-    public async Task ImageCommands_UseTheLibraryWriterWhenScannerIsASeparateService()
-    {
-        var library = new LibraryFakes();
-        var scanner = Substitute.For<ILibraryScanner>();
-        var artistId = Guid.NewGuid();
-        scanner.GetArtistDetailsAsync(artistId, Arg.Any<bool>(), Arg.Any<CancellationToken>())
-            .Returns(new Artist { Id = artistId, Name = "Artist" });
-        var ui = Substitute.For<IUIService>();
-        ui.PickSingleFileAsync(Arg.Any<IEnumerable<string>>()).Returns("portrait.png");
-        using var viewModel = CreateViewModel(library, scanner, ui);
-        await viewModel.LoadArtistDetailsAsync(artistId);
-
-        await viewModel.ChangeArtistImageCommand.ExecuteAsync(null);
-        await viewModel.RemoveArtistImageCommand.ExecuteAsync(null);
-
-        await library.Writer.Received(1).UpdateArtistImageAsync(artistId, "portrait.png");
-        await library.Writer.Received(1).RemoveArtistImageAsync(artistId);
-    }
-
-    [Fact]
     public async Task ChangeArtistImage_CancelledPickerLeavesImageUntouched()
     {
         var library = new LibraryFakes();
@@ -69,13 +49,14 @@ public class ArtistViewViewModelTests
         await library.Writer.DidNotReceiveWithAnyArgs().UpdateArtistImageAsync(default, default!);
     }
 
-
     private static ArtistViewViewModel CreateViewModel(LibraryFakes library, ILibraryScanner scanner, IUIService? ui = null)
     {
         library.Reader.GetSongsByArtistIdPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
             Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>
             {
-                PageNumber = 1, PageSize = 50, Items = []
+                PageNumber = 1,
+                PageSize = 50,
+                Items = []
             });
         var settings = Substitute.For<IUISettingsService>();
         settings.GetSongsPerPageAsync().Returns(50);

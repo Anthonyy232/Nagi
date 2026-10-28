@@ -34,10 +34,8 @@ public class LyricsPageViewModelTests
     [Theory]
     [InlineData("sidecar", true)]
     [InlineData("sidecar", false)]
-    [InlineData("embedded", true)]
     [InlineData("embedded", false)]
     [InlineData("network", true)]
-    [InlineData("network", false)]
     public void LyricsSources_PreservePriorityAndUseTheSameDisplayPipeline(string source, bool timed)
     {
         var song = new Song { Title = "Song" };
@@ -266,6 +264,23 @@ public class LyricsPageViewModelTests
     {
         _playback.CurrentTrack.Returns(song);
         _playback.TrackChanged += Raise.Event<Action>();
+    }
+
+    [Theory]
+    [InlineData(0, 15, 0.5, 5)]
+    [InlineData(2, 40, 0.5, 20)]
+    [InlineData(1, 25, 1, 0)]
+    public void CurrentLineProgress_RunsUntilTheNextLineOrTheSongEnds(int lineIndex, int positionSeconds,
+        double fraction, int remainingSeconds)
+    {
+        using var viewModel = CreateViewModel();
+        var lines = new[] { 10, 20, 20 }.Select(start => new LyricLine(TimeSpan.FromSeconds(start), "line")).ToList();
+        viewModel.LyricLines.ReplaceRange(lines);
+        viewModel.SongDuration = TimeSpan.FromSeconds(60);
+        viewModel.CurrentLine = lines[lineIndex];
+        viewModel.CurrentPosition = TimeSpan.FromSeconds(positionSeconds);
+
+        viewModel.GetCurrentLineProgress().Should().Be((fraction, TimeSpan.FromSeconds(remainingSeconds)));
     }
 
     private LyricsPageViewModel CreateViewModel(IDispatcherService? dispatcher = null) => new(

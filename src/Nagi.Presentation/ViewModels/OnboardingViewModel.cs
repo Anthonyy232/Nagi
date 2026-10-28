@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
@@ -158,5 +157,16 @@ public partial class OnboardingViewModel : ObservableObject
     }
 
     [RelayCommand(CanExecute = nameof(IsLibraryReady))]
-    private Task FinishAsync() => _applicationLifecycle.NavigateToMainContentAsync();
+    private async Task FinishAsync()
+    {
+        try
+        {
+            await _applicationLifecycle.NavigateToMainContentAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to open the library after onboarding");
+            await _uiService.ShowMessageDialogAsync(Strings.Generic_Error, Strings.Listening_ActionError);
+        }
+    }
 }

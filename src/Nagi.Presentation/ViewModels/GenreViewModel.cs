@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -87,7 +86,6 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
     public partial GenreSortOrder CurrentSortOrder { get; set; } = GenreSortOrder.NameAsc;
 
     public string CurrentSortOrderText => SortOrderHelper.GetDisplayName(CurrentSortOrder);
-
 
     public bool HasGenres => Genres.Any();
 
@@ -177,8 +175,7 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
             && newSortOrder != CurrentSortOrder)
         {
             CurrentSortOrder = newSortOrder;
-            try { await _settingsService.SetSortOrderAsync(SortOrderHelper.GenresSortOrderKey, newSortOrder); }
-            catch (Exception ex) { _logger.LogError(ex, "Failed to save genre sort order"); }
+            await _settingsService.SetSortOrderAsync(SortOrderHelper.GenresSortOrderKey, newSortOrder);
             ApplyFilter();
         }
     }

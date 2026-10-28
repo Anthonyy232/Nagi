@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace Nagi.Presentation.Services.Abstractions;
+﻿namespace Nagi.Presentation.Services.Abstractions;
 
 /// <summary>
 ///     Starts the app when the user signs in, through the operating system's startup registration.

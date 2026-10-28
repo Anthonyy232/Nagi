@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -303,22 +301,43 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         IsQueueViewVisible = false;
     }
 
+    /// <returns>Whether the navigation pane was open last time, or <c>null</c> when its state isn't remembered.</returns>
+    public async Task<bool?> GetRememberedPaneOpenAsync() =>
+        await _settingsService.GetRememberPaneStateEnabledAsync() ? await _settingsService.GetLastPaneOpenAsync() : null;
+
+    public async Task RememberPaneOpenAsync(bool isOpen)
+    {
+        if (await _settingsService.GetRememberPaneStateEnabledAsync())
+            await _settingsService.SetLastPaneOpenAsync(isOpen);
+    }
+
     private bool CanClearQueue() => _playbackService.PlaybackQueue.Count > 0;
 
     [RelayCommand]
     private void ToggleQueuePanel() => IsQueuePanelOpen = !IsQueuePanelOpen;
 
     [RelayCommand(CanExecute = nameof(CanClearQueue))]
-    private Task ClearQueueAsync() => _playbackService.ClearQueueAsync();
+    private Task ClearQueueAsync() => RunActionAsync(_playbackService.ClearQueueAsync);
 
     [RelayCommand]
-    private Task PlayPauseAsync() => _playbackService.PlayPauseAsync();
+    private Task PlayPauseAsync() => RunActionAsync(_playbackService.PlayPauseAsync);
 
     [RelayCommand]
-    private Task PreviousAsync() => _playbackService.PreviousAsync();
+    private Task PreviousAsync() => RunActionAsync(_playbackService.PreviousAsync);
 
     [RelayCommand]
-    private Task NextAsync() => _playbackService.NextAsync();
+    private Task NextAsync() => RunActionAsync(_playbackService.NextAsync);
+
+    private async Task RunActionAsync(Func<Task> action)
+    {
+        try { await action(); }
+        catch (OperationCanceledException) { }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Action failed");
+            if (!_isCleanedUp) await _uiService.ShowMessageDialogAsync(Strings.Generic_Error, Strings.Listening_ActionError);
+        }
+    }
 
     [RelayCommand]
     private Task ToggleShuffleAsync()
@@ -369,6 +388,9 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     private bool CanNavigateToTrack(object? parameter) => parameter != null || CurrentPlayingTrack != null;
 
     partial void OnIsMutedChanged(bool value) => UpdateButtonState("Volume", VolumeIcon, VolumeButtonToolTip);
+
+    /// <summary>Moves the volume one step, as the mouse wheel does over a volume control.</summary>
+    public void StepVolume(bool up) => CurrentVolume = Math.Clamp(CurrentVolume + (up ? 5 : -5), 0, 100);
 
     partial void OnCurrentVolumeChanged(double value)
     {
@@ -755,13 +777,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     {
         if (e.PropertyName == nameof(QueueDisplaySettings.ShowTotalDuration))
             SidebarQueue.SetShowTotalDuration(QueueDisplaySettings.ShowTotalDuration);
-        try
-        {
-            await _settingsService.SetQueueDisplaySettingsAsync(QueueDisplaySettings);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to save queue display settings.");
-        }
+        await _settingsService.SetQueueDisplaySettingsAsync(QueueDisplaySettings);
     }
 }

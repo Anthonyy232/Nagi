@@ -553,7 +553,6 @@ public partial class LibraryService
         return (wasMetadataFoundAndUpdated, artist.LocalImageCachePath);
     }
 
-
     private async Task<string?> DownloadAndCacheArtistImageAsync(Artist artist, Uri imageUrl, CancellationToken cancellationToken)
     {
         var artistId = artist.Id;

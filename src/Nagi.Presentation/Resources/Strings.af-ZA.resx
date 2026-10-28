@@ -58,30 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NavItem_Library" xml:space="preserve">
-    <value>Biblioteek</value>
-  </data>
-  <data name="NavItem_Albums" xml:space="preserve">
-    <value>Albums</value>
-  </data>
-  <data name="NavItem_Artists" xml:space="preserve">
-    <value>Kunstenaars</value>
-  </data>
-  <data name="NavItem_Genres" xml:space="preserve">
-    <value>Genres</value>
-  </data>
-  <data name="NavItem_Playlists" xml:space="preserve">
-    <value>Snitlyste</value>
-  </data>
-  <data name="NavItem_Folders" xml:space="preserve">
-    <value>Vouers</value>
-  </data>
-  <data name="NavItem_Favorites" xml:space="preserve">
-    <value>Gunstelinge</value>
-  </data>
-  <data name="NavItem_Insights" xml:space="preserve">
-    <value>Insigte</value>
-  </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>Instellings</value>
   </data>
@@ -614,9 +590,6 @@ Lêers wat nie ingevoer kon word nie: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg steeds nie bespeur nie. Installeer asseblief FFmpeg en klik 'Herkontroleer'.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Fout met soek na FFmpeg. Probeer asseblief weer.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Vorige</value>
   </data>
@@ -956,9 +929,6 @@ Wil jy voortgaan?</value>
   </data>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
     <value>Volgende</value>
-  </data>
-  <data name="AppName" xml:space="preserve">
-    <value>Nagi</value>
   </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Vorige</value>

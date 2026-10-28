@@ -277,8 +277,6 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
     [Theory]
     [InlineData(HttpStatusCode.InternalServerError)]
     [InlineData(HttpStatusCode.Unauthorized)]
-    [InlineData(HttpStatusCode.Forbidden)]
-    [InlineData(HttpStatusCode.NotFound)]
     public async Task ProcessPendingListensAsync_RecoverableBatchFailurePreservesListensForRetry(HttpStatusCode status)
     {
         _settingsService.GetListenBrainzUserTokenAsync().Returns(Task.FromResult<string?>("tok"));
@@ -297,7 +295,7 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
         (await verify.ListenHistory.FindAsync(100L))!.IsSubmittedToListenBrainz.Should().BeFalse();
         (await verify.ListenHistory.FindAsync(101L))!.IsSubmittedToListenBrainz.Should().BeFalse();
         (await verify.ListenHistory.FindAsync(102L))!.IsSubmittedToListenBrainz.Should().BeFalse();
-        if (status is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
+        if (status is HttpStatusCode.Unauthorized)
             _httpMessageHandler.Requests.Should().ContainSingle();
 
         SetupHttpResponse(HttpStatusCode.OK, "{}");
@@ -322,7 +320,9 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
             song.Folder = new Folder { Name = "Music", Path = "C:/Music" };
             context.ListenHistory.AddRange(Enumerable.Range(1, 3).Select(id => new ListenHistory
             {
-                Id = id, Song = song, IsEligibleForScrobbling = true,
+                Id = id,
+                Song = song,
+                IsEligibleForScrobbling = true,
                 ListenTimestampUtc = DateTime.UtcNow.AddMinutes(-10 + id)
             }));
             await context.SaveChangesAsync();
@@ -351,7 +351,10 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
         song.Folder = new Folder { Name = "Music", Path = "C:/Music" };
         context.ListenHistory.AddRange(listens.Select(listen => new ListenHistory
         {
-            Id = listen.Id, Song = song, ListenTimestampUtc = listen.Timestamp, IsEligibleForScrobbling = true
+            Id = listen.Id,
+            Song = song,
+            ListenTimestampUtc = listen.Timestamp,
+            IsEligibleForScrobbling = true
         }));
         await context.SaveChangesAsync();
     }

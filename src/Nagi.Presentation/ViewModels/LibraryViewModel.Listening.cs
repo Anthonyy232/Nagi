@@ -1,7 +1,5 @@
-using System;
 using System.Threading;
 using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nagi.Core.Models;
@@ -14,7 +12,7 @@ public partial class LibraryViewModel
     private bool _suggestionDismissed;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ShowSuggestion))]
+    [NotifyPropertyChangedFor(nameof(ShowSuggestion), nameof(EmptyStateTitle), nameof(EmptyStateSubtitle))]
     public partial bool ShowFavoritesOnly { get; set; }
 
     [ObservableProperty]
@@ -25,6 +23,24 @@ public partial class LibraryViewModel
     public bool ShowSuggestion => Suggestion is not null && !ShowFavoritesOnly && !IsSearchActive;
     public string SuggestionReason => Suggestion is null ? string.Empty
         : string.Format(Strings.Listening_RediscoveryReason, Suggestion.LastPlayedDate.ToLocalTime());
+
+    public string EmptyStateTitle => IsSearchActive
+        ? Strings.LibraryPage_SearchEmpty_Title
+        : ShowFavoritesOnly ? Strings.Listening_FavoritesEmpty : Strings.LibraryPage_EmptyState_Title;
+
+    public string EmptyStateSubtitle => IsSearchActive
+        ? Strings.LibraryPage_SearchEmpty_Subtitle
+        : ShowFavoritesOnly ? Strings.Listening_FavoritesEmptyDescription : Strings.LibraryPage_EmptyState_Subtitle;
+
+    /// <summary>
+    ///     Shows the whole library or only favorites, loading the songs and starting the initial background rescan on
+    ///     the first visit.
+    /// </summary>
+    public async Task OpenAsync(bool favorites)
+    {
+        await SetLibraryViewAsync(favorites);
+        if (!HasInitialized) await InitializeAsync();
+    }
 
     public async Task SetLibraryViewAsync(bool favorites)
     {
@@ -43,6 +59,8 @@ public partial class LibraryViewModel
     {
         base.OnSearchTermChangedInternal(value);
         OnPropertyChanged(nameof(ShowSuggestion));
+        OnPropertyChanged(nameof(EmptyStateTitle));
+        OnPropertyChanged(nameof(EmptyStateSubtitle));
     }
 
     protected override async Task OnAuxiliaryLoadAsync(CancellationToken token)
@@ -71,7 +89,7 @@ public partial class LibraryViewModel
     {
         var suggestion = Suggestion;
         if (suggestion is null) return Task.CompletedTask;
-        return RunListeningActionAsync(async () =>
+        return RunActionAsync(async () =>
         {
             await _playbackService.PlayAsync(suggestion.SongId);
             DismissSuggestion();

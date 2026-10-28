@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.UI.Xaml.Media;
+﻿using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace Nagi.WinUI.Helpers;

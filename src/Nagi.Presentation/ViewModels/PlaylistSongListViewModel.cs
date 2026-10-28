@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -40,12 +38,9 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         Songs.CollectionChanged += OnSongsCollectionChanged;
     }
 
-
     public bool IsReorderingEnabled => !_isDisposed && !_isSavingOrder && !IsLoading && !HasLoadError &&
         IsCurrentViewAPlaylist && CurrentSortOrder == SongSortOrder.PlaylistOrder && !IsSearchActive &&
         Songs.Count == TotalItemCount;
-
-
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(RemoveSelectedSongsFromPlaylistCommand))]
@@ -107,7 +102,6 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         }
     }
 
-
     protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
         SongSortOrder sortOrder, CancellationToken cancellationToken = default)
     {
@@ -133,22 +127,21 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         _currentPlaylistId.HasValue ? new(PlaybackContextType.Playlist, _currentPlaylistId.Value) : base.GetPlaybackContext();
 
     [RelayCommand(CanExecute = nameof(CanRemoveSongs))]
-    private async Task RemoveSelectedSongsFromPlaylistAsync()
-    {
-        if (!_currentPlaylistId.HasValue || !HasSelectedSongs) return;
+    private Task RemoveSelectedSongsFromPlaylistAsync() =>
+        !_currentPlaylistId.HasValue || !HasSelectedSongs ? Task.CompletedTask : RunActionAsync(async () =>
+        {
+            var playlistId = _currentPlaylistId.Value;
+            var generation = _playlistGeneration;
+            var songIdsToRemove = await GetCurrentSelectionIdsAsync();
+            if (_isDisposed || generation != _playlistGeneration || songIdsToRemove.Count == 0) return;
+            _logger.LogDebug("Removing {SongCount} songs from playlist ID {PlaylistId}", songIdsToRemove.Count,
+                playlistId);
 
-        var playlistId = _currentPlaylistId.Value;
-        var generation = _playlistGeneration;
-        var songIdsToRemove = await GetCurrentSelectionIdsAsync();
-        if (_isDisposed || generation != _playlistGeneration || songIdsToRemove.Count == 0) return;
-        _logger.LogDebug("Removing {SongCount} songs from playlist ID {PlaylistId}", songIdsToRemove.Count,
-            playlistId);
-
-        var success =
-            await _playlistService.RemoveSongsFromPlaylistAsync(playlistId, songIdsToRemove);
-        if (success && !_isDisposed && generation == _playlistGeneration)
-            await RefreshOrSortSongsCommand.ExecuteAsync(null);
-    }
+            var success =
+                await _playlistService.RemoveSongsFromPlaylistAsync(playlistId, songIdsToRemove);
+            if (success && !_isDisposed && generation == _playlistGeneration)
+                await RefreshOrSortSongsCommand.ExecuteAsync(null);
+        });
 
     private bool CanRemoveSongs()
     {
@@ -223,10 +216,6 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
                     await _uiService.ShowMessageDialogAsync(
                         Strings.Generic_Error, Strings.Playlist_ErrorSavingOrder);
             }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to recover playlist view after an unsuccessful reorder");
         }
         finally
         {

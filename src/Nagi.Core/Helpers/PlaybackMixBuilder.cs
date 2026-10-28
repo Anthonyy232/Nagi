@@ -5,7 +5,7 @@ namespace Nagi.Core.Helpers;
 internal static class PlaybackMixBuilder
 {
     public static List<Guid> Build(IEnumerable<MixCandidate> candidates, ShuffleMode mode, DateTime now,
-        TimeSpan? duration = null, int avoidRecentDays = 1, Random? random = null)
+        TimeSpan? duration = null, int avoidRecentDays = PlaybackMixLimits.DefaultAvoidRecentDays, Random? random = null)
     {
         random ??= Random.Shared;
         var eligible = candidates.Where(c => mode switch

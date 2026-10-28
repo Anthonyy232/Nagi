@@ -131,5 +131,4 @@ public partial class PlayerViewModelTests : IDisposable
         _viewModel.CurrentPosition.Should().Be(0);
         _playback.DidNotReceive().SeekAsync(Arg.Any<TimeSpan>());
     }
-
 }

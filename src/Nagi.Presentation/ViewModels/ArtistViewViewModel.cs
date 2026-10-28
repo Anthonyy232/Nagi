@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -120,10 +119,8 @@ public partial class ArtistViewViewModel : SongListViewModelBase
             var shouldFetchOnline = await onlineMetadataTask;
             CurrentSortOrder = await sortOrderTask;
 
-            // Start loading songs in parallel (updates its own UI)
+            // Updates its own UI.
             var songsTask = RefreshOrSortSongsAsync(manualToken: token);
-
-            // Start loading artist details and albums in parallel
             var artistTask = _libraryScanner.GetArtistDetailsAsync(artistId, shouldFetchOnline, token);
             var albumsTask = _libraryReader.GetTopAlbumsForArtistAsync(artistId, int.MaxValue);
 
@@ -202,14 +199,8 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteLoadCommands))]
-    private async Task PlayAlbumAsync(Guid albumId)
-    {
-        await _playbackService.PlayAlbumAsync(albumId);
-    }
+    private Task PlayAlbumAsync(Guid albumId) => RunActionAsync(() => _playbackService.PlayAlbumAsync(albumId));
 
-    /// <summary>
-    ///     Handles real-time updates to artist metadata, such as a downloaded artist image.
-    /// </summary>
     private void OnArtistMetadataUpdated(object? sender, ArtistMetadataUpdatedEventArgs e)
     {
         if (e.ArtistId == _artistId)
@@ -236,7 +227,6 @@ public partial class ArtistViewViewModel : SongListViewModelBase
             OnArtistMetadataUpdated(sender, update);
         }
     }
-
 
     public override SongListColumns VisibleColumns => ChosenColumns & ~SongListColumns.Artist;
 

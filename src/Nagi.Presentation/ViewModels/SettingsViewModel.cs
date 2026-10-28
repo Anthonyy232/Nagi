@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -111,6 +109,17 @@ public partial class SettingsViewModel : SettingsSectionViewModel
         Library.Dispose();
         Scrobbling.Dispose();
         Romanization.Dispose();
+    }
+
+    /// <summary>
+    ///     Loads the settings page: the saved settings, then the current audio devices, with the romanization packs
+    ///     loading in the background.
+    /// </summary>
+    public async Task OpenAsync()
+    {
+        await LoadSettingsAsync();
+        await Audio.RefreshAudioOutputDevicesCommand.ExecuteAsync(null);
+        _ = Romanization.LoadRomanizationPacksAsync();
     }
 
     public async Task LoadSettingsAsync()
@@ -278,6 +287,5 @@ public partial class SettingsViewModel : SettingsSectionViewModel
 
     partial void OnIsDiscordRichPresenceEnabledChanged(bool value) =>
         _ = SaveSettingAsync(() => _settingsService.SetDiscordRichPresenceEnabledAsync(value));
-
 
 }

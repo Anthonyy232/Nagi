@@ -17,7 +17,7 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     PlaybackStopMode StopMode { get; }
     DateTimeOffset? StopDeadline { get; }
     event Action? StopScheduleChanged;
-    Task<bool> PlayMixAsync(IEnumerable<Guid> songIds, ShuffleMode mode, TimeSpan? duration = null, PlaybackContext? context = null, int avoidRecentDays = 1);
+    Task<bool> PlayMixAsync(IEnumerable<Guid> songIds, ShuffleMode mode, TimeSpan? duration = null, PlaybackContext? context = null, int avoidRecentDays = PlaybackMixLimits.DefaultAvoidRecentDays);
     void ScheduleStop(PlaybackStopMode mode, TimeSpan? delay = null, bool finishCurrentTrack = true);
     Task CheckStopScheduleAsync();
 
@@ -58,7 +58,6 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     /// </summary>
     int CurrentShuffledIndex { get; }
 
-
     bool IsShuffleEnabled { get; }
 
     RepeatMode CurrentRepeatMode { get; }
@@ -91,7 +90,7 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     /// <summary>
     ///     Occurs once per listening session when the current track has been played
     ///     long enough to be eligible for scrobbling (track &gt; 30 s AND played ≥ 50% or ≥ 4 min).
-    ///     Subscribers receive the song and the listen history session ID.
+    ///     Subscribers receive the song, the listen history session ID and the UTC time the listen started.
     /// </summary>
     event Action<Song, long, DateTime>? ScrobbleEligibilityReached;
 

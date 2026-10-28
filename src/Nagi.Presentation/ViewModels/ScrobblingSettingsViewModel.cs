@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -6,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
+using CoreStrings = Nagi.Core.Resources.Strings;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -218,47 +218,26 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
     partial void OnIsLastFmNowPlayingEnabledChanged(bool value) =>
         _ = SaveSettingAsync(() => _settingsService.SetLastFmNowPlayingEnabledAsync(value));
 
-    async partial void OnListenBrainzScrobblingEnabledChanged(bool value)
-    {
-        if (_isInitializing) return;
-        try
+    partial void OnListenBrainzScrobblingEnabledChanged(bool value) =>
+        _ = SaveSettingAsync(async () =>
         {
             await _settingsService.SetListenBrainzScrobblingEnabledAsync(value);
             if (value) await StampListenBrainzEnabledSinceIfNeededAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to persist ListenBrainz scrobbling toggle");
-        }
-    }
+        });
 
-    async partial void OnListenBrainzNowPlayingEnabledChanged(bool value)
-    {
-        if (_isInitializing) return;
-        try
+    partial void OnListenBrainzNowPlayingEnabledChanged(bool value) =>
+        _ = SaveSettingAsync(async () =>
         {
             await _settingsService.SetListenBrainzNowPlayingEnabledAsync(value);
             if (value) await StampListenBrainzEnabledSinceIfNeededAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to persist ListenBrainz now-playing toggle");
-        }
-    }
+        });
 
-    async partial void OnListenBrainzServerUrlChanged(string value)
+    partial void OnListenBrainzServerUrlChanged(string value)
     {
         if (_isInitializing) return;
         ++_listenBrainzConnectionVersion;
-        try
-        {
-            var normalized = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
-            await _settingsService.SetListenBrainzServerUrlAsync(normalized);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to persist ListenBrainz server URL");
-        }
+        _ = SaveSettingAsync(() =>
+            _settingsService.SetListenBrainzServerUrlAsync(string.IsNullOrWhiteSpace(value) ? null : value.Trim()));
     }
 
     /// <summary>
@@ -267,17 +246,8 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
     /// </summary>
     private async Task StampListenBrainzEnabledSinceIfNeededAsync()
     {
-        try
-        {
-            if (await _settingsService.GetListenBrainzEnabledSinceUtcAsync() is null)
-            {
-                await _settingsService.SetListenBrainzEnabledSinceUtcAsync(DateTime.UtcNow);
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to stamp ListenBrainz EnabledSinceUtc");
-        }
+        if (await _settingsService.GetListenBrainzEnabledSinceUtcAsync() is null)
+            await _settingsService.SetListenBrainzEnabledSinceUtcAsync(DateTime.UtcNow);
     }
 
     [RelayCommand]
@@ -315,7 +285,7 @@ public partial class ScrobblingSettingsViewModel : SettingsSectionViewModel
             ListenBrainzIsConnected = false;
             ListenBrainzConnectionStatus = string.Format(
                 Strings.SettingsPage_ListenBrainz_ConnectionFailed,
-                "Could not reach ListenBrainz.");
+                CoreStrings.ListenBrainz_Unreachable);
         }
     }
 

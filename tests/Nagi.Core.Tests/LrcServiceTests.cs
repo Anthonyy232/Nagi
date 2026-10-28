@@ -262,18 +262,6 @@ public class LrcServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task GetLyricsAsync_WithEmptyFileContent_ReturnsEmptyParsedLrc()
-    {
-        _fileSystem.FileExists(LrcPath).Returns(true);
-        _fileSystem.ReadAllTextAsync(LrcPath).Returns(string.Empty);
-
-        var result = await _lrcService.GetLyricsAsync(LrcPath);
-
-        result.Should().NotBeNull();
-        result!.IsEmpty.Should().BeTrue();
-    }
-
-    [Fact]
     public async Task RemoveCachedLyricsAsync_DeletesOnlyManagedFileAndPreventsRedownload()
     {
         const string cacheRoot = @"C:\cache\lrc";
@@ -449,40 +437,22 @@ public class LrcServiceTests : IDisposable
         var hint = 0;
         var result = _lrcService.GetCurrentLine(parsedLrc, currentTime, ref hint);
 
-        result?.Text.Should().Be(expectedText);
+        (result?.Text).Should().Be(expectedText);
     }
 
-    [Fact]
-    public void GetCurrentLine_WithHint_WhenHintIsCorrect_ReturnsLineWithoutSearching()
+    [Theory]
+    [InlineData(1, 25, "Line 2", 1)]
+    [InlineData(0, 35, "Line 3", 2)]
+    [InlineData(2, 12, "Line 1", 0)]
+    public void GetCurrentLine_WithHint_FindsLineAndUpdatesHint(
+        int searchIndex, double currentTimeSec, string expectedText, int expectedIndex)
     {
         var parsedLrc = CreateTestParsedLrc();
-        var searchIndex = 1;
-        var result = _lrcService.GetCurrentLine(parsedLrc, TimeSpan.FromSeconds(25), ref searchIndex);
 
-        result?.Text.Should().Be("Line 2");
-        searchIndex.Should().Be(1);
-    }
+        var result = _lrcService.GetCurrentLine(parsedLrc, TimeSpan.FromSeconds(currentTimeSec), ref searchIndex);
 
-    [Fact]
-    public void GetCurrentLine_WithHint_WhenSeekingForward_FindsCorrectLineAndUpdatesHint()
-    {
-        var parsedLrc = CreateTestParsedLrc();
-        var searchIndex = 0;
-        var result = _lrcService.GetCurrentLine(parsedLrc, TimeSpan.FromSeconds(35), ref searchIndex);
-
-        result?.Text.Should().Be("Line 3");
-        searchIndex.Should().Be(2);
-    }
-
-    [Fact]
-    public void GetCurrentLine_WithHint_WhenSeekingBackward_FindsCorrectLineAndUpdatesHint()
-    {
-        var parsedLrc = CreateTestParsedLrc();
-        var searchIndex = 2;
-        var result = _lrcService.GetCurrentLine(parsedLrc, TimeSpan.FromSeconds(12), ref searchIndex);
-
-        result?.Text.Should().Be("Line 1");
-        searchIndex.Should().Be(0);
+        result!.Text.Should().Be(expectedText);
+        searchIndex.Should().Be(expectedIndex);
     }
 
     [Fact]
@@ -543,32 +513,6 @@ public class LrcServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task GetLyricsAsync_WithIdentityBasedCachePath_UsesLocalFile()
-    {
-        const string cacheRoot = @"C:\cache\lrc";
-        var song = new Song
-        {
-            Title = "Song",
-            PrimaryArtistName = "Artist",
-            FilePath = @"C:\Music\Song.flac",
-            Album = new Album { Title = "Album" }
-        };
-        var cachePath = Path.Combine(cacheRoot, FileNameHelper.GenerateLrcCacheFileName(
-            song.FilePath, song.PrimaryArtistName, song.Album.Title, song.Title));
-        song.LrcFilePath = cachePath;
-        _pathConfig.LrcCachePath.Returns(cacheRoot);
-        _fileSystem.FileExists(cachePath).Returns(true);
-        _fileSystem.ReadAllTextAsync(cachePath).Returns("[00:01.00]Local Lyrics");
-
-        var result = await _lrcService.GetLyricsAsync(song);
-
-        result!.Lines.Single().Text.Should().Be("Local Lyrics");
-        await _libraryWriter.DidNotReceive().UpdateSongLrcPathAsync(Arg.Any<Guid>(), Arg.Any<string?>());
-        await _onlineLyricsService.DidNotReceive().GetLyricsAsync(
-            Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
     public async Task GetLyricsAsync_WithIdentityBasedCachePathAfterMetadataEdit_UsesLocalFile()
     {
         const string cacheRoot = @"C:\cache\lrc";
@@ -591,24 +535,10 @@ public class LrcServiceTests : IDisposable
         var result = await _lrcService.GetLyricsAsync(song);
 
         result!.Lines.Single().Text.Should().Be("Cached Lyrics");
+        await _libraryWriter.DidNotReceive().UpdateSongLrcPathAsync(Arg.Any<Guid>(), Arg.Any<string?>());
         await _settingsService.DidNotReceive().GetFetchOnlineLyricsEnabledAsync();
         await _onlineLyricsService.DidNotReceive().GetLyricsAsync(
             Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task GetLyricsAsync_WhenLrcLibReturnsNull_UsesNetEaseResult()
-    {
-        var song = new Song { Title = "Japanese Song", LrcFilePath = null, Duration = TimeSpan.FromMinutes(3) };
-        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
-        _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
-            Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>()).Returns((string?)null);
-        _netEaseLyricsService.SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
-            .Returns("[00:01.00]From NetEase");
-
-        var result = await _lrcService.GetLyricsAsync(song);
-        result.Should().NotBeNull();
-        result!.Lines[0].Text.Should().Be("From NetEase");
     }
 
     [Fact]

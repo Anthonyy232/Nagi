@@ -58,30 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NavItem_Library" xml:space="preserve">
-    <value>Bibliothek</value>
-  </data>
-  <data name="NavItem_Albums" xml:space="preserve">
-    <value>Alben</value>
-  </data>
-  <data name="NavItem_Artists" xml:space="preserve">
-    <value>Künstler</value>
-  </data>
-  <data name="NavItem_Genres" xml:space="preserve">
-    <value>Genres</value>
-  </data>
-  <data name="NavItem_Playlists" xml:space="preserve">
-    <value>Wiedergabelisten</value>
-  </data>
-  <data name="NavItem_Folders" xml:space="preserve">
-    <value>Ordner</value>
-  </data>
-  <data name="NavItem_Favorites" xml:space="preserve">
-    <value>Favoriten</value>
-  </data>
-  <data name="NavItem_Insights" xml:space="preserve">
-    <value>Statistiken</value>
-  </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>Einstellungen</value>
   </data>
@@ -614,9 +590,6 @@ Dateien, die nicht importiert werden konnten: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg immer noch nicht erkannt. Bitte installieren Sie FFmpeg und klicken Sie auf „Erneut prüfen“.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Fehler beim Überprüfen auf FFmpeg. Bitte versuchen Sie es erneut.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Zurück</value>
   </data>
@@ -956,9 +929,6 @@ Möchten Sie fortfahren?</value>
   </data>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
     <value>Als Nächstes</value>
-  </data>
-  <data name="AppName" xml:space="preserve">
-    <value>Nagi</value>
   </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Zurück</value>

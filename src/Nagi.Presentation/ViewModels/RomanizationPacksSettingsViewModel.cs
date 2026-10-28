@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -105,7 +104,7 @@ public partial class RomanizationPacksSettingsViewModel : SettingsSectionViewMod
             var result = await _romanizationPackManager.InstallPackAsync(pack.Id);
             if (!result.Succeeded)
             {
-                RomanizationPacksStatus = result.ErrorMessage ?? Strings.SettingsPage_RomanizationPacks_InstallFailed;
+                RomanizationPacksStatus = Strings.SettingsPage_RomanizationPacks_InstallFailed;
                 return;
             }
 
@@ -129,7 +128,7 @@ public partial class RomanizationPacksSettingsViewModel : SettingsSectionViewMod
             var result = await _romanizationPackManager.RemovePackAsync(pack.Id);
             if (!result.Succeeded)
             {
-                RomanizationPacksStatus = result.ErrorMessage ?? Strings.SettingsPage_RomanizationPacks_RemoveFailed;
+                RomanizationPacksStatus = Strings.SettingsPage_RomanizationPacks_RemoveFailed;
                 return;
             }
 

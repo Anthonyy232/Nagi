@@ -3,8 +3,7 @@
 namespace Nagi.WinUI.Controls;
 
 /// <summary>
-///     Defines a contract for pages that provide custom XAML elements to be used
-///     for the application's title bar.
+///     Content that supplies the main window's custom title bar.
 /// </summary>
 public interface ICustomTitleBarProvider
 {

@@ -2,6 +2,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nagi.Core.Helpers;
+using Nagi.Core.Http;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
 using Nagi.Core.Services;
@@ -16,7 +17,6 @@ public class CoreServiceRegistrationTests
     {
         var services = new ServiceCollection();
         services.AddLogging();
-        services.AddHttpClient();
         services.AddSingleton(Substitute.For<IConfiguration>());
         services.AddSingleton(Substitute.For<IPathConfiguration>());
         services.AddSingleton(Substitute.For<ISettingsService>());
@@ -29,14 +29,6 @@ public class CoreServiceRegistrationTests
     }
 
     [Fact]
-    public async Task AddNagiCore_ResolvesWithOnlyTheDocumentedHostServices()
-    {
-        var build = BuildProvider;
-
-        await using var provider = build.Should().NotThrow().Subject;
-    }
-
-    [Fact]
     public async Task AddNagiCore_SharesOneLibraryServiceAcrossWriterAndScanner()
     {
         await using var provider = BuildProvider();
@@ -45,8 +37,6 @@ public class CoreServiceRegistrationTests
         var scanner = provider.GetRequiredService<ILibraryScanner>();
 
         writer.Should().BeOfType<LibraryService>().And.BeSameAs(scanner);
-        provider.GetRequiredService<ILibraryReader>().Should().BeOfType<LibraryReader>();
-        provider.GetRequiredService<IPlaylistService>().Should().BeOfType<PlaylistService>();
     }
 
     [Fact]
@@ -56,5 +46,17 @@ public class CoreServiceRegistrationTests
 
         provider.GetServices<IListenSubmitter>().Should().HaveCount(2);
         provider.GetServices<IPresenceService>().Should().HaveCount(3);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("ImageDownloader")]
+    public async Task AddNagiCore_IdentifiesNagiOnceOnEveryHttpClient(string clientName)
+    {
+        await using var provider = BuildProvider();
+
+        using var client = provider.GetRequiredService<IHttpClientFactory>().CreateClient(clientName);
+
+        client.DefaultRequestHeaders.UserAgent.ToString().Should().Be(ProviderUserAgent.Value);
     }
 }

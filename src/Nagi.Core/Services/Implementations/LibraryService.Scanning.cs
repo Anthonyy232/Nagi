@@ -43,9 +43,6 @@ public partial class LibraryService
         return RescanFolderForMusicAsync(folderId, false, progress, cancellationToken);
     }
 
-    /// <summary>
-    ///     Rescans a specific folder for music files with optional force full scan.
-    /// </summary>
     /// <param name="forceFullScan">If true, re-reads metadata for all files regardless of modification time.</param>
     /// <returns>True if changes were made to the library; otherwise, false.</returns>
     public Task<bool> RescanFolderForMusicAsync(Guid folderId, bool forceFullScan, IProgress<ScanProgress>? progress = null,
@@ -530,8 +527,10 @@ public partial class LibraryService
 
             var folder = new Folder
             {
-                Name = Path.GetFileName(path), Path = path,
-                ParentFolderId = parentId, LastModifiedDate = DateTime.UtcNow
+                Name = Path.GetFileName(path),
+                Path = path,
+                ParentFolderId = parentId,
+                LastModifiedDate = DateTime.UtcNow
             };
             context.Folders.Add(folder);
             foldersByPath.Add(path, folder);

@@ -58,30 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NavItem_Library" xml:space="preserve">
-    <value>Бібліотека</value>
-  </data>
-  <data name="NavItem_Albums" xml:space="preserve">
-    <value>Альбоми</value>
-  </data>
-  <data name="NavItem_Artists" xml:space="preserve">
-    <value>Виконавці</value>
-  </data>
-  <data name="NavItem_Genres" xml:space="preserve">
-    <value>Жанри</value>
-  </data>
-  <data name="NavItem_Playlists" xml:space="preserve">
-    <value>Списки відтворення</value>
-  </data>
-  <data name="NavItem_Folders" xml:space="preserve">
-    <value>Папки</value>
-  </data>
-  <data name="NavItem_Favorites" xml:space="preserve">
-    <value>Улюблені</value>
-  </data>
-  <data name="NavItem_Insights" xml:space="preserve">
-    <value>Аналітика</value>
-  </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>Налаштування</value>
   </data>
@@ -614,9 +590,6 @@
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg все ще не виявлено. Будь ласка, встановіть FFmpeg і натисніть 'Перевірити ще раз'.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Помилка перевірки FFmpeg. Будь ласка, спробуйте ще раз.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Попередній</value>
   </data>
@@ -956,9 +929,6 @@
   </data>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
     <value>Далі грає</value>
-  </data>
-  <data name="AppName" xml:space="preserve">
-    <value>Nagi</value>
   </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Попередня</value>

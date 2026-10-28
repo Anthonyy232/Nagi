@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -48,11 +47,6 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
         _smartPlaylistService = smartPlaylistService;
     }
 
-
-
-
-    public Guid? GetSmartPlaylistId() => _currentSmartPlaylistId;
-
     /// <summary>
     ///     Opens the smart playlist editor for this playlist and reloads it if the user saved changes.
     /// </summary>
@@ -87,8 +81,6 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
     public partial string? CoverImageUri { get; set; }
 
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverImageUri);
-
-
 
     public async Task InitializeAsync(string title, Guid smartPlaylistId, string? coverImageUri = null)
     {
@@ -148,7 +140,6 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
 
         return ResourceFormatter.Format(Strings.SmartPlaylist_RuleSummary_Format, matchType, ruleCount, ruleWord);
     }
-
 
     protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
         SongSortOrder sortOrder, CancellationToken cancellationToken = default)

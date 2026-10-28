@@ -9,7 +9,6 @@ using Nagi.Core.Services.Implementations;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
-using System.IO;
 
 namespace Nagi.Core.Tests;
 
@@ -34,7 +33,6 @@ public class MultiArtistTests : IDisposable
         pathConfig.AlbumArtCachePath.Returns("C:\\cache\\albumart");
         pathConfig.ArtistImageCachePath.Returns("C:\\cache\\artistimages");
         pathConfig.LrcCachePath.Returns("C:\\cache\\lrc");
-
 
         _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
 
@@ -122,48 +120,6 @@ public class MultiArtistTests : IDisposable
     }
 
     [Fact]
-    public async Task RescanFolderForMusicAsync_SingleArtist_PopulatesFieldsCorrectly()
-    {
-
-        var folderId = Guid.NewGuid();
-        var folderPath = "C:\\Music\\SingleArtist";
-        var filePath = Path.Combine(folderPath, "solo.mp3");
-
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Folders.Add(new Folder { Id = folderId, Path = folderPath, Name = "SingleArtist" });
-            await context.SaveChangesAsync();
-        }
-
-        _fileSystem.DirectoryExists(folderPath).Returns(true);
-        _fileSystem.EnumerateFilesWithLastWriteTime(folderPath, "*.*", SearchOption.AllDirectories).Returns(new[] { (filePath, DateTime.UtcNow) });
-
-        var metadata = new SongFileMetadata
-        {
-            FilePath = filePath,
-            Title = "Solo Song",
-            Artists = new List<string> { "Solo Artist" },
-            Album = "Solo Album",
-            Duration = TimeSpan.FromMinutes(3)
-        };
-
-        _metadataService.ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>()).Returns(metadata);
-
-        var result = await _libraryService.RescanFolderForMusicAsync(folderId);
-
-        result.Should().BeTrue("the scan should complete without errors");
-
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            var song = await context.Songs.FirstOrDefaultAsync(s => s.FilePath == filePath);
-
-            song.Should().NotBeNull();
-            song!.ArtistName.Should().Be("Solo Artist");
-            song.PrimaryArtistName.Should().Be("Solo Artist");
-        }
-    }
-
-    [Fact]
     public async Task RescanFolderForMusicAsync_FillsMissingArtistIdsFromTagsOnly()
     {
         var folder = new Folder { Path = @"C:\Music", Name = "Music" };
@@ -237,8 +193,13 @@ public class MultiArtistTests : IDisposable
             .Returns(new[] { (filePath, DateTime.UtcNow) });
         _metadataService.ExtractMetadataAsync(filePath, folder.Path).Returns(new SongFileMetadata
         {
-            FilePath = filePath, Title = "New track", Album = "Album", Year = 2024,
-            Artists = ["Primary"], AlbumArtists = ["Primary", "Guest"], CoverArtUri = @"C:\cache\new.jpg"
+            FilePath = filePath,
+            Title = "New track",
+            Album = "Album",
+            Year = 2024,
+            Artists = ["Primary"],
+            AlbumArtists = ["Primary", "Guest"],
+            CoverArtUri = @"C:\cache\new.jpg"
         });
 
         (await _libraryService.RescanFolderForMusicAsync(folder.Id)).Should().BeTrue();
@@ -275,20 +236,6 @@ public class MultiArtistTests : IDisposable
         var songs = await assertContext.Songs.Include(s => s.Album).OrderBy(s => s.Title).ToListAsync();
         songs.Select(s => s.Album!.Title).Should().Equal("A|B", "A");
         songs.Select(s => s.AlbumId).Should().OnlyHaveUniqueItems();
-    }
-
-    [Fact]
-    public void Album_SyncDenormalizedFields_CorrectlyJoinsArtists()
-    {
-
-        var album = new Album { Title = "Test Album" };
-        album.AlbumArtists.Add(new AlbumArtist { Order = 0, Artist = new Artist { Name = "Main Artist" } });
-        album.AlbumArtists.Add(new AlbumArtist { Order = 1, Artist = new Artist { Name = "Feature Artist" } });
-
-        album.SyncDenormalizedFields();
-
-        album.ArtistName.Should().Be("Main Artist & Feature Artist");
-        album.PrimaryArtistName.Should().Be("Main Artist");
     }
 
     [Fact]

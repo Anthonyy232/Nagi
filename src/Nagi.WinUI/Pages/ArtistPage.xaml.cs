@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
@@ -23,18 +22,14 @@ public sealed partial class ArtistPage : SearchablePage
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        ViewModel.SubscribeToEvents();
-
         await ViewModel.LoadAsync(CancellationToken.None);
     }
 
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        ViewModel.UnsubscribeFromEvents();
-
+        // The singleton view model outlives the page, so it is reset rather than disposed.
         ViewModel.ResetState();
-        // Note: ViewModel is Singleton, do not dispose - state persists across navigations
     }
 
     private void ArtistsGridView_ItemClick(object sender, ItemClickEventArgs e)

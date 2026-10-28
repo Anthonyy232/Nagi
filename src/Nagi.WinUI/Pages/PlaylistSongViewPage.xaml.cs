@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
@@ -6,7 +5,7 @@ using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Models;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services.Implementations;
 using Nagi.Presentation.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 
@@ -18,7 +17,7 @@ public sealed partial class PlaylistSongViewPage : SongListPage
     public PlaylistSongViewPage()
     {
         InitializeComponent();
-        ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<PlaylistSongListViewModel>();
+        ViewModel = App.Services!.GetRequiredService<ViewModelFactory>().Create<PlaylistSongListViewModel>();
         DataContext = ViewModel;
         InitializeSongList(ViewModel, ownsViewModel: true, SearchToggleButton, SearchTextBox,
             Strings.PlaylistSongViewPage_SearchButton_Search_ToolTip, ColumnHeaderHost, SongsListView);
@@ -32,7 +31,6 @@ public sealed partial class PlaylistSongViewPage : SongListPage
 
         var navParam = (PlaylistSongViewNavigationParameter)e.Parameter;
         await ViewModel.InitializeAsync(navParam.Title, navParam.PlaylistId, navParam.CoverImageUri);
-        await ViewModel.LoadAvailablePlaylistsAsync();
     }
 
     private void SongsListView_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)

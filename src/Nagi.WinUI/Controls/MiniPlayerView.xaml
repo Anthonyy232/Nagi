@@ -17,13 +17,10 @@
         <converters:VolumeToClipRectConverter x:Key="VolumeToClipRectConverter" />
     </UserControl.Resources>
 
-    <!--
-    The root grid handles pointer enter/exit events to show or hide the controls.
-    It contains several layers to create the final appearance.
-    -->
+    <!--  The root grid handles pointer enter/exit events to show or hide the controls.  -->
     <Grid x:Name="HoverDetector" Background="Transparent">
 
-        <!--  Background Layer: Blends album art with the theme colors for a premium look  -->
+        <!--  Blends album art with the theme colors  -->
         <Border x:Name="AmbientBackground" Opacity="1.0">
             <Border.Background>
                 <media:ImageBlendBrush
@@ -33,7 +30,7 @@
             </Border.Background>
         </Border>
 
-        <!--  A subtle dark overlay to ensure readability while exposing the acrylic backdrop slightly  -->
+        <!--  A faint theme-colored overlay for readability that still lets the acrylic backdrop show through  -->
         <Border Background="{ThemeResource SolidBackgroundFillColorBaseAltBrush}" Opacity="0.15" />
 
         <Border x:Name="DragHandle" Background="Transparent" />
@@ -54,7 +51,7 @@
             </Grid.Resources>
 
             <!--  Overlay for control readability  -->
-            <Border Background="#90000000" IsHitTestVisible="False" />
+            <Border Background="{StaticResource MediaOnImageControlsScrimBrush}" IsHitTestVisible="False" />
 
             <Grid>
                 <Grid.RowDefinitions>
@@ -62,7 +59,6 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <!--  Header: Contains the back button, title/artist info, and restore button.  -->
                 <Grid Grid.Row="0" Margin="16,16,16,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -90,7 +86,7 @@
                         Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                         <TextBlock
                             HorizontalAlignment="Center"
-                            Foreground="White"
+                            Foreground="{StaticResource MediaOnImageTextPrimaryBrush}"
                             Style="{ThemeResource BodyStrongTextBlockStyle}"
                             Text="{x:Bind ViewModel.SongTitle, Mode=OneWay, FallbackValue='Song Title'}"
                             TextAlignment="Center"
@@ -102,7 +98,7 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontSize="12"
-                                Foreground="#B0FFFFFF"
+                                Foreground="{StaticResource MediaOnImageTextSecondaryBrush}"
                                 Style="{ThemeResource BodyTextBlockStyle}"
                                 TextAlignment="Center"
                                 TextTrimming="CharacterEllipsis"
@@ -122,7 +118,7 @@
                         VerticalAlignment="Center"
                         FontSize="18"
                         FontWeight="SemiBold"
-                        Foreground="White"
+                        Foreground="{StaticResource MediaOnImageTextPrimaryBrush}"
                         Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                     <Button
@@ -135,7 +131,6 @@
                 </Grid>
 
                 <Grid Grid.Row="1">
-                    <!--  Player View -->
                     <Grid Padding="16,0,16,16"
                           Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                         <StackPanel VerticalAlignment="Bottom" Spacing="12">
@@ -146,12 +141,7 @@
                                 IsThumbToolTipEnabled="True"
                                 Maximum="{x:Bind ViewModel.TotalDuration, Mode=OneWay, Converter={StaticResource SliderMaximumConverter}}"
                                 ThumbToolTipValueConverter="{StaticResource TimeSpanToTimeStringConverter}"
-                                Value="{x:Bind ViewModel.CurrentPosition, Mode=TwoWay}"
-                                PointerPressed="MediaSeekerSlider_PointerPressed"
-                                PointerReleased="MediaSeekerSlider_PointerReleased"
-                                PointerCaptureLost="MediaSeekerSlider_PointerCaptureLost"
-                                KeyDown="MediaSeekerSlider_KeyDown"
-                                KeyUp="MediaSeekerSlider_KeyUp" />
+                                Value="{x:Bind ViewModel.CurrentPosition, Mode=TwoWay}" />
 
                             <StackPanel x:Name="MediaControlsPanel" HorizontalAlignment="Center" Orientation="Horizontal" Spacing="2">
 
@@ -209,7 +199,6 @@
                         </StackPanel>
                     </Grid>
 
-                    <!--  Queue View -->
                     <ListView
                         uihelpers:ScrollEdgeFade.IsEnabled="True"
                         x:Name="QueueListView"

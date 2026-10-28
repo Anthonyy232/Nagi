@@ -227,7 +227,8 @@ public partial class LibraryServiceTests : IDisposable
         _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(ServiceResult<ArtistInfo>.FromSuccess(new ArtistInfo
             {
-                Biography = "Biography", ImageUrl = "https://example.com/artist.jpg"
+                Biography = "Biography",
+                ImageUrl = "https://example.com/artist.jpg"
             }));
         _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(_ => new HttpClient(_httpMessageHandler, disposeHandler: false));
         _httpMessageHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.ServiceUnavailable));
@@ -439,8 +440,10 @@ public partial class LibraryServiceTests : IDisposable
         {
             var song = new Song
             {
-                FilePath = @"C:\Music\song.mp3", Folder = new Folder { Name = "Test", Path = @"C:\Music" },
-                Album = new Album { Title = "Album" }, Genres = [new Genre { Name = "Genre" }],
+                FilePath = @"C:\Music\song.mp3",
+                Folder = new Folder { Name = "Test", Path = @"C:\Music" },
+                Album = new Album { Title = "Album" },
+                Genres = [new Genre { Name = "Genre" }],
                 SongArtists = [new SongArtist { Artist = new Artist { Name = "Test Artist" } }]
             };
             context.ListenHistory.Add(new ListenHistory { Song = song });
@@ -496,7 +499,9 @@ public partial class LibraryServiceTests : IDisposable
             context.Folders.AddRange(removed, album, leaf, similarPrefix);
             context.Songs.Add(new Song
             {
-                Folder = root, FilePath = @"C:\Music\école\Album\song.mp3", DirectoryPath = @"C:\Music\école\Album\"
+                Folder = root,
+                FilePath = @"C:\Music\école\Album\song.mp3",
+                DirectoryPath = @"C:\Music\école\Album\"
             });
             context.Albums.Add(new Album { Title = "Empty album" });
             context.Genres.Add(new Genre { Name = "Empty genre" });
@@ -528,8 +533,12 @@ public partial class LibraryServiceTests : IDisposable
             context.Folders.Add(removed);
             context.Songs.Add(new Song
             {
-                Folder = root, FilePath = @"C:\Music\song.mp3", DirectoryPath = root.Path,
-                Album = album, AlbumArtUriFromTrack = art, SongArtists = [new SongArtist { Artist = artist }]
+                Folder = root,
+                FilePath = @"C:\Music\song.mp3",
+                DirectoryPath = root.Path,
+                Album = album,
+                AlbumArtUriFromTrack = art,
+                SongArtists = [new SongArtist { Artist = artist }]
             });
             context.Playlists.Add(new Playlist { Name = "Playlist", CoverImageUri = playlistArt });
             await context.SaveChangesAsync();
@@ -588,7 +597,10 @@ public partial class LibraryServiceTests : IDisposable
             .Returns(new[] { (filePath, DateTime.UtcNow) });
         _metadataService.ExtractMetadataAsync(filePath, root.Path).Returns(new SongFileMetadata
         {
-            FilePath = filePath, Title = "Song", Artists = ["Artist"], Album = "Album"
+            FilePath = filePath,
+            Title = "Song",
+            Artists = ["Artist"],
+            Album = "Album"
         });
 
         await _libraryService.RescanFolderForMusicAsync(root.Id);
@@ -601,7 +613,6 @@ public partial class LibraryServiceTests : IDisposable
     }
 
     [Theory]
-    [InlineData(@"C:\Music\Rock", "Rock")]
     [InlineData(@"C:\Music\Vol. 1", "Vol. 1")]
     [InlineData(@"C:\", @"C:\")]
     public async Task AddFolderAsync_WithValidNewPath_PreservesFolderName(string folderPath, string expectedName)
@@ -1023,36 +1034,6 @@ public partial class LibraryServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task MarkListenAsEligibleForScrobblingAsync_IncrementsPlayCountAndSetsLastPlayedDate()
-    {
-        var folder = new Folder { Name = "Test Folder", Path = "C:\\Test" };
-        var song = new Song { Title = "Test Song", Folder = folder, FilePath = "C:\\Test\\song.mp3", PlayCount = 5 };
-        var listenHistory = new ListenHistory { Song = song, IsEligibleForScrobbling = false };
-
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Folders.Add(folder);
-            context.Songs.Add(song);
-            context.ListenHistory.Add(listenHistory);
-            await context.SaveChangesAsync();
-        }
-
-        var beforeUpdate = DateTime.UtcNow;
-
-        var result = await _libraryService.MarkListenAsEligibleForScrobblingAsync(listenHistory.Id);
-
-        result.Should().BeTrue();
-
-        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
-        var updatedHistory = await assertContext.ListenHistory.FindAsync(listenHistory.Id);
-        var updatedSong = await assertContext.Songs.FindAsync(song.Id);
-
-        updatedHistory!.IsEligibleForScrobbling.Should().BeTrue();
-        updatedSong!.PlayCount.Should().Be(6);
-        updatedSong.LastPlayedDate.Should().BeOnOrAfter(beforeUpdate);
-    }
-
-    [Fact]
     public async Task FinalizeListenSessionAsync_WhenCalled_UpdatesDurationAndEndReason()
     {
         var folder = new Folder { Name = "Test Folder", Path = "C:\\Test" };
@@ -1133,17 +1114,20 @@ public partial class LibraryServiceTests : IDisposable
         }
 
         var id = (await _libraryService.StartListenSessionAsync(song.Id, new PlaybackContext(PlaybackContextType.Library, null)))!.Value;
+        var beforeEligible = DateTime.UtcNow;
         if (eligibilityFirst)
             await _libraryService.MarkListenAsEligibleForScrobblingAsync(id);
         await _libraryService.FinalizeListenSessionAsync(id, TimeSpan.FromMinutes(3), PlaybackEndReason.Skipped);
-        await _libraryService.MarkListenAsEligibleForScrobblingAsync(id);
+        (await _libraryService.MarkListenAsEligibleForScrobblingAsync(id)).Should().BeTrue();
         await _libraryService.MarkListenAsEligibleForScrobblingAsync(id);
         await _libraryService.FinalizeListenSessionAsync(id, TimeSpan.FromMinutes(3), PlaybackEndReason.Skipped);
 
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        (await assertContext.ListenHistory.SingleAsync()).IsEligibleForScrobbling.Should().BeTrue();
         var updatedSong = await assertContext.Songs.SingleAsync();
         updatedSong.PlayCount.Should().Be(6);
         updatedSong.SkipCount.Should().Be(2);
+        updatedSong.LastPlayedDate.Should().BeOnOrAfter(beforeEligible);
         updatedSong.TotalListenTimeTicks.Should().Be(TimeSpan.FromMinutes(3).Ticks);
     }
 
@@ -1158,10 +1142,28 @@ public partial class LibraryServiceTests : IDisposable
         var root = new Folder { Path = canonical, Name = "Music", LastModifiedDate = DateTime.UtcNow };
         var aliasChild = new Folder { Path = alias + @"\Album", Name = "Album", ParentFolder = aliasRoot, LastModifiedDate = aliasRoot.LastModifiedDate };
         var child = new Folder { Path = canonical + @"\Album", Name = "Album", ParentFolder = root, LastModifiedDate = root.LastModifiedDate };
-        var first = new Song { FilePath = aliasChild.Path + @"\song.mp3", DirectoryPath = aliasChild.Path, Folder = aliasChild,
-            PlayCount = 5, SkipCount = 2, TotalListenTimeTicks = 100, DateAddedToLibrary = DateTime.UtcNow.AddDays(-10) };
-        var second = new Song { FilePath = child.Path + @"\song.mp3", DirectoryPath = child.Path, Folder = child,
-            PlayCount = 3, SkipCount = 1, TotalListenTimeTicks = 50, IsLoved = true, Rating = 4, LastPlayedDate = DateTime.UtcNow };
+        var first = new Song
+        {
+            FilePath = aliasChild.Path + @"\song.mp3",
+            DirectoryPath = aliasChild.Path,
+            Folder = aliasChild,
+            PlayCount = 5,
+            SkipCount = 2,
+            TotalListenTimeTicks = 100,
+            DateAddedToLibrary = DateTime.UtcNow.AddDays(-10)
+        };
+        var second = new Song
+        {
+            FilePath = child.Path + @"\song.mp3",
+            DirectoryPath = child.Path,
+            Folder = child,
+            PlayCount = 3,
+            SkipCount = 1,
+            TotalListenTimeTicks = 50,
+            IsLoved = true,
+            Rating = 4,
+            LastPlayedDate = DateTime.UtcNow
+        };
         var shared = new Playlist { Name = "Shared" };
         var duplicateOnly = new Playlist { Name = "Duplicate only" };
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
@@ -1368,13 +1370,19 @@ public partial class LibraryServiceTests : IDisposable
             foreach (var art in new[] { sharedSongArt, sharedAlbumArt, orphanArt, externalArt })
                 context.Songs.Add(new Song
                 {
-                    Folder = folder, FilePath = Path.Combine(folder.Path, Path.GetFileName(art) + ".mp3"),
-                    DirectoryPath = folder.Path, AlbumArtUriFromTrack = art, Album = removedAlbum
+                    Folder = folder,
+                    FilePath = Path.Combine(folder.Path, Path.GetFileName(art) + ".mp3"),
+                    DirectoryPath = folder.Path,
+                    AlbumArtUriFromTrack = art,
+                    Album = removedAlbum
                 });
             context.Songs.Add(new Song
             {
-                Folder = otherFolder, FilePath = @"C:\Other\remaining.mp3", DirectoryPath = otherFolder.Path,
-                Album = remainingAlbum, AlbumArtUriFromTrack = sharedSongArt
+                Folder = otherFolder,
+                FilePath = @"C:\Other\remaining.mp3",
+                DirectoryPath = otherFolder.Path,
+                Album = remainingAlbum,
+                AlbumArtUriFromTrack = sharedSongArt
             });
             await context.SaveChangesAsync();
         }

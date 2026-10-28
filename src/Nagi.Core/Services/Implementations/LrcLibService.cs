@@ -4,7 +4,6 @@ using System.Net.Http.Json;
 using System.Web;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
-using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
@@ -31,7 +30,6 @@ public class LrcLibService : IOnlineLyricsService
         ILogger<LrcLibService> logger)
     {
         _httpClient = httpClientFactory.CreateClient();
-        _httpClient.DefaultRequestHeaders.Add("User-Agent", ProviderUserAgent.Value);
         _pipelines = pipelines;
         _logger = logger;
     }

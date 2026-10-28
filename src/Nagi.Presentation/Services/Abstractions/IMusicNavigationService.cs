@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace Nagi.Presentation.Services.Abstractions;
+﻿namespace Nagi.Presentation.Services.Abstractions;
 
 public interface IMusicNavigationService
 {

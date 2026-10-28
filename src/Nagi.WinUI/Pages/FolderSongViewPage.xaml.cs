@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
@@ -9,7 +8,7 @@ using Nagi.Core.Models;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services.Implementations;
 using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
 
@@ -21,7 +20,7 @@ public sealed partial class FolderSongViewPage : SongListPage
     public FolderSongViewPage()
     {
         InitializeComponent();
-        ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<FolderSongListViewModel>();
+        ViewModel = App.Services!.GetRequiredService<ViewModelFactory>().Create<FolderSongListViewModel>();
         DataContext = ViewModel;
         InitializeSongList(ViewModel, ownsViewModel: true, SearchToggleButton, SearchTextBox,
             Strings.FolderSongViewPage_SearchButton_Search_ToolTip, ColumnHeaderHost, FolderContentsListView);
@@ -38,7 +37,6 @@ public sealed partial class FolderSongViewPage : SongListPage
 
         var navParam = (FolderSongViewNavigationParameter)e.Parameter;
         await ViewModel.InitializeAsync(navParam.Title, navParam.FolderId, navParam.DirectoryPath);
-        await ViewModel.LoadAvailablePlaylistsAsync();
     }
 
     private void OnBreadcrumbItemClicked(BreadcrumbBar sender, BreadcrumbBarItemClickedEventArgs args)

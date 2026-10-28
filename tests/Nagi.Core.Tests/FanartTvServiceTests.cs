@@ -108,13 +108,11 @@ public class FanartTvServiceTests : IDisposable
         result.Status.Should().Be(ServiceResultStatus.TemporaryError);
     }
 
-    [Theory]
-    [InlineData(HttpStatusCode.InternalServerError)]
-    [InlineData(HttpStatusCode.TooManyRequests)]
-    public async Task GetArtistImagesAsync_WhenHttpError_ReturnsTemporaryError(HttpStatusCode status)
+    [Fact]
+    public async Task GetArtistImagesAsync_WhenHttpError_ReturnsTemporaryError()
     {
         _httpHandler.SendAsyncFunc = (_, _) =>
-            Task.FromResult(new HttpResponseMessage(status));
+            Task.FromResult(new HttpResponseMessage(HttpStatusCode.InternalServerError));
         var result = await _service.GetArtistImagesAsync(ValidMbid);
         result.Status.Should().Be(ServiceResultStatus.TemporaryError);
     }

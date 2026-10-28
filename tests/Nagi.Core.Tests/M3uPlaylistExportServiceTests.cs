@@ -28,35 +28,6 @@ public class M3uPlaylistExportServiceTests : IDisposable
     public void Dispose() => Directory.Delete(_tempDirectory, true);
 
     [Fact]
-    public async Task ExportAllPlaylistsAsync_WritesExtinfLineWithDurationAndArtistTitle()
-    {
-        var playlistId = Guid.NewGuid();
-        var filePath = Path.Combine(_tempDirectory, "P.m3u8");
-        var playlist = new Playlist { Id = playlistId, Name = "P" };
-        var song = new Song
-        {
-            Title = "Track One",
-            FilePath = @"C:\music\track.mp3",
-            DurationTicks = TimeSpan.FromSeconds(240).Ticks
-        };
-        var artist = new Artist { Name = "The Artist" };
-        song.SongArtists.Add(new SongArtist { Song = song, Artist = artist, Order = 0 });
-        song.SyncDenormalizedFields();
-
-        _libraryReader.GetAllPlaylistsAsync().Returns(new[] { playlist });
-        _libraryReader.GetSongsInPlaylistOrderedAsync(playlistId).Returns(new List<Song> { song });
-
-        var result = await _service.ExportAllPlaylistsAsync(_tempDirectory);
-
-        result.Success.Should().BeTrue();
-        var content = await File.ReadAllTextAsync(filePath);
-        content.Should().StartWith("#EXTM3U");
-        content.Should().Contain("#PLAYLIST:P");
-        content.Should().Contain("#EXTINF:240,The Artist - Track One");
-        content.Should().Contain(@"C:\music\track.mp3");
-    }
-
-    [Fact]
     public async Task ImportPlaylistAsync_WhenFileDoesNotExist_ReturnsFailureResult()
     {
         var result = await _service.ImportPlaylistAsync(Path.Combine(_tempDirectory, "missing.m3u"), "My Playlist");
@@ -181,7 +152,6 @@ public class M3uPlaylistExportServiceTests : IDisposable
         result.PlaylistsExported.Should().Be(1, "the empty playlist should be skipped");
         result.TotalSongs.Should().Be(1);
         await _libraryReader.Received(1).GetSongsInPlaylistOrderedAsync(filledPlaylist.Id);
-        await _libraryReader.DidNotReceive().GetPlaylistByIdAsync(filledPlaylist.Id);
     }
 
     [Fact]

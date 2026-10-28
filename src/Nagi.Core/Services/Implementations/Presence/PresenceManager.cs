@@ -10,7 +10,7 @@ namespace Nagi.Core.Services.Implementations.Presence;
 ///     This manager activates, deactivates, and broadcasts updates to all relevant
 ///     IPresenceService implementations like Discord and Last.fm.
 /// </summary>
-public class PresenceManager : IPresenceManager, IAsyncDisposable, IDisposable
+public class PresenceManager : IAsyncDisposable, IDisposable
 {
     private readonly List<IPresenceService> _activeServices = new();
     private readonly ILogger<PresenceManager> _logger;

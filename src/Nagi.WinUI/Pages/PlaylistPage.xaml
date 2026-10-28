@@ -43,7 +43,6 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Page Header -->
         <Grid Grid.Row="0"
               ColumnSpacing="8"
               Margin="{StaticResource CollectionPageHeaderMargin}">
@@ -65,7 +64,6 @@
             </StackPanel>
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <!-- Search functionality -->
                 <Grid>
                     <TextBox x:Name="SearchTextBox"
                              PlaceholderText="{x:Bind resources:Strings.PlaylistPage_SearchBox_Placeholder, Mode=OneTime}"
@@ -243,7 +241,7 @@
                                 Background="{StaticResource AppPrimaryColorBrush}"
                                 CornerRadius="{ThemeResource ControlCornerRadius}"
                                 Visibility="{x:Bind IsSmart, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <FontIcon Glyph="&#xE71C;" FontSize="12" Foreground="White" />
+                                <FontIcon Glyph="&#xE71C;" FontSize="12" Foreground="{StaticResource TextOnAppPrimaryBrush}" />
                             </Border>
                         </Grid>
 
@@ -268,7 +266,6 @@
             </GridView.ItemTemplate>
             </GridView>
 
-            <!-- This panel is shown when the playlist list is empty. -->
             <StackPanel
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"

@@ -58,30 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NavItem_Library" xml:space="preserve">
-    <value>Thư viện</value>
-  </data>
-  <data name="NavItem_Albums" xml:space="preserve">
-    <value>Album</value>
-  </data>
-  <data name="NavItem_Artists" xml:space="preserve">
-    <value>Nghệ sĩ</value>
-  </data>
-  <data name="NavItem_Genres" xml:space="preserve">
-    <value>Thể loại</value>
-  </data>
-  <data name="NavItem_Playlists" xml:space="preserve">
-    <value>Danh sách phát</value>
-  </data>
-  <data name="NavItem_Folders" xml:space="preserve">
-    <value>Thư mục</value>
-  </data>
-  <data name="NavItem_Favorites" xml:space="preserve">
-    <value>Yêu thích</value>
-  </data>
-  <data name="NavItem_Insights" xml:space="preserve">
-    <value>Thống kê</value>
-  </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>Cài đặt</value>
   </data>
@@ -614,9 +590,6 @@ Các tệp không thể nhập: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg vẫn chưa được phát hiện. Vui lòng cài đặt FFmpeg và nhấp 'Kiểm tra lại'.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Lỗi khi kiểm tra FFmpeg. Vui lòng thử lại.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Trước</value>
   </data>
@@ -956,9 +929,6 @@ Bạn có muốn tiếp tục không?</value>
   </data>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
     <value>Tiếp theo</value>
-  </data>
-  <data name="AppName" xml:space="preserve">
-    <value>Nagi</value>
   </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Trước</value>

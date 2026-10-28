@@ -1,8 +1,5 @@
-using System;
 using Windows.System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using CommunityToolkit.WinUI;
@@ -29,18 +26,17 @@ namespace Nagi.WinUI;
 
 /// <summary>
 ///     The main shell of the application, hosting navigation, content, and the media player.
-///     This page also provides the custom title bar elements to the main window.
+///     It also provides the custom title bar elements to the main window.
 /// </summary>
 public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 {
-    private const double VolumeChangeStep = 5.0;
     private int _queueDragVersion;
     private NowPlayingIndicatorBinder? _queuePlayingBinder;
     private NowPlayingIndicatorBinder? _historyPlayingBinder;
 
     private void QueueListView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
     {
-        if (e.Items.OfType<QueueEntry>().Any(entry => entry.Id == ViewModel.CurrentPlayingTrack?.Id))
+        if (!e.Items.OfType<QueueEntry>().All(ViewModel.SidebarQueue.CanMove))
         {
             e.Cancel = true;
             return;
@@ -152,6 +148,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
         InitializeComponent();
         DataContext = ViewModel;
+        PlayerInputHelper.AttachSeekSlider(MediaSeekerSlider, ViewModel);
         _seeAllSearch = new CollapsibleSearch(this, SeeAllSearchToggleButton, SeeAllSearchTextBox,
             Strings.InsightsPage_SeeAll_SearchButton_ToolTip, "SeeAllSearchExpanded", "SeeAllSearchCollapsed",
             () => InsightsVm.SearchTerm = string.Empty);
@@ -339,10 +336,9 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             NavView.MenuItems.Clear();
             foreach (var item in navItems.Where(i => i.IsEnabled))
             {
-                var resourceKey = $"NavItem_{item.Tag}";
                 NavView.MenuItems.Add(new NavigationViewItem
                 {
-                    Content = Strings.ResourceManager.GetString(resourceKey) ?? resourceKey,
+                    Content = item.DisplayName,
                     Tag = item.Tag,
                     Icon = new FontIcon { Glyph = AppIconGlyphs.ToGlyph(item.Icon) }
                 });
@@ -600,7 +596,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private void AppTitleBar_PaneToggleRequested(TitleBar sender, object args)
     {
         NavView.IsPaneOpen = !NavView.IsPaneOpen;
-        _ = SavePaneStateAsync(NavView.IsPaneOpen);
+        _ = ViewModel.RememberPaneOpenAsync(NavView.IsPaneOpen);
     }
 
     private void AppTitleBar_BackRequested(TitleBar sender, object args)
@@ -608,69 +604,12 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         TryGoBack();
     }
 
-    private void MediaSeekerSlider_PointerPressed(object sender, PointerRoutedEventArgs e)
-    {
-        ViewModel.IsUserDraggingSlider = true;
-    }
-
-    private void MediaSeekerSlider_PointerReleased(object sender, PointerRoutedEventArgs e)
-    {
-        ViewModel.IsUserDraggingSlider = false;
-    }
-
-    private void MediaSeekerSlider_KeyDown(object sender, KeyRoutedEventArgs e)
-    {
-        if (e.Key is VirtualKey.Left or VirtualKey.Right or VirtualKey.PageUp or VirtualKey.PageDown or VirtualKey.Home or VirtualKey.End)
-        {
-            ViewModel.IsUserDraggingSlider = true;
-        }
-    }
-
-    private void MediaSeekerSlider_KeyUp(object sender, KeyRoutedEventArgs e)
-    {
-        if (e.Key is VirtualKey.Left or VirtualKey.Right or VirtualKey.PageUp or VirtualKey.PageDown or VirtualKey.Home or VirtualKey.End)
-        {
-            ViewModel.IsUserDraggingSlider = false;
-        }
-    }
-
-    private async Task SavePaneStateAsync(bool isOpen)
-    {
-        try
-        {
-            if (await _settingsService.GetRememberPaneStateEnabledAsync())
-                await _settingsService.SetLastPaneOpenAsync(isOpen);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogTrace(ex, "Failed to save navigation pane state.");
-        }
-    }
-
-    private void VolumeSliderContainer_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
-    {
-        var pointerPoint = e.GetCurrentPoint((UIElement)sender);
-        var delta = pointerPoint.Properties.MouseWheelDelta;
-
-        ViewModel.CurrentVolume = Math.Clamp(ViewModel.CurrentVolume + Math.Sign(delta) * VolumeChangeStep, 0, 100);
-
-        e.Handled = true;
-    }
+    private void VolumeSliderContainer_PointerWheelChanged(object sender, PointerRoutedEventArgs e) =>
+        PlayerInputHelper.StepVolumeWithWheel(sender, e, ViewModel);
 
     private async Task RestorePaneStateAsync()
     {
-        try
-        {
-            if (await _settingsService.GetRememberPaneStateEnabledAsync())
-            {
-                var savedState = await _settingsService.GetLastPaneOpenAsync();
-                if (!_isUnloaded && savedState.HasValue) NavView.IsPaneOpen = savedState.Value;
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogTrace(ex, "Failed to restore navigation pane state.");
-        }
+        if (await ViewModel.GetRememberedPaneOpenAsync() is { } isOpen && !_isUnloaded) NavView.IsPaneOpen = isOpen;
     }
 
     /// <summary>

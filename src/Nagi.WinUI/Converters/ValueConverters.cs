@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Text;
-using Windows.Foundation;
+﻿using Windows.Foundation;
 using Windows.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
 using Nagi.Core.Helpers;
+using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
-using Nagi.Presentation.Resources;
 using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Converters;
@@ -17,7 +13,7 @@ namespace Nagi.WinUI.Converters;
 public sealed class PageSizeLabelConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language) =>
-        value is 0 ? Strings.PaginationControl_All : value?.ToString() ?? string.Empty;
+        value is int pageSize ? SettingsText.GetPageSizeName(pageSize) : string.Empty;
 
     public object ConvertBack(object value, Type targetType, object parameter, string language) =>
         DependencyProperty.UnsetValue;
@@ -71,27 +67,11 @@ public class BooleanToInverseBooleanConverter : IValueConverter
 
 public class AppThemeToFriendlyStringConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        return value switch
-        {
-            AppTheme.Light => Strings.Theme_Light,
-            AppTheme.Dark => Strings.Theme_Dark,
-            AppTheme.Default => Strings.Theme_Default,
-            _ => value?.ToString() ?? string.Empty
-        };
-    }
+    public object Convert(object value, Type targetType, object parameter, string language) =>
+        value is AppTheme theme ? SettingsText.GetName(theme) : string.Empty;
 
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        if (value is string strValue)
-        {
-            foreach (var theme in Enum.GetValues<AppTheme>())
-                if ((string)Convert(theme, targetType, parameter, language) == strValue) return theme;
-        }
-
-        return DependencyProperty.UnsetValue;
-    }
+    public object ConvertBack(object value, Type targetType, object parameter, string language) =>
+        DependencyProperty.UnsetValue;
 }
 
 public class ArgbColorToColorConverter : IValueConverter
@@ -115,7 +95,6 @@ public class IncrementalLoadingConverter : IValueConverter
 public class BooleanToVisibilityConverter : IValueConverter
 {
     /// <summary>
-    ///     Gets or sets a value indicating whether the conversion should be inverted.
     ///     If true, true becomes Collapsed and false becomes Visible.
     /// </summary>
     public bool Invert { get; set; }
@@ -160,7 +139,6 @@ public class StringToVisibilityConverter : IValueConverter
 public class CollectionCountToVisibilityConverter : IValueConverter
 {
     /// <summary>
-    ///     Gets or sets a value indicating whether the conversion should be inverted.
     ///     If true, 0 becomes Visible and >0 becomes Collapsed.
     /// </summary>
     public bool Invert { get; set; }
@@ -216,89 +194,33 @@ public class ObjectToVisibilityConverter : IValueConverter
     }
 }
 
-/// <summary>
-///     Converts a string value into a deterministic LinearGradientBrush from a curated palette.
-/// </summary>
 public class GenreToGradientConverter : IValueConverter
 {
-    private static readonly List<(Color Start, Color End)> Palettes = new()
-    {
-        (Color.FromArgb(255, 142, 45, 226), Color.FromArgb(255, 74, 0, 224)),
-        (Color.FromArgb(255, 214, 109, 255), Color.FromArgb(255, 92, 3, 214)),
-        (Color.FromArgb(255, 255, 95, 109), Color.FromArgb(255, 255, 195, 113)),
-        (Color.FromArgb(255, 221, 94, 221), Color.FromArgb(255, 115, 54, 242)),
-        (Color.FromArgb(255, 233, 30, 99), Color.FromArgb(255, 156, 39, 176)),
-        (Color.FromArgb(255, 1, 200, 255), Color.FromArgb(255, 4, 105, 255)),
-        (Color.FromArgb(255, 33, 150, 243), Color.FromArgb(255, 3, 169, 244)),
-        (Color.FromArgb(255, 89, 92, 255), Color.FromArgb(255, 102, 194, 255)),
-        (Color.FromArgb(255, 0, 212, 255), Color.FromArgb(255, 9, 9, 121)),
-        (Color.FromArgb(255, 43, 88, 118), Color.FromArgb(255, 78, 67, 118)),
-        (Color.FromArgb(255, 29, 212, 162), Color.FromArgb(255, 11, 171, 181)),
-        (Color.FromArgb(255, 168, 255, 120), Color.FromArgb(255, 120, 255, 214)),
-        (Color.FromArgb(255, 0, 150, 136), Color.FromArgb(255, 76, 175, 80)),
-        (Color.FromArgb(255, 106, 17, 203), Color.FromArgb(255, 37, 117, 252)),
-        (Color.FromArgb(255, 19, 84, 122), Color.FromArgb(255, 128, 208, 199)),
-        (Color.FromArgb(255, 255, 107, 107), Color.FromArgb(255, 255, 159, 67)),
-        (Color.FromArgb(255, 255, 193, 7), Color.FromArgb(255, 255, 87, 34)),
-        (Color.FromArgb(255, 255, 110, 82), Color.FromArgb(255, 255, 183, 82)),
-        (Color.FromArgb(255, 241, 39, 17), Color.FromArgb(255, 245, 175, 25)),
-        (Color.FromArgb(255, 255, 204, 42), Color.FromArgb(255, 255, 153, 0)),
-        (Color.FromArgb(255, 255, 0, 132), Color.FromArgb(255, 255, 100, 71)),
-        (Color.FromArgb(255, 255, 225, 109), Color.FromArgb(255, 255, 109, 143)),
-        (Color.FromArgb(255, 118, 75, 162), Color.FromArgb(255, 102, 126, 234)),
-        (Color.FromArgb(255, 6, 214, 160), Color.FromArgb(255, 255, 209, 102))
-    };
-
     public object Convert(object value, Type targetType, object parameter, string language)
     {
-        if (value is not string genreName || string.IsNullOrEmpty(genreName)) return GetDefaultGradient();
-
-        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(genreName));
-        var index = (int)(BitConverter.ToUInt32(hash, 0) % (uint)Palettes.Count);
-        var (startColor, endColor) = Palettes[index];
-
-        return CreateGradient(startColor, endColor);
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
-    }
-
-    private static LinearGradientBrush CreateGradient(Color start, Color end)
-    {
+        var (start, end) = GenreGradients.For(value as string);
         return new LinearGradientBrush
         {
             StartPoint = new Point(0, 0),
             EndPoint = new Point(1, 1),
             GradientStops = new GradientStopCollection
             {
-                new GradientStop { Color = start, Offset = 0.0 },
-                new GradientStop { Color = end, Offset = 1.0 }
+                new GradientStop { Color = start.ToWindowsColor(), Offset = 0.0 },
+                new GradientStop { Color = end.ToWindowsColor(), Offset = 1.0 }
             }
         };
     }
 
-    private static LinearGradientBrush GetDefaultGradient()
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
-        return CreateGradient(Color.FromArgb(255, 88, 88, 88), Color.FromArgb(255, 58, 58, 58));
+        throw new NotImplementedException();
     }
 }
 
 public class BackdropMaterialToStringConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        if (value is BackdropMaterial material)
-            return material switch
-            {
-                BackdropMaterial.Mica => Strings.Backdrop_Mica,
-                BackdropMaterial.MicaAlt => Strings.Backdrop_MicaAlt,
-                BackdropMaterial.Acrylic => Strings.Backdrop_Acrylic,
-                _ => material.ToString()
-            };
-        return string.Empty;
-    }
+    public object Convert(object value, Type targetType, object parameter, string language) =>
+        value is BackdropMaterial material ? SettingsText.GetName(material) : string.Empty;
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
@@ -308,17 +230,8 @@ public class BackdropMaterialToStringConverter : IValueConverter
 
 public class PlayerBackgroundMaterialToStringConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        if (value is PlayerBackgroundMaterial material)
-            return material switch
-            {
-                PlayerBackgroundMaterial.Acrylic => Strings.PlayerBackgroundMaterial_Acrylic,
-                PlayerBackgroundMaterial.Solid => Strings.PlayerBackgroundMaterial_Solid,
-                _ => material.ToString()
-            };
-        return string.Empty;
-    }
+    public object Convert(object value, Type targetType, object parameter, string language) =>
+        value is PlayerBackgroundMaterial material ? SettingsText.GetName(material) : string.Empty;
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
@@ -341,8 +254,6 @@ public class BooleanToOpacityConverter : IValueConverter
         throw new NotSupportedException();
     }
 }
-
-
 
 /// <summary>
 ///     Safely converts a URI string to a BitmapImage. Returns null for empty or invalid strings.

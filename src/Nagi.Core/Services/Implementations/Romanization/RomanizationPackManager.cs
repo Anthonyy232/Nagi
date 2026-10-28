@@ -1,5 +1,4 @@
 using System.IO.Compression;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -102,16 +101,22 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
 
     public async Task<RomanizationPackOperationResult> InstallPackAsync(string packId, CancellationToken cancellationToken = default)
     {
+        RomanizationPackOperationResult Rejected(string reason)
+        {
+            _logger.LogWarning("Romanization pack {PackId} was not installed: {Reason}", packId, reason);
+            return RomanizationPackOperationResult.Failure(reason);
+        }
+
         try
         {
             var pack = (await GetAvailablePacksAsync(false, cancellationToken).ConfigureAwait(false))
                 .FirstOrDefault(p => string.Equals(p.CatalogEntry.Id, packId, StringComparison.OrdinalIgnoreCase))
                 ?.CatalogEntry;
 
-            if (pack is null) return RomanizationPackOperationResult.Failure("Pack is not available for this app version.");
+            if (pack is null) return Rejected("Pack is not available for this app version.");
             var provider = _providers[pack.EngineId];
             if (!Uri.TryCreate(pack.DownloadUrl, UriKind.Absolute, out var downloadUri) || downloadUri.Scheme != Uri.UriSchemeHttps)
-                return RomanizationPackOperationResult.Failure("Pack download URL must use HTTPS.");
+                return Rejected("Pack download URL must use HTTPS.");
 
             var tempArchivePath = Path.Combine(PackRoot, $"{Guid.NewGuid():N}.nagipack");
             var tempExtractPath = Path.Combine(PackRoot, $"{Guid.NewGuid():N}.tmp");
@@ -129,24 +134,24 @@ public sealed class RomanizationPackManager : IRomanizationPackManager
                     archive.Position = 0;
                     var hash = await SHA256.HashDataAsync(archive, downloadToken).ConfigureAwait(false);
                     if (!string.Equals(Convert.ToHexString(hash), pack.Sha256?.Replace("-", string.Empty), StringComparison.OrdinalIgnoreCase))
-                        return RomanizationPackOperationResult.Failure("Downloaded pack hash did not match the signed catalog.");
+                        return Rejected("Downloaded pack hash did not match the signed catalog.");
                 }
                 ExtractZipSafely(tempArchivePath, tempExtractPath);
 
                 var manifestPath = Path.Combine(tempExtractPath, "manifest.json");
-                if (!File.Exists(manifestPath)) return RomanizationPackOperationResult.Failure("Pack does not contain a manifest.");
+                if (!File.Exists(manifestPath)) return Rejected("Pack does not contain a manifest.");
 
                 RomanizationPackManifest? manifest;
                 await using (var stream = File.OpenRead(manifestPath))
                     manifest = await JsonSerializer.DeserializeAsync<RomanizationPackManifest>(
                         stream, RomanizationJson.Options, cancellationToken).ConfigureAwait(false);
 
-                if (manifest is null) return RomanizationPackOperationResult.Failure("Pack manifest could not be read.");
-                if (!MatchesCatalogEntry(pack, manifest)) return RomanizationPackOperationResult.Failure("Pack manifest does not match the signed catalog.");
+                if (manifest is null) return Rejected("Pack manifest could not be read.");
+                if (!MatchesCatalogEntry(pack, manifest)) return Rejected("Pack manifest does not match the signed catalog.");
 
                 var installedPack = new InstalledRomanizationPack { Manifest = manifest, DirectoryPath = tempExtractPath };
                 if (!await provider.ValidatePackAsync(installedPack, cancellationToken).ConfigureAwait(false))
-                    return RomanizationPackOperationResult.Failure("Pack self-test failed.");
+                    return Rejected("Pack self-test failed.");
 
                 cancellationToken.ThrowIfCancellationRequested();
                 ReplacePackDirectory(tempExtractPath, GetPackDirectory(pack.Id));

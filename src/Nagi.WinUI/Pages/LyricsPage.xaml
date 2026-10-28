@@ -11,7 +11,6 @@
     Background="Transparent"
     Loaded="OnPageLoaded">
 
-
     <Page.Resources>
         <ResourceDictionary>
             <Storyboard x:Key="PageLoadStoryboard">
@@ -69,7 +68,6 @@
             Visibility="{x:Bind ViewModel.HasLyrics, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
             MaxWidth="600" />
 
-        <!-- Synchronized (timed) lyrics display -->
         <ScrollViewer
             x:Name="LyricsScrollViewer"
             Grid.Row="2"
@@ -137,7 +135,6 @@
             </StackPanel>
         </ScrollViewer>
 
-        <!-- Unsynchronized (plain text) lyrics display -->
         <ListView
             Grid.Row="2"
             Padding="{StaticResource PageContentPadding}"
@@ -164,7 +161,6 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <!-- No lyrics message -->
         <StackPanel
             Grid.Row="2"
             HorizontalAlignment="Center"

@@ -12,14 +12,12 @@ namespace Nagi.Presentation.Tests;
 public class GenreViewModelTests
 {
     [Fact]
-    public async Task ChangeSortOrder_WhenSavingFails_StillReordersGenres()
+    public async Task ChangeSortOrder_ReordersGenres()
     {
         var library = new LibraryFakes();
         library.Reader.GetGenreSummariesAsync(Arg.Any<CancellationToken>())
             .Returns(new[] { new GenreSummary(Guid.NewGuid(), "Jazz", 1), new GenreSummary(Guid.NewGuid(), "Rock", 1) });
         var settings = Substitute.For<IUISettingsService>();
-        settings.SetSortOrderAsync(Arg.Any<string>(), Arg.Any<GenreSortOrder>())
-            .Returns(_ => throw new IOException("Settings unavailable"));
         using var viewModel = new GenreViewModel(library.Reader, library.Scanner, Substitute.For<IMusicPlaybackService>(),
             Substitute.For<INavigationService>(), settings,
             new ImmediateDispatcher(), NullLogger<GenreViewModel>.Instance);

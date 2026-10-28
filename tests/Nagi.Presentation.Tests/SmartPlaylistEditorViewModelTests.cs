@@ -34,7 +34,9 @@ public class SmartPlaylistEditorViewModelTests : IDisposable
     {
         var editing = new SmartPlaylist
         {
-            Name = "Long tracks", MatchAllRules = false, SortOrder = SmartPlaylistSortOrder.DurationDesc,
+            Name = "Long tracks",
+            MatchAllRules = false,
+            SortOrder = SmartPlaylistSortOrder.DurationDesc,
             CoverImageUri = @"C:\covers\long.png",
             Rules =
             {

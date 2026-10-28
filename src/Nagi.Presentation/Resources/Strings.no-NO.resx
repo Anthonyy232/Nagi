@@ -58,30 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NavItem_Library" xml:space="preserve">
-    <value>Bibliotek</value>
-  </data>
-  <data name="NavItem_Albums" xml:space="preserve">
-    <value>Album</value>
-  </data>
-  <data name="NavItem_Artists" xml:space="preserve">
-    <value>Artister</value>
-  </data>
-  <data name="NavItem_Genres" xml:space="preserve">
-    <value>Sjangere</value>
-  </data>
-  <data name="NavItem_Playlists" xml:space="preserve">
-    <value>Spillelister</value>
-  </data>
-  <data name="NavItem_Folders" xml:space="preserve">
-    <value>Mapper</value>
-  </data>
-  <data name="NavItem_Favorites" xml:space="preserve">
-    <value>Favoritter</value>
-  </data>
-  <data name="NavItem_Insights" xml:space="preserve">
-    <value>Innsikt</value>
-  </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>Innstillinger</value>
   </data>
@@ -614,9 +590,6 @@ Filer som ikke kunne importeres: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg fortsatt ikke oppdaget. Vennligst installer FFmpeg og klikk 'Sjekk på nytt'.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Feil ved sjekk etter FFmpeg. Vennligst prøv igjen.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Forrige</value>
   </data>
@@ -956,9 +929,6 @@ Vil du fortsette?</value>
   </data>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
     <value>Neste i kø</value>
-  </data>
-  <data name="AppName" xml:space="preserve">
-    <value>Nagi</value>
   </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Forrige</value>

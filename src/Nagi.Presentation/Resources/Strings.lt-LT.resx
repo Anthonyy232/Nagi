@@ -58,30 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NavItem_Library" xml:space="preserve">
-    <value>Biblioteka</value>
-  </data>
-  <data name="NavItem_Albums" xml:space="preserve">
-    <value>Albumai</value>
-  </data>
-  <data name="NavItem_Artists" xml:space="preserve">
-    <value>Atlikėjai</value>
-  </data>
-  <data name="NavItem_Genres" xml:space="preserve">
-    <value>Žanrai</value>
-  </data>
-  <data name="NavItem_Playlists" xml:space="preserve">
-    <value>Grojaraščiai</value>
-  </data>
-  <data name="NavItem_Folders" xml:space="preserve">
-    <value>Aplankai</value>
-  </data>
-  <data name="NavItem_Favorites" xml:space="preserve">
-    <value>Mėgstamiausi</value>
-  </data>
-  <data name="NavItem_Insights" xml:space="preserve">
-    <value>Įžvalgos</value>
-  </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>Nustatymai</value>
   </data>
@@ -614,9 +590,6 @@ Failai, kurių nepavyko importuoti: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg vis dar nerastas. Įdiekite FFmpeg ir spustelėkite "Patikrinti iš naujo".</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Klaida tikrinant FFmpeg. Bandykite dar kartą.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Ankstesnis</value>
   </data>
@@ -956,9 +929,6 @@ Ar norite tęsti?</value>
   </data>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
     <value>Kitas eilėje</value>
-  </data>
-  <data name="AppName" xml:space="preserve">
-    <value>Nagi</value>
   </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Ankstesnis</value>

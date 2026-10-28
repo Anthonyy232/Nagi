@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Windows.Graphics;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
@@ -162,7 +161,6 @@ public class TrayPopupService : ITrayPopupService, IDisposable
         _logger.LogDebug("Popup deactivated. Hiding.");
         _ = HidePopupAsync();
     }
-
 
     private void OnPopupWindowClosed(object? sender, WindowEventArgs args)
     {

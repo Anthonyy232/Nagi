@@ -1,9 +1,8 @@
-using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services.Implementations;
 using Nagi.Presentation.ViewModels;
 
 namespace Nagi.WinUI.Pages;
@@ -14,7 +13,7 @@ public sealed partial class SmartPlaylistSongViewPage : SongListPage
     public SmartPlaylistSongViewPage()
     {
         InitializeComponent();
-        ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<SmartPlaylistSongListViewModel>();
+        ViewModel = App.Services!.GetRequiredService<ViewModelFactory>().Create<SmartPlaylistSongListViewModel>();
         DataContext = ViewModel;
         InitializeSongList(ViewModel, ownsViewModel: true, SearchToggleButton, SearchTextBox,
             Strings.SmartPlaylistSongViewPage_SearchButton_Search_ToolTip, ColumnHeaderHost, SongsListView);
@@ -28,6 +27,5 @@ public sealed partial class SmartPlaylistSongViewPage : SongListPage
 
         var navParam = (SmartPlaylistSongViewNavigationParameter)e.Parameter;
         await ViewModel.InitializeAsync(navParam.Title, navParam.SmartPlaylistId, navParam.CoverImageUri);
-        await ViewModel.LoadAvailablePlaylistsAsync();
     }
 }

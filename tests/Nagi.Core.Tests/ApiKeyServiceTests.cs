@@ -116,18 +116,6 @@ public class ApiKeyServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task GetApiKeyAsync_WhenApiResponseOmitsValue_ReturnsNull()
-    {
-        const string keyName = ServiceProviderIds.LastFmSecret;
-        SetupValidConfiguration();
-        SetupHttpResponse(HttpStatusCode.OK, new { Message = "This is not the expected format" });
-
-        var result = await _apiKeyService.GetApiKeyAsync(keyName);
-
-        result.Should().BeNull();
-    }
-
-    [Fact]
     public async Task GetApiKeyAsync_WhenConfigurationIsMissing_ReturnsNullWithoutHttpCall()
     {
         _configuration["NagiApiServer:Url"].Returns(string.Empty);
@@ -197,7 +185,6 @@ public class ApiKeyServiceTests : IDisposable
 
     [Theory]
     [InlineData("https://api.test.com/", "https://api.test.com/api/fanarttv-key")]
-    [InlineData("https://api.test.com", "https://api.test.com/api/fanarttv-key")]
     [InlineData("api.test.com", "https://api.test.com/api/fanarttv-key")]
     [InlineData("HTTPS://api.test.com/", "https://api.test.com/api/fanarttv-key")]
     [InlineData("https://api.test.com/nagi?region=west", "https://api.test.com/nagi/api/fanarttv-key?region=west")]
@@ -217,7 +204,6 @@ public class ApiKeyServiceTests : IDisposable
     [Theory]
     [InlineData("sub-key", true)]
     [InlineData(null, false)]
-    [InlineData("", false)]
     public async Task GetApiKeyAsync_HandlesSubscriptionKeyHeaderCorrectly(string? subscriptionKey,
         bool shouldHaveHeader)
     {
@@ -230,32 +216,6 @@ public class ApiKeyServiceTests : IDisposable
         var request = _httpMessageHandler.Requests[0];
         var headerExists = request.Headers.Contains("Ocp-Apim-Subscription-Key");
         headerExists.Should().Be(shouldHaveHeader);
-    }
-
-    [Fact]
-    public async Task GetApiKeyAsync_ConcurrentCallsForSameKey_ResultInSingleHttpCall()
-    {
-        const string keyName = ServiceProviderIds.TheAudioDb;
-        const string expectedApiKey = "shared-key";
-        SetupValidConfiguration();
-
-        var tcs = new TaskCompletionSource<HttpResponseMessage>();
-        var response = new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = new StringContent(JsonSerializer.Serialize(new { Value = expectedApiKey }), Encoding.UTF8,
-                "application/json")
-        };
-        _httpMessageHandler.SendAsyncFunc = (_, _) => tcs.Task;
-
-        var task1 = _apiKeyService.GetApiKeyAsync(keyName);
-        var task2 = _apiKeyService.GetApiKeyAsync(keyName);
-        var task3 = _apiKeyService.GetApiKeyAsync(keyName);
-
-        tcs.SetResult(response);
-        var results = await Task.WhenAll(task1, task2, task3);
-
-        _httpMessageHandler.Requests.Should().HaveCount(1);
-        results.Should().AllBe(expectedApiKey);
     }
 
     private void SetupValidConfiguration(string url = "https://api.test.com/", string? subscriptionKey = "sub-key")

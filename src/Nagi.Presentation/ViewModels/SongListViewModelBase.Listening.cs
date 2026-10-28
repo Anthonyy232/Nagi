@@ -1,8 +1,6 @@
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Resources;
@@ -12,7 +10,7 @@ namespace Nagi.Presentation.ViewModels;
 public abstract partial class SongListViewModelBase
 {
     [RelayCommand(CanExecute = nameof(CanExecutePlayAllCommands))]
-    private Task PlayMixAsync(ShuffleMode mode) => RunListeningActionAsync(async () =>
+    private Task PlayMixAsync(ShuffleMode mode) => RunActionAsync(async () =>
     {
         var generation = CaptureSongContext();
         var context = GetPlaybackContext();
@@ -23,7 +21,7 @@ public abstract partial class SongListViewModelBase
     });
 
     [RelayCommand(CanExecute = nameof(CanExecutePlayAllCommands))]
-    private Task PlayForAsync() => RunListeningActionAsync(async () =>
+    private Task PlayForAsync() => RunActionAsync(async () =>
     {
         var generation = CaptureSongContext();
         var context = GetPlaybackContext();
@@ -36,7 +34,7 @@ public abstract partial class SongListViewModelBase
     });
 
     [RelayCommand(CanExecute = nameof(CanExecuteSelectedSongsCommands))]
-    private Task SetSelectedFavoritesAsync(bool loved) => RunListeningActionAsync(async () =>
+    private Task SetSelectedFavoritesAsync(bool loved) => RunActionAsync(async () =>
     {
         var ids = await GetCurrentSelectionIdsAsync();
         if (ids.Count == 0) return;
@@ -48,20 +46,13 @@ public abstract partial class SongListViewModelBase
         }
     });
 
+    /// <summary>The favorite action for the one selected song.</summary>
+    public string SelectedFavoriteActionText =>
+        SelectedSongs.FirstOrDefault()?.IsLoved == true ? Strings.Listening_RemoveFavorite : Strings.Listening_AddFavorite;
+
     [RelayCommand(CanExecute = nameof(CanExecuteSingleSongCommands))]
     private async Task ToggleSelectedFavoriteAsync()
     {
         if (SelectedSongs.Count == 1) await SetSelectedFavoritesAsync(!SelectedSongs[0].IsLoved);
-    }
-
-    protected async Task RunListeningActionAsync(Func<Task> action)
-    {
-        try { await action(); }
-        catch (OperationCanceledException) { }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Listening action failed");
-            if (!_isDisposed) await _uiService.ShowMessageDialogAsync(Strings.Generic_Error, Strings.Listening_ActionError);
-        }
     }
 }

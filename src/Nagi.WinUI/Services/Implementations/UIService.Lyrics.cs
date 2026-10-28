@@ -1,10 +1,8 @@
-using System;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
-using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Services.Implementations;
 
@@ -35,9 +33,7 @@ public partial class UIService
             XamlRoot = xamlRoot
         };
 
-        void UpdateSaveButton() => dialog.IsPrimaryButtonEnabled =
-            !string.IsNullOrWhiteSpace(editor.Text)
-            && editor.Text.ReplaceLineEndings("\n") != lyrics.ReplaceLineEndings("\n");
+        void UpdateSaveButton() => dialog.IsPrimaryButtonEnabled = LyricsEdit.CanSave(editor.Text, lyrics);
 
         editor.TextChanged += (_, _) => UpdateSaveButton();
         UpdateSaveButton();

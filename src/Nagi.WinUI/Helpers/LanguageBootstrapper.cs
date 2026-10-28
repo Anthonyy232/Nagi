@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using Windows.Globalization;
 using Nagi.WinUI.Services.Implementations;
 

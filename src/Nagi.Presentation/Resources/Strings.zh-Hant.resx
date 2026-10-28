@@ -58,30 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NavItem_Library" xml:space="preserve">
-    <value>媒體庫</value>
-  </data>
-  <data name="NavItem_Albums" xml:space="preserve">
-    <value>專輯</value>
-  </data>
-  <data name="NavItem_Artists" xml:space="preserve">
-    <value>藝人</value>
-  </data>
-  <data name="NavItem_Genres" xml:space="preserve">
-    <value>類型</value>
-  </data>
-  <data name="NavItem_Playlists" xml:space="preserve">
-    <value>播放清單</value>
-  </data>
-  <data name="NavItem_Folders" xml:space="preserve">
-    <value>資料夾</value>
-  </data>
-  <data name="NavItem_Favorites" xml:space="preserve">
-    <value>最愛</value>
-  </data>
-  <data name="NavItem_Insights" xml:space="preserve">
-    <value>深入分析</value>
-  </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>設定</value>
   </data>
@@ -614,9 +590,6 @@
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>仍未偵測到 FFmpeg。請安裝 FFmpeg 並點擊「重新檢查」。</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>檢查 FFmpeg 時發生錯誤。請再試一次。</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>上一首</value>
   </data>
@@ -956,9 +929,6 @@
   </data>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
     <value>即將播放</value>
-  </data>
-  <data name="AppName" xml:space="preserve">
-    <value>Nagi</value>
   </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>上一首</value>

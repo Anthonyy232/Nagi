@@ -1,4 +1,3 @@
-using System.Linq;
 using Microsoft.Extensions.Logging;
 using ModernLrc;
 using ModernLrc.Model;
@@ -46,8 +45,8 @@ public class LrcService : ILrcService, IDisposable
     {
         var forceOnlineRefresh = false;
 
-        // 1. Try the local path from the Song object. Cache files created before identity hashes
-        // are not safe to reuse: two songs may already point at the same metadata-derived file.
+        // Cache files created before identity hashes are not safe to reuse: two songs may already
+        // point at the same metadata-derived file.
         if (!string.IsNullOrWhiteSpace(song.LrcFilePath))
         {
             var isLegacyCachePath = IsLegacyCachePath(song);
@@ -62,7 +61,7 @@ public class LrcService : ILrcService, IDisposable
                 song.Id);
         }
 
-        // 2. Try online fallback if enabled AND never checked before
+        // Look online only if never checked before, unless the local file is missing or unsafe to reuse.
         if ((!forceOnlineRefresh && song.LyricsLastCheckedUtc != null)
             || !await _settingsService.GetFetchOnlineLyricsEnabledAsync().ConfigureAwait(false))
             return null;

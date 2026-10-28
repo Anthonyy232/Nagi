@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
@@ -6,6 +5,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Nagi.Core.Constants;
+using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
 using Nagi.WinUI.Helpers;
@@ -77,7 +77,7 @@ public partial class UIService
             }
         };
         inputTextBox.TextChanged += (_, _) =>
-            dialog.IsPrimaryButtonEnabled = !string.IsNullOrWhiteSpace(inputTextBox.Text);
+            dialog.IsPrimaryButtonEnabled = PlaylistNames.IsValid(inputTextBox.Text);
 
         var result = await ShowDialogAsync(dialog);
         return result == ContentDialogResult.Primary ? new NewPlaylistRequest(inputTextBox.Text, coverImagePath) : null;
@@ -100,8 +100,7 @@ public partial class UIService
         };
 
         inputTextBox.TextChanged += (_, _) =>
-            dialog.IsPrimaryButtonEnabled = !string.IsNullOrWhiteSpace(inputTextBox.Text) &&
-                                            inputTextBox.Text.Trim() != currentName;
+            dialog.IsPrimaryButtonEnabled = PlaylistNames.CanRename(inputTextBox.Text, currentName);
 
         var result = await ShowDialogAsync(dialog);
         return result == ContentDialogResult.Primary ? inputTextBox.Text : null;

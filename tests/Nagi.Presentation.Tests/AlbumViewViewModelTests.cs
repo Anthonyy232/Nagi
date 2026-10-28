@@ -56,7 +56,10 @@ public class AlbumViewViewModelTests
         library.Reader.GetSongsByAlbumIdPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
             Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>
             {
-                PageNumber = 1, PageSize = 50, TotalCount = 51, Items = [new Song { DurationTicks = TimeSpan.TicksPerMinute }]
+                PageNumber = 1,
+                PageSize = 50,
+                TotalCount = 51,
+                Items = [new Song { DurationTicks = TimeSpan.TicksPerMinute }]
             });
         var duration = new TaskCompletionSource<TimeSpan>(TaskCreationOptions.RunContinuationsAsynchronously);
         library.Reader.GetSearchTotalDurationInAlbumAsync(Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
@@ -83,7 +86,9 @@ public class AlbumViewViewModelTests
         library.Reader.GetSongsByAlbumIdPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(),
             Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>
             {
-                PageNumber = 1, PageSize = 50, TotalCount = 1,
+                PageNumber = 1,
+                PageSize = 50,
+                TotalCount = 1,
                 Items = [new Song { DurationTicks = TimeSpan.FromHours(25).Ticks }]
             });
         using var viewModel = CreateViewModel(library);

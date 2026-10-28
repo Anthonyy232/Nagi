@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using H.NotifyIcon;
 using H.NotifyIcon.EfficiencyMode;
 using Microsoft.Extensions.Logging;
@@ -190,7 +189,6 @@ public sealed class WindowService : IWindowService, IDisposable
     {
         _isMiniPlayerEnabled = isEnabled;
     }
-
 
     private void OnAppWindowClosing(AppWindow sender, AppWindowClosingEventArgs args)
     {

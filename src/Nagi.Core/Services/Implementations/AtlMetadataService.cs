@@ -50,13 +50,12 @@ public partial class AtlMetadataService : IMetadataService
             // ATL parsing is synchronous, so enforce the timeout while awaiting it.
             var track = await Task.Run(() => new Track(filePath)).WaitAsync(TimeSpan.FromSeconds(30)).ConfigureAwait(false);
 
-            var isUnknownFormat = track.AudioFormat.Name?.Equals("Unknown", StringComparison.OrdinalIgnoreCase) == true ||
-                                  track.AudioFormat.ID == -1;
-
-            if (!track.AudioFormat.Readable || isUnknownFormat)
+            // Readable is a property of the format, not the file; ATL reports a damaged file as an unknown format.
+            if (!track.AudioFormat.Readable || track.AudioFormat.ID == -1 ||
+                track.AudioFormat.Name?.Equals("Unknown", StringComparison.OrdinalIgnoreCase) == true)
             {
                 metadata.ExtractionFailed = true;
-                metadata.ErrorMessage = isUnknownFormat ? "UnsupportedFormat" : "CorruptFile";
+                metadata.ErrorMessage = "UnsupportedFormat";
                 return metadata;
             }
 

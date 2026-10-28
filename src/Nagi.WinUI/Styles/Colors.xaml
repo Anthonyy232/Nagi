@@ -5,6 +5,7 @@
     xmlns:animation="using:Microsoft.UI.Xaml.Media.Animation">
 
     <SolidColorBrush x:Key="AppPrimaryColorBrush" Color="#FF21944B" />
+    <SolidColorBrush x:Key="TextOnAppPrimaryBrush" Color="#FFFFFFFF" />
     <StaticResource x:Key="NavigationViewSelectionIndicatorForeground" ResourceKey="AppPrimaryColorBrush" />
 
     <Style TargetType="FontIcon">
@@ -27,6 +28,11 @@
     <SolidColorBrush x:Key="MediaOnImageTextPrimaryBrush" Color="#FFFFFFFF" />
     <SolidColorBrush x:Key="MediaOnImageControlSecondaryBrush" Color="#80FFFFFF" />
     <SolidColorBrush x:Key="MediaOnImageControlTrackBrush" Color="#66FFFFFF" />
+    <SolidColorBrush x:Key="MediaOnImageTextSecondaryBrush" Color="#B0FFFFFF" />
+    <!--  Dark layers over artwork that keep what is drawn on it readable, from strongest to lightest.  -->
+    <SolidColorBrush x:Key="MediaOnImageControlsScrimBrush" Color="#90000000" />
+    <SolidColorBrush x:Key="MediaOnImageIndicatorBackgroundBrush" Color="#80000000" />
+    <SolidColorBrush x:Key="MediaOnImageHoverScrimBrush" Color="#66000000" />
 
     <Style x:Key="PageTitleTextStyle" TargetType="TextBlock">
         <Setter Property="Foreground" Value="{StaticResource AppPrimaryColorBrush}" />

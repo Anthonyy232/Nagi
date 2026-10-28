@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -75,16 +74,7 @@ public partial class LibraryViewModel : SongListViewModelBase
     public async Task InitializeAsync()
     {
         _logger.LogDebug("Initializing LibraryViewModel");
-        try
-        {
-            CurrentSortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.LibrarySortOrderKey);
-        }
-        catch (Exception ex)
-        {
-            // HasInitialized stays false, so the next visit retries.
-            _logger.LogError(ex, "Failed to initialize the library.");
-            return;
-        }
+        CurrentSortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.LibrarySortOrderKey);
 
         await RefreshOrSortSongsCommand.ExecuteAsync(null);
         HasInitialized = !HasLoadError;

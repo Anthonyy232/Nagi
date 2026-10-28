@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -27,7 +26,6 @@ public partial class ArtistViewModelItem : ObservableObject
 
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(LocalImageCachePath);
     public bool IsCustomImage => LocalImageCachePath?.Contains(".custom.") == true;
-
 
     public override string ToString() => Name;
 }
@@ -64,6 +62,8 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
         _musicNavigationService = musicNavigationService;
 
         Artists.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasArtists));
+        _libraryScanner.ArtistMetadataUpdated += OnArtistMetadataUpdated;
+        _libraryScanner.ArtistMetadataBatchUpdated += OnArtistMetadataBatchUpdated;
     }
 
     public ObservableRangeCollection<ArtistViewModelItem> Artists { get; } = new();
@@ -149,8 +149,7 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
             return;
 
         CurrentSortOrder = newSortOrder;
-        try { await _settingsService.SetSortOrderAsync(SortOrderHelper.ArtistsSortOrderKey, newSortOrder); }
-        catch (Exception ex) { _logger.LogError(ex, "Failed to save artist sort order"); }
+        await _settingsService.SetSortOrderAsync(SortOrderHelper.ArtistsSortOrderKey, newSortOrder);
         CurrentPage = 1;
         await LoadCommand.ExecuteAsync(CancellationToken.None);
     }
@@ -179,21 +178,10 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
         });
     }
 
-    public void SubscribeToEvents()
-    {
-        _libraryScanner.ArtistMetadataUpdated += OnArtistMetadataUpdated;
-        _libraryScanner.ArtistMetadataBatchUpdated += OnArtistMetadataBatchUpdated;
-    }
-
-    public void UnsubscribeFromEvents()
+    public override void Dispose()
     {
         _libraryScanner.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
         _libraryScanner.ArtistMetadataBatchUpdated -= OnArtistMetadataBatchUpdated;
-    }
-
-    public override void Dispose()
-    {
-        UnsubscribeFromEvents();
         base.Dispose();
     }
 

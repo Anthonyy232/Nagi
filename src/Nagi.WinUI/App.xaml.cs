@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -243,7 +241,6 @@ public partial class App : Application
 
         services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog());
         services.AddSingleton(configuration);
-        services.AddNagiHttpClients();
         services.AddNagiMainWindow(mainWindow);
         services.AddNagiPlatformServices();
         services.AddNagiCore();

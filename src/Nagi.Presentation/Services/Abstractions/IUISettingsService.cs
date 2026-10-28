@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Nagi.Core.Services.Abstractions;
@@ -7,10 +6,6 @@ using Nagi.Presentation.Navigation;
 
 namespace Nagi.Presentation.Services.Abstractions;
 
-/// <summary>
-///     Defines a service for managing application-wide settings, including UI-specific ones.
-///     This interface extends the core <see cref="ISettingsService" />.
-/// </summary>
 public interface IUISettingsService : ISettingsService
 {
     event Action<bool>? PlayerAnimationSettingChanged;
@@ -49,10 +44,7 @@ public interface IUISettingsService : ISettingsService
 
     Task SetPlayerBackgroundMaterialAsync(PlayerBackgroundMaterial material);
 
-    /// <summary>
-    ///     Gets the currently configured player tint intensity (0.0 to 1.0).
-    /// </summary>
-    /// <returns>A value between 0.0 (neutral) and 1.0 (vibrant).</returns>
+    /// <returns>From 0 (neutral) to 1 (vibrant).</returns>
     Task<double> GetPlayerTintIntensityAsync();
 
     Task SetPlayerTintIntensityAsync(double intensity);
@@ -157,7 +149,6 @@ public interface IUISettingsService : ISettingsService
     /// </summary>
     /// <param name="languageCode">The BCP-47 language tag, or empty string for "Auto".</param>
     Task SetLanguageAsync(string languageCode);
-
 
     /// <summary>
     ///     Gets the user-defined accent color, if any.

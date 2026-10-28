@@ -58,30 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NavItem_Library" xml:space="preserve">
-    <value>Knižnica</value>
-  </data>
-  <data name="NavItem_Albums" xml:space="preserve">
-    <value>Albumy</value>
-  </data>
-  <data name="NavItem_Artists" xml:space="preserve">
-    <value>Interpreti</value>
-  </data>
-  <data name="NavItem_Genres" xml:space="preserve">
-    <value>Žánre</value>
-  </data>
-  <data name="NavItem_Playlists" xml:space="preserve">
-    <value>Zoznamy skladieb</value>
-  </data>
-  <data name="NavItem_Folders" xml:space="preserve">
-    <value>Priečinky</value>
-  </data>
-  <data name="NavItem_Favorites" xml:space="preserve">
-    <value>Obľúbené</value>
-  </data>
-  <data name="NavItem_Insights" xml:space="preserve">
-    <value>Štatistiky</value>
-  </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>Nastavenia</value>
   </data>
@@ -614,9 +590,6 @@ Súbory, ktoré sa nepodarilo importovať: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg stále nebol zistený. Prosím, nainštalujte FFmpeg a kliknite na 'Znova skontrolovať'.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Chyba pri kontrole FFmpeg. Skúste to znova.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Predchádzajúce</value>
   </data>
@@ -956,9 +929,6 @@ Chcete pokračovať?</value>
   </data>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
     <value>Ďalej na rade</value>
-  </data>
-  <data name="AppName" xml:space="preserve">
-    <value>Nagi</value>
   </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Predchádzajúce</value>

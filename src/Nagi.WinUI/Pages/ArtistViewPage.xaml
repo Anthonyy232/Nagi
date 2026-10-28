@@ -154,11 +154,11 @@
                                 Glyph="" />
                         </Grid>
                         <Grid x:Name="EditOverlay"
-                              Background="#66000000"
+                              Background="{StaticResource MediaOnImageHoverScrimBrush}"
                               CornerRadius="75"
                               Opacity="0"
                               PointerPressed="EditOverlay_PointerPressed">
-                            <FontIcon Glyph="&#xE70F;" Foreground="White" FontSize="32" />
+                            <FontIcon Glyph="&#xE70F;" Foreground="{StaticResource MediaOnImageTextPrimaryBrush}" FontSize="32" />
                             <ToolTipService.ToolTip>
                                 <ToolTip Content="{x:Bind resources:Strings.ArtistViewPage_EditOverlay_Content, Mode=OneTime}" />
                             </ToolTipService.ToolTip>

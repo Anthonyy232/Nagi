@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,7 +36,6 @@ public partial class GenreViewViewModel : SongListViewModelBase
     }
 
     [ObservableProperty] public partial string GenreName { get; set; }
-
 
     protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
         SongSortOrder sortOrder, CancellationToken cancellationToken = default)
@@ -87,7 +85,6 @@ public partial class GenreViewViewModel : SongListViewModelBase
             Songs.Clear();
         }
     }
-
 
     protected override PlaybackContext GetPlaybackContext() =>
         _genreId != Guid.Empty ? new(PlaybackContextType.Genre, _genreId) : base.GetPlaybackContext();

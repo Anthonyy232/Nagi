@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
@@ -30,8 +29,8 @@ public sealed partial class GenrePage : SearchablePage
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
+        // The singleton view model outlives the page, so it is reset rather than disposed.
         ViewModel.ResetState();
-        // Note: ViewModel is Singleton, do not dispose - state persists across navigations
     }
 
     private void GenresGridView_ItemClick(object sender, ItemClickEventArgs e)

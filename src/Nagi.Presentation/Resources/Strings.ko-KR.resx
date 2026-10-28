@@ -58,30 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NavItem_Library" xml:space="preserve">
-    <value>라이브러리</value>
-  </data>
-  <data name="NavItem_Albums" xml:space="preserve">
-    <value>앨범</value>
-  </data>
-  <data name="NavItem_Artists" xml:space="preserve">
-    <value>아티스트</value>
-  </data>
-  <data name="NavItem_Genres" xml:space="preserve">
-    <value>장르</value>
-  </data>
-  <data name="NavItem_Playlists" xml:space="preserve">
-    <value>재생 목록</value>
-  </data>
-  <data name="NavItem_Folders" xml:space="preserve">
-    <value>폴더</value>
-  </data>
-  <data name="NavItem_Favorites" xml:space="preserve">
-    <value>즐겨찾기</value>
-  </data>
-  <data name="NavItem_Insights" xml:space="preserve">
-    <value>인사이트</value>
-  </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>설정</value>
   </data>
@@ -614,9 +590,6 @@
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg이(가) 여전히 감지되지 않았습니다. FFmpeg을 설치하고 '재확인'을 클릭하세요.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>FFmpeg 확인 중 오류가 발생했습니다. 다시 시도해 주세요.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>이전</value>
   </data>
@@ -956,9 +929,6 @@
   </data>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
     <value>다음 재생</value>
-  </data>
-  <data name="AppName" xml:space="preserve">
-    <value>Nagi</value>
   </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>이전</value>

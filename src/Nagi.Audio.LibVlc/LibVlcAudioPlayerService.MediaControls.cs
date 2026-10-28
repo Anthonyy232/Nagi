@@ -1,4 +1,3 @@
-using System;
 using LibVLCSharp;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;

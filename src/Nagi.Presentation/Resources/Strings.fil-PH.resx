@@ -58,30 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NavItem_Library" xml:space="preserve">
-    <value>Library</value>
-  </data>
-  <data name="NavItem_Albums" xml:space="preserve">
-    <value>Mga Album</value>
-  </data>
-  <data name="NavItem_Artists" xml:space="preserve">
-    <value>Mga Artista</value>
-  </data>
-  <data name="NavItem_Genres" xml:space="preserve">
-    <value>Mga Genre</value>
-  </data>
-  <data name="NavItem_Playlists" xml:space="preserve">
-    <value>Mga Playlist</value>
-  </data>
-  <data name="NavItem_Folders" xml:space="preserve">
-    <value>Mga Folder</value>
-  </data>
-  <data name="NavItem_Favorites" xml:space="preserve">
-    <value>Mga Paborito</value>
-  </data>
-  <data name="NavItem_Insights" xml:space="preserve">
-    <value>Mga Insight</value>
-  </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>Mga Setting</value>
   </data>
@@ -614,9 +590,6 @@ Mga file na hindi ma-import: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>Hindi pa rin nakita ang FFmpeg. Mangyaring i-install ang FFmpeg at i-click ang 'Muling Suriin'.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Error sa pagsusuri ng FFmpeg. Pakisubukan muli.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Nakaraan</value>
   </data>
@@ -956,9 +929,6 @@ Gusto mo bang magpatuloy?</value>
   </data>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
     <value>Susunod</value>
-  </data>
-  <data name="AppName" xml:space="preserve">
-    <value>Nagi</value>
   </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Nakaraan</value>

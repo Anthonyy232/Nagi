@@ -58,30 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NavItem_Library" xml:space="preserve">
-    <value>Βιβλιοθήκη</value>
-  </data>
-  <data name="NavItem_Albums" xml:space="preserve">
-    <value>Άλμπουμ</value>
-  </data>
-  <data name="NavItem_Artists" xml:space="preserve">
-    <value>Καλλιτέχνες</value>
-  </data>
-  <data name="NavItem_Genres" xml:space="preserve">
-    <value>Είδη</value>
-  </data>
-  <data name="NavItem_Playlists" xml:space="preserve">
-    <value>Λίστες αναπαραγωγής</value>
-  </data>
-  <data name="NavItem_Folders" xml:space="preserve">
-    <value>Φάκελοι</value>
-  </data>
-  <data name="NavItem_Favorites" xml:space="preserve">
-    <value>Αγαπημένα</value>
-  </data>
-  <data name="NavItem_Insights" xml:space="preserve">
-    <value>Στατιστικά</value>
-  </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>Ρυθμίσεις</value>
   </data>
@@ -614,9 +590,6 @@
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>Το FFmpeg εξακολουθεί να μην εντοπίζεται. Παρακαλώ εγκαταστήστε το FFmpeg και κάντε κλικ στο 'Επανέλεγχος'.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Σφάλμα κατά τον έλεγχο για FFmpeg. Παρακαλώ δοκιμάστε ξανά.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Προηγούμενο</value>
   </data>
@@ -956,9 +929,6 @@
   </data>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
     <value>Επόμενο</value>
-  </data>
-  <data name="AppName" xml:space="preserve">
-    <value>Nagi</value>
   </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Προηγούμενο</value>

@@ -12,6 +12,7 @@ public interface IPagedListViewModel : INotifyPropertyChanged
     int TotalPages { get; }
     int SongsPerPage { get; set; }
     int TotalItemCount { get; }
+    bool CanPaginate { get; }
     bool HasNextPage { get; }
     bool HasPreviousPage { get; }
     IAsyncRelayCommand NextPageCommand { get; }

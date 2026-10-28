@@ -102,8 +102,15 @@ public partial class LibraryService
             .AsNoTracking()
             .Select(s => new
             {
-                s.Id, s.FilePath, s.PlayCount, s.SkipCount, s.TotalListenTimeTicks,
-                s.IsLoved, s.Rating, s.DateAddedToLibrary, s.LastPlayedDate
+                s.Id,
+                s.FilePath,
+                s.PlayCount,
+                s.SkipCount,
+                s.TotalListenTimeTicks,
+                s.IsLoved,
+                s.Rating,
+                s.DateAddedToLibrary,
+                s.LastPlayedDate
             })
             .ToListAsync(ct).ConfigureAwait(false);
 
@@ -125,7 +132,9 @@ public partial class LibraryService
                 context.PlaylistSongs.AddRange(playlistEntries.GroupBy(entry => entry.PlaylistId)
                     .Select(playlist => new PlaylistSong
                     {
-                        PlaylistId = playlist.Key, SongId = survivor.Id, Order = playlist.Min(entry => entry.Order)
+                        PlaylistId = playlist.Key,
+                        SongId = survivor.Id,
+                        Order = playlist.Min(entry => entry.Order)
                     }));
                 await context.SaveChangesAsync(ct).ConfigureAwait(false);
                 context.ChangeTracker.Clear();

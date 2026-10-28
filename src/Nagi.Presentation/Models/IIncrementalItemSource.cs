@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-
 namespace Nagi.Presentation.Models;
 
 /// <summary>

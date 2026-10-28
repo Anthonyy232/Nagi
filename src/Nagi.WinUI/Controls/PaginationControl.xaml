@@ -14,7 +14,7 @@
     </UserControl.Resources>
 
     <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center"
-                Visibility="{x:Bind VisibleIfPaginates(ViewModel.TotalItemCount), Mode=OneWay}">
+                Visibility="{x:Bind ViewModel.CanPaginate, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
         <TextBlock Text="{x:Bind resources:Strings.PaginationControl_ItemsPerPage, Mode=OneTime}" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12"/>
 
         <controls:PageSizeComboBox Style="{StaticResource DefaultComboBoxStyle}"

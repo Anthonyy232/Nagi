@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Data;
@@ -322,7 +320,6 @@ public partial class SettingsService
 
     public async Task SetServiceProvidersAsync(ServiceCategory category, List<ServiceProviderSetting> providers)
     {
-        // Normalize order values based on list position
         for (var i = 0; i < providers.Count; i++)
             providers[i].Order = i;
 

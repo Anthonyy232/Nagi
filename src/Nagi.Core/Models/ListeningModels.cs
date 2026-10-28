@@ -8,6 +8,16 @@ public enum ShuffleMode
     Unheard
 }
 
+/// <summary>
+///     The ranges <see cref="Services.Abstractions.IMusicPlaybackService.PlayMixAsync" /> accepts.
+/// </summary>
+public static class PlaybackMixLimits
+{
+    public const int MaxMinutes = 24 * 60;
+    public const int MaxAvoidRecentDays = 365;
+    public const int DefaultAvoidRecentDays = 1;
+}
+
 public enum PlaybackStopMode
 {
     Off,

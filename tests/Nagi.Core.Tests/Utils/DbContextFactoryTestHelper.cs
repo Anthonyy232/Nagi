@@ -53,8 +53,13 @@ public class DbContextFactoryTestHelper : IDisposable
         var folder = new Folder { Name = "Music", Path = @"C:\Music" };
         var songs = orders.Select((_, i) => new Song
         {
-            Title = $"Song {i}", FilePath = $@"C:\Music\{i}.mp3", DirectoryPath = folder.Path,
-            Folder = folder, TrackNumber = orders.Length - i, Lyrics = "Heavy lyrics", Grouping = "Group"
+            Title = $"Song {i}",
+            FilePath = $@"C:\Music\{i}.mp3",
+            DirectoryPath = folder.Path,
+            Folder = folder,
+            TrackNumber = orders.Length - i,
+            Lyrics = "Heavy lyrics",
+            Grouping = "Group"
         }).ToArray();
         var playlist = new Playlist { Name = "Test", DateModified = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc) };
         await using var context = ContextFactory.CreateDbContext();

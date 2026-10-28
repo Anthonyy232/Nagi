@@ -46,7 +46,6 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- Page Header -->
         <Grid Grid.Row="0"
               Margin="{StaticResource CollectionPageHeaderMargin}">
             <Grid.ColumnDefinitions>
@@ -65,7 +64,6 @@
             </StackPanel>
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <!-- Search functionality -->
                 <Grid>
                     <TextBox x:Name="SearchTextBox"
                              PlaceholderText="{x:Bind resources:Strings.AlbumPage_SearchBox_Placeholder, Mode=OneTime}"
@@ -140,7 +138,6 @@
         </Grid>
 
         <Grid Grid.Row="1">
-            <!-- Displays the collection of albums -->
             <GridView uihelpers:ScrollEdgeFade.IsEnabled="True"
                 x:Name="AlbumsGridView"
                 IsItemClickEnabled="True"
@@ -177,7 +174,6 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <!-- Album Cover Art or Placeholder -->
                             <Grid Grid.Row="0" Width="{StaticResource CollectionCardImageSize}" Height="{StaticResource CollectionCardImageSize}" HorizontalAlignment="Center">
                                 <Border
                                     CornerRadius="{StaticResource ArtworkCornerRadius}"
@@ -226,7 +222,6 @@
                 </GridView.ItemTemplate>
             </GridView>
 
-            <!-- Message shown when the library is empty -->
             <StackPanel
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"

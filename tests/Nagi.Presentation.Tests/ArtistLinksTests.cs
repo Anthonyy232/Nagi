@@ -1,19 +1,20 @@
 using FluentAssertions;
 using Nagi.Core.Models;
-using Nagi.WinUI.Helpers;
+using Nagi.Presentation.Helpers;
 using Xunit;
 
-namespace Nagi.WinUI.Tests;
+namespace Nagi.Presentation.Tests;
 
-public class MultiArtistHyperlinkHelperTests
+public class ArtistLinksTests
 {
     [Fact]
-    public void ArtistNames_KeepDenormalizedNameWhenRelationshipsAreNotLoaded()
+    public void ArtistNames_KeepDenormalizedNameWhenRelationshipsAreNotLoaded_AndNavigateFromTheSong()
     {
         var song = new Song { SongArtists = [new SongArtist { ArtistId = Guid.NewGuid() }] };
 
-        MultiArtistHyperlinkHelper.GetArtistNames(song, null, "Earth, Wind & Fire")
+        ArtistLinks.GetNames(song, null, "Earth, Wind & Fire")
             .Should().Equal("Earth, Wind & Fire");
+        ArtistLinks.ShowsStoredSongName(song, null).Should().BeTrue();
     }
 
     [Theory]
@@ -40,7 +41,7 @@ public class MultiArtistHyperlinkHelperTests
             new() { Artist = first, Order = 1 }
         ];
 
-        MultiArtistHyperlinkHelper.GetArtistNames(album ? null : song, album ? albumArtists : null, null)
+        ArtistLinks.GetNames(album ? null : song, album ? albumArtists : null, null)
             .Should().Equal("First", "Second");
     }
 }

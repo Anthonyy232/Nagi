@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -11,7 +10,6 @@ namespace Nagi.WinUI;
 
 public sealed partial class MainPage
 {
-    private string GetListeningPaneTitle(bool history) => history ? Strings.Listening_RecentlyPlayed : Strings.QueueFlyout_Title;
     private Visibility GetQueueDetailVisibility(bool history, bool enabled) => !history && enabled ? Visibility.Visible : Visibility.Collapsed;
     private async void HistoryEntry_DoubleTapped(object sender, DoubleTappedRoutedEventArgs args)
     {
@@ -31,21 +29,19 @@ public sealed partial class MainPage
         PopulateStopOptions(stops.Items);
         menu.Items.Add(stops);
         var speeds = new MenuFlyoutSubItem { Text = Strings.Listening_PlaybackSpeed };
-        foreach (var rate in PlaybackRates)
+        foreach (var option in ViewModel.PlaybackRateOptions)
         {
             speeds.Items.Add(new RadioMenuFlyoutItem
             {
-                Text = rate == 1.0 ? Strings.Listening_PlaybackSpeedNormal : string.Format(Strings.Listening_PlaybackSpeedFormat, rate),
+                Text = option.DisplayName,
                 GroupName = "PlaybackSpeed",
-                IsChecked = ViewModel.PlaybackRate == rate,
+                IsChecked = ViewModel.PlaybackRate == option.Rate,
                 Command = ViewModel.SetPlaybackRateCommand,
-                CommandParameter = rate
+                CommandParameter = option.Rate
             });
         }
         menu.Items.Add(speeds);
     }
-
-    private static readonly double[] PlaybackRates = [0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
 
     private void TimerOptions_Opening(object sender, object e)
     {
@@ -58,8 +54,8 @@ public sealed partial class MainPage
         items.Add(new MenuFlyoutItem { Text = Strings.Listening_StopAfterTrack, Command = ViewModel.StopAfterTrackCommand });
         items.Add(new MenuFlyoutItem { Text = Strings.Listening_StopAtQueueEnd, Command = ViewModel.StopAtQueueEndCommand });
         items.Add(new MenuFlyoutSeparator());
-        foreach (var (minutes, label) in new[] { (15, Strings.Listening_Timer15), (30, Strings.Listening_Timer30), (60, Strings.Listening_Timer60) })
-            items.Add(new MenuFlyoutItem { Text = label, Command = ViewModel.SetSleepTimerCommand, CommandParameter = minutes });
+        foreach (var option in ViewModel.SleepTimerOptions)
+            items.Add(new MenuFlyoutItem { Text = option.DisplayName, Command = ViewModel.SetSleepTimerCommand, CommandParameter = option.Minutes });
         items.Add(new MenuFlyoutItem { Text = Strings.Listening_CustomTimer, Command = ViewModel.SetCustomSleepTimerCommand });
         if (ViewModel.IsStopScheduled)
         {
@@ -68,7 +64,6 @@ public sealed partial class MainPage
         }
     }
 
-    private string GetListeningPaneToggleLabel(bool history) => history ? Strings.QueueFlyout_Title : Strings.Listening_RecentlyPlayed;
     private string GetListeningPaneToggleIcon(bool history) => history ? "\uE90B" : "\uE81C";
     private void ToggleListeningPane_Click(object sender, RoutedEventArgs e) => ViewModel.IsHistoryVisible = !ViewModel.IsHistoryVisible;
 

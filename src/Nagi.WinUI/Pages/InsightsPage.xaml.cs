@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -31,18 +30,6 @@ public sealed partial class InsightsPage : Page
         base.OnNavigatedFrom(e);
         ViewModel.CloseSeeAllCommand.Execute(null);
     }
-
-    private void OnSeeAllSongsClick(object sender, RoutedEventArgs e) =>
-        ViewModel.OpenSeeAllSongsCommand.Execute(null);
-
-    private void OnSeeAllArtistsClick(object sender, RoutedEventArgs e) =>
-        ViewModel.OpenSeeAllArtistsCommand.Execute(null);
-
-    private void OnSeeAllAlbumsClick(object sender, RoutedEventArgs e) =>
-        ViewModel.OpenSeeAllAlbumsCommand.Execute(null);
-
-    private void OnSeeAllGenresClick(object sender, RoutedEventArgs e) =>
-        ViewModel.OpenSeeAllGenresCommand.Execute(null);
 
     private void OnSongsSortByPlayCountClick(object sender, RoutedEventArgs e) =>
         ViewModel.SongsSortMetric = SortMetric.PlayCount;

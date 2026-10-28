@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel;
 using System.Numerics;
 using Windows.UI.ViewManagement;
@@ -10,7 +9,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Nagi.Core.Models.Lyrics;
-using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services.Implementations;
 using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
 
@@ -45,7 +44,7 @@ public sealed partial class LyricsPage : Page
 
     public LyricsPage()
     {
-        ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<LyricsPageViewModel>();
+        ViewModel = App.Services!.GetRequiredService<ViewModelFactory>().Create<LyricsPageViewModel>();
         InitializeComponent();
         Storyboard.SetTarget(_progressBarAnimation, LyricsProgressBar);
         Storyboard.SetTargetProperty(_progressBarAnimation, nameof(ProgressBar.Value));
@@ -310,38 +309,12 @@ public sealed partial class LyricsPage : Page
     {
         _progressBarStoryboard.Stop();
 
-        var currentLine = ViewModel.CurrentLine;
-        if (currentLine == null)
-        {
-            LyricsProgressBar.Value = 0;
-            return;
-        }
+        var (fraction, remaining) = ViewModel.GetCurrentLineProgress();
+        LyricsProgressBar.Value = fraction * 100;
+        if (remaining <= TimeSpan.Zero || !CompositionAnimationHelper.AreAnimationsEnabled) return;
 
-        var currentIndex = ViewModel.LyricLines.IndexOf(currentLine);
-        var nextLineStartTime = currentIndex >= 0 && currentIndex < ViewModel.LyricLines.Count - 1
-            ? ViewModel.LyricLines[currentIndex + 1].StartTime
-            : ViewModel.SongDuration;
-        var lineDuration = nextLineStartTime - currentLine.StartTime;
-
-        if (lineDuration <= TimeSpan.Zero)
-        {
-            LyricsProgressBar.Value = 100;
-            return;
-        }
-
-        var positionInLine = ViewModel.CurrentPosition - currentLine.StartTime;
-        if (positionInLine < TimeSpan.Zero) positionInLine = TimeSpan.Zero;
-
-        var startValue = positionInLine.TotalMilliseconds / lineDuration.TotalMilliseconds * 100;
-        LyricsProgressBar.Value = Math.Clamp(startValue, 0, 100);
-
-        var remainingDuration = lineDuration - positionInLine;
-        if (remainingDuration <= TimeSpan.Zero || !CompositionAnimationHelper.AreAnimationsEnabled) return;
-
-        _progressBarAnimation.Duration = remainingDuration;
-
+        _progressBarAnimation.Duration = remaining;
         _progressBarStoryboard.Begin();
-
         if (!ViewModel.IsPlaying) _progressBarStoryboard.Pause();
     }
 }

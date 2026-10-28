@@ -1,5 +1,3 @@
-using System;
-
 namespace Nagi.Presentation.Models;
 
 /// <summary>

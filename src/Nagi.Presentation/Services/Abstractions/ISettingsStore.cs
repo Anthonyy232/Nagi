@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Nagi.Presentation.Services.Abstractions;
+﻿namespace Nagi.Presentation.Services.Abstractions;
 
 /// <summary>
 ///     The platform's persistent key-value store for settings. Values are strings, booleans and numbers.

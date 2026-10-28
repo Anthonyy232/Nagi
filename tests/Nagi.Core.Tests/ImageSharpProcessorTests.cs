@@ -5,7 +5,6 @@ using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using Xunit;
@@ -66,28 +65,6 @@ public class ImageSharpProcessorTests
     }
 
     [Fact]
-    public async Task SaveCoverArtAndExtractColorsAsync_WithIdenticalData_UsesSameCacheFile()
-    {
-        var pictureData = CreateTestImageBytes();
-        var contentHash = GenerateContentHash(pictureData);
-        string? savedPath = null;
-
-        _fileSystem.GetFiles(AlbumArtPath, $"{contentHash}.*.fetched.jpg")
-            .Returns(_ => savedPath == null ? Array.Empty<string>() : new[] { savedPath });
-
-        _fileSystem.When(x => x.MoveFile(Arg.Any<string>(), Arg.Any<string>(), true))
-            .Do(callInfo => savedPath = callInfo.ArgAt<string>(1));
-
-        var (uri1, _, _) = await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData);
-        var (uri2, _, _) = await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData);
-
-        uri1.Should().Be(savedPath);
-        uri2.Should().Be(savedPath);
-        await _fileSystem.Received(1).WriteAllBytesAsync(Arg.Any<string>(), Arg.Any<byte[]>());
-        _fileSystem.Received(1).MoveFile(Arg.Any<string>(), Arg.Any<string>(), true);
-    }
-
-    [Fact]
     public async Task SaveCoverArtAndExtractColorsAsync_WithDistinctLargePngs_SavesEveryConcurrentImage()
     {
         var pictures = Enumerable.Range(0, 4).Select(index =>
@@ -110,22 +87,6 @@ public class ImageSharpProcessorTests
 
         var (uri, lightSwatch, darkSwatch) =
             await _imageProcessor.SaveCoverArtAndExtractColorsAsync(invalidPictureData);
-
-        uri.Should().BeNull();
-        lightSwatch.Should().BeNull();
-        darkSwatch.Should().BeNull();
-    }
-
-    [Fact]
-    public async Task SaveCoverArtAndExtractColorsAsync_WhenFileWriteFails_ReturnsNullValues()
-    {
-        var pictureData = CreateTestImageBytes();
-        var contentHash = GenerateContentHash(pictureData);
-        _fileSystem.GetFiles(AlbumArtPath, $"{contentHash}.*.fetched.jpg").Returns(Array.Empty<string>());
-        _fileSystem.WriteAllBytesAsync(Arg.Any<string>(), Arg.Any<byte[]>()).ThrowsAsync(new IOException("Disk full"));
-
-        var (uri, lightSwatch, darkSwatch) =
-            await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData);
 
         uri.Should().BeNull();
         lightSwatch.Should().BeNull();

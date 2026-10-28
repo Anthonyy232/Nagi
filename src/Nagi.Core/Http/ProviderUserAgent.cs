@@ -1,8 +1,8 @@
 namespace Nagi.Core.Http;
 
 /// <summary>
-///     Identifies Nagi to services whose terms ask clients for a descriptive User-Agent with a contact link
-///     (MusicBrainz, Wikimedia, LRCLIB).
+///     Identifies Nagi on every HTTP request. MusicBrainz, Wikimedia and LRCLIB ask clients for a descriptive
+///     User-Agent with a contact link.
 /// </summary>
 internal static class ProviderUserAgent
 {

@@ -58,30 +58,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NavItem_Library" xml:space="preserve">
-    <value>Leabharlann</value>
-  </data>
-  <data name="NavItem_Albums" xml:space="preserve">
-    <value>Albaim</value>
-  </data>
-  <data name="NavItem_Artists" xml:space="preserve">
-    <value>Ealaíontóirí</value>
-  </data>
-  <data name="NavItem_Genres" xml:space="preserve">
-    <value>Seánraí</value>
-  </data>
-  <data name="NavItem_Playlists" xml:space="preserve">
-    <value>Seinmliostaí</value>
-  </data>
-  <data name="NavItem_Folders" xml:space="preserve">
-    <value>Fillteáin</value>
-  </data>
-  <data name="NavItem_Favorites" xml:space="preserve">
-    <value>Ceanáin</value>
-  </data>
-  <data name="NavItem_Insights" xml:space="preserve">
-    <value>Léargais</value>
-  </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>Socruithe</value>
   </data>
@@ -614,9 +590,6 @@ Comhaid nárbh fhéidir a iompórtáil: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>Níor braitheadh FFmpeg fós. Suiteáil FFmpeg le do thoil agus cliceáil 'Athsheiceáil'.</value>
   </data>
-  <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>Earráid ag seiceáil le haghaidh FFmpeg. Bain triail eile as le do thoil.</value>
-  </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
     <value>Roimhe Seo</value>
   </data>
@@ -956,9 +929,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   </data>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
     <value>An Chéad Eile</value>
-  </data>
-  <data name="AppName" xml:space="preserve">
-    <value>Nagi</value>
   </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
     <value>Roimhe Seo</value>

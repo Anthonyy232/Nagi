@@ -1,7 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml.Hosting;
-using System;
 using System.Numerics;
 using Windows.UI.ViewManagement;
 

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.UI.Xaml;
@@ -63,7 +62,8 @@ internal sealed class SplitViewContentMotion
                     };
                     layout.KeyFrames.Add(new DiscreteObjectKeyFrame
                     {
-                        KeyTime = KeyTime.FromTimeSpan(TimeSpan.Zero), Value = value
+                        KeyTime = KeyTime.FromTimeSpan(TimeSpan.Zero),
+                        Value = value
                     });
                     Storyboard.SetTarget(layout, contentRoot);
                     Storyboard.SetTargetProperty(layout, property);

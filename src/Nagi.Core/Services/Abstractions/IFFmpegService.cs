@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace Nagi.Core.Services.Abstractions;
+﻿namespace Nagi.Core.Services.Abstractions;
 
 public interface IFFmpegService
 {
