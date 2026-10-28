@@ -160,7 +160,7 @@ public class Song
     ///     The names of all associated artists joined by " & ".
     ///     This is a denormalized field for efficient display and searching.
     /// </summary>
-    [MaxLength(2000)]
+    [MaxLength(Artist.MaxCreditLength)]
     public string ArtistName { get; set; } = Artist.UnknownArtistName;
 
     /// <summary>
@@ -191,39 +191,16 @@ public class Song
     /// </summary>
     public void SyncDenormalizedFields()
     {
-        const int MaxArtistNameLength = 2000;
-
         SortTitle = SortKeyHelper.Normalize(Title);
 
-        // Fast path: single artist is the common case — skip LINQ, OrderBy, and GetDisplayName allocations.
-        if (SongArtists.Count == 1)
+        // Fast path: a single artist is the common case during scans, so skip the LINQ and joining.
+        if (SongArtists.Count == 1 && SongArtists.First().Artist?.Name is { Length: > 0 } name)
         {
-            var name = SongArtists.First().Artist?.Name;
-            if (!string.IsNullOrEmpty(name))
-            {
-                ArtistName = name;
-                PrimaryArtistName = name;
-                PrimaryArtistSortName = SortKeyHelper.Normalize(name);
-                return;
-            }
+            (ArtistName, PrimaryArtistName, PrimaryArtistSortName) = (name, name, SortKeyHelper.Normalize(name));
+            return;
         }
 
-        var artists = GetCreditedArtists().Select(artist => artist.Name).Where(n => !string.IsNullOrEmpty(n)).ToList();
-        if (artists.Count == 0)
-        {
-            ArtistName = Artist.UnknownArtistName;
-            PrimaryArtistName = Artist.UnknownArtistName;
-            PrimaryArtistSortName = SortKeyHelper.Normalize(Artist.UnknownArtistName);
-        }
-        else
-        {
-            var displayName = Artist.GetDisplayName(artists);
-            ArtistName = displayName.Length > MaxArtistNameLength
-                ? displayName[..(MaxArtistNameLength - 3)] + "..."
-                : displayName;
-            PrimaryArtistName = artists[0] ?? Artist.UnknownArtistName;
-            PrimaryArtistSortName = SortKeyHelper.Normalize(PrimaryArtistName);
-        }
+        (ArtistName, PrimaryArtistName, PrimaryArtistSortName) = Artist.GetCreditNames(GetCreditedArtists().Select(artist => artist.Name));
     }
 
     public override string ToString()
