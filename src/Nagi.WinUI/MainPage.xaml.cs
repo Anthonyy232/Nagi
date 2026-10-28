@@ -318,14 +318,14 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private async Task PopulateNavigationAsync()
     {
-        var navItems = await _settingsService.GetNavigationItemsAsync();
+        var navItems = await ViewModel.GetVisibleNavigationItemsAsync();
         if (_isUnloaded) return;
         var wasUpdating = _isUpdatingNavViewSelection;
         _isUpdatingNavViewSelection = true;
         try
         {
             NavView.MenuItems.Clear();
-            foreach (var item in navItems.Where(i => i.IsEnabled))
+            foreach (var item in navItems)
             {
                 NavView.MenuItems.Add(new NavigationViewItem
                 {

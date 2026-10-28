@@ -11,6 +11,7 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
+using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
@@ -304,6 +305,10 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     /// <returns>Whether the navigation pane was open last time, or <c>null</c> when its state isn't remembered.</returns>
     public async Task<bool?> GetRememberedPaneOpenAsync() =>
         await _settingsService.GetRememberPaneStateEnabledAsync() ? await _settingsService.GetLastPaneOpenAsync() : null;
+
+    /// <returns>The navigation items the user has turned on, in their chosen order.</returns>
+    public async Task<IReadOnlyList<NavigationItemSetting>> GetVisibleNavigationItemsAsync() =>
+        (await _settingsService.GetNavigationItemsAsync()).Where(item => item.IsEnabled).ToList();
 
     public async Task RememberPaneOpenAsync(bool isOpen)
     {
