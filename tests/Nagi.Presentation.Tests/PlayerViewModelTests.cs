@@ -131,4 +131,16 @@ public partial class PlayerViewModelTests : IDisposable
         _viewModel.CurrentPosition.Should().Be(0);
         _playback.DidNotReceive().SeekAsync(Arg.Any<TimeSpan>());
     }
+
+    [Fact]
+    public async Task AddFilesToQueue_QueuesDroppedItemsByFileNameNotByFolder()
+    {
+        IEnumerable<string>? queued = null;
+        _playback.AddTransientFilesToQueueAsync(Arg.Do<IEnumerable<string>>(paths => queued = paths.ToList()))
+            .Returns(Task.CompletedTask);
+
+        await _viewModel.AddFilesToQueueAsync([@"C:\b\Charlie.mp3", @"C:\a\bravo.mp3", @"C:\c\Alpha"]);
+
+        queued.Should().Equal(@"C:\c\Alpha", @"C:\a\bravo.mp3", @"C:\b\Charlie.mp3");
+    }
 }

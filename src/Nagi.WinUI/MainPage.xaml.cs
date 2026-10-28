@@ -241,9 +241,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         try
         {
             var items = await e.DataView.GetStorageItemsAsync();
-            await ViewModel.AddFilesToQueueAsync(items
-                .OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase)
-                .Select(item => item.Path));
+            await ViewModel.AddFilesToQueueAsync(items.Select(item => item.Path));
         }
         catch (Exception ex)
         {

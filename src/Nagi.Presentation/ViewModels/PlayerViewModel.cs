@@ -542,9 +542,10 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         }
     }
 
+    /// <summary>Queues dropped files and folders in file name order.</summary>
     public async Task AddFilesToQueueAsync(IEnumerable<string> paths)
     {
-        try { await _playbackService.AddTransientFilesToQueueAsync(paths); }
+        try { await _playbackService.AddTransientFilesToQueueAsync(paths.OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase)); }
         catch (Exception ex) { _logger.LogError(ex, "Failed to add dropped files to the playback queue."); }
     }
 
