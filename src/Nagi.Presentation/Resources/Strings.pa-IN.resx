@@ -340,9 +340,6 @@
   <data name="GenreView_DefaultName" xml:space="preserve">
     <value>ਸ਼ੈਲੀ</value>
   </data>
-  <data name="GenreView_Error" xml:space="preserve">
-    <value>ਸ਼ੈਲੀ ਲੋਡ ਕਰਨ ਵਿੱਚ ਗਲਤੀ</value>
-  </data>
   <data name="Lyrics_NoSongSelected" xml:space="preserve">
     <value>ਕੋਈ ਗੀਤ ਚੁਣਿਆ ਨਹੀਂ ਗਿਆ</value>
   </data>
@@ -369,9 +366,6 @@
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} ਗੀਤ</value>
-  </data>
-  <data name="Playlist_ErrorLoading" xml:space="preserve">
-    <value>ਪਲੇਲਿਸਟ ਲੋਡ ਕਰਨ ਵਿੱਚ ਗਲਤੀ</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
     <value>ਪਲੇਅਲਿਸਟ ਸ਼ੁਰੂ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ…</value>

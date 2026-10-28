@@ -84,22 +84,13 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         CurrentSortOrder = SongSortOrder.PlaylistOrder;
         _logger.LogDebug("Initializing for playlist '{Title}' (ID: {PlaylistId})", title, playlistId);
 
-        try
-        {
-            PageTitle = title;
-            _currentPlaylistId = playlistId;
-            IsCurrentViewAPlaylist = true;
-            CoverImageUri = coverImageUri;
+        PageTitle = title;
+        _currentPlaylistId = playlistId;
+        IsCurrentViewAPlaylist = true;
+        CoverImageUri = coverImageUri;
 
-            await RefreshOrSortSongsCommand.ExecuteAsync(null);
-            OnPropertyChanged(nameof(IsReorderingEnabled));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to initialize playlist {PlaylistId}", _currentPlaylistId);
-            TotalItemsText = Strings.Playlist_ErrorLoading;
-            Songs.Clear();
-        }
+        await RefreshOrSortSongsCommand.ExecuteAsync(null);
+        OnPropertyChanged(nameof(IsReorderingEnabled));
     }
 
     protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,

@@ -340,9 +340,6 @@
   <data name="GenreView_DefaultName" xml:space="preserve">
     <value>Género</value>
   </data>
-  <data name="GenreView_Error" xml:space="preserve">
-    <value>Error al cargar género</value>
-  </data>
   <data name="Lyrics_NoSongSelected" xml:space="preserve">
     <value>Ninguna canción seleccionada</value>
   </data>
@@ -369,9 +366,6 @@
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} canciones</value>
-  </data>
-  <data name="Playlist_ErrorLoading" xml:space="preserve">
-    <value>Error al cargar la lista de reproducción</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
     <value>Iniciando lista de reproducción…</value>

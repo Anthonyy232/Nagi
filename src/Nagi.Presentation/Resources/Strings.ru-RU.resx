@@ -340,9 +340,6 @@
   <data name="GenreView_DefaultName" xml:space="preserve">
     <value>Жанр</value>
   </data>
-  <data name="GenreView_Error" xml:space="preserve">
-    <value>Ошибка загрузки жанра</value>
-  </data>
   <data name="Lyrics_NoSongSelected" xml:space="preserve">
     <value>Песня не выбрана</value>
   </data>
@@ -369,9 +366,6 @@
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0, plural, one {# песня} few {# песни} many {# песен} other {# песен}}</value>
-  </data>
-  <data name="Playlist_ErrorLoading" xml:space="preserve">
-    <value>Ошибка загрузки плейлиста</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
     <value>Запуск плейлиста…</value>

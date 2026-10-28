@@ -340,9 +340,6 @@
   <data name="GenreView_DefaultName" xml:space="preserve">
     <value>வகை</value>
   </data>
-  <data name="GenreView_Error" xml:space="preserve">
-    <value>வகையை ஏற்றுவதில் பிழை</value>
-  </data>
   <data name="Lyrics_NoSongSelected" xml:space="preserve">
     <value>பாடல் தேர்ந்தெடுக்கப்படவில்லை</value>
   </data>
@@ -369,9 +366,6 @@
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} பாடல்கள்</value>
-  </data>
-  <data name="Playlist_ErrorLoading" xml:space="preserve">
-    <value>பிளேலிஸ்ட்டை ஏற்றுவதில் பிழை</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
     <value>பாடல் பட்டியல் தொடங்குகிறது…</value>

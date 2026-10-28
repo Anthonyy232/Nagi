@@ -340,9 +340,6 @@
   <data name="GenreView_DefaultName" xml:space="preserve">
     <value>ژانر</value>
   </data>
-  <data name="GenreView_Error" xml:space="preserve">
-    <value>خطا در بارگذاری ژانر</value>
-  </data>
   <data name="Lyrics_NoSongSelected" xml:space="preserve">
     <value>هیچ آهنگی انتخاب نشده است</value>
   </data>
@@ -369,9 +366,6 @@
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} آهنگ</value>
-  </data>
-  <data name="Playlist_ErrorLoading" xml:space="preserve">
-    <value>خطا در بارگذاری لیست پخش</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
     <value>در حال شروع لیست پخش…</value>

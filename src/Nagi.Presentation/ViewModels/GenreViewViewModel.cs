@@ -66,24 +66,13 @@ public partial class GenreViewViewModel : SongListViewModelBase
         _logger.LogDebug("Loading details for genre '{GenreName}' ({GenreId})", navParam.GenreName,
             navParam.GenreId);
 
-        try
-        {
-            _genreId = navParam.GenreId;
-            GenreName = navParam.GenreName;
-            PageTitle = navParam.GenreName;
+        _genreId = navParam.GenreId;
+        GenreName = navParam.GenreName;
+        PageTitle = navParam.GenreName;
 
-            var sortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.GenreViewSortOrderKey);
-            CurrentSortOrder = sortOrder;
-            await RefreshOrSortSongsAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to load details for GenreId {GenreId}", navParam.GenreId);
-            GenreName = Strings.GenreView_Error;
-            PageTitle = Strings.Generic_Error;
-            TotalItemsText = Strings.Generic_Error;
-            Songs.Clear();
-        }
+        var sortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.GenreViewSortOrderKey);
+        CurrentSortOrder = sortOrder;
+        await RefreshOrSortSongsAsync();
     }
 
     protected override PlaybackContext GetPlaybackContext() =>

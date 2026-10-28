@@ -340,9 +340,6 @@
   <data name="GenreView_DefaultName" xml:space="preserve">
     <value>ジャンル</value>
   </data>
-  <data name="GenreView_Error" xml:space="preserve">
-    <value>ジャンルの読み込みエラー</value>
-  </data>
   <data name="Lyrics_NoSongSelected" xml:space="preserve">
     <value>曲が選択されていません</value>
   </data>
@@ -369,9 +366,6 @@
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0}曲</value>
-  </data>
-  <data name="Playlist_ErrorLoading" xml:space="preserve">
-    <value>プレイリストの読み込みエラー</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
     <value>プレイリストを開始中…</value>
