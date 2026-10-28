@@ -617,10 +617,10 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         return !IsLoading;
     }
 
-    private bool CanExecutePlayAllCommands()
-    {
-        return !IsLoading && Songs.Any();
-    }
+    /// <summary>Whether play all, shuffle and mixes have anything to play.</summary>
+    protected virtual bool HasPlayableSongs => Songs.Any();
+
+    private bool CanExecutePlayAllCommands() => !IsLoading && HasPlayableSongs;
 
     private bool CanExecuteSelectedSongsCommands()
     {

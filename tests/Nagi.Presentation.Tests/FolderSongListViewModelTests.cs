@@ -231,6 +231,22 @@ public class FolderSongListViewModelTests
         (await resolving.WaitAsync(TimeSpan.FromSeconds(10))).Should().BeEmpty();
     }
 
+    [Fact]
+    public async Task FolderWithOnlySubfolders_CanPlayAll()
+    {
+        var library = new LibraryFakes();
+        var root = ConfigureRoot(library);
+        library.Reader.GetSubFolderCountAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(1);
+        library.Reader.GetSubFoldersPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
+            .Returns(new[] { new Folder { Name = "Album", Path = @"C:\Music\Album" } });
+        using var viewModel = CreateViewModel(library, Substitute.For<IUISettingsService>());
+
+        await viewModel.InitializeAsync(root.Name, root.Id);
+
+        viewModel.Songs.Should().BeEmpty();
+        viewModel.PlayAllSongsCommand.CanExecute(null).Should().BeTrue();
+    }
+
     private static Folder ConfigureRoot(LibraryFakes library)
     {
         var root = new Folder { Name = "Music", Path = @"C:\Music" };

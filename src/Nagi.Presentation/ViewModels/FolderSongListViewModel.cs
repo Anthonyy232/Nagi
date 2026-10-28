@@ -208,6 +208,8 @@ public partial class FolderSongListViewModel : SongListViewModelBase
             UpdateSelectionStatus();
             PlayAllSongsCommand.NotifyCanExecuteChanged();
             ShuffleAndPlayAllSongsCommand.NotifyCanExecuteChanged();
+            PlayMixCommand.NotifyCanExecuteChanged();
+            PlayForCommand.NotifyCanExecuteChanged();
             return Task.CompletedTask;
         }).WaitAsync(token).ConfigureAwait(false);
         return pageNumber < totalPages;
@@ -350,6 +352,9 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     /// </summary>
     protected override Task RefreshAsync(CancellationToken cancellationToken)
         => RefreshOrSortSongsAsync(null, cancellationToken);
+
+    // Play all covers subfolders too, so a folder that holds only subfolders still has something to play.
+    protected override bool HasPlayableSongs => TotalItemCount > 0;
 
     // LoadAllSongIdsAsync is still used by the base class for Play All.
     protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
