@@ -277,10 +277,10 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             _logger.LogInformation("Removed folder '{FolderName}' and associated data.", folder.Name);
         }
-        catch (Exception ex)
+        // Disposing the uncommitted transaction rolls it back; a cancellation propagates to the scan that asked for it.
+        catch (Exception ex) when (ex is not OperationCanceledException)
         {
             _logger.LogError(ex, "Folder removal for ID {FolderId} failed and was rolled back.", folderId);
-            await transaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
             return false;
         }
 
