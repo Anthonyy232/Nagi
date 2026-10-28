@@ -21,6 +21,10 @@ public class PresenceManager : IAsyncDisposable, IDisposable
     // Queued event handlers can outlive shutdown; keep this managed semaphore usable until they drain.
     private readonly SemaphoreSlim _servicesLock = new(1, 1);
 
+    // Each service's calls are chained, so it sees events in the order they happened
+    // while a slow service (a Last.fm request, say) doesn't hold up the others.
+    private readonly Dictionary<IPresenceService, Task> _pendingCalls = new();
+
     private Song? _currentTrack;
     private long? _currentListenSessionId;
     private bool _isInitialized;
@@ -109,6 +113,7 @@ public class PresenceManager : IAsyncDisposable, IDisposable
             _isInitialized = false;
             UnsubscribeFromEvents();
 
+            _pendingCalls.Clear();
             await Task.WhenAll(_activeServices.Select(StopAndDisposeAsync)).ConfigureAwait(false);
             _activeServices.Clear();
         }
@@ -226,6 +231,7 @@ public class PresenceManager : IAsyncDisposable, IDisposable
         if (!shouldBeActive)
         {
             _activeServices.Remove(service);
+            _pendingCalls.Remove(service);
             await StopAndDisposeAsync(service).ConfigureAwait(false);
             _logger.LogDebug("Deactivated '{ServiceName}' presence service.", service.Name);
             return;
@@ -338,20 +344,39 @@ public class PresenceManager : IAsyncDisposable, IDisposable
 
     private async Task BroadcastAsync(Func<IPresenceService, Task> action)
     {
-        List<IPresenceService> services;
+        var queued = new List<(IPresenceService Service, Task Previous, TaskCompletionSource Done)>();
         await _servicesLock.WaitAsync().ConfigureAwait(false);
         try
         {
             if (!_isInitialized || _isDisposed) return;
-            services = _activeServices.ToList();
+            foreach (var service in _activeServices)
+            {
+                var done = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+                queued.Add((service, _pendingCalls.GetValueOrDefault(service, Task.CompletedTask), done));
+                _pendingCalls[service] = done.Task;
+            }
         }
         finally
         {
             _servicesLock.Release();
         }
 
-        var broadcastTasks = services.Select(service => SafeExecuteAsync(service, action));
-        await Task.WhenAll(broadcastTasks).ConfigureAwait(false);
+        await Task.WhenAll(queued.Select(call => CallAfterAsync(call.Previous, call.Service, action, call.Done))).ConfigureAwait(false);
+    }
+
+    // Runs at once when the service has nothing pending, which keeps the common case synchronous.
+    private async Task CallAfterAsync(Task previous, IPresenceService service, Func<IPresenceService, Task> action,
+        TaskCompletionSource done)
+    {
+        try
+        {
+            await previous.ConfigureAwait(false);
+            await SafeExecuteAsync(service, action).ConfigureAwait(false);
+        }
+        finally
+        {
+            done.SetResult();
+        }
     }
 
     private async Task SafeExecuteAsync(IPresenceService service, Func<IPresenceService, Task> action)

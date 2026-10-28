@@ -44,7 +44,7 @@ public class PresenceManagerTests : IAsyncDisposable
     public async ValueTask DisposeAsync() => await _manager.DisposeAsync();
 
     [Fact]
-    public async Task PlaybackEvents_WaitingForServiceActivation_PreserveEventValues()
+    public async Task PlaybackEvents_WaitingForServiceActivation_ReachAServiceInOrder()
     {
         _settingsService.GetLastFmNowPlayingEnabledAsync().Returns(true);
         await _manager.InitializeAsync();
@@ -52,22 +52,35 @@ public class PresenceManagerTests : IAsyncDisposable
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var received = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var statesReceived = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var firstCallStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var firstCallGate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var updates = new System.Collections.Concurrent.ConcurrentQueue<(Song Song, long Session)>();
         var states = new System.Collections.Concurrent.ConcurrentQueue<bool>();
+        var callsInFlight = 0;
+        var overlapped = false;
         _discordService.InitializeAsync().Returns(_ =>
         {
             initializing.TrySetResult();
             return release.Task;
         });
-        _lastFmService.OnTrackChangedAsync(Arg.Any<Song>(), Arg.Any<long>()).Returns(call =>
+        // The first Last.fm call stays open; any other Last.fm call starting meanwhile would be out of order.
+        _lastFmService.OnTrackChangedAsync(Arg.Any<Song>(), Arg.Any<long>()).Returns(async call =>
         {
+            if (Interlocked.Increment(ref callsInFlight) > 1) overlapped = true;
             updates.Enqueue((call.Arg<Song>(), call.Arg<long>()));
+            if (updates.Count == 1)
+            {
+                firstCallStarted.TrySetResult();
+                await firstCallGate.Task;
+            }
+            Interlocked.Decrement(ref callsInFlight);
             if (updates.Count == 2) received.TrySetResult();
-            return Task.CompletedTask;
         });
         _lastFmService.OnPlaybackStateChangedAsync(Arg.Any<bool>()).Returns(call =>
         {
+            if (Interlocked.Increment(ref callsInFlight) > 1) overlapped = true;
             states.Enqueue(call.Arg<bool>());
+            Interlocked.Decrement(ref callsInFlight);
             if (states.Count == 2) statesReceived.TrySetResult();
             return Task.CompletedTask;
         });
@@ -88,16 +101,22 @@ public class PresenceManagerTests : IAsyncDisposable
             _playbackService.IsPlaying.Returns(true);
             _playbackService.PlaybackStateChanged += Raise.Event<Action>();
             release.SetResult();
+            await firstCallStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
+            // Give out-of-order broadcasts the chance to start before the first call finishes.
+            await Task.Delay(100);
+            firstCallGate.SetResult();
 
             await received.Task.WaitAsync(TimeSpan.FromSeconds(5));
             await statesReceived.Task.WaitAsync(TimeSpan.FromSeconds(5));
 
-            updates.Should().BeEquivalentTo(new[] { (first, 1L), (second, 2L) });
-            states.Should().BeEquivalentTo(new[] { false, true });
+            overlapped.Should().BeFalse();
+            updates.Should().Equal((first, 1L), (second, 2L));
+            states.Should().Equal(false, true);
         }
         finally
         {
             release.TrySetResult();
+            firstCallGate.TrySetResult();
         }
     }
 
