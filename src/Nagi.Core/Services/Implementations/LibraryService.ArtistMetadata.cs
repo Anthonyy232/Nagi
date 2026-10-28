@@ -555,20 +555,27 @@ public partial class LibraryService
     private async Task<string?> DownloadAndCacheArtistImageAsync(Artist artist, Uri imageUrl, CancellationToken cancellationToken)
     {
         var artistId = artist.Id;
-        var lazyTask = _artistImageProcessingTasks.GetOrAdd(artistId, _ =>
-            new Lazy<Task<string?>>(() => DownloadAndWriteImageInternalAsync(artistId, imageUrl, cancellationToken)));
+        // Callers share one download that runs until shutdown, and each stops waiting on its own token. The entry
+        // goes when the download ends rather than when a caller gives up, so it is never started twice.
+        var lazyTask = _artistImageProcessingTasks.GetOrAdd(artistId, _ => new Lazy<Task<string?>>(async () =>
+        {
+            try
+            {
+                return await DownloadAndWriteImageInternalAsync(artistId, imageUrl, _shutdownCts.Token).ConfigureAwait(false);
+            }
+            finally
+            {
+                _artistImageProcessingTasks.TryRemove(artistId, out Lazy<Task<string?>>? _);
+            }
+        }));
         try
         {
-            return await lazyTask.Value.ConfigureAwait(false);
+            return await lazyTask.Value.WaitAsync(cancellationToken).ConfigureAwait(false);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
             _logger.LogWarning(ex, "Artist image download failed for artist '{ArtistName}'.", artist.Name);
             return null;
-        }
-        finally
-        {
-            _artistImageProcessingTasks.TryRemove(new KeyValuePair<Guid, Lazy<Task<string?>>>(artistId, lazyTask));
         }
     }
 
