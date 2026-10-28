@@ -207,32 +207,21 @@ public partial class SmartPlaylistEditorViewModel : ObservableObject, IDisposabl
     /// <summary>
     ///     The playlist described by the editor, or null while it has no name.
     /// </summary>
-    public SmartPlaylist? BuildPlaylist()
+    private SmartPlaylist? BuildPlaylist()
     {
         var name = Name.Trim();
         if (string.IsNullOrWhiteSpace(name)) return null;
 
         var playlist = new SmartPlaylist
         {
-            Id = _editingPlaylist?.Id ?? Guid.NewGuid(),
             Name = name,
             MatchAllRules = MatchAllRules,
             SortOrder = SelectedSortOption.SortOrder,
             CoverImageUri = CoverImageUri,
             Description = _editingPlaylist?.Description,
-            DateCreated = _editingPlaylist?.DateCreated ?? DateTime.UtcNow,
-            DateModified = DateTime.UtcNow
+            Rules = Rules.Select(rule => rule.ToSmartPlaylistRule()).ToList()
         };
-
-        var orderIndex = 0;
-        foreach (var ruleVm in Rules)
-        {
-            var rule = ruleVm.ToSmartPlaylistRule();
-            rule.SmartPlaylistId = playlist.Id;
-            rule.Order = orderIndex++;
-            playlist.Rules.Add(rule);
-        }
-
+        if (_editingPlaylist is not null) playlist.Id = _editingPlaylist.Id;
         return playlist;
     }
 

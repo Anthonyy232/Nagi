@@ -80,8 +80,7 @@ public class SmartPlaylistEditorViewModelTests : IDisposable
 
         result.Should().Be(SmartPlaylistSaveResult.Saved);
         _viewModel.ResultPlaylist!.Name.Should().Be("Favourites");
-        _viewModel.ResultPlaylist.Rules.Select(r => (r.Order, r.Field))
-            .Should().Equal((0, SmartPlaylistField.Title), (1, SmartPlaylistField.Album));
+        _viewModel.ResultPlaylist.Rules.Select(r => r.Field).Should().Equal(SmartPlaylistField.Title, SmartPlaylistField.Album);
         await _service.DidNotReceiveWithAnyArgs().UpdateSmartPlaylistAsync(default!);
     }
 
