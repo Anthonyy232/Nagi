@@ -10,7 +10,6 @@ using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services;
-using CoreStrings = Nagi.Core.Resources.Strings;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -207,8 +206,6 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
         _preampDebouncer.Cancel();
         foreach (var band in EqualizerBands) band.CancelPendingGain();
         await _playbackService.ResetEqualizerAsync();
-        // Resetting will result in all 0s, which matches "None".
-        SelectedEqualizerPreset = AvailableEqualizerPresets.FirstOrDefault(p => p.Name == CoreStrings.EqPreset_None);
     }
 
     private void LoadEqualizerState()
