@@ -6,7 +6,7 @@ using System.Globalization;
 namespace Nagi.Core.Data.Interceptors;
 
 /// <summary>
-///     Configures SQLite connection settings and native .NET conversions used by migrations.
+///     Configures SQLite connection settings, native .NET conversions used by migrations, and Unicode case folding.
 /// </summary>
 public sealed class SqliteConnectionInterceptor : DbConnectionInterceptor
 {
@@ -34,6 +34,8 @@ public sealed class SqliteConnectionInterceptor : DbConnectionInterceptor
             isDeterministic: true);
         sqlite.CreateFunction("nagi_directory_path", (string path) => Path.GetDirectoryName(path) ?? string.Empty,
             isDeterministic: true);
+        // SQLite's built-in lower() folds only ASCII, so smart playlist rules would miss accented capitals.
+        sqlite.CreateFunction("lower", (string? value) => value?.ToLowerInvariant(), isDeterministic: true);
         using var cmd = connection.CreateCommand();
         cmd.CommandText =
             "PRAGMA journal_mode=WAL; " +

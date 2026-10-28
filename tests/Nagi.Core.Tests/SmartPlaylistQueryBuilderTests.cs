@@ -819,6 +819,28 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
             .Should().Equal("Come Together");
     }
 
+    [Fact]
+    public void BuildQuery_TextRules_FoldAccentedCapitals()
+    {
+        // The in-memory database is opened before EF can register Nagi's SQLite functions, so use a file.
+        using var fileDb = new DbContextFactoryTestHelper(useFileDatabase: true);
+        var artist = new Artist { Name = "Édith Piaf" };
+        var song = new Song { Title = "Énorme", Folder = new Folder { Name = "Music", Path = "C:\\Music" }, FilePath = "C:\\Music\\a.mp3" };
+        song.SongArtists.Add(new SongArtist { Artist = artist, Order = 0 });
+        song.SyncDenormalizedFields();
+        using (var seed = fileDb.ContextFactory.CreateDbContext())
+        {
+            seed.Songs.Add(song);
+            seed.SaveChanges();
+        }
+        var playlist = CreatePlaylist(
+            new SmartPlaylistRule { Field = SmartPlaylistField.Artist, Operator = SmartPlaylistOperator.Is, Value = "ÉDITH PIAF" },
+            new SmartPlaylistRule { Field = SmartPlaylistField.Title, Operator = SmartPlaylistOperator.StartsWith, Value = "éNO" });
+        using var context = fileDb.ContextFactory.CreateDbContext();
+
+        _queryBuilder.BuildQuery(context, playlist).Select(s => s.Title).ToList().Should().Equal("Énorme");
+    }
+
     private static SmartPlaylist CreatePlaylist(params SmartPlaylistRule[] rules) => CreatePlaylist(true, rules);
 
     private static SmartPlaylist CreatePlaylist(bool matchAllRules, params SmartPlaylistRule[] rules) =>

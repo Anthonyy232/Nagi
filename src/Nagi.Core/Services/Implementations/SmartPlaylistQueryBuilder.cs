@@ -112,7 +112,7 @@ public class SmartPlaylistQueryBuilder
     {
         var value = (rule.Value ?? string.Empty).ToLowerInvariant();
 
-        // Use ToLower() for EF Core SQL translation compatibility instead of StringComparison
+        // ToLower() becomes SQLite lower(), which the connection interceptor makes Unicode-aware.
         return rule.Operator switch
         {
             SmartPlaylistOperator.Is =>
