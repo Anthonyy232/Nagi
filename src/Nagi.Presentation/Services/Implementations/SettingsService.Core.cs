@@ -355,18 +355,18 @@ public partial class SettingsService
     public Task SetLanguageAsync(string languageCode) =>
         SetValueAsync(LanguageKey, languageCode);
 
-    public Task<PlayerBackgroundMaterial> GetPlayerBackgroundMaterialAsync() => Task.FromResult(GetEnumValue(PlayerBackgroundMaterialKey, PlayerBackgroundMaterial.Acrylic));
+    public Task<PlayerBackgroundMaterial> GetPlayerBackgroundMaterialAsync() => Task.FromResult(GetEnumValue(PlayerBackgroundMaterialKey, SettingsDefaults.DefaultPlayerBackgroundMaterial));
 
     public Task SetPlayerBackgroundMaterialAsync(PlayerBackgroundMaterial material)
     {
-        return SetValueAndNotifyAsync(PlayerBackgroundMaterialKey, material.ToString(), PlayerBackgroundMaterial.Acrylic.ToString(), _ => PlayerDesignSettingsChanged?.Invoke());
+        return SetValueAndNotifyAsync(PlayerBackgroundMaterialKey, material.ToString(), SettingsDefaults.DefaultPlayerBackgroundMaterial.ToString(), _ => PlayerDesignSettingsChanged?.Invoke());
     }
 
-    public Task<double> GetPlayerTintIntensityAsync() => Task.FromResult(GetValue(PlayerTintIntensityKey, 1.0));
+    public Task<double> GetPlayerTintIntensityAsync() => Task.FromResult(GetValue(PlayerTintIntensityKey, SettingsDefaults.DefaultPlayerTintIntensity));
 
     public Task SetPlayerTintIntensityAsync(double intensity)
     {
-        return SetValueAndNotifyAsync(PlayerTintIntensityKey, Math.Clamp(intensity, 0.0, 1.0), 1.0, _ => PlayerDesignSettingsChanged?.Invoke());
+        return SetValueAndNotifyAsync(PlayerTintIntensityKey, Math.Clamp(intensity, 0.0, 1.0), SettingsDefaults.DefaultPlayerTintIntensity, _ => PlayerDesignSettingsChanged?.Invoke());
     }
 
     public Task<int> GetSongsPerPageAsync() => Task.FromResult(GetValue(SongsPerPageKey, SettingsDefaults.DefaultSongsPerPage));
