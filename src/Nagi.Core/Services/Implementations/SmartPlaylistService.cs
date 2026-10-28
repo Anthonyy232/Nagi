@@ -52,6 +52,7 @@ public class SmartPlaylistService : ISmartPlaylistService
         if (playlist is null) return null;
 
         playlist.Name = ArtistNameHelper.NormalizeStringCore(draft.Name) ?? draft.Name;
+        await ThrowIfNameTakenAsync(context, playlist.Name, isNew ? null : playlist.Id).ConfigureAwait(false);
         playlist.Description = draft.Description;
         playlist.MatchAllRules = draft.MatchAllRules;
         playlist.SortOrder = draft.SortOrder;
@@ -124,7 +125,7 @@ public class SmartPlaylistService : ISmartPlaylistService
     public async Task<bool> RenameSmartPlaylistAsync(Guid smartPlaylistId, string newName)
     {
         if (string.IsNullOrWhiteSpace(newName))
-            throw new ArgumentException("New smart playlist name cannot be empty.", nameof(newName));
+            throw new ArgumentException(Resources.Strings.Error_PlaylistNameEmpty, nameof(newName));
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var smartPlaylist = await context.SmartPlaylists.FindAsync(smartPlaylistId).ConfigureAwait(false);
@@ -132,14 +133,7 @@ public class SmartPlaylistService : ISmartPlaylistService
 
         var normalizedName = ArtistNameHelper.NormalizeStringCore(newName) ?? newName;
 
-        var nameExists = await context.SmartPlaylists
-            .AnyAsync(sp => sp.Id != smartPlaylistId && sp.Name == normalizedName).ConfigureAwait(false);
-
-        if (nameExists)
-        {
-            _logger.LogWarning("Cannot rename smart playlist: name '{Name}' already exists", normalizedName);
-            return false;
-        }
+        await ThrowIfNameTakenAsync(context, normalizedName, smartPlaylistId).ConfigureAwait(false);
 
         smartPlaylist.Name = normalizedName;
         smartPlaylist.DateModified = DateTime.UtcNow;
@@ -273,6 +267,13 @@ public class SmartPlaylistService : ISmartPlaylistService
                 .CountAsync().ConfigureAwait(false);
         }
         return counts;
+    }
+
+    // Name is NOCASE-collated, so this matches the unique index rather than waiting for SaveChanges to fail.
+    private static async Task ThrowIfNameTakenAsync(MusicDbContext context, string name, Guid? exceptId)
+    {
+        if (await context.SmartPlaylists.AnyAsync(sp => sp.Id != exceptId && sp.Name == name).ConfigureAwait(false))
+            throw new PlaylistNameTakenException(name);
     }
 
     private async Task SetCoverAsync(SmartPlaylist playlist, string? path)

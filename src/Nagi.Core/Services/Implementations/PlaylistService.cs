@@ -45,9 +45,11 @@ public class PlaylistService : IPlaylistService
             throw new ArgumentException(Resources.Strings.Error_PlaylistNameEmpty, nameof(name));
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var normalizedName = NormalizeString(name) ?? name;
+        await ThrowIfNameTakenAsync(context, normalizedName, exceptId: null).ConfigureAwait(false);
         var playlist = new Playlist
         {
-            Name = NormalizeString(name) ?? name,
+            Name = normalizedName,
             Description = description,
             DateCreated = DateTime.UtcNow,
             DateModified = DateTime.UtcNow
@@ -98,7 +100,9 @@ public class PlaylistService : IPlaylistService
         var playlist = await context.Playlists.FindAsync(playlistId).ConfigureAwait(false);
         if (playlist is null) return false;
 
-        playlist.Name = NormalizeString(newName) ?? newName;
+        var normalizedName = NormalizeString(newName) ?? newName;
+        await ThrowIfNameTakenAsync(context, normalizedName, playlistId).ConfigureAwait(false);
+        playlist.Name = normalizedName;
         playlist.DateModified = DateTime.UtcNow;
         await context.SaveChangesAsync().ConfigureAwait(false);
         PlaylistUpdated?.Invoke(this, new PlaylistUpdatedEventArgs(playlist.Id, playlist.CoverImageUri, playlist.DateModified));
@@ -259,4 +263,11 @@ public class PlaylistService : IPlaylistService
     }
 
     private static string? NormalizeString(string? s) => ArtistNameHelper.NormalizeStringCore(s);
+
+    // Name is NOCASE-collated, so this matches the unique index rather than waiting for SaveChanges to fail.
+    private static async Task ThrowIfNameTakenAsync(MusicDbContext context, string name, Guid? exceptId)
+    {
+        if (await context.Playlists.AnyAsync(p => p.Id != exceptId && p.Name == name).ConfigureAwait(false))
+            throw new PlaylistNameTakenException(name);
+    }
 }

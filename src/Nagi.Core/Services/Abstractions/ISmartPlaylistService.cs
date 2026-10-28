@@ -8,11 +8,14 @@ public interface ISmartPlaylistService
     event EventHandler<PlaylistUpdatedEventArgs>? PlaylistUpdated;
     event EventHandler? PlaylistsChanged;
 
+    /// <exception cref="PlaylistNameTakenException">Another smart playlist already has the name.</exception>
     Task<SmartPlaylist> CreateSmartPlaylistAsync(SmartPlaylist playlist);
     Task<bool> DeleteSmartPlaylistAsync(Guid smartPlaylistId);
+    /// <exception cref="PlaylistNameTakenException">Another smart playlist already has the name.</exception>
     Task<SmartPlaylist?> UpdateSmartPlaylistAsync(SmartPlaylist playlist);
     Task<SmartPlaylist?> GetSmartPlaylistByIdAsync(Guid smartPlaylistId);
     Task<IEnumerable<SmartPlaylist>> GetAllSmartPlaylistsAsync();
+    /// <exception cref="PlaylistNameTakenException">Another smart playlist already has the name.</exception>
     Task<bool> RenameSmartPlaylistAsync(Guid smartPlaylistId, string newName);
     Task<bool> UpdateSmartPlaylistCoverAsync(Guid smartPlaylistId, string? newCoverImageUri);
 

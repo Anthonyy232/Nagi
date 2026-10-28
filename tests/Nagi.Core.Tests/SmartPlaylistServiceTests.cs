@@ -96,14 +96,12 @@ public class SmartPlaylistServiceTests : IDisposable
     [Theory]
     [InlineData("My Playlist")]
     [InlineData("MY PLAYLIST")]
-    public async Task CreateSmartPlaylistAsync_DuplicateName_UsesUniqueConstraint(string name)
+    public async Task CreateSmartPlaylistAsync_DuplicateName_ThrowsNameTaken(string name)
     {
         await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "My Playlist" });
         var save = () => _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = name });
 
-        var exception = await save.Should().ThrowAsync<DbUpdateException>();
-        exception.Which.InnerException.Should().BeOfType<Microsoft.Data.Sqlite.SqliteException>()
-            .Which.SqliteExtendedErrorCode.Should().Be(2067);
+        await save.Should().ThrowAsync<PlaylistNameTakenException>();
         (await _service.GetAllSmartPlaylistsAsync()).Should().ContainSingle();
     }
 
@@ -238,14 +236,14 @@ public class SmartPlaylistServiceTests : IDisposable
     [Theory]
     [InlineData("My Playlist")]
     [InlineData("MY PLAYLIST")]
-    public async Task RenameSmartPlaylistAsync_DuplicateName_ReturnsFalse(string name)
+    public async Task RenameSmartPlaylistAsync_DuplicateName_ThrowsNameTaken(string name)
     {
         await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "My Playlist" });
         var toRename = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "Another Playlist" });
 
-        var result = await _service.RenameSmartPlaylistAsync(toRename!.Id, name);
+        var rename = () => _service.RenameSmartPlaylistAsync(toRename.Id, name);
 
-        result.Should().BeFalse();
+        await rename.Should().ThrowAsync<PlaylistNameTakenException>();
     }
 
     [Fact]

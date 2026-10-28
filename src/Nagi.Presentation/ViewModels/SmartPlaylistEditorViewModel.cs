@@ -5,13 +5,12 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Constants;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
@@ -34,8 +33,6 @@ public record SortOrderOption(SmartPlaylistSortOrder SortOrder, string DisplayNa
 /// </summary>
 public partial class SmartPlaylistEditorViewModel : ObservableObject, IDisposable
 {
-    private const int SqliteConstraintUnique = 2067;
-
     private readonly ISmartPlaylistService _smartPlaylistService;
     private readonly IUIService _uiService;
     private readonly IDispatcherService _dispatcherService;
@@ -194,9 +191,8 @@ public partial class SmartPlaylistEditorViewModel : ObservableObject, IDisposabl
             MatchCountText = Strings.SmartPlaylist_Status_Error;
             return SmartPlaylistSaveResult.Failed;
         }
-        catch (DbUpdateException dbEx) when (dbEx.InnerException is SqliteException { SqliteExtendedErrorCode: SqliteConstraintUnique })
+        catch (PlaylistNameTakenException)
         {
-            _logger.LogWarning(dbEx, "Duplicate smart playlist name");
             MatchCountText = Strings.SmartPlaylist_Error_DuplicateName;
             return SmartPlaylistSaveResult.DuplicateName;
         }

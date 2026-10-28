@@ -46,6 +46,19 @@ public class PlaylistServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task CreateOrRename_ToANameAlreadyTaken_ThrowsNameTakenAndChangesNothing()
+    {
+        await _playlistService.CreatePlaylistAsync("Road Trip");
+        var other = await _playlistService.CreatePlaylistAsync("Other");
+
+        await FluentActions.Awaiting(() => _playlistService.CreatePlaylistAsync("road trip")).Should().ThrowAsync<PlaylistNameTakenException>();
+        await FluentActions.Awaiting(() => _playlistService.RenamePlaylistAsync(other.Id, "ROAD TRIP")).Should().ThrowAsync<PlaylistNameTakenException>();
+
+        await using var context = _dbHelper.ContextFactory.CreateDbContext();
+        context.Playlists.Select(p => p.Name).Should().BeEquivalentTo("Road Trip", "Other");
+    }
+
+    [Fact]
     public async Task AddSongsToPlaylistAsync_AppendsUniqueSongsAfterExistingFractionalOrders()
     {
         var (playlist, songs) = await _dbHelper.SeedPlaylistAsync(0.5, 1.5, 2.5);

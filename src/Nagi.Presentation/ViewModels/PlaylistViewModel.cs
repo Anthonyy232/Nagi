@@ -379,6 +379,10 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
             ApplyFilter();
             StatusMessage = string.Empty;
         }
+        catch (PlaylistNameTakenException)
+        {
+            StatusMessage = Strings.SmartPlaylist_Error_DuplicateName;
+        }
         catch (Exception ex)
         {
             StatusMessage = Strings.Playlist_Status_CreateError;
@@ -487,6 +491,10 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
             {
                 StatusMessage = Strings.Playlist_Status_RenameFailed;
             }
+        }
+        catch (PlaylistNameTakenException)
+        {
+            StatusMessage = Strings.SmartPlaylist_Error_DuplicateName;
         }
         catch (Exception ex)
         {

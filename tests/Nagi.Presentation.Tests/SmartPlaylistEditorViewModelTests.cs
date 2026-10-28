@@ -1,10 +1,9 @@
 using FluentAssertions;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Time.Testing;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Services.Data;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
@@ -104,7 +103,7 @@ public class SmartPlaylistEditorViewModelTests : IDisposable
     public async Task Save_DuplicateNameIsReportedAndKeepsTheEditorOpen()
     {
         _service.CreateSmartPlaylistAsync(Arg.Any<SmartPlaylist>())
-            .ThrowsAsync(new DbUpdateException("duplicate", new SqliteException("UNIQUE constraint failed", 19, 2067)));
+            .ThrowsAsync(new PlaylistNameTakenException("Taken"));
         _viewModel.Initialize(null);
         _viewModel.Name = "Taken";
 
