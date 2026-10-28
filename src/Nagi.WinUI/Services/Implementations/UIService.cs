@@ -16,7 +16,6 @@ using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Dialogs;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.Services.Abstractions;
 using WinRT.Interop;
 
 namespace Nagi.WinUI.Services.Implementations;
@@ -27,12 +26,12 @@ public partial class UIService : IUIService
     private const uint MB_ICONERROR = 0x00000010;
     private const string IssuesUrl = "https://github.com/Anthonyy232/Nagi/issues";
 
-    private readonly IWin32InteropService _win32InteropService;
+    private readonly Win32InteropService _win32InteropService;
     private readonly ViewModelFactory _viewModelFactory;
     private readonly ILogger<UIService> _logger;
     private readonly MainWindow _window;
 
-    public UIService(MainWindow window, IWin32InteropService win32InteropService, ViewModelFactory viewModelFactory,
+    public UIService(MainWindow window, Win32InteropService win32InteropService, ViewModelFactory viewModelFactory,
         ILogger<UIService> logger)
     {
         _window = window;

@@ -7,7 +7,7 @@ using Microsoft.UI.Xaml.Input;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.Services.Abstractions;
+using Nagi.WinUI.Services.Implementations;
 using WinRT.Interop;
 
 namespace Nagi.WinUI.Popups;
@@ -15,12 +15,12 @@ namespace Nagi.WinUI.Popups;
 public sealed partial class TrayPopup : Window
 {
     private readonly IUISettingsService _settingsService;
-    private readonly IWin32InteropService _win32InteropService;
+    private readonly Win32InteropService _win32InteropService;
     private bool _isClosed;
     private bool _isCoverArtInFlyoutEnabled;
 
     public TrayPopup(ElementTheme initialTheme, PlayerViewModel viewModel, IUISettingsService settingsService,
-        IWin32InteropService win32InteropService)
+        Win32InteropService win32InteropService)
     {
         InitializeComponent();
 

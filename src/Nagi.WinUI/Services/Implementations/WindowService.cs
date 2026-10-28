@@ -7,7 +7,6 @@ using Microsoft.UI.Xaml;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.Services.Implementations;
 
@@ -16,7 +15,7 @@ public sealed class WindowService : IWindowService, IDisposable
     private readonly IDispatcherService _dispatcherService;
     private readonly ILogger<WindowService> _logger;
     private readonly IUISettingsService _settingsService;
-    private readonly IWin32InteropService _win32InteropService;
+    private readonly Win32InteropService _win32InteropService;
     private AppWindow? _appWindow;
     private bool _isClosingMiniPlayerProgrammatically;
     private bool _isDisposed;
@@ -29,7 +28,7 @@ public sealed class WindowService : IWindowService, IDisposable
     private Window? _window;
 
     public WindowService(MainWindow mainWindow, Func<MiniPlayerWindow> createMiniPlayerWindow,
-        IWin32InteropService win32InteropService, IUISettingsService settingsService,
+        Win32InteropService win32InteropService, IUISettingsService settingsService,
         IDispatcherService dispatcherService, ILogger<WindowService> logger)
     {
         _createMiniPlayerWindow = createMiniPlayerWindow;

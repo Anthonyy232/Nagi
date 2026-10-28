@@ -8,7 +8,6 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Resources;
-using Nagi.WinUI.Services.Abstractions;
 using Windows.Foundation;
 using Windows.UI;
 using static Nagi.WinUI.Helpers.TaskbarNativeMethods;
@@ -25,7 +24,7 @@ namespace Nagi.WinUI.Services.Implementations;
 ///     and handle button click events through window message processing. Icons are rendered
 ///     using Win2D for reliable, GPU-accelerated rendering without visual tree dependencies.
 /// </remarks>
-public sealed class TaskbarService : ITaskbarService
+public sealed class TaskbarService : IDisposable
 {
     private const int PreviousButtonId = 1;
     private const int PlayPauseButtonId = 2;
@@ -50,7 +49,7 @@ public sealed class TaskbarService : ITaskbarService
     private readonly ILogger<TaskbarService> _logger;
     private readonly IMusicPlaybackService _playbackService;
     private readonly IDispatcherService _dispatcherService;
-    private readonly IWin32InteropService _win32InteropService;
+    private readonly Win32InteropService _win32InteropService;
 
     private readonly object _iconLock = new();
 
@@ -72,7 +71,7 @@ public sealed class TaskbarService : ITaskbarService
         ILogger<TaskbarService> logger,
         IMusicPlaybackService playbackService,
         IDispatcherService dispatcherService,
-        IWin32InteropService win32InteropService)
+        Win32InteropService win32InteropService)
     {
         _logger = logger;
         _playbackService = playbackService;
@@ -80,6 +79,7 @@ public sealed class TaskbarService : ITaskbarService
         _win32InteropService = win32InteropService;
     }
 
+    /// <summary>Call once the window has a native handle.</summary>
     public void Initialize(nint windowHandle)
     {
         if (_isInitialized)
@@ -115,6 +115,7 @@ public sealed class TaskbarService : ITaskbarService
         _ = RefreshIconsAsync();
     }
 
+    /// <summary>Call from the window's message handler, which receives the thumbnail button clicks.</summary>
     public void HandleWindowMessage(int msg, nint wParam, nint lParam)
     {
         if (!_isInitialized || _isDisposed) return;
@@ -143,6 +144,7 @@ public sealed class TaskbarService : ITaskbarService
         }
     }
 
+    /// <summary>Redraws the button icons in the current accent color; rapid calls are debounced.</summary>
     public Task RefreshIconsAsync()
     {
         if (!_isInitialized || _isDisposed) return Task.CompletedTask;

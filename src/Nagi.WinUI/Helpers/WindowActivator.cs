@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using Nagi.WinUI.Services.Abstractions;
+using Nagi.WinUI.Services.Implementations;
 using WinRT.Interop;
 
 namespace Nagi.WinUI.Helpers;
@@ -31,7 +31,7 @@ internal static class WindowActivator
     ///     This method handles the Win32 logic required to steal focus from another application
     ///     by temporarily attaching the input threads of the foreground and target windows.
     /// </remarks>
-    public static void ShowAndActivate(Window window, IWin32InteropService win32)
+    public static void ShowAndActivate(Window window, Win32InteropService win32)
     {
         var windowHandle = WindowNative.GetWindowHandle(window);
         if (windowHandle == IntPtr.Zero)

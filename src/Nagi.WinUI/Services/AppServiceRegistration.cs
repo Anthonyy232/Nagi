@@ -7,7 +7,6 @@ using Nagi.Presentation.Services.Abstractions;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Popups;
-using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Services.Implementations;
 
 namespace Nagi.WinUI.Services;
@@ -41,7 +40,7 @@ public static class AppServiceRegistration
         services.AddSingleton<ICredentialLockerService, CredentialLockerService>();
         services.AddSingleton<IAutoLaunchService, StartupTaskAutoLaunchService>();
 
-        services.AddSingleton<IWin32InteropService, Win32InteropService>();
+        services.AddSingleton<Win32InteropService>();
         services.AddSingleton<IWindowService, WindowService>();
         services.AddSingleton<IUIService, UIService>();
         services.AddSingleton<IDispatcherService, DispatcherService>();
@@ -54,7 +53,7 @@ public static class AppServiceRegistration
         services.AddSingleton<ITrayPopupService, TrayPopupService>();
         services.AddSingleton<ISystemMediaControls, SmtcMediaControls>();
         services.AddSingleton<IAudioPlayer, LibVlcAudioPlayerService>();
-        services.AddTransient<ITaskbarService, TaskbarService>();
+        services.AddTransient<TaskbarService>();
 
         return services;
     }

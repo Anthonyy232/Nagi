@@ -17,7 +17,6 @@ using Nagi.Presentation.Logging;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services;
 using Nagi.WinUI.Helpers;
-using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Services.Implementations;
 using Nagi.WinUI.Services;
 using Serilog;
@@ -259,7 +258,7 @@ public partial class App : Application
         Services = ConfigureServices(mainWindow, configuration);
 
         mainWindow.InitializeDependencies(Services.GetRequiredService<IUISettingsService>(),
-            Services.GetRequiredService<ITaskbarService>(), Services.GetRequiredService<TransparencyEffectsMonitor>(),
+            Services.GetRequiredService<TaskbarService>(), Services.GetRequiredService<TransparencyEffectsMonitor>(),
             Services.GetRequiredService<ILogger<MainWindow>>());
     }
 

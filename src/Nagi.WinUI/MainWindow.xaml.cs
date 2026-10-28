@@ -16,7 +16,6 @@ using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Pages;
-using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Services.Implementations;
 using WinRT.Interop;
 
@@ -41,10 +40,10 @@ public sealed partial class MainWindow : Window
     private ILogger<MainWindow>? _logger;
     private FrameworkElement? _rootElement;
     private IUISettingsService? _settingsService;
-    private ITaskbarService? _taskbarService;
+    private TaskbarService? _taskbarService;
     private TransparencyEffectsMonitor? _transparencyEffects;
 
-    internal ITaskbarService? TaskbarService => _taskbarService;
+    internal TaskbarService? TaskbarService => _taskbarService;
 
     private bool _isTaskbarInitialized;
     private int _isCleanedUp;
@@ -55,7 +54,7 @@ public sealed partial class MainWindow : Window
         ExtendsContentIntoTitleBar = true;
     }
 
-    public void InitializeDependencies(IUISettingsService settingsService, ITaskbarService taskbarService,
+    public void InitializeDependencies(IUISettingsService settingsService, TaskbarService taskbarService,
         TransparencyEffectsMonitor transparencyEffects, ILogger<MainWindow> logger)
     {
         _settingsService = settingsService;
@@ -364,10 +363,10 @@ public sealed class MiniPlayerWindow : Window
     private readonly AppWindow _appWindow;
     private readonly ILogger<MiniPlayerWindow> _logger;
     private readonly MiniPlayerView _view;
-    private readonly IWin32InteropService _win32InteropService;
+    private readonly Win32InteropService _win32InteropService;
 
     public MiniPlayerWindow(PlayerViewModel playerViewModel, IThemeService themeService,
-        IWin32InteropService win32InteropService, ILogger<MiniPlayerWindow> logger)
+        Win32InteropService win32InteropService, ILogger<MiniPlayerWindow> logger)
     {
         _logger = logger;
         _win32InteropService = win32InteropService;

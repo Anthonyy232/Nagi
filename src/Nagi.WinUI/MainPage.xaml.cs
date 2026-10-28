@@ -19,7 +19,6 @@ using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Pages;
-using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Services.Implementations;
 
 namespace Nagi.WinUI;
@@ -114,7 +113,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private readonly IUISettingsService _settingsService;
     private readonly TransparencyEffectsMonitor _transparencyEffects;
     private readonly IThemeService _themeService;
-    private readonly IWin32InteropService _win32InteropService;
+    private readonly Win32InteropService _win32InteropService;
 
     private SplitViewContentMotion? _queueContentMotion;
     private SplitViewContentMotion? _navigationContentMotion;
@@ -133,7 +132,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     public MainPage(PlayerViewModel viewModel, InsightsViewModel insightsViewModel,
         GlobalOperationViewModel globalOperation, IUISettingsService settingsService, IThemeService themeService,
-        IDispatcherService dispatcherService, IWin32InteropService win32InteropService,
+        IDispatcherService dispatcherService, Win32InteropService win32InteropService,
         NavigationService navigationService, TransparencyEffectsMonitor transparencyEffects, ILogger<MainPage> logger)
     {
         ViewModel = viewModel;
