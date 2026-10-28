@@ -124,9 +124,6 @@ public class LastFmScrobblerService : ILastFmScrobblerService, IListenSubmitter
 
     public async Task ProcessPendingListensAsync(CancellationToken cancellationToken)
     {
-        if (cancellationToken.IsCancellationRequested) return;
-        if (!await IsEnabledAsync().ConfigureAwait(false)) return;
-
         await using var ctx = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
 
         var pending = await ctx.ListenHistory

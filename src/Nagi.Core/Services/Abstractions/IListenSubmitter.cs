@@ -22,6 +22,7 @@ public interface IListenSubmitter
     ///     Processes this submitter's pending listen queue: queries the DB for listens that are
     ///     eligible and not yet submitted to this destination, submits each in timestamp order,
     ///     marks successes in the DB, and stops on the first failure to preserve order.
+    ///     Callers check <see cref="IsEnabledAsync" /> first.
     /// </summary>
     Task ProcessPendingListensAsync(CancellationToken cancellationToken);
 }
