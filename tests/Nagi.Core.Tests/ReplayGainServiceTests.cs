@@ -81,4 +81,25 @@ public class ReplayGainServiceTests
         await firstPass.WaitAsync(TimeSpan.FromSeconds(5));
         analyses.Should().Be(2);
     }
+
+    [Fact]
+    public async Task ScanLibraryAsync_WhenTheTagsCantBeWritten_StillStoresTheGain()
+    {
+        using var database = new DbContextFactoryTestHelper();
+        await using (var context = database.ContextFactory.CreateDbContext())
+        {
+            var missingFile = Path.Combine(Path.GetTempPath(), $"nagi-missing-{Guid.NewGuid():N}.mp3");
+            context.Songs.Add(new Song { FilePath = missingFile, Folder = new Folder { Path = Path.GetTempPath() } });
+            await context.SaveChangesAsync();
+        }
+        var analyzer = Substitute.For<ILoudnessAnalyzer>();
+        analyzer.AnalyzeAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult<(double LoudnessLufs, double Peak)?>((-14, 0.5)));
+        using var service = new ReplayGainService(database.ContextFactory, analyzer, NullLogger<ReplayGainService>.Instance);
+
+        await service.ScanLibraryAsync();
+
+        await using var saved = database.ContextFactory.CreateDbContext();
+        (await saved.Songs.SingleAsync()).ReplayGainTrackGain.Should().NotBeNull();
+    }
 }
