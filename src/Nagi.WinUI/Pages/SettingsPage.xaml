@@ -67,6 +67,7 @@
                 <ToggleSwitch
                     Grid.Column="3"
                     VerticalAlignment="Center"
+                    AutomationProperties.Name="{x:Bind DisplayName}"
                     IsOn="{x:Bind IsEnabled, Mode=TwoWay}" />
             </Grid>
         </DataTemplate>
@@ -917,6 +918,7 @@
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <TextBox
                             Width="150"
+                            AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_ArtistSplitting_Header, Mode=OneTime}"
                             PlaceholderText="{x:Bind resources:Strings.SettingsPage_FolderExclusion_Placeholder, Mode=OneTime}"
                             Text="{x:Bind ViewModel.Library.ArtistSplitCharacters, Mode=TwoWay}" />
                         <Button
@@ -933,6 +935,7 @@
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <TextBox
                             Width="150"
+                            AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_GenreSplitting_Header, Mode=OneTime}"
                             PlaceholderText="{x:Bind resources:Strings.SettingsPage_FolderExclusion_Placeholder, Mode=OneTime}"
                             Text="{x:Bind ViewModel.Library.GenreSplitCharacters, Mode=TwoWay}" />
                         <Button
@@ -1161,6 +1164,7 @@
                             <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
                                 <PasswordBox
                                     Width="260"
+                                    AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_ListenBrainz_TokenLabel, Mode=OneTime}"
                                     PlaceholderText="{x:Bind resources:Strings.SettingsPage_ListenBrainz_TokenPlaceholder, Mode=OneTime}"
                                     Password="{x:Bind ViewModel.Scrobbling.ListenBrainzUserToken, Mode=TwoWay}" />
                                 <Button

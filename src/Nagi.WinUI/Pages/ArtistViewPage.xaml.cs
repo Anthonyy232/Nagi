@@ -63,20 +63,19 @@ public sealed partial class ArtistViewPage : SongListPage
         }
     }
 
-    private void ArtistImage_PointerEntered(object sender, PointerRoutedEventArgs e)
-    {
-        EditOverlay.Opacity = 1;
-    }
+    private void ArtistImage_PointerEntered(object sender, PointerRoutedEventArgs e) => EditOverlay.Opacity = 1;
 
     private void ArtistImage_PointerExited(object sender, PointerRoutedEventArgs e)
     {
-        EditOverlay.Opacity = 0;
+        if (EditOverlay.FocusState != FocusState.Keyboard) EditOverlay.Opacity = 0;
     }
 
-    private void EditOverlay_PointerPressed(object sender, PointerRoutedEventArgs e)
+    private void EditOverlay_GotFocus(object sender, RoutedEventArgs e)
     {
-        ImageEditFlyout.ShowAt(EditOverlay, new FlyoutShowOptions { Position = e.GetCurrentPoint(EditOverlay).Position });
+        if (EditOverlay.FocusState == FocusState.Keyboard) EditOverlay.Opacity = 1;
     }
+
+    private void EditOverlay_LostFocus(object sender, RoutedEventArgs e) => EditOverlay.Opacity = 0;
 
     private void OnSongsListViewLoaded(object sender, RoutedEventArgs e)
     {
