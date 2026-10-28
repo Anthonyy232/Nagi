@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.IO.Compression;
 using System.Text.Json;
 using Microsoft.Data.Sqlite;
@@ -99,7 +100,7 @@ public class BackupRestoreService : IBackupRestoreService
                 await File.WriteAllTextAsync(Path.Combine(stagingPath, SettingsFileName),
                     await _settingsService.ExportAsync().ConfigureAwait(false)).ConfigureAwait(false);
 
-                var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss", CultureInfo.InvariantCulture);
                 var zipFilePath = Path.Combine(destinationFolderPath, $"Nagi_Backup_{timestamp}.zip");
                 var pendingArchivePath = Path.Combine(destinationFolderPath, $".Nagi_Backup_{Guid.NewGuid():N}.tmp");
                 try
