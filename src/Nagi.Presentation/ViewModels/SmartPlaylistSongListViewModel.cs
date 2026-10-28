@@ -47,8 +47,6 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
         _smartPlaylistService = smartPlaylistService;
     }
 
-    public Guid? GetSmartPlaylistId() => _currentSmartPlaylistId;
-
     /// <summary>
     ///     Opens the smart playlist editor for this playlist and reloads it if the user saved changes.
     /// </summary>
