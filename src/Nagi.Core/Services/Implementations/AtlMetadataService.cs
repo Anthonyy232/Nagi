@@ -154,7 +154,6 @@ public partial class AtlMetadataService : IMetadataService
 
         PopulateMusicBrainzIds(metadata, track);
 
-        // Parse genre (ATL returns a single string, may need to split)
         var genreString = ArtistNameHelper.NormalizeStringCore(track.Genre);
         metadata.Genres = SplitMetadataList(genreString, genreSplitCharacters);
 
@@ -165,7 +164,6 @@ public partial class AtlMetadataService : IMetadataService
             track.AdditionalFields.TryGetValue("TIT1", out grouping))
             metadata.Grouping = ArtistNameHelper.NormalizeStringCore(grouping);
 
-        // Extract ReplayGain tags (case-insensitive lookup)
         var gainKey = track.AdditionalFields.Keys
             .FirstOrDefault(k => k.Equals("REPLAYGAIN_TRACK_GAIN", StringComparison.OrdinalIgnoreCase));
         if (gainKey != null && track.AdditionalFields.TryGetValue(gainKey, out var gainStr))
@@ -239,17 +237,12 @@ public partial class AtlMetadataService : IMetadataService
         var directoryArt = await ProcessCoverArtFromDirectoryAsync(filePath, baseFolderPath).ConfigureAwait(false);
         if (directoryArt.Uri != null) return directoryArt;
 
-        // No directory art found — fall back to embedded image.
         var picture = track.EmbeddedPictures?.FirstOrDefault();
         return picture?.PictureData is { Length: > 0 } pictureData
             ? await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData).ConfigureAwait(false)
             : default;
     }
 
-    /// <summary>
-    ///     Searches for cover art files in the directory hierarchy, starting from the song's
-    ///     directory and walking up to the base folder path.
-    /// </summary>
     private async Task<(string? Uri, string? Light, string? Dark)> ProcessCoverArtFromDirectoryAsync(
         string filePath, string? baseFolderPath)
     {

@@ -88,7 +88,6 @@ public class LastFmMetadataService : ILastFmMetadataService
         var (result, errorCode) = await TryFetchAsync(query, apiKey, map, subject, cancellationToken).ConfigureAwait(false);
         if (result is not null) return result;
 
-        // Error code 10 = invalid API key. Refresh the key and retry once.
         if (errorCode == InvalidApiKeyErrorCode)
         {
             _logger.LogWarning("Last.fm API key invalid. Refreshing and retrying for {Subject}.", subject);

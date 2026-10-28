@@ -7,6 +7,7 @@ internal static class LibVlcAudioOutputInterop
 {
     // LibVLCSharp's current ToUtf8 converts "" into NULL, which LibVLC 4 rejects.
     // Windows' MMDevice backend uses a non-null empty string for default routing.
+    // "libvlc" resolves to the module LibVLCSharp has already loaded by full path from its package folder.
     [DllImport("libvlc", CallingConvention = CallingConvention.Cdecl,
         EntryPoint = "libvlc_audio_output_device_set")]
     private static extern int SetOutputDevice(IntPtr player,

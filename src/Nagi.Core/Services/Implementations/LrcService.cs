@@ -73,7 +73,6 @@ public class LrcService : ILrcService, IDisposable
             settingsToken = _settingsCts.Token;
         }
 
-        // Use a linked token source to handle both caller cancellation AND settings toggle
         using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, settingsToken);
         var token = linkedCts.Token;
 
