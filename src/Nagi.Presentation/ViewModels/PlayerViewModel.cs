@@ -33,7 +33,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     private readonly ILibraryScanner _libraryScanner;
 
     private bool _isUpdatingFromService;
-    private bool _isEfficiencyModeEnabled;
     private bool _isCleanedUp;
 
     private double _lastReportedPosition;
@@ -442,11 +441,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         var isInBackgroundState = !isVisible || isMiniPlayerActive || isMinimized;
         var shouldBeEfficient = !isPlaying && isInBackgroundState;
 
-        if (_isEfficiencyModeEnabled != shouldBeEfficient)
-        {
-            _isEfficiencyModeEnabled = shouldBeEfficient;
-            _windowService.SetEfficiencyMode(shouldBeEfficient);
-        }
+        _windowService.SetEfficiencyMode(shouldBeEfficient);
     }
 
     private void UpdateTrackDetails(Song? song)
