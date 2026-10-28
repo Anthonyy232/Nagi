@@ -358,7 +358,7 @@ public sealed class MiniPlayerWindow : Window
     private static readonly string AppIconPath = System.IO.Path.Combine(AppContext.BaseDirectory, "Assets/AppLogo.ico");
 
     private const int HorizontalScreenMargin = 10;
-    private const int VerticalScreenMargin = 48; // Larger to account for taskbar height.
+    private const int VerticalScreenMargin = 48;
 
     private readonly AppWindow _appWindow;
     private readonly ILogger<MiniPlayerWindow> _logger;

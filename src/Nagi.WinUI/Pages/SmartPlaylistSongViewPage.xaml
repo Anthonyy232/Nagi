@@ -59,7 +59,7 @@
                         <controls:ImageEx Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}"
                             IsCacheEnabled="True"
                             Source="{x:Bind ViewModel.CoverImageUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
-                            DecodePixelWidth="160"
+                            DecodePixelWidth="{StaticResource HeaderImageSize}"
                             DecodePixelType="Logical"
                             Stretch="UniformToFill" />
                     </Border>
@@ -69,7 +69,7 @@
                         <FontIcon
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="48"
+                            FontSize="64"
                             Glyph="&#xE71C;" />
                     </Grid>
                 </Grid>
