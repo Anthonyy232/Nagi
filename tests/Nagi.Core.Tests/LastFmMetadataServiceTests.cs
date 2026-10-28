@@ -81,6 +81,18 @@ public class LastFmMetadataServiceTests : IDisposable
         query["artist"].Should().Be(ArtistName);
         query["lang"].Should().Be("de");
     }
+
+    [Fact]
+    public async Task GetArtistInfoAsync_WithThreeLetterLanguageCode_OmitsLangParam()
+    {
+        SetupApiKey();
+        SetupHttpResponse(HttpStatusCode.OK, CreateValidArtistResponse("Bio", "http://url.jpg", "http://url.jpg"));
+
+        await _metadataService.GetArtistInfoAsync(ArtistName, "fil");
+
+        HttpUtility.ParseQueryString(_httpMessageHandler.Requests[0].RequestUri!.Query)["lang"].Should().BeNull();
+    }
+
     [Theory]
     [InlineData(HttpStatusCode.BadRequest)]
     [InlineData(HttpStatusCode.OK)]
