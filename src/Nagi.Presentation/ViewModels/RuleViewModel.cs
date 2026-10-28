@@ -72,8 +72,6 @@ public class RuleViewModel : ObservableObject
         new(SmartPlaylistOperator.IsFalse, Strings.Operator_IsFalse)
     };
 
-    public IReadOnlyList<FieldOption> AvailableFieldsList => AvailableFields;
-
     private FieldOption _selectedField = AvailableFields[0];
     private OperatorOption _selectedOperator = TextOperators[0];
     private string _value = string.Empty;

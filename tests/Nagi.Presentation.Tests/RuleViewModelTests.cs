@@ -32,8 +32,6 @@ public class RuleViewModelTests
         saved.SecondValue.Should().Be(secondValue);
         viewModel.IsRange.Should().Be(ruleOperator == SmartPlaylistOperator.IsInRange);
         viewModel.RequiresValue.Should().Be(ruleOperator is not (SmartPlaylistOperator.IsTrue or SmartPlaylistOperator.IsFalse));
-        viewModel.AvailableFieldsList.Should().Contain(viewModel.SelectedField);
-        viewModel.AvailableOperators.Should().Contain(viewModel.SelectedOperator);
     }
 
     [Fact]

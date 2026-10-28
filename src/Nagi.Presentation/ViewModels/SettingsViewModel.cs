@@ -17,8 +17,8 @@ namespace Nagi.Presentation.ViewModels;
 /// <summary>
 ///     ViewModel for the Settings page. Owns the player and startup behavior settings directly and
 ///     exposes the self-contained sections (<see cref="Appearance" />, <see cref="Audio" />,
-///     <see cref="Library" />, <see cref="Scrobbling" />, <see cref="Romanization" />,
-///     <see cref="DataManagement" />) as child view models, loading and disposing them together.
+///     <see cref="Library" />, <see cref="Scrobbling" />, <see cref="Romanization" />) as child view
+///     models, loading and disposing them together, plus <see cref="DataManagement" />, which has nothing to load or dispose.
 /// </summary>
 public partial class SettingsViewModel : SettingsSectionViewModel
 {
@@ -28,7 +28,6 @@ public partial class SettingsViewModel : SettingsSectionViewModel
     private readonly SemaphoreSlim _loadLock = new(1, 1);
 
     private const int SettingsSaveDebounceMs = 300;
-    private readonly TimeProvider _timeProvider;
 
     private bool _isLoaded;
     private readonly Debouncer _playerButtonSaveDebouncer;
@@ -57,8 +56,7 @@ public partial class SettingsViewModel : SettingsSectionViewModel
         Scrobbling = scrobbling;
         Romanization = romanizationPacks;
         DataManagement = dataManagement;
-        _timeProvider = timeProvider ?? TimeProvider.System;
-        _playerButtonSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs), _timeProvider);
+        _playerButtonSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs), timeProvider ?? TimeProvider.System);
 
         PlayerButtons.CollectionChanged += OnPlayerButtonsCollectionChanged;
 
