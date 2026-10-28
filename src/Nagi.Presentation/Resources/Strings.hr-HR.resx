@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Stvaranje novog popisa pjesama…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Stvaranje popisa pjesama nije uspjelo. Možda već postoji.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Došlo je do pogreške prilikom stvaranja popisa pjesama.</value>
   </data>

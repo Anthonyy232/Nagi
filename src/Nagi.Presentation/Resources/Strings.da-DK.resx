@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Opretter ny afspilningsliste…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Kunne ikke oprette afspilningsliste. Den findes muligvis allerede.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Der opstod en fejl under oprettelsen af afspilningslisten.</value>
   </data>

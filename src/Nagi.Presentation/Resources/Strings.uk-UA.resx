@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Створення нового списку відтворення…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Не вдалося створити список відтворення. Можливо, він вже існує.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Виникла помилка під час створення списку відтворення.</value>
   </data>

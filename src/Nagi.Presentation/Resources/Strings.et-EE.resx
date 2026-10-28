@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Uue esitusloendi loomine…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Esitusloendi loomine ebaõnnestus. See võib juba olemas olla.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Esitusloendi loomisel ilmnes viga.</value>
   </data>

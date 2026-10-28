@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Creando nueva lista de reproducción…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Error al crear la lista de reproducción. Puede que ya exista.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Ocurrió un error al crear la lista de reproducción.</value>
   </data>

@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Liosta seinm nua á chruthú…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Theip ar an seinmliosta a chruthú. D'fhéadfadh sé a bheith ann cheana féin.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Tharla earráid agus an seinmliosta á chruthú.</value>
   </data>

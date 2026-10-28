@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>正在创建新播放列表……</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>创建播放列表失败。它可能已存在。</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>创建播放列表时发生错误。</value>
   </data>

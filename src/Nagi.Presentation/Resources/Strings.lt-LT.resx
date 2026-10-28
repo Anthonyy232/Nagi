@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Kuriamas naujas grojaraštis…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Nepavyko sukurti grojaraščio. Galbūt jis jau egzistuoja.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Įvyko klaida kuriant grojaraštį.</value>
   </data>

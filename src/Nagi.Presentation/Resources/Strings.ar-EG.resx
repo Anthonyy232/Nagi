@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>جاري إنشاء قائمة تشغيل جديدة…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>فشل في إنشاء قائمة التشغيل. قد تكون موجودة بالفعل.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>حدث خطأ أثناء إنشاء قائمة التشغيل.</value>
   </data>

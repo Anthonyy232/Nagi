@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>יוצר רשימת השמעה חדשה…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>יצירת רשימת ההשמעה נכשלה. ייתכן שהיא כבר קיימת.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>אירעה שגיאה בעת יצירת רשימת ההשמעה.</value>
   </data>

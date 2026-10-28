@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Прављење нове плејлисте…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Креирање плејлисте није успело. Можда већ постоји.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Дошло је до грешке при креирању плејлисте.</value>
   </data>

@@ -8,7 +8,7 @@ public interface IPlaylistService
     event EventHandler<PlaylistUpdatedEventArgs>? PlaylistUpdated;
     event EventHandler? PlaylistsChanged;
 
-    Task<Playlist?> CreatePlaylistAsync(string name, string? description = null, string? coverImageUri = null);
+    Task<Playlist> CreatePlaylistAsync(string name, string? description = null, string? coverImageUri = null);
     Task<bool> DeletePlaylistAsync(Guid playlistId);
     Task<bool> RenamePlaylistAsync(Guid playlistId, string newName);
     Task<bool> UpdatePlaylistCoverAsync(Guid playlistId, string? newCoverImageUri);

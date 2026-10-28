@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Създаване на нов плейлист…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Неуспешно създаване на плейлист. Може вече да съществува.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Възникна грешка при създаване на плейлиста.</value>
   </data>

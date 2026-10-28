@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Oppretter ny spilleliste…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Klarte ikke å opprette spilleliste. Den kan allerede eksistere.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Det oppsto en feil under oppretting av spillelisten.</value>
   </data>

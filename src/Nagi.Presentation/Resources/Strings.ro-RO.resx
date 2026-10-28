@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Se creează o nouă listă de redare…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Crearea listei de redare a eșuat. Poate că există deja.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>A apărut o eroare la crearea listei de redare.</value>
   </data>

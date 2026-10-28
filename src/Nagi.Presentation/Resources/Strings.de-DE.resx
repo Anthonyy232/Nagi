@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Neue Wiedergabeliste wird erstellt…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Wiedergabeliste konnte nicht erstellt werden. Sie existiert möglicherweise bereits.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Beim Erstellen der Wiedergabeliste ist ein Fehler aufgetreten.</value>
   </data>

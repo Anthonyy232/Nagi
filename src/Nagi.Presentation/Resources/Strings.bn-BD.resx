@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>নতুন প্লেলিস্ট তৈরি করা হচ্ছে…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>প্লেলিস্ট তৈরি করতে ব্যর্থ হয়েছে। এটি ইতিমধ্যেই বিদ্যমান থাকতে পারে।</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>প্লেলিস্ট তৈরির সময় একটি ত্রুটি ঘটেছে।</value>
   </data>

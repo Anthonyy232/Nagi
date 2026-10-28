@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Inatengeneza orodha mpya ya kucheza…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Imeshindwa kuunda orodha ya kucheza. Huenda tayari ipo.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Hitilafu imetokea wakati wa kuunda orodha ya kucheza.</value>
   </data>

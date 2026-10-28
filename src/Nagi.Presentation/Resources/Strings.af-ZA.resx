@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Skep tans nuwe snitlys…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Kon nie snitlys skep nie. Dit bestaan dalk reeds.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>'n Fout het voorgekom terwyl die snitlys geskep is.</value>
   </data>

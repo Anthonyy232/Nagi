@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Nieuwe afspeellijst maken…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Aanmaken afspeellijst mislukt. Deze bestaat mogelijk al.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Er is een fout opgetreden bij het aanmaken van de afspeellijst.</value>
   </data>

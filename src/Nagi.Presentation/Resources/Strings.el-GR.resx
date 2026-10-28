@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Δημιουργία νέας λίστας αναπαραγωγής…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Αποτυχία δημιουργίας λίστας αναπαραγωγής. Ενδέχεται να υπάρχει ήδη.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Παρουσιάστηκε σφάλμα κατά τη δημιουργία της λίστας αναπαραγωγής.</value>
   </data>

@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Luodaan uutta soittolistaa…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Soittolistan luominen epäonnistui. Se saattaa jo olla olemassa.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Virhe soittolistan luomisessa.</value>
   </data>

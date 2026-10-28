@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>در حال ایجاد لیست پخش جدید…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>ایجاد لیست پخش ناموفق بود. ممکن است از قبل موجود باشد.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>هنگام ایجاد لیست پخش خطایی رخ داد.</value>
   </data>

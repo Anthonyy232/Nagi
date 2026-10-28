@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Membuat daftar putar baru…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Gagal membuat daftar putar. Mungkin sudah ada.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Terjadi kesalahan saat membuat daftar putar.</value>
   </data>

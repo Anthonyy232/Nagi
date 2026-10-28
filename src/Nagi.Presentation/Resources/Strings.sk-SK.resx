@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Vytvára sa nový zoznam skladieb…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Nepodarilo sa vytvoriť zoznam skladieb. Môže už existovať.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Počas vytvárania zoznamu skladieb došlo k chybe.</value>
   </data>

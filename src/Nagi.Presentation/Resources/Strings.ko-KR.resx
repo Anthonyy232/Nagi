@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>새 재생 목록 만드는 중…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>재생 목록 생성에 실패했습니다. 이미 존재할 수 있습니다.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>재생 목록을 생성하는 중 오류가 발생했습니다.</value>
   </data>

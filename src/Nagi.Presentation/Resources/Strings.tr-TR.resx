@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Yeni çalma listesi oluşturuluyor…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Çalma listesi oluşturulamadı. Zaten mevcut olabilir.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Çalma listesi oluşturulurken bir hata oluştu.</value>
   </data>

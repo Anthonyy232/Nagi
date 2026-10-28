@@ -142,8 +142,6 @@ public class Song : ObservableObject
     [NotMapped] public double Order { get; set; }
     [NotMapped] public bool IsArtworkAvailable => !string.IsNullOrEmpty(AlbumArtUriFromTrack);
 
-    [NotMapped] public bool HasTimedLyrics => !string.IsNullOrEmpty(LrcFilePath);
-
     [NotMapped]
     public string TrackDisplay
     {

@@ -38,7 +38,7 @@ public class PlaylistService : IPlaylistService
 
     public event EventHandler? PlaylistsChanged;
 
-    public async Task<Playlist?> CreatePlaylistAsync(string name, string? description = null,
+    public async Task<Playlist> CreatePlaylistAsync(string name, string? description = null,
         string? coverImageUri = null)
     {
         if (string.IsNullOrWhiteSpace(name))

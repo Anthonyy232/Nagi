@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Gumagawa ng bagong playlist…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Nabigo ang paggawa ng playlist. Maaaring mayroon na ito.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>May error na naganap habang ginagawa ang playlist.</value>
   </data>

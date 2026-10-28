@@ -83,13 +83,6 @@ public class M3uPlaylistExportService : IPlaylistExportService
             for (var suffix = 2; takenNames.Contains(uniqueName); suffix++) uniqueName = $"{baseName} ({suffix})";
 
             var playlist = await _playlistService.CreatePlaylistAsync(uniqueName).ConfigureAwait(false);
-            if (playlist is null)
-            {
-                _logger.LogError("Failed to create playlist during import");
-                return new PlaylistImportResult(false, null, matchedSongIds.Count, unmatchedPaths.Count,
-                    unmatchedPaths, string.Format(Resources.Strings.Format_NotFound, Resources.Strings.Label_Playlist));
-            }
-
             var songsAdded = false;
             try
             {

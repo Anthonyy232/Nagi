@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Đang tạo danh sách phát mới…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Không thể tạo danh sách phát. Nó có thể đã tồn tại.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Đã xảy ra lỗi khi tạo danh sách phát.</value>
   </data>

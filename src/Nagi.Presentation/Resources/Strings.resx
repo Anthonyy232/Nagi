@@ -406,9 +406,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Creating new playlist…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Failed to create playlist. It may already exist.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>An error occurred while creating the playlist.</value>
   </data>

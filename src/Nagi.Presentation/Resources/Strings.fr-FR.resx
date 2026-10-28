@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Création d'une nouvelle liste de lecture…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Échec de la création de la liste de lecture. Elle peut déjà exister.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Une erreur est survenue lors de la création de la liste de lecture.</value>
   </data>

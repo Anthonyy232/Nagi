@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Mencipta senarai main baharu…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Gagal mencipta senarai main. Ia mungkin sudah wujud.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Ralat berlaku semasa mencipta senarai main.</value>
   </data>

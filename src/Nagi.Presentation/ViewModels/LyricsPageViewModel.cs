@@ -38,6 +38,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     private long _optimisticSetTimestamp;
     private ParsedLrc? _parsedLrc;
     private Song? _currentSong;
+    private bool _canRemoveLyrics;
 
     internal Task PendingPrefetch { get; private set; } = Task.CompletedTask;
 
@@ -103,9 +104,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     public partial bool IsLoading { get; set; }
 
     [ObservableProperty] public partial bool CanEditLyrics { get; set; }
-    [ObservableProperty] public partial bool CanRemoveLyrics { get; set; }
     [ObservableProperty] public partial string EditableLyrics { get; set; } = string.Empty;
-    public Guid? CurrentSongId => _currentSong?.Id;
 
     public bool ShowNoLyricsMessage => !HasLyrics && !HasUnsyncedLyrics && !IsLoading;
 
@@ -172,9 +171,9 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private async Task EditLyricsAsync()
     {
-        if (CurrentSongId is not { } songId) return;
+        if (_currentSong?.Id is not { } songId) return;
 
-        var edit = await _uiService.ShowLyricsEditorAsync(EditableLyrics, CanRemoveLyrics);
+        var edit = await _uiService.ShowLyricsEditorAsync(EditableLyrics, _canRemoveLyrics);
         if (edit is null) return;
 
         try
@@ -281,7 +280,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
             HasLyrics = false;
             HasUnsyncedLyrics = false;
             CanEditLyrics = false;
-            CanRemoveLyrics = song is not null && _lrcService.HasCachedLyrics(song);
+            _canRemoveLyrics = song is not null && _lrcService.HasCachedLyrics(song);
             EditableLyrics = string.Empty;
 
             if (song is null)
@@ -345,7 +344,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
                 if (cancellationToken.IsCancellationRequested || _isDisposed) return;
                 EditableLyrics = rawLyrics;
                 CanEditLyrics = true;
-                CanRemoveLyrics = _lrcService.HasCachedLyrics(song);
+                _canRemoveLyrics = _lrcService.HasCachedLyrics(song);
                 IsLoading = false;
                 if (hasTimedLyrics)
                 {

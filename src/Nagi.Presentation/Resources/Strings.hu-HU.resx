@@ -403,9 +403,6 @@
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Új lejátszási lista létrehozása…</value>
   </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Nem sikerült létrehozni a lejátszási listát. Lehet, hogy már létezik.</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Hiba történt a lejátszási lista létrehozása során.</value>
   </data>

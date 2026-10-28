@@ -375,17 +375,9 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         {
             var normalizedName = ArtistNameHelper.NormalizeStringCore(playlistName) ?? playlistName;
             var newPlaylist = await _playlistService.CreatePlaylistAsync(normalizedName, coverImageUri: coverImageUri);
-            if (newPlaylist != null)
-            {
-                var newItem = new PlaylistViewModelItem(newPlaylist);
-                _allPlaylists.Add(newItem);
-                ApplyFilter();
-                StatusMessage = string.Empty;
-            }
-            else
-            {
-                StatusMessage = Strings.Playlist_Status_CreateFailed;
-            }
+            _allPlaylists.Add(new PlaylistViewModelItem(newPlaylist));
+            ApplyFilter();
+            StatusMessage = string.Empty;
         }
         catch (Exception ex)
         {
