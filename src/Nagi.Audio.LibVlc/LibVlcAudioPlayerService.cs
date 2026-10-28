@@ -39,7 +39,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private Song? _currentSong;
 
     private volatile bool _isDisposed;
-    private bool _isExplicitStop; // Prevents false PlaybackEnded events on user/error stop
+    private volatile bool _isExplicitStop; // Prevents false PlaybackEnded events on user/error stop
     private double _replayGainOffset;
 
     // Nagi intentionally keeps approximately 2 dB of headroom below LibVLC's

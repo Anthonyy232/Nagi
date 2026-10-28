@@ -25,7 +25,6 @@ public static class FileNameHelper
     /// <summary>
     ///     Generates a deterministic, collision-resistant cache file name for an audio file's lyrics.
     /// </summary>
-    /// <param name="title">The song title.</param>
     /// <returns>A sanitized filename with a stable identity hash.</returns>
     public static string GenerateLrcCacheFileName(
         string audioFileIdentity,

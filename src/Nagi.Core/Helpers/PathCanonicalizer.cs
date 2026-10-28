@@ -88,6 +88,6 @@ public static class PathCanonicalizer
     public static bool IsUncPath(string path)
     {
         if (string.IsNullOrEmpty(path)) return false;
-        return path.StartsWith(@"\\") || path.StartsWith("//");
+        return path.StartsWith(@"\\", StringComparison.Ordinal) || path.StartsWith("//", StringComparison.Ordinal);
     }
 }
