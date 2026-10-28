@@ -1,6 +1,7 @@
 using System.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Nagi.Core.Services.Data;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -29,6 +30,16 @@ public partial class GlobalOperationViewModel : ObservableObject
         Interlocked.Exchange(ref _cancel, cancel);
         IsCancellable = cancel != null;
     }
+
+    /// <summary>Shows a scan's progress here until <paramref name="token" /> is cancelled.</summary>
+    public IProgress<ScanProgress> CreateProgress(CancellationToken token = default) =>
+        new Progress<ScanProgress>(progress =>
+        {
+            if (token.IsCancellationRequested) return;
+            StatusMessage = progress.StatusText;
+            IsIndeterminate = progress.IsIndeterminate || progress.Percentage < 5;
+            ProgressValue = progress.Percentage;
+        });
 
     private bool CanCancel() => IsCancellable;
 

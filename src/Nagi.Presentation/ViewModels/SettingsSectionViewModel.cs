@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
 
 namespace Nagi.Presentation.ViewModels;
@@ -76,18 +75,4 @@ public abstract class SettingsSectionViewModel : ObservableObject, IDisposable
             _logger.LogError(ex, "Failed to save setting {SettingName}", settingName);
         }
     }
-
-    /// <summary>
-    ///     Reports a library-wide scan on the global operation bar until <paramref name="token" />
-    ///     is cancelled or this section is disposed.
-    /// </summary>
-    protected IProgress<ScanProgress> CreateGlobalOperationProgress(GlobalOperationViewModel operation,
-        CancellationToken token) =>
-        new Progress<ScanProgress>(progress =>
-        {
-            if (token.IsCancellationRequested || _isDisposed) return;
-            operation.StatusMessage = progress.StatusText;
-            operation.IsIndeterminate = progress.IsIndeterminate || progress.Percentage < 5;
-            operation.ProgressValue = progress.Percentage;
-        });
 }

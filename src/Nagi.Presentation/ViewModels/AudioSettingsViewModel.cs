@@ -395,7 +395,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
 
         try
         {
-            await _replayGainService.ScanLibraryAsync(CreateGlobalOperationProgress(_globalOperation, cancellationToken), cancellationToken);
+            await _replayGainService.ScanLibraryAsync(_globalOperation.CreateProgress(cancellationToken), cancellationToken);
         }
         catch (OperationCanceledException)
         {
