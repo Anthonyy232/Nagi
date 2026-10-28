@@ -107,12 +107,6 @@
   <data name="Label_Songs" xml:space="preserve">
     <value>Пісні</value>
   </data>
-  <data name="Label_Artists" xml:space="preserve">
-    <value>Виконавці</value>
-  </data>
-  <data name="Label_Song" xml:space="preserve">
-    <value>Пісня</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Папка</value>
   </data>
@@ -171,9 +165,6 @@
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Сканування папки {0} з {1}: {2} - {3}</value>
   </data>
-  <data name="Format_ScanCompleteResult" xml:space="preserve">
-    <value>Сканування завершено. Додано або оновлено {0} {1}.</value>
-  </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Сканування завершено. Бібліотека актуальна.</value>
@@ -213,18 +204,6 @@
     <value>Назва списку відтворення не може бути порожньою.</value>
   </data>
   <!-- Labels -->
-  <data name="Label_WithLyrics" xml:space="preserve">
-    <value>з текстом пісні</value>
-  </data>
-  <data name="Label_WithCoverArt" xml:space="preserve">
-    <value>з обкладинкою</value>
-  </data>
-  <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>із зображенням виконавця</value>
-  </data>
-  <data name="Label_And" xml:space="preserve">
-    <value>та</value>
-  </data>
   <!-- Static Strings -->
   <data name="UnknownFilename" xml:space="preserve">
     <value>невідомий</value>

@@ -107,12 +107,6 @@
   <data name="Label_Songs" xml:space="preserve">
     <value>Песни</value>
   </data>
-  <data name="Label_Artists" xml:space="preserve">
-    <value>Исполнители</value>
-  </data>
-  <data name="Label_Song" xml:space="preserve">
-    <value>Песня</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Папка</value>
   </data>
@@ -171,9 +165,6 @@
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Сканирование папки {0} из {1}: {2} - {3}</value>
   </data>
-  <data name="Format_ScanCompleteResult" xml:space="preserve">
-    <value>Сканирование завершено. Добавлено или обновлено {0} {1}.</value>
-  </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Сканирование завершено. Библиотека в актуальном состоянии.</value>
@@ -213,18 +204,6 @@
     <value>Имя плейлиста не может быть пустым.</value>
   </data>
   <!-- Labels -->
-  <data name="Label_WithLyrics" xml:space="preserve">
-    <value>с текстом</value>
-  </data>
-  <data name="Label_WithCoverArt" xml:space="preserve">
-    <value>с обложкой</value>
-  </data>
-  <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>с изображением исполнителя</value>
-  </data>
-  <data name="Label_And" xml:space="preserve">
-    <value>и</value>
-  </data>
   <!-- Static Strings -->
   <data name="UnknownFilename" xml:space="preserve">
     <value>неизвестный</value>

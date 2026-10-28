@@ -240,26 +240,14 @@ public partial class LibraryService
 
                         var updates = new List<string>();
                         if (lrcUpdates > 0)
-                        {
-                            var songLabel = lrcUpdates == 1 ? Resources.Strings.Label_Song : Resources.Strings.Label_Songs;
-                            updates.Add($"{lrcUpdates} {songLabel.ToLower()} {Resources.Strings.Label_WithLyrics}");
-                        }
-
+                            updates.Add(FormatCount(lrcUpdates, Resources.Strings.Format_ScanFoundLyrics_Singular, Resources.Strings.Format_ScanFoundLyrics_Plural));
                         if (coverArtUpdates > 0)
-                        {
-                            var songLabel = coverArtUpdates == 1 ? Resources.Strings.Label_Song : Resources.Strings.Label_Songs;
-                            updates.Add($"{coverArtUpdates} {songLabel.ToLower()} {Resources.Strings.Label_WithCoverArt}");
-                        }
-
+                            updates.Add(FormatCount(coverArtUpdates, Resources.Strings.Format_ScanFoundCoverArt_Singular, Resources.Strings.Format_ScanFoundCoverArt_Plural));
                         if (artistImageUpdates > 0)
-                        {
-                            var artistLabel = artistImageUpdates == 1 ? Resources.Strings.Label_Artist : Resources.Strings.Label_Artists;
-                            updates.Add($"{artistImageUpdates} {artistLabel.ToLower()} {Resources.Strings.Label_WithArtistImage}");
-                        }
+                            updates.Add(FormatCount(artistImageUpdates, Resources.Strings.Format_ScanFoundArtistImages_Singular, Resources.Strings.Format_ScanFoundArtistImages_Plural));
 
-                        var andJoiner = $" {Resources.Strings.Label_And} ";
-                        var statusMessage = updates.Any()
-                            ? string.Format(Resources.Strings.Format_ScanCompleteResult, string.Join(andJoiner, updates), "")
+                        var statusMessage = updates.Count > 0
+                            ? string.Join(" ", [Resources.Strings.Status_ScanComplete, .. updates])
                             : Resources.Strings.Status_ScanCompleteUpToDate;
 
                         progress?.Report(new ScanProgress
@@ -314,9 +302,8 @@ public partial class LibraryService
                         }
                     }
 
-                    var labelSong = newSongsFound == 1 ? Resources.Strings.Label_Song : Resources.Strings.Label_Songs;
                     var summary = newSongsFound > 0
-                        ? string.Format(Resources.Strings.Format_ScanCompleteResult, newSongsFound.ToString("N0"), labelSong.ToLower())
+                        ? FormatCount(newSongsFound, Resources.Strings.Format_ScanAddedSongs_Singular, Resources.Strings.Format_ScanAddedSongs_Plural)
                         : Resources.Strings.Status_ScanCompleteUpToDate;
                     progress?.Report(new ScanProgress { StatusText = summary, Percentage = 100 });
                     LibraryContentChanged?.Invoke(this, new LibraryContentChangedEventArgs(LibraryChangeType.FolderRescanned, folderId));
@@ -363,6 +350,9 @@ public partial class LibraryService
             _scanSemaphore.Release();
         }
     }
+
+    private static string FormatCount(int count, string singular, string plural) =>
+        string.Format(count == 1 ? singular : plural, count.ToString("N0"));
 
     private async Task RunReplayGainAnalysisAsync(IProgress<ScanProgress>? progress, CancellationToken cancellationToken)
     {

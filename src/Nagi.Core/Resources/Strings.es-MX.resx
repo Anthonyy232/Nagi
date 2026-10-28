@@ -107,12 +107,6 @@
   <data name="Label_Songs" xml:space="preserve">
     <value>Canciones</value>
   </data>
-  <data name="Label_Artists" xml:space="preserve">
-    <value>Artistas</value>
-  </data>
-  <data name="Label_Song" xml:space="preserve">
-    <value>Canción</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Carpeta</value>
   </data>
@@ -171,9 +165,6 @@
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Escaneando carpeta {0} de {1}: {2} - {3}</value>
   </data>
-  <data name="Format_ScanCompleteResult" xml:space="preserve">
-    <value>Escaneo completo. Se agregaron o actualizaron {0} {1}.</value>
-  </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Escaneo completo. La biblioteca está actualizada.</value>
@@ -213,18 +204,6 @@
     <value>El nombre de la lista de reproducción no puede estar vacío.</value>
   </data>
   <!-- Labels -->
-  <data name="Label_WithLyrics" xml:space="preserve">
-    <value>con letras</value>
-  </data>
-  <data name="Label_WithCoverArt" xml:space="preserve">
-    <value>con carátula</value>
-  </data>
-  <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>con imagen de artista</value>
-  </data>
-  <data name="Label_And" xml:space="preserve">
-    <value>y</value>
-  </data>
   <!-- Static Strings -->
   <data name="UnknownFilename" xml:space="preserve">
     <value>desconocido</value>

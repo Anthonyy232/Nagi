@@ -107,12 +107,6 @@
   <data name="Label_Songs" xml:space="preserve">
     <value>Brani</value>
   </data>
-  <data name="Label_Artists" xml:space="preserve">
-    <value>Artisti</value>
-  </data>
-  <data name="Label_Song" xml:space="preserve">
-    <value>Brano</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Cartella</value>
   </data>
@@ -171,9 +165,6 @@
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Scansione cartella {0} di {1}: {2} - {3}</value>
   </data>
-  <data name="Format_ScanCompleteResult" xml:space="preserve">
-    <value>Scansione completata. Aggiunti o aggiornati {0} {1}.</value>
-  </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Scansione completata. La libreria è aggiornata.</value>
@@ -213,18 +204,6 @@
     <value>Il nome della playlist non può essere vuoto.</value>
   </data>
   <!-- Labels -->
-  <data name="Label_WithLyrics" xml:space="preserve">
-    <value>con testi</value>
-  </data>
-  <data name="Label_WithCoverArt" xml:space="preserve">
-    <value>con copertina</value>
-  </data>
-  <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>con immagine dell'artista</value>
-  </data>
-  <data name="Label_And" xml:space="preserve">
-    <value>e</value>
-  </data>
   <!-- Static Strings -->
   <data name="UnknownFilename" xml:space="preserve">
     <value>sconosciuto</value>

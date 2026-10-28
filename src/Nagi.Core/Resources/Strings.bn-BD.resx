@@ -107,12 +107,6 @@
   <data name="Label_Songs" xml:space="preserve">
     <value>গান</value>
   </data>
-  <data name="Label_Artists" xml:space="preserve">
-    <value>শিল্পী</value>
-  </data>
-  <data name="Label_Song" xml:space="preserve">
-    <value>গান</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>ফোল্ডার</value>
   </data>
@@ -171,9 +165,6 @@
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>ফোল্ডার স্ক্যান করা হচ্ছে {1} এর মধ্যে {0}: {2} - {3}</value>
   </data>
-  <data name="Format_ScanCompleteResult" xml:space="preserve">
-    <value>স্ক্যান সম্পূর্ণ। {0} {1} যোগ করা হয়েছে বা আপডেট করা হয়েছে।</value>
-  </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>স্ক্যান সম্পূর্ণ। লাইব্রেরি আপ টু ডেট আছে।</value>
@@ -213,18 +204,6 @@
     <value>প্লেলিস্টের নাম খালি থাকতে পারবে না।</value>
   </data>
   <!-- Labels -->
-  <data name="Label_WithLyrics" xml:space="preserve">
-    <value>লিরিক্স সহ</value>
-  </data>
-  <data name="Label_WithCoverArt" xml:space="preserve">
-    <value>কভার আর্ট সহ</value>
-  </data>
-  <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>শিল্পীর ছবি সহ</value>
-  </data>
-  <data name="Label_And" xml:space="preserve">
-    <value>এবং</value>
-  </data>
   <!-- Static Strings -->
   <data name="UnknownFilename" xml:space="preserve">
     <value>অজানা</value>

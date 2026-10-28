@@ -108,12 +108,6 @@
   <data name="Label_Songs" xml:space="preserve">
     <value>Songs</value>
   </data>
-  <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
-  </data>
-  <data name="Label_Song" xml:space="preserve">
-    <value>Song</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Folder</value>
   </data>
@@ -173,8 +167,32 @@
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Scanning folder {0} of {1}: {2} - {3}</value>
   </data>
-  <data name="Format_ScanCompleteResult" xml:space="preserve">
-    <value>Scan complete. Added or updated {0} {1}.</value>
+  <data name="Status_ScanComplete" xml:space="preserve">
+    <value>Scan complete.</value>
+  </data>
+  <data name="Format_ScanAddedSongs_Singular" xml:space="preserve">
+    <value>Scan complete. Added or updated {0} song.</value>
+  </data>
+  <data name="Format_ScanAddedSongs_Plural" xml:space="preserve">
+    <value>Scan complete. Added or updated {0} songs.</value>
+  </data>
+  <data name="Format_ScanFoundLyrics_Singular" xml:space="preserve">
+    <value>Found lyrics for {0} song.</value>
+  </data>
+  <data name="Format_ScanFoundLyrics_Plural" xml:space="preserve">
+    <value>Found lyrics for {0} songs.</value>
+  </data>
+  <data name="Format_ScanFoundCoverArt_Singular" xml:space="preserve">
+    <value>Found cover art for {0} song.</value>
+  </data>
+  <data name="Format_ScanFoundCoverArt_Plural" xml:space="preserve">
+    <value>Found cover art for {0} songs.</value>
+  </data>
+  <data name="Format_ScanFoundArtistImages_Singular" xml:space="preserve">
+    <value>Found an image for {0} artist.</value>
+  </data>
+  <data name="Format_ScanFoundArtistImages_Plural" xml:space="preserve">
+    <value>Found images for {0} artists.</value>
   </data>
 
   <!-- Status & Success Messages -->
@@ -215,20 +233,6 @@
   </data>
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Playlist name cannot be empty.</value>
-  </data>
-
-  <!-- Labels -->
-  <data name="Label_WithLyrics" xml:space="preserve">
-    <value>with lyrics</value>
-  </data>
-  <data name="Label_WithCoverArt" xml:space="preserve">
-    <value>with cover art</value>
-  </data>
-  <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
-  </data>
-  <data name="Label_And" xml:space="preserve">
-    <value>and</value>
   </data>
 
   <!-- Static Strings -->

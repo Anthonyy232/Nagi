@@ -107,12 +107,6 @@
   <data name="Label_Songs" xml:space="preserve">
     <value>노래</value>
   </data>
-  <data name="Label_Artists" xml:space="preserve">
-    <value>아티스트</value>
-  </data>
-  <data name="Label_Song" xml:space="preserve">
-    <value>곡</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>폴더</value>
   </data>
@@ -171,9 +165,6 @@
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>{1}개 중 {0}번째 폴더 스캔 중: {2} - {3}</value>
   </data>
-  <data name="Format_ScanCompleteResult" xml:space="preserve">
-    <value>스캔 완료. {0}개의 {1}을(를) 추가하거나 업데이트했습니다.</value>
-  </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>스캔 완료. 라이브러리가 최신 상태입니다.</value>
@@ -213,18 +204,6 @@
     <value>재생 목록 이름은 비워둘 수 없습니다.</value>
   </data>
   <!-- Labels -->
-  <data name="Label_WithLyrics" xml:space="preserve">
-    <value>가사 포함</value>
-  </data>
-  <data name="Label_WithCoverArt" xml:space="preserve">
-    <value>커버 아트 포함</value>
-  </data>
-  <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>아티스트 이미지 포함</value>
-  </data>
-  <data name="Label_And" xml:space="preserve">
-    <value>및</value>
-  </data>
   <!-- Static Strings -->
   <data name="UnknownFilename" xml:space="preserve">
     <value>알 수 없음</value>
