@@ -44,7 +44,6 @@
                     Grid.Column="0"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    FontFamily="{StaticResource SymbolThemeFontFamily}"
                     FontSize="12"
                     Foreground="{ThemeResource TextFillColorTertiaryBrush}"
                     Glyph="&#xE76F;" />
@@ -53,7 +52,6 @@
                     Grid.Column="1"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    FontFamily="{StaticResource SymbolThemeFontFamily}"
                     Foreground="{ThemeResource AppPrimaryColorBrush}"
                     Glyph="&#xE774;" />
 
@@ -190,7 +188,7 @@
                     Header="{x:Bind resources:Strings.SettingsPage_Theme_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_Theme_Description, Mode=OneTime}"
                     IsExpanded="False">
                     <controls:SettingsExpander.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE793;" />
+                        <FontIcon Glyph="&#xE793;" />
                     </controls:SettingsExpander.HeaderIcon>
                     <ComboBox
                         MinWidth="300"
@@ -235,7 +233,7 @@
                 <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_WindowMaterial_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_WindowMaterial_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE81E;" />
+                        <FontIcon Glyph="&#xE81E;" />
                     </controls:SettingsCard.HeaderIcon>
                     <ComboBox
                         MinWidth="300"
@@ -254,7 +252,7 @@
                 <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_DynamicTheming_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_DynamicTheming_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
+                        <FontIcon Glyph="&#xE790;" />
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
@@ -279,7 +277,7 @@
                         </Grid>
                     </controls:SettingsExpander.Header>
                     <controls:SettingsExpander.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
+                        <FontIcon Glyph="&#xE790;" />
                     </controls:SettingsExpander.HeaderIcon>
 
                     <ComboBox
@@ -331,7 +329,7 @@
                     Header="{x:Bind resources:Strings.SettingsPage_Language_Header, Mode=OneTime}"
                     controls:SettingsCard.Description="{x:Bind resources:Strings.SettingsPage_Language_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE774;" />
+                        <FontIcon Glyph="&#xE774;" />
                     </controls:SettingsCard.HeaderIcon>
                     <ComboBox
                         MinWidth="200"
@@ -349,7 +347,7 @@
                 <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_RememberWindowSize_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_RememberWindowSize_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE740;" />
+                        <FontIcon Glyph="&#xE740;" />
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
@@ -359,7 +357,7 @@
                 <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_RememberWindowPosition_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_RememberWindowPosition_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE707;" />
+                        <FontIcon Glyph="&#xE707;" />
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
@@ -369,7 +367,7 @@
                 <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_RememberNavState_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_RememberNavState_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE700;" />
+                        <FontIcon Glyph="&#xE700;" />
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
@@ -379,7 +377,7 @@
                 <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_CustomizeNav_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_CustomizeNav_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE700;" />
+                        <FontIcon Glyph="&#xE700;" />
                     </controls:SettingsCard.HeaderIcon>
 
                     <ListView
@@ -411,7 +409,6 @@
                                         Grid.Column="0"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
-                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
                                         FontSize="12"
                                         Foreground="{ThemeResource TextFillColorTertiaryBrush}"
                                         Glyph="&#xE76F;" />
@@ -420,7 +417,6 @@
                                         Grid.Column="1"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
-                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                         Foreground="{ThemeResource AppPrimaryColorBrush}"
                                         Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(Icon)}" />
 
@@ -445,7 +441,7 @@
                 <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_SongListHeader_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_SongListHeader_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8FD;" />
+                        <FontIcon Glyph="&#xE8FD;" />
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
@@ -471,7 +467,7 @@
                         </Grid>
                     </controls:SettingsExpander.Header>
                     <controls:SettingsExpander.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8FD;" />
+                        <FontIcon Glyph="&#xE8FD;" />
                     </controls:SettingsExpander.HeaderIcon>
                     <controls:SettingsExpander.ItemTemplate>
                         <DataTemplate x:DataType="models:SongListColumnSetting">
@@ -487,7 +483,7 @@
                 <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_VolumeNormalization_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_VolumeNormalization_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE995;" />
+                        <FontIcon Glyph="&#xE995;" />
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
@@ -498,7 +494,7 @@
                     Header="{x:Bind resources:Strings.SettingsPage_WasapiExclusive_Header, Mode=OneTime}"
                     Description="{x:Bind resources:Strings.SettingsPage_WasapiExclusive_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7F6;" />
+                        <FontIcon Glyph="&#xE7F6;" />
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
@@ -509,7 +505,7 @@
                     Header="{x:Bind resources:Strings.SettingsPage_AudioOutput_Header, Mode=OneTime}"
                     Description="{x:Bind resources:Strings.SettingsPage_AudioOutput_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7F5;" />
+                        <FontIcon Glyph="&#xE7F5;" />
                     </controls:SettingsCard.HeaderIcon>
                     <StackPanel Spacing="8" MaxWidth="360">
                         <ComboBox
@@ -534,7 +530,7 @@
                     Header="{x:Bind resources:Strings.SettingsPage_FadeOnPlayPause_Header, Mode=OneTime}"
                     Description="{x:Bind resources:Strings.SettingsPage_FadeOnPlayPause_Description, Mode=OneTime}">
                     <controls:SettingsExpander.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE9E9;" />
+                        <FontIcon Glyph="&#xE9E9;" />
                     </controls:SettingsExpander.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
@@ -596,7 +592,7 @@
                         </StackPanel>
                     </controls:SettingsCard.Header>
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE9E9;" />
+                        <FontIcon Glyph="&#xE9E9;" />
                     </controls:SettingsCard.HeaderIcon>
                     <StackPanel Spacing="20" HorizontalAlignment="Center">
                         <StackPanel Spacing="6" Width="320">
@@ -678,7 +674,7 @@
                         </StackPanel>
                     </controls:SettingsCard.Header>
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE768;" />
+                        <FontIcon Glyph="&#xE768;" />
                     </controls:SettingsCard.HeaderIcon>
 
                     <StackPanel Spacing="12" HorizontalAlignment="Right">
@@ -770,7 +766,6 @@
 
                                                 <FontIcon
                                                     HorizontalAlignment="Center"
-                                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
                                                     FontSize="10"
                                                     Foreground="{ThemeResource TextFillColorTertiaryBrush}"
                                                     Glyph="&#xE76F;" />
@@ -785,7 +780,6 @@
                                                     Style="{StaticResource MediaControlButtonStyle}">
                                                     <Grid>
                                                         <FontIcon
-                                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
                                                             FontSize="14"
                                                             Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(Icon)}"
                                                             Visibility="{x:Bind IsNotSeparator, Converter={StaticResource BooleanToVisibilityConverter}}" />
@@ -824,7 +818,7 @@
                 <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_CollapsablePlayer_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_CollapsablePlayer_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE745;" />
+                        <FontIcon Glyph="&#xE745;" />
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
@@ -834,7 +828,7 @@
                 <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_RestorePlayback_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_RestorePlayback_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE74E;" />
+                        <FontIcon Glyph="&#xE74E;" />
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
@@ -844,7 +838,7 @@
                 <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_AutoLaunch_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_AutoLaunch_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7E8;" />
+                        <FontIcon Glyph="&#xE7E8;" />
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
@@ -855,7 +849,7 @@
                 <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_StartMinimized_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_StartMinimized_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE921;" />
+                        <FontIcon Glyph="&#xE921;" />
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
@@ -865,7 +859,7 @@
                 <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_MinimizeToMiniPlayer_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_MinimizeToMiniPlayer_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE73F;" />
+                        <FontIcon Glyph="&#xE73F;" />
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
@@ -875,7 +869,7 @@
                 <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_HideToTray_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_HideToTray_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE90E;" />
+                        <FontIcon Glyph="&#xE90E;" />
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
@@ -885,7 +879,7 @@
                 <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_TrayCoverArt_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_TrayCoverArt_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEB9F;" />
+                        <FontIcon Glyph="&#xEB9F;" />
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
@@ -897,7 +891,7 @@
                 <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_IgnoreLeadingArticles_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_IgnoreLeadingArticles_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8CB;" />
+                        <FontIcon Glyph="&#xE8CB;" />
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
@@ -907,7 +901,7 @@
                 <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_ArtistSplitting_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_ArtistSplitting_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE77B;" />
+                        <FontIcon Glyph="&#xE77B;" />
                     </controls:SettingsCard.HeaderIcon>
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <TextBox
@@ -924,7 +918,7 @@
                 <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_GenreSplitting_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_GenreSplitting_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8EC;" />
+                        <FontIcon Glyph="&#xE8EC;" />
                     </controls:SettingsCard.HeaderIcon>
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <TextBox
@@ -942,7 +936,7 @@
                     IsExpanded="{x:Bind ViewModel.Library.IsFetchOnlineMetadataEnabled, Mode=OneWay}"
                     Header="{x:Bind resources:Strings.SettingsPage_OnlineMetadata_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_OnlineMetadata_Description, Mode=OneTime}">
                     <controls:SettingsExpander.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8EC;" />
+                        <FontIcon Glyph="&#xE8EC;" />
                     </controls:SettingsExpander.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
@@ -951,7 +945,7 @@
                     <controls:SettingsExpander.Items>
                         <controls:SettingsCard Header="{x:Bind resources:Strings.SettingsPage_MetadataSources_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_MetadataSources_Description, Mode=OneTime}">
                             <controls:SettingsCard.HeaderIcon>
-                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8FD;" />
+                                <FontIcon Glyph="&#xE8FD;" />
                             </controls:SettingsCard.HeaderIcon>
                             <ListView
                                     Width="350"
@@ -976,7 +970,7 @@
                     IsExpanded="{x:Bind ViewModel.Library.IsFetchOnlineLyricsEnabled, Mode=OneWay}"
                     Header="{x:Bind resources:Strings.SettingsPage_OnlineLyrics_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_OnlineLyrics_Description, Mode=OneTime}">
                     <controls:SettingsExpander.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED1E;" />
+                        <FontIcon Glyph="&#xED1E;" />
                     </controls:SettingsExpander.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
@@ -985,7 +979,7 @@
                     <controls:SettingsExpander.Items>
                         <controls:SettingsCard Header="{x:Bind resources:Strings.SettingsPage_LyricsSources_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_LyricsSources_Description, Mode=OneTime}">
                             <controls:SettingsCard.HeaderIcon>
-                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8FD;" />
+                                <FontIcon Glyph="&#xE8FD;" />
                             </controls:SettingsCard.HeaderIcon>
                             <ListView
                                 Width="350"
@@ -1011,7 +1005,7 @@
                     IsExpanded="{x:Bind ViewModel.Library.IsLyricsRomanizationEnabled, Mode=OneWay}"
                     Header="{x:Bind resources:Strings.SettingsPage_RomanizedLyrics_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_RomanizedLyrics_Description, Mode=OneTime}">
                     <controls:SettingsExpander.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8D2;" />
+                        <FontIcon Glyph="&#xE8D2;" />
                     </controls:SettingsExpander.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
@@ -1020,7 +1014,7 @@
                     <controls:SettingsExpander.Items>
                         <controls:SettingsCard Header="{x:Bind resources:Strings.SettingsPage_RomanizationPacks_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_RomanizationPacks_Description, Mode=OneTime}">
                             <controls:SettingsCard.HeaderIcon>
-                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7B8;" />
+                                <FontIcon Glyph="&#xE7B8;" />
                             </controls:SettingsCard.HeaderIcon>
                             <StackPanel
                                 Width="520"
@@ -1065,7 +1059,7 @@
                 <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_PlaylistsIO_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_PlaylistsIO_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8B5;" />
+                        <FontIcon Glyph="&#xE8B5;" />
                     </controls:SettingsCard.HeaderIcon>
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <Button
@@ -1081,7 +1075,7 @@
                     Header="{x:Bind resources:Strings.SettingsPage_BackupRestore_Header, Mode=OneTime}"
                     Description="{x:Bind resources:Strings.SettingsPage_BackupRestore_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE78C;" />
+                        <FontIcon Glyph="&#xE78C;" />
                     </controls:SettingsCard.HeaderIcon>
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <Button
@@ -1096,7 +1090,7 @@
                 <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_ResetApp_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_ResetApp_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE74D;" />
+                        <FontIcon Glyph="&#xE74D;" />
                     </controls:SettingsCard.HeaderIcon>
                     <Button
                         HorizontalAlignment="Right"
@@ -1120,7 +1114,7 @@
                         <controls:SettingsCard
                             Header="{x:Bind resources:Strings.SettingsPage_LastFm_Scrobbling_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_LastFm_Scrobbling_Description, Mode=OneTime}">
                             <controls:SettingsCard.HeaderIcon>
-                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE81C;" />
+                                <FontIcon Glyph="&#xE81C;" />
                             </controls:SettingsCard.HeaderIcon>
                             <ToggleSwitch IsOn="{x:Bind ViewModel.Scrobbling.IsLastFmScrobblingEnabled, Mode=TwoWay}" />
                         </controls:SettingsCard>
@@ -1128,7 +1122,7 @@
                         <controls:SettingsCard
                             Header="{x:Bind resources:Strings.SettingsPage_LastFm_NowPlaying_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_LastFm_NowPlaying_Description, Mode=OneTime}">
                             <controls:SettingsCard.HeaderIcon>
-                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE768;" />
+                                <FontIcon Glyph="&#xE768;" />
                             </controls:SettingsCard.HeaderIcon>
                             <ToggleSwitch IsOn="{x:Bind ViewModel.Scrobbling.IsLastFmNowPlayingEnabled, Mode=TwoWay}" />
                         </controls:SettingsCard>
@@ -1138,7 +1132,7 @@
                 <controls:SettingsExpander
                     Header="{x:Bind resources:Strings.SettingsPage_ListenBrainz_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_ListenBrainz_Description, Mode=OneTime}">
                     <controls:SettingsExpander.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE90B;" />
+                        <FontIcon Glyph="&#xE90B;" />
                     </controls:SettingsExpander.HeaderIcon>
 
                     <Button
@@ -1150,7 +1144,7 @@
                         <controls:SettingsCard
                             Header="{x:Bind resources:Strings.SettingsPage_ListenBrainz_TokenLabel, Mode=OneTime}">
                             <controls:SettingsCard.HeaderIcon>
-                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8D7;" />
+                                <FontIcon Glyph="&#xE8D7;" />
                             </controls:SettingsCard.HeaderIcon>
                             <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
                                 <PasswordBox
@@ -1175,7 +1169,7 @@
                         <controls:SettingsCard
                             Header="{x:Bind resources:Strings.SettingsPage_ListenBrainz_ScrobblingToggle, Mode=OneTime}">
                             <controls:SettingsCard.HeaderIcon>
-                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE81C;" />
+                                <FontIcon Glyph="&#xE81C;" />
                             </controls:SettingsCard.HeaderIcon>
                             <ToggleSwitch IsOn="{x:Bind ViewModel.Scrobbling.ListenBrainzScrobblingEnabled, Mode=TwoWay}" />
                         </controls:SettingsCard>
@@ -1183,7 +1177,7 @@
                         <controls:SettingsCard
                             Header="{x:Bind resources:Strings.SettingsPage_ListenBrainz_NowPlayingToggle, Mode=OneTime}">
                             <controls:SettingsCard.HeaderIcon>
-                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE768;" />
+                                <FontIcon Glyph="&#xE768;" />
                             </controls:SettingsCard.HeaderIcon>
                             <ToggleSwitch IsOn="{x:Bind ViewModel.Scrobbling.ListenBrainzNowPlayingEnabled, Mode=TwoWay}" />
                         </controls:SettingsCard>
@@ -1193,7 +1187,7 @@
                             Header="{x:Bind resources:Strings.SettingsPage_ListenBrainz_AdvancedHeader, Mode=OneTime}"
                             IsExpanded="False">
                             <controls:SettingsExpander.HeaderIcon>
-                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE713;" />
+                                <FontIcon Glyph="&#xE713;" />
                             </controls:SettingsExpander.HeaderIcon>
                             <controls:SettingsExpander.Items>
                                 <controls:SettingsCard
@@ -1225,7 +1219,7 @@
                     Header="{x:Bind resources:Strings.SettingsPage_AboutExpander_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_AboutExpander_Description, Mode=OneTime}"
                     IsExpanded="False">
                     <controls:SettingsExpander.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
+                        <FontIcon Glyph="&#xE946;" />
                     </controls:SettingsExpander.HeaderIcon>
                     <TextBlock
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"

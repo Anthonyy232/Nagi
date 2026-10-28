@@ -136,7 +136,6 @@
                                 AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylistSongViewPage_SearchButton_Search_ToolTip, Mode=OneTime}"
                                 HorizontalAlignment="Right"
                                 Margin="0,0,1,0"
-                                IsHitTestVisible="True"
                                 Canvas.ZIndex="1">
                             <FontIcon x:Name="SearchIcon" FontSize="16" Glyph="&#xE721;" />
                         </Button>
@@ -257,9 +256,6 @@
                       ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
                       ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
                       SelectionChanged="SongsListView_SelectionChanged"
-                      CanDragItems="False"
-                      CanReorderItems="False"
-                      AllowDrop="False"
                       DoubleTapped="SongsListView_DoubleTapped">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="models:Song">

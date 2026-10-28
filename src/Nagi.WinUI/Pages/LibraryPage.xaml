@@ -98,7 +98,6 @@
                             Style="{StaticResource SongListViewPageIconButton}"
                             HorizontalAlignment="Right"
                             Margin="0,0,1,0"
-                            IsHitTestVisible="True"
                             Canvas.ZIndex="1">
                         <FontIcon x:Name="SearchIcon" FontSize="16" Glyph="&#xE721;" />
                     </Button>
