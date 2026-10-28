@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using CommunityToolkit.WinUI;
 using System.Numerics;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,12 +35,6 @@ public sealed partial class ArtistViewPage : SongListPage
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-
-        AlbumsViewport.Height = double.NaN;
-        AlbumsViewport.Opacity = 1;
-        AlbumsContent.Translation = Vector3.Zero;
-        _lastKnownAlbumsHeight = 0;
-
         var navParam = (ArtistViewNavigationParameter)e.Parameter;
         await ViewModel.LoadArtistDetailsAsync(navParam.ArtistId);
     }
