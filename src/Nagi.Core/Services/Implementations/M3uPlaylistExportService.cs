@@ -75,7 +75,14 @@ public class M3uPlaylistExportService : IPlaylistExportService
                     Resources.Strings.Error_M3uImportNoSongsMatched);
             }
 
-            var playlist = await _playlistService.CreatePlaylistAsync(playlistName).ConfigureAwait(false);
+            // Playlist names are unique, so re-importing a file adds "Name (2)" rather than failing.
+            var takenNames = (await _libraryReader.GetAllPlaylistsAsync().ConfigureAwait(false))
+                .Select(existing => existing.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
+            var baseName = ArtistNameHelper.NormalizeStringCore(playlistName) ?? playlistName;
+            var uniqueName = baseName;
+            for (var suffix = 2; takenNames.Contains(uniqueName); suffix++) uniqueName = $"{baseName} ({suffix})";
+
+            var playlist = await _playlistService.CreatePlaylistAsync(uniqueName).ConfigureAwait(false);
             if (playlist is null)
             {
                 _logger.LogError("Failed to create playlist during import");

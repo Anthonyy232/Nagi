@@ -77,6 +77,22 @@ public class M3uPlaylistExportServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task ImportPlaylistAsync_WhenTheNameIsTaken_CreatesTheNextFreeName()
+    {
+        var song = new Song { Id = Guid.NewGuid(), FilePath = @"C:\music\track.mp3" };
+        var m3uPath = Path.Combine(_tempDirectory, "playlist.m3u");
+        await File.WriteAllLinesAsync(m3uPath, [song.FilePath]);
+        _libraryReader.GetSongByFilePathAsync(song.FilePath).Returns(song);
+        _libraryReader.GetAllPlaylistsAsync().Returns([new Playlist { Name = "mix" }, new Playlist { Name = "Mix (2)" }]);
+        _playlistService.CreatePlaylistAsync(Arg.Any<string>()).Returns(call => new Playlist { Name = call.ArgAt<string>(0) });
+
+        var result = await _service.ImportPlaylistAsync(m3uPath, "Mix");
+
+        result.Success.Should().BeTrue();
+        await _playlistService.Received(1).CreatePlaylistAsync("Mix (3)");
+    }
+
+    [Fact]
     public async Task ImportPlaylistAsync_SkipsM3uDirectivesAndBlankLines()
     {
         var matchedSong = new Song { Id = Guid.NewGuid(), FilePath = @"C:\music\track.mp3" };
