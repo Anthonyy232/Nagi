@@ -121,7 +121,12 @@ public class TrayPopupService : ITrayPopupService, IDisposable
         var scale = _win32.GetDpiForWindow(windowHandle) / BASE_DPI;
 
         var contentHeight = await popup.ShowAndMeasureAsync(POPUP_WIDTH_DIPS);
-        if (_popupWindow != popup) return;
+        if (_popupWindow != popup)
+        {
+            // The popup closed while measuring; leaving the flag set would block every later toggle.
+            _isAnimating = false;
+            return;
+        }
 
         popup.AppWindow.ResizeClient(new SizeInt32(
             (int)Math.Ceiling(POPUP_WIDTH_DIPS * scale),
