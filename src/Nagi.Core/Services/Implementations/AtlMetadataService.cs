@@ -241,19 +241,9 @@ public partial class AtlMetadataService : IMetadataService
 
         // No directory art found — fall back to embedded image.
         var picture = track.EmbeddedPictures?.FirstOrDefault();
-        if (picture?.PictureData is { Length: > 0 } pictureData)
-        {
-            try
-            {
-                return await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to process embedded album art for '{FilePath}'.", filePath);
-            }
-        }
-
-        return default;
+        return picture?.PictureData is { Length: > 0 } pictureData
+            ? await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData).ConfigureAwait(false)
+            : default;
     }
 
     /// <summary>
@@ -294,36 +284,27 @@ public partial class AtlMetadataService : IMetadataService
     /// <returns>The full path to the first matching cover art file, or null if none found.</returns>
     private string? FindCoverArtInDirectoryHierarchy(string songFilePath, string? baseFolderPath)
     {
-        try
+        var currentDirectory = Path.GetDirectoryName(songFilePath);
+        if (string.IsNullOrEmpty(currentDirectory)) return null;
+
+        var normalizedBasePath = baseFolderPath?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+        while (!string.IsNullOrEmpty(currentDirectory))
         {
-            var currentDirectory = Path.GetDirectoryName(songFilePath);
-            if (string.IsNullOrEmpty(currentDirectory)) return null;
+            var coverArtPath = ImageStorageHelper.FindCoverArtInDirectory(_fileSystem, currentDirectory, _logger);
+            if (coverArtPath != null) return coverArtPath;
 
-            var normalizedBasePath = baseFolderPath?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-
-            while (!string.IsNullOrEmpty(currentDirectory))
+            var normalizedCurrent = currentDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            if (!string.IsNullOrEmpty(normalizedBasePath) &&
+                normalizedCurrent.Equals(normalizedBasePath, StringComparison.OrdinalIgnoreCase))
             {
-                var coverArtPath = ImageStorageHelper.FindCoverArtInDirectory(_fileSystem, currentDirectory, _logger);
-                if (coverArtPath != null) return coverArtPath;
-
-                var normalizedCurrent = currentDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-                if (!string.IsNullOrEmpty(normalizedBasePath) &&
-                    normalizedCurrent.Equals(normalizedBasePath, StringComparison.OrdinalIgnoreCase))
-                {
-                    break;
-                }
-
-                currentDirectory = Path.GetDirectoryName(currentDirectory);
+                break;
             }
 
-            return null;
+            currentDirectory = Path.GetDirectoryName(currentDirectory);
         }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Error while searching for cover art in directory hierarchy for '{SongFilePath}'.",
-                songFilePath);
-            return null;
-        }
+
+        return null;
     }
 
     /// <summary>
