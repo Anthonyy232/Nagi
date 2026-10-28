@@ -265,7 +265,8 @@ public partial class MusicPlaybackService
         return RunPlaybackRequest(async request =>
         {
             FinalizeCurrentListenBeforeQueueRemoval();
-            await StopInternalAsync(request);
+            // Playback carries on with the next song, so a sleep timer or "stop at queue end" still applies.
+            await StopInternalAsync(request, clearStopSchedule: !nextSongId.HasValue);
             if (!IsCurrentRequest(request)) return;
             RemoveQueuedTracks(idsToRemove);
             if (nextSongId.HasValue && IsCurrentRequest(request))

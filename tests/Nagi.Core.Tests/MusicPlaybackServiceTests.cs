@@ -1078,6 +1078,19 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task RemoveRangeFromQueueAsync_WhenCurrentTrackIsRemoved_KeepsTheSleepTimer()
+    {
+        await _service.InitializeAsync();
+        await _service.PlayAsync(_testSongs, 1);
+        _service.ScheduleStop(PlaybackStopMode.Timer, TimeSpan.FromMinutes(30));
+
+        await _service.RemoveRangeFromQueueAsync(new[] { _testSongs[1].Id });
+
+        _service.CurrentTrack.Should().Be(_testSongs[2]);
+        _service.StopMode.Should().Be(PlaybackStopMode.Timer);
+    }
+
+    [Fact]
     public async Task RemoveRangeFromQueueAsync_WhenLastCurrentTrackIsRemovedWithoutRepeat_Stops()
     {
         await _service.InitializeAsync();

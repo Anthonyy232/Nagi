@@ -440,11 +440,11 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     }
 
     public Task StopAsync() =>
-        RunPlaybackRequest(StopInternalAsync);
+        RunPlaybackRequest(request => StopInternalAsync(request));
 
-    private async Task StopInternalAsync(int request)
+    private async Task StopInternalAsync(int request, bool clearStopSchedule = true)
     {
-        ScheduleStop(PlaybackStopMode.Off);
+        if (clearStopSchedule) ScheduleStop(PlaybackStopMode.Off);
         if (CurrentListenHistoryId.HasValue)
         {
             // Capture and clear synchronously before the async gap, mirroring the pattern in
