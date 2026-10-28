@@ -70,7 +70,7 @@ public partial class MusicPlaybackService
         _isEligibilityMarked = true;
         var sessionId = CurrentListenHistoryId.Value;
         var song = CurrentTrack!;
-        var listenStartedUtc = _currentListenStartedUtc ?? DateTime.UtcNow - progress;
+        var listenStartedUtc = _currentListenStartedUtc ?? _timeProvider.GetUtcNow().UtcDateTime - progress;
         FireAndForgetSafe(
             async () =>
             {

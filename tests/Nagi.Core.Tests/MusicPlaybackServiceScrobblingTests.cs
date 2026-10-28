@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Time.Testing;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
@@ -21,6 +22,7 @@ public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
     private readonly MusicPlaybackService _service;
     private readonly List<Song> _testSongs;
     private readonly List<(Song Song, long SessionId, DateTime ListenStartedUtc)> _raisedEvents = new();
+    private readonly FakeTimeProvider _time = new();
 
     public MusicPlaybackServiceScrobblingTests()
     {
@@ -42,7 +44,7 @@ public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
             _library.Reader, _library.Writer,
             metadataService,
             Substitute.For<IFileSystemService>(),
-            logger);
+            logger, _time);
 
         _testSongs = Enumerable.Range(1, 2)
             .Select(i => new Song { Id = Guid.NewGuid(), Title = $"Song {i}", FilePath = $"C:\\music\\song{i}.mp3" })
@@ -177,7 +179,9 @@ public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
         });
 
         await _service.PlayAsync(_testSongs, startIndex: 0);
-        var firstSessionStartedBy = DateTime.UtcNow;
+        var firstSessionStarted = _time.GetUtcNow().UtcDateTime;
+        // Advance by more than the position so the "now minus position" fallback would give a different time.
+        _time.Advance(TimeSpan.FromSeconds(120));
         _audioPlayer.Duration.Returns(TimeSpan.FromMinutes(3));
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(91));
         RaisePositionChanged();
@@ -189,7 +193,7 @@ public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
 
         _raisedEvents.Should().ContainSingle();
         _raisedEvents[0].SessionId.Should().Be(20L);
-        _raisedEvents[0].ListenStartedUtc.Should().BeOnOrBefore(firstSessionStartedBy);
+        _raisedEvents[0].ListenStartedUtc.Should().Be(firstSessionStarted);
     }
 
     [Fact]

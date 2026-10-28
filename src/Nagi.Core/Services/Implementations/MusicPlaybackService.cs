@@ -719,7 +719,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     private async Task StartListenSessionAsync(Guid songId, int request)
     {
         // Presence listeners need the session before LoadAsync can raise MediaOpened.
-        var startedUtc = DateTime.UtcNow;
+        var startedUtc = _timeProvider.GetUtcNow().UtcDateTime;
         var sessionId = await _libraryWriter.StartListenSessionAsync(songId, _currentContext);
         if (!IsCurrentRequest(request))
         {
