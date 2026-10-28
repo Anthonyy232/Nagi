@@ -85,7 +85,6 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     private readonly IUIService _uiService;
     private bool _hasSortOrderLoaded;
     private readonly List<PlaylistViewModelItem> _allPlaylists = new();
-    private bool _isNavigating;
     private int _isMutating;
     private int _loadVersion;
     private bool _isDisposed;
@@ -157,36 +156,22 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
 
     public void NavigateToPlaylistDetail(PlaylistViewModelItem? playlist)
     {
-        if (playlist is null || _isNavigating) return;
+        if (playlist is null) return;
 
-        _isNavigating = true;
-        try
-        {
-            if (playlist.IsSmart)
+        if (playlist.IsSmart)
+            _navigationService.NavigateTo(new SmartPlaylistSongViewNavigationParameter
             {
-                var navParam = new SmartPlaylistSongViewNavigationParameter
-                {
-                    Title = playlist.Name,
-                    SmartPlaylistId = playlist.Id,
-                    CoverImageUri = playlist.CoverImageUri
-                };
-                _navigationService.NavigateTo(navParam);
-            }
-            else
+                Title = playlist.Name,
+                SmartPlaylistId = playlist.Id,
+                CoverImageUri = playlist.CoverImageUri
+            });
+        else
+            _navigationService.NavigateTo(new PlaylistSongViewNavigationParameter
             {
-                var navParam = new PlaylistSongViewNavigationParameter
-                {
-                    Title = playlist.Name,
-                    PlaylistId = playlist.Id,
-                    CoverImageUri = playlist.CoverImageUri
-                };
-                _navigationService.NavigateTo(navParam);
-            }
-        }
-        finally
-        {
-            _isNavigating = false;
-        }
+                Title = playlist.Name,
+                PlaylistId = playlist.Id,
+                CoverImageUri = playlist.CoverImageUri
+            });
     }
 
     /// <summary>
@@ -221,7 +206,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         catch (Exception ex)
         {
             StatusMessage = Strings.Playlist_Status_ErrorPlayback;
-            _logger.LogCritical(ex, "Error playing playlist {PlaylistId}", playlistId);
+            _logger.LogError(ex, "Error playing playlist {PlaylistId}", playlistId);
         }
     }
 
@@ -283,7 +268,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         catch (Exception ex)
         {
             StatusMessage = Strings.Playlist_Status_ErrorRandom;
-            _logger.LogCritical(ex, "Error playing random playlist");
+            _logger.LogError(ex, "Error playing random playlist");
         }
     }
 
