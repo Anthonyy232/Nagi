@@ -30,7 +30,6 @@ public class WikipediaServiceTests : IDisposable
 
     public void Dispose()
     {
-        _service.Dispose();
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _httpHandler.Dispose();
     }

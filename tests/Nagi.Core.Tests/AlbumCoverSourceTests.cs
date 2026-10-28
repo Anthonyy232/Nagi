@@ -35,7 +35,7 @@ public class AlbumCoverSourceTests : IDisposable
             ]}
             """));
         await using var pipelines = TestProviderPipeline.Build(ServiceProviderIds.CoverArtArchive);
-        using var service = new CoverArtArchiveService(_httpClientFactory, pipelines, NullLogger<CoverArtArchiveService>.Instance);
+        var service = new CoverArtArchiveService(_httpClientFactory, pipelines, NullLogger<CoverArtArchiveService>.Instance);
 
         var result = await service.GetReleaseGroupCoverUrlAsync("group-id");
 
@@ -48,7 +48,7 @@ public class AlbumCoverSourceTests : IDisposable
     {
         _httpHandler.RespondSequence((HttpStatusCode.NotFound, ""));
         await using var pipelines = TestProviderPipeline.Build(ServiceProviderIds.CoverArtArchive);
-        using var service = new CoverArtArchiveService(_httpClientFactory, pipelines, NullLogger<CoverArtArchiveService>.Instance);
+        var service = new CoverArtArchiveService(_httpClientFactory, pipelines, NullLogger<CoverArtArchiveService>.Instance);
 
         var result = await service.GetReleaseCoverUrlAsync("release-id");
 
@@ -65,7 +65,7 @@ public class AlbumCoverSourceTests : IDisposable
             ]}
             """));
         await using var pipelines = TestProviderPipeline.Build(ServiceProviderIds.AppleMusic);
-        using var service = new AppleMusicService(_httpClientFactory, pipelines, NullLogger<AppleMusicService>.Instance);
+        var service = new AppleMusicService(_httpClientFactory, pipelines, NullLogger<AppleMusicService>.Instance);
 
         var result = await service.GetAlbumCoverUrlAsync("OK Computer", "Radiohead");
 

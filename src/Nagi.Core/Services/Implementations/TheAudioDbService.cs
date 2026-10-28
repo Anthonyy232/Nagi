@@ -42,7 +42,7 @@ file class TheAudioDbArtist
 ///     is 30 req/min), retry, and circuit breaker are handled by
 ///     <see cref="IProviderPipelineProvider"/>.
 /// </summary>
-public class TheAudioDbService : ITheAudioDbService, IDisposable
+public class TheAudioDbService : ITheAudioDbService
 {
     private const string BaseUrl = "https://www.theaudiodb.com/api/v1/json";
     private const string ApiKeyName = ServiceProviderIds.TheAudioDb;
@@ -63,8 +63,6 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
         _apiKeyService = apiKeyService;
         _logger = logger;
     }
-
-    public void Dispose() => _httpClient.Dispose();
 
     public async Task<ServiceResult<TheAudioDbArtistInfo>> GetArtistMetadataAsync(
         string musicBrainzId,

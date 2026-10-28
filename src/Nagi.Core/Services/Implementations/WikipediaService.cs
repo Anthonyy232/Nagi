@@ -12,7 +12,7 @@ namespace Nagi.Core.Services.Implementations;
 ///     Finds artist biographies on Wikipedia through Wikidata, which records each artist's MusicBrainz ID
 ///     (property P434). Wikimedia asks API clients to identify themselves with a User-Agent.
 /// </summary>
-public class WikipediaService : IWikipediaService, IDisposable
+public class WikipediaService : IWikipediaService
 {
     private const string WikidataApiUrl = "https://www.wikidata.org/w/api.php";
     private const string FallbackLanguage = "en";
@@ -30,8 +30,6 @@ public class WikipediaService : IWikipediaService, IDisposable
         _pipelines = pipelines;
         _logger = logger;
     }
-
-    public void Dispose() => _httpClient.Dispose();
 
     public async Task<ServiceResult<string>> GetArtistBiographyAsync(
         string musicBrainzId, string? languageCode = null, CancellationToken cancellationToken = default)
