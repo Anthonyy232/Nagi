@@ -17,9 +17,10 @@ internal static class PlayerInputHelper
     /// </summary>
     public static void AttachSeekSlider(Slider slider, PlayerViewModel viewModel)
     {
-        slider.PointerPressed += (_, _) => viewModel.IsUserDraggingSlider = true;
-        slider.PointerReleased += (_, _) => viewModel.IsUserDraggingSlider = false;
-        slider.PointerCaptureLost += (_, _) => viewModel.IsUserDraggingSlider = false;
+        // Slider marks its own pointer events handled, so plain += handlers would never see a drag start or end.
+        slider.AddHandler(UIElement.PointerPressedEvent, new PointerEventHandler((_, _) => viewModel.IsUserDraggingSlider = true), true);
+        slider.AddHandler(UIElement.PointerReleasedEvent, new PointerEventHandler((_, _) => viewModel.IsUserDraggingSlider = false), true);
+        slider.AddHandler(UIElement.PointerCaptureLostEvent, new PointerEventHandler((_, _) => viewModel.IsUserDraggingSlider = false), true);
         slider.KeyDown += (_, e) =>
         {
             if (IsSeekKey(e.Key)) viewModel.IsUserDraggingSlider = true;
