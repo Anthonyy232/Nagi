@@ -306,7 +306,8 @@ public class SettingsServiceTests
         IAutoLaunchService? autoLaunch = null)
     {
         var paths = Substitute.For<IPathConfiguration>();
-        paths.PlaybackStateFilePath.Returns(playbackPath ?? "unused.json");
+        // A unique temp path: resetting settings deletes the playback state file.
+        paths.PlaybackStateFilePath.Returns(playbackPath ?? Path.Combine(Path.GetTempPath(), $"nagi-playback-{Guid.NewGuid():N}.json"));
         var store = Substitute.For<ISettingsStore>();
         store.Values.Returns(values);
         return new SettingsService(store, paths, Substitute.For<ICredentialLockerService>(),

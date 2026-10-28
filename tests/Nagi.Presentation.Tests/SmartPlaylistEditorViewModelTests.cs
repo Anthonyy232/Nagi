@@ -118,24 +118,14 @@ public class SmartPlaylistEditorViewModelTests : IDisposable
         _service.GetMatchingSongCountAsync(Arg.Any<SmartPlaylist>(), token: Arg.Any<CancellationToken>()).Returns(7);
         _viewModel.Initialize(new SmartPlaylist { Name = "Mix" });
         _time.Advance(TimeSpan.FromMilliseconds(300));
-        await WaitForAsync(() => _viewModel.MatchCountText != Strings.SmartPlaylist_Status_Calculating);
+        await _viewModel.PendingMatchCount.WaitAsync(TimeSpan.FromSeconds(5));
         _service.ClearReceivedCalls();
 
         _viewModel.AddRuleCommand.Execute(null);
         _time.Advance(TimeSpan.FromMilliseconds(300));
 
-        await WaitForAsync(() => _service.ReceivedCalls().Any());
+        await _viewModel.PendingMatchCount.WaitAsync(TimeSpan.FromSeconds(5));
         await _service.Received(1).GetMatchingSongCountAsync(Arg.Is<SmartPlaylist>(p => p.Rules.Count == 1),
             token: Arg.Any<CancellationToken>());
-    }
-
-    private static async Task WaitForAsync(Func<bool> condition)
-    {
-        var deadline = DateTime.UtcNow.AddSeconds(5);
-        while (!condition())
-        {
-            if (DateTime.UtcNow > deadline) throw new TimeoutException("Condition was not met.");
-            await Task.Delay(10);
-        }
     }
 }

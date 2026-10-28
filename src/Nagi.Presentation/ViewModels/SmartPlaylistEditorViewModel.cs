@@ -225,6 +225,8 @@ public partial class SmartPlaylistEditorViewModel : ObservableObject, IDisposabl
         return playlist;
     }
 
+    internal Task PendingMatchCount => _matchCountDebouncer.PendingInvocation;
+
     internal Task UpdateMatchCountAsync()
     {
         if (!_isInitialized || _isDisposed) return Task.CompletedTask;
