@@ -26,7 +26,7 @@
             <TextBlock Grid.Column="0" Text="{x:Bind resources:Strings.FolderPage_Title, Mode=OneTime}" Style="{StaticResource PageTitleTextStyle}" />
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
-                <Button x:Name="RandomFolderButton"
+                <Button
                         ToolTipService.ToolTip="{x:Bind resources:Strings.FolderPage_RandomButton_ToolTip, Mode=OneTime}"
                         AutomationProperties.Name="{x:Bind resources:Strings.FolderPage_RandomButton_ToolTip, Mode=OneTime}"
                         Style="{StaticResource SongListViewPageIconButton}"

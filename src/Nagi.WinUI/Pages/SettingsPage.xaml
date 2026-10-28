@@ -30,7 +30,7 @@
 
         <!-- Shared template for service provider items in Lyrics and Metadata source lists -->
         <DataTemplate x:Key="ServiceProviderItemTemplate" x:DataType="viewmodels:ServiceProviderSettingViewModel">
-            <Grid x:Name="ProviderItemRoot" Padding="12,8" VerticalAlignment="Center"
+            <Grid Padding="12,8" VerticalAlignment="Center"
                   ToolTipService.ToolTip="{x:Bind Description}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="28" />
@@ -187,7 +187,6 @@
                 <TextBlock Margin="0,0,0,8" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{x:Bind resources:Strings.SettingsPage_Section_Appearance, Mode=OneTime}" />
 
                 <controls:SettingsExpander
-                    x:Name="ThemeSettingsExpander"
                     Header="{x:Bind resources:Strings.SettingsPage_Theme_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_Theme_Description, Mode=OneTime}"
                     IsExpanded="False">
                     <controls:SettingsExpander.HeaderIcon>
@@ -399,7 +398,7 @@
 
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="navigation:NavigationItemSetting">
-                                <Grid x:Name="NavItemRoot" Padding="12,8" VerticalAlignment="Center">
+                                <Grid Padding="12,8" VerticalAlignment="Center">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="28" />
                                         <ColumnDefinition Width="32" />
@@ -739,7 +738,6 @@
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:DataType="models:PlayerButtonSetting">
                                         <Grid
-                                            x:Name="ButtonContainer"
                                             Width="Auto"
                                             MinWidth="28"
                                             Padding="4,8"
@@ -748,14 +746,12 @@
                                             ToolTipService.ToolTip="{x:Bind DisplayName}">
 
                                             <Border
-                                                x:Name="HoverHighlight"
                                                 Width="57"
                                                 Background="{ThemeResource SubtleFillColorSecondaryBrush}"
                                                 CornerRadius="{ThemeResource ControlCornerRadius}"
                                                 Visibility="{x:Bind IsNotSeparator, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                                             <Border
-                                                x:Name="SeparatorVisual"
                                                 Width="2"
                                                 Height="100"
                                                 HorizontalAlignment="Center"
@@ -773,7 +769,6 @@
                                                 Visibility="{x:Bind IsNotSeparator, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                                                 <FontIcon
-                                                    x:Name="DragIndicator"
                                                     HorizontalAlignment="Center"
                                                     FontFamily="{StaticResource SymbolThemeFontFamily}"
                                                     FontSize="10"
@@ -801,7 +796,6 @@
                                                 </Button>
 
                                                 <ToggleSwitch
-                                                    x:Name="EnableDisableToggle"
                                                     AutomationProperties.Name="{x:Bind DisplayName}"
                                                     Width="40"
                                                     Margin="0"
@@ -960,7 +954,6 @@
                                 <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8FD;" />
                             </controls:SettingsCard.HeaderIcon>
                             <ListView
-                                x:Name="MetadataProvidersListView"
                                     Width="350"
                                     HorizontalAlignment="Right"
                                     AllowDrop="True"
@@ -995,7 +988,6 @@
                                 <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8FD;" />
                             </controls:SettingsCard.HeaderIcon>
                             <ListView
-                                x:Name="LyricsProvidersListView"
                                 Width="350"
                                 HorizontalAlignment="Right"
                                 AllowDrop="True"
@@ -1144,7 +1136,6 @@
                 </controls:SettingsExpander>
 
                 <controls:SettingsExpander
-                    x:Name="ListenBrainzSettingsExpander"
                     Header="{x:Bind resources:Strings.SettingsPage_ListenBrainz_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_ListenBrainz_Description, Mode=OneTime}">
                     <controls:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE90B;" />

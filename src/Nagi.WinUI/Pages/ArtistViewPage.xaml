@@ -141,7 +141,7 @@
                     <Grid Grid.Column="0" Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}" CornerRadius="75"
                           PointerEntered="ArtistImage_PointerEntered" PointerExited="ArtistImage_PointerExited"
                           Background="Transparent">
-                        <controls:ImageEx Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}" x:Name="AlbumImage"
+                        <controls:ImageEx Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}"
                             CornerRadius="75"
                             IsCacheEnabled="True"
                             Source="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
@@ -208,7 +208,6 @@
                         <StackPanel x:Name="AlbumsContent" VerticalAlignment="Top" SizeChanged="OnAlbumsContentSizeChanged">
                         <TextBlock Text="{x:Bind resources:Strings.ArtistViewPage_Albums_Title, Mode=OneTime}" Style="{StaticResource SectionHeaderTextBlockStyle}" Foreground="{StaticResource AppPrimaryColorBrush}" />
                         <GridView
-                            x:Name="AlbumGridView"
                             Padding="0"
                             IsItemClickEnabled="True"
                             ItemClick="AlbumGridView_ItemClick"

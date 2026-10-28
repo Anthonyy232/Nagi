@@ -18,7 +18,7 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Spacing="2">
-            <Rectangle x:Name="Bar1"
+            <Rectangle
                        Width="3"
                        Height="14"
                        RadiusX="1"
@@ -29,7 +29,7 @@
                     <ScaleTransform x:Name="Bar1Scale" ScaleY="0.4" />
                 </Rectangle.RenderTransform>
             </Rectangle>
-            <Rectangle x:Name="Bar2"
+            <Rectangle
                        Width="3"
                        Height="14"
                        RadiusX="1"
@@ -40,7 +40,7 @@
                     <ScaleTransform x:Name="Bar2Scale" ScaleY="0.7" />
                 </Rectangle.RenderTransform>
             </Rectangle>
-            <Rectangle x:Name="Bar3"
+            <Rectangle
                        Width="3"
                        Height="14"
                        RadiusX="1"

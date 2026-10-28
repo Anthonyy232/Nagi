@@ -34,7 +34,6 @@
 
             <DataTemplate x:Key="PlayPauseButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
                 <Button
-                    x:Name="PlayPauseButton"
                     Command="{x:Bind Command}"
                     Style="{StaticResource MediaControlButtonStyle}"
                     Foreground="{StaticResource PlayerAccentBrush}"
@@ -95,7 +94,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid x:Name="OverlayContainerGrid">
+    <Grid>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="SeeAllSearchStates">
                 <VisualState x:Name="SeeAllSearchCollapsed">
@@ -256,7 +255,7 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <Grid x:Name="MainContentGrid">
+        <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
@@ -298,7 +297,7 @@
                                OpenPaneLength="332" CompactPaneLength="0" PaneBackground="Transparent"
                                IsPaneOpen="{x:Bind ViewModel.IsQueuePanelOpen, Mode=TwoWay}">
                         <SplitView.Pane>
-                            <Grid x:Name="QueuePanel" Margin="0,12,12,24"
+                            <Grid Margin="0,12,12,24"
                                   AllowDrop="True" DragOver="QueuePanel_DragOver" DragLeave="QueuePanel_DragLeave" Drop="Queue_Drop">
                                 <Border x:Name="QueuePanelSurface"
                                         BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="{ThemeResource OverlayCornerRadius}">
@@ -334,7 +333,7 @@
                                                     ToolTipService.ToolTip="{x:Bind resources:Strings.QueueFlyout_ClearQueue}"
                                                     AutomationProperties.Name="{x:Bind resources:Strings.QueueFlyout_ClearQueue}"
                                                     ContentTemplate="{StaticResource ClearQueueIconTemplate}" />
-                                            <Button Visibility="{x:Bind ViewModel.IsHistoryVisible, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" x:Name="QueueSettingsButton" Grid.Column="2" VerticalAlignment="Top" Style="{StaticResource CompactMediaControlButtonStyle}"
+                                            <Button Visibility="{x:Bind ViewModel.IsHistoryVisible, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Grid.Column="2" VerticalAlignment="Top" Style="{StaticResource CompactMediaControlButtonStyle}"
                                                     Foreground="{StaticResource PlayerAccentBrush}"
                                                     ToolTipService.ToolTip="{x:Bind resources:Strings.QueuePanel_DisplayOptions}"
                                                     AutomationProperties.Name="{x:Bind resources:Strings.QueuePanel_DisplayOptions}">
@@ -542,7 +541,7 @@
                             VerticalAlignment="Bottom"
                             CornerRadius="{ThemeResource OverlayCornerRadius}">
                             <Grid>
-                                <Grid x:Name="MainControlsGrid" VerticalAlignment="Top">
+                                <Grid VerticalAlignment="Top">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition MinWidth="180" Width="*" />
                                         <ColumnDefinition Width="Auto" />
@@ -571,12 +570,10 @@
                                         Style="{StaticResource DefaultButtonStyle}"
                                         Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                                         <Border
-                                            x:Name="AlbumArtBorder"
                                             Width="{StaticResource FloatingPlayerArtSize}"
                                             Height="{StaticResource FloatingPlayerArtSize}"
                                             CornerRadius="{StaticResource ArtworkCornerRadius}">
                                             <imageEx:ImageEx Width="{StaticResource FloatingPlayerArtSize}" Height="{StaticResource FloatingPlayerArtSize}"
-                                                x:Name="AlbumArt"
                                                 IsCacheEnabled="True"
                                                 Source="{x:Bind ViewModel.AlbumArtUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
                                                 DecodePixelWidth="{StaticResource FloatingPlayerArtSize}"
@@ -714,7 +711,6 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock
-                                        x:Name="CurrentTimeTextBlock"
                                         Grid.Column="0"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Top"
@@ -722,7 +718,6 @@
                                         Style="{StaticResource CaptionTextBlockStyle}"
                                         Text="{x:Bind ViewModel.CurrentTimeText, Mode=OneWay, FallbackValue='0:00'}" />
                                     <TextBlock
-                                        x:Name="TotalTimeTextBlock"
                                         Grid.Column="1"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Top"
@@ -744,7 +739,6 @@
             Width="1" Height="1" Opacity="0" IsTabStop="False" />
 
         <Grid
-            x:Name="ProgressOverlayGrid"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
             IsHitTestVisible="{x:Bind GlobalOperation.IsInProgress, Mode=OneWay}"
             Opacity="0.85"
@@ -777,7 +771,7 @@
             </StackPanel>
         </Grid>
 
-        <Grid x:Name="SeeAllOverlay"
+        <Grid
               Visibility="{x:Bind InsightsVm.IsSeeAllOpen, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
 
             <Grid.ColumnDefinitions>
@@ -791,7 +785,7 @@
                   Opacity="0.85"
                   Tapped="OnCloseSeeAll" />
 
-            <Grid x:Name="SeeAllPanel"
+            <Grid
                   Grid.Column="1"
                   Margin="0,156,0,156"
                   VerticalAlignment="Stretch"

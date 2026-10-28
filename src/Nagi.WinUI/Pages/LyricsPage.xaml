@@ -47,7 +47,6 @@
                 MaxLines="1"
                 MaxWidth="1200" />
             <Button
-                x:Name="EditLyricsButton"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 Style="{StaticResource SongListViewPageIconButton}"

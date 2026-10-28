@@ -16,7 +16,7 @@
     <Grid x:Name="HoverDetector" Background="Transparent">
 
         <!--  Blends album art with the theme colors  -->
-        <Border x:Name="AmbientBackground" Opacity="1.0">
+        <Border Opacity="1.0">
             <Border.Background>
                 <media:ImageBlendBrush
                     Mode="Multiply"

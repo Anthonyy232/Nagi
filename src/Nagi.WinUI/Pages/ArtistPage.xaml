@@ -114,7 +114,7 @@
                     <FontIcon FontSize="16" Glyph="&#xE8CB;" />
                 </Button>
 
-                <Button x:Name="RandomArtistButton"
+                <Button
                         ToolTipService.ToolTip="{x:Bind resources:Strings.ArtistPage_RandomButton_ToolTip, Mode=OneTime}"
                         AutomationProperties.Name="{x:Bind resources:Strings.ArtistPage_RandomButton_ToolTip, Mode=OneTime}"
                         Style="{StaticResource SongListViewPageIconButton}"
@@ -127,7 +127,6 @@
 
         <Grid Grid.Row="1">
             <GridView uihelpers:ScrollEdgeFade.IsEnabled="True"
-                x:Name="ArtistsGridView"
                 IsItemClickEnabled="True"
                 ItemClick="ArtistsGridView_ItemClick"
                 Padding="{StaticResource PageContentPadding}"
