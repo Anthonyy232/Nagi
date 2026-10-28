@@ -571,8 +571,10 @@ public class SmartPlaylistServiceTests : IDisposable
             (await _service.GetMatchingSongCountAsync(saved.Id)).Should().Be(3);
 
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de-DE");
-            var display = SmartPlaylistRuleValue.ToDisplayValue(SmartPlaylistField.Duration, reloaded.Rules.First().Value);
+            var display = SmartPlaylistRuleValue.ToDisplayValue(SmartPlaylistField.Duration, SmartPlaylistOperator.LessThan, reloaded.Rules.First().Value);
             display.Should().Be("180,5");
+            SmartPlaylistRuleValue.ToDisplayValue(SmartPlaylistField.DateAdded, SmartPlaylistOperator.GreaterThan, reloaded.Rules.Last().Value)
+                .Should().Be("01.02.2020");
             SmartPlaylistRuleValue.ToStoredValue(SmartPlaylistField.Duration, SmartPlaylistOperator.LessThan, display)
                 .Should().Be("180.5");
         }

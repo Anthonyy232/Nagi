@@ -88,8 +88,8 @@ public class RuleViewModel : ObservableObject
         _selectedField = AvailableFields.First(f => f.Field == rule.Field);
         UpdateOperatorsForField();
         _selectedOperator = AvailableOperators.First(o => o.Operator == rule.Operator);
-        _value = SmartPlaylistRuleValue.ToDisplayValue(rule.Field, rule.Value);
-        _secondValue = SmartPlaylistRuleValue.ToDisplayValue(rule.Field, rule.SecondValue);
+        _value = SmartPlaylistRuleValue.ToDisplayValue(rule.Field, rule.Operator, rule.Value);
+        _secondValue = SmartPlaylistRuleValue.ToDisplayValue(rule.Field, rule.Operator, rule.SecondValue);
     }
 
     public IReadOnlyList<OperatorOption> AvailableOperators { get; private set; } = TextOperators;
