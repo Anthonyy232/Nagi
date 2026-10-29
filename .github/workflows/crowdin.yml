@@ -17,8 +17,12 @@ concurrency:
   group: crowdin-sync
 
 permissions:
+  actions: write
   contents: write
   pull-requests: write
+
+env:
+  BRANCH: crowdin-translations
 
 jobs:
   synchronize-with-crowdin:
@@ -26,6 +30,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7.0.1
+
+      - name: Note the translations branch
+        id: before
+        run: echo "sha=$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)" >> "$GITHUB_OUTPUT"
 
       - name: Crowdin Action
         uses: crowdin/github-action@v3.3.0
@@ -36,8 +44,20 @@ jobs:
           create_pull_request: true
           pull_request_title: 'New Crowdin translations'
           pull_request_base_branch_name: 'master'
-          localization_branch_name: 'crowdin-translations'
+          localization_branch_name: ${{ env.BRANCH }}
         env:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # GitHub holds CI on PRs opened with GITHUB_TOKEN until someone approves the run,
+      # but a dispatch from the same token runs straight away and reports on the PR's commit.
+      - name: Run CI on new translations
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BEFORE: ${{ steps.before.outputs.sha }}
+        run: |
+          after=$(git ls-remote origin "refs/heads/$BRANCH" | cut -f1)
+          if [ -n "$after" ] && [ "$after" != "$BEFORE" ]; then
+            gh workflow run build.yml --ref "$BRANCH"
+          fi
