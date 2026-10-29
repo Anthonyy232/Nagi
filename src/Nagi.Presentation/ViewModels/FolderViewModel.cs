@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -72,6 +73,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         Folders.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasFolders));
 
         _libraryScanner.LibraryContentChanged += OnLibraryContentChanged;
+        _globalOperation.PropertyChanged += OnGlobalOperationPropertyChanged;
     }
 
     private void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
@@ -99,28 +101,23 @@ public partial class FolderViewModel : ObservableObject, IDisposable
     public void Dispose()
     {
         _libraryScanner.LibraryContentChanged -= OnLibraryContentChanged;
+        _globalOperation.PropertyChanged -= OnGlobalOperationPropertyChanged;
         _debouncer.Dispose();
         LoadFoldersCommand.Cancel();
     }
 
     public ObservableRangeCollection<FolderViewModelItem> Folders { get; } = new();
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsAnyOperationInProgress))]
-    public partial bool IsAddingFolder { get; set; }
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsAnyOperationInProgress))]
-    public partial bool IsScanning { get; set; }
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsAnyOperationInProgress))]
-    public partial bool IsDeletingFolder { get; set; }
-
     /// <summary>
-    ///     Disables the UI while a long-running library operation runs, so conflicting operations can't start.
+    ///     Disables folder actions while any library operation runs, including scans started from Settings.
     /// </summary>
-    public bool IsAnyOperationInProgress => IsAddingFolder || IsScanning || IsDeletingFolder;
+    public bool IsAnyOperationInProgress => _globalOperation.IsInProgress;
+
+    private void OnGlobalOperationPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(GlobalOperationViewModel.IsInProgress))
+            OnPropertyChanged(nameof(IsAnyOperationInProgress));
+    }
 
     public bool HasFolders => Folders.Any();
 
@@ -146,8 +143,8 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         }
         catch (Exception ex)
         {
-            _globalOperation.StatusMessage = Strings.Folders_Error_Playback;
-            _logger.LogCritical(ex, "Error playing folder {FolderId}", folderId);
+            _logger.LogError(ex, "Error playing folder {FolderId}", folderId);
+            await _uiService.ShowMessageDialogAsync(Strings.Generic_Error, Strings.Folders_Error_Playback);
         }
     }
 
@@ -166,13 +163,13 @@ public partial class FolderViewModel : ObservableObject, IDisposable
             }
             else
             {
-                _globalOperation.StatusMessage = Strings.Folders_Empty_NoMusicFound;
+                await _uiService.ShowMessageDialogAsync(Strings.FolderPage_Title, Strings.Folders_Empty_NoMusicFound);
             }
         }
         catch (Exception ex)
         {
-            _globalOperation.StatusMessage = Strings.Folders_Error_RandomPlayback;
-            _logger.LogCritical(ex, "Error playing random folder");
+            _logger.LogError(ex, "Error playing random folder");
+            await _uiService.ShowMessageDialogAsync(Strings.Generic_Error, Strings.Folders_Error_RandomPlayback);
         }
     }
 
@@ -213,59 +210,46 @@ public partial class FolderViewModel : ObservableObject, IDisposable
     {
         if (string.IsNullOrWhiteSpace(folderPath) || IsAnyOperationInProgress) return;
 
-        // Pre-flight textual dedup using the shared canonicalizer. This won't collapse
-        // mapped-drive vs UNC (that requires platform resolution in LibraryService), but it
-        // catches case, separator, and Unicode variations so the user gets an immediate
-        // "already added" message instead of a silent no-op.
+        // LibraryService hands back a folder that is already in the library, so say so here rather than rescanning it.
         var canonicalNew = PathCanonicalizer.Normalize(folderPath);
-        if (!string.IsNullOrEmpty(canonicalNew) &&
-            Folders.Any(f => PathCanonicalizer.Normalize(f.Path)
-                .Equals(canonicalNew, StringComparison.OrdinalIgnoreCase)))
+        if (Folders.Any(f => PathCanonicalizer.Normalize(f.Path).Equals(canonicalNew, StringComparison.OrdinalIgnoreCase)))
         {
-            _globalOperation.StatusMessage = Strings.Folders_AddFolder_Exists;
+            await _uiService.ShowMessageDialogAsync(Strings.FolderPage_AddFolder_Label, Strings.Folders_AddFolder_Exists);
             return;
         }
 
-        IsAddingFolder = true;
         _globalOperation.IsInProgress = true;
         _globalOperation.StatusMessage = Strings.Folders_AddFolder_InProgress;
         _globalOperation.ProgressValue = 0;
         _globalOperation.IsIndeterminate = true;
 
+        var title = Strings.Generic_Error;
+        string? error = null;
         try
         {
             var folder = await _libraryWriter.AddFolderAsync(folderPath);
             if (folder == null)
-            {
-                _globalOperation.StatusMessage = Strings.Folders_AddFolder_Failed;
-                return;
-            }
-
-            IsScanning = true;
-
-            var progress = new Progress<ScanProgress>(p =>
-            {
-                _globalOperation.StatusMessage = p.StatusText;
-                _globalOperation.IsIndeterminate = p.IsIndeterminate || p.Percentage < 5;
-                _globalOperation.ProgressValue = p.Percentage;
-            });
-
-            await _libraryScanner.ScanFolderForMusicAsync(folder.Path, progress);
-
-            _globalOperation.StatusMessage = string.Format(Strings.Folders_AddFolder_Success, folder.Name);
+                error = Strings.Folders_AddFolder_Failed;
+            else
+                await _libraryScanner.ScanFolderForMusicAsync(folder.Path, _globalOperation.CreateProgress());
+        }
+        catch (FolderOverlapsException)
+        {
+            title = Strings.FolderPage_AddFolder_Label;
+            error = Strings.Folders_AddFolder_Overlaps;
         }
         catch (Exception ex)
         {
-            _globalOperation.StatusMessage = string.Format(Strings.Folders_Error_AddFolder, ex.Message);
+            error = string.Format(Strings.Folders_Error_AddFolder, ex.Message);
             _logger.LogError(ex, "Failed to add and scan folder '{FolderPath}'", folderPath);
         }
         finally
         {
-            IsAddingFolder = false;
-            IsScanning = false;
             _globalOperation.IsInProgress = false;
             _globalOperation.IsIndeterminate = false;
         }
+
+        if (error != null) await _uiService.ShowMessageDialogAsync(title, error);
     }
 
     [RelayCommand]
@@ -283,34 +267,28 @@ public partial class FolderViewModel : ObservableObject, IDisposable
             Strings.FolderPage_DeleteDialog_CloseButton);
         if (!confirmed || IsAnyOperationInProgress) return;
 
-        IsDeletingFolder = true;
         _globalOperation.IsInProgress = true;
         _globalOperation.StatusMessage = string.Format(Strings.Folders_Delete_InProgress, folderToDelete.Name);
         _globalOperation.IsIndeterminate = true;
 
+        string? error = null;
         try
         {
-            var success = await _libraryWriter.RemoveFolderAsync(folderId);
-            if (success)
-            {
-                _globalOperation.StatusMessage = string.Format(Strings.Folders_Delete_Success, folderToDelete.Name);
-            }
-            else
-            {
-                _globalOperation.StatusMessage = string.Format(Strings.Folders_Delete_Failed, folderToDelete.Name);
-            }
+            if (!await _libraryWriter.RemoveFolderAsync(folderId))
+                error = string.Format(Strings.Folders_Delete_Failed, folderToDelete.Name);
         }
         catch (Exception ex)
         {
-            _globalOperation.StatusMessage = string.Format(Strings.Folders_Error_DeleteFolder, ex.Message);
+            error = string.Format(Strings.Folders_Error_DeleteFolder, ex.Message);
             _logger.LogError(ex, "Failed to delete folder {FolderId}", folderId);
         }
         finally
         {
-            IsDeletingFolder = false;
             _globalOperation.IsInProgress = false;
             _globalOperation.IsIndeterminate = false;
         }
+
+        if (error != null) await _uiService.ShowMessageDialogAsync(Strings.Generic_Error, error);
     }
 
     [RelayCommand]
@@ -321,27 +299,15 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         var folderItem = Folders.FirstOrDefault(f => f.Id == folderId);
         if (folderItem == null) return;
 
-        IsScanning = true;
         _globalOperation.IsInProgress = true;
         _globalOperation.StatusMessage = string.Format(Strings.Folders_Rescan_InProgress, folderItem.Name);
         _globalOperation.IsIndeterminate = true;
         _globalOperation.SetCancellation(RescanFolderCommand.Cancel);
 
+        string? error = null;
         try
         {
-            var progress = new Progress<ScanProgress>(p =>
-            {
-                _globalOperation.StatusMessage = p.StatusText;
-                _globalOperation.IsIndeterminate = p.IsIndeterminate || p.Percentage < 5;
-                _globalOperation.ProgressValue = p.Percentage;
-            });
-
-            var changesDetected = await _libraryScanner.RescanFolderForMusicAsync(folderId, progress, cancellationToken);
-            cancellationToken.ThrowIfCancellationRequested();
-
-            _globalOperation.StatusMessage = changesDetected
-                ? string.Format(Strings.Folders_Rescan_Complete, folderItem.Name)
-                : string.Format(Strings.Folders_Rescan_NoChanges, folderItem.Name);
+            await _libraryScanner.RescanFolderForMusicAsync(folderId, _globalOperation.CreateProgress(cancellationToken), cancellationToken);
         }
         catch (OperationCanceledException)
         {
@@ -349,15 +315,16 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         }
         catch (Exception ex)
         {
-            _globalOperation.StatusMessage = string.Format(Strings.Folders_Error_RescanFolder, ex.Message);
+            error = string.Format(Strings.Folders_Error_RescanFolder, ex.Message);
             _logger.LogError(ex, "Failed to rescan folder {FolderId}", folderId);
         }
         finally
         {
             _globalOperation.SetCancellation(null);
-            IsScanning = false;
             _globalOperation.IsInProgress = false;
             _globalOperation.IsIndeterminate = false;
         }
+
+        if (error != null) await _uiService.ShowMessageDialogAsync(Strings.Generic_Error, error);
     }
 }

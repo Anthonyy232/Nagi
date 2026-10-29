@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>フォルダーの読み込みエラー</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>'{0}'の追加とスキャンが完了しました。</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>フォルダーの追加に失敗しました。パスが無効な可能性があります。</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>フォルダーをライブラリに追加中…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>ライブラリから &apos;{0}&apos; を削除しました。</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>ライブラリから &apos;{0}&apos; を削除できませんでした。</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>ライブラリから &apos;{0}&apos; を削除中…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>'{0}'の再スキャンが完了しました。</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>'{0}'の変更は検出されませんでした。</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>'{0}' を再スキャン中…</value>
@@ -352,9 +340,6 @@
   <data name="GenreView_DefaultName" xml:space="preserve">
     <value>ジャンル</value>
   </data>
-  <data name="GenreView_Error" xml:space="preserve">
-    <value>ジャンルの読み込みエラー</value>
-  </data>
   <data name="Lyrics_NoSongSelected" xml:space="preserve">
     <value>曲が選択されていません</value>
   </data>
@@ -381,9 +366,6 @@
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0}曲</value>
-  </data>
-  <data name="Playlist_ErrorLoading" xml:space="preserve">
-    <value>プレイリストの読み込みエラー</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
     <value>プレイリストを開始中…</value>
@@ -414,9 +396,6 @@
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>新しいプレイリストを作成中…</value>
-  </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>プレイリストの作成に失敗しました。すでに存在している可能性があります。</value>
   </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>プレイリストの作成中にエラーが発生しました。</value>
@@ -794,9 +773,6 @@
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>音量正規化スキャンを準備中…</value>
-  </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>音量正規化のスキャンがキャンセルされました。</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>スキャン中にエラーが発生しました: {0}</value>

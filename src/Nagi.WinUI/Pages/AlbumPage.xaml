@@ -59,7 +59,7 @@
                     Margin="0,0,0,5"
                     VerticalAlignment="Bottom"
                     FontSize="13"
-                    Foreground="{ThemeResource TextFillColorSecondary}"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                     Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}" />
             </StackPanel>
 
@@ -126,7 +126,7 @@
                     <FontIcon FontSize="16" Glyph="&#xE8CB;" />
                 </Button>
 
-                <Button x:Name="RandomAlbumButton"
+                <Button
                         ToolTipService.ToolTip="{x:Bind resources:Strings.AlbumPage_RandomButton_ToolTip, Mode=OneTime}"
                         AutomationProperties.Name="{x:Bind resources:Strings.AlbumPage_RandomButton_ToolTip, Mode=OneTime}"
                         Style="{StaticResource SongListViewPageIconButton}"
@@ -139,7 +139,6 @@
 
         <Grid Grid.Row="1">
             <GridView uihelpers:ScrollEdgeFade.IsEnabled="True"
-                x:Name="AlbumsGridView"
                 IsItemClickEnabled="True"
                 ItemClick="AlbumsGridView_ItemClick"
                 Padding="{StaticResource PageContentPadding}"
@@ -193,7 +192,7 @@
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         FontSize="48"
-                                        Glyph="" />
+                                        Glyph="&#xE93C;" />
                                 </Grid>
                             </Grid>
 

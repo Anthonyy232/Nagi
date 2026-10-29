@@ -84,30 +84,19 @@ public class ListenBrainzPresenceServiceTests : IAsyncDisposable
         await _libraryWriter.Received(1).MarkListenAsSubmittedToListenBrainzAsync(1);
     }
 
-    [Fact]
-    public async Task OnTrackEligibleForScrobblingAsync_WhenRealtimeSubmitFails_DoesNotMarkAsSubmitted()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task OnTrackEligibleForScrobblingAsync_WhenRealtimeSubmitFails_DoesNotMarkAsSubmitted(bool throws)
     {
         await InitializeServiceAsync(false, true);
         var song = CreateTestSong(TimeSpan.FromMinutes(3));
         await _service.OnTrackChangedAsync(song, 1);
-        _scrobblerService.SubmitListenAsync(song, Arg.Any<DateTime>()).Returns(false);
+        if (throws) _scrobblerService.SubmitListenAsync(song, Arg.Any<DateTime>()).ThrowsAsync(new Exception("Network error"));
+        else _scrobblerService.SubmitListenAsync(song, Arg.Any<DateTime>()).Returns(false);
 
         await _service.OnTrackEligibleForScrobblingAsync(song, 1, DateTime.UnixEpoch);
 
         await _libraryWriter.DidNotReceive().MarkListenAsSubmittedToListenBrainzAsync(Arg.Any<long>());
     }
-
-    [Fact]
-    public async Task OnTrackEligibleForScrobblingAsync_WhenRealtimeSubmitThrows_DoesNotMarkAsSubmitted()
-    {
-        await InitializeServiceAsync(false, true);
-        var song = CreateTestSong(TimeSpan.FromMinutes(3));
-        await _service.OnTrackChangedAsync(song, 1);
-        _scrobblerService.SubmitListenAsync(song, Arg.Any<DateTime>()).ThrowsAsync(new Exception("Network error"));
-
-        await _service.OnTrackEligibleForScrobblingAsync(song, 1, DateTime.UnixEpoch);
-
-        await _libraryWriter.DidNotReceive().MarkListenAsSubmittedToListenBrainzAsync(Arg.Any<long>());
-    }
-
 }

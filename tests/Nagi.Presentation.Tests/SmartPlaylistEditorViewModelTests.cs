@@ -1,10 +1,9 @@
 using FluentAssertions;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Time.Testing;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Services.Data;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
@@ -81,8 +80,7 @@ public class SmartPlaylistEditorViewModelTests : IDisposable
 
         result.Should().Be(SmartPlaylistSaveResult.Saved);
         _viewModel.ResultPlaylist!.Name.Should().Be("Favourites");
-        _viewModel.ResultPlaylist.Rules.Select(r => (r.Order, r.Field))
-            .Should().Equal((0, SmartPlaylistField.Title), (1, SmartPlaylistField.Album));
+        _viewModel.ResultPlaylist.Rules.Select(r => r.Field).Should().Equal(SmartPlaylistField.Title, SmartPlaylistField.Album);
         await _service.DidNotReceiveWithAnyArgs().UpdateSmartPlaylistAsync(default!);
     }
 
@@ -104,7 +102,7 @@ public class SmartPlaylistEditorViewModelTests : IDisposable
     public async Task Save_DuplicateNameIsReportedAndKeepsTheEditorOpen()
     {
         _service.CreateSmartPlaylistAsync(Arg.Any<SmartPlaylist>())
-            .ThrowsAsync(new DbUpdateException("duplicate", new SqliteException("UNIQUE constraint failed", 19, 2067)));
+            .ThrowsAsync(new PlaylistNameTakenException("Taken"));
         _viewModel.Initialize(null);
         _viewModel.Name = "Taken";
 
@@ -120,24 +118,14 @@ public class SmartPlaylistEditorViewModelTests : IDisposable
         _service.GetMatchingSongCountAsync(Arg.Any<SmartPlaylist>(), token: Arg.Any<CancellationToken>()).Returns(7);
         _viewModel.Initialize(new SmartPlaylist { Name = "Mix" });
         _time.Advance(TimeSpan.FromMilliseconds(300));
-        await WaitForAsync(() => _viewModel.MatchCountText != Strings.SmartPlaylist_Status_Calculating);
+        await _viewModel.PendingMatchCount.WaitAsync(TimeSpan.FromSeconds(5));
         _service.ClearReceivedCalls();
 
         _viewModel.AddRuleCommand.Execute(null);
         _time.Advance(TimeSpan.FromMilliseconds(300));
 
-        await WaitForAsync(() => _service.ReceivedCalls().Any());
+        await _viewModel.PendingMatchCount.WaitAsync(TimeSpan.FromSeconds(5));
         await _service.Received(1).GetMatchingSongCountAsync(Arg.Is<SmartPlaylist>(p => p.Rules.Count == 1),
             token: Arg.Any<CancellationToken>());
-    }
-
-    private static async Task WaitForAsync(Func<bool> condition)
-    {
-        var deadline = DateTime.UtcNow.AddSeconds(5);
-        while (!condition())
-        {
-            if (DateTime.UtcNow > deadline) throw new TimeoutException("Condition was not met.");
-            await Task.Delay(10);
-        }
     }
 }

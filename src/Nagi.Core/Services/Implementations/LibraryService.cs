@@ -188,10 +188,13 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
         // collapse mapped-drive vs UNC or Unicode equivalence classes.
         var normalizedPath = _fileSystem.NormalizePath(path);
 
-        var existingFolder = await context.Folders.AsNoTracking()
-            .FirstOrDefaultAsync(f => f.Path == normalizedPath).ConfigureAwait(false);
-        if (existingFolder is not null)
+        var roots = await context.Folders.AsNoTracking().Where(f => f.ParentFolderId == null).ToListAsync().ConfigureAwait(false);
+        if (roots.FirstOrDefault(f => f.Path.Equals(normalizedPath, StringComparison.OrdinalIgnoreCase)) is { } existingFolder)
             return existingFolder;
+
+        // Scans assume each file belongs to one root, so a root inside another would re-add the other's songs.
+        if (roots.Any(f => PathCanonicalizer.IsSameOrInside(normalizedPath, f.Path) || PathCanonicalizer.IsSameOrInside(f.Path, normalizedPath)))
+            throw new FolderOverlapsException(normalizedPath);
 
         var folderName = Path.GetFileName(normalizedPath);
         var folder = new Folder
@@ -277,27 +280,17 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             _logger.LogInformation("Removed folder '{FolderName}' and associated data.", folder.Name);
         }
-        catch (Exception ex)
+        // Disposing the uncommitted transaction rolls it back; a cancellation propagates to the scan that asked for it.
+        catch (Exception ex) when (ex is not OperationCanceledException)
         {
             _logger.LogError(ex, "Folder removal for ID {FolderId} failed and was rolled back.", folderId);
-            await transaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
             return false;
         }
 
         DeleteOrphanedArtistImages(orphanedArtistIds);
         await DeleteUnreferencedCoverArtAsync(context, albumArtPathsToDelete, cancellationToken).ConfigureAwait(false);
 
-        foreach (var lrcPath in lrcPathsToDelete)
-            if (IsPathInLrcCache(lrcPath))
-                try
-                {
-                    _fileSystem.DeleteFile(lrcPath);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "Failed to delete cached LRC file {LrcPath} during folder removal.",
-                        lrcPath);
-                }
+        DeleteCachedLrcFiles(lrcPathsToDelete);
 
         LibraryContentChanged?.Invoke(this, new LibraryContentChangedEventArgs(LibraryChangeType.FolderRemoved, folderId));
 
@@ -410,6 +403,20 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
     }
 
     private bool IsPathInLrcCache(string? filePath) => IsExistingCacheFile(filePath, _pathConfig.LrcCachePath);
+
+    // Only files in Nagi's own cache: an LRC that sits next to the song belongs to the user.
+    private void DeleteCachedLrcFiles(IEnumerable<string> lrcPaths)
+    {
+        foreach (var lrcPath in lrcPaths.Where(IsPathInLrcCache))
+            try
+            {
+                _fileSystem.DeleteFile(lrcPath);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to delete cached LRC file {LrcPath}.", lrcPath);
+            }
+    }
 
     private bool IsExistingCacheFile(string? filePath, string cachePath)
     {

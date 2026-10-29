@@ -6,6 +6,13 @@ namespace Nagi.Core.Helpers;
 
 public static class ImageStorageHelper
 {
+    /// <summary>Whether a cached image is one the user picked, which online lookups must not replace.</summary>
+    public static bool IsCustomImage(string? path) => path?.Contains(".custom.", StringComparison.OrdinalIgnoreCase) == true;
+
+    /// <summary>Whether a cached artist image came from the user or the music folder rather than an online provider.</summary>
+    public static bool IsUserOrFolderImage(string? path) =>
+        IsCustomImage(path) || path?.Contains(".local.", StringComparison.OrdinalIgnoreCase) == true;
+
     internal static string? FindCoverArtInDirectory(IFileSystemService fileSystem, string directory, ILogger logger)
     {
         try

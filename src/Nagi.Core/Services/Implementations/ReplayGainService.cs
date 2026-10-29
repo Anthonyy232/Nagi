@@ -136,8 +136,11 @@ public class ReplayGainService : IReplayGainService
             {
                 var result = await CalculateAsync(song.FilePath, ct).ConfigureAwait(false);
                 ct.ThrowIfCancellationRequested();
-                if (result is { } values && TagFileSafely(song.FilePath, values.GainDb, values.Peak))
+                if (result is { } values)
                 {
+                    // The player normalizes from the database, so a file whose tags can't be written (read-only, say)
+                    // still gets its gain, and isn't analyzed again on every scan.
+                    TagFileSafely(song.FilePath, values.GainDb, values.Peak);
                     song.ReplayGainTrackGain = values.GainDb;
                     song.ReplayGainTrackPeak = values.Peak;
                 }
@@ -165,21 +168,18 @@ public class ReplayGainService : IReplayGainService
         _logger.LogInformation("ReplayGain scan complete. Processed {Count} songs.", processed);
     }
 
-    private bool TagFileSafely(string filePath, double gainDb, double peak)
+    private void TagFileSafely(string filePath, double gainDb, double peak)
     {
         try
         {
             var track = new Track(filePath);
             track.AdditionalFields["REPLAYGAIN_TRACK_GAIN"] = FormattableString.Invariant($"{gainDb:F2} dB");
             track.AdditionalFields["REPLAYGAIN_TRACK_PEAK"] = FormattableString.Invariant($"{peak:F6}");
-            var saved = track.Save();
-            if (!saved) _logger.LogError("Failed to save ReplayGain tags to file: {FilePath}", filePath);
-            return saved;
+            if (!track.Save()) _logger.LogError("Failed to save ReplayGain tags to file: {FilePath}", filePath);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error writing ReplayGain tags to file: {FilePath}", filePath);
-            return false;
         }
     }
 

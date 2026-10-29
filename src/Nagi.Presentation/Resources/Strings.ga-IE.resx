@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Earráid ag luchtú fillteáin</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>Cuireadh agus scanadh '{0}' go rathúil.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Theip ar an bhfillteán a chur leis. D'fhéadfadh an cosán a bheith neamhbhailí.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Fillteán á chur leis an leabharlann…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Baineadh &apos;{0}&apos; de do leabharlann.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>Níorbh fhéidir &apos;{0}&apos; a bhaint de do leabharlann.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>&apos;{0}&apos; á bhaint de do leabharlann…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Athscanadh '{0}' críochnaithe.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Níor braitheadh aon athruithe do '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>'{0}' á athscanadh…</value>
@@ -352,9 +340,6 @@
   <data name="GenreView_DefaultName" xml:space="preserve">
     <value>Seánra</value>
   </data>
-  <data name="GenreView_Error" xml:space="preserve">
-    <value>Earráid ag Luchtú Seánra</value>
-  </data>
   <data name="Lyrics_NoSongSelected" xml:space="preserve">
     <value>Níl aon amhrán roghnaithe</value>
   </data>
@@ -381,9 +366,6 @@
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} amhrán</value>
-  </data>
-  <data name="Playlist_ErrorLoading" xml:space="preserve">
-    <value>Earráid ag luchtú seinmliosta</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
     <value>Liosta seinm á thosú…</value>
@@ -414,9 +396,6 @@
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Liosta seinm nua á chruthú…</value>
-  </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Theip ar an seinmliosta a chruthú. D'fhéadfadh sé a bheith ann cheana féin.</value>
   </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Tharla earráid agus an seinmliosta á chruthú.</value>
@@ -794,9 +773,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Scanadh normalaithe airde fuaime á ullmhú…</value>
-  </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Cealaíodh scanadh normalaithe airde fuaime.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Earráid le linn scanadh: {0}</value>

@@ -107,12 +107,6 @@
   <data name="Label_Songs" xml:space="preserve">
     <value>Kappaleet</value>
   </data>
-  <data name="Label_Artists" xml:space="preserve">
-    <value>Artistit</value>
-  </data>
-  <data name="Label_Song" xml:space="preserve">
-    <value>Kappale</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Kansio</value>
   </data>
@@ -171,9 +165,6 @@
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Skannataan kansiota {0}/{1}: {2} - {3}</value>
   </data>
-  <data name="Format_ScanCompleteResult" xml:space="preserve">
-    <value>Skannaus valmis. Lisättiin tai päivitettiin {0} {1}.</value>
-  </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Skannaus valmis. Kirjasto on ajan tasalla.</value>
@@ -213,18 +204,6 @@
     <value>Soittolistan nimi ei voi olla tyhjä.</value>
   </data>
   <!-- Labels -->
-  <data name="Label_WithLyrics" xml:space="preserve">
-    <value>sanoituksilla</value>
-  </data>
-  <data name="Label_WithCoverArt" xml:space="preserve">
-    <value>kansikuvalla</value>
-  </data>
-  <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>artistikuvalla</value>
-  </data>
-  <data name="Label_And" xml:space="preserve">
-    <value>ja</value>
-  </data>
   <!-- Static Strings -->
   <data name="UnknownFilename" xml:space="preserve">
     <value>tuntematon</value>
@@ -234,12 +213,6 @@
   </data>
   <data name="SortByPrefix" xml:space="preserve">
     <value>Järjestä: </value>
-  </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>Soittolista luotiin, mutta sen kappaleita ei voitu lisätä. Yritä tuontia uudelleen.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Soittolistasta ei löytynyt kappaleita kirjastostasi.</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Ei soittolistoja vietäväksi.</value>

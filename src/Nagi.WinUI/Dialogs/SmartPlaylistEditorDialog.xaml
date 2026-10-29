@@ -31,10 +31,10 @@
 
         <Grid Grid.Row="0" ColumnDefinitions="Auto, 24, *, 24, Auto" Margin="0,0,0,24">
             <StackPanel Grid.Column="0" Spacing="8" VerticalAlignment="Top">
-                <Grid x:Name="CoverImageGrid" Width="100" Height="100"
+                <Grid Width="100" Height="100"
                       Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                       CornerRadius="{StaticResource ArtworkCornerRadius}">
-                    <FontIcon x:Name="CoverImagePlaceholder" Glyph="&#xE91B;" FontSize="40"
+                    <FontIcon Glyph="&#xE91B;" FontSize="40"
                               Visibility="{x:Bind ViewModel.HasCoverImage, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
                               HorizontalAlignment="Center" VerticalAlignment="Center"
                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
@@ -46,7 +46,7 @@
                                       CornerRadius="{StaticResource ArtworkCornerRadius}"
                                       Visibility="{x:Bind ViewModel.HasCoverImage, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 </Grid>
-                <Button x:Name="PickCoverImageButton"
+                <Button
                         Content="{x:Bind resources:Strings.SmartPlaylist_PickCoverButton_Content, Mode=OneTime}"
                         ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylist_PickCoverButton_ToolTip, Mode=OneTime}"
                         Command="{x:Bind ViewModel.PickCoverImageCommand}"
@@ -63,7 +63,7 @@
 
             <StackPanel Grid.Column="4" Spacing="4" MinWidth="200" VerticalAlignment="Top">
                 <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_SortOrderLabel, Mode=OneTime}" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
-                <ComboBox x:Name="SortByComboBox" HorizontalAlignment="Stretch"
+                <ComboBox HorizontalAlignment="Stretch"
                           AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylist_SortOrderLabel, Mode=OneTime}"
                           ItemsSource="{x:Bind viewmodels:SmartPlaylistEditorViewModel.SortOptions}"
                           DisplayMemberPath="DisplayName"
@@ -74,7 +74,7 @@
         <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,12">
             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                 <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_MatchLabel, Mode=OneTime}" VerticalAlignment="Center"/>
-                <ComboBox x:Name="MatchLogicComboBox" MinWidth="80"
+                <ComboBox MinWidth="80"
                           AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylist_MatchLabel, Mode=OneTime}"
                           SelectedIndex="{x:Bind ViewModel.MatchLogicIndex, Mode=TwoWay}">
                     <ComboBoxItem Content="{x:Bind resources:Strings.SmartPlaylist_MatchLogic_All_Content, Mode=OneTime}" Tag="All" />
@@ -100,7 +100,7 @@
             <Grid>
                 <ScrollViewer uihelpers:ScrollEdgeFade.IsEnabled="True" VerticalScrollBarVisibility="Auto" Padding="{StaticResource SurfaceContentPadding}">
                     <StackPanel Spacing="8">
-                        <ListView x:Name="RulesListView"
+                        <ListView
                                   ItemsSource="{x:Bind ViewModel.Rules}"
                                   SelectionMode="None"
                                   IsItemClickEnabled="False">
@@ -123,7 +123,7 @@
                                             </Grid.ColumnDefinitions>
 
                                             <ComboBox Grid.Column="0"
-                                                      ItemsSource="{x:Bind AvailableFieldsList}"
+                                                      ItemsSource="{x:Bind viewmodels:RuleViewModel.AvailableFields}"
                                                       AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylist_RuleField_Name, Mode=OneTime}"
                                                       SelectedItem="{x:Bind SelectedField, Mode=TwoWay}"
                                                       DisplayMemberPath="DisplayName"
@@ -160,7 +160,7 @@
                             </ListView.ItemTemplate>
                         </ListView>
 
-                        <StackPanel x:Name="NoRulesPanel"
+                        <StackPanel
                                    Visibility="{x:Bind ViewModel.HasNoRules, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"

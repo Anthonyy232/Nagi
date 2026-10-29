@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Eroare la încărcarea dosarului</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>„{0}” a fost adăugat și scanat cu succes.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Adăugarea dosarului a eșuat. Calea poate fi invalidă.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Se adaugă dosarul în bibliotecă…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>S-a eliminat &apos;{0}&apos; din bibliotecă.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>Nu s-a putut elimina &apos;{0}&apos; din bibliotecă.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>Se elimină &apos;{0}&apos; din bibliotecă…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Re-scanarea „{0}” este completă.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Nu s-au detectat modificări pentru „{0}”.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>Se rescanează „{0}”…</value>
@@ -352,9 +340,6 @@
   <data name="GenreView_DefaultName" xml:space="preserve">
     <value>Gen</value>
   </data>
-  <data name="GenreView_Error" xml:space="preserve">
-    <value>Eroare la încărcarea genului</value>
-  </data>
   <data name="Lyrics_NoSongSelected" xml:space="preserve">
     <value>Nicio piesă selectată</value>
   </data>
@@ -381,9 +366,6 @@
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} piese</value>
-  </data>
-  <data name="Playlist_ErrorLoading" xml:space="preserve">
-    <value>Eroare la încărcarea listei de redare</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
     <value>Se pornește lista de redare…</value>
@@ -414,9 +396,6 @@
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Se creează o nouă listă de redare…</value>
-  </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Crearea listei de redare a eșuat. Poate că există deja.</value>
   </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>A apărut o eroare la crearea listei de redare.</value>
@@ -794,9 +773,6 @@ Vrei să continui?</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Se pregătește scanarea pentru normalizarea volumului…</value>
-  </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Scanarea pentru normalizarea volumului a fost anulată.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Eroare în timpul scanării: {0}</value>

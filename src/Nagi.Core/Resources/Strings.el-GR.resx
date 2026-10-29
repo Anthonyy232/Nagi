@@ -107,12 +107,6 @@
   <data name="Label_Songs" xml:space="preserve">
     <value>Τραγούδια</value>
   </data>
-  <data name="Label_Artists" xml:space="preserve">
-    <value>Καλλιτέχνες</value>
-  </data>
-  <data name="Label_Song" xml:space="preserve">
-    <value>Τραγούδι</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Φάκελος</value>
   </data>
@@ -171,9 +165,6 @@
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Σάρωση φακέλου {0} από {1}: {2} - {3}</value>
   </data>
-  <data name="Format_ScanCompleteResult" xml:space="preserve">
-    <value>Ολοκληρώθηκε η σάρωση. Προστέθηκαν ή ενημερώθηκαν {0} {1}.</value>
-  </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Ολοκληρώθηκε η σάρωση. Η βιβλιοθήκη είναι ενημερωμένη.</value>
@@ -213,18 +204,6 @@
     <value>Το όνομα της λίστας αναπαραγωγής δεν μπορεί να είναι κενό.</value>
   </data>
   <!-- Labels -->
-  <data name="Label_WithLyrics" xml:space="preserve">
-    <value>με στίχους</value>
-  </data>
-  <data name="Label_WithCoverArt" xml:space="preserve">
-    <value>με εξώφυλλο</value>
-  </data>
-  <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>με εικόνα καλλιτέχνη</value>
-  </data>
-  <data name="Label_And" xml:space="preserve">
-    <value>και</value>
-  </data>
   <!-- Static Strings -->
   <data name="UnknownFilename" xml:space="preserve">
     <value>άγνωστο</value>
@@ -234,12 +213,6 @@
   </data>
   <data name="SortByPrefix" xml:space="preserve">
     <value>Ταξινόμηση ανά: </value>
-  </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>Η λίστα αναπαραγωγής δημιουργήθηκε, αλλά δεν ήταν δυνατή η προσθήκη των τραγουδιών της. Δοκιμάστε να κάνετε εισαγωγή ξανά.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Δεν βρέθηκαν τραγούδια από τη λίστα αναπαραγωγής στη βιβλιοθήκη σας.</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Δεν υπάρχουν λίστες αναπαραγωγής για εξαγωγή.</value>

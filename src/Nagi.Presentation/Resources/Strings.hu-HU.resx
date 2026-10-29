@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Hiba a mappa betöltésekor</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>Sikeresen hozzáadva és beolvasva: „{0}”.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Nem sikerült hozzáadni a mappát. Lehet, hogy az elérési út érvénytelen.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Mappa hozzáadása a könyvtárhoz…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>&apos;{0}&apos; eltávolítva a könyvtárból.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>Nem sikerült eltávolítani a &apos;{0}&apos; elemet a könyvtárból.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>&apos;{0}&apos; eltávolítása a könyvtárból…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>„{0}” újraolvasása befejeződött.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Nincs változás érzékelve ennél: „{0}”.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>'{0}' újravizsgálata…</value>
@@ -352,9 +340,6 @@
   <data name="GenreView_DefaultName" xml:space="preserve">
     <value>Műfaj</value>
   </data>
-  <data name="GenreView_Error" xml:space="preserve">
-    <value>Hiba a műfaj betöltésekor</value>
-  </data>
   <data name="Lyrics_NoSongSelected" xml:space="preserve">
     <value>Nincs kiválasztott dal</value>
   </data>
@@ -381,9 +366,6 @@
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} dal</value>
-  </data>
-  <data name="Playlist_ErrorLoading" xml:space="preserve">
-    <value>Hiba a lejátszási lista betöltésekor</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
     <value>Lejátszási lista indítása…</value>
@@ -414,9 +396,6 @@
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Új lejátszási lista létrehozása…</value>
-  </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Nem sikerült létrehozni a lejátszási listát. Lehet, hogy már létezik.</value>
   </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Hiba történt a lejátszási lista létrehozása során.</value>
@@ -794,9 +773,6 @@ Szeretné folytatni?</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Hangerő-normalizálási vizsgálat előkészítése…</value>
-  </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Hangerő-normalizálási beolvasás megszakítva.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Hiba a beolvasás során: {0}</value>

@@ -107,12 +107,6 @@
   <data name="Label_Songs" xml:space="preserve">
     <value>Chansons</value>
   </data>
-  <data name="Label_Artists" xml:space="preserve">
-    <value>Artistes</value>
-  </data>
-  <data name="Label_Song" xml:space="preserve">
-    <value>Chanson</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Dossier</value>
   </data>
@@ -171,9 +165,6 @@
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Analyse du dossier {0} sur {1} : {2} - {3}</value>
   </data>
-  <data name="Format_ScanCompleteResult" xml:space="preserve">
-    <value>Analyse terminée. {0} {1} ajouté(e)s ou mis(es) à jour.</value>
-  </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Analyse terminée. La bibliothèque est à jour.</value>
@@ -213,18 +204,6 @@
     <value>Le nom de la liste de lecture ne peut pas être vide.</value>
   </data>
   <!-- Labels -->
-  <data name="Label_WithLyrics" xml:space="preserve">
-    <value>avec paroles</value>
-  </data>
-  <data name="Label_WithCoverArt" xml:space="preserve">
-    <value>avec pochette</value>
-  </data>
-  <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>avec image d'artiste</value>
-  </data>
-  <data name="Label_And" xml:space="preserve">
-    <value>et</value>
-  </data>
   <!-- Static Strings -->
   <data name="UnknownFilename" xml:space="preserve">
     <value>inconnu</value>
@@ -234,12 +213,6 @@
   </data>
   <data name="SortByPrefix" xml:space="preserve">
     <value>Trier par : </value>
-  </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>La liste de lecture a été créée, mais ses morceaux n'ont pas pu être ajoutés. Veuillez réessayer l'importation.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Aucune chanson de la liste de lecture n'a été trouvée dans votre bibliothèque.</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Aucune liste de lecture à exporter.</value>

@@ -84,11 +84,6 @@ internal sealed class LibraryBenchmarkFixture : IDisposable
         public bool FileExists(string path) => File.Exists(path);
         public string[] GetFiles(string path, string searchPattern) => Directory.GetFiles(path, searchPattern);
         public DateTime GetLastWriteTimeUtc(string path) => File.GetLastWriteTimeUtc(path);
-        public string GetFileNameWithoutExtension(string path) => Path.GetFileNameWithoutExtension(path);
-        public string GetFileName(string path) => Path.GetFileName(path);
-        public string? GetDirectoryName(string path) => Path.GetDirectoryName(path);
-        public string GetExtension(string path) => Path.GetExtension(path);
-        public string Combine(params string[] paths) => Path.Combine(paths);
         public Task<byte[]> ReadAllBytesAsync(string path) => File.ReadAllBytesAsync(path);
         public Task<string> ReadAllTextAsync(string path) => File.ReadAllTextAsync(path);
         public Task WriteAllBytesAsync(string path, byte[] bytes) => File.WriteAllBytesAsync(path, bytes);

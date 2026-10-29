@@ -245,8 +245,10 @@ public class AtlMetadataServiceTests : IDisposable
         result2.CoverArtUri.Should().Be("C:/art/success.jpg");
     }
 
-    [Fact]
-    public async Task GetLrcPathAsync_WithValidCache_ReturnsCachedPathWithoutExtraction()
+    [Theory]
+    [InlineData(1, true)]
+    [InlineData(-1, false)]
+    public async Task GetLrcPathAsync_UsesTheCacheOnlyWhileItIsNewerThanTheAudioFile(int cacheAgeHours, bool usesCache)
     {
         var audioFilePath = CreateTestAudioFile("cached.mp3", track =>
         {
@@ -254,36 +256,36 @@ public class AtlMetadataServiceTests : IDisposable
             track.Artist = "Cache Artist";
         });
         var audioFileTime = new DateTime(2023, 1, 1, 12, 0, 0, DateTimeKind.Utc);
-        var cacheFileTime = audioFileTime.AddHours(1);
-
         File.SetLastWriteTimeUtc(audioFilePath, audioFileTime);
-
-        var expectedCachePath = Path.Combine(LrcCachePath,
+        var cachePath = Path.Combine(LrcCachePath,
             FileNameHelper.GenerateLrcCacheFileName(audioFilePath, "Cache Artist", null, "Cached Song"));
+        _fileSystem.FileExists(cachePath).Returns(true);
+        _fileSystem.GetLastWriteTimeUtc(cachePath).Returns(audioFileTime.AddHours(cacheAgeHours));
 
-        _fileSystem.FileExists(expectedCachePath).Returns(true);
-        _fileSystem.GetLastWriteTimeUtc(expectedCachePath).Returns(cacheFileTime);
         var result = await _metadataService.ExtractMetadataAsync(audioFilePath);
-        result.LrcFilePath.Should().Be(expectedCachePath);
-        await _fileSystem.DidNotReceive().WriteAllTextAsync(Arg.Any<string>(), Arg.Any<string>());
+
+        // A stale cache is re-extracted, and this file has no embedded lyrics to extract.
+        result.LrcFilePath.Should().Be(usesCache ? cachePath : null);
     }
 
     [Fact]
-    public async Task GetLrcPathAsync_WithOlderOverride_ReturnsOverride()
+    public async Task GetLrcPathAsync_OverrideWinsOverAFreshCache()
     {
         var audioFilePath = CreateTestAudioFile("override.mp3", track =>
         {
             track.Title = "Override Song";
             track.Artist = "Override Artist";
         });
-        var expectedPath = Path.Combine(LrcCachePath,
-            FileNameHelper.GenerateLrcOverrideFileName(audioFilePath));
-        _fileSystem.FileExists(expectedPath).Returns(true);
+        var overridePath = Path.Combine(LrcCachePath, FileNameHelper.GenerateLrcOverrideFileName(audioFilePath));
+        var cachePath = Path.Combine(LrcCachePath,
+            FileNameHelper.GenerateLrcCacheFileName(audioFilePath, "Override Artist", null, "Override Song"));
+        _fileSystem.FileExists(overridePath).Returns(true);
+        _fileSystem.FileExists(cachePath).Returns(true);
+        _fileSystem.GetLastWriteTimeUtc(cachePath).Returns(DateTime.UtcNow.AddDays(1));
 
         var result = await _metadataService.ExtractMetadataAsync(audioFilePath);
 
-        result.LrcFilePath.Should().Be(expectedPath);
-        _fileSystem.DidNotReceive().GetLastWriteTimeUtc(expectedPath);
+        result.LrcFilePath.Should().Be(overridePath);
     }
 
     [Theory]

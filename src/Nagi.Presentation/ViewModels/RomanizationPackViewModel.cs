@@ -18,10 +18,8 @@ public partial class RomanizationPackViewModel : ObservableObject
     public string Description => _packView.CatalogEntry.Description;
     public string Language => _packView.CatalogEntry.Language;
     public string Script => _packView.CatalogEntry.Script;
-    public string Version => _packView.CatalogEntry.Version;
     public string InstalledVersion => _packView.InstalledPack?.Manifest.Version ?? string.Empty;
     public string License => _packView.CatalogEntry.License;
-    public string Attribution => _packView.CatalogEntry.Attribution;
     public string LicenseText => string.IsNullOrWhiteSpace(License)
         ? string.Empty
         : string.Format(Strings.SettingsPage_RomanizationPack_LicenseFormat, License);

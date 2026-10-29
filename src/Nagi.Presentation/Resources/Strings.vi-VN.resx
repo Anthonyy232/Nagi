@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Lỗi khi tải thư mục</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>Đã thêm và quét '{0}' thành công.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Không thể thêm thư mục. Đường dẫn có thể không hợp lệ.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Đang thêm thư mục vào thư viện…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Đã xóa &apos;{0}&apos; khỏi thư viện của bạn.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>Không thể xóa &apos;{0}&apos; khỏi thư viện của bạn.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>Đang xóa &apos;{0}&apos; khỏi thư viện của bạn…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Quét lại '{0}' hoàn tất.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Không phát hiện thay đổi nào cho '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>Đang quét lại '{0}'…</value>
@@ -352,9 +340,6 @@
   <data name="GenreView_DefaultName" xml:space="preserve">
     <value>Thể loại</value>
   </data>
-  <data name="GenreView_Error" xml:space="preserve">
-    <value>Lỗi khi tải Thể loại</value>
-  </data>
   <data name="Lyrics_NoSongSelected" xml:space="preserve">
     <value>Chưa chọn bài hát nào</value>
   </data>
@@ -381,9 +366,6 @@
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} bài hát</value>
-  </data>
-  <data name="Playlist_ErrorLoading" xml:space="preserve">
-    <value>Lỗi khi tải danh sách phát</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
     <value>Đang bắt đầu danh sách phát…</value>
@@ -414,9 +396,6 @@
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Đang tạo danh sách phát mới…</value>
-  </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Không thể tạo danh sách phát. Nó có thể đã tồn tại.</value>
   </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Đã xảy ra lỗi khi tạo danh sách phát.</value>
@@ -794,9 +773,6 @@ Bạn có muốn tiếp tục không?</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Đang chuẩn bị quét chuẩn hóa âm lượng…</value>
-  </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Đã hủy quét chuẩn hóa âm lượng.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Lỗi trong quá trình quét: {0}</value>

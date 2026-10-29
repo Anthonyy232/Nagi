@@ -107,12 +107,6 @@
   <data name="Label_Songs" xml:space="preserve">
     <value>Dalok</value>
   </data>
-  <data name="Label_Artists" xml:space="preserve">
-    <value>Előadók</value>
-  </data>
-  <data name="Label_Song" xml:space="preserve">
-    <value>Dal</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Mappa</value>
   </data>
@@ -171,9 +165,6 @@
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Mappa beolvasása {0}/{1}: {2} - {3}</value>
   </data>
-  <data name="Format_ScanCompleteResult" xml:space="preserve">
-    <value>Beolvasás kész. Hozzáadva vagy frissítve {0} {1}.</value>
-  </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Beolvasás kész. A könyvtár naprakész.</value>
@@ -213,18 +204,6 @@
     <value>A lejátszási lista neve nem lehet üres.</value>
   </data>
   <!-- Labels -->
-  <data name="Label_WithLyrics" xml:space="preserve">
-    <value>dalszöveggel</value>
-  </data>
-  <data name="Label_WithCoverArt" xml:space="preserve">
-    <value>borítóképpel</value>
-  </data>
-  <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>előadó képpel</value>
-  </data>
-  <data name="Label_And" xml:space="preserve">
-    <value>és</value>
-  </data>
   <!-- Static Strings -->
   <data name="UnknownFilename" xml:space="preserve">
     <value>ismeretlen</value>
@@ -234,12 +213,6 @@
   </data>
   <data name="SortByPrefix" xml:space="preserve">
     <value>Rendezés: </value>
-  </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>A lejátszási lista létrejött, de a dalait nem sikerült hozzáadni. Próbálja meg újra az importálást.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Nem találtunk dalt a lejátszási listáról a könyvtárában.</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Nincsenek exportálható lejátszási listák.</value>

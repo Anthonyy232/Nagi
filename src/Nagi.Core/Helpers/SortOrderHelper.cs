@@ -95,11 +95,11 @@ public static class SortOrderHelper
 
     public static string GetDisplayName(ArtistSortOrder sortOrder) => Resources.Strings.SortByPrefix + (sortOrder switch
     {
-        ArtistSortOrder.NameAsc => TitleAscLabel,
-        ArtistSortOrder.NameDesc => TitleDescLabel,
+        ArtistSortOrder.NameAsc => ArtistAscLabel,
+        ArtistSortOrder.NameDesc => ArtistDescLabel,
         ArtistSortOrder.SongCountDesc => MostSongsLabel,
         ArtistSortOrder.SongCountAsc => LeastSongsLabel,
-        _ => TitleAscLabel
+        _ => ArtistAscLabel
     });
 
     public static string GetDisplayName(AlbumSortOrder sortOrder) => Resources.Strings.SortByPrefix + (sortOrder switch

@@ -107,12 +107,6 @@
   <data name="Label_Songs" xml:space="preserve">
     <value>Cançons</value>
   </data>
-  <data name="Label_Artists" xml:space="preserve">
-    <value>Artistes</value>
-  </data>
-  <data name="Label_Song" xml:space="preserve">
-    <value>Cançó</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Carpeta</value>
   </data>
@@ -171,9 +165,6 @@
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Escanejant carpeta {0} de {1}: {2} - {3}</value>
   </data>
-  <data name="Format_ScanCompleteResult" xml:space="preserve">
-    <value>Escaneig completat. S'han afegit o actualitzat {0} {1}.</value>
-  </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Escaneig completat. La biblioteca està actualitzada.</value>
@@ -213,18 +204,6 @@
     <value>El nom de la llista de reproducció no pot estar buit.</value>
   </data>
   <!-- Labels -->
-  <data name="Label_WithLyrics" xml:space="preserve">
-    <value>amb lletres</value>
-  </data>
-  <data name="Label_WithCoverArt" xml:space="preserve">
-    <value>amb caràtula</value>
-  </data>
-  <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>amb imatge d'artista</value>
-  </data>
-  <data name="Label_And" xml:space="preserve">
-    <value>i</value>
-  </data>
   <!-- Static Strings -->
   <data name="UnknownFilename" xml:space="preserve">
     <value>desconegut</value>
@@ -234,12 +213,6 @@
   </data>
   <data name="SortByPrefix" xml:space="preserve">
     <value>Ordenar per: </value>
-  </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>S'ha creat la llista de reproducció, però no se n'han pogut afegir les cançons. Torna a intentar la importació.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>No s'han trobat cançons de la llista de reproducció a la teva biblioteca.</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>No hi ha llistes de reproducció per exportar.</value>

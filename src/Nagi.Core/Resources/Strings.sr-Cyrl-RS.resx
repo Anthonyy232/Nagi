@@ -107,12 +107,6 @@
   <data name="Label_Songs" xml:space="preserve">
     <value>Песме</value>
   </data>
-  <data name="Label_Artists" xml:space="preserve">
-    <value>Извођачи</value>
-  </data>
-  <data name="Label_Song" xml:space="preserve">
-    <value>Песма</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Фасцикла</value>
   </data>
@@ -171,9 +165,6 @@
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Скенирам фасциклу {0} од {1}: {2} - {3}</value>
   </data>
-  <data name="Format_ScanCompleteResult" xml:space="preserve">
-    <value>Скенирање завршено. Додато или ажурирано {0} {1}.</value>
-  </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Скенирање завршено. Библиотека је ажурна.</value>
@@ -213,18 +204,6 @@
     <value>Назив плејлисте не може бити празан.</value>
   </data>
   <!-- Labels -->
-  <data name="Label_WithLyrics" xml:space="preserve">
-    <value>са текстом</value>
-  </data>
-  <data name="Label_WithCoverArt" xml:space="preserve">
-    <value>са омотом</value>
-  </data>
-  <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>са сликом извођача</value>
-  </data>
-  <data name="Label_And" xml:space="preserve">
-    <value>и</value>
-  </data>
   <!-- Static Strings -->
   <data name="UnknownFilename" xml:space="preserve">
     <value>непознато</value>
@@ -234,12 +213,6 @@
   </data>
   <data name="SortByPrefix" xml:space="preserve">
     <value>Сортирај по: </value>
-  </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>Плејлиста је направљена, али њене песме нису могле бити додате. Покушајте поново са увозом.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Ниједна песма из плејлисте није пронађена у вашој библиотеци.</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Нема плејлиста за извоз.</value>

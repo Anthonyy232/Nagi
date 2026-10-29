@@ -38,6 +38,21 @@ public class NetEaseLyricsServiceTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task SearchLyricsAsync_ReplacesTheDefaultUserAgentWithABrowserOne()
+    {
+        using var handler = new TestHttpMessageHandler();
+        var client = new HttpClient(handler);
+        client.DefaultRequestHeaders.UserAgent.ParseAdd("Nagi/1.0");
+        var factory = Substitute.For<IHttpClientFactory>();
+        factory.CreateClient(Arg.Any<string>()).Returns(client);
+        handler.RespondSequence((HttpStatusCode.OK, "{}"));
+
+        await new NetEaseLyricsService(factory, _pipelines, _logger).SearchLyricsAsync("Track", null);
+
+        handler.Requests[0].Headers.UserAgent.ToString().Should().StartWith("Mozilla/5.0").And.NotContain("Nagi");
+    }
+
+    [Fact]
     public async Task SearchLyricsAsync_PrefersExactTitleThenMatchingArtist()
     {
         _httpHandler.SendAsyncFunc = (request, _) =>

@@ -39,7 +39,6 @@ public sealed class ArtistAlbumViewModelItem
 public partial class ArtistViewViewModel : SongListViewModelBase
 {
     private Guid _artistId;
-    private bool _isNavigatingToAlbum;
     private CancellationTokenSource? _pageCts;
 
     public ArtistViewViewModel(
@@ -70,7 +69,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     [NotifyPropertyChangedFor(nameof(IsCustomImage))]
     public partial string? ArtistImageUri { get; set; }
 
-    public bool IsCustomImage => ArtistImageUri?.Contains(".custom.") == true;
+    public bool IsCustomImage => ImageStorageHelper.IsCustomImage(ArtistImageUri);
 
     public ObservableRangeCollection<ArtistAlbumViewModelItem> Albums { get; } = new();
     public bool HasAlbums => Albums.Any();
@@ -182,23 +181,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         Songs.Clear();
     }
 
-    [RelayCommand(CanExecute = nameof(CanExecuteLoadCommands))]
-    private async Task ViewAlbumAsync(object? parameter)
-    {
-        if (_isNavigatingToAlbum) return;
-
-        try
-        {
-            _isNavigatingToAlbum = true;
-            await _musicNavigationService.NavigateToAlbumAsync(parameter);
-        }
-        finally
-        {
-            _isNavigatingToAlbum = false;
-        }
-    }
-
-    [RelayCommand(CanExecute = nameof(CanExecuteLoadCommands))]
+    [RelayCommand]
     private Task PlayAlbumAsync(Guid albumId) => RunActionAsync(() => _playbackService.PlayAlbumAsync(albumId));
 
     private void OnArtistMetadataUpdated(object? sender, ArtistMetadataUpdatedEventArgs e)

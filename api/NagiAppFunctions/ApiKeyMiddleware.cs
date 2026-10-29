@@ -36,7 +36,7 @@ public class ApiKeyMiddleware : IFunctionsWorkerMiddleware
         var requestPath = request.Path.Value ?? string.Empty;
 
         // Bypass authentication for public OpenAPI/Swagger documentation endpoints.
-        if (requestPath.StartsWith("/api/swagger") || requestPath.StartsWith("/api/openapi"))
+        if (requestPath.StartsWith("/api/swagger", StringComparison.Ordinal) || requestPath.StartsWith("/api/openapi", StringComparison.Ordinal))
         {
             await next(context);
             return;

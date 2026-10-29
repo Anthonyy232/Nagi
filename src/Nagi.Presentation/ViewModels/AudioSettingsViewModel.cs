@@ -10,7 +10,6 @@ using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services;
-using CoreStrings = Nagi.Core.Resources.Strings;
 
 namespace Nagi.Presentation.ViewModels;
 
@@ -207,8 +206,6 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
         _preampDebouncer.Cancel();
         foreach (var band in EqualizerBands) band.CancelPendingGain();
         await _playbackService.ResetEqualizerAsync();
-        // Resetting will result in all 0s, which matches "None".
-        SelectedEqualizerPreset = AvailableEqualizerPresets.FirstOrDefault(p => p.Name == CoreStrings.EqPreset_None);
     }
 
     private void LoadEqualizerState()
@@ -393,17 +390,15 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
         _globalOperation.IsIndeterminate = true;
         _globalOperation.SetCancellation(scanCts.Cancel);
 
+        string? error = null;
         try
         {
-            await _replayGainService.ScanLibraryAsync(CreateGlobalOperationProgress(_globalOperation, cancellationToken), cancellationToken);
+            await _replayGainService.ScanLibraryAsync(_globalOperation.CreateProgress(cancellationToken), cancellationToken);
         }
-        catch (OperationCanceledException)
-        {
-            _globalOperation.StatusMessage = Strings.Settings_Status_VolumeNorm_Cancelled;
-        }
+        catch (OperationCanceledException) { }
         catch (Exception ex)
         {
-            _globalOperation.StatusMessage = string.Format(Strings.Settings_Status_VolumeNorm_Error_Format, ex.Message);
+            error = string.Format(Strings.Settings_Status_VolumeNorm_Error_Format, ex.Message);
             _logger.LogError(ex, "Failed to scan library for ReplayGain");
         }
         finally
@@ -414,5 +409,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
             _globalOperation.IsInProgress = false;
             _globalOperation.IsIndeterminate = false;
         }
+
+        if (error != null && !_isDisposed) await _uiService.ShowMessageDialogAsync(Strings.Generic_Error, error);
     }
 }

@@ -14,7 +14,7 @@ namespace Nagi.Core.Services.Implementations;
 ///     Searches the Apple Music catalog through the public iTunes Search API, which needs no key but allows
 ///     only about 20 requests a minute.
 /// </summary>
-public class AppleMusicService : IAppleMusicService, IDisposable
+public class AppleMusicService : IAppleMusicService
 {
     private const string SearchUrl = "https://itunes.apple.com/search";
 
@@ -31,8 +31,6 @@ public class AppleMusicService : IAppleMusicService, IDisposable
         _pipelines = pipelines;
         _logger = logger;
     }
-
-    public void Dispose() => _httpClient.Dispose();
 
     public Task<ServiceResult<string>> GetAlbumCoverUrlAsync(string albumTitle, string artistName,
         CancellationToken cancellationToken = default)

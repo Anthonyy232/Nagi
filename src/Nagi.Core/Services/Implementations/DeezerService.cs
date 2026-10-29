@@ -13,7 +13,7 @@ namespace Nagi.Core.Services.Implementations;
 ///     Searches Deezer's public catalog, which needs no API key. Its limit of 50 requests per 5 seconds
 ///     is enforced by <see cref="IProviderPipelineProvider" />.
 /// </summary>
-public class DeezerService : IDeezerService, IDisposable
+public class DeezerService : IDeezerService
 {
     private const string BaseUrl = "https://api.deezer.com";
 
@@ -33,8 +33,6 @@ public class DeezerService : IDeezerService, IDisposable
         _pipelines = pipelines;
         _logger = logger;
     }
-
-    public void Dispose() => _httpClient.Dispose();
 
     public Task<ServiceResult<string>> GetArtistImageUrlAsync(string artistName, CancellationToken cancellationToken = default)
     {

@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>載入資料夾錯誤</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>已成功新增並掃描 '{0}'。</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>新增資料夾失敗。路徑可能無效。</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>正在新增資料夾至媒體庫……</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>已從您的媒體庫移除 &apos;{0}&apos;。</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>無法從您的媒體庫移除 &apos;{0}&apos;。</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>正在從您的媒體庫移除 &apos;{0}&apos;……</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>'{0}' 的重新掃描完成。</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>'{0}' 未偵測到任何變更。</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>正在重新掃描 '{0}'……</value>
@@ -352,9 +340,6 @@
   <data name="GenreView_DefaultName" xml:space="preserve">
     <value>類型</value>
   </data>
-  <data name="GenreView_Error" xml:space="preserve">
-    <value>載入類型錯誤</value>
-  </data>
   <data name="Lyrics_NoSongSelected" xml:space="preserve">
     <value>未選取歌曲</value>
   </data>
@@ -381,9 +366,6 @@
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} 首歌曲</value>
-  </data>
-  <data name="Playlist_ErrorLoading" xml:space="preserve">
-    <value>載入播放清單錯誤</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
     <value>正在開始播放清單……</value>
@@ -414,9 +396,6 @@
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>正在建立新播放清單……</value>
-  </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>建立播放清單失敗。它可能已存在。</value>
   </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>建立播放清單時發生錯誤。</value>
@@ -794,9 +773,6 @@
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>正在準備音量標準化掃描……</value>
-  </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>音量標準化掃描已取消。</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>掃描期間發生錯誤：{0}</value>

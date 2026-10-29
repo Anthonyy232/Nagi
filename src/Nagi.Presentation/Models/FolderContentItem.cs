@@ -11,7 +11,6 @@ public sealed class FolderContentItem
     public Song? Song { get; }
     public bool IsFolder => Folder is not null;
     public string DisplayName => Folder?.Name ?? Song!.Title;
-    public Guid Id => Folder?.Id ?? Song!.Id;
 
     public static FolderContentItem FromFolder(Folder folder) => new(folder);
     public static FolderContentItem FromSong(Song song) => new(song);

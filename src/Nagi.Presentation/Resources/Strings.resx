@@ -271,32 +271,23 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Error loading folder</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>Successfully added and scanned '{0}'.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Failed to add folder. The path may be invalid.</value>
   </data>
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>This folder is already in the library.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>This folder is inside a folder already in your library, or contains one. Add either the outer folder or the inner one, not both.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Adding folder to library…</value>
-  </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Removed &apos;{0}&apos; from your library.</value>
   </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>Could not remove &apos;{0}&apos; from your library.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>Removing &apos;{0}&apos; from your library…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Rescan of '{0}' complete.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>No changes detected for '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>Rescanning '{0}'…</value>
@@ -352,9 +343,6 @@
   <data name="GenreView_DefaultName" xml:space="preserve">
     <value>Genre</value>
   </data>
-  <data name="GenreView_Error" xml:space="preserve">
-    <value>Error Loading Genre</value>
-  </data>
   <data name="Lyrics_NoSongSelected" xml:space="preserve">
     <value>No song selected</value>
   </data>
@@ -381,9 +369,6 @@
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} songs</value>
-  </data>
-  <data name="Playlist_ErrorLoading" xml:space="preserve">
-    <value>Error loading playlist</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
     <value>Starting playlist…</value>
@@ -414,9 +399,6 @@
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Creating new playlist…</value>
-  </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Failed to create playlist. It may already exist.</value>
   </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>An error occurred while creating the playlist.</value>
@@ -794,9 +776,6 @@ Do you want to continue?</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Preparing volume normalization scan…</value>
-  </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Volume normalization scan cancelled.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Error during scan: {0}</value>

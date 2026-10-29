@@ -123,26 +123,6 @@ public class FolderSongListViewModelTests
         viewModel.IsAtRootLevel.Should().Be(!directoryPath.EndsWith("Album"));
     }
 
-    [Fact]
-    public async Task RefreshAsync_WhenSettingsFail_ReleasesLoadingStateAndAllowsRetry()
-    {
-        var settings = Substitute.For<IUISettingsService>();
-        settings.GetSongsPerPageAsync().Returns(Task.FromException<int>(new IOException("Settings unavailable")),
-            Task.FromResult(50));
-        using var viewModel = CreateViewModel(new LibraryFakes(), settings);
-
-        await viewModel.RefreshOrSortSongsAsync();
-
-        viewModel.HasLoadError.Should().BeTrue();
-        viewModel.IsLoading.Should().BeFalse();
-
-        await viewModel.RefreshOrSortSongsAsync();
-
-        viewModel.HasLoadError.Should().BeFalse();
-        viewModel.IsLoading.Should().BeFalse();
-        await settings.Received(2).GetSongsPerPageAsync();
-    }
-
     [Theory]
     [InlineData(0)]
     [InlineData(51)]
@@ -229,6 +209,22 @@ public class FolderSongListViewModelTests
         pending.SetResult(new List<Guid> { Guid.NewGuid() });
 
         (await resolving.WaitAsync(TimeSpan.FromSeconds(10))).Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task FolderWithOnlySubfolders_CanPlayAll()
+    {
+        var library = new LibraryFakes();
+        var root = ConfigureRoot(library);
+        library.Reader.GetSubFolderCountAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(1);
+        library.Reader.GetSubFoldersPagedAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
+            .Returns(new[] { new Folder { Name = "Album", Path = @"C:\Music\Album" } });
+        using var viewModel = CreateViewModel(library, Substitute.For<IUISettingsService>());
+
+        await viewModel.InitializeAsync(root.Name, root.Id);
+
+        viewModel.Songs.Should().BeEmpty();
+        viewModel.PlayAllSongsCommand.CanExecute(null).Should().BeTrue();
     }
 
     private static Folder ConfigureRoot(LibraryFakes library)

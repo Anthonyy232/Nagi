@@ -44,7 +44,6 @@ public class SmartPlaylistQueryBuilder
     {
         if (smartPlaylist.MatchAllRules)
         {
-            // AND logic: chain Where clauses
             foreach (var rule in smartPlaylist.Rules)
             {
                 var predicate = BuildRulePredicate(rule);
@@ -54,7 +53,6 @@ public class SmartPlaylistQueryBuilder
         }
         else
         {
-            // OR logic: combine predicates
             var predicates = smartPlaylist.Rules
                 .Select(BuildRulePredicate)
                 .OfType<Expression<Func<Song, bool>>>()
@@ -81,7 +79,6 @@ public class SmartPlaylistQueryBuilder
             SmartPlaylistField.Comment => BuildTextPredicate(s => s.Comment, rule),
             SmartPlaylistField.Grouping => BuildTextPredicate(s => s.Grouping, rule),
 
-            // Genre is special (many-to-many)
             SmartPlaylistField.Genre => BuildGenrePredicate(rule),
 
             SmartPlaylistField.PlayCount => BuildNumericPredicate(s => s.PlayCount, rule),
@@ -112,7 +109,7 @@ public class SmartPlaylistQueryBuilder
     {
         var value = (rule.Value ?? string.Empty).ToLowerInvariant();
 
-        // Use ToLower() for EF Core SQL translation compatibility instead of StringComparison
+        // ToLower() becomes SQLite lower(), which the connection interceptor makes Unicode-aware.
         return rule.Operator switch
         {
             SmartPlaylistOperator.Is =>

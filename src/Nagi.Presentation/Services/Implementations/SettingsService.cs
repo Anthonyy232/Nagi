@@ -59,6 +59,8 @@ public partial class SettingsService : IUISettingsService
     private const string WasapiExclusiveModeEnabledKey = "WasapiExclusiveModeEnabled";
     private const string AudioOutputDeviceIdKey = "AudioOutputDeviceId";
     private const string FadeOnPlayPauseEnabledKey = "FadeOnPlayPauseEnabled";
+    private const string FadeInDurationMsKey = "FadeInDurationMs";
+    private const string FadeOutDurationMsKey = "FadeOutDurationMs";
     private const string AccentColorKey = "AccentColor";
     private const string LyricsServiceProvidersKey = "LyricsServiceProviders";
     private const string MetadataServiceProvidersKey = "MetadataServiceProviders";

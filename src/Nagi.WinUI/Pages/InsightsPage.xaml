@@ -7,7 +7,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:vm="using:Nagi.Presentation.ViewModels"
-    x:Name="InsightsPageRoot"
     Background="Transparent"
     mc:Ignorable="d">
 
@@ -79,7 +78,7 @@
                        Style="{StaticResource PageTitleTextStyle}" />
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <ComboBox x:Name="TimeRangeSelector"
+                <ComboBox
                           AutomationProperties.Name="{x:Bind resources:Strings.InsightsPage_TimeRange_Name, Mode=OneTime}"
                           ItemsSource="{x:Bind ViewModel.TimeRangeLabels}"
                           SelectedIndex="{x:Bind ViewModel.SelectedTimeRangeIndex, Mode=TwoWay}"
@@ -239,7 +238,7 @@
                                         </MenuFlyout>
                                     </DropDownButton.Flyout>
                                 </DropDownButton>
-                                <Button x:Name="SeeAllSongsButton"
+                                <Button
                                         Grid.Column="2"
                                         Command="{x:Bind ViewModel.OpenSeeAllSongsCommand}"
                                         Style="{StaticResource SubtleButtonStyle}"
@@ -292,7 +291,7 @@
                                         </MenuFlyout>
                                     </DropDownButton.Flyout>
                                 </DropDownButton>
-                                <Button x:Name="SeeAllArtistsButton"
+                                <Button
                                         Grid.Column="2"
                                         Command="{x:Bind ViewModel.OpenSeeAllArtistsCommand}"
                                         Style="{StaticResource SubtleButtonStyle}"
@@ -356,7 +355,7 @@
                                         </MenuFlyout>
                                     </DropDownButton.Flyout>
                                 </DropDownButton>
-                                <Button x:Name="SeeAllAlbumsButton"
+                                <Button
                                         Grid.Column="2"
                                         Command="{x:Bind ViewModel.OpenSeeAllAlbumsCommand}"
                                         Style="{StaticResource SubtleButtonStyle}"
@@ -409,7 +408,7 @@
                                         </MenuFlyout>
                                     </DropDownButton.Flyout>
                                 </DropDownButton>
-                                <Button x:Name="SeeAllGenresButton"
+                                <Button
                                         Grid.Column="2"
                                         Command="{x:Bind ViewModel.OpenSeeAllGenresCommand}"
                                         Style="{StaticResource SubtleButtonStyle}"
@@ -432,7 +431,7 @@
                         </Grid>
                     </Grid>
 
-                    <Grid x:Name="Row4Grid" Style="{StaticResource InsightsCardStyle}">
+                    <Grid Style="{StaticResource InsightsCardStyle}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />

@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Hitilafu wakati wa kupakia folda</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>'{0}' imeongezwa na kuchanganuliwa kwa mafanikio.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Imeshindwa kuongeza folda. Njia inaweza kuwa batili.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Inaongeza folda kwenye maktaba…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Imeondoa &apos;{0}&apos; kutoka kwenye maktaba yako.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>Haikuweza kuondoa &apos;{0}&apos; kutoka kwenye maktaba yako.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>Inaondoa &apos;{0}&apos; kutoka kwenye maktaba yako…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Kuchanganua upya kwa '{0}' kumekamilika.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Hakuna mabadiliko yaliyogunduliwa kwa '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>Inachanganua upya '{0}'…</value>
@@ -352,9 +340,6 @@
   <data name="GenreView_DefaultName" xml:space="preserve">
     <value>Aina</value>
   </data>
-  <data name="GenreView_Error" xml:space="preserve">
-    <value>Hitilafu Wakati wa Kupakia Aina</value>
-  </data>
   <data name="Lyrics_NoSongSelected" xml:space="preserve">
     <value>Hakuna wimbo uliochaguliwa</value>
   </data>
@@ -381,9 +366,6 @@
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>nyimbo {0}</value>
-  </data>
-  <data name="Playlist_ErrorLoading" xml:space="preserve">
-    <value>Hitilafu wakati wa kupakia orodha ya kucheza</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
     <value>Inaanzisha orodha ya kucheza…</value>
@@ -414,9 +396,6 @@
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Inatengeneza orodha mpya ya kucheza…</value>
-  </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Imeshindwa kuunda orodha ya kucheza. Huenda tayari ipo.</value>
   </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Hitilafu imetokea wakati wa kuunda orodha ya kucheza.</value>
@@ -794,9 +773,6 @@ Je, unataka kuendelea?</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Inatayarisha uchanganuzi wa usawazishaji wa sauti…</value>
-  </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Uchanganuzi wa usawazishaji wa sauti umeghairiwa.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Hitilafu wakati wa kuchanganua: {0}</value>

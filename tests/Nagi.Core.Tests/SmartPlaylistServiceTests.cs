@@ -96,14 +96,12 @@ public class SmartPlaylistServiceTests : IDisposable
     [Theory]
     [InlineData("My Playlist")]
     [InlineData("MY PLAYLIST")]
-    public async Task CreateSmartPlaylistAsync_DuplicateName_UsesUniqueConstraint(string name)
+    public async Task CreateSmartPlaylistAsync_DuplicateName_ThrowsNameTaken(string name)
     {
         await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "My Playlist" });
         var save = () => _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = name });
 
-        var exception = await save.Should().ThrowAsync<DbUpdateException>();
-        exception.Which.InnerException.Should().BeOfType<Microsoft.Data.Sqlite.SqliteException>()
-            .Which.SqliteExtendedErrorCode.Should().Be(2067);
+        await save.Should().ThrowAsync<PlaylistNameTakenException>();
         (await _service.GetAllSmartPlaylistsAsync()).Should().ContainSingle();
     }
 
@@ -124,7 +122,7 @@ public class SmartPlaylistServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task DeleteSmartPlaylistAsync_RemovesThePlaylistAndItsRules()
+    public async Task DeleteSmartPlaylistAsync_RemovesThePlaylistItsRulesAndCover()
     {
         var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist
         {
@@ -136,14 +134,29 @@ public class SmartPlaylistServiceTests : IDisposable
             ]
         });
 
+        var cover = $"C:\\cache\\playlists\\{playlist.Id}.custom.jpg";
+        _fileSystem.DirectoryExists("C:\\cache\\playlists").Returns(true);
+        _fileSystem.FileExists(cover).Returns(true);
+
         (await _service.DeleteSmartPlaylistAsync(playlist.Id)).Should().BeTrue();
 
+        _fileSystem.Received(1).DeleteFile(cover);
         (await _service.GetSmartPlaylistByIdAsync(playlist.Id)).Should().BeNull();
         using var context = _dbHelper.ContextFactory.CreateDbContext();
         var rules = await context.SmartPlaylistRules
             .Where(r => r.SmartPlaylistId == playlist.Id)
             .ToListAsync();
         rules.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task GetRandomSmartPlaylistIdAsync_ReturnsNullWhenEmptyElseAStoredId()
+    {
+        (await _service.GetRandomSmartPlaylistIdAsync()).Should().BeNull();
+
+        var playlist = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "Test Smart" });
+
+        (await _service.GetRandomSmartPlaylistIdAsync()).Should().Be(playlist.Id);
     }
 
     [Fact]
@@ -233,14 +246,14 @@ public class SmartPlaylistServiceTests : IDisposable
     [Theory]
     [InlineData("My Playlist")]
     [InlineData("MY PLAYLIST")]
-    public async Task RenameSmartPlaylistAsync_DuplicateName_ReturnsFalse(string name)
+    public async Task RenameSmartPlaylistAsync_DuplicateName_ThrowsNameTaken(string name)
     {
         await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "My Playlist" });
         var toRename = await _service.CreateSmartPlaylistAsync(new SmartPlaylist { Name = "Another Playlist" });
 
-        var result = await _service.RenameSmartPlaylistAsync(toRename!.Id, name);
+        var rename = () => _service.RenameSmartPlaylistAsync(toRename.Id, name);
 
-        result.Should().BeFalse();
+        await rename.Should().ThrowAsync<PlaylistNameTakenException>();
     }
 
     [Fact]
@@ -571,8 +584,10 @@ public class SmartPlaylistServiceTests : IDisposable
             (await _service.GetMatchingSongCountAsync(saved.Id)).Should().Be(3);
 
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de-DE");
-            var display = SmartPlaylistRuleValue.ToDisplayValue(SmartPlaylistField.Duration, reloaded.Rules.First().Value);
+            var display = SmartPlaylistRuleValue.ToDisplayValue(SmartPlaylistField.Duration, SmartPlaylistOperator.LessThan, reloaded.Rules.First().Value);
             display.Should().Be("180,5");
+            SmartPlaylistRuleValue.ToDisplayValue(SmartPlaylistField.DateAdded, SmartPlaylistOperator.GreaterThan, reloaded.Rules.Last().Value)
+                .Should().Be("01.02.2020");
             SmartPlaylistRuleValue.ToStoredValue(SmartPlaylistField.Duration, SmartPlaylistOperator.LessThan, display)
                 .Should().Be("180.5");
         }

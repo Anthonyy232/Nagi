@@ -2,11 +2,10 @@ using System.Runtime.InteropServices;
 using Windows.Foundation;
 using Windows.Graphics;
 using Microsoft.UI.Windowing;
-using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.Services.Implementations;
 
-public class Win32InteropService : IWin32InteropService
+public class Win32InteropService
 {
     public Rect GetWorkAreaForPoint(PointInt32 point)
     {

@@ -160,7 +160,6 @@ public partial class LibraryService
 
                             if (currentCount % progressReportingBatchSize == 0 || currentCount == totalFiles)
                             {
-                                _logger.LogInformation("Producer progress: {Count}/{Total}", currentCount, totalFiles);
                                 progress?.Report(new ScanProgress
                                 {
                                     StatusText = Resources.Strings.Status_ReadingSongDetails,
@@ -184,8 +183,6 @@ public partial class LibraryService
         {
             try
             {
-                var batchNumber = 0;
-
                 await foreach (var batch in channel.Reader.ReadAllAsync(pipelineToken).Chunk(50).ConfigureAwait(false))
                 {
                     foreach (var metadata in batch)
@@ -193,7 +190,6 @@ public partial class LibraryService
                         var dir = Path.GetDirectoryName(metadata.FilePath);
                         if (dir != null) discoveredDirectories.Add(dir);
                     }
-                    batchNumber++;
                     progress?.Report(new ScanProgress
                     {
                         StatusText = Resources.Strings.Status_ReadingSongDetails,
@@ -203,7 +199,6 @@ public partial class LibraryService
                     var saved = await ProcessSingleBatchAsync(folderId, batch, batchContext, artistIdCache,
                         albumIdCache, genreIdCache, filePathsBeingUpdated, unchangedFiles, replacedCovers,
                         pipelineToken).ConfigureAwait(false);
-                    _logger.LogInformation("Consumer finished batch {BatchNumber}. Saved {Count} items.", batchNumber, saved);
                     totalSaved += saved;
                 }
             }
@@ -289,11 +284,6 @@ public partial class LibraryService
         var albumDefinitions = BuildAlbumDefinitions(metadataList);
         var albumLookup = await ResolveAlbumsForBatchAsync(context, albumDefinitions, artistLookup, albumIdCache, cancellationToken).ConfigureAwait(false);
 
-        _logger.LogInformation("Processing single batch for folder {FolderId}. Metadata count: {Count}. First file: {First}, Last file: {Last}",
-            folderId, metadataList.Length,
-            Path.GetFileName(metadataList[0].FilePath),
-            Path.GetFileName(metadataList[^1].FilePath));
-
         foreach (var metadata in metadataList)
         {
             existingSongs.TryGetValue(metadata.FilePath, out var existingSong);
@@ -304,15 +294,12 @@ public partial class LibraryService
                 replacedCovers.Add(previousArt);
         }
 
-        _logger.LogInformation("Saving changes for batch...");
         // With AutoDetectChangesEnabled=false, collection operations (Clear/Add on navigation properties)
         // may not be reflected in entity states until DetectChanges is called explicitly.
         context.ChangeTracker.DetectChanges();
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
         context.ChangeTracker.Clear();
-
-        _logger.LogInformation("Batch saved successfully.");
 
         return metadataList.Length;
     }
@@ -474,7 +461,6 @@ public partial class LibraryService
         Dictionary<(string Title, string Artist), Guid> albumIdCache,
         CancellationToken cancellationToken)
     {
-        _logger.LogInformation("ResolveAlbumsForBatchAsync entered. Definition count: {Count}", albumDefinitions.Count);
         var albumLookup = new Dictionary<(string Title, string Artist), Album>();
 
         if (albumDefinitions.Count == 0)
@@ -520,7 +506,6 @@ public partial class LibraryService
         if (uncachedKeys.Count == 0)
             return albumLookup;
 
-        _logger.LogInformation("Creating {Count} new albums.", uncachedKeys.Count);
         foreach (var albumKey in uncachedKeys)
         {
             var definition = albumDefinitions[albumKey];

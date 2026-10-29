@@ -30,13 +30,13 @@ public class M3uPlaylistExportService : IPlaylistExportService
             if (!File.Exists(filePath))
             {
                 _logger.LogWarning("M3U file not found: {FilePath}", filePath);
-                return new PlaylistImportResult(false, null, 0, 0, [], string.Format(Resources.Strings.Format_NotFound, Resources.Strings.Label_File));
+                return new PlaylistImportResult(false, 0, 0);
             }
 
             var m3uDirectory = Path.GetDirectoryName(Path.GetFullPath(filePath))!;
 
             var matchedSongIds = new List<Guid>();
-            var unmatchedPaths = new List<string>();
+            var unmatchedCount = 0;
 
             await foreach (var line in File.ReadLinesAsync(filePath, Encoding.UTF8).ConfigureAwait(false))
             {
@@ -51,7 +51,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
                 var songPath = ResolveSongPath(trimmedLine, m3uDirectory);
                 if (songPath is null)
                 {
-                    unmatchedPaths.Add(trimmedLine);
+                    unmatchedCount++;
                     continue;
                 }
 
@@ -62,7 +62,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
                 }
                 else
                 {
-                    unmatchedPaths.Add(trimmedLine);
+                    unmatchedCount++;
                     _logger.LogDebug("Could not match path to library: {Path}", songPath);
                 }
             }
@@ -71,18 +71,17 @@ public class M3uPlaylistExportService : IPlaylistExportService
             if (matchedSongIds.Count == 0)
             {
                 _logger.LogWarning("No songs matched during import of {FilePath}", filePath);
-                return new PlaylistImportResult(false, null, 0, unmatchedPaths.Count, unmatchedPaths,
-                    Resources.Strings.Error_M3uImportNoSongsMatched);
+                return new PlaylistImportResult(false, 0, unmatchedCount);
             }
 
-            var playlist = await _playlistService.CreatePlaylistAsync(playlistName).ConfigureAwait(false);
-            if (playlist is null)
-            {
-                _logger.LogError("Failed to create playlist during import");
-                return new PlaylistImportResult(false, null, matchedSongIds.Count, unmatchedPaths.Count,
-                    unmatchedPaths, string.Format(Resources.Strings.Format_NotFound, Resources.Strings.Label_Playlist));
-            }
+            // Playlist names are unique, so re-importing a file adds "Name (2)" rather than failing.
+            var takenNames = (await _libraryReader.GetAllPlaylistsAsync().ConfigureAwait(false))
+                .Select(existing => existing.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
+            var baseName = ArtistNameHelper.NormalizeStringCore(playlistName) ?? playlistName;
+            var uniqueName = baseName;
+            for (var suffix = 2; takenNames.Contains(uniqueName); suffix++) uniqueName = $"{baseName} ({suffix})";
 
+            var playlist = await _playlistService.CreatePlaylistAsync(uniqueName).ConfigureAwait(false);
             var songsAdded = false;
             try
             {
@@ -96,21 +95,19 @@ public class M3uPlaylistExportService : IPlaylistExportService
             if (!songsAdded)
             {
                 _logger.LogWarning("Failed to add imported songs to playlist {PlaylistId}", playlist.Id);
-                return new PlaylistImportResult(false, null, matchedSongIds.Count, unmatchedPaths.Count,
-                    unmatchedPaths, Resources.Strings.Error_M3uImportAddSongsFailed);
+                return new PlaylistImportResult(false, matchedSongIds.Count, unmatchedCount);
             }
 
             _logger.LogInformation(
                 "Imported playlist '{PlaylistName}' from {FilePath}: {Matched} matched, {Unmatched} unmatched",
-                playlistName, filePath, matchedSongIds.Count, unmatchedPaths.Count);
+                playlistName, filePath, matchedSongIds.Count, unmatchedCount);
 
-            return new PlaylistImportResult(true, playlist.Id, matchedSongIds.Count, unmatchedPaths.Count,
-                unmatchedPaths);
+            return new PlaylistImportResult(true, matchedSongIds.Count, unmatchedCount);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to import playlist from {FilePath}", filePath);
-            return new PlaylistImportResult(false, null, 0, 0, [], ex.Message);
+            return new PlaylistImportResult(false, 0, 0);
         }
     }
 
@@ -245,7 +242,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
         var importedCount = 0;
         var totalMatched = 0;
         var totalUnmatched = 0;
-        var failedFiles = new List<string>();
+        var failedCount = 0;
 
         foreach (var filePath in filePaths)
         {
@@ -260,14 +257,14 @@ public class M3uPlaylistExportService : IPlaylistExportService
             }
             else
             {
-                failedFiles.Add(Path.GetFileName(filePath));
+                failedCount++;
             }
         }
 
         _logger.LogInformation(
             "Batch imported {Count} playlists: {Matched} matched, {Unmatched} unmatched, {Failed} failed",
-            importedCount, totalMatched, totalUnmatched, failedFiles.Count);
+            importedCount, totalMatched, totalUnmatched, failedCount);
 
-        return new BatchImportResult(importedCount > 0, importedCount, totalMatched, totalUnmatched, failedFiles);
+        return new BatchImportResult(importedCount > 0, importedCount, totalMatched, totalUnmatched, failedCount);
     }
 }

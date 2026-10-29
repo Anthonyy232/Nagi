@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Fout met laai van vouer</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>'{0}' is suksesvol bygevoeg en geskandeer.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Kon nie vouer byvoeg nie. Die pad is dalk ongeldig.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Voeg vouer by biblioteek toe…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>&apos;{0}&apos; is uit jou biblioteek verwyder.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>Kon nie &apos;{0}&apos; uit jou biblioteek verwyder nie.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>Verwyder tans &apos;{0}&apos; uit jou biblioteek…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Herskandering van '{0}' is voltooi.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Geen veranderinge vir '{0}' bespeur nie.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>Herskandeer tans '{0}'…</value>
@@ -352,9 +340,6 @@
   <data name="GenreView_DefaultName" xml:space="preserve">
     <value>Genre</value>
   </data>
-  <data name="GenreView_Error" xml:space="preserve">
-    <value>Fout met Laai van Genre</value>
-  </data>
   <data name="Lyrics_NoSongSelected" xml:space="preserve">
     <value>Geen liedjie gekies nie</value>
   </data>
@@ -381,9 +366,6 @@
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} liedjies</value>
-  </data>
-  <data name="Playlist_ErrorLoading" xml:space="preserve">
-    <value>Fout met laai van snitlys</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
     <value>Begin tans snitlys…</value>
@@ -414,9 +396,6 @@
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Skep tans nuwe snitlys…</value>
-  </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Kon nie snitlys skep nie. Dit bestaan dalk reeds.</value>
   </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>'n Fout het voorgekom terwyl die snitlys geskep is.</value>
@@ -794,9 +773,6 @@ Wil jy voortgaan?</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Berei tans volumenormaliseringskandering voor…</value>
-  </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Volumenormaliseringskandering gekanselleer.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Fout tydens skandering: {0}</value>

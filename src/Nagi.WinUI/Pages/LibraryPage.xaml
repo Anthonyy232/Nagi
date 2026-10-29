@@ -68,7 +68,7 @@
                     Margin="0,0,0,5"
                     VerticalAlignment="Bottom"
                     FontSize="13"
-                    Foreground="{ThemeResource TextFillColorSecondary}"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                     Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}"
                     Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
             </StackPanel>
@@ -98,7 +98,6 @@
                             Style="{StaticResource SongListViewPageIconButton}"
                             HorizontalAlignment="Right"
                             Margin="0,0,1,0"
-                            IsHitTestVisible="True"
                             Canvas.ZIndex="1">
                         <FontIcon x:Name="SearchIcon" FontSize="16" Glyph="&#xE721;" />
                     </Button>

@@ -16,32 +16,29 @@ public class MusicNavigationService(
 {
     public async Task NavigateToArtistAsync(object? parameter)
     {
-        try
-        {
-            if (await ResolveArtistIdAsync(parameter) is { } artistId)
-                navigationService.NavigateTo(new ArtistViewNavigationParameter(artistId));
-            else
-                logger.LogWarning("Could not resolve artist for navigation from {Parameter}", parameter);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Failed to navigate to the artist of {Parameter}", parameter);
-        }
+        if (await TryResolveAsync(ResolveArtistIdAsync, parameter, "artist") is { } artistId)
+            navigationService.NavigateTo(new ArtistViewNavigationParameter(artistId));
     }
 
     public async Task NavigateToAlbumAsync(object? parameter)
     {
+        if (await TryResolveAsync(ResolveAlbumIdAsync, parameter, "album") is { } albumId)
+            navigationService.NavigateTo(new AlbumViewNavigationParameter(albumId));
+    }
+
+    // Only the library lookup is caught: a page that fails to build should reach the crash handler like any navigation.
+    private async Task<Guid?> TryResolveAsync(Func<object?, Task<Guid?>> resolve, object? parameter, string kind)
+    {
         try
         {
-            if (await ResolveAlbumIdAsync(parameter) is { } albumId)
-                navigationService.NavigateTo(new AlbumViewNavigationParameter(albumId));
-            else
-                logger.LogWarning("Could not resolve album for navigation from {Parameter}", parameter);
+            if (await resolve(parameter) is { } id) return id;
+            logger.LogWarning("Could not resolve the {Kind} to open from {Parameter}", kind, parameter);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to navigate to the album of {Parameter}", parameter);
+            logger.LogError(ex, "Failed to look up the {Kind} of {Parameter}", kind, parameter);
         }
+        return null;
     }
 
     private async Task<Guid?> ResolveArtistIdAsync(object? parameter)

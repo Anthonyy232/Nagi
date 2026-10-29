@@ -267,13 +267,6 @@ public partial class LibraryReader : ILibraryReader, IDisposable
         return TimeSpan.FromTicks(ticks);
     }
 
-    public async Task<Playlist?> GetPlaylistByIdAsync(Guid playlistId)
-    {
-        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        return await context.Playlists.AsNoTracking()
-            .FirstOrDefaultAsync(p => p.Id == playlistId).ConfigureAwait(false);
-    }
-
     public async Task<IEnumerable<Playlist>> GetAllPlaylistsAsync(CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);

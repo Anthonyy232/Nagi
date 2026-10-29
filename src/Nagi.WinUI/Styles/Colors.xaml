@@ -336,7 +336,7 @@
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HoverOverlay"
                                                                        Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="#1AFFFFFF" />
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SubtleFillColorSecondaryBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleX" To="1.02" Duration="0:0:0.3" EasingFunction="{StaticResource CubicEaseOut}" />
                                         <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleY" To="1.02" Duration="0:0:0.3" EasingFunction="{StaticResource CubicEaseOut}" />
@@ -346,7 +346,7 @@
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HoverOverlay"
                                                                        Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="#26000000" />
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SubtleFillColorTertiaryBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleX" To="0.98" Duration="0:0:0.1" EasingFunction="{StaticResource CubicEaseOut}" />
                                         <DoubleAnimation Storyboard.TargetName="ItemScale" Storyboard.TargetProperty="ScaleY" To="0.98" Duration="0:0:0.1" EasingFunction="{StaticResource CubicEaseOut}" />
@@ -386,6 +386,7 @@
     <animation:CubicEase x:Key="CubicEaseOut" EasingMode="EaseOut" />
 
     <ResourceDictionary.ThemeDictionaries>
+        <!-- Default serves the light theme too; the colors are the same in both. -->
         <ResourceDictionary x:Key="Default">
             <StaticResource x:Key="SliderThumbBackground" ResourceKey="AppPrimaryColorBrush" />
             <StaticResource x:Key="SliderThumbBackgroundPointerOver" ResourceKey="AppPrimaryColorBrush" />
@@ -441,61 +442,7 @@
             <StaticResource x:Key="HyperlinkForegroundPointerOver" ResourceKey="AppPrimaryColorBrush" />
             <StaticResource x:Key="HyperlinkForegroundPressed" ResourceKey="AppPrimaryColorBrush" />
         </ResourceDictionary>
-        <ResourceDictionary x:Key="Light">
-            <StaticResource x:Key="SliderThumbBackground" ResourceKey="AppPrimaryColorBrush" />
-            <StaticResource x:Key="SliderThumbBackgroundPointerOver" ResourceKey="AppPrimaryColorBrush" />
-            <StaticResource x:Key="SliderThumbBackgroundPressed" ResourceKey="AppPrimaryColorBrush" />
-            <StaticResource x:Key="SliderTrackValueFill" ResourceKey="AppPrimaryColorBrush" />
-            <StaticResource x:Key="SliderTrackValueFillPointerOver" ResourceKey="AppPrimaryColorBrush" />
-            <StaticResource x:Key="SliderTrackValueFillPressed" ResourceKey="AppPrimaryColorBrush" />
-            <StaticResource x:Key="SliderTrackFill" ResourceKey="ControlStrokeColorSecondaryBrush" />
-            <StaticResource x:Key="SliderTrackFillPointerOver" ResourceKey="ControlStrokeColorSecondaryBrush" />
-            <StaticResource x:Key="SliderTrackFillPressed" ResourceKey="ControlStrokeColorSecondaryBrush" />
-            <StaticResource x:Key="ListViewItemSelectionIndicatorBrush" ResourceKey="AppPrimaryColorBrush" />
-            <StaticResource x:Key="ListViewItemSelectionIndicatorPointerOverBrush" ResourceKey="AppPrimaryColorBrush" />
-            <StaticResource x:Key="ListViewItemSelectionIndicatorPressedBrush" ResourceKey="AppPrimaryColorBrush" />
-            <StaticResource x:Key="ListViewItemSelectionIndicatorDisabledBrush" ResourceKey="AppPrimaryColorBrush" />
-
-            <LinearGradientBrush x:Key="TextControlElevationBorderFocusedBrush" MappingMode="Absolute" StartPoint="0,0" EndPoint="0,2">
-                <LinearGradientBrush.RelativeTransform>
-                    <ScaleTransform ScaleY="-1" CenterY="0.5" />
-                </LinearGradientBrush.RelativeTransform>
-                <GradientStop Offset="0.0" Color="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}" />
-                <GradientStop Offset="1.0" Color="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}" />
-                <GradientStop Offset="1.0" Color="{ThemeResource ControlStrokeColorDefault}" />
-            </LinearGradientBrush>
-            <StaticResource x:Key="TextControlBorderBrushFocused" ResourceKey="TextControlElevationBorderFocusedBrush" />
-
-            <StaticResource x:Key="HyperlinkButtonForeground" ResourceKey="AppPrimaryColorBrush" />
-            <StaticResource x:Key="HyperlinkButtonForegroundPointerOver" ResourceKey="AppPrimaryColorBrush" />
-            <StaticResource x:Key="HyperlinkButtonForegroundPressed" ResourceKey="AppPrimaryColorBrush" />
-
-            <StaticResource x:Key="ComboBoxItemPillFillBrush" ResourceKey="AppPrimaryColorBrush" />
-
-            <StaticResource x:Key="ToggleSwitchFillOn" ResourceKey="AppPrimaryColorBrush" />
-            <StaticResource x:Key="ToggleSwitchFillOnPointerOver" ResourceKey="AppPrimaryColorBrush" />
-            <StaticResource x:Key="ToggleSwitchFillOnPressed" ResourceKey="AppPrimaryColorBrush" />
-
-            <StaticResource x:Key="ProgressBarForeground" ResourceKey="AppPrimaryColorBrush" />
-            <StaticResource x:Key="ProgressRingForegroundThemeBrush" ResourceKey="AppPrimaryColorBrush" />
-
-            <StaticResource x:Key="CheckBoxCheckBackgroundFillChecked" ResourceKey="AppPrimaryColorBrush" />
-            <StaticResource x:Key="CheckBoxCheckBackgroundFillCheckedPointerOver" ResourceKey="AppPrimaryColorBrush" />
-            <StaticResource x:Key="CheckBoxCheckBackgroundFillCheckedPressed" ResourceKey="AppPrimaryColorBrush" />
-            <StaticResource x:Key="RadioButtonOuterEllipseCheckedFill" ResourceKey="AppPrimaryColorBrush" />
-            <StaticResource x:Key="RadioButtonOuterEllipseCheckedFillPointerOver" ResourceKey="AppPrimaryColorBrush" />
-            <StaticResource x:Key="RadioButtonOuterEllipseCheckedFillPressed" ResourceKey="AppPrimaryColorBrush" />
-
-            <StaticResource x:Key="TextControlSelectionHighlightColor" ResourceKey="AppPrimaryColorBrush" />
-
-            <StaticResource x:Key="AccentButtonBackground" ResourceKey="AppPrimaryColorBrush" />
-            <StaticResource x:Key="AccentButtonBackgroundPointerOver" ResourceKey="AppPrimaryColorBrush" />
-            <StaticResource x:Key="AccentButtonBackgroundPressed" ResourceKey="AppPrimaryColorBrush" />
-
-            <StaticResource x:Key="HyperlinkForeground" ResourceKey="AppPrimaryColorBrush" />
-            <StaticResource x:Key="HyperlinkForegroundPointerOver" ResourceKey="AppPrimaryColorBrush" />
-            <StaticResource x:Key="HyperlinkForegroundPressed" ResourceKey="AppPrimaryColorBrush" />
-        </ResourceDictionary>
+        <!-- Empty on purpose: high contrast uses the system colors instead of falling back to Default. -->
         <ResourceDictionary x:Key="HighContrast">
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>

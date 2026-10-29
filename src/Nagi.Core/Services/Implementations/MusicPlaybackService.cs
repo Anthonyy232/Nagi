@@ -244,7 +244,6 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
         CurrentTrack = transientSong;
         CurrentQueueIndex = -1;
-        CurrentListenHistoryId = null;
         _currentContext = new PlaybackContext(PlaybackContextType.Transient, null);
 
         // Track listens for transient playback only when the file maps to a known library song.
@@ -440,11 +439,11 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     }
 
     public Task StopAsync() =>
-        RunPlaybackRequest(StopInternalAsync);
+        RunPlaybackRequest(request => StopInternalAsync(request));
 
-    private async Task StopInternalAsync(int request)
+    private async Task StopInternalAsync(int request, bool clearStopSchedule = true)
     {
-        ScheduleStop(PlaybackStopMode.Off);
+        if (clearStopSchedule) ScheduleStop(PlaybackStopMode.Off);
         if (CurrentListenHistoryId.HasValue)
         {
             // Capture and clear synchronously before the async gap, mirroring the pattern in
@@ -720,7 +719,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     private async Task StartListenSessionAsync(Guid songId, int request)
     {
         // Presence listeners need the session before LoadAsync can raise MediaOpened.
-        var startedUtc = DateTime.UtcNow;
+        var startedUtc = _timeProvider.GetUtcNow().UtcDateTime;
         var sessionId = await _libraryWriter.StartListenSessionAsync(songId, _currentContext);
         if (!IsCurrentRequest(request))
         {

@@ -47,7 +47,6 @@
                 MaxLines="1"
                 MaxWidth="1200" />
             <Button
-                x:Name="EditLyricsButton"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 Style="{StaticResource SongListViewPageIconButton}"
@@ -127,6 +126,14 @@
                                         Foreground="{StaticResource AppPrimaryColorBrush}"
                                         Visibility="{x:Bind HasTranslatedText, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 </StackPanel>
+                                <!-- Hover background: last child so the text layers keep their indexes; drawn beneath them, out over the padding -->
+                                <Border
+                                    Margin="-32,-28"
+                                    Canvas.ZIndex="-1"
+                                    Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                    CornerRadius="{ThemeResource ControlCornerRadius}"
+                                    IsHitTestVisible="False"
+                                    Visibility="Collapsed" />
                             </Grid>
                         </DataTemplate>
                     </ItemsRepeater.ItemTemplate>

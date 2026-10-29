@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Erreur de chargement du dossier</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>'{0}' a été ajouté et analysé avec succès.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Échec de l'ajout du dossier. Le chemin peut être invalide.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Ajout du dossier à la bibliothèque…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>&apos;{0}&apos; a été retiré de votre bibliothèque.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>Impossible de retirer &apos;{0}&apos; de votre bibliothèque.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>Retrait de &apos;{0}&apos; de votre bibliothèque…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Réanalyse de '{0}' terminée.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Aucune modification détectée pour '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>Analyse de '{0}' en cours…</value>
@@ -352,9 +340,6 @@
   <data name="GenreView_DefaultName" xml:space="preserve">
     <value>Genre</value>
   </data>
-  <data name="GenreView_Error" xml:space="preserve">
-    <value>Erreur de chargement du genre</value>
-  </data>
   <data name="Lyrics_NoSongSelected" xml:space="preserve">
     <value>Aucun morceau sélectionné</value>
   </data>
@@ -381,9 +366,6 @@
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} morceaux</value>
-  </data>
-  <data name="Playlist_ErrorLoading" xml:space="preserve">
-    <value>Erreur de chargement de la liste de lecture</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
     <value>Lancement de la liste de lecture…</value>
@@ -414,9 +396,6 @@
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Création d'une nouvelle liste de lecture…</value>
-  </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Échec de la création de la liste de lecture. Elle peut déjà exister.</value>
   </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Une erreur est survenue lors de la création de la liste de lecture.</value>
@@ -794,9 +773,6 @@ Voulez-vous continuer ?</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Préparation de l'analyse de normalisation du volume…</value>
-  </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Analyse de normalisation du volume annulée.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Erreur lors de l'analyse : {0}</value>

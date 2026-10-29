@@ -107,12 +107,6 @@
   <data name="Label_Songs" xml:space="preserve">
     <value>Laulud</value>
   </data>
-  <data name="Label_Artists" xml:space="preserve">
-    <value>Artistid</value>
-  </data>
-  <data name="Label_Song" xml:space="preserve">
-    <value>Lugu</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Kaust</value>
   </data>
@@ -171,9 +165,6 @@
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Kausta {0}/{1} skaneerimine: {2} - {3}</value>
   </data>
-  <data name="Format_ScanCompleteResult" xml:space="preserve">
-    <value>Skaneerimine lõpetatud. Lisatud või uuendatud {0} {1}.</value>
-  </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Skaneerimine lõpetatud. Teek on ajakohane.</value>
@@ -213,18 +204,6 @@
     <value>Esitusloendi nimi ei tohi olla tühi.</value>
   </data>
   <!-- Labels -->
-  <data name="Label_WithLyrics" xml:space="preserve">
-    <value>koos sõnadega</value>
-  </data>
-  <data name="Label_WithCoverArt" xml:space="preserve">
-    <value>koos kaanepildiga</value>
-  </data>
-  <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>esitaja pildiga</value>
-  </data>
-  <data name="Label_And" xml:space="preserve">
-    <value>ja</value>
-  </data>
   <!-- Static Strings -->
   <data name="UnknownFilename" xml:space="preserve">
     <value>tundmatu</value>
@@ -234,12 +213,6 @@
   </data>
   <data name="SortByPrefix" xml:space="preserve">
     <value>Sorteeri: </value>
-  </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>Esitusloend loodi, kuid selle lugusid ei saanud lisada. Palun proovi uuesti importida.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Teie teegist ei leitud ühtegi laulu esitusloendist.</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Eksportimiseks pole ühtegi esitusloendit.</value>

@@ -18,8 +18,11 @@ internal sealed class SingleInstanceManager : IDisposable
 
     public SingleInstanceManager(string instanceId = "9A8B7C6D")
     {
-        _mutexName = $@"Global\NagiMusicPlayer-{instanceId}";
-        _pipeName = $"NagiMusicPlayer-Activation-{instanceId}";
+        // One instance per sign-in session: each user has their own library, and pipe names are machine-wide.
+        using var process = System.Diagnostics.Process.GetCurrentProcess();
+        var sessionId = process.SessionId;
+        _mutexName = $@"Local\NagiMusicPlayer-{instanceId}";
+        _pipeName = $"NagiMusicPlayer-Activation-{instanceId}-{sessionId}";
     }
 
     public bool TryAcquire()

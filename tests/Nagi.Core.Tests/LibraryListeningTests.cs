@@ -14,7 +14,9 @@ public partial class LibraryServiceTests
         Song[] songs = [
             new() { Folder = folder, Title = "Keep 100%", FilePath = "C:\\Music\\1.mp3" },
             new() { Folder = folder, Title = "Keep 100% again", FilePath = "C:\\Music\\2.mp3" },
-            new() { Folder = folder, Title = "Other", FilePath = "C:\\Music\\3.mp3" }
+            new() { Folder = folder, Title = "Other", FilePath = "C:\\Music\\3.mp3" },
+            // Matches only if the % in the search were treated as a wildcard.
+            new() { Folder = folder, Title = "Keep 1000", FilePath = "C:\\Music\\4.mp3" }
         ];
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {
@@ -29,7 +31,7 @@ public partial class LibraryServiceTests
 
         page.TotalCount.Should().Be(2);
         page.Items.Should().ContainSingle().Which.Id.Should().Be(ids[1]);
-        ids.Should().BeEquivalentTo(songs.Take(2).Select(s => s.Id));
+        ids.Should().Equal(songs.Take(2).Select(s => s.Id));
     }
 
     [Fact]

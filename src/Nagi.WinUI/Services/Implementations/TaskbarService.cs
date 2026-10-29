@@ -8,7 +8,6 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Resources;
-using Nagi.WinUI.Services.Abstractions;
 using Windows.Foundation;
 using Windows.UI;
 using static Nagi.WinUI.Helpers.TaskbarNativeMethods;
@@ -25,7 +24,7 @@ namespace Nagi.WinUI.Services.Implementations;
 ///     and handle button click events through window message processing. Icons are rendered
 ///     using Win2D for reliable, GPU-accelerated rendering without visual tree dependencies.
 /// </remarks>
-public sealed class TaskbarService : ITaskbarService
+public sealed class TaskbarService : IDisposable
 {
     private const int PreviousButtonId = 1;
     private const int PlayPauseButtonId = 2;
@@ -50,7 +49,7 @@ public sealed class TaskbarService : ITaskbarService
     private readonly ILogger<TaskbarService> _logger;
     private readonly IMusicPlaybackService _playbackService;
     private readonly IDispatcherService _dispatcherService;
-    private readonly IWin32InteropService _win32InteropService;
+    private readonly Win32InteropService _win32InteropService;
 
     private readonly object _iconLock = new();
 
@@ -72,7 +71,7 @@ public sealed class TaskbarService : ITaskbarService
         ILogger<TaskbarService> logger,
         IMusicPlaybackService playbackService,
         IDispatcherService dispatcherService,
-        IWin32InteropService win32InteropService)
+        Win32InteropService win32InteropService)
     {
         _logger = logger;
         _playbackService = playbackService;
@@ -80,6 +79,7 @@ public sealed class TaskbarService : ITaskbarService
         _win32InteropService = win32InteropService;
     }
 
+    /// <summary>Call once the window has a native handle.</summary>
     public void Initialize(nint windowHandle)
     {
         if (_isInitialized)
@@ -115,6 +115,7 @@ public sealed class TaskbarService : ITaskbarService
         _ = RefreshIconsAsync();
     }
 
+    /// <summary>Call from the window's message handler, which receives the thumbnail button clicks.</summary>
     public void HandleWindowMessage(int msg, nint wParam, nint lParam)
     {
         if (!_isInitialized || _isDisposed) return;
@@ -143,6 +144,7 @@ public sealed class TaskbarService : ITaskbarService
         }
     }
 
+    /// <summary>Redraws the button icons in the current accent color; rapid calls are debounced.</summary>
     public Task RefreshIconsAsync()
     {
         if (!_isInitialized || _isDisposed) return Task.CompletedTask;
@@ -152,7 +154,7 @@ public sealed class TaskbarService : ITaskbarService
             try
             {
                 var foregroundColor = await _dispatcherService.EnqueueAsync(() =>
-                    token.IsCancellationRequested || _isDisposed ? default : GetCurrentThemeForegroundColor()).ConfigureAwait(false);
+                    token.IsCancellationRequested || _isDisposed ? default : GetAccentColor()).ConfigureAwait(false);
 
                 // Win2D icon generation can run off the UI thread.
                 await Task.Run(() =>
@@ -249,22 +251,8 @@ public sealed class TaskbarService : ITaskbarService
         return Math.Max(DefaultIconSize, (int)(DefaultIconSize * dpi / BaseDpi));
     }
 
-    /// <summary>
-    ///     Gets the app primary color for icon rendering.
-    ///     Falls back to theme-based foreground if the resource is not found.
-    ///     Must be called from the UI thread.
-    /// </summary>
-    private static Color GetCurrentThemeForegroundColor()
-    {
-        if (Application.Current.Resources.TryGetValue("AppPrimaryColorBrush", out var resource)
-            && resource is SolidColorBrush brush)
-        {
-            return brush.Color;
-        }
-        return Application.Current.RequestedTheme == ApplicationTheme.Dark
-            ? Color.FromArgb(255, 255, 255, 255)
-            : Color.FromArgb(255, 0, 0, 0);
-    }
+    // The accent brush is a top-level app resource, so it is always there. Read it on the UI thread.
+    private static Color GetAccentColor() => ((SolidColorBrush)Application.Current.Resources["AppPrimaryColorBrush"]).Color;
 
     /// <summary>
     ///     Renders a glyph to an HICON using Win2D.

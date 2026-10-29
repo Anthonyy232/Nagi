@@ -64,9 +64,6 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
 
     public async Task ProcessPendingListensAsync(CancellationToken cancellationToken)
     {
-        if (cancellationToken.IsCancellationRequested) return;
-        if (!await IsEnabledAsync().ConfigureAwait(false)) return;
-
         var enabledSince = await _settingsService.GetListenBrainzEnabledSinceUtcAsync().ConfigureAwait(false);
         if (!enabledSince.HasValue) return;
 

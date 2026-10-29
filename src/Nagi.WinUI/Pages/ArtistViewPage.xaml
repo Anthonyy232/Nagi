@@ -59,17 +59,24 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <controls:ImageEx x:Name="AlbumArtwork" Grid.Row="0"
+                <Grid x:Name="AlbumArtwork" Grid.Row="0"
                     Width="{StaticResource AlbumCardImageSize}"
                     Height="{StaticResource AlbumCardImageSize}"
-                    HorizontalAlignment="Center"
-                    CornerRadius="{StaticResource ArtworkCornerRadius}"
-                    Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}"
-                    IsCacheEnabled="True"
-                    Source="{x:Bind CoverArtUri}"
-                    DecodePixelWidth="{StaticResource AlbumCardImageSizeLarge}"
-                    DecodePixelType="Logical"
-                    Stretch="UniformToFill" />
+                    HorizontalAlignment="Center">
+                    <controls:ImageEx
+                        CornerRadius="{StaticResource ArtworkCornerRadius}"
+                        Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        IsCacheEnabled="True"
+                        Source="{x:Bind CoverArtUri, Converter={StaticResource StringToImageSourceConverter}}"
+                        DecodePixelWidth="{StaticResource AlbumCardImageSizeLarge}"
+                        DecodePixelType="Logical"
+                        Stretch="UniformToFill" />
+                    <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                          CornerRadius="{StaticResource ArtworkCornerRadius}"
+                          Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                        <FontIcon HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" Glyph="&#xE93C;" />
+                    </Grid>
+                </Grid>
                 <TextBlock x:Name="AlbumName"
                     Grid.Row="1"
                     Margin="4,8,4,0"
@@ -134,42 +141,51 @@
                     <Grid Grid.Column="0" Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}" CornerRadius="75"
                           PointerEntered="ArtistImage_PointerEntered" PointerExited="ArtistImage_PointerExited"
                           Background="Transparent">
-                        <controls:ImageEx Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}" x:Name="AlbumImage"
+                        <controls:ImageEx Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}"
                             CornerRadius="75"
                             IsCacheEnabled="True"
                             Source="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
                             Stretch="UniformToFill"
                             DecodePixelWidth="{StaticResource HeaderImageSize}"
                             DecodePixelType="Logical"
-                            Visibility="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource NullOrEmptyStringToVisibilityConverter}}" />
+                            Visibility="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}" />
 
                         <Grid
                             Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                             CornerRadius="75"
-                            Visibility="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource InverseNullOrEmptyStringToVisibilityConverter}}">
+                            Visibility="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource InverseStringToVisibilityConverter}}">
                             <FontIcon
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontSize="64"
                                 Glyph="" />
                         </Grid>
-                        <Grid x:Name="EditOverlay"
-                              Background="{StaticResource MediaOnImageHoverScrimBrush}"
-                              CornerRadius="75"
-                              Opacity="0"
-                              PointerPressed="EditOverlay_PointerPressed">
-                            <FontIcon Glyph="&#xE70F;" Foreground="{StaticResource MediaOnImageTextPrimaryBrush}" FontSize="32" />
-                            <ToolTipService.ToolTip>
-                                <ToolTip Content="{x:Bind resources:Strings.ArtistViewPage_EditOverlay_Content, Mode=OneTime}" />
-                            </ToolTipService.ToolTip>
-                            <Grid.ContextFlyout>
-                                <MenuFlyout x:Name="ImageEditFlyout">
+                        <!-- A button, so the image menu is reachable by keyboard and screen readers, not only by pointer. -->
+                        <Button x:Name="EditOverlay"
+                                Padding="0"
+                                BorderThickness="0"
+                                Background="Transparent"
+                                CornerRadius="75"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                HorizontalContentAlignment="Stretch"
+                                VerticalContentAlignment="Stretch"
+                                Opacity="0"
+                                GotFocus="EditOverlay_GotFocus"
+                                LostFocus="EditOverlay_LostFocus"
+                                ToolTipService.ToolTip="{x:Bind resources:Strings.ArtistViewPage_EditOverlay_Content, Mode=OneTime}"
+                                AutomationProperties.Name="{x:Bind resources:Strings.ArtistViewPage_EditOverlay_Content, Mode=OneTime}">
+                            <Button.Flyout>
+                                <MenuFlyout>
                                     <MenuFlyoutItem Text="{x:Bind resources:Strings.ArtistViewPage_ImageMenu_ChangeImage, Mode=OneTime}" Command="{x:Bind ViewModel.ChangeArtistImageCommand}" />
                                     <MenuFlyoutItem Text="{x:Bind resources:Strings.ArtistViewPage_ImageMenu_RemoveImage, Mode=OneTime}" Command="{x:Bind ViewModel.RemoveArtistImageCommand}"
                                                     Visibility="{x:Bind ViewModel.IsCustomImage, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 </MenuFlyout>
-                            </Grid.ContextFlyout>
-                        </Grid>
+                            </Button.Flyout>
+                            <Grid Background="{StaticResource MediaOnImageHoverScrimBrush}" CornerRadius="75">
+                                <FontIcon Glyph="&#xE70F;" Foreground="{StaticResource MediaOnImageTextPrimaryBrush}" FontSize="32" />
+                            </Grid>
+                        </Button>
                     </Grid>
 
                     <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Center" Spacing="8">
@@ -192,7 +208,6 @@
                         <StackPanel x:Name="AlbumsContent" VerticalAlignment="Top" SizeChanged="OnAlbumsContentSizeChanged">
                         <TextBlock Text="{x:Bind resources:Strings.ArtistViewPage_Albums_Title, Mode=OneTime}" Style="{StaticResource SectionHeaderTextBlockStyle}" Foreground="{StaticResource AppPrimaryColorBrush}" />
                         <GridView
-                            x:Name="AlbumGridView"
                             Padding="0"
                             IsItemClickEnabled="True"
                             ItemClick="AlbumGridView_ItemClick"
@@ -228,7 +243,7 @@
                             Text="{x:Bind ViewModel.SelectedItemsCountText, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                        <TextBlock VerticalAlignment="Center" FontSize="13"
-                                   Foreground="{ThemeResource TextFillColorSecondary}"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                    Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}"
                                    Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                     </StackPanel>
@@ -257,7 +272,6 @@
                                     Style="{StaticResource SongListViewPageIconButton}"
                                     HorizontalAlignment="Right"
                                     Margin="0,0,1,0"
-                                    IsHitTestVisible="True"
                                     Canvas.ZIndex="1">
                                 <FontIcon x:Name="SearchIcon" FontSize="16" Glyph="&#xE721;" />
                             </Button>

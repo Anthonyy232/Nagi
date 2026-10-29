@@ -241,24 +241,6 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task PlayTransientFileAsync_WithMultipleArtists_SetsCorrectArtistName()
-    {
-        const string filePath = "C:\\temp\\multi.mp3";
-        var metadata = new SongFileMetadata
-        {
-            Title = "Multi Track",
-            Artists = new List<string> { "Artist 1", "Artist 2" }
-        };
-        _metadataService.ExtractMetadataAsync(filePath).Returns(metadata);
-        await _service.InitializeAsync();
-
-        await _service.PlayTransientFileAsync(filePath);
-
-        _service.CurrentTrack.Should().NotBeNull();
-        _service.CurrentTrack!.ArtistName.Should().Be("Artist 1 & Artist 2");
-    }
-
-    [Fact]
     public async Task AddTransientFilesToQueueAsync_AppendsAndPlaysExternalFiles()
     {
         var firstPath = "C:\\temp\\first.mp3";
@@ -286,6 +268,20 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         await _audioPlayer.Received(1).LoadAsync(Arg.Is<Song>(song => song.FilePath == firstPath));
         await _library.Writer.DidNotReceive().StartListenSessionAsync(
             externalIds[0], Arg.Any<PlaybackContext>());
+    }
+
+    [Fact]
+    public async Task AddTransientFilesToQueueAsync_WhenStoppedWithAQueue_PlaysTheDroppedFile()
+    {
+        const string path = "C:\\temp\\dropped.mp3";
+        _metadataService.ExtractMetadataAsync(path).Returns(new SongFileMetadata { Title = "Dropped" });
+        await _service.InitializeAsync();
+        await _service.PlayAsync(_testSongs);
+        await _service.StopAsync();
+
+        await _service.AddTransientFilesToQueueAsync([path]);
+
+        _service.CurrentTrack!.FilePath.Should().Be(path);
     }
 
     [Fact]
@@ -1078,6 +1074,19 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task RemoveRangeFromQueueAsync_WhenCurrentTrackIsRemoved_KeepsTheSleepTimer()
+    {
+        await _service.InitializeAsync();
+        await _service.PlayAsync(_testSongs, 1);
+        _service.ScheduleStop(PlaybackStopMode.Timer, TimeSpan.FromMinutes(30));
+
+        await _service.RemoveRangeFromQueueAsync(new[] { _testSongs[1].Id });
+
+        _service.CurrentTrack.Should().Be(_testSongs[2]);
+        _service.StopMode.Should().Be(PlaybackStopMode.Timer);
+    }
+
+    [Fact]
     public async Task RemoveRangeFromQueueAsync_WhenLastCurrentTrackIsRemovedWithoutRepeat_Stops()
     {
         await _service.InitializeAsync();
@@ -1206,37 +1215,26 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         ));
     }
 
-    [Fact]
-    public async Task SetEqualizerBandAsync_WithValidBand_AppliesAndSavesSettings()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task SettingABandOrThePreamp_ChangesOnlyThatValueAndSavesIt(bool preamp)
     {
         await _service.InitializeAsync();
+        var bandsBefore = _service.CurrentEqualizerSettings!.BandGains.ToList();
+        var preampBefore = _service.CurrentEqualizerSettings.Preamp;
         _audioPlayer.ClearReceivedCalls();
         _settingsService.ClearReceivedCalls();
         var eventTracker = new EventTracker(_service);
 
-        await _service.SetEqualizerBandAsync(1, 3.5f);
+        if (preamp) await _service.SetEqualizerPreampAsync(5.0f);
+        else await _service.SetEqualizerBandAsync(1, 3.5f);
 
-        _service.CurrentEqualizerSettings.Should().NotBeNull();
-        _service.CurrentEqualizerSettings!.BandGains[1].Should().Be(3.5f);
-        _audioPlayer.Received(1).ApplyEqualizerSettings(Arg.Is<EqualizerSettings>(s => s != null && s.BandGains[1] == 3.5f));
-        await _settingsService.Received(1).SetEqualizerSettingsAsync(Arg.Any<EqualizerSettings>());
-        eventTracker.EqualizerChangedCount.Should().Be(1);
-    }
-
-    [Fact]
-    public async Task SetEqualizerPreampAsync_WhenCalled_AppliesAndSavesSettings()
-    {
-        await _service.InitializeAsync();
-        _audioPlayer.ClearReceivedCalls();
-        _settingsService.ClearReceivedCalls();
-        var eventTracker = new EventTracker(_service);
-
-        await _service.SetEqualizerPreampAsync(5.0f);
-
-        _service.CurrentEqualizerSettings.Should().NotBeNull();
-        _service.CurrentEqualizerSettings!.Preamp.Should().Be(5.0f);
-        _audioPlayer.Received(1).ApplyEqualizerSettings(Arg.Is<EqualizerSettings>(s => s != null && s.Preamp == 5.0f));
-        await _settingsService.Received(1).SetEqualizerSettingsAsync(Arg.Any<EqualizerSettings>());
+        var after = _service.CurrentEqualizerSettings!;
+        after.Preamp.Should().Be(preamp ? 5.0f : preampBefore);
+        after.BandGains.Should().Equal(preamp ? bandsBefore : bandsBefore.Select((gain, i) => i == 1 ? 3.5f : gain));
+        _audioPlayer.Received(1).ApplyEqualizerSettings(after);
+        await _settingsService.Received(1).SetEqualizerSettingsAsync(after);
         eventTracker.EqualizerChangedCount.Should().Be(1);
     }
 

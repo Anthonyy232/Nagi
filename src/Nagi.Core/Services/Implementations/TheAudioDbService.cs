@@ -1,5 +1,3 @@
-using System.Net;
-using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
@@ -8,6 +6,7 @@ using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Services.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -43,7 +42,7 @@ file class TheAudioDbArtist
 ///     is 30 req/min), retry, and circuit breaker are handled by
 ///     <see cref="IProviderPipelineProvider"/>.
 /// </summary>
-public class TheAudioDbService : ITheAudioDbService, IDisposable
+public class TheAudioDbService : ITheAudioDbService
 {
     private const string BaseUrl = "https://www.theaudiodb.com/api/v1/json";
     private const string ApiKeyName = ServiceProviderIds.TheAudioDb;
@@ -65,8 +64,6 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
         _logger = logger;
     }
 
-    public void Dispose() => _httpClient.Dispose();
-
     public async Task<ServiceResult<TheAudioDbArtistInfo>> GetArtistMetadataAsync(
         string musicBrainzId,
         string? languageCode = null,
@@ -75,6 +72,7 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
         if (string.IsNullOrWhiteSpace(musicBrainzId))
             return ServiceResult<TheAudioDbArtistInfo>.FromSuccessNotFound();
 
+        // Checked before the key too, so a failing provider doesn't cost a key request.
         if (_pipelines.IsCircuitOpen(ServiceProviderIds.TheAudioDb))
             return ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError();
 
@@ -85,79 +83,43 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
             return ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError();
         }
 
-        var url = $"{BaseUrl}/{apiKey}/artist-mb.php?i={musicBrainzId}";
-        var isoCode = languageCode?.Length > 2 ? languageCode[..2] : (languageCode ?? "Default");
-
-        return await _pipelines.ExecuteWithFallbackAsync(
-            ServiceProviderIds.TheAudioDb,
-            async ct =>
+        return await _pipelines.GetJsonAsync<TheAudioDbResponse, TheAudioDbArtistInfo>(_httpClient, ServiceProviderIds.TheAudioDb,
+            $"{BaseUrl}/{apiKey}/artist-mb.php?i={musicBrainzId}", response =>
             {
-                _logger.LogDebug("Fetching TheAudioDB metadata for MBID: {MBID} (Language: {LanguageCode})",
-                    musicBrainzId, isoCode);
-                return await _httpClient.GetAsync(url, ct).ConfigureAwait(false);
-            },
-            async (response, ct) =>
-            {
-                if (response.StatusCode == HttpStatusCode.NotFound)
-                {
-                    _logger.LogDebug("No TheAudioDB data found for MBID: {MBID}", musicBrainzId);
+                if (response.Artists?.FirstOrDefault() is not { } artist)
                     return ServiceResult<TheAudioDbArtistInfo>.FromSuccessNotFound();
-                }
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    _logger.LogWarning("TheAudioDB request failed with status {StatusCode} for MBID: {MBID}",
-                        response.StatusCode, musicBrainzId);
-                    return ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError();
-                }
-
-                var apiResult = await response.Content.ReadFromJsonAsync<TheAudioDbResponse>(cancellationToken: ct)
-                    .ConfigureAwait(false);
-
-                var artist = apiResult?.Artists?.FirstOrDefault();
-                if (artist is null)
-                {
-                    _logger.LogDebug("TheAudioDB returned null/empty artist data for MBID: {MBID}", musicBrainzId);
-                    return ServiceResult<TheAudioDbArtistInfo>.FromSuccessNotFound();
-                }
-
-                var bio = GetLocalizedBiography(artist.ExtensionData, languageCode);
-                var isLocalizedBio = !string.IsNullOrEmpty(bio);
-                bio ??= artist.BiographyEN;
 
                 var info = new TheAudioDbArtistInfo(
-                    Biography: ArtistNameHelper.NormalizeStringCore(bio),
+                    Biography: ArtistNameHelper.NormalizeStringCore(GetLocalizedBiography(artist.ExtensionData, languageCode) ?? artist.BiographyEN),
                     ThumbUrl: ArtistNameHelper.NormalizeStringCore(artist.ArtistThumb),
                     FanartUrl: ArtistNameHelper.NormalizeStringCore(artist.ArtistFanart)
                                ?? ArtistNameHelper.NormalizeStringCore(artist.ArtistFanart2)
-                               ?? ArtistNameHelper.NormalizeStringCore(artist.ArtistFanart3)
-                );
+                               ?? ArtistNameHelper.NormalizeStringCore(artist.ArtistFanart3));
 
-                if (info.Biography is null && info.ThumbUrl is null && info.FanartUrl is null)
-                {
-                    _logger.LogDebug("TheAudioDB returned empty metadata for MBID: {MBID}", musicBrainzId);
-                    return ServiceResult<TheAudioDbArtistInfo>.FromSuccessNotFound();
-                }
-
-                _logger.LogInformation("Found TheAudioDB metadata for MBID: {MBID} (Language: {LanguageCode}): Bio={HasBio} ({BioSource}), Thumb={HasThumb}, Fanart={HasFanart}",
-                    musicBrainzId, isoCode, !string.IsNullOrEmpty(info.Biography), isLocalizedBio ? isoCode : "en",
-                    !string.IsNullOrEmpty(info.ThumbUrl), !string.IsNullOrEmpty(info.FanartUrl));
-                return ServiceResult<TheAudioDbArtistInfo>.FromSuccess(info);
-            },
-            fallback: ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError(),
-            _logger,
-            $"fetch metadata for MBID {musicBrainzId}",
-            cancellationToken).ConfigureAwait(false);
+                return info.Biography is null && info.ThumbUrl is null && info.FanartUrl is null
+                    ? ServiceResult<TheAudioDbArtistInfo>.FromSuccessNotFound()
+                    : ServiceResult<TheAudioDbArtistInfo>.FromSuccess(info);
+            }, _logger, $"metadata for MBID {musicBrainzId}", cancellationToken).ConfigureAwait(false);
     }
+
+    // Biography fields are named by an upper-case code, which for a few languages is a country rather than the language.
+    private static readonly Dictionary<string, string> BiographyFieldCodes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["zh"] = "CN",
+        ["ja"] = "JP",
+        ["sv"] = "SE",
+        ["he"] = "IL",
+        ["nb"] = "NO",
+        ["nn"] = "NO"
+    };
 
     private static string? GetLocalizedBiography(Dictionary<string, JsonElement> extensionData, string? languageCode)
     {
-        if (string.IsNullOrWhiteSpace(languageCode))
-            return null;
+        if (string.IsNullOrWhiteSpace(languageCode)) return null;
+        var language = languageCode.Split('-')[0];
+        var fieldCode = BiographyFieldCodes.GetValueOrDefault(language, language.ToUpperInvariant());
 
-        var isoCode = languageCode.Length > 2 ? languageCode[..2] : languageCode;
-
-        return extensionData.TryGetValue($"strBiography{isoCode}", out var biography) &&
+        return extensionData.TryGetValue($"strBiography{fieldCode}", out var biography) &&
                biography.ValueKind == JsonValueKind.String
             ? ArtistNameHelper.NormalizeStringCore(biography.GetString())
             : null;

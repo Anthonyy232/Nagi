@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Gabim në ngarkimin e dosjes</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>'{0}' u shtua dhe skanua me sukses.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Dështoi shtimi i dosjes. Shtegu mund të jetë i pavlefshëm.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Po shtohet dosja në bibliotekë…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>U hoq &apos;{0}&apos; nga biblioteka juaj.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>Nuk u mundësua heqja e &apos;{0}&apos; nga biblioteka juaj.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>Po hiqet &apos;{0}&apos; nga biblioteka juaj…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Riskanimi i '{0}' përfundoi.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Asnjë ndryshim nuk u zbulua për '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>Po riskanohet '{0}'…</value>
@@ -352,9 +340,6 @@
   <data name="GenreView_DefaultName" xml:space="preserve">
     <value>Zhanër</value>
   </data>
-  <data name="GenreView_Error" xml:space="preserve">
-    <value>Gabim në ngarkimin e zhanrit</value>
-  </data>
   <data name="Lyrics_NoSongSelected" xml:space="preserve">
     <value>Asnjë këngë e zgjedhur</value>
   </data>
@@ -381,9 +366,6 @@
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} këngë</value>
-  </data>
-  <data name="Playlist_ErrorLoading" xml:space="preserve">
-    <value>Gabim në ngarkimin e listës së luajtjes</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
     <value>Po niset lista e luajtjes…</value>
@@ -414,9 +396,6 @@
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Po krijohet lista e re e luajtjes…</value>
-  </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Dështoi krijimi i listës së luajtjes. Ajo mund të ekzistojë tashmë.</value>
   </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Ndodhi një gabim gjatë krijimit të listës së luajtjes.</value>
@@ -794,9 +773,6 @@ Dëshironi të vazhdoni?</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Po përgatitet skanimi i normalizimit të volumit…</value>
-  </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Skanimi i normalizimit të volumit u anulua.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Gabim gjatë skanimit: {0}</value>

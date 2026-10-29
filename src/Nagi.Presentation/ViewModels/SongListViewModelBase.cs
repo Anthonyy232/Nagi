@@ -53,10 +53,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     // the auxiliary ID fetch). Distinct from the base's internal page CTS, which gates LoadAsync.
     protected CancellationTokenSource? _pagedLoadCts;
 
-    // Navigation re-entry guards
-    private bool _isNavigatingToArtist;
-    private bool _isNavigatingToAlbum;
-
     protected SongListViewModelBase(
         ILibraryReader libraryReader,
         ILibraryWriter libraryWriter,
@@ -201,8 +197,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ShowInFolderCommand))]
     [NotifyCanExecuteChangedFor(nameof(ShowSongInfoCommand))]
-    [NotifyCanExecuteChangedFor(nameof(GoToAlbumCommand))]
-    [NotifyCanExecuteChangedFor(nameof(GoToArtistCommand))]
     public partial bool IsSingleSongSelected { get; set; }
 
     public bool HasSelectedSongs => SelectedItemsCount > 0;
@@ -459,16 +453,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     /// <summary>
     ///     Runs a user action, logging a failure and telling the user instead of letting it reach the view.
     /// </summary>
-    protected async Task RunActionAsync(Func<Task> action)
-    {
-        try { await action(); }
-        catch (OperationCanceledException) { }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Action failed");
-            if (!_isDisposed) await _uiService.ShowMessageDialogAsync(Strings.Generic_Error, Strings.Listening_ActionError);
-        }
-    }
+    protected Task RunActionAsync(Func<Task> action) => UserAction.RunAsync(action, _logger, _uiService, () => _isDisposed);
 
     [RelayCommand(CanExecute = nameof(CanExecutePlayAllCommands))]
     private Task PlayAllSongsAsync() => RunActionAsync(async () =>
@@ -557,20 +542,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     }
 
     [RelayCommand]
-    private async Task GoToAlbumAsync(object? parameter)
-    {
-        if (_isNavigatingToAlbum) return;
-
-        try
-        {
-            _isNavigatingToAlbum = true;
-            await _musicNavigationService.NavigateToAlbumAsync(parameter);
-        }
-        finally
-        {
-            _isNavigatingToAlbum = false;
-        }
-    }
+    private Task GoToAlbumAsync(object? parameter) => _musicNavigationService.NavigateToAlbumAsync(parameter);
 
     /// <summary>
     ///     Loads a song's credited artists in credit order, for the "Go to artist" submenu.
@@ -590,37 +562,19 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     }
 
     [RelayCommand]
-    public async Task GoToArtistAsync(object? parameter)
-    {
-        if (_isNavigatingToArtist) return;
-
-        try
-        {
-            _isNavigatingToArtist = true;
-
-            // For the base's "Play All/Selected" context, if no parameter is provided, we use the first selected song.
-            if (parameter == null && SelectedSongs.Any())
-            {
-                parameter = SelectedSongs.First();
-            }
-
-            await _musicNavigationService.NavigateToArtistAsync(parameter);
-        }
-        finally
-        {
-            _isNavigatingToArtist = false;
-        }
-    }
+    // Without a parameter it opens the artist of the selected song.
+    public Task GoToArtistAsync(object? parameter) =>
+        _musicNavigationService.NavigateToArtistAsync(parameter ?? SelectedSongs.FirstOrDefault());
 
     protected bool CanExecuteLoadCommands()
     {
         return !IsLoading;
     }
 
-    private bool CanExecutePlayAllCommands()
-    {
-        return !IsLoading && Songs.Any();
-    }
+    /// <summary>Whether play all, shuffle and mixes have anything to play.</summary>
+    protected virtual bool HasPlayableSongs => Songs.Any();
+
+    private bool CanExecutePlayAllCommands() => !IsLoading && HasPlayableSongs;
 
     private bool CanExecuteSelectedSongsCommands()
     {

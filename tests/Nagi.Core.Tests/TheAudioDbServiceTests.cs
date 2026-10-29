@@ -43,7 +43,6 @@ public class TheAudioDbServiceTests : IDisposable
 
     public void Dispose()
     {
-        _service.Dispose();
         _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _httpHandler.Dispose();
     }
@@ -132,6 +131,8 @@ public class TheAudioDbServiceTests : IDisposable
     [InlineData("de", null, "English Bio")]
     [InlineData("fr", "German Bio", "English Bio")]
     [InlineData(null, "German Bio", "English Bio")]
+    [InlineData("ja", null, "Japanese Bio")]
+    [InlineData("fil", "German Bio", "English Bio")]
     public async Task GetArtistMetadataAsync_SelectsLocalizedBiographyOrEnglish(string? language, string? localizedBio, string expected)
     {
         var audioDbResponse = new
@@ -141,7 +142,10 @@ public class TheAudioDbServiceTests : IDisposable
                 new
                 {
                     strBiographyEN = "English Bio",
-                    strBiographyDe = localizedBio
+                    strBiographyDe = localizedBio,
+                    strBiographyJP = "Japanese Bio",
+                    // Cutting "fil" to two letters would wrongly pick this one.
+                    strBiographyFI = "Finnish Bio"
                 }
             }
         };

@@ -124,7 +124,7 @@
                     <FontIcon FontSize="16" Glyph="&#xE8CB;" />
                 </Button>
 
-                <Button x:Name="RandomPlaylistButton"
+                <Button
                         ToolTipService.ToolTip="{x:Bind resources:Strings.PlaylistPage_RandomButton_ToolTip, Mode=OneTime}"
                         AutomationProperties.Name="{x:Bind resources:Strings.PlaylistPage_RandomButton_ToolTip, Mode=OneTime}"
                         Style="{StaticResource SongListViewPageIconButton}"

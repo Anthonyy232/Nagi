@@ -107,12 +107,6 @@
   <data name="Label_Songs" xml:space="preserve">
     <value>பாடல்கள்</value>
   </data>
-  <data name="Label_Artists" xml:space="preserve">
-    <value>கலைஞர்கள்</value>
-  </data>
-  <data name="Label_Song" xml:space="preserve">
-    <value>பாடல்</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>கோப்புறை</value>
   </data>
@@ -171,9 +165,6 @@
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>{1} இல் உள்ள {0} கோப்புறையை ஸ்கேன் செய்கிறது: {2} - {3}</value>
   </data>
-  <data name="Format_ScanCompleteResult" xml:space="preserve">
-    <value>ஸ்கேன் முடிந்தது. {0} {1} சேர்க்கப்பட்டது அல்லது புதுப்பிக்கப்பட்டது.</value>
-  </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>ஸ்கேன் முடிந்தது. நூலகம் புதுப்பித்த நிலையில் உள்ளது.</value>
@@ -213,18 +204,6 @@
     <value>பிளேலிஸ்ட் பெயர் காலியாக இருக்க முடியாது.</value>
   </data>
   <!-- Labels -->
-  <data name="Label_WithLyrics" xml:space="preserve">
-    <value>பாடல் வரிகளுடன்</value>
-  </data>
-  <data name="Label_WithCoverArt" xml:space="preserve">
-    <value>அட்டைப் படத்துடன்</value>
-  </data>
-  <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>கலைஞர் படத்துடன்</value>
-  </data>
-  <data name="Label_And" xml:space="preserve">
-    <value>மற்றும்</value>
-  </data>
   <!-- Static Strings -->
   <data name="UnknownFilename" xml:space="preserve">
     <value>அறியப்படாத</value>
@@ -234,12 +213,6 @@
   </data>
   <data name="SortByPrefix" xml:space="preserve">
     <value>வரிசைப்படுத்து: </value>
-  </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>பிளேலிஸ்ட் உருவாக்கப்பட்டது, ஆனால் அதன் பாடல்களைச் சேர்க்க முடியவில்லை. தயவுசெய்து மீண்டும் இறக்குமதி செய்ய முயற்சிக்கவும்.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>உங்கள் நூலகத்தில் பிளேலிஸ்ட்டில் இருந்து பாடல்கள் எதுவும் கண்டறியப்படவில்லை.</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>ஏற்றுமதி செய்ய பிளேலிஸ்ட்கள் இல்லை.</value>

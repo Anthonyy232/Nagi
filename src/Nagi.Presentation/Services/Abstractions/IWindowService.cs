@@ -49,6 +49,7 @@ public interface IWindowService
 
     /// <summary>
     ///     Lowers the process's resource priority while nothing needs it, such as when hidden and not playing.
+    ///     Asking for the mode already in effect does nothing.
     /// </summary>
     void SetEfficiencyMode(bool isEnabled);
 }

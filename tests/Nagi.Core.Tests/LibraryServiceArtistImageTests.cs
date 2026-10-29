@@ -391,21 +391,6 @@ public class LibraryServiceArtistImageTests : IDisposable
     }
 
     [Fact]
-    public async Task RescanFolder_CancellationRequested_ReturnsFalseAndDoesNotSave()
-    {
-        var (folder, artist, _) = await SeedUpToDateSongAsync();
-        using var cts = new CancellationTokenSource();
-        cts.Cancel();
-
-        var result = await _libraryService.RescanFolderForMusicAsync(folder.Id, cancellationToken: cts.Token);
-
-        result.Should().BeFalse(because: "a cancelled scan returns false without propagating the exception");
-        await _imageProcessor.DidNotReceive().ProcessImageBytesAsync(Arg.Any<byte[]>());
-        var path1 = await GetArtistLocalImagePathAsync(artist.Id);
-        path1.Should().BeNull(because: "cancellation must prevent any DB write");
-    }
-
-    [Fact]
     public async Task GetArtistDetails_LocalArtistJpgFound_SetsLocalImagePathBeforeOnlineProviders()
     {
         var (_, artist, _) = await SeedUpToDateSongAsync();

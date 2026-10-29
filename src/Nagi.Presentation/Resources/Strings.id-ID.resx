@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Kesalahan memuat folder</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>Berhasil menambahkan dan memindai '{0}'.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Gagal menambahkan folder. Jalur mungkin tidak valid.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Menambahkan folder ke pustaka…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Menghapus &apos;{0}&apos; dari pustaka Anda.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>Gagal menghapus &apos;{0}&apos; dari pustaka Anda.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>Menghapus &apos;{0}&apos; dari pustaka Anda…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Pemindaian ulang '{0}' selesai.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Tidak ada perubahan terdeteksi untuk '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>Memindai ulang '{0}'…</value>
@@ -352,9 +340,6 @@
   <data name="GenreView_DefaultName" xml:space="preserve">
     <value>Genre</value>
   </data>
-  <data name="GenreView_Error" xml:space="preserve">
-    <value>Kesalahan Memuat Genre</value>
-  </data>
   <data name="Lyrics_NoSongSelected" xml:space="preserve">
     <value>Tidak ada lagu yang dipilih</value>
   </data>
@@ -381,9 +366,6 @@
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} lagu</value>
-  </data>
-  <data name="Playlist_ErrorLoading" xml:space="preserve">
-    <value>Kesalahan memuat daftar putar</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
     <value>Memulai daftar putar…</value>
@@ -414,9 +396,6 @@
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Membuat daftar putar baru…</value>
-  </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Gagal membuat daftar putar. Mungkin sudah ada.</value>
   </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Terjadi kesalahan saat membuat daftar putar.</value>
@@ -794,9 +773,6 @@ Apakah Anda ingin melanjutkan?</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Menyiapkan pemindaian normalisasi volume…</value>
-  </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Pemindaian normalisasi volume dibatalkan.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Kesalahan selama pemindaian: {0}</value>

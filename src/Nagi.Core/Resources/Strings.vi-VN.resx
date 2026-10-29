@@ -107,12 +107,6 @@
   <data name="Label_Songs" xml:space="preserve">
     <value>Bài hát</value>
   </data>
-  <data name="Label_Artists" xml:space="preserve">
-    <value>Nghệ sĩ</value>
-  </data>
-  <data name="Label_Song" xml:space="preserve">
-    <value>Bài hát</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Thư mục</value>
   </data>
@@ -171,9 +165,6 @@
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Đang quét thư mục {0} trên {1}: {2} - {3}</value>
   </data>
-  <data name="Format_ScanCompleteResult" xml:space="preserve">
-    <value>Quét hoàn tất. Đã thêm hoặc cập nhật {0} {1}.</value>
-  </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Quét hoàn tất. Thư viện đã là mới nhất.</value>
@@ -213,18 +204,6 @@
     <value>Tên danh sách phát không được để trống.</value>
   </data>
   <!-- Labels -->
-  <data name="Label_WithLyrics" xml:space="preserve">
-    <value>có lời</value>
-  </data>
-  <data name="Label_WithCoverArt" xml:space="preserve">
-    <value>có ảnh bìa</value>
-  </data>
-  <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>có hình ảnh nghệ sĩ</value>
-  </data>
-  <data name="Label_And" xml:space="preserve">
-    <value>và</value>
-  </data>
   <!-- Static Strings -->
   <data name="UnknownFilename" xml:space="preserve">
     <value>không xác định</value>
@@ -234,12 +213,6 @@
   </data>
   <data name="SortByPrefix" xml:space="preserve">
     <value>Sắp xếp theo: </value>
-  </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>Danh sách phát đã được tạo, nhưng không thể thêm các bài hát. Vui lòng thử nhập lại.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Không tìm thấy bài hát nào từ danh sách phát trong thư viện của bạn.</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Không có danh sách phát nào để xuất.</value>

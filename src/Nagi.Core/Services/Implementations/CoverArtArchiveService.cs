@@ -11,7 +11,7 @@ namespace Nagi.Core.Services.Implementations;
 /// <summary>
 ///     Reads album covers from the Cover Art Archive, the image store that MusicBrainz releases link to.
 /// </summary>
-public class CoverArtArchiveService : ICoverArtArchiveService, IDisposable
+public class CoverArtArchiveService : ICoverArtArchiveService
 {
     private const string BaseUrl = "https://coverartarchive.org";
 
@@ -28,8 +28,6 @@ public class CoverArtArchiveService : ICoverArtArchiveService, IDisposable
         _pipelines = pipelines;
         _logger = logger;
     }
-
-    public void Dispose() => _httpClient.Dispose();
 
     public Task<ServiceResult<string>> GetReleaseCoverUrlAsync(string releaseId, CancellationToken cancellationToken = default) =>
         GetFrontCoverUrlAsync("release", releaseId, cancellationToken);

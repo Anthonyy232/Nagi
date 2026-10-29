@@ -107,12 +107,6 @@
   <data name="Label_Songs" xml:space="preserve">
     <value>Mga Kanta</value>
   </data>
-  <data name="Label_Artists" xml:space="preserve">
-    <value>Mga Artista</value>
-  </data>
-  <data name="Label_Song" xml:space="preserve">
-    <value>Kanta</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Folder</value>
   </data>
@@ -171,9 +165,6 @@
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Ini-scan ang folder {0} sa {1}: {2} - {3}</value>
   </data>
-  <data name="Format_ScanCompleteResult" xml:space="preserve">
-    <value>Tapos na ang pag-scan. Nagdagdag o nag-update ng {0} {1}.</value>
-  </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Tapos na ang pag-scan. Ang library ay napapanahon.</value>
@@ -213,18 +204,6 @@
     <value>Hindi maaaring walang laman ang pangalan ng playlist.</value>
   </data>
   <!-- Labels -->
-  <data name="Label_WithLyrics" xml:space="preserve">
-    <value>may liriko</value>
-  </data>
-  <data name="Label_WithCoverArt" xml:space="preserve">
-    <value>may cover art</value>
-  </data>
-  <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>na may larawan ng artista</value>
-  </data>
-  <data name="Label_And" xml:space="preserve">
-    <value>at</value>
-  </data>
   <!-- Static Strings -->
   <data name="UnknownFilename" xml:space="preserve">
     <value>hindi alam</value>
@@ -234,12 +213,6 @@
   </data>
   <data name="SortByPrefix" xml:space="preserve">
     <value>Pagbukud-bukurin Ayon sa: </value>
-  </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>Nagawa ang playlist, ngunit hindi naidagdag ang mga kanta nito. Subukang i-import muli.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Walang mga kanta mula sa playlist ang natagpuan sa iyong library.</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Walang mga playlist na i-e-export.</value>

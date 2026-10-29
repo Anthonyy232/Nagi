@@ -4,7 +4,7 @@ namespace Nagi.Core.Constants;
 
 public static class FileExtensions
 {
-    public static readonly HashSet<string> MusicFileExtensions = new(new[]
+    public static readonly IReadOnlySet<string> MusicFileExtensions = new HashSet<string>(new[]
     {
         ".aa", ".aac", ".aiff", ".ape", ".dsf", ".flac",
         ".m4a", ".m4b", ".mp3", ".mpc", ".mpp", ".ogg",
@@ -16,7 +16,7 @@ public static class FileExtensions
     /// <summary>
     ///     Supported image file extensions for cover art (WinUI 3 BitmapImage compatible).
     /// </summary>
-    public static readonly HashSet<string> ImageFileExtensions = new(new[]
+    public static readonly IReadOnlySet<string> ImageFileExtensions = new HashSet<string>(new[]
     {
         ".jpg", ".jpeg", ".png", ".bmp", ".gif", ".tiff", ".tif", ".ico"
     }, StringComparer.OrdinalIgnoreCase);

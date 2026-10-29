@@ -107,12 +107,6 @@
   <data name="Label_Songs" xml:space="preserve">
     <value>Utwory</value>
   </data>
-  <data name="Label_Artists" xml:space="preserve">
-    <value>Wykonawcy</value>
-  </data>
-  <data name="Label_Song" xml:space="preserve">
-    <value>Utwór</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Folder</value>
   </data>
@@ -171,9 +165,6 @@
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Skanowanie folderu {0} z {1}: {2} - {3}</value>
   </data>
-  <data name="Format_ScanCompleteResult" xml:space="preserve">
-    <value>Skanowanie zakończone. Dodano lub zaktualizowano {0} {1}.</value>
-  </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Skanowanie zakończone. Biblioteka jest aktualna.</value>
@@ -213,18 +204,6 @@
     <value>Nazwa playlisty nie może być pusta.</value>
   </data>
   <!-- Labels -->
-  <data name="Label_WithLyrics" xml:space="preserve">
-    <value>z tekstem</value>
-  </data>
-  <data name="Label_WithCoverArt" xml:space="preserve">
-    <value>z okładką</value>
-  </data>
-  <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>ze zdjęciem wykonawcy</value>
-  </data>
-  <data name="Label_And" xml:space="preserve">
-    <value>i</value>
-  </data>
   <!-- Static Strings -->
   <data name="UnknownFilename" xml:space="preserve">
     <value>nieznany</value>
@@ -234,12 +213,6 @@
   </data>
   <data name="SortByPrefix" xml:space="preserve">
     <value>Sortuj według: </value>
-  </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>Playlista została utworzona, ale nie można było dodać do niej utworów. Spróbuj zaimportować ponownie.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Żadne utwory z playlisty nie zostały znalezione w Twojej bibliotece.</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Brak playlist do wyeksportowania.</value>

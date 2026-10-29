@@ -107,12 +107,6 @@
   <data name="Label_Songs" xml:space="preserve">
     <value>Këngët</value>
   </data>
-  <data name="Label_Artists" xml:space="preserve">
-    <value>Artistët</value>
-  </data>
-  <data name="Label_Song" xml:space="preserve">
-    <value>Këngë</value>
-  </data>
   <data name="Label_Folder" xml:space="preserve">
     <value>Dosje</value>
   </data>
@@ -171,9 +165,6 @@
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Po skanohet dosja {0} nga {1}: {2} - {3}</value>
   </data>
-  <data name="Format_ScanCompleteResult" xml:space="preserve">
-    <value>Skanimi u përfundua. U shtuan ose u përditësuan {0} {1}.</value>
-  </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Skanimi u përfundua. Biblioteka është e përditësuar.</value>
@@ -213,18 +204,6 @@
     <value>Emri i listës së luajtjes nuk mund të jetë bosh.</value>
   </data>
   <!-- Labels -->
-  <data name="Label_WithLyrics" xml:space="preserve">
-    <value>me tekst</value>
-  </data>
-  <data name="Label_WithCoverArt" xml:space="preserve">
-    <value>me kopertinë</value>
-  </data>
-  <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>me imazh artisti</value>
-  </data>
-  <data name="Label_And" xml:space="preserve">
-    <value>dhe</value>
-  </data>
   <!-- Static Strings -->
   <data name="UnknownFilename" xml:space="preserve">
     <value>i panjohur</value>
@@ -234,12 +213,6 @@
   </data>
   <data name="SortByPrefix" xml:space="preserve">
     <value>Rendit sipas: </value>
-  </data>
-  <data name="Error_M3uImportAddSongsFailed" xml:space="preserve">
-    <value>Lista e luajtjes u krijua, por këngët e saj nuk mund të shtoheshin. Ju lutemi provoni ta importoni përsëri.</value>
-  </data>
-  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
-    <value>Asnjë këngë nga lista e luajtjes nuk u gjet në bibliotekën tuaj.</value>
   </data>
   <data name="Error_NoPlaylistsToExport" xml:space="preserve">
     <value>Nuk ka lista luajtjeje për t'u eksportuar.</value>

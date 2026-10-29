@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>கோப்புறையை ஏற்றுவதில் பிழை</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>'{0}' வெற்றிகரமாக சேர்க்கப்பட்டு ஸ்கேன் செய்யப்பட்டது.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>கோப்புறையை சேர்க்கத் தவறிவிட்டது. பாதை தவறாக இருக்கலாம்.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>கோப்புறையைத் தொகுப்பில் சேர்க்கிறது…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>உங்கள் தொகுப்பிலிருந்து &apos;{0}&apos; அகற்றப்பட்டது.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>உங்கள் தொகுப்பிலிருந்து &apos;{0}&apos;-ஐ அகற்ற முடியவில்லை.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>உங்கள் தொகுப்பிலிருந்து &apos;{0}&apos; அகற்றப்படுகிறது…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>'{0}' மறு ஸ்கேன் முடிந்தது.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>'{0}' க்கு எந்த மாற்றங்களும் கண்டறியப்படவில்லை.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>'{0}' மீண்டும் ஸ்கேன் செய்யப்படுகிறது…</value>
@@ -352,9 +340,6 @@
   <data name="GenreView_DefaultName" xml:space="preserve">
     <value>வகை</value>
   </data>
-  <data name="GenreView_Error" xml:space="preserve">
-    <value>வகையை ஏற்றுவதில் பிழை</value>
-  </data>
   <data name="Lyrics_NoSongSelected" xml:space="preserve">
     <value>பாடல் தேர்ந்தெடுக்கப்படவில்லை</value>
   </data>
@@ -381,9 +366,6 @@
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} பாடல்கள்</value>
-  </data>
-  <data name="Playlist_ErrorLoading" xml:space="preserve">
-    <value>பிளேலிஸ்ட்டை ஏற்றுவதில் பிழை</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
     <value>பாடல் பட்டியல் தொடங்குகிறது…</value>
@@ -414,9 +396,6 @@
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>புதிய பாடல் பட்டியல் உருவாக்கப்படுகிறது…</value>
-  </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>பிளேலிஸ்ட்டை உருவாக்கத் தவறிவிட்டது. அது ஏற்கனவே இருக்கலாம்.</value>
   </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>பிளேலிஸ்ட்டை உருவாக்கும்போது பிழை ஏற்பட்டது.</value>
@@ -794,9 +773,6 @@
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>ஒலி அளவு இயல்பாக்க ஸ்கேன் தயார் செய்யப்படுகிறது…</value>
-  </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>ஒலி அளவு இயல்பாக்க ஸ்கேன் ரத்து செய்யப்பட்டது.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>ஸ்கேன் செய்யும் போது பிழை: {0}</value>

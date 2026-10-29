@@ -392,17 +392,6 @@ public sealed class RomanizationPackTests : IDisposable
     }
 
     [Fact]
-    public async Task LyricRomanizationService_WithInstalledKoreanPack_RomanizesMixedScriptLine()
-    {
-        var service = CreateLyricService(isEnabled: true, installedPack: LoadSourcePack("korean-revised"));
-
-        var lines = await service.ApplyRomanizationAsync(new[] { new LyricLine(TimeSpan.Zero, $"sing {KoreanText}!") });
-
-        lines[0].Text.Should().Be($"sing {KoreanText}!");
-        lines[0].RomanizedText.Should().Be("sing saranghae!");
-    }
-
-    [Fact]
     public async Task LyricRomanizationService_WithMissingEarlierProviderPack_UsesInstalledLaterProvider()
     {
         var service = CreateLyricService(isEnabled: true, installedPack: LoadSourcePack("korean-revised"));

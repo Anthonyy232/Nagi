@@ -140,7 +140,7 @@
                         Text="{x:Bind ViewModel.SelectedItemsCountText, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     <TextBlock Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}"
-                               Foreground="{ThemeResource TextFillColorSecondary}" VerticalAlignment="Center"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"
                                FontSize="13"
                                Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                 </StackPanel>
@@ -170,7 +170,6 @@
                                 Style="{StaticResource SongListViewPageIconButton}"
                                 HorizontalAlignment="Right"
                                 Margin="0,0,1,0"
-                                IsHitTestVisible="True"
                                 Canvas.ZIndex="1">
                             <FontIcon x:Name="SearchIcon" FontSize="16" Glyph="&#xE721;" />
                         </Button>

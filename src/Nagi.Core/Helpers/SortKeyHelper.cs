@@ -3,8 +3,8 @@ using System.Globalization;
 namespace Nagi.Core.Helpers;
 
 /// <summary>
-///     Produces normalized sort keys for titles and names. When article-stripping is enabled,
-///     leading English articles ("the", "a", "an") are removed so "The Beatles" sorts under "B".
+///     Produces normalized sort keys for titles and names. Leading English articles ("the", "a", "an")
+///     are removed so "The Beatles" sorts under "B".
 /// </summary>
 public static class SortKeyHelper
 {

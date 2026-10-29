@@ -31,7 +31,6 @@ public interface ILibraryReader
     Task<Artist?> GetArtistByNameAsync(string name);
     Task<IEnumerable<Album>> GetTopAlbumsForArtistAsync(Guid artistId, int limit);
     Task<Album?> GetAlbumByIdAsync(Guid albumId);
-    Task<Playlist?> GetPlaylistByIdAsync(Guid playlistId);
     Task<IEnumerable<Playlist>> GetAllPlaylistsAsync(CancellationToken token = default);
     Task<IEnumerable<Song>> GetSongsInPlaylistOrderedAsync(Guid playlistId, CancellationToken token = default);
     Task<IEnumerable<GenreSummary>> GetGenreSummariesAsync(CancellationToken token = default);

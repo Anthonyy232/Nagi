@@ -231,18 +231,18 @@ public partial class SettingsService
         return SetValueAndNotifyAsync(FadeOnPlayPauseEnabledKey, isEnabled, SettingsDefaults.FadeOnPlayPauseEnabled, FadeOnPlayPauseEnabledChanged);
     }
 
-    public Task<int> GetFadeInDurationMsAsync() => Task.FromResult(GetValue("FadeInDurationMs", SettingsDefaults.DefaultFadeInDurationMs));
+    public Task<int> GetFadeInDurationMsAsync() => Task.FromResult(GetValue(FadeInDurationMsKey, SettingsDefaults.DefaultFadeInDurationMs));
 
     public Task SetFadeInDurationMsAsync(int durationMs)
     {
-        return SetValueAndNotifyAsync("FadeInDurationMs", durationMs, SettingsDefaults.DefaultFadeInDurationMs, FadeInDurationChanged);
+        return SetValueAndNotifyAsync(FadeInDurationMsKey, durationMs, SettingsDefaults.DefaultFadeInDurationMs, FadeInDurationChanged);
     }
 
-    public Task<int> GetFadeOutDurationMsAsync() => Task.FromResult(GetValue("FadeOutDurationMs", SettingsDefaults.DefaultFadeOutDurationMs));
+    public Task<int> GetFadeOutDurationMsAsync() => Task.FromResult(GetValue(FadeOutDurationMsKey, SettingsDefaults.DefaultFadeOutDurationMs));
 
     public Task SetFadeOutDurationMsAsync(int durationMs)
     {
-        return SetValueAndNotifyAsync("FadeOutDurationMs", durationMs, SettingsDefaults.DefaultFadeOutDurationMs, FadeOutDurationChanged);
+        return SetValueAndNotifyAsync(FadeOutDurationMsKey, durationMs, SettingsDefaults.DefaultFadeOutDurationMs, FadeOutDurationChanged);
     }
 
     public Task<TEnum> GetSortOrderAsync<TEnum>(string pageKey) where TEnum : struct, Enum

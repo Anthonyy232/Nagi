@@ -51,37 +51,24 @@ public class LrcLibService : IOnlineLyricsService
             throw new BrokenCircuitException("LRCLIB is temporarily unavailable.");
         }
 
-        try
+        LrcLibResponse? strictResult = null;
+        if (artistName is not null && albumName is not null)
         {
-            LrcLibResponse? strictResult = null;
-            if (artistName is not null && albumName is not null)
-            {
-                strictResult = await TryStrictLookupAsync(trackName, artistName, albumName, duration, cancellationToken)
-                    .ConfigureAwait(false);
-                if (!string.IsNullOrWhiteSpace(strictResult?.SyncedLyrics))
-                    return strictResult.SyncedLyrics;
-            }
-            else
-            {
-                _logger.LogDebug("Strict lookup skipped (missing artist or album). Using search for: {Track}", trackName);
-            }
+            strictResult = await TryStrictLookupAsync(trackName, artistName, albumName, duration, cancellationToken)
+                .ConfigureAwait(false);
+            if (!string.IsNullOrWhiteSpace(strictResult?.SyncedLyrics))
+                return strictResult.SyncedLyrics;
+        }
+        else
+        {
+            _logger.LogDebug("Strict lookup skipped (missing artist or album). Using search for: {Track}", trackName);
+        }
 
-            var searchResult = await SearchLyricsAsync(trackName, artistName, albumName, duration, cancellationToken).ConfigureAwait(false);
-            if (!string.IsNullOrWhiteSpace(searchResult?.SyncedLyrics)) return searchResult.SyncedLyrics;
-            return !string.IsNullOrWhiteSpace(strictResult?.PlainLyrics)
-                ? strictResult.PlainLyrics
-                : searchResult?.PlainLyrics;
-        }
-        catch (OperationCanceledException)
-        {
-            _logger.LogDebug("Lyrics fetch cancelled for {Artist} - {Track}", artistName, trackName);
-            throw;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to fetch lyrics from LRCLIB for {Artist} - {Track}", artistName, trackName);
-            throw;
-        }
+        var searchResult = await SearchLyricsAsync(trackName, artistName, albumName, duration, cancellationToken).ConfigureAwait(false);
+        if (!string.IsNullOrWhiteSpace(searchResult?.SyncedLyrics)) return searchResult.SyncedLyrics;
+        return !string.IsNullOrWhiteSpace(strictResult?.PlainLyrics)
+            ? strictResult.PlainLyrics
+            : searchResult?.PlainLyrics;
     }
 
     private async Task<LrcLibResponse?> TryStrictLookupAsync(string trackName, string artistName, string albumName, TimeSpan duration, CancellationToken cancellationToken)

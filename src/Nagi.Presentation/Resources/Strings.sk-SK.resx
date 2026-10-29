@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>Chyba pri načítaní priečinka</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>Úspešne pridané a naskenované '{0}'.</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>Nepodarilo sa pridať priečinok. Cesta môže byť neplatná.</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Pridáva sa priečinok do knižnice…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>Priečinok &apos;{0}&apos; bol odstránený z vašej knižnice.</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>Nepodarilo sa odstrániť &apos;{0}&apos; z vašej knižnice.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>Odstraňuje sa &apos;{0}&apos; z vašej knižnice…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>Opätovné skenovanie '{0}' dokončené.</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>Pre '{0}' neboli zistené žiadne zmeny.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>Znova sa kontroluje '{0}'…</value>
@@ -352,9 +340,6 @@
   <data name="GenreView_DefaultName" xml:space="preserve">
     <value>Žáner</value>
   </data>
-  <data name="GenreView_Error" xml:space="preserve">
-    <value>Chyba pri načítaní žánru</value>
-  </data>
   <data name="Lyrics_NoSongSelected" xml:space="preserve">
     <value>Nevybratá žiadna skladba</value>
   </data>
@@ -381,9 +366,6 @@
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0, plural, one {# skladba} few {# skladby} many {# skladby} other {# skladieb}}</value>
-  </data>
-  <data name="Playlist_ErrorLoading" xml:space="preserve">
-    <value>Chyba pri načítaní zoznamu skladieb</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
     <value>Spúšťa sa zoznam skladieb…</value>
@@ -414,9 +396,6 @@
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>Vytvára sa nový zoznam skladieb…</value>
-  </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>Nepodarilo sa vytvoriť zoznam skladieb. Môže už existovať.</value>
   </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Počas vytvárania zoznamu skladieb došlo k chybe.</value>
@@ -794,9 +773,6 @@ Chcete pokračovať?</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>Pripravuje sa skenovanie na normalizáciu hlasitosti…</value>
-  </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>Skenovanie normalizácie hlasitosti zrušené.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>Chyba počas skenovania: {0}</value>

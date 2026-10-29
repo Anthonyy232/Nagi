@@ -25,7 +25,7 @@ public partial class ArtistViewModelItem : ObservableObject
     public partial string? LocalImageCachePath { get; set; }
 
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(LocalImageCachePath);
-    public bool IsCustomImage => LocalImageCachePath?.Contains(".custom.") == true;
+    public bool IsCustomImage => ImageStorageHelper.IsCustomImage(LocalImageCachePath);
 
     public override string ToString() => Name;
 }
@@ -126,20 +126,17 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
     private async Task PlayArtistAsync(Guid artistId)
     {
         if (IsLoading || artistId == Guid.Empty) return;
-        try { await _musicPlaybackService.PlayArtistAsync(artistId); }
-        catch (Exception ex) { _logger.LogCritical(ex, "Error playing artist {ArtistId}", artistId); }
+        await UserAction.RunAsync(() => _musicPlaybackService.PlayArtistAsync(artistId), _logger, _uiService);
     }
 
     [RelayCommand]
     private async Task PlayRandomArtistAsync()
     {
         if (IsLoading) return;
-        try
+        await UserAction.RunAsync(async () =>
         {
-            var id = await _libraryReader.GetRandomArtistIdAsync();
-            if (id.HasValue) await _musicPlaybackService.PlayArtistAsync(id.Value);
-        }
-        catch (Exception ex) { _logger.LogCritical(ex, "Error playing random artist"); }
+            if (await _libraryReader.GetRandomArtistIdAsync() is { } id) await _musicPlaybackService.PlayArtistAsync(id);
+        }, _logger, _uiService);
     }
 
     [RelayCommand]

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
 using NSubstitute;
@@ -54,6 +55,38 @@ public class FolderViewModelTests
         await viewModel.AddFolderCommand.ExecuteAsync(null);
 
         await library.Writer.DidNotReceiveWithAnyArgs().AddFolderAsync(default!, default);
+    }
+
+    [Fact]
+    public async Task AddFolder_FolderAlreadyInLibrary_TellsTheUserAndAddsNothing()
+    {
+        var library = new LibraryFakes();
+        var folder = new Folder { Name = "Music", Path = @"C:\Music" };
+        library.Reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new FolderSummary(folder, 1) });
+        var ui = Substitute.For<IUIService>();
+        ui.PickSingleFolderAsync().Returns(@"c:\music\");
+        using var viewModel = CreateViewModel(library, ui);
+        await viewModel.LoadFoldersCommand.ExecuteAsync(null);
+
+        await viewModel.AddFolderCommand.ExecuteAsync(null);
+
+        await ui.Received(1).ShowMessageDialogAsync(Arg.Any<string>(), Strings.Folders_AddFolder_Exists);
+        await library.Writer.DidNotReceiveWithAnyArgs().AddFolderAsync(default!, default);
+    }
+
+    [Fact]
+    public async Task AddFolder_OverlappingAnExistingFolder_TellsTheUserWhyAndScansNothing()
+    {
+        var library = new LibraryFakes();
+        library.Writer.AddFolderAsync(@"C:\Music\Rock").Returns<Folder?>(_ => throw new FolderOverlapsException(@"C:\Music\Rock"));
+        var ui = Substitute.For<IUIService>();
+        ui.PickSingleFolderAsync().Returns(@"C:\Music\Rock");
+        using var viewModel = CreateViewModel(library, ui);
+
+        await viewModel.AddFolderCommand.ExecuteAsync(null);
+
+        await ui.Received(1).ShowMessageDialogAsync(Strings.FolderPage_AddFolder_Label, Strings.Folders_AddFolder_Overlaps);
+        await library.Scanner.DidNotReceiveWithAnyArgs().ScanFolderForMusicAsync(default!, default, default);
     }
 
     [Theory]

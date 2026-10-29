@@ -87,6 +87,7 @@ public partial class MusicPlaybackService
 
         if (_queue.Order.Count == 0 && CurrentTrack != null) _queue.Add(CurrentTrack.Id);
         var queuedIds = _queue.Order.ToHashSet();
+        Guid? firstDroppedId = null;
         foreach (var item in songs)
         {
             var song = item.Song;
@@ -99,13 +100,14 @@ public partial class MusicPlaybackService
                     _transientTracks.Register(song);
             }
             if (queuedIds.Add(song.Id)) _queue.Add(song.Id);
+            firstDroppedId ??= song.Id;
         }
         CommitQueueChanges();
 
-        if (CurrentTrack == null && _queue.Order.Count > 0 && IsCurrentRequest(request))
+        if (CurrentTrack == null && firstDroppedId is { } playId && IsCurrentRequest(request))
         {
             _currentContext = new PlaybackContext(PlaybackContextType.Transient, null);
-            await PlayQueueItemAsync(0);
+            await PlayQueueItemAsync(_queue.IndexOf(playId));
         }
     }
 
@@ -265,7 +267,8 @@ public partial class MusicPlaybackService
         return RunPlaybackRequest(async request =>
         {
             FinalizeCurrentListenBeforeQueueRemoval();
-            await StopInternalAsync(request);
+            // Playback carries on with the next song, so a sleep timer or "stop at queue end" still applies.
+            await StopInternalAsync(request, clearStopSchedule: !nextSongId.HasValue);
             if (!IsCurrentRequest(request)) return;
             RemoveQueuedTracks(idsToRemove);
             if (nextSongId.HasValue && IsCurrentRequest(request))

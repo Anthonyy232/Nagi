@@ -18,7 +18,7 @@ public class ListenHistory
 
     /// <summary>
     ///     Indicates whether this listen has met the time requirements (e.g., >4 mins or 50% played)
-    ///     to be submitted to a scrobbling service. Defaults to false.
+    ///     to be submitted to a scrobbling service.
     /// </summary>
     public bool IsEligibleForScrobbling { get; set; }
 

@@ -6,7 +6,6 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Popups;
-using Nagi.WinUI.Services.Abstractions;
 using WinRT.Interop;
 
 namespace Nagi.WinUI.Services.Implementations;
@@ -22,14 +21,14 @@ public class TrayPopupService : ITrayPopupService, IDisposable
     private readonly MainWindow _mainWindow;
     private readonly Func<ElementTheme, TrayPopup> _createPopup;
 
-    private readonly IWin32InteropService _win32;
+    private readonly Win32InteropService _win32;
     private bool _isAnimating;
     private bool _isDisposed;
     private long _lastDeactivatedTime;
     private TrayPopup? _popupWindow;
 
     public TrayPopupService(MainWindow mainWindow, Func<ElementTheme, TrayPopup> createPopup,
-        IWin32InteropService win32InteropService,
+        Win32InteropService win32InteropService,
         IDispatcherService dispatcherService, ILogger<TrayPopupService> logger)
     {
         _mainWindow = mainWindow;
@@ -121,7 +120,12 @@ public class TrayPopupService : ITrayPopupService, IDisposable
         var scale = _win32.GetDpiForWindow(windowHandle) / BASE_DPI;
 
         var contentHeight = await popup.ShowAndMeasureAsync(POPUP_WIDTH_DIPS);
-        if (_popupWindow != popup) return;
+        if (_popupWindow != popup)
+        {
+            // The popup closed while measuring; leaving the flag set would block every later toggle.
+            _isAnimating = false;
+            return;
+        }
 
         popup.AppWindow.ResizeClient(new SizeInt32(
             (int)Math.Ceiling(POPUP_WIDTH_DIPS * scale),

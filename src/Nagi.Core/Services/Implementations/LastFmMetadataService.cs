@@ -45,9 +45,9 @@ public class LastFmMetadataService : ILastFmMetadataService
             return Task.FromResult(ServiceResult<ArtistInfo>.FromSuccessNotFound());
 
         var query = $"method=artist.getinfo&artist={Uri.EscapeDataString(artistName)}&autocorrect=1";
-        // Last.fm expects ISO 639-1 (2-letter) language codes.
-        if (!string.IsNullOrWhiteSpace(languageCode))
-            query += $"&lang={Uri.EscapeDataString(languageCode.Length > 2 ? languageCode[..2] : languageCode)}";
+        // Last.fm takes ISO 639-1 codes; a language with only a three-letter code (Filipino's fil) gets English.
+        if (languageCode is { Length: 2 })
+            query += $"&lang={Uri.EscapeDataString(languageCode)}";
 
         return GetAsync<LastFmArtistResponse, ArtistInfo>(query,
             response => response.Artist is null ? null : ToArtistInfo(response.Artist),
@@ -88,7 +88,6 @@ public class LastFmMetadataService : ILastFmMetadataService
         var (result, errorCode) = await TryFetchAsync(query, apiKey, map, subject, cancellationToken).ConfigureAwait(false);
         if (result is not null) return result;
 
-        // Error code 10 = invalid API key. Refresh the key and retry once.
         if (errorCode == InvalidApiKeyErrorCode)
         {
             _logger.LogWarning("Last.fm API key invalid. Refreshing and retrying for {Subject}.", subject);

@@ -6,7 +6,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Nagi.Core.Models.Lyrics;
 using Nagi.Presentation.Services.Implementations;
@@ -21,7 +20,6 @@ public sealed partial class LyricsPage : Page
     private const int AnimationDurationMs = 300;
     private const float ActiveScale = 1.03f;
     private const float InactiveScale = 1.0f;
-    private static readonly SolidColorBrush _transparentBrush = new(Microsoft.UI.Colors.Transparent);
     private readonly Storyboard _progressBarStoryboard = new();
     private readonly DoubleAnimation _progressBarAnimation = new() { To = 100, EnableDependentAnimation = true };
     private bool _isUnloaded;
@@ -175,6 +173,7 @@ public sealed partial class LyricsPage : Page
 
         SetLayerOpacity((Panel)grid.Children[0], 1.0f, false);
         SetLayerOpacity((Panel)grid.Children[1], 0.0f, false);
+        SetHoverVisible(grid, false);
     }
 
     private void ScrollToCurrentLine(bool disableAnimation)
@@ -281,20 +280,13 @@ public sealed partial class LyricsPage : Page
         return Math.Max(0.05, Math.Pow(0.55, distance));
     }
 
-    private void LyricItem_PointerEntered(object sender, PointerRoutedEventArgs e)
+    private void LyricItem_PointerEntered(object sender, PointerRoutedEventArgs e) => SetHoverVisible(sender, true);
+
+    private void LyricItem_PointerExited(object sender, PointerRoutedEventArgs e) => SetHoverVisible(sender, false);
+
+    private static void SetHoverVisible(object sender, bool visible)
     {
-        if (sender is not Grid grid) return;
-
-        grid.Background = (Brush)Application.Current.Resources["SubtleFillColorSecondaryBrush"];
-    }
-
-    private void LyricItem_PointerExited(object sender, PointerRoutedEventArgs e)
-    {
-        if (sender is not Grid grid) return;
-
-        // Use a cached brush — avoids allocating a new SolidColorBrush on every pointer exit.
-        // Transparent (not null) is required to keep hit-testing active over the padded Grid area.
-        grid.Background = _transparentBrush;
+        if (sender is Grid grid) grid.Children[2].Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private async void LyricItem_Tapped(object sender, TappedRoutedEventArgs e)

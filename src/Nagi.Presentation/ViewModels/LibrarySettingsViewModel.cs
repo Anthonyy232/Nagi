@@ -199,7 +199,7 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
         {
             await SaveMetadataSplitSettingsAsync();
             token.ThrowIfCancellationRequested();
-            await _libraryScanner.ForceRescanMetadataAsync(CreateGlobalOperationProgress(_globalOperation, token), token);
+            await _libraryScanner.ForceRescanMetadataAsync(_globalOperation.CreateProgress(token), token);
             token.ThrowIfCancellationRequested();
 
             await _uiService.ShowMessageDialogAsync(Strings.Settings_Dialog_RescanComplete_Title, Strings.Settings_Dialog_RescanComplete_Content);
@@ -271,6 +271,7 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
 
         if (!_isInitializing)
         {
+            // Deferred: moving the pinned provider here would change the collection while it is still raising this event.
             _dispatcherService.TryEnqueue(() =>
             {
                 if (_isDisposed) return;

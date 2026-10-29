@@ -11,6 +11,7 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
+using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
@@ -32,7 +33,6 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     private readonly ILibraryScanner _libraryScanner;
 
     private bool _isUpdatingFromService;
-    private bool _isEfficiencyModeEnabled;
     private bool _isCleanedUp;
 
     private double _lastReportedPosition;
@@ -305,6 +305,10 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     public async Task<bool?> GetRememberedPaneOpenAsync() =>
         await _settingsService.GetRememberPaneStateEnabledAsync() ? await _settingsService.GetLastPaneOpenAsync() : null;
 
+    /// <returns>The navigation items the user has turned on, in their chosen order.</returns>
+    public async Task<IReadOnlyList<NavigationItemSetting>> GetVisibleNavigationItemsAsync() =>
+        (await _settingsService.GetNavigationItemsAsync()).Where(item => item.IsEnabled).ToList();
+
     public async Task RememberPaneOpenAsync(bool isOpen)
     {
         if (await _settingsService.GetRememberPaneStateEnabledAsync())
@@ -328,16 +332,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     [RelayCommand]
     private Task NextAsync() => RunActionAsync(_playbackService.NextAsync);
 
-    private async Task RunActionAsync(Func<Task> action)
-    {
-        try { await action(); }
-        catch (OperationCanceledException) { }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Action failed");
-            if (!_isCleanedUp) await _uiService.ShowMessageDialogAsync(Strings.Generic_Error, Strings.Listening_ActionError);
-        }
-    }
+    private Task RunActionAsync(Func<Task> action) => UserAction.RunAsync(action, _logger, _uiService, () => _isCleanedUp);
 
     [RelayCommand]
     private Task ToggleShuffleAsync()
@@ -446,11 +441,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         var isInBackgroundState = !isVisible || isMiniPlayerActive || isMinimized;
         var shouldBeEfficient = !isPlaying && isInBackgroundState;
 
-        if (_isEfficiencyModeEnabled != shouldBeEfficient)
-        {
-            _isEfficiencyModeEnabled = shouldBeEfficient;
-            _windowService.SetEfficiencyMode(shouldBeEfficient);
-        }
+        _windowService.SetEfficiencyMode(shouldBeEfficient);
     }
 
     private void UpdateTrackDetails(Song? song)
@@ -542,9 +533,10 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         }
     }
 
+    /// <summary>Queues dropped files and folders in file name order.</summary>
     public async Task AddFilesToQueueAsync(IEnumerable<string> paths)
     {
-        try { await _playbackService.AddTransientFilesToQueueAsync(paths); }
+        try { await _playbackService.AddTransientFilesToQueueAsync(paths.OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase)); }
         catch (Exception ex) { _logger.LogError(ex, "Failed to add dropped files to the playback queue."); }
     }
 

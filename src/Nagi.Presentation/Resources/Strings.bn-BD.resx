@@ -271,9 +271,6 @@
   <data name="Folders_ErrorLoading" xml:space="preserve">
     <value>ফোল্ডার লোড করতে ত্রুটি</value>
   </data>
-  <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>'{0}' সফলভাবে যোগ করা এবং স্ক্যান করা হয়েছে।</value>
-  </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
     <value>ফোল্ডার যোগ করতে ব্যর্থ হয়েছে। পথটি অবৈধ হতে পারে।</value>
   </data>
@@ -283,20 +280,11 @@
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>লাইব্রেরিতে ফোল্ডার যোগ করা হচ্ছে…</value>
   </data>
-  <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>আপনার লাইব্রেরি থেকে &apos;{0}&apos; সরানো হয়েছে।</value>
-  </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
     <value>আপনার লাইব্রেরি থেকে &apos;{0}&apos; সরানো যায়নি।</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
     <value>আপনার লাইব্রেরি থেকে &apos;{0}&apos; সরানো হচ্ছে…</value>
-  </data>
-  <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>'{0}' এর পুনরায় স্ক্যান সম্পূর্ণ।</value>
-  </data>
-  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>'{0}' এর জন্য কোনো পরিবর্তন সনাক্ত করা যায়নি।</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
     <value>'{0}' পুনরায় স্ক্যান করা হচ্ছে…</value>
@@ -352,9 +340,6 @@
   <data name="GenreView_DefaultName" xml:space="preserve">
     <value>জেনার</value>
   </data>
-  <data name="GenreView_Error" xml:space="preserve">
-    <value>জেনার লোড করতে ত্রুটি</value>
-  </data>
   <data name="Lyrics_NoSongSelected" xml:space="preserve">
     <value>কোনো গান নির্বাচন করা হয়নি</value>
   </data>
@@ -381,9 +366,6 @@
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} গান</value>
-  </data>
-  <data name="Playlist_ErrorLoading" xml:space="preserve">
-    <value>প্লেলিস্ট লোড করতে ত্রুটি</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
     <value>প্লেলিস্ট শুরু করা হচ্ছে…</value>
@@ -414,9 +396,6 @@
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
     <value>নতুন প্লেলিস্ট তৈরি করা হচ্ছে…</value>
-  </data>
-  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>প্লেলিস্ট তৈরি করতে ব্যর্থ হয়েছে। এটি ইতিমধ্যেই বিদ্যমান থাকতে পারে।</value>
   </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>প্লেলিস্ট তৈরির সময় একটি ত্রুটি ঘটেছে।</value>
@@ -794,9 +773,6 @@
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
     <value>ভলিউম স্বাভাবিককরণ স্ক্যানের প্রস্তুতি নেওয়া হচ্ছে…</value>
-  </data>
-  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>ভলিউম স্বাভাবিককরণ স্ক্যান বাতিল করা হয়েছে।</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
     <value>স্ক্যান করার সময় ত্রুটি: {0}</value>

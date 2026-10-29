@@ -17,11 +17,14 @@ public static class SmartPlaylistRuleValue
         return value;
     }
 
-    public static string ToDisplayValue(SmartPlaylistField field, string? value)
+    public static string ToDisplayValue(SmartPlaylistField field, SmartPlaylistOperator ruleOperator, string? value)
     {
         if (field is SmartPlaylistField.Bpm or SmartPlaylistField.Duration &&
             TryParseNumber(value, out var number))
             return number.ToString("R", CultureInfo.CurrentCulture);
+
+        if (IsAbsoluteDate(field, ruleOperator) && TryParseDate(value, out var date))
+            return date.ToString(date.TimeOfDay == TimeSpan.Zero ? "d" : "g", CultureInfo.CurrentCulture);
 
         return value ?? string.Empty;
     }

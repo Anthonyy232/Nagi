@@ -450,8 +450,7 @@ public partial class LibraryService
         // Navidrome priority: local folder images first (artist.*, album/artist.*), then external providers.
         // Skip if a custom image or a previously-found local folder image is already cached.
         // We DO NOT skip if they only have a .fetched (external) image, as local files take precedence.
-        if (artist.LocalImageCachePath == null ||
-            (!artist.LocalImageCachePath.Contains(".custom.") && !artist.LocalImageCachePath.Contains(".local.")))
+        if (!ImageStorageHelper.IsUserOrFolderImage(artist.LocalImageCachePath))
         {
             var localImageBytes = preloadedSongDirectories is not null
                 ? await FindArtistImageInDirectoriesAsync(preloadedSongDirectories, artist.Name, cancellationToken).ConfigureAwait(false)
@@ -511,7 +510,7 @@ public partial class LibraryService
         // Download and cache the best image found from external providers.
         // Skip if a local folder image or custom image is already set.
         if (!string.IsNullOrEmpty(found.ImageUrl) &&
-            (artist.LocalImageCachePath == null || (!artist.LocalImageCachePath.Contains(".custom.") && !artist.LocalImageCachePath.Contains(".local."))))
+            !ImageStorageHelper.IsUserOrFolderImage(artist.LocalImageCachePath))
         {
             var downloadedPath =
                 await DownloadAndCacheArtistImageAsync(artist, new Uri(found.ImageUrl), cancellationToken).ConfigureAwait(false);
@@ -556,20 +555,27 @@ public partial class LibraryService
     private async Task<string?> DownloadAndCacheArtistImageAsync(Artist artist, Uri imageUrl, CancellationToken cancellationToken)
     {
         var artistId = artist.Id;
-        var lazyTask = _artistImageProcessingTasks.GetOrAdd(artistId, _ =>
-            new Lazy<Task<string?>>(() => DownloadAndWriteImageInternalAsync(artistId, imageUrl, cancellationToken)));
+        // Callers share one download that runs until shutdown, and each stops waiting on its own token. The entry
+        // goes when the download ends rather than when a caller gives up, so it is never started twice.
+        var lazyTask = _artistImageProcessingTasks.GetOrAdd(artistId, _ => new Lazy<Task<string?>>(async () =>
+        {
+            try
+            {
+                return await DownloadAndWriteImageInternalAsync(artistId, imageUrl, _shutdownCts.Token).ConfigureAwait(false);
+            }
+            finally
+            {
+                _artistImageProcessingTasks.TryRemove(artistId, out Lazy<Task<string?>>? _);
+            }
+        }));
         try
         {
-            return await lazyTask.Value.ConfigureAwait(false);
+            return await lazyTask.Value.WaitAsync(cancellationToken).ConfigureAwait(false);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
             _logger.LogWarning(ex, "Artist image download failed for artist '{ArtistName}'.", artist.Name);
             return null;
-        }
-        finally
-        {
-            _artistImageProcessingTasks.TryRemove(new KeyValuePair<Guid, Lazy<Task<string?>>>(artistId, lazyTask));
         }
     }
 
