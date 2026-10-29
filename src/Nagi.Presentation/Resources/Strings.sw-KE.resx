@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>Folda hii tayari ipo kwenye maktaba.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>Folda hii iko ndani ya folda ambayo tayari ipo kwenye maktaba yako, au ina folda kama hiyo. Ongeza folda ya nje au ya ndani, si zote mbili.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Inaongeza folda kwenye maktaba…</value>
   </data>

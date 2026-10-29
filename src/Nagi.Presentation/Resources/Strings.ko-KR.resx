@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>이 폴더는 이미 라이브러리에 있습니다.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>이 폴더는 이미 라이브러리에 있는 폴더 안에 있거나 그런 폴더를 포함하고 있습니다. 바깥쪽 폴더와 안쪽 폴더 중 하나만 추가하세요.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>라이브러리에 폴더 추가 중…</value>
   </data>

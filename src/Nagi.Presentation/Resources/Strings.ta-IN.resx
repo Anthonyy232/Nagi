@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>இந்த கோப்புறை ஏற்கனவே நூலகத்தில் உள்ளது.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>இந்தக் கோப்புறை உங்கள் தொகுப்பில் ஏற்கனவே உள்ள ஒரு கோப்புறைக்குள் உள்ளது, அல்லது அத்தகைய கோப்புறையைக் கொண்டுள்ளது. வெளிப்புறக் கோப்புறை அல்லது உட்புறக் கோப்புறை ஒன்றை மட்டும் சேர்க்கவும், இரண்டையும் அல்ல.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>கோப்புறையைத் தொகுப்பில் சேர்க்கிறது…</value>
   </data>

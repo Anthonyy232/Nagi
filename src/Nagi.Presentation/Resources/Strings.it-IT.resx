@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>Questa cartella è già nella libreria.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>Questa cartella si trova in una cartella già presente nella libreria, oppure ne contiene una. Aggiungi la cartella esterna o quella interna, non entrambe.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Aggiunta della cartella alla libreria in corso…</value>
   </data>

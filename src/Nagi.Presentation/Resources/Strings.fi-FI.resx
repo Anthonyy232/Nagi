@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>Tämä kansio on jo kirjastossa.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>Tämä kansio on kansiossa, joka on jo kirjastossasi, tai sisältää sellaisen. Lisää joko ulompi tai sisempi kansio, ei molempia.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Lisätään kansiota kirjastoon…</value>
   </data>

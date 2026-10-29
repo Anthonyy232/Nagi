@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>Ова фасцикла је већ у библиотеци.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>Ова фасцикла се налази унутар фасцикле која је већ у вашој библиотеци или садржи такву фасциклу. Додајте спољну или унутрашњу фасциклу, али не обе.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Додавање фасцикле у библиотеку…</value>
   </data>

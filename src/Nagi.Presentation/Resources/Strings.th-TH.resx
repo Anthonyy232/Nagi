@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>โฟลเดอร์นี้อยู่ในคลังเพลงแล้ว</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>โฟลเดอร์นี้อยู่ภายในโฟลเดอร์ที่มีอยู่ในคลังเพลงแล้ว หรือมีโฟลเดอร์ดังกล่าวอยู่ภายใน โปรดเพิ่มโฟลเดอร์ด้านนอกหรือด้านในเพียงโฟลเดอร์เดียว ไม่ใช่ทั้งสอง</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>กำลังเพิ่มโฟลเดอร์ไปยังคลังเพลง…</value>
   </data>

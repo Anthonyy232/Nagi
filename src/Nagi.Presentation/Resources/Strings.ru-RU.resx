@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>Эта папка уже есть в библиотеке.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>Эта папка находится внутри папки, которая уже есть в вашей библиотеке, или содержит такую папку. Добавьте либо внешнюю, либо внутреннюю папку, но не обе.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Добавление папки в библиотеку…</value>
   </data>

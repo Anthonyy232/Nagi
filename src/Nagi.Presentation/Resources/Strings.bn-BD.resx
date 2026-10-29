@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>এই ফোল্ডারটি ইতিমধ্যেই লাইব্রেরিতে আছে।</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>এই ফোল্ডারটি আপনার লাইব্রেরিতে থাকা কোনো ফোল্ডারের ভেতরে আছে, অথবা এর ভেতরে এমন একটি ফোল্ডার আছে। বাইরের অথবা ভেতরের ফোল্ডারটি যোগ করুন, দুটোই নয়।</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>লাইব্রেরিতে ফোল্ডার যোগ করা হচ্ছে…</value>
   </data>

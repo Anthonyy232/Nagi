@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>Ez a mappa már a könyvtárban van.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>Ez a mappa egy olyan mappában van, amely már szerepel a könyvtárban, vagy ilyet tartalmaz. Csak a külső vagy csak a belső mappát lehet hozzáadni, mindkettőt nem.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Mappa hozzáadása a könyvtárhoz…</value>
   </data>

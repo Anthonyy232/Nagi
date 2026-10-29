@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>ਇਹ ਫੋਲਡਰ ਪਹਿਲਾਂ ਹੀ ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚ ਹੈ।</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>ਇਹ ਫੋਲਡਰ ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚ ਪਹਿਲਾਂ ਤੋਂ ਮੌਜੂਦ ਕਿਸੇ ਫੋਲਡਰ ਦੇ ਅੰਦਰ ਹੈ, ਜਾਂ ਉਸ ਵਿੱਚ ਅਜਿਹਾ ਫੋਲਡਰ ਹੈ। ਜਾਂ ਤਾਂ ਬਾਹਰਲਾ ਫੋਲਡਰ ਜੋੜੋ ਜਾਂ ਅੰਦਰਲਾ, ਦੋਵੇਂ ਨਹੀਂ।</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚ ਫੋਲਡਰ ਜੋੜਿਆ ਜਾ ਰਿਹਾ ਹੈ…</value>
   </data>

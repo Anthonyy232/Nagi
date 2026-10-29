@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>Deze map bevindt zich al in de bibliotheek.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>Deze map staat in een map die al in je bibliotheek staat, of bevat er een. Voeg de buitenste of de binnenste map toe, niet allebei.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Map toevoegen aan bibliotheek…</value>
   </data>

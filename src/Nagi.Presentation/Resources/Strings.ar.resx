@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>هذا المجلد موجود بالفعل في المكتبة.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>هذا المجلد موجود داخل مجلد موجود بالفعل في مكتبتك، أو يحتوي على مجلد منها. أضف المجلد الخارجي أو الداخلي، وليس كليهما.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>جاري إضافة المجلد إلى المكتبة…</value>
   </data>

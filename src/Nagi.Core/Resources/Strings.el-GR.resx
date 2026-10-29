@@ -165,6 +165,33 @@
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Σάρωση φακέλου {0} από {1}: {2} - {3}</value>
   </data>
+  <data name="Status_ScanComplete" xml:space="preserve">
+    <value>Η σάρωση ολοκληρώθηκε.</value>
+  </data>
+  <data name="Format_ScanAddedSongs_Singular" xml:space="preserve">
+    <value>Η σάρωση ολοκληρώθηκε. Προστέθηκε ή ενημερώθηκε {0} τραγούδι.</value>
+  </data>
+  <data name="Format_ScanAddedSongs_Plural" xml:space="preserve">
+    <value>Η σάρωση ολοκληρώθηκε. Προστέθηκαν ή ενημερώθηκαν {0} τραγούδια.</value>
+  </data>
+  <data name="Format_ScanFoundLyrics_Singular" xml:space="preserve">
+    <value>Βρέθηκαν στίχοι για {0} τραγούδι.</value>
+  </data>
+  <data name="Format_ScanFoundLyrics_Plural" xml:space="preserve">
+    <value>Βρέθηκαν στίχοι για {0} τραγούδια.</value>
+  </data>
+  <data name="Format_ScanFoundCoverArt_Singular" xml:space="preserve">
+    <value>Βρέθηκε εξώφυλλο για {0} τραγούδι.</value>
+  </data>
+  <data name="Format_ScanFoundCoverArt_Plural" xml:space="preserve">
+    <value>Βρέθηκαν εξώφυλλα για {0} τραγούδια.</value>
+  </data>
+  <data name="Format_ScanFoundArtistImages_Singular" xml:space="preserve">
+    <value>Βρέθηκε εικόνα για {0} καλλιτέχνη.</value>
+  </data>
+  <data name="Format_ScanFoundArtistImages_Plural" xml:space="preserve">
+    <value>Βρέθηκαν εικόνες για {0} καλλιτέχνες.</value>
+  </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Ολοκληρώθηκε η σάρωση. Η βιβλιοθήκη είναι ενημερωμένη.</value>
@@ -203,7 +230,6 @@
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Το όνομα της λίστας αναπαραγωγής δεν μπορεί να είναι κενό.</value>
   </data>
-  <!-- Labels -->
   <!-- Static Strings -->
   <data name="UnknownFilename" xml:space="preserve">
     <value>άγνωστο</value>

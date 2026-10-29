@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>Tato složka je již v knihovně.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>Tato složka je uvnitř složky, která už je ve vaší knihovně, nebo nějakou takovou obsahuje. Přidejte buď vnější, nebo vnitřní složku, ne obě.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Přidávání složky do knihovny…</value>
   </data>
