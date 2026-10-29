@@ -165,6 +165,33 @@
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>اسکن پوشه {0} از {1}: {2} - {3}</value>
   </data>
+  <data name="Status_ScanComplete" xml:space="preserve">
+    <value>اسکن کامل شد.</value>
+  </data>
+  <data name="Format_ScanAddedSongs_Singular" xml:space="preserve">
+    <value>اسکن کامل شد. {0} آهنگ افزوده یا به‌روز شد.</value>
+  </data>
+  <data name="Format_ScanAddedSongs_Plural" xml:space="preserve">
+    <value>اسکن کامل شد. {0} آهنگ افزوده یا به‌روز شدند.</value>
+  </data>
+  <data name="Format_ScanFoundLyrics_Singular" xml:space="preserve">
+    <value>متن ترانه برای {0} آهنگ پیدا شد.</value>
+  </data>
+  <data name="Format_ScanFoundLyrics_Plural" xml:space="preserve">
+    <value>متن ترانه برای {0} آهنگ پیدا شد.</value>
+  </data>
+  <data name="Format_ScanFoundCoverArt_Singular" xml:space="preserve">
+    <value>تصویر کاور برای {0} آهنگ پیدا شد.</value>
+  </data>
+  <data name="Format_ScanFoundCoverArt_Plural" xml:space="preserve">
+    <value>تصویر کاور برای {0} آهنگ پیدا شد.</value>
+  </data>
+  <data name="Format_ScanFoundArtistImages_Singular" xml:space="preserve">
+    <value>تصویر برای {0} هنرمند پیدا شد.</value>
+  </data>
+  <data name="Format_ScanFoundArtistImages_Plural" xml:space="preserve">
+    <value>تصویر برای {0} هنرمند پیدا شد.</value>
+  </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>اسکن کامل شد. کتابخانه به‌روز است.</value>
@@ -203,7 +230,6 @@
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>نام لیست پخش نمی‌تواند خالی باشد.</value>
   </data>
-  <!-- Labels -->
   <!-- Static Strings -->
   <data name="UnknownFilename" xml:space="preserve">
     <value>ناشناخته</value>

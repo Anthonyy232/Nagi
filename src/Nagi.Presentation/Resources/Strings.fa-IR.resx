@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>این پوشه از قبل در کتابخانه موجود است.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>این پوشه داخل پوشه‌ای است که از قبل در کتابخانه شما وجود دارد، یا چنین پوشه‌ای را در بر دارد. یا پوشه بیرونی را اضافه کنید یا پوشه درونی را، نه هر دو.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>در حال افزودن پوشه به کتابخانه…</value>
   </data>

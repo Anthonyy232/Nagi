@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>このフォルダーはすでにライブラリにあります。</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>このフォルダーは、ライブラリにすでにあるフォルダーの中にあるか、そのようなフォルダーを含んでいます。外側か内側のどちらか一方のフォルダーだけを追加してください。</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>フォルダーをライブラリに追加中…</value>
   </data>

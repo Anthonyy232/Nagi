@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>Thư mục này đã có trong thư viện.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>Thư mục này nằm trong một thư mục đã có trong thư viện của bạn, hoặc chứa một thư mục như vậy. Hãy thêm thư mục bên ngoài hoặc thư mục bên trong, không thêm cả hai.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Đang thêm thư mục vào thư viện…</value>
   </data>

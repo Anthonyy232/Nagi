@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>Hierdie vouer is reeds in die biblioteek.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>Hierdie vouer is binne 'n vouer wat reeds in jou biblioteek is, of bevat een. Voeg óf die buitenste óf die binneste vouer by, nie albei nie.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Voeg vouer by biblioteek toe…</value>
   </data>

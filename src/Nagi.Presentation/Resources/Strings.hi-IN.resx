@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>यह फ़ोल्डर पहले से ही लाइब्रेरी में है।</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>यह फ़ोल्डर आपकी लाइब्रेरी में पहले से मौजूद किसी फ़ोल्डर के अंदर है, या उसमें ऐसा कोई फ़ोल्डर है। या तो बाहरी फ़ोल्डर जोड़ें या भीतरी, दोनों नहीं।</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>लाइब्रेरी में फ़ोल्डर जोड़ा जा रहा है…</value>
   </data>

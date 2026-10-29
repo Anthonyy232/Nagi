@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>Acest dosar este deja în bibliotecă.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>Acest dosar se află într-un dosar care este deja în bibliotecă sau conține un astfel de dosar. Adăugați fie dosarul exterior, fie cel interior, nu pe amândouă.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Se adaugă dosarul în bibliotecă…</value>
   </data>

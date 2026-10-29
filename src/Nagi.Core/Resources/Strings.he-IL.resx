@@ -165,6 +165,33 @@
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>סורק תיקייה {0} מתוך {1}: {2} - {3}</value>
   </data>
+  <data name="Status_ScanComplete" xml:space="preserve">
+    <value>הסריקה הושלמה.</value>
+  </data>
+  <data name="Format_ScanAddedSongs_Singular" xml:space="preserve">
+    <value>הסריקה הושלמה. {0} שיר נוסף או עודכן.</value>
+  </data>
+  <data name="Format_ScanAddedSongs_Plural" xml:space="preserve">
+    <value>הסריקה הושלמה. {0} שירים נוספו או עודכנו.</value>
+  </data>
+  <data name="Format_ScanFoundLyrics_Singular" xml:space="preserve">
+    <value>נמצאו מילים עבור {0} שיר.</value>
+  </data>
+  <data name="Format_ScanFoundLyrics_Plural" xml:space="preserve">
+    <value>נמצאו מילים עבור {0} שירים.</value>
+  </data>
+  <data name="Format_ScanFoundCoverArt_Singular" xml:space="preserve">
+    <value>נמצאה תמונת עטיפה עבור {0} שיר.</value>
+  </data>
+  <data name="Format_ScanFoundCoverArt_Plural" xml:space="preserve">
+    <value>נמצאו תמונות עטיפה עבור {0} שירים.</value>
+  </data>
+  <data name="Format_ScanFoundArtistImages_Singular" xml:space="preserve">
+    <value>נמצאה תמונה עבור {0} אמן.</value>
+  </data>
+  <data name="Format_ScanFoundArtistImages_Plural" xml:space="preserve">
+    <value>נמצאו תמונות עבור {0} אמנים.</value>
+  </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>הסריקה הושלמה. הספרייה מעודכנת.</value>
@@ -203,7 +230,6 @@
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>שם רשימת ההשמעה אינו יכול להיות ריק.</value>
   </data>
-  <!-- Labels -->
   <!-- Static Strings -->
   <data name="UnknownFilename" xml:space="preserve">
     <value>לא ידוע</value>

@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>Nasa library na ang folder na ito.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>Ang folder na ito ay nasa loob ng isang folder na nasa iyong library na, o naglalaman ng isa. Idagdag ang panlabas o ang panloob na folder, hindi pareho.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Idinadagdag ang folder sa library…</value>
   </data>

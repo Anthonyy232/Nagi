@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>Esta pasta já está na biblioteca.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>Esta pasta está dentro de uma pasta que já está na sua biblioteca, ou contém uma. Adicione a pasta externa ou a interna, não ambas.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Adicionando pasta à biblioteca…</value>
   </data>

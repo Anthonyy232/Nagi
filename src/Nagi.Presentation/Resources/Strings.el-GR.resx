@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>Αυτός ο φάκελος βρίσκεται ήδη στη βιβλιοθήκη.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>Αυτός ο φάκελος βρίσκεται μέσα σε φάκελο που υπάρχει ήδη στη βιβλιοθήκη σας ή περιέχει έναν τέτοιο. Προσθέστε είτε τον εξωτερικό είτε τον εσωτερικό φάκελο, όχι και τους δύο.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Προσθήκη φακέλου στη βιβλιοθήκη…</value>
   </data>

@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>Denne mappen er allerede i biblioteket.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>Denne mappen ligger i en mappe som allerede er i biblioteket ditt, eller inneholder en. Legg til enten den ytre eller den indre mappen, ikke begge.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Legger til mappe i biblioteket…</value>
   </data>

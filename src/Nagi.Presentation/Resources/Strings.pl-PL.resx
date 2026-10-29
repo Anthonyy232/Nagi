@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>Ten folder jest już w bibliotece.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>Ten folder znajduje się w folderze, który jest już w bibliotece, lub zawiera taki folder. Dodaj folder zewnętrzny albo wewnętrzny, nie oba.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Dodawanie folderu do biblioteki…</value>
   </data>

@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>Tento priečinok už je v knižnici.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>Tento priečinok je v priečinku, ktorý už je vo vašej knižnici, alebo taký priečinok obsahuje. Pridajte buď vonkajší, alebo vnútorný priečinok, nie oba.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Pridáva sa priečinok do knižnice…</value>
   </data>

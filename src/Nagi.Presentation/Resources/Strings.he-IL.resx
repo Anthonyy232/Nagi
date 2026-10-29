@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>תיקיה זו כבר קיימת בספרייה.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>תיקייה זו נמצאת בתוך תיקייה שכבר קיימת בספרייה שלך, או מכילה תיקייה כזו. הוסף את התיקייה החיצונית או את הפנימית, לא את שתיהן.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>מוסיף תיקייה לספרייה…</value>
   </data>

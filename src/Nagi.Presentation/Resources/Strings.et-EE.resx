@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>See kaust on juba teegis.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>See kaust asub kaustas, mis on juba sinu kogus, või sisaldab sellist. Lisa kas välimine või sisemine kaust, mitte mõlemat.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Kausta lisamine kogusse…</value>
   </data>

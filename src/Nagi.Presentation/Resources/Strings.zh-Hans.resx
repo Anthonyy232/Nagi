@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>此文件夹已在库中。</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>此文件夹位于库中已有的文件夹内，或包含这样的文件夹。请只添加外层或内层文件夹中的一个，不要同时添加。</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>正在将文件夹添加到音乐库……</value>
   </data>

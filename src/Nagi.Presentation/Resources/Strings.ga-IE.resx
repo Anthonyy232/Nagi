@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>Tá an fillteán seo sa leabharlann cheana féin.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>Tá an fillteán seo istigh i bhfillteán atá i do leabharlann cheana féin, nó tá ceann den sórt sin ann. Cuir an fillteán seachtrach nó an fillteán inmheánach leis, ach ní an dá cheann.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Fillteán á chur leis an leabharlann…</value>
   </data>

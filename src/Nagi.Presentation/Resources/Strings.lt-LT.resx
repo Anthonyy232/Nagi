@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>Šis aplankas jau yra bibliotekoje.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>Šis aplankas yra aplanke, kuris jau yra jūsų bibliotekoje, arba tokį aplanką turi. Pridėkite arba išorinį, arba vidinį aplanką, bet ne abu.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Aplankas įtraukiamas į biblioteką…</value>
   </data>

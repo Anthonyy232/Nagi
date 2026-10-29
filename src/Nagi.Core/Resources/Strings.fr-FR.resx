@@ -165,6 +165,33 @@
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Analyse du dossier {0} sur {1} : {2} - {3}</value>
   </data>
+  <data name="Status_ScanComplete" xml:space="preserve">
+    <value>Analyse terminée.</value>
+  </data>
+  <data name="Format_ScanAddedSongs_Singular" xml:space="preserve">
+    <value>Analyse terminée. {0} morceau ajouté ou mis à jour.</value>
+  </data>
+  <data name="Format_ScanAddedSongs_Plural" xml:space="preserve">
+    <value>Analyse terminée. {0} morceaux ajoutés ou mis à jour.</value>
+  </data>
+  <data name="Format_ScanFoundLyrics_Singular" xml:space="preserve">
+    <value>Paroles trouvées pour {0} morceau.</value>
+  </data>
+  <data name="Format_ScanFoundLyrics_Plural" xml:space="preserve">
+    <value>Paroles trouvées pour {0} morceaux.</value>
+  </data>
+  <data name="Format_ScanFoundCoverArt_Singular" xml:space="preserve">
+    <value>Pochette trouvée pour {0} morceau.</value>
+  </data>
+  <data name="Format_ScanFoundCoverArt_Plural" xml:space="preserve">
+    <value>Pochettes trouvées pour {0} morceaux.</value>
+  </data>
+  <data name="Format_ScanFoundArtistImages_Singular" xml:space="preserve">
+    <value>Image trouvée pour {0} artiste.</value>
+  </data>
+  <data name="Format_ScanFoundArtistImages_Plural" xml:space="preserve">
+    <value>Images trouvées pour {0} artistes.</value>
+  </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Analyse terminée. La bibliothèque est à jour.</value>
@@ -203,7 +230,6 @@
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Le nom de la liste de lecture ne peut pas être vide.</value>
   </data>
-  <!-- Labels -->
   <!-- Static Strings -->
   <data name="UnknownFilename" xml:space="preserve">
     <value>inconnu</value>

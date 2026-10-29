@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>Folder ini sudah ada di pustaka.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>Folder ini berada di dalam folder yang sudah ada di pustaka Anda, atau berisi folder tersebut. Tambahkan folder luar atau folder dalam saja, jangan keduanya.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Menambahkan folder ke pustaka…</value>
   </data>

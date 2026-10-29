@@ -165,6 +165,33 @@
   <data name="Format_ScanFolderProgress" xml:space="preserve">
     <value>Сканирование папки {0} из {1}: {2} - {3}</value>
   </data>
+  <data name="Status_ScanComplete" xml:space="preserve">
+    <value>Сканирование завершено.</value>
+  </data>
+  <data name="Format_ScanAddedSongs_Singular" xml:space="preserve">
+    <value>Сканирование завершено. Добавлена или обновлена {0} песня.</value>
+  </data>
+  <data name="Format_ScanAddedSongs_Plural" xml:space="preserve">
+    <value>Сканирование завершено. Добавлено или обновлено песен: {0}.</value>
+  </data>
+  <data name="Format_ScanFoundLyrics_Singular" xml:space="preserve">
+    <value>Найден текст для {0} песни.</value>
+  </data>
+  <data name="Format_ScanFoundLyrics_Plural" xml:space="preserve">
+    <value>Песен с найденным текстом: {0}.</value>
+  </data>
+  <data name="Format_ScanFoundCoverArt_Singular" xml:space="preserve">
+    <value>Найдена обложка для {0} песни.</value>
+  </data>
+  <data name="Format_ScanFoundCoverArt_Plural" xml:space="preserve">
+    <value>Песен с найденной обложкой: {0}.</value>
+  </data>
+  <data name="Format_ScanFoundArtistImages_Singular" xml:space="preserve">
+    <value>Найдено изображение для {0} исполнителя.</value>
+  </data>
+  <data name="Format_ScanFoundArtistImages_Plural" xml:space="preserve">
+    <value>Исполнителей с найденным изображением: {0}.</value>
+  </data>
   <!-- Status & Success Messages -->
   <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
     <value>Сканирование завершено. Библиотека в актуальном состоянии.</value>
@@ -203,7 +230,6 @@
   <data name="Error_PlaylistNameEmpty" xml:space="preserve">
     <value>Имя плейлиста не может быть пустым.</value>
   </data>
-  <!-- Labels -->
   <!-- Static Strings -->
   <data name="UnknownFilename" xml:space="preserve">
     <value>неизвестный</value>

@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>Bu klasör zaten kitaplıkta.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>Bu klasör, kitaplığınızda zaten bulunan bir klasörün içinde ya da böyle bir klasörü içeriyor. Dış veya iç klasörden yalnızca birini ekleyin, ikisini birden değil.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Klasör kitaplığa ekleniyor…</value>
   </data>

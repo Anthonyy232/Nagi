@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>Ova mapa je već u biblioteci.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>Ova se mapa nalazi unutar mape koja je već u vašoj biblioteci ili sadrži takvu mapu. Dodajte vanjsku ili unutarnju mapu, ali ne obje.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Dodavanje mape u biblioteku…</value>
   </data>

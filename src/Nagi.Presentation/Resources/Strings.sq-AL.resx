@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>Kjo dosje tashmë është në bibliotekë.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>Kjo dosje ndodhet brenda një dosjeje që është tashmë në bibliotekën tuaj, ose përmban një të tillë. Shtoni ose dosjen e jashtme, ose atë të brendshme, jo të dyja.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>Po shtohet dosja në bibliotekë…</value>
   </data>

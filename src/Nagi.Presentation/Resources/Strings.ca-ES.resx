@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>Aquesta carpeta ja és a la biblioteca.</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>Aquesta carpeta és dins d'una carpeta que ja és a la biblioteca, o en conté una. Afegiu la carpeta exterior o la interior, però no totes dues.</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>S'està afegint la carpeta a la biblioteca…</value>
   </data>

@@ -277,6 +277,9 @@
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
     <value>此資料夾已存在於媒體庫中。</value>
   </data>
+  <data name="Folders_AddFolder_Overlaps" xml:space="preserve">
+    <value>此資料夾位於媒體庫中既有的資料夾內，或包含這樣的資料夾。請只新增外層或內層資料夾其中之一，不要同時新增。</value>
+  </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
     <value>正在新增資料夾至媒體庫……</value>
   </data>
