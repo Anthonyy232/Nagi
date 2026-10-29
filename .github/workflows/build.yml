@@ -8,6 +8,12 @@ on:
     tags: ['*.*.*']
   workflow_dispatch:
 
+# A newer push supersedes older runs: branch runs are cancelled, while master and tag runs finish
+# so a deploy or signing request is never cut off, and only the newest waiting run is kept.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' && !startsWith(github.ref, 'refs/tags/') }}
+
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   SixLaborsLicenseKey: ${{ secrets.SIXLABORS_LICENSE_KEY }}
@@ -118,7 +124,8 @@ jobs:
 
       - uses: FedericoCarboni/setup-ffmpeg@v3.1
 
-      - run: dotnet run -c Release --project benchmarks/Nagi.Benchmarks/Nagi.Benchmarks.csproj -- --filter *LibraryScanBenchmarks*
+      # A short job catches large regressions and failed scans; the default job took over an hour on the 10,000-song case.
+      - run: dotnet run -c Release --project benchmarks/Nagi.Benchmarks/Nagi.Benchmarks.csproj -- --filter *LibraryScanBenchmarks* --job Short --iterationCount 7 --warmupCount 2 --launchCount 1
 
       - uses: actions/upload-artifact@v7.0.2
         with:
