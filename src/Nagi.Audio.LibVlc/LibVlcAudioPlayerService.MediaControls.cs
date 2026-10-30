@@ -1,28 +1,14 @@
 using LibVLCSharp;
-using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 
 namespace Nagi.Audio.LibVlc;
 
 /// <summary>
-///     Keeps the operating system's media controls in step with LibVLC and handles their play and pause buttons.
+///     Keeps the operating system's media controls in step with LibVLC. Their buttons are handled by
+///     MusicPlaybackService, which owns playback.
 /// </summary>
 public sealed partial class LibVlcAudioPlayerService
 {
-    private async void OnMediaControlsPlayPressed()
-    {
-        if (_isDisposed) return;
-        try { await PlayAsync(); }
-        catch (Exception ex) { _logger.LogError(ex, "Error handling the media controls Play button."); }
-    }
-
-    private async void OnMediaControlsPausePressed()
-    {
-        if (_isDisposed) return;
-        try { await PauseAsync(); }
-        catch (Exception ex) { _logger.LogError(ex, "Error handling the media controls Pause button."); }
-    }
-
     private void ReportPlaybackStatus()
     {
         if (_isDisposed || _mediaPlayer is null) return;

@@ -60,6 +60,8 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         _audioPlayer.ErrorOccurred += OnAudioPlayerErrorOccurred;
         _audioPlayer.MediaOpened += OnAudioPlayerMediaOpened;
         _audioPlayer.DurationChanged += OnAudioPlayerDurationChanged;
+        _mediaControls.PlayPressed += OnMediaControlsPlayPressed;
+        _mediaControls.PausePressed += OnMediaControlsPausePressed;
         _mediaControls.NextPressed += OnMediaControlsNextPressed;
         _mediaControls.PreviousPressed += OnMediaControlsPreviousPressed;
 
@@ -778,6 +780,8 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         _audioPlayer.ErrorOccurred -= OnAudioPlayerErrorOccurred;
         _audioPlayer.MediaOpened -= OnAudioPlayerMediaOpened;
         _audioPlayer.DurationChanged -= OnAudioPlayerDurationChanged;
+        _mediaControls.PlayPressed -= OnMediaControlsPlayPressed;
+        _mediaControls.PausePressed -= OnMediaControlsPausePressed;
         _mediaControls.NextPressed -= OnMediaControlsNextPressed;
         _mediaControls.PreviousPressed -= OnMediaControlsPreviousPressed;
         _settingsService.VolumeNormalizationEnabledChanged -= OnVolumeNormalizationEnabledChanged;

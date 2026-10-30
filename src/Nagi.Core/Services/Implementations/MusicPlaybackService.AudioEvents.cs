@@ -106,6 +106,17 @@ public partial class MusicPlaybackService
         UpdateMediaControlsNavigation();
     }
 
+    // The media controls send Play and Pause separately, so only toggle when the state differs.
+    private void OnMediaControlsPlayPressed()
+    {
+        if (!IsPlaying) FireAndForgetSafe(PlayPauseAsync, "Media controls Play");
+    }
+
+    private void OnMediaControlsPausePressed()
+    {
+        if (IsPlaying) FireAndForgetSafe(PlayPauseAsync, "Media controls Pause");
+    }
+
     private void OnMediaControlsNextPressed()
     {
         FireAndForgetSafe(
