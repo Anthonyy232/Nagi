@@ -1341,6 +1341,23 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         _mediaControls.DidNotReceive().SetTimeline(TimeSpan.FromSeconds(90), Arg.Any<TimeSpan>());
     }
 
+    [Theory]
+    [InlineData(90, true)]
+    [InlineData(-1, false)]
+    [InlineData(181, false)]
+    public async Task MediaControlsSeekRequested_SeeksOnlyWithinTheTrack(int seconds, bool seeks)
+    {
+        _testSongs[0].Duration = TimeSpan.FromMinutes(3);
+        await _service.InitializeAsync();
+        await _service.PlayAsync(_testSongs[0]);
+        var position = TimeSpan.FromSeconds(seconds);
+
+        _mediaControls.SeekRequested += Raise.Event<Action<TimeSpan>>(position);
+        await _service.FlushPendingFinalizationAsync();
+
+        await _audioPlayer.Received(seeks ? 1 : 0).SeekAsync(position);
+    }
+
     [Fact]
     public async Task MediaControlsTimeline_IsNotReportedAfterStop()
     {

@@ -37,6 +37,7 @@ public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
     public event Action? PausePressed;
     public event Action? NextPressed;
     public event Action? PreviousPressed;
+    public event Action<TimeSpan>? SeekRequested;
 
     public void Initialize()
     {
@@ -54,6 +55,7 @@ public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
                 smtc.IsNextEnabled = false;
                 smtc.IsPreviousEnabled = false;
                 smtc.ButtonPressed += OnButtonPressed;
+                smtc.PlaybackPositionChangeRequested += OnPlaybackPositionChangeRequested;
                 smtc.IsEnabled = true;
                 smtc.PlaybackStatus = MediaPlaybackStatus.Stopped;
                 _smtc = smtc;
@@ -120,6 +122,7 @@ public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
             smtc.UpdateTimelineProperties(new SystemMediaTransportControlsTimelineProperties
             {
                 Position = position,
+                MaxSeekTime = duration,
                 EndTime = duration
             });
         }
@@ -202,6 +205,7 @@ public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
             if (_smtc is not null)
             {
                 _smtc.ButtonPressed -= OnButtonPressed;
+                _smtc.PlaybackPositionChangeRequested -= OnPlaybackPositionChangeRequested;
                 _smtc.IsEnabled = false;
             }
 
@@ -236,6 +240,18 @@ public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
                 _ => null
             };
             handler?.Invoke();
+        });
+    }
+
+    private void OnPlaybackPositionChangeRequested(SystemMediaTransportControls sender,
+        PlaybackPositionChangeRequestedEventArgs args)
+    {
+        if (_isDisposed) return;
+        var position = args.RequestedPlaybackPosition;
+        _logger.LogDebug("SMTC seek requested to {Position}", position);
+        _dispatcherService.TryEnqueue(() =>
+        {
+            if (!_isDisposed) SeekRequested?.Invoke(position);
         });
     }
 }

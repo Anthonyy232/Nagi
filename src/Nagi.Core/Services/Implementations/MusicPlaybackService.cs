@@ -62,6 +62,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         _audioPlayer.DurationChanged += OnAudioPlayerDurationChanged;
         _mediaControls.NextPressed += OnMediaControlsNextPressed;
         _mediaControls.PreviousPressed += OnMediaControlsPreviousPressed;
+        _mediaControls.SeekRequested += OnMediaControlsSeekRequested;
 
         _settingsService.VolumeNormalizationEnabledChanged += OnVolumeNormalizationEnabledChanged;
         _settingsService.FadeOnPlayPauseEnabledChanged += OnFadeOnPlayPauseEnabledChanged;
@@ -784,6 +785,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         _audioPlayer.DurationChanged -= OnAudioPlayerDurationChanged;
         _mediaControls.NextPressed -= OnMediaControlsNextPressed;
         _mediaControls.PreviousPressed -= OnMediaControlsPreviousPressed;
+        _mediaControls.SeekRequested -= OnMediaControlsSeekRequested;
         _settingsService.VolumeNormalizationEnabledChanged -= OnVolumeNormalizationEnabledChanged;
         _settingsService.FadeOnPlayPauseEnabledChanged -= OnFadeOnPlayPauseEnabledChanged;
         _settingsService.FadeInDurationChanged -= OnFadeInDurationChanged;

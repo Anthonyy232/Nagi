@@ -123,6 +123,19 @@ public partial class MusicPlaybackService
             "Media controls Previous");
     }
 
+    private void OnMediaControlsSeekRequested(TimeSpan position)
+    {
+        if (position < TimeSpan.Zero || position > Duration)
+        {
+            _logger.LogDebug("Ignoring media controls seek to {Position} outside the track.", position);
+            return;
+        }
+
+        FireAndForgetSafe(
+            () => SeekAsync(position),
+            "Media controls Seek");
+    }
+
     private async Task ApplyReplayGainIfEnabledAsync(bool? isEnabledOverride = null)
     {
         var version = ++_replayGainVersion;
