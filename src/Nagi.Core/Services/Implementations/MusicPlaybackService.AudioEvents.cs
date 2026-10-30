@@ -33,6 +33,7 @@ public partial class MusicPlaybackService
     private void OnAudioPlayerStateChanged()
     {
         PlaybackStateChanged?.Invoke();
+        UpdateMediaControlsTimeline(CurrentPosition);
     }
 
     private void OnAudioPlayerVolumeChanged()
@@ -92,6 +93,7 @@ public partial class MusicPlaybackService
     private void OnAudioPlayerDurationChanged()
     {
         DurationChanged?.Invoke();
+        UpdateMediaControlsTimeline(CurrentPosition);
     }
 
     private void OnAudioPlayerErrorOccurred(string errorMessage)
@@ -104,6 +106,7 @@ public partial class MusicPlaybackService
     {
         TrackChanged?.Invoke();
         UpdateMediaControlsNavigation();
+        UpdateMediaControlsTimeline(CurrentPosition);
     }
 
     private void OnMediaControlsNextPressed()
@@ -118,6 +121,19 @@ public partial class MusicPlaybackService
         FireAndForgetSafe(
             PreviousAsync,
             "Media controls Previous");
+    }
+
+    private void OnMediaControlsSeekRequested(TimeSpan position)
+    {
+        if (position < TimeSpan.Zero || position > Duration)
+        {
+            _logger.LogDebug("Ignoring media controls seek to {Position} outside the track.", position);
+            return;
+        }
+
+        FireAndForgetSafe(
+            () => SeekAsync(position),
+            "Media controls Seek");
     }
 
     private async Task ApplyReplayGainIfEnabledAsync(bool? isEnabledOverride = null)
