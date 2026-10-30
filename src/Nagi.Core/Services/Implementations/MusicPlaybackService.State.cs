@@ -34,7 +34,15 @@ public partial class MusicPlaybackService
     {
         _logger.LogDebug("Attempting to restore previous playback state.");
         var savedQueue = state.PlaybackQueueTrackIds ?? [];
-        _queue.SetOrder(savedQueue.Where(id => id != Guid.Empty).Distinct().ToList());
+        var savedIds = savedQueue.Where(id => id != Guid.Empty).Distinct().ToList();
+        // Songs can leave the library while the app is closed, for example when it is rescanned.
+        var librarySongs = await _libraryReader.GetSongsByIdsAsync(savedIds);
+        if (_isDisposed) return false;
+        if (librarySongs.Count < savedIds.Count)
+            _logger.LogWarning("Dropped {Count} songs no longer in the library from the restored queue.",
+                savedIds.Count - librarySongs.Count);
+
+        _queue.SetOrder(savedIds.Where(librarySongs.ContainsKey).ToList());
         _queue.RebuildIndex();
 
         if (!_queue.Order.Any()) return false;
@@ -42,7 +50,7 @@ public partial class MusicPlaybackService
 
         if (IsShuffleEnabled)
         {
-            _queue.SetShuffled((state.ShuffledQueueTrackIds ?? Enumerable.Empty<Guid>()).ToList());
+            _queue.SetShuffled((state.ShuffledQueueTrackIds ?? []).Where(librarySongs.ContainsKey).ToList());
 
             // Equal lengths alone do not rule out duplicate or unrelated tracks.
             if (_queue.Shuffled.Count != _queue.Order.Count ||
