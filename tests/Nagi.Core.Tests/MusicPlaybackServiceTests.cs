@@ -60,6 +60,11 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         {
             _library.Reader.GetSongByIdAsync(song.Id).Returns(song);
         }
+        _library.Reader.GetSongsByIdsAsync(Arg.Any<IEnumerable<Guid>>()).Returns(call =>
+        {
+            var ids = call.Arg<IEnumerable<Guid>>().ToHashSet();
+            return (IReadOnlyDictionary<Guid, Song>)_testSongs.Where(s => ids.Contains(s.Id)).ToDictionary(s => s.Id);
+        });
     }
 
     public ValueTask DisposeAsync() => _service.DisposeAsync();
@@ -335,6 +340,28 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         _service.CurrentQueueIndex.Should().Be(1);
         await _service.PlayPauseAsync();
         _service.CurrentTrack.Should().BeSameAs(second);
+    }
+
+    [Fact]
+    public async Task InitializeAsync_WithSongsNoLongerInTheLibrary_DropsThemAndKeepsTheShuffleOrder()
+    {
+        var (a, b, c) = (_testSongs[0].Id, _testSongs[1].Id, _testSongs[2].Id);
+        var removed = Guid.NewGuid();
+        _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
+        _settingsService.GetInitialShuffleStateAsync().Returns(true);
+        _settingsService.GetPlaybackStateAsync().Returns(new PlaybackState
+        {
+            PlaybackQueueTrackIds = [a, removed, b, c],
+            ShuffledQueueTrackIds = [c, removed, a, b],
+            CurrentTrackId = removed
+        });
+
+        await _service.InitializeAsync();
+
+        _service.PlaybackQueue.Should().Equal(a, b, c);
+        _service.ShuffledQueue.Should().Equal(c, a, b);
+        await _service.PlayPauseAsync();
+        _service.CurrentTrack!.Id.Should().Be(c);
     }
 
     [Theory]
