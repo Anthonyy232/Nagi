@@ -1273,6 +1273,37 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task MediaControlsPlayPressed_AfterStop_PlaysTheQueue()
+    {
+        await _service.InitializeAsync();
+        await _service.PlayAsync(_testSongs);
+        await _service.StopAsync();
+
+        _mediaControls.PlayPressed += Raise.Event<Action>();
+
+        await _service.FlushPendingFinalizationAsync();
+        _service.CurrentTrack.Should().Be(_testSongs[0]);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task MediaControlsPlayAndPause_DoNotToggleWhenAlreadyInThatState(bool isPlaying)
+    {
+        await _service.InitializeAsync();
+        await _service.PlayAsync(_testSongs[0]);
+        _audioPlayer.IsPlaying.Returns(isPlaying);
+        _audioPlayer.ClearReceivedCalls();
+
+        if (isPlaying) _mediaControls.PlayPressed += Raise.Event<Action>();
+        else _mediaControls.PausePressed += Raise.Event<Action>();
+
+        await _service.FlushPendingFinalizationAsync();
+        await _audioPlayer.DidNotReceive().PlayAsync();
+        await _audioPlayer.DidNotReceive().PauseAsync();
+    }
+
+    [Fact]
     public async Task MediaControlsNextPressed_ShouldCallNextAsync()
     {
         await _service.InitializeAsync();

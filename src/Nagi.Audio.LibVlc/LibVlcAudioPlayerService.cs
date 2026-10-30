@@ -73,8 +73,6 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         _settingsService = settingsService;
         _logger = logger;
         _disposeTask = new Lazy<Task>(DisposeCoreAsync);
-        _mediaControls.PlayPressed += OnMediaControlsPlayPressed;
-        _mediaControls.PausePressed += OnMediaControlsPausePressed;
     }
 
     private void EnsureInitialized()
@@ -575,21 +573,13 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
         try
         {
-            _mediaControls.PlayPressed -= OnMediaControlsPlayPressed;
-            _mediaControls.PausePressed -= OnMediaControlsPausePressed;
+            DisposeCurrentMedia("audio service disposal");
+            await Task.Run(DisposeNativeComponents).ConfigureAwait(false);
         }
         finally
         {
-            try
-            {
-                DisposeCurrentMedia("audio service disposal");
-                await Task.Run(DisposeNativeComponents).ConfigureAwait(false);
-            }
-            finally
-            {
-                // Queued operations still need to acquire and release this managed gate before exiting.
-                _vlcOperationLock.Release();
-            }
+            // Queued operations still need to acquire and release this managed gate before exiting.
+            _vlcOperationLock.Release();
         }
         GC.SuppressFinalize(this);
     }
