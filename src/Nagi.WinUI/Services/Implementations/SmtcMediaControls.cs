@@ -111,6 +111,24 @@ public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
         });
     }
 
+    public void SetTimeline(TimeSpan position, TimeSpan duration)
+    {
+        var smtc = _smtc;
+        if (_isDisposed || smtc is null) return;
+        try
+        {
+            smtc.UpdateTimelineProperties(new SystemMediaTransportControlsTimelineProperties
+            {
+                Position = position,
+                EndTime = duration
+            });
+        }
+        catch (Exception ex) when (ex.HResult == RO_E_CLOSED)
+        {
+            _logger.LogDebug("SMTC already disposed during timeline update.");
+        }
+    }
+
     public async Task SetNowPlayingAsync(Song song)
     {
         ArgumentNullException.ThrowIfNull(song);
@@ -161,6 +179,7 @@ public sealed class SmtcMediaControls : ISystemMediaControls, IDisposable
         {
             smtc.DisplayUpdater.ClearAll();
             smtc.DisplayUpdater.Update();
+            smtc.UpdateTimelineProperties(new SystemMediaTransportControlsTimelineProperties());
             smtc.PlaybackStatus = MediaPlaybackStatus.Stopped;
         }
         catch (Exception ex) when (ex.HResult == RO_E_CLOSED)

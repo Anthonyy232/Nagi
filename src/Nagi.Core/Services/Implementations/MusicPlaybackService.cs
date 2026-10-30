@@ -537,7 +537,11 @@ public partial class MusicPlaybackService : IMusicPlaybackService
 
     public async Task SeekAsync(TimeSpan position)
     {
-        if (CurrentTrack != null) await _audioPlayer.SeekAsync(position);
+        if (CurrentTrack == null) return;
+        var request = _playbackRequestVersion;
+        await _audioPlayer.SeekAsync(position);
+        // The player applies a seek asynchronously, so its own position can still be the old one here.
+        if (IsCurrentRequest(request)) UpdateMediaControlsTimeline(position);
     }
 
     public Task PlayAlbumAsync(Guid albumId) => RunPlaybackRequest(async request =>
@@ -814,6 +818,12 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         }
 
         _mediaControls.SetNavigationEnabled(canGoNext, canGoPrevious);
+    }
+
+    private void UpdateMediaControlsTimeline(TimeSpan position)
+    {
+        // Without a track the audio player has already cleared the media controls, timeline included.
+        if (CurrentTrack != null) _mediaControls.SetTimeline(position, Duration);
     }
 
     private Task RunPlaybackRequest(Func<int, Task> action)

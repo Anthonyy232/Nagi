@@ -1312,6 +1312,48 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
             .GetArguments().Should().Equal(canGoNext, true);
     }
 
+    [Fact]
+    public async Task SeekAsync_ReportsTheRequestedPositionWithTheTaggedDurationBeforeThePlayerKnowsTheLength()
+    {
+        _testSongs[0].Duration = TimeSpan.FromMinutes(3);
+        await _service.InitializeAsync();
+        await _service.PlayAsync(_testSongs[0]);
+        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(5));
+
+        await _service.SeekAsync(TimeSpan.FromSeconds(90));
+
+        _mediaControls.Received().SetTimeline(TimeSpan.FromSeconds(90), TimeSpan.FromMinutes(3));
+    }
+
+    [Fact]
+    public async Task SeekAsync_FinishingAfterATrackChange_DoesNotReportItsPosition()
+    {
+        await _service.InitializeAsync();
+        await _service.PlayAsync(_testSongs);
+        var seek = new TaskCompletionSource();
+        _audioPlayer.SeekAsync(Arg.Any<TimeSpan>()).Returns(seek.Task);
+
+        var seekTask = _service.SeekAsync(TimeSpan.FromSeconds(90));
+        await _service.NextAsync();
+        seek.SetResult();
+        await seekTask;
+
+        _mediaControls.DidNotReceive().SetTimeline(TimeSpan.FromSeconds(90), Arg.Any<TimeSpan>());
+    }
+
+    [Fact]
+    public async Task MediaControlsTimeline_IsNotReportedAfterStop()
+    {
+        await _service.InitializeAsync();
+        await _service.PlayAsync(_testSongs[0]);
+        await _service.StopAsync();
+        _mediaControls.ClearReceivedCalls();
+
+        _audioPlayer.StateChanged += Raise.Event<Action>();
+
+        _mediaControls.DidNotReceive().SetTimeline(Arg.Any<TimeSpan>(), Arg.Any<TimeSpan>());
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]

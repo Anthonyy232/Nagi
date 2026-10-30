@@ -20,6 +20,12 @@ public interface ISystemMediaControls
     void SetPlaybackStatus(SystemMediaPlaybackStatus status);
 
     /// <summary>
+    ///     The OS advances the position itself while playing, so call this when the track, its length or the
+    ///     playback state changes and after a seek, not on every tick.
+    /// </summary>
+    void SetTimeline(TimeSpan position, TimeSpan duration);
+
+    /// <summary>
     ///     Shows <paramref name="song" /> as now playing. A later call wins over one still loading its artwork.
     /// </summary>
     Task SetNowPlayingAsync(Song song);

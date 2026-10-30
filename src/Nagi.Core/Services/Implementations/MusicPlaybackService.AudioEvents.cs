@@ -33,6 +33,7 @@ public partial class MusicPlaybackService
     private void OnAudioPlayerStateChanged()
     {
         PlaybackStateChanged?.Invoke();
+        UpdateMediaControlsTimeline(CurrentPosition);
     }
 
     private void OnAudioPlayerVolumeChanged()
@@ -92,6 +93,7 @@ public partial class MusicPlaybackService
     private void OnAudioPlayerDurationChanged()
     {
         DurationChanged?.Invoke();
+        UpdateMediaControlsTimeline(CurrentPosition);
     }
 
     private void OnAudioPlayerErrorOccurred(string errorMessage)
@@ -104,6 +106,7 @@ public partial class MusicPlaybackService
     {
         TrackChanged?.Invoke();
         UpdateMediaControlsNavigation();
+        UpdateMediaControlsTimeline(CurrentPosition);
     }
 
     private void OnMediaControlsNextPressed()
