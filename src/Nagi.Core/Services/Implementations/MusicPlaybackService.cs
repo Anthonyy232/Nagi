@@ -80,6 +80,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     public Song? CurrentTrack { get; private set; }
     public long? CurrentListenHistoryId { get; private set; }
     public bool IsPlaying => _audioPlayer.IsPlaying;
+    public bool IsOpening => _audioPlayer.IsOpening;
     public TimeSpan CurrentPosition => _audioPlayer.CurrentPosition;
     public TimeSpan Duration => _audioPlayer.Duration > TimeSpan.Zero
         ? _audioPlayer.Duration

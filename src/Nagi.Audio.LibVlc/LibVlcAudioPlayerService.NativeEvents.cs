@@ -62,6 +62,7 @@ public sealed partial class LibVlcAudioPlayerService
         if (_isDisposed || _libVlc is null) return;
 
         _isExplicitStop = true;
+        SetOpening(false);
 
         // Also shown to the user, so redacted like VLC's log.
         var lastVlcError = UrlRedaction.RemoveQueries(ReadNative(() => _libVlc?.LastLibVLCError, null));
@@ -88,8 +89,9 @@ public sealed partial class LibVlcAudioPlayerService
         _dispatcherService.TryEnqueue(() =>
         {
             if (_isDisposed) return;
-            StateChanged?.Invoke();
             var state = ReadNative(() => _mediaPlayer?.State, null);
+            if (state is VLCState.Paused or VLCState.Stopped) _isOpening = false;
+            StateChanged?.Invoke();
 
             // Only fire PlaybackEnded for natural end of playback, not explicit stops
             if (state == VLCState.Stopped && currentSong is not null && !isExplicitStop)
@@ -107,9 +109,21 @@ public sealed partial class LibVlcAudioPlayerService
         ReportPlaybackStatus();
     }
 
+    private void SetOpening(bool isOpening)
+    {
+        if (_isOpening == isOpening) return;
+        _isOpening = isOpening;
+        _dispatcherService.TryEnqueue(() =>
+        {
+            if (!_isDisposed) StateChanged?.Invoke();
+        });
+    }
+
     private void OnMediaPlayerPositionChanged(object? sender, MediaPlayerPositionChangedEventArgs e)
     {
         if (_isDisposed) return;
+        _hasCurrentMediaStarted = true;
+        SetOpening(false);
         _dispatcherService.TryEnqueue(() =>
         {
             if (_isDisposed) return;

@@ -29,6 +29,12 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
 
     bool IsPlaying { get; }
 
+    /// <summary>
+    ///     True while the current song is still opening and hasn't started, such as while its music server answers.
+    ///     <see cref="PlaybackStateChanged" /> occurs when this changes.
+    /// </summary>
+    bool IsOpening { get; }
+
     TimeSpan CurrentPosition { get; }
 
     TimeSpan Duration { get; }
