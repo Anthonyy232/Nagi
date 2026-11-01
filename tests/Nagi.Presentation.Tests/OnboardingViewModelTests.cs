@@ -89,7 +89,7 @@ public class OnboardingViewModelTests
 
         await _viewModel.ConnectServerCommand.ExecuteAsync(null);
 
-        await _library.Writer.Received(1).RemoveFolderAsync(server.Id);
+        await _musicServers.Received(1).RemoveAsync(server.Id);
         _viewModel.HasLibraryFailed.Should().BeTrue();
         _viewModel.ConnectServerCommand.CanExecute(null).Should().BeTrue();
     }

@@ -137,6 +137,14 @@ internal sealed class JellyfinClient : IMusicServerClient
         }
     }
 
+    // Also takes Nagi off the server's list of devices.
+    public async Task SignOutAsync(CancellationToken cancellationToken)
+    {
+        using var response = await SendCoreAsync(HttpMethod.Post, "/Sessions/Logout", null, cancellationToken)
+            .ConfigureAwait(false);
+        EnsureSuccess(response);
+    }
+
     private async Task<List<string>> GetMusicLibraryIdsAsync(CancellationToken cancellationToken)
     {
         var views = await SendAsync<ItemsResult>(HttpMethod.Get, $"/UserViews?userId={_userId}", null, cancellationToken)

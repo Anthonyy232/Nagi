@@ -79,6 +79,25 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
         _logger.LogInformation("Signed in to server folder {FolderId} again.", folderId);
     }
 
+    public async Task<bool> RemoveAsync(Guid folderId)
+    {
+        // Read first: removing the server also removes the address and sign-in needed to sign out.
+        IMusicServerClient? client = null;
+        try
+        {
+            client = await GetClientAsync(folderId, CancellationToken.None).ConfigureAwait(false);
+        }
+        catch (MusicServerException ex)
+        {
+            _logger.LogDebug(ex, "Server folder {FolderId} has no sign-in to end.", folderId);
+        }
+
+        if (!await _libraryWriter.RemoveFolderAsync(folderId).ConfigureAwait(false)) return false;
+        // In the background, so a server that can't be reached doesn't hold up its removal.
+        if (client is not null) _ = SignOutAsync(folderId, client);
+        return true;
+    }
+
     public async Task<MusicServer?> GetServerAsync(Guid folderId)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -334,6 +353,19 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to update music servers after a library change.");
+        }
+    }
+
+    private async Task SignOutAsync(Guid folderId, IMusicServerClient client)
+    {
+        try
+        {
+            await client.SignOutAsync(_shutdownCts.Token).ConfigureAwait(false);
+        }
+        // The server keeps the session until it expires or is ended on the server.
+        catch (Exception ex) when (ex is MusicServerException or OperationCanceledException)
+        {
+            _logger.LogWarning(ex, "Couldn't sign out of removed server folder {FolderId}.", folderId);
         }
     }
 

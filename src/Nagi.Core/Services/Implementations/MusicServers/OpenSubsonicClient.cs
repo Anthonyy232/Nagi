@@ -149,6 +149,9 @@ internal sealed class OpenSubsonicClient : IMusicServerClient
                 .ConfigureAwait(false);
     }
 
+    // Every request carries the password or API key itself, so there's no session to end.
+    public Task SignOutAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+
     private async Task<SubsonicResponse> SendAsync(string endpoint, IEnumerable<(string Name, string Value)> parameters,
         CancellationToken cancellationToken)
     {

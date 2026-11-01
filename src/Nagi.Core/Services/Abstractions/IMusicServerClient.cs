@@ -33,4 +33,6 @@ public interface IMusicServerClient
     Task ReportPlayedAsync(string songId, DateTime playedUtc, CancellationToken cancellationToken);
 
     Task SetFavoriteAsync(IReadOnlyCollection<string> songIds, bool isFavorite, CancellationToken cancellationToken);
+
+    Task SignOutAsync(CancellationToken cancellationToken);
 }

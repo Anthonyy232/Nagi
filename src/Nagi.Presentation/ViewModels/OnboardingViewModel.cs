@@ -149,7 +149,7 @@ public partial class OnboardingViewModel : ObservableObject
             catch
             {
                 // Setup can't finish with an empty server, and connecting to it again would be refused as already added.
-                await _libraryWriter.RemoveFolderAsync(server.Id);
+                await _musicServers.RemoveAsync(server.Id);
                 throw;
             }
 

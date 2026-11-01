@@ -282,7 +282,10 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         string? error = null;
         try
         {
-            if (!await _libraryWriter.RemoveFolderAsync(folderId))
+            var removed = folderToDelete.IsServer
+                ? await _musicServers.RemoveAsync(folderId)
+                : await _libraryWriter.RemoveFolderAsync(folderId);
+            if (!removed)
                 error = string.Format(Strings.Folders_Delete_Failed, folderToDelete.Name);
         }
         catch (Exception ex)

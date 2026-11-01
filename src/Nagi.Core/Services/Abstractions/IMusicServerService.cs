@@ -5,7 +5,7 @@ namespace Nagi.Core.Services.Abstractions;
 
 /// <summary>
 ///     The user's music servers: adding and syncing them, streaming their songs, and reporting plays. Each server is
-///     a root folder in the library, identified by the folder's ID, and is removed by removing that folder.
+///     a root folder in the library, identified by the folder's ID.
 /// </summary>
 public interface IMusicServerService
 {
@@ -32,6 +32,12 @@ public interface IMusicServerService
     ///     The server couldn't be signed in to, the API key is another account's, or the server is no longer in the library.
     /// </exception>
     Task SignInAsync(Guid folderId, string password);
+
+    /// <summary>
+    ///     Removes the server and its songs from the library, then signs out of the server in the background.
+    /// </summary>
+    /// <returns>False if the folder couldn't be removed, in which case Nagi stays signed in.</returns>
+    Task<bool> RemoveAsync(Guid folderId);
 
     /// <returns>The server with its root folder, or null if the folder isn't a server.</returns>
     Task<MusicServer?> GetServerAsync(Guid folderId);

@@ -13,7 +13,7 @@ public interface ILibraryWriter
 
     /// <summary>
     ///     Adds a music server to the library as a root folder named <paramref name="name" />, without syncing it.
-    ///     Removing the folder removes the server.
+    ///     Removing the folder removes the server; <see cref="IMusicServerService.RemoveAsync" /> does that and signs out.
     /// </summary>
     Task<Folder> AddMusicServerAsync(MusicServer server, string name);
 

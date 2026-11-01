@@ -110,6 +110,26 @@ public class FolderViewModelTests
     }
 
     [Fact]
+    public async Task DeleteFolder_Server_IsRemovedThroughItsServerSoNagiSignsOut()
+    {
+        var library = new LibraryFakes();
+        var server = new Folder { Name = "Jellyfin", Path = "nagi-server:0123" };
+        library.Reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new FolderSummary(server, 1, IsServer: true) });
+        var musicServers = Substitute.For<IMusicServerService>();
+        musicServers.RemoveAsync(server.Id).Returns(true);
+        var ui = Substitute.For<IUIService>();
+        ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<bool>()).Returns(true);
+        using var viewModel = CreateViewModel(library, ui, musicServers);
+        await viewModel.LoadFoldersCommand.ExecuteAsync(null);
+
+        await viewModel.DeleteFolderCommand.ExecuteAsync(server.Id);
+
+        await musicServers.Received(1).RemoveAsync(server.Id);
+        await library.Writer.DidNotReceive().RemoveFolderAsync(server.Id);
+        await ui.DidNotReceiveWithAnyArgs().ShowMessageDialogAsync(default!, default!);
+    }
+
+    [Fact]
     public async Task SyncServer_SavedSignInRejected_OffersToSignInAgainThenSyncs()
     {
         var library = new LibraryFakes();

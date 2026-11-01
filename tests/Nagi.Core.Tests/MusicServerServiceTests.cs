@@ -138,6 +138,34 @@ public class MusicServerServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task RemoveAsync_Jellyfin_SignsOutWithTheSavedSignIn()
+    {
+        var (server, _) = await SeedServerAsync(kind: MusicServerKind.Jellyfin);
+        _writer.RemoveFolderAsync(server.FolderId).Returns(true);
+        var signedOut = new TaskCompletionSource<string?>(TaskCreationOptions.RunContinuationsAsynchronously);
+        _handler.SendAsyncFunc = (request, _) =>
+        {
+            if (request.RequestUri!.AbsolutePath == "/Sessions/Logout") signedOut.TrySetResult(request.Headers.Authorization?.Parameter);
+            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.NoContent));
+        };
+
+        (await _service.RemoveAsync(server.FolderId)).Should().BeTrue();
+
+        (await signedOut.Task.WaitAsync(TimeSpan.FromSeconds(5))).Should().Contain("Token=\"secret\"");
+    }
+
+    [Fact]
+    public async Task RemoveAsync_ServerThatCouldntBeRemoved_StaysSignedIn()
+    {
+        var (server, _) = await SeedServerAsync(kind: MusicServerKind.Jellyfin);
+        _writer.RemoveFolderAsync(server.FolderId).Returns(false);
+
+        (await _service.RemoveAsync(server.FolderId)).Should().BeFalse();
+
+        _handler.Requests.Should().BeEmpty();
+    }
+
+    [Fact]
     public async Task SyncAsync_SendsFavoritesAndPlaysBeforeReadingTheServer()
     {
         var (server, song) = await SeedServerAsync(lovedPending: true);
