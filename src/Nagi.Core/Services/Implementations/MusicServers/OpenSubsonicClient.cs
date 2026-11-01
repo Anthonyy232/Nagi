@@ -255,6 +255,9 @@ internal sealed class OpenSubsonicClient : IMusicServerClient
         Bpm = Positive(song.Bpm),
         Comment = NullIfEmpty(song.Comment),
         Composer = NullIfEmpty(song.DisplayComposer),
+        Conductor = NullIfEmpty(string.Join(", ", song.Contributors?.Where(contributor => contributor.Role == "conductor")
+            .Select(contributor => contributor.Artist?.Name) ?? [])),
+        Grouping = NullIfEmpty(string.Join(", ", song.Groupings ?? [])),
         MusicBrainzTrackId = NullIfEmpty(song.MusicBrainzId),
         ReplayGainTrackGain = song.ReplayGain?.TrackGain,
         ReplayGainTrackPeak = song.ReplayGain?.TrackPeak,
@@ -295,6 +298,8 @@ internal sealed class OpenSubsonicClient : IMusicServerClient
 
     private sealed record SubsonicName(string? Name);
 
+    private sealed record SubsonicContributor(string? Role, SubsonicName? Artist);
+
     private sealed record SubsonicReplayGain(double? TrackGain, double? TrackPeak);
 
     private sealed record SubsonicLyricsList(List<SubsonicLyrics>? StructuredLyrics);
@@ -324,6 +329,8 @@ internal sealed class OpenSubsonicClient : IMusicServerClient
         public int? Bpm { get; init; }
         public string? Comment { get; init; }
         public string? DisplayComposer { get; init; }
+        public List<SubsonicContributor>? Contributors { get; init; }
+        public List<string>? Groupings { get; init; }
         public string? MusicBrainzId { get; init; }
         public SubsonicReplayGain? ReplayGain { get; init; }
         public string? CoverArt { get; init; }

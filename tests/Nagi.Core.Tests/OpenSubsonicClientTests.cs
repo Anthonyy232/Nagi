@@ -154,6 +154,13 @@ public class OpenSubsonicClientTests : IDisposable
             discNumber = 1,
             year = 2021,
             duration = 245,
+            displayComposer = "Ada Brook",
+            contributors = new[]
+            {
+                new { role = "composer", artist = new { id = "ar3", name = "Ada Brook" } },
+                new { role = "conductor", artist = new { id = "ar4", name = "Lena Hart" } }
+            },
+            groupings = new[] { "Harbor Suite" },
             replayGain = new { trackGain = -7.5, trackPeak = 0.98 },
             coverArt = "al-1",
             starred = "2026-05-01T10:00:00Z",
@@ -189,6 +196,9 @@ public class OpenSubsonicClientTests : IDisposable
         song.Artists.Should().Equal("A", "B");
         song.AlbumArtists.Should().Equal("A");
         song.Genres.Should().Equal("Dream Pop", "Shoegaze");
+        song.Composer.Should().Be("Ada Brook");
+        song.Conductor.Should().Be("Lena Hart");
+        song.Grouping.Should().Be("Harbor Suite");
         song.Duration.Should().Be(TimeSpan.FromSeconds(245));
         song.ReplayGainTrackGain.Should().Be(-7.5);
         song.ReplayGainTrackPeak.Should().Be(0.98);

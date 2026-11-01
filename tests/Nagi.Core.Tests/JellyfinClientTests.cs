@@ -107,6 +107,12 @@ public class JellyfinClientTests : IDisposable
                         AlbumArtists = new[] { new { Name = "Selene Grey", Id = "ar-1" } },
                         Artists = new[] { "Selene Grey", "Guest" },
                         Genres = new[] { "Folk" },
+                        People = new[]
+                        {
+                            new { Name = "Ada Brook", Type = "Composer" },
+                            new { Name = "Selene Grey", Type = "Artist" },
+                            new { Name = "Ivo Marsh", Type = "Composer" }
+                        },
                         RunTimeTicks = TimeSpan.FromMinutes(3).Ticks,
                         IndexNumber = 2,
                         ParentIndexNumber = 1,
@@ -135,6 +141,7 @@ public class JellyfinClientTests : IDisposable
         song.FileExtension.Should().Be("opus");
         song.Artists.Should().Equal("Selene Grey", "Guest");
         song.AlbumArtists.Should().Equal("Selene Grey");
+        song.Composer.Should().Be("Ada Brook, Ivo Marsh");
         song.Duration.Should().Be(TimeSpan.FromMinutes(3));
         song.TrackNumber.Should().Be(2);
         song.Bitrate.Should().Be(920);

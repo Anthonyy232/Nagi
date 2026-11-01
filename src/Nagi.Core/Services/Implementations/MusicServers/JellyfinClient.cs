@@ -18,7 +18,7 @@ namespace Nagi.Core.Services.Implementations.MusicServers;
 internal sealed class JellyfinClient : IMusicServerClient
 {
     private const int PageSize = 500;
-    private const string SongFields = "Genres,DateCreated,MediaSources,ProviderIds,Path";
+    private const string SongFields = "Genres,DateCreated,MediaSources,ProviderIds,Path,People";
     private static readonly Version MinimumVersion = new(10, 11);
 
     private readonly HttpClient _httpClient;
@@ -226,6 +226,8 @@ internal sealed class JellyfinClient : IMusicServerClient
             Bitrate = source?.Bitrate / 1000,
             SampleRate = audio?.SampleRate,
             Channels = audio?.Channels,
+            Composer = string.Join(", ", item.People?.Where(person => person.Type == "Composer").Select(person => person.Name) ?? [])
+                is { Length: > 0 } composer ? composer : null,
             // Jellyfin normalizes toward -18 LUFS, the reference ReplayGain 2.0 uses, so its gain carries over unchanged.
             ReplayGainTrackGain = item.NormalizationGain,
             MusicBrainzTrackId = ProviderId(item, "MusicBrainzRecording") ?? ProviderId(item, "MusicBrainzTrack"),
@@ -254,6 +256,8 @@ internal sealed class JellyfinClient : IMusicServerClient
 
     private sealed record NamedItem(string? Name);
 
+    private sealed record Person(string? Name, string? Type);
+
     private sealed record MediaSource(int? Bitrate, List<MediaStream>? MediaStreams);
 
     private sealed record MediaStream(string? Type, int? SampleRate, int? Channels);
@@ -276,6 +280,7 @@ internal sealed class JellyfinClient : IMusicServerClient
         public List<NamedItem>? AlbumArtists { get; init; }
         public List<string>? Artists { get; init; }
         public List<string>? Genres { get; init; }
+        public List<Person>? People { get; init; }
         public long? RunTimeTicks { get; init; }
         public int? IndexNumber { get; init; }
         public int? ParentIndexNumber { get; init; }
