@@ -12,6 +12,7 @@ using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Implementations.MusicServers;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using Xunit;
 
 namespace Nagi.Core.Tests;
@@ -184,6 +185,23 @@ public class MusicServerServiceTests : IDisposable
         await _service.SyncAsync(server.FolderId);
 
         whenSyncing.Should().Be((false, true), "the sync replaces the favorite and play count with the server's");
+    }
+
+    [Theory]
+    [InlineData(MusicServerError.SignInFailed, true)]
+    [InlineData(MusicServerError.Unreachable, false)]
+    public async Task SyncAllAsync_ServerThatRejectsTheSavedSignIn_IsReported(MusicServerError error, bool reported)
+    {
+        var (server, _) = await SeedServerAsync();
+        _scanner.SyncServerFolderAsync(server.FolderId, Arg.Any<IMusicServerClient>(), Arg.Any<IProgress<ScanProgress>?>(),
+            Arg.Any<CancellationToken>()).ThrowsAsync(new MusicServerException(error, "failed"));
+        var rejected = new List<Guid>();
+        _service.SignInRejected += rejected.Add;
+
+        await _service.SyncAllAsync();
+
+        Guid[] expected = reported ? [server.FolderId] : [];
+        rejected.Should().Equal(expected);
     }
 
     [Fact]

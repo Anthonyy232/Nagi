@@ -82,6 +82,18 @@ public sealed class MusicServerPromptsTests : IDisposable
         await _ui.ReceivedWithAnyArgs(2).ShowMessageDialogAsync(default!, default!);
     }
 
+    [Fact]
+    public async Task SignInRejectedDuringASync_IsOfferedOncePerRun()
+    {
+        var folderId = AddServerSong().FolderId;
+
+        _musicServers.SignInRejected += Raise.Event<Action<Guid>>(folderId);
+        _musicServers.SignInRejected += Raise.Event<Action<Guid>>(folderId);
+
+        await _ui.Received(1).ShowConfirmationDialogAsync(Arg.Any<string>(),
+            string.Format(Strings.MusicServer_Error_SavedSignIn_Format, "Living Room"), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<bool>());
+    }
+
     private Song AddServerSong()
     {
         var folder = new Folder { Name = "Living Room", Path = "nagi-server:0123" };

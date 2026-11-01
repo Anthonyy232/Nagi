@@ -54,6 +54,8 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
         _libraryScanner.LibraryContentChanged += OnLibraryContentChanged;
     }
 
+    public event Action<Guid>? SignInRejected;
+
     public Task<Folder> AddAsync(MusicServerKind kind, string address, string userName, string password) =>
         AddCoreAsync(kind, address, userName.Trim(), password, false);
 
@@ -133,6 +135,11 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
             catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested && !_shutdownCts.IsCancellationRequested)
             {
                 _logger.LogDebug("Server folder {FolderId} was removed while it synced.", folderId);
+            }
+            catch (MusicServerException ex) when (ex.Error == MusicServerError.SignInFailed)
+            {
+                _logger.LogWarning(ex, "Server folder {FolderId} rejected the saved sign-in.", folderId);
+                SignInRejected?.Invoke(folderId);
             }
             // One server failing mustn't keep the others from syncing.
             catch (Exception ex) when (ex is not OperationCanceledException)

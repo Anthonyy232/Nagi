@@ -32,13 +32,16 @@ public static class MusicServerErrors
     public static async Task<bool> ShowAsync(IUIService ui, Guid folderId, string serverName, MusicServerError? error,
         string fallback)
     {
-        if (error == MusicServerError.SignInFailed)
-            return await ui.ShowConfirmationDialogAsync(Strings.FolderPage_Menu_SignIn,
-                       string.Format(Strings.MusicServer_Error_SavedSignIn_Format, serverName), Strings.MusicServerDialog_SignInButton)
-                   && await ui.ShowMusicServerSignInDialogAsync(folderId);
+        if (error == MusicServerError.SignInFailed) return await OfferSignInAsync(ui, folderId, serverName);
 
         await ui.ShowMessageDialogAsync(Strings.Generic_Error,
             (error is { } known ? DescribeForServer(known, serverName) : null) ?? fallback);
         return false;
     }
+
+    /// <returns>True when the user signed in again.</returns>
+    public static async Task<bool> OfferSignInAsync(IUIService ui, Guid folderId, string serverName) =>
+        await ui.ShowConfirmationDialogAsync(Strings.FolderPage_Menu_SignIn,
+            string.Format(Strings.MusicServer_Error_SavedSignIn_Format, serverName), Strings.MusicServerDialog_SignInButton)
+        && await ui.ShowMusicServerSignInDialogAsync(folderId);
 }

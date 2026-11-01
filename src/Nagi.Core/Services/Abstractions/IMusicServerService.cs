@@ -10,6 +10,12 @@ namespace Nagi.Core.Services.Abstractions;
 public interface IMusicServerService
 {
     /// <summary>
+    ///     Raised on a background thread with the server's folder ID when <see cref="SyncAllAsync" /> finds that a server
+    ///     no longer accepts the saved sign-in.
+    /// </summary>
+    event Action<Guid>? SignInRejected;
+
+    /// <summary>
     ///     Signs in with a user name and password and adds the server to the library without syncing it.
     ///     An address without a scheme means HTTPS.
     /// </summary>

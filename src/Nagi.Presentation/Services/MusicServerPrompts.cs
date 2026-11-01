@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
@@ -10,7 +11,8 @@ using Nagi.Presentation.Services.Abstractions;
 namespace Nagi.Presentation.Services;
 
 /// <summary>
-///     Tells the user why a song from a music server won't play.
+///     Tells the user about music server failures that no page asked about: a server song that won't play, and a
+///     background sync that finds the server no longer accepts the saved sign-in.
 /// </summary>
 public sealed class MusicServerPrompts : IDisposable
 {
@@ -21,6 +23,8 @@ public sealed class MusicServerPrompts : IDisposable
     private readonly ILogger<MusicServerPrompts> _logger;
     // One message at a time: playing a song again while its message is open fails again.
     private bool _isShowingMessage;
+    // Offered once per server each run, so a user who declines isn't asked again at every sync.
+    private readonly HashSet<Guid> _offeredSignIns = [];
 
     public MusicServerPrompts(IMusicServerService musicServers, IMusicPlaybackService playback, IUIService ui,
         IDispatcherService dispatcher, ILogger<MusicServerPrompts> logger)
@@ -35,14 +39,19 @@ public sealed class MusicServerPrompts : IDisposable
     public void Start()
     {
         _playback.ServerSongFailed += OnServerSongFailed;
+        _musicServers.SignInRejected += OnSignInRejected;
     }
 
     public void Dispose()
     {
         _playback.ServerSongFailed -= OnServerSongFailed;
+        _musicServers.SignInRejected -= OnSignInRejected;
     }
 
     private void OnServerSongFailed(Song song) => _dispatcher.TryEnqueue(() => _ = ExplainServerSongFailureAsync(song));
+
+    // Jellyfin keeps streaming with a sign-in it no longer accepts, so playback alone wouldn't reveal it.
+    private void OnSignInRejected(Guid folderId) => _dispatcher.TryEnqueue(() => _ = OfferSignInAsync(folderId));
 
     // Asks the server what went wrong, so the message can say what to do about it.
     private async Task ExplainServerSongFailureAsync(Song song)
@@ -77,6 +86,25 @@ public sealed class MusicServerPrompts : IDisposable
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to explain why server song {SongId} couldn't be played.", song.Id);
+        }
+        finally
+        {
+            _isShowingMessage = false;
+        }
+    }
+
+    private async Task OfferSignInAsync(Guid folderId)
+    {
+        if (_isShowingMessage || !_offeredSignIns.Add(folderId)) return;
+        _isShowingMessage = true;
+        try
+        {
+            if (await _musicServers.GetServerAsync(folderId) is { } server)
+                await MusicServerErrors.OfferSignInAsync(_ui, folderId, server.Folder.Name);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to offer to sign in to server folder {FolderId} again.", folderId);
         }
         finally
         {
