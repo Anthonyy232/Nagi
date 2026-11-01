@@ -1060,9 +1060,6 @@ Do you want to continue?</value>
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Pick one at random</value>
   </data>
-  <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Add a music folder</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Add Folder</value>
   </data>
@@ -1079,7 +1076,7 @@ Do you want to continue?</value>
     <value>No folders added yet</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Add music folders to get started</value>
+    <value>Add a music folder or server to get started</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Play</value>
@@ -1217,7 +1214,7 @@ Do you want to continue?</value>
     <value>Where's your music?</value>
   </data>
   <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Choose the folder where you keep your music. Nagi builds your library while you finish setting up, and you can add more folders later.</value>
+    <value>Choose the folder where you keep your music, or add a music server. Nagi builds your library while you finish setting up, and you can add more later.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Make it yours</value>
@@ -2226,6 +2223,10 @@ Do you want to continue?</value>
   <data name="Label_Path" xml:space="preserve">
     <value>Path</value>
   </data>
+  <data name="Label_Server" xml:space="preserve">
+    <value>Server</value>
+    <comment>A music server such as Navidrome or Jellyfin: where a song streams from, or the kind of item a page shows.</comment>
+  </data>
   <data name="Label_Format" xml:space="preserve">
     <value>Format</value>
   </data>
@@ -2261,5 +2262,159 @@ Do you want to continue?</value>
   </data>
   <data name="SettingsPage_SongListHeader_Description" xml:space="preserve">
     <value>Label each column above song lists.</value>
+  </data>
+  <data name="Generic_Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="FolderPage_AddButton_ToolTip" xml:space="preserve">
+    <value>Add a music folder or server</value>
+  </data>
+  <data name="FolderPage_AddMenu_Folder" xml:space="preserve">
+    <value>Music Folder</value>
+  </data>
+  <data name="FolderPage_AddMenu_Server" xml:space="preserve">
+    <value>Music Server</value>
+  </data>
+  <data name="FolderPage_Menu_Sync" xml:space="preserve">
+    <value>Sync</value>
+  </data>
+  <data name="FolderPage_Menu_SignIn" xml:space="preserve">
+    <value>Sign In Again</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Title" xml:space="preserve">
+    <value>Remove Server</value>
+  </data>
+  <data name="FolderPage_RemoveServerDialog_Format" xml:space="preserve">
+    <value>Remove '{0}' from your library? Its music stays on the server.</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Title" xml:space="preserve">
+    <value>No songs yet</value>
+  </data>
+  <data name="FolderSongViewPage_ServerEmpty_Subtitle" xml:space="preserve">
+    <value>Sync the server from the Folders page to bring in its music</value>
+  </data>
+  <data name="Folders_Sync_InProgress" xml:space="preserve">
+    <value>Syncing '{0}'…</value>
+  </data>
+  <data name="Folders_Sync_Error_Failed" xml:space="preserve">
+    <value>Couldn't sync '{0}'. Try again later.</value>
+  </data>
+  <data name="MusicServerDialog_AddTitle" xml:space="preserve">
+    <value>Add Music Server</value>
+  </data>
+  <data name="MusicServerDialog_SignInTitle_Format" xml:space="preserve">
+    <value>Sign In to {0}</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInButton" xml:space="preserve">
+    <value>Sign In</value>
+  </data>
+  <data name="MusicServerDialog_SignInPassword_Format" xml:space="preserve">
+    <value>Enter the password for {0} on {1}.</value>
+    <comment>{0} is a user name, {1} a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInApiKey_Format" xml:space="preserve">
+    <value>Enter a new API key for {0}.</value>
+    <comment>{0} is a server address.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_Header" xml:space="preserve">
+    <value>Server Type</value>
+  </data>
+  <data name="MusicServerDialog_Kind_Jellyfin" xml:space="preserve">
+    <value>Jellyfin</value>
+    <comment>Product name.</comment>
+  </data>
+  <data name="MusicServerDialog_Kind_OpenSubsonic" xml:space="preserve">
+    <value>Navidrome or another OpenSubsonic server</value>
+    <comment>Navidrome and OpenSubsonic are product names.</comment>
+  </data>
+  <data name="MusicServerDialog_Address_Header" xml:space="preserve">
+    <value>Server Address</value>
+  </data>
+  <data name="MusicServerDialog_Address_Placeholder" xml:space="preserve">
+    <value>music.example.com</value>
+    <comment>An example web address.</comment>
+  </data>
+  <data name="MusicServerDialog_SignInMethod_Header" xml:space="preserve">
+    <value>Sign In with</value>
+  </data>
+  <data name="MusicServerDialog_UserName_Header" xml:space="preserve">
+    <value>User Name</value>
+  </data>
+  <data name="MusicServerDialog_Password_Header" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="MusicServerDialog_ApiKey_Header" xml:space="preserve">
+    <value>API Key</value>
+  </data>
+  <data name="MusicServer_Error_InvalidAddress" xml:space="preserve">
+    <value>Enter the server's address, such as music.example.com.</value>
+  </data>
+  <data name="MusicServer_Error_Unreachable" xml:space="preserve">
+    <value>Couldn't reach the server. Check the address and that the server is running.</value>
+  </data>
+  <data name="MusicServer_Error_SecureConnectionFailed" xml:space="preserve">
+    <value>Couldn't connect securely. If the server doesn't use HTTPS, enter its address starting with http://.</value>
+  </data>
+  <data name="MusicServer_Error_NotJellyfin" xml:space="preserve">
+    <value>There's no Jellyfin server at this address.</value>
+  </data>
+  <data name="MusicServer_Error_NotOpenSubsonic" xml:space="preserve">
+    <value>There's no OpenSubsonic server at this address. Servers that only support the original Subsonic API can't be added.</value>
+  </data>
+  <data name="MusicServer_Error_JellyfinTooOld" xml:space="preserve">
+    <value>Nagi needs Jellyfin 10.11 or later. Update the server, then try again.</value>
+  </data>
+  <data name="MusicServer_Error_SignInFailed" xml:space="preserve">
+    <value>The user name or password is incorrect.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyRejected" xml:space="preserve">
+    <value>The server didn't accept this API key.</value>
+  </data>
+  <data name="MusicServer_Error_PasswordUnsupported" xml:space="preserve">
+    <value>This server doesn't accept passwords from apps. Sign in with an API key instead.</value>
+  </data>
+  <data name="MusicServer_Error_ApiKeyUnsupported" xml:space="preserve">
+    <value>This server doesn't support API keys. Sign in with your password instead.</value>
+  </data>
+  <data name="MusicServer_Error_NoMusicLibrary" xml:space="preserve">
+    <value>Your account doesn't have a music library on this server.</value>
+  </data>
+  <data name="MusicServer_Error_AlreadyAdded" xml:space="preserve">
+    <value>This server is already in your library.</value>
+  </data>
+  <data name="MusicServer_Error_SignInNotSaved" xml:space="preserve">
+    <value>Couldn't save the sign-in on this PC.</value>
+  </data>
+  <data name="MusicServer_Error_ServerError" xml:space="preserve">
+    <value>The server ran into a problem. Try again later.</value>
+  </data>
+  <data name="MusicServer_Error_DifferentAccount_Format" xml:space="preserve">
+    <value>This API key belongs to a different account. Create one while signed in as {0}.</value>
+    <comment>{0} is a user name.</comment>
+  </data>
+  <data name="MusicServer_Error_Unreachable_Format" xml:space="preserve">
+    <value>Couldn't reach '{0}'. Check that the server is running and that you're online.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SecureConnection_Format" xml:space="preserve">
+    <value>Couldn't connect securely to '{0}'. Its certificate may have changed or expired.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SignInMethod_Format" xml:space="preserve">
+    <value>'{0}' no longer accepts this way of signing in. Remove it, then add it again and choose the other way to sign in.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="MusicServer_Error_SavedSignIn_Format" xml:space="preserve">
+    <value>'{0}' didn't accept the saved sign-in. Sign in again to keep using it.</value>
+    <comment>{0} is the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongFailed_Format" xml:space="preserve">
+    <value>Couldn't play '{0}' from '{1}'.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
+  </data>
+  <data name="Player_ServerSongGone_Format" xml:space="preserve">
+    <value>'{0}' is no longer on '{1}', so it will leave your library at the next sync.</value>
+    <comment>{0} is a song title, {1} the name of a music server.</comment>
   </data>
 </root>

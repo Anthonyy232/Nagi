@@ -7,6 +7,7 @@ using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Services.Implementations.MusicServers;
 using Nagi.Core.Services.Implementations.Presence;
 using Nagi.Core.Services.Implementations.Romanization;
 using Nagi.Core.Services.Implementations;
@@ -21,7 +22,7 @@ public static class CoreServiceRegistration
     /// <summary>
     ///     Adds the library, playback, metadata, scrobbling, lyrics, and maintenance services.
     ///     The host must also register logging, <c>IConfiguration</c>, and its platform services:
-    ///     <see cref="IPathConfiguration" />, <see cref="ISettingsService" />, <see cref="IAppInfoService" />, <see cref="IAudioPlayer" />
+    ///     <see cref="IPathConfiguration" />, <see cref="ISettingsService" />, <see cref="IAppInfoService" />, <see cref="ICredentialLockerService" />, <see cref="IAudioPlayer" />
     ///     and <see cref="ISystemMediaControls" />.
     /// </summary>
     public static IServiceCollection AddNagiCore(this IServiceCollection services)
@@ -233,6 +234,8 @@ public static class CoreServiceRegistration
         services.AddSingleton<IPresenceService, DiscordPresenceService>();
         services.AddSingleton<IPresenceService, LastFmPresenceService>();
         services.AddSingleton<IPresenceService, ListenBrainzPresenceService>();
+        services.AddSingleton<IMusicServerService, MusicServerService>();
+        services.AddSingleton<IPresenceService, MusicServerPresenceService>();
         services.AddSingleton<ISmartPlaylistService, SmartPlaylistService>();
         services.AddSingleton<IOnlineLyricsService, LrcLibService>();
         services.AddSingleton<IRomanizationProvider, JapaneseRomanizationProvider>();
@@ -267,6 +270,16 @@ public static class CoreServiceRegistration
                 KeepAlivePingDelay = TimeSpan.FromSeconds(30),
                 KeepAlivePingTimeout = TimeSpan.FromSeconds(5)
             });
+
+        // A sync makes thousands of requests, which would crowd everything else out of the log kept for crash reports.
+        services.AddHttpClient(MusicServerService.HttpClientName)
+            .ConfigureHttpClient(client => client.Timeout = TimeSpan.FromSeconds(30))
+            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
+            {
+                PooledConnectionLifetime = TimeSpan.FromMinutes(2),
+                ConnectTimeout = TimeSpan.FromSeconds(10),
+            })
+            .RemoveAllLoggers();
 
         // Image downloads are larger payloads and tolerate slower CDNs; use a longer timeout.
         services.AddHttpClient("ImageDownloader")

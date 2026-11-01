@@ -73,7 +73,7 @@ public partial class LibraryReader : ILibraryReader, IDisposable
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
         return await context.Folders.AsNoTracking()
             .Where(f => f.ParentFolderId == null)
-            .Select(f => new FolderSummary(f, f.Songs.Count))
+            .Select(f => new FolderSummary(f, f.Songs.Count, f.MusicServer != null))
             .ToListAsync(token).ConfigureAwait(false);
     }
 

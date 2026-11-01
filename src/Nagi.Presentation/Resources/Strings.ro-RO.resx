@@ -1074,9 +1074,6 @@ Vrei să continui?</value>
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Alege unul la întâmplare</value>
   </data>
-  <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Adaugă un dosar de muzică</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Adaugă dosar</value>
   </data>

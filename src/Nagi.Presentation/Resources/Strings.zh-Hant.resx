@@ -1074,9 +1074,6 @@
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
     <value>隨機選擇一個</value>
   </data>
-  <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>新增音樂資料夾</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>新增資料夾</value>
   </data>

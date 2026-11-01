@@ -1,5 +1,6 @@
 using LibVLCSharp;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Helpers;
 using Nagi.Core.Resources;
 
 namespace Nagi.Audio.LibVlc;
@@ -13,7 +14,8 @@ public sealed partial class LibVlcAudioPlayerService
     {
         if (_isDisposed) return;
 
-        var message = string.IsNullOrWhiteSpace(e.FormattedLog) ? e.Message : e.FormattedLog;
+        // VLC quotes the URL it failed to open, and a server stream's URL carries the sign-in.
+        var message = UrlRedaction.RemoveQueries(string.IsNullOrWhiteSpace(e.FormattedLog) ? e.Message : e.FormattedLog);
         switch (e.Level)
         {
             case LibVLCSharp.LogLevel.Error:
@@ -61,7 +63,8 @@ public sealed partial class LibVlcAudioPlayerService
 
         _isExplicitStop = true;
 
-        var lastVlcError = ReadNative(() => _libVlc?.LastLibVLCError, null);
+        // Also shown to the user, so redacted like VLC's log.
+        var lastVlcError = UrlRedaction.RemoveQueries(ReadNative(() => _libVlc?.LastLibVLCError, null));
         var errorMessage = string.IsNullOrEmpty(lastVlcError)
             ? Strings.Player_Error_LibVLC_Unspecified
             : string.Format(Strings.Player_Error_LibVLC_WithDetails, lastVlcError);

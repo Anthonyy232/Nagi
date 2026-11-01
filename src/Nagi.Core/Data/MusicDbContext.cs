@@ -31,6 +31,7 @@ public class MusicDbContext : DbContext
     public DbSet<ListenHistory> ListenHistory { get; set; } = null!;
     public DbSet<SmartPlaylist> SmartPlaylists { get; set; } = null!;
     public DbSet<SmartPlaylistRule> SmartPlaylistRules { get; set; } = null!;
+    public DbSet<MusicServer> MusicServers { get; set; } = null!;
 
     public Task BackfillSortKeysAsync(CancellationToken cancellationToken = default)
     {
@@ -155,6 +156,15 @@ public class MusicDbContext : DbContext
             entity.HasOne(f => f.ParentFolder)
                 .WithMany(f => f.SubFolders)
                 .HasForeignKey(f => f.ParentFolderId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<MusicServer>(entity =>
+        {
+            entity.Property(s => s.UserName).UseCollation("NOCASE");
+            entity.HasOne(s => s.Folder)
+                .WithOne(f => f.MusicServer)
+                .HasForeignKey<MusicServer>(s => s.FolderId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 

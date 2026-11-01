@@ -49,53 +49,11 @@ public partial class LibraryService
         progress?.Report(new ScanProgress
         { StatusText = Resources.Strings.Status_PreparingScanCaches, Percentage = 0 });
 
-        // Pre-load scan-scoped caches (names -> IDs) to prevent duplicate entity creation across batches
-        var artistIdCache = new Dictionary<string, Guid>(StringComparer.OrdinalIgnoreCase);
-        var albumIdCache = new Dictionary<(string Title, string Artist), Guid>();
-        var genreIdCache = new Dictionary<string, Guid>(StringComparer.OrdinalIgnoreCase);
-
         // Create the batch context early so it can be reused for both pre-warm queries and batch writes,
         // avoiding a second connection-open + 5-PRAGMA overhead.
         await using var batchContext = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
         batchContext.ChangeTracker.AutoDetectChangesEnabled = false;
-
-        {
-            var existingArtists = await batchContext.Artists.Select(a => new { a.Id, a.Name })
-                .ToListAsync(cancellationToken).ConfigureAwait(false);
-            foreach (var artist in existingArtists)
-            {
-                artistIdCache.TryAdd(artist.Name, artist.Id);
-            }
-
-            var existingAlbumsWithArtist = await batchContext.Albums
-                .AsNoTracking()
-                .Select(a => new
-                {
-                    a.Id,
-                    a.Title,
-                    PrimaryArtistName = a.AlbumArtists
-                        .Where(aa => aa.Order == 0)
-                        .Select(aa => aa.Artist.Name)
-                        .FirstOrDefault() ?? string.Empty
-                })
-                .ToListAsync(cancellationToken).ConfigureAwait(false);
-
-            foreach (var album in existingAlbumsWithArtist)
-            {
-                var albumKey = AlbumKey(album.Title, album.PrimaryArtistName);
-                albumIdCache.TryAdd(albumKey, album.Id);
-            }
-
-            var existingGenres = await batchContext.Genres.Select(g => new { g.Id, g.Name })
-                .ToListAsync(cancellationToken).ConfigureAwait(false);
-            foreach (var genre in existingGenres)
-            {
-                genreIdCache.TryAdd(genre.Name, genre.Id);
-            }
-        }
-
-        _logger.LogDebug("Pre-loaded {ArtistCount} artists, {AlbumCount} albums, {GenreCount} genres into scan caches.",
-            artistIdCache.Count, albumIdCache.Count, genreIdCache.Count);
+        var caches = await LoadImportCachesAsync(batchContext, cancellationToken).ConfigureAwait(false);
 
         progress?.Report(new ScanProgress
         { StatusText = Resources.Strings.Status_ReadingSongDetails, Percentage = 0 });
@@ -196,9 +154,8 @@ public partial class LibraryService
                         Percentage = (Volatile.Read(ref processedCount) + totalSaved) / (double)(totalFiles * 2) * 100,
                     });
 
-                    var saved = await ProcessSingleBatchAsync(folderId, batch, batchContext, artistIdCache,
-                        albumIdCache, genreIdCache, filePathsBeingUpdated, unchangedFiles, replacedCovers,
-                        pipelineToken).ConfigureAwait(false);
+                    var saved = await ProcessSingleBatchAsync(folderId, batch, batchContext, caches,
+                        filePathsBeingUpdated, unchangedFiles, replacedCovers, pipelineToken).ConfigureAwait(false);
                     totalSaved += saved;
                 }
             }
@@ -224,6 +181,60 @@ public partial class LibraryService
     }
 
     /// <summary>
+    ///     Name-to-ID lookups for artists, albums and genres that live for one import, so batches written one after
+    ///     another reuse the rows earlier batches created instead of adding duplicates.
+    /// </summary>
+    private sealed record ImportCaches(
+        Dictionary<string, Guid> ArtistIds,
+        Dictionary<(string Title, string Artist), Guid> AlbumIds,
+        Dictionary<string, Guid> GenreIds);
+
+    private async Task<ImportCaches> LoadImportCachesAsync(MusicDbContext context, CancellationToken cancellationToken)
+    {
+        var caches = new ImportCaches(
+            new Dictionary<string, Guid>(StringComparer.OrdinalIgnoreCase),
+            new Dictionary<(string Title, string Artist), Guid>(),
+            new Dictionary<string, Guid>(StringComparer.OrdinalIgnoreCase));
+
+        var existingArtists = await context.Artists.Select(a => new { a.Id, a.Name })
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+        foreach (var artist in existingArtists)
+        {
+            caches.ArtistIds.TryAdd(artist.Name, artist.Id);
+        }
+
+        var existingAlbumsWithArtist = await context.Albums
+            .AsNoTracking()
+            .Select(a => new
+            {
+                a.Id,
+                a.Title,
+                PrimaryArtistName = a.AlbumArtists
+                    .Where(aa => aa.Order == 0)
+                    .Select(aa => aa.Artist.Name)
+                    .FirstOrDefault() ?? string.Empty
+            })
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+
+        foreach (var album in existingAlbumsWithArtist)
+        {
+            var albumKey = AlbumKey(album.Title, album.PrimaryArtistName);
+            caches.AlbumIds.TryAdd(albumKey, album.Id);
+        }
+
+        var existingGenres = await context.Genres.Select(g => new { g.Id, g.Name })
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+        foreach (var genre in existingGenres)
+        {
+            caches.GenreIds.TryAdd(genre.Name, genre.Id);
+        }
+
+        _logger.LogDebug("Pre-loaded {ArtistCount} artists, {AlbumCount} albums, {GenreCount} genres into scan caches.",
+            caches.ArtistIds.Count, caches.AlbumIds.Count, caches.GenreIds.Count);
+        return caches;
+    }
+
+    /// <summary>
     ///     Processes a batch of song metadata, using scan-scoped caches for Artists, Albums, and Genres.
     ///     The single channel reader owns these caches and writes batches sequentially.
     /// </summary>
@@ -231,9 +242,7 @@ public partial class LibraryService
         Guid folderId,
         SongFileMetadata[] metadataList,
         MusicDbContext context,
-        Dictionary<string, Guid> artistIdCache,
-        Dictionary<(string Title, string Artist), Guid> albumIdCache,
-        Dictionary<string, Guid> genreIdCache,
+        ImportCaches caches,
         IReadOnlySet<string> filePathsBeingUpdated,
         IReadOnlySet<string> unchangedFiles,
         ISet<string> replacedCovers,
@@ -277,12 +286,12 @@ public partial class LibraryService
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
 
-        var artistLookup = ResolveArtistsForBatch(context, artistNames, artistIdCache);
+        var artistLookup = ResolveArtistsForBatch(context, artistNames, caches.ArtistIds);
         await ApplyTaggedArtistIdsAsync(context, metadataList, artistLookup, cancellationToken).ConfigureAwait(false);
-        var genreLookup = ResolveGenresForBatch(context, genreNames, genreIdCache);
+        var genreLookup = ResolveGenresForBatch(context, genreNames, caches.GenreIds);
 
         var albumDefinitions = BuildAlbumDefinitions(metadataList);
-        var albumLookup = await ResolveAlbumsForBatchAsync(context, albumDefinitions, artistLookup, albumIdCache, cancellationToken).ConfigureAwait(false);
+        var albumLookup = await ResolveAlbumsForBatchAsync(context, albumDefinitions, artistLookup, caches.AlbumIds, cancellationToken).ConfigureAwait(false);
 
         foreach (var metadata in metadataList)
         {
@@ -639,9 +648,21 @@ public partial class LibraryService
         song.ReplayGainTrackGain = metadata.ReplayGainTrackGain;
         song.ReplayGainTrackPeak = metadata.ReplayGainTrackPeak;
 
+        var remote = metadata as ServerSongMetadata;
+        if (remote is not null)
+        {
+            song.RemoteId = remote.RemoteId;
+            song.RemoteHash = remote.ComputeHash();
+            // The server counts plays and keeps favorites from every app the user listens with, so its values win,
+            // except for a favorite changed here that the server hasn't been told about yet.
+            song.PlayCount = remote.PlayCount;
+            song.LastPlayedDate = remote.LastPlayedUtc;
+            if (!song.IsLovedSyncPending) song.IsLoved = remote.IsFavorite;
+        }
+
         if (existingSong == null)
         {
-            song.DateAddedToLibrary = DateTime.UtcNow;
+            song.DateAddedToLibrary = remote?.AddedUtc ?? DateTime.UtcNow;
             context.Songs.Add(song);
         }
 

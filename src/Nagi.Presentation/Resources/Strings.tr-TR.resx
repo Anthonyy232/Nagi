@@ -1074,9 +1074,6 @@ Devam etmek ister misiniz?</value>
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Rastgele birini seç</value>
   </data>
-  <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Bir müzik klasörü ekle</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Klasör ekle</value>
   </data>

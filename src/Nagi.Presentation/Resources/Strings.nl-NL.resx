@@ -1074,9 +1074,6 @@ Wil je doorgaan?</value>
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Kies er willekeurig een</value>
   </data>
-  <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Een muziekmap toevoegen</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Map toevoegen</value>
   </data>

@@ -1074,9 +1074,6 @@ Vil du fortsette?</value>
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Velg en tilfeldig</value>
   </data>
-  <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Legg til en musikkmappe</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Legg til mappe</value>
   </data>

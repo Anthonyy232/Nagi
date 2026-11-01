@@ -15,6 +15,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     private readonly ILogger<MusicPlaybackService> _logger;
     private readonly IMetadataService _metadataService;
     private readonly IFileSystemService _fileSystem;
+    private readonly IMusicServerService _musicServers;
     private readonly ISettingsService _settingsService;
     private readonly object _pendingOperationsLock = new();
 
@@ -41,9 +42,11 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         ILibraryWriter libraryWriter,
         IMetadataService metadataService,
         IFileSystemService fileSystem,
+        IMusicServerService musicServers,
         ILogger<MusicPlaybackService> logger, TimeProvider? timeProvider = null)
     {
         _fileSystem = fileSystem;
+        _musicServers = musicServers;
         _settingsService = settingsService;
         _audioPlayer = audioPlayer;
         _mediaControls = mediaControls;
@@ -119,6 +122,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
     public event Action? DurationChanged;
     public event Action? EqualizerChanged;
     public event Action<Song, long, DateTime>? ScrobbleEligibilityReached;
+    public event Action<Song>? ServerSongFailed;
 
     public Task InitializeAsync(bool restoreLastSession = true)
     {
@@ -710,6 +714,16 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         CurrentQueueIndex = currentIndex;
         PruneTransientTracks();
 
+        // Before the listen session starts, so a server song that can't stream isn't credited with any listening time.
+        var streamUri = await _musicServers.GetStreamUriAsync(song);
+        if (!IsCurrentRequest(request)) return;
+        if (song.IsRemote && streamUri is null)
+        {
+            await StopInternalAsync(request);
+            ServerSongFailed?.Invoke(song);
+            return;
+        }
+
         if (!_transientTracks.ContainsKey(song.Id)) await StartListenSessionAsync(song.Id, request);
         if (!IsCurrentRequest(request)) return;
 
@@ -717,7 +731,7 @@ public partial class MusicPlaybackService : IMusicPlaybackService
         _logger.LogDebug("Now playing '{SongTitle}' (Index: {QueueIndex}, Shuffled Index: {ShuffledIndex})",
             song.Title, CurrentQueueIndex, CurrentShuffledIndex);
 
-        await _audioPlayer.LoadAsync(song);
+        await _audioPlayer.LoadAsync(song, streamUri);
         if (!IsCurrentRequest(request)) return;
         await ApplyReplayGainIfEnabledAsync();
         if (IsCurrentRequest(request)) await _audioPlayer.PlayAsync();

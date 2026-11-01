@@ -44,6 +44,7 @@ public class MusicPlaybackServiceScrobblingTests : IAsyncDisposable
             _library.Reader, _library.Writer,
             metadataService,
             Substitute.For<IFileSystemService>(),
+            Substitute.For<IMusicServerService>(),
             logger, _time);
 
         _testSongs = Enumerable.Range(1, 2)

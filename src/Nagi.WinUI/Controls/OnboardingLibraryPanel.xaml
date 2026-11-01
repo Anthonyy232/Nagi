@@ -13,26 +13,33 @@
 
         <StackPanel
             Spacing="24"
-            Visibility="{x:Bind ViewModel.HasLibraryFolder, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+            Visibility="{x:Bind ViewModel.HasLibrarySource, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
             <FontIcon
                 FontSize="96"
                 Foreground="{ThemeResource AppPrimaryColorBrush}"
                 Glyph="&#xE8B7;" />
-            <Button
-                Padding="24,12"
-                HorizontalAlignment="Center"
-                AutomationProperties.Name="{x:Bind resources:Strings.OnboardingPage_AddFolderButton_Content, Mode=OneTime}"
-                Command="{x:Bind ViewModel.ChooseFolderCommand, Mode=OneWay}"
-                Style="{StaticResource AnimatedAccentButtonStyle}">
-                <StackPanel Orientation="Horizontal" Spacing="10">
-                    <FontIcon FontSize="16" Glyph="&#xE8F4;" />
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        FontSize="16"
-                        FontWeight="SemiBold"
-                        Text="{x:Bind resources:Strings.OnboardingPage_AddFolderButton_Content, Mode=OneTime}" />
-                </StackPanel>
-            </Button>
+            <StackPanel Spacing="8">
+                <Button
+                    Padding="24,12"
+                    HorizontalAlignment="Center"
+                    AutomationProperties.Name="{x:Bind resources:Strings.OnboardingPage_AddFolderButton_Content, Mode=OneTime}"
+                    Command="{x:Bind ViewModel.ChooseFolderCommand, Mode=OneWay}"
+                    Style="{StaticResource AnimatedAccentButtonStyle}">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <FontIcon FontSize="16" Glyph="&#xE8F4;" />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            FontWeight="SemiBold"
+                            Text="{x:Bind resources:Strings.OnboardingPage_AddFolderButton_Content, Mode=OneTime}" />
+                    </StackPanel>
+                </Button>
+                <HyperlinkButton
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind ViewModel.ConnectServerCommand, Mode=OneWay}"
+                    Content="{x:Bind resources:Strings.MusicServerDialog_AddTitle, Mode=OneTime}"
+                    Style="{StaticResource AnimatedHyperlinkButtonStyle}" />
+            </StackPanel>
         </StackPanel>
 
         <Grid
@@ -43,7 +50,7 @@
             ColumnSpacing="16"
             CornerRadius="{ThemeResource ControlCornerRadius}"
             RowSpacing="4"
-            Visibility="{x:Bind ViewModel.HasLibraryFolder, Mode=OneWay}">
+            Visibility="{x:Bind ViewModel.HasLibrarySource, Mode=OneWay}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -72,9 +79,9 @@
             <TextBlock
                 Grid.Column="1"
                 Style="{StaticResource BodyStrongTextBlockStyle}"
-                Text="{x:Bind ViewModel.FolderPath, Mode=OneWay}"
+                Text="{x:Bind ViewModel.LibrarySource, Mode=OneWay}"
                 TextTrimming="CharacterEllipsis"
-                ToolTipService.ToolTip="{x:Bind ViewModel.FolderPath, Mode=OneWay}" />
+                ToolTipService.ToolTip="{x:Bind ViewModel.LibrarySource, Mode=OneWay}" />
             <TextBlock
                 Grid.Row="1"
                 Grid.Column="1"

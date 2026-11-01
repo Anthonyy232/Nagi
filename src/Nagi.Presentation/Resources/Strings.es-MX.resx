@@ -1074,9 +1074,6 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Elegir una al azar</value>
   </data>
-  <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Agregar una carpeta de música</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Agregar carpeta</value>
   </data>

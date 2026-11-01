@@ -1074,9 +1074,6 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Odaberi nasumično</value>
   </data>
-  <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Dodaj glazbenu mapu</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Dodaj mapu</value>
   </data>

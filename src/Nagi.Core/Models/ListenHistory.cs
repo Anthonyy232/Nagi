@@ -37,4 +37,9 @@ public class ListenHistory
     public bool IsScrobbled { get; set; }
 
     public bool IsSubmittedToListenBrainz { get; set; }
+
+    /// <summary>
+    ///     Whether the play was reported to the music server the song streams from. Unused for songs on disk.
+    /// </summary>
+    public bool IsSubmittedToServer { get; set; }
 }

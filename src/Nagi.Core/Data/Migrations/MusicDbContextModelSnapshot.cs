@@ -237,6 +237,9 @@ namespace Nagi.Core.Data.Migrations
                     b.Property<bool>("IsSubmittedToListenBrainz")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsSubmittedToServer")
+                        .HasColumnType("INTEGER");
+
                     b.Property<long>("ListenDurationTicks")
                         .HasColumnType("INTEGER");
 
@@ -261,6 +264,37 @@ namespace Nagi.Core.Data.Migrations
                     b.HasIndex("ListenTimestampUtc", "SongId");
 
                     b.ToTable("ListenHistory");
+                });
+
+            modelBuilder.Entity("Nagi.Core.Models.MusicServer", b =>
+                {
+                    b.Property<Guid>("FolderId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BaseUrl")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UserId")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT")
+                        .UseCollation("NOCASE");
+
+                    b.Property<bool>("UsesApiKey")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("FolderId");
+
+                    b.ToTable("MusicServers");
                 });
 
             modelBuilder.Entity("Nagi.Core.Models.Playlist", b =>
@@ -477,6 +511,9 @@ namespace Nagi.Core.Data.Migrations
                     b.Property<bool>("IsLoved")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsLovedSyncPending")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime?>("LastPlayedDate")
                         .HasColumnType("TEXT");
 
@@ -523,6 +560,18 @@ namespace Nagi.Core.Data.Migrations
 
                     b.Property<int?>("Rating")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("RemoteCoverArtId")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RemoteHash")
+                        .HasMaxLength(64)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RemoteId")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
 
                     b.Property<double?>("ReplayGainTrackGain")
                         .HasColumnType("REAL");
@@ -675,6 +724,17 @@ namespace Nagi.Core.Data.Migrations
                     b.Navigation("Song");
                 });
 
+            modelBuilder.Entity("Nagi.Core.Models.MusicServer", b =>
+                {
+                    b.HasOne("Nagi.Core.Models.Folder", "Folder")
+                        .WithOne("MusicServer")
+                        .HasForeignKey("Nagi.Core.Models.MusicServer", "FolderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Folder");
+                });
+
             modelBuilder.Entity("Nagi.Core.Models.PlaylistSong", b =>
                 {
                     b.HasOne("Nagi.Core.Models.Playlist", "Playlist")
@@ -757,6 +817,8 @@ namespace Nagi.Core.Data.Migrations
 
             modelBuilder.Entity("Nagi.Core.Models.Folder", b =>
                 {
+                    b.Navigation("MusicServer");
+
                     b.Navigation("Songs");
 
                     b.Navigation("SubFolders");

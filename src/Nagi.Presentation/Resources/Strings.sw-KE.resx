@@ -1074,9 +1074,6 @@ Je, unataka kuendelea?</value>
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Chagua moja kwa nasibu</value>
   </data>
-  <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Ongeza folda ya muziki</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Ongeza Folda</value>
   </data>

@@ -1074,9 +1074,6 @@ Haluatko jatkaa?</value>
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Valitse satunnainen</value>
   </data>
-  <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Lisää musiikkikansio</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Lisää kansio</value>
   </data>

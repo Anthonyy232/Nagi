@@ -184,6 +184,8 @@ public class PresenceManager : IAsyncDisposable, IDisposable
             "Discord" => _settingsService.GetDiscordRichPresenceEnabledAsync(),
             "Last.fm" => IsLastFmServiceEnabledAsync(),
             "ListenBrainz" => IsListenBrainzServiceEnabledAsync(),
+            // Only acts for songs streamed from a server, which always hears about their plays.
+            "Music servers" => Task.FromResult(true),
             _ => Task.FromResult(false)
         };
 

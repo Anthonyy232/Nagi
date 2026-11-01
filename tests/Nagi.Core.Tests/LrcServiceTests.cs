@@ -5,6 +5,7 @@ using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Models.Lyrics;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Implementations;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
@@ -22,6 +23,7 @@ public class LrcServiceTests : IDisposable
     private readonly ILibraryWriter _libraryWriter;
     private readonly ILogger<LrcService> _logger;
     private readonly INetEaseLyricsService _netEaseLyricsService;
+    private readonly IMusicServerService _musicServers = Substitute.For<IMusicServerService>();
     private readonly LrcService _lrcService;
 
     public LrcServiceTests()
@@ -47,6 +49,7 @@ public class LrcServiceTests : IDisposable
             _settingsService,
             _pathConfig,
             _libraryWriter,
+            _musicServers,
             _logger);
     }
 
@@ -108,6 +111,48 @@ public class LrcServiceTests : IDisposable
         await _onlineLyricsService.DidNotReceive().GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(),
             Arg.Any<string?>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
         await _netEaseLyricsService.DidNotReceive().SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task GetLyricsAsync_ServerSong_UsesAndCachesTheServersLyricsWithOnlineLyricsOff()
+    {
+        var song = new Song { Title = "Breakwater", FilePath = @"nagi-server:0123\s1", RemoteId = "s1" };
+        _pathConfig.LrcCachePath.Returns(@"C:\LyricsCache");
+        _musicServers.GetLyricsAsync(song, Arg.Any<CancellationToken>()).Returns("[00:01.000]Salt on the window");
+
+        var result = await _lrcService.GetLyricsAsync(song);
+
+        result!.Lines.Should().ContainSingle().Which.Text.Should().Be("Salt on the window");
+        await _fileSystem.Received(1).WriteAllTextAsync(Arg.Any<string>(), "[00:01.000]Salt on the window");
+    }
+
+    [Fact]
+    public async Task GetLyricsAsync_ServerSongTheServerHasNoLyricsFor_LooksOnline()
+    {
+        var song = new Song { Title = "Undertow", FilePath = @"nagi-server:0123\s2", RemoteId = "s2" };
+        _musicServers.GetLyricsAsync(song, Arg.Any<CancellationToken>()).Returns((string?)null);
+        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _pathConfig.LrcCachePath.Returns(@"C:\LyricsCache");
+        _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
+            Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>()).Returns("[00:02.00]From LRCLIB");
+
+        var result = await _lrcService.GetLyricsAsync(song);
+
+        result!.Lines.Should().ContainSingle().Which.Text.Should().Be("From LRCLIB");
+    }
+
+    [Fact]
+    public async Task GetLyricsAsync_ServerSongWhileTheServerIsDown_IsAskedAgainLater()
+    {
+        var song = new Song { Title = "Breakwater", FilePath = @"nagi-server:0123\s1", RemoteId = "s1" };
+        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _musicServers.GetLyricsAsync(song, Arg.Any<CancellationToken>())
+            .Returns(Task.FromException<string?>(new MusicServerException(MusicServerError.Unreachable, "offline")));
+
+        (await _lrcService.GetLyricsAsync(song)).Should().BeNull();
+
+        song.LyricsLastCheckedUtc.Should().BeNull();
+        await _libraryWriter.DidNotReceive().UpdateSongLyricsLastCheckedAsync(song.Id);
     }
 
     [Theory]
@@ -181,7 +226,7 @@ public class LrcServiceTests : IDisposable
         var onlineService = new LrcLibService(factory, pipeline, Substitute.For<ILogger<LrcLibService>>());
         var netEaseService = new NetEaseLyricsService(factory, pipeline, Substitute.For<ILogger<NetEaseLyricsService>>());
         using var service = new LrcService(_fileSystem, onlineService, netEaseService, _settingsService,
-            _pathConfig, _libraryWriter, _logger);
+            _pathConfig, _libraryWriter, _musicServers, _logger);
         var song = new Song { Id = Guid.NewGuid(), Title = "Song", DurationTicks = TimeSpan.FromSeconds(180).Ticks };
         _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
         _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Lyrics).Returns(

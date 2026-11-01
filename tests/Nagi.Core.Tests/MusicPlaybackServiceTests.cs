@@ -18,6 +18,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     private readonly ILogger<MusicPlaybackService> _logger;
     private readonly IMetadataService _metadataService;
     private readonly IFileSystemService _fileSystem = Substitute.For<IFileSystemService>();
+    private readonly IMusicServerService _musicServers = Substitute.For<IMusicServerService>();
 
     private readonly MusicPlaybackService _service;
 
@@ -52,6 +53,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
             _library.Reader, _library.Writer,
             _metadataService,
             _fileSystem,
+            _musicServers,
             _logger);
 
         _testSongs = CreateTestSongs(5);
@@ -1183,7 +1185,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
 
         _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
         _settingsService.GetPlaybackStateAsync().Returns(savedState);
-        using var restored = new MusicPlaybackService(_settingsService, _audioPlayer, _mediaControls, _library.Reader, _library.Writer, _metadataService, _fileSystem, _logger);
+        using var restored = new MusicPlaybackService(_settingsService, _audioPlayer, _mediaControls, _library.Reader, _library.Writer, _metadataService, _fileSystem, _musicServers, _logger);
         await restored.InitializeAsync();
         restored.PlaybackQueue.Should().BeEmpty();
         restored.CurrentTrack.Should().BeNull();

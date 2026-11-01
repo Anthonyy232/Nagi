@@ -32,6 +32,11 @@ public class Folder
     /// </summary>
     public virtual ICollection<Song> Songs { get; set; } = new List<Song>();
 
+    /// <summary>
+    ///     The server this root mirrors, or null for a folder on disk. A server root's <see cref="Path" /> is not a file path.
+    /// </summary>
+    public virtual MusicServer? MusicServer { get; set; }
+
     public override string ToString()
     {
         return string.IsNullOrEmpty(Name) ? Path : Name;

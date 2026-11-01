@@ -95,6 +95,12 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     event Action<Song, long, DateTime>? ScrobbleEligibilityReached;
 
     /// <summary>
+    ///     Occurs when a song from a music server couldn't be streamed and playback stopped. May be raised on a
+    ///     background thread.
+    /// </summary>
+    event Action<Song>? ServerSongFailed;
+
+    /// <summary>
     ///     Initializes the service, loading settings and optionally restoring the last saved playback state.
     /// </summary>
     Task InitializeAsync(bool restoreLastSession = true);

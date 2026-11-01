@@ -61,6 +61,26 @@ public class SongInfoViewModelTests : IDisposable
     }
 
     [Fact]
+    public async Task Load_ForAServerSong_ShowsItsServerInsteadOfFileDetails()
+    {
+        var song = new Song
+        {
+            FilePath = @"nagi-server:0f8fad5bd9cb469fa16570867728950e\s1.flac",
+            RemoteId = "s1",
+            Folder = new Folder { Name = "Navidrome", Path = "nagi-server:0f8fad5bd9cb469fa16570867728950e" },
+            FileCreatedDate = new DateTime(2024, 3, 4, 5, 6, 7, DateTimeKind.Utc),
+            DateAddedToLibrary = new DateTime(2024, 3, 4, 5, 6, 7, DateTimeKind.Utc)
+        };
+        _reader.GetSongByIdAsync(song.Id).Returns(song);
+
+        await _viewModel.LoadAsync(song);
+
+        var fields = _viewModel.Sections.SelectMany(s => s.Fields).ToDictionary(f => f.Label, f => f.Value);
+        fields.Should().Contain("Server", "Navidrome").And.Contain("Format", "FLAC").And.ContainKey("Date Added");
+        fields.Should().NotContainKeys("Path", "Size", "Date Created");
+    }
+
+    [Fact]
     public async Task Load_FallsBackToTheListSongWhenItsDetailsCannotBeRead()
     {
         var listSong = new Song { Title = "Cobalt", ArtistName = "MOB CHOIR", FilePath = @"C:\Missing\cobalt.mp3" };

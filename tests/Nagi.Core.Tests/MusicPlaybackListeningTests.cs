@@ -78,7 +78,7 @@ public partial class MusicPlaybackServiceTests
     {
         var clock = new FakeTimeProvider();
         await using var service = new MusicPlaybackService(_settingsService, _audioPlayer, _mediaControls, _library.Reader, _library.Writer,
-            _metadataService, Substitute.For<IFileSystemService>(), NullLogger<MusicPlaybackService>.Instance, clock);
+            _metadataService, Substitute.For<IFileSystemService>(), Substitute.For<IMusicServerService>(), NullLogger<MusicPlaybackService>.Instance, clock);
         await service.InitializeAsync();
         await service.PlayAsync(_testSongs);
         _audioPlayer.MediaOpened += Raise.Event<Action>();

@@ -1074,9 +1074,6 @@ Möchten Sie fortfahren?</value>
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Zufällig auswählen</value>
   </data>
-  <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Einen Musikordner hinzufügen</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Ordner hinzufügen</value>
   </data>

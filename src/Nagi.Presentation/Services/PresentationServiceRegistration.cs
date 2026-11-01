@@ -22,6 +22,7 @@ public static class PresentationServiceRegistration
         services.AddSingleton<ISettingsService>(sp => sp.GetRequiredService<SettingsService>());
         services.AddSingleton<IMusicNavigationService, MusicNavigationService>();
         services.AddSingleton<ViewModelFactory>();
+        services.AddSingleton<MusicServerPrompts>();
 
         services.AddSingleton<PlayerViewModel>();
         services.AddSingleton<GlobalOperationViewModel>();

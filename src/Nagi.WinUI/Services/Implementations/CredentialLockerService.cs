@@ -22,7 +22,7 @@ public class CredentialLockerService : ICredentialLockerService
         _logger = logger;
     }
 
-    public void SaveCredential(string resource, string userName, string password)
+    public bool SaveCredential(string resource, string userName, string password)
     {
         try
         {
@@ -34,10 +34,12 @@ public class CredentialLockerService : ICredentialLockerService
                 if (previous.UserName != userName) _vault.Remove(previous);
 
             _logger.LogDebug("Saved credential for resource {Resource}", resource);
+            return true;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to save credential for resource {Resource}", resource);
+            return false;
         }
     }
 

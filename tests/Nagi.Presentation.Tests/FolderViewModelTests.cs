@@ -32,7 +32,7 @@ public class FolderViewModelTests
             viewModel.LoadFoldersCommand.Cancel();
             token.IsCancellationRequested.Should().BeTrue();
 
-            response.SetResult(new[] { new FolderSummary(new Folder { Name = "Stale folder" }, 2) });
+            response.SetResult(new[] { new FolderSummary(new Folder { Name = "Stale folder" }, 2, IsServer: false) });
             await load;
 
             viewModel.Folders.Should().BeEmpty();
@@ -62,7 +62,7 @@ public class FolderViewModelTests
     {
         var library = new LibraryFakes();
         var folder = new Folder { Name = "Music", Path = @"C:\Music" };
-        library.Reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new FolderSummary(folder, 1) });
+        library.Reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new FolderSummary(folder, 1, IsServer: false) });
         var ui = Substitute.For<IUIService>();
         ui.PickSingleFolderAsync().Returns(@"c:\music\");
         using var viewModel = CreateViewModel(library, ui);
@@ -96,7 +96,7 @@ public class FolderViewModelTests
     {
         var library = new LibraryFakes();
         var folder = new Folder { Name = "Music", Path = @"C:Music" };
-        library.Reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new FolderSummary(folder, 1) });
+        library.Reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new FolderSummary(folder, 1, IsServer: false) });
         library.Writer.RemoveFolderAsync(folder.Id).Returns(true);
         var ui = Substitute.For<IUIService>();
         ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<bool>()).Returns(confirmed);
@@ -109,8 +109,50 @@ public class FolderViewModelTests
         await library.Writer.Received(confirmed ? 1 : 0).RemoveFolderAsync(folder.Id);
     }
 
-    private static FolderViewModel CreateViewModel(LibraryFakes library, IUIService ui) =>
-        new(library.Reader, library.Writer, library.Scanner, new GlobalOperationViewModel(),
-            Substitute.For<IMusicPlaybackService>(), Substitute.For<INavigationService>(), ui, new ImmediateDispatcher(),
-            NullLogger<FolderViewModel>.Instance);
+    [Fact]
+    public async Task SyncServer_SavedSignInRejected_OffersToSignInAgainThenSyncs()
+    {
+        var library = new LibraryFakes();
+        var server = new Folder { Name = "Navidrome", Path = "nagi-server:0123" };
+        library.Reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new FolderSummary(server, 1, IsServer: true) });
+        var musicServers = Substitute.For<IMusicServerService>();
+        musicServers.SyncAsync(server.Id, Arg.Any<IProgress<ScanProgress>?>(), Arg.Any<CancellationToken>()).Returns(
+            Task.FromException(new MusicServerException(MusicServerError.SignInFailed, "rejected")),
+            Task.CompletedTask);
+        var ui = Substitute.For<IUIService>();
+        ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<bool>()).Returns(true);
+        ui.ShowMusicServerSignInDialogAsync(server.Id).Returns(true);
+        using var viewModel = CreateViewModel(library, ui, musicServers);
+        await viewModel.LoadFoldersCommand.ExecuteAsync(null);
+
+        await viewModel.SyncServerCommand.ExecuteAsync(server.Id);
+
+        await ui.Received(1).ShowMusicServerSignInDialogAsync(server.Id);
+        await musicServers.Received(2).SyncAsync(server.Id, Arg.Any<IProgress<ScanProgress>?>(), Arg.Any<CancellationToken>());
+        await ui.DidNotReceiveWithAnyArgs().ShowMessageDialogAsync(default!, default!);
+    }
+
+    [Fact]
+    public async Task SyncServer_Unreachable_SaysWhichServerCouldntBeReached()
+    {
+        var library = new LibraryFakes();
+        var server = new Folder { Name = "Living Room", Path = "nagi-server:0123" };
+        library.Reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>()).Returns(new[] { new FolderSummary(server, 1, IsServer: true) });
+        var musicServers = Substitute.For<IMusicServerService>();
+        musicServers.SyncAsync(server.Id, Arg.Any<IProgress<ScanProgress>?>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromException(new MusicServerException(MusicServerError.Unreachable, "timed out")));
+        var ui = Substitute.For<IUIService>();
+        using var viewModel = CreateViewModel(library, ui, musicServers);
+        await viewModel.LoadFoldersCommand.ExecuteAsync(null);
+
+        await viewModel.SyncServerCommand.ExecuteAsync(server.Id);
+
+        await ui.Received(1).ShowMessageDialogAsync(Strings.Generic_Error, string.Format(Strings.MusicServer_Error_Unreachable_Format, "Living Room"));
+        viewModel.IsAnyOperationInProgress.Should().BeFalse();
+    }
+
+    private static FolderViewModel CreateViewModel(LibraryFakes library, IUIService ui, IMusicServerService? musicServers = null) =>
+        new(library.Reader, library.Writer, library.Scanner, musicServers ?? Substitute.For<IMusicServerService>(),
+            new GlobalOperationViewModel(), Substitute.For<IMusicPlaybackService>(), Substitute.For<INavigationService>(), ui,
+            new ImmediateDispatcher(), NullLogger<FolderViewModel>.Instance);
 }

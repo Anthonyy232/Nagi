@@ -34,17 +34,30 @@
                         Margin="0,0,1,0"
                         ContentTemplate="{StaticResource RandomPlayIconTemplate}" />
 
-                <Button
-                    Command="{x:Bind ViewModel.AddFolderCommand}"
-                    ToolTipService.ToolTip="{x:Bind resources:Strings.FolderPage_AddFolderButton_ToolTip, Mode=OneTime}"
-                    AutomationProperties.Name="{x:Bind resources:Strings.FolderPage_AddFolderButton_ToolTip, Mode=OneTime}"
+                <DropDownButton
                     IsEnabled="{x:Bind ViewModel.IsAnyOperationInProgress, Converter={StaticResource BooleanToInverseBooleanConverter}, Mode=OneWay}"
-                    Style="{StaticResource AnimatedAccentButtonStyle}">
+                    Style="{StaticResource AnimatedAccentButtonStyle}"
+                    ToolTipService.ToolTip="{x:Bind resources:Strings.FolderPage_AddButton_ToolTip, Mode=OneTime}"
+                    AutomationProperties.Name="{x:Bind resources:Strings.FolderPage_AddButton_ToolTip, Mode=OneTime}">
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                        <FontIcon Glyph="" />
-                        <TextBlock Text="{x:Bind resources:Strings.FolderPage_AddFolder_Label, Mode=OneTime}" />
+                        <FontIcon Glyph="&#xE710;" />
+                        <TextBlock Text="{x:Bind resources:Strings.Generic_Add, Mode=OneTime}" />
                     </StackPanel>
-                </Button>
+                    <DropDownButton.Flyout>
+                        <MenuFlyout Placement="Bottom">
+                            <MenuFlyoutItem Text="{x:Bind resources:Strings.FolderPage_AddMenu_Folder, Mode=OneTime}" Command="{x:Bind ViewModel.AddFolderCommand}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE8F4;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem Text="{x:Bind resources:Strings.FolderPage_AddMenu_Server, Mode=OneTime}" Command="{x:Bind ViewModel.AddServerCommand}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE8CE;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                        </MenuFlyout>
+                    </DropDownButton.Flyout>
+                </DropDownButton>
 
             </StackPanel>
         </Grid>
@@ -81,7 +94,20 @@
                                     Text="{x:Bind resources:Strings.FolderPage_Menu_Rescan, Mode=OneTime}"
                                     Command="{Binding DataContext.RescanFolderCommand, ElementName=FolderPageRoot}"
                                     CommandParameter="{x:Bind Id}"
-                                    IsEnabled="{Binding DataContext.IsAnyOperationInProgress, ElementName=FolderPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
+                                    IsEnabled="{Binding DataContext.IsAnyOperationInProgress, ElementName=FolderPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}"
+                                    Visibility="{x:Bind IsServer, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                                <MenuFlyoutItem
+                                    Text="{x:Bind resources:Strings.FolderPage_Menu_Sync, Mode=OneTime}"
+                                    Command="{Binding DataContext.SyncServerCommand, ElementName=FolderPageRoot}"
+                                    CommandParameter="{x:Bind Id}"
+                                    IsEnabled="{Binding DataContext.IsAnyOperationInProgress, ElementName=FolderPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}"
+                                    Visibility="{x:Bind IsServer, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                <MenuFlyoutItem
+                                    Text="{x:Bind resources:Strings.FolderPage_Menu_SignIn, Mode=OneTime}"
+                                    Command="{Binding DataContext.SignInToServerCommand, ElementName=FolderPageRoot}"
+                                    CommandParameter="{x:Bind Id}"
+                                    IsEnabled="{Binding DataContext.IsAnyOperationInProgress, ElementName=FolderPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}"
+                                    Visibility="{x:Bind IsServer, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 <MenuFlyoutItem Text="{x:Bind resources:Strings.FolderPage_Menu_Delete, Mode=OneTime}" Command="{Binding DataContext.DeleteFolderCommand, ElementName=FolderPageRoot}" CommandParameter="{x:Bind Id}" />
                             </MenuFlyout>
                         </Grid.ContextFlyout>
@@ -98,7 +124,11 @@
                             HorizontalAlignment="Center"
                             Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                             CornerRadius="{StaticResource ArtworkCornerRadius}">
-                            <FontIcon HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" Glyph="" />
+                            <FontIcon HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" Glyph="&#xE8CE;"
+                                      Visibility="{x:Bind IsServer, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            <FontIcon HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48"
+                                      Visibility="{x:Bind IsServer, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+                                      Glyph="" />
                         </Grid>
 
                         <TextBlock

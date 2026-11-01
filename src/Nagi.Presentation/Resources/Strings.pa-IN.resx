@@ -1074,9 +1074,6 @@
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
     <value>ਕੋਈ ਇੱਕ ਬੇਤਰਤੀਬੇ ਚੁਣੋ</value>
   </data>
-  <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>ਇੱਕ ਸੰਗੀਤ ਫੋਲਡਰ ਜੋੜੋ</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>ਫੋਲਡਰ ਜੋੜੋ</value>
   </data>

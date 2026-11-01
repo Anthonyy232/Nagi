@@ -1074,9 +1074,6 @@ Voulez-vous continuer ?</value>
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
     <value>En choisir un au hasard</value>
   </data>
-  <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Ajouter un dossier de musique</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Ajouter un dossier</value>
   </data>

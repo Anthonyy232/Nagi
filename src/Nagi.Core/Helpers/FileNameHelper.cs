@@ -34,7 +34,7 @@ public static class FileNameHelper
     {
         var sanitizedArtist = SanitizeFileName(artist ?? string.Empty, Artist.UnknownArtistName);
         var sanitizedAlbum = SanitizeFileName(album ?? string.Empty, Album.UnknownAlbumName);
-        var sanitizedTitle = SanitizeFileName(title ?? string.Empty, string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Title));
+        var sanitizedTitle = SanitizeFileName(title ?? string.Empty, Song.UnknownTitle);
 
         var descriptivePrefix = $"{sanitizedArtist} - {sanitizedAlbum} - {sanitizedTitle}";
         const int maxPrefixLength = 140;

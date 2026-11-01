@@ -8,7 +8,9 @@ public class Song
 {
     [Key] public Guid Id { get; set; } = Guid.NewGuid();
 
-    [Required][MaxLength(500)] public string Title { get; set; } = string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Title);
+    public static string UnknownTitle => string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Title);
+
+    [Required][MaxLength(500)] public string Title { get; set; } = UnknownTitle;
 
     /// <summary>
     ///     Denormalized sort key for <see cref="Title"/> with leading articles stripped.
@@ -42,7 +44,34 @@ public class Song
 
     [MaxLength(2000)] public string? AlbumArtUriFromTrack { get; set; }
 
+    /// <summary>
+    ///     The file on disk, or for a song on a music server a unique key that is not a file path.
+    /// </summary>
     [Required][MaxLength(1000)] public string FilePath { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     The song's ID on its music server, or null for a song on disk.
+    /// </summary>
+    [MaxLength(200)] public string? RemoteId { get; set; }
+
+    [NotMapped] public bool IsRemote => RemoteId is not null;
+
+    /// <summary>
+    ///     A hash of the song as its server last described it, so a sync can skip songs that haven't changed.
+    /// </summary>
+    [MaxLength(64)] public string? RemoteHash { get; set; }
+
+    /// <summary>
+    ///     The server's ID for the cover <see cref="AlbumArtUriFromTrack" /> was downloaded from, so a sync can tell
+    ///     when the server's cover changed.
+    /// </summary>
+    [MaxLength(200)] public string? RemoteCoverArtId { get; set; }
+
+    /// <summary>
+    ///     Set when <see cref="IsLoved" /> changed locally and the server hasn't been told yet, so a sync keeps the
+    ///     local value instead of the server's.
+    /// </summary>
+    public bool IsLovedSyncPending { get; set; }
 
     /// <summary>
     ///     The directory path where the song file is located. This is used for efficient

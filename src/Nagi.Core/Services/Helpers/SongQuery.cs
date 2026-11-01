@@ -69,6 +69,7 @@ internal static class SongQuery
             DurationTicks = s.DurationTicks,
             AlbumArtUriFromTrack = s.AlbumArtUriFromTrack,
             FilePath = s.FilePath,
+            RemoteId = s.RemoteId,
             DirectoryPath = s.DirectoryPath,
             Year = s.Year,
             TrackNumber = s.TrackNumber,

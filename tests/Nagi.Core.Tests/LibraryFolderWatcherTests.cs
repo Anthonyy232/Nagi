@@ -23,7 +23,7 @@ public sealed class LibraryFolderWatcherTests : IDisposable
     public LibraryFolderWatcherTests()
     {
         _reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>())
-            .Returns(_ => _folders.Select(f => new FolderSummary(f, 0)).ToList());
+            .Returns(_ => _folders.Select(f => new FolderSummary(f, 0, IsServer: false)).ToList());
         // File system events arrive on their own thread, so tests wait for this signal rather than a fixed time.
         _scanner.RefreshFolderInBackgroundAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(_ =>
         {

@@ -155,12 +155,14 @@ public class M3uPlaylistExportService : IPlaylistExportService
 
             foreach (var playlist in playlistList)
             {
+                // A server song has no file other players could open, and its stream URL would give away the sign-in.
                 var songs = (await _libraryReader.GetSongsInPlaylistOrderedAsync(playlist.Id).ConfigureAwait(false))
+                    .Where(song => !song.IsRemote)
                     .ToList();
 
                 if (songs.Count == 0)
                 {
-                    _logger.LogDebug("Skipping empty playlist '{PlaylistName}'", playlist.Name);
+                    _logger.LogDebug("Skipping playlist '{PlaylistName}': it has no songs on this PC", playlist.Name);
                     continue;
                 }
 

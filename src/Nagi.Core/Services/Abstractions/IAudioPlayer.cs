@@ -3,7 +3,7 @@
 namespace Nagi.Core.Services.Abstractions;
 
 /// <summary>
-///     Plays audio files. Events are raised on the UI thread, which the playback service relies on.
+///     Plays audio files and music server streams. Events are raised on the UI thread, which the playback service relies on.
 /// </summary>
 public interface IAudioPlayer : IDisposable
 {
@@ -60,7 +60,11 @@ public interface IAudioPlayer : IDisposable
     ///     Asynchronously loads a song for playback. The returned task completes when the media is successfully opened or has
     ///     failed to load.
     /// </summary>
-    Task LoadAsync(Song song);
+    /// <param name="streamUri">
+    ///     Where to stream a song on a music server from, or null to play <see cref="Song.FilePath" />. The URL carries the
+    ///     server's credentials, so it must not be logged.
+    /// </param>
+    Task LoadAsync(Song song, Uri? streamUri = null);
 
     Task PlayAsync();
 

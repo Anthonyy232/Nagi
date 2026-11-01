@@ -22,8 +22,8 @@ public enum OnboardingStep
 }
 
 /// <summary>
-///     Walks a new user through choosing a music folder and the settings they are most likely to want.
-///     The library scan starts as soon as a folder is chosen and runs while the remaining steps are shown.
+///     Walks a new user through choosing a music folder or server and the settings they are most likely to want.
+///     Building the library starts as soon as one is chosen and runs while the remaining steps are shown.
 /// </summary>
 public partial class OnboardingViewModel : ObservableObject
 {
@@ -38,14 +38,17 @@ public partial class OnboardingViewModel : ObservableObject
     private readonly IApplicationLifecycle _applicationLifecycle;
     private readonly ILibraryScanner _libraryScanner;
     private readonly ILibraryWriter _libraryWriter;
+    private readonly IMusicServerService _musicServers;
     private readonly ILogger<OnboardingViewModel> _logger;
     private readonly IUIService _uiService;
 
-    public OnboardingViewModel(ILibraryWriter libraryWriter, ILibraryScanner libraryScanner, IUIService uiService,
-        IApplicationLifecycle applicationLifecycle, ILogger<OnboardingViewModel> logger)
+    public OnboardingViewModel(ILibraryWriter libraryWriter, ILibraryScanner libraryScanner,
+        IMusicServerService musicServers, IUIService uiService, IApplicationLifecycle applicationLifecycle,
+        ILogger<OnboardingViewModel> logger)
     {
         _libraryWriter = libraryWriter;
         _libraryScanner = libraryScanner;
+        _musicServers = musicServers;
         _uiService = uiService;
         _applicationLifecycle = applicationLifecycle;
         _logger = logger;
@@ -62,12 +65,15 @@ public partial class OnboardingViewModel : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsScanning), nameof(IsLibraryReady), nameof(HasLibraryFailed),
-        nameof(HasLibraryFolder))]
+        nameof(HasLibrarySource))]
     [NotifyCanExecuteChangedFor(nameof(GoBackCommand), nameof(GoNextCommand), nameof(GoToStepCommand),
-        nameof(SkipSetupCommand), nameof(ChooseFolderCommand), nameof(FinishCommand))]
+        nameof(SkipSetupCommand), nameof(ChooseFolderCommand), nameof(ConnectServerCommand), nameof(FinishCommand))]
     private partial OnboardingLibraryState LibraryState { get; set; }
 
-    [ObservableProperty] public partial string? FolderPath { get; private set; }
+    /// <summary>
+    ///     The folder path, or the music server's name, that the library is built from.
+    /// </summary>
+    [ObservableProperty] public partial string? LibrarySource { get; private set; }
 
     [ObservableProperty] public partial string ScanStatus { get; private set; } = string.Empty;
 
@@ -78,15 +84,15 @@ public partial class OnboardingViewModel : ObservableObject
     public bool IsScanning => LibraryState == OnboardingLibraryState.Scanning;
     public bool IsLibraryReady => LibraryState == OnboardingLibraryState.Ready;
     public bool HasLibraryFailed => LibraryState == OnboardingLibraryState.Failed;
-    public bool HasLibraryFolder => LibraryState is OnboardingLibraryState.Scanning or OnboardingLibraryState.Ready;
+    public bool HasLibrarySource => LibraryState is OnboardingLibraryState.Scanning or OnboardingLibraryState.Ready;
 
     private bool CanGoTo(OnboardingStep step)
     {
         if (step == CurrentStep || !Enum.IsDefined(step)) return false;
         // Changing the language on the welcome step restarts the app, which would abandon a running scan.
-        if (step == OnboardingStep.Welcome) return !HasLibraryFolder;
-        // After a failed scan the remaining steps stay open; the finish step offers choosing another folder.
-        return step <= OnboardingStep.Library || FolderPath is not null;
+        if (step == OnboardingStep.Welcome) return !HasLibrarySource;
+        // After a failed scan the remaining steps stay open; the finish step offers choosing another folder or server.
+        return step <= OnboardingStep.Library || LibrarySource is not null;
     }
 
     private bool CanGoBack() => CanGoTo(CurrentStep - 1);
@@ -107,21 +113,58 @@ public partial class OnboardingViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(CanSkipSetup))]
     private void SkipSetup() => CurrentStep = OnboardingStep.Finish;
 
-    private bool CanChooseFolder() => !HasLibraryFolder;
+    private bool CanChooseLibrary() => !HasLibrarySource;
 
-    // Completes when the scan does, which runs while the user moves on through the remaining steps.
-    [RelayCommand(CanExecute = nameof(CanChooseFolder))]
+    [RelayCommand(CanExecute = nameof(CanChooseLibrary))]
     private async Task ChooseFolderAsync()
     {
         var folderPath = await _uiService.PickSingleFolderAsync();
         if (folderPath is null) return;
 
         _logger.LogDebug("User selected folder '{FolderPath}' for onboarding", folderPath);
-        FolderPath = folderPath;
+        await BuildLibraryAsync(folderPath, async progress =>
+        {
+            if (await _libraryWriter.AddFolderAsync(folderPath) is not { } folder)
+            {
+                _logger.LogWarning("Could not add onboarding folder '{FolderPath}'", folderPath);
+                return false;
+            }
+
+            await _libraryScanner.ScanFolderForMusicAsync(folder.Path, progress);
+            return true;
+        });
+    }
+
+    [RelayCommand(CanExecute = nameof(CanChooseLibrary))]
+    private async Task ConnectServerAsync()
+    {
+        if (await _uiService.ShowAddMusicServerDialogAsync() is not { } server) return;
+
+        await BuildLibraryAsync(server.Name, async progress =>
+        {
+            try
+            {
+                await _musicServers.SyncAsync(server.Id, progress);
+            }
+            catch
+            {
+                // Setup can't finish with an empty server, and connecting to it again would be refused as already added.
+                await _libraryWriter.RemoveFolderAsync(server.Id);
+                throw;
+            }
+
+            return true;
+        });
+    }
+
+    // Completes when the scan does, which runs while the user moves on through the remaining steps.
+    private async Task BuildLibraryAsync(string source, Func<IProgress<ScanProgress>, Task<bool>> buildAsync)
+    {
+        LibrarySource = source;
         ScanStatus = Strings.Onboarding_BuildingLibrary;
         ScanPercentage = 0;
         IsScanProgressIndeterminate = true;
-        // Moving on before the folder prompt hides lets focus on it follow to the next step instead of being lost.
+        // Moving on before the library prompt hides lets focus on it follow to the next step instead of being lost.
         if (CurrentStep == OnboardingStep.Library) CurrentStep++;
         LibraryState = OnboardingLibraryState.Scanning;
 
@@ -136,16 +179,13 @@ public partial class OnboardingViewModel : ObservableObject
 
         try
         {
-            if (await _libraryWriter.AddFolderAsync(folderPath) is { } folder)
+            if (await buildAsync(progress))
             {
-                await _libraryScanner.ScanFolderForMusicAsync(folder.Path, progress);
                 _logger.LogInformation("Onboarding library scan complete");
                 LibraryState = OnboardingLibraryState.Ready;
                 ScanStatus = Strings.Onboarding_LibraryReady;
                 return;
             }
-
-            _logger.LogWarning("Could not add onboarding folder '{FolderPath}'", folderPath);
         }
         catch (Exception ex)
         {

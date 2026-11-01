@@ -113,6 +113,7 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
     public async Task ClearAllLibraryDataAsync()
     {
         CancelActiveScan("library data reset");
+        foreach (var folderId in _serverSyncs.Keys) CancelServerSync(folderId);
         await _scanSemaphore.WaitAsync(_shutdownCts.Token).ConfigureAwait(false);
         try
         {
@@ -133,9 +134,11 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
         {
             await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
             await using var transaction = await context.Database.BeginTransactionAsync().ConfigureAwait(false);
+            List<Guid> serverFolderIds;
 
             try
             {
+                serverFolderIds = await context.MusicServers.Select(s => s.FolderId).ToListAsync().ConfigureAwait(false);
                 await context.PlaylistSongs.ExecuteDeleteAsync().ConfigureAwait(false);
                 await context.ListenHistory.ExecuteDeleteAsync().ConfigureAwait(false);
                 await context.Songs.ExecuteDeleteAsync().ConfigureAwait(false);
@@ -155,6 +158,10 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
                 _logger.LogError(ex, "Database reset failed and was rolled back.");
                 throw;
             }
+
+            // A server's sign-in lives outside the database, so the removal is announced for it to be forgotten.
+            foreach (var folderId in serverFolderIds)
+                LibraryContentChanged?.Invoke(this, new LibraryContentChangedEventArgs(LibraryChangeType.FolderRemoved, folderId));
 
             try
             {
@@ -221,6 +228,7 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
     public async Task<bool> RemoveFolderAsync(Guid folderId)
     {
         CancelActiveScan("folder removal");
+        CancelServerSync(folderId);
         await _scanSemaphore.WaitAsync(_shutdownCts.Token).ConfigureAwait(false);
         try
         {
