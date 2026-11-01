@@ -6,6 +6,12 @@ Nagi is a music player designed with speed, simplicity, and user privacy in mind
 
 Nagi is primarily a local music player. Your music library, playlists, and playback history are stored locally on your device. The app does not upload your library to a Nagi account or cloud library.
 
+## Your Music Servers
+
+If you add a Navidrome, other OpenSubsonic, or Jellyfin server, Nagi connects only to the address you enter. It reads the server's song list, album art, and lyrics, streams the songs you play, and sends back the songs you favorite or unfavorite and the songs you play, with the time you played them. Requests include Nagi's name and version, and Jellyfin also receives your PC's name, which it shows in its list of devices. Your local library is not sent to the server.
+
+Nagi keeps the password or API key you sign in with in the Windows Credential Locker. For Jellyfin it keeps the access token the server issues instead of your password. Removing the server from Nagi deletes the saved sign-in.
+
 ## Third-Party Services (Opt-In)
 
 Online metadata, online lyrics, scrobbling, and Discord Rich Presence are disabled by default. You can enable them in Settings. Application updates and optional romanization pack downloads are described separately below.
@@ -49,4 +55,4 @@ Online requests include the metadata needed for the feature and, for account-bas
 We may update our Privacy Policy from time to time. We will notify you of any significant changes by updating the "Last Updated" date at the bottom of this document.
 
 ---
-*Last Updated: October 24, 2026*
+*Last Updated: November 1, 2026*
