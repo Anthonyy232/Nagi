@@ -323,9 +323,20 @@ namespace Nagi.Core.Data.Migrations
                         .HasColumnType("TEXT")
                         .UseCollation("NOCASE");
 
+                    b.Property<string>("RemoteId")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("ServerFolderId")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
+                        .IsUnique()
+                        .HasFilter("\"ServerFolderId\" IS NULL");
+
+                    b.HasIndex("ServerFolderId", "RemoteId")
                         .IsUnique();
 
                     b.ToTable("Playlists");
@@ -733,6 +744,16 @@ namespace Nagi.Core.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Folder");
+                });
+
+            modelBuilder.Entity("Nagi.Core.Models.Playlist", b =>
+                {
+                    b.HasOne("Nagi.Core.Models.Folder", "ServerFolder")
+                        .WithMany()
+                        .HasForeignKey("ServerFolderId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("ServerFolder");
                 });
 
             modelBuilder.Entity("Nagi.Core.Models.PlaylistSong", b =>

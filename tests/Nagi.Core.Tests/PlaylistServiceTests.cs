@@ -59,6 +59,29 @@ public class PlaylistServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task APlaylistFromAServer_CantBeChangedNorTakeANameFromNagisOwn()
+    {
+        var (playlist, songs) = await _dbHelper.SeedPlaylistAsync(1, 2);
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            (await context.Playlists.FindAsync(playlist.Id))!.ServerFolderId = songs[0].FolderId;
+            await context.SaveChangesAsync();
+        }
+
+        (await _playlistService.RenamePlaylistAsync(playlist.Id, "Mine")).Should().BeFalse();
+        (await _playlistService.AddSongsToPlaylistAsync(playlist.Id, [Guid.NewGuid()])).Should().BeFalse();
+        (await _playlistService.RemoveSongsFromPlaylistAsync(playlist.Id, [songs[0].Id])).Should().BeFalse();
+        (await _playlistService.MovePlaylistSongAsync(playlist.Id, songs[0].Id, 3)).Should().BeFalse();
+        (await _playlistService.DeletePlaylistAsync(playlist.Id)).Should().BeFalse();
+        await _playlistService.CreatePlaylistAsync(playlist.Name);
+
+        await using var check = _dbHelper.ContextFactory.CreateDbContext();
+        (await check.PlaylistSongs.Where(ps => ps.PlaylistId == playlist.Id).OrderBy(ps => ps.Order).Select(ps => ps.SongId).ToListAsync())
+            .Should().Equal(songs[0].Id, songs[1].Id);
+        (await check.Playlists.Select(p => p.Name).ToListAsync()).Should().Equal(playlist.Name, playlist.Name);
+    }
+
+    [Fact]
     public async Task AddSongsToPlaylistAsync_AppendsUniqueSongsAfterExistingFractionalOrders()
     {
         var (playlist, songs) = await _dbHelper.SeedPlaylistAsync(0.5, 1.5, 2.5);

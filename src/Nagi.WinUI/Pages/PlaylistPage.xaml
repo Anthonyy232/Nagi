@@ -14,6 +14,17 @@
     Background="Transparent"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <Style x:Key="PlaylistBadgeStyle" TargetType="Border">
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="VerticalAlignment" Value="Bottom" />
+            <Setter Property="Margin" Value="0,0,4,4" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="Background" Value="{StaticResource AppPrimaryColorBrush}" />
+            <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+        </Style>
+    </Page.Resources>
+
     <Grid Padding="{StaticResource PageContainerPaddingVertical}">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="SearchStates">
@@ -189,16 +200,19 @@
                                     CommandParameter="{x:Bind}"
                                     Text="{x:Bind resources:Strings.PlaylistPage_Context_Play, Mode=OneTime}"
                                     IsEnabled="{Binding DataContext.IsAnyOperationInProgress, ElementName=PlaylistPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
-                                <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_Context_Rename, Mode=OneTime}" Command="{Binding DataContext.RenamePlaylistCommand, ElementName=PlaylistPageRoot}" CommandParameter="{x:Bind}" />
-                                <MenuFlyoutSeparator />
-                                <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_Context_ChangeImage, Mode=OneTime}" Command="{Binding DataContext.ChangePlaylistCoverCommand, ElementName=PlaylistPageRoot}" CommandParameter="{x:Bind}" />
+                                <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_Context_Rename, Mode=OneTime}" Command="{Binding DataContext.RenamePlaylistCommand, ElementName=PlaylistPageRoot}" CommandParameter="{x:Bind}"
+                                    Visibility="{x:Bind IsFromServer, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                                <MenuFlyoutSeparator Visibility="{x:Bind IsFromServer, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                                <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_Context_ChangeImage, Mode=OneTime}" Command="{Binding DataContext.ChangePlaylistCoverCommand, ElementName=PlaylistPageRoot}" CommandParameter="{x:Bind}"
+                                    Visibility="{x:Bind IsFromServer, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                                 <MenuFlyoutItem
                                     Command="{Binding DataContext.RemovePlaylistCoverCommand, ElementName=PlaylistPageRoot}"
                                     CommandParameter="{x:Bind}"
                                     Text="{x:Bind resources:Strings.PlaylistPage_Context_RemoveImage, Mode=OneTime}"
                                     Visibility="{x:Bind IsCustomImage, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                <MenuFlyoutSeparator />
-                                <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_Context_Delete, Mode=OneTime}" Command="{Binding DataContext.DeletePlaylistCommand, ElementName=PlaylistPageRoot}" CommandParameter="{x:Bind}" />
+                                <MenuFlyoutSeparator Visibility="{x:Bind IsFromServer, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                                <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_Context_Delete, Mode=OneTime}" Command="{Binding DataContext.DeletePlaylistCommand, ElementName=PlaylistPageRoot}" CommandParameter="{x:Bind}"
+                                    Visibility="{x:Bind IsFromServer, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                             </MenuFlyout>
                         </Grid.ContextFlyout>
                         <Grid.RowDefinitions>
@@ -232,16 +246,11 @@
                                     FontSize="48"
                                     Glyph="&#xE90B;" />
                             </Grid>
-                            <!-- Smart playlist badge -->
-                            <Border
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Bottom"
-                                Margin="0,0,4,4"
-                                Padding="8,4"
-                                Background="{StaticResource AppPrimaryColorBrush}"
-                                CornerRadius="{ThemeResource ControlCornerRadius}"
-                                Visibility="{x:Bind IsSmart, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Border Style="{StaticResource PlaylistBadgeStyle}" Visibility="{x:Bind IsSmart, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <FontIcon Glyph="&#xE71C;" FontSize="12" Foreground="{StaticResource TextOnAppPrimaryBrush}" />
+                            </Border>
+                            <Border Style="{StaticResource PlaylistBadgeStyle}" Visibility="{x:Bind IsFromServer, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <FontIcon Glyph="&#xE8CE;" FontSize="12" Foreground="{StaticResource TextOnAppPrimaryBrush}" />
                             </Border>
                         </Grid>
 
@@ -258,7 +267,7 @@
                             Margin="0,4,0,0"
                             HorizontalAlignment="Center"
                             Opacity="0.7"
-                            Text="{x:Bind SongCountText, Mode=OneWay}"
+                            Text="{x:Bind Subtitle, Mode=OneWay}"
                             TextTrimming="CharacterEllipsis"
                             TextWrapping="NoWrap" />
                     </Grid>

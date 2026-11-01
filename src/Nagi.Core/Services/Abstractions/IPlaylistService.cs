@@ -3,6 +3,9 @@ using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Services.Abstractions;
 
+/// <summary>
+///     Changes playlists made in Nagi. A playlist from a music server follows the server, so changing one returns false.
+/// </summary>
 public interface IPlaylistService
 {
     event EventHandler<PlaylistUpdatedEventArgs>? PlaylistUpdated;

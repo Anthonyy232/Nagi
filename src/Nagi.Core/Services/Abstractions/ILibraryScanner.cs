@@ -26,7 +26,7 @@ public interface ILibraryScanner
 
     /// <summary>
     ///     Makes a music server's root folder match the server: adds or updates every song it lists, removes the
-    ///     rest, then downloads covers that are missing or changed. Server roots can't be rescanned like folders on
+    ///     rest, brings its playlists in line, then downloads covers that are missing or changed. Server roots can't be rescanned like folders on
     ///     disk. A sync of a server that is already syncing waits for that sync to finish first.
     /// </summary>
     /// <returns>True if the library changed.</returns>

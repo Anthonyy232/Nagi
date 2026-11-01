@@ -28,6 +28,8 @@ public partial class PlaylistViewModelItem : ObservableObject
         DateCreated = playlist.DateCreated;
         DateModified = playlist.DateModified;
         SongCount = playlist.PlaylistSongs.Count;
+        IsFromServer = playlist.IsFromServer;
+        ServerName = playlist.ServerFolder?.Name;
     }
 
     public PlaylistViewModelItem(SmartPlaylist smartPlaylist, int matchingSongCount = 0)
@@ -46,6 +48,13 @@ public partial class PlaylistViewModelItem : ObservableObject
 
     public bool IsSmart { get; }
 
+    /// <summary>
+    ///     The name of the music server the playlist comes from, or null for a playlist made in Nagi.
+    /// </summary>
+    public string? ServerName { get; }
+
+    public bool IsFromServer { get; }
+
     public DateTime DateCreated { get; }
 
     public DateTime DateModified { get; set; }
@@ -62,13 +71,20 @@ public partial class PlaylistViewModelItem : ObservableObject
 
     public int SongCount { get; }
 
-    public string SongCountText => ResourceFormatter.Format((IsSmart, SongCount == 1) switch
+    public string Subtitle
     {
-        (true, true) => Strings.Playlist_Smart_Count_Singular,
-        (true, false) => Strings.Playlist_Smart_Count_Plural,
-        (false, true) => Strings.Playlist_Count_Singular,
-        _ => Strings.Playlist_Count_Plural
-    }, SongCount);
+        get
+        {
+            var count = ResourceFormatter.Format((IsSmart, SongCount == 1) switch
+            {
+                (true, true) => Strings.Playlist_Smart_Count_Singular,
+                (true, false) => Strings.Playlist_Smart_Count_Plural,
+                (false, true) => Strings.Playlist_Count_Singular,
+                _ => Strings.Playlist_Count_Plural
+            }, SongCount);
+            return ServerName is null ? count : string.Format(Strings.Playlist_FromServer_Format, ServerName, count);
+        }
+    }
 
     public override string ToString() => Name;
 }
@@ -77,6 +93,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
 {
     private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
     private readonly ILibraryReader _libraryReader;
+    private readonly ILibraryScanner _libraryScanner;
     private readonly IPlaylistService _playlistService;
     private readonly ISmartPlaylistService _smartPlaylistService;
     private readonly IMusicPlaybackService _musicPlaybackService;
@@ -89,12 +106,13 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     private int _loadVersion;
     private bool _isDisposed;
 
-    public PlaylistViewModel(ILibraryReader libraryReader, IPlaylistService playlistService, ISmartPlaylistService smartPlaylistService,
+    public PlaylistViewModel(ILibraryReader libraryReader, ILibraryScanner libraryScanner, IPlaylistService playlistService, ISmartPlaylistService smartPlaylistService,
         IMusicPlaybackService musicPlaybackService, INavigationService navigationService, IUIService uiService,
         IUISettingsService settingsService, IDispatcherService dispatcherService, ILogger<PlaylistViewModel> logger)
         : base(dispatcherService, logger)
     {
         _libraryReader = libraryReader;
+        _libraryScanner = libraryScanner;
         _playlistService = playlistService;
         _smartPlaylistService = smartPlaylistService;
         _musicPlaybackService = musicPlaybackService;
@@ -110,6 +128,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
 
         _playlistService.PlaylistsChanged += OnPlaylistsChanged;
         _smartPlaylistService.PlaylistsChanged += OnPlaylistsChanged;
+        _libraryScanner.LibraryContentChanged += OnLibraryContentChanged;
 
         UpdateSortOrderText();
     }
@@ -170,7 +189,8 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
             {
                 Title = playlist.Name,
                 PlaylistId = playlist.Id,
-                CoverImageUri = playlist.CoverImageUri
+                CoverImageUri = playlist.CoverImageUri,
+                IsFromServer = playlist.IsFromServer
             });
     }
 
@@ -594,6 +614,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         _smartPlaylistService.PlaylistUpdated -= OnPlaylistUpdated;
         _playlistService.PlaylistsChanged -= OnPlaylistsChanged;
         _smartPlaylistService.PlaylistsChanged -= OnPlaylistsChanged;
+        _libraryScanner.LibraryContentChanged -= OnLibraryContentChanged;
     }
 
     private void OnPlaylistUpdated(object? sender, PlaylistUpdatedEventArgs e)
@@ -618,6 +639,12 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
                 }
             }
         });
+    }
+
+    // A server's sync or removal adds, changes and removes its playlists.
+    private void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
+    {
+        if (e.ChangeType is LibraryChangeType.FolderRescanned or LibraryChangeType.FolderRemoved) OnPlaylistsChanged(sender, e);
     }
 
     private void OnPlaylistsChanged(object? sender, EventArgs e)

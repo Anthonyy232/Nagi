@@ -93,6 +93,27 @@ internal sealed class OpenSubsonicClient : IMusicServerClient
         }
     }
 
+    public async Task<IReadOnlyList<ServerPlaylist>> GetPlaylistsAsync(CancellationToken cancellationToken)
+    {
+        var listed = (await SendAsync("getPlaylists", [], cancellationToken).ConfigureAwait(false)).Playlists?.Playlist ?? [];
+        var playlists = new List<ServerPlaylist>();
+        foreach (var summary in listed)
+        {
+            try
+            {
+                if ((await SendAsync("getPlaylist", [("id", summary.Id)], cancellationToken).ConfigureAwait(false)).Playlist is { } playlist)
+                    playlists.Add(new ServerPlaylist(playlist.Id, playlist.Name ?? string.Empty, playlist.Created?.UtcDateTime,
+                        playlist.Entry?.Select(entry => entry.Id).ToList() ?? []));
+            }
+            catch (MusicServerException ex) when (ex.Error == MusicServerError.NotFound)
+            {
+                // Deleted since it was listed.
+            }
+        }
+
+        return playlists;
+    }
+
     public async Task<byte[]?> GetCoverArtAsync(string coverArtId, CancellationToken cancellationToken)
     {
         using var response = await GetAsync(
@@ -291,6 +312,8 @@ internal sealed class OpenSubsonicClient : IMusicServerClient
         SubsonicError? Error,
         SubsonicTokenInfo? TokenInfo,
         SubsonicSearchResult? SearchResult3,
+        SubsonicPlaylists? Playlists,
+        SubsonicPlaylist? Playlist,
         SubsonicLyricsList? LyricsList);
 
     private sealed record SubsonicError(int Code, string? Message);
@@ -298,6 +321,12 @@ internal sealed class OpenSubsonicClient : IMusicServerClient
     private sealed record SubsonicTokenInfo(string? Username);
 
     private sealed record SubsonicSearchResult(List<SubsonicSong>? Song);
+
+    private sealed record SubsonicPlaylists(List<SubsonicPlaylist>? Playlist);
+
+    private sealed record SubsonicPlaylist(string Id, string? Name, DateTimeOffset? Created, List<SubsonicPlaylistEntry>? Entry);
+
+    private sealed record SubsonicPlaylistEntry(string Id);
 
     private sealed record SubsonicName(string? Name);
 

@@ -370,6 +370,10 @@
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} songs</value>
   </data>
+  <data name="Playlist_FromServer_Format" xml:space="preserve">
+    <value>{0} • {1}</value>
+    <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
+  </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
     <value>Starting playlist…</value>
   </data>

@@ -54,11 +54,15 @@ public partial class LibraryService
                 progress?.Report(FetchingProgress(songs.Count));
             }
 
+            var playlists = await client.GetPlaylistsAsync(operationToken).ConfigureAwait(false);
+
             ServerImport import;
+            bool playlistsChanged;
             await _scanSemaphore.WaitAsync(operationToken).ConfigureAwait(false);
             try
             {
                 import = await ImportServerSongsAsync(folderId, songs, progress, operationToken).ConfigureAwait(false);
+                playlistsChanged = await ImportServerPlaylistsAsync(folderId, playlists, operationToken).ConfigureAwait(false);
             }
             finally
             {
@@ -67,7 +71,7 @@ public partial class LibraryService
 
             var importChanged = import.Added + import.Updated + import.Removed > 0;
             // The songs show up now rather than after their covers, which can take a while to download.
-            if (importChanged)
+            if (importChanged || playlistsChanged)
                 LibraryContentChanged?.Invoke(this, new LibraryContentChangedEventArgs(LibraryChangeType.FolderRescanned, folderId));
 
             var covers = await DownloadServerCoversAsync(folderId, client, import.SongsNeedingCovers, progress, operationToken)
@@ -96,10 +100,10 @@ public partial class LibraryService
             if (importChanged)
                 _ = StartMetadataBackgroundFetchAsync();
 
-            _logger.LogInformation("Synced server folder {FolderId}: +{Added} ~{Updated} -{Removed}, {Covers} songs got covers.",
-                folderId, import.Added, import.Updated, import.Removed, covers);
+            _logger.LogInformation("Synced server folder {FolderId}: +{Added} ~{Updated} -{Removed}, {Covers} songs got covers, {Playlists} playlists.",
+                folderId, import.Added, import.Updated, import.Removed, covers, playlists.Count);
             progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_SyncComplete, Percentage = 100 });
-            return importChanged || coverUpdates > 0;
+            return importChanged || playlistsChanged || coverUpdates > 0;
         }
         catch (OperationCanceledException)
         {
@@ -226,6 +230,68 @@ public partial class LibraryService
         var replacedCovers = songsNeedingCovers.Select(song => existing.GetValueOrDefault(song.FilePath)?.AlbumArtUriFromTrack)
             .OfType<string>().ToList();
         return new ServerImport(added, toImport.Count - added, removed, songsNeedingCovers, replacedCovers);
+    }
+
+    /// <summary>
+    ///     Makes the server's playlists in the library match its list. Songs the library doesn't have from the server are
+    ///     left out, and a song listed twice is kept once, where it first appears.
+    /// </summary>
+    /// <returns>True if a playlist was added, changed or removed.</returns>
+    private async Task<bool> ImportServerPlaylistsAsync(Guid folderId, IReadOnlyList<ServerPlaylist> playlists,
+        CancellationToken cancellationToken)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
+        var songIds = await context.Songs.Where(s => s.FolderId == folderId && s.RemoteId != null)
+            .ToDictionaryAsync(s => s.RemoteId!, s => s.Id, cancellationToken).ConfigureAwait(false);
+        var stored = await context.Playlists.Include(p => p.PlaylistSongs).Where(p => p.ServerFolderId == folderId)
+            .ToDictionaryAsync(p => p.RemoteId!, cancellationToken).ConfigureAwait(false);
+
+        var changed = false;
+        foreach (var listed in playlists)
+        {
+            stored.Remove(listed.RemoteId, out var playlist);
+            var playlistChanged = playlist?.Name != listed.Name;
+            if (playlist is null)
+            {
+                playlist = new Playlist
+                {
+                    ServerFolderId = folderId,
+                    RemoteId = listed.RemoteId,
+                    DateCreated = listed.CreatedUtc ?? DateTime.UtcNow
+                };
+                context.Playlists.Add(playlist);
+            }
+
+            playlist.Name = listed.Name;
+            var entries = playlist.PlaylistSongs.ToDictionary(ps => ps.SongId);
+            var order = 0;
+            foreach (var songId in listed.SongIds.Select(id => songIds.GetValueOrDefault(id)).Where(id => id != Guid.Empty).Distinct())
+            {
+                order++;
+                if (entries.Remove(songId, out var entry))
+                {
+                    if (entry.Order == order) continue;
+                }
+                else
+                {
+                    entry = new PlaylistSong { SongId = songId };
+                    playlist.PlaylistSongs.Add(entry);
+                }
+
+                entry.Order = order;
+                playlistChanged = true;
+            }
+
+            foreach (var gone in entries.Values) playlist.PlaylistSongs.Remove(gone);
+            if (!playlistChanged && entries.Count == 0) continue;
+            playlist.DateModified = DateTime.UtcNow;
+            changed = true;
+        }
+
+        context.Playlists.RemoveRange(stored.Values);
+        changed |= stored.Count > 0;
+        if (changed) await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        return changed;
     }
 
     /// <summary>

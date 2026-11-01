@@ -292,6 +292,63 @@ public partial class LibraryServiceTests
     }
 
     [Fact]
+    public async Task SyncServerFolder_AddsThePlaylistsWithTheSongsTheLibraryHas()
+    {
+        var folder = await AddServerAsync();
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Playlists.Add(new Playlist { Name = "Road Trip" });
+            await context.SaveChangesAsync();
+        }
+
+        var client = ServerWith(ServerSong("s1", "Breakwater"), ServerSong("s2", "Gulls"));
+        client.GetPlaylistsAsync(default).ReturnsForAnyArgs([new ServerPlaylist("p1", "Road Trip", Created, ["s2", "unknown", "s1", "s2"])]);
+
+        await _libraryService.SyncServerFolderAsync(folder.Id, client);
+
+        await using var check = _dbHelper.ContextFactory.CreateDbContext();
+        var playlist = await check.Playlists.SingleAsync(p => p.ServerFolderId == folder.Id);
+        playlist.Name.Should().Be("Road Trip", "a server's playlist can share a name with one made in Nagi");
+        playlist.DateCreated.Should().Be(Created, "sorting by date created goes by the server's date");
+        (await check.PlaylistSongs.Where(ps => ps.PlaylistId == playlist.Id).OrderBy(ps => ps.Order).Select(ps => ps.Song.Title)
+            .ToListAsync()).Should().Equal("Gulls", "Breakwater");
+    }
+
+    [Fact]
+    public async Task SyncServerFolder_FollowsThePlaylistsTheServerChangesAndRemoves()
+    {
+        var folder = await AddServerAsync();
+        var client = ServerWith(ServerSong("s1", "Breakwater"), ServerSong("s2", "Gulls"));
+        client.GetPlaylistsAsync(default).ReturnsForAnyArgs(
+            [new ServerPlaylist("p1", "Road Trip", null, ["s1", "s2"]), new ServerPlaylist("p2", "Deleted", null, ["s1"])],
+            [new ServerPlaylist("p1", "Night Drive", null, ["s2", "s1"])]);
+        await _libraryService.SyncServerFolderAsync(folder.Id, client);
+
+        (await _libraryService.SyncServerFolderAsync(folder.Id, client)).Should().BeTrue();
+        (await _libraryService.SyncServerFolderAsync(folder.Id, client)).Should().BeFalse();
+
+        await using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var playlist = await context.Playlists.SingleAsync();
+        playlist.Name.Should().Be("Night Drive");
+        (await context.PlaylistSongs.OrderBy(ps => ps.Order).Select(ps => ps.Song.Title).ToListAsync())
+            .Should().Equal("Gulls", "Breakwater");
+    }
+
+    [Fact]
+    public async Task RemoveFolder_OfAServer_RemovesItsPlaylists()
+    {
+        var folder = await AddServerAsync();
+        var client = ServerWith(ServerSong("s1", "Breakwater"));
+        client.GetPlaylistsAsync(default).ReturnsForAnyArgs([new ServerPlaylist("p1", "Road Trip", null, ["s1"])]);
+        await _libraryService.SyncServerFolderAsync(folder.Id, client);
+
+        await _libraryService.RemoveFolderAsync(folder.Id);
+
+        await using var context = _dbHelper.ContextFactory.CreateDbContext();
+        (await context.Playlists.AnyAsync()).Should().BeFalse();
+    }
+
+    [Fact]
     public async Task RemoveFolder_OfAServer_CancelsItsSyncAndRemovesIt()
     {
         var folder = await AddServerAsync();
@@ -357,6 +414,8 @@ public partial class LibraryServiceTests
         (await context.Songs.SingleAsync()).FilePath.Should().Be($@"{folder.Path}\s1");
     }
 
+    private static readonly DateTime Created = new(2026, 5, 4, 3, 2, 1, DateTimeKind.Utc);
+
     private Task<Folder> AddServerAsync() => _libraryService.AddMusicServerAsync(
         new MusicServer
         {
@@ -371,6 +430,7 @@ public partial class LibraryServiceTests
     {
         var client = Substitute.For<IMusicServerClient>();
         client.GetSongsAsync(Arg.Any<CancellationToken>()).Returns(_ => Pages(songs));
+        client.GetPlaylistsAsync(Arg.Any<CancellationToken>()).Returns([]);
         return client;
     }
 

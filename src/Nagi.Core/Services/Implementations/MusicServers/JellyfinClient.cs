@@ -81,6 +81,27 @@ internal sealed class JellyfinClient : IMusicServerClient
         }
     }
 
+    public async Task<IReadOnlyList<ServerPlaylist>> GetPlaylistsAsync(CancellationToken cancellationToken)
+    {
+        var listed = await SendAsync<ItemsResult>(HttpMethod.Get,
+            $"/Items?userId={_userId}&includeItemTypes=Playlist&mediaTypes=Audio&recursive=true&fields=DateCreated&enableUserData=false",
+            null, cancellationToken).ConfigureAwait(false);
+        var playlists = new List<ServerPlaylist>();
+        foreach (var playlist in listed.Items)
+        {
+            using var response = await SendCoreAsync(HttpMethod.Get,
+                $"/Playlists/{Uri.EscapeDataString(playlist.Id)}/Items?userId={_userId}&enableImages=false&enableUserData=false",
+                null, cancellationToken).ConfigureAwait(false);
+            // Deleted since it was listed.
+            if (response.StatusCode == HttpStatusCode.NotFound) continue;
+            var songs = await ReadAsync<ItemsResult>(response, cancellationToken).ConfigureAwait(false);
+            playlists.Add(new ServerPlaylist(playlist.Id, playlist.Name ?? string.Empty, playlist.DateCreated?.UtcDateTime,
+                songs.Items.Select(song => song.Id).ToList()));
+        }
+
+        return playlists;
+    }
+
     public async Task<byte[]?> GetCoverArtAsync(string coverArtId, CancellationToken cancellationToken)
     {
         using var response = await SendCoreAsync(HttpMethod.Get,

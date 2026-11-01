@@ -199,6 +199,29 @@ public class PlaylistSongListViewModelTests
         await _ui.DidNotReceiveWithAnyArgs().ShowMessageDialogAsync(default!, default!);
     }
 
+    [Fact]
+    public async Task PlaylistFromAServer_CantBeReordered()
+    {
+        using var viewModel = CreateViewModel();
+
+        await viewModel.InitializeAsync("Road Trip", _playlistId, isFromServer: true);
+
+        viewModel.IsReorderingEnabled.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task AddToPlaylist_OffersOnlyNagisOwnPlaylists()
+    {
+        var mine = new Playlist { Name = "Mine" };
+        _library.Reader.GetAllPlaylistsAsync(Arg.Any<CancellationToken>())
+            .Returns([mine, new Playlist { Name = "Road Trip", ServerFolderId = Guid.NewGuid() }]);
+        using var viewModel = CreateViewModel();
+
+        await viewModel.LoadAvailablePlaylistsAsync();
+
+        viewModel.AvailablePlaylists.Should().Equal(mine);
+    }
+
     private sealed class TestPlaylist(LibraryFakes library, IPlaylistService playlists, IUIService ui)
         : PlaylistSongListViewModel(library.Reader, library.Writer, library.Scanner, playlists, Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(),

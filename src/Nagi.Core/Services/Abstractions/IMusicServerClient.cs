@@ -13,6 +13,11 @@ public interface IMusicServerClient
     /// </summary>
     IAsyncEnumerable<IReadOnlyList<ServerSongMetadata>> GetSongsAsync(CancellationToken cancellationToken);
 
+    /// <summary>
+    ///     The playlists the account can see, with their songs.
+    /// </summary>
+    Task<IReadOnlyList<ServerPlaylist>> GetPlaylistsAsync(CancellationToken cancellationToken);
+
     /// <returns>The image, or null when the server has no image with that ID.</returns>
     Task<byte[]?> GetCoverArtAsync(string coverArtId, CancellationToken cancellationToken);
 

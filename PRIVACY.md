@@ -8,7 +8,7 @@ Nagi is primarily a local music player. Your music library, playlists, and playb
 
 ## Your Music Servers
 
-If you add a Navidrome, other OpenSubsonic, or Jellyfin server, Nagi connects only to the address you enter. It reads the server's song list, album art, and lyrics, streams the songs you play, and sends back the songs you favorite or unfavorite and the songs you play, with the time you played them. Requests include Nagi's name and version, and Jellyfin also receives your PC's name, which it shows in its list of devices. Your local library is not sent to the server.
+If you add a Navidrome, other OpenSubsonic, or Jellyfin server, Nagi connects only to the address you enter. It reads the server's song list, playlists, album art, and lyrics, streams the songs you play, and sends back the songs you favorite or unfavorite and the songs you play, with the time you played them. Requests include Nagi's name and version, and Jellyfin also receives your PC's name, which it shows in its list of devices. Your local library is not sent to the server.
 
 Nagi keeps the password or API key you sign in with in the Windows Credential Locker. For Jellyfin it keeps the access token the server issues instead of your password. Removing the server from Nagi deletes the saved sign-in and signs out of Jellyfin, which also takes Nagi off its list of devices.
 

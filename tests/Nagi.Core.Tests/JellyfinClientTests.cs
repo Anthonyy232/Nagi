@@ -156,6 +156,23 @@ public class JellyfinClientTests : IDisposable
     }
 
     [Fact]
+    public async Task GetPlaylistsAsync_ReadsEachPlaylistsSongsAndSkipsOneDeletedMeanwhile()
+    {
+        _handler.SendAsyncFunc = (request, _) => Task.FromResult(request.RequestUri!.AbsolutePath switch
+        {
+            "/Items" => Json(new { Items = new[] { new { Id = "p1", Name = "Road Trip", DateCreated = "2026-05-04T03:02:01Z" }, new { Id = "p2", Name = "Deleted", DateCreated = "2026-05-04T03:02:01Z" } } }),
+            "/Playlists/p1/Items" => Json(new { Items = new[] { new { Id = "s2" }, new { Id = "s1" }, new { Id = "s2" } } }),
+            _ => new HttpResponseMessage(HttpStatusCode.NotFound)
+        });
+
+        var playlists = await Client().GetPlaylistsAsync(CancellationToken.None);
+
+        playlists.Should().ContainSingle();
+        playlists[0].Should().BeEquivalentTo(new { RemoteId = "p1", Name = "Road Trip", CreatedUtc = new DateTime(2026, 5, 4, 3, 2, 1, DateTimeKind.Utc) });
+        playlists[0].SongIds.Should().Equal("s2", "s1", "s2");
+    }
+
+    [Fact]
     public async Task SetFavoriteAsync_SkipsSongsDeletedFromTheServer()
     {
         _handler.SendAsyncFunc = (request, _) => Task.FromResult(new HttpResponseMessage(

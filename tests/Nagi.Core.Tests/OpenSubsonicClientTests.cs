@@ -212,6 +212,31 @@ public class OpenSubsonicClientTests : IDisposable
     }
 
     [Fact]
+    public async Task GetPlaylistsAsync_ReadsEachPlaylistsSongsAndSkipsOneDeletedMeanwhile()
+    {
+        _handler.RespondSequence(
+            (HttpStatusCode.OK, Response(new
+            {
+                status = "ok",
+                openSubsonic = true,
+                playlists = new { playlist = new[] { new { id = "p1", name = "Road Trip" }, new { id = "p2", name = "Deleted" } } }
+            })),
+            (HttpStatusCode.OK, Response(new
+            {
+                status = "ok",
+                openSubsonic = true,
+                playlist = new { id = "p1", name = "Road Trip", created = "2026-05-03T20:02:01-07:00", entry = new[] { new { id = "s2" }, new { id = "s1" }, new { id = "s2" } } }
+            })),
+            (HttpStatusCode.OK, Response(new { status = "failed", openSubsonic = true, error = new { code = 70, message = "not found" } })));
+
+        var playlists = await Client().GetPlaylistsAsync(CancellationToken.None);
+
+        playlists.Should().ContainSingle();
+        playlists[0].Should().BeEquivalentTo(new { RemoteId = "p1", Name = "Road Trip", CreatedUtc = new DateTime(2026, 5, 4, 3, 2, 1, DateTimeKind.Utc) });
+        playlists[0].SongIds.Should().Equal("s2", "s1", "s2");
+    }
+
+    [Fact]
     public async Task GetCoverArtAsync_MissingImage_ReturnsNull()
     {
         _handler.RespondSequence((HttpStatusCode.OK, Response(new
