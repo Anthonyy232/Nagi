@@ -1089,9 +1089,6 @@ Bạn có muốn tiếp tục không?</value>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Chưa có thư mục nào được thêm</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Thêm thư mục nhạc để bắt đầu</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Phát</value>
   </data>
@@ -1226,9 +1223,6 @@ Bạn có muốn tiếp tục không?</value>
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>Nhạc của bạn ở đâu?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Chọn thư mục chứa nhạc của bạn. Nagi sẽ xây dựng thư viện trong khi bạn hoàn tất thiết lập, và bạn có thể thêm các thư mục khác sau.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Tùy biến theo ý bạn</value>

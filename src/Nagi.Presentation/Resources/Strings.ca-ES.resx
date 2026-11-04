@@ -1089,9 +1089,6 @@ Vols continuar?</value>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Encara no s'han afegit carpetes</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Afegeix carpetes de música per començar</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Reprodueix</value>
   </data>
@@ -1226,9 +1223,6 @@ Vols continuar?</value>
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>On és la teva música?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Tria la carpeta on guardes la música. Nagi crearà la biblioteca mentre acabes de configurar-ho, i podràs afegir més carpetes més endavant.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Personalitza'l</value>

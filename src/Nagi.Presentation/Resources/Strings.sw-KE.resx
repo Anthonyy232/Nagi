@@ -1089,9 +1089,6 @@ Je, unataka kuendelea?</value>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Hakuna folda zilizoongezwa bado</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Ongeza folda za muziki ili kuanza</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Cheza</value>
   </data>
@@ -1226,9 +1223,6 @@ Je, unataka kuendelea?</value>
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>Muziki wako uko wapi?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Chagua folda unapohifadhi muziki wako. Nagi inatengeneza maktaba yako unapomalizia kuweka mipangilio, na unaweza kuongeza folda zaidi baadaye.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Ibinafsishe</value>

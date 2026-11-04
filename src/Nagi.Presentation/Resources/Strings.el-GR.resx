@@ -1089,9 +1089,6 @@
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Δεν έχουν προστεθεί φάκελοι ακόμα</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Προσθέστε φακέλους μουσικής για να ξεκινήσετε</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Αναπαραγωγή</value>
   </data>
@@ -1226,9 +1223,6 @@
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>Πού βρίσκεται η μουσική σας;</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Επιλέξτε τον φάκελο στον οποίο διατηρείτε τη μουσική σας. Το Nagi δημιουργεί τη βιβλιοθήκη σας ενώ ολοκληρώνετε τη ρύθμιση, και μπορείτε να προσθέσετε περισσότερους φακέλους αργότερα.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Προσαρμόστε το στα μέτρα σας</value>

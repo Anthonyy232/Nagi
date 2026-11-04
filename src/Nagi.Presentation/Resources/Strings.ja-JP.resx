@@ -1089,9 +1089,6 @@
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>フォルダーがまだ追加されていません</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>開始するには音楽フォルダーを追加してください</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>再生</value>
   </data>
@@ -1226,9 +1223,6 @@
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>音楽の保存場所はどこですか？</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>音楽を保存しているフォルダを選択してください。セットアップの完了中に Nagi がライブラリを構築します。フォルダは後から追加することもできます。</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>自分好みにカスタマイズ</value>

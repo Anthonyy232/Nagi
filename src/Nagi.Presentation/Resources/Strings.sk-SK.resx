@@ -1089,9 +1089,6 @@ Chcete pokračovať?</value>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Zatiaľ neboli pridané žiadne priečinky</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Ak chcete začať, pridajte hudobné priečinky</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Prehrať</value>
   </data>
@@ -1226,9 +1223,6 @@ Chcete pokračovať?</value>
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>Kde sa nachádza vaša hudba?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Vyberte priečinok, v ktorom máte uloženú hudbu. Nagi vytvorí vašu knižnicu, kým dokončíte nastavenie. Ďalšie priečinky môžete pridať neskôr.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Prispôsobte si vzhľad</value>

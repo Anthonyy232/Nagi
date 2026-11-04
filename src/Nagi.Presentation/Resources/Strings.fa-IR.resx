@@ -1089,9 +1089,6 @@
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>هنوز پوشه‌ای اضافه نشده است</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>برای شروع پوشه‌های موسیقی اضافه کنید</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>پخش</value>
   </data>
@@ -1226,9 +1223,6 @@
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>موسیقی شما کجاست؟</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>پوشه‌ای را که موسیقی خود را در آن نگهداری می‌کنید انتخاب کنید. Nagi در حالی که راه‌اندازی را تمام می‌کنید، کتابخانه شما را می‌سازد و می‌توانید بعداً پوشه‌های بیشتری اضافه کنید.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>آن را سفارشی کنید</value>

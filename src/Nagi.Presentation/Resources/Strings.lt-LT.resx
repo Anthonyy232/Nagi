@@ -1089,9 +1089,6 @@ Ar norite tęsti?</value>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Dar nepridėta aplankų</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Pridėkite muzikos aplankus, kad pradėtumėte</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Groti</value>
   </data>
@@ -1226,9 +1223,6 @@ Ar norite tęsti?</value>
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>Kur yra jūsų muzika?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Pasirinkite aplanką, kuriame laikote savo muziką. Nagi kurs jūsų biblioteką, kol baigsite sąranką, o vėliau galėsite pridėti daugiau aplankų.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Pritaikykite sau</value>

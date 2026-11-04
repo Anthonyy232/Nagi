@@ -1089,9 +1089,6 @@
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>아직 추가된 폴더가 없습니다</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>시작하려면 음악 폴더를 추가하세요</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>재생</value>
   </data>
@@ -1226,9 +1223,6 @@
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>음악이 어디에 있나요?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>음악을 보관하는 폴더를 선택하세요. 설정을 마치는 동안 Nagi가 라이브러리를 구축하며, 나중에 폴더를 더 추가할 수 있습니다.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>나만의 스타일로 맞추기</value>

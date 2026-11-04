@@ -1089,9 +1089,6 @@ Wil jy voortgaan?</value>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Geen vouers is nog bygevoeg nie</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Voeg musiekvouers by om te begin</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Speel</value>
   </data>
@@ -1226,9 +1223,6 @@ Wil jy voortgaan?</value>
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>Waar is jou musiek?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Kies die vouer waar jy jou musiek stoor. Nagi bou jou biblioteek terwyl jy die opstelling voltooi, en jy kan later nog vouers byvoeg.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Maak dit joune</value>

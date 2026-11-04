@@ -1089,9 +1089,6 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Aún no se han añadido carpetas</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Añade carpetas de música para empezar</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Reproducir</value>
   </data>
@@ -1226,9 +1223,6 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>¿Dónde está tu música?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Elige la carpeta donde guardas tu música. Nagi creará tu biblioteca mientras terminas la configuración, y podrás añadir más carpetas más tarde.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Personalízalo</value>

@@ -1089,9 +1089,6 @@
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>ਹਾਲੇ ਕੋਈ ਫੋਲਡਰ ਨਹੀਂ ਜੋੜਿਆ ਗਿਆ</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਸੰਗੀਤ ਫੋਲਡਰ ਜੋੜੋ</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>ਚਲਾਓ</value>
   </data>
@@ -1226,9 +1223,6 @@
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>ਤੁਹਾਡਾ ਸੰਗੀਤ ਕਿੱਥੇ ਹੈ?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>ਉਹ ਫੋਲਡਰ ਚੁਣੋ ਜਿੱਥੇ ਤੁਸੀਂ ਆਪਣਾ ਸੰਗੀਤ ਰੱਖਦੇ ਹੋ। ਜਦੋਂ ਤੁਸੀਂ ਸੈੱਟਅੱਪ ਪੂਰਾ ਕਰਦੇ ਹੋ, Nagi ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਤਿਆਰ ਕਰਦਾ ਹੈ, ਅਤੇ ਤੁਸੀਂ ਬਾਅਦ ਵਿੱਚ ਹੋਰ ਫੋਲਡਰ ਜੋੜ ਸਕਦੇ ਹੋ।</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>ਇਸਨੂੰ ਆਪਣੀ ਪਸੰਦ ਅਨੁਸਾਰ ਬਣਾਓ</value>

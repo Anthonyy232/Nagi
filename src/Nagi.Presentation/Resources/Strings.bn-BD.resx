@@ -1089,9 +1089,6 @@
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>এখনো কোনো ফোল্ডার যোগ করা হয়নি</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>শুরু করতে সঙ্গীত ফোল্ডার যোগ করুন</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>চালান</value>
   </data>
@@ -1226,9 +1223,6 @@
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>আপনার মিউজিক কোথায় আছে?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>আপনি যেখানে আপনার মিউজিক রাখেন সেই ফোল্ডারটি বেছে নিন। সেট আপ শেষ করার সময়ই Nagi আপনার লাইব্রেরি তৈরি করে ফেলবে, এবং আপনি পরেও ফোল্ডার যোগ করতে পারবেন।</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>নিজের মতো সাজিয়ে নিন</value>

@@ -1089,9 +1089,6 @@
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>अभी तक कोई फ़ोल्डर जोड़ा नहीं गया है</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>शुरू करने के लिए संगीत फ़ोल्डर जोड़ें</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>चलाएँ</value>
   </data>
@@ -1226,9 +1223,6 @@
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>आपका संगीत कहाँ है?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>वह फ़ोल्डर चुनें जहाँ आप अपना संगीत रखते हैं। जब तक आप सेटअप पूरा करते हैं, Nagi आपकी लाइब्रेरी तैयार करता है, और आप बाद में और फ़ोल्डर जोड़ सकते हैं।</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>इसे अपना बनाएं</value>

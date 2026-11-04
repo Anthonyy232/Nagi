@@ -1089,9 +1089,6 @@ Devam etmek ister misiniz?</value>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Henüz klasör eklenmedi</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Başlamak için müzik klasörleri ekleyin</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Oynat</value>
   </data>
@@ -1226,9 +1223,6 @@ Devam etmek ister misiniz?</value>
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>Müziğiniz nerede?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Müziğinizi sakladığınız klasörü seçin. Siz kurulumu tamamlarken Nagi kitaplığınızı oluşturur; daha sonra daha fazla klasör ekleyebilirsiniz.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Kişiselleştirin</value>
