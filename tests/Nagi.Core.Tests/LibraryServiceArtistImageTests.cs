@@ -438,4 +438,31 @@ public class LibraryServiceArtistImageTests : IDisposable
 
         await _imageProcessor.Received(1).ProcessImageBytesAsync(artistBytes);
     }
+
+    [Fact]
+    public async Task RescanFolder_ArtistAlsoOnAServer_LooksForImagesOnlyInFoldersOnDisk()
+    {
+        var (folder, artist, _) = await SeedUpToDateSongAsync();
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            var server = new Folder { Name = "Navidrome", Path = "nagi-server:0123" };
+            var streamed = new Song
+            {
+                Title = "Streamed",
+                FilePath = @"nagi-server:0123\s1",
+                DirectoryPath = server.Path,
+                FolderId = server.Id,
+                RemoteId = "s1"
+            };
+            streamed.SongArtists.Add(new SongArtist { ArtistId = artist.Id, Order = 0 });
+            ctx.Folders.Add(server);
+            ctx.Songs.Add(streamed);
+            await ctx.SaveChangesAsync();
+        }
+
+        await _libraryService.RescanFolderForMusicAsync(folder.Id);
+
+        _fileSystem.Received().GetFiles(AlbumDir, "*.*");
+        _fileSystem.DidNotReceive().GetFiles(Arg.Is<string>(dir => dir.StartsWith("nagi-server:")), Arg.Any<string>());
+    }
 }

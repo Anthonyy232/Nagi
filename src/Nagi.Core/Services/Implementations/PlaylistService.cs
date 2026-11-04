@@ -74,7 +74,7 @@ public class PlaylistService : IPlaylistService
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
-        var playlist = await context.Playlists.FindAsync(playlistId).ConfigureAwait(false);
+        var playlist = await FindOwnPlaylistAsync(context, playlistId).ConfigureAwait(false);
         if (playlist is null) return false;
 
         context.Playlists.Remove(playlist);
@@ -97,7 +97,7 @@ public class PlaylistService : IPlaylistService
             throw new ArgumentException(Resources.Strings.Error_PlaylistNameEmpty, nameof(newName));
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var playlist = await context.Playlists.FindAsync(playlistId).ConfigureAwait(false);
+        var playlist = await FindOwnPlaylistAsync(context, playlistId).ConfigureAwait(false);
         if (playlist is null) return false;
 
         var normalizedName = NormalizeString(newName) ?? newName;
@@ -113,7 +113,7 @@ public class PlaylistService : IPlaylistService
     public async Task<bool> UpdatePlaylistCoverAsync(Guid playlistId, string? newCoverImageUri)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var playlist = await context.Playlists.FindAsync(playlistId).ConfigureAwait(false);
+        var playlist = await FindOwnPlaylistAsync(context, playlistId).ConfigureAwait(false);
         if (playlist is null) return false;
 
         if (!string.IsNullOrEmpty(newCoverImageUri))
@@ -146,7 +146,7 @@ public class PlaylistService : IPlaylistService
         if (uniqueSongIds.Length == 0) return false;
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var playlist = await context.Playlists.FindAsync(playlistId).ConfigureAwait(false);
+        var playlist = await FindOwnPlaylistAsync(context, playlistId).ConfigureAwait(false);
         if (playlist is null) return false;
 
         var existingSongIds = await context.PlaylistSongs
@@ -183,7 +183,7 @@ public class PlaylistService : IPlaylistService
         if (uniqueSongIds.Length == 0) return false;
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var playlist = await context.Playlists.FindAsync(playlistId).ConfigureAwait(false);
+        var playlist = await FindOwnPlaylistAsync(context, playlistId).ConfigureAwait(false);
         if (playlist is null) return false;
 
         var rowsDeleted = await context.PlaylistSongs
@@ -202,7 +202,7 @@ public class PlaylistService : IPlaylistService
     public async Task<bool> UpdatePlaylistOrderAsync(Guid playlistId, IEnumerable<Guid> orderedSongIds)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var playlist = await context.Playlists.FindAsync(playlistId).ConfigureAwait(false);
+        var playlist = await FindOwnPlaylistAsync(context, playlistId).ConfigureAwait(false);
         if (playlist is null) return false;
 
         var playlistSongs = await context.PlaylistSongs
@@ -247,7 +247,7 @@ public class PlaylistService : IPlaylistService
 
         var playlistSong = await context.PlaylistSongs
             .Include(ps => ps.Playlist)
-            .FirstOrDefaultAsync(ps => ps.PlaylistId == playlistId && ps.SongId == songId)
+            .FirstOrDefaultAsync(ps => ps.PlaylistId == playlistId && ps.SongId == songId && ps.Playlist.ServerFolderId == null)
             .ConfigureAwait(false);
 
         if (playlistSong is null) return false;
@@ -262,12 +262,17 @@ public class PlaylistService : IPlaylistService
         return true;
     }
 
+    /// <returns>The playlist, or null when it doesn't exist or comes from a music server.</returns>
+    private static Task<Playlist?> FindOwnPlaylistAsync(MusicDbContext context, Guid playlistId) =>
+        context.Playlists.FirstOrDefaultAsync(p => p.Id == playlistId && p.ServerFolderId == null);
+
     private static string? NormalizeString(string? s) => ArtistNameHelper.NormalizeStringCore(s);
 
-    // Name is NOCASE-collated, so this matches the unique index rather than waiting for SaveChanges to fail.
+    // Name is NOCASE-collated, so this matches the unique index, which covers only Nagi's own playlists, rather than
+    // waiting for SaveChanges to fail.
     private static async Task ThrowIfNameTakenAsync(MusicDbContext context, string name, Guid? exceptId)
     {
-        if (await context.Playlists.AnyAsync(p => p.Id != exceptId && p.Name == name).ConfigureAwait(false))
+        if (await context.Playlists.AnyAsync(p => p.Id != exceptId && p.ServerFolderId == null && p.Name == name).ConfigureAwait(false))
             throw new PlaylistNameTakenException(name);
     }
 }

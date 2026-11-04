@@ -96,6 +96,7 @@ public partial class App : Application
             if (_isExiting) return;
             _coreServicesInitialized = true;
             await Services!.GetRequiredService<IApplicationLifecycle>().NavigateToMainContentAsync();
+            AppServices.StartAfterMainContent(Services!);
 
             _ = ProcessFileActivationQueueAsync();
 

@@ -1074,9 +1074,6 @@
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
     <value>یکی را به صورت تصادفی انتخاب کنید</value>
   </data>
-  <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>افزودن یک پوشه موسیقی</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>افزودن پوشه</value>
   </data>

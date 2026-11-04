@@ -25,6 +25,7 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
     private readonly IUISettingsService _settingsService;
     private readonly IUIService _uiService;
     private readonly ILibraryScanner _libraryScanner;
+    private readonly IMusicServerService _musicServers;
     private readonly GlobalOperationViewModel _globalOperation;
     private readonly Debouncer _lyricsProviderSaveDebouncer;
     private readonly Debouncer _metadataProviderSaveDebouncer;
@@ -36,6 +37,7 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
         IUISettingsService settingsService,
         IUIService uiService,
         ILibraryScanner libraryScanner,
+        IMusicServerService musicServers,
         GlobalOperationViewModel globalOperation,
         IDispatcherService dispatcherService,
         ILogger<LibrarySettingsViewModel> logger,
@@ -45,6 +47,7 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
         _settingsService = settingsService;
         _uiService = uiService;
         _libraryScanner = libraryScanner;
+        _musicServers = musicServers;
         _globalOperation = globalOperation;
         _globalOperation.PropertyChanged += OnGlobalOperationPropertyChanged;
         timeProvider ??= TimeProvider.System;
@@ -199,7 +202,11 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
         {
             await SaveMetadataSplitSettingsAsync();
             token.ThrowIfCancellationRequested();
-            await _libraryScanner.ForceRescanMetadataAsync(_globalOperation.CreateProgress(token), token);
+            var progress = _globalOperation.CreateProgress(token);
+            await _libraryScanner.ForceRescanMetadataAsync(progress, token);
+            token.ThrowIfCancellationRequested();
+            // A sync applies the split settings to server songs.
+            await _musicServers.SyncAllAsync(progress, token);
             token.ThrowIfCancellationRequested();
 
             await _uiService.ShowMessageDialogAsync(Strings.Settings_Dialog_RescanComplete_Title, Strings.Settings_Dialog_RescanComplete_Content);

@@ -155,8 +155,12 @@
                                 <Button Command="{x:Bind ViewModel.PlayPauseCommand}"
                                         ToolTipService.ToolTip="{x:Bind ViewModel.PlayPauseButtonToolTip, Mode=OneWay}"
                                         AutomationProperties.Name="{x:Bind ViewModel.PlayPauseButtonToolTip, Mode=OneWay}">
-                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="24"
-                                              Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.PlayPauseIcon), Mode=OneWay}" />
+                                    <Grid>
+                                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="24"
+                                                  Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(ViewModel.PlayPauseIcon), Mode=OneWay}"
+                                                  Visibility="{x:Bind ViewModel.IsOpening, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                                        <ProgressRing Width="20" Height="20" IsActive="{x:Bind ViewModel.IsOpening, Mode=OneWay}" />
+                                    </Grid>
                                 </Button>
                                 <Button Command="{x:Bind ViewModel.NextCommand}"
                                         ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_NextButton_ToolTip, Mode=OneTime}"

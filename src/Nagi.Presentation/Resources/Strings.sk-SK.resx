@@ -1074,9 +1074,6 @@ Chcete pokračovať?</value>
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Vybrať náhodný</value>
   </data>
-  <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Pridať hudobný priečinok</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Pridať priečinok</value>
   </data>

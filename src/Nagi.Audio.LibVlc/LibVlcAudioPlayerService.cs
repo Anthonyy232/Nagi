@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LibVLCSharp;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Resources;
@@ -59,6 +60,11 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
     // Tracks if we are currently fading out to pause, so IsPlaying can return false early
     private volatile bool _isPausing;
+
+    // LibVLC 4 keeps reporting Playing while it opens the next song, so opening is tracked from Play until the
+    // song first reports a position.
+    private volatile bool _isOpening;
+    private volatile bool _hasCurrentMediaStarted;
 
     public LibVlcAudioPlayerService(
         IDispatcherService dispatcherService,
@@ -207,6 +213,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     public event Action<string>? ErrorOccurred;
 
     public bool IsPlaying => !_isPausing && ReadNative(() => _mediaPlayer?.State == VLCState.Playing, false);
+    public bool IsOpening => _isOpening;
     public TimeSpan CurrentPosition => ReadNative(() => FromVlcMicroseconds(_mediaPlayer?.Time ?? 0), TimeSpan.Zero);
     public TimeSpan Duration => ReadNative(() => FromVlcMicroseconds(_mediaPlayer?.Length ?? 0), TimeSpan.Zero);
     public double Volume => _isDisposed || !_isInitialized ? 0 : _userVolume;
@@ -228,7 +235,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         }
     }
 
-    public async Task LoadAsync(Song song)
+    public async Task LoadAsync(Song song, Uri? streamUri = null)
     {
         if (_isDisposed) return;
         await EnsureInitializedAsync().ConfigureAwait(false);
@@ -263,15 +270,15 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
                 DisposeCurrentMedia("replacement load");
 
+                // A server song's path ends in its file's extension, so its stream is read like the file would be.
                 var extension = System.IO.Path.GetExtension(song.FilePath).ToLowerInvariant();
-                var useNativeDemuxer = UsesNativeDemuxer(extension);
-
-                _currentMedia = new Media(song.FilePath, FromType.FromPath);
+                _currentMedia = streamUri is null ? new Media(song.FilePath, FromType.FromPath) : new Media(streamUri);
 
                 // Native Ogg and Matroska demuxers integrate more safely with VLC's player clock.
-                // FFmpeg remains preferred for the other formats because it handles edge-case MP3s
-                // better than VLC's native elementary-stream demuxer.
-                if (!useNativeDemuxer)
+                // FFmpeg remains preferred for the other formats: it handles edge-case MP3s better than
+                // VLC's native elementary-stream demuxer, and reads MP4 over HTTP, where VLC's own stalls.
+                // A stream without an extension is left for VLC to recognize, so FFmpeg is never forced onto Ogg.
+                if (extension.Length > 0 && !UsesNativeDemuxer(extension))
                 {
                     _currentMedia.AddOption(":demux=avcodec");
 
@@ -284,6 +291,7 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
                 }
 
                 _mediaPlayer!.Media = _currentMedia;
+                _hasCurrentMediaStarted = false;
                 // Do NOT dispose the media immediately - let it be disposed when no longer needed
             }).ConfigureAwait(false);
         }
@@ -361,17 +369,20 @@ public sealed partial class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
                 // LibVLC 4 queues the start command and returns immediately.
                 _isExplicitStop = false;
                 _mediaPlayer.SetRate(_playbackRate);
+                // Before playing, so the song's first position, which can follow at once, ends it.
+                if (!_hasCurrentMediaStarted) SetOpening(true);
                 if (_mediaPlayer.Play())
                 {
                     startFadeIn = _isFadeOnPlayPauseEnabled;
                 }
                 else
                 {
+                    SetOpening(false);
                     _isExplicitStop = true;
                     _isFading = false;
                     _mediaPlayer.SetVolume((int)Math.Clamp(_userVolume * 100, 0, 100));
                     _logger.LogWarning("LibVLC rejected the play command. Last error: {LastError}",
-                        _libVlc?.LastLibVLCError);
+                        UrlRedaction.RemoveQueries(_libVlc?.LastLibVLCError));
                 }
             }
             else

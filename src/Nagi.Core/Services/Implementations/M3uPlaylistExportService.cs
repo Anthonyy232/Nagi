@@ -74,9 +74,9 @@ public class M3uPlaylistExportService : IPlaylistExportService
                 return new PlaylistImportResult(false, 0, unmatchedCount);
             }
 
-            // Playlist names are unique, so re-importing a file adds "Name (2)" rather than failing.
+            // Nagi's playlist names are unique, so re-importing a file adds "Name (2)" rather than failing.
             var takenNames = (await _libraryReader.GetAllPlaylistsAsync().ConfigureAwait(false))
-                .Select(existing => existing.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
+                .Where(existing => !existing.IsFromServer).Select(existing => existing.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
             var baseName = ArtistNameHelper.NormalizeStringCore(playlistName) ?? playlistName;
             var uniqueName = baseName;
             for (var suffix = 2; takenNames.Contains(uniqueName); suffix++) uniqueName = $"{baseName} ({suffix})";
@@ -155,12 +155,14 @@ public class M3uPlaylistExportService : IPlaylistExportService
 
             foreach (var playlist in playlistList)
             {
+                // A server song has no file other players could open, and its stream URL would give away the sign-in.
                 var songs = (await _libraryReader.GetSongsInPlaylistOrderedAsync(playlist.Id).ConfigureAwait(false))
+                    .Where(song => !song.IsRemote)
                     .ToList();
 
                 if (songs.Count == 0)
                 {
-                    _logger.LogDebug("Skipping empty playlist '{PlaylistName}'", playlist.Name);
+                    _logger.LogDebug("Skipping playlist '{PlaylistName}': it has no songs on this PC", playlist.Name);
                     continue;
                 }
 

@@ -102,6 +102,15 @@ public partial class LibraryServiceTests : IDisposable
         _httpMessageHandler.Dispose();
     }
 
+    // Concurrency tests need their own file database: contexts that share the in-memory connection collide when
+    // they open it while another runs a query.
+    private LibraryService CreateLibraryService(DbContextFactoryTestHelper database, LibraryReader reader) =>
+        new(database.ContextFactory, reader, _fileSystem, _metadataService,
+            new ArtistMetadataService(_lastFmService, _musicBrainzService, _fanartTvService, _theAudioDbService,
+                Substitute.For<IDeezerService>(), Substitute.For<IWikipediaService>(), _artistMetadataLogger),
+            Substitute.For<IAlbumCoverService>(), _httpClientFactory, _pathConfig, _settingsService, _replayGainService,
+            _imageProcessor, _pipelines, _logger);
+
     [Theory]
     [InlineData(ServiceProviderIds.LastFm)]
     [InlineData(ServiceProviderIds.TheAudioDb)]
@@ -962,8 +971,12 @@ public partial class LibraryServiceTests : IDisposable
     [Fact]
     public async Task RescanFolderForMusicAsync_SupersedingScansWaitForActiveWorkAndApplyOnlyLatest()
     {
+        using var database = new DbContextFactoryTestHelper(useFileDatabase: true);
+        using var reader = new LibraryReader(database.ContextFactory, _fileSystem, _settingsService,
+            Substitute.For<ILogger<LibraryReader>>());
+        using var service = CreateLibraryService(database, reader);
         var folder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Music\\Concurrent", Name = "Concurrent" };
-        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        await using (var context = database.ContextFactory.CreateDbContext())
         {
             context.Folders.Add(folder);
             await context.SaveChangesAsync();
@@ -981,10 +994,10 @@ public partial class LibraryServiceTests : IDisposable
             return metadata.Task;
         });
 
-        var first = _libraryService.RescanFolderForMusicAsync(folder.Id);
+        var first = service.RescanFolderForMusicAsync(folder.Id);
         await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
-        var second = _libraryService.RescanFolderForMusicAsync(folder.Id);
-        var third = _libraryService.RescanFolderForMusicAsync(folder.Id);
+        var second = service.RescanFolderForMusicAsync(folder.Id);
+        var third = service.RescanFolderForMusicAsync(folder.Id);
         try
         {
             third.IsCompleted.Should().BeFalse();
@@ -1003,7 +1016,7 @@ public partial class LibraryServiceTests : IDisposable
             .Should().Equal(false, false, true);
         await _metadataService.Received(2).ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>());
 
-        await using (var assertContext = _dbHelper.ContextFactory.CreateDbContext())
+        await using (var assertContext = database.ContextFactory.CreateDbContext())
         {
             var songs = await assertContext.Songs.Where(s => s.FolderId == folder.Id).ToListAsync();
 
@@ -1250,10 +1263,7 @@ public partial class LibraryServiceTests : IDisposable
         using var database = new DbContextFactoryTestHelper(useFileDatabase: true);
         using var reader = new LibraryReader(database.ContextFactory, _fileSystem, _settingsService,
             Substitute.For<ILogger<LibraryReader>>());
-        using var service = new LibraryService(database.ContextFactory, reader, _fileSystem, _metadataService,
-            new ArtistMetadataService(_lastFmService, _musicBrainzService, _fanartTvService, _theAudioDbService,
-                Substitute.For<IDeezerService>(), Substitute.For<IWikipediaService>(), _artistMetadataLogger),
-            Substitute.For<IAlbumCoverService>(), _httpClientFactory, _pathConfig, _settingsService, _replayGainService, _imageProcessor, _pipelines, _logger);
+        using var service = CreateLibraryService(database, reader);
         var song = new Song { FilePath = @"C:\Music\song.mp3", Folder = new Folder { Path = @"C:\Music", Name = "Music" } };
         await using (var context = database.ContextFactory.CreateDbContext())
         {

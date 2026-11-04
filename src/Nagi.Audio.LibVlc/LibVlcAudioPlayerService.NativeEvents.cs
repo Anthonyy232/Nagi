@@ -1,5 +1,6 @@
 using LibVLCSharp;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Helpers;
 using Nagi.Core.Resources;
 
 namespace Nagi.Audio.LibVlc;
@@ -13,7 +14,8 @@ public sealed partial class LibVlcAudioPlayerService
     {
         if (_isDisposed) return;
 
-        var message = string.IsNullOrWhiteSpace(e.FormattedLog) ? e.Message : e.FormattedLog;
+        // VLC quotes the URL it failed to open, and a server stream's URL carries the sign-in.
+        var message = UrlRedaction.RemoveQueries(string.IsNullOrWhiteSpace(e.FormattedLog) ? e.Message : e.FormattedLog);
         switch (e.Level)
         {
             case LibVLCSharp.LogLevel.Error:
@@ -60,8 +62,10 @@ public sealed partial class LibVlcAudioPlayerService
         if (_isDisposed || _libVlc is null) return;
 
         _isExplicitStop = true;
+        SetOpening(false);
 
-        var lastVlcError = ReadNative(() => _libVlc?.LastLibVLCError, null);
+        // Also shown to the user, so redacted like VLC's log.
+        var lastVlcError = UrlRedaction.RemoveQueries(ReadNative(() => _libVlc?.LastLibVLCError, null));
         var errorMessage = string.IsNullOrEmpty(lastVlcError)
             ? Strings.Player_Error_LibVLC_Unspecified
             : string.Format(Strings.Player_Error_LibVLC_WithDetails, lastVlcError);
@@ -85,8 +89,9 @@ public sealed partial class LibVlcAudioPlayerService
         _dispatcherService.TryEnqueue(() =>
         {
             if (_isDisposed) return;
-            StateChanged?.Invoke();
             var state = ReadNative(() => _mediaPlayer?.State, null);
+            if (state is VLCState.Paused or VLCState.Stopped) _isOpening = false;
+            StateChanged?.Invoke();
 
             // Only fire PlaybackEnded for natural end of playback, not explicit stops
             if (state == VLCState.Stopped && currentSong is not null && !isExplicitStop)
@@ -104,9 +109,21 @@ public sealed partial class LibVlcAudioPlayerService
         ReportPlaybackStatus();
     }
 
+    private void SetOpening(bool isOpening)
+    {
+        if (_isOpening == isOpening) return;
+        _isOpening = isOpening;
+        _dispatcherService.TryEnqueue(() =>
+        {
+            if (!_isDisposed) StateChanged?.Invoke();
+        });
+    }
+
     private void OnMediaPlayerPositionChanged(object? sender, MediaPlayerPositionChangedEventArgs e)
     {
         if (_isDisposed) return;
+        _hasCurrentMediaStarted = true;
+        SetOpening(false);
         _dispatcherService.TryEnqueue(() =>
         {
             if (_isDisposed) return;

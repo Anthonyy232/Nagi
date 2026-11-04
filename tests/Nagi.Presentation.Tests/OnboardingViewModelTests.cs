@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Models;
+using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
@@ -15,6 +16,7 @@ public class OnboardingViewModelTests
     private const string FolderPath = @"C:\Music";
 
     private readonly LibraryFakes _library = new();
+    private readonly IMusicServerService _musicServers = Substitute.For<IMusicServerService>();
     private readonly IUIService _ui = Substitute.For<IUIService>();
     private readonly IApplicationLifecycle _lifecycle = Substitute.For<IApplicationLifecycle>();
     private readonly OnboardingViewModel _viewModel;
@@ -23,7 +25,7 @@ public class OnboardingViewModelTests
     {
         _ui.PickSingleFolderAsync().Returns(FolderPath);
         _library.Writer.AddFolderAsync(FolderPath).Returns(new Folder { Name = "Music", Path = FolderPath });
-        _viewModel = new OnboardingViewModel(_library.Writer, _library.Scanner, _ui, _lifecycle,
+        _viewModel = new OnboardingViewModel(_library.Writer, _library.Scanner, _musicServers, _ui, _lifecycle,
             NullLogger<OnboardingViewModel>.Instance);
         _viewModel.GoNextCommand.Execute(null);
     }
@@ -64,6 +66,32 @@ public class OnboardingViewModelTests
 
         _viewModel.CurrentStep.Should().Be(OnboardingStep.Library);
         await _library.Writer.DidNotReceiveWithAnyArgs().AddFolderAsync(default!);
+    }
+
+    [Fact]
+    public async Task ConnectingAServer_LetsSetupFinishWithoutAFolder()
+    {
+        _ui.ShowAddMusicServerDialogAsync().Returns(new Folder { Name = "Navidrome", Path = "nagi-server:0123" });
+
+        await _viewModel.ConnectServerCommand.ExecuteAsync(null);
+
+        _viewModel.LibrarySource.Should().Be("Navidrome");
+        _viewModel.FinishCommand.CanExecute(null).Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ConnectingAServerWhoseSyncFails_RemovesItSoItCanBeConnectedAgain()
+    {
+        var server = new Folder { Name = "Navidrome", Path = "nagi-server:0123" };
+        _ui.ShowAddMusicServerDialogAsync().Returns(server);
+        _musicServers.SyncAsync(server.Id, Arg.Any<IProgress<ScanProgress>?>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromException(new MusicServerException(MusicServerError.Unreachable, "timed out")));
+
+        await _viewModel.ConnectServerCommand.ExecuteAsync(null);
+
+        await _musicServers.Received(1).RemoveAsync(server.Id);
+        _viewModel.HasLibraryFailed.Should().BeTrue();
+        _viewModel.ConnectServerCommand.CanExecute(null).Should().BeTrue();
     }
 
     [Theory]

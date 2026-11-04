@@ -66,7 +66,18 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     [ObservableProperty]
     public partial bool IsAtRootLevel { get; set; } = true;
 
-    public async Task InitializeAsync(string title, Guid rootFolderId, string? directoryPath = null)
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HeaderLabel), nameof(EmptyTitle), nameof(EmptySubtitle))]
+    public partial bool IsServer { get; private set; }
+
+    public string HeaderLabel => IsServer ? Strings.Label_Server : Strings.FolderSongViewPage_Header_Label;
+
+    public string EmptyTitle => IsServer ? Strings.FolderSongViewPage_ServerEmpty_Title : Strings.FolderSongViewPage_Empty_Title;
+
+    public string EmptySubtitle =>
+        IsServer ? Strings.FolderSongViewPage_ServerEmpty_Subtitle : Strings.FolderSongViewPage_Empty_Subtitle;
+
+    public async Task InitializeAsync(string title, Guid rootFolderId, string? directoryPath = null, bool isServer = false)
     {
         if (_isDisposed) return;
         ResetState();
@@ -77,6 +88,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
             _rootFolderId = rootFolderId;
             _rootFolderPath = null;
             _currentDirectoryPath = directoryPath ?? string.Empty;
+            IsServer = isServer;
 
             var rootFolderTask = _libraryReader.GetFolderByIdAsync(rootFolderId);
             var sortTask = _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.FolderViewSortOrderKey);

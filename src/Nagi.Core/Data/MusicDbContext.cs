@@ -31,6 +31,7 @@ public class MusicDbContext : DbContext
     public DbSet<ListenHistory> ListenHistory { get; set; } = null!;
     public DbSet<SmartPlaylist> SmartPlaylists { get; set; } = null!;
     public DbSet<SmartPlaylistRule> SmartPlaylistRules { get; set; } = null!;
+    public DbSet<MusicServer> MusicServers { get; set; } = null!;
 
     public Task BackfillSortKeysAsync(CancellationToken cancellationToken = default)
     {
@@ -158,10 +159,26 @@ public class MusicDbContext : DbContext
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
+        modelBuilder.Entity<MusicServer>(entity =>
+        {
+            entity.Property(s => s.UserName).UseCollation("NOCASE");
+            entity.HasOne(s => s.Folder)
+                .WithOne(f => f.MusicServer)
+                .HasForeignKey<MusicServer>(s => s.FolderId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
         modelBuilder.Entity<Playlist>(entity =>
         {
             entity.Property(p => p.Name).UseCollation("NOCASE");
-            entity.HasIndex(p => p.Name).IsUnique();
+            // Only Nagi's own playlists need unique names: a server's can match them, or another server's.
+            entity.HasIndex(p => p.Name).IsUnique().HasFilter("\"ServerFolderId\" IS NULL");
+            entity.HasIndex(p => new { p.ServerFolderId, p.RemoteId }).IsUnique();
+
+            entity.HasOne(p => p.ServerFolder)
+                .WithMany()
+                .HasForeignKey(p => p.ServerFolderId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<PlaylistSong>(entity =>

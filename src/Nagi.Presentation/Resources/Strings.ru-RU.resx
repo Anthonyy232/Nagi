@@ -1074,9 +1074,6 @@
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Выбрать случайную</value>
   </data>
-  <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Добавить музыкальную папку</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Добавить папку</value>
   </data>

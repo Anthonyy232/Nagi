@@ -15,8 +15,9 @@ public partial class LibraryService
     private async Task<IEnumerable<Folder>> GetRootFoldersAsync(CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
+        // Server roots aren't directories; they are synced instead of scanned.
         return await context.Folders.AsNoTracking()
-            .Where(f => f.ParentFolderId == null)
+            .Where(f => f.ParentFolderId == null && f.MusicServer == null)
             .OrderBy(f => f.Name)
             .ThenBy(f => f.Path)
             .ThenBy(f => f.Id)
@@ -100,6 +101,16 @@ public partial class LibraryService
                     return false;
                 }
 
+                // A server root has no directory, so scanning it would remove it from the library.
+                if (await IsMusicServerFolderAsync(folderId, operationToken).ConfigureAwait(false))
+                {
+                    _logger.LogWarning("Cannot rescan folder {FolderId}: it is a music server, which is synced instead.", folderId);
+                    progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_ScanFailed, Percentage = 100 });
+                    if (throwOnFailure)
+                        throw new InvalidOperationException($"Folder {folderId} is a music server.");
+                    return false;
+                }
+
                 var isNetwork = _fileSystem.IsNetworkPath(folder.Path);
                 _logger.LogInformation(
                     "Scanning folder '{FolderName}' (path={FolderPath}, network={IsNetwork}, forceFull={ForceFull}).",
@@ -147,18 +158,12 @@ public partial class LibraryService
 
                     var allFilePathsToDelete = filesRemovedFromDisk.Distinct().ToList();
 
-                    // Safety guard: if the scan proposes to delete the majority of existing songs
-                    // while barely adding any, something upstream failed (e.g., a transient NAS
-                    // enumeration failure). Skip the delete pass to avoid data loss; the next
-                    // successful scan will reconcile correctly.
                     if (allFilePathsToDelete.Count > 50)
                     {
                         await using var guardContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
                         var existingCount = await guardContext.Songs.AsNoTracking()
                             .CountAsync(s => s.FolderId == folderId, operationToken).ConfigureAwait(false);
-                        if (existingCount > 0 &&
-                            allFilePathsToDelete.Count > Math.Max(50, existingCount / 2) &&
-                            filesToAdd.Count < allFilePathsToDelete.Count / 10)
+                        if (IsLikelyMissedListing(allFilePathsToDelete.Count, existingCount, filesToAdd.Count))
                         {
                             _logger.LogError(
                                 "Scan safety guard tripped for folder {FolderId}: proposed to delete {DeleteCount}/{ExistingCount} songs while only adding {AddCount}. Skipping delete pass; likely a transient enumeration failure (NAS blip / unmounted drive).",
@@ -172,27 +177,7 @@ public partial class LibraryService
                     {
                         progress?.Report(new ScanProgress
                         { StatusText = Resources.Strings.Status_CleaningUpLibrary, IsIndeterminate = true });
-                        await using var deleteContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-
-                        var songsToDeleteQuery = deleteContext.Songs
-                            .Where(s => s.FolderId == folderId && allFilePathsToDelete.Contains(s.FilePath));
-
-                        var lrcPathsToDelete = await songsToDeleteQuery
-                            .Where(s => s.LrcFilePath != null)
-                            .Select(s => s.LrcFilePath!)
-                            .ToListAsync(operationToken).ConfigureAwait(false);
-
-                        var albumArtPathsToDelete = await songsToDeleteQuery
-                            .Where(s => s.AlbumArtUriFromTrack != null)
-                            .Select(s => s.AlbumArtUriFromTrack!)
-                            .Distinct()
-                            .ToListAsync(operationToken).ConfigureAwait(false);
-
-                        await songsToDeleteQuery.ExecuteDeleteAsync(operationToken).ConfigureAwait(false);
-
-                        DeleteCachedLrcFiles(lrcPathsToDelete);
-
-                        await DeleteUnreferencedCoverArtAsync(deleteContext, albumArtPathsToDelete, operationToken).ConfigureAwait(false);
+                        await DeleteSongsAsync(folderId, allFilePathsToDelete, operationToken).ConfigureAwait(false);
                     }
 
                     // Before the folder image check, so it can replace the images that are gone.
@@ -339,6 +324,40 @@ public partial class LibraryService
                 ClearActiveScanCancellationSource(operationCts);
             _scanSemaphore.Release();
         }
+    }
+
+    /// <summary>
+    ///     Whether deleting most of a folder's songs while adding hardly any means the scan or sync missed them,
+    ///     as when a NAS or server library is briefly offline, rather than that they were deleted. Deleting them
+    ///     anyway would lose their playlist entries and listening history; the next good pass reconciles instead.
+    /// </summary>
+    private static bool IsLikelyMissedListing(int deleteCount, int existingCount, int addCount) =>
+        existingCount > 0 && deleteCount > Math.Max(50, existingCount / 2) && addCount < deleteCount / 10;
+
+    /// <summary>
+    ///     Deletes the folder's songs at these paths, with the cached lyrics and covers only they used.
+    /// </summary>
+    private async Task<int> DeleteSongsAsync(Guid folderId, IReadOnlyCollection<string> filePaths,
+        CancellationToken cancellationToken)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
+        var songs = context.Songs.Where(s => s.FolderId == folderId && filePaths.Contains(s.FilePath));
+
+        var lrcPaths = await songs
+            .Where(s => s.LrcFilePath != null)
+            .Select(s => s.LrcFilePath!)
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+
+        var albumArtPaths = await songs
+            .Where(s => s.AlbumArtUriFromTrack != null)
+            .Select(s => s.AlbumArtUriFromTrack!)
+            .Distinct()
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+
+        var deleted = await songs.ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
+        DeleteCachedLrcFiles(lrcPaths);
+        await DeleteUnreferencedCoverArtAsync(context, albumArtPaths, cancellationToken).ConfigureAwait(false);
+        return deleted;
     }
 
     private static string FormatCount(int count, string singular, string plural) =>

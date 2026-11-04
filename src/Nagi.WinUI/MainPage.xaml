@@ -39,10 +39,18 @@
                     Foreground="{StaticResource PlayerAccentBrush}"
                     ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneWay}"
                     AutomationProperties.Name="{x:Bind DynamicToolTip, Mode=OneWay}">
-                    <FontIcon
-                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                        FontSize="24"
-                        Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(DynamicIcon), Mode=OneWay}" />
+                    <Grid>
+                        <FontIcon
+                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                            FontSize="24"
+                            Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(DynamicIcon), Mode=OneWay}"
+                            Visibility="{x:Bind IsLoading, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                        <ProgressRing
+                            Width="20"
+                            Height="20"
+                            Foreground="{StaticResource PlayerAccentBrush}"
+                            IsActive="{x:Bind IsLoading, Mode=OneWay}" />
+                    </Grid>
                 </Button>
             </DataTemplate>
 

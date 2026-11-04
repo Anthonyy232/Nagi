@@ -49,7 +49,7 @@ public class SettingsViewModelTests : IDisposable
                 NullLogger<AppearanceSettingsViewModel>.Instance, _timeProvider),
             new AudioSettingsViewModel(_playback, _audioPlayer, _settings, _ui, _ffmpeg, _replayGain, _operation, _dispatcher,
                 NullLogger<AudioSettingsViewModel>.Instance, _timeProvider),
-            new LibrarySettingsViewModel(_settings, _ui, _library.Scanner, _operation, _dispatcher,
+            new LibrarySettingsViewModel(_settings, _ui, _library.Scanner, Substitute.For<IMusicServerService>(), _operation, _dispatcher,
                 NullLogger<LibrarySettingsViewModel>.Instance, _timeProvider),
             new ScrobblingSettingsViewModel(_settings, _ui, _lastFm, _listenBrainz, _dispatcher,
                 NullLogger<ScrobblingSettingsViewModel>.Instance),

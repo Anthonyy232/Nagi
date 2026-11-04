@@ -29,6 +29,12 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
 
     bool IsPlaying { get; }
 
+    /// <summary>
+    ///     True while the current song is still opening and hasn't started, such as while its music server answers.
+    ///     <see cref="PlaybackStateChanged" /> occurs when this changes.
+    /// </summary>
+    bool IsOpening { get; }
+
     TimeSpan CurrentPosition { get; }
 
     TimeSpan Duration { get; }
@@ -93,6 +99,12 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     ///     Subscribers receive the song, the listen history session ID and the UTC time the listen started.
     /// </summary>
     event Action<Song, long, DateTime>? ScrobbleEligibilityReached;
+
+    /// <summary>
+    ///     Occurs when a song from a music server couldn't be streamed and playback stopped. May be raised on a
+    ///     background thread.
+    /// </summary>
+    event Action<Song>? ServerSongFailed;
 
     /// <summary>
     ///     Initializes the service, loading settings and optionally restoring the last saved playback state.

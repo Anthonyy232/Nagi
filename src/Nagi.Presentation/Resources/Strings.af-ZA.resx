@@ -1074,9 +1074,6 @@ Wil jy voortgaan?</value>
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Kies een ewekansig</value>
   </data>
-  <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Voeg 'n musiekvouer by</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Voeg Vouer by</value>
   </data>

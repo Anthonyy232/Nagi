@@ -1074,9 +1074,6 @@ Ar norite tęsti?</value>
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Pasirinkti atsitiktinį</value>
   </data>
-  <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Pridėti muzikos aplanką</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Pridėti aplanką</value>
   </data>

@@ -18,12 +18,13 @@ namespace Nagi.Presentation.ViewModels;
 
 public sealed class FolderViewModelItem
 {
-    public FolderViewModelItem(Folder folder, int songCount)
+    public FolderViewModelItem(Folder folder, int songCount, bool isServer)
     {
         Id = folder.Id;
         Name = folder.Name;
         Path = folder.Path;
         SongCount = songCount;
+        IsServer = isServer;
     }
 
     public Guid Id { get; }
@@ -31,6 +32,8 @@ public sealed class FolderViewModelItem
     public string Path { get; }
 
     public int SongCount { get; }
+
+    public bool IsServer { get; }
 
     public string SongCountText => SongCount == 1
         ? ResourceFormatter.Format(Strings.Songs_Count_Singular, SongCount)
@@ -40,14 +43,15 @@ public sealed class FolderViewModelItem
 }
 
 /// <summary>
-///     Manages the collection of music library folders and orchestrates library operations
-///     such as adding, deleting, and scanning folders.
+///     Manages the library's folders and music servers: adding and removing them, rescanning folders and syncing
+///     servers.
 /// </summary>
 public partial class FolderViewModel : ObservableObject, IDisposable
 {
     private readonly ILibraryReader _libraryReader;
     private readonly ILibraryWriter _libraryWriter;
     private readonly ILibraryScanner _libraryScanner;
+    private readonly IMusicServerService _musicServers;
     private readonly ILogger<FolderViewModel> _logger;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly INavigationService _navigationService;
@@ -56,13 +60,15 @@ public partial class FolderViewModel : ObservableObject, IDisposable
     private readonly GlobalOperationViewModel _globalOperation;
     private readonly Debouncer _debouncer = new(TimeSpan.FromSeconds(1));
 
-    public FolderViewModel(ILibraryReader libraryReader, ILibraryWriter libraryWriter, ILibraryScanner libraryScanner, GlobalOperationViewModel globalOperation,
+    public FolderViewModel(ILibraryReader libraryReader, ILibraryWriter libraryWriter, ILibraryScanner libraryScanner,
+        IMusicServerService musicServers, GlobalOperationViewModel globalOperation,
         IMusicPlaybackService musicPlaybackService, INavigationService navigationService, IUIService uiService,
         IDispatcherService dispatcherService, ILogger<FolderViewModel> logger)
     {
         _libraryReader = libraryReader;
         _libraryWriter = libraryWriter;
         _libraryScanner = libraryScanner;
+        _musicServers = musicServers;
         _globalOperation = globalOperation;
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
@@ -127,7 +133,8 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         var navParam = new FolderSongViewNavigationParameter
         {
             Title = folder.Name,
-            FolderId = folder.Id
+            FolderId = folder.Id,
+            IsServer = folder.IsServer
         };
         _navigationService.NavigateTo(navParam);
     }
@@ -181,7 +188,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
             var foldersFromDb = await _libraryReader.GetRootFoldersWithCountsAsync(cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
             var newItems = foldersFromDb
-                .Select(item => new FolderViewModelItem(item.Folder, item.SongCount))
+                .Select(item => new FolderViewModelItem(item.Folder, item.SongCount, item.IsServer))
                 .OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(item => item.Id)
                 .ToList();
@@ -261,8 +268,9 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         if (folderToDelete == null) return;
 
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
-            Strings.FolderPage_DeleteDialog_Title,
-            string.Format(Strings.FolderPage_DeleteDialog_Format, folderToDelete.Name),
+            folderToDelete.IsServer ? Strings.FolderPage_RemoveServerDialog_Title : Strings.FolderPage_DeleteDialog_Title,
+            string.Format(folderToDelete.IsServer ? Strings.FolderPage_RemoveServerDialog_Format : Strings.FolderPage_DeleteDialog_Format,
+                folderToDelete.Name),
             Strings.FolderPage_DeleteDialog_PrimaryButton,
             Strings.FolderPage_DeleteDialog_CloseButton);
         if (!confirmed || IsAnyOperationInProgress) return;
@@ -274,7 +282,10 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         string? error = null;
         try
         {
-            if (!await _libraryWriter.RemoveFolderAsync(folderId))
+            var removed = folderToDelete.IsServer
+                ? await _musicServers.RemoveAsync(folderId)
+                : await _libraryWriter.RemoveFolderAsync(folderId);
+            if (!removed)
                 error = string.Format(Strings.Folders_Delete_Failed, folderToDelete.Name);
         }
         catch (Exception ex)
@@ -326,5 +337,68 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         }
 
         if (error != null) await _uiService.ShowMessageDialogAsync(Strings.Generic_Error, error);
+    }
+
+    /// <summary>
+    ///     Lets the user add a music server, then syncs its songs into the library.
+    /// </summary>
+    [RelayCommand]
+    private async Task AddServerAsync()
+    {
+        if (IsAnyOperationInProgress) return;
+        if (await _uiService.ShowAddMusicServerDialogAsync() is { } server) await RunServerSyncAsync(server.Id, server.Name);
+    }
+
+    [RelayCommand]
+    private async Task SyncServerAsync(Guid folderId)
+    {
+        if (IsAnyOperationInProgress || Folders.FirstOrDefault(f => f.Id == folderId) is not { } server) return;
+        await RunServerSyncAsync(server.Id, server.Name);
+    }
+
+    [RelayCommand]
+    private async Task SignInToServerAsync(Guid folderId)
+    {
+        if (IsAnyOperationInProgress || Folders.FirstOrDefault(f => f.Id == folderId) is not { } server) return;
+        if (await _uiService.ShowMusicServerSignInDialogAsync(folderId)) await RunServerSyncAsync(server.Id, server.Name);
+    }
+
+    private async Task RunServerSyncAsync(Guid folderId, string name)
+    {
+        using var syncCts = new CancellationTokenSource();
+        _globalOperation.IsInProgress = true;
+        _globalOperation.StatusMessage = string.Format(Strings.Folders_Sync_InProgress, name);
+        _globalOperation.IsIndeterminate = true;
+        _globalOperation.SetCancellation(syncCts.Cancel);
+
+        MusicServerError? error = null;
+        try
+        {
+            await _musicServers.SyncAsync(folderId, _globalOperation.CreateProgress(syncCts.Token), syncCts.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("Sync cancelled for server folder {FolderId}.", folderId);
+        }
+        catch (MusicServerException ex)
+        {
+            error = ex.Error;
+            _logger.LogWarning(ex, "Failed to sync server folder {FolderId}", folderId);
+        }
+        catch (Exception ex)
+        {
+            error = MusicServerError.ServerError;
+            _logger.LogError(ex, "Failed to sync server folder {FolderId}", folderId);
+        }
+        finally
+        {
+            _globalOperation.SetCancellation(null);
+            _globalOperation.IsInProgress = false;
+            _globalOperation.IsIndeterminate = false;
+        }
+
+        if (error != null &&
+            await MusicServerErrors.ShowAsync(_uiService, folderId, name, error, string.Format(Strings.Folders_Sync_Error_Failed, name)))
+            await RunServerSyncAsync(folderId, name);
     }
 }

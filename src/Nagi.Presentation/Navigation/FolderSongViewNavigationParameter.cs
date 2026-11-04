@@ -10,4 +10,6 @@ public record FolderSongViewNavigationParameter : INavigationParameter
     ///     The directory within the folder to show; null or empty shows the folder's root.
     /// </summary>
     public string? DirectoryPath { get; init; }
+
+    public bool IsServer { get; init; }
 }

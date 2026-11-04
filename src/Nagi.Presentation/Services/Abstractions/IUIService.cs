@@ -92,4 +92,17 @@ public interface IUIService
     /// <param name="checkAction">An async function that checks if FFmpeg is installed. Returns true if detected.</param>
     /// <returns>True if FFmpeg was detected after a recheck, false if the user cancelled.</returns>
     Task<bool> ShowFFmpegSetupDialogAsync(Func<Task<bool>> checkAction);
+
+    /// <summary>
+    ///     Asks for a music server's address and sign-in, and adds the server once it accepts them.
+    /// </summary>
+    /// <returns>The server's root folder, or null if the user cancelled.</returns>
+    Task<Folder?> ShowAddMusicServerDialogAsync();
+
+    /// <summary>
+    ///     Asks for the password or API key of the server with root folder <paramref name="folderId" />, and saves
+    ///     it once the server accepts it.
+    /// </summary>
+    /// <returns>True if the user signed in, false if they cancelled.</returns>
+    Task<bool> ShowMusicServerSignInDialogAsync(Guid folderId);
 }

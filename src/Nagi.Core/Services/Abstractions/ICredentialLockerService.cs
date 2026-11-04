@@ -9,7 +9,8 @@ public interface ICredentialLockerService
     ///     Overwrites any credential already saved for <paramref name="resource" />.
     /// </summary>
     /// <param name="resource">A unique identifier for the credential resource (e.g., "AppName/Service").</param>
-    void SaveCredential(string resource, string userName, string password);
+    /// <returns>False if the credential store refused it, for example because it is full.</returns>
+    bool SaveCredential(string resource, string userName, string password);
 
     /// <returns>A tuple containing the username and password, or null if not found.</returns>
     (string? UserName, string? Password)? RetrieveCredential(string resource);

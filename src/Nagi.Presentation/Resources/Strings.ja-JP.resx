@@ -1074,9 +1074,6 @@
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
     <value>ランダムに選択</value>
   </data>
-  <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>音楽フォルダーを追加</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>フォルダーを追加</value>
   </data>

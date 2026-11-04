@@ -5,6 +5,7 @@ using Nagi.Core.Helpers;
 using Nagi.Core.Http;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
+using Nagi.Core.Services.Implementations.MusicServers;
 using Nagi.Core.Services;
 using NSubstitute;
 using Xunit;
@@ -21,6 +22,7 @@ public class CoreServiceRegistrationTests
         services.AddSingleton(Substitute.For<IPathConfiguration>());
         services.AddSingleton(Substitute.For<ISettingsService>());
         services.AddSingleton(Substitute.For<IAppInfoService>());
+        services.AddSingleton(Substitute.For<ICredentialLockerService>());
         services.AddSingleton(Substitute.For<IAudioPlayer>());
         services.AddSingleton(Substitute.For<ISystemMediaControls>());
         services.AddNagiCore();
@@ -45,12 +47,13 @@ public class CoreServiceRegistrationTests
         await using var provider = BuildProvider();
 
         provider.GetServices<IListenSubmitter>().Should().HaveCount(2);
-        provider.GetServices<IPresenceService>().Should().HaveCount(3);
+        provider.GetServices<IPresenceService>().Should().HaveCount(4);
     }
 
     [Theory]
     [InlineData("")]
     [InlineData("ImageDownloader")]
+    [InlineData(MusicServerService.HttpClientName)]
     public async Task AddNagiCore_IdentifiesNagiOnceOnEveryHttpClient(string clientName)
     {
         await using var provider = BuildProvider();

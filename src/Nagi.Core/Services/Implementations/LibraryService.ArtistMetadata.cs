@@ -106,18 +106,8 @@ public partial class LibraryService
             if (artistsInBatch.Count == 0) break;
             // A failed lookup stays retryable, but must not loop forever in this run.
             afterId = artistsInBatch[^1].Id;
-            var artistIdsToUpdate = artistsInBatch.Select(a => a.Id).ToArray();
-
-            var directoryRows = await batchContext.SongArtists
-                .AsNoTracking()
-                .Where(sa => artistIdsToUpdate.Contains(sa.ArtistId))
-                .Select(sa => new { sa.ArtistId, sa.Song.DirectoryPath })
-                .Distinct()
-                .ToListAsync(token).ConfigureAwait(false);
-
-            var directoriesByArtist = directoryRows
-                .GroupBy(r => r.ArtistId)
-                .ToDictionary(g => g.Key, g => (IReadOnlyList<string?>)g.Select(r => r.DirectoryPath).ToList());
+            var directoriesByArtist = await LoadSongDirectoriesByArtistAsync(batchContext,
+                artistsInBatch.Select(a => a.Id).ToList(), token).ConfigureAwait(false);
 
             var pendingUpdates = new List<ArtistMetadataUpdatedEventArgs>();
             var stopwatch = Stopwatch.StartNew();
@@ -238,20 +228,8 @@ public partial class LibraryService
             artistsNeedingImages.Count, folderId);
 
         // Batch-load song directories for all target artists in a single query (avoids N+1 round-trips).
-        var artistIds = artistsNeedingImages.Select(a => a.Id).ToList();
-        var songDirPairs = await context.SongArtists
-            .AsNoTracking()
-            .Where(sa => artistIds.Contains(sa.ArtistId))
-            .Select(sa => new { sa.ArtistId, sa.Song.DirectoryPath })
-            .Distinct()
-            .ToListAsync(cancellationToken)
-            .ConfigureAwait(false);
-
-        var songDirsByArtistId = songDirPairs
-            .GroupBy(x => x.ArtistId)
-            .ToDictionary(
-                g => g.Key,
-                g => (IReadOnlyList<string?>)g.Select(x => x.DirectoryPath).ToList());
+        var songDirsByArtistId = await LoadSongDirectoriesByArtistAsync(context,
+            artistsNeedingImages.Select(a => a.Id).ToList(), cancellationToken).ConfigureAwait(false);
 
         // Cache processed directories to avoid redundant GetFiles calls when multiple artists share a directory.
         var directoryCache = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
@@ -317,15 +295,28 @@ public partial class LibraryService
     /// </summary>
     private async Task<byte[]?> FindArtistImageInFoldersAsync(Artist artist, MusicDbContext context, CancellationToken ct)
     {
-        var songDirectories = await context.Songs
+        var songDirectories = (await LoadSongDirectoriesByArtistAsync(context, [artist.Id], ct).ConfigureAwait(false))
+            .GetValueOrDefault(artist.Id, Array.Empty<string?>());
+        return await FindArtistImageInDirectoriesAsync(songDirectories, artist.Name, ct).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    ///     The directories of each artist's songs on disk, where an artist image may sit beside them.
+    /// </summary>
+    private static async Task<Dictionary<Guid, IReadOnlyList<string?>>> LoadSongDirectoriesByArtistAsync(
+        MusicDbContext context, List<Guid> artistIds, CancellationToken ct)
+    {
+        var rows = await context.SongArtists
             .AsNoTracking()
-            .Where(s => s.SongArtists.Any(sa => sa.ArtistId == artist.Id))
-            .Select(s => s.DirectoryPath)
+            // A server song's directory is its server's library key, not a folder to look in.
+            .Where(sa => artistIds.Contains(sa.ArtistId) && sa.Song.RemoteId == null)
+            .Select(sa => new { sa.ArtistId, sa.Song.DirectoryPath })
             .Distinct()
             .ToListAsync(ct)
             .ConfigureAwait(false);
 
-        return await FindArtistImageInDirectoriesAsync(songDirectories, artist.Name, ct).ConfigureAwait(false);
+        return rows.GroupBy(r => r.ArtistId)
+            .ToDictionary(g => g.Key, g => (IReadOnlyList<string?>)g.Select(r => r.DirectoryPath).ToList());
     }
 
     /// <summary>

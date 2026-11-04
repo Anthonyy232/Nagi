@@ -168,6 +168,27 @@ public class M3uPlaylistExportServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task ExportAllPlaylistsAsync_LeavesOutSongsThatStreamFromAServer()
+    {
+        var tempDir = Path.Combine(_tempDirectory, "exports");
+        var mixed = new Playlist { Id = Guid.NewGuid(), Name = "Mixed" };
+        var streamedOnly = new Playlist { Id = Guid.NewGuid(), Name = "Streamed only" };
+        var local = CreateSong("On disk", @"C:\music\local.mp3");
+        var remote = CreateSong("Streamed", @"nagi-server:0123\s1");
+        remote.RemoteId = "s1";
+        _libraryReader.GetAllPlaylistsAsync().Returns(new[] { mixed, streamedOnly });
+        _libraryReader.GetSongsInPlaylistOrderedAsync(mixed.Id).Returns(new[] { local, remote });
+        _libraryReader.GetSongsInPlaylistOrderedAsync(streamedOnly.Id).Returns(new[] { remote });
+
+        var result = await _service.ExportAllPlaylistsAsync(tempDir);
+
+        result.PlaylistsExported.Should().Be(1);
+        result.TotalSongs.Should().Be(1);
+        var content = await File.ReadAllTextAsync(Directory.GetFiles(tempDir, "*.m3u8").Single());
+        content.Should().Contain(@"C:\music\local.mp3").And.NotContain("nagi-server").And.NotContain("Streamed");
+    }
+
+    [Fact]
     public async Task ExportAllPlaylistsAsync_WhenNamesSanitizeToSameFile_PreservesBothPlaylists()
     {
         var tempDir = Path.Combine(_tempDirectory, "exports");

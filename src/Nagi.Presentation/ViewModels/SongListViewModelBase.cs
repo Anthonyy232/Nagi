@@ -419,7 +419,8 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         {
             var playlists = await _libraryReader.GetAllPlaylistsAsync();
             if (_isDisposed) return;
-            AvailablePlaylists = new ObservableCollection<Playlist>(playlists);
+            // A server's playlists follow the server, so songs can't be added to them here.
+            AvailablePlaylists = new ObservableCollection<Playlist>(playlists.Where(playlist => !playlist.IsFromServer));
             HasLoadedPlaylists = true;
             AddSelectedSongsToPlaylistCommand.NotifyCanExecuteChanged();
         }

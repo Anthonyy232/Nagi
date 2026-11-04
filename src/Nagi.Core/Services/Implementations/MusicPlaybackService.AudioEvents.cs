@@ -99,7 +99,10 @@ public partial class MusicPlaybackService
     private void OnAudioPlayerErrorOccurred(string errorMessage)
     {
         _logger.LogWarning("Audio playback failed: {Message}", errorMessage);
+        // Read before stopping, which clears the current track.
+        var song = CurrentTrack;
         FireAndForgetSafe(StopAsync, "Error recovery");
+        if (song is { IsRemote: true }) ServerSongFailed?.Invoke(song);
     }
 
     private void OnAudioPlayerMediaOpened()

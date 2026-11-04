@@ -54,7 +54,8 @@ public partial class LibraryService
 
     private async Task<int> CollapseDuplicateFoldersAsync(MusicDbContext context, CancellationToken ct)
     {
-        var folders = await context.Folders.AsNoTracking().ToListAsync(ct).ConfigureAwait(false);
+        // A server root's path is a key, not a file path, which normalizing would rewrite.
+        var folders = await context.Folders.AsNoTracking().Where(f => f.MusicServer == null).ToListAsync(ct).ConfigureAwait(false);
         var groups = folders
             .GroupBy(f => _fileSystem.NormalizePath(f.Path), StringComparer.OrdinalIgnoreCase);
 
@@ -100,6 +101,8 @@ public partial class LibraryService
     {
         var songs = await context.Songs
             .AsNoTracking()
+            // A server song's path is a key that normalizing would rewrite.
+            .Where(s => s.RemoteId == null)
             .Select(s => new
             {
                 s.Id,

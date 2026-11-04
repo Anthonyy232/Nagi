@@ -1074,9 +1074,6 @@ Kas soovite jätkata?</value>
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Vali juhuslikult</value>
   </data>
-  <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Lisa muusikakaust</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Lisa kaust</value>
   </data>

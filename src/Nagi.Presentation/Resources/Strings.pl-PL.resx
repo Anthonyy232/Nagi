@@ -1074,9 +1074,6 @@ Czy chcesz kontynuować?</value>
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
     <value>Wybierz losowo</value>
   </data>
-  <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Dodaj folder muzyki</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Dodaj Folder</value>
   </data>

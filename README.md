@@ -18,7 +18,7 @@ A fast, private music player for your local library on Windows.
 
 </div>
 
-Nagi plays the music already on your computer. Point it at your folders and it builds and maintains the library, plays almost any format through LibVLC, and stays offline unless you turn on an online service. The [privacy policy](PRIVACY.md) lists what each service sends.
+Nagi plays the music already on your computer, and can stream from your own Navidrome or Jellyfin server. Point it at your folders and it builds and maintains the library, plays almost any format through LibVLC, and stays offline unless you add a server or turn on an online service. The [privacy policy](PRIVACY.md) lists what each service sends.
 
 ## Download
 
@@ -37,6 +37,7 @@ Windows 10 (1809 or later) or Windows 11, on x64 or ARM64. The Store version upd
 **Library**
 
 - Folder-based library that rescans automatically when files change.
+- Streaming from your own Navidrome or other OpenSubsonic server, or Jellyfin 10.11 and later, alongside your local music. Favorites and play counts sync both ways, the server's playlists show up read-only next to yours, and lyrics stored on the server are used first.
 - MP3, FLAC, AAC, OGG, WAV, AIFF, APE, DSD, M4A, WMA, WavPack and more.
 - Playlists, rule-based smart playlists, and M3U export.
 - Favorites (Ctrl+D), stored in Nagi's database without touching your files.

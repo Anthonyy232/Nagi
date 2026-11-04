@@ -39,13 +39,13 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
     }
 
     public bool IsReorderingEnabled => !_isDisposed && !_isSavingOrder && !IsLoading && !HasLoadError &&
-        IsCurrentViewAPlaylist && CurrentSortOrder == SongSortOrder.PlaylistOrder && !IsSearchActive &&
+        CanEditPlaylist && CurrentSortOrder == SongSortOrder.PlaylistOrder && !IsSearchActive &&
         Songs.Count == TotalItemCount;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(RemoveSelectedSongsFromPlaylistCommand))]
     [NotifyPropertyChangedFor(nameof(IsReorderingEnabled))]
-    public partial bool IsCurrentViewAPlaylist { get; set; }
+    public partial bool CanEditPlaylist { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsArtworkAvailable))]
@@ -77,7 +77,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         RemoveSelectedSongsFromPlaylistCommand.NotifyCanExecuteChanged();
     }
 
-    public async Task InitializeAsync(string title, Guid playlistId, string? coverImageUri = null)
+    public async Task InitializeAsync(string title, Guid playlistId, string? coverImageUri = null, bool isFromServer = false)
     {
         if (_isDisposed) return;
         ResetState();
@@ -86,7 +86,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
 
         PageTitle = title;
         _currentPlaylistId = playlistId;
-        IsCurrentViewAPlaylist = true;
+        CanEditPlaylist = !isFromServer;
         CoverImageUri = coverImageUri;
 
         await RefreshOrSortSongsCommand.ExecuteAsync(null);
@@ -136,7 +136,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
 
     private bool CanRemoveSongs()
     {
-        return IsCurrentViewAPlaylist && HasSelectedSongs;
+        return CanEditPlaylist && HasSelectedSongs;
     }
 
     /// <summary>Persists the completed drag, including every item in a multi-selection.</summary>
@@ -227,7 +227,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
 
         _playlistGeneration++;
         _currentPlaylistId = null;
-        IsCurrentViewAPlaylist = false;
+        CanEditPlaylist = false;
 
         base.ResetState();
     }

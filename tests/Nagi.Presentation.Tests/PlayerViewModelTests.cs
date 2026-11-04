@@ -1,9 +1,11 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Time.Testing;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Models;
+using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
 using NSubstitute;
@@ -16,6 +18,7 @@ public partial class PlayerViewModelTests : IDisposable
     private readonly IMusicPlaybackService _playback = Substitute.For<IMusicPlaybackService>();
     private readonly IUISettingsService _settings = Substitute.For<IUISettingsService>();
     private readonly IDispatcherService _dispatcher = Substitute.For<IDispatcherService>();
+    private readonly FakeTimeProvider _time = new();
     private readonly PlayerViewModel _viewModel;
     private readonly LibraryFakes _library = new LibraryFakes();
 
@@ -31,10 +34,34 @@ public partial class PlayerViewModelTests : IDisposable
         _settings.GetQueueDisplaySettingsAsync().Returns(new QueueDisplaySettings());
         _viewModel = new PlayerViewModel(_playback, Substitute.For<IMusicNavigationService>(),
             _dispatcher, _settings, Substitute.For<IWindowService>(),
-            _library.Reader, _library.Writer, _library.Scanner, NullLogger<PlayerViewModel>.Instance, Substitute.For<IUIService>());
+            _library.Reader, _library.Writer, _library.Scanner, NullLogger<PlayerViewModel>.Instance, Substitute.For<IUIService>(), _time);
     }
 
     public void Dispose() => _viewModel.Cleanup();
+
+    [Fact]
+    public async Task OpeningIndicator_ShowsOnlyForASongSlowToOpen()
+    {
+        _playback.IsOpening.Returns(true);
+        _playback.PlaybackStateChanged += Raise.Event<Action>();
+        _time.Advance(TimeSpan.FromMilliseconds(250));
+        _playback.IsOpening.Returns(false);
+        _playback.PlaybackStateChanged += Raise.Event<Action>();
+        _time.Advance(TimeSpan.FromMilliseconds(500));
+        await _viewModel.PendingOpeningIndicator.WaitAsync(TimeSpan.FromSeconds(5));
+        _viewModel.IsOpening.Should().BeFalse("a song that opens at once shouldn't flash the indicator");
+
+        _playback.IsOpening.Returns(true);
+        _playback.PlaybackStateChanged += Raise.Event<Action>();
+        _time.Advance(TimeSpan.FromMilliseconds(500));
+        await _viewModel.PendingOpeningIndicator.WaitAsync(TimeSpan.FromSeconds(5));
+        _viewModel.IsOpening.Should().BeTrue();
+        _viewModel.PlayPauseButtonToolTip.Should().Be(Strings.Status_Loading);
+
+        _playback.IsOpening.Returns(false);
+        _playback.PlaybackStateChanged += Raise.Event<Action>();
+        _viewModel.IsOpening.Should().BeFalse();
+    }
 
     [Fact]
     public void ServiceVolumeChanges_UpdateBothIconsAndMuteTooltip()

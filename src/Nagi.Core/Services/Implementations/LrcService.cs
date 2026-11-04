@@ -5,6 +5,7 @@ using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Models.Lyrics;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -17,6 +18,7 @@ public class LrcService : ILrcService, IDisposable
     private readonly ISettingsService _settingsService;
     private readonly IPathConfiguration _pathConfig;
     private readonly ILibraryWriter _libraryWriter;
+    private readonly IMusicServerService _musicServers;
 
     private readonly object _ctsLock = new();
     private CancellationTokenSource _settingsCts = new();
@@ -29,6 +31,7 @@ public class LrcService : ILrcService, IDisposable
         ISettingsService settingsService,
         IPathConfiguration pathConfig,
         ILibraryWriter libraryWriter,
+        IMusicServerService musicServers,
         ILogger<LrcService> logger)
     {
         _fileSystemService = fileSystemService;
@@ -37,6 +40,7 @@ public class LrcService : ILrcService, IDisposable
         _settingsService = settingsService;
         _pathConfig = pathConfig;
         _libraryWriter = libraryWriter;
+        _musicServers = musicServers;
         _logger = logger;
         _settingsService.FetchOnlineLyricsEnabledChanged += OnFetchOnlineLyricsEnabledChanged;
     }
@@ -59,6 +63,28 @@ public class LrcService : ILrcService, IDisposable
                     ? "Ignoring legacy collision-prone lyrics cache path while refreshing song {SongId}."
                     : "Ignoring missing lyrics path while refreshing song {SongId}.",
                 song.Id);
+        }
+
+        // Like lyrics embedded in a file, a server song's own lyrics come first and don't need online lyrics turned on.
+        if (song.IsRemote && (forceOnlineRefresh || song.LyricsLastCheckedUtc == null))
+        {
+            string? serverLyrics;
+            try
+            {
+                serverLyrics = await _musicServers.GetLyricsAsync(song, cancellationToken).ConfigureAwait(false);
+            }
+            catch (MusicServerException ex)
+            {
+                // Not marked as checked, so the server is asked again once it's back.
+                _logger.LogDebug(ex, "Couldn't ask the server for the lyrics of song {SongId}.", song.Id);
+                return null;
+            }
+
+            if (serverLyrics is not null)
+            {
+                await CacheLyricsAsync(song, serverLyrics).ConfigureAwait(false);
+                return ParseLyrics(serverLyrics);
+            }
         }
 
         // Look online only if never checked before, unless the local file is missing or unsafe to reuse.
@@ -201,7 +227,8 @@ public class LrcService : ILrcService, IDisposable
         if (!HasCachedLyrics(song)) return false;
 
         var cachedPath = song.LrcFilePath!;
-        var sidecarPath = LyricsStorageHelper.FindSidecar(_fileSystemService, song.FilePath, _logger);
+        // A server song has no folder of its own to hold an .lrc file.
+        var sidecarPath = song.IsRemote ? null : LyricsStorageHelper.FindSidecar(_fileSystemService, song.FilePath, _logger);
         if (_fileSystemService.FileExists(cachedPath)) _fileSystemService.DeleteFile(cachedPath);
 
         song.LrcFilePath = sidecarPath;

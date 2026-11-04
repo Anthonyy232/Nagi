@@ -12,7 +12,7 @@ namespace Nagi.Presentation.Services;
 
 /// <summary>
 ///     Starts and stops the app's services in the order they depend on each other. Every UI head calls these
-///     once its service provider is built and when its main window closes.
+///     once its service provider is built, once it shows its main content, and when its main window closes.
 /// </summary>
 public static class AppServices
 {
@@ -60,6 +60,16 @@ public static class AppServices
         await Task.WhenAll(presenceTask, trayTask, scrobbleTask, appInfoTask, settingsTask);
 
         logger.LogInformation("Core services initialized successfully.");
+    }
+
+    /// <summary>
+    ///     Starts what has to wait for the main content: music server syncs and the prompts they can show.
+    /// </summary>
+    public static void StartAfterMainContent(IServiceProvider services)
+    {
+        // Listening first, so the first sync can already offer to sign in again.
+        services.GetRequiredService<MusicServerPrompts>().Start();
+        services.GetRequiredService<IMusicServerService>().StartPeriodicSync();
     }
 
     /// <summary>

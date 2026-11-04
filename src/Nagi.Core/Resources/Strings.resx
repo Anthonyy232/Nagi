@@ -360,4 +360,20 @@
     <value>From Wikipedia, under the CC BY-SA license.</value>
     <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
+  <data name="Format_FetchingServerSongs" xml:space="preserve">
+    <value>Getting songs from the server ({0})…</value>
+    <comment>Shown while a music server is synced. {0} is the number of songs received so far.</comment>
+  </data>
+  <data name="Status_AddingServerSongs" xml:space="preserve">
+    <value>Adding songs to your library…</value>
+    <comment>Shown while songs from a music server are saved to the library.</comment>
+  </data>
+  <data name="Status_DownloadingServerCovers" xml:space="preserve">
+    <value>Downloading album covers…</value>
+    <comment>Shown while album covers are downloaded from a music server.</comment>
+  </data>
+  <data name="Status_SyncComplete" xml:space="preserve">
+    <value>Sync complete.</value>
+    <comment>Shown when a music server has finished syncing.</comment>
+  </data>
 </root>

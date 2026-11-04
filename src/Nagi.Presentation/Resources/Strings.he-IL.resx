@@ -1074,9 +1074,6 @@
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
     <value>בחר אחד אקראי</value>
   </data>
-  <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>הוסף תיקיית מוזיקה</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>הוסף תיקייה</value>
   </data>

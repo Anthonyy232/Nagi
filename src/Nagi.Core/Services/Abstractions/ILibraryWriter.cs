@@ -10,6 +10,13 @@ public interface ILibraryWriter
     /// <exception cref="FolderOverlapsException">The path is inside, or contains, a folder already in the library.</exception>
     Task<Folder?> AddFolderAsync(string path, string? name = null);
     Task<bool> RemoveFolderAsync(Guid folderId);
+
+    /// <summary>
+    ///     Adds a music server to the library as a root folder named <paramref name="name" />, without syncing it.
+    ///     Removing the folder removes the server; <see cref="IMusicServerService.RemoveAsync" /> does that and signs out.
+    /// </summary>
+    Task<Folder> AddMusicServerAsync(MusicServer server, string name);
+
     Task<bool> UpdateSongLrcPathAsync(Guid songId, string? lrcPath);
     Task<bool> UpdateSongLyricsLastCheckedAsync(Guid songId);
     Task<bool> UpdateArtistImageAsync(Guid artistId, string localFilePath);

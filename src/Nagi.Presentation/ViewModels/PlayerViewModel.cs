@@ -41,11 +41,18 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
 
     private CancellationTokenSource? _queueDisplayCts;
 
+    // A song that opens normally starts within about a quarter of a second, so waiting longer keeps the indicator
+    // from flashing on every change of song.
+    private static readonly TimeSpan OpeningIndicatorDelay = TimeSpan.FromMilliseconds(500);
+    private readonly Debouncer _openingIndicator;
+
     public PlayerViewModel(IMusicPlaybackService playbackService,
         IMusicNavigationService musicNavigationService,
         IDispatcherService dispatcherService, IUISettingsService settingsService, IWindowService windowService,
-        ILibraryReader libraryReader, ILibraryWriter libraryWriter, ILibraryScanner libraryScanner, ILogger<PlayerViewModel> logger, IUIService uiService)
+        ILibraryReader libraryReader, ILibraryWriter libraryWriter, ILibraryScanner libraryScanner, ILogger<PlayerViewModel> logger, IUIService uiService,
+        TimeProvider? timeProvider = null)
     {
+        _openingIndicator = new Debouncer(OpeningIndicatorDelay, timeProvider);
         _playbackService = playbackService;
         _musicNavigationService = musicNavigationService;
         _dispatcherService = dispatcherService;
@@ -78,6 +85,13 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
     [NotifyPropertyChangedFor(nameof(PlayPauseIcon))]
     [NotifyPropertyChangedFor(nameof(PlayPauseButtonToolTip))]
     public partial bool IsPlaying { get; set; }
+
+    /// <summary>
+    ///     True once the current song has spent a moment opening, such as while a slow music server answers.
+    /// </summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(PlayPauseButtonToolTip))]
+    public partial bool IsOpening { get; set; }
 
     [ObservableProperty] public partial string SongTitle { get; set; }
 
@@ -142,7 +156,9 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
 
     public bool IsArtworkAvailable => !string.IsNullOrWhiteSpace(AlbumArtUri);
     public AppIcon PlayPauseIcon => IsPlaying ? AppIcon.Pause : AppIcon.Play;
-    public string PlayPauseButtonToolTip => IsPlaying ? Strings.Tooltip_Pause : Strings.Tooltip_Play;
+    public string PlayPauseButtonToolTip => IsOpening ? Strings.Status_Loading
+        : IsPlaying ? Strings.Tooltip_Pause
+        : Strings.Tooltip_Play;
     public AppIcon ShuffleIcon => AppIcon.Shuffle;
     public string ShuffleButtonToolTip => IsShuffleEnabled
         ? ShuffleModeText.GetName(_playbackService.CurrentShuffleMode)
@@ -167,7 +183,12 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
 
     partial void OnIsPlayingChanged(bool value)
     {
-        UpdateButtonState("PlayPause", PlayPauseIcon, PlayPauseButtonToolTip);
+        UpdateButtonState("PlayPause", PlayPauseIcon, PlayPauseButtonToolTip, isLoading: IsOpening);
+    }
+
+    partial void OnIsOpeningChanged(bool value)
+    {
+        UpdateButtonState("PlayPause", PlayPauseIcon, PlayPauseButtonToolTip, isLoading: value);
     }
 
     partial void OnIsShuffleEnabledChanged(bool value)
@@ -180,7 +201,8 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         UpdateButtonState("Repeat", RepeatIcon, RepeatButtonToolTip);
     }
 
-    private void UpdateButtonState(string buttonId, AppIcon icon, string toolTip, bool isIconActive = true)
+    private void UpdateButtonState(string buttonId, AppIcon icon, string toolTip, bool isIconActive = true,
+        bool isLoading = false)
     {
         var button = MainTransportButtons.FirstOrDefault(b => b.Id == buttonId)
                      ?? SecondaryControlsButtons.FirstOrDefault(b => b.Id == buttonId);
@@ -190,6 +212,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
             button.IsIconActive = isIconActive;
             button.DynamicIcon = icon;
             button.DynamicToolTip = toolTip;
+            button.IsLoading = isLoading;
         }
     }
 
@@ -212,6 +235,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         _queueDisplayCts?.Cancel();
         _queueDisplayCts?.Dispose();
         _queueDisplayCts = null;
+        _openingIndicator.Dispose();
     }
 
     /// <summary>
@@ -237,6 +261,7 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
                     button.Command = PlayPauseCommand;
                     button.DynamicIcon = PlayPauseIcon;
                     button.DynamicToolTip = PlayPauseButtonToolTip;
+                    button.IsLoading = IsOpening;
                     break;
                 case "Shuffle":
                     button.Command = ToggleShuffleCommand;
@@ -616,9 +641,29 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         RunOnUIThread(() =>
         {
             IsPlaying = _playbackService.IsPlaying;
+            UpdateOpening();
             UpdateEfficiencyMode();
         });
     }
+
+    private void UpdateOpening()
+    {
+        if (!_playbackService.IsOpening)
+        {
+            _openingIndicator.Cancel();
+            IsOpening = false;
+        }
+        else if (!IsOpening)
+        {
+            _openingIndicator.Trigger(_ =>
+            {
+                RunOnUIThread(() => IsOpening = _playbackService.IsOpening);
+                return Task.CompletedTask;
+            });
+        }
+    }
+
+    internal Task PendingOpeningIndicator => _openingIndicator.PendingInvocation;
 
     private void OnPlaybackService_TrackChanged()
     {

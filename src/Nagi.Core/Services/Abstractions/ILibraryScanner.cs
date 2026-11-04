@@ -24,6 +24,17 @@ public interface ILibraryScanner
     /// </summary>
     Task<bool> RefreshFolderInBackgroundAsync(Guid folderId, CancellationToken cancellationToken = default);
 
+    /// <summary>
+    ///     Makes a music server's root folder match the server: adds or updates every song it lists, removes the
+    ///     rest, brings its playlists in line, then downloads covers that are missing or changed. Server roots can't be rescanned like folders on
+    ///     disk. A sync of a server that is already syncing waits for that sync to finish first.
+    /// </summary>
+    /// <returns>True if the library changed.</returns>
+    /// <exception cref="MusicServerException">The server couldn't be read.</exception>
+    /// <exception cref="OperationCanceledException">Cancelled, or the server's folder was removed while it synced.</exception>
+    Task<bool> SyncServerFolderAsync(Guid folderId, IMusicServerClient client, IProgress<ScanProgress>? progress = null,
+        CancellationToken cancellationToken = default);
+
     Task<bool> ForceRescanMetadataAsync(IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default);
 

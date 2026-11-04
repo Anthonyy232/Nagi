@@ -2,7 +2,6 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using ATL;
 using Microsoft.Extensions.Logging;
-using ModernLrc;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
@@ -222,13 +221,7 @@ public partial class AtlMetadataService : IMetadataService
             return normalized != null ? [normalized] : [];
         }
 
-        return input
-            .Split([.. splitCharacters, AtlMultiValueSeparator], StringSplitOptions.RemoveEmptyEntries)
-            .Select(s => ArtistNameHelper.NormalizeStringCore(s))
-            .Where(s => !string.IsNullOrEmpty(s))
-            .Select(s => s!)
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToList();
+        return ArtistNameHelper.SplitNames(input.Split(AtlMultiValueSeparator), splitCharacters);
     }
 
     private async Task<(string? Uri, string? Light, string? Dark)> ProcessAlbumArtAsync(
@@ -342,22 +335,9 @@ public partial class AtlMetadataService : IMetadataService
         var syncLyrics = lyricsInfo.SynchronizedLyrics;
         if (syncLyrics == null || syncLyrics.Count == 0) return null;
 
-        var builder = new LrcDocumentBuilder();
-
-        foreach (var phrase in syncLyrics)
-        {
-            var text = ArtistNameHelper.NormalizeStringCore(phrase.Text);
-            if (string.IsNullOrWhiteSpace(text)) continue;
-
-            var time = TimeSpan.FromMilliseconds(phrase.TimestampStart);
-            builder.AddLine(time, text);
-        }
-
-        if (builder.LineCount == 0) return null;
-        var lrcContent = LrcWriter.Write(builder.Build(), new LrcWriteOptions
-        {
-            TimestampPrecision = LrcTimestampPrecision.Milliseconds
-        });
+        var lrcContent = LyricsFormatter.Format(syncLyrics
+            .Select(phrase => ((TimeSpan?)TimeSpan.FromMilliseconds(phrase.TimestampStart), (string?)phrase.Text)).ToList());
+        if (lrcContent is null) return null;
 
         await LyricsStorageHelper.SaveAsync(_fileSystem, cachedLrcPath, lrcContent).ConfigureAwait(false);
         return cachedLrcPath;

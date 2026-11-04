@@ -89,8 +89,12 @@
                         <Button Command="{Binding PlayPauseCommand}" Style="{StaticResource MediaControlButtonStyle}"
                                 ToolTipService.ToolTip="{Binding PlayPauseButtonToolTip}"
                                 AutomationProperties.Name="{Binding PlayPauseButtonToolTip}">
-                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="24"
-                                      Glyph="{Binding PlayPauseIcon, Converter={StaticResource AppIconToGlyphConverter}}" />
+                            <Grid>
+                                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="24"
+                                          Glyph="{Binding PlayPauseIcon, Converter={StaticResource AppIconToGlyphConverter}}"
+                                          Visibility="{Binding IsOpening, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                                <ProgressRing Width="20" Height="20" IsActive="{Binding IsOpening}" />
+                            </Grid>
                         </Button>
                         <Button Command="{Binding NextCommand}" Style="{StaticResource MediaControlButtonStyle}"
                                 ToolTipService.ToolTip="{x:Bind resources:Strings.TrayPopup_NextButton_ToolTip, Mode=OneTime}"

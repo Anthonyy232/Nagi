@@ -1074,9 +1074,6 @@
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
     <value>தோராயமாக ஒன்றைத் தேர்ந்தெடு</value>
   </data>
-  <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>ஒரு இசை கோப்புறையைச் சேர்</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>கோப்புறையைச் சேர்</value>
   </data>

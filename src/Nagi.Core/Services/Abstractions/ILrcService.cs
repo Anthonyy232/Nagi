@@ -6,7 +6,7 @@ namespace Nagi.Core.Services.Abstractions;
 public interface ILrcService
 {
     /// <summary>
-    ///     Loads local lyrics or fetches them from the enabled providers.
+    ///     Loads local lyrics, or fetches them from a server song's server and then the enabled providers.
     /// </summary>
     /// <returns>Parsed lyrics, or null if no lyrics could be loaded.</returns>
     Task<ParsedLrc?> GetLyricsAsync(Song song, CancellationToken cancellationToken = default);

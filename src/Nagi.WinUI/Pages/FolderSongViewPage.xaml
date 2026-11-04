@@ -102,12 +102,19 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="64"
-                            Glyph="&#xE8B7;" />
+                            Glyph="&#xE8B7;"
+                            Visibility="{x:Bind ViewModel.IsServer, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                        <FontIcon
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontSize="64"
+                            Glyph="&#xE8CE;"
+                            Visibility="{x:Bind ViewModel.IsServer, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     </Grid>
                 </Grid>
 
                 <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Bottom" Spacing="8">
-                    <TextBlock Text="{x:Bind resources:Strings.FolderSongViewPage_Header_Label, Mode=OneTime}" Style="{ThemeResource CaptionTextBlockStyle}" />
+                    <TextBlock Text="{x:Bind ViewModel.HeaderLabel, Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" />
                     <TextBlock Style="{ThemeResource HeaderTextBlockStyle}"
                                Text="{x:Bind ViewModel.PageTitle, Mode=OneWay}" />
                 </StackPanel>
@@ -266,18 +273,24 @@
                     <EntranceThemeTransition FromVerticalOffset="20" />
                 </TransitionCollection>
             </StackPanel.ChildrenTransitions>
-            <FontIcon
-                Glyph="&#xE8B7;"
-                FontSize="48"
-                Margin="0,0,0,12"
-                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                HorizontalAlignment="Center" />
+            <Grid Margin="0,0,0,12" HorizontalAlignment="Center">
+                <FontIcon
+                    Glyph="&#xE8B7;"
+                    FontSize="48"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Visibility="{x:Bind ViewModel.IsServer, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                <FontIcon
+                    Glyph="&#xE8CE;"
+                    FontSize="48"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Visibility="{x:Bind ViewModel.IsServer, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </Grid>
             <TextBlock
-                Text="{x:Bind resources:Strings.FolderSongViewPage_Empty_Title, Mode=OneTime}"
+                Text="{x:Bind ViewModel.EmptyTitle, Mode=OneWay}"
                 Style="{StaticResource TitleTextBlockStyle}"
                 HorizontalAlignment="Center" />
             <TextBlock
-                Text="{x:Bind resources:Strings.FolderSongViewPage_Empty_Subtitle, Mode=OneTime}"
+                Text="{x:Bind ViewModel.EmptySubtitle, Mode=OneWay}"
                 Style="{StaticResource SubtitleTextBlockStyle}"
                 HorizontalAlignment="Center"
                 Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
