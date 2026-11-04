@@ -1089,9 +1089,6 @@ Vil du fortsætte?</value>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Ingen mapper tilføjet endnu</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Tilføj musikmapper for at komme i gang</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Afspil</value>
   </data>
@@ -1226,9 +1223,6 @@ Vil du fortsætte?</value>
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>Hvor er din musik?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Vælg mappen, hvor du har din musik. Nagi opbygger dit bibliotek, mens du gør opsætningen færdig, og du kan tilføje flere mapper senere.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Gør den til din egen</value>

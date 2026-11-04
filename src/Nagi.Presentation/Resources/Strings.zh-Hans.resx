@@ -1089,9 +1089,6 @@
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>尚未添加文件夹</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>添加音乐文件夹以开始使用</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>播放</value>
   </data>
@@ -1226,9 +1223,6 @@
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>您的音乐存放在哪里？</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>选择存放音乐的文件夹。在您完成设置的过程中，Nagi 会建立您的音乐库，您也可以稍后再添加更多文件夹。</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>打造专属外观</value>

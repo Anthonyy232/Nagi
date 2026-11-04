@@ -1089,9 +1089,6 @@ Czy chcesz kontynuować?</value>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Nie dodano jeszcze folderów</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Dodaj foldery muzyki, aby rozpocząć</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Odtwórz</value>
   </data>
@@ -1226,9 +1223,6 @@ Czy chcesz kontynuować?</value>
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>Gdzie jest Twoja muzyka?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Wybierz folder, w którym przechowujesz muzykę. Nagi utworzy Twoją bibliotekę podczas kończenia konfiguracji. Więcej folderów możesz dodać później.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Dostosuj do siebie</value>

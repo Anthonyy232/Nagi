@@ -1089,9 +1089,6 @@ Vrei să continui?</value>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Nu s-au adăugat dosare încă</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Adaugă dosare de muzică pentru a începe</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Redă</value>
   </data>
@@ -1226,9 +1223,6 @@ Vrei să continui?</value>
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>Unde se află muzica ta?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Alege dosarul în care îți păstrezi muzica. Nagi îți creează biblioteca în timp ce finalizezi configurarea, iar ulterior poți adăuga mai multe dosare.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Personalizează aplicația</value>

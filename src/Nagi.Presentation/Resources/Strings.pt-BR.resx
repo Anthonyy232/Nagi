@@ -1089,9 +1089,6 @@ Deseja continuar?</value>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Nenhuma pasta adicionada ainda</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Adicione pastas de música para começar</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Reproduzir</value>
   </data>
@@ -1226,9 +1223,6 @@ Deseja continuar?</value>
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>Onde estão suas músicas?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Escolha a pasta onde você guarda suas músicas. O Nagi cria sua biblioteca enquanto você conclui a configuração, e você pode adicionar mais pastas depois.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Deixe do seu jeito</value>

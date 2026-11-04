@@ -1089,9 +1089,6 @@
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>கோப்புறைகள் எதுவும் இன்னும் சேர்க்கப்படவில்லை</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>தொடங்குவதற்கு இசை கோப்புறைகளைச் சேர்க்கவும்</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>இயக்கு</value>
   </data>
@@ -1226,9 +1223,6 @@
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>உங்கள் இசை எங்கே உள்ளது?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>உங்கள் இசையை வைத்திருக்கும் கோப்புறையைத் தேர்ந்தெடுக்கவும். நீங்கள் அமைவை முடிக்கும் நேரத்தில் Nagi உங்கள் லைப்ரரியை உருவாக்கும், மேலும் கோப்புறைகளை நீங்கள் பின்னர் சேர்க்கலாம்.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>உங்கள் விருப்பப்படி மாற்றவும்</value>

@@ -1089,9 +1089,6 @@
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Још нису додате фасцикле</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Додајте музичке фасцикле да бисте почели</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Пусти</value>
   </data>
@@ -1226,9 +1223,6 @@
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>Где је ваша музика?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Изаберите фасциклу у којој чувате музику. Nagi гради вашу библиотеку док завршавате подешавање, а касније можете додати још фасцикли.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Прилагодите по свом укусу</value>

@@ -1089,9 +1089,6 @@ Dëshironi të vazhdoni?</value>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Asnjë dosje nuk është shtuar ende</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Shtoni dosje muzike për të filluar</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Luaj</value>
   </data>
@@ -1226,9 +1223,6 @@ Dëshironi të vazhdoni?</value>
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>Ku është muzika jote?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Zgjidh dosjen ku mban muzikën tënde. Nagi ndërton bibliotekën tënde ndërsa përfundon konfigurimin, dhe mund të shtosh më shumë dosje më vonë.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Përshtate sipas dëshirës</value>

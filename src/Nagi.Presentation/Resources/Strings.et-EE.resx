@@ -1089,9 +1089,6 @@ Kas soovite jätkata?</value>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Ühtegi kausta pole veel lisatud</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Alustamiseks lisa muusikakaustad</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Esita</value>
   </data>
@@ -1226,9 +1223,6 @@ Kas soovite jätkata?</value>
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>Kus asub sinu muusika?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Vali kaust, kus oma muusikat hoiad. Nagi loob sinu muusikakogu seadistamise lõpuleviimise ajal ning saad hiljem kaustu juurde lisada.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Kohanda enda järgi</value>

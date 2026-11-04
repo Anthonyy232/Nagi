@@ -1089,9 +1089,6 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Još nema dodanih mapa</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Dodajte glazbene mape za početak</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Reproduciraj</value>
   </data>
@@ -1226,9 +1223,6 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>Gdje se nalazi vaša glazba?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Odaberite mapu u kojoj čuvate svoju glazbu. Nagi gradi vašu biblioteku dok završavate postavljanje, a kasnije možete dodati još mapa.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Prilagodite po svom ukusu</value>

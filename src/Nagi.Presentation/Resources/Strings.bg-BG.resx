@@ -1089,9 +1089,6 @@
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Все още няма добавени папки</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Добавете музикални папки, за да започнете</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Пусни</value>
   </data>
@@ -1226,9 +1223,6 @@
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>Къде е музиката ви?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Изберете папката, в която съхранявате музиката си. Nagi създава вашата библиотека, докато завършвате настройката, а по-късно можете да добавите още папки.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Персонализирайте по ваш вкус</value>

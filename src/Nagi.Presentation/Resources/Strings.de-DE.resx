@@ -1089,9 +1089,6 @@ Möchten Sie fortfahren?</value>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Noch keine Ordner hinzugefügt</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Fügen Sie Musikordner hinzu, um zu beginnen</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Wiedergeben</value>
   </data>
@@ -1226,9 +1223,6 @@ Möchten Sie fortfahren?</value>
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>Wo ist Ihre Musik?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Wählen Sie den Ordner, in dem Sie Ihre Musik aufbewahren. Nagi baut Ihre Bibliothek auf, während Sie die Einrichtung abschließen. Sie können später weitere Ordner hinzufügen.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Ganz nach Ihrem Geschmack</value>

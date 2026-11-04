@@ -1089,9 +1089,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Níl fillteáin curtha leis go fóill</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Cuir fillteáin ceoil leis chun tús a chur leis</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Seinn</value>
   </data>
@@ -1226,9 +1223,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>Cá bhfuil do chuid ceoil?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Roghnaigh an fillteán ina gcoinníonn tú do chuid ceoil. Tógann Nagi do leabharlann agus tú ag críochnú an tsocraithe, agus is féidir leat níos mó fillteán a chur leis níos déanaí.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Déan do chuid féin de</value>

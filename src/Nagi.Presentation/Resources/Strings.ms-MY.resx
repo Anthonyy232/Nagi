@@ -1089,9 +1089,6 @@ Adakah anda ingin meneruskan?</value>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Tiada folder ditambahkan lagi</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Tambah folder muzik untuk bermula</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Main</value>
   </data>
@@ -1226,9 +1223,6 @@ Adakah anda ingin meneruskan?</value>
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>Di manakah muzik anda?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Pilih folder tempat anda menyimpan muzik anda. Nagi membina pustaka anda sementara anda menyelesaikan persediaan, dan anda boleh menambah lebih banyak folder kemudian.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Jadikannya milik anda</value>

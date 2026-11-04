@@ -1089,9 +1089,6 @@ Vill du fortsätta?</value>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Inga mappar har lagts till än</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Lägg till musikmappar för att komma igång</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Spela</value>
   </data>
@@ -1226,9 +1223,6 @@ Vill du fortsätta?</value>
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>Var finns din musik?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Välj mappen där du har din musik. Nagi bygger upp ditt bibliotek medan du slutför konfigurationen, och du kan lägga till fler mappar senare.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Gör det till ditt</value>

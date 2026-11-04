@@ -1089,9 +1089,6 @@ Chcete pokračovat?</value>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Zatím nebyly přidány žádné složky</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Pro začátek přidejte hudební složky</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Přehrát</value>
   </data>
@@ -1226,9 +1223,6 @@ Chcete pokračovat?</value>
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>Kde máte hudbu?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Vyberte složku, ve které máte hudbu. Nagi vytvoří vaši knihovnu během dokončování nastavení. Další složky můžete přidat později.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Přizpůsobte si vzhled</value>

@@ -1089,9 +1089,6 @@ Wil je doorgaan?</value>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Nog geen mappen toegevoegd</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Voeg muziekmappen toe om te beginnen</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Afspelen</value>
   </data>
@@ -1226,9 +1223,6 @@ Wil je doorgaan?</value>
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>Waar is je muziek?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Kies de map waarin je je muziek bewaart. Nagi bouwt je bibliotheek op terwijl je de installatie voltooit, en je kunt later meer mappen toevoegen.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Maak het persoonlijk</value>

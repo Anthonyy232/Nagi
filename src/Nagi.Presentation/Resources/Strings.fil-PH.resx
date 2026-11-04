@@ -1089,9 +1089,6 @@ Gusto mo bang magpatuloy?</value>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Wala pang folder na idinagdag</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Magdagdag ng mga music folder upang makapagsimula</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>I-play</value>
   </data>
@@ -1226,9 +1223,6 @@ Gusto mo bang magpatuloy?</value>
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>Nasaan ang iyong musika?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Piliin ang folder kung saan mo itinatabi ang iyong musika. Bubuo ang Nagi ng iyong library habang tinatapos mo ang pag-set up, at maaari kang magdagdag ng higit pang mga folder mamaya.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Ibagay sa iyong kagustuhan</value>

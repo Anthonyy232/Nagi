@@ -1089,9 +1089,6 @@
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>לא נוספו תיקיות עדיין</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>הוסף תיקיות מוזיקה כדי להתחיל</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>נגן</value>
   </data>
@@ -1226,9 +1223,6 @@
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>איפה נמצאת המוזיקה שלך?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>יש לבחור את התיקייה שבה שמורה המוזיקה שלך. Nagi תבנה את הספרייה שלך בזמן השלמת ההגדרה, וניתן להוסיף תיקיות נוספות מאוחר יותר.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>התאמה אישית</value>

@@ -1089,9 +1089,6 @@ Vuoi continuare?</value>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Nessuna cartella aggiunta ancora</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Aggiungi cartelle musicali per iniziare</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Riproduci</value>
   </data>
@@ -1226,9 +1223,6 @@ Vuoi continuare?</value>
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>Dove si trova la tua musica?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Scegli la cartella in cui conservi la tua musica. Nagi crea la tua libreria mentre completi la configurazione; potrai aggiungere altre cartelle in seguito.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Personalizza</value>

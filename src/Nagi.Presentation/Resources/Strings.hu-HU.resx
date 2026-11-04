@@ -1089,9 +1089,6 @@ Szeretné folytatni?</value>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>Még nem lett mappa hozzáadva</value>
   </data>
-  <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Kezdéshez adjon hozzá zenei mappákat</value>
-  </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
     <value>Lejátszás</value>
   </data>
@@ -1226,9 +1223,6 @@ Szeretné folytatni?</value>
   </data>
   <data name="OnboardingPage_Library_Title" xml:space="preserve">
     <value>Hol van a zenéje?</value>
-  </data>
-  <data name="OnboardingPage_Library_Description" xml:space="preserve">
-    <value>Válassza ki a mappát, ahol a zenéit tárolja. A Nagi felépíti a könyvtárát, miközben befejezi a beállítást, és később további mappákat is hozzáadhat.</value>
   </data>
   <data name="OnboardingPage_Appearance_Title" xml:space="preserve">
     <value>Tegye egyedivé</value>
