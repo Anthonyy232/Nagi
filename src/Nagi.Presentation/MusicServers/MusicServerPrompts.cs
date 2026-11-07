@@ -53,7 +53,7 @@ public sealed class MusicServerPrompts : IDisposable
         _musicServers.SignInRejected -= OnSignInRejected;
     }
 
-    private void OnServerSongFailed(Song song) => _dispatcher.TryEnqueue(() => _ = ExplainServerSongFailureAsync(song));
+    private void OnServerSongFailed(Song song) => _ = ExplainServerSongFailureAsync(song);
 
     // Jellyfin keeps streaming with a sign-in it no longer accepts, so playback alone wouldn't reveal it.
     private void OnSignInRejected(Guid folderId) => _dispatcher.TryEnqueue(() => _ = OfferSignInAsync(folderId));

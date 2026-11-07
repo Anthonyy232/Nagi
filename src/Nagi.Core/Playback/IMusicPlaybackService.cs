@@ -104,8 +104,7 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     event Action<Song, long, DateTime>? ScrobbleEligibilityReached;
 
     /// <summary>
-    ///     Occurs when a song from a music server couldn't be streamed and playback stopped. May be raised on a
-    ///     background thread.
+    ///     Occurs when a song from a music server couldn't be streamed and playback stopped.
     /// </summary>
     event Action<Song>? ServerSongFailed;
 
