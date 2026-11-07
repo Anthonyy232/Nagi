@@ -76,15 +76,16 @@ public class LastFmScrobblerService : IListenSubmitter
         await _submitLock.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            if (await GetApiCredentialsAsync(cancellationToken).ConfigureAwait(false) is not { } credentials) return;
             await using var ctx = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
-
             var pending = await ctx.ListenHistory
                 .AsTracking()
                 .Where(lh => lh.IsEligibleForScrobbling && !lh.IsScrobbled)
                 .Include(lh => lh.Song).ThenInclude(s => s.Album)
                 .OrderBy(lh => lh.ListenTimestampUtc)
                 .ToListAsync(cancellationToken).ConfigureAwait(false);
+            // Fetching the keys can take a while offline, so it waits until there is something to send.
+            if (pending.Count == 0 ||
+                await GetApiCredentialsAsync(cancellationToken).ConfigureAwait(false) is not { } credentials) return;
 
             foreach (var entry in pending)
             {

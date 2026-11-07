@@ -199,6 +199,17 @@ public class LastFmScrobblerServiceTests : IDisposable
 
         _httpMessageHandler.Requests.Should().HaveCount(2);
     }
+
+    [Fact]
+    public async Task SubmitPendingAsync_WithNothingPending_DoesNotFetchTheApiKeys()
+    {
+        SetupValidCredentials();
+
+        await _scrobblerService.SubmitPendingAsync(CancellationToken.None);
+
+        await _apiKeyService.DidNotReceiveWithAnyArgs().GetApiKeyAsync(default!, default);
+    }
+
     [Fact]
     public async Task UpdateNowPlayingAsync_WithMinimalSongData_SendsCorrectParameters()
     {
