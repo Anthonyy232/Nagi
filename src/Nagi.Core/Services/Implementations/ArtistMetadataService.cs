@@ -98,8 +98,7 @@ public class ArtistMetadataService : IArtistMetadataService
             }, cancellationToken).ConfigureAwait(false);
 
         cancellationToken.ThrowIfCancellationRequested();
-        var anyAsked = musicBrainzLookup is not null || lookups.Count > 0;
-        return new ArtistMetadataResult(resolvedMbid, imageUrl, biography, anyAsked && musicBrainzAnswered && isFinal);
+        return new ArtistMetadataResult(resolvedMbid, imageUrl, biography, musicBrainzAnswered && isFinal);
     }
 
     private static async Task<ServiceResult<ArtistInfo>> MapAsync<T>(Task<ServiceResult<T>> lookup, Func<T, ArtistInfo> map)

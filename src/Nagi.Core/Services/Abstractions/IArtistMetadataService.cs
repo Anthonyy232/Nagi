@@ -4,7 +4,8 @@ namespace Nagi.Core.Services.Abstractions;
 
 /// <param name="MusicBrainzId">The ID MusicBrainz found for an artist that had none, otherwise null.</param>
 /// <param name="IsConclusive">
-///     At least one source answered and none failed, so missing data is final rather than worth retrying.
+///     No source failed, so missing data is final rather than worth retrying. True when no enabled source
+///     can look the artist up.
 /// </param>
 public record ArtistMetadataResult(string? MusicBrainzId, string? ImageUrl, string? Biography, bool IsConclusive);
 

@@ -148,6 +148,27 @@ public partial class LibraryServiceTests : IDisposable
     }
 
     [Theory]
+    [InlineData(ServiceProviderIds.MusicBrainz)]
+    [InlineData(ServiceProviderIds.CoverArtArchive, ServiceProviderIds.AppleMusic)]
+    public async Task ArtistMetadata_WithoutAnEnabledSourceThatCanLookTheArtistUp_MarksTheArtistChecked(
+        params string[] providerIds)
+    {
+        var artist = new Artist { Name = "Known artist", MusicBrainzId = Guid.NewGuid().ToString() };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Artists.Add(artist);
+            await context.SaveChangesAsync();
+        }
+        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata).Returns(
+            providerIds.Select(id => new ServiceProviderSetting { Id = id, IsEnabled = true }).ToList());
+
+        var result = await _libraryService.GetArtistDetailsAsync(artist.Id, true);
+
+        result!.MetadataLastCheckedUtc.Should().NotBeNull();
+        await _musicBrainzService.DidNotReceive().SearchArtistAsync(Arg.Any<string>(), Arg.Any<CancellationToken>());
+    }
+
+    [Theory]
     [InlineData(ServiceProviderIds.TheAudioDb)]
     [InlineData(ServiceProviderIds.MusicBrainz)]
     public async Task ArtistMetadata_ProviderFailure_UsesLowerPriorityBiography(string providerId)
