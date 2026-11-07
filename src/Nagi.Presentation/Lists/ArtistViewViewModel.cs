@@ -9,6 +9,7 @@ using Nagi.Core.Artwork;
 using Nagi.Core.Library;
 using Nagi.Core.Listening;
 using Nagi.Core.Metadata;
+using Nagi.Core.OnlineProviders;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
@@ -18,6 +19,7 @@ using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Settings;
 using Nagi.Presentation.Shell;
+using CoreStrings = Nagi.Core.Resources.Strings;
 
 namespace Nagi.Presentation.Lists;
 
@@ -74,6 +76,9 @@ public partial class ArtistViewViewModel : DetailSongListViewModelBase<ArtistVie
 
     [ObservableProperty] public partial string ArtistBio { get; set; }
 
+    /// <summary>The credit a biography's license asks for, or null if it needs none.</summary>
+    [ObservableProperty] public partial string? BiographyCredit { get; set; }
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsCustomImage))]
     public partial string? ArtistImageUri { get; set; }
@@ -117,6 +122,9 @@ public partial class ArtistViewViewModel : DetailSongListViewModelBase<ArtistVie
         PageTitle = artist.Name;
         ArtistImageUri = ImageUriHelper.GetUriWithCacheBuster(artist.LocalImageCachePath);
         ArtistBio = string.IsNullOrWhiteSpace(artist.Biography) ? Strings.ArtistView_NoBiography : artist.Biography;
+        BiographyCredit = artist.BiographySource == ServiceProviderIds.Wikipedia && !string.IsNullOrWhiteSpace(artist.Biography)
+            ? CoreStrings.Biography_WikipediaAttribution
+            : null;
         Albums.ReplaceRange(albumsTask.Result.Select(album => new ArtistAlbumViewModelItem(album)));
         return true;
     }
@@ -124,6 +132,7 @@ public partial class ArtistViewViewModel : DetailSongListViewModelBase<ArtistVie
     protected override void ClearDetails()
     {
         ArtistBio = string.Empty;
+        BiographyCredit = null;
         ArtistImageUri = null;
         Albums.Clear();
     }

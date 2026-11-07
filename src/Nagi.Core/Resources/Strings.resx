@@ -346,7 +346,7 @@
   </data>
   <data name="Biography_WikipediaAttribution" xml:space="preserve">
     <value>From Wikipedia, under the CC BY-SA license.</value>
-    <comment>Shown after an artist biography taken from Wikipedia, as its license requires.</comment>
+    <comment>Shown below an artist biography taken from Wikipedia, as its license requires.</comment>
   </data>
   <data name="Format_FetchingServerSongs" xml:space="preserve">
     <value>Getting songs from the server ({0})…</value>

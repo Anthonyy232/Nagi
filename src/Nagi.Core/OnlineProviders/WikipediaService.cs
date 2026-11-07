@@ -49,7 +49,7 @@ public class WikipediaService : IWikipediaService
         return await GetAsync<WikipediaExtractResponse, string>(
             $"https://{articleLanguage}.wikipedia.org/w/api.php?action=query&prop=extracts&exintro=1&explaintext=1&redirects=1&format=json&formatversion=2&titles={Uri.EscapeDataString(title)}",
             response => response.Query?.Pages?.FirstOrDefault()?.Extract is { } extract && !string.IsNullOrWhiteSpace(extract)
-                ? $"{extract.Trim()}\n\n{Resources.Strings.Biography_WikipediaAttribution}"
+                ? extract.Trim()
                 : null,
             $"Wikipedia extract for {title}", cancellationToken).ConfigureAwait(false);
     }

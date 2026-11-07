@@ -192,12 +192,13 @@ public class DatabaseMigrationTests
         await context.Database.OpenConnectionAsync();
         await context.GetService<IMigrator>().MigrateAsync("20261024222916_AddSongReleaseGroupId");
         var checkedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        context.Artists.AddRange(
-            new Artist { Name = "Complete", Biography = "Bio", LocalImageCachePath = "image.jpg", MetadataLastCheckedUtc = checkedAt },
-            new Artist { Name = "No bio", LocalImageCachePath = "image.jpg", MetadataLastCheckedUtc = checkedAt },
-            new Artist { Name = "No image", Biography = "Bio", MetadataLastCheckedUtc = checkedAt });
-        await context.SaveChangesAsync();
-        context.ChangeTracker.Clear();
+        // Raw SQL, because the current model has columns this schema doesn't.
+        await context.Database.ExecuteSqlAsync($"""
+            INSERT INTO Artists (Id, Name, SortName, Biography, LocalImageCachePath, MetadataLastCheckedUtc) VALUES
+                ({Guid.NewGuid()}, 'Complete', 'Complete', 'Bio', 'image.jpg', {checkedAt}),
+                ({Guid.NewGuid()}, 'No bio', 'No bio', NULL, 'image.jpg', {checkedAt}),
+                ({Guid.NewGuid()}, 'No image', 'No image', 'Bio', NULL, {checkedAt});
+            """);
 
         await context.Database.MigrateAsync();
 
@@ -223,5 +224,35 @@ public class DatabaseMigrationTests
 
         (await context.Songs.OrderBy(s => s.Title).Select(s => s.Lyrics).ToListAsync())
             .Should().Equal("Words", "Words", "Words || more", "[00:01.00]eng||Words");
+    }
+
+    [Fact]
+    public async Task RecordBiographySource_MovesTheWikipediaCreditOutOfStoredBiographiesInAnyLanguage()
+    {
+        await using var context = new MusicDbContext(
+            new DbContextOptionsBuilder<MusicDbContext>().UseSqlite("Data Source=:memory:").Options);
+        await context.Database.OpenConnectionAsync();
+        await context.GetService<IMigrator>().MigrateAsync("20261107031219_StripLyricsLanguagePrefix");
+        await context.Database.ExecuteSqlRawAsync("""
+            INSERT INTO Artists (Id, Name, SortName, Biography) VALUES
+                ('00000000-0000-0000-0000-000000000001', 'German', 'German',
+                 'Eine Band.' || char(10) || char(10) || 'Aus Wikipedia, unter der Lizenz CC BY-SA.'),
+                ('00000000-0000-0000-0000-000000000002', 'Turkish', 'Turkish',
+                 'Bir grup.' || char(10) || char(10) || 'Vikipedi''den, CC BY-SA lisansı altında.'),
+                ('00000000-0000-0000-0000-000000000003', 'Other', 'Other', 'A band, from Wikipedia, under the CC BY-SA license.');
+            """);
+
+        await context.Database.MigrateAsync();
+
+        (await context.Artists.OrderBy(a => a.Name).Select(a => new { a.Biography, a.BiographySource }).ToListAsync())
+            .Should().Equal(
+                new { Biography = (string?)"Eine Band.", BiographySource = (string?)"wikipedia" },
+                new { Biography = (string?)"A band, from Wikipedia, under the CC BY-SA license.", BiographySource = (string?)null },
+                new { Biography = (string?)"Bir grup.", BiographySource = (string?)"wikipedia" });
+
+        await context.GetService<IMigrator>().MigrateAsync("20261107031219_StripLyricsLanguagePrefix");
+
+        (await context.Database.SqlQueryRaw<string>("SELECT Biography AS Value FROM Artists WHERE Name = 'German'").SingleAsync())
+            .Should().Be("Eine Band.\n\nFrom Wikipedia, under the CC BY-SA license.");
     }
 }

@@ -123,6 +123,10 @@ namespace Nagi.Core.Data.Migrations
                         .HasMaxLength(50000)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("BiographySource")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("LocalImageCachePath")
                         .HasMaxLength(1000)
                         .HasColumnType("TEXT");
