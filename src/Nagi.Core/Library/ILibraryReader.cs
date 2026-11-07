@@ -17,6 +17,7 @@ public interface ILibraryReader
     Task<Folder?> GetFolderByIdAsync(Guid folderId);
     Task<bool> HasAnyFolderAsync(CancellationToken token = default);
     Task<IEnumerable<FolderSummary>> GetRootFoldersWithCountsAsync(CancellationToken token = default);
+    Task<IReadOnlyList<Folder>> GetRootFoldersOnDiskAsync(CancellationToken token = default);
 
     /// <summary>Includes lyrics, heavy fields, and artist relationships for playback and lyrics display.</summary>
     Task<Song?> GetSongByIdAsync(Guid songId);

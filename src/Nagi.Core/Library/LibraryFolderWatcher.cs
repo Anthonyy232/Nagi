@@ -64,10 +64,7 @@ public sealed class LibraryFolderWatcher : IDisposable
     {
         try
         {
-            var roots = (await _libraryReader.GetRootFoldersWithCountsAsync(_shutdownToken).ConfigureAwait(false))
-                .Where(summary => !summary.IsFromServer)
-                .Select(summary => summary.Folder)
-                .ToList();
+            var roots = await _libraryReader.GetRootFoldersOnDiskAsync(_shutdownToken).ConfigureAwait(false);
 
             lock (_lock)
             {

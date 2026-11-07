@@ -21,8 +21,7 @@ public sealed class LibraryFolderWatcherTests : IDisposable
 
     public LibraryFolderWatcherTests()
     {
-        _reader.GetRootFoldersWithCountsAsync(Arg.Any<CancellationToken>())
-            .Returns(_ => _folders.Select(f => new FolderSummary(f, 0, IsFromServer: false)).ToList());
+        _reader.GetRootFoldersOnDiskAsync(Arg.Any<CancellationToken>()).Returns(_ => _folders.ToList());
         _folderService.RefreshFolderInBackgroundAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns(true);
         _watcher = new LibraryFolderWatcher(_reader, _notifier, _folderService, NullLogger<LibraryFolderWatcher>.Instance, _time);
     }

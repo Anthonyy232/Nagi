@@ -2,6 +2,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Library;
 using Nagi.Core.Listening;
+using Nagi.Core.MusicServers;
 using Nagi.Core.Platform;
 using Nagi.Core.Playlists;
 using Nagi.Core.Settings;
@@ -123,6 +124,24 @@ public class LibraryReaderTests : IDisposable
                 [other.Id] = 1
             });
         summaries.Should().OnlyContain(item => item.Folder.Songs.Count == 0);
+    }
+
+    [Fact]
+    public async Task GetRootFoldersOnDiskAsync_SkipsServersAndSubfolders()
+    {
+        var music = new Folder { Name = "Music", Path = @"C:\Music" };
+        var child = new Folder { Name = "Album", Path = @"C:\Music\Album", ParentFolder = music };
+        var server = new Folder { Name = "Server", Path = "nagi-server://server" };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.AddRange(music, child, server);
+            context.MusicServers.Add(new MusicServer { Folder = server, BaseUrl = "https://music.example.com", UserName = "alex" });
+            await context.SaveChangesAsync();
+        }
+
+        var roots = await _libraryReader.GetRootFoldersOnDiskAsync();
+
+        roots.Select(folder => folder.Id).Should().Equal(music.Id);
     }
 
     [Fact]

@@ -50,6 +50,14 @@ public partial class LibraryReader : ILibraryReader
             .ToListAsync(token).ConfigureAwait(false);
     }
 
+    public async Task<IReadOnlyList<Folder>> GetRootFoldersOnDiskAsync(CancellationToken token = default)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
+        return await context.Folders.AsNoTracking().OnDisk()
+            .Where(f => f.ParentFolderId == null)
+            .ToListAsync(token).ConfigureAwait(false);
+    }
+
     private static Task<Guid?> GetRandomEntityIdAsync<T>(IQueryable<T> query) where T : class =>
         query.OrderBy(_ => EF.Functions.Random())
             .Select(e => (Guid?)EF.Property<Guid>(e, "Id"))
