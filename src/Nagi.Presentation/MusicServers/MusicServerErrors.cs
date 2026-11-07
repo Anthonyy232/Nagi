@@ -5,7 +5,7 @@ using Nagi.Presentation.Common;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
-namespace Nagi.Presentation.Helpers;
+namespace Nagi.Presentation.MusicServers;
 
 /// <summary>
 ///     Tells the user what went wrong with a music server and what to do about it.

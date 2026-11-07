@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Nagi.Core.Library;
 using Nagi.Core.Platform;
 using Nagi.Core.Settings;
-using Nagi.Presentation.Services.Abstractions;
 using Serilog;
 
 namespace Nagi.Presentation.Services;

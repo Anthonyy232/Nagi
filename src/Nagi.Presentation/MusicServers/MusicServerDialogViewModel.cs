@@ -4,10 +4,9 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Library;
 using Nagi.Core.MusicServers;
 using Nagi.Presentation.Common;
-using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Resources;
 
-namespace Nagi.Presentation.ViewModels;
+namespace Nagi.Presentation.MusicServers;
 
 /// <summary>
 ///     Adds a music server, or signs in to one again once it stops accepting the saved sign-in. The server checks

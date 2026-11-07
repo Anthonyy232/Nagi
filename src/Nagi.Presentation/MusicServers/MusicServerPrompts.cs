@@ -7,11 +7,10 @@ using Nagi.Core.MusicServers;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Presentation.Common;
-using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
-namespace Nagi.Presentation.Services;
+namespace Nagi.Presentation.MusicServers;
 
 /// <summary>
 ///     Runs the background syncs of the music servers and tells the user about failures that no page asked about: a

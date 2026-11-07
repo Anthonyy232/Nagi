@@ -1,5 +1,5 @@
 using Microsoft.UI.Xaml.Controls;
-using Nagi.Presentation.ViewModels;
+using Nagi.Presentation.MusicServers;
 
 namespace Nagi.WinUI.Dialogs;
 

@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.Core.Library;
-using Nagi.Presentation.ViewModels;
+using Nagi.Presentation.MusicServers;
 using Nagi.WinUI.Dialogs;
 
 namespace Nagi.WinUI.Services.Implementations;
