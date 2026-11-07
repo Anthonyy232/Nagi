@@ -79,14 +79,9 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
 
     public async Task SubmitPendingAsync(CancellationToken cancellationToken)
     {
-        if (!_settingsService.Get(CoreSettings.ListenBrainzScrobbling)) return;
-        // Connecting sets it; a token saved before that existed starts from the first time scrobbling runs, so the
-        // user's whole history isn't sent.
-        if (_settingsService.Get(CoreSettings.ListenBrainzEnabledSinceUtc) is not { } enabledSince)
-        {
-            enabledSince = DateTime.UtcNow;
-            _settingsService.Set(CoreSettings.ListenBrainzEnabledSinceUtc, enabledSince);
-        }
+        // Connecting sets the cutoff, and every release with ListenBrainz did, so a token without one has nothing to send.
+        if (!_settingsService.Get(CoreSettings.ListenBrainzScrobbling) ||
+            _settingsService.Get(CoreSettings.ListenBrainzEnabledSinceUtc) is not { } enabledSince) return;
 
         await _submitLock.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
