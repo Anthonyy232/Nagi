@@ -10,6 +10,7 @@ using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using static Nagi.Core.Services.Implementations.MusicServers.MusicServerHttp;
 
 namespace Nagi.Core.Services.Implementations.MusicServers;
 
@@ -22,9 +23,7 @@ internal sealed class OpenSubsonicClient : IMusicServerClient
 {
     // OpenSubsonic extends the last Subsonic API version instead of raising it.
     private const string ApiVersion = "1.16.1";
-    private const int PageSize = 500;
     private const int FavoriteBatchSize = 100;
-    private const string CoverArtSize = "600";
 
     private readonly HttpClient _httpClient;
     private readonly string _baseUrl;
@@ -45,31 +44,24 @@ internal sealed class OpenSubsonicClient : IMusicServerClient
         _clientName = clientName;
     }
 
-    /// <inheritdoc cref="MusicServerHttp.NormalizeAddress" />
-    public static string NormalizeAddress(string address)
-    {
-        var baseUrl = MusicServerHttp.NormalizeAddress(address);
-        // People often paste the API address, which ends in /rest.
-        return baseUrl.EndsWith("/rest", StringComparison.OrdinalIgnoreCase) ? baseUrl[..^"/rest".Length] : baseUrl;
-    }
-
     /// <summary>
     ///     Signs in and checks the server speaks OpenSubsonic.
     /// </summary>
-    /// <returns>The server's name, and the user name, which an API key sign-in learns from the server.</returns>
-    public static async Task<(string ServerName, string UserName)> ConnectAsync(HttpClient httpClient, string baseUrl,
-        string userName, string secret, bool usesApiKey, string clientName)
+    internal static async Task<ServerSignIn> SignInAsync(HttpClient httpClient, MusicServer server, string secret,
+        string clientName)
     {
-        var client = new OpenSubsonicClient(httpClient, baseUrl, userName, secret, usesApiKey, clientName);
+        var client = new OpenSubsonicClient(httpClient, server.BaseUrl, server.UserName, secret, server.UsesApiKey, clientName);
         var response = await client.SendAsync("ping", [], CancellationToken.None).ConfigureAwait(false);
         if (!response.OpenSubsonic)
-            throw new MusicServerException(MusicServerError.UnsupportedServer, $"{baseUrl} implements the Subsonic API but not OpenSubsonic.");
+            throw new MusicServerException(MusicServerError.UnsupportedServer, $"{server.BaseUrl} implements the Subsonic API but not OpenSubsonic.");
 
-        if (usesApiKey)
+        var userName = server.UserName;
+        if (server.UsesApiKey)
             userName = (await client.SendAsync("tokenInfo", [], CancellationToken.None).ConfigureAwait(false)).TokenInfo?.Username
-                       ?? throw new MusicServerException(MusicServerError.UnsupportedServer, $"{baseUrl} didn't name the API key's user.");
+                       ?? throw new MusicServerException(MusicServerError.UnsupportedServer, $"{server.BaseUrl} didn't name the API key's user.");
 
-        return (ToDisplayName(response.Type) ?? new Uri(baseUrl).Host, userName);
+        // Every request carries the password or API key itself, so that is what is kept.
+        return new ServerSignIn(ServerName(ToDisplayName(response.Type), server.BaseUrl), userName, null, secret);
     }
 
     public async IAsyncEnumerable<IReadOnlyList<ServerSongMetadata>> GetSongsAsync(
@@ -117,7 +109,9 @@ internal sealed class OpenSubsonicClient : IMusicServerClient
     public async Task<byte[]?> GetCoverArtAsync(string coverArtId, CancellationToken cancellationToken)
     {
         using var response = await GetAsync(
-            BuildUri("getCoverArt", [("id", coverArtId), ("size", CoverArtSize), ("f", "json")]), cancellationToken)
+            BuildUri("getCoverArt",
+                [("id", coverArtId), ("size", CoverSize.ToString(CultureInfo.InvariantCulture)), ("f", "json")]),
+            cancellationToken)
             .ConfigureAwait(false);
         if (response.IsSuccessStatusCode &&
             response.Content.Headers.ContentType?.MediaType?.StartsWith("image/", StringComparison.OrdinalIgnoreCase) == true)
@@ -301,8 +295,6 @@ internal sealed class OpenSubsonicClient : IMusicServerClient
 
     private static int? Positive(int? value) => value > 0 ? value : null;
 
-    private static string? NullIfEmpty(string? value) => string.IsNullOrWhiteSpace(value) ? null : value;
-
     private sealed record SubsonicEnvelope([property: JsonPropertyName("subsonic-response")] SubsonicResponse? Response);
 
     private sealed record SubsonicResponse(
@@ -372,4 +364,22 @@ internal sealed class OpenSubsonicClient : IMusicServerClient
         public DateTimeOffset? Played { get; init; }
         public DateTimeOffset? Created { get; init; }
     }
+}
+
+internal sealed class OpenSubsonicConnector(string clientName) : MusicServerConnector
+{
+    public override bool SupportsApiKey => true;
+
+    public override string NormalizeAddress(string address)
+    {
+        var baseUrl = base.NormalizeAddress(address);
+        // People often paste the API address, which ends in /rest.
+        return baseUrl.EndsWith("/rest", StringComparison.OrdinalIgnoreCase) ? baseUrl[..^"/rest".Length] : baseUrl;
+    }
+
+    public override Task<ServerSignIn> SignInAsync(HttpClient httpClient, MusicServer server, string secret) =>
+        OpenSubsonicClient.SignInAsync(httpClient, server, secret, clientName);
+
+    public override IMusicServerClient CreateClient(HttpClient httpClient, MusicServer server, string secret) =>
+        new OpenSubsonicClient(httpClient, server.BaseUrl, server.UserName, secret, server.UsesApiKey, clientName);
 }

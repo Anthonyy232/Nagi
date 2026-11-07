@@ -80,8 +80,8 @@ public sealed partial class MusicServerDialogViewModel : ObservableObject
     public partial bool IsBusy { get; set; }
 
     public bool IsAdding => _signInServer is null;
-    public bool CanChooseSignInMethod => IsAdding && IsOpenSubsonic;
-    public bool UsesApiKey => IsOpenSubsonic && SignInWithApiKey;
+    public bool CanChooseSignInMethod => IsAdding && _musicServers.SupportsApiKey(Kind);
+    public bool UsesApiKey => SignInWithApiKey && _musicServers.SupportsApiKey(Kind);
     public bool AsksForUserName => IsAdding && !UsesApiKey;
     public bool HasError => ErrorMessage is not null;
 
@@ -140,7 +140,7 @@ public sealed partial class MusicServerDialogViewModel : ObservableObject
             if (_signInServer is { } server)
                 await _musicServers.SignInAsync(server.FolderId, UsesApiKey ? ApiKey : Password);
             else if (UsesApiKey)
-                AddedServer = await _musicServers.AddWithApiKeyAsync(Address, ApiKey);
+                AddedServer = await _musicServers.AddWithApiKeyAsync(Kind, Address, ApiKey);
             else
                 AddedServer = await _musicServers.AddAsync(Kind, Address, UserName, Password);
             return true;

@@ -16,6 +16,11 @@ public interface IMusicServerService
     event Action<Guid>? SignInRejected;
 
     /// <summary>
+    ///     Whether servers of the kind can be signed in to with an API key instead of a password.
+    /// </summary>
+    bool SupportsApiKey(MusicServerKind kind);
+
+    /// <summary>
     ///     Signs in with a user name and password and adds the server to the library without syncing it.
     ///     An address without a scheme means HTTPS.
     /// </summary>
@@ -24,10 +29,10 @@ public interface IMusicServerService
     Task<Folder> AddAsync(MusicServerKind kind, string address, string userName, string password);
 
     /// <summary>
-    ///     Adds an OpenSubsonic server with an API key, which the server must support.
+    ///     Adds a server with an API key, which the server must support.
     /// </summary>
     /// <inheritdoc cref="AddAsync" />
-    Task<Folder> AddWithApiKeyAsync(string address, string apiKey);
+    Task<Folder> AddWithApiKeyAsync(MusicServerKind kind, string address, string apiKey);
 
     /// <summary>
     ///     Signs in to an added server again, as the same user and the same way, when it stops accepting the saved
@@ -89,8 +94,8 @@ public interface IMusicServerService
     Task<Uri?> GetStreamUriAsync(Song song);
 
     /// <summary>
-    ///     Finds out why a server song couldn't be played. Returning means the server looks fine, so the cause lies
-    ///     elsewhere.
+    ///     Finds out why a server song couldn't be played. Returning means the server looks fine, or the song is on disk,
+    ///     so the cause lies elsewhere.
     /// </summary>
     /// <exception cref="MusicServerException">
     ///     The server can't be reached or rejects the saved sign-in, or the song or its server is gone

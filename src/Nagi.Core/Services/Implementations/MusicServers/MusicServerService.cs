@@ -23,7 +23,7 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
     private readonly ILibraryNotifier _libraryNotifier;
     private readonly ICredentialLockerService _credentials;
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly IAppInfoService _appInfo;
+    private readonly IReadOnlyDictionary<MusicServerKind, MusicServerConnector> _connectors;
     private readonly TimeProvider _timeProvider;
     private readonly ILogger<MusicServerService> _logger;
     private readonly ConcurrentDictionary<Guid, IMusicServerClient> _clients = new();
@@ -52,19 +52,27 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
         _libraryNotifier = libraryNotifier;
         _credentials = credentials;
         _httpClientFactory = httpClientFactory;
-        _appInfo = appInfo;
         _logger = logger;
         _timeProvider = timeProvider ?? TimeProvider.System;
+        _connectors = new Dictionary<MusicServerKind, MusicServerConnector>
+        {
+            [MusicServerKind.OpenSubsonic] = new OpenSubsonicConnector(appInfo.GetAppName()),
+            [MusicServerKind.Jellyfin] = new JellyfinConnector(appInfo)
+        };
         _libraryNotifier.Changed += OnLibraryChanged;
     }
 
     public event Action<Guid>? SignInRejected;
 
+    public bool SupportsApiKey(MusicServerKind kind) => _connectors[kind].SupportsApiKey;
+
     public Task<Folder> AddAsync(MusicServerKind kind, string address, string userName, string password) =>
         AddCoreAsync(kind, address, userName.Trim(), password, false);
 
-    public Task<Folder> AddWithApiKeyAsync(string address, string apiKey) =>
-        AddCoreAsync(MusicServerKind.OpenSubsonic, address, string.Empty, apiKey.Trim(), true);
+    public Task<Folder> AddWithApiKeyAsync(MusicServerKind kind, string address, string apiKey) =>
+        SupportsApiKey(kind)
+            ? AddCoreAsync(kind, address, string.Empty, apiKey.Trim(), true)
+            : throw new MusicServerException(MusicServerError.SignInMethodUnsupported, $"{kind} servers don't take API keys.");
 
     public async Task SignInAsync(Guid folderId, string password)
     {
@@ -72,13 +80,13 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
         var server = await context.MusicServers.FirstOrDefaultAsync(s => s.FolderId == folderId).ConfigureAwait(false)
                      ?? throw new MusicServerException(MusicServerError.NotFound, $"Server folder {folderId} is no longer in the library.");
 
-        var userName = server.UserName;
-        var (_, secret) = await ConnectAsync(server, server.UsesApiKey ? password.Trim() : password).ConfigureAwait(false);
+        var signIn = await ConnectAsync(server, server.UsesApiKey ? password.Trim() : password).ConfigureAwait(false);
         // An API key names its own user; the library's favorites and plays must stay with the account it was added as.
-        if (!string.Equals(server.UserName, userName, StringComparison.OrdinalIgnoreCase))
-            throw new MusicServerException(MusicServerError.DifferentAccount, $"The API key is for {server.UserName}, not {userName}.");
-        if (!_credentials.SaveCredential(CredentialResource(folderId), server.UserName, secret))
+        if (!string.Equals(signIn.UserName, server.UserName, StringComparison.OrdinalIgnoreCase))
+            throw new MusicServerException(MusicServerError.DifferentAccount, $"The API key is for {signIn.UserName}, not {server.UserName}.");
+        if (!_credentials.SaveCredential(CredentialResource(folderId), server.UserName, signIn.Secret))
             throw new MusicServerException(MusicServerError.SignInNotSaved, $"The sign-in for {server.BaseUrl} couldn't be saved.");
+        server.UserId = signIn.UserId;
         await context.SaveChangesAsync().ConfigureAwait(false);
         // The cached client still holds the sign-in the server stopped accepting.
         _clients.TryRemove(folderId, out _);
@@ -93,6 +101,7 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
         {
             client = await GetClientAsync(folderId, CancellationToken.None).ConfigureAwait(false);
         }
+        // A server whose sign-in is gone has no session to end, and can still be removed.
         catch (MusicServerException ex)
         {
             _logger.LogDebug(ex, "Server folder {FolderId} has no sign-in to end.", folderId);
@@ -248,6 +257,7 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
 
     public async Task CheckSongAsync(Song song, CancellationToken cancellationToken = default)
     {
+        if (!song.IsFromServer) return;
         var client = await GetClientAsync(song.FolderId, cancellationToken).ConfigureAwait(false)
                      ?? throw new MusicServerException(MusicServerError.NotFound, $"Server folder {song.FolderId} is no longer in the library.");
         await client.CheckSongAsync(song.RemoteId!, cancellationToken).ConfigureAwait(false);
@@ -308,20 +318,21 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
         {
             FolderId = Guid.NewGuid(),
             Kind = kind,
-            BaseUrl = kind == MusicServerKind.OpenSubsonic
-                ? OpenSubsonicClient.NormalizeAddress(address)
-                : MusicServerHttp.NormalizeAddress(address),
+            BaseUrl = _connectors[kind].NormalizeAddress(address),
             UserName = userName,
             UsesApiKey = usesApiKey
         };
         // Checked before signing in where possible, so adding a Jellyfin server twice doesn't leave a sign-in behind.
+        // An API key names its user only once the server is asked.
         if (!usesApiKey) await EnsureNotAddedAsync(server).ConfigureAwait(false);
-        var (name, savedSecret) = await ConnectAsync(server, secret).ConfigureAwait(false);
+        var signIn = await ConnectAsync(server, secret).ConfigureAwait(false);
+        server.UserName = signIn.UserName;
+        server.UserId = signIn.UserId;
         if (usesApiKey) await EnsureNotAddedAsync(server).ConfigureAwait(false);
-        name = await GetUniqueNameAsync(name, server).ConfigureAwait(false);
+        var name = await GetUniqueNameAsync(signIn.ServerName, server).ConfigureAwait(false);
 
         var resource = CredentialResource(server.FolderId);
-        if (!_credentials.SaveCredential(resource, server.UserName, savedSecret))
+        if (!_credentials.SaveCredential(resource, server.UserName, signIn.Secret))
             throw new MusicServerException(MusicServerError.SignInNotSaved, $"The sign-in for {server.BaseUrl} couldn't be saved.");
         try
         {
@@ -336,29 +347,8 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
         }
     }
 
-    /// <summary>
-    ///     Signs in to the server, filling in the user it knows the sign-in as.
-    /// </summary>
-    /// <returns>The server's name, and the secret to keep: the password or API key, or Jellyfin's access token.</returns>
-    private async Task<(string Name, string Secret)> ConnectAsync(MusicServer server, string secret)
-    {
-        var httpClient = _httpClientFactory.CreateClient(HttpClientName);
-        switch (server.Kind)
-        {
-            case MusicServerKind.OpenSubsonic:
-                (var name, server.UserName) = await OpenSubsonicClient.ConnectAsync(httpClient, server.BaseUrl,
-                    server.UserName, secret, server.UsesApiKey, _appInfo.GetAppName()).ConfigureAwait(false);
-                return (name, secret);
-            case MusicServerKind.Jellyfin:
-                var signIn = await JellyfinClient.SignInAsync(httpClient, server.BaseUrl, server.UserName, secret,
-                    CreateIdentity(server.FolderId)).ConfigureAwait(false);
-                server.UserId = signIn.UserId;
-                // Jellyfin's access token replaces the password, which isn't kept.
-                return (signIn.ServerName, signIn.AccessToken);
-            default:
-                throw new ArgumentOutOfRangeException(nameof(server), server.Kind, null);
-        }
-    }
+    private Task<ServerSignIn> ConnectAsync(MusicServer server, string secret) =>
+        _connectors[server.Kind].SignInAsync(_httpClientFactory.CreateClient(HttpClientName), server, secret);
 
     // Servers of the same kind would otherwise share a name, such as two called "Navidrome".
     private async Task<string> GetUniqueNameAsync(string name, MusicServer server)
@@ -477,22 +467,12 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
                 .ConfigureAwait(false);
         if (server is null) return null;
 
+        // A missing sign-in is fixed the same way as one the server rejects: by signing in again.
         var secret = _credentials.RetrieveCredential(CredentialResource(folderId))?.Password
                      ?? throw new MusicServerException(MusicServerError.SignInFailed, $"No saved sign-in for {server.BaseUrl}.");
-        var httpClient = _httpClientFactory.CreateClient(HttpClientName);
-        IMusicServerClient client = server.Kind switch
-        {
-            MusicServerKind.OpenSubsonic => new OpenSubsonicClient(httpClient, server.BaseUrl, server.UserName, secret,
-                server.UsesApiKey, _appInfo.GetAppName()),
-            MusicServerKind.Jellyfin => new JellyfinClient(httpClient, server.BaseUrl, server.UserId ?? string.Empty, secret,
-                CreateIdentity(folderId)),
-            _ => throw new InvalidOperationException($"Unknown server kind {server.Kind}.")
-        };
+        var client = _connectors[server.Kind].CreateClient(_httpClientFactory.CreateClient(HttpClientName), server, secret);
         return _clients.GetOrAdd(folderId, client);
     }
-
-    private JellyfinClientIdentity CreateIdentity(Guid folderId) =>
-        new(_appInfo.GetAppName(), _appInfo.GetAppVersion(), Environment.MachineName, folderId.ToString("N"));
 
     private static string CredentialResource(Guid folderId) => CredentialResourcePrefix + folderId.ToString("N");
 }
