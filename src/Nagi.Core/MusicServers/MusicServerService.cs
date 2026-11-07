@@ -5,6 +5,7 @@ using Nagi.Core.Data;
 using Nagi.Core.Library;
 using Nagi.Core.Platform;
 using Nagi.Core.Scrobbling;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.MusicServers;
 
@@ -198,6 +199,10 @@ public sealed class MusicServerService : IMusicServerService, IListenSubmitter, 
     public void StartPeriodicSync() => _ = Task.Run(() => SyncPeriodicallyAsync(_shutdownCts.Token));
 
     public string Name => "music servers";
+
+    public IReadOnlyCollection<Setting> Settings => [];
+
+    public ScrobblingAccount? Account => null;
 
     // A server sees what is playing from what it streams.
     public Task UpdateNowPlayingAsync(Song song) => Task.CompletedTask;

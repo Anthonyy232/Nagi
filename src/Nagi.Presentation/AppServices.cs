@@ -49,15 +49,13 @@ public static class AppServices
         // Playback and settings both need EF ready. Scrobbling queries ListenHistory, including columns
         // added by recent migrations, so start it only after database migration/backfill has completed.
         await dbTask;
-        var scrobbleCoordinator = services.GetRequiredService<ScrobbleCoordinator>();
-        scrobbleCoordinator.Start();
+        services.GetRequiredService<ScrobbleCoordinator>().Start();
         services.GetRequiredService<LibraryFolderWatcher>().Start();
         _ = Task.Run(services.GetRequiredService<ILibraryFolderService>().RefreshOnStartupAsync);
-        var scrobbleTask = scrobbleCoordinator.SubmitPendingAsync();
         var playbackTask = services.GetRequiredService<IMusicPlaybackService>().InitializeAsync(restoreSession);
         var settingsTask = services.GetRequiredService<SettingsViewModel>().LoadSettingsAsync();
 
-        await Task.WhenAll(presenceTask, scrobbleTask, appInfoTask, equalizerTask, playbackTask, settingsTask);
+        await Task.WhenAll(presenceTask, appInfoTask, equalizerTask, playbackTask, settingsTask);
 
         logger.LogInformation("Core services initialized successfully.");
     }

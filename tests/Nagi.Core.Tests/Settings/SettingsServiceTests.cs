@@ -56,7 +56,7 @@ public class SettingsServiceTests
         var playbackState = Substitute.For<IPlaybackStateStore>();
         var settings = TestSettings.Create(credentials: credentials, autoLaunch: autoLaunch, playbackStateStore: playbackState);
         var credentialChanges = 0;
-        settings.CredentialsChanged += () => credentialChanges++;
+        settings.CredentialsChanged += _ => credentialChanges++;
 
         await settings.ResetToDefaultsAsync();
 
@@ -76,7 +76,7 @@ public class SettingsServiceTests
         credentials.SaveCredential(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(accepted);
         var settings = TestSettings.Create(credentials: credentials);
         var credentialChanges = 0;
-        settings.CredentialsChanged += () => credentialChanges++;
+        settings.CredentialsChanged += _ => credentialChanges++;
 
         (await settings.SaveLastFmCredentialsAsync("user", "session")).Should().Be(accepted);
         (await settings.SaveListenBrainzUserTokenAsync("token")).Should().Be(accepted);

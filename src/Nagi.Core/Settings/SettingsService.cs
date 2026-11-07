@@ -2,6 +2,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
+using Nagi.Core.Scrobbling;
 
 namespace Nagi.Core.Settings;
 
@@ -32,7 +33,7 @@ public sealed class SettingsService : ISettingsService
     }
 
     public event Action<Setting>? SettingChanged;
-    public event Action? CredentialsChanged;
+    public event Action<ScrobblingAccount>? CredentialsChanged;
 
     public T Get<T>(Setting<T> setting)
     {
@@ -60,12 +61,12 @@ public sealed class SettingsService : ISettingsService
         Task.FromResult(_credentialLockerService.RetrieveCredential(LastFmCredentialResource));
 
     public Task<bool> SaveLastFmCredentialsAsync(string username, string sessionKey) =>
-        Task.FromResult(SaveCredential(LastFmCredentialResource, username, sessionKey));
+        Task.FromResult(SaveCredential(ScrobblingAccount.LastFm, LastFmCredentialResource, username, sessionKey));
 
     public Task ClearLastFmCredentialsAsync()
     {
         _credentialLockerService.RemoveCredential(LastFmCredentialResource);
-        CredentialsChanged?.Invoke();
+        CredentialsChanged?.Invoke(ScrobblingAccount.LastFm);
         return Task.CompletedTask;
     }
 
@@ -73,12 +74,12 @@ public sealed class SettingsService : ISettingsService
         Task.FromResult(_credentialLockerService.RetrieveCredential(ListenBrainzTokenResource)?.Password);
 
     public Task<bool> SaveListenBrainzUserTokenAsync(string token) =>
-        Task.FromResult(SaveCredential(ListenBrainzTokenResource, ListenBrainzTokenUserName, token));
+        Task.FromResult(SaveCredential(ScrobblingAccount.ListenBrainz, ListenBrainzTokenResource, ListenBrainzTokenUserName, token));
 
     public Task ClearListenBrainzUserTokenAsync()
     {
         _credentialLockerService.RemoveCredential(ListenBrainzTokenResource);
-        CredentialsChanged?.Invoke();
+        CredentialsChanged?.Invoke(ScrobblingAccount.ListenBrainz);
         return Task.CompletedTask;
     }
 
@@ -126,7 +127,7 @@ public sealed class SettingsService : ISettingsService
         return Task.CompletedTask;
     }
 
-    private bool SaveCredential(string resource, string userName, string secret)
+    private bool SaveCredential(ScrobblingAccount account, string resource, string userName, string secret)
     {
         if (!_credentialLockerService.SaveCredential(resource, userName, secret))
         {
@@ -134,7 +135,7 @@ public sealed class SettingsService : ISettingsService
             return false;
         }
 
-        CredentialsChanged?.Invoke();
+        CredentialsChanged?.Invoke(account);
         return true;
     }
 

@@ -2,6 +2,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Time.Testing;
 using Nagi.Core.Library;
+using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Core.Scrobbling;
 using Nagi.Core.Settings;
@@ -13,10 +14,17 @@ namespace Nagi.Core.Tests.Scrobbling;
 
 public sealed class ScrobbleCoordinatorTests : IDisposable
 {
-    private readonly SettingsService _settingsService = TestSettings.Create();
+    private readonly ICredentialLockerService _credentials = Substitute.For<ICredentialLockerService>();
+    private readonly SettingsService _settingsService;
     private readonly IMusicPlaybackService _playback = Substitute.For<IMusicPlaybackService>();
     private readonly FakeTimeProvider _time = new();
     private readonly List<ScrobbleCoordinator> _coordinators = [];
+
+    public ScrobbleCoordinatorTests()
+    {
+        _credentials.SaveCredential(default!, default!, default!).ReturnsForAnyArgs(true);
+        _settingsService = TestSettings.Create(credentials: _credentials);
+    }
 
     public void Dispose()
     {
@@ -24,73 +32,102 @@ public sealed class ScrobbleCoordinatorTests : IDisposable
     }
 
     [Fact]
-    public async Task SubmitPendingAsync_OneDestinationFailing_DoesNotBlockTheOthers()
+    public async Task Start_SendsWhatIsPendingInTheBackground()
     {
-        // Network failures are handled inside each destination; what escapes is unexpected, such as a database error.
-        var failing = Substitute.For<IListenSubmitter>();
-        failing.SubmitPendingAsync(Arg.Any<CancellationToken>())
-            .Returns(Task.FromException(new InvalidOperationException("database unavailable")));
-        var healthy = Substitute.For<IListenSubmitter>();
-        var coordinator = Create(failing, healthy);
+        var submitter = new FakeSubmitter { Block = true };
+        var coordinator = Create(submitter);
 
-        await coordinator.SubmitPendingAsync();
+        coordinator.Start();
+        _time.Advance(ScrobbleCoordinator.CoalesceDelay);
 
-        await healthy.Received(1).SubmitPendingAsync(Arg.Any<CancellationToken>());
+        await submitter.WaitForRunsAsync(1);
     }
 
     [Fact]
-    public async Task SubmitPendingAsync_WhenCancelled_DoesNotCallDestinations()
+    public async Task OneDestinationFailing_DoesNotBlockTheOthers()
     {
-        var submitter = Substitute.For<IListenSubmitter>();
-        var coordinator = Create(submitter);
-        using var cancellation = new CancellationTokenSource();
-        await cancellation.CancelAsync();
+        // Network failures are handled inside each destination; what escapes is unexpected, such as a database error.
+        var failing = new FakeSubmitter { Failure = new InvalidOperationException("database unavailable") };
+        var healthy = new FakeSubmitter();
+        Create(failing, healthy).Start();
 
-        await coordinator.SubmitPendingAsync(cancellation.Token);
+        _time.Advance(ScrobbleCoordinator.CoalesceDelay);
 
-        await submitter.DidNotReceiveWithAnyArgs().SubmitPendingAsync(default);
+        await healthy.WaitForRunsAsync(1);
     }
 
     [Fact]
     public async Task Dispose_CancelsARunningSubmission()
     {
-        var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var submitter = Substitute.For<IListenSubmitter>();
-        submitter.SubmitPendingAsync(Arg.Any<CancellationToken>()).Returns(async call =>
-        {
-            started.SetResult();
-            await Task.Delay(Timeout.Infinite, call.Arg<CancellationToken>());
-        });
+        var submitter = new FakeSubmitter { Block = true };
         var coordinator = Create(submitter);
-        var submitting = coordinator.SubmitPendingAsync();
-        await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        coordinator.Start();
+        _time.Advance(ScrobbleCoordinator.CoalesceDelay);
+        await submitter.WaitForRunsAsync(1);
 
         coordinator.Dispose();
 
-        await FluentActions.Awaiting(() => submitting.WaitAsync(TimeSpan.FromSeconds(5)))
-            .Should().ThrowAsync<OperationCanceledException>();
+        submitter.LastToken.IsCancellationRequested.Should().BeTrue();
     }
 
-    [Theory]
-    [InlineData("lastfm")]
-    [InlineData("listenbrainz")]
-    [InlineData("credentials")]
-    public async Task ScrobblingChange_SubmitsAtOnce(string change)
+    [Fact]
+    public async Task ConnectingAndDisconnecting_RunsOnlyTheAffectedDestinationOnce()
     {
-        var submitter = Substitute.For<IListenSubmitter>();
+        var lastFm = new FakeSubmitter
+        {
+            Settings = [CoreSettings.LastFmScrobbling, CoreSettings.LastFmNowPlaying],
+            Account = ScrobblingAccount.LastFm
+        };
+        var listenBrainz = new FakeSubmitter
+        {
+            Settings = [CoreSettings.ListenBrainzScrobbling, CoreSettings.ListenBrainzEnabledSinceUtc],
+            Account = ScrobblingAccount.ListenBrainz
+        };
+        var song = new Song { Title = "Breakwater" };
+        _playback.CurrentTrack.Returns(song);
+        _playback.CurrentListenHistoryId.Returns(7L);
+        Create(lastFm, listenBrainz).Start();
+        _time.Advance(ScrobbleCoordinator.CoalesceDelay);
+        await Task.WhenAll(lastFm.WaitForRunsAsync(1), listenBrainz.WaitForRunsAsync(1));
+        var accounts = new ScrobblingAccounts(_settingsService);
+
+        await accounts.ConnectLastFmAsync("user", "session");
+        _time.Advance(ScrobbleCoordinator.CoalesceDelay);
+        await lastFm.WaitForRunsAsync(2);
+        await accounts.ConnectListenBrainzAsync("token");
+        _time.Advance(ScrobbleCoordinator.CoalesceDelay);
+        await listenBrainz.WaitForRunsAsync(2);
+        await accounts.DisconnectLastFmAsync();
+        _time.Advance(ScrobbleCoordinator.CoalesceDelay);
+        await lastFm.WaitForRunsAsync(3);
+
+        lastFm.Runs.Should().Be(3);
+        lastFm.Announcements.Should().Be(2);
+        listenBrainz.Runs.Should().Be(2);
+        listenBrainz.Announcements.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task RequestsWhileARunWaits_JoinIt()
+    {
+        var submitter = new FakeSubmitter();
         Create(submitter).Start();
 
-        if (change == "lastfm") _settingsService.Set(CoreSettings.LastFmScrobbling, true);
-        else if (change == "listenbrainz") _settingsService.Set(CoreSettings.ListenBrainzScrobbling, true);
-        else await _settingsService.SaveListenBrainzUserTokenAsync("token");
+        for (var i = 0; i < 3; i++)
+            _playback.ScrobbleEligibilityReached += Raise.Event<Action<Song, long, DateTime>>(new Song(), 1L, DateTime.UtcNow);
+        _time.Advance(ScrobbleCoordinator.CoalesceDelay);
+        await submitter.WaitForRunsAsync(1);
+        _playback.ScrobbleEligibilityReached += Raise.Event<Action<Song, long, DateTime>>(new Song(), 2L, DateTime.UtcNow);
+        _time.Advance(ScrobbleCoordinator.CoalesceDelay);
+        await submitter.WaitForRunsAsync(2);
 
-        await submitter.Received().SubmitPendingAsync(Arg.Any<CancellationToken>());
+        submitter.Runs.Should().Be(2);
     }
 
     [Fact]
     public async Task Dispose_StopsReactingToChanges()
     {
-        var submitter = Substitute.For<IListenSubmitter>();
+        var submitter = new FakeSubmitter { Settings = [CoreSettings.LastFmScrobbling], Account = ScrobblingAccount.ListenBrainz };
         var coordinator = Create(submitter);
         coordinator.Start();
         coordinator.Dispose();
@@ -98,19 +135,9 @@ public sealed class ScrobbleCoordinatorTests : IDisposable
         _settingsService.Set(CoreSettings.LastFmScrobbling, true);
         await _settingsService.SaveListenBrainzUserTokenAsync("token");
         _playback.ScrobbleEligibilityReached += Raise.Event<Action<Song, long, DateTime>>(new Song(), 1L, DateTime.UtcNow);
+        _time.Advance(TimeSpan.FromHours(1));
 
-        await submitter.DidNotReceiveWithAnyArgs().SubmitPendingAsync(default);
-    }
-
-    [Fact]
-    public async Task ListenReachingTheThreshold_IsSubmittedAtOnce()
-    {
-        var submitter = Substitute.For<IListenSubmitter>();
-        Create(submitter).Start();
-
-        _playback.ScrobbleEligibilityReached += Raise.Event<Action<Song, long, DateTime>>(new Song(), 1L, DateTime.UtcNow);
-
-        await submitter.Received(1).SubmitPendingAsync(Arg.Any<CancellationToken>());
+        submitter.Runs.Should().Be(0);
     }
 
     [Fact]
@@ -134,21 +161,19 @@ public sealed class ScrobbleCoordinatorTests : IDisposable
     [Fact]
     public async Task Retry_RunsEveryQuarterHour()
     {
-        var runs = new SemaphoreSlim(0);
-        var submitter = Substitute.For<IListenSubmitter>();
-        submitter.SubmitPendingAsync(Arg.Any<CancellationToken>()).Returns(_ =>
-        {
-            runs.Release();
-            return Task.CompletedTask;
-        });
+        var submitter = new FakeSubmitter();
         Create(submitter).Start();
+        _time.Advance(ScrobbleCoordinator.CoalesceDelay);
+        await submitter.WaitForRunsAsync(1);
 
         _time.Advance(TimeSpan.FromMinutes(14));
-        (await runs.WaitAsync(TimeSpan.FromMilliseconds(100))).Should().BeFalse();
+        submitter.Runs.Should().Be(1);
         _time.Advance(TimeSpan.FromMinutes(1));
-        (await runs.WaitAsync(TimeSpan.FromSeconds(5))).Should().BeTrue();
+        _time.Advance(ScrobbleCoordinator.CoalesceDelay);
+        await submitter.WaitForRunsAsync(2);
         _time.Advance(TimeSpan.FromMinutes(15));
-        (await runs.WaitAsync(TimeSpan.FromSeconds(5))).Should().BeTrue();
+        _time.Advance(ScrobbleCoordinator.CoalesceDelay);
+        await submitter.WaitForRunsAsync(3);
     }
 
     private ScrobbleCoordinator Create(params IListenSubmitter[] submitters)
@@ -157,5 +182,43 @@ public sealed class ScrobbleCoordinatorTests : IDisposable
             NullLogger<ScrobbleCoordinator>.Instance, _time);
         _coordinators.Add(coordinator);
         return coordinator;
+    }
+
+    private sealed class FakeSubmitter : IListenSubmitter
+    {
+        private readonly SemaphoreSlim _runs = new(0);
+        private int _runCount;
+        private int _announcements;
+
+        public bool Block { get; init; }
+        public Exception? Failure { get; init; }
+        public CancellationToken LastToken { get; private set; }
+        public int Runs => Volatile.Read(ref _runCount);
+        public int Announcements => Volatile.Read(ref _announcements);
+
+        public string Name => "fake";
+        public IReadOnlyCollection<Setting> Settings { get; init; } = [];
+        public ScrobblingAccount? Account { get; init; }
+
+        public Task UpdateNowPlayingAsync(Song song)
+        {
+            Interlocked.Increment(ref _announcements);
+            return Task.CompletedTask;
+        }
+
+        public Task SubmitPendingAsync(CancellationToken cancellationToken)
+        {
+            LastToken = cancellationToken;
+            Interlocked.Increment(ref _runCount);
+            _runs.Release();
+            if (Failure is not null) return Task.FromException(Failure);
+            return Block ? Task.Delay(Timeout.Infinite, cancellationToken) : Task.CompletedTask;
+        }
+
+        public async Task WaitForRunsAsync(int count)
+        {
+            while (Runs < count)
+                (await _runs.WaitAsync(TimeSpan.FromSeconds(5))).Should().BeTrue();
+        }
     }
 }

@@ -56,6 +56,14 @@ public class ListenBrainzScrobblerService : IListenBrainzScrobblerService, IList
 
     public string Name => "ListenBrainz";
 
+    public IReadOnlyCollection<Setting> Settings { get; } =
+    [
+        CoreSettings.ListenBrainzScrobbling, CoreSettings.ListenBrainzNowPlaying, CoreSettings.ListenBrainzServerUrl,
+        CoreSettings.ListenBrainzEnabledSinceUtc
+    ];
+
+    public ScrobblingAccount? Account => ScrobblingAccount.ListenBrainz;
+
     public async Task UpdateNowPlayingAsync(Song song)
     {
         if (!_settingsService.Get(CoreSettings.ListenBrainzNowPlaying)) return;

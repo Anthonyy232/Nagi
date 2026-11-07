@@ -14,9 +14,9 @@ public interface ISettingsService
     event Action<Setting>? SettingChanged;
 
     /// <summary>
-    ///     Raised when a Last.fm or ListenBrainz credential is saved or removed.
+    ///     Raised when the credential of a scrobbling account is saved or removed.
     /// </summary>
-    event Action? CredentialsChanged;
+    event Action<ScrobblingAccount>? CredentialsChanged;
 
     T Get<T>(Setting<T> setting);
 

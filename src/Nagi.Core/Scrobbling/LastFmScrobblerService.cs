@@ -43,6 +43,10 @@ public class LastFmScrobblerService : IListenSubmitter
 
     public string Name => "Last.fm";
 
+    public IReadOnlyCollection<Setting> Settings { get; } = [CoreSettings.LastFmScrobbling, CoreSettings.LastFmNowPlaying];
+
+    public ScrobblingAccount? Account => ScrobblingAccount.LastFm;
+
     public async Task UpdateNowPlayingAsync(Song song)
     {
         if (!_settingsService.Get(CoreSettings.LastFmNowPlaying)) return;
