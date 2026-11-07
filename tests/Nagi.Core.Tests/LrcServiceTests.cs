@@ -92,7 +92,7 @@ public class LrcServiceTests : IDisposable
 
         var result = await _lrcService.GetLyricsAsync(song);
 
-        result!.IsEmpty.Should().Be(!timed);
+        result!.IsSynced.Should().Be(timed);
         result.RawLyrics.Should().Be(expected);
         await _fileSystem.Received(1).WriteAllTextAsync(Arg.Any<string>(), expected);
         _fileSystem.FileExists(song.LrcFilePath!).Returns(true);
@@ -102,7 +102,7 @@ public class LrcServiceTests : IDisposable
 
         var cached = await _lrcService.GetLyricsAsync(song);
 
-        cached!.IsEmpty.Should().Be(!timed);
+        cached!.IsSynced.Should().Be(timed);
         cached.RawLyrics.Should().Be(expected);
         await _lrcLib.DidNotReceive().GetLyricsAsync(Arg.Any<Song>(), Arg.Any<CancellationToken>());
         await _netEase.DidNotReceive().GetLyricsAsync(Arg.Any<Song>(), Arg.Any<CancellationToken>());
@@ -247,10 +247,9 @@ public class LrcServiceTests : IDisposable
         _fileSystem.FileExists(LrcPath).Returns(true);
         _fileSystem.ReadAllTextAsync(LrcPath).Returns(lrcContent);
 
-        var result = await _lrcService.GetLyricsAsync(LrcPath);
+        var result = await _lrcService.GetLyricsAsync(new Song { LrcFilePath = LrcPath });
 
-        result.Should().NotBeNull();
-        result!.IsEmpty.Should().BeFalse();
+        result!.IsSynced.Should().BeTrue();
         result.Lines.Should().HaveCount(2);
         result.Lines[0].Text.Should().Be("Line 1");
         result.Lines[0].StartTime.Should().Be(TimeSpan.FromSeconds(1));
@@ -258,25 +257,40 @@ public class LrcServiceTests : IDisposable
         result.Lines[1].StartTime.Should().Be(TimeSpan.FromSeconds(5));
     }
 
-    [Fact]
-    public async Task GetLyricsAsync_WithNonExistentFile_ReturnsNull()
+    [Theory]
+    [InlineData("file")]
+    [InlineData("tags")]
+    [InlineData("online")]
+    public async Task GetLyricsAsync_PrefersTheLyricsFileThenTheTagsThenOnline(string source)
     {
-        _fileSystem.FileExists(LrcPath).Returns(false);
+        var song = new Song { Title = "Song", Lyrics = source == "online" ? null : "Embedded lyrics" };
+        if (source == "file")
+        {
+            song.LrcFilePath = LrcPath;
+            _fileSystem.FileExists(LrcPath).Returns(true);
+            _fileSystem.ReadAllTextAsync(LrcPath).Returns("[00:01.00]From the file");
+        }
+        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _lrcLib.GetLyricsAsync(Arg.Any<Song>(), Arg.Any<CancellationToken>()).Returns(Found("[00:01.00]From online"));
 
-        var result = await _lrcService.GetLyricsAsync(LrcPath);
+        var result = await _lrcService.GetLyricsAsync(song);
 
-        result.Should().BeNull();
+        result!.Lines[0].Text.Should().Be(source switch
+        {
+            "file" => "From the file",
+            "tags" => "Embedded lyrics",
+            _ => "From online"
+        });
+        await _lrcLib.Received(source == "online" ? 1 : 0).GetLyricsAsync(Arg.Any<Song>(), Arg.Any<CancellationToken>());
     }
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("   ")]
-    public async Task GetLyricsAsync_WithInvalidPath_ReturnsNull(string? path)
+    [Fact]
+    public void ParsePlainLyrics_KeepsOneBlankLineBetweenVerses()
     {
-        var result = await _lrcService.GetLyricsAsync(path!);
+        var result = LyricsParser.Parse("First\r\n\r\n\r\n Second ");
 
-        result.Should().BeNull();
+        result!.IsSynced.Should().BeFalse();
+        result.Lines.Select(line => line.Text).Should().Equal("First", "", "Second");
     }
 
     [Fact]
@@ -284,7 +298,7 @@ public class LrcServiceTests : IDisposable
     {
         var content = "eng||[00:01.00]Line 1\n[00:02.00]Line 2";
 
-        var result = _lrcService.ParseLyrics(content);
+        var result = LyricsParser.Parse(content)!;
 
         result.Should().NotBeNull();
         result.Lines.Should().HaveCount(2);
@@ -332,7 +346,7 @@ public class LrcServiceTests : IDisposable
             LrcFilePath = externalPath,
             Album = new Album { Title = "Album" }
         };
-        var expectedPath = Path.Combine(cacheRoot, FileNameHelper.GenerateLrcOverrideFileName(song.FilePath));
+        var expectedPath = LrcCache.OverridePath(cacheRoot, song.FilePath);
         _pathConfig.LrcCachePath.Returns(cacheRoot);
         _fileSystem.GetFiles(@"C:\Music", "*.lrc").Returns([externalPath]);
         _fileSystem.FileExists(expectedPath).Returns(true);
@@ -359,7 +373,7 @@ public class LrcServiceTests : IDisposable
     {
         const string cacheRoot = @"C:\cache\lrc";
         var song = new Song { FilePath = @"C:\Music\Song.flac" };
-        var previousPath = Path.Combine(cacheRoot, FileNameHelper.GenerateLrcOverrideFileName(song.FilePath));
+        var previousPath = LrcCache.OverridePath(cacheRoot, song.FilePath);
         song.LrcFilePath = previousPath;
         _pathConfig.LrcCachePath.Returns(cacheRoot);
         _fileSystem.FileExists(Arg.Any<string>()).Returns(true);
@@ -400,11 +414,10 @@ public class LrcServiceTests : IDisposable
     }
 
     [Fact]
-    public void GetCurrentLine_WithEmptyParsedLrc_ReturnsNull()
+    public void GetCurrentLine_WithNoLines_ReturnsNull()
     {
-        var empty = new ParsedLrc(Enumerable.Empty<LyricLine>());
         var hint = 0;
-        var result = _lrcService.GetCurrentLine(empty, TimeSpan.FromSeconds(5), ref hint);
+        var result = LyricsParser.GetCurrentLine([], TimeSpan.FromSeconds(5), ref hint);
         result.Should().BeNull();
     }
 
@@ -414,9 +427,9 @@ public class LrcServiceTests : IDisposable
     [InlineData(2)]
     public void GetCurrentLine_WithTranslatedLines_SelectsOriginalLine(int hint)
     {
-        var parsed = _lrcService.ParseLyrics("[00:01.00]First\n[00:01.00]Translation\n[00:02.00]Second\n[00:03.00]Third");
+        var parsed = LyricsParser.Parse("[00:01.00]First\n[00:01.00]Translation\n[00:02.00]Second\n[00:03.00]Third")!;
 
-        var line = _lrcService.GetCurrentLine(parsed, TimeSpan.FromSeconds(1), ref hint);
+        var line = LyricsParser.GetCurrentLine(parsed.Lines, TimeSpan.FromSeconds(1), ref hint);
 
         line!.Text.Should().Be("First");
         hint.Should().Be(0);
@@ -434,7 +447,7 @@ public class LrcServiceTests : IDisposable
             "[00:05.00]Untranslated",
             "[00:01.00][00:09.00]Chorus translation");
 
-        var result = _lrcService.ParseLyrics(content);
+        var result = LyricsParser.Parse(content)!;
 
         result.Lines.Select(line => (line.StartTime.TotalSeconds, line.Text, line.TranslatedText)).Should().Equal(
             (1, "Chorus", "Chorus translation"),
@@ -443,16 +456,12 @@ public class LrcServiceTests : IDisposable
             (9, "Chorus", "Chorus translation"));
     }
 
-    private static ParsedLrc CreateTestParsedLrc()
-    {
-        var lines = new List<LyricLine>
-        {
-            new() { StartTime = TimeSpan.FromSeconds(10), Text = "Line 1" },
-            new() { StartTime = TimeSpan.FromSeconds(20), Text = "Line 2" },
-            new() { StartTime = TimeSpan.FromSeconds(30), Text = "Line 3" }
-        };
-        return new ParsedLrc(lines);
-    }
+    private static List<LyricLine> CreateTestLines() =>
+    [
+        new(TimeSpan.FromSeconds(10), "Line 1"),
+        new(TimeSpan.FromSeconds(20), "Line 2"),
+        new(TimeSpan.FromSeconds(30), "Line 3")
+    ];
 
     [Theory]
     [InlineData(5, null)]
@@ -463,11 +472,11 @@ public class LrcServiceTests : IDisposable
     [InlineData(100, "Line 3")]
     public void GetCurrentLine_Simple_ReturnsCorrectLineForTime(double currentTimeSec, string? expectedText)
     {
-        var parsedLrc = CreateTestParsedLrc();
+        var lines = CreateTestLines();
         var currentTime = TimeSpan.FromSeconds(currentTimeSec);
 
         var hint = 0;
-        var result = _lrcService.GetCurrentLine(parsedLrc, currentTime, ref hint);
+        var result = LyricsParser.GetCurrentLine(lines, currentTime, ref hint);
 
         (result?.Text).Should().Be(expectedText);
     }
@@ -479,9 +488,9 @@ public class LrcServiceTests : IDisposable
     public void GetCurrentLine_WithHint_FindsLineAndUpdatesHint(
         int searchIndex, double currentTimeSec, string expectedText, int expectedIndex)
     {
-        var parsedLrc = CreateTestParsedLrc();
+        var lines = CreateTestLines();
 
-        var result = _lrcService.GetCurrentLine(parsedLrc, TimeSpan.FromSeconds(currentTimeSec), ref searchIndex);
+        var result = LyricsParser.GetCurrentLine(lines, TimeSpan.FromSeconds(currentTimeSec), ref searchIndex);
 
         result!.Text.Should().Be(expectedText);
         searchIndex.Should().Be(expectedIndex);
@@ -546,8 +555,7 @@ public class LrcServiceTests : IDisposable
     {
         const string cacheRoot = @"C:\cache\lrc";
         const string audioFilePath = @"C:\Music\Song.flac";
-        var cachePath = Path.Combine(cacheRoot, FileNameHelper.GenerateLrcCacheFileName(
-            audioFilePath, "Original Artist", "Original Album", "Original Title"));
+        var cachePath = LrcCache.CachedPath(cacheRoot, audioFilePath, "Original Artist", "Original Album", "Original Title");
         var song = new Song
         {
             Title = "Corrected Title",
@@ -625,13 +633,9 @@ public class LrcServiceTests : IDisposable
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void ParseLyrics_WithNullOrWhitespace_ReturnsEmptyParsedLrc(string? content)
+    public void ParseLyrics_WithNullOrWhitespace_ReturnsNull(string? content)
     {
-        var result = _lrcService.ParseLyrics(content);
-
-        result.Should().NotBeNull();
-        result.IsEmpty.Should().BeTrue();
-        result.Lines.Should().BeEmpty();
+        LyricsParser.Parse(content).Should().BeNull();
     }
 
     [Fact]
@@ -639,9 +643,9 @@ public class LrcServiceTests : IDisposable
     {
         var content = "[00:01.123]First Line\n[00:05.456]Second Line";
 
-        var result = _lrcService.ParseLyrics(content);
+        var result = LyricsParser.Parse(content)!;
 
-        result.IsEmpty.Should().BeFalse();
+        result.IsSynced.Should().BeTrue();
         result.Lines.Should().HaveCount(2);
         result.Lines[0].Text.Should().Be("First Line");
         result.Lines[0].StartTime.Should().Be(TimeSpan.FromMilliseconds(1123));
@@ -653,7 +657,7 @@ public class LrcServiceTests : IDisposable
     {
         var content = "[offset:250]\n[00:01.00][00:02.00]Same Line";
 
-        var result = _lrcService.ParseLyrics(content);
+        var result = LyricsParser.Parse(content)!;
 
         result.Lines.Should().HaveCount(2);
         result.Lines.Select(line => line.Text).Should().Equal("Same Line", "Same Line");

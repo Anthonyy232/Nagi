@@ -1,6 +1,7 @@
 using System.Threading.Channels;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nagi.Core.Helpers;
 using Nagi.Core.Models.Lyrics;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
@@ -26,33 +27,17 @@ public class LyricsPageViewModelTests
         _playback.PlaybackQueue.Returns(Array.Empty<Guid>());
         _romanization.ApplyRomanizationAsync(Arg.Any<IEnumerable<LyricLine>>(), Arg.Any<CancellationToken>())
             .Returns(call => Task.FromResult<IReadOnlyList<LyricLine>>(call.Arg<IEnumerable<LyricLine>>().ToList()));
-        _romanization.ApplyRomanizationAsync(Arg.Any<IEnumerable<string>>(), Arg.Any<CancellationToken>())
-            .Returns(call => Task.FromResult<IReadOnlyList<LyricLine>>(call.Arg<IEnumerable<string>>()
-                .Select(text => new LyricLine(TimeSpan.Zero, text)).ToList()));
     }
 
     [Theory]
-    [InlineData("sidecar", true)]
-    [InlineData("sidecar", false)]
-    [InlineData("embedded", false)]
-    [InlineData("network", true)]
-    public void LyricsSources_PreservePriorityAndUseTheSameDisplayPipeline(string source, bool timed)
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Lyrics_ShowTimedLinesOrPlainText(bool timed)
     {
         var song = new Song { Title = "Song" };
-        const string raw = "eng||First\r\n\r\n\r\nSecond";
-        var parsed = new ParsedLrc(timed ? [new LyricLine(TimeSpan.FromSeconds(2), "First")] : [], raw);
-        if (source == "sidecar")
-        {
-            song.LrcFilePath = "song.lrc";
-            song.Lyrics = "Lower-priority embedded lyrics";
-            _lyrics.GetLyricsAsync(song.LrcFilePath).Returns(parsed);
-        }
-        else if (source == "embedded")
-        {
-            song.Lyrics = raw;
-            _lyrics.ParseLyrics(raw).Returns(parsed);
-        }
-        else _lyrics.GetLyricsAsync(song, Arg.Any<CancellationToken>()).Returns(parsed);
+        const string raw = "[00:02.00]First";
+        LyricLine[] lines = [new(TimeSpan.FromSeconds(2), "First")];
+        _lyrics.GetLyricsAsync(song, Arg.Any<CancellationToken>()).Returns(new SongLyrics(raw, lines, timed));
         _library.GetSongByIdAsync(song.Id).Returns(song);
         _playback.CurrentTrack.Returns(song);
 
@@ -63,10 +48,7 @@ public class LyricsPageViewModelTests
         viewModel.EditableLyrics.Should().Be(raw);
         viewModel.CanEditLyrics.Should().BeTrue();
         viewModel.IsLoading.Should().BeFalse();
-        if (timed) viewModel.LyricLines.Should().Equal(parsed.Lines);
-        else viewModel.UnsyncedLyricLines.Select(line => line.Text).Should().Equal("First", "", "Second");
-        if (source != "network")
-            _lyrics.DidNotReceive().GetLyricsAsync(song, Arg.Any<CancellationToken>());
+        (timed ? viewModel.LyricLines : viewModel.UnsyncedLyricLines).Should().Equal(lines);
     }
 
     [Fact]
@@ -97,11 +79,11 @@ public class LyricsPageViewModelTests
         using var viewModel = CreateViewModel(dispatcher);
         dispatcher.Drain();
         var oldSong = new Song { Title = "Old" };
-        var pending = new TaskCompletionSource<ParsedLrc?>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var pending = new TaskCompletionSource<SongLyrics?>(TaskCreationOptions.RunContinuationsAsynchronously);
         _lyrics.GetLyricsAsync(oldSong, Arg.Any<CancellationToken>()).Returns(pending.Task);
         ChangeTrack(oldSong);
         dispatcher.Drain();
-        var next = new TaskCompletionSource<ParsedLrc?>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var next = new TaskCompletionSource<SongLyrics?>(TaskCreationOptions.RunContinuationsAsynchronously);
         if (dispose) viewModel.Dispose();
         else
         {
@@ -145,7 +127,7 @@ public class LyricsPageViewModelTests
     {
         var current = new Song { Title = "Current" };
         var next = new Song { Title = "Next" };
-        var currentLyrics = new TaskCompletionSource<ParsedLrc?>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var currentLyrics = new TaskCompletionSource<SongLyrics?>(TaskCreationOptions.RunContinuationsAsynchronously);
         var nextRequested = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         _library.GetSongByIdAsync(current.Id).Returns(current);
         _library.GetSongByIdAsync(next.Id).Returns(next);
@@ -153,7 +135,7 @@ public class LyricsPageViewModelTests
         _lyrics.GetLyricsAsync(next, Arg.Any<CancellationToken>()).Returns(_ =>
         {
             nextRequested.SetResult();
-            return Task.FromResult<ParsedLrc?>(null);
+            return Task.FromResult<SongLyrics?>(null);
         });
         _playback.PlaybackQueue.Returns(new[] { current.Id, next.Id });
         _playback.CurrentQueueIndex.Returns(0);
@@ -194,7 +176,7 @@ public class LyricsPageViewModelTests
     {
         var song = new Song { Title = title, ArtistName = string.Empty };
         _lyrics.GetLyricsAsync(song, Arg.Any<CancellationToken>())
-            .Returns(new ParsedLrc([new LyricLine(TimeSpan.Zero, title)], title));
+            .Returns(new SongLyrics(title, [new LyricLine(TimeSpan.Zero, title)], IsSynced: true));
         return song;
     }
 
@@ -253,7 +235,7 @@ public class LyricsPageViewModelTests
     private Song PlayingSongWithLyrics(string raw, bool cached)
     {
         var song = new Song { Title = "Song", Lyrics = raw };
-        _lyrics.ParseLyrics(raw).Returns(new ParsedLrc([], raw));
+        _lyrics.GetLyricsAsync(song, Arg.Any<CancellationToken>()).Returns(LyricsParser.Parse(raw));
         _lyrics.HasCachedLyrics(song).Returns(cached);
         _library.GetSongByIdAsync(song.Id).Returns(song);
         _playback.CurrentTrack.Returns(song);

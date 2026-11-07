@@ -144,7 +144,10 @@ public partial class AtlMetadataService : IMetadataService
         metadata.Bitrate = track.Bitrate > 0 ? track.Bitrate : null;
         metadata.Channels = track.ChannelsArrangement?.NbChannels > 0 ? track.ChannelsArrangement.NbChannels : null;
 
-        metadata.Lyrics = ArtistNameHelper.NormalizeStringCore(track.Lyrics?.FirstOrDefault()?.UnsynchronizedLyrics);
+        var lyrics = ArtistNameHelper.NormalizeStringCore(track.Lyrics?.FirstOrDefault()?.UnsynchronizedLyrics);
+        metadata.Lyrics = lyrics is null
+            ? null
+            : ArtistNameHelper.NormalizeStringCore(LyricsLanguagePrefix().Replace(lyrics, string.Empty));
 
         metadata.Composer = ArtistNameHelper.NormalizeStringCore(track.Composer);
         metadata.Copyright = ArtistNameHelper.NormalizeStringCore(track.Copyright);
@@ -299,12 +302,10 @@ public partial class AtlMetadataService : IMetadataService
     /// </summary>
     private async Task<string?> GetLrcPathAsync(string audioFilePath, DateTime audioFileLastWriteTime, string? artist, string? album, string? title, Track track)
     {
-        var overrideFileName = FileNameHelper.GenerateLrcOverrideFileName(audioFilePath);
-        var overridePath = Path.Combine(_pathConfig.LrcCachePath, overrideFileName);
+        var overridePath = LrcCache.OverridePath(_pathConfig.LrcCachePath, audioFilePath);
         if (_fileSystem.FileExists(overridePath)) return overridePath;
 
-        var cacheFileName = FileNameHelper.GenerateLrcCacheFileName(audioFilePath, artist, album, title);
-        var cachedLrcPath = Path.Combine(_pathConfig.LrcCachePath, cacheFileName);
+        var cachedLrcPath = LrcCache.CachedPath(_pathConfig.LrcCachePath, audioFilePath, artist, album, title);
 
         // Check for a valid cache entry. It's valid if it exists and is newer than the audio file.
         if (_fileSystem.FileExists(cachedLrcPath))
@@ -355,6 +356,10 @@ public partial class AtlMetadataService : IMetadataService
 
         return null;
     }
+
+    // ATL prefixes unsynchronized lyrics with their language, as in "eng||".
+    [GeneratedRegex(@"^[a-z]{2,3}\|\|", RegexOptions.IgnoreCase)]
+    private static partial Regex LyricsLanguagePrefix();
 
     [GeneratedRegex(@"^[-+]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][-+]?[0-9]+)?")]
     private static partial Regex ReplayGainNumberRegex();

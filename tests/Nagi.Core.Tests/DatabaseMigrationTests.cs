@@ -204,4 +204,24 @@ public class DatabaseMigrationTests
         (await context.Artists.ToDictionaryAsync(a => a.Name, a => a.MetadataLastCheckedUtc)).Should().Equal(
             new Dictionary<string, DateTime?> { ["Complete"] = checkedAt, ["No bio"] = null, ["No image"] = null });
     }
+
+    [Fact]
+    public async Task StripLyricsLanguagePrefix_RemovesOnlyALeadingLanguageCode()
+    {
+        await using var context = new MusicDbContext(
+            new DbContextOptionsBuilder<MusicDbContext>().UseSqlite("Data Source=:memory:").Options);
+        await context.Database.OpenConnectionAsync();
+        await context.GetService<IMigrator>().MigrateAsync("20261101215552_AddServerPlaylists");
+        var folder = new Folder { Name = "Music", Path = @"C:\Music" };
+        string[] lyrics = ["eng||Words", "EN||Words", "Words || more", "[00:01.00]eng||Words"];
+        context.Songs.AddRange(lyrics.Select((text, i) =>
+            new Song { Title = $"{i}", FilePath = $@"C:\Music\{i}.mp3", Folder = folder, Lyrics = text }));
+        await context.SaveChangesAsync();
+        context.ChangeTracker.Clear();
+
+        await context.Database.MigrateAsync();
+
+        (await context.Songs.OrderBy(s => s.Title).Select(s => s.Lyrics).ToListAsync())
+            .Should().Equal("Words", "Words", "Words || more", "[00:01.00]eng||Words");
+    }
 }

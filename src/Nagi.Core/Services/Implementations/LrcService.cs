@@ -1,6 +1,4 @@
 using Microsoft.Extensions.Logging;
-using ModernLrc;
-using ModernLrc.Model;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Models.Lyrics;
@@ -41,17 +39,15 @@ public class LrcService : ILrcService, IDisposable
         _settingsService.FetchOnlineLyricsEnabledChanged += OnFetchOnlineLyricsEnabledChanged;
     }
 
-    public async Task<ParsedLrc?> GetLyricsAsync(Song song, CancellationToken cancellationToken = default)
+    public async Task<SongLyrics?> GetLyricsAsync(Song song, CancellationToken cancellationToken = default)
     {
         var forceOnlineRefresh = false;
 
-        // Cache files created before identity hashes are not safe to reuse: two songs may already
-        // point at the same metadata-derived file.
         if (!string.IsNullOrWhiteSpace(song.LrcFilePath))
         {
-            var isLegacyCachePath = IsLegacyCachePath(song);
+            var isLegacyCachePath = LrcCache.IsLegacy(_pathConfig.LrcCachePath, song.LrcFilePath, LrcCache.Identity(song));
             if (!isLegacyCachePath && _fileSystemService.FileExists(song.LrcFilePath))
-                return await GetLyricsAsync(song.LrcFilePath).ConfigureAwait(false);
+                return await ReadLyricsFileAsync(song.LrcFilePath).ConfigureAwait(false) ?? LyricsParser.Parse(song.Lyrics);
 
             forceOnlineRefresh = true;
             _logger.LogInformation(
@@ -60,6 +56,8 @@ public class LrcService : ILrcService, IDisposable
                     : "Ignoring missing lyrics path while refreshing song {SongId}.",
                 song.Id);
         }
+
+        if (LyricsParser.Parse(song.Lyrics) is { } embeddedLyrics) return embeddedLyrics;
 
         // Like lyrics embedded in a file, a server song's own lyrics come first and don't need online lyrics turned on.
         if (song.IsRemote && (forceOnlineRefresh || song.LyricsLastCheckedUtc == null))
@@ -79,7 +77,7 @@ public class LrcService : ILrcService, IDisposable
             if (serverLyrics is not null)
             {
                 await CacheLyricsAsync(song, serverLyrics).ConfigureAwait(false);
-                return ParseLyrics(serverLyrics);
+                return LyricsParser.Parse(serverLyrics);
             }
         }
 
@@ -103,21 +101,20 @@ public class LrcService : ILrcService, IDisposable
         if (lookups.Count == 0) return null;
 
         // Provider order breaks ties; plain text must not hide another provider's timed lyrics.
-        ParsedLrc? selectedLyrics = null;
+        SongLyrics? selectedLyrics = null;
         bool isFinal;
         try
         {
-            isFinal = await ProviderPriority.TakeInOrderAsync(lookups, lyrics =>
+            isFinal = await ProviderPriority.TakeInOrderAsync(lookups, rawLyrics =>
             {
-                if (string.IsNullOrWhiteSpace(lyrics)) return false;
-                var parsed = ParseLyrics(lyrics);
-                if (parsed.IsEmpty)
+                if (LyricsParser.Parse(rawLyrics) is not { } lyrics) return false;
+                if (!lyrics.IsSynced)
                 {
-                    selectedLyrics ??= parsed;
+                    selectedLyrics ??= lyrics;
                     return false;
                 }
 
-                selectedLyrics = parsed;
+                selectedLyrics = lyrics;
                 return true;
             }, token).ConfigureAwait(false);
         }
@@ -130,7 +127,7 @@ public class LrcService : ILrcService, IDisposable
 
         if (selectedLyrics is not null)
         {
-            await CacheLyricsAsync(song, selectedLyrics.RawLyrics!).ConfigureAwait(false);
+            await CacheLyricsAsync(song, selectedLyrics.RawLyrics).ConfigureAwait(false);
             return selectedLyrics;
         }
 
@@ -151,22 +148,6 @@ public class LrcService : ILrcService, IDisposable
         }
 
         return null;
-    }
-
-    public async Task<ParsedLrc?> GetLyricsAsync(string lrcFilePath)
-    {
-        if (string.IsNullOrWhiteSpace(lrcFilePath) || !_fileSystemService.FileExists(lrcFilePath)) return null;
-
-        try
-        {
-            var fileContent = await _fileSystemService.ReadAllTextAsync(lrcFilePath).ConfigureAwait(false);
-            return ParseLyrics(fileContent);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to parse LRC file {LrcFilePath}", lrcFilePath);
-            return null;
-        }
     }
 
     public Task SaveLyricsAsync(Song song, string lrcContent)
@@ -196,7 +177,20 @@ public class LrcService : ILrcService, IDisposable
     public bool HasCachedLyrics(Song song)
     {
         ArgumentNullException.ThrowIfNull(song);
-        return IsCachePath(song.LrcFilePath);
+        return LrcCache.Contains(_pathConfig.LrcCachePath, song.LrcFilePath);
+    }
+
+    private async Task<SongLyrics?> ReadLyricsFileAsync(string path)
+    {
+        try
+        {
+            return LyricsParser.Parse(await _fileSystemService.ReadAllTextAsync(path).ConfigureAwait(false));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to read lyrics file {LrcFilePath}", path);
+            return null;
+        }
     }
 
     private async Task CacheLyricsAsync(Song song, string lrcContent)
@@ -213,12 +207,11 @@ public class LrcService : ILrcService, IDisposable
 
     private async Task WriteLyricsCacheAsync(Song song, string lrcContent, bool isOverride)
     {
-        var cacheIdentity = string.IsNullOrWhiteSpace(song.FilePath) ? song.Id.ToString("N") : song.FilePath;
-        var cacheFileName = isOverride
-            ? FileNameHelper.GenerateLrcOverrideFileName(cacheIdentity)
-            : FileNameHelper.GenerateLrcCacheFileName(
-                cacheIdentity, song.PrimaryArtistName, song.Album?.Title, song.Title);
-        var cachedLrcPath = Path.Combine(_pathConfig.LrcCachePath, cacheFileName);
+        var cacheRoot = _pathConfig.LrcCachePath;
+        var identity = LrcCache.Identity(song);
+        var cachedLrcPath = isOverride
+            ? LrcCache.OverridePath(cacheRoot, identity)
+            : LrcCache.CachedPath(cacheRoot, identity, song.PrimaryArtistName, song.Album?.Title, song.Title);
         var previousPath = song.LrcFilePath;
 
         await LyricsStorageHelper.SaveAsync(_fileSystemService, cachedLrcPath, lrcContent).ConfigureAwait(false);
@@ -228,102 +221,8 @@ public class LrcService : ILrcService, IDisposable
         await _libraryWriter.UpdateSongLrcPathAsync(song.Id, cachedLrcPath).ConfigureAwait(false);
         song.LrcFilePath = cachedLrcPath;
 
-        if (previousPath is not null && IsCachePath(previousPath) && _fileSystemService.FileExists(previousPath))
-            _fileSystemService.DeleteFile(previousPath);
-    }
-
-    private bool IsLegacyCachePath(Song song)
-    {
-        if (!IsCachePath(song.LrcFilePath)) return false;
-
-        var cacheIdentity = string.IsNullOrWhiteSpace(song.FilePath) ? song.Id.ToString("N") : song.FilePath;
-        var candidate = Path.GetFullPath(song.LrcFilePath!);
-        return !FileNameHelper.MatchesLrcCacheIdentity(candidate, cacheIdentity);
-    }
-
-    private bool IsCachePath(string? path)
-    {
-        if (string.IsNullOrWhiteSpace(path) || string.IsNullOrWhiteSpace(_pathConfig.LrcCachePath)) return false;
-
-        var cacheRoot = Path.TrimEndingDirectorySeparator(Path.GetFullPath(_pathConfig.LrcCachePath)) + Path.DirectorySeparatorChar;
-        var candidate = Path.GetFullPath(path);
-        return candidate.StartsWith(cacheRoot, StringComparison.OrdinalIgnoreCase);
-    }
-
-    public ParsedLrc ParseLyrics(string? content)
-    {
-        if (string.IsNullOrWhiteSpace(content)) return new ParsedLrc(Enumerable.Empty<LyricLine>());
-
-        try
-        {
-            var document = LrcParser.Parse(content).Document;
-            // LRC has no translation syntax, so files commonly repeat the original line's timestamp for it.
-            var lyricLines = document.Lines
-                .GroupBy(line => document.GetEffectiveTime(line.Timestamp))
-                .Select(group => CreateLine(group.Key, group.Select(line => line.GetText())));
-            return new ParsedLrc(lyricLines, content);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error parsing LRC content");
-            return new ParsedLrc(Enumerable.Empty<LyricLine>(), content);
-        }
-    }
-
-    private static LyricLine CreateLine(TimeSpan startTime, IEnumerable<string> texts)
-    {
-        var nonEmpty = texts.Where(text => !string.IsNullOrWhiteSpace(text)).ToList();
-        return new LyricLine(startTime, nonEmpty.FirstOrDefault() ?? string.Empty)
-        {
-            TranslatedText = nonEmpty.Count > 1 ? string.Join('\n', nonEmpty.Skip(1)) : null
-        };
-    }
-
-    public LyricLine? GetCurrentLine(ParsedLrc parsedLrc, TimeSpan currentTime, ref int searchStartIndex)
-    {
-        if (parsedLrc.IsEmpty) return null;
-
-        var lines = parsedLrc.Lines;
-        var lineCount = lines.Count;
-
-        if (searchStartIndex >= 0 && searchStartIndex < lineCount)
-        {
-            var currentLine = lines[searchStartIndex];
-            var nextLineStartTime = searchStartIndex + 1 < lineCount
-                ? lines[searchStartIndex + 1].StartTime
-                : TimeSpan.MaxValue;
-
-            if (currentLine.StartTime <= currentTime && currentTime < nextLineStartTime) return currentLine;
-        }
-
-        // If the hint was wrong (e.g., due to seeking), perform a full binary search.
-        var bestMatchIndex = FindBestMatchIndex(lines, currentTime);
-        searchStartIndex = bestMatchIndex != -1 ? bestMatchIndex : 0;
-
-        return bestMatchIndex != -1 ? lines[bestMatchIndex] : null;
-    }
-
-    private static int FindBestMatchIndex(IReadOnlyList<LyricLine> lines, TimeSpan currentTime)
-    {
-        var low = 0;
-        var high = lines.Count - 1;
-        var latestMatchIndex = -1;
-
-        while (low <= high)
-        {
-            var mid = low + (high - low) / 2;
-            if (lines[mid].StartTime <= currentTime)
-            {
-                latestMatchIndex = mid;
-                low = mid + 1;
-            }
-            else
-            {
-                high = mid - 1;
-            }
-        }
-
-        return latestMatchIndex;
+        if (LrcCache.Contains(cacheRoot, previousPath) && _fileSystemService.FileExists(previousPath!))
+            _fileSystemService.DeleteFile(previousPath!);
     }
 
     private void OnFetchOnlineLyricsEnabledChanged(bool isEnabled)

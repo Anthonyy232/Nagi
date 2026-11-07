@@ -20,11 +20,6 @@ public sealed class LyricRomanizationService : ILyricRomanizationService
         _providers = providers.ToList();
     }
 
-    public Task<IReadOnlyList<LyricLine>> ApplyRomanizationAsync(IEnumerable<string> lines, CancellationToken cancellationToken = default)
-    {
-        return ApplyRomanizationAsync(lines.Select(line => new LyricLine(TimeSpan.Zero, line)), cancellationToken);
-    }
-
     public async Task<IReadOnlyList<LyricLine>> ApplyRomanizationAsync(IEnumerable<LyricLine> lines, CancellationToken cancellationToken = default)
     {
         var snapshot = lines

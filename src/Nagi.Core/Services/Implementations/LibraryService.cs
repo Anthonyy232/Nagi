@@ -409,7 +409,8 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
             .ConfigureAwait(false) > 0;
     }
 
-    private bool IsPathInLrcCache(string? filePath) => IsExistingCacheFile(filePath, _pathConfig.LrcCachePath);
+    private bool IsPathInLrcCache(string? filePath) =>
+        LrcCache.Contains(_pathConfig.LrcCachePath, filePath) && _fileSystem.FileExists(filePath!);
 
     // Only files in Nagi's own cache: an LRC that sits next to the song belongs to the user.
     private void DeleteCachedLrcFiles(IEnumerable<string> lrcPaths)
