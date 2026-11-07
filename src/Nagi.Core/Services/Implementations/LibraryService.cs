@@ -68,7 +68,6 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
         _replayGainService = replayGainService;
         _imageProcessor = imageProcessor;
         _logger = logger;
-        _settingsService.FetchOnlineMetadataEnabledChanged += OnFetchOnlineMetadataEnabledChanged;
     }
 
     private void CancelActiveScan(string reason)
@@ -551,7 +550,6 @@ public partial class LibraryService : ILibraryWriter, ILibraryScanner, IDisposab
     public void Dispose()
     {
         if (Interlocked.Exchange(ref _disposeState, 1) != 0) return;
-        _settingsService.FetchOnlineMetadataEnabledChanged -= OnFetchOnlineMetadataEnabledChanged;
         _shutdownCts.Cancel();
         // These managed gates have no wait handles. Keep them usable while cancelled runs unwind.
         GC.SuppressFinalize(this);

@@ -1,5 +1,3 @@
-using Nagi.Core.Models;
-
 namespace Nagi.Core.Services.Abstractions;
 
 /// <param name="MusicBrainzId">The ID MusicBrainz found for an artist that had none, otherwise null.</param>
@@ -14,6 +12,9 @@ public interface IArtistMetadataService
     /// <summary>
     ///     Asks the enabled artist sources and keeps the first image and the first biography in priority order.
     /// </summary>
-    Task<ArtistMetadataResult> FindAsync(string artistName, string? musicBrainzId,
-        IReadOnlyList<ServiceProviderSetting> enabledProviders, CancellationToken cancellationToken = default);
+    /// <returns>
+    ///     Null when online metadata is turned off, before or during the lookup, or no metadata source is enabled.
+    /// </returns>
+    Task<ArtistMetadataResult?> FindAsync(string artistName, string? musicBrainzId,
+        CancellationToken cancellationToken = default);
 }

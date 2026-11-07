@@ -16,7 +16,6 @@ public class DiscordPresenceServiceTests
 {
     private readonly IMusicPlaybackService _playback = Substitute.For<IMusicPlaybackService>();
     private readonly IAlbumCoverService _albumCovers = Substitute.For<IAlbumCoverService>();
-    private readonly ISettingsService _settings = Substitute.For<ISettingsService>();
 
     public DiscordPresenceServiceTests() => _playback.PlaybackRate.Returns(1.0);
 
@@ -27,7 +26,7 @@ public class DiscordPresenceServiceTests
         configuration["Discord:AppId"].Returns("123456789");
         var clients = new List<DiscordRpcClient>();
         await using var service = new DiscordPresenceService(configuration,
-            NullLogger<DiscordPresenceService>.Instance, _playback, _albumCovers, _settings, appId =>
+            NullLogger<DiscordPresenceService>.Instance, _playback, _albumCovers, appId =>
             {
                 var client = new DiscordRpcClient(appId, client: Substitute.For<INamedPipeClient>());
                 clients.Add(client);
@@ -56,7 +55,7 @@ public class DiscordPresenceServiceTests
         configuration["Discord:AppId"].Returns(appId);
         var createClient = Substitute.For<Func<string, DiscordRpcClient>>();
         await using var service = new DiscordPresenceService(configuration,
-            NullLogger<DiscordPresenceService>.Instance, _playback, _albumCovers, _settings, createClient);
+            NullLogger<DiscordPresenceService>.Instance, _playback, _albumCovers, createClient);
 
         await service.InitializeAsync();
 
@@ -87,12 +86,11 @@ public class DiscordPresenceServiceTests
     {
         var url = "https://covers.test/".PadRight(urlLength, 'x');
         var expected = expectCover ? url : null;
-        _settings.GetFetchOnlineMetadataEnabledAsync().Returns(onlineMetadata);
-        _settings.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata).Returns(new List<ServiceProviderSetting>());
-        _albumCovers.FindCoverUrlAsync(default!, default!).ReturnsForAnyArgs(ServiceResult<string>.FromSuccess(url));
+        _albumCovers.FindCoverUrlAsync(default!, default)
+            .ReturnsForAnyArgs(onlineMetadata ? ServiceResult<string>.FromSuccess(url) : null);
         var album = new Album { Title = "Album" };
         await using var service = new DiscordPresenceService(Substitute.For<IConfiguration>(),
-            NullLogger<DiscordPresenceService>.Instance, _playback, _albumCovers, _settings,
+            NullLogger<DiscordPresenceService>.Instance, _playback, _albumCovers,
             Substitute.For<Func<string, DiscordRpcClient>>());
 
         var first = await service.FindCoverUrlAsync(new Song { Title = "One", Album = album, MusicBrainzReleaseId = "release" });
@@ -100,8 +98,9 @@ public class DiscordPresenceServiceTests
 
         first.Should().Be(expected);
         second.Should().Be(expected);
-        await _albumCovers.Received(onlineMetadata ? 1 : 0).FindCoverUrlAsync(
-            Arg.Is<AlbumCoverQuery>(q => q.Title == "Album" && q.ReleaseId == "release"),
-            Arg.Any<IReadOnlyList<ServiceProviderSetting>>(), Arg.Any<CancellationToken>());
+        // Without online metadata there is no answer to keep, so the next song asks again.
+        await _albumCovers.Received(onlineMetadata ? 1 : 2).FindCoverUrlAsync(Arg.Any<AlbumCoverQuery>(), Arg.Any<CancellationToken>());
+        await _albumCovers.Received(1).FindCoverUrlAsync(
+            Arg.Is<AlbumCoverQuery>(q => q.Title == "Album" && q.ReleaseId == "release"), Arg.Any<CancellationToken>());
     }
 }

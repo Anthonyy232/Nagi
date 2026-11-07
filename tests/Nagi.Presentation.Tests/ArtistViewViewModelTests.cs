@@ -20,7 +20,7 @@ public class ArtistViewViewModelTests
         var library = new LibraryFakes();
         var scanner = Substitute.For<ILibraryScanner>();
         var metadata = new TaskCompletionSource<Artist?>(TaskCreationOptions.RunContinuationsAsynchronously);
-        scanner.GetArtistDetailsAsync(Arg.Any<Guid>(), Arg.Any<bool>(), Arg.Any<CancellationToken>())
+        scanner.GetArtistDetailsAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(metadata.Task);
         using var viewModel = CreateViewModel(library, scanner);
         var originalName = viewModel.ArtistName;

@@ -20,9 +20,7 @@ public class LrcService : ILrcService, IDisposable
     private readonly ILibraryWriter _libraryWriter;
     private readonly IMusicServerService _musicServers;
 
-    private readonly object _ctsLock = new();
-    private CancellationTokenSource _settingsCts = new();
-    private bool _disposed;
+    private readonly OnlineLookupCancellation _onlineLookups = new();
 
     public LrcService(
         IFileSystemService fileSystemService,
@@ -86,18 +84,12 @@ public class LrcService : ILrcService, IDisposable
         }
 
         // Look online only if never checked before, unless the local file is missing or unsafe to reuse.
+        var turnedOff = _onlineLookups.Token;
         if ((!forceOnlineRefresh && song.LyricsLastCheckedUtc != null)
             || !await _settingsService.GetFetchOnlineLyricsEnabledAsync().ConfigureAwait(false))
             return null;
 
-        CancellationToken settingsToken;
-        lock (_ctsLock)
-        {
-            if (_disposed) return null;
-            settingsToken = _settingsCts.Token;
-        }
-
-        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, settingsToken);
+        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, turnedOff);
         var token = linkedCts.Token;
 
         if (token.IsCancellationRequested)
@@ -336,32 +328,14 @@ public class LrcService : ILrcService, IDisposable
 
     private void OnFetchOnlineLyricsEnabledChanged(bool isEnabled)
     {
-        lock (_ctsLock)
-        {
-            if (_disposed) return;
-
-            if (!isEnabled)
-            {
-                _logger.LogInformation("Fetch online lyrics disabled. Cancelling ongoing fetches.");
-                _settingsCts.Cancel();
-            }
-            else if (_settingsCts.IsCancellationRequested)
-            {
-                _settingsCts.Dispose();
-                _settingsCts = new CancellationTokenSource();
-            }
-        }
+        if (isEnabled) return;
+        _logger.LogInformation("Fetch online lyrics disabled. Cancelling ongoing fetches.");
+        _onlineLookups.CancelRunning();
     }
 
     public void Dispose()
     {
-        lock (_ctsLock)
-        {
-            if (_disposed) return;
-            _disposed = true;
-            _settingsService.FetchOnlineLyricsEnabledChanged -= OnFetchOnlineLyricsEnabledChanged;
-            _settingsCts.Cancel();
-            _settingsCts.Dispose();
-        }
+        _settingsService.FetchOnlineLyricsEnabledChanged -= OnFetchOnlineLyricsEnabledChanged;
+        _onlineLookups.CancelRunning();
     }
 }

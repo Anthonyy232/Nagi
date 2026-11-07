@@ -38,7 +38,11 @@ public interface ILibraryScanner
     Task<bool> ForceRescanMetadataAsync(IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default);
 
-    Task<Artist?> GetArtistDetailsAsync(Guid artistId, bool allowOnlineFetch, CancellationToken cancellationToken = default);
+    /// <summary>
+    ///     Gets the artist, first looking up a missing image or biography online if the artist was never looked up.
+    /// </summary>
+    Task<Artist?> GetArtistDetailsAsync(Guid artistId, CancellationToken cancellationToken = default);
+
     /// <summary>
     ///     Fills in missing artist images, biographies and album covers from the enabled online sources.
     ///     Returns at once if online metadata is turned off or a run is already in progress.

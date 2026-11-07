@@ -60,6 +60,7 @@ public class ServiceProviderIntegrationTests : IDisposable
                 _theAudioDbService,
                 _deezerService,
                 _wikipediaService,
+                _settingsService,
                 Substitute.For<ILogger<ArtistMetadataService>>()),
             _albumCoverService,
             httpClientFactory,
@@ -96,7 +97,7 @@ public class ServiceProviderIntegrationTests : IDisposable
         _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata)
             .Returns(new List<ServiceProviderSetting>());
 
-        await _libraryService.GetArtistDetailsAsync(artist.Id, true);
+        await _libraryService.GetArtistDetailsAsync(artist.Id);
 
         using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
         var assertArtist = await assertContext.Artists.FindAsync(artist.Id);
@@ -123,7 +124,7 @@ public class ServiceProviderIntegrationTests : IDisposable
         _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(ServiceResult<ArtistInfo>.FromSuccess(new ArtistInfo { Biography = "Available biography" }));
 
-        var result = await _libraryService.GetArtistDetailsAsync(artist.Id, true);
+        var result = await _libraryService.GetArtistDetailsAsync(artist.Id);
         result!.Biography.Should().Be("Available biography");
 
         await _theAudioDbService.DidNotReceive().GetArtistMetadataAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
@@ -156,7 +157,7 @@ public class ServiceProviderIntegrationTests : IDisposable
                 ImageUrl = "https://lastfm.test/artist.jpg"
             }));
 
-        var result = await _libraryService.GetArtistDetailsAsync(artist.Id, true);
+        var result = await _libraryService.GetArtistDetailsAsync(artist.Id);
 
         result!.Biography.Should().Be("Last.fm biography");
         _httpHandler.Requests.Select(request => request.RequestUri!.AbsoluteUri)
@@ -187,7 +188,7 @@ public class ServiceProviderIntegrationTests : IDisposable
             .Returns(new List<ServiceProviderSetting> { new() { Id = ServiceProviderIds.CoverArtArchive } });
         _albumCoverService.FindCoverUrlAsync(
                 Arg.Is<AlbumCoverQuery>(q => q.Title == "Album" && q.ArtistName == "Artist" && q.ReleaseId == "release-id"),
-                Arg.Any<IReadOnlyList<ServiceProviderSetting>>(), Arg.Any<CancellationToken>())
+                Arg.Any<CancellationToken>())
             .Returns(status switch
             {
                 ServiceResultStatus.Success => ServiceResult<string>.FromSuccess("https://covers.test/front.jpg"),
@@ -236,7 +237,7 @@ public class ServiceProviderIntegrationTests : IDisposable
 
         _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata)
             .Returns(new List<ServiceProviderSetting> { new() { Id = ServiceProviderIds.CoverArtArchive } });
-        _albumCoverService.FindCoverUrlAsync(default!, default!, default).ReturnsForAnyArgs(_ =>
+        _albumCoverService.FindCoverUrlAsync(default!, default).ReturnsForAnyArgs(_ =>
         {
             using var scanContext = _dbHelper.ContextFactory.CreateDbContext();
             scanContext.Albums.Single().CoverArtUri = scannedCover;

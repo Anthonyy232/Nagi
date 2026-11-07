@@ -8,13 +8,15 @@ using Nagi.Core.Services.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
-public class AlbumCoverService : IAlbumCoverService
+public class AlbumCoverService : IAlbumCoverService, IDisposable
 {
+    private readonly OnlineLookupCancellation _onlineLookups = new();
     private readonly ICoverArtArchiveService _coverArtArchive;
     private readonly IMusicBrainzService _musicBrainz;
     private readonly IAppleMusicService _appleMusic;
     private readonly IDeezerService _deezer;
     private readonly ILastFmMetadataService _lastFm;
+    private readonly ISettingsService _settingsService;
     private readonly ILogger<AlbumCoverService> _logger;
 
     public AlbumCoverService(
@@ -23,6 +25,7 @@ public class AlbumCoverService : IAlbumCoverService
         IAppleMusicService appleMusic,
         IDeezerService deezer,
         ILastFmMetadataService lastFm,
+        ISettingsService settingsService,
         ILogger<AlbumCoverService> logger)
     {
         _coverArtArchive = coverArtArchive;
@@ -30,11 +33,39 @@ public class AlbumCoverService : IAlbumCoverService
         _appleMusic = appleMusic;
         _deezer = deezer;
         _lastFm = lastFm;
+        _settingsService = settingsService;
         _logger = logger;
+        _settingsService.FetchOnlineMetadataEnabledChanged += OnFetchOnlineMetadataEnabledChanged;
     }
 
-    public async Task<ServiceResult<string>> FindCoverUrlAsync(AlbumCoverQuery album,
-        IReadOnlyList<ServiceProviderSetting> enabledProviders, CancellationToken cancellationToken = default)
+    public async Task<ServiceResult<string>?> FindCoverUrlAsync(AlbumCoverQuery album,
+        CancellationToken cancellationToken = default)
+    {
+        var turnedOff = _onlineLookups.Token;
+        if (!await _settingsService.GetFetchOnlineMetadataEnabledAsync().ConfigureAwait(false)) return null;
+        var enabledProviders = await _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata)
+            .ConfigureAwait(false);
+        if (!enabledProviders.Any(p => ProviderCatalog.Can(p.Id, ProviderCapabilities.AlbumCover))) return null;
+
+        using var linked = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, turnedOff);
+        try
+        {
+            return await AskSourcesAsync(album, enabledProviders, linked.Token).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+        {
+            return null;
+        }
+    }
+
+    public void Dispose()
+    {
+        _settingsService.FetchOnlineMetadataEnabledChanged -= OnFetchOnlineMetadataEnabledChanged;
+        _onlineLookups.CancelRunning();
+    }
+
+    private async Task<ServiceResult<string>> AskSourcesAsync(AlbumCoverQuery album,
+        IReadOnlyList<ServiceProviderSetting> enabledProviders, CancellationToken cancellationToken)
     {
         // A name search for an unknown title or artist would return some unrelated album.
         var canSearchByName = album.Title != Album.UnknownAlbumName && album.ArtistName != Artist.UnknownArtistName;
@@ -46,7 +77,7 @@ public class AlbumCoverService : IAlbumCoverService
             enabledProviders
                 .Where(p => ProviderCatalog.Can(p.Id, ProviderCapabilities.AlbumCover) &&
                             (canSearchByName || p.Id == ServiceProviderIds.CoverArtArchive))
-                .Select(p => FindCoverUrlAsync(p.Id, album, canSearchMusicBrainz, cancellationToken)),
+                .Select(p => AskSourceAsync(p.Id, album, canSearchMusicBrainz, cancellationToken)),
             url =>
             {
                 coverUrl = url;
@@ -58,7 +89,7 @@ public class AlbumCoverService : IAlbumCoverService
             : ServiceResult<string>.FromTemporaryError();
     }
 
-    private async Task<ServiceResult<string>> FindCoverUrlAsync(string providerId, AlbumCoverQuery album,
+    private async Task<ServiceResult<string>> AskSourceAsync(string providerId, AlbumCoverQuery album,
         bool canSearchMusicBrainz, CancellationToken cancellationToken)
     {
         var result = await (providerId switch
@@ -73,6 +104,11 @@ public class AlbumCoverService : IAlbumCoverService
         if (result.Data is not null)
             _logger.LogDebug("Using {Provider} cover for album '{AlbumTitle}'.", providerId, album.Title);
         return result;
+    }
+
+    private void OnFetchOnlineMetadataEnabledChanged(bool isEnabled)
+    {
+        if (!isEnabled) _onlineLookups.CancelRunning();
     }
 
     private async Task<ServiceResult<string>> FindInCoverArtArchiveAsync(AlbumCoverQuery album, bool canSearchMusicBrainz,

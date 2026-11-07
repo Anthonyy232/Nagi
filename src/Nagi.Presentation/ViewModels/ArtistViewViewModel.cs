@@ -109,18 +109,12 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         try
         {
             _artistId = artistId;
-            var onlineMetadataTask = _settingsService.GetFetchOnlineMetadataEnabledAsync();
-            var sortOrderTask = _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.ArtistViewSortOrderKey);
-
-            await Task.WhenAll(onlineMetadataTask, sortOrderTask);
+            CurrentSortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.ArtistViewSortOrderKey);
             token.ThrowIfCancellationRequested();
-
-            var shouldFetchOnline = await onlineMetadataTask;
-            CurrentSortOrder = await sortOrderTask;
 
             // Updates its own UI.
             var songsTask = RefreshOrSortSongsAsync(manualToken: token);
-            var artistTask = _libraryScanner.GetArtistDetailsAsync(artistId, shouldFetchOnline, token);
+            var artistTask = _libraryScanner.GetArtistDetailsAsync(artistId, token);
             var albumsTask = _libraryReader.GetTopAlbumsForArtistAsync(artistId, int.MaxValue);
 
             await Task.WhenAll(artistTask, albumsTask, songsTask);

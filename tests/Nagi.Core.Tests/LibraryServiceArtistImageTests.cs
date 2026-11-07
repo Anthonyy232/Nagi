@@ -399,7 +399,7 @@ public class LibraryServiceArtistImageTests : IDisposable
 
         var expectedPath = Path.Combine(ArtistImageCachePath, $"{artist.Id}.local.jpg");
 
-        var result = await _libraryService.GetArtistDetailsAsync(artist.Id, allowOnlineFetch: true);
+        var result = await _libraryService.GetArtistDetailsAsync(artist.Id);
 
         result.Should().NotBeNull();
         result!.LocalImageCachePath.Should().Be(expectedPath,
@@ -416,7 +416,7 @@ public class LibraryServiceArtistImageTests : IDisposable
         var (_, artist, _) = await SeedUpToDateSongAsync(localImageCachePath: existingLocal);
         SetupArtistImageAt(ArtistImagePath);
 
-        await _libraryService.GetArtistDetailsAsync(artist.Id, allowOnlineFetch: true);
+        await _libraryService.GetArtistDetailsAsync(artist.Id);
 
         await _imageProcessor.DidNotReceive().ProcessImageBytesAsync(Arg.Any<byte[]>());
     }

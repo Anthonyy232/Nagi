@@ -1,4 +1,3 @@
-using Nagi.Core.Models;
 using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Services.Abstractions;
@@ -13,9 +12,9 @@ public interface IAlbumCoverService
     ///     Asks the enabled album cover sources one at a time, in priority order, and returns the first cover found.
     /// </summary>
     /// <returns>
-    ///     A cover URL; not found once every source has answered; or a retryable failure when a source failed
-    ///     before any cover was found.
+    ///     A cover URL; not found once every source has answered; a retryable failure when a source failed before any
+    ///     cover was found; or null when online metadata is turned off, before or during the lookup, or no album
+    ///     cover source is enabled.
     /// </returns>
-    Task<ServiceResult<string>> FindCoverUrlAsync(AlbumCoverQuery album,
-        IReadOnlyList<ServiceProviderSetting> enabledProviders, CancellationToken cancellationToken = default);
+    Task<ServiceResult<string>?> FindCoverUrlAsync(AlbumCoverQuery album, CancellationToken cancellationToken = default);
 }
