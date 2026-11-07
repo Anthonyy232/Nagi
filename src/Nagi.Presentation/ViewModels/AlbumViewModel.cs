@@ -9,6 +9,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services;
@@ -45,8 +46,6 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
     private readonly IMusicNavigationService _musicNavigationService;
     private readonly IUIService _uiService;
 
-    private bool _isNavigating;
-
     public AlbumViewModel(ILibraryReader libraryReader, ILibraryNotifier libraryNotifier, IArtworkService artwork,
         IMusicPlaybackService musicPlaybackService,
         IMusicNavigationService musicNavigationService,
@@ -57,30 +56,34 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
         _musicPlaybackService = musicPlaybackService;
         _musicNavigationService = musicNavigationService;
         _uiService = uiService;
+        Sort = new SortOrderSelection<AlbumSortOrder>(SortOrders, AppSettings.AlbumsSortOrder, settingsService, () =>
+        {
+            CurrentPage = 1;
+            return LoadAsync(CancellationToken.None);
+        }, logger);
 
         Albums.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasAlbums));
     }
 
     public ObservableRangeCollection<AlbumViewModelItem> Albums { get; } = new();
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(CurrentSortOrderText))]
-    public partial AlbumSortOrder CurrentSortOrder { get; set; } = AlbumSortOrder.ArtistAsc;
+    private static readonly AlbumSortOrder[] SortOrders =
+    [
+        AlbumSortOrder.ArtistAsc, AlbumSortOrder.ArtistDesc, AlbumSortOrder.AlbumTitleAsc, AlbumSortOrder.AlbumTitleDesc,
+        AlbumSortOrder.YearAsc, AlbumSortOrder.YearDesc, AlbumSortOrder.SongCountAsc, AlbumSortOrder.SongCountDesc
+    ];
 
-    public string CurrentSortOrderText => SortOrderHelper.GetDisplayName(CurrentSortOrder);
+    public SortOrderSelection<AlbumSortOrder> Sort { get; }
 
     public bool HasAlbums => Albums.Any();
 
-    protected override void LoadInitialSortOrder() =>
-        CurrentSortOrder = _settingsService.Get(AppSettings.AlbumsSortOrder);
-
-    protected override string FormatTotalItemsText(int count) =>
-        count == 1
-            ? ResourceFormatter.Format(Strings.Albums_Count_Singular, count)
-            : ResourceFormatter.Format(Strings.Albums_Count_Plural, count);
+    protected override string FormatTotalItemsText(PagedResult<Album> result) =>
+        result.TotalCount == 1
+            ? ResourceFormatter.Format(Strings.Albums_Count_Singular, result.TotalCount)
+            : ResourceFormatter.Format(Strings.Albums_Count_Plural, result.TotalCount);
 
     protected override Task<PagedResult<Album>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token) =>
-        _libraryReader.GetAlbumsAsync(SearchTerm, CurrentSortOrder, pageNumber, pageSize, token);
+        _libraryReader.GetAlbumsAsync(SearchTerm, Sort.Current, pageNumber, pageSize, token);
 
     protected override void ApplyItemsToCollection(PagedResult<Album> result, bool append)
     {
@@ -94,12 +97,7 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
         return Task.CompletedTask;
     }
 
-    public async Task NavigateToAlbumDetailAsync(object? parameter)
-    {
-        if (_isNavigating) return;
-        try { _isNavigating = true; await _musicNavigationService.NavigateToAlbumAsync(parameter); }
-        finally { _isNavigating = false; }
-    }
+    public void OpenAlbum(AlbumViewModelItem album) => _musicNavigationService.OpenAlbum(album.Id);
 
     [RelayCommand]
     private async Task PlayAlbumAsync(Guid albumId)
@@ -119,22 +117,5 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
     }
 
     [RelayCommand]
-    public async Task GoToArtistAsync(object? parameter)
-    {
-        if (_isNavigating) return;
-        try { _isNavigating = true; await _musicNavigationService.NavigateToArtistAsync(parameter); }
-        finally { _isNavigating = false; }
-    }
-
-    [RelayCommand]
-    public async Task ChangeSortOrderAsync(string sortOrderString)
-    {
-        if (!Enum.TryParse<AlbumSortOrder>(sortOrderString, out var newSortOrder) || newSortOrder == CurrentSortOrder)
-            return;
-
-        CurrentSortOrder = newSortOrder;
-        _settingsService.Set(AppSettings.AlbumsSortOrder, newSortOrder);
-        CurrentPage = 1;
-        await LoadCommand.ExecuteAsync(CancellationToken.None);
-    }
+    private Task GoToArtistAsync(ArtistNavigationRequest request) => _musicNavigationService.OpenArtistAsync(request);
 }

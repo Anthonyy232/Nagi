@@ -10,6 +10,7 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
+using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services;
@@ -17,7 +18,7 @@ using Nagi.Core.Settings;
 
 namespace Nagi.Presentation.ViewModels;
 
-public partial class AlbumViewViewModel : SongListViewModelBase
+public partial class AlbumViewViewModel : DetailSongListViewModelBase<AlbumViewNavigationParameter>
 {
     private Guid _albumId;
     private int? _albumYear;
@@ -36,16 +37,18 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         ISettingsService settingsService,
         IUIService uiService,
         ILogger<AlbumViewViewModel> logger)
-        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger, SortOrders, AppSettings.AlbumViewSortOrder)
     {
-        AlbumTitle = Strings.AlbumView_DefaultAlbumTitle;
+        PageTitle = Strings.AlbumView_DefaultAlbumTitle;
         ArtistName = Strings.AlbumView_DefaultArtistName;
         AlbumDetailsText = string.Empty;
-
-        CurrentSortOrder = SongSortOrder.TrackNumberAsc;
     }
 
-    [ObservableProperty] public partial string AlbumTitle { get; set; }
+    private static readonly SongSortOrder[] SortOrders =
+    [
+        SongSortOrder.TrackNumberAsc, SongSortOrder.TrackNumberDesc, SongSortOrder.TitleAsc, SongSortOrder.TitleDesc,
+        SongSortOrder.YearAsc, SongSortOrder.YearDesc, SongSortOrder.FileCreatedDateAsc, SongSortOrder.FileCreatedDateDesc
+    ];
 
     [ObservableProperty] public partial string ArtistName { get; set; }
 
@@ -77,70 +80,31 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         return _libraryReader.GetSongIdsAsync(new SongScope.Album(_albumId), SearchTerm, sortOrder, token);
     }
 
-    public async Task LoadAlbumDetailsAsync(Guid albumId)
+    protected override string NotFoundTitle => Strings.AlbumView_AlbumNotFound;
+
+    protected override string OpenErrorTitle => Strings.AlbumView_Error;
+
+    protected override async Task<bool> OpenDetailsAsync(AlbumViewNavigationParameter parameter, CancellationToken token)
     {
-        if (_isDisposed) return;
-        ResetState();
-        var generation = CaptureSongContext();
+        _albumId = parameter.AlbumId;
+        var album = await _libraryReader.GetAlbumByIdAsync(parameter.AlbumId);
+        if (album is null || token.IsCancellationRequested) return album is not null;
 
-        _logger.LogDebug("Loading details for album {AlbumId}", albumId);
-        try
-        {
-            _albumId = albumId;
-            var albumTask = _libraryReader.GetAlbumByIdAsync(albumId);
-            var album = await albumTask;
-            if (!IsSongContextCurrent(generation)) return;
-            CurrentSortOrder = _settingsService.Get(AppSettings.AlbumViewSortOrder);
-
-            if (album != null)
-            {
-                AlbumTitle = album.Title;
-                ArtistName = album.ArtistName;
-                AlbumArtists = album.AlbumArtists;
-                PageTitle = album.Title;
-                _albumYear = album.Year;
-                CoverArtUri = ImageUriHelper.GetUriWithCacheBuster(album.CoverArtUri);
-                await RefreshOrSortSongsAsync();
-                _logger.LogDebug("Populated details for album '{AlbumTitle}' ({AlbumId})", album.Title, albumId);
-            }
-            else
-            {
-                HandleAlbumNotFound(albumId);
-            }
-        }
-        catch (Exception ex)
-        {
-            if (IsSongContextCurrent(generation)) HandleLoadError(albumId, ex);
-        }
+        PageTitle = album.Title;
+        ArtistName = album.ArtistName;
+        AlbumArtists = album.AlbumArtists;
+        _albumYear = album.Year;
+        CoverArtUri = ImageUriHelper.GetUriWithCacheBuster(album.CoverArtUri);
+        return true;
     }
 
-    private void HandleAlbumNotFound(Guid albumId)
+    protected override void ClearDetails()
     {
-        _logger.LogWarning("Album with ID {AlbumId} not found", albumId);
-        AlbumTitle = Strings.AlbumView_AlbumNotFound;
-        PageTitle = Strings.Generic_NoItems;
-        ArtistName = string.Empty;
-        AlbumArtists = new List<AlbumArtist>();
-        CoverArtUri = null;
-        Songs.Clear();
-        GroupedSongsFlat.Clear();
-        AlbumDetailsText = string.Empty;
-        TotalItemsText = ResourceFormatter.Format(Strings.Songs_Count_Plural, 0);
-    }
-
-    private void HandleLoadError(Guid albumId, Exception ex)
-    {
-        _logger.LogError(ex, "Failed to load album with ID {AlbumId}", albumId);
-        AlbumTitle = Strings.AlbumView_Error;
-        PageTitle = Strings.Generic_Error;
         ArtistName = string.Empty;
         AlbumArtists = new List<AlbumArtist>();
         CoverArtUri = null;
         AlbumDetailsText = string.Empty;
-        TotalItemsText = Strings.Generic_Error;
-        Songs.Clear();
         GroupedSongsFlat.Clear();
-        HasLoadError = true;
     }
 
     private void UpdateAlbumDetails(PagedResult<Song> pagedResult)
@@ -208,7 +172,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
 
     private void UpdateGrouping()
     {
-        IsGroupedByDisc = CurrentSortOrder == SongSortOrder.TrackNumberAsc && !IsSearchActive;
+        IsGroupedByDisc = Sort.Current == SongSortOrder.TrackNumberAsc && !IsSearchActive;
 
         if (IsGroupedByDisc)
         {
@@ -240,14 +204,10 @@ public partial class AlbumViewViewModel : SongListViewModelBase
     public override SongListColumns VisibleColumns =>
         (ChosenColumns & ~(SongListColumns.Artist | SongListColumns.Album | SongListColumns.Year)) | SongListColumns.TrackNumber;
 
+    public override bool ShowsGoToAlbum => false;
+
     protected override PlaybackContext GetPlaybackContext() =>
         _albumId != Guid.Empty ? new(PlaybackContextType.Album, _albumId) : base.GetPlaybackContext();
-
-    protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
-    {
-        _settingsService.Set(AppSettings.AlbumViewSortOrder, sortOrder);
-        return Task.CompletedTask;
-    }
 
     private void CancelDurationFetch()
     {

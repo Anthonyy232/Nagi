@@ -24,9 +24,7 @@ public class MusicNavigationServiceTests
         var navigation = Substitute.For<INavigationService>();
         var service = new MusicNavigationService(library, navigation, NullLogger<MusicNavigationService>.Instance);
 
-        await service.NavigateToArtistAsync(namedRequest
-            ? new ArtistNavigationRequest { Song = song, ArtistName = "guest" }
-            : song);
+        await service.OpenArtistAsync(new ArtistNavigationRequest { Song = song, ArtistName = namedRequest ? "guest" : null });
 
         var expectedId = namedRequest ? guest.Id : primary.Id;
         navigation.Received(1).NavigateTo(new ArtistViewNavigationParameter(expectedId));
@@ -44,7 +42,7 @@ public class MusicNavigationServiceTests
         var navigation = Substitute.For<INavigationService>();
         var service = new MusicNavigationService(library, navigation, NullLogger<MusicNavigationService>.Instance);
 
-        await service.NavigateToArtistAsync(new ArtistNavigationRequest { Song = song, ArtistName = requested.Name });
+        await service.OpenArtistAsync(new ArtistNavigationRequest { Song = song, ArtistName = requested.Name });
 
         navigation.Received(1).NavigateTo(new ArtistViewNavigationParameter(requested.Id));
         await library.DidNotReceive().GetArtistsForSongAsync(Arg.Any<Guid>());
@@ -58,7 +56,7 @@ public class MusicNavigationServiceTests
         var navigation = Substitute.For<INavigationService>();
         var service = new MusicNavigationService(library, navigation, NullLogger<MusicNavigationService>.Instance);
 
-        await service.NavigateToAlbumAsync(song);
+        await service.OpenAlbumAsync(song);
 
         navigation.Received(1).NavigateTo(new AlbumViewNavigationParameter(song.AlbumId.Value));
         await library.DidNotReceive().GetSongByIdAsync(Arg.Any<Guid>());

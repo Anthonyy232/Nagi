@@ -234,7 +234,7 @@ public class InsightsViewModelTests
     }
 
     private static InsightsViewModel CreateViewModel(IStatisticsService statistics) =>
-        new(statistics, new ImmediateDispatcher(), Substitute.For<INavigationService>(),
+        new(statistics, new ImmediateDispatcher(), Substitute.For<IMusicNavigationService>(),
             Substitute.For<IListeningService>(), Substitute.For<IUIService>(),
             NullLogger<InsightsViewModel>.Instance);
 }

@@ -2,24 +2,25 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
 namespace Nagi.Presentation.ViewModels;
 
-public partial class PlaylistSongListViewModel : SongListViewModelBase
+public partial class PlaylistSongListViewModel : DetailSongListViewModelBase<PlaylistSongViewNavigationParameter>
 {
     protected override bool PrefetchSongIds => true;
 
     private Guid? _currentPlaylistId;
     private bool _isSavingOrder;
-    private int _playlistGeneration;
 
     public PlaylistSongListViewModel(
         ILibraryReader libraryReader,
@@ -32,14 +33,16 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         ISettingsService settingsService,
         IUIService uiService,
         ILogger<PlaylistSongListViewModel> logger)
-        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger, [SongSortOrder.PlaylistOrder, .. CommonSortOrders], null)
     {
-        IsPaginationEnabled = false;
         Songs.CollectionChanged += OnSongsCollectionChanged;
     }
 
+    // Reordering by dragging needs every song in the list.
+    protected override bool IsPaged => false;
+
     public bool IsReorderingEnabled => !_isDisposed && !_isSavingOrder && !IsLoading && !HasLoadError &&
-        CanEditPlaylist && CurrentSortOrder == SongSortOrder.PlaylistOrder && !IsSearchActive &&
+        CanEditPlaylist && Sort.Current == SongSortOrder.PlaylistOrder && !IsSearchActive &&
         Songs.Count == TotalItemCount;
 
     [ObservableProperty]
@@ -59,10 +62,10 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         OnPropertyChanged(nameof(IsReorderingEnabled));
     }
 
-    protected override void OnCurrentSortOrderChangedInternal(SongSortOrder oldOrder, SongSortOrder newOrder)
+    protected override Task OnSortOrderChangedAsync()
     {
-        base.OnCurrentSortOrderChangedInternal(oldOrder, newOrder);
         OnPropertyChanged(nameof(IsReorderingEnabled));
+        return base.OnSortOrderChangedAsync();
     }
 
     protected override void OnLoadingStateChanged(bool isLoading)
@@ -77,31 +80,17 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         RemoveSelectedSongsFromPlaylistCommand.NotifyCanExecuteChanged();
     }
 
-    public async Task InitializeAsync(string title, Guid playlistId, string? coverImageUri = null)
+    protected override async Task<bool> OpenDetailsAsync(PlaylistSongViewNavigationParameter parameter, CancellationToken token)
     {
-        if (_isDisposed) return;
-        ResetState();
-        CurrentSortOrder = SongSortOrder.PlaylistOrder;
-        _logger.LogDebug("Initializing for playlist '{Title}' (ID: {PlaylistId})", title, playlistId);
-
-        PageTitle = title;
-        _currentPlaylistId = playlistId;
-        CoverImageUri = coverImageUri;
-        var generation = _playlistGeneration;
-        try
-        {
-            var playlist = await _libraryReader.GetPlaylistByIdAsync(playlistId);
-            if (_isDisposed || generation != _playlistGeneration) return;
-            // A server's playlist follows the server at each sync, so it can't be changed here.
-            CanEditPlaylist = playlist?.IsFromServer != true;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to load playlist {PlaylistId}", playlistId);
-        }
-
-        await RefreshOrSortSongsCommand.ExecuteAsync(null);
-        OnPropertyChanged(nameof(IsReorderingEnabled));
+        Sort.Current = SongSortOrder.PlaylistOrder;
+        PageTitle = parameter.Title;
+        _currentPlaylistId = parameter.PlaylistId;
+        CoverImageUri = parameter.CoverImageUri;
+        var playlist = await _libraryReader.GetPlaylistByIdAsync(parameter.PlaylistId);
+        if (token.IsCancellationRequested) return true;
+        // A server's playlist follows the server at each sync, so it can't be changed here.
+        CanEditPlaylist = playlist?.IsFromServer != true;
+        return true;
     }
 
     protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
@@ -128,17 +117,19 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         !_currentPlaylistId.HasValue || !HasSelectedSongs ? Task.CompletedTask : RunActionAsync(async () =>
         {
             var playlistId = _currentPlaylistId.Value;
-            var generation = _playlistGeneration;
+            var token = OpenToken;
             var songIdsToRemove = await GetCurrentSelectionIdsAsync();
-            if (_isDisposed || generation != _playlistGeneration || songIdsToRemove.Count == 0) return;
+            if (_isDisposed || token.IsCancellationRequested || songIdsToRemove.Count == 0) return;
             _logger.LogDebug("Removing {SongCount} songs from playlist ID {PlaylistId}", songIdsToRemove.Count,
                 playlistId);
 
             var success =
                 await _playlistService.RemoveSongsFromPlaylistAsync(playlistId, songIdsToRemove);
-            if (success && !_isDisposed && generation == _playlistGeneration)
-                await RefreshOrSortSongsCommand.ExecuteAsync(null);
+            if (success && !_isDisposed && !token.IsCancellationRequested)
+                await LoadAsync(CancellationToken.None);
         });
+
+    public override ICommand RemoveSelectionCommand => RemoveSelectedSongsFromPlaylistCommand;
 
     private bool CanRemoveSongs()
     {
@@ -152,13 +143,9 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         var songs = Songs.ToList();
         var orderedIds = songs.Select(song => song.Id).ToList();
         var visibleIds = orderedIds.ToHashSet();
-        if (movedSongs.Any(song => !visibleIds.Contains(song.Id))) return;
-        lock (_fullSongIdsLock)
-        {
-            if (_fullSongIdList.SequenceEqual(orderedIds)) return;
-        }
+        if (movedSongs.Any(song => !visibleIds.Contains(song.Id)) || !ReplaceCachedSongIds(orderedIds)) return;
         var playlistId = _currentPlaylistId.Value;
-        var generation = _playlistGeneration;
+        var token = OpenToken;
         var normalize = movedSongs.Count > 1;
         var moved = movedSongs.First();
         var newOrder = moved.Order;
@@ -180,11 +167,6 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
 
         _isSavingOrder = true;
         OnPropertyChanged(nameof(IsReorderingEnabled));
-        lock (_fullSongIdsLock)
-        {
-            _fullSongIdList.Clear();
-            _fullSongIdList.AddRange(orderedIds);
-        }
 
         var saved = false;
         try
@@ -192,7 +174,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
             saved = normalize
                 ? await _playlistService.UpdatePlaylistOrderAsync(playlistId, orderedIds)
                 : await _playlistService.MovePlaylistSongAsync(playlistId, moved.Id, newOrder);
-            if (saved && !_isDisposed && generation == _playlistGeneration)
+            if (saved && !_isDisposed && !token.IsCancellationRequested)
             {
                 if (normalize)
                     for (var i = 0; i < songs.Count; i++) songs[i].Order = i + 1;
@@ -206,10 +188,10 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         }
         try
         {
-            if (!saved && !_isDisposed && generation == _playlistGeneration)
+            if (!saved && !_isDisposed && !token.IsCancellationRequested)
             {
-                await RefreshOrSortSongsAsync();
-                if (!_isDisposed && generation == _playlistGeneration)
+                await LoadAsync(CancellationToken.None);
+                if (!_isDisposed && !token.IsCancellationRequested)
                     await _uiService.ShowMessageDialogAsync(
                         Strings.Generic_Error, Strings.Playlist_ErrorSavingOrder);
             }
@@ -229,9 +211,6 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
 
     public override void ResetState()
     {
-        _logger.LogDebug("Cleaning up PlaylistSongListViewModel resources");
-
-        _playlistGeneration++;
         _currentPlaylistId = null;
         CanEditPlaylist = false;
 

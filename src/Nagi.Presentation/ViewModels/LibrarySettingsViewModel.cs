@@ -138,39 +138,32 @@ public partial class LibrarySettingsViewModel : SettingsSectionViewModel
         _metadataRescanCts = rescanCts;
         var token = rescanCts.Token;
 
-        _globalOperation.IsInProgress = true;
-        _globalOperation.StatusMessage = Strings.Settings_Status_Rescan_Preparing;
-        _globalOperation.IsIndeterminate = true;
-        _globalOperation.SetCancellation(rescanCts.Cancel);
+        using (_globalOperation.Begin(Strings.Settings_Status_Rescan_Preparing, rescanCts.Cancel))
+            try
+            {
+                var progress = _globalOperation.CreateProgress(token);
+                await _libraryFolders.ForceRescanMetadataAsync(progress, token);
+                token.ThrowIfCancellationRequested();
+                // A sync applies the split settings to server songs.
+                await _musicServers.SyncAllAsync(progress, token);
+                token.ThrowIfCancellationRequested();
 
-        try
-        {
-            var progress = _globalOperation.CreateProgress(token);
-            await _libraryFolders.ForceRescanMetadataAsync(progress, token);
-            token.ThrowIfCancellationRequested();
-            // A sync applies the split settings to server songs.
-            await _musicServers.SyncAllAsync(progress, token);
-            token.ThrowIfCancellationRequested();
-
-            await _uiService.ShowMessageDialogAsync(Strings.Settings_Dialog_RescanComplete_Title, Strings.Settings_Dialog_RescanComplete_Content);
-        }
-        catch (OperationCanceledException)
-        {
-            _logger.LogInformation("Metadata rescan cancelled.");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Metadata rescan failed.");
-            await _uiService.ShowMessageDialogAsync(Strings.Settings_Dialog_RescanFailed_Title, Strings.Settings_Dialog_RescanFailed_Content);
-        }
-        finally
-        {
-            rescanCts.Cancel();
-            _metadataRescanCts = null;
-            _globalOperation.SetCancellation(null);
-            _globalOperation.IsInProgress = false;
-            _globalOperation.IsIndeterminate = false;
-        }
+                await _uiService.ShowMessageDialogAsync(Strings.Settings_Dialog_RescanComplete_Title, Strings.Settings_Dialog_RescanComplete_Content);
+            }
+            catch (OperationCanceledException)
+            {
+                _logger.LogInformation("Metadata rescan cancelled.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Metadata rescan failed.");
+                await _uiService.ShowMessageDialogAsync(Strings.Settings_Dialog_RescanFailed_Title, Strings.Settings_Dialog_RescanFailed_Content);
+            }
+            finally
+            {
+                rescanCts.Cancel();
+                _metadataRescanCts = null;
+            }
     }
 
     private static List<ServiceProviderSetting> ToSettings(IReadOnlyList<ServiceProviderSettingViewModel> providers) =>

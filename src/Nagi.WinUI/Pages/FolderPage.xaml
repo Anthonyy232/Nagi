@@ -1,10 +1,12 @@
 <Page
     x:Class="Nagi.WinUI.Pages.FolderPage"
+    NavigationCacheMode="Enabled"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uicontrols="using:Nagi.WinUI.Controls"
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:vm="using:Nagi.Presentation.ViewModels"
     x:Name="FolderPageRoot"
@@ -27,8 +29,8 @@
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
                 <Button
-                        ToolTipService.ToolTip="{x:Bind resources:Strings.FolderPage_RandomButton_ToolTip, Mode=OneTime}"
-                        AutomationProperties.Name="{x:Bind resources:Strings.FolderPage_RandomButton_ToolTip, Mode=OneTime}"
+                        ToolTipService.ToolTip="{x:Bind resources:Strings.Generic_PickRandom, Mode=OneTime}"
+                        AutomationProperties.Name="{x:Bind resources:Strings.Generic_PickRandom, Mode=OneTime}"
                         Style="{StaticResource SongListViewPageIconButton}"
                         Command="{x:Bind ViewModel.PlayRandomFolderCommand}"
                         Margin="0,0,1,0"
@@ -67,10 +69,10 @@
             IsItemClickEnabled="True"
             ItemClick="FoldersGridView_ItemClick"
             ItemContainerStyle="{StaticResource AnimatedGridViewItemStyle}"
-            ItemsSource="{x:Bind ViewModel.Folders, Mode=OneWay}"
+            ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
             SelectionMode="None"
             Padding="{StaticResource PageContentPadding}"
-            Visibility="{x:Bind ViewModel.HasFolders, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+            Visibility="{x:Bind ViewModel.HasItems, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsWrapGrid ItemWidth="{StaticResource CollectionGridItemWidth}" Orientation="Horizontal" />
@@ -86,7 +88,7 @@
                         <Grid.ContextFlyout>
                             <MenuFlyout>
                                 <MenuFlyoutItem
-                                    Text="{x:Bind resources:Strings.FolderPage_Menu_Play, Mode=OneTime}"
+                                    Text="{x:Bind resources:Strings.Generic_Play, Mode=OneTime}"
                                     Command="{Binding DataContext.PlayFolderCommand, ElementName=FolderPageRoot}"
                                     CommandParameter="{x:Bind Id}"
                                     IsEnabled="{Binding DataContext.IsAnyOperationInProgress, ElementName=FolderPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
@@ -152,32 +154,11 @@
             </GridView.ItemTemplate>
         </GridView>
 
-        <StackPanel
-            Grid.Row="1"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Spacing="16"
-            Visibility="{x:Bind ViewModel.HasFolders, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
-            <StackPanel.ChildrenTransitions>
-                <TransitionCollection>
-                    <EntranceThemeTransition FromVerticalOffset="20" />
-                </TransitionCollection>
-            </StackPanel.ChildrenTransitions>
-            <FontIcon
-                Glyph="&#xED25;"
-                FontSize="48"
-                Margin="0,0,0,12"
-                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                HorizontalAlignment="Center" />
-            <TextBlock
-                HorizontalAlignment="Center"
-                Text="{x:Bind resources:Strings.FolderPage_Empty_Title, Mode=OneTime}"
-                Style="{StaticResource TitleTextBlockStyle}" />
-            <TextBlock
-                HorizontalAlignment="Center"
-                Text="{x:Bind resources:Strings.FolderPage_Empty_Subtitle, Mode=OneTime}"
-                Style="{StaticResource SubtitleTextBlockStyle}"
-                Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
-        </StackPanel>
+        <uicontrols:EmptyState Grid.Row="1"
+                               Glyph="&#xED25;"
+                               Title="{x:Bind resources:Strings.FolderPage_Empty_Title, Mode=OneTime}"
+                               Subtitle="{x:Bind resources:Strings.FolderPage_Empty_Subtitle, Mode=OneTime}"
+                               IsShown="{x:Bind ViewModel.ShowEmptyState, Mode=OneWay}"
+                               HasLoadError="{x:Bind ViewModel.HasLoadError, Mode=OneWay}" />
     </Grid>
 </Page>

@@ -370,17 +370,11 @@
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} amhrán</value>
   </data>
-  <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Liosta seinm á thosú…</value>
-  </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Níl aon amhráin ag teacht le rialacha an tseinmliosta chliste seo.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>Earráid ag tosú athsheinm don seinmliosta seo.</value>
-  </data>
-  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Liosta seinm randamach á roghnú…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Níor aimsíodh aon seinmliostaí.</value>
@@ -391,20 +385,8 @@
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
     <value>Earráid ag seinm seinmliosta randamach.</value>
   </data>
-  <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Liostaí seinm á lódáil…</value>
-  </data>
-  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>Earráid ag luchtú seinmliostaí.</value>
-  </data>
-  <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Liosta seinm nua á chruthú…</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Tharla earráid agus an seinmliosta á chruthú.</value>
-  </data>
-  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Clúdach an liosta seinm á nuashonrú…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Theip ar chlúdach seinmliosta a nuashonrú.</value>
@@ -412,26 +394,17 @@
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
     <value>Tharla earráid agus an clúdach seinmliosta á nuashonrú.</value>
   </data>
-  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Íomhá an liosta seinm á baint…</value>
-  </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Theip ar íomhá seinmliosta a bhaint.</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
     <value>Tharla earráid agus an íomhá seinmliosta á baint.</value>
   </data>
-  <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Liosta seinm á athainmniú…</value>
-  </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Theip ar an seinmliosta a athainmniú.</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
     <value>Tharla earráid agus an seinmliosta á athainmniú.</value>
-  </data>
-  <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Liosta seinm á scriosadh…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Theip ar an seinmliosta a scriosadh.</value>
@@ -529,9 +502,6 @@ Comhaid nárbh fhéidir a iompórtáil: {0}.</value>
   </data>
   <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
     <value>rialacha</value>
-  </data>
-  <data name="SongList_PageTitle_Default" xml:space="preserve">
-    <value>Amhráin</value>
   </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} mír</value>
@@ -963,11 +933,8 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cuardaigh albaim…</value>
   </data>
-  <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
+  <data name="Generic_PickRandom" xml:space="preserve">
     <value>Roghnaigh ceann go randamach</value>
-  </data>
-  <data name="AlbumPage_Menu_Play" xml:space="preserve">
-    <value>Seinn</value>
   </data>
   <data name="AlbumPage_Empty_Title" xml:space="preserve">
     <value>Níor aimsíodh albaim ar bith</value>
@@ -978,23 +945,14 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="AlbumViewPage_Header_Label" xml:space="preserve">
     <value>Albam</value>
   </data>
-  <data name="AlbumViewPage_Songs_Title" xml:space="preserve">
+  <data name="SongList_Songs" xml:space="preserve">
     <value>Amhráin</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cuardaigh san albam…</value>
   </data>
-  <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Seinn uile</value>
-  </data>
-  <data name="AlbumViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Seinn gach amhrán in ord randamach</value>
-  </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
     <value>Níor aimsíodh amhráin ar bith san albam seo</value>
-  </data>
-  <data name="AlbumViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Bain triail as cuardach a dhéanamh ar rud éigin eile</value>
   </data>
   <data name="ArtistPage_Title" xml:space="preserve">
     <value>Ealaíontóirí</value>
@@ -1002,16 +960,10 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cuardaigh ealaíontóirí…</value>
   </data>
-  <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Roghnaigh ceann go randamach</value>
-  </data>
-  <data name="ArtistPage_Menu_Play" xml:space="preserve">
-    <value>Seinn</value>
-  </data>
-  <data name="ArtistPage_Menu_ChangeImage" xml:space="preserve">
+  <data name="Generic_ChangeImage" xml:space="preserve">
     <value>Athraigh Íomhá</value>
   </data>
-  <data name="ArtistPage_Menu_RemoveImage" xml:space="preserve">
+  <data name="Generic_RemoveImage" xml:space="preserve">
     <value>Bain Íomhá</value>
   </data>
   <data name="ArtistPage_Empty_Title" xml:space="preserve">
@@ -1023,47 +975,23 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
     <value>Athraigh íomhá ealaíontóra</value>
   </data>
-  <data name="ArtistViewPage_ImageMenu_ChangeImage" xml:space="preserve">
-    <value>Athraigh Íomhá</value>
-  </data>
-  <data name="ArtistViewPage_ImageMenu_RemoveImage" xml:space="preserve">
-    <value>Bain Íomhá</value>
-  </data>
   <data name="ArtistViewPage_Header_Label" xml:space="preserve">
     <value>Ealaíontóir</value>
   </data>
   <data name="ArtistViewPage_Albums_Title" xml:space="preserve">
     <value>Príomhalbaim</value>
   </data>
-  <data name="ArtistViewPage_Songs_Title" xml:space="preserve">
-    <value>Amhráin</value>
-  </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cuardaigh san ealaíontóir…</value>
-  </data>
-  <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Seinn uile</value>
-  </data>
-  <data name="ArtistViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Seinn gach amhrán in ord randamach</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
     <value>Níor aimsíodh amhráin ar bith don ealaíontóir seo</value>
   </data>
-  <data name="ArtistViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Bain triail as cuardach a dhéanamh ar rud éigin eile</value>
-  </data>
   <data name="FolderPage_Title" xml:space="preserve">
     <value>Fillteáin</value>
   </data>
-  <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Roghnaigh ceann go randamach</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Cuir Fillteán Leis</value>
-  </data>
-  <data name="FolderPage_Menu_Play" xml:space="preserve">
-    <value>Seinn</value>
   </data>
   <data name="FolderPage_Menu_Rescan" xml:space="preserve">
     <value>Athscanadh</value>
@@ -1077,26 +1005,11 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
     <value>Cuir fillteáin ceoil leis chun tús a chur leis</value>
   </data>
-  <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
-    <value>Seinn</value>
-  </data>
-  <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>Cuir le Liosta Seinm</value>
-  </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Fillteán</value>
   </data>
-  <data name="FolderSongViewPage_Songs_Title" xml:space="preserve">
-    <value>Amhráin</value>
-  </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cuardaigh san fhillteán…</value>
-  </data>
-  <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Seinn uile</value>
-  </data>
-  <data name="FolderSongViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Seinn gach amhrán in ord randamach</value>
   </data>
   <data name="FolderSongViewPage_Empty_Title" xml:space="preserve">
     <value>Tá an fillteán seo folamh</value>
@@ -1110,12 +1023,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cuardaigh seánraí…</value>
   </data>
-  <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Roghnaigh ceann go randamach</value>
-  </data>
-  <data name="GenrePage_Menu_Play" xml:space="preserve">
-    <value>Seinn</value>
-  </data>
   <data name="GenrePage_Empty_Title" xml:space="preserve">
     <value>Níor aimsíodh seánraí ar bith</value>
   </data>
@@ -1128,40 +1035,37 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cuardaigh sa leabharlann…</value>
   </data>
-  <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
+  <data name="SongList_PlayAll" xml:space="preserve">
     <value>Seinn uile</value>
   </data>
-  <data name="LibraryPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
+  <data name="SongList_ShuffleAll" xml:space="preserve">
     <value>Seinn gach amhrán in ord randamach</value>
   </data>
-  <data name="LibraryPage_Context_Play" xml:space="preserve">
+  <data name="Generic_Play" xml:space="preserve">
     <value>Seinn</value>
   </data>
-  <data name="LibraryPage_Context_PlayNext" xml:space="preserve">
+  <data name="SongList_Context_PlayNext" xml:space="preserve">
     <value>Seinn ina dhiaidh seo</value>
   </data>
-  <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
+  <data name="SongList_Context_AddToQueue" xml:space="preserve">
     <value>Cuir leis an Scuaine</value>
   </data>
-  <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
+  <data name="SongList_Context_AddToPlaylist" xml:space="preserve">
     <value>Cuir le Liosta Seinm</value>
   </data>
-  <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
+  <data name="SongList_Context_GoToAlbum" xml:space="preserve">
     <value>Gabh go dtí an tAlbam</value>
   </data>
-  <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
+  <data name="SongList_Context_GoToArtist" xml:space="preserve">
     <value>Gabh go dtí an tEalaíontóir</value>
   </data>
-  <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
+  <data name="SongList_Context_ShowInExplorer" xml:space="preserve">
     <value>Taispeáin sa Taiscéalaí Comhad</value>
-  </data>
-  <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Seinn</value>
   </data>
   <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
     <value>Níor aimsíodh aon amhrán</value>
   </data>
-  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+  <data name="Generic_TrySearchingElse" xml:space="preserve">
     <value>Bain triail as rud éigin eile a chuardach</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
@@ -1272,9 +1176,6 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cuardaigh liostaí seinm…</value>
   </data>
-  <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Roghnaigh ceann go randamach</value>
-  </data>
   <data name="PlaylistPage_NewPlaylistButton_ToolTip" xml:space="preserve">
     <value>Cruthaigh seinmliosta nua</value>
   </data>
@@ -1287,17 +1188,8 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="PlaylistPage_NewPlaylistMenu_Smart" xml:space="preserve">
     <value>Seinmliosta Cliste</value>
   </data>
-  <data name="PlaylistPage_Context_Play" xml:space="preserve">
-    <value>Seinn</value>
-  </data>
   <data name="PlaylistPage_Context_Rename" xml:space="preserve">
     <value>Athainmnigh</value>
-  </data>
-  <data name="PlaylistPage_Context_ChangeImage" xml:space="preserve">
-    <value>Athraigh Íomhá</value>
-  </data>
-  <data name="PlaylistPage_Context_RemoveImage" xml:space="preserve">
-    <value>Bain Íomhá</value>
   </data>
   <data name="PlaylistPage_Context_Delete" xml:space="preserve">
     <value>Scrios</value>
@@ -1311,19 +1203,10 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="PlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Seinmliosta</value>
   </data>
-  <data name="PlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Amhráin</value>
-  </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cuardaigh sa liosta seinm…</value>
   </data>
-  <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Seinn uile</value>
-  </data>
-  <data name="PlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Seinn gach amhrán in ord randamach</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
+  <data name="SongList_Context_RemoveFromPlaylist" xml:space="preserve">
     <value>Bain den Liosta Seinm</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
@@ -1335,23 +1218,11 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="GenreViewPage_Header_Caption" xml:space="preserve">
     <value>Seánra</value>
   </data>
-  <data name="GenreViewPage_Section_Songs" xml:space="preserve">
-    <value>Amhráin</value>
-  </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cuardaigh sa seánra…</value>
   </data>
-  <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Seinn uile</value>
-  </data>
-  <data name="GenreViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Seinn gach amhrán in ord randamach</value>
-  </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
     <value>Níor aimsíodh amhráin ar bith don seánra seo</value>
-  </data>
-  <data name="GenreViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Bain triail as cuardach a dhéanamh ar rud éigin eile</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Socruithe</value>
@@ -1716,20 +1587,11 @@ Ar mhaith leat leanúint ar aghaidh?</value>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Seinmliosta Cliste</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Amhráin</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Cuardaigh sa liosta seinm cliste…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Cuir rialacha in eagar</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Seinn uile</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Seinn gach amhrán in ord randamach</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>Ní mheaitseálann aon amhrán na rialacha reatha</value>

@@ -17,21 +17,36 @@
     <Grid x:Name="RowGrid" Height="54" Padding="0,0,12,0" Background="Transparent">
         <Grid.ContextFlyout>
             <MenuFlyout Opening="SongMenu_Opening">
-                <MenuFlyoutItem Text="{x:Bind resources:Strings.LibraryPage_Context_Play}"
+                <MenuFlyoutItem Text="{x:Bind resources:Strings.Generic_Play}"
                                 Command="{x:Bind ViewModel.PlaySelectedSongsCommand, Mode=OneWay}" />
-                <MenuFlyoutItem Text="{x:Bind resources:Strings.LibraryPage_Context_PlayNext}"
+                <MenuFlyoutItem Text="{x:Bind resources:Strings.SongList_Context_PlayNext}"
                                 Command="{x:Bind ViewModel.PlaySelectedSongsNextCommand, Mode=OneWay}" />
-                <MenuFlyoutItem Text="{x:Bind resources:Strings.LibraryPage_Context_AddToQueue}"
+                <MenuFlyoutItem Text="{x:Bind resources:Strings.SongList_Context_AddToQueue}"
                                 Command="{x:Bind ViewModel.AddSelectedSongsToQueueCommand, Mode=OneWay}" />
-                <MenuFlyoutSubItem x:Name="AddToPlaylistSubMenu" Text="{x:Bind resources:Strings.LibraryPage_Context_AddToPlaylist}" />
+                <MenuFlyoutItem x:Name="FavoriteItem" Command="{x:Bind ViewModel.ToggleSelectedFavoriteCommand, Mode=OneWay}" />
+                <MenuFlyoutSubItem x:Name="FavoritesSubMenu" Text="{x:Bind resources:Strings.Listening_Favorites}">
+                    <MenuFlyoutItem Text="{x:Bind resources:Strings.Listening_AddFavorite}"
+                                    Command="{x:Bind ViewModel.SetSelectedFavoritesCommand, Mode=OneWay}">
+                        <MenuFlyoutItem.CommandParameter>
+                            <x:Boolean>True</x:Boolean>
+                        </MenuFlyoutItem.CommandParameter>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutItem Text="{x:Bind resources:Strings.Listening_RemoveFavorite}"
+                                    Command="{x:Bind ViewModel.SetSelectedFavoritesCommand, Mode=OneWay}">
+                        <MenuFlyoutItem.CommandParameter>
+                            <x:Boolean>False</x:Boolean>
+                        </MenuFlyoutItem.CommandParameter>
+                    </MenuFlyoutItem>
+                </MenuFlyoutSubItem>
+                <MenuFlyoutSubItem x:Name="AddToPlaylistSubMenu" Text="{x:Bind resources:Strings.SongList_Context_AddToPlaylist}" />
                 <MenuFlyoutSeparator x:Name="SingleSongSeparator" />
                 <MenuFlyoutItem x:Name="GoToAlbumItem"
-                                Text="{x:Bind resources:Strings.LibraryPage_Context_GoToAlbum}"
+                                Text="{x:Bind resources:Strings.SongList_Context_GoToAlbum}"
                                 Command="{x:Bind ViewModel.GoToAlbumCommand, Mode=OneWay}"
                                 CommandParameter="{x:Bind Song, Mode=OneWay}" />
-                <MenuFlyoutSubItem x:Name="GoToArtistSubMenu" Text="{x:Bind resources:Strings.LibraryPage_Context_GoToArtist}" />
+                <MenuFlyoutSubItem x:Name="GoToArtistSubMenu" Text="{x:Bind resources:Strings.SongList_Context_GoToArtist}" />
                 <MenuFlyoutItem x:Name="ShowInExplorerItem"
-                                Text="{x:Bind resources:Strings.LibraryPage_Context_ShowInExplorer}"
+                                Text="{x:Bind resources:Strings.SongList_Context_ShowInExplorer}"
                                 Command="{x:Bind ViewModel.ShowInFolderCommand, Mode=OneWay}"
                                 CommandParameter="{x:Bind Song, Mode=OneWay}" />
                 <MenuFlyoutItem x:Name="SongInfoItem"
@@ -40,8 +55,8 @@
                                 CommandParameter="{x:Bind Song, Mode=OneWay}" />
                 <MenuFlyoutSeparator x:Name="RemoveFromPlaylistSeparator" />
                 <MenuFlyoutItem x:Name="RemoveFromPlaylistItem"
-                                Text="{x:Bind resources:Strings.PlaylistSongViewPage_Context_RemoveFromPlaylist}"
-                                Command="{x:Bind RemoveFromPlaylistCommand, Mode=OneWay}" />
+                                Text="{x:Bind resources:Strings.SongList_Context_RemoveFromPlaylist}"
+                                Command="{x:Bind ViewModel.RemoveSelectionCommand, Mode=OneWay}" />
             </MenuFlyout>
         </Grid.ContextFlyout>
 
@@ -58,8 +73,8 @@
                 Command="{x:Bind ViewModel.PlaySongCommand, Mode=OneWay}"
                 CommandParameter="{x:Bind Song, Mode=OneWay}"
                 Style="{StaticResource SongListViewPageSongPlayButtonStyle}"
-                ToolTipService.ToolTip="{x:Bind resources:Strings.LibraryPage_SongElement_PlayButton_ToolTip}"
-                AutomationProperties.Name="{x:Bind resources:Strings.LibraryPage_SongElement_PlayButton_ToolTip}">
+                ToolTipService.ToolTip="{x:Bind resources:Strings.Generic_Play}"
+                AutomationProperties.Name="{x:Bind resources:Strings.Generic_Play}">
             <Border Width="42" Height="42" CornerRadius="{StaticResource ArtworkCornerRadius}"
                     Visibility="{x:Bind Song.IsArtworkAvailable, Mode=OneWay, FallbackValue=Collapsed}">
                 <controls:ImageEx Width="42" Height="42"

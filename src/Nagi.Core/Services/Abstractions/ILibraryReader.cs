@@ -14,14 +14,8 @@ public interface ILibraryReader
 
     /// <returns>The folder with its <see cref="Folder.MusicServer" />, or null.</returns>
     Task<Folder?> GetFolderByIdAsync(Guid folderId);
-    Task<Folder?> GetFolderByPathAsync(string path);
     Task<bool> HasAnyFolderAsync(CancellationToken token = default);
     Task<IEnumerable<FolderSummary>> GetRootFoldersWithCountsAsync(CancellationToken token = default);
-
-    Task<int> GetSubFolderCountAsync(Guid parentFolderId, string? searchTerm, CancellationToken token = default);
-
-    Task<IEnumerable<Folder>> GetSubFoldersAsync(Guid parentFolderId, string? searchTerm, int skip, int take,
-        CancellationToken token = default);
 
     /// <summary>Includes lyrics, heavy fields, and artist relationships for playback and lyrics display.</summary>
     Task<Song?> GetSongByIdAsync(Guid songId);
@@ -59,11 +53,11 @@ public interface ILibraryReader
         int pageSize, CancellationToken token = default);
 
     /// <summary>
-    ///     Like <see cref="GetSongsAsync" />, from an offset rather than a page; its result has no page number. The total
-    ///     count is filled in even when <paramref name="take" /> is 0.
+    ///     One page of a directory's sub-folders whose names match <paramref name="searchTerm" />, sorted by name, followed
+    ///     by its songs that match it, sorted by <paramref name="sortOrder" />.
     /// </summary>
-    Task<PagedResult<Song>> GetSongSliceAsync(SongScope scope, string? searchTerm, SongSortOrder sortOrder, int skip,
-        int take, CancellationToken token = default);
+    Task<DirectoryPage> GetDirectoryPageAsync(SongScope.Directory directory, string? searchTerm, SongSortOrder sortOrder,
+        int pageNumber, int pageSize, CancellationToken token = default);
 
     /// <summary>
     ///     The IDs of every song <see cref="GetSongsAsync" /> lists, in the same order, such as to play them all.

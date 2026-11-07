@@ -1,18 +1,31 @@
-﻿namespace Nagi.Presentation.Services.Abstractions;
+﻿using Nagi.Core.Models;
+using Nagi.Presentation.Navigation;
 
+namespace Nagi.Presentation.Services.Abstractions;
+
+/// <summary>
+///     Opens the page that shows an album, an artist or another collection.
+/// </summary>
 public interface IMusicNavigationService
 {
-    /// <summary>
-    ///     Navigates to an artist's page based on a variety of input parameters.
-    /// </summary>
-    /// <param name="parameter">Can be a <see cref="Nagi.Core.Models.Song" />, a string (artist name),
-    /// or a <see cref="Nagi.Presentation.Navigation.ArtistNavigationRequest" />.</param>
-    Task NavigateToArtistAsync(object? parameter);
+    void OpenAlbum(Guid albumId);
+
+    /// <summary>Opens the album <paramref name="song" /> is on, looking it up when the song doesn't carry it.</summary>
+    Task OpenAlbumAsync(Song song);
+
+    void OpenArtist(Guid artistId);
 
     /// <summary>
-    ///     Navigates to an album's detail page based on a variety of input parameters.
+    ///     Opens the artist the request names among the song's credited artists, the song's first credited artist when it
+    ///     names none, or the library artist with that name when the song doesn't credit it.
     /// </summary>
-    /// <param name="parameter">Can be a <see cref="Nagi.Core.Models.Album" />, a <see cref="Nagi.Core.Models.Song" />,
-    /// a <see cref="System.Guid" /> (AlbumId), or various Album ViewModel items.</param>
-    Task NavigateToAlbumAsync(object? parameter);
+    Task OpenArtistAsync(ArtistNavigationRequest request);
+
+    void OpenGenre(Guid genreId, string name);
+
+    void OpenFolder(Guid folderId, string name);
+
+    void OpenPlaylist(Guid playlistId, string name, string? coverImageUri);
+
+    void OpenSmartPlaylist(Guid smartPlaylistId, string name, string? coverImageUri);
 }

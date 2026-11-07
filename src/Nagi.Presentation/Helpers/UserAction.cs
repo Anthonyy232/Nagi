@@ -11,14 +11,17 @@ namespace Nagi.Presentation.Helpers;
 internal static class UserAction
 {
     /// <param name="isClosed">Whether the view went away, so no dialog should appear for it.</param>
-    public static async Task RunAsync(Func<Task> action, ILogger logger, IUIService uiService, Func<bool>? isClosed = null)
+    /// <param name="failureMessage">What the dialog says when the action fails, if not the general message.</param>
+    public static async Task RunAsync(Func<Task> action, ILogger logger, IUIService uiService, Func<bool>? isClosed = null,
+        string? failureMessage = null)
     {
         try { await action(); }
         catch (OperationCanceledException) { }
         catch (Exception ex)
         {
             logger.LogError(ex, "Action failed");
-            if (isClosed?.Invoke() != true) await uiService.ShowMessageDialogAsync(Strings.Generic_Error, Strings.Listening_ActionError);
+            if (isClosed?.Invoke() != true)
+                await uiService.ShowMessageDialogAsync(Strings.Generic_Error, failureMessage ?? Strings.Listening_ActionError);
         }
     }
 }

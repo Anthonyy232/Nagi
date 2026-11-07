@@ -26,7 +26,7 @@ public partial class LibraryViewModel : SongListViewModelBase
         ISettingsService settingsService,
         IUIService uiService,
         ILogger<LibraryViewModel> logger)
-        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger, CommonSortOrders, AppSettings.LibrarySortOrder)
     {
         PageTitle = Strings.LibraryPage_Title;
         _settingsService.SettingChanged += OnSettingChanged;
@@ -38,7 +38,7 @@ public partial class LibraryViewModel : SongListViewModelBase
         _dispatcherService.TryEnqueue(() =>
         {
             CurrentPage = 1;
-            _ = RefreshOrSortSongsAsync();
+            _ = LoadAsync(CancellationToken.None);
         });
     }
 
@@ -65,22 +65,11 @@ public partial class LibraryViewModel : SongListViewModelBase
     public async Task InitializeAsync()
     {
         _logger.LogDebug("Initializing LibraryViewModel");
-        CurrentSortOrder = _settingsService.Get(AppSettings.LibrarySortOrder);
-
-        await RefreshOrSortSongsCommand.ExecuteAsync(null);
+        await LoadAsync(CancellationToken.None);
         HasInitialized = !HasLoadError;
     }
 
     protected override bool ShouldReloadOnLibraryChange(LibraryChangeKind kind) =>
         kind != LibraryChangeKind.RootAdded;
-
-    protected override Task RefreshAsync(CancellationToken cancellationToken) =>
-        RefreshOrSortSongsAsync(manualToken: cancellationToken);
-
-    protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
-    {
-        _settingsService.Set(AppSettings.LibrarySortOrder, sortOrder);
-        return Task.CompletedTask;
-    }
 
 }

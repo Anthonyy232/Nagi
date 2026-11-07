@@ -11,7 +11,7 @@ public class GlobalOperationViewModelTests
     {
         var operation = new GlobalOperationViewModel();
         var cancellations = 0;
-        operation.SetCancellation(() => cancellations++);
+        using var scope = operation.Begin("Scanning", () => cancellations++);
         operation.CancelCommand.CanExecute(null).Should().BeTrue();
 
         operation.CancelCommand.Execute(null);

@@ -87,7 +87,7 @@ public partial class InsightsViewModel : ObservableObject
 
     private readonly IStatisticsService _statisticsService;
     private readonly IDispatcherService _dispatcherService;
-    private readonly INavigationService _navigationService;
+    private readonly IMusicNavigationService _navigationService;
     private readonly IListeningService _listening;
     private readonly IUIService _uiService;
     private readonly ILogger<InsightsViewModel> _logger;
@@ -99,7 +99,7 @@ public partial class InsightsViewModel : ObservableObject
     public InsightsViewModel(
         IStatisticsService statisticsService,
         IDispatcherService dispatcherService,
-        INavigationService navigationService,
+        IMusicNavigationService navigationService,
         IListeningService listening,
         IUIService uiService,
         ILogger<InsightsViewModel> logger)
@@ -435,19 +435,15 @@ public partial class InsightsViewModel : ObservableObject
 
     [RelayCommand]
     private void GoToArtist(TopArtistItem item) =>
-        _navigationService.NavigateTo(new ArtistViewNavigationParameter(item.ArtistId));
+        _navigationService.OpenArtist(item.ArtistId);
 
     [RelayCommand]
     private void GoToAlbum(TopAlbumItem item) =>
-        _navigationService.NavigateTo(new AlbumViewNavigationParameter(item.AlbumId));
+        _navigationService.OpenAlbum(item.AlbumId);
 
     [RelayCommand]
     private void GoToGenre(TopGenreItem item) =>
-        _navigationService.NavigateTo(new GenreViewNavigationParameter
-        {
-            GenreId = item.GenreId,
-            GenreName = item.Name
-        });
+        _navigationService.OpenGenre(item.GenreId, item.Name);
 
     private async Task ReloadTopItemsAsync(InsightsCategoryViewModel category)
     {

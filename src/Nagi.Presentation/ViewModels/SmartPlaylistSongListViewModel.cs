@@ -9,6 +9,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
+using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 
@@ -18,16 +19,20 @@ namespace Nagi.Presentation.ViewModels;
 ///     A specialized song list view model for displaying songs that match a smart playlist's rules.
 ///     Unlike regular playlists, smart playlist songs are read-only and dynamically generated.
 /// </summary>
-public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
+public partial class SmartPlaylistSongListViewModel : DetailSongListViewModelBase<SmartPlaylistSongViewNavigationParameter>
 {
-    private readonly record struct RandomSnapshotKey(Guid PlaylistId, string? SearchTerm);
+    private static readonly SongSortOrder[] SortOrders =
+    [
+        SongSortOrder.TitleAsc, SongSortOrder.TitleDesc, SongSortOrder.YearAsc, SongSortOrder.YearDesc,
+        SongSortOrder.ArtistAsc, SongSortOrder.ArtistDesc, SongSortOrder.AlbumAsc, SongSortOrder.AlbumDesc,
+        SongSortOrder.TrackNumberAsc, SongSortOrder.TrackNumberDesc, SongSortOrder.PlayCountAsc, SongSortOrder.PlayCountDesc,
+        SongSortOrder.LastPlayedAsc, SongSortOrder.LastPlayedDesc, SongSortOrder.DateAddedAsc, SongSortOrder.DateAddedDesc,
+        SongSortOrder.DurationAsc, SongSortOrder.DurationDesc, SongSortOrder.BpmAsc, SongSortOrder.BpmDesc,
+        SongSortOrder.FileCreatedDateAsc, SongSortOrder.FileCreatedDateDesc, SongSortOrder.Random
+    ];
 
     private readonly ISmartPlaylistService _smartPlaylistService;
-    private readonly object _randomSnapshotLock = new();
     private Guid? _currentSmartPlaylistId;
-    private int _playlistGeneration;
-    private Task<List<Guid>>? _randomSongIdsTask;
-    private RandomSnapshotKey? _randomSnapshotKey;
 
     public SmartPlaylistSongListViewModel(
         ILibraryReader libraryReader,
@@ -41,7 +46,7 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
         ISettingsService settingsService,
         IUIService uiService,
         ILogger<SmartPlaylistSongListViewModel> logger)
-        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger, SortOrders, null)
     {
         _smartPlaylistService = smartPlaylistService;
     }
@@ -64,7 +69,13 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
             }
 
             var edited = await _uiService.ShowSmartPlaylistEditorAsync(smartPlaylist);
-            if (edited is not null) await InitializeAsync(edited.Name, smartPlaylistId, edited.CoverImageUri);
+            if (edited is not null)
+                await OpenAsync(new SmartPlaylistSongViewNavigationParameter
+                {
+                    Title = edited.Name,
+                    SmartPlaylistId = smartPlaylistId,
+                    CoverImageUri = edited.CoverImageUri
+                });
         }
         catch (Exception ex)
         {
@@ -81,47 +92,31 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
 
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverImageUri);
 
-    public async Task InitializeAsync(string title, Guid smartPlaylistId, string? coverImageUri = null)
+    protected override string LoadErrorText => Strings.SmartPlaylist_ErrorLoading;
+
+    // A smart playlist that no longer exists shows as an empty list under the name it was opened with.
+    protected override async Task<bool> OpenDetailsAsync(SmartPlaylistSongViewNavigationParameter parameter,
+        CancellationToken token)
     {
-        if (_isDisposed) return;
-        ResetState();
-        var generation = _playlistGeneration;
-        CurrentPage = 1;
-        CurrentSortOrder = SongSortOrder.TitleAsc;
-        Songs.Clear();
-        TotalItemCount = 0;
+        Sort.Current = SongSortOrder.TitleAsc;
         RuleSummary = string.Empty;
-        _logger.LogDebug("Initializing for smart playlist '{Title}' (ID: {SmartPlaylistId})", title, smartPlaylistId);
+        PageTitle = parameter.Title;
+        _currentSmartPlaylistId = parameter.SmartPlaylistId;
+        CoverImageUri = parameter.CoverImageUri;
 
-        try
+        var smartPlaylist = await _smartPlaylistService.GetSmartPlaylistByIdAsync(parameter.SmartPlaylistId);
+        if (token.IsCancellationRequested) return true;
+        if (smartPlaylist is null)
         {
-            PageTitle = title;
-            _currentSmartPlaylistId = smartPlaylistId;
-            CoverImageUri = coverImageUri;
-
-            var smartPlaylist = await _smartPlaylistService.GetSmartPlaylistByIdAsync(smartPlaylistId);
-            if (_isDisposed || generation != _playlistGeneration) return;
-            if (smartPlaylist != null)
-            {
-                PageTitle = smartPlaylist.Name;
-                CoverImageUri = ImageUriHelper.GetUriWithCacheBuster(smartPlaylist.CoverImageUri, smartPlaylist.DateModified);
-                RuleSummary = BuildRuleSummary(smartPlaylist);
-                CurrentSortOrder = smartPlaylist.SortOrder.ToSongSortOrder();
-            }
-            else
-            {
-                _currentSmartPlaylistId = null;
-            }
-
-            await RefreshOrSortSongsCommand.ExecuteAsync(null);
+            _currentSmartPlaylistId = null;
+            return true;
         }
-        catch (Exception ex)
-        {
-            if (_isDisposed || generation != _playlistGeneration) return;
-            _logger.LogError(ex, "Failed to initialize smart playlist {SmartPlaylistId}", _currentSmartPlaylistId);
-            TotalItemsText = Strings.SmartPlaylist_ErrorLoading;
-            Songs.Clear();
-        }
+
+        PageTitle = smartPlaylist.Name;
+        CoverImageUri = ImageUriHelper.GetUriWithCacheBuster(smartPlaylist.CoverImageUri, smartPlaylist.DateModified);
+        RuleSummary = BuildRuleSummary(smartPlaylist);
+        Sort.Current = smartPlaylist.SortOrder.ToSongSortOrder();
+        return true;
     }
 
     private static string BuildRuleSummary(SmartPlaylist smartPlaylist)
@@ -146,7 +141,7 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
         if (!_currentSmartPlaylistId.HasValue) return Task.FromResult(new PagedResult<Song>());
 
         if (sortOrder == SongSortOrder.Random)
-            return LoadRandomSongsPageAsync(pageNumber, pageSize, cancellationToken);
+            return LoadRandomPageAsync(pageNumber, pageSize, cancellationToken);
 
         return _smartPlaylistService.GetMatchingSongsPagedAsync(
             _currentSmartPlaylistId.Value, pageNumber, pageSize, ActiveSearchTerm, sortOrder, cancellationToken);
@@ -155,7 +150,6 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
     protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
     {
         if (!_currentSmartPlaylistId.HasValue) return Task.FromResult(new List<Guid>());
-        if (sortOrder == SongSortOrder.Random) return GetRandomSongIdsAsync(token);
         return _smartPlaylistService.GetMatchingSongIdsAsync(_currentSmartPlaylistId.Value, ActiveSearchTerm, sortOrder, token);
     }
 
@@ -169,16 +163,10 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
             : Task.CompletedTask;
     }
 
-    public override Task RefreshOrSortSongsAsync(string? sortOrderString = null, CancellationToken manualToken = default)
+    // A random order only holds still as one list of IDs, so every page is cut from the list that playing all uses.
+    private async Task<PagedResult<Song>> LoadRandomPageAsync(int pageNumber, int pageSize, CancellationToken token)
     {
-        ClearRandomSnapshot();
-        return base.RefreshOrSortSongsAsync(sortOrderString, manualToken);
-    }
-
-    private async Task<PagedResult<Song>> LoadRandomSongsPageAsync(int pageNumber, int pageSize, CancellationToken token)
-    {
-        var ids = await GetRandomSongIdsAsync(token).ConfigureAwait(false);
-        token.ThrowIfCancellationRequested();
+        var ids = await GetFullSongIdsAsync().WaitAsync(token).ConfigureAwait(false);
 
         var pageIds = ids.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
         var songsById = await _libraryReader.GetSongsByIdsAsync(pageIds).ConfigureAwait(false);
@@ -198,61 +186,11 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
         };
     }
 
-    private async Task<List<Guid>> GetRandomSongIdsAsync(CancellationToken token)
-    {
-        if (!_currentSmartPlaylistId.HasValue) return new List<Guid>();
-
-        var playlistId = _currentSmartPlaylistId.Value;
-        var searchTerm = ActiveSearchTerm;
-        var snapshotKey = new RandomSnapshotKey(playlistId, searchTerm);
-        Task<List<Guid>> snapshotTask;
-
-        lock (_randomSnapshotLock)
-        {
-            if (_randomSongIdsTask is null || _randomSnapshotKey != snapshotKey)
-            {
-                _randomSnapshotKey = snapshotKey;
-                // The ordering is shared by every page. Do not let cancellation of the first page
-                // poison the snapshot for subsequent page or playback-ID requests.
-                _randomSongIdsTask = _smartPlaylistService.GetMatchingSongIdsAsync(
-                    playlistId, searchTerm, SongSortOrder.Random, CancellationToken.None);
-            }
-
-            snapshotTask = _randomSongIdsTask;
-        }
-
-        try
-        {
-            return await snapshotTask.WaitAsync(token).ConfigureAwait(false);
-        }
-        catch (Exception ex) when (ex is not OperationCanceledException || !token.IsCancellationRequested)
-        {
-            ClearRandomSnapshot(snapshotTask);
-            throw;
-        }
-    }
-
     private string? ActiveSearchTerm => IsSearchActive ? SearchTerm : null;
-
-    private void ClearRandomSnapshot(Task<List<Guid>>? expectedTask = null)
-    {
-        lock (_randomSnapshotLock)
-        {
-            if (expectedTask is not null && !ReferenceEquals(_randomSongIdsTask, expectedTask))
-                return;
-
-            _randomSongIdsTask = null;
-            _randomSnapshotKey = null;
-        }
-    }
 
     public override void ResetState()
     {
-        _logger.LogDebug("Cleaning up SmartPlaylistSongListViewModel resources");
-
         _currentSmartPlaylistId = null;
-        _playlistGeneration++;
-        ClearRandomSnapshot();
 
         base.ResetState();
     }

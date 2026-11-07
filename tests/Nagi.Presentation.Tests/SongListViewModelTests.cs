@@ -59,6 +59,24 @@ public class SongListViewModelTests
     }
 
     [Fact]
+    public async Task Search_StartsFromTheFirstPage()
+    {
+        var pages = new List<int>();
+        using var viewModel = new TestSongList((page, size, _) =>
+        {
+            pages.Add(page);
+            return Task.FromResult(new PagedResult<Song> { PageNumber = page, PageSize = size, TotalCount = 200 });
+        });
+        await viewModel.LoadPageAsync(3);
+
+        viewModel.SearchTerm = "needle";
+        await viewModel.SearchCommand.ExecuteAsync(null);
+
+        pages.Should().Equal(3, 1);
+        viewModel.CurrentPage.Should().Be(1);
+    }
+
+    [Fact]
     public async Task LoadPageAsync_AfterFailure_ReportsErrorAndAllowsRetry()
     {
         var attempts = 0;
@@ -102,12 +120,21 @@ public class SongListViewModelTests
         : SongListViewModelBase(Substitute.For<ILibraryReader>(), Substitute.For<IListeningService>(), Substitute.For<ILibraryNotifier>(), Substitute.For<IPlaylistService>(),
             Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), TestSettings.Create(),
-            Substitute.For<IUIService>(), NullLogger.Instance)
+            Substitute.For<IUIService>(), NullLogger.Instance, [SongSortOrder.TitleAsc], null)
     {
         protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
             SongSortOrder sortOrder, CancellationToken cancellationToken = default) => load(pageNumber, pageSize, cancellationToken);
 
+        protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default) =>
+            Task.FromResult(new List<Guid>());
+
         public Task<List<Guid>> ResolveSelectionAsync() => GetCurrentSelectionIdsAsync();
+
+        public Task LoadPageAsync(int page)
+        {
+            CurrentPage = page;
+            return LoadAsync(CancellationToken.None);
+        }
     }
 
     [Fact]
@@ -131,9 +158,12 @@ public class SongListViewModelTests
         : SongListViewModelBase(Substitute.For<ILibraryReader>(), Substitute.For<IListeningService>(), Substitute.For<ILibraryNotifier>(), Substitute.For<IPlaylistService>(),
             playback ?? Substitute.For<IMusicPlaybackService>(),
             Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), TestSettings.Create(),
-            ui ?? Substitute.For<IUIService>(), NullLogger.Instance)
+            ui ?? Substitute.For<IUIService>(), NullLogger.Instance, [SongSortOrder.TitleAsc], null)
     {
         protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default) => ids;
+
+        protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
+            SongSortOrder sortOrder, CancellationToken cancellationToken = default) => Task.FromResult(new PagedResult<Song>());
     }
 
     [Fact]

@@ -284,16 +284,9 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         if (VisualTreeHelper.GetChildrenCount(NavView) > 0 &&
             (VisualTreeHelper.GetChild(NavView, 0) as FrameworkElement)?.FindName("RootSplitView") is SplitView navigationSplitView)
             _navigationContentMotion = SplitViewContentMotion.Attach(navigationSplitView);
-        _queuePlayingBinder = new NowPlayingIndicatorBinder(
-            QueueListView, ViewModel,
-            (Brush)Application.Current.Resources["AppPrimaryColorBrush"],
-            item => (item as QueueEntry)?.Id);
-        _queuePlayingBinder.Refresh();
-        _historyPlayingBinder = new NowPlayingIndicatorBinder(
-            HistoryListView, ViewModel,
-            (Brush)Application.Current.Resources["AppPrimaryColorBrush"],
+        _queuePlayingBinder = new NowPlayingIndicatorBinder(QueueListView, ViewModel, item => (item as QueueEntry)?.Id);
+        _historyPlayingBinder = new NowPlayingIndicatorBinder(HistoryListView, ViewModel,
             item => (item as RecentListenEntry)?.Listen.SongId);
-        _historyPlayingBinder.Refresh();
         if (NavView.SettingsItem is NavigationViewItem settingsItem)
         {
             settingsItem.Content = Strings.NavItem_Settings;

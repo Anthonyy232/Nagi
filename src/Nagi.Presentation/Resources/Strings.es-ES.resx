@@ -370,17 +370,11 @@
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} canciones</value>
   </data>
-  <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Iniciando lista de reproducción…</value>
-  </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Ninguna canción coincide con las reglas de esta lista de reproducción inteligente.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>Error al iniciar la reproducción para esta lista de reproducción.</value>
-  </data>
-  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Eligiendo una lista de reproducción al azar…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>No se encontraron listas de reproducción.</value>
@@ -391,20 +385,8 @@
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
     <value>Error al reproducir lista de reproducción aleatoria.</value>
   </data>
-  <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Cargando listas de reproducción…</value>
-  </data>
-  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>Error al cargar listas de reproducción.</value>
-  </data>
-  <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Creando nueva lista de reproducción…</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Se produjo un error al crear la lista de reproducción.</value>
-  </data>
-  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Actualizando la portada de la lista de reproducción…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Error al actualizar la portada de la lista de reproducción.</value>
@@ -412,26 +394,17 @@
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
     <value>Se produjo un error al actualizar la portada de la lista de reproducción.</value>
   </data>
-  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Eliminando la imagen de la lista de reproducción…</value>
-  </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Error al eliminar la imagen de la lista de reproducción.</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
     <value>Se produjo un error al eliminar la imagen de la lista de reproducción.</value>
   </data>
-  <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Cambiando el nombre de la lista de reproducción…</value>
-  </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Error al renombrar la lista de reproducción.</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
     <value>Se produjo un error al renombrar la lista de reproducción.</value>
-  </data>
-  <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Eliminando la lista de reproducción…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Error al eliminar la lista de reproducción.</value>
@@ -529,9 +502,6 @@ Archivos que no se pudieron importar: {0}.</value>
   </data>
   <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
     <value>reglas</value>
-  </data>
-  <data name="SongList_PageTitle_Default" xml:space="preserve">
-    <value>Canciones</value>
   </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} elemento</value>
@@ -963,11 +933,8 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Buscar álbumes…</value>
   </data>
-  <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
+  <data name="Generic_PickRandom" xml:space="preserve">
     <value>Elegir uno al azar</value>
-  </data>
-  <data name="AlbumPage_Menu_Play" xml:space="preserve">
-    <value>Reproducir</value>
   </data>
   <data name="AlbumPage_Empty_Title" xml:space="preserve">
     <value>No se encontraron álbumes</value>
@@ -978,23 +945,14 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="AlbumViewPage_Header_Label" xml:space="preserve">
     <value>Álbum</value>
   </data>
-  <data name="AlbumViewPage_Songs_Title" xml:space="preserve">
+  <data name="SongList_Songs" xml:space="preserve">
     <value>Canciones</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Buscar en el álbum…</value>
   </data>
-  <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Reproducir todo</value>
-  </data>
-  <data name="AlbumViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Reproducir todo aleatoriamente</value>
-  </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
     <value>No se encontraron canciones en este álbum</value>
-  </data>
-  <data name="AlbumViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Intenta buscar otra cosa</value>
   </data>
   <data name="ArtistPage_Title" xml:space="preserve">
     <value>Artistas</value>
@@ -1002,16 +960,10 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Buscar artistas…</value>
   </data>
-  <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Elegir uno al azar</value>
-  </data>
-  <data name="ArtistPage_Menu_Play" xml:space="preserve">
-    <value>Reproducir</value>
-  </data>
-  <data name="ArtistPage_Menu_ChangeImage" xml:space="preserve">
+  <data name="Generic_ChangeImage" xml:space="preserve">
     <value>Cambiar imagen</value>
   </data>
-  <data name="ArtistPage_Menu_RemoveImage" xml:space="preserve">
+  <data name="Generic_RemoveImage" xml:space="preserve">
     <value>Eliminar imagen</value>
   </data>
   <data name="ArtistPage_Empty_Title" xml:space="preserve">
@@ -1023,47 +975,23 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
     <value>Cambiar imagen del artista</value>
   </data>
-  <data name="ArtistViewPage_ImageMenu_ChangeImage" xml:space="preserve">
-    <value>Cambiar imagen</value>
-  </data>
-  <data name="ArtistViewPage_ImageMenu_RemoveImage" xml:space="preserve">
-    <value>Eliminar imagen</value>
-  </data>
   <data name="ArtistViewPage_Header_Label" xml:space="preserve">
     <value>Artista</value>
   </data>
   <data name="ArtistViewPage_Albums_Title" xml:space="preserve">
     <value>Álbumes principales</value>
   </data>
-  <data name="ArtistViewPage_Songs_Title" xml:space="preserve">
-    <value>Canciones</value>
-  </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Buscar en el artista…</value>
-  </data>
-  <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Reproducir todo</value>
-  </data>
-  <data name="ArtistViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Reproducir todo aleatoriamente</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
     <value>No se encontraron canciones para este artista</value>
   </data>
-  <data name="ArtistViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Intenta buscar otra cosa</value>
-  </data>
   <data name="FolderPage_Title" xml:space="preserve">
     <value>Carpetas</value>
   </data>
-  <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Elegir uno al azar</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Añadir carpeta</value>
-  </data>
-  <data name="FolderPage_Menu_Play" xml:space="preserve">
-    <value>Reproducir</value>
   </data>
   <data name="FolderPage_Menu_Rescan" xml:space="preserve">
     <value>Volver a escanear</value>
@@ -1077,26 +1005,11 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
     <value>Añade carpetas de música para empezar</value>
   </data>
-  <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
-    <value>Reproducir</value>
-  </data>
-  <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>Añadir a la lista de reproducción</value>
-  </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Carpeta</value>
   </data>
-  <data name="FolderSongViewPage_Songs_Title" xml:space="preserve">
-    <value>Canciones</value>
-  </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Buscar en la carpeta…</value>
-  </data>
-  <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Reproducir todo</value>
-  </data>
-  <data name="FolderSongViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Reproducir todo aleatoriamente</value>
   </data>
   <data name="FolderSongViewPage_Empty_Title" xml:space="preserve">
     <value>Esta carpeta está vacía</value>
@@ -1110,12 +1023,6 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Buscar géneros…</value>
   </data>
-  <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Elegir uno al azar</value>
-  </data>
-  <data name="GenrePage_Menu_Play" xml:space="preserve">
-    <value>Reproducir</value>
-  </data>
   <data name="GenrePage_Empty_Title" xml:space="preserve">
     <value>No se encontraron géneros</value>
   </data>
@@ -1128,40 +1035,37 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Buscar en la biblioteca…</value>
   </data>
-  <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
+  <data name="SongList_PlayAll" xml:space="preserve">
     <value>Reproducir todo</value>
   </data>
-  <data name="LibraryPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
+  <data name="SongList_ShuffleAll" xml:space="preserve">
     <value>Reproducir todo aleatoriamente</value>
   </data>
-  <data name="LibraryPage_Context_Play" xml:space="preserve">
+  <data name="Generic_Play" xml:space="preserve">
     <value>Reproducir</value>
   </data>
-  <data name="LibraryPage_Context_PlayNext" xml:space="preserve">
+  <data name="SongList_Context_PlayNext" xml:space="preserve">
     <value>Reproducir siguiente</value>
   </data>
-  <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
+  <data name="SongList_Context_AddToQueue" xml:space="preserve">
     <value>Añadir a la cola</value>
   </data>
-  <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
+  <data name="SongList_Context_AddToPlaylist" xml:space="preserve">
     <value>Añadir a la lista de reproducción</value>
   </data>
-  <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
+  <data name="SongList_Context_GoToAlbum" xml:space="preserve">
     <value>Ir al álbum</value>
   </data>
-  <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
+  <data name="SongList_Context_GoToArtist" xml:space="preserve">
     <value>Ir al artista</value>
   </data>
-  <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
+  <data name="SongList_Context_ShowInExplorer" xml:space="preserve">
     <value>Mostrar en el Explorador de archivos</value>
-  </data>
-  <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Reproducir</value>
   </data>
   <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
     <value>No se encontraron canciones</value>
   </data>
-  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+  <data name="Generic_TrySearchingElse" xml:space="preserve">
     <value>Intenta buscar otra cosa</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
@@ -1272,9 +1176,6 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Buscar listas de reproducción…</value>
   </data>
-  <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Elegir una al azar</value>
-  </data>
   <data name="PlaylistPage_NewPlaylistButton_ToolTip" xml:space="preserve">
     <value>Crear una nueva lista de reproducción</value>
   </data>
@@ -1287,17 +1188,8 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="PlaylistPage_NewPlaylistMenu_Smart" xml:space="preserve">
     <value>Lista de reproducción inteligente</value>
   </data>
-  <data name="PlaylistPage_Context_Play" xml:space="preserve">
-    <value>Reproducir</value>
-  </data>
   <data name="PlaylistPage_Context_Rename" xml:space="preserve">
     <value>Renombrar</value>
-  </data>
-  <data name="PlaylistPage_Context_ChangeImage" xml:space="preserve">
-    <value>Cambiar imagen</value>
-  </data>
-  <data name="PlaylistPage_Context_RemoveImage" xml:space="preserve">
-    <value>Eliminar imagen</value>
   </data>
   <data name="PlaylistPage_Context_Delete" xml:space="preserve">
     <value>Eliminar</value>
@@ -1311,19 +1203,10 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="PlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Lista de reproducción</value>
   </data>
-  <data name="PlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Canciones</value>
-  </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Buscar en la lista de reproducción…</value>
   </data>
-  <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Reproducir todo</value>
-  </data>
-  <data name="PlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Reproducir todo aleatoriamente</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
+  <data name="SongList_Context_RemoveFromPlaylist" xml:space="preserve">
     <value>Eliminar de la lista de reproducción</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
@@ -1335,23 +1218,11 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="GenreViewPage_Header_Caption" xml:space="preserve">
     <value>Género</value>
   </data>
-  <data name="GenreViewPage_Section_Songs" xml:space="preserve">
-    <value>Canciones</value>
-  </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Buscar en el género…</value>
   </data>
-  <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Reproducir todo</value>
-  </data>
-  <data name="GenreViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Reproducir todo aleatoriamente</value>
-  </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
     <value>No se encontraron canciones para este género</value>
-  </data>
-  <data name="GenreViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Intenta buscar otra cosa</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Ajustes</value>
@@ -1716,20 +1587,11 @@ Esto analizará tu biblioteca de música y modificará directamente tus archivos
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Lista de reproducción inteligente</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Canciones</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Buscar en la lista de reproducción inteligente…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Editar reglas</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Reproducir todo</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Reproducir todo aleatoriamente</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>Ninguna canción coincide con las reglas actuales</value>

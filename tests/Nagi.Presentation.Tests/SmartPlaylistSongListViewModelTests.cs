@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
 using NSubstitute;
@@ -14,6 +15,7 @@ public class SmartPlaylistSongListViewModelTests
 {
     private readonly LibraryFakes _library = new LibraryFakes();
     private readonly ISmartPlaylistService _playlists = Substitute.For<ISmartPlaylistService>();
+    private readonly IMusicPlaybackService _playback = Substitute.For<IMusicPlaybackService>();
 
     public SmartPlaylistSongListViewModelTests()
     {
@@ -38,15 +40,15 @@ public class SmartPlaylistSongListViewModelTests
         };
         _playlists.GetSmartPlaylistByIdAsync(current.Id).Returns(current);
         using var viewModel = CreateViewModel();
-        var oldLoad = viewModel.InitializeAsync("Old", oldId);
-        await viewModel.InitializeAsync("Navigation label", current.Id);
+        var oldLoad = viewModel.OpenAsync(new SmartPlaylistSongViewNavigationParameter { Title = "Old", SmartPlaylistId = oldId });
+        await viewModel.OpenAsync(new SmartPlaylistSongViewNavigationParameter { Title = "Navigation label", SmartPlaylistId = current.Id });
 
         pending.SetResult(new SmartPlaylist { Id = oldId, Name = "Outdated" });
         await oldLoad;
 
         viewModel.PageTitle.Should().Be("Current");
         viewModel.CoverImageUri.Should().StartWith(current.CoverImageUri);
-        viewModel.CurrentSortOrder.Should().Be(SongSortOrder.DurationDesc);
+        viewModel.Sort.Current.Should().Be(SongSortOrder.DurationDesc);
         await _playlists.DidNotReceive().GetMatchingSongsPagedAsync(oldId, Arg.Any<int>(), Arg.Any<int>(),
             Arg.Any<string?>(), Arg.Any<SongSortOrder?>(), Arg.Any<CancellationToken>());
     }
@@ -60,7 +62,7 @@ public class SmartPlaylistSongListViewModelTests
         var pending = new TaskCompletionSource<SmartPlaylist?>();
         _playlists.GetSmartPlaylistByIdAsync(id).Returns(pending.Task);
         using var viewModel = CreateViewModel();
-        var loading = viewModel.InitializeAsync("Initial", id);
+        var loading = viewModel.OpenAsync(new SmartPlaylistSongViewNavigationParameter { Title = "Initial", SmartPlaylistId = id });
 
         if (dispose) viewModel.Dispose();
         else viewModel.ResetState();
@@ -68,7 +70,7 @@ public class SmartPlaylistSongListViewModelTests
         await loading;
 
         viewModel.PageTitle.Should().Be("Initial");
-        viewModel.CurrentSortOrder.Should().Be(SongSortOrder.TitleAsc);
+        viewModel.Sort.Current.Should().Be(SongSortOrder.TitleAsc);
         viewModel.Songs.Should().BeEmpty();
     }
 
@@ -92,10 +94,10 @@ public class SmartPlaylistSongListViewModelTests
         {
             if (viewModel.Songs.Contains(currentSong)) applied.TrySetResult();
         };
-        var oldLoad = viewModel.InitializeAsync("Old", oldId);
+        var oldLoad = viewModel.OpenAsync(new SmartPlaylistSongViewNavigationParameter { Title = "Old", SmartPlaylistId = oldId });
         await started.Task.WaitAsync(TimeSpan.FromSeconds(10));
 
-        await viewModel.InitializeAsync("New", newId);
+        await viewModel.OpenAsync(new SmartPlaylistSongViewNavigationParameter { Title = "New", SmartPlaylistId = newId });
         pending.SetResult(new PagedResult<Song> { Items = [new Song { Title = "Old song" }], TotalCount = 1 });
         await oldLoad;
         await applied.Task.WaitAsync(TimeSpan.FromSeconds(10));
@@ -104,42 +106,30 @@ public class SmartPlaylistSongListViewModelTests
     }
 
     [Fact]
-    public async Task RandomPages_ShareOrderWithPlaybackIdsAfterOneWaiterCancels()
+    public async Task RandomOrder_ShowsAndPlaysTheSameShuffle()
     {
-        var id = Guid.NewGuid();
+        var playlist = new SmartPlaylist { Name = "Random", SortOrder = SmartPlaylistSortOrder.Random };
+        _playlists.GetSmartPlaylistByIdAsync(playlist.Id).Returns(playlist);
         var songs = new[] { new Song(), new Song(), new Song() };
-        var ids = songs.Select(song => song.Id).ToList();
-        var pending = new TaskCompletionSource<List<Guid>>();
-        _playlists.GetMatchingSongIdsAsync(id, null, SongSortOrder.Random, CancellationToken.None).Returns(pending.Task);
+        var ids = songs.Select(song => song.Id).Reverse().ToList();
+        _playlists.GetMatchingSongIdsAsync(playlist.Id, null, SongSortOrder.Random, Arg.Any<CancellationToken>())
+            .Returns(_ => ids.ToList());
         _library.Reader.GetSongsByIdsAsync(Arg.Any<IEnumerable<Guid>>())
             .Returns(call => (IReadOnlyDictionary<Guid, Song>)songs
                 .Where(song => call.Arg<IEnumerable<Guid>>().Contains(song.Id)).ToDictionary(song => song.Id));
         using var viewModel = CreateViewModel();
-        await viewModel.InitializeAsync("Random", id);
-        using var cancellation = new CancellationTokenSource();
-        var cancelledPage = viewModel.RandomPageAsync(1, 2, cancellation.Token);
-        var playbackIds = viewModel.RandomIdsAsync();
 
-        cancellation.Cancel();
-        await ((Func<Task>)(() => cancelledPage)).Should().ThrowAsync<OperationCanceledException>();
-        pending.SetResult(ids);
-        (await playbackIds).Should().Equal(ids);
-        (await viewModel.RandomPageAsync(1, 2)).Items.Should().Equal(songs.Take(2));
-        (await viewModel.RandomPageAsync(2, 2)).Items.Should().Equal(songs.Skip(2));
-        await _playlists.Received(1).GetMatchingSongIdsAsync(id, null, SongSortOrder.Random, CancellationToken.None);
+        await viewModel.OpenAsync(new SmartPlaylistSongViewNavigationParameter { Title = "Random", SmartPlaylistId = playlist.Id });
+        await viewModel.PlayAllSongsCommand.ExecuteAsync(null);
+
+        viewModel.Songs.Select(song => song.Id).Should().Equal(ids);
+        await _playback.Received(1).PlayAsync(Arg.Is<IEnumerable<Guid>>(played => played.SequenceEqual(ids)), 0, null,
+            Arg.Any<PlaybackContext>());
+        await _playlists.Received(1).GetMatchingSongIdsAsync(playlist.Id, null, SongSortOrder.Random, Arg.Any<CancellationToken>());
     }
 
-    private TestSmartPlaylist CreateViewModel() => new(_library, _playlists);
-
-    private sealed class TestSmartPlaylist(LibraryFakes library, ISmartPlaylistService playlists)
-        : SmartPlaylistSongListViewModel(library.Reader, library.Listening, library.Notifier, Substitute.For<IPlaylistService>(), playlists,
-            Substitute.For<IMusicPlaybackService>(), Substitute.For<IMusicNavigationService>(),
-            new ImmediateDispatcher(), TestSettings.Create(), Substitute.For<IUIService>(),
-            NullLogger<SmartPlaylistSongListViewModel>.Instance)
-    {
-        public Task<PagedResult<Song>> RandomPageAsync(int page, int size, CancellationToken token = default) =>
-            LoadSongsPagedAsync(page, size, SongSortOrder.Random, token);
-
-        public Task<List<Guid>> RandomIdsAsync() => LoadAllSongIdsAsync(SongSortOrder.Random);
-    }
+    private SmartPlaylistSongListViewModel CreateViewModel() =>
+        new(_library.Reader, _library.Listening, _library.Notifier, Substitute.For<IPlaylistService>(), _playlists,
+            _playback, Substitute.For<IMusicNavigationService>(), new ImmediateDispatcher(), TestSettings.Create(),
+            Substitute.For<IUIService>(), NullLogger<SmartPlaylistSongListViewModel>.Instance);
 }

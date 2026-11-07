@@ -2,9 +2,9 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Models;
+using Nagi.Presentation.Navigation;
 using Nagi.Presentation.ViewModels;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Helpers;
@@ -12,29 +12,23 @@ using Nagi.WinUI.Helpers;
 namespace Nagi.WinUI.Pages;
 
 /// <summary>
-///     A searchable page of songs. The selection is whatever the list has selected, including the
+///     A page of songs. The selection is whatever the list has selected, including the
 ///     list's own Ctrl+A. Also handles double-click to play, the now-playing indicator and the column
 ///     header; each row's context menu is part of <see cref="SongRow" />.
 /// </summary>
-public abstract class SongListPage : SearchablePage
+public abstract class SongListPage : Page
 {
     private readonly List<NowPlayingIndicatorBinder> _nowPlayingBinders = new();
     private SongListViewModelBase? _viewModel;
     private ListView[] _songLists = [];
-    private bool _ownsViewModel;
 
     /// <summary>
-    ///     Call after InitializeComponent. When <paramref name="ownsViewModel" /> is true the view model
-    ///     is disposed on navigating away; cached pages with a shared view model pass false.
-    ///     The column header goes in <paramref name="columnHeaderHost" /> above the lists, not in them, so it
-    ///     stays in view and re-sorting doesn't make a list follow its old first row.
+    ///     Call after InitializeComponent. The column header goes in <paramref name="columnHeaderHost" /> above the
+    ///     lists, not in them, so it stays in view and re-sorting doesn't make a list follow its old first row.
     /// </summary>
-    protected void InitializeSongList(SongListViewModelBase viewModel, bool ownsViewModel, Button searchButton,
-        TextBox searchBox, string searchToolTip, Border columnHeaderHost, params ListView[] songLists)
+    protected void InitializeSongList(SongListViewModelBase viewModel, Border columnHeaderHost, params ListView[] songLists)
     {
-        InitializeSearch(viewModel, searchButton, searchBox, searchToolTip);
         _viewModel = viewModel;
-        _ownsViewModel = ownsViewModel;
         _songLists = songLists;
         columnHeaderHost.Child = CreateColumnHeader(viewModel);
         Loaded += AttachNowPlayingBinders;
@@ -48,17 +42,20 @@ public abstract class SongListPage : SearchablePage
     /// </summary>
     protected virtual Song? GetSong(object? item) => item as Song;
 
-    protected override void OnNavigatedTo(NavigationEventArgs e)
+    protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
         // For the "Add to playlist" menu. A cached page's shared view model keeps them up to date once loaded.
         if (!_viewModel!.HasLoadedPlaylists) _ = _viewModel.LoadAvailablePlaylistsAsync();
+        if (_viewModel is IDetailListViewModel detail && e.Parameter is INavigationParameter parameter)
+            await detail.OpenAsync(parameter);
     }
 
+    // A cached page keeps its view model, which is shared, for the next visit.
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        if (_ownsViewModel) _viewModel!.Dispose();
+        if (NavigationCacheMode == NavigationCacheMode.Disabled) _viewModel!.Dispose();
     }
 
     internal void ClearSelection() => ActiveSongList.SelectedItems.Clear();
@@ -76,12 +73,7 @@ public abstract class SongListPage : SearchablePage
 
     private static SongRow CreateColumnHeader(SongListViewModelBase viewModel)
     {
-        var header = new SongRow(isHeader: true);
-        header.SetBinding(SongRow.ColumnsProperty, new Binding
-        {
-            Source = viewModel,
-            Path = new PropertyPath(nameof(SongListViewModelBase.VisibleColumns))
-        });
+        var header = new SongRow(isHeader: true) { ViewModel = viewModel };
         header.SetBinding(VisibilityProperty, new Binding
         {
             Source = viewModel,
@@ -91,20 +83,12 @@ public abstract class SongListPage : SearchablePage
         return header;
     }
 
-    protected void ListeningOptions_Opening(object sender, object e) =>
-        ListeningMenuFlyoutHelper.PopulateMixes((MenuFlyout)sender, _viewModel!.PlayMixCommand, _viewModel.PlayForCommand);
-
     // Recreated on each load so a cached page coming back gets fresh binders.
     private void AttachNowPlayingBinders(object sender, RoutedEventArgs e)
     {
         if (_nowPlayingBinders.Count > 0) return;
-        var playingBrush = (Brush)Application.Current.Resources["AppPrimaryColorBrush"];
         foreach (var list in _songLists)
-        {
-            var binder = new NowPlayingIndicatorBinder(list, _viewModel!, playingBrush, item => GetSong(item)?.Id);
-            binder.Refresh();
-            _nowPlayingBinders.Add(binder);
-        }
+            _nowPlayingBinders.Add(new NowPlayingIndicatorBinder(list, _viewModel!, item => GetSong(item)?.Id));
     }
 
     private void DetachNowPlayingBinders(object sender, RoutedEventArgs e)

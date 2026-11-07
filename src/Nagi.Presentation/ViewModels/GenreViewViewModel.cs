@@ -14,7 +14,7 @@ using Nagi.Core.Settings;
 
 namespace Nagi.Presentation.ViewModels;
 
-public partial class GenreViewViewModel : SongListViewModelBase
+public partial class GenreViewViewModel : DetailSongListViewModelBase<GenreViewNavigationParameter>
 {
     private Guid _genreId;
 
@@ -29,14 +29,10 @@ public partial class GenreViewViewModel : SongListViewModelBase
         ISettingsService settingsService,
         IUIService uiService,
         ILogger<GenreViewViewModel> logger)
-        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger, CommonSortOrders, AppSettings.GenreViewSortOrder)
     {
-        GenreName = Strings.GenreView_DefaultName;
-
-        CurrentSortOrder = SongSortOrder.TitleAsc;
+        PageTitle = Strings.GenreView_DefaultName;
     }
-
-    [ObservableProperty] public partial string GenreName { get; set; }
 
     protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
         SongSortOrder sortOrder, CancellationToken cancellationToken = default)
@@ -54,30 +50,14 @@ public partial class GenreViewViewModel : SongListViewModelBase
         return _libraryReader.GetSongIdsAsync(new SongScope.Genre(_genreId), SearchTerm, sortOrder, token);
     }
 
-    public async Task LoadGenreDetailsAsync(GenreViewNavigationParameter? navParam)
+    protected override Task<bool> OpenDetailsAsync(GenreViewNavigationParameter parameter, CancellationToken token)
     {
-        if (_isDisposed || navParam is null) return;
-        ResetState();
-
-        _logger.LogDebug("Loading details for genre '{GenreName}' ({GenreId})", navParam.GenreName,
-            navParam.GenreId);
-
-        _genreId = navParam.GenreId;
-        GenreName = navParam.GenreName;
-        PageTitle = navParam.GenreName;
-
-        var sortOrder = _settingsService.Get(AppSettings.GenreViewSortOrder);
-        CurrentSortOrder = sortOrder;
-        await RefreshOrSortSongsAsync();
+        _genreId = parameter.GenreId;
+        PageTitle = parameter.GenreName;
+        return Task.FromResult(true);
     }
 
     protected override PlaybackContext GetPlaybackContext() =>
         _genreId != Guid.Empty ? new(PlaybackContextType.Genre, _genreId) : base.GetPlaybackContext();
-
-    protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
-    {
-        _settingsService.Set(AppSettings.GenreViewSortOrder, sortOrder);
-        return Task.CompletedTask;
-    }
 
 }

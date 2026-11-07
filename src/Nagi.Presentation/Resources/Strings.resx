@@ -337,6 +337,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>No items</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>This list couldn't be loaded.</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>Error</value>
   </data>
@@ -374,17 +377,11 @@
     <value>{0} • {1}</value>
     <comment>Under a playlist from a music server. {0} is the server's name, {1} the song count, such as "12 songs".</comment>
   </data>
-  <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Starting playlist…</value>
-  </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>No songs match this smart playlist's rules.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>Error starting playback for this playlist.</value>
-  </data>
-  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Picking a random playlist…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>No playlists found.</value>
@@ -395,20 +392,8 @@
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
     <value>Error playing random playlist.</value>
   </data>
-  <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Loading playlists…</value>
-  </data>
-  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>Error loading playlists.</value>
-  </data>
-  <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Creating new playlist…</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>An error occurred while creating the playlist.</value>
-  </data>
-  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Updating playlist cover…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Failed to update playlist cover.</value>
@@ -416,26 +401,17 @@
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
     <value>An error occurred while updating the playlist cover.</value>
   </data>
-  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Removing playlist image…</value>
-  </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Failed to remove playlist image.</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
     <value>An error occurred while removing the playlist image.</value>
   </data>
-  <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Renaming playlist…</value>
-  </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Failed to rename playlist.</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
     <value>An error occurred while renaming the playlist.</value>
-  </data>
-  <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Deleting playlist…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Failed to delete playlist.</value>
@@ -533,9 +509,6 @@ Files that could not be imported: {0}.</value>
   </data>
   <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
     <value>rules</value>
-  </data>
-  <data name="SongList_PageTitle_Default" xml:space="preserve">
-    <value>Songs</value>
   </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} item</value>
@@ -953,11 +926,8 @@ Do you want to continue?</value>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Search albums…</value>
   </data>
-  <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
+  <data name="Generic_PickRandom" xml:space="preserve">
     <value>Pick one at random</value>
-  </data>
-  <data name="AlbumPage_Menu_Play" xml:space="preserve">
-    <value>Play</value>
   </data>
   <data name="AlbumPage_Empty_Title" xml:space="preserve">
     <value>No albums found</value>
@@ -968,23 +938,14 @@ Do you want to continue?</value>
   <data name="AlbumViewPage_Header_Label" xml:space="preserve">
     <value>Album</value>
   </data>
-  <data name="AlbumViewPage_Songs_Title" xml:space="preserve">
+  <data name="SongList_Songs" xml:space="preserve">
     <value>Songs</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Search in album…</value>
   </data>
-  <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
-  </data>
-  <data name="AlbumViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
-  </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
     <value>No songs found in this album</value>
-  </data>
-  <data name="AlbumViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Try searching for something else</value>
   </data>
   <data name="ArtistPage_Title" xml:space="preserve">
     <value>Artists</value>
@@ -992,16 +953,10 @@ Do you want to continue?</value>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Search artists…</value>
   </data>
-  <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Pick one at random</value>
-  </data>
-  <data name="ArtistPage_Menu_Play" xml:space="preserve">
-    <value>Play</value>
-  </data>
-  <data name="ArtistPage_Menu_ChangeImage" xml:space="preserve">
+  <data name="Generic_ChangeImage" xml:space="preserve">
     <value>Change Image</value>
   </data>
-  <data name="ArtistPage_Menu_RemoveImage" xml:space="preserve">
+  <data name="Generic_RemoveImage" xml:space="preserve">
     <value>Remove Image</value>
   </data>
   <data name="ArtistPage_Empty_Title" xml:space="preserve">
@@ -1013,47 +968,23 @@ Do you want to continue?</value>
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
     <value>Change artist image</value>
   </data>
-  <data name="ArtistViewPage_ImageMenu_ChangeImage" xml:space="preserve">
-    <value>Change Image</value>
-  </data>
-  <data name="ArtistViewPage_ImageMenu_RemoveImage" xml:space="preserve">
-    <value>Remove Image</value>
-  </data>
   <data name="ArtistViewPage_Header_Label" xml:space="preserve">
     <value>Artist</value>
   </data>
   <data name="ArtistViewPage_Albums_Title" xml:space="preserve">
     <value>Top Albums</value>
   </data>
-  <data name="ArtistViewPage_Songs_Title" xml:space="preserve">
-    <value>Songs</value>
-  </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Search in artist…</value>
-  </data>
-  <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
-  </data>
-  <data name="ArtistViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
     <value>No songs found for this artist</value>
   </data>
-  <data name="ArtistViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Try searching for something else</value>
-  </data>
   <data name="FolderPage_Title" xml:space="preserve">
     <value>Folders</value>
   </data>
-  <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Pick one at random</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Add Folder</value>
-  </data>
-  <data name="FolderPage_Menu_Play" xml:space="preserve">
-    <value>Play</value>
   </data>
   <data name="FolderPage_Menu_Rescan" xml:space="preserve">
     <value>Rescan</value>
@@ -1067,26 +998,11 @@ Do you want to continue?</value>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
     <value>Add a music folder or server to get started</value>
   </data>
-  <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
-    <value>Play</value>
-  </data>
-  <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>Add to Playlist</value>
-  </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Folder</value>
   </data>
-  <data name="FolderSongViewPage_Songs_Title" xml:space="preserve">
-    <value>Songs</value>
-  </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Search in folder…</value>
-  </data>
-  <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
-  </data>
-  <data name="FolderSongViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
   </data>
   <data name="FolderSongViewPage_Empty_Title" xml:space="preserve">
     <value>This folder is empty</value>
@@ -1100,12 +1016,6 @@ Do you want to continue?</value>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Search genres…</value>
   </data>
-  <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Pick one at random</value>
-  </data>
-  <data name="GenrePage_Menu_Play" xml:space="preserve">
-    <value>Play</value>
-  </data>
   <data name="GenrePage_Empty_Title" xml:space="preserve">
     <value>No genres found</value>
   </data>
@@ -1118,40 +1028,37 @@ Do you want to continue?</value>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Search library…</value>
   </data>
-  <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
+  <data name="SongList_PlayAll" xml:space="preserve">
     <value>Play all</value>
   </data>
-  <data name="LibraryPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
+  <data name="SongList_ShuffleAll" xml:space="preserve">
     <value>Shuffle and play all</value>
   </data>
-  <data name="LibraryPage_Context_Play" xml:space="preserve">
+  <data name="Generic_Play" xml:space="preserve">
     <value>Play</value>
   </data>
-  <data name="LibraryPage_Context_PlayNext" xml:space="preserve">
+  <data name="SongList_Context_PlayNext" xml:space="preserve">
     <value>Play Next</value>
   </data>
-  <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
+  <data name="SongList_Context_AddToQueue" xml:space="preserve">
     <value>Add to Queue</value>
   </data>
-  <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
+  <data name="SongList_Context_AddToPlaylist" xml:space="preserve">
     <value>Add to Playlist</value>
   </data>
-  <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
+  <data name="SongList_Context_GoToAlbum" xml:space="preserve">
     <value>Go to Album</value>
   </data>
-  <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
+  <data name="SongList_Context_GoToArtist" xml:space="preserve">
     <value>Go to Artist</value>
   </data>
-  <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
+  <data name="SongList_Context_ShowInExplorer" xml:space="preserve">
     <value>Show in File Explorer</value>
-  </data>
-  <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
   </data>
   <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
     <value>No songs found</value>
   </data>
-  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+  <data name="Generic_TrySearchingElse" xml:space="preserve">
     <value>Try searching for something else</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
@@ -1262,9 +1169,6 @@ Do you want to continue?</value>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Search playlists…</value>
   </data>
-  <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Pick one at random</value>
-  </data>
   <data name="PlaylistPage_NewPlaylistButton_ToolTip" xml:space="preserve">
     <value>Create a new playlist</value>
   </data>
@@ -1277,17 +1181,8 @@ Do you want to continue?</value>
   <data name="PlaylistPage_NewPlaylistMenu_Smart" xml:space="preserve">
     <value>Smart Playlist</value>
   </data>
-  <data name="PlaylistPage_Context_Play" xml:space="preserve">
-    <value>Play</value>
-  </data>
   <data name="PlaylistPage_Context_Rename" xml:space="preserve">
     <value>Rename</value>
-  </data>
-  <data name="PlaylistPage_Context_ChangeImage" xml:space="preserve">
-    <value>Change Image</value>
-  </data>
-  <data name="PlaylistPage_Context_RemoveImage" xml:space="preserve">
-    <value>Remove Image</value>
   </data>
   <data name="PlaylistPage_Context_Delete" xml:space="preserve">
     <value>Delete</value>
@@ -1301,19 +1196,10 @@ Do you want to continue?</value>
   <data name="PlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Playlist</value>
   </data>
-  <data name="PlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Songs</value>
-  </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Search in playlist…</value>
   </data>
-  <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
-  </data>
-  <data name="PlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
+  <data name="SongList_Context_RemoveFromPlaylist" xml:space="preserve">
     <value>Remove from Playlist</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
@@ -1325,23 +1211,11 @@ Do you want to continue?</value>
   <data name="GenreViewPage_Header_Caption" xml:space="preserve">
     <value>Genre</value>
   </data>
-  <data name="GenreViewPage_Section_Songs" xml:space="preserve">
-    <value>Songs</value>
-  </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Search in genre…</value>
   </data>
-  <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
-  </data>
-  <data name="GenreViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
-  </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
     <value>No songs found for this genre</value>
-  </data>
-  <data name="GenreViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Try searching for something else</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Settings</value>
@@ -1706,20 +1580,11 @@ Do you want to continue?</value>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Smart Playlist</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Songs</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Search in smart playlist…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Edit rules</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>No songs match the current rules</value>

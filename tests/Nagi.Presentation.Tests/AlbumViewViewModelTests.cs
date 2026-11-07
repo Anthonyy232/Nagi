@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
 using NSubstitute;
@@ -21,15 +22,15 @@ public class AlbumViewViewModelTests
         var result = new TaskCompletionSource<Album?>(TaskCreationOptions.RunContinuationsAsynchronously);
         library.Reader.GetAlbumByIdAsync(Arg.Any<Guid>()).Returns(result.Task);
         using var viewModel = CreateViewModel(library);
-        var title = viewModel.AlbumTitle;
-        var load = viewModel.LoadAlbumDetailsAsync(Guid.NewGuid());
+        var title = viewModel.PageTitle;
+        var load = viewModel.OpenAsync(new AlbumViewNavigationParameter(Guid.NewGuid()));
 
         viewModel.Dispose();
         if (fails) result.SetException(new IOException("Old lookup failed"));
         else result.SetResult(new Album { Title = "Old album" });
         await load.WaitAsync(TimeSpan.FromSeconds(5));
 
-        viewModel.AlbumTitle.Should().Be(title);
+        viewModel.PageTitle.Should().Be(title);
         await library.Reader.DidNotReceive().GetSongsAsync(Arg.Any<SongScope>(), Arg.Any<string?>(), Arg.Any<SongSortOrder>(),
             Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>());
     }
@@ -40,7 +41,7 @@ public class AlbumViewViewModelTests
         var library = new LibraryFakes();
         using var viewModel = CreateViewModel(library);
 
-        await viewModel.LoadAlbumDetailsAsync(Guid.NewGuid());
+        await viewModel.OpenAsync(new AlbumViewNavigationParameter(Guid.NewGuid()));
 
         viewModel.Songs.Should().BeEmpty();
         viewModel.GroupedSongsFlat.Should().BeEmpty();
@@ -66,7 +67,7 @@ public class AlbumViewViewModelTests
             .Returns(duration.Task);
         var dispatcher = new HoldingDispatcher();
         using var viewModel = CreateViewModel(library, dispatcher);
-        await viewModel.LoadAlbumDetailsAsync(Guid.NewGuid());
+        await viewModel.OpenAsync(new AlbumViewNavigationParameter(Guid.NewGuid()));
         var originalDetails = viewModel.AlbumDetailsText;
         dispatcher.Hold = true;
 
@@ -93,7 +94,7 @@ public class AlbumViewViewModelTests
             });
         using var viewModel = CreateViewModel(library);
 
-        await viewModel.LoadAlbumDetailsAsync(Guid.NewGuid());
+        await viewModel.OpenAsync(new AlbumViewNavigationParameter(Guid.NewGuid()));
 
         viewModel.AlbumDetailsText.Should().EndWith("25:00:00");
     }

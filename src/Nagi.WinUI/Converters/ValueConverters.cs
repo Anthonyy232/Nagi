@@ -120,18 +120,8 @@ public class StringToVisibilityConverter : IValueConverter
 /// </summary>
 public class CollectionCountToVisibilityConverter : IValueConverter
 {
-    /// <summary>
-    ///     If true, 0 becomes Visible and >0 becomes Collapsed.
-    /// </summary>
-    public bool Invert { get; set; }
-
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        var count = value is int c ? c : 0;
-        var isVisible = count > 0;
-        if (Invert) isVisible = !isVisible;
-        return isVisible ? Visibility.Visible : Visibility.Collapsed;
-    }
+    public object Convert(object value, Type targetType, object parameter, string language) =>
+        value is > 0 ? Visibility.Visible : Visibility.Collapsed;
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
@@ -250,26 +240,6 @@ public class FloatToDecimalStringConverter : IValueConverter
             double d => d.ToString(format),
             _ => value?.ToString() ?? string.Empty
         };
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-/// <summary>
-///     Compares an enum value to a string parameter and returns true if they match.
-///     Used for RadioMenuFlyoutItem IsChecked bindings to indicate the selected sort order.
-/// </summary>
-public class SortOrderEqualsConverter : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        if (value is null || parameter is not string paramString)
-            return false;
-
-        return string.Equals(value.ToString(), paramString, StringComparison.OrdinalIgnoreCase);
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)

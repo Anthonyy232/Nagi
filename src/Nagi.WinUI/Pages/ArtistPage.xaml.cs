@@ -2,19 +2,17 @@ using System.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using Nagi.Presentation.Resources;
 using Nagi.Presentation.ViewModels;
 
 namespace Nagi.WinUI.Pages;
 
-public sealed partial class ArtistPage : SearchablePage
+public sealed partial class ArtistPage : Page
 {
     public ArtistPage()
     {
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<ArtistViewModel>();
         DataContext = ViewModel;
-        InitializeSearch(ViewModel, SearchToggleButton, SearchTextBox, Strings.ArtistPage_SearchButton_Search_ToolTip);
     }
 
     public ArtistViewModel ViewModel { get; }
@@ -28,15 +26,11 @@ public sealed partial class ArtistPage : SearchablePage
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        // The singleton view model outlives the page, so it is reset rather than disposed.
         ViewModel.ResetState();
     }
 
     private void ArtistsGridView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        if (e.ClickedItem is ArtistViewModelItem clickedArtist)
-        {
-            _ = ViewModel.NavigateToArtistDetailAsync(clickedArtist);
-        }
+        if (e.ClickedItem is ArtistViewModelItem clickedArtist) ViewModel.OpenArtist(clickedArtist);
     }
 }

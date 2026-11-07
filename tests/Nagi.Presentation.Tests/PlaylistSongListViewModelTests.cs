@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
 using NSubstitute;
@@ -40,7 +41,7 @@ public class PlaylistSongListViewModelTests
     public async Task Reorder_WithRemoveAndAddEvents_KeepsEveryTrackInPlaybackOrder()
     {
         using var viewModel = CreateViewModel();
-        await viewModel.InitializeAsync("Playlist", _playlistId);
+        await viewModel.OpenAsync(new PlaylistSongViewNavigationParameter { Title = "Playlist", PlaylistId = _playlistId });
         var moved = viewModel.Songs[0];
         viewModel.Songs.RemoveAt(0);
         viewModel.Songs.Insert(3, moved);
@@ -56,7 +57,7 @@ public class PlaylistSongListViewModelTests
     {
         _playlists.MovePlaylistSongAsync(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<double>()).Returns(false);
         using var viewModel = CreateViewModel();
-        await viewModel.InitializeAsync("Playlist", _playlistId);
+        await viewModel.OpenAsync(new PlaylistSongViewNavigationParameter { Title = "Playlist", PlaylistId = _playlistId });
         var moved = viewModel.Songs[0];
         viewModel.Songs.RemoveAt(0);
         viewModel.Songs.Insert(3, moved);
@@ -74,7 +75,7 @@ public class PlaylistSongListViewModelTests
     public async Task SelectingASong_EnablesTheRemoveCommandAndNotifiesItsButton()
     {
         using var viewModel = CreateViewModel();
-        await viewModel.InitializeAsync("Playlist", _playlistId);
+        await viewModel.OpenAsync(new PlaylistSongViewNavigationParameter { Title = "Playlist", PlaylistId = _playlistId });
         var notified = false;
         viewModel.RemoveSelectedSongsFromPlaylistCommand.CanExecuteChanged += (_, _) => notified = true;
 
@@ -88,7 +89,7 @@ public class PlaylistSongListViewModelTests
     public async Task Reorder_WithMultipleTracks_SavesCompleteOrderAndUpdatesPositions()
     {
         using var viewModel = CreateViewModel();
-        await viewModel.InitializeAsync("Playlist", _playlistId);
+        await viewModel.OpenAsync(new PlaylistSongViewNavigationParameter { Title = "Playlist", PlaylistId = _playlistId });
         var moved = viewModel.Songs.Take(2).ToArray();
         foreach (var song in moved) viewModel.Songs.Remove(song);
         foreach (var song in moved) viewModel.Songs.Add(song);
@@ -109,7 +110,7 @@ public class PlaylistSongListViewModelTests
         _songs[1].Order = 2;
         _songs[2].Order = 2 + 1e-12;
         using var viewModel = CreateViewModel();
-        await viewModel.InitializeAsync("Playlist", _playlistId);
+        await viewModel.OpenAsync(new PlaylistSongViewNavigationParameter { Title = "Playlist", PlaylistId = _playlistId });
         var moved = viewModel.Songs[0];
         viewModel.Songs.RemoveAt(0);
         viewModel.Songs.Insert(1, moved);
@@ -134,7 +135,7 @@ public class PlaylistSongListViewModelTests
         var save = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         _playlists.MovePlaylistSongAsync(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<double>()).Returns(save.Task);
         using var viewModel = CreateViewModel();
-        await viewModel.InitializeAsync("Playlist", _playlistId);
+        await viewModel.OpenAsync(new PlaylistSongViewNavigationParameter { Title = "Playlist", PlaylistId = _playlistId });
         var moved = viewModel.Songs[0];
         viewModel.Songs.RemoveAt(0);
         viewModel.Songs.Insert(3, moved);
@@ -155,7 +156,7 @@ public class PlaylistSongListViewModelTests
         var save = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         _playlists.MovePlaylistSongAsync(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<double>()).Returns(save.Task);
         using var viewModel = CreateViewModel();
-        await viewModel.InitializeAsync("Playlist", _playlistId);
+        await viewModel.OpenAsync(new PlaylistSongViewNavigationParameter { Title = "Playlist", PlaylistId = _playlistId });
         var moved = viewModel.Songs[0];
         viewModel.Songs.RemoveAt(0);
         viewModel.Songs.Insert(3, moved);
@@ -163,7 +164,7 @@ public class PlaylistSongListViewModelTests
 
         viewModel.ResetState();
         var newPlaylist = Guid.NewGuid();
-        await viewModel.InitializeAsync("New playlist", newPlaylist);
+        await viewModel.OpenAsync(new PlaylistSongViewNavigationParameter { Title = "New playlist", PlaylistId = newPlaylist });
         save.SetResult(false);
         await saving.WaitAsync(TimeSpan.FromSeconds(10));
 
@@ -177,7 +178,7 @@ public class PlaylistSongListViewModelTests
     public async Task Reorder_WhenPlaylistStillLoading_DoesNotSavePartialOrder()
     {
         using var viewModel = CreateViewModel();
-        await viewModel.InitializeAsync("Playlist", _playlistId);
+        await viewModel.OpenAsync(new PlaylistSongViewNavigationParameter { Title = "Playlist", PlaylistId = _playlistId });
         viewModel.TotalItemCount = 20;
 
         viewModel.IsReorderingEnabled.Should().BeFalse();
@@ -191,7 +192,7 @@ public class PlaylistSongListViewModelTests
     public async Task Reorder_WithoutAChange_DoesNotWriteOrReportAnError()
     {
         using var viewModel = CreateViewModel();
-        await viewModel.InitializeAsync("Playlist", _playlistId);
+        await viewModel.OpenAsync(new PlaylistSongViewNavigationParameter { Title = "Playlist", PlaylistId = _playlistId });
 
         await viewModel.OnSongsReorderedAsync(viewModel.Songs.Take(2).ToArray());
 
@@ -207,7 +208,7 @@ public class PlaylistSongListViewModelTests
         _library.Reader.GetPlaylistByIdAsync(_playlistId)
             .Returns(new Playlist { Id = _playlistId, Name = "Road Trip", ServerFolderId = Guid.NewGuid() });
 
-        await viewModel.InitializeAsync("Road Trip", _playlistId);
+        await viewModel.OpenAsync(new PlaylistSongViewNavigationParameter { Title = "Road Trip", PlaylistId = _playlistId });
 
         viewModel.IsReorderingEnabled.Should().BeFalse();
     }
@@ -239,14 +240,14 @@ public class PlaylistSongListViewModelTests
     public async Task RemoveSelected_WhenNavigationChangesDuringResolution_DoesNotRemoveFromNewPlaylist()
     {
         using var viewModel = CreateViewModel();
-        await viewModel.InitializeAsync("Original playlist", _playlistId);
+        await viewModel.OpenAsync(new PlaylistSongViewNavigationParameter { Title = "Original playlist", PlaylistId = _playlistId });
         viewModel.OnSongsSelectionChanged([_songs[0]]);
         var pending = new TaskCompletionSource<List<Guid>>(TaskCreationOptions.RunContinuationsAsynchronously);
         viewModel.PendingSelection = pending.Task;
         var removing = viewModel.RemoveSelectedSongsFromPlaylistCommand.ExecuteAsync(null);
 
         viewModel.ResetState();
-        await viewModel.InitializeAsync("New playlist", Guid.NewGuid());
+        await viewModel.OpenAsync(new PlaylistSongViewNavigationParameter { Title = "New playlist", PlaylistId = Guid.NewGuid() });
         pending.SetResult(new List<Guid> { _songs[0].Id });
         await removing.WaitAsync(TimeSpan.FromSeconds(10));
 
@@ -259,13 +260,13 @@ public class PlaylistSongListViewModelTests
         var save = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         _playlists.RemoveSongsFromPlaylistAsync(Arg.Any<Guid>(), Arg.Any<IEnumerable<Guid>>()).Returns(save.Task);
         using var viewModel = CreateViewModel();
-        await viewModel.InitializeAsync("Original playlist", _playlistId);
+        await viewModel.OpenAsync(new PlaylistSongViewNavigationParameter { Title = "Original playlist", PlaylistId = _playlistId });
         viewModel.OnSongsSelectionChanged([_songs[0]]);
         var removing = viewModel.RemoveSelectedSongsFromPlaylistCommand.ExecuteAsync(null);
 
         viewModel.ResetState();
         var newPlaylist = Guid.NewGuid();
-        await viewModel.InitializeAsync("New playlist", newPlaylist);
+        await viewModel.OpenAsync(new PlaylistSongViewNavigationParameter { Title = "New playlist", PlaylistId = newPlaylist });
         save.SetResult(true);
         await removing.WaitAsync(TimeSpan.FromSeconds(10));
 

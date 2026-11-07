@@ -8,7 +8,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Nagi.Core.Models"
     xmlns:resources="using:Nagi.Presentation.Resources"
-    xmlns:helpers="using:Nagi.Presentation.Helpers"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
     x:Name="pageRoot"
@@ -17,28 +16,6 @@
 
     <Grid
           Padding="{StaticResource PageContainerPaddingVertical}">
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="SearchStates">
-                <VisualState x:Name="SearchCollapsed">
-                    <VisualState.Setters>
-                        <Setter Target="SearchTextBox.Width" Value="0" />
-                        <Setter Target="SearchTextBox.Opacity" Value="0" />
-                        <Setter Target="SearchTextBox.IsHitTestVisible" Value="False" />
-                        <Setter Target="SearchTextBox.IsTabStop" Value="False" />
-                        <Setter Target="SearchIcon.Glyph" Value="&#xE721;" />
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="SearchExpanded">
-                    <VisualState.Setters>
-                        <Setter Target="SearchTextBox.Width" Value="{StaticResource SearchBoxExpandedWidth}" />
-                        <Setter Target="SearchTextBox.Opacity" Value="1" />
-                        <Setter Target="SearchTextBox.IsHitTestVisible" Value="True" />
-                        <Setter Target="SearchTextBox.IsTabStop" Value="True" />
-                        <Setter Target="SearchIcon.Glyph" Value="&#xE711;" />
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -74,88 +51,11 @@
             </StackPanel>
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <Grid>
-                    <TextBox x:Name="SearchTextBox"
-                             PlaceholderText="{x:Bind resources:Strings.LibraryPage_SearchBox_Placeholder, Mode=OneTime}"
-                             Style="{StaticResource SearchTextBoxStyle}"
-                             Width="0"
-                             Opacity="0"
-                             IsHitTestVisible="False"
-                             IsTabStop="False"
-                             HorizontalAlignment="Right"
-                             KeyDown="OnSearchTextBoxKeyDown"
-                             Text="{x:Bind ViewModel.SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             Canvas.ZIndex="0">
-                        <TextBox.OpacityTransition>
-                            <ScalarTransition Duration="0:0:0.15" />
-                        </TextBox.OpacityTransition>
-                    </TextBox>
+                <uicontrols:SearchToggle SearchTerm="{x:Bind ViewModel.SearchTerm, Mode=TwoWay}" PlaceholderText="{x:Bind resources:Strings.LibraryPage_SearchBox_Placeholder, Mode=OneTime}" SearchToolTip="{x:Bind resources:Strings.LibraryPage_SearchButton_Search_ToolTip, Mode=OneTime}" />
 
-                    <Button x:Name="SearchToggleButton"
-                            ToolTipService.ToolTip="{x:Bind resources:Strings.LibraryPage_SearchButton_Search_ToolTip, Mode=OneTime}"
-                            AutomationProperties.Name="{x:Bind resources:Strings.LibraryPage_SearchButton_Search_ToolTip, Mode=OneTime}"
-                            Click="OnSearchToggleButtonClick"
-                            Style="{StaticResource SongListViewPageIconButton}"
-                            HorizontalAlignment="Right"
-                            Margin="0,0,1,0"
-                            Canvas.ZIndex="1">
-                        <FontIcon x:Name="SearchIcon" FontSize="16" Glyph="&#xE721;" />
-                    </Button>
-                </Grid>
+                <uicontrols:SortButton Selection="{x:Bind ViewModel.Sort}" />
 
-                <Button Style="{StaticResource SongListViewPageIconButton}"
-                        ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}"
-                        AutomationProperties.Name="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
-                    <Button.Flyout>
-                        <MenuFlyout Placement="Bottom">
-                            <RadioMenuFlyoutItem GroupName="LibrarySort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="TitleAsc" Text="{x:Bind helpers:SortOrderHelper.TitleAscLabel}"
-                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=TitleAsc}" />
-                            <RadioMenuFlyoutItem GroupName="LibrarySort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="TitleDesc" Text="{x:Bind helpers:SortOrderHelper.TitleDescLabel}"
-                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=TitleDesc}" />
-                            <RadioMenuFlyoutItem GroupName="LibrarySort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="YearAsc" Text="{x:Bind helpers:SortOrderHelper.YearOldestLabel}"
-                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=YearAsc}" />
-                            <RadioMenuFlyoutItem GroupName="LibrarySort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="YearDesc" Text="{x:Bind helpers:SortOrderHelper.YearNewestLabel}"
-                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=YearDesc}" />
-                            <RadioMenuFlyoutItem GroupName="LibrarySort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="ArtistAsc" Text="{x:Bind helpers:SortOrderHelper.ArtistAscLabel}"
-                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=ArtistAsc}" />
-                            <RadioMenuFlyoutItem GroupName="LibrarySort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="ArtistDesc" Text="{x:Bind helpers:SortOrderHelper.ArtistDescLabel}"
-                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=ArtistDesc}" />
-                            <RadioMenuFlyoutItem GroupName="LibrarySort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="AlbumAsc" Text="{x:Bind helpers:SortOrderHelper.AlbumAscLabel}"
-                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=AlbumAsc}" />
-                            <RadioMenuFlyoutItem GroupName="LibrarySort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="AlbumDesc" Text="{x:Bind helpers:SortOrderHelper.AlbumDescLabel}"
-                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=AlbumDesc}" />
-                            <RadioMenuFlyoutItem GroupName="LibrarySort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="FileCreatedDateAsc" Text="{x:Bind helpers:SortOrderHelper.DateCreatedOldestLabel}"
-                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=FileCreatedDateAsc}" />
-                            <RadioMenuFlyoutItem GroupName="LibrarySort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="FileCreatedDateDesc" Text="{x:Bind helpers:SortOrderHelper.DateCreatedNewestLabel}"
-                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=FileCreatedDateDesc}" />
-                        </MenuFlyout>
-                    </Button.Flyout>
-                    <FontIcon FontSize="16" Glyph="&#xE8CB;" />
-                </Button>
-
-                <Button Command="{x:Bind ViewModel.PlayAllSongsCommand}"
-                        ToolTipService.ToolTip="{x:Bind resources:Strings.LibraryPage_PlayAllButton_ToolTip, Mode=OneTime}"
-                        AutomationProperties.Name="{x:Bind resources:Strings.LibraryPage_PlayAllButton_ToolTip, Mode=OneTime}"
-                        Style="{StaticResource SongListViewPageIconButton}">
-                    <FontIcon FontSize="16" Glyph="" />
-                </Button>
-
-                <SplitButton Style="{StaticResource SongListViewPageShuffleButton}" Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}"
-                        ToolTipService.ToolTip="{x:Bind resources:Strings.LibraryPage_ShufflePlayAllButton_ToolTip, Mode=OneTime}"
-                        AutomationProperties.Name="{x:Bind resources:Strings.LibraryPage_ShufflePlayAllButton_ToolTip, Mode=OneTime}">
-                    <SplitButton.Flyout><MenuFlyout Opening="ListeningOptions_Opening" /></SplitButton.Flyout>
-                    <FontIcon FontSize="16" Glyph="" />
-                </SplitButton>
+                <uicontrols:SongListPlayButtons ViewModel="{x:Bind ViewModel}" />
 
             </StackPanel>
         </Grid>
@@ -186,7 +86,7 @@
                 DoubleTapped="SongsListView_DoubleTapped">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="models:Song">
-                        <uicontrols:SongRow Song="{x:Bind}" ViewModel="{Binding DataContext, ElementName=pageRoot}" Columns="{Binding DataContext.VisibleColumns, ElementName=pageRoot}" />
+                        <uicontrols:SongRow Song="{x:Bind}" ViewModel="{Binding DataContext, ElementName=pageRoot}" />
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
@@ -198,33 +98,12 @@
             HorizontalAlignment="Right"
             Margin="0,16,24,16" />
 
-        <StackPanel
-            Grid.Row="2"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Spacing="16"
-            Visibility="{x:Bind ViewModel.ShowEmptyState, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <StackPanel.ChildrenTransitions>
-                <TransitionCollection>
-                    <EntranceThemeTransition FromVerticalOffset="20" />
-                </TransitionCollection>
-            </StackPanel.ChildrenTransitions>
-            <FontIcon
-                Glyph="&#xE8D6;"
-                FontSize="48"
-                Margin="0,0,0,12"
-                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                HorizontalAlignment="Center" />
-            <TextBlock
-                Style="{StaticResource TitleTextBlockStyle}"
-                Text="{x:Bind ViewModel.EmptyStateTitle, Mode=OneWay}"
-                HorizontalAlignment="Center" />
-            <TextBlock
-                Style="{StaticResource SubtitleTextBlockStyle}"
-                Text="{x:Bind ViewModel.EmptyStateSubtitle, Mode=OneWay}"
-                HorizontalAlignment="Center"
-                Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
-        </StackPanel>
+        <uicontrols:EmptyState Grid.Row="2"
+                               Glyph="&#xE8D6;"
+                               Title="{x:Bind ViewModel.EmptyStateTitle, Mode=OneWay}"
+                               Subtitle="{x:Bind ViewModel.EmptyStateSubtitle, Mode=OneWay}"
+                               IsShown="{x:Bind ViewModel.ShowEmptyState, Mode=OneWay}"
+                               HasLoadError="{x:Bind ViewModel.HasLoadError, Mode=OneWay}" />
 
     </Grid>
 </pages:SongListPage>

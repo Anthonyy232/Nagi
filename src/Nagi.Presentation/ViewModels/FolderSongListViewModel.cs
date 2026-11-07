@@ -11,6 +11,7 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
+using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services;
@@ -32,16 +33,12 @@ public sealed class BreadcrumbItem
 ///     directory. Folders and songs are paged together in a single virtual list: folders appear first, then songs.
 ///     Supports hierarchical navigation through subfolders and folder-name search.
 /// </summary>
-public partial class FolderSongListViewModel : SongListViewModelBase
+public partial class FolderSongListViewModel : DetailSongListViewModelBase<FolderSongViewNavigationParameter>
 {
     private string _currentDirectoryPath = string.Empty;
     private Guid? _rootFolderId;
     private string? _rootFolderPath;
     private readonly List<Folder> _selectedFolders = new();
-
-    // Reused by page navigation until the directory is refreshed.
-    private Guid? _currentParentFolderId;
-    private int _totalFolderCount;
 
     private bool _isNavigating;
 
@@ -56,7 +53,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         ISettingsService settingsService,
         IUIService uiService,
         ILogger<FolderSongListViewModel> logger)
-        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger, CommonSortOrders, AppSettings.FolderViewSortOrder)
     {
     }
 
@@ -78,280 +75,64 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     public string EmptySubtitle =>
         IsServer ? Strings.FolderSongViewPage_ServerEmpty_Subtitle : Strings.FolderSongViewPage_Empty_Subtitle;
 
-    public async Task InitializeAsync(string title, Guid rootFolderId, string? directoryPath = null)
+    protected override async Task<bool> OpenDetailsAsync(FolderSongViewNavigationParameter parameter, CancellationToken token)
     {
-        if (_isDisposed) return;
-        ResetState();
-        var generation = CaptureSongContext();
+        _rootFolderId = parameter.FolderId;
+        _rootFolderPath = null;
+        _currentDirectoryPath = string.Empty;
 
-        try
-        {
-            _rootFolderId = rootFolderId;
-            _rootFolderPath = null;
-            _currentDirectoryPath = directoryPath ?? string.Empty;
+        var rootFolder = await _libraryReader.GetFolderByIdAsync(parameter.FolderId);
+        if (token.IsCancellationRequested) return true;
 
-            var rootFolder = await _libraryReader.GetFolderByIdAsync(rootFolderId);
-            if (!IsSongContextCurrent(generation)) return;
-
-            _rootFolderPath = rootFolder?.Path;
-            IsServer = rootFolder?.MusicServer is not null;
-            CurrentSortOrder = _settingsService.Get(AppSettings.FolderViewSortOrder);
-
-            if (string.IsNullOrEmpty(_currentDirectoryPath))
-                _currentDirectoryPath = _rootFolderPath ?? string.Empty;
-
-            PageTitle = title;
-            UpdateBreadcrumbs();
-            await RefreshOrSortSongsCommand.ExecuteAsync(null);
-        }
-        catch (Exception ex)
-        {
-            if (!IsSongContextCurrent(generation)) return;
-            _logger.LogError(ex, "Failed to load directory items for {Path}", _currentDirectoryPath);
-            TotalItemsText = Strings.Folders_ErrorLoading;
-            FolderContents.Clear();
-            Songs.Clear();
-        }
+        _rootFolderPath = rootFolder?.Path;
+        IsServer = rootFolder?.MusicServer is not null;
+        _currentDirectoryPath = _rootFolderPath ?? string.Empty;
+        PageTitle = parameter.Title;
+        UpdateBreadcrumbs();
+        return true;
     }
 
-    private static (int folderSkip, int foldersToLoad, int songSkip, int songsToLoad)
-        ComputePageSlices(int pageNumber, int pageSize, int totalFolders)
+    protected override void ClearDetails() => FolderContents.Clear();
+
+    private SongScope.Directory? CurrentDirectory => _rootFolderId is { } rootFolderId && !string.IsNullOrEmpty(_currentDirectoryPath)
+        ? new SongScope.Directory(rootFolderId, _currentDirectoryPath)
+        : null;
+
+    protected override async Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
+        SongSortOrder sortOrder, CancellationToken cancellationToken = default) =>
+        CurrentDirectory is { } directory
+            ? await _libraryReader.GetDirectoryPageAsync(directory, SearchTerm, sortOrder, pageNumber, pageSize, cancellationToken)
+            : new DirectoryPage();
+
+    protected override void ApplyItemsToCollection(PagedResult<Song> result, bool append)
     {
-        var virtualStart = (pageNumber - 1) * pageSize;
-        var foldersToLoad = Math.Max(0, Math.Min(pageSize, totalFolders - virtualStart));
-        var folderSkip = virtualStart;
-        var songSkip = Math.Max(0, virtualStart - totalFolders);
-        var songsToLoad = pageSize - foldersToLoad;
-        return (folderSkip, foldersToLoad, songSkip, songsToLoad);
+        var page = (DirectoryPage)result;
+        FolderContents.AppendOrReplace(
+            page.Folders.Select(FolderContentItem.FromFolder).Concat(page.Items.Select(FolderContentItem.FromSong)), append);
+        base.ApplyItemsToCollection(result, append);
     }
 
-    private async Task<Guid?> ResolveCurrentParentFolderIdAsync(CancellationToken token)
+    protected override string FormatTotalItemsText(PagedResult<Song> result)
     {
-        if (!_rootFolderId.HasValue) return null;
+        var page = (DirectoryPage)result;
+        var parts = new List<string>();
+        if (page.FolderCount > 0)
+            parts.Add(ResourceFormatter.Format(page.FolderCount == 1
+                ? Strings.Folders_Count_Singular
+                : Strings.Folders_Count_Plural, page.FolderCount));
+        if (page.SongCount > 0)
+            parts.Add(ResourceFormatter.Format(page.SongCount == 1
+                ? Strings.Songs_Count_Singular
+                : Strings.Songs_Count_Plural, page.SongCount));
 
-        if (IsAtRootLevel)
-            return _rootFolderId.Value;
-
-        var folder = await _libraryReader.GetFolderByPathAsync(_currentDirectoryPath)
-            .ConfigureAwait(false);
-        token.ThrowIfCancellationRequested();
-        return folder?.Id;
+        return parts.Count == 0 ? Strings.Generic_NoItems : string.Join(", ", parts);
     }
 
-    private Task<int> FetchTotalFolderCountAsync(Guid parentFolderId, CancellationToken token = default) =>
-        _libraryReader.GetSubFolderCountAsync(parentFolderId, SearchTerm, token);
-
-    private Task<IEnumerable<Folder>> FetchFolderSliceAsync(Guid parentFolderId, int skip, int take, CancellationToken token = default) =>
-        _libraryReader.GetSubFoldersAsync(parentFolderId, SearchTerm, skip, take, token);
-
-    /// <summary>
-    ///     Returns TotalCount even when take=0,
-    ///     so the caller can compute total pages without a separate COUNT query.
-    /// </summary>
-    private Task<PagedResult<Song>> FetchSongSliceAsync(int skip, int take, SongSortOrder sortOrder, CancellationToken token = default)
-    {
-        if (!_rootFolderId.HasValue || string.IsNullOrEmpty(_currentDirectoryPath))
-            return Task.FromResult(new PagedResult<Song>());
-
-        return _libraryReader.GetSongSliceAsync(new SongScope.Directory(_rootFolderId.Value, _currentDirectoryPath), SearchTerm,
-            sortOrder, skip, take, token);
-    }
-
-    /// <summary>
-    ///     Loads a single page of combined folder+song content. Both slices are fetched in parallel.
-    ///     Dispatches all UI updates atomically.
-    /// </summary>
-    private async Task<bool> LoadCombinedPageAsync(int pageNumber, Guid parentFolderId, int totalFolderCount,
-        CancellationToken token, bool append = false, bool clampPage = true)
-    {
-        var pageSize = PageSize;
-        var (folderSkip, foldersToLoad, songSkip, songsToLoad) =
-            ComputePageSlices(pageNumber, pageSize, totalFolderCount);
-
-        var folderTask = FetchFolderSliceAsync(parentFolderId, folderSkip, foldersToLoad, token);
-        var songTask = FetchSongSliceAsync(songSkip, songsToLoad, CurrentSortOrder, token);
-
-        await Task.WhenAll(folderTask, songTask).ConfigureAwait(false);
-        if (token.IsCancellationRequested) return false;
-
-        var folders = folderTask.Result.ToList();
-        var songResult = songTask.Result;
-
-        var combinedTotal = totalFolderCount + songResult.TotalCount;
-        var totalPages = (int)Math.Ceiling(combinedTotal / (double)pageSize);
-        if (clampPage && !append && combinedTotal > 0 && pageNumber > Math.Max(1, totalPages))
-            return await LoadCombinedPageAsync(Math.Max(1, totalPages), parentFolderId, totalFolderCount,
-                token, clampPage: false).ConfigureAwait(false);
-
-        // All UI updates in one dispatch to avoid partial-render states.
-        await _dispatcherService.EnqueueAsync(() =>
-        {
-            if (token.IsCancellationRequested || _isDisposed || _pendingReload) return Task.CompletedTask;
-
-            Songs.AppendOrReplace(songResult.Items, append);
-
-            var newItems = folders.Select(FolderContentItem.FromFolder)
-                .Concat(songResult.Items.Select(FolderContentItem.FromSong));
-            FolderContents.AppendOrReplace(newItems, append);
-
-            var isPaged = IsPaginationEnabled && SongsPerPage != 0;
-            TotalPages = isPaged ? Math.Max(1, totalPages) : 1;
-            CurrentPage = isPaged ? Math.Clamp(pageNumber, 1, TotalPages) : 1;
-            TotalItemCount = combinedTotal;
-
-            UpdateTotalItemsText(totalFolderCount, songResult.TotalCount);
-            UpdateSelectionStatus();
-            PlayAllSongsCommand.NotifyCanExecuteChanged();
-            ShuffleAndPlayAllSongsCommand.NotifyCanExecuteChanged();
-            PlayMixCommand.NotifyCanExecuteChanged();
-            PlayForCommand.NotifyCanExecuteChanged();
-            return Task.CompletedTask;
-        }).WaitAsync(token).ConfigureAwait(false);
-        return pageNumber < totalPages;
-    }
-
-    private async Task LoadRemainingFolderPagesAsync(Guid parentFolderId, int totalFolderCount, CancellationToken token)
-    {
-        try
-        {
-            var page = 2;
-            while (!token.IsCancellationRequested)
-            {
-                var hasMore = await Task.Run(() => LoadCombinedPageAsync(page, parentFolderId,
-                    totalFolderCount, token, append: true), token);
-                if (!hasMore) break;
-                page++;
-            }
-        }
-        catch (OperationCanceledException) { }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to load remaining folder contents");
-            _dispatcherService.TryEnqueue(() =>
-            {
-                if (!token.IsCancellationRequested && !_isDisposed) HasLoadError = true;
-            });
-        }
-    }
-
-    public override async Task RefreshOrSortSongsAsync(string? sortOrderString = null, CancellationToken manualToken = default)
-    {
-        lock (_loadLock)
-        {
-            if (_isDisposed) return;
-            // Coalesce: if a refresh is already running, queue a follow-up. The finally block
-            // re-runs RefreshAsync once the current one finishes, picking up the new sort/page-size.
-            if (IsLoading) { _pendingReload = true; return; }
-            IsLoading = true;
-        }
-
-        _pagedLoadCts?.Cancel();
-        _pagedLoadCts?.Dispose();
-        _pagedLoadCts = CancellationTokenSource.CreateLinkedTokenSource(manualToken);
-        var token = _pagedLoadCts.Token;
-        HasLoadError = false;
-
-        try
-        {
-            EnsureInitialSettingsLoaded();
-            token.ThrowIfCancellationRequested();
-
-            if (!string.IsNullOrEmpty(sortOrderString) &&
-                Enum.TryParse<SongSortOrder>(sortOrderString, true, out var newSortOrder) &&
-                newSortOrder != CurrentSortOrder)
-            {
-                CurrentSortOrder = newSortOrder;
-                CurrentPage = 1;
-                await SaveSortOrderAsync(newSortOrder);
-            }
-            ClearFullSongIds();
-
-            var parentFolderId = await ResolveCurrentParentFolderIdAsync(token).ConfigureAwait(false);
-            if (!parentFolderId.HasValue || token.IsCancellationRequested) return;
-            _currentParentFolderId = parentFolderId;
-
-            var totalFolderCount = await FetchTotalFolderCountAsync(parentFolderId.Value, token).ConfigureAwait(false);
-            if (token.IsCancellationRequested) return;
-            _totalFolderCount = totalFolderCount;
-
-            var hasMore = await LoadCombinedPageAsync(1, parentFolderId.Value, _totalFolderCount, token).ConfigureAwait(false);
-            if (SongsPerPage == 0 && hasMore)
-                _ = LoadRemainingFolderPagesAsync(parentFolderId.Value, _totalFolderCount, token);
-        }
-        catch (OperationCanceledException)
-        {
-            _logger.LogDebug("Folder song refresh was cancelled.");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to refresh folder contents for {Path}", _currentDirectoryPath);
-            _dispatcherService.TryEnqueue(() =>
-            {
-                if (token.IsCancellationRequested || _isDisposed) return;
-                HasLoadError = true;
-                TotalItemsText = Strings.Folders_ErrorLoading;
-            });
-        }
-        finally
-        {
-            EndLoadAndDrainPendingReload();
-        }
-    }
-
-    /// <summary>
-    ///     Overrides the base page navigation to use the combined math with cached state.
-    ///     No extra DB round-trips are needed — parentFolderId and totalFolderCount are already cached.
-    /// </summary>
-    public override async Task LoadPageAsync(int pageNumber)
-    {
-        lock (_loadLock)
-        {
-            if (_isDisposed || IsLoading || !IsPaginationEnabled) return;
-            IsLoading = true;
-        }
-
-        _pagedLoadCts?.Cancel();
-        _pagedLoadCts?.Dispose();
-        _pagedLoadCts = new CancellationTokenSource();
-        var token = _pagedLoadCts.Token;
-        HasLoadError = false;
-
-        try
-        {
-            if (!_currentParentFolderId.HasValue) return;
-            await LoadCombinedPageAsync(pageNumber, _currentParentFolderId.Value, _totalFolderCount, token).ConfigureAwait(false);
-        }
-        catch (OperationCanceledException)
-        {
-            _logger.LogDebug("Page load was cancelled.");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to load page {PageNumber}", pageNumber);
-            _dispatcherService.TryEnqueue(() =>
-            {
-                if (!token.IsCancellationRequested && !_isDisposed) HasLoadError = true;
-            });
-        }
-        finally
-        {
-            EndLoadAndDrainPendingReload();
-        }
-    }
-
-    /// <summary>
-    ///     Folder paging uses combined folder+song slicing, so external triggers (page-size
-    ///     change, settings push, library content change) must route through the folder's own
-    ///     refresh envelope — not the base's <c>LoadAsync</c>, which would call the
-    ///     non-overridden <c>LoadSongsPagedAsync</c> and clobber <c>Songs</c> with an empty result.
-    /// </summary>
-    protected override Task RefreshAsync(CancellationToken cancellationToken)
-        => RefreshOrSortSongsAsync(null, cancellationToken);
+    protected override string LoadErrorText => Strings.Folders_ErrorLoading;
 
     // Play all covers subfolders too, so a folder that holds only subfolders still has something to play.
     protected override bool HasPlayableSongs => TotalItemCount > 0;
 
-    // LoadAllSongIdsAsync is still used by the base class for Play All.
     protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
     {
         if (!_rootFolderId.HasValue || string.IsNullOrEmpty(_currentDirectoryPath))
@@ -385,7 +166,8 @@ public partial class FolderSongListViewModel : SongListViewModelBase
             Songs.Clear();
             FolderContents.Clear();
             UpdateBreadcrumbs();
-            await RefreshOrSortSongsCommand.ExecuteAsync(null);
+            CurrentPage = 1;
+            await LoadAsync(CancellationToken.None);
         }
         finally
         {
@@ -430,23 +212,18 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         _rootFolderId.HasValue ? new(PlaybackContextType.Folder, _rootFolderId.Value) : base.GetPlaybackContext();
 
     [RelayCommand]
-    private async Task PlaySubfolderAsync(Folder? folder)
+    private Task PlaySubfolderAsync(Folder? folder)
     {
-        if (_isDisposed || folder == null || !_rootFolderId.HasValue) return;
+        if (_isDisposed || folder == null || _rootFolderId is not { } rootFolderId) return Task.CompletedTask;
         var generation = CaptureSongContext();
-
-        try
+        return RunActionAsync(async () =>
         {
             var songIds = await _libraryReader.GetSongIdsAsync(
-                new SongScope.DirectoryTree(_rootFolderId.Value, folder.Path), null, SongSortOrder.TitleAsc, CancellationToken.None);
+                new SongScope.DirectoryTree(rootFolderId, folder.Path), null, SongSortOrder.TitleAsc, CancellationToken.None);
 
             if (IsSongContextCurrent(generation) && songIds.Count > 0)
                 await _playbackService.PlayAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.Folder, folder.Id));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error playing subfolder {SubfolderPath}", folder.Path);
-        }
+        });
     }
 
     public override int SelectedItemsCount => base.SelectedItemsCount + _selectedFolders.Count;
@@ -492,35 +269,11 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         return ids;
     }
 
-    private void UpdateTotalItemsText(int folderCount, int songCount)
-    {
-        var parts = new List<string>();
-        if (folderCount > 0)
-            parts.Add(ResourceFormatter.Format(folderCount == 1
-                ? Strings.Folders_Count_Singular
-                : Strings.Folders_Count_Plural, folderCount));
-        if (songCount > 0)
-            parts.Add(ResourceFormatter.Format(songCount == 1
-                ? Strings.Songs_Count_Singular
-                : Strings.Songs_Count_Plural, songCount));
-
-        TotalItemsText = parts.Count == 0 ? Strings.Generic_NoItems : string.Join(", ", parts);
-    }
-
-    protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
-    {
-        _settingsService.Set(AppSettings.FolderViewSortOrder, sortOrder);
-        return Task.CompletedTask;
-    }
-
     public override void ResetState()
     {
         base.ResetState();
         FolderContents.Clear();
         Breadcrumbs.Clear();
-        IsServer = false;
-        _currentParentFolderId = null;
-        _totalFolderCount = 0;
         _logger.LogDebug("Cleaned up resources for folder {FolderId}", _rootFolderId);
     }
 }

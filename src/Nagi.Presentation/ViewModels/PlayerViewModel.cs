@@ -394,21 +394,25 @@ public partial class PlayerViewModel : ObservableObject, INowPlayingSource
         return _playbackService.SetPlaybackRateAsync(rate);
     }
 
-    [RelayCommand(CanExecute = nameof(CanNavigateToTrack))]
-    public async Task GoToArtistAsync(object? parameter)
+    // Without a request it opens the playing song's artist.
+    [RelayCommand(CanExecute = nameof(CanGoToArtist))]
+    private async Task GoToArtistAsync(ArtistNavigationRequest? request)
     {
         _windowService.ShowAndActivate();
-        await _musicNavigationService.NavigateToArtistAsync(parameter ?? CurrentPlayingTrack);
+        await _musicNavigationService.OpenArtistAsync(request ?? new ArtistNavigationRequest { Song = CurrentPlayingTrack });
     }
 
-    [RelayCommand(CanExecute = nameof(CanNavigateToTrack))]
-    public async Task GoToAlbumAsync(object? parameter)
+    [RelayCommand(CanExecute = nameof(HasPlayingTrack))]
+    private async Task GoToAlbumAsync()
     {
+        if (CurrentPlayingTrack is not { } song) return;
         _windowService.ShowAndActivate();
-        await _musicNavigationService.NavigateToAlbumAsync(parameter ?? CurrentPlayingTrack);
+        await _musicNavigationService.OpenAlbumAsync(song);
     }
 
-    private bool CanNavigateToTrack(object? parameter) => parameter != null || CurrentPlayingTrack != null;
+    private bool CanGoToArtist(ArtistNavigationRequest? request) => request != null || HasPlayingTrack();
+
+    private bool HasPlayingTrack() => CurrentPlayingTrack != null;
 
     partial void OnIsMutedChanged(bool value) => UpdateButtonState(PlayerButtonIds.Volume, VolumeIcon, VolumeButtonToolTip);
 

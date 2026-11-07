@@ -19,7 +19,7 @@
 
         <controls:PageSizeComboBox Style="{StaticResource DefaultComboBoxStyle}"
                   ItemsSource="{x:Bind PageSizeOptions}"
-                  SelectedItem="{x:Bind ViewModel.SongsPerPage, Mode=TwoWay}"
+                  SelectedItem="{x:Bind ViewModel.PageSize, Mode=TwoWay}"
                   MinWidth="80" Margin="0,0,16,0" FontSize="12">
             <ComboBox.ItemTemplate>
                 <DataTemplate x:DataType="x:Int32">
@@ -29,7 +29,6 @@
         </controls:PageSizeComboBox>
 
         <Button Command="{x:Bind ViewModel.PreviousPageCommand, Mode=OneWay}"
-                IsEnabled="{x:Bind ViewModel.HasPreviousPage, Mode=OneWay}"
                 Style="{ThemeResource SubtleButtonStyle}"
                 ToolTipService.ToolTip="{x:Bind resources:Strings.PaginationControl_PreviousPage_ToolTip, Mode=OneTime}"
                 AutomationProperties.Name="{x:Bind resources:Strings.PaginationControl_PreviousPage_ToolTip, Mode=OneTime}"
@@ -44,7 +43,6 @@
         </TextBlock>
 
         <Button Command="{x:Bind ViewModel.NextPageCommand, Mode=OneWay}"
-                IsEnabled="{x:Bind ViewModel.HasNextPage, Mode=OneWay}"
                 Style="{ThemeResource SubtleButtonStyle}"
                 ToolTipService.ToolTip="{x:Bind resources:Strings.PaginationControl_NextPage_ToolTip, Mode=OneTime}"
                 AutomationProperties.Name="{x:Bind resources:Strings.PaginationControl_NextPage_ToolTip, Mode=OneTime}"

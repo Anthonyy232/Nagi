@@ -44,8 +44,6 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly IMusicNavigationService _musicNavigationService;
 
-    private bool _isNavigating;
-
     public ArtistViewModel(
         ILibraryReader libraryReader,
         ILibraryNotifier libraryNotifier,
@@ -62,6 +60,11 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
         _uiService = uiService;
         _musicPlaybackService = musicPlaybackService;
         _musicNavigationService = musicNavigationService;
+        Sort = new SortOrderSelection<ArtistSortOrder>(SortOrders, AppSettings.ArtistsSortOrder, settingsService, () =>
+        {
+            CurrentPage = 1;
+            return LoadAsync(CancellationToken.None);
+        }, logger);
 
         Artists.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasArtists));
         _libraryNotifier.ArtistImagesChanged += OnArtistImagesChanged;
@@ -69,24 +72,20 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
 
     public ObservableRangeCollection<ArtistViewModelItem> Artists { get; } = new();
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(CurrentSortOrderText))]
-    public partial ArtistSortOrder CurrentSortOrder { get; set; } = ArtistSortOrder.NameAsc;
+    private static readonly ArtistSortOrder[] SortOrders =
+        [ArtistSortOrder.NameAsc, ArtistSortOrder.NameDesc, ArtistSortOrder.SongCountAsc, ArtistSortOrder.SongCountDesc];
 
-    public string CurrentSortOrderText => SortOrderHelper.GetDisplayName(CurrentSortOrder);
+    public SortOrderSelection<ArtistSortOrder> Sort { get; }
 
     public bool HasArtists => Artists.Any();
 
-    protected override void LoadInitialSortOrder() =>
-        CurrentSortOrder = _settingsService.Get(AppSettings.ArtistsSortOrder);
-
-    protected override string FormatTotalItemsText(int count) =>
-        count == 1
-            ? ResourceFormatter.Format(Strings.Artists_Count_Singular, count)
-            : ResourceFormatter.Format(Strings.Artists_Count_Plural, count);
+    protected override string FormatTotalItemsText(PagedResult<Artist> result) =>
+        result.TotalCount == 1
+            ? ResourceFormatter.Format(Strings.Artists_Count_Singular, result.TotalCount)
+            : ResourceFormatter.Format(Strings.Artists_Count_Plural, result.TotalCount);
 
     protected override Task<PagedResult<Artist>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token) =>
-        _libraryReader.GetArtistsAsync(SearchTerm, CurrentSortOrder, pageNumber, pageSize, token);
+        _libraryReader.GetArtistsAsync(SearchTerm, Sort.Current, pageNumber, pageSize, token);
 
     protected override void ApplyItemsToCollection(PagedResult<Artist> result, bool append)
     {
@@ -114,12 +113,7 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
         return Task.CompletedTask;
     }
 
-    public async Task NavigateToArtistDetailAsync(object? parameter)
-    {
-        if (_isNavigating) return;
-        try { _isNavigating = true; await _musicNavigationService.NavigateToArtistAsync(parameter); }
-        finally { _isNavigating = false; }
-    }
+    public void OpenArtist(ArtistViewModelItem artist) => _musicNavigationService.OpenArtist(artist.Id);
 
     [RelayCommand]
     private async Task PlayArtistAsync(Guid artistId)
@@ -136,18 +130,6 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
         {
             if (await _libraryReader.GetRandomArtistIdAsync() is { } id) await _musicPlaybackService.PlayArtistAsync(id);
         }, _logger, _uiService);
-    }
-
-    [RelayCommand]
-    public async Task ChangeSortOrderAsync(string sortOrderString)
-    {
-        if (!Enum.TryParse<ArtistSortOrder>(sortOrderString, out var newSortOrder) || newSortOrder == CurrentSortOrder)
-            return;
-
-        CurrentSortOrder = newSortOrder;
-        _settingsService.Set(AppSettings.ArtistsSortOrder, newSortOrder);
-        CurrentPage = 1;
-        await LoadCommand.ExecuteAsync(CancellationToken.None);
     }
 
     private void OnArtistImagesChanged(object? sender, IReadOnlyList<ArtistImageChange> changes)

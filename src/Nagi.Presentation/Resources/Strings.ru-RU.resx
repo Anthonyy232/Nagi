@@ -370,17 +370,11 @@
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0, plural, one {# песня} few {# песни} many {# песен} other {# песен}}</value>
   </data>
-  <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Запуск плейлиста…</value>
-  </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Ни одна песня не соответствует правилам этого умного плейлиста.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>Ошибка при начале воспроизведения для этого плейлиста.</value>
-  </data>
-  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Выбор случайного плейлиста…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Плейлисты не найдены.</value>
@@ -391,20 +385,8 @@
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
     <value>Ошибка при воспроизведении случайного плейлиста.</value>
   </data>
-  <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Загрузка плейлистов…</value>
-  </data>
-  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>Ошибка загрузки плейлистов.</value>
-  </data>
-  <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Создание нового плейлиста…</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Произошла ошибка при создании плейлиста.</value>
-  </data>
-  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Обновление обложки плейлиста…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Не удалось обновить обложку плейлиста.</value>
@@ -412,26 +394,17 @@
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
     <value>Произошла ошибка при обновлении обложки плейлиста.</value>
   </data>
-  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Удаление обложки плейлиста…</value>
-  </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Не удалось удалить изображение плейлиста.</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
     <value>Произошла ошибка при удалении изображения плейлиста.</value>
   </data>
-  <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Переименование плейлиста…</value>
-  </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Не удалось переименовать плейлист.</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
     <value>Произошла ошибка при переименовании плейлиста.</value>
-  </data>
-  <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Удаление плейлиста…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Не удалось удалить плейлист.</value>
@@ -529,9 +502,6 @@
   </data>
   <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
     <value>правила</value>
-  </data>
-  <data name="SongList_PageTitle_Default" xml:space="preserve">
-    <value>Песни</value>
   </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0, plural, one {# элемент} few {# элемента} many {# элементов} other {# элементов}}</value>
@@ -963,11 +933,8 @@
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Поиск альбомов…</value>
   </data>
-  <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
+  <data name="Generic_PickRandom" xml:space="preserve">
     <value>Выбрать случайный</value>
-  </data>
-  <data name="AlbumPage_Menu_Play" xml:space="preserve">
-    <value>Воспроизвести</value>
   </data>
   <data name="AlbumPage_Empty_Title" xml:space="preserve">
     <value>Альбомы не найдены</value>
@@ -978,23 +945,14 @@
   <data name="AlbumViewPage_Header_Label" xml:space="preserve">
     <value>Альбом</value>
   </data>
-  <data name="AlbumViewPage_Songs_Title" xml:space="preserve">
+  <data name="SongList_Songs" xml:space="preserve">
     <value>Песни</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Искать в альбоме…</value>
   </data>
-  <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Воспроизвести все</value>
-  </data>
-  <data name="AlbumViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Перемешать и воспроизвести все</value>
-  </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
     <value>Песни в этом альбоме не найдены</value>
-  </data>
-  <data name="AlbumViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Попробуйте поискать что-нибудь другое</value>
   </data>
   <data name="ArtistPage_Title" xml:space="preserve">
     <value>Исполнители</value>
@@ -1002,16 +960,10 @@
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Поиск исполнителей…</value>
   </data>
-  <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Выбрать случайного</value>
-  </data>
-  <data name="ArtistPage_Menu_Play" xml:space="preserve">
-    <value>Воспроизвести</value>
-  </data>
-  <data name="ArtistPage_Menu_ChangeImage" xml:space="preserve">
+  <data name="Generic_ChangeImage" xml:space="preserve">
     <value>Изменить изображение</value>
   </data>
-  <data name="ArtistPage_Menu_RemoveImage" xml:space="preserve">
+  <data name="Generic_RemoveImage" xml:space="preserve">
     <value>Удалить изображение</value>
   </data>
   <data name="ArtistPage_Empty_Title" xml:space="preserve">
@@ -1023,47 +975,23 @@
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
     <value>Изменить изображение исполнителя</value>
   </data>
-  <data name="ArtistViewPage_ImageMenu_ChangeImage" xml:space="preserve">
-    <value>Изменить изображение</value>
-  </data>
-  <data name="ArtistViewPage_ImageMenu_RemoveImage" xml:space="preserve">
-    <value>Удалить изображение</value>
-  </data>
   <data name="ArtistViewPage_Header_Label" xml:space="preserve">
     <value>Исполнитель</value>
   </data>
   <data name="ArtistViewPage_Albums_Title" xml:space="preserve">
     <value>Лучшие альбомы</value>
   </data>
-  <data name="ArtistViewPage_Songs_Title" xml:space="preserve">
-    <value>Песни</value>
-  </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Искать у исполнителя…</value>
-  </data>
-  <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Воспроизвести все</value>
-  </data>
-  <data name="ArtistViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Перемешать и воспроизвести все</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
     <value>Песни этого исполнителя не найдены</value>
   </data>
-  <data name="ArtistViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Попробуйте поискать что-нибудь другое</value>
-  </data>
   <data name="FolderPage_Title" xml:space="preserve">
     <value>Папки</value>
   </data>
-  <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Выбрать случайную</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Добавить папку</value>
-  </data>
-  <data name="FolderPage_Menu_Play" xml:space="preserve">
-    <value>Воспроизвести</value>
   </data>
   <data name="FolderPage_Menu_Rescan" xml:space="preserve">
     <value>Пересканировать</value>
@@ -1077,26 +1005,11 @@
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
     <value>Добавьте музыкальные папки, чтобы начать</value>
   </data>
-  <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
-    <value>Воспроизвести</value>
-  </data>
-  <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>Добавить в плейлист</value>
-  </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Папка</value>
   </data>
-  <data name="FolderSongViewPage_Songs_Title" xml:space="preserve">
-    <value>Песни</value>
-  </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Искать в папке…</value>
-  </data>
-  <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Воспроизвести все</value>
-  </data>
-  <data name="FolderSongViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Перемешать и воспроизвести все</value>
   </data>
   <data name="FolderSongViewPage_Empty_Title" xml:space="preserve">
     <value>Эта папка пуста</value>
@@ -1110,12 +1023,6 @@
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Поиск жанров…</value>
   </data>
-  <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Выбрать случайный</value>
-  </data>
-  <data name="GenrePage_Menu_Play" xml:space="preserve">
-    <value>Воспроизвести</value>
-  </data>
   <data name="GenrePage_Empty_Title" xml:space="preserve">
     <value>Жанры не найдены</value>
   </data>
@@ -1128,40 +1035,37 @@
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Поиск по библиотеке…</value>
   </data>
-  <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
+  <data name="SongList_PlayAll" xml:space="preserve">
     <value>Воспроизвести все</value>
   </data>
-  <data name="LibraryPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
+  <data name="SongList_ShuffleAll" xml:space="preserve">
     <value>Перемешать и воспроизвести все</value>
   </data>
-  <data name="LibraryPage_Context_Play" xml:space="preserve">
+  <data name="Generic_Play" xml:space="preserve">
     <value>Воспроизвести</value>
   </data>
-  <data name="LibraryPage_Context_PlayNext" xml:space="preserve">
+  <data name="SongList_Context_PlayNext" xml:space="preserve">
     <value>Воспроизвести следующей</value>
   </data>
-  <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
+  <data name="SongList_Context_AddToQueue" xml:space="preserve">
     <value>Добавить в очередь</value>
   </data>
-  <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
+  <data name="SongList_Context_AddToPlaylist" xml:space="preserve">
     <value>Добавить в плейлист</value>
   </data>
-  <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
+  <data name="SongList_Context_GoToAlbum" xml:space="preserve">
     <value>Перейти к альбому</value>
   </data>
-  <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
+  <data name="SongList_Context_GoToArtist" xml:space="preserve">
     <value>Перейти к исполнителю</value>
   </data>
-  <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
+  <data name="SongList_Context_ShowInExplorer" xml:space="preserve">
     <value>Показать в Проводнике</value>
-  </data>
-  <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Воспроизвести</value>
   </data>
   <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
     <value>Песни не найдены</value>
   </data>
-  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+  <data name="Generic_TrySearchingElse" xml:space="preserve">
     <value>Попробуйте изменить поисковый запрос</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
@@ -1272,9 +1176,6 @@
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Поиск плейлистов…</value>
   </data>
-  <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Выбрать случайный</value>
-  </data>
   <data name="PlaylistPage_NewPlaylistButton_ToolTip" xml:space="preserve">
     <value>Создать новый плейлист</value>
   </data>
@@ -1287,17 +1188,8 @@
   <data name="PlaylistPage_NewPlaylistMenu_Smart" xml:space="preserve">
     <value>Умный плейлист</value>
   </data>
-  <data name="PlaylistPage_Context_Play" xml:space="preserve">
-    <value>Воспроизвести</value>
-  </data>
   <data name="PlaylistPage_Context_Rename" xml:space="preserve">
     <value>Переименовать</value>
-  </data>
-  <data name="PlaylistPage_Context_ChangeImage" xml:space="preserve">
-    <value>Изменить изображение</value>
-  </data>
-  <data name="PlaylistPage_Context_RemoveImage" xml:space="preserve">
-    <value>Удалить изображение</value>
   </data>
   <data name="PlaylistPage_Context_Delete" xml:space="preserve">
     <value>Удалить</value>
@@ -1311,19 +1203,10 @@
   <data name="PlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Плейлист</value>
   </data>
-  <data name="PlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Песни</value>
-  </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Искать в плейлисте…</value>
   </data>
-  <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Воспроизвести все</value>
-  </data>
-  <data name="PlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Перемешать и воспроизвести все</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
+  <data name="SongList_Context_RemoveFromPlaylist" xml:space="preserve">
     <value>Удалить из плейлиста</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
@@ -1335,23 +1218,11 @@
   <data name="GenreViewPage_Header_Caption" xml:space="preserve">
     <value>Жанр</value>
   </data>
-  <data name="GenreViewPage_Section_Songs" xml:space="preserve">
-    <value>Песни</value>
-  </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Искать в жанре…</value>
   </data>
-  <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Воспроизвести все</value>
-  </data>
-  <data name="GenreViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Перемешать и воспроизвести все</value>
-  </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
     <value>Песни этого жанра не найдены</value>
-  </data>
-  <data name="GenreViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Попробуйте поискать что-нибудь другое</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Настройки</value>
@@ -1716,20 +1587,11 @@
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Умный плейлист</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Песни</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Искать в умном плейлисте…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Редактировать правила</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Воспроизвести все</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Перемешать и воспроизвести все</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>Нет песен, соответствующих текущим правилам</value>

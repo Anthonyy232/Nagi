@@ -370,17 +370,11 @@
   <data name="Playlist_Count_Plural" xml:space="preserve">
     <value>{0} låtar</value>
   </data>
-  <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>Startar spellista…</value>
-  </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
     <value>Inga låtar matchar den här smarta spellistans regler.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
     <value>Fel vid start av uppspelning för den här spellistan.</value>
-  </data>
-  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>Väljer en slumpmässig spellista…</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
     <value>Inga spellistor hittades.</value>
@@ -391,20 +385,8 @@
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
     <value>Fel vid uppspelning av slumpmässig spellista.</value>
   </data>
-  <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>Laddar spellistor…</value>
-  </data>
-  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>Fel vid laddning av spellistor.</value>
-  </data>
-  <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>Skapar ny spellista…</value>
-  </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
     <value>Ett fel uppstod när spellistan skulle skapas.</value>
-  </data>
-  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>Uppdaterar spellistans omslag…</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
     <value>Kunde inte uppdatera spellistans omslag.</value>
@@ -412,26 +394,17 @@
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
     <value>Ett fel uppstod när spellistans omslag skulle uppdateras.</value>
   </data>
-  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>Tar bort spellistans bild…</value>
-  </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
     <value>Kunde inte ta bort spellistans bild.</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
     <value>Ett fel uppstod när spellistans bild skulle tas bort.</value>
   </data>
-  <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>Döper om spellista…</value>
-  </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
     <value>Kunde inte byta namn på spellistan.</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
     <value>Ett fel uppstod när spellistan skulle döpas om.</value>
-  </data>
-  <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>Tar bort spellista…</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
     <value>Kunde inte radera spellistan.</value>
@@ -529,9 +502,6 @@ Filer som inte kunde importeras: {0}.</value>
   </data>
   <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
     <value>regler</value>
-  </data>
-  <data name="SongList_PageTitle_Default" xml:space="preserve">
-    <value>Låtar</value>
   </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
     <value>{0} objekt</value>
@@ -963,11 +933,8 @@ Vill du fortsätta?</value>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Sök album…</value>
   </data>
-  <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
+  <data name="Generic_PickRandom" xml:space="preserve">
     <value>Välj en slumpmässigt</value>
-  </data>
-  <data name="AlbumPage_Menu_Play" xml:space="preserve">
-    <value>Spela</value>
   </data>
   <data name="AlbumPage_Empty_Title" xml:space="preserve">
     <value>Inga album hittades</value>
@@ -978,23 +945,14 @@ Vill du fortsätta?</value>
   <data name="AlbumViewPage_Header_Label" xml:space="preserve">
     <value>Album</value>
   </data>
-  <data name="AlbumViewPage_Songs_Title" xml:space="preserve">
+  <data name="SongList_Songs" xml:space="preserve">
     <value>Låtar</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Sök i album…</value>
   </data>
-  <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Spela alla</value>
-  </data>
-  <data name="AlbumViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Blanda och spela alla</value>
-  </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
     <value>Inga låtar hittades i detta album</value>
-  </data>
-  <data name="AlbumViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Prova att söka efter något annat</value>
   </data>
   <data name="ArtistPage_Title" xml:space="preserve">
     <value>Artister</value>
@@ -1002,16 +960,10 @@ Vill du fortsätta?</value>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Sök artister…</value>
   </data>
-  <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Välj en slumpmässigt</value>
-  </data>
-  <data name="ArtistPage_Menu_Play" xml:space="preserve">
-    <value>Spela</value>
-  </data>
-  <data name="ArtistPage_Menu_ChangeImage" xml:space="preserve">
+  <data name="Generic_ChangeImage" xml:space="preserve">
     <value>Ändra bild</value>
   </data>
-  <data name="ArtistPage_Menu_RemoveImage" xml:space="preserve">
+  <data name="Generic_RemoveImage" xml:space="preserve">
     <value>Ta bort bild</value>
   </data>
   <data name="ArtistPage_Empty_Title" xml:space="preserve">
@@ -1023,47 +975,23 @@ Vill du fortsätta?</value>
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
     <value>Ändra artistbild</value>
   </data>
-  <data name="ArtistViewPage_ImageMenu_ChangeImage" xml:space="preserve">
-    <value>Ändra bild</value>
-  </data>
-  <data name="ArtistViewPage_ImageMenu_RemoveImage" xml:space="preserve">
-    <value>Ta bort bild</value>
-  </data>
   <data name="ArtistViewPage_Header_Label" xml:space="preserve">
     <value>Artist</value>
   </data>
   <data name="ArtistViewPage_Albums_Title" xml:space="preserve">
     <value>Toppalbum</value>
   </data>
-  <data name="ArtistViewPage_Songs_Title" xml:space="preserve">
-    <value>Låtar</value>
-  </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Sök hos artist…</value>
-  </data>
-  <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Spela alla</value>
-  </data>
-  <data name="ArtistViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Blanda och spela alla</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
     <value>Inga låtar hittades för denna artist</value>
   </data>
-  <data name="ArtistViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Prova att söka efter något annat</value>
-  </data>
   <data name="FolderPage_Title" xml:space="preserve">
     <value>Mappar</value>
   </data>
-  <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Välj en slumpmässigt</value>
-  </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
     <value>Lägg till mapp</value>
-  </data>
-  <data name="FolderPage_Menu_Play" xml:space="preserve">
-    <value>Spela</value>
   </data>
   <data name="FolderPage_Menu_Rescan" xml:space="preserve">
     <value>Skanna om</value>
@@ -1077,26 +1005,11 @@ Vill du fortsätta?</value>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
     <value>Lägg till musikmappar för att komma igång</value>
   </data>
-  <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
-    <value>Spela</value>
-  </data>
-  <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>Lägg till i spellista</value>
-  </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
     <value>Mapp</value>
   </data>
-  <data name="FolderSongViewPage_Songs_Title" xml:space="preserve">
-    <value>Låtar</value>
-  </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Sök i mapp…</value>
-  </data>
-  <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Spela alla</value>
-  </data>
-  <data name="FolderSongViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Blanda och spela alla</value>
   </data>
   <data name="FolderSongViewPage_Empty_Title" xml:space="preserve">
     <value>Denna mapp är tom</value>
@@ -1110,12 +1023,6 @@ Vill du fortsätta?</value>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
     <value>Sök genrer…</value>
   </data>
-  <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Välj en slumpmässigt</value>
-  </data>
-  <data name="GenrePage_Menu_Play" xml:space="preserve">
-    <value>Spela</value>
-  </data>
   <data name="GenrePage_Empty_Title" xml:space="preserve">
     <value>Inga genrer hittades</value>
   </data>
@@ -1128,40 +1035,37 @@ Vill du fortsätta?</value>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Sök i biblioteket…</value>
   </data>
-  <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
+  <data name="SongList_PlayAll" xml:space="preserve">
     <value>Spela alla</value>
   </data>
-  <data name="LibraryPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
+  <data name="SongList_ShuffleAll" xml:space="preserve">
     <value>Blanda och spela alla</value>
   </data>
-  <data name="LibraryPage_Context_Play" xml:space="preserve">
+  <data name="Generic_Play" xml:space="preserve">
     <value>Spela</value>
   </data>
-  <data name="LibraryPage_Context_PlayNext" xml:space="preserve">
+  <data name="SongList_Context_PlayNext" xml:space="preserve">
     <value>Spela nästa</value>
   </data>
-  <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
+  <data name="SongList_Context_AddToQueue" xml:space="preserve">
     <value>Lägg till i kö</value>
   </data>
-  <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
+  <data name="SongList_Context_AddToPlaylist" xml:space="preserve">
     <value>Lägg till i spellista</value>
   </data>
-  <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
+  <data name="SongList_Context_GoToAlbum" xml:space="preserve">
     <value>Gå till album</value>
   </data>
-  <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
+  <data name="SongList_Context_GoToArtist" xml:space="preserve">
     <value>Gå till artist</value>
   </data>
-  <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
+  <data name="SongList_Context_ShowInExplorer" xml:space="preserve">
     <value>Visa i Utforskaren</value>
-  </data>
-  <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Spela</value>
   </data>
   <data name="LibraryPage_SearchEmpty_Title" xml:space="preserve">
     <value>Inga låtar hittades</value>
   </data>
-  <data name="LibraryPage_SearchEmpty_Subtitle" xml:space="preserve">
+  <data name="Generic_TrySearchingElse" xml:space="preserve">
     <value>Försök att söka efter något annat</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
@@ -1272,9 +1176,6 @@ Vill du fortsätta?</value>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Sök spellistor…</value>
   </data>
-  <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Välj en slumpmässigt</value>
-  </data>
   <data name="PlaylistPage_NewPlaylistButton_ToolTip" xml:space="preserve">
     <value>Skapa en ny spellista</value>
   </data>
@@ -1287,17 +1188,8 @@ Vill du fortsätta?</value>
   <data name="PlaylistPage_NewPlaylistMenu_Smart" xml:space="preserve">
     <value>Smart spellista</value>
   </data>
-  <data name="PlaylistPage_Context_Play" xml:space="preserve">
-    <value>Spela</value>
-  </data>
   <data name="PlaylistPage_Context_Rename" xml:space="preserve">
     <value>Byt namn</value>
-  </data>
-  <data name="PlaylistPage_Context_ChangeImage" xml:space="preserve">
-    <value>Ändra bild</value>
-  </data>
-  <data name="PlaylistPage_Context_RemoveImage" xml:space="preserve">
-    <value>Ta bort bild</value>
   </data>
   <data name="PlaylistPage_Context_Delete" xml:space="preserve">
     <value>Ta bort</value>
@@ -1311,19 +1203,10 @@ Vill du fortsätta?</value>
   <data name="PlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Spellista</value>
   </data>
-  <data name="PlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Låtar</value>
-  </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Sök i spellista…</value>
   </data>
-  <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Spela alla</value>
-  </data>
-  <data name="PlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Blanda och spela alla</value>
-  </data>
-  <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
+  <data name="SongList_Context_RemoveFromPlaylist" xml:space="preserve">
     <value>Ta bort från spellista</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
@@ -1335,23 +1218,11 @@ Vill du fortsätta?</value>
   <data name="GenreViewPage_Header_Caption" xml:space="preserve">
     <value>Genre</value>
   </data>
-  <data name="GenreViewPage_Section_Songs" xml:space="preserve">
-    <value>Låtar</value>
-  </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Sök i genre…</value>
   </data>
-  <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Spela alla</value>
-  </data>
-  <data name="GenreViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Blanda och spela alla</value>
-  </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
     <value>Inga låtar hittades för denna genre</value>
-  </data>
-  <data name="GenreViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Prova att söka efter något annat</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>Inställningar</value>
@@ -1716,20 +1587,11 @@ Vill du fortsätta?</value>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Smart spellista</value>
   </data>
-  <data name="SmartPlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Låtar</value>
-  </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Sök i smart spellista…</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
     <value>Redigera regler</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Spela alla</value>
-  </data>
-  <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Blanda och spela alla</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
     <value>Inga låtar matchar de nuvarande reglerna</value>

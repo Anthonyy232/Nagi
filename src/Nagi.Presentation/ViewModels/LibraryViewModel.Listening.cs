@@ -30,7 +30,7 @@ public partial class LibraryViewModel
         : ShowFavoritesOnly ? Strings.Listening_FavoritesEmpty : Strings.LibraryPage_EmptyState_Title;
 
     public string EmptyStateSubtitle => IsSearchActive
-        ? Strings.LibraryPage_SearchEmpty_Subtitle
+        ? Strings.Generic_TrySearchingElse
         : ShowFavoritesOnly ? Strings.Listening_FavoritesEmptyDescription : Strings.LibraryPage_EmptyState_Subtitle;
 
     /// <summary>
@@ -45,14 +45,14 @@ public partial class LibraryViewModel
     public async Task SetLibraryViewAsync(bool favorites)
     {
         if (ShowFavoritesOnly == favorites) return;
-        _pagedLoadCts?.Cancel();
+        CancelLoad();
         ShowFavoritesOnly = favorites;
         PageTitle = favorites ? Strings.Listening_Favorites : Strings.LibraryPage_Title;
         SearchTerm = string.Empty;
         DeselectAll();
         ClearFullSongIds();
         CurrentPage = 1;
-        if (HasInitialized) await RefreshOrSortSongsAsync();
+        if (HasInitialized) await LoadAsync(CancellationToken.None);
     }
 
     protected override void OnSearchTermChangedInternal(string value)

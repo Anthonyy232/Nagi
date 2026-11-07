@@ -22,9 +22,38 @@ public partial class LibraryReader
         return ReadSongsAsync(scope, searchTerm, sortOrder, (pageNumber - 1) * pageSize, pageSize, pageNumber, token);
     }
 
-    public Task<PagedResult<Song>> GetSongSliceAsync(SongScope scope, string? searchTerm, SongSortOrder sortOrder,
-        int skip, int take, CancellationToken token = default) =>
-        ReadSongsAsync(scope, searchTerm, sortOrder, Math.Max(0, skip), Math.Max(0, take), 0, token);
+    public async Task<DirectoryPage> GetDirectoryPageAsync(SongScope.Directory directory, string? searchTerm,
+        SongSortOrder sortOrder, int pageNumber, int pageSize, CancellationToken token = default)
+    {
+        Paging.Sanitize(ref pageNumber, ref pageSize);
+        var start = (pageNumber - 1) * pageSize;
+
+        List<Folder> folders = [];
+        var folderCount = 0;
+        await using (var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false))
+        {
+            if (await GetDirectoryFolderIdAsync(context, directory, token).ConfigureAwait(false) is { } folderId)
+            {
+                var subFolders = SubFolders(context, folderId, searchTerm);
+                folderCount = await subFolders.CountAsync(token).ConfigureAwait(false);
+                if (start < folderCount)
+                    folders = await subFolders.OrderBy(f => f.Name).ThenBy(f => f.Path).ThenBy(f => f.Id)
+                        .Skip(start).Take(pageSize).ToListAsync(token).ConfigureAwait(false);
+            }
+        }
+
+        var songs = await ReadSongsAsync(directory, searchTerm, sortOrder, Math.Max(0, start - folderCount),
+            pageSize - folders.Count, pageNumber, token).ConfigureAwait(false);
+        return new DirectoryPage
+        {
+            Items = songs.Items,
+            Folders = folders,
+            FolderCount = folderCount,
+            TotalCount = folderCount + songs.TotalCount,
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
+    }
 
     public async Task<List<Guid>> GetSongIdsAsync(SongScope scope, string? searchTerm, SongSortOrder sortOrder,
         CancellationToken token = default)
@@ -79,24 +108,22 @@ public partial class LibraryReader
         return new PagedResult<Album> { Items = items, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
     }
 
-    public async Task<int> GetSubFolderCountAsync(Guid parentFolderId, string? searchTerm, CancellationToken token = default)
+    // A root folder's own path is matched as the user added it; any directory under it by its normalized path.
+    private async Task<Guid?> GetDirectoryFolderIdAsync(MusicDbContext context, SongScope.Directory directory,
+        CancellationToken token)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
-        return await SubFolders(context, parentFolderId, searchTerm).CountAsync(token).ConfigureAwait(false);
+        var rootPath = await context.Folders.AsNoTracking().Where(f => f.Id == directory.RootFolderId)
+            .Select(f => f.Path).FirstOrDefaultAsync(token).ConfigureAwait(false);
+        if (rootPath is not null && string.Equals(Path.TrimEndingDirectorySeparator(rootPath),
+                Path.TrimEndingDirectorySeparator(directory.Path), StringComparison.OrdinalIgnoreCase))
+            return directory.RootFolderId;
+
+        var normalizedPath = _fileSystem.NormalizePath(directory.Path);
+        if (string.IsNullOrEmpty(normalizedPath)) return null;
+        return await context.Folders.AsNoTracking().Where(f => f.Path == normalizedPath)
+            .Select(f => (Guid?)f.Id).FirstOrDefaultAsync(token).ConfigureAwait(false);
     }
 
-    public async Task<IEnumerable<Folder>> GetSubFoldersAsync(Guid parentFolderId, string? searchTerm, int skip, int take,
-        CancellationToken token = default)
-    {
-        if (take <= 0) return [];
-        await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
-        return await SubFolders(context, parentFolderId, searchTerm)
-            .OrderBy(f => f.Name).ThenBy(f => f.Path).ThenBy(f => f.Id)
-            .Skip(Math.Max(0, skip)).Take(take)
-            .ToListAsync(token).ConfigureAwait(false);
-    }
-
-    /// <param name="pageNumber">The page the slice is, or 0 for a slice from an offset.</param>
     private async Task<PagedResult<Song>> ReadSongsAsync(SongScope scope, string? searchTerm, SongSortOrder sortOrder,
         int skip, int take, int pageNumber, CancellationToken token)
     {

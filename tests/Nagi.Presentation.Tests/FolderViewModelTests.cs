@@ -25,17 +25,17 @@ public class FolderViewModelTests
             return response.Task;
         });
         using var viewModel = CreateViewModel(library, Substitute.For<IUIService>());
-        var load = viewModel.LoadFoldersCommand.ExecuteAsync(null);
+        var load = viewModel.LoadAsync(CancellationToken.None);
         try
         {
             var token = await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
-            viewModel.LoadFoldersCommand.Cancel();
+            viewModel.ResetState();
             token.IsCancellationRequested.Should().BeTrue();
 
             response.SetResult(new[] { new FolderSummary(new Folder { Name = "Stale folder" }, 2, IsFromServer: false) });
             await load;
 
-            viewModel.Folders.Should().BeEmpty();
+            viewModel.Items.Should().BeEmpty();
         }
         finally
         {
@@ -66,7 +66,7 @@ public class FolderViewModelTests
         var ui = Substitute.For<IUIService>();
         ui.PickSingleFolderAsync().Returns(@"c:\music\");
         using var viewModel = CreateViewModel(library, ui);
-        await viewModel.LoadFoldersCommand.ExecuteAsync(null);
+        await viewModel.LoadAsync(CancellationToken.None);
 
         await viewModel.AddFolderCommand.ExecuteAsync(null);
 
@@ -102,7 +102,7 @@ public class FolderViewModelTests
         ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<bool>()).Returns(confirmed);
         using var viewModel = CreateViewModel(library, ui);
 
-        await viewModel.LoadFoldersCommand.ExecuteAsync(null);
+        await viewModel.LoadAsync(CancellationToken.None);
 
         await viewModel.DeleteFolderCommand.ExecuteAsync(folder.Id);
 
@@ -120,7 +120,7 @@ public class FolderViewModelTests
         var ui = Substitute.For<IUIService>();
         ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<bool>()).Returns(true);
         using var viewModel = CreateViewModel(library, ui, musicServers);
-        await viewModel.LoadFoldersCommand.ExecuteAsync(null);
+        await viewModel.LoadAsync(CancellationToken.None);
 
         await viewModel.DeleteFolderCommand.ExecuteAsync(server.Id);
 
@@ -143,7 +143,7 @@ public class FolderViewModelTests
         ui.ShowConfirmationDialogAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<bool>()).Returns(true);
         ui.ShowMusicServerSignInDialogAsync(server.Id).Returns(true);
         using var viewModel = CreateViewModel(library, ui, musicServers);
-        await viewModel.LoadFoldersCommand.ExecuteAsync(null);
+        await viewModel.LoadAsync(CancellationToken.None);
 
         await viewModel.SyncServerCommand.ExecuteAsync(server.Id);
 
@@ -163,7 +163,7 @@ public class FolderViewModelTests
             .Returns(Task.FromException(new MusicServerException(MusicServerError.Unreachable, "timed out")));
         var ui = Substitute.For<IUIService>();
         using var viewModel = CreateViewModel(library, ui, musicServers);
-        await viewModel.LoadFoldersCommand.ExecuteAsync(null);
+        await viewModel.LoadAsync(CancellationToken.None);
 
         await viewModel.SyncServerCommand.ExecuteAsync(server.Id);
 
@@ -173,6 +173,6 @@ public class FolderViewModelTests
 
     private static FolderViewModel CreateViewModel(LibraryFakes library, IUIService ui, IMusicServerService? musicServers = null) =>
         new(library.Reader, library.Folders, library.Notifier, musicServers ?? Substitute.For<IMusicServerService>(),
-            new GlobalOperationViewModel(), Substitute.For<IMusicPlaybackService>(), Substitute.For<INavigationService>(), ui,
+            new GlobalOperationViewModel(), Substitute.For<IMusicPlaybackService>(), Substitute.For<IMusicNavigationService>(), ui,
             new ImmediateDispatcher(), NullLogger<FolderViewModel>.Instance);
 }

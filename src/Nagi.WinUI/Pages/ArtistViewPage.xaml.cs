@@ -5,8 +5,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
-using Nagi.Presentation.Navigation;
-using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Implementations;
 using Nagi.Presentation.ViewModels;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -25,19 +23,12 @@ public sealed partial class ArtistViewPage : SongListPage
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<ViewModelFactory>().Create<ArtistViewViewModel>();
         DataContext = ViewModel;
-        InitializeSongList(ViewModel, ownsViewModel: true, SearchToggleButton, SearchTextBox,
-            Strings.ArtistViewPage_SearchButton_Search_ToolTip, ColumnHeaderHost, SongsListView);
+        InitializeSongList(ViewModel, ColumnHeaderHost, SongsListView);
         SongsListView.Loaded += OnSongsListViewLoaded;
     }
 
     public ArtistViewViewModel ViewModel { get; }
 
-    protected override async void OnNavigatedTo(NavigationEventArgs e)
-    {
-        base.OnNavigatedTo(e);
-        var navParam = (ArtistViewNavigationParameter)e.Parameter;
-        await ViewModel.LoadArtistDetailsAsync(navParam.ArtistId);
-    }
 
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
@@ -50,10 +41,7 @@ public sealed partial class ArtistViewPage : SongListPage
 
     private void AlbumGridView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        if (e.ClickedItem is ArtistAlbumViewModelItem clickedAlbum)
-        {
-            ViewModel.GoToAlbumCommand.Execute(clickedAlbum);
-        }
+        if (e.ClickedItem is ArtistAlbumViewModelItem clickedAlbum) ViewModel.OpenAlbum(clickedAlbum);
     }
 
     private void ArtistImage_PointerEntered(object sender, PointerRoutedEventArgs e) => EditOverlay.Opacity = 1;
@@ -125,8 +113,6 @@ public sealed partial class ArtistViewPage : SongListPage
                 AlbumsViewport.Height = newHeight;
             }
 
-            // Translate the content up to mimic scrolling naturally
-            // We clamp the translation so it doesn't float away if we scroll way past
             var translationY = (float)-Math.Min(scrollOffset, _lastKnownAlbumsHeight);
             AlbumsContent.Translation = new Vector3(0, translationY, 0);
 
@@ -134,7 +120,6 @@ public sealed partial class ArtistViewPage : SongListPage
             {
                 var opacity = Math.Clamp(newHeight / _lastKnownAlbumsHeight, 0, 1);
 
-                // Optimization: Snap to 0 if very low to save GPU composition effort
                 if (opacity < 0.05) opacity = 0;
 
                 AlbumsViewport.Opacity = opacity;

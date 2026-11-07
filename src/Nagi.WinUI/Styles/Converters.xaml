@@ -13,7 +13,6 @@ to avoid duplicate declarations across pages and controls.
     <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
     <converters:StringToDecodedImageSourceConverter x:Key="StringToDecodedImageSourceConverter" />
     <converters:CollectionCountToVisibilityConverter x:Key="CollectionCountToVisibilityConverter" />
-    <converters:CollectionCountToVisibilityConverter x:Key="InverseCollectionCountToVisibilityConverter" Invert="True" />
     <converters:BooleanToInverseBooleanConverter x:Key="BooleanToInverseBooleanConverter" />
     <converters:IncrementalLoadingConverter x:Key="IncrementalLoadingConverter" />
     <converters:ObjectToVisibilityConverter x:Key="ObjectToVisibilityConverter" />
@@ -23,7 +22,6 @@ to avoid duplicate declarations across pages and controls.
     <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
     <converters:StringToVisibilityConverter x:Key="InverseStringToVisibilityConverter" Invert="True" />
     <converters:VolumeToClipRectConverter x:Key="VolumeToClipRectConverter" />
-    <converters:SortOrderEqualsConverter x:Key="SortOrderEqualsConverter" />
     <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
 
     <!-- Slider helper converter to prevent E_INVALIDARG when Maximum is 0 -->

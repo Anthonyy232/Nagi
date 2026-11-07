@@ -34,67 +34,51 @@ public static class SortOrderHelper
     public static string PlaylistOrderLabel => CoreStrings.Label_ManualOrder;
     public static string RandomLabel => CoreStrings.Label_Random;
 
-    public static string GetDisplayName(SongSortOrder sortOrder) =>
-        sortOrder == SongSortOrder.PlaylistOrder ? PlaylistOrderLabel : CoreStrings.SortByPrefix + (sortOrder switch
-        {
-            SongSortOrder.TitleAsc => TitleAscLabel,
-            SongSortOrder.TitleDesc => TitleDescLabel,
-            SongSortOrder.AlbumAsc => AlbumAscLabel,
-            SongSortOrder.AlbumDesc => AlbumDescLabel,
-            SongSortOrder.YearAsc => YearOldestLabel,
-            SongSortOrder.YearDesc => YearNewestLabel,
-            SongSortOrder.FileCreatedDateAsc => DateCreatedOldestLabel,
-            SongSortOrder.FileCreatedDateDesc => DateCreatedNewestLabel,
-            SongSortOrder.ArtistAsc => ArtistAscLabel,
-            SongSortOrder.ArtistDesc => ArtistDescLabel,
-            SongSortOrder.TrackNumberAsc => TrackNumberAscLabel,
-            SongSortOrder.TrackNumberDesc => TrackNumberDescLabel,
-            SongSortOrder.PlayCountAsc => PlayCountAscLabel,
-            SongSortOrder.PlayCountDesc => PlayCountDescLabel,
-            SongSortOrder.LastPlayedAsc => LastPlayedAscLabel,
-            SongSortOrder.LastPlayedDesc => LastPlayedDescLabel,
-            SongSortOrder.DateAddedAsc => DateAddedAscLabel,
-            SongSortOrder.DateAddedDesc => DateAddedDescLabel,
-            SongSortOrder.DurationAsc => DurationAscLabel,
-            SongSortOrder.DurationDesc => DurationDescLabel,
-            SongSortOrder.BpmAsc => BpmAscLabel,
-            SongSortOrder.BpmDesc => BpmDescLabel,
-            SongSortOrder.Random => RandomLabel,
-            _ => TitleAscLabel
-        });
-
-    public static string GetDisplayName(PlaylistSortOrder sortOrder) => CoreStrings.SortByPrefix + (sortOrder switch
+    /// <summary>The order as a sort menu lists it.</summary>
+    public static string GetLabel(Enum sortOrder) => sortOrder switch
     {
-        PlaylistSortOrder.NameAsc => TitleAscLabel,
+        SongSortOrder.TitleAsc => TitleAscLabel,
+        SongSortOrder.TitleDesc => TitleDescLabel,
+        SongSortOrder.AlbumAsc => AlbumAscLabel,
+        SongSortOrder.AlbumDesc => AlbumDescLabel,
+        SongSortOrder.YearAsc => YearOldestLabel,
+        SongSortOrder.YearDesc => YearNewestLabel,
+        SongSortOrder.FileCreatedDateAsc => DateCreatedOldestLabel,
+        SongSortOrder.FileCreatedDateDesc => DateCreatedNewestLabel,
+        SongSortOrder.ArtistAsc => ArtistAscLabel,
+        SongSortOrder.ArtistDesc => ArtistDescLabel,
+        SongSortOrder.TrackNumberAsc => TrackNumberAscLabel,
+        SongSortOrder.TrackNumberDesc => TrackNumberDescLabel,
+        SongSortOrder.PlayCountAsc => PlayCountAscLabel,
+        SongSortOrder.PlayCountDesc => PlayCountDescLabel,
+        SongSortOrder.LastPlayedAsc => LastPlayedAscLabel,
+        SongSortOrder.LastPlayedDesc => LastPlayedDescLabel,
+        SongSortOrder.DateAddedAsc => DateAddedAscLabel,
+        SongSortOrder.DateAddedDesc => DateAddedDescLabel,
+        SongSortOrder.DurationAsc => DurationAscLabel,
+        SongSortOrder.DurationDesc => DurationDescLabel,
+        SongSortOrder.BpmAsc => BpmAscLabel,
+        SongSortOrder.BpmDesc => BpmDescLabel,
+        SongSortOrder.Random => RandomLabel,
+        SongSortOrder.PlaylistOrder => PlaylistOrderLabel,
+
         PlaylistSortOrder.NameDesc => TitleDescLabel,
         PlaylistSortOrder.DateCreatedDesc => DateCreatedNewestLabel,
         PlaylistSortOrder.DateCreatedAsc => DateCreatedOldestLabel,
         PlaylistSortOrder.DateModifiedDesc => ModifiedNewestLabel,
         PlaylistSortOrder.DateModifiedAsc => ModifiedOldestLabel,
-        _ => TitleAscLabel
-    });
+        PlaylistSortOrder => TitleAscLabel,
 
-    public static string GetDisplayName(GenreSortOrder sortOrder) => CoreStrings.SortByPrefix + (sortOrder switch
-    {
-        GenreSortOrder.NameAsc => TitleAscLabel,
         GenreSortOrder.NameDesc => TitleDescLabel,
         GenreSortOrder.SongCountDesc => MostSongsLabel,
         GenreSortOrder.SongCountAsc => LeastSongsLabel,
-        _ => TitleAscLabel
-    });
+        GenreSortOrder => TitleAscLabel,
 
-    public static string GetDisplayName(ArtistSortOrder sortOrder) => CoreStrings.SortByPrefix + (sortOrder switch
-    {
-        ArtistSortOrder.NameAsc => ArtistAscLabel,
         ArtistSortOrder.NameDesc => ArtistDescLabel,
         ArtistSortOrder.SongCountDesc => MostSongsLabel,
         ArtistSortOrder.SongCountAsc => LeastSongsLabel,
-        _ => ArtistAscLabel
-    });
+        ArtistSortOrder => ArtistAscLabel,
 
-    public static string GetDisplayName(AlbumSortOrder sortOrder) => CoreStrings.SortByPrefix + (sortOrder switch
-    {
-        AlbumSortOrder.ArtistAsc => ArtistAscLabel,
         AlbumSortOrder.ArtistDesc => ArtistDescLabel,
         AlbumSortOrder.AlbumTitleAsc => AlbumAscLabel,
         AlbumSortOrder.AlbumTitleDesc => AlbumDescLabel,
@@ -102,6 +86,12 @@ public static class SortOrderHelper
         AlbumSortOrder.YearAsc => YearOldestLabel,
         AlbumSortOrder.SongCountDesc => MostSongsLabel,
         AlbumSortOrder.SongCountAsc => LeastSongsLabel,
-        _ => ArtistAscLabel
-    });
+        AlbumSortOrder => ArtistAscLabel,
+
+        _ => TitleAscLabel
+    };
+
+    /// <summary>The order as a list's sort button names it.</summary>
+    public static string GetDisplayName(Enum sortOrder) =>
+        sortOrder is SongSortOrder.PlaylistOrder ? PlaylistOrderLabel : CoreStrings.SortByPrefix + GetLabel(sortOrder);
 }

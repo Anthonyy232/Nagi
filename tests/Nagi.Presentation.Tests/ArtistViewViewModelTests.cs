@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Presentation.Navigation;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.ViewModels;
 using NSubstitute;
@@ -22,8 +23,8 @@ public class ArtistViewViewModelTests
         library.Artwork.GetArtistDetailsAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(metadata.Task);
         using var viewModel = CreateViewModel(library);
-        var originalName = viewModel.ArtistName;
-        var load = viewModel.LoadArtistDetailsAsync(Guid.NewGuid());
+        var originalName = viewModel.PageTitle;
+        var load = viewModel.OpenAsync(new ArtistViewNavigationParameter(Guid.NewGuid()));
 
         viewModel.ResetState();
         viewModel.Dispose();
@@ -31,7 +32,7 @@ public class ArtistViewViewModelTests
         else metadata.SetResult(new Artist { Name = "Old artist" });
         await load.WaitAsync(TimeSpan.FromSeconds(5));
 
-        viewModel.ArtistName.Should().Be(originalName);
+        viewModel.PageTitle.Should().Be(originalName);
         viewModel.Albums.Should().BeEmpty();
     }
 

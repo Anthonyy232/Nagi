@@ -35,17 +35,6 @@ public partial class LibraryReader : ILibraryReader
             .FirstOrDefaultAsync(f => f.Id == folderId).ConfigureAwait(false);
     }
 
-    public async Task<Folder?> GetFolderByPathAsync(string path)
-    {
-        if (string.IsNullOrWhiteSpace(path)) return null;
-
-        var normalizedPath = _fileSystem.NormalizePath(path);
-        if (string.IsNullOrEmpty(normalizedPath)) return null;
-
-        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        return await context.Folders.AsNoTracking().FirstOrDefaultAsync(f => f.Path == normalizedPath).ConfigureAwait(false);
-    }
-
     public async Task<bool> HasAnyFolderAsync(CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
