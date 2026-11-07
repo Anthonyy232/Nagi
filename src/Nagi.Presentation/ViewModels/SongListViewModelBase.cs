@@ -215,6 +215,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         await _dispatcherService.EnqueueAsync(async () =>
         {
             if (token.IsCancellationRequested) return;
+            CurrentPage = 1;
             await RefreshOrSortSongsAsync(null, token);
         });
     }

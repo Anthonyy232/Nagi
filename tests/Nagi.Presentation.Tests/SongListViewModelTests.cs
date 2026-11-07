@@ -59,6 +59,24 @@ public class SongListViewModelTests
     }
 
     [Fact]
+    public async Task Search_StartsFromTheFirstPage()
+    {
+        var pages = new List<int>();
+        using var viewModel = new TestSongList((page, size, _) =>
+        {
+            pages.Add(page);
+            return Task.FromResult(new PagedResult<Song> { PageNumber = page, PageSize = size, TotalCount = 200 });
+        });
+        await viewModel.LoadPageAsync(3);
+
+        viewModel.SearchTerm = "needle";
+        await viewModel.SearchCommand.ExecuteAsync(null);
+
+        pages.Should().Equal(3, 1);
+        viewModel.CurrentPage.Should().Be(1);
+    }
+
+    [Fact]
     public async Task LoadPageAsync_AfterFailure_ReportsErrorAndAllowsRetry()
     {
         var attempts = 0;
