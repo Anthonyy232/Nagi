@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
-using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Implementations;
 using Nagi.Presentation.ViewModels;
 
@@ -14,8 +13,7 @@ public sealed partial class AlbumViewPage : SongListPage
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<ViewModelFactory>().Create<AlbumViewViewModel>();
         DataContext = ViewModel;
-        InitializeSongList(ViewModel, SearchToggleButton, SearchTextBox,
-            Strings.AlbumViewPage_SearchButton_Search_ToolTip, ColumnHeaderHost, SongsListView, GroupedSongsListView);
+        InitializeSongList(ViewModel, ColumnHeaderHost, SongsListView, GroupedSongsListView);
     }
 
     public AlbumViewViewModel ViewModel { get; }

@@ -1,5 +1,4 @@
-<pages:SearchablePage
-    xmlns:pages="using:Nagi.WinUI.Pages"
+<Page
     x:Class="Nagi.WinUI.Pages.PlaylistPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
@@ -26,28 +25,6 @@
     </Page.Resources>
 
     <Grid Padding="{StaticResource PageContainerPaddingVertical}">
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="SearchStates">
-                <VisualState x:Name="SearchCollapsed">
-                    <VisualState.Setters>
-                        <Setter Target="SearchTextBox.Width" Value="0" />
-                        <Setter Target="SearchTextBox.Opacity" Value="0" />
-                        <Setter Target="SearchTextBox.IsHitTestVisible" Value="False" />
-                        <Setter Target="SearchTextBox.IsTabStop" Value="False" />
-                        <Setter Target="SearchIcon.Glyph" Value="&#xE721;" />
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="SearchExpanded">
-                    <VisualState.Setters>
-                        <Setter Target="SearchTextBox.Width" Value="{StaticResource SearchBoxExpandedWidth}" />
-                        <Setter Target="SearchTextBox.Opacity" Value="1" />
-                        <Setter Target="SearchTextBox.IsHitTestVisible" Value="True" />
-                        <Setter Target="SearchTextBox.IsTabStop" Value="True" />
-                        <Setter Target="SearchIcon.Glyph" Value="&#xE711;" />
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -68,33 +45,7 @@
             </StackPanel>
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <Grid>
-                    <TextBox x:Name="SearchTextBox"
-                             PlaceholderText="{x:Bind resources:Strings.PlaylistPage_SearchBox_Placeholder, Mode=OneTime}"
-                             Style="{StaticResource SearchTextBoxStyle}"
-                             Width="0"
-                             Opacity="0"
-                             IsHitTestVisible="False"
-                             IsTabStop="False"
-                             HorizontalAlignment="Right"
-                             KeyDown="OnSearchTextBoxKeyDown"
-                             Text="{x:Bind ViewModel.SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             Canvas.ZIndex="0">
-                        <TextBox.OpacityTransition>
-                            <ScalarTransition Duration="0:0:0.15" />
-                        </TextBox.OpacityTransition>
-                    </TextBox>
-                    <Button x:Name="SearchToggleButton"
-                            ToolTipService.ToolTip="{x:Bind resources:Strings.PlaylistPage_SearchButton_Search_ToolTip, Mode=OneTime}"
-                            AutomationProperties.Name="{x:Bind resources:Strings.PlaylistPage_SearchButton_Search_ToolTip, Mode=OneTime}"
-                            Click="OnSearchToggleButtonClick"
-                            Style="{StaticResource SongListViewPageIconButton}"
-                            HorizontalAlignment="Right"
-                            Margin="0,0,1,0"
-                            Canvas.ZIndex="1">
-                        <FontIcon x:Name="SearchIcon" FontSize="16" Glyph="&#xE721;" />
-                    </Button>
-                </Grid>
+                <uicontrols:SearchToggle SearchTerm="{x:Bind ViewModel.SearchTerm, Mode=TwoWay}" PlaceholderText="{x:Bind resources:Strings.PlaylistPage_SearchBox_Placeholder, Mode=OneTime}" SearchToolTip="{x:Bind resources:Strings.PlaylistPage_SearchButton_Search_ToolTip, Mode=OneTime}" />
 
                 <uicontrols:SortButton Selection="{x:Bind ViewModel.Sort}" />
 
@@ -245,4 +196,4 @@
                                    HasLoadError="{x:Bind ViewModel.HasLoadError, Mode=OneWay}" />
         </Grid>
     </Grid>
-</pages:SearchablePage>
+</Page>

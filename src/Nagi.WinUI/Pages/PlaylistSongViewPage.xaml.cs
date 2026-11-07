@@ -2,7 +2,6 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.Core.Models;
-using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Implementations;
 using Nagi.Presentation.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
@@ -17,8 +16,7 @@ public sealed partial class PlaylistSongViewPage : SongListPage
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<ViewModelFactory>().Create<PlaylistSongListViewModel>();
         DataContext = ViewModel;
-        InitializeSongList(ViewModel, SearchToggleButton, SearchTextBox,
-            Strings.PlaylistSongViewPage_SearchButton_Search_ToolTip, ColumnHeaderHost, SongsListView);
+        InitializeSongList(ViewModel, ColumnHeaderHost, SongsListView);
     }
 
     public PlaylistSongListViewModel ViewModel { get; }

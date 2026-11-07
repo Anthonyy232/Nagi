@@ -2,19 +2,17 @@ using System.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using Nagi.Presentation.Resources;
 using Nagi.Presentation.ViewModels;
 
 namespace Nagi.WinUI.Pages;
 
-public sealed partial class ArtistPage : SearchablePage
+public sealed partial class ArtistPage : Page
 {
     public ArtistPage()
     {
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<ArtistViewModel>();
         DataContext = ViewModel;
-        InitializeSearch(ViewModel, SearchToggleButton, SearchTextBox, Strings.ArtistPage_SearchButton_Search_ToolTip);
     }
 
     public ArtistViewModel ViewModel { get; }

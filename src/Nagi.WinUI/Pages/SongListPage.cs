@@ -12,11 +12,11 @@ using Nagi.WinUI.Helpers;
 namespace Nagi.WinUI.Pages;
 
 /// <summary>
-///     A searchable page of songs. The selection is whatever the list has selected, including the
+///     A page of songs. The selection is whatever the list has selected, including the
 ///     list's own Ctrl+A. Also handles double-click to play, the now-playing indicator and the column
 ///     header; each row's context menu is part of <see cref="SongRow" />.
 /// </summary>
-public abstract class SongListPage : SearchablePage
+public abstract class SongListPage : Page
 {
     private readonly List<NowPlayingIndicatorBinder> _nowPlayingBinders = new();
     private SongListViewModelBase? _viewModel;
@@ -26,10 +26,8 @@ public abstract class SongListPage : SearchablePage
     ///     Call after InitializeComponent. The column header goes in <paramref name="columnHeaderHost" /> above the
     ///     lists, not in them, so it stays in view and re-sorting doesn't make a list follow its old first row.
     /// </summary>
-    protected void InitializeSongList(SongListViewModelBase viewModel, Button searchButton,
-        TextBox searchBox, string searchToolTip, Border columnHeaderHost, params ListView[] songLists)
+    protected void InitializeSongList(SongListViewModelBase viewModel, Border columnHeaderHost, params ListView[] songLists)
     {
-        InitializeSearch(viewModel, searchButton, searchBox, searchToolTip);
         _viewModel = viewModel;
         _songLists = songLists;
         columnHeaderHost.Child = CreateColumnHeader(viewModel);

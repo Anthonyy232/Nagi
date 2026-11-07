@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Implementations;
 using Nagi.Presentation.ViewModels;
 
@@ -13,8 +12,7 @@ public sealed partial class SmartPlaylistSongViewPage : SongListPage
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<ViewModelFactory>().Create<SmartPlaylistSongListViewModel>();
         DataContext = ViewModel;
-        InitializeSongList(ViewModel, SearchToggleButton, SearchTextBox,
-            Strings.SmartPlaylistSongViewPage_SearchButton_Search_ToolTip, ColumnHeaderHost, SongsListView);
+        InitializeSongList(ViewModel, ColumnHeaderHost, SongsListView);
     }
 
     public SmartPlaylistSongListViewModel ViewModel { get; }

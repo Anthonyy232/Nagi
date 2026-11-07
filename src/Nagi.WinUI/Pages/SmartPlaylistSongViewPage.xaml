@@ -16,28 +16,6 @@
 
     <Grid
           Padding="{StaticResource DetailPageContainerPadding}">
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="SearchStates">
-                <VisualState x:Name="SearchCollapsed">
-                    <VisualState.Setters>
-                        <Setter Target="SearchTextBox.Width" Value="0" />
-                        <Setter Target="SearchTextBox.Opacity" Value="0" />
-                        <Setter Target="SearchTextBox.IsHitTestVisible" Value="False" />
-                        <Setter Target="SearchTextBox.IsTabStop" Value="False" />
-                        <Setter Target="SearchIcon.Glyph" Value="&#xE721;" />
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="SearchExpanded">
-                    <VisualState.Setters>
-                        <Setter Target="SearchTextBox.Width" Value="{StaticResource SearchBoxExpandedWidth}" />
-                        <Setter Target="SearchTextBox.Opacity" Value="1" />
-                        <Setter Target="SearchTextBox.IsHitTestVisible" Value="True" />
-                        <Setter Target="SearchTextBox.IsTabStop" Value="True" />
-                        <Setter Target="SearchIcon.Glyph" Value="&#xE711;" />
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -111,34 +89,7 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                    <Grid>
-                        <TextBox x:Name="SearchTextBox"
-                                 Style="{StaticResource SearchTextBoxStyle}"
-                                 PlaceholderText="{x:Bind resources:Strings.SmartPlaylistSongViewPage_SearchBox_Placeholder, Mode=OneTime}"
-                                 Width="0"
-                                 Opacity="0"
-                                 IsHitTestVisible="False"
-                             IsTabStop="False"
-                                 HorizontalAlignment="Right"
-                                 KeyDown="OnSearchTextBoxKeyDown"
-                                 Text="{x:Bind ViewModel.SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 Canvas.ZIndex="0">
-                            <TextBox.OpacityTransition>
-                                <ScalarTransition Duration="0:0:0.15" />
-                            </TextBox.OpacityTransition>
-                        </TextBox>
-
-                        <Button x:Name="SearchToggleButton"
-                                Click="OnSearchToggleButtonClick"
-                                Style="{StaticResource SongListViewPageIconButton}"
-                                ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylistSongViewPage_SearchButton_Search_ToolTip, Mode=OneTime}"
-                                AutomationProperties.Name="{x:Bind resources:Strings.SmartPlaylistSongViewPage_SearchButton_Search_ToolTip, Mode=OneTime}"
-                                HorizontalAlignment="Right"
-                                Margin="0,0,1,0"
-                                Canvas.ZIndex="1">
-                            <FontIcon x:Name="SearchIcon" FontSize="16" Glyph="&#xE721;" />
-                        </Button>
-                    </Grid>
+                    <uicontrols:SearchToggle SearchTerm="{x:Bind ViewModel.SearchTerm, Mode=TwoWay}" PlaceholderText="{x:Bind resources:Strings.SmartPlaylistSongViewPage_SearchBox_Placeholder, Mode=OneTime}" SearchToolTip="{x:Bind resources:Strings.SmartPlaylistSongViewPage_SearchButton_Search_ToolTip, Mode=OneTime}" />
 
                     <uicontrols:SortButton Selection="{x:Bind ViewModel.Sort}" />
 

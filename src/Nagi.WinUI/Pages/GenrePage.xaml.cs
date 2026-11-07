@@ -2,19 +2,17 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Services.Data;
-using Nagi.Presentation.Resources;
 using Nagi.Presentation.ViewModels;
 
 namespace Nagi.WinUI.Pages;
 
-public sealed partial class GenrePage : SearchablePage
+public sealed partial class GenrePage : Page
 {
     public GenrePage()
     {
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<GenreViewModel>();
         DataContext = ViewModel;
-        InitializeSearch(ViewModel, SearchToggleButton, SearchTextBox, Strings.GenrePage_SearchButton_Search_ToolTip);
     }
 
     public GenreViewModel ViewModel { get; }
