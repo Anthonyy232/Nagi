@@ -1,10 +1,8 @@
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
-using Nagi.Core.Models;
-using Nagi.Core.Services.Abstractions;
 
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Playback;
 
 public sealed class PlaybackStateStore(IPathConfiguration pathConfig, ILogger<PlaybackStateStore> logger)
     : IPlaybackStateStore

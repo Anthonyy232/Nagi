@@ -1,5 +1,5 @@
 ﻿using Nagi.Core.Library;
-using Nagi.Core.Models;
+using Nagi.Core.Playback;
 
 namespace Nagi.Core.Services.Abstractions;
 

@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Dispatching;
 using Nagi.Audio.LibVlc;
 using Nagi.Core.Helpers;
+using Nagi.Core.Playback;
 using Nagi.Core.Services;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Services;

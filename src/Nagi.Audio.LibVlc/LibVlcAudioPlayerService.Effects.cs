@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Models;
+using Nagi.Core.Playback;
 using Nagi.Core.Settings;
 
 namespace Nagi.Audio.LibVlc;

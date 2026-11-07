@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Helpers;
 using Nagi.Core.Library;
 using Nagi.Core.Models.Lyrics;
+using Nagi.Core.Playback;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;

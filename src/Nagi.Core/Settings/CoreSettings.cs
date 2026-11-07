@@ -1,5 +1,5 @@
 using Nagi.Core.Models;
-using Nagi.Core.Services.Data;
+using Nagi.Core.Playback;
 
 namespace Nagi.Core.Settings;
 
@@ -12,7 +12,7 @@ public static class CoreSettings
     public static readonly Setting<double> Volume = Setting.Value("AppVolume", 0.5, volume => Math.Clamp(volume, 0.0, 1.0));
     public static readonly Setting<bool> IsMuted = Setting.Value("AppMuteState", false);
     public static readonly Setting<bool> IsShuffleEnabled = Setting.Value("MusicShuffleState", false);
-    public static readonly Setting<RepeatMode> RepeatMode = Setting.EnumName("MusicRepeatMode", Services.Data.RepeatMode.Off);
+    public static readonly Setting<RepeatMode> RepeatMode = Setting.EnumName("MusicRepeatMode", Playback.RepeatMode.Off);
     public static readonly Setting<bool> RestorePlaybackState = Setting.Value("RestorePlaybackStateEnabled", true);
 
     /// <summary>Null until the equalizer is first set up for the audio player's bands.</summary>

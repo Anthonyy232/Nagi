@@ -11,7 +11,7 @@ public enum ShuffleMode
 }
 
 /// <summary>
-///     The ranges <see cref="Services.Abstractions.IMusicPlaybackService.PlayMixAsync" /> accepts.
+///     The ranges <see cref="Playback.IMusicPlaybackService.PlayMixAsync" /> accepts.
 /// </summary>
 public static class PlaybackMixLimits
 {

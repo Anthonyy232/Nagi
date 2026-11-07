@@ -1,8 +1,7 @@
 using Nagi.Core.Library;
 using Nagi.Core.Models;
-using Nagi.Core.Services.Data;
 
-namespace Nagi.Core.Services.Abstractions;
+namespace Nagi.Core.Playback;
 
 /// <remarks>
 ///     Call mutations from the UI context. New transport requests supersede pending selections;

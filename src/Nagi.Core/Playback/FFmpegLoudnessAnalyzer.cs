@@ -1,9 +1,8 @@
 using System.Diagnostics;
 using System.Globalization;
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Services.Abstractions;
 
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Playback;
 
 public sealed class FFmpegLoudnessAnalyzer(ILogger<FFmpegLoudnessAnalyzer> logger) : ILoudnessAnalyzer
 {

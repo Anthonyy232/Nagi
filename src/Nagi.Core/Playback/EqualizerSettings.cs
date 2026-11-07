@@ -1,4 +1,4 @@
-﻿namespace Nagi.Core.Models;
+﻿namespace Nagi.Core.Playback;
 
 public class EqualizerSettings
 {

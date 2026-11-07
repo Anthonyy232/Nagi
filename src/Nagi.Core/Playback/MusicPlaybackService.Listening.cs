@@ -1,8 +1,6 @@
-using Nagi.Core.Helpers;
 using Nagi.Core.Models;
-using Nagi.Core.Services.Data;
 
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Playback;
 
 public partial class MusicPlaybackService
 {

@@ -1,4 +1,5 @@
 using Nagi.Core.Library;
+using Nagi.Core.Playback;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

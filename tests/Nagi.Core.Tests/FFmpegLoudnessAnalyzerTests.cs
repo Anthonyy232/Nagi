@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
-using Nagi.Core.Services.Implementations;
+using Nagi.Core.Playback;
 using Xunit;
 
 namespace Nagi.Core.Tests;

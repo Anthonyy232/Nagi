@@ -4,7 +4,7 @@ using Nagi.Core.Data;
 using Nagi.Core.Library;
 using Nagi.Core.Services.Abstractions;
 
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Playback;
 
 public class ReplayGainService : IReplayGainService
 {

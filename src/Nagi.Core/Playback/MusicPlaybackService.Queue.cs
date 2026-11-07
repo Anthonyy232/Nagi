@@ -4,7 +4,7 @@ using Nagi.Core.Helpers;
 using Nagi.Core.Library;
 using Nagi.Core.Models;
 
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Playback;
 
 /// <summary>
 ///     Queue editing: adding, reordering and removing songs, files from outside the library, and queue lookups.

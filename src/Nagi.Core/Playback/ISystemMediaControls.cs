@@ -1,7 +1,6 @@
 ﻿using Nagi.Core.Library;
-using Nagi.Core.Models;
 
-namespace Nagi.Core.Services.Abstractions;
+namespace Nagi.Core.Playback;
 
 /// <summary>
 ///     The operating system's media overlay and media keys, such as the System Media Transport Controls on

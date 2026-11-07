@@ -1,4 +1,6 @@
-﻿namespace Nagi.Core.Models;
+﻿using Nagi.Core.Models;
+
+namespace Nagi.Core.Playback;
 
 public class PlaybackState
 {

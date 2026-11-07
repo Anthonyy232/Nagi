@@ -1,7 +1,6 @@
 ﻿using Nagi.Core.Library;
-using Nagi.Core.Models;
 
-namespace Nagi.Core.Services.Abstractions;
+namespace Nagi.Core.Playback;
 
 /// <summary>
 ///     Plays audio files and music server streams. Events are raised on the UI thread, which the playback service relies on.

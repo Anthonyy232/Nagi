@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Nagi.Core.Library;
 
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Playback;
 
 /// <summary>
 ///     Songs played from files outside the library, looked up by id or by file path.

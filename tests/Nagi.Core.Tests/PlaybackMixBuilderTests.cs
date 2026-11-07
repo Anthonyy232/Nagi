@@ -1,7 +1,7 @@
 using FluentAssertions;
-using Nagi.Core.Helpers;
 using Nagi.Core.Library;
 using Nagi.Core.Models;
+using Nagi.Core.Playback;
 using Xunit;
 
 namespace Nagi.Core.Tests;

@@ -1,4 +1,4 @@
-namespace Nagi.Core.Services.Data;
+namespace Nagi.Core.Playback;
 
 public enum RepeatMode
 {

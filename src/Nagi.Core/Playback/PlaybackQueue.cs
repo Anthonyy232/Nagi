@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Playback;
 
 /// <summary>
 ///     The songs queued to play, in their own order and, while shuffling, in a shuffled play order, with the current

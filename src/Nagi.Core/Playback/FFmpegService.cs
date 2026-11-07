@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
-using Nagi.Core.Services.Abstractions;
 
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Playback;
 
 public class FFmpegService : IFFmpegService
 {

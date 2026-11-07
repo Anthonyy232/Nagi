@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
-using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Playback;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Helpers;
 

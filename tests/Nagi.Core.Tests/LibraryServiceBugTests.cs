@@ -6,6 +6,7 @@ using Nagi.Core.Http;
 using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Library;
 using Nagi.Core.Models;
+using Nagi.Core.Playback;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
 using Nagi.Core.Tests.Utils;

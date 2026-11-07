@@ -1,6 +1,4 @@
-using Nagi.Core.Models;
-
-namespace Nagi.Core.Services.Abstractions;
+namespace Nagi.Core.Playback;
 
 /// <summary>
 ///     The queue and current track saved between sessions.

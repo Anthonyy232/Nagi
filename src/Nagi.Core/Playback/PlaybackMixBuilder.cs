@@ -1,7 +1,7 @@
 using Nagi.Core.Library;
 using Nagi.Core.Models;
 
-namespace Nagi.Core.Helpers;
+namespace Nagi.Core.Playback;
 
 internal static class PlaybackMixBuilder
 {

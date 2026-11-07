@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Playback;
 
 internal sealed class Ebur128Meter : SafeHandle
 {

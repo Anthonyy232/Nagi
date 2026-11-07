@@ -1,6 +1,6 @@
 ﻿using Nagi.Core.Library;
 
-namespace Nagi.Core.Services.Abstractions;
+namespace Nagi.Core.Playback;
 
 public interface IReplayGainService : IDisposable
 {

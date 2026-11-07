@@ -1,6 +1,4 @@
-using Nagi.Core.Models;
-
-namespace Nagi.Core.Services.Abstractions;
+namespace Nagi.Core.Playback;
 
 /// <summary>
 ///     The audio player's equalizer: its bands, the saved gains and preamp, and the built-in presets. Every change is

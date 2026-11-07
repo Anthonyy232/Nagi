@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Settings;
 
-namespace Nagi.Core.Services.Implementations;
+namespace Nagi.Core.Playback;
 
 /// <summary>
 ///     Saving and restoring the queue and current track between sessions.
