@@ -22,6 +22,7 @@ public abstract partial class ClientFilteredListViewModelBase<TItem> : Searchabl
     private CancellationTokenSource? _loadCts;
     private int _loadVersion;
     protected bool _isDisposed;
+    private bool _hasLoaded;
 
     protected ClientFilteredListViewModelBase(ILibraryNotifier libraryNotifier, IDispatcherService dispatcherService,
         ILogger logger)
@@ -29,7 +30,11 @@ public abstract partial class ClientFilteredListViewModelBase<TItem> : Searchabl
     {
         _libraryNotifier = libraryNotifier;
         _libraryNotifier.Changed += OnLibraryChanged;
-        Items.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasItems));
+        Items.CollectionChanged += (_, _) =>
+        {
+            OnPropertyChanged(nameof(HasItems));
+            OnPropertyChanged(nameof(ShowEmptyState));
+        };
     }
 
     /// <summary>The items the search and sort let through.</summary>
@@ -37,9 +42,16 @@ public abstract partial class ClientFilteredListViewModelBase<TItem> : Searchabl
 
     public bool HasItems => Items.Count > 0;
 
-    [ObservableProperty] public partial bool IsLoading { get; set; }
+    /// <summary>Whether a load has finished and nothing passes the search, so the list doesn't look empty while it loads.</summary>
+    public bool ShowEmptyState => _hasLoaded && !IsLoading && !HasLoadError && Items.Count == 0;
 
-    [ObservableProperty] public partial bool HasLoadError { get; set; }
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowEmptyState))]
+    public partial bool IsLoading { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowEmptyState))]
+    public partial bool HasLoadError { get; set; }
 
     /// <summary>Every loaded item, before the search and sort.</summary>
     protected List<TItem> AllItems { get; private set; } = [];
@@ -88,6 +100,7 @@ public abstract partial class ClientFilteredListViewModelBase<TItem> : Searchabl
             token.ThrowIfCancellationRequested();
             if (_isDisposed || version != _loadVersion) return;
             AllItems = items.ToList();
+            _hasLoaded = true;
             ApplyFilter();
         }
         catch (OperationCanceledException) when (token.IsCancellationRequested)

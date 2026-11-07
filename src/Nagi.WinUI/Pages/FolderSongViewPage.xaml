@@ -223,39 +223,12 @@
             ViewModel="{x:Bind ViewModel}"
             HorizontalAlignment="Right"
             Margin="0,16,24,16" />
-        <StackPanel
-            Grid.Row="1"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Spacing="16"
-            Visibility="{x:Bind ViewModel.FolderContents.Count, Mode=OneWay, Converter={StaticResource InverseCollectionCountToVisibilityConverter}}">
-            <StackPanel.ChildrenTransitions>
-                <TransitionCollection>
-                    <EntranceThemeTransition FromVerticalOffset="20" />
-                </TransitionCollection>
-            </StackPanel.ChildrenTransitions>
-            <Grid Margin="0,0,0,12" HorizontalAlignment="Center">
-                <FontIcon
-                    Glyph="&#xE8B7;"
-                    FontSize="48"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    Visibility="{x:Bind ViewModel.IsServer, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-                <FontIcon
-                    Glyph="&#xE8CE;"
-                    FontSize="48"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    Visibility="{x:Bind ViewModel.IsServer, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-            </Grid>
-            <TextBlock
-                Text="{x:Bind ViewModel.EmptyTitle, Mode=OneWay}"
-                Style="{StaticResource TitleTextBlockStyle}"
-                HorizontalAlignment="Center" />
-            <TextBlock
-                Text="{x:Bind ViewModel.EmptySubtitle, Mode=OneWay}"
-                Style="{StaticResource SubtitleTextBlockStyle}"
-                HorizontalAlignment="Center"
-                Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
-        </StackPanel>
+        <uicontrols:EmptyState Grid.Row="1"
+                               Glyph="{x:Bind EmptyGlyph(ViewModel.IsServer), Mode=OneWay}"
+                               Title="{x:Bind ViewModel.EmptyTitle, Mode=OneWay}"
+                               Subtitle="{x:Bind ViewModel.EmptySubtitle, Mode=OneWay}"
+                               IsShown="{x:Bind ViewModel.ShowEmptyState, Mode=OneWay}"
+                               HasLoadError="{x:Bind ViewModel.HasLoadError, Mode=OneWay}" />
 
     </Grid>
 </pages:SongListPage>

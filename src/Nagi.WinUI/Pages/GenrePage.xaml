@@ -147,32 +147,11 @@
                 </GridView.ItemTemplate>
             </GridView>
 
-            <StackPanel
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Spacing="16"
-                Visibility="{x:Bind ViewModel.HasItems, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
-                <StackPanel.ChildrenTransitions>
-                    <TransitionCollection>
-                        <EntranceThemeTransition FromVerticalOffset="20" />
-                    </TransitionCollection>
-                </StackPanel.ChildrenTransitions>
-                <FontIcon
-                    Glyph="&#xE8EC;"
-                    FontSize="48"
-                    Margin="0,0,0,12"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    HorizontalAlignment="Center" />
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    Text="{x:Bind resources:Strings.GenrePage_Empty_Title, Mode=OneTime}"
-                    Style="{StaticResource TitleTextBlockStyle}" />
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    Text="{x:Bind resources:Strings.GenrePage_Empty_Subtitle, Mode=OneTime}"
-                    Style="{StaticResource SubtitleTextBlockStyle}"
-                    Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
-            </StackPanel>
+            <uicontrols:EmptyState Glyph="&#xE8EC;"
+                                   Title="{x:Bind resources:Strings.GenrePage_Empty_Title, Mode=OneTime}"
+                                   Subtitle="{x:Bind resources:Strings.GenrePage_Empty_Subtitle, Mode=OneTime}"
+                                   IsShown="{x:Bind ViewModel.ShowEmptyState, Mode=OneWay}"
+                                   HasLoadError="{x:Bind ViewModel.HasLoadError, Mode=OneWay}" />
         </Grid>
     </Grid>
 </pages:SearchablePage>

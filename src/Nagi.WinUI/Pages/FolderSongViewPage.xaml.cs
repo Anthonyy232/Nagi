@@ -26,6 +26,8 @@ public sealed partial class FolderSongViewPage : SongListPage
 
     public FolderSongListViewModel ViewModel { get; }
 
+    public string EmptyGlyph(bool isServer) => isServer ? "" : "";
+
     // Rows are subfolders or songs.
     protected override Song? GetSong(object? item) => (item as FolderContentItem)?.Song;
 

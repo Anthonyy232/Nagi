@@ -120,18 +120,8 @@ public class StringToVisibilityConverter : IValueConverter
 /// </summary>
 public class CollectionCountToVisibilityConverter : IValueConverter
 {
-    /// <summary>
-    ///     If true, 0 becomes Visible and >0 becomes Collapsed.
-    /// </summary>
-    public bool Invert { get; set; }
-
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        var count = value is int c ? c : 0;
-        var isVisible = count > 0;
-        if (Invert) isVisible = !isVisible;
-        return isVisible ? Visibility.Visible : Visibility.Collapsed;
-    }
+    public object Convert(object value, Type targetType, object parameter, string language) =>
+        value is > 0 ? Visibility.Visible : Visibility.Collapsed;
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {

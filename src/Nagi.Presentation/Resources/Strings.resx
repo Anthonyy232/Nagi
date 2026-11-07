@@ -337,6 +337,9 @@
   <data name="Generic_NoItems" xml:space="preserve">
     <value>No items</value>
   </data>
+  <data name="Generic_LoadError" xml:space="preserve">
+    <value>This list couldn't be loaded.</value>
+  </data>
   <data name="Generic_Error" xml:space="preserve">
     <value>Error</value>
   </data>

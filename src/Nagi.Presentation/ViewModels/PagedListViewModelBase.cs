@@ -30,11 +30,17 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     private readonly Debouncer _libraryChangeDebouncer = new(TimeSpan.FromSeconds(1));
 
     private bool _pendingReload;
+    private bool _hasLoaded;
     protected bool _isDisposed;
     private CancellationTokenSource? _loadCts;
 
-    [ObservableProperty] public partial bool IsLoading { get; set; }
-    [ObservableProperty] public partial bool HasLoadError { get; set; }
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowEmptyState))]
+    public partial bool IsLoading { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowEmptyState))]
+    public partial bool HasLoadError { get; set; }
     [ObservableProperty] public partial string TotalItemsText { get; set; } = string.Empty;
 
     [ObservableProperty]
@@ -50,8 +56,11 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     public partial int PageSize { get; set; }
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(CanPaginate))]
+    [NotifyPropertyChangedFor(nameof(CanPaginate), nameof(ShowEmptyState))]
     public partial int TotalItemCount { get; set; }
+
+    /// <summary>Whether a load has finished and found nothing, so the list doesn't look empty while it loads.</summary>
+    public bool ShowEmptyState => _hasLoaded && !IsLoading && !HasLoadError && TotalItemCount == 0;
 
     /// <summary>Paging only means something once there are more items than the smallest page holds.</summary>
     public bool CanPaginate => TotalItemCount > AppSettings.PageSizeOptions[0];
@@ -118,6 +127,7 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
     {
         if (token.IsCancellationRequested || _isDisposed || _pendingReload) return;
 
+        _hasLoaded = true;
         TotalPages = IsPaged ? Math.Max(1, result.TotalPages) : 1;
         CurrentPage = IsPaged
             ? Math.Clamp(result.PageNumber > 0 ? result.PageNumber : CurrentPage, 1, TotalPages)

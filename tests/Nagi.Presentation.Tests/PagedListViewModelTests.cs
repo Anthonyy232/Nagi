@@ -33,6 +33,21 @@ public class PagedListViewModelTests
     }
 
     [Fact]
+    public async Task EmptyState_ShowsOnlyOnceALoadFoundNothing()
+    {
+        var result = new TaskCompletionSource<PagedResult<int>>(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var viewModel = CreateViewModel((_, _, _) => result.Task);
+        viewModel.ShowEmptyState.Should().BeFalse();
+
+        var loading = viewModel.LoadAsync(CancellationToken.None);
+        viewModel.ShowEmptyState.Should().BeFalse();
+        result.SetResult(new PagedResult<int> { PageNumber = 1, PageSize = 50, TotalCount = 0 });
+        await loading;
+
+        viewModel.ShowEmptyState.Should().BeTrue();
+    }
+
+    [Fact]
     public async Task LoadAsync_WhenLastPageIsRemoved_LoadsLastRemainingPage()
     {
         var requestedPages = new List<int>();

@@ -193,38 +193,20 @@
             HorizontalAlignment="Right"
             Margin="0,16,24,16" />
 
-        <StackPanel
-            Grid.Row="1"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Spacing="16"
-            Visibility="{x:Bind ViewModel.ShowEmptyState, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <StackPanel.ChildrenTransitions>
-                <TransitionCollection>
-                    <EntranceThemeTransition FromVerticalOffset="20" />
-                </TransitionCollection>
-            </StackPanel.ChildrenTransitions>
-            <FontIcon
-                Glyph="&#xE71C;"
-                FontSize="48"
-                Margin="0,0,0,12"
-                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                HorizontalAlignment="Center" />
-            <TextBlock
-                Style="{StaticResource TitleTextBlockStyle}"
-                Text="{x:Bind resources:Strings.SmartPlaylistSongViewPage_EmptyState_Title, Mode=OneTime}"
-                HorizontalAlignment="Center" />
-            <TextBlock
-                Style="{StaticResource SubtitleTextBlockStyle}"
-                Text="{x:Bind resources:Strings.SmartPlaylistSongViewPage_EmptyState_Subtitle, Mode=OneTime}"
-                HorizontalAlignment="Center"
-                Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
-            <Button
-                Style="{StaticResource AnimatedAccentButtonStyle}"
-                Content="{x:Bind resources:Strings.SmartPlaylistSongViewPage_EmptyState_Button_Content, Mode=OneTime}"
-                Command="{x:Bind ViewModel.EditRulesCommand}"
-                HorizontalAlignment="Center" />
-        </StackPanel>
+        <uicontrols:EmptyState Grid.Row="1"
+                               Glyph="&#xE71C;"
+                               Title="{x:Bind resources:Strings.SmartPlaylistSongViewPage_EmptyState_Title, Mode=OneTime}"
+                               Subtitle="{x:Bind resources:Strings.SmartPlaylistSongViewPage_EmptyState_Subtitle, Mode=OneTime}"
+                               IsShown="{x:Bind ViewModel.ShowEmptyState, Mode=OneWay}"
+                               HasLoadError="{x:Bind ViewModel.HasLoadError, Mode=OneWay}">
+            <uicontrols:EmptyState.Action>
+                <Button
+                    Style="{StaticResource AnimatedAccentButtonStyle}"
+                    Content="{x:Bind resources:Strings.SmartPlaylistSongViewPage_EmptyState_Button_Content, Mode=OneTime}"
+                    Command="{x:Bind ViewModel.EditRulesCommand}"
+                    HorizontalAlignment="Center" />
+            </uicontrols:EmptyState.Action>
+        </uicontrols:EmptyState>
 
     </Grid>
 </pages:SongListPage>

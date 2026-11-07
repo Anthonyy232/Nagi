@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uicontrols="using:Nagi.WinUI.Controls"
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:vm="using:Nagi.Presentation.ViewModels"
     x:Name="FolderPageRoot"
@@ -152,32 +153,11 @@
             </GridView.ItemTemplate>
         </GridView>
 
-        <StackPanel
-            Grid.Row="1"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Spacing="16"
-            Visibility="{x:Bind ViewModel.HasItems, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
-            <StackPanel.ChildrenTransitions>
-                <TransitionCollection>
-                    <EntranceThemeTransition FromVerticalOffset="20" />
-                </TransitionCollection>
-            </StackPanel.ChildrenTransitions>
-            <FontIcon
-                Glyph="&#xED25;"
-                FontSize="48"
-                Margin="0,0,0,12"
-                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                HorizontalAlignment="Center" />
-            <TextBlock
-                HorizontalAlignment="Center"
-                Text="{x:Bind resources:Strings.FolderPage_Empty_Title, Mode=OneTime}"
-                Style="{StaticResource TitleTextBlockStyle}" />
-            <TextBlock
-                HorizontalAlignment="Center"
-                Text="{x:Bind resources:Strings.FolderPage_Empty_Subtitle, Mode=OneTime}"
-                Style="{StaticResource SubtitleTextBlockStyle}"
-                Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
-        </StackPanel>
+        <uicontrols:EmptyState Grid.Row="1"
+                               Glyph="&#xED25;"
+                               Title="{x:Bind resources:Strings.FolderPage_Empty_Title, Mode=OneTime}"
+                               Subtitle="{x:Bind resources:Strings.FolderPage_Empty_Subtitle, Mode=OneTime}"
+                               IsShown="{x:Bind ViewModel.ShowEmptyState, Mode=OneWay}"
+                               HasLoadError="{x:Bind ViewModel.HasLoadError, Mode=OneWay}" />
     </Grid>
 </Page>

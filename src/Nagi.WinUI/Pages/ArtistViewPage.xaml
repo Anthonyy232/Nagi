@@ -319,33 +319,12 @@
             ViewModel="{x:Bind ViewModel}"
             HorizontalAlignment="Right"
             Margin="0,16,24,16" />
-        <StackPanel
-            Grid.Row="1"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Spacing="16"
-            Visibility="{x:Bind ViewModel.Songs.Count, Mode=OneWay, Converter={StaticResource InverseCollectionCountToVisibilityConverter}}">
-            <StackPanel.ChildrenTransitions>
-                <TransitionCollection>
-                    <EntranceThemeTransition FromVerticalOffset="20" />
-                </TransitionCollection>
-            </StackPanel.ChildrenTransitions>
-            <FontIcon
-                Glyph="&#xE8D6;"
-                FontSize="48"
-                Margin="0,0,0,12"
-                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                HorizontalAlignment="Center" />
-            <TextBlock
-                Text="{x:Bind resources:Strings.ArtistViewPage_Empty_Title, Mode=OneTime}"
-                Style="{StaticResource TitleTextBlockStyle}"
-                HorizontalAlignment="Center" />
-            <TextBlock
-                Text="{x:Bind resources:Strings.ArtistViewPage_Empty_Subtitle, Mode=OneTime}"
-                Style="{StaticResource SubtitleTextBlockStyle}"
-                HorizontalAlignment="Center"
-                Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
-        </StackPanel>
+        <uicontrols:EmptyState Grid.Row="1"
+                               Glyph="&#xE8D6;"
+                               Title="{x:Bind resources:Strings.ArtistViewPage_Empty_Title, Mode=OneTime}"
+                               Subtitle="{x:Bind resources:Strings.ArtistViewPage_Empty_Subtitle, Mode=OneTime}"
+                               IsShown="{x:Bind ViewModel.ShowEmptyState, Mode=OneWay}"
+                               HasLoadError="{x:Bind ViewModel.HasLoadError, Mode=OneWay}" />
 
     </Grid>
 </pages:SongListPage>

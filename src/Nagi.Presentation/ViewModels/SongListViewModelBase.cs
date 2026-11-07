@@ -75,7 +75,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         _musicNavigationService = musicNavigationService;
         _uiService = uiService;
 
-        Songs.CollectionChanged += OnSongsCollectionChanged;
         _playlistService.PlaylistsChanged += OnPlaylistsChanged;
 
         // Mirror the playback service's current track Id so row "now playing" indicators
@@ -127,11 +126,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     }
 
     public ObservableRangeCollection<Song> Songs { get; } = new();
-
-    private void OnSongsCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-    {
-        OnPropertyChanged(nameof(ShowEmptyState));
-    }
 
     public ObservableCollection<Song> SelectedSongs { get; } = new();
 
@@ -195,8 +189,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         });
     }
 
-    public bool ShowEmptyState => !IsLoading && Songs.Count == 0;
-
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ShowInFolderCommand))]
     [NotifyCanExecuteChangedFor(nameof(ShowSongInfoCommand))]
@@ -209,7 +201,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
     protected override void OnLoadingStateChanged(bool isLoading)
     {
-        OnPropertyChanged(nameof(ShowEmptyState));
         NotifyPlayCommandsChanged();
     }
 
@@ -570,7 +561,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         _playbackService.TrackChanged -= OnPlaybackTrackChanged;
         _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
         _settingsService.SettingChanged -= OnSettingChanged;
-        Songs.CollectionChanged -= OnSongsCollectionChanged;
 
         base.Dispose();
 

@@ -238,32 +238,11 @@
             </GridView.ItemTemplate>
             </GridView>
 
-            <StackPanel
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Spacing="16"
-                Visibility="{x:Bind ViewModel.HasItems, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
-                <StackPanel.ChildrenTransitions>
-                    <TransitionCollection>
-                        <EntranceThemeTransition FromVerticalOffset="20" />
-                    </TransitionCollection>
-                </StackPanel.ChildrenTransitions>
-                <FontIcon
-                    Glyph="&#xE90B;"
-                    FontSize="48"
-                    Margin="0,0,0,12"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    HorizontalAlignment="Center" />
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    Style="{StaticResource TitleTextBlockStyle}"
-                    Text="{x:Bind resources:Strings.PlaylistPage_EmptyState_Title, Mode=OneTime}" />
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    Style="{StaticResource SubtitleTextBlockStyle}"
-                    Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                    Text="{x:Bind resources:Strings.PlaylistPage_EmptyState_Subtitle, Mode=OneTime}" />
-            </StackPanel>
+            <uicontrols:EmptyState Glyph="&#xE90B;"
+                                   Title="{x:Bind resources:Strings.PlaylistPage_EmptyState_Title, Mode=OneTime}"
+                                   Subtitle="{x:Bind resources:Strings.PlaylistPage_EmptyState_Subtitle, Mode=OneTime}"
+                                   IsShown="{x:Bind ViewModel.ShowEmptyState, Mode=OneWay}"
+                                   HasLoadError="{x:Bind ViewModel.HasLoadError, Mode=OneWay}" />
         </Grid>
     </Grid>
 </pages:SearchablePage>

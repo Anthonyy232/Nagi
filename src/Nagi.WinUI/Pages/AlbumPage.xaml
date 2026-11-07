@@ -188,32 +188,11 @@
                 </GridView.ItemTemplate>
             </GridView>
 
-            <StackPanel
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Spacing="16"
-                Visibility="{x:Bind ViewModel.HasAlbums, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
-                <StackPanel.ChildrenTransitions>
-                    <TransitionCollection>
-                        <EntranceThemeTransition FromVerticalOffset="20" />
-                    </TransitionCollection>
-                </StackPanel.ChildrenTransitions>
-                <FontIcon
-                    Glyph="&#xE93C;"
-                    FontSize="48"
-                    Margin="0,0,0,12"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    HorizontalAlignment="Center" />
-                <TextBlock
-                    Text="{x:Bind resources:Strings.AlbumPage_Empty_Title, Mode=OneTime}"
-                    HorizontalAlignment="Center"
-                    Style="{StaticResource TitleTextBlockStyle}" />
-                <TextBlock
-                    Text="{x:Bind resources:Strings.AlbumPage_Empty_Subtitle, Mode=OneTime}"
-                    HorizontalAlignment="Center"
-                    Style="{StaticResource SubtitleTextBlockStyle}"
-                    Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
-            </StackPanel>
+            <uicontrols:EmptyState Glyph="&#xE93C;"
+                                   Title="{x:Bind resources:Strings.AlbumPage_Empty_Title, Mode=OneTime}"
+                                   Subtitle="{x:Bind resources:Strings.AlbumPage_Empty_Subtitle, Mode=OneTime}"
+                                   IsShown="{x:Bind ViewModel.ShowEmptyState, Mode=OneWay}"
+                                   HasLoadError="{x:Bind ViewModel.HasLoadError, Mode=OneWay}" />
         </Grid>
 
         <uicontrols:PaginationControl

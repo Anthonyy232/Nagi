@@ -13,7 +13,6 @@ to avoid duplicate declarations across pages and controls.
     <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
     <converters:StringToDecodedImageSourceConverter x:Key="StringToDecodedImageSourceConverter" />
     <converters:CollectionCountToVisibilityConverter x:Key="CollectionCountToVisibilityConverter" />
-    <converters:CollectionCountToVisibilityConverter x:Key="InverseCollectionCountToVisibilityConverter" Invert="True" />
     <converters:BooleanToInverseBooleanConverter x:Key="BooleanToInverseBooleanConverter" />
     <converters:IncrementalLoadingConverter x:Key="IncrementalLoadingConverter" />
     <converters:ObjectToVisibilityConverter x:Key="ObjectToVisibilityConverter" />
