@@ -1,4 +1,3 @@
-using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
@@ -23,11 +22,6 @@ public sealed partial class SettingsPage : Page
         base.OnNavigatedTo(e);
         await ViewModel.OpenAsync();
         Bindings.Update();
-    }
-
-    private void ProvidersListView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
-    {
-        if (e.Items.Any(i => i is ServiceProviderSettingViewModel { IsPinnedFirst: true })) e.Cancel = true;
     }
 
     private async void AudioOutput_DropDownOpened(object sender, object e) =>

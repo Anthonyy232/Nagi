@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Presentation.Resources;
+using Nagi.Presentation.Helpers;
 
 namespace Nagi.Presentation.Models;
 
@@ -35,7 +36,7 @@ public sealed class PlaybackQueueCollection(IMusicPlaybackService playbackServic
     public bool HasLoadError => _hasLoadError;
     public bool ShowEmptyState => _isActive && !IsLoading && !HasLoadError && Count == 0;
     public string TotalDurationText { get; private set; } = string.Empty;
-    public string TrackCountText => string.Format(Strings.QueuePanel_TrackCount, _ids.Length);
+    public string TrackCountText => ResourceFormatter.Format(Strings.QueuePanel_TrackCount, _ids.Length);
     private int FirstMovableIndex => playbackService.CurrentTrack?.Id == _ids.FirstOrDefault() ? 1 : 0;
 
     public void SetActive(bool active)

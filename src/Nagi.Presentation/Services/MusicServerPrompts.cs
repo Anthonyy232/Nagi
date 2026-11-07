@@ -80,8 +80,8 @@ public sealed class MusicServerPrompts : IDisposable
             if (await _musicServers.GetServerAsync(song.FolderId) is not { } server) return;
             var name = server.Folder.Name;
             await MusicServerErrors.ShowAsync(_ui, song.FolderId, name, error, error == MusicServerError.NotFound
-                ? string.Format(Strings.Player_ServerSongGone_Format, song.Title, name)
-                : string.Format(Strings.Player_ServerSongFailed_Format, song.Title, name));
+                ? ResourceFormatter.Format(Strings.Player_ServerSongGone_Format, song.Title, name)
+                : ResourceFormatter.Format(Strings.Player_ServerSongFailed_Format, song.Title, name));
         }
         catch (Exception ex)
         {

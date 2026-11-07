@@ -37,6 +37,13 @@ public class LocalizedResourceTests
     }
 
     [Fact]
+    public void Formatter_FillsPlaceholdersAPlainTranslationQuotes()
+    {
+        // ICU would read the apostrophes as quotes and print "{0}".
+        ResourceFormatter.Format("Renommer '{0}'", "Mix").Should().Be("Renommer 'Mix'");
+    }
+
+    [Fact]
     public void Translations_KeepTheSourcePlaceholdersAndLineBreaks()
     {
         var problems = new List<string>();

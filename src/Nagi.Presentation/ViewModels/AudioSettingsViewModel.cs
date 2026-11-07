@@ -202,7 +202,14 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
     {
         _preampDebouncer.Cancel();
         foreach (var band in EqualizerBands) band.CancelPendingGain();
-        await _playbackService.ResetEqualizerAsync();
+        try
+        {
+            await _playbackService.ResetEqualizerAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to reset the equalizer");
+        }
     }
 
     private void LoadEqualizerState()
@@ -387,7 +394,7 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
         catch (OperationCanceledException) { }
         catch (Exception ex)
         {
-            error = string.Format(Strings.Settings_Status_VolumeNorm_Error_Format, ex.Message);
+            error = ResourceFormatter.Format(Strings.Settings_Status_VolumeNorm_Error_Format, ex.Message);
             _logger.LogError(ex, "Failed to scan library for ReplayGain");
         }
         finally

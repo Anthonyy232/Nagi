@@ -558,6 +558,24 @@ public class SettingsViewModelTests : IDisposable
     }
 
     [Fact]
+    public async Task DraggingAProviderAboveMusicBrainz_KeepsMusicBrainzFirst()
+    {
+        await _viewModel.LoadSettingsAsync();
+        var providers = _viewModel.Library.MetadataProviders;
+        providers[0].Id.Should().Be(ServiceProviderIds.MusicBrainz);
+        var dragged = providers[^1];
+
+        // A list view reorders by removing the item and inserting it again.
+        providers.Remove(dragged);
+        providers.Insert(0, dragged);
+        await AdvanceDebouncesAsync();
+
+        providers.Select(p => p.Id).Should().StartWith(new[] { ServiceProviderIds.MusicBrainz, dragged.Id });
+        _settings.Get(CoreSettings.MetadataProviders).Select(p => p.Id).Should()
+            .Equal(providers.Select(p => p.Id));
+    }
+
+    [Fact]
     public async Task ResetPlayerDesign_CancelsOlderTintSave()
     {
         _viewModel.Appearance.PlayerTintIntensity = .75;

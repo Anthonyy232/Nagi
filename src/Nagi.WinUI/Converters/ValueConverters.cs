@@ -65,15 +65,6 @@ public class BooleanToInverseBooleanConverter : IValueConverter
     }
 }
 
-public class AppThemeToFriendlyStringConverter : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, string language) =>
-        value is AppTheme theme ? SettingsText.GetName(theme) : string.Empty;
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language) =>
-        DependencyProperty.UnsetValue;
-}
-
 public class ArgbColorToColorConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language) =>
@@ -186,28 +177,6 @@ public class GenreToGradientConverter : IValueConverter
             }
         };
     }
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-public class BackdropMaterialToStringConverter : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, string language) =>
-        value is BackdropMaterial material ? SettingsText.GetName(material) : string.Empty;
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-public class PlayerBackgroundMaterialToStringConverter : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, string language) =>
-        value is PlayerBackgroundMaterial material ? SettingsText.GetName(material) : string.Empty;
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {

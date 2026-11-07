@@ -52,6 +52,30 @@ public class LyricsPageViewModelTests
     }
 
     [Fact]
+    public void NewTimedLyrics_SignalTheReplacementBeforeTheirFirstCurrentLine()
+    {
+        var song = new Song { Title = "Song" };
+        LyricLine[] lines = [new(TimeSpan.FromSeconds(1), "First"), new(TimeSpan.FromSeconds(3), "Second")];
+        _lyrics.GetLyricsAsync(song, Arg.Any<CancellationToken>()).Returns(new SongLyrics("raw", lines, true));
+        _library.GetSongByIdAsync(song.Id).Returns(song);
+        _playback.CurrentTrack.Returns(song);
+        _playback.CurrentPosition.Returns(TimeSpan.FromSeconds(4));
+        var events = new List<string>();
+
+        var dispatcher = new QueuedDispatcher();
+        using var viewModel = CreateViewModel(dispatcher);
+        viewModel.LyricsReplaced += () => events.Add($"replaced at {viewModel.CurrentLineIndex}");
+        viewModel.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(LyricsPageViewModel.CurrentLine))
+                events.Add($"line {viewModel.CurrentLineIndex}");
+        };
+        dispatcher.Drain();
+
+        events.Should().Equal("replaced at -1", "line 1");
+    }
+
+    [Fact]
     public void QueuedReset_FromOldTrack_CannotClearNewLyrics()
     {
         var dispatcher = new QueuedDispatcher();

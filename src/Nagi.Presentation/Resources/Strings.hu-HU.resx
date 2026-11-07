@@ -707,9 +707,6 @@ Nem importálható fájlok: {0}.</value>
   <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
     <value>Létrehozás</value>
   </data>
-  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>Mégse</value>
-  </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
     <value>„{0}” átnevezése</value>
   </data>
@@ -1386,6 +1383,12 @@ Szeretné folytatni?</value>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
     <value>Visszaállítás alapértelmezettre</value>
   </data>
+  <data name="SettingsPage_ResetPlayerStyling_Content" xml:space="preserve">
+    <value>Visszaállítás alapértelmezettre</value>
+  </data>
+  <data name="SettingsPage_ResetSongListColumns_Content" xml:space="preserve">
+    <value>Visszaállítás alapértelmezettre</value>
+  </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Ablak anyaga</value>
   </data>
@@ -1983,7 +1986,7 @@ Szeretné folytatni?</value>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Következő oldal</value>
   </data>
-  <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
+  <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>pl. ;/\\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">

@@ -707,9 +707,6 @@ Các tệp không thể nhập: {0}.</value>
   <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
     <value>Tạo</value>
   </data>
-  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>Hủy</value>
-  </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
     <value>Đổi tên '{0}'</value>
   </data>
@@ -1386,6 +1383,12 @@ Bạn có muốn tiếp tục không?</value>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
     <value>Đặt lại về mặc định</value>
   </data>
+  <data name="SettingsPage_ResetPlayerStyling_Content" xml:space="preserve">
+    <value>Đặt lại về mặc định</value>
+  </data>
+  <data name="SettingsPage_ResetSongListColumns_Content" xml:space="preserve">
+    <value>Đặt lại về mặc định</value>
+  </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Chất liệu cửa sổ</value>
   </data>
@@ -1983,7 +1986,7 @@ Bạn có muốn tiếp tục không?</value>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Trang tiếp theo</value>
   </data>
-  <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
+  <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>ví dụ: ;/\\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">

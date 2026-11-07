@@ -707,9 +707,6 @@ Datoteke koje nije bilo moguće uvesti: {0}.</value>
   <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
     <value>Stvori</value>
   </data>
-  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>Odustani</value>
-  </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
     <value>Preimenuj '{0}'</value>
   </data>
@@ -1386,6 +1383,12 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
     <value>Vrati na zadano</value>
   </data>
+  <data name="SettingsPage_ResetPlayerStyling_Content" xml:space="preserve">
+    <value>Vrati na zadano</value>
+  </data>
+  <data name="SettingsPage_ResetSongListColumns_Content" xml:space="preserve">
+    <value>Vrati na zadano</value>
+  </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Materijal prozora</value>
   </data>
@@ -1983,7 +1986,7 @@ Ovo će analizirati vašu glazbenu biblioteku i izravno modificirati vaše audio
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Sljedeća stranica</value>
   </data>
-  <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
+  <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>npr. ;/\\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">

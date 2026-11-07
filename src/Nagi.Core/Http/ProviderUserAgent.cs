@@ -1,3 +1,5 @@
+using Nagi.Core.Constants;
+
 namespace Nagi.Core.Http;
 
 /// <summary>
@@ -6,5 +8,5 @@ namespace Nagi.Core.Http;
 /// </summary>
 internal static class ProviderUserAgent
 {
-    public const string Value = "Nagi/1.0 (+https://github.com/Anthonyy232/Nagi)";
+    public const string Value = "Nagi/1.0 (+" + AppLinks.Repository + ")";
 }

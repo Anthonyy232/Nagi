@@ -3,7 +3,7 @@ using Nagi.Presentation.Models;
 
 namespace Nagi.Presentation.Navigation;
 
-public partial class NavigationItemSetting : ObservableObject
+public partial class NavigationItemSetting : ObservableObject, IToggleItem
 {
     [ObservableProperty] public partial bool IsEnabled { get; set; }
 

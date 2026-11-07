@@ -707,9 +707,6 @@
   <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
     <value>Креирај</value>
   </data>
-  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>Откажи</value>
-  </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
     <value>Преименуј '{0}'</value>
   </data>
@@ -1386,6 +1383,12 @@
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
     <value>Врати на подразумевано</value>
   </data>
+  <data name="SettingsPage_ResetPlayerStyling_Content" xml:space="preserve">
+    <value>Врати на подразумевано</value>
+  </data>
+  <data name="SettingsPage_ResetSongListColumns_Content" xml:space="preserve">
+    <value>Врати на подразумевано</value>
+  </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Материјал прозора</value>
   </data>
@@ -1983,7 +1986,7 @@
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
     <value>Следећа страница</value>
   </data>
-  <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
+  <data name="SettingsPage_SplitCharacters_Placeholder" xml:space="preserve">
     <value>нпр. ;/\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">

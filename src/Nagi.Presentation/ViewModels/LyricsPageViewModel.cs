@@ -88,6 +88,18 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
     [ObservableProperty] public partial LyricLine? CurrentLine { get; set; }
 
+    /// <summary>
+    ///     The position of <see cref="CurrentLine" /> in <see cref="LyricLines" />, or -1 when there is none. It is
+    ///     up to date when <see cref="CurrentLine" /> raises PropertyChanged.
+    /// </summary>
+    public int CurrentLineIndex { get; private set; } = -1;
+
+    /// <summary>
+    ///     Raised when newly loaded synchronized lyrics replace <see cref="LyricLines" />, before their first current
+    ///     line is set, so a view can jump to that line instead of animating to it.
+    /// </summary>
+    public event Action? LyricsReplaced;
+
     [ObservableProperty] public partial TimeSpan SongDuration { get; set; }
 
     [ObservableProperty] public partial TimeSpan CurrentPosition { get; set; }
@@ -116,7 +128,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     {
         if (CurrentLine is not { } line) return (0, TimeSpan.Zero);
 
-        var index = LyricLines.IndexOf(line);
+        var index = CurrentLineIndex;
         var nextLineStart = index >= 0 && index < LyricLines.Count - 1 ? LyricLines[index + 1].StartTime : SongDuration;
         var lineDuration = nextLineStart - line.StartTime;
         if (lineDuration <= TimeSpan.Zero) return (1, TimeSpan.Zero);
@@ -208,6 +220,9 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         if (_currentSong?.Id == song.Id) await UpdateForTrack(song).ConfigureAwait(false);
     }
 
+    partial void OnCurrentLineChanged(LyricLine? value) =>
+        CurrentLineIndex = value is null ? -1 : LyricLines.IndexOf(value);
+
     private void OnPlaybackServicePositionChanged()
     {
         UpdateCurrentLineFromPosition(_playbackService.CurrentPosition);
@@ -288,7 +303,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
             else
             {
                 SongTitle = !string.IsNullOrWhiteSpace(song.ArtistName)
-                    ? string.Format(Strings.Lyrics_SongTitleFormat, song.Title, song.ArtistName)
+                    ? ResourceFormatter.Format(Strings.Lyrics_SongTitleFormat, song.Title, song.ArtistName)
                     : song.Title;
                 SongDuration = _playbackService.Duration;
                 IsLoading = true;
@@ -327,6 +342,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
                     _syncedLines = displayLines;
                     LyricLines.ReplaceRange(displayLines);
                     HasLyrics = true;
+                    LyricsReplaced?.Invoke();
                     UpdateCurrentLineFromPosition(_playbackService.CurrentPosition);
                 }
                 else

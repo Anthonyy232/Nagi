@@ -86,7 +86,7 @@ public partial class RomanizationPacksSettingsViewModel : ObservableObject, IDis
             _dispatcherService.TryEnqueue(() =>
             {
                 if (token.IsCancellationRequested || _isDisposed) return;
-                RomanizationPacksStatus = string.Format(Strings.SettingsPage_RomanizationPacks_LoadFailedFormat, ex.Message);
+                RomanizationPacksStatus = ResourceFormatter.Format(Strings.SettingsPage_RomanizationPacks_LoadFailedFormat, ex.Message);
             });
         }
         finally

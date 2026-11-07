@@ -2,50 +2,51 @@ using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.Core.Models;
-using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Models;
 using Nagi.Presentation.Resources;
+using Nagi.Presentation.ViewModels;
 
 namespace Nagi.WinUI.Services.Implementations;
 
 public partial class UIService
 {
-    private static NumberBox CreateMinutesInput() => new()
+    private static NumberBox CreateMinutesInput(double minutes) => new()
     {
         Header = Strings.Listening_Minutes,
         Minimum = 1,
         Maximum = PlaybackMixLimits.MaxMinutes,
-        Value = ListeningMinutes.Default,
+        Value = minutes,
         SpinButtonPlacementMode = NumberBoxSpinButtonPlacementMode.Inline
     };
 
     public async Task<PlaybackMixOptions?> ShowPlayForDialogAsync()
     {
         if (!TryGetXamlRoot(out var root)) return null;
-        var minutes = CreateMinutesInput();
+        var viewModel = new PlayForDialogViewModel();
+        var minutes = CreateMinutesInput(viewModel.Minutes);
         var mode = new ComboBox
         {
             Header = Strings.Listening_ShuffleMode,
-            HorizontalAlignment = HorizontalAlignment.Stretch
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            ItemsSource = viewModel.ModeOptions,
+            DisplayMemberPath = nameof(SettingOption<ShuffleMode>.DisplayName),
+            SelectedItem = viewModel.SelectedMode
         };
-        foreach (var value in Enum.GetValues<ShuffleMode>()) mode.Items.Add(ShuffleModeText.GetName(value));
-        mode.SelectedIndex = 0;
         var avoid = new NumberBox
         {
             Header = Strings.Listening_AvoidRecentDays,
             Minimum = 0,
             Maximum = PlaybackMixLimits.MaxAvoidRecentDays,
-            Value = PlaybackMixLimits.DefaultAvoidRecentDays,
+            Value = viewModel.AvoidRecentDays,
             SpinButtonPlacementMode = NumberBoxSpinButtonPlacementMode.Inline
         };
         var more = new Expander
         {
             Header = Strings.Listening_MoreOptions,
             Content = avoid,
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            Visibility = Visibility.Collapsed
+            HorizontalAlignment = HorizontalAlignment.Stretch
         };
-        var description = new TextBlock { TextWrapping = TextWrapping.Wrap, MaxWidth = 360, Visibility = Visibility.Collapsed };
+        var description = new TextBlock { TextWrapping = TextWrapping.Wrap, MaxWidth = 360 };
         var content = new StackPanel { Spacing = 12 };
         content.Children.Add(new TextBlock { Text = Strings.Listening_PlayForDescription, TextWrapping = TextWrapping.Wrap, MaxWidth = 360 });
         content.Children.Add(minutes);
@@ -61,30 +62,40 @@ public partial class UIService
             DefaultButton = ContentDialogButton.Primary,
             XamlRoot = root
         };
-        void Validate() => dialog.IsPrimaryButtonEnabled = ListeningMinutes.IsValid(minutes.Value)
-            && (!PlaybackMixOptions.UsesAvoidRecentDays((ShuffleMode)mode.SelectedIndex)
-                || PlaybackMixOptions.IsValidAvoidRecentDays(avoid.Value));
+
+        void Refresh()
+        {
+            more.Visibility = viewModel.ShowsAvoidRecentDays ? Visibility.Visible : Visibility.Collapsed;
+            description.Text = viewModel.ModeDescription;
+            description.Visibility = description.Text.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
+            dialog.IsPrimaryButtonEnabled = viewModel.CanAccept;
+        }
+
         mode.SelectionChanged += (_, _) =>
         {
-            more.Visibility = PlaybackMixOptions.UsesAvoidRecentDays((ShuffleMode)mode.SelectedIndex)
-                ? Visibility.Visible : Visibility.Collapsed;
-            description.Text = ShuffleModeText.GetDescription((ShuffleMode)mode.SelectedIndex);
-            description.Visibility = description.Text.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
-            Validate();
+            viewModel.SelectedMode = (SettingOption<ShuffleMode>)mode.SelectedItem;
+            Refresh();
         };
-        minutes.ValueChanged += (_, _) => Validate();
-        avoid.ValueChanged += (_, _) => Validate();
-        return await ShowDialogAsync(dialog) == ContentDialogResult.Primary
-            ? new PlaybackMixOptions((int)minutes.Value, (ShuffleMode)mode.SelectedIndex,
-                PlaybackMixOptions.UsesAvoidRecentDays((ShuffleMode)mode.SelectedIndex)
-                    ? (int)avoid.Value : PlaybackMixLimits.DefaultAvoidRecentDays) : null;
+        minutes.ValueChanged += (_, _) =>
+        {
+            viewModel.Minutes = minutes.Value;
+            Refresh();
+        };
+        avoid.ValueChanged += (_, _) =>
+        {
+            viewModel.AvoidRecentDays = avoid.Value;
+            Refresh();
+        };
+        Refresh();
+        return await ShowDialogAsync(dialog) == ContentDialogResult.Primary ? viewModel.ToOptions() : null;
     }
 
     public async Task<(int Minutes, bool FinishTrack)?> ShowSleepTimerDialogAsync()
     {
         if (!TryGetXamlRoot(out var root)) return null;
-        var minutes = CreateMinutesInput();
-        var finish = new CheckBox { Content = Strings.Listening_FinishTrack, IsChecked = true };
+        var viewModel = new SleepTimerDialogViewModel();
+        var minutes = CreateMinutesInput(viewModel.Minutes);
+        var finish = new CheckBox { Content = Strings.Listening_FinishTrack, IsChecked = viewModel.FinishTrack };
         var content = new StackPanel { Spacing = 12 };
         content.Children.Add(minutes);
         content.Children.Add(finish);
@@ -97,7 +108,14 @@ public partial class UIService
             DefaultButton = ContentDialogButton.Primary,
             XamlRoot = root
         };
-        minutes.ValueChanged += (_, _) => dialog.IsPrimaryButtonEnabled = ListeningMinutes.IsValid(minutes.Value);
-        return await ShowDialogAsync(dialog) == ContentDialogResult.Primary ? ((int)minutes.Value, finish.IsChecked == true) : null;
+        minutes.ValueChanged += (_, _) =>
+        {
+            viewModel.Minutes = minutes.Value;
+            dialog.IsPrimaryButtonEnabled = viewModel.CanAccept;
+        };
+        finish.Click += (_, _) => viewModel.FinishTrack = finish.IsChecked == true;
+        return await ShowDialogAsync(dialog) == ContentDialogResult.Primary
+            ? ((int)viewModel.Minutes, viewModel.FinishTrack)
+            : null;
     }
 }

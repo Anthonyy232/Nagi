@@ -6,12 +6,12 @@
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:uicontrols="using:Nagi.WinUI.Controls"
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:constants="using:Nagi.Core.Constants"
     xmlns:coreModels="using:Nagi.Core.Models"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:localConverters="using:Nagi.WinUI.Converters"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Nagi.Presentation.Models"
-    xmlns:navigation="using:Nagi.Presentation.Navigation"
     xmlns:resources="using:Nagi.Presentation.Resources"
     xmlns:viewmodels="using:Nagi.Presentation.ViewModels"
     mc:Ignorable="d"
@@ -23,13 +23,14 @@
             <Setter Property="OnContent" Value="" />
             <Setter Property="OffContent" Value="" />
         </Style>
+        <Style TargetType="ComboBox" BasedOn="{StaticResource DefaultComboBoxStyle}">
+            <Setter Property="MinWidth" Value="300" />
+        </Style>
         <localConverters:ArgbColorToColorConverter x:Key="ArgbColorToColorConverter" />
         <localConverters:FloatToDecimalStringConverter x:Key="FloatToDecimalStringConverter" />
-        <localConverters:PlayerBackgroundMaterialToStringConverter x:Key="PlayerBackgroundMaterialToStringConverter" />
         <localConverters:DoubleToPercentageConverter x:Key="DoubleToPercentageConverter" />
 
-        <!-- Shared template for service provider items in Lyrics and Metadata source lists -->
-        <DataTemplate x:Key="ServiceProviderItemTemplate" x:DataType="viewmodels:ServiceProviderSettingViewModel">
+        <DataTemplate x:Key="ToggleItemTemplate" x:DataType="models:IToggleItem">
             <Grid Padding="12,8" VerticalAlignment="Center"
                   ToolTipService.ToolTip="{x:Bind Description}">
                 <Grid.ColumnDefinitions>
@@ -39,7 +40,6 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <!-- Drag Handle -->
                 <FontIcon
                     Grid.Column="0"
                     HorizontalAlignment="Center"
@@ -53,7 +53,7 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Foreground="{ThemeResource AppPrimaryColorBrush}"
-                    Glyph="&#xE774;" />
+                    Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(Icon)}" />
 
                 <TextBlock
                     Grid.Column="2"
@@ -69,6 +69,21 @@
                     IsOn="{x:Bind IsEnabled, Mode=TwoWay}" />
             </Grid>
         </DataTemplate>
+
+        <Style x:Key="ReorderableToggleListViewStyle" TargetType="ListView">
+            <Setter Property="Width" Value="350" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="AllowDrop" Value="True" />
+            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CanDragItems" Value="True" />
+            <Setter Property="CanReorderItems" Value="True" />
+            <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+            <Setter Property="ItemContainerStyle" Value="{StaticResource NavigationListViewItemStyle}" />
+            <Setter Property="ItemTemplate" Value="{StaticResource ToggleItemTemplate}" />
+            <Setter Property="SelectionMode" Value="Single" />
+        </Style>
 
         <DataTemplate x:Key="RomanizationPackItemTemplate" x:DataType="viewmodels:RomanizationPackViewModel">
             <Border
@@ -191,16 +206,11 @@
                         <FontIcon Glyph="&#xE793;" />
                     </controls:SettingsExpander.HeaderIcon>
                     <ComboBox
-                        MinWidth="300"
                         HorizontalAlignment="Right"
-                        ItemsSource="{x:Bind ViewModel.Appearance.AvailableThemes}"
-                        SelectedItem="{x:Bind ViewModel.Appearance.SelectedTheme, Mode=TwoWay}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate x:DataType="models:AppTheme">
-                                <TextBlock Text="{x:Bind Converter={StaticResource ThemeToStringConverter}}" />
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
+                        AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_Theme_Header, Mode=OneTime}"
+                        ItemsSource="{x:Bind ViewModel.Appearance.ThemeOptions}"
+                        DisplayMemberPath="DisplayName"
+                        SelectedItem="{x:Bind ViewModel.Appearance.SelectedTheme, Mode=TwoWay}" />
 
                     <controls:SettingsExpander.Items>
                         <controls:SettingsCard>
@@ -230,34 +240,15 @@
                     </controls:SettingsExpander.Items>
                 </controls:SettingsExpander>
 
-                <controls:SettingsCard
-                    Header="{x:Bind resources:Strings.SettingsPage_WindowMaterial_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_WindowMaterial_Description, Mode=OneTime}">
-                    <controls:SettingsCard.HeaderIcon>
-                        <FontIcon Glyph="&#xE81E;" />
-                    </controls:SettingsCard.HeaderIcon>
-                    <ComboBox
-                        MinWidth="300"
-                        HorizontalAlignment="Right"
-                        ItemsSource="{x:Bind ViewModel.Appearance.AvailableBackdropMaterials}"
-                        SelectedItem="{x:Bind ViewModel.Appearance.SelectedBackdropMaterial, Mode=TwoWay}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate x:DataType="models:BackdropMaterial">
-                                <TextBlock
-                                    Text="{x:Bind Converter={StaticResource BackdropMaterialToStringConverter}}" />
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                </controls:SettingsCard>
+                <ContentControl
+                    Content="{x:Bind ViewModel.Appearance}"
+                    ContentTemplate="{StaticResource BackdropMaterialSettingCard}"
+                    Style="{StaticResource SettingCardHostStyle}" />
 
-                <controls:SettingsCard
-                    Header="{x:Bind resources:Strings.SettingsPage_DynamicTheming_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_DynamicTheming_Description, Mode=OneTime}">
-                    <controls:SettingsCard.HeaderIcon>
-                        <FontIcon Glyph="&#xE790;" />
-                    </controls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch
-                        HorizontalAlignment="Right"
-                        IsOn="{x:Bind ViewModel.Appearance.IsDynamicThemingEnabled, Mode=TwoWay}" />
-                </controls:SettingsCard>
+                <ContentControl
+                    Content="{x:Bind ViewModel.Appearance}"
+                    ContentTemplate="{StaticResource DynamicThemingSettingCard}"
+                    Style="{StaticResource SettingCardHostStyle}" />
 
                 <controls:SettingsExpander
                     AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_PlayerStyling_Header, Mode=OneTime}"
@@ -273,7 +264,7 @@
                                 Grid.Column="1"
                                 Command="{x:Bind ViewModel.Appearance.ResetPlayerDesignSettingsCommand}"
                                 Style="{StaticResource SettingsResetHyperlinkButtonStyle}"
-                                Content="{x:Bind resources:Strings.SettingsPage_ResetAccentColor_Content, Mode=OneTime}" />
+                                Content="{x:Bind resources:Strings.SettingsPage_ResetPlayerStyling_Content, Mode=OneTime}" />
                         </Grid>
                     </controls:SettingsExpander.Header>
                     <controls:SettingsExpander.HeaderIcon>
@@ -281,17 +272,11 @@
                     </controls:SettingsExpander.HeaderIcon>
 
                     <ComboBox
-                        MinWidth="300"
                         HorizontalAlignment="Right"
-                        ItemsSource="{x:Bind ViewModel.Appearance.AvailablePlayerBackgroundMaterials}"
+                        ItemsSource="{x:Bind ViewModel.Appearance.PlayerBackgroundMaterialOptions}"
+                        DisplayMemberPath="DisplayName"
                         AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_PlayerStyling_Header, Mode=OneTime}"
-                        SelectedItem="{x:Bind ViewModel.Appearance.SelectedPlayerBackgroundMaterial, Mode=TwoWay}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate x:DataType="models:PlayerBackgroundMaterial">
-                                <TextBlock Text="{x:Bind Converter={StaticResource PlayerBackgroundMaterialToStringConverter}}" />
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
+                        SelectedItem="{x:Bind ViewModel.Appearance.SelectedPlayerBackgroundMaterial, Mode=TwoWay}" />
 
                     <controls:SettingsExpander.Items>
                         <controls:SettingsCard>
@@ -381,61 +366,8 @@
                     </controls:SettingsCard.HeaderIcon>
 
                     <ListView
-                        Width="350"
-                        HorizontalAlignment="Right"
-                        AllowDrop="True"
-                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                        BorderThickness="1"
-                        CanDragItems="True"
-                        CanReorderItems="True"
-                        CornerRadius="{ThemeResource ControlCornerRadius}"
-                        ItemContainerStyle="{StaticResource NavigationListViewItemStyle}"
                         ItemsSource="{x:Bind ViewModel.Appearance.NavigationItems}"
-                        SelectionMode="Single">
-
-                        <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="navigation:NavigationItemSetting">
-                                <Grid Padding="12,8" VerticalAlignment="Center">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="28" />
-                                        <ColumnDefinition Width="32" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <!-- Drag Handle -->
-                                    <FontIcon
-                                        Grid.Column="0"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        FontSize="12"
-                                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                                        Glyph="&#xE76F;" />
-
-                                    <FontIcon
-                                        Grid.Column="1"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        Foreground="{ThemeResource AppPrimaryColorBrush}"
-                                        Glyph="{x:Bind uihelpers:AppIconGlyphs.ToGlyph(Icon)}" />
-
-                                    <TextBlock
-                                        Grid.Column="2"
-                                        Margin="8,0,12,0"
-                                        VerticalAlignment="Center"
-                                        FontWeight="SemiBold"
-                                        Text="{x:Bind DisplayName}" />
-
-                                    <ToggleSwitch
-                                        Grid.Column="3"
-                                        VerticalAlignment="Center"
-                                        AutomationProperties.Name="{x:Bind DisplayName}"
-                                        IsOn="{x:Bind IsEnabled, Mode=TwoWay}" />
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
+                        Style="{StaticResource ReorderableToggleListViewStyle}" />
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
@@ -463,7 +395,7 @@
                                 Grid.Column="1"
                                 Command="{x:Bind ViewModel.Appearance.ResetSongListColumnsCommand}"
                                 Style="{StaticResource SettingsResetHyperlinkButtonStyle}"
-                                Content="{x:Bind resources:Strings.SettingsPage_ResetAccentColor_Content, Mode=OneTime}" />
+                                Content="{x:Bind resources:Strings.SettingsPage_ResetSongListColumns_Content, Mode=OneTime}" />
                         </Grid>
                     </controls:SettingsExpander.Header>
                     <controls:SettingsExpander.HeaderIcon>
@@ -835,16 +767,10 @@
                         IsOn="{x:Bind ViewModel.IsRestorePlaybackStateEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
-                <controls:SettingsCard
-                    Header="{x:Bind resources:Strings.SettingsPage_AutoLaunch_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_AutoLaunch_Description, Mode=OneTime}">
-                    <controls:SettingsCard.HeaderIcon>
-                        <FontIcon Glyph="&#xE7E8;" />
-                    </controls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch
-                        HorizontalAlignment="Right"
-                        IsOn="{x:Bind ViewModel.IsAutoLaunchEnabled, Mode=TwoWay}"
-                        IsEnabled="{x:Bind ViewModel.IsUpdatingAutoLaunch, Mode=OneWay, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
-                </controls:SettingsCard>
+                <ContentControl
+                    Content="{x:Bind ViewModel}"
+                    ContentTemplate="{StaticResource AutoLaunchSettingCard}"
+                    Style="{StaticResource SettingCardHostStyle}" />
 
                 <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_StartMinimized_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_StartMinimized_Description, Mode=OneTime}">
@@ -856,25 +782,15 @@
                         IsOn="{x:Bind ViewModel.IsStartMinimizedEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
-                <controls:SettingsCard
-                    Header="{x:Bind resources:Strings.SettingsPage_MinimizeToMiniPlayer_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_MinimizeToMiniPlayer_Description, Mode=OneTime}">
-                    <controls:SettingsCard.HeaderIcon>
-                        <FontIcon Glyph="&#xE73F;" />
-                    </controls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch
-                        HorizontalAlignment="Right"
-                        IsOn="{x:Bind ViewModel.IsMinimizeToMiniPlayerEnabled, Mode=TwoWay}" />
-                </controls:SettingsCard>
+                <ContentControl
+                    Content="{x:Bind ViewModel}"
+                    ContentTemplate="{StaticResource MinimizeToMiniPlayerSettingCard}"
+                    Style="{StaticResource SettingCardHostStyle}" />
 
-                <controls:SettingsCard
-                    Header="{x:Bind resources:Strings.SettingsPage_HideToTray_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_HideToTray_Description, Mode=OneTime}">
-                    <controls:SettingsCard.HeaderIcon>
-                        <FontIcon Glyph="&#xE90E;" />
-                    </controls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch
-                        HorizontalAlignment="Right"
-                        IsOn="{x:Bind ViewModel.IsHideToTrayEnabled, Mode=TwoWay}" />
-                </controls:SettingsCard>
+                <ContentControl
+                    Content="{x:Bind ViewModel}"
+                    ContentTemplate="{StaticResource HideToTraySettingCard}"
+                    Style="{StaticResource SettingCardHostStyle}" />
 
                 <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_TrayCoverArt_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_TrayCoverArt_Description, Mode=OneTime}">
@@ -907,7 +823,7 @@
                         <TextBox
                             Width="150"
                             AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_ArtistSplitting_Header, Mode=OneTime}"
-                            PlaceholderText="{x:Bind resources:Strings.SettingsPage_FolderExclusion_Placeholder, Mode=OneTime}"
+                            PlaceholderText="{x:Bind resources:Strings.SettingsPage_SplitCharacters_Placeholder, Mode=OneTime}"
                             Text="{x:Bind ViewModel.Library.ArtistSplitCharacters, Mode=TwoWay}" />
                         <Button
                             Command="{x:Bind ViewModel.Library.RescanMetadataCommand}"
@@ -924,7 +840,7 @@
                         <TextBox
                             Width="150"
                             AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_GenreSplitting_Header, Mode=OneTime}"
-                            PlaceholderText="{x:Bind resources:Strings.SettingsPage_FolderExclusion_Placeholder, Mode=OneTime}"
+                            PlaceholderText="{x:Bind resources:Strings.SettingsPage_SplitCharacters_Placeholder, Mode=OneTime}"
                             Text="{x:Bind ViewModel.Library.GenreSplitCharacters, Mode=TwoWay}" />
                         <Button
                             Command="{x:Bind ViewModel.Library.RescanMetadataCommand}"
@@ -948,20 +864,8 @@
                                 <FontIcon Glyph="&#xE8FD;" />
                             </controls:SettingsCard.HeaderIcon>
                             <ListView
-                                    Width="350"
-                                    HorizontalAlignment="Right"
-                                    AllowDrop="True"
-                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                    BorderThickness="1"
-                                    CanDragItems="True"
-                                    CanReorderItems="True"
-                                    CornerRadius="{ThemeResource ControlCornerRadius}"
-                                    ItemsSource="{x:Bind ViewModel.Library.MetadataProviders}"
-                                    DragItemsStarting="ProvidersListView_DragItemsStarting"
-                                    ItemContainerStyle="{StaticResource NavigationListViewItemStyle}"
-                                    ItemTemplate="{StaticResource ServiceProviderItemTemplate}"
-                                    SelectionMode="Single" />
+                                ItemsSource="{x:Bind ViewModel.Library.MetadataProviders}"
+                                Style="{StaticResource ReorderableToggleListViewStyle}" />
                         </controls:SettingsCard>
                     </controls:SettingsExpander.Items>
                 </controls:SettingsExpander>
@@ -982,20 +886,8 @@
                                 <FontIcon Glyph="&#xE8FD;" />
                             </controls:SettingsCard.HeaderIcon>
                             <ListView
-                                Width="350"
-                                HorizontalAlignment="Right"
-                                AllowDrop="True"
-                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                BorderThickness="1"
-                                CanDragItems="True"
-                                CanReorderItems="True"
-                                CornerRadius="{ThemeResource ControlCornerRadius}"
                                 ItemsSource="{x:Bind ViewModel.Library.LyricsProviders}"
-                                DragItemsStarting="ProvidersListView_DragItemsStarting"
-                                ItemContainerStyle="{StaticResource NavigationListViewItemStyle}"
-                                ItemTemplate="{StaticResource ServiceProviderItemTemplate}"
-                                SelectionMode="Single" />
+                                Style="{StaticResource ReorderableToggleListViewStyle}" />
                         </controls:SettingsCard>
 
                     </controls:SettingsExpander.Items>
@@ -1203,15 +1095,10 @@
                     </controls:SettingsExpander.Items>
                 </controls:SettingsExpander>
 
-                <controls:SettingsCard
-                    Header="{x:Bind resources:Strings.SettingsPage_Discord_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_Discord_Description, Mode=OneTime}">
-                    <controls:SettingsCard.HeaderIcon>
-                        <uicontrols:DiscordIcon Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-                    </controls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch
-                        HorizontalAlignment="Right"
-                        IsOn="{x:Bind ViewModel.IsDiscordRichPresenceEnabled, Mode=TwoWay}" />
-                </controls:SettingsCard>
+                <ContentControl
+                    Content="{x:Bind ViewModel}"
+                    ContentTemplate="{StaticResource DiscordSettingCard}"
+                    Style="{StaticResource SettingCardHostStyle}" />
 
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{x:Bind resources:Strings.SettingsPage_Section_About, Mode=OneTime}" />
 
@@ -1233,11 +1120,11 @@
                                 <HyperlinkButton
                                     Content="{x:Bind resources:Strings.SettingsPage_About_Licenses_Content, Mode=OneTime}"
                                     Style="{StaticResource AnimatedHyperlinkButtonStyle}"
-                                    NavigateUri="https://github.com/Anthonyy232/Nagi/blob/master/LICENSE" />
+                                    NavigateUri="{x:Bind constants:AppLinks.License}" />
                                 <HyperlinkButton
                                     Content="{x:Bind resources:Strings.SettingsPage_About_SourceCode_Content, Mode=OneTime}"
                                     Style="{StaticResource AnimatedHyperlinkButtonStyle}"
-                                    NavigateUri="https://github.com/Anthonyy232/Nagi" />
+                                    NavigateUri="{x:Bind constants:AppLinks.Repository}" />
                             </StackPanel>
                         </controls:SettingsCard>
                     </controls:SettingsExpander.Items>
@@ -1250,11 +1137,11 @@
                     <HyperlinkButton
                         Content="{x:Bind resources:Strings.SettingsPage_About_Feedback_Content, Mode=OneTime}"
                         Style="{StaticResource AnimatedHyperlinkButtonStyle}"
-                        NavigateUri="mailto:anthonyyla.dev@gmail.com" />
+                        NavigateUri="{x:Bind constants:AppLinks.FeedbackEmail}" />
                     <HyperlinkButton
                         Content="{x:Bind resources:Strings.SettingsPage_About_PrivacyPolicy_Content, Mode=OneTime}"
                         Style="{StaticResource AnimatedHyperlinkButtonStyle}"
-                        NavigateUri="https://github.com/Anthonyy232/Nagi/blob/master/PRIVACY.md" />
+                        NavigateUri="{x:Bind constants:AppLinks.PrivacyPolicy}" />
                 </StackPanel>
             </StackPanel>
         </Grid>

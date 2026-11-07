@@ -1,5 +1,3 @@
-using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -25,10 +23,7 @@ public partial class SettingsViewModel : SettingsSectionViewModel
     private readonly IAutoLaunchService _autoLaunchService;
     private readonly SemaphoreSlim _loadLock = new(1, 1);
 
-    private const int SettingsSaveDebounceMs = 300;
-
     private bool _isLoaded;
-    private readonly Debouncer _playerButtonSaveDebouncer;
 
     public SettingsViewModel(
         ISettingsService settingsService,
@@ -53,9 +48,9 @@ public partial class SettingsViewModel : SettingsSectionViewModel
         Scrobbling = scrobbling;
         Romanization = romanizationPacks;
         DataManagement = dataManagement;
-        _playerButtonSaveDebouncer = new Debouncer(TimeSpan.FromMilliseconds(SettingsSaveDebounceMs), timeProvider ?? TimeProvider.System);
-
-        PlayerButtons.CollectionChanged += OnPlayerButtonsCollectionChanged;
+        PlayerButtons = new ReorderableToggleList<PlayerButtonSetting>(
+            buttons => Set(AppSettings.PlayerButtons, buttons.ToList(), nameof(PlayerButtons)), dispatcherService,
+            timeProvider);
     }
 
     public AppearanceSettingsViewModel Appearance { get; }
@@ -111,17 +106,13 @@ public partial class SettingsViewModel : SettingsSectionViewModel
     [ObservableProperty] public partial bool IsAutoLaunchEnabled { get; set; }
     [ObservableProperty] public partial bool IsUpdatingAutoLaunch { get; set; }
 
-    public ObservableRangeCollection<PlayerButtonSetting> PlayerButtons { get; } = new();
+    public ReorderableToggleList<PlayerButtonSetting> PlayerButtons { get; }
 
     public string ApplicationVersion => _appInfoService.GetAppVersion();
 
     protected override void OnDisposing()
     {
-        PlayerButtons.CollectionChanged -= OnPlayerButtonsCollectionChanged;
-
-        foreach (var item in PlayerButtons) item.PropertyChanged -= OnPlayerButtonPropertyChanged;
-
-        _playerButtonSaveDebouncer.Dispose();
+        PlayerButtons.Dispose();
         Appearance.Dispose();
         Audio.Dispose();
         Library.Dispose();
@@ -158,7 +149,7 @@ public partial class SettingsViewModel : SettingsSectionViewModel
             Appearance.Load();
             Audio.Load();
             Library.Load();
-            ReplacePlayerButtons(_settingsService.Get(AppSettings.PlayerButtons));
+            PlayerButtons.Load(_settingsService.Get(AppSettings.PlayerButtons));
 
             await Task.WhenAll(autoLaunchTask, scrobblingLoadTask);
             if (_isDisposed) return;
@@ -177,58 +168,13 @@ public partial class SettingsViewModel : SettingsSectionViewModel
     }
 
     [RelayCommand]
-    private void ResetPlayerButtons()
-    {
-        _playerButtonSaveDebouncer.Cancel();
-        var defaultButtons = AppSettings.PlayerButtons.Default;
-        ReplacePlayerButtons(defaultButtons);
-        Set(AppSettings.PlayerButtons, defaultButtons, nameof(PlayerButtons));
-    }
-
-    // ReplaceRange raises a reset, which doesn't name the items, so they're (un)subscribed here.
-    private void ReplacePlayerButtons(List<PlayerButtonSetting> buttons) => ApplyWithoutSaving(() =>
-    {
-        foreach (var item in PlayerButtons) item.PropertyChanged -= OnPlayerButtonPropertyChanged;
-        foreach (var item in buttons) item.PropertyChanged += OnPlayerButtonPropertyChanged;
-        PlayerButtons.ReplaceRange(buttons);
-    });
-
-    private void OnPlayerButtonsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-    {
-        if (e.NewItems != null)
-            foreach (PlayerButtonSetting item in e.NewItems)
-                item.PropertyChanged += OnPlayerButtonPropertyChanged;
-
-        if (e.OldItems != null)
-            foreach (PlayerButtonSetting item in e.OldItems)
-                item.PropertyChanged -= OnPlayerButtonPropertyChanged;
-
-        if (!_isInitializing)
-            QueuePlayerButtonSave();
-    }
-
-    private void OnPlayerButtonPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (_isInitializing || e.PropertyName != nameof(PlayerButtonSetting.IsEnabled)) return;
-        QueuePlayerButtonSave();
-    }
-
-    // Debounced so dragging a button saves once.
-    private void QueuePlayerButtonSave()
-    {
-        var snapshot = PlayerButtons.ToList();
-        QueueSettingsSave(_playerButtonSaveDebouncer, _ =>
-        {
-            Set(AppSettings.PlayerButtons, snapshot, nameof(PlayerButtons));
-            return Task.CompletedTask;
-        }, nameof(PlayerButtons));
-    }
+    private void ResetPlayerButtons() => PlayerButtons.Reset(AppSettings.PlayerButtons.Default);
 
     internal Task PendingSettingsSaves => Task.WhenAll(
         Appearance.PendingSettingsSaves,
         Audio.PendingSettingsSaves,
         Library.PendingSettingsSaves,
-        _playerButtonSaveDebouncer.PendingInvocation);
+        PlayerButtons.PendingSave);
 
     async partial void OnIsAutoLaunchEnabledChanged(bool value)
     {
@@ -243,18 +189,8 @@ public partial class SettingsViewModel : SettingsSectionViewModel
             _logger.LogError(ex, "Failed to change startup setting.");
         }
 
-        try
-        {
-            var enabled = await _autoLaunchService.IsEnabledAsync();
-            if (!_isDisposed) IsAutoLaunchEnabled = enabled;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to read startup setting.");
-        }
-        finally
-        {
-            IsUpdatingAutoLaunch = false;
-        }
+        var enabled = await _autoLaunchService.IsEnabledAsync();
+        if (!_isDisposed) IsAutoLaunchEnabled = enabled;
+        IsUpdatingAutoLaunch = false;
     }
 }
