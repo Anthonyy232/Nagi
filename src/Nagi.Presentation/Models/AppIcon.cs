@@ -28,5 +28,6 @@ public enum AppIcon
     VolumeLow,
     VolumeMedium,
     VolumeHigh,
-    OnlineSource
+    OnlineSource,
+    History
 }

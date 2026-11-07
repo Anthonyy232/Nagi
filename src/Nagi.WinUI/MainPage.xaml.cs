@@ -1,6 +1,7 @@
 using Windows.System;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Windows.ApplicationModel.DataTransfer;
 using CommunityToolkit.WinUI;
 using Microsoft.Extensions.Logging;
@@ -53,37 +54,23 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             ViewModel.SidebarQueue.CompleteReorder(entry, _queueDragVersion);
     }
 
-    private async void QueueEntry_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+    private void QueueEntry_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e) =>
+        PlayTappedEntry(sender, e, ViewModel.PlayQueueEntryCommand);
+
+    private void HistoryEntry_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e) =>
+        PlayTappedEntry(sender, e, ViewModel.PlayHistoryNowCommand);
+
+    private static void PlayTappedEntry(object sender, DoubleTappedRoutedEventArgs e, ICommand play)
     {
-        if (sender is FrameworkElement { Tag: QueueEntry entry })
-        {
-            e.Handled = true;
-            await ViewModel.SidebarQueue.PlayAsync(entry);
-        }
+        if (sender is not FrameworkElement { Tag: { } entry }) return;
+        e.Handled = true;
+        play.Execute(entry);
     }
 
-    private async void QueueEntry_Play(object sender, RoutedEventArgs e)
-    {
-        if (sender is FrameworkElement { Tag: QueueEntry entry }) await ViewModel.SidebarQueue.PlayAsync(entry);
-    }
-
-    private void QueueEntry_MoveUp(object sender, RoutedEventArgs e)
-    {
-        if (sender is FrameworkElement { Tag: QueueEntry entry }) ViewModel.SidebarQueue.Move(entry, -1);
-    }
-
-    private void Queue_Retry(object sender, RoutedEventArgs e) => ViewModel.SidebarQueue.Refresh(reloadMetadata: true);
-
-    private void QueueEntry_MoveDown(object sender, RoutedEventArgs e)
-    {
-        if (sender is FrameworkElement { Tag: QueueEntry entry }) ViewModel.SidebarQueue.Move(entry, 1);
-    }
-
-    private async void QueueEntry_Remove(object sender, RoutedEventArgs e)
-    {
-        if (sender is not FrameworkElement { Tag: QueueEntry entry }) return;
-        await ViewModel.SidebarQueue.RemoveAsync(entry);
-    }
+    // Read by the layout and the player storyboards in XAML as well as by the code here.
+    private double ExpandedPlayerHeight => 132;
+    private double CollapsedPlayerHeight => 80;
+    private double QueuePaneWidth => 332;
 
     private readonly IDispatcherService _dispatcherService;
     private readonly NavigationService _navigationService;
@@ -186,7 +173,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private void ContentRegion_SizeChanged(object sender, SizeChangedEventArgs e)
     {
-        QueueSplitView.OpenPaneLength = Math.Min(332, Math.Max(0, e.NewSize.Width - 12));
+        QueueSplitView.OpenPaneLength = Math.Min(QueuePaneWidth, Math.Max(0, e.NewSize.Width - 12));
         var overlay = e.NewSize.Width < 760;
         QueueSplitView.DisplayMode = overlay ? SplitViewDisplayMode.Overlay : SplitViewDisplayMode.Inline;
         VisualStateManager.GoToState(this, overlay ? "QueuePaneOverlay" : "QueuePaneInline", false);
@@ -294,18 +281,19 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private void OnMainPageLoaded(object sender, RoutedEventArgs e)
     {
-        _isUnloaded = false;
-        _queueContentMotion ??= SplitViewContentMotion.Attach(QueueSplitView);
+        // The page is unloaded only when the window closes or swaps it out, which ends it, so it loads once.
+        Loaded -= OnMainPageLoaded;
+        _queueContentMotion = SplitViewContentMotion.Attach(QueueSplitView);
         NavView.ApplyTemplate();
         if (VisualTreeHelper.GetChildrenCount(NavView) > 0 &&
             (VisualTreeHelper.GetChild(NavView, 0) as FrameworkElement)?.FindName("RootSplitView") is SplitView navigationSplitView)
-            _navigationContentMotion ??= SplitViewContentMotion.Attach(navigationSplitView);
-        _queuePlayingBinder ??= new NowPlayingIndicatorBinder(
+            _navigationContentMotion = SplitViewContentMotion.Attach(navigationSplitView);
+        _queuePlayingBinder = new NowPlayingIndicatorBinder(
             QueueListView, ViewModel,
             (Brush)Application.Current.Resources["AppPrimaryColorBrush"],
             item => (item as QueueEntry)?.Id);
         _queuePlayingBinder.Refresh();
-        _historyPlayingBinder ??= new NowPlayingIndicatorBinder(
+        _historyPlayingBinder = new NowPlayingIndicatorBinder(
             HistoryListView, ViewModel,
             (Brush)Application.Current.Resources["AppPrimaryColorBrush"],
             item => (item as RecentListenEntry)?.Listen.SongId);
@@ -431,7 +419,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         var isSettingsPage = e.SourcePageType == typeof(SettingsPage);
         // Keep destination bounds stable while player space changes, so WinUI can finish the outgoing fade.
         var pageHeightAnimation = isSettingsPage ? HiddenPageHeightAnimation : VisiblePageHeightAnimation;
-        var reservedHeight = isSettingsPage ? 0 : ShouldExpandPlayer ? 132 : 80;
+        var reservedHeight = isSettingsPage ? 0 : ShouldExpandPlayer ? ExpandedPlayerHeight : CollapsedPlayerHeight;
         pageHeightAnimation.From = pageHeightAnimation.To = Math.Max(0, ContentRegion.ActualHeight - reservedHeight);
         if (isSettingsPage) PlayerSpaceHideAnimation.From = PlayerContentSpace.ActualHeight;
         var stateName = isSettingsPage ? "PlayerHidden" : "PlayerVisible";
@@ -499,12 +487,18 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private void OnSelectionKeyDown(object sender, KeyRoutedEventArgs e)
     {
-        if (e.Key != VirtualKey.Escape || e.Handled ||
-            VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot).Count != 0) return;
-        for (var element = e.OriginalSource as DependencyObject; element is not null; element = VisualTreeHelper.GetParent(element))
-            if (element is TextBox or PasswordBox or RichEditBox) return;
+        if (e.Key != VirtualKey.Escape || e.Handled || IsShortcutBlocked(e.OriginalSource as DependencyObject)) return;
 
         e.Handled = DismissListSelection(null);
+    }
+
+    // Page-wide keyboard shortcuts give way to text input and to open menus, flyouts and dialogs.
+    private bool IsShortcutBlocked(DependencyObject? focusedElement)
+    {
+        if (VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot).Count != 0) return true;
+        for (var element = focusedElement; element is not null; element = VisualTreeHelper.GetParent(element))
+            if (element is TextBox or PasswordBox or RichEditBox) return true;
+        return false;
     }
 
     private bool DismissListSelection(DependencyObject? source)

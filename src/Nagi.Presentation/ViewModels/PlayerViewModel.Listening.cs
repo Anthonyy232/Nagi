@@ -29,13 +29,15 @@ public partial class PlayerViewModel
     public string FavoriteActionText => IsCurrentTrackFavorite ? Strings.Listening_RemoveFavorite : Strings.Listening_AddFavorite;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ListeningPaneTitle), nameof(ListeningPaneToggleText))]
+    [NotifyPropertyChangedFor(nameof(ListeningPaneTitle), nameof(ListeningPaneToggleText), nameof(ListeningPaneToggleIcon))]
     public partial bool IsHistoryVisible { get; set; }
 
     public string ListeningPaneTitle => IsHistoryVisible ? Strings.Listening_RecentlyPlayed : Strings.QueueFlyout_Title;
 
     /// <summary>Names the pane the toggle switches to.</summary>
     public string ListeningPaneToggleText => IsHistoryVisible ? Strings.QueueFlyout_Title : Strings.Listening_RecentlyPlayed;
+
+    public AppIcon ListeningPaneToggleIcon => IsHistoryVisible ? AppIcon.Queue : AppIcon.History;
 
     public IReadOnlyList<PlaybackRateOption> PlaybackRateOptions { get; } =
         new[] { 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0 }.Select(rate => new PlaybackRateOption(rate,
@@ -119,6 +121,33 @@ public partial class PlayerViewModel
             IsCurrentTrackFavorite = loved;
         }
     });
+
+    /// <summary>
+    ///     What the favorite shortcut does: favorite the songs selected in <paramref name="activeList" /> when it can,
+    ///     otherwise the playing track when nothing is selected there.
+    /// </summary>
+    /// <returns>The command to run, or null when the shortcut does nothing.</returns>
+    public IAsyncRelayCommand? GetFavoriteShortcutCommand(SongListViewModelBase? activeList)
+    {
+        if (activeList?.ToggleSelectedFavoriteCommand.CanExecute(null) == true) return activeList.ToggleSelectedFavoriteCommand;
+        if (activeList?.HasSelectedSongs != true && ToggleFavoriteCommand.CanExecute(null)) return ToggleFavoriteCommand;
+        return null;
+    }
+
+    [RelayCommand]
+    private Task PlayQueueEntryAsync(QueueEntry entry) => SidebarQueue.PlayAsync(entry);
+
+    [RelayCommand]
+    private void MoveQueueEntryUp(QueueEntry entry) => SidebarQueue.Move(entry, -1);
+
+    [RelayCommand]
+    private void MoveQueueEntryDown(QueueEntry entry) => SidebarQueue.Move(entry, 1);
+
+    [RelayCommand]
+    private Task RemoveQueueEntryAsync(QueueEntry entry) => SidebarQueue.RemoveAsync(entry);
+
+    [RelayCommand]
+    private void ReloadQueue() => SidebarQueue.Refresh(reloadMetadata: true);
 
     [RelayCommand]
     private Task PlayHistoryNextAsync(RecentListenEntry? entry) => entry is null ? Task.CompletedTask : RunActionAsync(() => _playbackService.PlayNextAsync(entry.Listen.SongId));

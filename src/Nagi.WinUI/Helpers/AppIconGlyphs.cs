@@ -32,6 +32,7 @@ public static class AppIconGlyphs
         AppIcon.VolumeMedium => "",
         AppIcon.VolumeHigh => "",
         AppIcon.OnlineSource => "",
+        AppIcon.History => "",
         _ => string.Empty
     };
 }
