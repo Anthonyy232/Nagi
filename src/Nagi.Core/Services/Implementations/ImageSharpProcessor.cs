@@ -112,10 +112,6 @@ public class ImageSharpProcessor : IImageProcessor
         }
     }
 
-    /// <summary>
-    ///     Parses light and dark color hex values from the filename pattern.
-    ///     Expected pattern: {hash}.{lightHex}.{darkHex}.fetched.jpg
-    /// </summary>
     private static (string? lightHex, string? darkHex) ParseColorsFromFilename(string filePath)
     {
         var filename = Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(filePath));
@@ -162,10 +158,7 @@ public class ImageSharpProcessor : IImageProcessor
             baseFileName, ".fetched", await EncodeCachedJpegAsync(image).ConfigureAwait(false)).ConfigureAwait(false))!;
     }
 
-    /// <summary>
-    ///     Extracts colors from an already-loaded image by cloning and resizing to a small dimension.
-    ///     This avoids decoding the image twice.
-    /// </summary>
+    // Works on a small copy of the image already decoded for the cache, so the file is decoded once.
     private (string? lightHex, string? darkHex) ExtractColorsFromLoadedImage(Image<Bgra32> originalImage)
     {
         try

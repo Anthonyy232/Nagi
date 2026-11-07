@@ -193,20 +193,13 @@ public partial class LibraryService
         return artistIds.Count;
     }
 
-    /// <summary>
-    ///     Finds artists linked to songs in the given folder that have no local or custom image,
-    ///     then searches their associated directories for artist image files (e.g., artist.jpg).
-    ///     Updates each artist's <see cref="Artist.LocalImageCachePath"/> and fires
-    ///     <see cref="ArtistMetadataUpdated"/> when an image is found.
-    /// </summary>
+    /// <summary>Looks for an artist image (such as artist.jpg) beside the songs in the folder.</summary>
     /// <returns>The number of artists updated with newly found local images.</returns>
     private async Task<int> UpdateMissingArtistImagesFromFoldersAsync(Guid folderId, CancellationToken cancellationToken)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
-        // Find distinct artists linked to songs in this folder.
-        // Skip if a custom image or a previously-found local folder image is already cached.
-        // We DO NOT skip if they only have a .fetched (external) image, as local files take precedence.
+        // A folder image replaces a fetched one, but never a custom image or an earlier folder image.
         var artistsNeedingImages = await context.Artists
             .Where(a => a.SongArtists.Any(sa => sa.Song.FolderId == folderId))
             .Where(a => a.LocalImageCachePath == null ||
@@ -256,7 +249,6 @@ public partial class LibraryService
         {
             await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             _logger.LogInformation("Updated {Count} artists with local folder images.", pendingEvents.Count);
-            // Fire events only after the DB write succeeds to keep UI state consistent with persisted data.
             foreach (var eventArgs in pendingEvents)
                 ArtistMetadataUpdated?.Invoke(this, eventArgs);
         }
@@ -280,11 +272,6 @@ public partial class LibraryService
         }
     }
 
-    /// <summary>
-    ///     Searches for an artist image file in the folders associated with the artist's songs.
-    ///     Queries the database for song directories, then delegates to
-    ///     <see cref="FindArtistImageInDirectoriesAsync"/>. Used by single-artist code paths.
-    /// </summary>
     private async Task<byte[]?> FindArtistImageInFoldersAsync(Artist artist, MusicDbContext context, CancellationToken ct)
     {
         var songDirectories = (await LoadSongDirectoriesByArtistAsync(context, [artist.Id], ct).ConfigureAwait(false))
@@ -432,9 +419,8 @@ public partial class LibraryService
     {
         var wasMetadataFoundAndUpdated = false;
 
-        // Navidrome priority: local folder images first (artist.*, album/artist.*), then external providers.
-        // Skip if a custom image or a previously-found local folder image is already cached.
-        // We DO NOT skip if they only have a .fetched (external) image, as local files take precedence.
+        // As in Navidrome, a folder image (artist.*, album/artist.*) comes before the online sources, and replaces a
+        // fetched image but never a custom image or an earlier folder image.
         if (!ImageStorageHelper.IsUserOrFolderImage(artist.LocalImageCachePath))
         {
             var localImageBytes = preloadedSongDirectories is not null
@@ -501,8 +487,6 @@ public partial class LibraryService
             wasMetadataFoundAndUpdated = true;
         }
 
-        // Download and cache the best image found from external providers.
-        // Skip if a local folder image or custom image is already set.
         if (!string.IsNullOrEmpty(found.ImageUrl) &&
             !ImageStorageHelper.IsUserOrFolderImage(artist.LocalImageCachePath))
         {

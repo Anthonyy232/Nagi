@@ -13,9 +13,7 @@ public enum ProviderCapabilities
     Lyrics = 8,
 
     /// <summary>Finds the MusicBrainz IDs that other providers look artists and albums up by.</summary>
-    IdResolver = 16,
-
-    Artist = ArtistImage | ArtistBiography | IdResolver
+    IdResolver = 16
 }
 
 /// <summary>An online source the user can turn on and rank in settings.</summary>
