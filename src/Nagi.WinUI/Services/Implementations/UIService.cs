@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Windows.Storage.Pickers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Nagi.Core.Constants;
 using Nagi.Core.Models;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
@@ -24,7 +25,6 @@ public partial class UIService : IUIService
 {
     private const uint MB_OK = 0x00000000;
     private const uint MB_ICONERROR = 0x00000010;
-    private const string IssuesUrl = "https://github.com/Anthonyy232/Nagi/issues";
 
     private readonly Win32InteropService _win32InteropService;
     private readonly ViewModelFactory _viewModelFactory;
@@ -127,7 +127,7 @@ public partial class UIService : IUIService
         {
             Introduction = Strings.CrashReport_Message,
             LogContent = report,
-            GitHubUrl = IssuesUrl
+            GitHubUrl = AppLinks.Issues
         };
 
         var dialog = new ContentDialog

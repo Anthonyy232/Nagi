@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Security.Cryptography;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Constants;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models.Romanization;
 using Nagi.Core.Services.Abstractions;
@@ -11,7 +12,7 @@ namespace Nagi.Core.Services.Implementations.Romanization;
 
 public sealed class RomanizationPackManager : IRomanizationPackManager
 {
-    public const string DefaultCatalogUrl = "https://github.com/Anthonyy232/Nagi/releases/download/romanization-packs/catalog.json";
+    public const string DefaultCatalogUrl = AppLinks.Repository + "/releases/download/romanization-packs/catalog.json";
     private static readonly HashSet<string> AllowedPackExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
         ".csv",
