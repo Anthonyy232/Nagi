@@ -92,7 +92,7 @@ public partial class LibraryReader : ILibraryReader
     {
         var result = new Dictionary<Guid, Song>();
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        foreach (var chunk in songIds.Distinct().Chunk(500))
+        foreach (var chunk in songIds.Distinct().Chunk(MusicDbContext.MaxParametersPerQuery))
         {
 
             var query = context.Songs.AsNoTracking()
@@ -117,7 +117,7 @@ public partial class LibraryReader : ILibraryReader
     {
         var result = new Dictionary<Guid, Song>();
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
-        foreach (var chunk in songIds.Distinct().Chunk(500))
+        foreach (var chunk in songIds.Distinct().Chunk(MusicDbContext.MaxParametersPerQuery))
         {
             var songs = await context.Songs.AsNoTracking().Where(s => chunk.Contains(s.Id))
                 .Select(s => new Song
@@ -143,7 +143,7 @@ public partial class LibraryReader : ILibraryReader
     {
         long ticks = 0;
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
-        foreach (var chunk in songIds.Distinct().Chunk(500))
+        foreach (var chunk in songIds.Distinct().Chunk(MusicDbContext.MaxParametersPerQuery))
             ticks += await context.Songs.Where(s => chunk.Contains(s.Id))
                 .SumAsync(s => s.DurationTicks, cancellationToken).ConfigureAwait(false);
         return TimeSpan.FromTicks(ticks);
@@ -274,7 +274,7 @@ public partial class LibraryReader : ILibraryReader
     {
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
         var result = new List<MixCandidate>();
-        foreach (var ids in songIds.Distinct().Chunk(500))
+        foreach (var ids in songIds.Distinct().Chunk(MusicDbContext.MaxParametersPerQuery))
             result.AddRange(await context.Songs.AsNoTracking().Where(s => ids.Contains(s.Id))
                 .Select(s => new MixCandidate(s.Id, s.PrimaryArtistName, s.DurationTicks, s.PlayCount, s.LastPlayedDate))
                 .ToListAsync(token).ConfigureAwait(false));

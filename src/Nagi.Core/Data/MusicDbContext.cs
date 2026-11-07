@@ -5,6 +5,11 @@ namespace Nagi.Core.Data;
 
 public class MusicDbContext : DbContext
 {
+    /// <summary>
+    ///     How many values a query passes in one IN list; SQLite caps the parameters one statement can have.
+    /// </summary>
+    internal const int MaxParametersPerQuery = 500;
+
     private static readonly Data.Interceptors.DenormalizationInterceptor _interceptor = new();
 
     public MusicDbContext(DbContextOptions<MusicDbContext> options) : base(options)

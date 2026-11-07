@@ -948,7 +948,7 @@ public sealed class LibraryFolderService : ILibraryFolderService
         Action<Song, T> update, CancellationToken cancellationToken)
     {
         var updated = 0;
-        foreach (var ids in values.Keys.Chunk(500))
+        foreach (var ids in values.Keys.Chunk(MusicDbContext.MaxParametersPerQuery))
         {
             var songs = await context.Songs.Where(s => ids.Contains(s.Id)).ToListAsync(cancellationToken).ConfigureAwait(false);
             foreach (var song in songs) update(song, values[song.Id]);

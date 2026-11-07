@@ -320,7 +320,7 @@ public sealed class ArtworkService : IArtworkService
     internal async Task DeleteUnreferencedCoverArtAsync(IEnumerable<string> paths, CancellationToken token)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(token).ConfigureAwait(false);
-        foreach (var batch in paths.Distinct(StringComparer.OrdinalIgnoreCase).Chunk(500))
+        foreach (var batch in paths.Distinct(StringComparer.OrdinalIgnoreCase).Chunk(MusicDbContext.MaxParametersPerQuery))
         {
             var references = await context.Songs
                 .Where(s => s.AlbumArtUriFromTrack != null && batch.Contains(s.AlbumArtUriFromTrack))
@@ -351,10 +351,7 @@ public sealed class ArtworkService : IArtworkService
 
         try
         {
-            var normalizedFilePath = Path.GetFullPath(filePath);
-            var normalizedCachePath = Path.TrimEndingDirectorySeparator(Path.GetFullPath(cachePath)) + Path.DirectorySeparatorChar;
-
-            return normalizedFilePath.StartsWith(normalizedCachePath, StringComparison.OrdinalIgnoreCase)
+            return PathCanonicalizer.IsSameOrInside(Path.GetFullPath(filePath), Path.GetFullPath(cachePath))
                    && _fileSystem.FileExists(filePath);
         }
         catch (Exception ex)

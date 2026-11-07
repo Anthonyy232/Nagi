@@ -63,14 +63,12 @@ public class DenormalizationInterceptor : SaveChangesInterceptor
                 albumsToSync.Add(albumEntry.Entity);
         }
 
-        const int chunkSize = 500;
-
         // Added entities already have their relationships in memory.
         var nonAddedSongIds = songsToSync
             .Where(s => trackedSongsById[s.Id].State != EntityState.Added)
             .Select(s => s.Id);
 
-        foreach (var chunk in nonAddedSongIds.Chunk(chunkSize))
+        foreach (var chunk in nonAddedSongIds.Chunk(MusicDbContext.MaxParametersPerQuery))
         {
             context.Set<SongArtist>()
                 .Include(sa => sa.Artist)
@@ -89,7 +87,7 @@ public class DenormalizationInterceptor : SaveChangesInterceptor
             .Where(a => trackedAlbumsById[a.Id].State != EntityState.Added)
             .Select(a => a.Id);
 
-        foreach (var chunk in nonAddedAlbumIds.Chunk(chunkSize))
+        foreach (var chunk in nonAddedAlbumIds.Chunk(MusicDbContext.MaxParametersPerQuery))
         {
             context.Set<AlbumArtist>()
                 .Include(aa => aa.Artist)

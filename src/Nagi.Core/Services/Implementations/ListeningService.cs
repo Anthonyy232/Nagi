@@ -26,7 +26,7 @@ public sealed class ListeningService : IListeningService
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         await using var transaction = await context.Database.BeginTransactionAsync().ConfigureAwait(false);
         var updated = 0;
-        foreach (var ids in songIds.Distinct().Chunk(500))
+        foreach (var ids in songIds.Distinct().Chunk(MusicDbContext.MaxParametersPerQuery))
             updated += await context.Songs.Where(s => ids.Contains(s.Id) && s.IsLoved != loved)
                 .ExecuteUpdateAsync(setters => setters
                     .SetProperty(s => s.IsLoved, loved)
