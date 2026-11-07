@@ -212,23 +212,18 @@ public partial class FolderSongListViewModel : DetailSongListViewModelBase<Folde
         _rootFolderId.HasValue ? new(PlaybackContextType.Folder, _rootFolderId.Value) : base.GetPlaybackContext();
 
     [RelayCommand]
-    private async Task PlaySubfolderAsync(Folder? folder)
+    private Task PlaySubfolderAsync(Folder? folder)
     {
-        if (_isDisposed || folder == null || !_rootFolderId.HasValue) return;
+        if (_isDisposed || folder == null || _rootFolderId is not { } rootFolderId) return Task.CompletedTask;
         var generation = CaptureSongContext();
-
-        try
+        return RunActionAsync(async () =>
         {
             var songIds = await _libraryReader.GetSongIdsAsync(
-                new SongScope.DirectoryTree(_rootFolderId.Value, folder.Path), null, SongSortOrder.TitleAsc, CancellationToken.None);
+                new SongScope.DirectoryTree(rootFolderId, folder.Path), null, SongSortOrder.TitleAsc, CancellationToken.None);
 
             if (IsSongContextCurrent(generation) && songIds.Count > 0)
                 await _playbackService.PlayAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.Folder, folder.Id));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error playing subfolder {SubfolderPath}", folder.Path);
-        }
+        });
     }
 
     public override int SelectedItemsCount => base.SelectedItemsCount + _selectedFolders.Count;
