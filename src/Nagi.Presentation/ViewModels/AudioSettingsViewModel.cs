@@ -202,7 +202,14 @@ public partial class AudioSettingsViewModel : SettingsSectionViewModel
     {
         _preampDebouncer.Cancel();
         foreach (var band in EqualizerBands) band.CancelPendingGain();
-        await _playbackService.ResetEqualizerAsync();
+        try
+        {
+            await _playbackService.ResetEqualizerAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to reset the equalizer");
+        }
     }
 
     private void LoadEqualizerState()
