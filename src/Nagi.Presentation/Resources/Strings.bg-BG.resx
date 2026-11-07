@@ -572,18 +572,6 @@
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg все още не е открит. Моля, инсталирайте FFmpeg и щракнете "Провери отново".</value>
   </data>
-  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>Предишна</value>
-  </data>
-  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>Пусни</value>
-  </data>
-  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>Пауза</value>
-  </data>
-  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>Следваща</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Библиотека</value>
   </data>

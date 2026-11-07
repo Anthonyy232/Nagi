@@ -572,18 +572,6 @@
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg이(가) 여전히 감지되지 않았습니다. FFmpeg을 설치하고 '재확인'을 클릭하세요.</value>
   </data>
-  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>이전</value>
-  </data>
-  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>재생</value>
-  </data>
-  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>일시 정지</value>
-  </data>
-  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>다음</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>라이브러리</value>
   </data>

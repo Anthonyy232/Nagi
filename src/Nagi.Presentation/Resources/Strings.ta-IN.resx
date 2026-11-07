@@ -572,18 +572,6 @@
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg இன்னும் கண்டறியப்படவில்லை. தயவுசெய்து FFmpeg ஐ நிறுவி 'மீண்டும் சரிபார்க்கவும்' என்பதைக் கிளிக் செய்யவும்.</value>
   </data>
-  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>முந்தைய</value>
-  </data>
-  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>இயக்கு</value>
-  </data>
-  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>இடைநிறுத்து</value>
-  </data>
-  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>அடுத்த</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>நூலகம்</value>
   </data>

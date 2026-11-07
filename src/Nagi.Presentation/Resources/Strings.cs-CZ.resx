@@ -572,18 +572,6 @@ Soubory, které se nepodařilo importovat: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg stále nebyl detekován. Nainstalujte prosím FFmpeg a klikněte na 'Zkontrolovat znovu'.</value>
   </data>
-  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>Předchozí</value>
-  </data>
-  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>Přehrát</value>
-  </data>
-  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>Pozastavit</value>
-  </data>
-  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>Další</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Knihovna</value>
   </data>

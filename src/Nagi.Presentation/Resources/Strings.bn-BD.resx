@@ -572,18 +572,6 @@
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg এখনও সনাক্ত করা যায়নি। অনুগ্রহ করে FFmpeg ইনস্টল করুন এবং 'পুনরায় পরীক্ষা করুন' ক্লিক করুন।</value>
   </data>
-  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>পূর্ববর্তী</value>
-  </data>
-  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>চালান</value>
-  </data>
-  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>বিরতি দিন</value>
-  </data>
-  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>পরবর্তী</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>লাইব্রেরি</value>
   </data>

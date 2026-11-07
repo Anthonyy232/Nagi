@@ -572,18 +572,6 @@
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>Το FFmpeg εξακολουθεί να μην εντοπίζεται. Παρακαλώ εγκαταστήστε το FFmpeg και κάντε κλικ στο 'Επανέλεγχος'.</value>
   </data>
-  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>Προηγούμενο</value>
-  </data>
-  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>Αναπαραγωγή</value>
-  </data>
-  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>Παύση</value>
-  </data>
-  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>Επόμενο</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Βιβλιοθήκη</value>
   </data>

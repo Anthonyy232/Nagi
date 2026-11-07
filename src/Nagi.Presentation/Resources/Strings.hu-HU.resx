@@ -572,18 +572,6 @@ Nem importálható fájlok: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>Az FFmpeg továbbra sem észlelhető. Kérjük, telepítse az FFmpeg-et, majd kattintson az „Újraellenőrzés” gombra.</value>
   </data>
-  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>Előző</value>
-  </data>
-  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>Lejátszás</value>
-  </data>
-  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>Szünet</value>
-  </data>
-  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>Következő</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Könyvtár</value>
   </data>

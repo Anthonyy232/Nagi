@@ -360,7 +360,7 @@ public sealed class TaskbarService : IDisposable
                     iId = PreviousButtonId,
                     dwMask = THB.ICON | THB.TOOLTIP | THB.FLAGS,
                     hIcon = _prevIcon,
-                    szTip = Strings.Taskbar_Tooltip_Previous,
+                    szTip = Strings.Player_PreviousButton_ToolTip,
                     dwFlags = CanGoPrevious() ? THBF.ENABLED : THBF.DISABLED
                 },
                 new THUMBBUTTON
@@ -368,7 +368,7 @@ public sealed class TaskbarService : IDisposable
                     iId = PlayPauseButtonId,
                     dwMask = THB.ICON | THB.TOOLTIP | THB.FLAGS,
                     hIcon = _playbackService.IsPlaying ? _pauseIcon : _playIcon,
-                    szTip = _playbackService.IsPlaying ? Strings.Taskbar_Tooltip_Pause : Strings.Taskbar_Tooltip_Play,
+                    szTip = _playbackService.IsPlaying ? Strings.Tooltip_Pause : Strings.Tooltip_Play,
                     dwFlags = THBF.ENABLED
                 },
                 new THUMBBUTTON
@@ -376,7 +376,7 @@ public sealed class TaskbarService : IDisposable
                     iId = NextButtonId,
                     dwMask = THB.ICON | THB.TOOLTIP | THB.FLAGS,
                     hIcon = _nextIcon,
-                    szTip = Strings.Taskbar_Tooltip_Next,
+                    szTip = Strings.Player_NextButton_ToolTip,
                     dwFlags = CanGoNext() ? THBF.ENABLED : THBF.DISABLED
                 }
             ];
@@ -399,12 +399,12 @@ public sealed class TaskbarService : IDisposable
             if (_playbackService.IsPlaying)
             {
                 _buttons[1].hIcon = _pauseIcon;
-                _buttons[1].szTip = Strings.Taskbar_Tooltip_Pause;
+                _buttons[1].szTip = Strings.Tooltip_Pause;
             }
             else
             {
                 _buttons[1].hIcon = _playIcon;
-                _buttons[1].szTip = Strings.Taskbar_Tooltip_Play;
+                _buttons[1].szTip = Strings.Tooltip_Play;
             }
             _buttons[1].dwFlags = THBF.ENABLED;
             _buttons[2].hIcon = _nextIcon;
