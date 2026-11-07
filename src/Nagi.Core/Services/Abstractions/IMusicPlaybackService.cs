@@ -78,7 +78,8 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     bool CanGoPrevious { get; }
 
     /// <summary>
-    ///     Occurs when the current track changes or playback stops.
+    ///     Occurs when the current track changes or playback stops. A new track's listen, if one is recorded, has
+    ///     already started, so <see cref="CurrentListenHistoryId" /> belongs to it.
     /// </summary>
     event Action? TrackChanged;
 
@@ -135,6 +136,10 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     /// </summary>
     Task PlayPauseAsync();
 
+    /// <summary>
+    ///     Skips to the next song in play order, going round the queue while repeating. Repeating one song only
+    ///     replays it when it ends, and stopping after the current track waits for it to end too.
+    /// </summary>
     Task NextAsync();
 
     /// <summary>

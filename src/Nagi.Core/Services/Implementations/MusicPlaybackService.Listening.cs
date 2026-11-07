@@ -41,14 +41,14 @@ public partial class MusicPlaybackService
                 candidates.AddRange(transient);
                 return PlaybackMixBuilder.Build(candidates, mode, now, duration, avoidRecentDays);
             });
-            if (!IsCurrentRequest(request)) throw new OperationCanceledException();
+            request.ThrowIfCancellationRequested();
             if (order.Count == 0) return;
             await PlayInternalAsync(order, 0, true, context ?? _currentContext, request, order, mode);
-            if (!IsCurrentRequest(request)) throw new OperationCanceledException();
+            request.ThrowIfCancellationRequested();
             if (duration.HasValue)
             {
                 await SetRepeatModeAsync(RepeatMode.Off);
-                if (!IsCurrentRequest(request)) throw new OperationCanceledException();
+                request.ThrowIfCancellationRequested();
                 ScheduleStop(PlaybackStopMode.EndOfQueue);
             }
             played = true;
@@ -85,7 +85,7 @@ public partial class MusicPlaybackService
         if (_finishCurrentTrack && CurrentTrack is not null && IsPlaying)
             ScheduleStop(PlaybackStopMode.AfterTrack);
         else
-            FireAndForgetSafe(() => RunPlaybackRequest(request => StopInternalAsync(request)), "Sleep timer stop");
+            RunInBackground(StopAsync, "Sleep timer stop");
     }
 
     private bool ShouldStopAfterTrack()

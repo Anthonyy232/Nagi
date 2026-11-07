@@ -634,18 +634,66 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task NextAsync_WithRepeatOne_RestartsCurrentTrack()
+    public async Task RepeatOne_ReplaysTheTrackWhenItEndsButNextStillMovesOn()
     {
         await _service.InitializeAsync();
         await _service.SetRepeatModeAsync(RepeatMode.RepeatOne);
-        await _service.PlayAsync(Ids(_testSongs), 1);
-        _audioPlayer.ClearReceivedCalls();
+        await _service.PlayAsync(Ids(_testSongs), _testSongs.Count - 2);
 
         await _service.NextAsync();
+        _service.CurrentTrack.Should().Be(_testSongs[^1]);
+        await _service.NextAsync();
+        _service.CurrentTrack.Should().Be(_testSongs[0]);
 
+        _audioPlayer.ClearReceivedCalls();
+        _audioPlayer.PlaybackEnded += Raise.Event<Action>();
+        await _service.FlushPendingFinalizationAsync();
+        _service.CurrentTrack.Should().Be(_testSongs[0]);
+        await _audioPlayer.Received(1).LoadAsync(_testSongs[0]);
+    }
+
+    [Fact]
+    public async Task TrackChanged_IsRaisedOncePerTrackWithItsListenAlreadyStarted()
+    {
+        _library.Writer.StartListenSessionAsync(_testSongs[1].Id, Arg.Any<PlaybackContext>()).Returns(42L);
+        await _service.InitializeAsync();
+        var seen = new List<(Guid? Track, long? Listen)>();
+        _service.TrackChanged += () => seen.Add((_service.CurrentTrack?.Id, _service.CurrentListenHistoryId));
+
+        await _service.PlayAsync(Ids(_testSongs), 1);
+        _audioPlayer.MediaOpened += Raise.Event<Action>();
+
+        seen.Should().Equal((_testSongs[1].Id, 42L));
+    }
+
+    [Fact]
+    public async Task DisposeAsync_AfterDispose_StillEndsTheListen()
+    {
+        _library.Writer.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(7L);
+        await _service.InitializeAsync();
+        await _service.PlayAsync(_testSongs[0].Id);
+
+        _service.Dispose();
+        await _service.DisposeAsync();
+
+        await _library.Writer.Received(1).FinalizeListenSessionAsync(7L, Arg.Any<TimeSpan>(), PlaybackEndReason.PausedAndAbandoned);
+    }
+
+    [Fact]
+    public async Task StopAfterTrack_StopsWhenTheTrackEndsButNextStillMovesOn()
+    {
+        await _service.InitializeAsync();
+        await _service.PlayAsync(Ids(_testSongs));
+        _service.ScheduleStop(PlaybackStopMode.AfterTrack);
+
+        await _service.NextAsync();
         _service.CurrentTrack.Should().Be(_testSongs[1]);
-        await _audioPlayer.Received(1).LoadAsync(_testSongs[1]);
-        await _audioPlayer.Received(1).PlayAsync();
+        _service.StopMode.Should().Be(PlaybackStopMode.AfterTrack);
+
+        _audioPlayer.PlaybackEnded += Raise.Event<Action>();
+        await _service.FlushPendingFinalizationAsync();
+        _service.CurrentTrack.Should().BeNull();
+        _service.StopMode.Should().Be(PlaybackStopMode.Off);
     }
 
     [Fact]
@@ -674,7 +722,7 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task PreviousAsync_WithRepeatOne_RestartsCurrentTrack()
+    public async Task PreviousAsync_WithRepeatOne_RestartsAPlayingTrackAndOtherwiseGoesBack()
     {
         await _service.InitializeAsync();
         await _service.SetRepeatModeAsync(RepeatMode.RepeatOne);
@@ -685,8 +733,12 @@ public partial class MusicPlaybackServiceTests : IAsyncDisposable
         await _service.PreviousAsync();
 
         _service.CurrentTrack.Should().Be(_testSongs[1]);
-        await _audioPlayer.Received(1).LoadAsync(_testSongs[1]);
-        await _audioPlayer.Received(1).PlayAsync();
+        await _audioPlayer.Received(1).SeekAsync(TimeSpan.Zero);
+        await _audioPlayer.DidNotReceive().LoadAsync(Arg.Any<Song>());
+
+        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(1));
+        await _service.PreviousAsync();
+        _service.CurrentTrack.Should().Be(_testSongs[0]);
     }
 
     [Fact]
