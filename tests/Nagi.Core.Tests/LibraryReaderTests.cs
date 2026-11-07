@@ -127,6 +127,42 @@ public class LibraryReaderTests : IDisposable
     }
 
     [Fact]
+    public async Task DirectoryPages_ListMatchingSubFoldersBeforeSongsAcrossPages()
+    {
+        var root = new Folder { Name = "Music", Path = @"C:\Music" };
+        var rock = new Folder { Name = "Rock", Path = @"C:\Music\Rock", ParentFolder = root };
+        var jazz = new Folder { Name = "Jazz", Path = @"C:\Music\Jazz", ParentFolder = root };
+        var songs = new[] { "Rocket", "Ballad", "Rockabilly" }.Select(title => new Song
+        {
+            Folder = root,
+            Title = title,
+            FilePath = $@"C:\Music\{title}.mp3",
+            DirectoryPath = @"C:\Music"
+        }).ToArray();
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.AddRange(rock, jazz);
+            context.Songs.AddRange(songs);
+            await context.SaveChangesAsync();
+        }
+        var directory = new SongScope.Directory(root.Id, root.Path);
+
+        var first = await _libraryReader.GetDirectoryPageAsync(directory, null, SongSortOrder.TitleAsc, 1, 3);
+        var second = await _libraryReader.GetDirectoryPageAsync(directory, null, SongSortOrder.TitleAsc, 2, 3);
+        var search = await _libraryReader.GetDirectoryPageAsync(directory, "Rock", SongSortOrder.TitleAsc, 1, 10);
+
+        first.Folders.Select(folder => folder.Name).Should().Equal("Jazz", "Rock");
+        first.Items.Select(song => song.Title).Should().Equal("Ballad");
+        second.Folders.Should().BeEmpty();
+        second.Items.Select(song => song.Title).Should().Equal("Rockabilly", "Rocket");
+        first.TotalCount.Should().Be(5);
+        first.TotalPages.Should().Be(2);
+        search.Folders.Select(folder => folder.Name).Should().Equal("Rock");
+        search.Items.Select(song => song.Title).Should().Equal("Rockabilly", "Rocket");
+        search.SongCount.Should().Be(2);
+    }
+
+    [Fact]
     public async Task DirectoryQueries_PreserveDriveRootAndIncludeDescendantsOnlyWhenRequested()
     {
         var root = new Folder { Name = "Drive", Path = @"C:\" };
@@ -138,10 +174,10 @@ public class LibraryReaderTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var page = await _libraryReader.GetSongSliceAsync(new SongScope.Directory(root.Id, root.Path), null, SongSortOrder.TitleAsc, 0, 10);
+        var page = await _libraryReader.GetSongsAsync(new SongScope.Directory(root.Id, root.Path), null, SongSortOrder.TitleAsc, 1, 10);
         page.TotalCount.Should().Be(1);
         page.Items.Should().ContainSingle().Which.Id.Should().Be(direct.Id);
-        var search = await _libraryReader.GetSongSliceAsync(new SongScope.Directory(root.Id, root.Path), "Song", SongSortOrder.TitleAsc, 0, 10);
+        var search = await _libraryReader.GetSongsAsync(new SongScope.Directory(root.Id, root.Path), "Song", SongSortOrder.TitleAsc, 1, 10);
         search.Items.Should().ContainSingle().Which.Id.Should().Be(direct.Id);
         var recursive = await _libraryReader.GetSongIdsAsync(new SongScope.DirectoryTree(root.Id, root.Path), null, SongSortOrder.TitleAsc);
         recursive.Should().Equal(direct.Id, nested.Id);
@@ -410,7 +446,7 @@ public class LibraryReaderTests : IDisposable
             "album" => await _libraryReader.GetSongsAsync(new SongScope.Album(album.Id), term, sort, 2, 1),
             "artist" => await _libraryReader.GetSongsAsync(new SongScope.Artist(artist.Id), term, sort, 2, 1),
             "genre" => await _libraryReader.GetSongsAsync(new SongScope.Genre(genre.Id), term, sort, 2, 1),
-            _ => await _libraryReader.GetSongSliceAsync(new SongScope.Directory(folder.Id, folder.Path), term, sort, 1, 1)
+            _ => await _libraryReader.GetSongsAsync(new SongScope.Directory(folder.Id, folder.Path), term, sort, 2, 1)
         };
 
         ids.Should().Equal(songs[0].Id, songs[1].Id);
@@ -472,7 +508,7 @@ public class LibraryReaderTests : IDisposable
 
         var rock = new SongScope.Directory(root.Id, @"C:\Music\Rock\");
         var ids = await _libraryReader.GetSongIdsAsync(rock, "Match", SongSortOrder.TrackNumberDesc);
-        var page = await _libraryReader.GetSongSliceAsync(rock, "Match", SongSortOrder.TrackNumberDesc, 0, 50);
+        var page = await _libraryReader.GetSongsAsync(rock, "Match", SongSortOrder.TrackNumberDesc, 1, 50);
 
         ids.Should().Equal(songs[1].Id, songs[0].Id);
         page.Items.Select(song => song.Id).Should().Equal(ids);

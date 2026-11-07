@@ -78,10 +78,10 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
     protected override void LoadInitialSortOrder() =>
         CurrentSortOrder = _settingsService.Get(AppSettings.ArtistsSortOrder);
 
-    protected override string FormatTotalItemsText(int count) =>
-        count == 1
-            ? ResourceFormatter.Format(Strings.Artists_Count_Singular, count)
-            : ResourceFormatter.Format(Strings.Artists_Count_Plural, count);
+    protected override string FormatTotalItemsText(PagedResult<Artist> result) =>
+        result.TotalCount == 1
+            ? ResourceFormatter.Format(Strings.Artists_Count_Singular, result.TotalCount)
+            : ResourceFormatter.Format(Strings.Artists_Count_Plural, result.TotalCount);
 
     protected override Task<PagedResult<Artist>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token) =>
         _libraryReader.GetArtistsAsync(SearchTerm, CurrentSortOrder, pageNumber, pageSize, token);

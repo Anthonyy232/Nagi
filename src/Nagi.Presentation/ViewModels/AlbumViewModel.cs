@@ -73,10 +73,10 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
     protected override void LoadInitialSortOrder() =>
         CurrentSortOrder = _settingsService.Get(AppSettings.AlbumsSortOrder);
 
-    protected override string FormatTotalItemsText(int count) =>
-        count == 1
-            ? ResourceFormatter.Format(Strings.Albums_Count_Singular, count)
-            : ResourceFormatter.Format(Strings.Albums_Count_Plural, count);
+    protected override string FormatTotalItemsText(PagedResult<Album> result) =>
+        result.TotalCount == 1
+            ? ResourceFormatter.Format(Strings.Albums_Count_Singular, result.TotalCount)
+            : ResourceFormatter.Format(Strings.Albums_Count_Plural, result.TotalCount);
 
     protected override Task<PagedResult<Album>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token) =>
         _libraryReader.GetAlbumsAsync(SearchTerm, CurrentSortOrder, pageNumber, pageSize, token);

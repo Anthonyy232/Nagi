@@ -61,7 +61,7 @@ public class PagedListViewModelTests
     public void ProcessPagedResult_WithPaginationDisabled_KeepsPagerDisabled()
     {
         using var viewModel = CreateViewModel((_, _, _) => throw new InvalidOperationException());
-        viewModel.IsPaginationEnabled = false;
+        viewModel.Paged = false;
 
         viewModel.ApplyResult(new PagedResult<int> { PageNumber = 2, PageSize = 50, TotalCount = 200 });
 
@@ -203,7 +203,7 @@ public class PagedListViewModelTests
                 reloaded.TrySetResult();
         };
 
-        viewModel.SongsPerPage = 25;
+        viewModel.PageSize = 25;
         await reloaded.Task.WaitAsync(TimeSpan.FromSeconds(5));
 
         viewModel.TotalPages.Should().Be(4);
@@ -242,12 +242,14 @@ public class PagedListViewModelTests
             dispatcher ?? new ImmediateDispatcher(), NullLogger.Instance)
     {
         public List<int> Items { get; } = [];
+        public bool Paged { get; set; } = true;
+        protected override bool IsPaged => Paged && base.IsPaged;
         public void ApplyResult(PagedResult<int> result) => ProcessPagedResult(result, CancellationToken.None);
 
         protected override Task<PagedResult<int>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token) =>
             load(pageNumber, pageSize, token);
 
-        protected override string FormatTotalItemsText(int count) => count.ToString();
+        protected override string FormatTotalItemsText(PagedResult<int> result) => result.TotalCount.ToString();
 
         protected override void ApplyItemsToCollection(PagedResult<int> result, bool append)
         {

@@ -19,7 +19,7 @@
 
         <controls:PageSizeComboBox Style="{StaticResource DefaultComboBoxStyle}"
                   ItemsSource="{x:Bind PageSizeOptions}"
-                  SelectedItem="{x:Bind ViewModel.SongsPerPage, Mode=TwoWay}"
+                  SelectedItem="{x:Bind ViewModel.PageSize, Mode=TwoWay}"
                   MinWidth="80" Margin="0,0,16,0" FontSize="12">
             <ComboBox.ItemTemplate>
                 <DataTemplate x:DataType="x:Int32">

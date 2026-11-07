@@ -45,7 +45,7 @@ public partial class LibraryViewModel
     public async Task SetLibraryViewAsync(bool favorites)
     {
         if (ShowFavoritesOnly == favorites) return;
-        _pagedLoadCts?.Cancel();
+        CancelLoad();
         ShowFavoritesOnly = favorites;
         PageTitle = favorites ? Strings.Listening_Favorites : Strings.LibraryPage_Title;
         SearchTerm = string.Empty;

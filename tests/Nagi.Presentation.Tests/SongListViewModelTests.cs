@@ -125,7 +125,16 @@ public class SongListViewModelTests
         protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
             SongSortOrder sortOrder, CancellationToken cancellationToken = default) => load(pageNumber, pageSize, cancellationToken);
 
+        protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default) =>
+            Task.FromResult(new List<Guid>());
+
         public Task<List<Guid>> ResolveSelectionAsync() => GetCurrentSelectionIdsAsync();
+
+        public Task LoadPageAsync(int page)
+        {
+            CurrentPage = page;
+            return LoadAsync(CancellationToken.None);
+        }
     }
 
     [Fact]
@@ -152,6 +161,9 @@ public class SongListViewModelTests
             ui ?? Substitute.For<IUIService>(), NullLogger.Instance)
     {
         protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default) => ids;
+
+        protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
+            SongSortOrder sortOrder, CancellationToken cancellationToken = default) => Task.FromResult(new PagedResult<Song>());
     }
 
     [Fact]

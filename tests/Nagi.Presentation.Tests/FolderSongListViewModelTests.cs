@@ -41,7 +41,7 @@ public class FolderSongListViewModelTests
 
         viewModel.PageTitle.Should().Be(title);
         viewModel.Breadcrumbs.Should().Equal(breadcrumbs);
-        await library.Reader.DidNotReceive().GetSongSliceAsync(
+        await library.Reader.DidNotReceive().GetDirectoryPageAsync(
             new SongScope.Directory(oldFolder.Id, oldFolder.Path), Arg.Any<string?>(),
             Arg.Any<SongSortOrder>(), Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>());
     }
@@ -74,11 +74,10 @@ public class FolderSongListViewModelTests
         var library = new LibraryFakes();
         var root = ConfigureRoot(library);
         var child = new Folder { Name = "Album", Path = @"C:\Music\Album" };
-        library.Reader.GetFolderByPathAsync(child.Path).Returns(child);
         var song = new Song { Title = "Match" };
-        library.Reader.GetSongSliceAsync(new SongScope.Directory(root.Id, child.Path), "Match", Arg.Any<SongSortOrder>(),
+        library.Reader.GetDirectoryPageAsync(new SongScope.Directory(root.Id, child.Path), Arg.Any<string?>(), Arg.Any<SongSortOrder>(),
             Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
-            .Returns(new PagedResult<Song> { Items = [song], TotalCount = 1 });
+            .Returns(new DirectoryPage { Items = [song], TotalCount = 1 });
         library.Reader.GetSongIdsAsync(new SongScope.Directory(root.Id, child.Path), "Match", Arg.Any<SongSortOrder>(), Arg.Any<CancellationToken>())
             .Returns(new List<Guid> { song.Id });
         var playback = Substitute.For<IMusicPlaybackService>();
@@ -127,25 +126,28 @@ public class FolderSongListViewModelTests
     [Theory]
     [InlineData(0)]
     [InlineData(51)]
-    public async Task LoadPageAsync_WhenSongsWereRemoved_UpdatesPageAndContents(int remainingSongs)
+    public async Task Load_WhenSongsWereRemoved_UpdatesPageAndContents(int remainingSongs)
     {
         var library = new LibraryFakes();
         var folder = new Folder { Id = Guid.NewGuid(), Path = @"C:\Music", Name = "Music" };
         library.Reader.GetFolderByIdAsync(folder.Id).Returns(folder);
         var count = 151;
         var song = new Song { Title = "Last song" };
-        library.Reader.GetSongSliceAsync(new SongScope.Directory(folder.Id, folder.Path), Arg.Any<string?>(), Arg.Any<SongSortOrder>(),
+        library.Reader.GetDirectoryPageAsync(new SongScope.Directory(folder.Id, folder.Path), Arg.Any<string?>(), Arg.Any<SongSortOrder>(),
                 Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
-            .Returns(call => new PagedResult<Song>
+            .Returns(call => new DirectoryPage
             {
                 TotalCount = count,
-                Items = call.ArgAt<int>(2) < count ? [song] : []
+                PageNumber = call.ArgAt<int>(3),
+                PageSize = call.ArgAt<int>(4),
+                Items = (call.ArgAt<int>(3) - 1) * call.ArgAt<int>(4) < count ? [song] : []
             });
         using var viewModel = CreateViewModel(library);
         await viewModel.InitializeAsync(folder.Name, folder.Id);
         count = remainingSongs;
 
-        await viewModel.LoadPageAsync(3);
+        viewModel.CurrentPage = 3;
+        await viewModel.LoadAsync(CancellationToken.None);
 
         viewModel.CurrentPage.Should().Be(remainingSongs == 0 ? 1 : 2);
         viewModel.TotalPages.Should().Be(remainingSongs == 0 ? 1 : 2);
@@ -214,9 +216,9 @@ public class FolderSongListViewModelTests
     {
         var library = new LibraryFakes();
         var root = ConfigureRoot(library);
-        library.Reader.GetSubFolderCountAsync(Arg.Any<Guid>(), Arg.Any<string?>(), Arg.Any<CancellationToken>()).Returns(1);
-        library.Reader.GetSubFoldersAsync(Arg.Any<Guid>(), Arg.Any<string?>(), Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
-            .Returns(new[] { new Folder { Name = "Album", Path = @"C:\Music\Album" } });
+        library.Reader.GetDirectoryPageAsync(Arg.Any<SongScope.Directory>(), Arg.Any<string?>(), Arg.Any<SongSortOrder>(),
+                Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
+            .Returns(new DirectoryPage { Folders = [new Folder { Name = "Album", Path = @"C:\Music\Album" }], FolderCount = 1, TotalCount = 1 });
         using var viewModel = CreateViewModel(library);
 
         await viewModel.InitializeAsync(root.Name, root.Id);
@@ -229,8 +231,8 @@ public class FolderSongListViewModelTests
     {
         var root = new Folder { Name = "Music", Path = @"C:\Music" };
         library.Reader.GetFolderByIdAsync(root.Id).Returns(root);
-        library.Reader.GetSongSliceAsync(new SongScope.Directory(root.Id, root.Path), Arg.Any<string?>(), Arg.Any<SongSortOrder>(),
-            Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>()).Returns(new PagedResult<Song>());
+        library.Reader.GetDirectoryPageAsync(new SongScope.Directory(root.Id, root.Path), Arg.Any<string?>(), Arg.Any<SongSortOrder>(),
+            Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>()).Returns(new DirectoryPage());
         return root;
     }
 

@@ -43,16 +43,12 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     [ObservableProperty] public partial bool IsPlaying { get; set; }
 
     // Loaded on demand unless a view requires it for editing.
-    protected readonly object _fullSongIdsLock = new();
-    protected List<Guid> _fullSongIdList = new();
+    private readonly object _fullSongIdsLock = new();
+    private List<Guid> _fullSongIdList = new();
     private Task<List<Guid>>? _fullSongIdLoadTask;
     private int _fullSongIdGeneration;
 
     protected virtual bool PrefetchSongIds => false;
-
-    // Owned by the song-base's <see cref="LoadPageAsync"/> envelope (Next/Previous reload that skips
-    // the auxiliary ID fetch). Distinct from the base's internal page CTS, which gates LoadAsync.
-    protected CancellationTokenSource? _pagedLoadCts;
 
     protected SongListViewModelBase(
         ILibraryReader libraryReader,
@@ -196,6 +192,11 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     {
         OnPropertyChanged(nameof(ShowEmptyState));
         RefreshOrSortSongsCommand.NotifyCanExecuteChanged();
+        NotifyPlayCommandsChanged();
+    }
+
+    private void NotifyPlayCommandsChanged()
+    {
         PlayAllSongsCommand.NotifyCanExecuteChanged();
         ShuffleAndPlayAllSongsCommand.NotifyCanExecuteChanged();
         PlayMixCommand.NotifyCanExecuteChanged();
@@ -205,28 +206,15 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     protected override void OnSearchTermChangedInternal(string value)
     {
         base.OnSearchTermChangedInternal(value);
-        _pagedLoadCts?.Cancel();
         if (HasSelectedSongs) DeselectAll();
         ClearFullSongIds();
     }
 
-    protected override async Task ExecuteSearchAsync(CancellationToken token)
-    {
-        await _dispatcherService.EnqueueAsync(async () =>
-        {
-            if (token.IsCancellationRequested) return;
-            CurrentPage = 1;
-            await RefreshOrSortSongsAsync(null, token);
-        });
-    }
-
-    /// <summary>Bridge the base's typed page hook to the song-specific virtual.</summary>
     protected sealed override Task<PagedResult<Song>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token)
     {
         return LoadSongsPagedAsync(pageNumber, pageSize, CurrentSortOrder, token);
     }
 
-    /// <summary>Refreshes the playback ID cache when a view requires it.</summary>
     protected override async Task OnAuxiliaryLoadAsync(CancellationToken token)
     {
         var generation = ClearFullSongIds();
@@ -303,6 +291,21 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         }
     }
 
+    /// <summary>
+    ///     Replaces the cached play-all IDs with the order the user has just given the list.
+    /// </summary>
+    /// <returns>False when the cache already holds that order.</returns>
+    protected bool ReplaceCachedSongIds(IReadOnlyList<Guid> ids)
+    {
+        lock (_fullSongIdsLock)
+        {
+            if (_fullSongIdList.SequenceEqual(ids)) return false;
+            _fullSongIdList = ids.ToList();
+            _fullSongIdLoadTask = Task.FromResult(_fullSongIdList);
+            return true;
+        }
+    }
+
     protected int CaptureSongContext()
     {
         lock (_fullSongIdsLock) return _fullSongIdGeneration;
@@ -313,24 +316,18 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         lock (_fullSongIdsLock) return !_isDisposed && generation == _fullSongIdGeneration;
     }
 
-    /// <summary>Songs use the SongList resource strings rather than per-list-type formatting.</summary>
-    protected override string FormatTotalItemsText(int count) =>
-        count == 1
-            ? ResourceFormatter.Format(Strings.SongList_TotalItems_Format_Singular, count)
-            : ResourceFormatter.Format(Strings.SongList_TotalItems_Format_Plural, count);
+    protected override string FormatTotalItemsText(PagedResult<Song> result) =>
+        result.TotalCount == 1
+            ? ResourceFormatter.Format(Strings.SongList_TotalItems_Format_Singular, result.TotalCount)
+            : ResourceFormatter.Format(Strings.SongList_TotalItems_Format_Plural, result.TotalCount);
 
-    protected virtual Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize, SongSortOrder sortOrder, CancellationToken cancellationToken = default)
-    {
-        return Task.FromResult(new PagedResult<Song>());
-    }
+    protected abstract Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize, SongSortOrder sortOrder,
+        CancellationToken cancellationToken = default);
 
-    protected virtual Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
-    {
-        return Task.FromResult(new List<Guid>());
-    }
+    protected abstract Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default);
 
     [RelayCommand(CanExecute = nameof(CanExecuteLoadCommands))]
-    public virtual async Task RefreshOrSortSongsAsync(string? sortOrderString = null, CancellationToken manualToken = default)
+    public async Task RefreshOrSortSongsAsync(string? sortOrderString = null, CancellationToken manualToken = default)
     {
         if (!string.IsNullOrEmpty(sortOrderString) &&
             Enum.TryParse<SongSortOrder>(sortOrderString, true, out var newSortOrder)
@@ -348,59 +345,11 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         await LoadAsync(manualToken);
     }
 
-    /// <summary>
-    ///     Loads a specific page of songs without re-fetching all song IDs.
-    ///     Useful for pagination where the overall sort order and ID list remain unchanged.
-    /// </summary>
-    public virtual async Task LoadPageAsync(int pageNumber)
-    {
-        lock (_loadLock)
-        {
-            if (_isDisposed || IsLoading || !IsPaginationEnabled) return;
-            IsLoading = true;
-        }
-
-        _pagedLoadCts?.Cancel();
-        _pagedLoadCts?.Dispose();
-        _pagedLoadCts = new CancellationTokenSource();
-        var token = _pagedLoadCts.Token;
-        HasLoadError = false;
-
-        try
-        {
-            var pagedResult = await Task.Run(
-                () => LoadValidPageAsync(pageNumber, PageSize, token), token);
-            ProcessPagedResult(pagedResult, token);
-        }
-        catch (OperationCanceledException)
-        {
-            _logger.LogDebug("Song page load was canceled.");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to load next page");
-            if (!token.IsCancellationRequested && !_isDisposed) HasLoadError = true;
-        }
-        finally
-        {
-            EndLoadAndDrainPendingReload();
-        }
-    }
-
-    /// <summary>
-    ///     Next/Previous step over the current page only — skip the full ID-list refetch
-    ///     because the sort order and result set haven't changed across the step.
-    /// </summary>
-    protected override Task ReloadCurrentPageAsync(CancellationToken cancellationToken) => LoadPageAsync(CurrentPage);
-
     protected override void ApplyItemsToCollection(PagedResult<Song> result, bool append)
     {
         Songs.AppendOrReplace(result.Items, append);
         UpdateSelectionStatus();
-        PlayAllSongsCommand.NotifyCanExecuteChanged();
-        ShuffleAndPlayAllSongsCommand.NotifyCanExecuteChanged();
-        PlayMixCommand.NotifyCanExecuteChanged();
-        PlayForCommand.NotifyCanExecuteChanged();
+        NotifyPlayCommandsChanged();
     }
 
     public async Task LoadAvailablePlaylistsAsync()
@@ -620,11 +569,6 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         base.ResetState();
         DeselectAll();
         ClearFullSongIds();
-        _pagedLoadCts?.Cancel();
-        _pagedLoadCts?.Dispose();
-        _pagedLoadCts = null;
-
-        _logger.LogDebug("Reset state for SongListViewModelBase");
     }
 
     public override void Dispose()

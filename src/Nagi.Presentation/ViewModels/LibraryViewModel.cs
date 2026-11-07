@@ -74,9 +74,6 @@ public partial class LibraryViewModel : SongListViewModelBase
     protected override bool ShouldReloadOnLibraryChange(LibraryChangeKind kind) =>
         kind != LibraryChangeKind.RootAdded;
 
-    protected override Task RefreshAsync(CancellationToken cancellationToken) =>
-        RefreshOrSortSongsAsync(manualToken: cancellationToken);
-
     protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
     {
         _settingsService.Set(AppSettings.LibrarySortOrder, sortOrder);

@@ -34,9 +34,11 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         ILogger<PlaylistSongListViewModel> logger)
         : base(libraryReader, listening, libraryNotifier, playlistService, playbackService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
-        IsPaginationEnabled = false;
         Songs.CollectionChanged += OnSongsCollectionChanged;
     }
+
+    // Reordering by dragging needs every song in the list.
+    protected override bool IsPaged => false;
 
     public bool IsReorderingEnabled => !_isDisposed && !_isSavingOrder && !IsLoading && !HasLoadError &&
         CanEditPlaylist && CurrentSortOrder == SongSortOrder.PlaylistOrder && !IsSearchActive &&
@@ -141,11 +143,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         var songs = Songs.ToList();
         var orderedIds = songs.Select(song => song.Id).ToList();
         var visibleIds = orderedIds.ToHashSet();
-        if (movedSongs.Any(song => !visibleIds.Contains(song.Id))) return;
-        lock (_fullSongIdsLock)
-        {
-            if (_fullSongIdList.SequenceEqual(orderedIds)) return;
-        }
+        if (movedSongs.Any(song => !visibleIds.Contains(song.Id)) || !ReplaceCachedSongIds(orderedIds)) return;
         var playlistId = _currentPlaylistId.Value;
         var generation = _playlistGeneration;
         var normalize = movedSongs.Count > 1;
@@ -169,11 +167,6 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
 
         _isSavingOrder = true;
         OnPropertyChanged(nameof(IsReorderingEnabled));
-        lock (_fullSongIdsLock)
-        {
-            _fullSongIdList.Clear();
-            _fullSongIdList.AddRange(orderedIds);
-        }
 
         var saved = false;
         try
