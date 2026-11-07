@@ -87,7 +87,7 @@ public sealed class LibraryFolderWatcherTests : IDisposable
             _notifier.Changed += Raise.Event<EventHandler<LibraryChange>>(_notifier, new LibraryChange(LibraryChangeKind.RootAdded, added.Id));
             await File.WriteAllTextAsync(Path.Combine(second, "song.flac"), "audio");
             await _time.Scheduled.WaitAsync(EventTimeout);
-            _time.Advance(LibraryFolderWatcher.QuietPeriod);
+            await AdvanceUntilRefreshedAsync();
 
             await _folderService.Received(1).RefreshFolderInBackgroundAsync(added.Id, Arg.Any<CancellationToken>());
         }
@@ -95,6 +95,21 @@ public sealed class LibraryFolderWatcherTests : IDisposable
         {
             _watcher.Dispose();
             Directory.Delete(second, recursive: true);
+        }
+    }
+
+    // A fresh write raises Created and then Changed events on the watcher's thread. A late one re-arms the debounce,
+    // as in production, and one that lands inside FakeTimeProvider.Advance can make it skip the due timer, so the
+    // test keeps advancing until the refresh fires. The timer callback runs inside Advance, so the call is visible
+    // as soon as it returns.
+    private async Task AdvanceUntilRefreshedAsync()
+    {
+        var deadline = DateTime.UtcNow + EventTimeout;
+        while (true)
+        {
+            _time.Advance(LibraryFolderWatcher.QuietPeriod);
+            if (_folderService.ReceivedCalls().Any() || DateTime.UtcNow > deadline) return;
+            await Task.Delay(10);
         }
     }
 
