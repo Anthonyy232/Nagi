@@ -6,7 +6,7 @@ using Nagi.Core.Listening;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Resources;
 
-namespace Nagi.Presentation.ViewModels;
+namespace Nagi.Presentation.Insights;
 
 internal delegate Task<StatisticsPage<InsightsRankedItem>> RankingLoader(
     TimeRange range, SortMetric metric, int offset, int limit, string? searchTerm, CancellationToken ct);

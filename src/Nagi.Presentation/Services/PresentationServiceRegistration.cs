@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Nagi.Core;
+using Nagi.Presentation.Insights;
 using Nagi.Presentation.Lists;
 using Nagi.Presentation.Player;
 using Nagi.Presentation.Services.Abstractions;
