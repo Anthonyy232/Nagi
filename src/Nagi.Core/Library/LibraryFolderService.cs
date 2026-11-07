@@ -123,15 +123,12 @@ public sealed class LibraryFolderService : ILibraryFolderService
                 return false;
             }
 
-            if (!await _importer.RemoveRootAsync(folderId, _writeLock.ShutdownToken).ConfigureAwait(false)) return false;
+            return await _importer.RemoveRootAsync(folderId, _writeLock.ShutdownToken).ConfigureAwait(false);
         }
         finally
         {
             _writeLock.Release();
         }
-
-        _notifier.Raise(LibraryChangeKind.RootRemoved, folderId);
-        return true;
     }
 
     public Task<bool> RescanFolderForMusicAsync(Guid folderId, IProgress<ScanProgress>? progress = null,
@@ -278,9 +275,7 @@ public sealed class LibraryFolderService : ILibraryFolderService
             progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_ScanFailed, Percentage = 100 });
             _logger.LogWarning("Folder path '{FolderPath}' no longer exists. Removing folder {FolderId} from library.",
                 folder.Path, folder.Id);
-            if (!await _importer.RemoveRootAsync(folderId, token).ConfigureAwait(false)) return false;
-            _notifier.Raise(LibraryChangeKind.RootRemoved, folderId);
-            return true;
+            return await _importer.RemoveRootAsync(folderId, token).ConfigureAwait(false);
         }
 
         progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_PreparingScanCaches, IsIndeterminate = true });
@@ -290,20 +285,10 @@ public sealed class LibraryFolderService : ILibraryFolderService
                 changes.Added.Count, changes.Updated.Count, changes.Removed.Count);
         token.ThrowIfCancellationRequested();
 
-        var removed = changes.Removed;
-        if (removed.Count > 0 && LibraryImporter.IsLikelyMissedListing(removed.Count, changes.ExistingCount, changes.Added.Count))
-        {
-            _logger.LogError(
-                "Scan safety guard tripped for folder {FolderId}: proposed to delete {DeleteCount}/{ExistingCount} songs while only adding {AddCount}. Skipping delete pass; likely a transient enumeration failure (NAS blip / unmounted drive).",
-                folderId, removed.Count, changes.ExistingCount, changes.Added.Count);
-            removed = [];
-        }
-
-        if (removed.Count > 0)
-        {
+        if (changes.Removed.Count > 0)
             progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_CleaningUpLibrary, IsIndeterminate = true });
-            await _importer.DeleteSongsAsync(folderId, removed, token).ConfigureAwait(false);
-        }
+        var removed = await _importer.DeleteSongsAsync(folderId, changes.Removed, changes.ExistingCount, changes.Added.Count, token)
+            .ConfigureAwait(false);
 
         // Before the folder image check, so it can replace the images that are gone.
         var clearedArtistImages = await _artwork.ClearMissingArtistImagesAsync(folderId, token).ConfigureAwait(false);
@@ -323,10 +308,10 @@ public sealed class LibraryFolderService : ILibraryFolderService
         await Task.WhenAll(lrcTask, coverArtTask, artistImageTask,
             EnsureSubFoldersExistAsync(folderId, folder.Path, import.Directories, token)).ConfigureAwait(false);
         // Adding songs to an album leaves it the cover it has.
-        var onlyAdded = changes.Added.Count > 0 && changes.Updated.Count == 0 && removed.Count == 0;
+        var onlyAdded = changes.Added.Count > 0 && changes.Updated.Count == 0 && removed == 0;
         var covers = await _artwork.UpdateAlbumCoversAsync(folderId, import.ReplacedCovers, onlyAdded, token).ConfigureAwait(false);
 
-        if (removed.Count > 0 || changes.Updated.Count > 0)
+        if (removed > 0 || changes.Updated.Count > 0)
         {
             progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_Finalizing, IsIndeterminate = true });
             await _importer.CleanUpOrphansAsync(token).ConfigureAwait(false);
@@ -341,7 +326,7 @@ public sealed class LibraryFolderService : ILibraryFolderService
             Percentage = 100
         });
 
-        var changed = removed.Count > 0 || import.SongCount > 0 || lrcUpdates > 0 || coverArtUpdates > 0 ||
+        var changed = removed > 0 || import.SongCount > 0 || lrcUpdates > 0 || coverArtUpdates > 0 ||
                       artistImageUpdates > 0 || covers.Albums > 0 || clearedArtistImages > 0;
         if (changed) _notifier.Raise(LibraryChangeKind.FolderRescanned, folderId);
         return changed;

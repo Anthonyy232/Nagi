@@ -64,16 +64,13 @@ public sealed class ServerLibrarySync : IServerLibrarySync
         await _writeLock.WaitAsync(token).ConfigureAwait(false);
         try
         {
-            if (!await IsMusicServerFolderAsync(folderId, token).ConfigureAwait(false)
-                || !await _importer.RemoveRootAsync(folderId, token).ConfigureAwait(false)) return false;
+            return await IsMusicServerFolderAsync(folderId, token).ConfigureAwait(false)
+                   && await _importer.RemoveRootAsync(folderId, token).ConfigureAwait(false);
         }
         finally
         {
             _writeLock.Release();
         }
-
-        _notifier.Raise(LibraryChangeKind.RootRemoved, folderId);
-        return true;
     }
 
     public async Task SyncAsync(Guid folderId, IMusicServerClient client, IProgress<ScanProgress>? progress = null,
@@ -220,15 +217,13 @@ public sealed class ServerLibrarySync : IServerLibrarySync
 
         var listedPaths = listed.Select(song => song.FilePath).ToHashSet(StringComparer.OrdinalIgnoreCase);
         var gone = existingPaths.Where(path => !listedPaths.Contains(path)).ToList();
-        if (gone.Count > 0 && (listed.Count == 0 || LibraryImporter.IsLikelyMissedListing(gone.Count, existing.Count, added)))
-        {
-            _logger.LogError(
-                "Sync safety guard tripped for server folder {FolderId}: it listed {ListedCount} songs, so {DeleteCount}/{ExistingCount} would be removed. Keeping them; the server likely has a library offline.",
-                folderId, listed.Count, gone.Count, existing.Count);
-            gone.Clear();
-        }
-
-        var removed = gone.Count > 0 ? await _importer.DeleteSongsAsync(folderId, gone, cancellationToken).ConfigureAwait(false) : 0;
+        var removed = 0;
+        // Unlike a folder, a server that lists nothing keeps even a few songs.
+        if (listed.Count == 0 && gone.Count > 0)
+            _logger.LogError("Server folder {FolderId} listed no songs. Keeping its {ExistingCount} songs; the server likely has a library offline.",
+                folderId, existing.Count);
+        else
+            removed = await _importer.DeleteSongsAsync(folderId, gone, existing.Count, added, cancellationToken).ConfigureAwait(false);
         // Added songs can't leave an artist, album or genre without songs, as with a scan.
         if (toImport.Count > added || removed > 0)
             await _importer.CleanUpOrphansAsync(cancellationToken).ConfigureAwait(false);

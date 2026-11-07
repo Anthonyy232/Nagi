@@ -18,6 +18,7 @@ public sealed class LibraryImporter
     private readonly IFileSystemService _fileSystem;
     private readonly IPathConfiguration _pathConfig;
     private readonly ArtworkService _artwork;
+    private readonly LibraryNotifier _notifier;
     private readonly ILogger<LibraryImporter> _logger;
 
     public LibraryImporter(
@@ -25,12 +26,14 @@ public sealed class LibraryImporter
         IFileSystemService fileSystem,
         IPathConfiguration pathConfig,
         ArtworkService artwork,
+        LibraryNotifier notifier,
         ILogger<LibraryImporter> logger)
     {
         _contextFactory = contextFactory;
         _fileSystem = fileSystem;
         _pathConfig = pathConfig;
         _artwork = artwork;
+        _notifier = notifier;
         _logger = logger;
     }
 
@@ -60,19 +63,26 @@ public sealed class LibraryImporter
     }
 
     /// <summary>
-    ///     Whether deleting most of a folder's songs while adding hardly any means the scan or sync missed them,
-    ///     as when a NAS or server library is briefly offline, rather than that they were deleted. Deleting them
-    ///     anyway would lose their playlist entries and listening history; the next good pass reconciles instead.
+    ///     Deletes the folder's songs at these paths, with the cached lyrics and covers only they used. Deleting most of
+    ///     a folder's songs while adding hardly any means the scan or sync missed them, as when a NAS or server library
+    ///     is briefly offline, so then nothing is deleted: that would lose their playlist entries and listening
+    ///     history, and the next good pass reconciles instead.
     /// </summary>
-    internal static bool IsLikelyMissedListing(int deleteCount, int existingCount, int addCount) =>
-        existingCount > 0 && deleteCount > Math.Max(50, existingCount / 2) && addCount < deleteCount / 10;
-
-    /// <summary>
-    ///     Deletes the folder's songs at these paths, with the cached lyrics and covers only they used.
-    /// </summary>
-    internal async Task<int> DeleteSongsAsync(Guid folderId, IReadOnlyCollection<string> filePaths,
-        CancellationToken cancellationToken)
+    /// <param name="existingCount">The number of songs in the folder before the scan or sync.</param>
+    /// <param name="addedCount">The number of songs the scan or sync added.</param>
+    /// <returns>The number of songs deleted.</returns>
+    internal async Task<int> DeleteSongsAsync(Guid folderId, IReadOnlyCollection<string> filePaths, int existingCount,
+        int addedCount, CancellationToken cancellationToken)
     {
+        if (filePaths.Count == 0) return 0;
+        if (existingCount > 0 && filePaths.Count > Math.Max(50, existingCount / 2) && addedCount < filePaths.Count / 10)
+        {
+            _logger.LogError(
+                "Safety guard tripped for folder {FolderId}: proposed to delete {DeleteCount}/{ExistingCount} songs while only adding {AddCount}. Keeping them; the folder or server library is likely offline.",
+                folderId, filePaths.Count, existingCount, addedCount);
+            return 0;
+        }
+
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
         var (deleted, files) = await DeleteSongRowsAsync(
             context.Songs.Where(s => s.FolderId == folderId && filePaths.Contains(s.FilePath)), cancellationToken).ConfigureAwait(false);
@@ -81,7 +91,7 @@ public sealed class LibraryImporter
     }
 
     /// <summary>
-    ///     Removes a root folder with its songs, and everything only they used.
+    ///     Removes a root folder with its songs, and everything only they used, and announces it.
     /// </summary>
     /// <returns>False if the folder isn't in the library or couldn't be removed.</returns>
     internal async Task<bool> RemoveRootAsync(Guid folderId, CancellationToken cancellationToken)
@@ -118,6 +128,7 @@ public sealed class LibraryImporter
         await CleanUpOrphansAsync(cancellationToken).ConfigureAwait(false);
         await DeleteSongFilesAsync(files, cancellationToken).ConfigureAwait(false);
         _logger.LogInformation("Removed folder '{FolderName}' and associated data.", folderName);
+        _notifier.Raise(LibraryChangeKind.RootRemoved, folderId);
         return true;
     }
 
