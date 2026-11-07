@@ -22,7 +22,7 @@ public class PresenceManager : IAsyncDisposable, IDisposable
     private readonly SemaphoreSlim _servicesLock = new(1, 1);
 
     // Each service's calls are chained, so it sees events in the order they happened
-    // while a slow service (a Last.fm request, say) doesn't hold up the others.
+    // while a slow service (a Discord reconnect, say) doesn't hold up the others.
     private readonly Dictionary<IPresenceService, Task> _pendingCalls = new();
 
     private Song? _currentTrack;
@@ -71,7 +71,7 @@ public class PresenceManager : IAsyncDisposable, IDisposable
         if (_isDisposed) return;
         _isDisposed = true;
 
-        // Synchronous disposal - use Task.Run to avoid deadlock on UI thread
+        // On a background thread, so blocking here can't deadlock with a continuation that needs the UI thread.
         Task.Run(() => ShutdownAsync()).GetAwaiter().GetResult();
     }
 
@@ -232,7 +232,6 @@ public class PresenceManager : IAsyncDisposable, IDisposable
     {
         if (_currentTrack is null || _playbackService.Duration <= TimeSpan.Zero) return;
 
-        // Throttle presence updates to every 5 seconds
         var now = Stopwatch.GetTimestamp();
         if (_lastPresencePositionUpdate is { } lastUpdate &&
             Stopwatch.GetElapsedTime(lastUpdate, now) < PresenceThrottleInterval)

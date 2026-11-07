@@ -31,8 +31,7 @@ public class ListenHistory
     public Guid? ContextId { get; set; }
 
     /// <summary>
-    ///     Indicates whether this listen event has been successfully submitted
-    ///     to an external scrobbling service (e.g., Last.fm).
+    ///     Whether the listen was sent to Last.fm, or dropped because Last.fm rejected it for good.
     /// </summary>
     public bool IsScrobbled { get; set; }
 

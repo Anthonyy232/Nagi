@@ -402,6 +402,7 @@ public sealed class MusicServerService : IMusicServerService, IListenSubmitter, 
         }
         catch (OperationCanceledException) when (_shutdownCts.IsCancellationRequested)
         {
+            // The app closed; the favorites stay pending for the next run.
         }
         catch (Exception ex)
         {

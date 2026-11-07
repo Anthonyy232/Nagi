@@ -306,6 +306,7 @@ public sealed class ServerLibrarySync : IServerLibrarySync
         }
         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
         {
+            // Downloads stopped after a failure that every remaining cover would hit; the next sync tries them.
         }
 
         return updated;
