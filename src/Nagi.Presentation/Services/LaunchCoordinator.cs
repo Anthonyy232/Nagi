@@ -19,7 +19,6 @@ public sealed class LaunchCoordinator
     private readonly ILibraryReader _libraryReader;
     private readonly IMusicPlaybackService _playbackService;
     private readonly ThemeCoordinator _themeCoordinator;
-    private readonly ISystemMediaControls _systemMediaControls;
     private readonly IDispatcherService _dispatcherService;
     private readonly ILogger<LaunchCoordinator> _logger;
     private volatile bool _isActivatedExternally;
@@ -29,8 +28,7 @@ public sealed class LaunchCoordinator
 
     public LaunchCoordinator(IServiceProvider services, IWindowService windowService, WindowBehavior windowBehavior,
         IApplicationLifecycle applicationLifecycle, ILibraryReader libraryReader, IMusicPlaybackService playbackService,
-        ThemeCoordinator themeCoordinator, ISystemMediaControls systemMediaControls,
-        IDispatcherService dispatcherService, ILogger<LaunchCoordinator> logger)
+        ThemeCoordinator themeCoordinator, IDispatcherService dispatcherService, ILogger<LaunchCoordinator> logger)
     {
         _services = services;
         _windowService = windowService;
@@ -39,7 +37,6 @@ public sealed class LaunchCoordinator
         _libraryReader = libraryReader;
         _playbackService = playbackService;
         _themeCoordinator = themeCoordinator;
-        _systemMediaControls = systemMediaControls;
         _dispatcherService = dispatcherService;
         _logger = logger;
     }
@@ -97,18 +94,6 @@ public sealed class LaunchCoordinator
         _ = PlayQueuedFilesAsync();
         _windowBehavior.ShowWhenLoaded(_isActivatedExternally);
         await RunPendingCommandAsync();
-
-        _dispatcherService.TryEnqueue(() =>
-        {
-            try
-            {
-                if (!_windowService.IsExiting) _systemMediaControls.Initialize();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to initialize the system media controls");
-            }
-        });
     }
 
     /// <summary>

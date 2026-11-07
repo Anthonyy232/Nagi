@@ -28,7 +28,7 @@ public partial class PlayerViewModelTests : IDisposable
     {
         _dispatcher.HasThreadAccess.Returns(true);
         _dispatcher.EnqueueAsync(Arg.Any<Func<Task>>()).Returns(call => call.Arg<Func<Task>>()());
-        _playback.PlaybackQueue.Returns(Array.Empty<Guid>());
+        _playback.PlayOrder.Returns(Array.Empty<Guid>());
         _settings.Set(AppSettings.PlayerButtons, [new PlayerButtonSetting { Id = "Volume", DisplayName = "Volume", IsEnabled = true }]);
         _viewModel = new PlayerViewModel(_playback, Substitute.For<IMusicNavigationService>(),
             _dispatcher, _settings, Substitute.For<IWindowService>(),
@@ -62,6 +62,16 @@ public partial class PlayerViewModelTests : IDisposable
     }
 
     [Fact]
+    public void ASongRestoredAfterThePlayerIsCreated_ShowsItsDurationBeforeItPlays()
+    {
+        _playback.CurrentTrack.Returns(new Song { Title = "Restored" });
+        _playback.Duration.Returns(TimeSpan.FromSeconds(248));
+        _playback.TrackChanged += Raise.Event<Action>();
+
+        _viewModel.TotalDuration.Should().Be(248);
+    }
+
+    [Fact]
     public void ServiceVolumeChanges_UpdateBothIconsAndMuteTooltip()
     {
         var volumeButton = _viewModel.MainTransportButtons.Single();
@@ -87,56 +97,41 @@ public partial class PlayerViewModelTests : IDisposable
     {
         var first = new Song { Title = "First" };
         var next = new Song { Title = "Next" };
-        _playback.GetQueueTracksAsync(Arg.Any<IEnumerable<Guid>>())
+        _playback.GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
             .Returns(new Dictionary<Guid, Song> { [first.Id] = first, [next.Id] = next });
-        _playback.PlaybackQueue.Returns(new[] { first.Id });
+        _playback.UpcomingQueue.Returns(new[] { first.Id });
         _playback.QueueChanged += Raise.Event<Action>();
         _playback.TrackChanged += Raise.Event<Action>();
-        await _playback.DidNotReceive().GetQueueTracksAsync(Arg.Any<IEnumerable<Guid>>());
+        await _playback.DidNotReceive().GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>());
 
         _viewModel.IsQueueViewVisible = true;
         _viewModel.CurrentQueue.Should().ContainSingle().Which.Should().BeSameAs(first);
         _viewModel.IsQueueViewVisible = false;
         _playback.ClearReceivedCalls();
-        _playback.PlaybackQueue.Returns(new[] { next.Id });
+        _playback.UpcomingQueue.Returns(new[] { next.Id });
         _playback.QueueChanged += Raise.Event<Action>();
-        await _playback.DidNotReceive().GetQueueTracksAsync(Arg.Any<IEnumerable<Guid>>());
+        await _playback.DidNotReceive().GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>());
 
         _viewModel.IsQueueViewVisible = true;
         _viewModel.CurrentQueue.Should().ContainSingle().Which.Should().BeSameAs(next);
     }
 
-    [Theory]
-    [InlineData(false, 4, 3, 1, 4)]
-    [InlineData(true, 4, 3, 1, 4)]
-    [InlineData(false, 150, 140, 10, 100)]
-    [InlineData(false, 4, -1, 4, 4)]
-    public void RepeatChanges_RefreshBoundedQueuePreview(bool shuffle, int count, int index, int linearCount, int repeatCount)
+    [Fact]
+    public void QueuePreview_ShowsAtMostAHundredUpcomingSongsAndFollowsRepeatChanges()
     {
-        var songs = Enumerable.Range(0, count).Select(i => new Song { Title = i.ToString() }).ToArray();
+        var songs = Enumerable.Range(0, 150).Select(i => new Song { Title = i.ToString() }).ToArray();
         var ids = songs.Select(song => song.Id).ToArray();
-        _playback.PlaybackQueue.Returns(ids);
-        _playback.ShuffledQueue.Returns(ids.Reverse().ToArray());
-        _playback.IsShuffleEnabled.Returns(shuffle);
-        _playback.CurrentQueueIndex.Returns(index);
-        _playback.CurrentShuffledIndex.Returns(index);
-        _playback.GetQueueTracksAsync(Arg.Any<IEnumerable<Guid>>()).Returns(songs.ToDictionary(song => song.Id));
+        _playback.UpcomingQueue.Returns(ids);
+        _playback.GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
+            .Returns(songs.ToDictionary(song => song.Id));
         _viewModel.IsQueueViewVisible = true;
         _playback.QueueChanged += Raise.Event<Action>();
-        _viewModel.CurrentQueue.Should().HaveCount(linearCount);
+        _viewModel.CurrentQueue.Should().Equal(songs.Take(100));
 
-        _playback.CurrentRepeatMode.Returns(RepeatMode.RepeatAll);
+        _playback.UpcomingQueue.Returns(ids.Skip(140).ToArray());
         _playback.RepeatModeChanged += Raise.Event<Action>();
 
-        _viewModel.CurrentQueue.Should().HaveCount(repeatCount).And.OnlyHaveUniqueItems();
-        var first = Math.Max(index, 0);
-        _viewModel.CurrentQueue[0].Should().Be(songs[shuffle ? count - 1 - first : first]);
-        if (index > 0)
-            _viewModel.CurrentQueue[linearCount].Should().Be(songs[shuffle ? count - 1 : 0]);
-
-        _playback.CurrentRepeatMode.Returns(RepeatMode.Off);
-        _playback.RepeatModeChanged += Raise.Event<Action>();
-        _viewModel.CurrentQueue.Should().HaveCount(linearCount);
+        _viewModel.CurrentQueue.Should().Equal(songs.Skip(140));
     }
 
     [Fact]

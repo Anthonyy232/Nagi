@@ -572,18 +572,6 @@ Fichiers qui n'ont pas pu être importés : {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg toujours non détecté. Veuillez installer FFmpeg et cliquer sur 'Vérifier à nouveau'.</value>
   </data>
-  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>Précédent</value>
-  </data>
-  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>Lire</value>
-  </data>
-  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>Pause</value>
-  </data>
-  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>Suivant</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Bibliothèque</value>
   </data>

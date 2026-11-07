@@ -572,18 +572,6 @@ Kitaplığınızda bulunamayan şarkılar: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg hala algılanmadı. Lütfen FFmpeg'i yükleyin ve 'Yeniden kontrol et'e tıklayın.</value>
   </data>
-  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>Önceki</value>
-  </data>
-  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>Oynat</value>
-  </data>
-  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>Duraklat</value>
-  </data>
-  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>Sonraki</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Kitaplık</value>
   </data>

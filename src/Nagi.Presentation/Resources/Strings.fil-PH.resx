@@ -572,18 +572,6 @@ Mga file na hindi ma-import: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>Hindi pa rin nakita ang FFmpeg. Mangyaring i-install ang FFmpeg at i-click ang 'Muling Suriin'.</value>
   </data>
-  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>Nakaraan</value>
-  </data>
-  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>I-play</value>
-  </data>
-  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>I-pause</value>
-  </data>
-  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>Susunod</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Library</value>
   </data>

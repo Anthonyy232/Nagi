@@ -572,18 +572,6 @@ Failid, mida ei õnnestunud importida: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg'i ikka veel ei tuvastatud. Palun installige FFmpeg ja klõpsake 'Kontrolli uuesti'.</value>
   </data>
-  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>Eelmine</value>
-  </data>
-  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>Esita</value>
-  </data>
-  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>Peata</value>
-  </data>
-  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>Järgmine</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Teek</value>
   </data>

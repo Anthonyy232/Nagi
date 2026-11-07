@@ -572,18 +572,6 @@ Bestanden die niet konden worden geïmporteerd: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg nog steeds niet gedetecteerd. Installeer FFmpeg en klik op 'Opnieuw controleren'.</value>
   </data>
-  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>Vorige</value>
-  </data>
-  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>Afspelen</value>
-  </data>
-  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>Pauze</value>
-  </data>
-  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>Volgende</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Bibliotheek</value>
   </data>

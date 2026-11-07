@@ -531,8 +531,8 @@
                             <TextBlock FontWeight="SemiBold" Text="{x:Bind resources:Strings.SettingsPage_Equalizer_Preamp, Mode=OneTime}" HorizontalAlignment="Center" />
                             <Slider
                                 AutomationProperties.Name="{x:Bind resources:Strings.SettingsPage_Equalizer_Preamp, Mode=OneTime}"
-                                Maximum="20"
-                                Minimum="-20"
+                                Maximum="{x:Bind coreModels:EqualizerSettings.MaxGainDb}"
+                                Minimum="{x:Bind coreModels:EqualizerSettings.MinGainDb}"
                                 StepFrequency="0.1"
                                 Style="{StaticResource DefaultSliderStyle}"
                                 Value="{x:Bind ViewModel.Audio.EqualizerPreamp, Mode=TwoWay}" />
@@ -562,8 +562,8 @@
                                             <Slider
                                                 AutomationProperties.Name="{x:Bind AccessibleName}"
                                                 HorizontalAlignment="Center"
-                                                Maximum="20"
-                                                Minimum="-20"
+                                                Maximum="{x:Bind coreModels:EqualizerSettings.MaxGainDb}"
+                                                Minimum="{x:Bind coreModels:EqualizerSettings.MinGainDb}"
                                                 Orientation="Vertical"
                                                 StepFrequency="0.1"
                                                 Style="{StaticResource DefaultSliderStyle}"

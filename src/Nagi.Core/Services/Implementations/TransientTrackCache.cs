@@ -5,7 +5,7 @@ namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
 ///     Songs played from files outside the library, looked up by id or by file path.
-///     They live only as long as they are queued or playing.
+///     They live only as long as they are queued.
 /// </summary>
 internal sealed class TransientTrackCache
 {

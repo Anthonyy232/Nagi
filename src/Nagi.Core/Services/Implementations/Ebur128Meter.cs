@@ -4,13 +4,17 @@ namespace Nagi.Core.Services.Implementations;
 
 internal sealed class Ebur128Meter : SafeHandle
 {
-    private const int BytesPerFrame = 2 * sizeof(float);
+    // FFmpegLoudnessAnalyzer asks FFmpeg for exactly this format, which AddFrames reads as interleaved float frames.
+    public const string FFmpegSampleFormat = "f32le";
+    public const int Channels = 2;
+    public const int SampleRate = 48000;
+    private const int BytesPerFrame = Channels * sizeof(float);
 
     public Ebur128Meter() : base(IntPtr.Zero, ownsHandle: true)
     {
         const int integrated = (1 << 2) | 1;
         const int samplePeak = (1 << 4) | 1;
-        SetHandle(Init(2, new CULong(48000), integrated | samplePeak));
+        SetHandle(Init(Channels, new CULong(SampleRate), integrated | samplePeak));
         if (IsInvalid) throw new OutOfMemoryException("Could not allocate the ReplayGain loudness meter.");
     }
 

@@ -146,12 +146,12 @@ public partial class SettingsViewModel : SettingsSectionViewModel
 
             var autoLaunchTask = _autoLaunchService.IsEnabledAsync();
             var scrobblingLoadTask = Scrobbling.LoadAsync();
+            var audioLoadTask = Audio.LoadAsync();
             Appearance.Load();
-            Audio.Load();
             Library.Load();
             PlayerButtons.Load(_settingsService.Get(AppSettings.PlayerButtons));
 
-            await Task.WhenAll(autoLaunchTask, scrobblingLoadTask);
+            await Task.WhenAll(autoLaunchTask, scrobblingLoadTask, audioLoadTask);
             if (_isDisposed) return;
 
             ApplyWithoutSaving(() => IsAutoLaunchEnabled = autoLaunchTask.Result);

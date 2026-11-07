@@ -5,9 +5,9 @@ using Microsoft.Graphics.Canvas.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Services.Data;
 using Nagi.Presentation.Helpers;
 using Nagi.Presentation.Resources;
+using Nagi.Presentation.ViewModels;
 using Windows.Foundation;
 using Windows.UI;
 using WinRT.Interop;
@@ -43,6 +43,7 @@ public sealed class TaskbarService : IDisposable
     private readonly MainWindow _window;
     private readonly ILogger<TaskbarService> _logger;
     private readonly IMusicPlaybackService _playbackService;
+    private readonly PlayerViewModel _player;
     private readonly IDispatcherService _dispatcherService;
 
     private readonly object _iconLock = new();
@@ -69,11 +70,13 @@ public sealed class TaskbarService : IDisposable
         MainWindow window,
         ILogger<TaskbarService> logger,
         IMusicPlaybackService playbackService,
+        PlayerViewModel player,
         IDispatcherService dispatcherService)
     {
         _window = window;
         _logger = logger;
         _playbackService = playbackService;
+        _player = player;
         _dispatcherService = dispatcherService;
     }
 
@@ -143,18 +146,15 @@ public sealed class TaskbarService : IDisposable
         }
         if (_taskbarList is null || msg != WM_COMMAND || HIWORD(wParam) != THBN_CLICKED) return;
 
-        switch (LOWORD(wParam))
+        // The same commands as the player's own buttons, so failures are handled the same way.
+        var command = LOWORD(wParam) switch
         {
-            case PreviousButtonId:
-                _ = _playbackService.PreviousAsync();
-                break;
-            case PlayPauseButtonId:
-                _ = _playbackService.PlayPauseAsync();
-                break;
-            case NextButtonId:
-                _ = _playbackService.NextAsync();
-                break;
-        }
+            PreviousButtonId => _player.PreviousCommand,
+            PlayPauseButtonId => _player.PlayPauseCommand,
+            NextButtonId => _player.NextCommand,
+            _ => null
+        };
+        if (command?.CanExecute(null) == true) command.Execute(null);
     }
 
     /// <summary>Redraws the button icons in the current accent color; rapid calls are debounced.</summary>
@@ -273,7 +273,6 @@ public sealed class TaskbarService : IDisposable
     {
         try
         {
-            // Get shared GPU device (thread-safe, automatically handles device loss)
             var device = CanvasDevice.GetSharedDevice();
             using var renderTarget = new CanvasRenderTarget(device, size, size, 96f);
             using var textFormat = new CanvasTextFormat
@@ -289,7 +288,6 @@ public sealed class TaskbarService : IDisposable
                 ds.DrawText(glyph, new Rect(0, 0, size, size), foreground, textFormat);
             }
 
-            // Extract pixel data (BGRA8 format, same as RenderTargetBitmap)
             var pixels = renderTarget.GetPixelBytes();
             return CreateIconFromPixels(pixels, size, size);
         }
@@ -370,15 +368,15 @@ public sealed class TaskbarService : IDisposable
                     iId = PreviousButtonId,
                     dwMask = THB.ICON | THB.TOOLTIP | THB.FLAGS,
                     hIcon = _prevIcon,
-                    szTip = Strings.Taskbar_Tooltip_Previous,
-                    dwFlags = CanGoPrevious() ? THBF.ENABLED : THBF.DISABLED
+                    szTip = Strings.Player_PreviousButton_ToolTip,
+                    dwFlags = _playbackService.CanGoPrevious ? THBF.ENABLED : THBF.DISABLED
                 },
                 new THUMBBUTTON
                 {
                     iId = PlayPauseButtonId,
                     dwMask = THB.ICON | THB.TOOLTIP | THB.FLAGS,
                     hIcon = _playbackService.IsPlaying ? _pauseIcon : _playIcon,
-                    szTip = _playbackService.IsPlaying ? Strings.Taskbar_Tooltip_Pause : Strings.Taskbar_Tooltip_Play,
+                    szTip = _playbackService.IsPlaying ? Strings.Tooltip_Pause : Strings.Tooltip_Play,
                     dwFlags = THBF.ENABLED
                 },
                 new THUMBBUTTON
@@ -386,8 +384,8 @@ public sealed class TaskbarService : IDisposable
                     iId = NextButtonId,
                     dwMask = THB.ICON | THB.TOOLTIP | THB.FLAGS,
                     hIcon = _nextIcon,
-                    szTip = Strings.Taskbar_Tooltip_Next,
-                    dwFlags = CanGoNext() ? THBF.ENABLED : THBF.DISABLED
+                    szTip = Strings.Player_NextButton_ToolTip,
+                    dwFlags = _playbackService.CanGoNext ? THBF.ENABLED : THBF.DISABLED
                 }
             ];
             var hResult = _taskbarList.ThumbBarAddButtons(_windowHandle, (uint)_buttons.Length, _buttons);
@@ -405,48 +403,26 @@ public sealed class TaskbarService : IDisposable
         lock (_iconLock)
         {
             _buttons[0].hIcon = _prevIcon;
-            _buttons[0].dwFlags = CanGoPrevious() ? THBF.ENABLED : THBF.DISABLED;
+            _buttons[0].dwFlags = _playbackService.CanGoPrevious ? THBF.ENABLED : THBF.DISABLED;
             if (_playbackService.IsPlaying)
             {
                 _buttons[1].hIcon = _pauseIcon;
-                _buttons[1].szTip = Strings.Taskbar_Tooltip_Pause;
+                _buttons[1].szTip = Strings.Tooltip_Pause;
             }
             else
             {
                 _buttons[1].hIcon = _playIcon;
-                _buttons[1].szTip = Strings.Taskbar_Tooltip_Play;
+                _buttons[1].szTip = Strings.Tooltip_Play;
             }
             _buttons[1].dwFlags = THBF.ENABLED;
             _buttons[2].hIcon = _nextIcon;
-            _buttons[2].dwFlags = CanGoNext() ? THBF.ENABLED : THBF.DISABLED;
+            _buttons[2].dwFlags = _playbackService.CanGoNext ? THBF.ENABLED : THBF.DISABLED;
             var hResult = _taskbarList.ThumbBarUpdateButtons(_windowHandle, (uint)_buttons.Length, _buttons);
             if (hResult < 0)
             {
                 _logger.LogError("Failed to update thumbnail buttons: HRESULT 0x{HResult:X}", hResult);
             }
         }
-    }
-
-    private bool CanGoPrevious()
-    {
-        var index = _playbackService.IsShuffleEnabled
-            ? _playbackService.CurrentShuffledIndex
-            : _playbackService.CurrentQueueIndex;
-        return _playbackService.PlaybackQueue.Count > 0 &&
-               (_playbackService.CurrentTrack != null || index > 0 ||
-                _playbackService.CurrentRepeatMode != RepeatMode.Off);
-    }
-
-    private bool CanGoNext()
-    {
-        var queue = _playbackService.IsShuffleEnabled
-            ? _playbackService.ShuffledQueue
-            : _playbackService.PlaybackQueue;
-        var index = _playbackService.IsShuffleEnabled
-            ? _playbackService.CurrentShuffledIndex
-            : _playbackService.CurrentQueueIndex;
-        return queue.Count > 0 &&
-               (index < queue.Count - 1 || _playbackService.CurrentRepeatMode != RepeatMode.Off);
     }
 
     public void Dispose()

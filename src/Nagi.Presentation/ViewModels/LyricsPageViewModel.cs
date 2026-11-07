@@ -424,13 +424,11 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         }
     }
 
-    private Task<Song?> GetNextSongInQueueAsync()
+    // A queued file from outside the library has no library entry, but the queue knows it in full.
+    private async Task<Song?> GetNextSongInQueueAsync()
     {
-        var shuffled = _playbackService.IsShuffleEnabled;
-        var queue = shuffled ? _playbackService.ShuffledQueue : _playbackService.PlaybackQueue;
-        var nextIndex = (shuffled ? _playbackService.CurrentShuffledIndex : _playbackService.CurrentQueueIndex) + 1;
-        return nextIndex >= 0 && nextIndex < queue.Count
-            ? _libraryReader.GetSongByIdAsync(queue[nextIndex])
-            : Task.FromResult<Song?>(null);
+        if (_playbackService.NextTrackId is not { } id) return null;
+        return await _libraryReader.GetSongByIdAsync(id).ConfigureAwait(false)
+               ?? (await _playbackService.GetQueueSongsAsync([id]).ConfigureAwait(false)).GetValueOrDefault(id);
     }
 }

@@ -433,7 +433,7 @@ public class AtlMetadataServiceTests : IDisposable
 
             var analyzer = Substitute.For<ILoudnessAnalyzer>();
             analyzer.AnalyzeAsync(filePath, Arg.Any<CancellationToken>()).Returns((-9.03, 0.5));
-            using var service = new ReplayGainService(database.ContextFactory, analyzer,
+            using var service = new ReplayGainService(database.ContextFactory, analyzer, _metadataService,
                 Substitute.For<ILogger<ReplayGainService>>());
 
             await service.ScanLibraryAsync();
@@ -449,6 +449,16 @@ public class AtlMetadataServiceTests : IDisposable
         {
             CultureInfo.CurrentCulture = originalCulture;
         }
+    }
+
+    [Fact]
+    public void WriteReplayGain_WhenTheFileCantBeWritten_DoesNotThrow()
+    {
+        var missingFile = Path.Combine(_tempDirectory, "missing.mp3");
+
+        var write = () => _metadataService.WriteReplayGain(missingFile, -4, 0.5);
+
+        write.Should().NotThrow();
     }
 
     [Theory]

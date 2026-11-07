@@ -315,15 +315,6 @@
   <data name="Backup_InvalidFile" xml:space="preserve">
     <value>Fișierul selectat nu este o copie de rezervă Nagi validă.</value>
   </data>
-  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>LibVLC a întâmpinat o eroare nespecificată.</value>
-  </data>
-  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>Eroare LibVLC: {0}</value>
-  </data>
-  <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>Nu s-a putut încărca „{0}”.</value>
-  </data>
   <data name="Presence_BrowsingLibrary" xml:space="preserve">
     <value>Răsfoiește biblioteca muzicală</value>
   </data>

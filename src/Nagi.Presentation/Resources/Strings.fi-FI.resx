@@ -572,18 +572,6 @@ Tiedostoja, joita ei voitu tuoda: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpegia ei edelleenkään havaittu. Asenna FFmpeg ja napsauta 'Tarkista uudelleen'.</value>
   </data>
-  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>Edellinen</value>
-  </data>
-  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>Toista</value>
-  </data>
-  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>Keskeytä</value>
-  </data>
-  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>Seuraava</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Kirjasto</value>
   </data>

@@ -24,7 +24,6 @@ public class LyricsPageViewModelTests
 
     public LyricsPageViewModelTests()
     {
-        _playback.PlaybackQueue.Returns(Array.Empty<Guid>());
         _romanization.ApplyRomanizationAsync(Arg.Any<IEnumerable<LyricLine>>(), Arg.Any<CancellationToken>())
             .Returns(call => Task.FromResult<IReadOnlyList<LyricLine>>(call.Arg<IEnumerable<LyricLine>>().ToList()));
     }
@@ -161,8 +160,7 @@ public class LyricsPageViewModelTests
             nextRequested.SetResult();
             return Task.FromResult<SongLyrics?>(null);
         });
-        _playback.PlaybackQueue.Returns(new[] { current.Id, next.Id });
-        _playback.CurrentQueueIndex.Returns(0);
+        _playback.NextTrackId.Returns(next.Id);
         _playback.CurrentTrack.Returns(current);
         using var viewModel = CreateViewModel();
 
@@ -175,19 +173,41 @@ public class LyricsPageViewModelTests
     }
 
     [Fact]
+    public async Task Prefetch_FindsANextTrackFromOutsideTheLibraryInTheQueue()
+    {
+        var current = new Song { Title = "Current" };
+        var next = new Song { Title = "Dropped file", FilePath = @"C:\temp\next.mp3" };
+        _library.GetSongByIdAsync(current.Id).Returns(current);
+        _library.GetSongByIdAsync(next.Id).Returns((Song?)null);
+        _playback.GetQueueSongsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
+            .Returns(new Dictionary<Guid, Song> { [next.Id] = next });
+        var nextRequested = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        _lyrics.GetLyricsAsync(next, Arg.Any<CancellationToken>()).Returns(_ =>
+        {
+            nextRequested.SetResult();
+            return Task.FromResult<SongLyrics?>(null);
+        });
+        _playback.NextTrackId.Returns(next.Id);
+        _playback.CurrentTrack.Returns(current);
+
+        using var viewModel = CreateViewModel();
+
+        await nextRequested.Task.WaitAsync(TimeSpan.FromSeconds(5));
+    }
+
+    [Fact]
     public async Task PrefetchLookup_CompletesAfterTrackChange_DoesNotBorrowNewTracksCancellationToken()
     {
         var current = new Song { Title = "Current" };
         var next = new Song { Title = "Old next" };
         var pending = new TaskCompletionSource<Song?>(TaskCreationOptions.RunContinuationsAsynchronously);
         _library.GetSongByIdAsync(next.Id).Returns(pending.Task);
-        _playback.PlaybackQueue.Returns(new[] { current.Id, next.Id });
-        _playback.CurrentQueueIndex.Returns(0);
+        _playback.NextTrackId.Returns(next.Id);
         _playback.CurrentTrack.Returns(current);
         using var viewModel = CreateViewModel();
         var prefetch = viewModel.PendingPrefetch;
 
-        _playback.PlaybackQueue.Returns(Array.Empty<Guid>());
+        _playback.NextTrackId.Returns((Guid?)null);
         ChangeTrack(new Song { Title = "Replacement" });
         pending.SetResult(next);
         await prefetch.WaitAsync(TimeSpan.FromSeconds(5));

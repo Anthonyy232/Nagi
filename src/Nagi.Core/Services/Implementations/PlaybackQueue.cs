@@ -4,176 +4,203 @@ using System.Runtime.InteropServices;
 namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
-///     The play order of a queue and, while shuffling, its shuffled order, with reverse indexes
-///     for O(1) position lookups in very large queues.
+///     The songs queued to play, in their own order and, while shuffling, in a shuffled play order, with the current
+///     position in them. Every edit keeps the reverse index, used for O(1) lookups in very large queues, up to date.
 /// </summary>
-/// <remarks>
-///     Indexes are rebuilt only when <see cref="RebuildIndex" />, <see cref="RebuildShuffledIndex" />
-///     or <see cref="SyncShuffledWithOrder" /> is called, so a caller can batch several edits before
-///     paying for a rebuild. Not thread-safe: <see cref="MusicPlaybackService" /> serialises access.
-/// </remarks>
+/// <remarks>Not thread-safe: <see cref="MusicPlaybackService" /> serialises access.</remarks>
 internal sealed class PlaybackQueue
 {
-    private List<Guid> _order = new();
-    private List<Guid> _shuffled = new();
-    private readonly Dictionary<Guid, int> _orderIndex = new();
-    private readonly Dictionary<Guid, int> _shuffledIndex = new();
-
-    public IReadOnlyList<Guid> Order => _order;
-    public IReadOnlyList<Guid> Shuffled => _shuffled;
+    private List<Guid> _order = [];
+    private List<Guid>? _shuffled;
+    private readonly Dictionary<Guid, int> _positions = new();
 
     /// <summary>
-    ///     A read-only view of the current play order list. Replacing the order (for example with
-    ///     <see cref="SetOrder" />) starts a new list, so earlier views keep showing the old one.
+    ///     The queue in the order it was built. Replacing the queue starts a new list, so an earlier view keeps
+    ///     showing the old one.
     /// </summary>
-    public ReadOnlyCollection<Guid> OrderView() => _order.AsReadOnly();
+    public ReadOnlyCollection<Guid> Order => _order.AsReadOnly();
 
-    /// <inheritdoc cref="OrderView" />
-    public ReadOnlyCollection<Guid> ShuffledView() => _shuffled.AsReadOnly();
+    /// <summary>The queue in the order it plays: <see cref="Order" />, or its shuffled order while shuffling.</summary>
+    public ReadOnlyCollection<Guid> PlayOrder => ActiveOrder.AsReadOnly();
 
-    public int IndexOf(Guid songId) => _orderIndex.GetValueOrDefault(songId, -1);
+    public bool IsShuffled => _shuffled is not null;
 
-    public int ShuffledIndexOf(Guid songId) => _shuffledIndex.GetValueOrDefault(songId, -1);
-
-    public void SetOrder(List<Guid> songIds) => _order = songIds;
-
-    public void SetShuffled(List<Guid> songIds) => _shuffled = songIds;
-
-    public void GenerateShuffled()
-    {
-        _shuffled = new List<Guid>(_order);
-        Random.Shared.Shuffle(CollectionsMarshal.AsSpan(_shuffled));
-    }
-
-    public void ClearShuffled() => _shuffled.Clear();
-
-    public void Add(Guid songId) => _order.Add(songId);
-
-    public void AddRange(IEnumerable<Guid> songIds) => _order.AddRange(songIds);
-
-    public void RemoveAll(ISet<Guid> songIds)
-    {
-        _order.RemoveAll(songIds.Contains);
-        _shuffled.RemoveAll(songIds.Contains);
-    }
-
-    public void Clear()
-    {
-        _order.Clear();
-        _shuffled.Clear();
-        _orderIndex.Clear();
-        _shuffledIndex.Clear();
-    }
-
-    public void MoveToShuffledFront(Guid songId)
-    {
-        _shuffled.Remove(songId);
-        _shuffled.Insert(0, songId);
-    }
+    public int Count => _order.Count;
 
     /// <summary>
-    ///     Moves <paramref name="songId" /> before <paramref name="beforeSongId" />, or to the end when it
-    ///     is null, in the shuffled order when <paramref name="inShuffled" /> is set.
+    ///     The song at the current position: the one playing, or the one playback resumes with while stopped.
+    ///     Null only while the queue is empty or nothing has been chosen yet.
     /// </summary>
-    /// <returns>Whether anything moved.</returns>
-    public bool Move(Guid songId, Guid? beforeSongId, bool inShuffled)
-    {
-        var queue = inShuffled ? _shuffled : _order;
-        var from = queue.IndexOf(songId);
-        var target = beforeSongId.HasValue ? queue.IndexOf(beforeSongId.Value) : queue.Count;
-        if (from < 0 || target < 0 || from == target || from + 1 == target) return false;
+    public Guid? CurrentId { get; private set; }
 
-        queue.RemoveAt(from);
-        queue.Insert(target > from ? target - 1 : target, songId);
+    /// <summary>The position of <see cref="CurrentId" /> in <see cref="PlayOrder" />, or -1.</summary>
+    public int CurrentPosition => CurrentId is { } id ? PositionOf(id) : -1;
+
+    private List<Guid> ActiveOrder => _shuffled ?? _order;
+
+    public int PositionOf(Guid songId) => _positions.GetValueOrDefault(songId, -1);
+
+    public bool Contains(Guid songId) => _positions.ContainsKey(songId);
+
+    /// <summary>
+    ///     Replaces the queue with <paramref name="songIds" />, which must be distinct, and makes
+    ///     <paramref name="startId" /> current. While shuffling it plays first, followed by the rest in
+    ///     <paramref name="shuffledOrder" /> or a random order; without one, the shuffled order decides what plays first.
+    /// </summary>
+    public void Replace(List<Guid> songIds, bool shuffle, Guid? startId, IReadOnlyList<Guid>? shuffledOrder = null)
+    {
+        _order = songIds;
+        _shuffled = shuffle ? shuffledOrder?.ToList() ?? Shuffle(_order) : null;
+        if (_shuffled is not null && startId is { } first)
+        {
+            _shuffled.Remove(first);
+            _shuffled.Insert(0, first);
+        }
+        CurrentId = _shuffled is not null ? _shuffled.FirstOrDefault() : startId ?? _order.FirstOrDefault();
+        if (CurrentId == Guid.Empty) CurrentId = null;
+        Reindex();
+    }
+
+    /// <summary>Turns shuffling on with a new random order, or off. The current song stays current.</summary>
+    public void SetShuffled(bool shuffle)
+    {
+        _shuffled = shuffle ? Shuffle(_order) : null;
+        Reindex();
+    }
+
+    /// <param name="songId">A queued song, or null to have nothing current.</param>
+    public void SetCurrent(Guid? songId)
+    {
+        if (songId is { } id && !Contains(id)) throw new ArgumentException("The song isn't queued.", nameof(songId));
+        CurrentId = songId;
+    }
+
+    /// <summary>Appends the songs not queued yet; while shuffling they join the shuffled order in random order.</summary>
+    /// <returns>Whether anything was added.</returns>
+    public bool Add(IEnumerable<Guid> songIds)
+    {
+        var added = songIds.Where(id => id != Guid.Empty).Distinct().Where(id => !Contains(id)).ToList();
+        if (added.Count == 0) return false;
+        _order.AddRange(added);
+        _shuffled?.AddRange(Shuffle(added));
+        Reindex();
         return true;
     }
 
     /// <summary>
-    ///     Places <paramref name="songId" /> right after the current track, or after
-    ///     <paramref name="stoppedIndex" /> when nothing is playing.
+    ///     Removes songs. When the current song goes, the next remaining song in play order, or else the last one,
+    ///     becomes current.
     /// </summary>
-    public void MoveAfterCurrent(Guid songId, Guid? currentTrackId, int stoppedIndex, bool inShuffled)
+    public void Remove(IReadOnlySet<Guid> songIds)
     {
-        var queue = inShuffled ? _shuffled : _order;
-        var currentIndex = currentTrackId is null ? stoppedIndex : queue.IndexOf(currentTrackId.Value);
-        var removedIndex = queue.IndexOf(songId);
-        if (removedIndex >= 0)
-        {
-            queue.RemoveAt(removedIndex);
-            if (removedIndex < currentIndex) currentIndex--;
-        }
+        if (CurrentId is { } current && songIds.Contains(current))
+            CurrentId = FindFromCurrent(id => !songIds.Contains(id), wrap: false)
+                        ?? ActiveOrder.LastOrDefault(id => !songIds.Contains(id));
+        if (CurrentId == Guid.Empty) CurrentId = null;
+        _order.RemoveAll(songIds.Contains);
+        _shuffled?.RemoveAll(songIds.Contains);
+        Reindex();
+    }
 
-        queue.Insert(Math.Clamp(currentIndex + 1, 0, queue.Count), songId);
+    public void Clear()
+    {
+        _order = [];
+        if (_shuffled is not null) _shuffled = [];
+        CurrentId = null;
+        _positions.Clear();
     }
 
     /// <summary>
-    ///     Drops shuffled entries no longer in the play order and appends newly queued songs to the
-    ///     shuffled order in random order, then rebuilds the shuffled index.
+    ///     Moves <paramref name="songId" /> in play order before <paramref name="beforeSongId" />, or to the end when it
+    ///     is null.
     /// </summary>
-    public void SyncShuffledWithOrder()
+    /// <returns>Whether anything moved.</returns>
+    public bool Move(Guid songId, Guid? beforeSongId)
     {
-        var retained = _order.ToHashSet();
-        _shuffled.RemoveAll(id => !retained.Contains(id));
-        retained.ExceptWith(_shuffled);
-        var additions = retained.ToArray();
-        Random.Shared.Shuffle(additions);
-        _shuffled.AddRange(additions);
-        RebuildShuffledIndex();
-    }
+        var queue = ActiveOrder;
+        var from = PositionOf(songId);
+        var target = beforeSongId is { } before ? PositionOf(before) : queue.Count;
+        if (from < 0 || target < 0 || from == target || from + 1 == target) return false;
 
-    public void RebuildIndex() => Rebuild(_orderIndex, _order);
-
-    public void RebuildShuffledIndex() => Rebuild(_shuffledIndex, _shuffled);
-
-    /// <summary>
-    ///     The play-order index of the track before or after <paramref name="originalIndex" />, following
-    ///     the shuffled order when shuffling and wrapping around when <paramref name="repeatAll" /> is set.
-    /// </summary>
-    /// <returns>The play-order index, or -1 at either end of a non-repeating queue.</returns>
-    public int GetAdjacentIndex(int originalIndex, bool moveForward, bool shuffle, bool repeatAll)
-    {
-        if (originalIndex < 0 || originalIndex >= _order.Count) return -1;
-        var queue = shuffle ? _shuffled : _order;
-        var index = shuffle ? ShuffledIndexOf(_order[originalIndex]) : originalIndex;
-        if (index < 0) return -1;
-
-        var nextIndex = index + (moveForward ? 1 : -1);
-        if (nextIndex < 0 || nextIndex >= queue.Count)
-        {
-            if (!repeatAll) return -1;
-            nextIndex = moveForward ? 0 : queue.Count - 1;
-        }
-
-        return shuffle ? IndexOf(queue[nextIndex]) : nextIndex;
+        queue.RemoveAt(from);
+        queue.Insert(target > from ? target - 1 : target, songId);
+        Reindex();
+        return true;
     }
 
     /// <summary>
-    ///     The first song after <paramref name="currentIndex" /> (in the active order) that is not about to
-    ///     be removed, wrapping around when <paramref name="repeatAll" /> is set.
+    ///     Places the songs, in the order given, right after the current song in both orders, queueing any that
+    ///     aren't. The current song itself stays where it is.
     /// </summary>
-    public Guid? GetNextSurvivingSongId(ISet<Guid> songIdsToRemove, int currentIndex, bool shuffle, bool repeatAll)
+    public void MoveAfterCurrent(IReadOnlyList<Guid> songIds)
     {
-        var activeQueue = shuffle ? _shuffled : _order;
-        if (currentIndex < 0 || currentIndex >= activeQueue.Count) return null;
+        var moved = songIds.Where(id => id != Guid.Empty && id != CurrentId).Distinct().ToList();
+        if (moved.Count == 0) return;
+        InsertAfterCurrent(_order, moved);
+        if (_shuffled is not null) InsertAfterCurrent(_shuffled, moved);
+        Reindex();
+    }
 
-        for (var i = currentIndex + 1; i < activeQueue.Count; i++)
+    /// <summary>The song before or after the current one in play order, wrapping around when asked.</summary>
+    public Guid? GetAdjacent(bool forward, bool wrap)
+    {
+        var position = CurrentPosition;
+        if (position < 0) return null;
+        var queue = ActiveOrder;
+        var next = position + (forward ? 1 : -1);
+        if (next < 0 || next >= queue.Count)
         {
-            if (!songIdsToRemove.Contains(activeQueue[i])) return activeQueue[i];
+            if (!wrap) return null;
+            next = forward ? 0 : queue.Count - 1;
         }
+        return queue[next];
+    }
 
-        if (!repeatAll) return null;
-
-        for (var i = 0; i < currentIndex; i++)
-        {
-            if (!songIdsToRemove.Contains(activeQueue[i])) return activeQueue[i];
-        }
-
+    /// <summary>The first song after the current one in play order that <paramref name="match" /> accepts.</summary>
+    public Guid? FindFromCurrent(Func<Guid, bool> match, bool wrap)
+    {
+        var position = CurrentPosition;
+        if (position < 0) return null;
+        var queue = ActiveOrder;
+        for (var i = position + 1; i < queue.Count; i++)
+            if (match(queue[i])) return queue[i];
+        if (!wrap) return null;
+        for (var i = 0; i < position; i++)
+            if (match(queue[i])) return queue[i];
         return null;
     }
 
-    private static void Rebuild(Dictionary<Guid, int> index, List<Guid> queue)
+    /// <summary>
+    ///     The play order from the current song, or from the start when there is none, continuing from the start
+    ///     when <paramref name="wrap" /> is set.
+    /// </summary>
+    public Guid[] Upcoming(bool wrap)
     {
-        index.Clear();
-        for (var i = 0; i < queue.Count; i++) index[queue[i]] = i;
+        var queue = ActiveOrder;
+        var start = Math.Max(0, CurrentPosition);
+        return wrap ? [.. queue.Skip(start), .. queue.Take(start)] : [.. queue.Skip(start)];
+    }
+
+    private void InsertAfterCurrent(List<Guid> queue, List<Guid> songIds)
+    {
+        var moving = songIds.ToHashSet();
+        queue.RemoveAll(moving.Contains);
+        var current = CurrentId is { } id ? queue.IndexOf(id) : -1;
+        queue.InsertRange(current + 1, songIds);
+    }
+
+    private static List<Guid> Shuffle(List<Guid> songIds)
+    {
+        var shuffled = new List<Guid>(songIds);
+        Random.Shared.Shuffle(CollectionsMarshal.AsSpan(shuffled));
+        return shuffled;
+    }
+
+    private void Reindex()
+    {
+        _positions.Clear();
+        var queue = ActiveOrder;
+        for (var i = 0; i < queue.Count; i++) _positions[queue[i]] = i;
+        if (CurrentId is { } id && !_positions.ContainsKey(id)) CurrentId = null;
     }
 }

@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
+using Nagi.Core.Settings;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -10,22 +11,27 @@ public partial class MusicPlaybackService
 {
     public async Task SavePlaybackStateAsync()
     {
+        if (!_settingsService.Get(CoreSettings.RestorePlaybackState))
+        {
+            _playbackStateStore.Clear();
+            return;
+        }
         if (!_isInitialized) return;
 
         var playbackQueue = _queue.Order.Where(id => !_transientTracks.ContainsKey(id)).ToList();
-        var shuffledQueue = _queue.Shuffled.Where(id => !_transientTracks.ContainsKey(id)).ToList();
-        var currentTrackId = CurrentTrack is not null && !_transientTracks.ContainsKey(CurrentTrack.Id)
-            ? CurrentTrack.Id
-            : (Guid?)null;
+        List<Guid> shuffledQueue = IsShuffleEnabled ? _queue.PlayOrder.Where(id => !_transientTracks.ContainsKey(id)).ToList() : [];
+        var position = _queue.CurrentId ?? Guid.Empty;
 
         var state = new PlaybackState
         {
-            CurrentTrackId = currentTrackId,
+            CurrentTrackId = CurrentTrack is not null && !_transientTracks.ContainsKey(CurrentTrack.Id)
+                ? CurrentTrack.Id
+                : null,
             ShuffleMode = CurrentShuffleMode,
             PlaybackQueueTrackIds = playbackQueue,
-            CurrentPlaybackQueueIndex = playbackQueue.IndexOf(_queue.Order.ElementAtOrDefault(CurrentQueueIndex)),
-            ShuffledQueueTrackIds = IsShuffleEnabled ? shuffledQueue : [],
-            CurrentShuffledQueueIndex = shuffledQueue.IndexOf(_queue.Shuffled.ElementAtOrDefault(CurrentShuffledIndex))
+            CurrentPlaybackQueueIndex = playbackQueue.IndexOf(position),
+            ShuffledQueueTrackIds = shuffledQueue,
+            CurrentShuffledQueueIndex = shuffledQueue.IndexOf(position)
         };
         await _playbackStateStore.SaveAsync(state);
     }
@@ -42,37 +48,26 @@ public partial class MusicPlaybackService
             _logger.LogWarning("Dropped {Count} songs no longer in the library from the restored queue.",
                 savedIds.Count - librarySongs.Count);
 
-        _queue.SetOrder(savedIds.Where(librarySongs.ContainsKey).ToList());
-        _queue.RebuildIndex();
-
-        if (!_queue.Order.Any()) return false;
+        var restoredIds = savedIds.Where(librarySongs.ContainsKey).ToList();
+        if (restoredIds.Count == 0) return false;
         CurrentShuffleMode = Enum.IsDefined(state.ShuffleMode) ? state.ShuffleMode : ShuffleMode.Random;
 
-        if (IsShuffleEnabled)
-        {
-            _queue.SetShuffled((state.ShuffledQueueTrackIds ?? []).Where(librarySongs.ContainsKey).ToList());
+        var savedShuffle = state.ShuffledQueueTrackIds ?? [];
+        var restoredShuffle = savedShuffle.Where(librarySongs.ContainsKey).ToList();
+        // Equal lengths alone do not rule out duplicate or unrelated tracks.
+        var shuffledOrder = restoredShuffle.Count == restoredIds.Count && restoredShuffle.ToHashSet().SetEquals(restoredIds)
+            ? restoredShuffle
+            : null;
+        _queue.Replace(restoredIds, IsShuffleEnabled, startId: null, shuffledOrder);
 
-            // Equal lengths alone do not rule out duplicate or unrelated tracks.
-            if (_queue.Shuffled.Count != _queue.Order.Count ||
-                !_queue.Shuffled.ToHashSet().SetEquals(_queue.Order))
-                _queue.GenerateShuffled();
-            _queue.RebuildShuffledIndex();
-        }
-
-        if (state.CurrentTrackId.HasValue)
+        if (state.CurrentTrackId is { } trackId)
         {
-            var currentSong = _queue.IndexOf(state.CurrentTrackId.Value) >= 0
-                ? await _libraryReader.GetSongByIdAsync(state.CurrentTrackId.Value)
-                : null;
+            var currentSong = _queue.Contains(trackId) ? await _libraryReader.GetSongByIdAsync(trackId) : null;
             if (_isDisposed) return false;
             if (currentSong != null)
             {
+                _queue.SetCurrent(trackId);
                 CurrentTrack = currentSong;
-                CurrentQueueIndex = _queue.IndexOf(currentSong.Id);
-                if (IsShuffleEnabled)
-                {
-                    CurrentShuffledIndex = _queue.ShuffledIndexOf(currentSong.Id);
-                }
 
                 var streamUri = await _musicServers.GetStreamUriAsync(currentSong);
                 if (_isDisposed) return false;
@@ -82,35 +77,19 @@ public partial class MusicPlaybackService
             }
             else
             {
-                // The current track is missing from the library or queue, but the queue is still valid.
-                // Fall back to starting from the beginning of the queue rather than clearing it.
-                _logger.LogWarning("Could not restore current track {SongId}: it is missing from the library or saved queue. Falling back to queue start.", state.CurrentTrackId.Value);
-                CurrentQueueIndex = 0;
-                CurrentShuffledIndex = IsShuffleEnabled ? 0 : -1;
-                CurrentTrack = null;
+                _logger.LogWarning("Could not restore current track {SongId}: it is missing from the library or saved queue. Falling back to queue start.", trackId);
             }
         }
         else
         {
             // Resolve saved positions by identity because removing duplicates can shift indices.
-            var positionId = state.CurrentPlaybackQueueIndex >= 0 && state.CurrentPlaybackQueueIndex < savedQueue.Count
-                ? savedQueue[state.CurrentPlaybackQueueIndex]
-                : Guid.Empty;
-            CurrentQueueIndex = Math.Max(0, _queue.IndexOf(positionId));
-            CurrentShuffledIndex = -1;
-            if (IsShuffleEnabled)
-            {
-                var savedShuffle = state.ShuffledQueueTrackIds ?? [];
-                var shuffledPositionId = state.CurrentShuffledQueueIndex >= 0 && state.CurrentShuffledQueueIndex < savedShuffle.Count
-                    ? savedShuffle[state.CurrentShuffledQueueIndex]
-                    : Guid.Empty;
-                CurrentShuffledIndex = _queue.ShuffledIndexOf(shuffledPositionId);
-                if (CurrentShuffledIndex < 0)
-                    CurrentShuffledIndex = _queue.ShuffledIndexOf(_queue.Order[CurrentQueueIndex]);
-                CurrentQueueIndex = _queue.IndexOf(_queue.Shuffled[CurrentShuffledIndex]);
-            }
+            var positionId = IsShuffleEnabled ? IdAt(savedShuffle, state.CurrentShuffledQueueIndex) : Guid.Empty;
+            if (!_queue.Contains(positionId)) positionId = IdAt(savedQueue, state.CurrentPlaybackQueueIndex);
+            _queue.SetCurrent(_queue.Contains(positionId) ? positionId : _queue.Order[0]);
         }
 
         return true;
     }
+
+    private static Guid IdAt(List<Guid> ids, int index) => index >= 0 && index < ids.Count ? ids[index] : Guid.Empty;
 }

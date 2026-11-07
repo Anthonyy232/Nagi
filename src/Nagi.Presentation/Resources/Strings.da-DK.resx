@@ -572,18 +572,6 @@ Filer, der ikke kunne importeres: {0}.</value>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
     <value>FFmpeg er stadig ikke fundet. Installer venligst FFmpeg og klik på 'Tjek igen'.</value>
   </data>
-  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>Forrige</value>
-  </data>
-  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>Afspil</value>
-  </data>
-  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>Pause</value>
-  </data>
-  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>Næste</value>
-  </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
     <value>Bibliotek</value>
   </data>
