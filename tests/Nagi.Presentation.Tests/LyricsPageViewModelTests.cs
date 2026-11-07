@@ -9,7 +9,7 @@ using Nagi.Core.Playback;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Lyrics;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Shell;
 using NSubstitute;
 using Xunit;
 

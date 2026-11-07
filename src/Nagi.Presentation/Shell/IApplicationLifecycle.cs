@@ -1,4 +1,4 @@
-﻿namespace Nagi.Presentation.Services.Abstractions;
+﻿namespace Nagi.Presentation.Shell;
 
 /// <summary>
 ///     What the main window shows, and restarting the app.

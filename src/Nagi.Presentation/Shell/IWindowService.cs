@@ -1,4 +1,4 @@
-﻿namespace Nagi.Presentation.Services.Abstractions;
+﻿namespace Nagi.Presentation.Shell;
 
 /// <summary>
 ///     The main window and the mini player. <see cref="WindowBehavior" /> decides when to use which.

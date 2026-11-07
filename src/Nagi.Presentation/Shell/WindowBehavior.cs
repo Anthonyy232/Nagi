@@ -1,10 +1,9 @@
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Platform;
 using Nagi.Core.Settings;
-using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Settings;
 
-namespace Nagi.Presentation.Services;
+namespace Nagi.Presentation.Shell;
 
 /// <summary>
 ///     What the main window does when it is closed, minimized or shown at launch: hide to the tray, give way to the

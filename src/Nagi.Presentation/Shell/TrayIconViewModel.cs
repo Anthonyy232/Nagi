@@ -3,10 +3,9 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Platform;
 using Nagi.Core.Settings;
-using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Settings;
 
-namespace Nagi.Presentation.ViewModels;
+namespace Nagi.Presentation.Shell;
 
 public partial class TrayIconViewModel : ObservableObject
 {

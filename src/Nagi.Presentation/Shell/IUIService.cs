@@ -6,7 +6,7 @@ using Nagi.Presentation.Lyrics;
 using Nagi.Presentation.Player;
 using Nagi.Presentation.Playlists;
 
-namespace Nagi.Presentation.Services.Abstractions;
+namespace Nagi.Presentation.Shell;
 
 /// <summary>
 ///     Dialogs, pickers and shell actions. Implementations don't throw: when the platform can't show a dialog or

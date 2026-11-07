@@ -1,4 +1,4 @@
-namespace Nagi.Presentation.Services;
+namespace Nagi.Presentation.Shell;
 
 /// <summary>
 ///     What a launch asks the app to do besides opening a file, such as a taskbar jump list task.

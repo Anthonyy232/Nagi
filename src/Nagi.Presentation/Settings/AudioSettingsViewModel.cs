@@ -9,8 +9,7 @@ using Nagi.Core.Playback;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Services.Abstractions;
-using Nagi.Presentation.ViewModels;
+using Nagi.Presentation.Shell;
 
 namespace Nagi.Presentation.Settings;
 

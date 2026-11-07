@@ -4,7 +4,7 @@ using Microsoft.Extensions.Time.Testing;
 using Nagi.Core.Playlists;
 using Nagi.Presentation.Playlists;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Shell;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Xunit;

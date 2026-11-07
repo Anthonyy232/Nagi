@@ -5,7 +5,7 @@ using Nagi.Core.MusicServers;
 using Nagi.Core.Playback;
 using Nagi.Presentation.MusicServers;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Shell;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Xunit;

@@ -7,6 +7,7 @@ using Nagi.Core.Platform;
 using Nagi.Core.Playback;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Services;
+using Nagi.Presentation.Shell;
 using Nagi.Presentation.Theme;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Helpers;

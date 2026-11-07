@@ -3,10 +3,10 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Library;
 using Nagi.Core.Platform;
 using Nagi.Core.Playback;
-using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Services;
 using Nagi.Presentation.Theme;
 
-namespace Nagi.Presentation.Services;
+namespace Nagi.Presentation.Shell;
 
 /// <summary>
 ///     Runs the app's launch: starts the services, shows the main shell or onboarding and then the windows the

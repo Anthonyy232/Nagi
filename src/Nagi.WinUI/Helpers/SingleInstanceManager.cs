@@ -2,7 +2,7 @@ using System.IO;
 using System.IO.Pipes;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Nagi.Presentation.Services;
+using Nagi.Presentation.Shell;
 using Serilog;
 
 namespace Nagi.WinUI.Helpers;

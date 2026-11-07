@@ -5,9 +5,8 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Library;
 using Nagi.Core.MusicServers;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Services.Abstractions;
 
-namespace Nagi.Presentation.ViewModels;
+namespace Nagi.Presentation.Shell;
 
 public enum OnboardingStep
 {

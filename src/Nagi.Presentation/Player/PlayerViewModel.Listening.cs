@@ -11,7 +11,7 @@ using Nagi.Core.Playback;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Lists;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Shell;
 
 namespace Nagi.Presentation.Player;
 

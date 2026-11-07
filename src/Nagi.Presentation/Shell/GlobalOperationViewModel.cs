@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nagi.Core.Library;
 
-namespace Nagi.Presentation.ViewModels;
+namespace Nagi.Presentation.Shell;
 
 /// <summary>
 ///     The app-wide status bar for long-running library work such as adding, rescanning or removing

@@ -1,6 +1,6 @@
 using FluentAssertions;
 using Microsoft.Data.Sqlite;
-using Nagi.Presentation.Services;
+using Nagi.Presentation.Shell;
 using Xunit;
 
 namespace Nagi.Presentation.Tests;

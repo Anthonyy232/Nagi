@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
-using Nagi.Presentation.ViewModels;
+using Nagi.Presentation.Shell;
 
 namespace Nagi.WinUI.Controls;
 

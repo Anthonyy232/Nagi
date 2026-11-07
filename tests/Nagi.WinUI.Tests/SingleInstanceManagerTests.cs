@@ -1,5 +1,5 @@
 using FluentAssertions;
-using Nagi.Presentation.Services;
+using Nagi.Presentation.Shell;
 using Nagi.WinUI.Helpers;
 using Xunit;
 

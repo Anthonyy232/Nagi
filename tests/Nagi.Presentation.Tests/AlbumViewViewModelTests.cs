@@ -6,6 +6,7 @@ using Nagi.Core.Playback;
 using Nagi.Core.Playlists;
 using Nagi.Presentation.Lists;
 using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Shell;
 using NSubstitute;
 using Xunit;
 

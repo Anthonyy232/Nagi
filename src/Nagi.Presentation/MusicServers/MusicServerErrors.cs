@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.MusicServers;
 using Nagi.Presentation.Common;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Shell;
 
 namespace Nagi.Presentation.MusicServers;
 

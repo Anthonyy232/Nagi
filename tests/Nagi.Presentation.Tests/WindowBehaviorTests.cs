@@ -1,9 +1,8 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Settings;
-using Nagi.Presentation.Services.Abstractions;
-using Nagi.Presentation.Services;
 using Nagi.Presentation.Settings;
+using Nagi.Presentation.Shell;
 using NSubstitute;
 using Xunit;
 

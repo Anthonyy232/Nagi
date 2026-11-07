@@ -10,7 +10,7 @@ using Nagi.Core.Scrobbling;
 using Nagi.Presentation.MusicServers;
 using Nagi.Presentation.Player;
 using Nagi.Presentation.Settings;
-using Nagi.Presentation.ViewModels;
+using Nagi.Presentation.Shell;
 
 namespace Nagi.Presentation.Services;
 

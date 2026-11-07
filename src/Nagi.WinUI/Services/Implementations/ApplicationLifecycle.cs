@@ -1,5 +1,5 @@
 ﻿using Microsoft.Windows.AppLifecycle;
-using Nagi.Presentation.Services.Abstractions;
+using Nagi.Presentation.Shell;
 using Nagi.WinUI.Pages;
 
 namespace Nagi.WinUI.Services.Implementations;

@@ -18,6 +18,7 @@ using Nagi.Presentation.Player;
 using Nagi.Presentation.Resources;
 using Nagi.Presentation.Services.Abstractions;
 using Nagi.Presentation.Settings;
+using Nagi.Presentation.Shell;
 
 namespace Nagi.Presentation.Lists;
 

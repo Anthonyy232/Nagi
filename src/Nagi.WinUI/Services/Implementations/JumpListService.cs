@@ -4,8 +4,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.UI.Dispatching;
 using Nagi.Core.Settings;
 using Nagi.Presentation.Resources;
-using Nagi.Presentation.Services;
 using Nagi.Presentation.Settings;
+using Nagi.Presentation.Shell;
 using Windows.UI.StartScreen;
 
 namespace Nagi.WinUI.Services.Implementations;

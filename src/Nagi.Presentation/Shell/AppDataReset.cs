@@ -7,7 +7,7 @@ using Nagi.Core.Platform;
 using Nagi.Core.Settings;
 using Serilog;
 
-namespace Nagi.Presentation.Services;
+namespace Nagi.Presentation.Shell;
 
 /// <summary>
 ///     Wipes settings, the library database and caches when the user asks for a reset from the crash
