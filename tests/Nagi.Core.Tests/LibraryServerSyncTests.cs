@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using System.Text;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -272,28 +271,6 @@ public partial class LibraryServiceTests
     }
 
     [Fact]
-    public async Task SyncServerFolder_WhileTheServerSyncs_WaitsForThatSyncThenSyncs()
-    {
-        var folder = await AddServerAsync();
-        var listing = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var stalled = Substitute.For<IMusicServerClient>();
-        stalled.GetSongsAsync(Arg.Any<CancellationToken>()).Returns(call => Stalled(listing, call.Arg<CancellationToken>()));
-        using var cancellation = new CancellationTokenSource();
-        var first = _library.Servers.SyncAsync(folder.Id, stalled, cancellationToken: cancellation.Token);
-        await listing.Task.WaitAsync(TimeSpan.FromSeconds(5));
-
-        var second = _library.Servers.SyncAsync(folder.Id, ServerWith(ServerSong("s1", "Breakwater")));
-        second.IsCompleted.Should().BeFalse();
-        await cancellation.CancelAsync();
-
-        await FluentActions.Awaiting(() => first.WaitAsync(TimeSpan.FromSeconds(5)))
-            .Should().ThrowAsync<OperationCanceledException>();
-        await second.WaitAsync(TimeSpan.FromSeconds(5));
-        await using var context = _dbHelper.ContextFactory.CreateDbContext();
-        (await context.Songs.SingleAsync()).RemoteId.Should().Be("s1");
-    }
-
-    [Fact]
     public async Task SyncServerFolder_AddsThePlaylistsWithTheSongsTheLibraryHas()
     {
         var folder = await AddServerAsync();
@@ -351,30 +328,13 @@ public partial class LibraryServiceTests
     }
 
     [Fact]
-    public async Task RemoveServer_CancelsItsSyncAndRemovesIt()
-    {
-        var folder = await AddServerAsync();
-        var listing = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var client = Substitute.For<IMusicServerClient>();
-        client.GetSongsAsync(Arg.Any<CancellationToken>()).Returns(call => Stalled(listing, call.Arg<CancellationToken>()));
-        var sync = _library.Servers.SyncAsync(folder.Id, client);
-        await listing.Task.WaitAsync(TimeSpan.FromSeconds(5));
-
-        (await _library.Servers.RemoveAsync(folder.Id)).Should().BeTrue();
-
-        await FluentActions.Awaiting(() => sync.WaitAsync(TimeSpan.FromSeconds(5)))
-            .Should().ThrowAsync<OperationCanceledException>();
-        await using var context = _dbHelper.ContextFactory.CreateDbContext();
-        (await context.MusicServers.AnyAsync()).Should().BeFalse();
-    }
-
-    [Fact]
-    public async Task ClearAllLibraryData_ForgetsEachServersSignIn()
+    public async Task ClearAllLibraryData_CancelsServerSyncsAndForgetsEachServersSignIn()
     {
         var folder = await AddServerAsync();
 
         await _library.Reset.ClearAllLibraryDataAsync();
 
+        _library.MusicServers.Received(1).CancelSyncs();
         _library.MusicServers.Received(1).ForgetSignIns(Arg.Is<IEnumerable<Guid>>(ids => ids.SequenceEqual(new[] { folder.Id })));
     }
 
@@ -458,15 +418,6 @@ public partial class LibraryServiceTests
     {
         await Task.Yield();
         yield return songs;
-    }
-
-    // A server that started answering and then went quiet, until the sync is cancelled.
-    private static async IAsyncEnumerable<IReadOnlyList<ServerSongMetadata>> Stalled(TaskCompletionSource started,
-        [EnumeratorCancellation] CancellationToken cancellationToken)
-    {
-        started.TrySetResult();
-        await Task.Delay(Timeout.Infinite, cancellationToken);
-        yield break;
     }
 
     private static ServerSongMetadata ServerSong(string id, string title, string album = "Saltwater Hymns",

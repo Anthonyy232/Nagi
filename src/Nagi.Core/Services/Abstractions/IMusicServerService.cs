@@ -46,6 +46,11 @@ public interface IMusicServerService
     Task<bool> RemoveAsync(Guid folderId);
 
     /// <summary>
+    ///     Cancels every running sync, such as before the library is cleared.
+    /// </summary>
+    void CancelSyncs();
+
+    /// <summary>
     ///     Forgets the saved sign-ins of servers that are no longer in the library, such as after it was cleared.
     /// </summary>
     void ForgetSignIns(IEnumerable<Guid> folderIds);
@@ -55,7 +60,7 @@ public interface IMusicServerService
 
     /// <summary>
     ///     Tells the server about favorites and plays from Nagi, then makes the library match it. A sync of a server
-    ///     that is already syncing waits for that sync to finish first.
+    ///     that is already syncing waits for that sync to finish first. Removing the server cancels its sync.
     /// </summary>
     /// <exception cref="MusicServerException">The server couldn't be reached or rejected the saved sign-in.</exception>
     /// <exception cref="OperationCanceledException">Cancelled, or the server was removed while it synced.</exception>

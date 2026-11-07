@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
@@ -12,8 +11,6 @@ namespace Nagi.Core.Services.Implementations.MusicServers;
 
 public sealed class ServerLibrarySync : IServerLibrarySync
 {
-    // One sync per server at a time; a second one, such as Sync pressed during a background sync, waits its turn.
-    private readonly ConcurrentDictionary<Guid, SemaphoreSlim> _syncLocks = new();
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
     private readonly IFileSystemService _fileSystem;
     private readonly IImageProcessor _imageProcessor;
@@ -64,7 +61,6 @@ public sealed class ServerLibrarySync : IServerLibrarySync
     {
         var token = _writeLock.ShutdownToken;
         _writeLock.CancelActiveScan("server removal");
-        _writeLock.CancelServerSync(folderId);
         await _writeLock.WaitAsync(token).ConfigureAwait(false);
         try
         {
@@ -85,16 +81,8 @@ public sealed class ServerLibrarySync : IServerLibrarySync
     {
         using var operationCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _writeLock.ShutdownToken);
         var operationToken = operationCts.Token;
-        var syncLock = _syncLocks.GetOrAdd(folderId, _ => new SemaphoreSlim(1, 1));
-        await syncLock.WaitAsync(operationToken).ConfigureAwait(false);
-        _writeLock.SetServerSync(folderId, operationCts);
-
         try
         {
-            // Removed while this sync waited for the one before it.
-            if (!await IsMusicServerFolderAsync(folderId, operationToken).ConfigureAwait(false))
-                throw new OperationCanceledException($"Server folder {folderId} was removed.");
-
             // Reading from the server happens outside the write lock, so a slow server doesn't hold up folder scans.
             var songs = new List<ServerSongMetadata>();
             progress?.Report(FetchingProgress(0));
@@ -153,11 +141,6 @@ public sealed class ServerLibrarySync : IServerLibrarySync
         {
             progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_ScanCancelled, Percentage = 100 });
             throw;
-        }
-        finally
-        {
-            _writeLock.ClearServerSync(folderId);
-            syncLock.Release();
         }
     }
 

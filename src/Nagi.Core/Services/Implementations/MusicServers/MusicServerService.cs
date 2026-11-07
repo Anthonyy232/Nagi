@@ -9,8 +9,8 @@ using Nagi.Core.Services.Data;
 namespace Nagi.Core.Services.Implementations.MusicServers;
 
 /// <summary>
-///     Keeps the library in step with the user's music servers. The library side of a sync lives in
-///     <see cref="ServerLibrarySync" />; this service owns the connections and the server's side of favorites and plays.
+///     Keeps the library in step with the user's music servers: their sign-ins, syncs and removal. The library side of a
+///     sync lives in <see cref="ServerLibrarySync" />.
 /// </summary>
 public sealed class MusicServerService : IMusicServerService, IDisposable
 {
@@ -27,6 +27,10 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
     private readonly TimeProvider _timeProvider;
     private readonly ILogger<MusicServerService> _logger;
     private readonly ConcurrentDictionary<Guid, IMusicServerClient> _clients = new();
+    // One sync per server at a time; a second one, such as Sync pressed during a background sync, waits its turn.
+    private readonly ConcurrentDictionary<Guid, SemaphoreSlim> _syncLocks = new();
+    // Removing a server, or clearing the library, cancels its sync instead of waiting for the import to finish.
+    private readonly ConcurrentDictionary<Guid, CancellationTokenSource> _runningSyncs = new();
     // One push at a time, so an older favorite can't reach the server after a newer one.
     private readonly SemaphoreSlim _favoritesLock = new(1, 1);
     // Plays are reported live and before each sync; one at a time keeps a play from being counted twice.
@@ -94,6 +98,7 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
             _logger.LogDebug(ex, "Server folder {FolderId} has no sign-in to end.", folderId);
         }
 
+        CancelSync(folderId);
         if (!await _library.RemoveAsync(folderId).ConfigureAwait(false)) return false;
         ForgetServer(folderId);
         // In the background, so a server that can't be reached doesn't hold up its removal.
@@ -112,13 +117,43 @@ public sealed class MusicServerService : IMusicServerService, IDisposable
         CancellationToken cancellationToken = default)
     {
         using var syncCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _shutdownCts.Token);
-        var client = await GetClientAsync(folderId, syncCts.Token).ConfigureAwait(false);
-        if (client is null) return;
+        var syncLock = _syncLocks.GetOrAdd(folderId, _ => new SemaphoreSlim(1, 1));
+        await syncLock.WaitAsync(syncCts.Token).ConfigureAwait(false);
+        _runningSyncs[folderId] = syncCts;
+        try
+        {
+            // Removed while this sync waited for the one before it.
+            var client = await GetClientAsync(folderId, syncCts.Token).ConfigureAwait(false)
+                         ?? throw new OperationCanceledException($"Server folder {folderId} was removed.");
 
-        // The server must hear about Nagi's favorites and plays before the sync reads its own back.
-        await PushPendingFavoritesAsync(folderId, syncCts.Token).ConfigureAwait(false);
-        await ReportPlaysAsync(folderId, syncCts.Token).ConfigureAwait(false);
-        await _library.SyncAsync(folderId, client, progress, syncCts.Token).ConfigureAwait(false);
+            // The server must hear about Nagi's favorites and plays before the sync reads its own back.
+            await PushPendingFavoritesAsync(folderId, syncCts.Token).ConfigureAwait(false);
+            await ReportPlaysAsync(folderId, syncCts.Token).ConfigureAwait(false);
+            await _library.SyncAsync(folderId, client, progress, syncCts.Token).ConfigureAwait(false);
+        }
+        finally
+        {
+            _runningSyncs.TryRemove(KeyValuePair.Create(folderId, syncCts));
+            syncLock.Release();
+        }
+    }
+
+    public void CancelSyncs()
+    {
+        foreach (var folderId in _runningSyncs.Keys) CancelSync(folderId);
+    }
+
+    private void CancelSync(Guid folderId)
+    {
+        if (!_runningSyncs.TryGetValue(folderId, out var sync)) return;
+        try
+        {
+            sync.Cancel();
+        }
+        catch (ObjectDisposedException)
+        {
+            // The sync finished while it was being cancelled.
+        }
     }
 
     public async Task SyncAllAsync(IProgress<ScanProgress>? progress = null, CancellationToken cancellationToken = default)

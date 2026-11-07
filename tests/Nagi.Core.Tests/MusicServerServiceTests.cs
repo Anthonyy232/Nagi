@@ -189,6 +189,50 @@ public class MusicServerServiceTests : IDisposable
         whenSyncing.Should().Be((false, true), "the sync replaces the favorite and play count with the server's");
     }
 
+    [Fact]
+    public async Task SyncAsync_WhileTheServerSyncs_WaitsForThatWholeSyncBeforeSendingPlays()
+    {
+        var (server, song) = await SeedServerAsync();
+        var syncing = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var librarySyncs = 0;
+        _serverLibrary.SyncAsync(server.FolderId, Arg.Any<IMusicServerClient>(), Arg.Any<IProgress<ScanProgress>?>(),
+                Arg.Any<CancellationToken>())
+            .Returns(call => Interlocked.Increment(ref librarySyncs) == 1
+                ? StallAsync(syncing, call.Arg<CancellationToken>())
+                : Task.CompletedTask);
+        using var cancellation = new CancellationTokenSource();
+        var first = _service.SyncAsync(server.FolderId, cancellationToken: cancellation.Token);
+        await syncing.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        await SeedListensAsync(song, (new DateTime(2026, 10, 1, 8, 0, 0, DateTimeKind.Utc), true));
+        _handler.RespondSequence((HttpStatusCode.OK, OkResponse));
+
+        var second = _service.SyncAsync(server.FolderId);
+        second.IsCompleted.Should().BeFalse();
+        _handler.Requests.Should().BeEmpty();
+        await cancellation.CancelAsync();
+
+        await FluentActions.Awaiting(() => first.WaitAsync(TimeSpan.FromSeconds(5))).Should().ThrowAsync<OperationCanceledException>();
+        await second.WaitAsync(TimeSpan.FromSeconds(5));
+        librarySyncs.Should().Be(2);
+        _handler.Requests.Should().ContainSingle();
+    }
+
+    [Fact]
+    public async Task RemoveAsync_CancelsTheServersSync()
+    {
+        var (server, _) = await SeedServerAsync();
+        var syncing = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        _serverLibrary.SyncAsync(server.FolderId, Arg.Any<IMusicServerClient>(), Arg.Any<IProgress<ScanProgress>?>(),
+            Arg.Any<CancellationToken>()).Returns(call => StallAsync(syncing, call.Arg<CancellationToken>()));
+        _serverLibrary.RemoveAsync(server.FolderId).Returns(true);
+        var sync = _service.SyncAsync(server.FolderId);
+        await syncing.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+        (await _service.RemoveAsync(server.FolderId)).Should().BeTrue();
+
+        await FluentActions.Awaiting(() => sync.WaitAsync(TimeSpan.FromSeconds(5))).Should().ThrowAsync<OperationCanceledException>();
+    }
+
     [Theory]
     [InlineData(MusicServerError.SignInFailed, true)]
     [InlineData(MusicServerError.Unreachable, false)]
@@ -355,6 +399,13 @@ public class MusicServerServiceTests : IDisposable
         context.Songs.Add(song);
         await context.SaveChangesAsync();
         return (server, song);
+    }
+
+    // A library sync that started and then went quiet, until it is cancelled.
+    private static async Task StallAsync(TaskCompletionSource started, CancellationToken cancellationToken)
+    {
+        started.TrySetResult();
+        await Task.Delay(Timeout.Infinite, cancellationToken);
     }
 
     private async Task SeedListensAsync(Song song, params (DateTime At, bool Eligible)[] listens)
